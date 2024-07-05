@@ -1,78 +1,83 @@
 [[plugins]]
-package = "@netlify/plugin-nextjs"
+  package = "@netlify/plugin-nextjs"
 
 [build]
-base = "./"
-publish = "./packages/ui/.next"
-command = "yarn build:deploy:ui"
+  base = "./"
+  publish = "./packages/ui/.next"
+  command = "next build ./packages/ui"
+
+[dev]
+  command = "next dev ./packages/ui"
+  port = 3000
 
 [build.environment]
-YARN_CHECKSUM_BEHAVIOR = "update"
-SUPABASE_URL = "https://uoagtjstsdrjypxlkuzr.supabase.co"
-ICON_SERVER = "https://d1912tcoux65lj.cloudfront.net"
-PRODUCT_URL = 'https://app.ionic.money'
-FEATURE_CREATE_POOL = "0x2680D8f1ED3BEe1c731cFeedcDa2A74bB7317828,0x7dB8d33114462e032E5bf636D271f8680619Ba25,0xb6c11605e971ab46B9BE4fDC48C9650A257075db,0x9308dddeC9B5cCd8a2685A46E913C892FE31C826"
-FEATURE_DEPLOY_FLYWHEEL = "false"
+  YARN_CHECKSUM_BEHAVIOR = "update"
+  SUPABASE_URL = "https://uoagtjstsdrjypxlkuzr.supabase.co"
+  ICON_SERVER = "https://d1912tcoux65lj.cloudfront.net"
+  PRODUCT_URL = 'https://app.ionic.money'
+  FEATURE_CREATE_POOL = "0x2680D8f1ED3BEe1c731cFeedcDa2A74bB7317828,0x7dB8d33114462e032E5bf636D271f8680619Ba25,0xb6c11605e971ab46B9BE4fDC48C9650A257075db,0x9308dddeC9B5cCd8a2685A46E913C892FE31C826"
+  FEATURE_DEPLOY_FLYWHEEL = "false"
 
 [context.preview.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "true"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-NEON = "false"
-IS_SENTRY_ENABLED = "false"
-IS_PRODUCTION = "false"
+  NEXT_PUBLIC_SHOW_TESTNETS = "true"
+  BSC = "false"
+  POLYGON = "false"
+  ARBITRUM = "false"
+  FANTOM = "false"
+  ETHEREUM = "false"
+  ZKEVM = "false"
+  LINEA = "false"
+  NEON = "false"
+  IS_SENTRY_ENABLED = "false"
+  IS_PRODUCTION = "false"
 
 [context.development.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "true"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-NEON = "false"
-IS_SENTRY_ENABLED = "false"
-IS_PRODUCTION = "false"
-NODE_ENV = "production"
+  NEXT_PUBLIC_SHOW_TESTNETS = "true"
+  BSC = "false"
+  POLYGON = "false"
+  ARBITRUM = "false"
+  ETHEREUM = "false"
+  ZKEVM = "false"
+  LINEA = "false"
+  NEON = "false"
+  IS_SENTRY_ENABLED = "false"
+  IS_PRODUCTION = "false"
+  NODE_ENV = "production"
 
 [context.production.environment]
-NEXT_PUBLIC_SHOW_TESTNETS = "false"
-BSC = "false"
-POLYGON = "false"
-ARBITRUM = "false"
-ETHEREUM = "false"
-ZKEVM = "false"
-LINEA = "false"
-NEON = "false"
-IS_SENTRY_ENABLED = "true"
-IS_PRODUCTION = "true"
-NODE_ENV = "production"
+  NEXT_PUBLIC_SHOW_TESTNETS = "false"
+  BSC = "false"
+  POLYGON = "false"
+  ARBITRUM = "false"
+  ETHEREUM = "false"
+  ZKEVM = "false"
+  LINEA = "false"
+  NEON = "false"
+  IS_SENTRY_ENABLED = "true"
+  IS_PRODUCTION = "true"
+  NODE_ENV = "production"
 
 [functions]
-directory = "./packages/functions/dist/functions/src/functions"
-node_bundler = "esbuild"
+  directory = "./packages/functions/dist/functions/src/functions"
+  node_bundler = "esbuild"
 
 [functions."plugin-rewards-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."asset-apys-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."vault-data-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."asset-price-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."asset-tvl-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."asset-total-apy-*"]
-schedule = "@hourly"
+  schedule = "@hourly"
 
 [functions."asset-total-history-*"]
-schedule = "0 0 * * *"
+  schedule = "0 0 * * *"
