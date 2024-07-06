@@ -8,33 +8,47 @@ interface IMode {
 const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
   return (
     <div
-      className={`w-[94%] mx-auto rounded-lg bg-grayone ${
-        mode === PopupMode.INSTANTSUPPLY && 'hidden'
-      }py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
+      className={`w-[94%] mx-auto rounded-lg py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
     >
       {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
-        <>
-          <p
-            className={`rounded-md py-1 text-center w-full cursor-pointer ${
-              active === PopupMode.SUPPLY
-                ? 'bg-darkone text-accent '
-                : 'text-white/40 '
-            } transition-all duration-200 ease-linear `}
-            onClick={() => setActive(PopupMode.SUPPLY)}
+        <div className={`w-full flex flex-col `}>
+          <div className={`w-full flex  bg-grayone p-1 rounded-md`}>
+            <p
+              className={`rounded-md py-1 text-center w-full cursor-pointer ${
+                active === PopupMode.SUPPLY
+                  ? 'bg-darkone text-accent '
+                  : 'text-white/40 '
+              } transition-all duration-200 ease-linear `}
+              onClick={() => setActive(PopupMode.SUPPLY)}
+            >
+              COLLATERAL
+            </p>
+            <p
+              className={` rounded-md py-1 px-3  w-full ${
+                active === PopupMode.WITHDRAW
+                  ? 'bg-darkone text-accent '
+                  : 'text-white/40'
+              } cursor-pointer transition-all duration-200 ease-linear`}
+              onClick={() => setActive(PopupMode.WITHDRAW)}
+            >
+              WITHDRAW
+            </p>
+          </div>
+          <div
+            className={`rounded-md p-1   bg-grayone text-center w-full  mt-1 cursor-pointer transition-all duration-200 ease-linear  `}
+            onClick={() => setActive(PopupMode.INSTANTSUPPLY)}
           >
-            COLLATERAL
-          </p>
-          <p
-            className={` rounded-md py-1 px-3  w-full ${
-              active === PopupMode.WITHDRAW
-                ? 'bg-darkone text-accent '
-                : 'text-white/40'
-            } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive(PopupMode.WITHDRAW)}
-          >
-            WITHDRAW
-          </p>
-        </>
+            <p
+              className={`p-1 rounded-md w-full px-3 ${
+                active === PopupMode.INSTANTSUPPLY
+                  ? 'bg-darkone text-accent '
+                  : 'text-white/40 '
+              }`}
+            >
+              Cross Chain Supply
+            </p>
+          </div>
+        </div>
       )}
       {(mode === PopupMode.BORROW ||
         mode === PopupMode.REPAY ||

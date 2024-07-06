@@ -448,15 +448,12 @@ const PoolRows = ({
           COLLATERAL FACTOR:
         </span>
         {collateralFactor}%{' '}
-        <span
-          onClick={() => {
-            setSelectedSymbol(asset);
-            setPopupMode(PopupMode.INSTANTSUPPLY);
-          }}
+        {/* <span
+         
         >
           {' '}
           instant{' '}
-        </span>
+        </span> */}
       </h3>
       <div className={` col-span-4 flex items-center justify-center gap-3`}>
         {address ? (

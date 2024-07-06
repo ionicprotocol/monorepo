@@ -1,21 +1,22 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
+import type { Route } from '@lifi/sdk';
+import { useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
-import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
 import { useChainId } from 'wagmi';
 
+import InstantSupply from '../markets/InstantSupply';
 import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
-// import InstantSupply from './InstantSupply';
 // import LifiChains from './LifiChains';
 import Loop from './Loop';
 import SliderComponent from './Slider';
@@ -44,10 +45,11 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+// import InstantSupply from '';
 
-const InstantSupply = dynamic(() => import('../markets/InstantSupply'), {
-  ssr: false
-});
+// const InstantSupply = dynamic(() => import('../markets/InstantSupply'), {
+//   ssr: false
+// });
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -421,8 +423,14 @@ const Popup = ({
     upsertTransactionStep(undefined);
 
     switch (active) {
-      case PopupMode.SUPPLY || PopupMode.INSTANTSUPPLY:
+      case PopupMode.SUPPLY:
         slide.current.style.transform = 'translateX(0%)';
+
+        setCurrentFundOperation(FundOperationMode.SUPPLY);
+
+        break;
+      case PopupMode.INSTANTSUPPLY:
+        slide.current.style.transform = 'translateX(-200%)';
 
         setCurrentFundOperation(FundOperationMode.SUPPLY);
 
@@ -566,7 +574,10 @@ const Popup = ({
     });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const supplyAmount = async () => {
+    // console.log('trying to start supply');
+
     if (
       !transactionSteps.length &&
       currentSdk &&
@@ -576,6 +587,8 @@ const Popup = ({
       maxSupplyAmount &&
       amountAsBInt.lte(maxSupplyAmount.bigNumber)
     ) {
+      // eslint-disable-next-line no-console
+      console.log({ amount });
       let currentTransactionStep = 0;
       addStepsForAction([
         {
@@ -624,6 +637,8 @@ const Popup = ({
           });
 
           await tx.wait();
+          // eslint-disable-next-line no-console
+          console.log('tx completed from supply');
         }
 
         upsertTransactionStep({
@@ -707,6 +722,9 @@ const Popup = ({
         });
       }
     }
+    // else {
+    //   console.log('else triggered in supply');
+    // } this is getting triggered while running it from the lifi cross chain execution
   };
 
   const withdrawAmount = async () => {
@@ -1104,6 +1122,58 @@ const Popup = ({
     }
   };
 
+  const widgetEvents = useWidgetEvents();
+
+  useEffect(() => {
+    const onRouteExecutionStarted = () => {
+      // console.log('onRouteExecutionStarted fired.');
+      // setWidgetStatus('START')
+    };
+    const onRouteExecutionUpdated = () => {
+      // console.log('onRouteExecutionUpdated fired.');
+      // setWidgetStatus('UPDATE');
+    };
+    const onRouteExecutionCompleted = async (route: Route) => {
+      // console.log('onRouteExecutionCompleted fired.');
+      // setWidgetStatus('COMPLETED');
+      // set balance to max ------
+      // if (!data) return;
+      // eslint-disable-next-line no-console
+      console.log('-----------------------------');
+      // eslint-disable-next-line no-console
+      console.log(route);
+      setAmount(
+        formatUnits(BigInt(route?.toAmountMin), route?.toToken.decimals)
+      );
+      // handleUtilization();
+      setCurrentUtilizationPercentage(100);
+      // eslint-disable-next-line no-console
+      console.log('supply started');
+      await supplyAmount();
+      // eslint-disable-next-line no-console
+      console.log('supply completed');
+    };
+    const onRouteExecutionFailed = () => {
+      // console.log('onRouteExecutionFailed fired.');
+      // setWidgetStatus('FAIL');
+    };
+    const onRouteHighValueLoss = () => {
+      // console.log('onRouteHighValueLoss continued.');
+      // setWidgetStatus('LOSS');
+    };
+
+    widgetEvents.on(WidgetEvent.RouteExecutionStarted, onRouteExecutionStarted);
+    widgetEvents.on(WidgetEvent.RouteExecutionUpdated, onRouteExecutionUpdated);
+    widgetEvents.on(
+      WidgetEvent.RouteExecutionCompleted,
+      onRouteExecutionCompleted
+    );
+    widgetEvents.on(WidgetEvent.RouteExecutionFailed, onRouteExecutionFailed);
+    widgetEvents.on(WidgetEvent.RouteHighValueLoss, onRouteHighValueLoss);
+    // setWidgetLoading(false);
+    return () => widgetEvents.all.clear();
+  }, [supplyAmount, widgetEvents]);
+
   return (
     <>
       <div
@@ -1147,37 +1217,12 @@ const Popup = ({
             className={`w-full transition-all duration-300 ease-linear h-min  flex`}
             ref={slide}
           >
-            {mode === PopupMode.INSTANTSUPPLY && (
-              <div className="w-full flex flex-col items-center justify-center pb-6">
-                {transactionSteps.length > 0 ? (
-                  <TransactionStepsHandler
-                    chainId={chainId}
-                    resetTransactionSteps={resetTransactionSteps}
-                    transactionSteps={transactionSteps}
-                  />
-                ) : (
-                  <>
-                    <InstantSupply
-                      toToken={selectedMarketData?.cToken}
-                      handleInput={(val?: string) => setAmount(val)}
-                      handleUtilization={() =>
-                        setCurrentUtilizationPercentage(100)
-                      }
-                      handleCollateralToggle={async () => {
-                        await handleCollateralToggle();
-                      }}
-                      startSupply={() => supplyAmount()}
-                    />
-                  </>
-                )}
-              </div>
-            )}
-
             {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
               <>
                 {/* ---------------------------------------------------------------------------- */}
                 {/* SUPPLY-Collateral section */}
                 {/* ---------------------------------------------------------------------------- */}
+
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
                   <Amount
                     amount={amount}
@@ -1459,6 +1504,26 @@ const Popup = ({
                     )}
                   </div>
                   {/* <Approved /> */}
+                </div>
+                <div className="min-w-full py-5 px-[6%] h-min flex flex-col items-center justify-center">
+                  {transactionSteps.length > 0 ? (
+                    <TransactionStepsHandler
+                      chainId={chainId}
+                      resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
+                    />
+                  ) : (
+                    <>
+                      <InstantSupply
+                        toToken={selectedMarketData?.cToken}
+                        // handleInput={(val?: string) => setAmount(val)}
+                        // handleUtilization={() =>
+                        //   setCurrentUtilizationPercentage(100)
+                        // }
+                        // startSupply={() => supplyAmount()}
+                      />
+                    </>
+                  )}
                 </div>
               </>
             )}
