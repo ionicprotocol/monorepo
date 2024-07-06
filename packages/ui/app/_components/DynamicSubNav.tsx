@@ -19,9 +19,11 @@ function DynamicSubNav() {
       }`} absolute w-full top-full left-0 text-center p-2 text-sm font-medium cursor-pointer`}
       onClick={() => router.push('/points')}
     >
-      Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
+      {/* Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
       multipliers, new ways to earn points! See your Season 1 $ION eligibility
-      on the Claim page (Open till 6th of July).
+      on the Claim page (Open till 6th of July). */}
+      Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE, supply ETH
+      and/or USDC to get OP rewards on top of the MODE and IONIC points!
     </div>
   );
 }
