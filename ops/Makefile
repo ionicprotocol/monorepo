@@ -71,6 +71,8 @@ prod-plan:
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
+	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
+	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
 	terraform init && \
 	terraform plan
 
@@ -87,6 +89,8 @@ prod-deploy:
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
+	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
+	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
 	terraform init && \
 	terraform apply -auto-approve
 
