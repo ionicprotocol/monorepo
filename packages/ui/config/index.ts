@@ -6,6 +6,7 @@ type CONFIG = {
   isFWDeployEnabled: boolean;
   isModeEnabled: boolean;
   isOptimismEnabled: boolean;
+  isBobEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
@@ -30,6 +31,7 @@ const config: CONFIG = {
   isFWDeployEnabled: process.env.FEATURE_DEPLOY_FLYWHEEL === 'true',
   isModeEnabled: true,
   isOptimismEnabled: true,
+  isBobEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,

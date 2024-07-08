@@ -1,17 +1,9 @@
 import {
-  arbitrum,
   base,
-  bsc,
+  bob,
   chainIdToConfig,
-  chapel,
-  ethereum,
-  ganache,
-  linea,
   mode,
-  neon,
-  optimism,
-  polygon,
-  zkevm
+  optimism
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -81,32 +73,23 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.optimism);
   }
 
+  if (config.isBobEnabled) {
+    enabledChains.push(SupportedChains.bob);
+  }
+
   return enabledChains;
 }
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.ethereum]: ethereum.assets,
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.neon]: neon.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.linea]: linea.assets,
-  [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
-  [SupportedChains.optimism]: optimism.assets
+  [SupportedChains.optimism]: optimism.assets,
+  [SupportedChains.bob]: bob.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
-  [SupportedChains.bsc]: bsc.deployedPlugins,
-  [SupportedChains.polygon]: polygon.deployedPlugins,
-  [SupportedChains.ganache]: ganache.deployedPlugins,
-  [SupportedChains.chapel]: chapel.deployedPlugins,
-  [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
-  [SupportedChains.ethereum]: ethereum.deployedPlugins,
   [SupportedChains.mode]: mode.deployedPlugins,
   [SupportedChains.base]: base.deployedPlugins,
-  [SupportedChains.optimism]: optimism.deployedPlugins
+  [SupportedChains.optimism]: optimism.deployedPlugins,
+  [SupportedChains.bob]: bob.deployedPlugins
 };
