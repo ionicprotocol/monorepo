@@ -140,21 +140,20 @@ const PoolRows = ({
               href="https://jumper.exchange/superfest/"
               target="_blank"
             >
-              {/* <img
-                alt="external-link"
-                className={`w-3 h-3 inline-block`}
-                src="/img/logo/superOP.png"
-              /> */}
-              + OP FEST{' '}
-              <img
-                alt="external-link"
-                className={`w-3 h-3`}
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
+              <div
+                className={`flex items-center text-[10px] justify-center gap-1 py-[1px]`}
+              >
+                <span className={``}>+ OP FEST</span>
+                <img
+                  alt="OP fest"
+                  className={`w-4 h-4 inline-block `}
+                  src="/img/logo/superOP.png"
+                />
+              </div>
             </a>
           )}
           <div
-            className={`popover absolute w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
             Base APR: {supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -185,7 +184,7 @@ const PoolRows = ({
                 {(asset.toLowerCase() === 'usdc' ||
                   asset.toLowerCase() === 'weth' ||
                   asset.toLowerCase() === 'ezeth') && (
-                  <div className="flex px-2">
+                  <div className="flex pr-4">
                     <img
                       alt=""
                       className="size-4 rounded mr-1"
@@ -356,21 +355,20 @@ const PoolRows = ({
               href="https://jumper.exchange/superfest/"
               target="_blank"
             >
-              {/* <img
-                alt="external-link"
-                className={`w-3 h-3 inline-block`}
-                src="/img/logo/superOP.png"
-              /> */}
-              + OP FEST{' '}
-              <img
-                alt="external-link"
-                className={`w-3 h-3`}
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
+              <div
+                className={`flex items-center text-[10px] justify-center gap-1 py-[1px]`}
+              >
+                <span className={``}>+ OP FEST</span>
+                <img
+                  alt="OP fest"
+                  className={`w-4 h-4 inline-block `}
+                  src="/img/logo/superOP.png"
+                />
+              </div>
             </a>
           )}
           <div
-            className={`popover absolute w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
           >
             Base APR: {borrowAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -409,7 +407,7 @@ const PoolRows = ({
                 {(asset.toLowerCase() === 'usdc' ||
                   asset.toLowerCase() === 'weth' ||
                   asset.toLowerCase() === 'ezeth') && (
-                  <div className="flex px-2">
+                  <div className="flex pr-2">
                     <img
                       alt=""
                       className="size-4 rounded mr-1"
