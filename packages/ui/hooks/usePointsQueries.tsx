@@ -702,7 +702,7 @@ const useLeaderboard = (page: number) => {
       // get ENS address
       const data = response.data
         ? await Promise.all(
-            response.data.map(async (row) => {
+            response.data.map(async (row: { address: string }) => {
               const ens = await getEnsName(config, {
                 address: row.address as Address,
                 chainId: config.chains[0].id

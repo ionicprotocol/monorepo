@@ -8,7 +8,7 @@ import { Handler } from '@netlify/functions';
 import { chainIdToConfig } from '@ionicprotocol/chains';
 import axios from 'axios';
 
-export const HEARTBEAT_API_URL = 'https://uptime.betterstack.com/api/v1/heartbeat/hxW4PWkrQG61T8iMq57iNY9i';
+export const HEARTBEAT_API_URL =environment.uptimeAssetPriceApi;
 export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 

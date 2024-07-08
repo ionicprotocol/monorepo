@@ -26,7 +26,8 @@ on:
 
 env:
   IMAGE_TAG: ${{ github.sha }}
-
+  UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+  UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 jobs:
   terraform-infra:
     runs-on: ubuntu-latest
@@ -101,6 +102,8 @@ jobs:
     env:
       REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-liquidator
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - uses: actions/checkout@v4
@@ -139,7 +142,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg UPTIME_LIQUIDATOR_API=${{ secrets.UPTIME_LIQUIDATOR_API }} -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
@@ -197,6 +200,8 @@ jobs:
     env:
       REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
       REPOSITORY: ionic-pyth-updater
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - uses: actions/checkout@v4
@@ -235,7 +240,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build -f docker/pyth-updater/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg UPTIME_PYTH_UPDATER_API=${{ secrets.UPTIME_PYTH_UPDATER_API }} -f docker/pyth-updater/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
@@ -258,6 +263,8 @@ jobs:
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
       - name: Checkout repository
