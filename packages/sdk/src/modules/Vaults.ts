@@ -12,7 +12,7 @@ export function withVaults<TBase extends CreateContractsModule = CreateContracts
       return [];
     }
 
-    async getClaimableRewardsForVaults(account: string): Promise<FlywheelRewardsInfoForVault[]> {
+    async getClaimableRewardsForVaults(_: string): Promise<FlywheelRewardsInfoForVault[]> {
       return [];
     }
 
