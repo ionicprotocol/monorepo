@@ -34,10 +34,6 @@ const chainlinkAssets: ChainlinkAsset[] = bob.assets
     symbol: asset.symbol
   }));
 
-const pythAssets: PythAsset[] = bob.assets
-  .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
-  .map((asset) => ({ feed: (asset.oracleSpecificParams! as PythSpecificParams).feed, underlying: asset.underlying }));
-
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -50,19 +46,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
     assets,
     chainlinkAssets
-  });
-
-  //// Pyth Price Oracle
-  await deployPythPriceOracle({
-    run,
-    deployConfig,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    usdToken: bob.chainAddresses.STABLE_TOKEN,
-    pythAddress: "0xff1a0f4744e8582DF1aE09D5611b887B6a12925C",
-    pythAssets,
-    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   });
 
   //// Uniswap V3 Liquidator Funder

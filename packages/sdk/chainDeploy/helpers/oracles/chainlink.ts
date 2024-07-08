@@ -1,5 +1,4 @@
 import { ChainlinkFeedBaseCurrency, underlying } from "@ionicprotocol/types";
-import { ContractTransaction, PopulatedTransaction } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { addTransaction } from "../logging";

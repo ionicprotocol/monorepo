@@ -1,5 +1,4 @@
 import { assetSymbols, ChainAddresses, underlying } from "@ionicprotocol/types";
-import { ethers } from "ethers";
 
 import { assets } from "./assets";
 
@@ -16,7 +15,7 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V3_ROUTER: "0x3EF68D3f7664b2805D4E88381b64868a56f88bC4",
   W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
   W_TOKEN: underlying(assets, assetSymbols.WETH),
-  W_TOKEN_USD_CHAINLINK_PRICE_FEED: ethers.constants.AddressZero
+  W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x97CB85Eb5F892Dd02866672EAB137b3C34501b7b"
 };
 
 export default chainAddresses;

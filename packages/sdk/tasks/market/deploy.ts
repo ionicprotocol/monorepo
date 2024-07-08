@@ -2,6 +2,7 @@ import { assetFilter, assetSymbols, MarketConfig } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 import { assets as baseAssets } from "../../../chains/src/base/assets";
+import { assets as bobAssets } from "../../../chains/src/bob/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 import { assets as optimismAssets } from "../../../chains/src/optimism/assets";
 import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
@@ -154,6 +155,33 @@ task("markets:deploy:optimism:main", "deploy op main market").setAction(async (_
 task("market:set-caps:optimism:main", "Sets caps on a market").setAction(async (_, { ethers, run }) => {
   const COMPTROLLER = "0xaFB4A254D125B0395610fdc8f1D022936c7b166B";
   for (const asset of optimismAssets) {
+    const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
+    const cToken = await pool.cTokensByUnderlying(asset.underlying);
+    console.log("cToken: ", cToken);
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
+  }
+});
+
+task("markets:deploy:optimism:main", "deploy op main market").setAction(async (_, { ethers, run }) => {
+  const COMPTROLLER = "0x9cFEe81970AA10CC593B83fB96eAA9880a6DF715";
+  for (const asset of bobAssets) {
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: asset.initialCf,
+      underlying: asset.underlying,
+      comptroller: "0xaFB4A254D125B0395610fdc8f1D022936c7b166B",
+      symbol: "ion" + asset.symbol,
+      name: `Ionic ${asset.name}`
+    });
     const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
     const cToken = await pool.cTokensByUnderlying(asset.underlying);
     console.log("cToken: ", cToken);

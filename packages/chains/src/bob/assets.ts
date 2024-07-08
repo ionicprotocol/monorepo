@@ -6,6 +6,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
+import { utils } from "ethers";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -23,7 +24,8 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.bob)
+    extraDocs: wrappedAssetDocs(SupportedChains.bob),
+    initialSupplyCap: utils.parseEther(String(10_000_000)).toString()
   },
   {
     symbol: assetSymbols.WBTC,
