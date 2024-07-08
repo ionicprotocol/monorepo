@@ -57,7 +57,7 @@ IS_PRODUCTION = "true"
 NODE_ENV = "production"
 
 [functions]
-directory = "./packages/functions/dist/functions/src/functions"
+directory = "./netlify/functions/dist/functions/src/functions"
 node_bundler = "esbuild"
 
 [functions."plugin-rewards-*"]
