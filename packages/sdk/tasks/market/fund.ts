@@ -1,11 +1,7 @@
-import { bsc, polygon } from "@ionicprotocol/chains";
 import { assetFilter } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
-const underlyingsMapping = {
-  [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets
-};
+const underlyingsMapping = {};
 
 task("fund:mint", "deploy dynamic rewards plugin with flywheels")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)

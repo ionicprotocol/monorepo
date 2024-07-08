@@ -16,9 +16,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
   //// Liquidator
-  let liquidatorContractName;
-  if (chainId !== 34443) {
-    liquidatorContractName = await deployIonicLiquidator({
+  let liquidatorContractName: string | undefined;
+  if (chainId === 34443) {
+    liquidatorContractName = await deployIonicUniV3Liquidator({
       run,
       ethers,
       getNamedAccounts,
@@ -26,8 +26,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       deployConfig: chainDeployParams,
       chainId
     });
+  } else if (chainId === 60808) {
+    // TODO
   } else {
-    liquidatorContractName = await deployIonicUniV3Liquidator({
+    liquidatorContractName = await deployIonicLiquidator({
       run,
       ethers,
       getNamedAccounts,
@@ -38,12 +40,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   //// Configure Liquidator
-  await configureIonicLiquidator({
-    contractName: liquidatorContractName,
-    ethers,
-    getNamedAccounts,
-    chainId
-  });
+  if (liquidatorContractName) {
+    await configureIonicLiquidator({
+      contractName: liquidatorContractName,
+      ethers,
+      getNamedAccounts,
+      chainId
+    });
+  }
 };
 
 func.tags = ["prod", "deploy-liquidators"];

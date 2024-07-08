@@ -208,6 +208,10 @@ export enum assetSymbols {
   OP = "OP",
   LUSD = "LUSD",
 
+  // bob
+  tBTC = "tBTC",
+  SOV = "SOV",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",

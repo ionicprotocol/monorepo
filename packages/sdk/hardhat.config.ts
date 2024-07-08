@@ -1,4 +1,4 @@
-import { optimism } from "@ionicprotocol/chains";
+import { bob, optimism } from "@ionicprotocol/chains";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
@@ -120,6 +120,11 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || optimism.specificParams.metadata.rpcUrls.default.http[0],
       accounts: { mnemonic },
       chainId: 10
+    },
+    bob: {
+      url: OVERRIDE_RPC_URL || bob.specificParams.metadata.rpcUrls.default.http[0],
+      accounts: { mnemonic },
+      chainId: 60808
     }
   },
   typechain: {

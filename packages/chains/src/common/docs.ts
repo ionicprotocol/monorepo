@@ -8,38 +8,6 @@ export const defaultDocs = (blockExplorerUrl: string, tokenAddress: string): str
 
 export const wrappedAssetDocs = (chainId: SupportedChains) => {
   const wrapAddress = {
-    [SupportedChains.bsc]: {
-      swapName: "PancakeSwap",
-      swapAddress: "https://pancakeswap.finance/swap?outputCurrency=0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
-    },
-    [SupportedChains.polygon]: {
-      swapName: "SushiSwap",
-      swapAddress:
-        "https://app.sushi.com/swap?tokens=MATIC&tokens=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270&chainId=137"
-    },
-    [SupportedChains.arbitrum]: {
-      swapName: "SushiSwap",
-      swapAddress:
-        "https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&chainId=42161"
-    },
-    [SupportedChains.ganache]: {},
-    [SupportedChains.neon]: {
-      swapName: "MoraSwap",
-      swapAddress: "https://moraswap.com/exchange/swap"
-    },
-    [SupportedChains.chapel]: {},
-    [SupportedChains.linea]: {
-      swapName: "Uniswap",
-      swapAddress: "https://swap.linea.build/#/swap"
-    },
-    [SupportedChains.ethereum]: {
-      swapName: "Uniswap",
-      swapAddress: "https://app.uniswap.org/#/swap?outputCurrency=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-    },
-    [SupportedChains.zkevm]: {
-      swapName: "Quickswap",
-      swapAddress: "https://quickswap.exchange/#/swap?swapIndex=2&currency1=0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9"
-    },
     [SupportedChains.mode]: {
       swapName: "Kim",
       swapAddress: "https://app.kim.exchange/swap"
@@ -51,6 +19,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
     [SupportedChains.optimism]: {
       swapName: "Uniswap",
       swapAddress: "https://app.uniswap.org/?chain=optimism"
+    },
+    [SupportedChains.bob]: {
+      swapName: "Velodrome",
+      swapAddress: "https://velodrome.finance/swap"
     }
   }[chainId];
 
