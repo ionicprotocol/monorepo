@@ -7,7 +7,7 @@ import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
 import { useChainId } from 'wagmi';
@@ -172,16 +172,19 @@ const Popup = ({
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<PopupMode>(mode);
   const slide = useRef<HTMLDivElement>(null!);
-  const [amount, setAmount] = useReducer(
-    (_: string | undefined, value: string | undefined): string | undefined =>
-      value,
-    '0'
-  );
+  // const [amount, setAmount] = useReducer(
+  //   (_: string | undefined, value: string | undefined): string | undefined =>
+  //     value,
+  //   '0'
+  // );
+  const [amount, setAmount] = useState<string>('0');
   // const [selectedAssetAmount, setSelectedAssetAmount] = useReducer(
   //   (_: string | undefined, value: string | undefined): string | undefined =>
   //     value,
   //   '0'
   // );
+  const widgetEvents = useWidgetEvents();
+
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
   const amountAsBInt = useMemo<BigNumber>(
@@ -575,20 +578,29 @@ const Popup = ({
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const supplyAmount = async () => {
-    // console.log('trying to start supply');
-
-    if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt.gt('0') &&
+  const supplyAmount = async (
+    bypass: boolean = false,
+    amountToSet: string = '0'
+  ) => {
+    // // eslint-disable-next-line no-console
+    // console.log({
+    //   bypass,
+    //   transactionSteps,
+    //   currentSdk,
+    //   address,
+    //   amount,
+    //   amountAsBInt
+    // });
+    const otherChecks =
       maxSupplyAmount &&
-      amountAsBInt.lte(maxSupplyAmount.bigNumber)
-    ) {
+      amountAsBInt.lte(maxSupplyAmount?.bigNumber) &&
+      amount &&
+      amountAsBInt.gt('0');
+    //---------------
+    if (!transactionSteps.length && currentSdk && address) {
+      if (bypass === false && otherChecks === false) return;
       // eslint-disable-next-line no-console
-      console.log({ amount });
+      console.log({ amount, amountToSet });
       let currentTransactionStep = 0;
       addStepsForAction([
         {
@@ -613,19 +625,30 @@ const Popup = ({
       ]);
 
       try {
+        const amountForBInt = parseUnits(
+          amountToSet,
+          selectedMarketData.underlyingDecimals
+        );
+        const decidedAmount = amountAsBInt.gt('0')
+          ? amountAsBInt
+          : amountForBInt;
+
+        // eslint-disable-next-line no-console
+        console.log(decidedAmount, selectedMarketData);
+        // everything is correct till here.........................
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
         );
         const hasApprovedEnough = (
           await token.callStatic.allowance(address, selectedMarketData.cToken)
-        ).gte(amountAsBInt);
+        ).gte(decidedAmount);
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.approve(
             selectedMarketData.cToken,
             selectedMarketData.underlyingToken,
-            amountAsBInt
+            decidedAmount
           );
 
           upsertTransactionStep({
@@ -680,7 +703,7 @@ const Popup = ({
 
         const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
-          amountAsBInt
+          decidedAmount
         );
 
         if (errorCode) {
@@ -721,10 +744,11 @@ const Popup = ({
           }
         });
       }
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('else triggered in supply');
     }
-    // else {
-    //   console.log('else triggered in supply');
-    // } this is getting triggered while running it from the lifi cross chain execution
+    //this is getting triggered while running it from the lifi cross chain execution
   };
 
   const withdrawAmount = async () => {
@@ -1122,8 +1146,6 @@ const Popup = ({
     }
   };
 
-  const widgetEvents = useWidgetEvents();
-
   useEffect(() => {
     const onRouteExecutionStarted = () => {
       // console.log('onRouteExecutionStarted fired.');
@@ -1140,16 +1162,18 @@ const Popup = ({
       // if (!data) return;
       // eslint-disable-next-line no-console
       console.log('-----------------------------');
-      // eslint-disable-next-line no-console
-      console.log(route);
-      setAmount(
-        formatUnits(BigInt(route?.toAmountMin), route?.toToken.decimals)
+      const amountToSet = formatUnits(
+        BigInt(route?.toAmountMin),
+        route?.toToken.decimals
       );
+      setAmount(amountToSet);
       // handleUtilization();
       setCurrentUtilizationPercentage(100);
       // eslint-disable-next-line no-console
+      // console.log({ route, amountToSet, amount });
+      // eslint-disable-next-line no-console
       console.log('supply started');
-      await supplyAmount();
+      await supplyAmount(true, amountToSet);
       // eslint-disable-next-line no-console
       console.log('supply completed');
     };
@@ -1217,7 +1241,9 @@ const Popup = ({
             className={`w-full transition-all duration-300 ease-linear h-min  flex`}
             ref={slide}
           >
-            {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
+            {(mode === PopupMode.SUPPLY ||
+              mode === PopupMode.WITHDRAW ||
+              mode === PopupMode.INSTANTSUPPLY) && (
               <>
                 {/* ---------------------------------------------------------------------------- */}
                 {/* SUPPLY-Collateral section */}
@@ -1226,7 +1252,7 @@ const Popup = ({
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     isLoading={isLoadingMaxSupply}
                     max={formatUnits(
                       maxSupplyAmount?.bigNumber ?? '0',
@@ -1389,7 +1415,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText="Max Withdraw"
                     isLoading={isLoadingMaxWithdrawAmount}
                     max={formatUnits(
@@ -1506,23 +1532,13 @@ const Popup = ({
                   {/* <Approved /> */}
                 </div>
                 <div className="min-w-full py-5 px-[6%] h-min flex flex-col items-center justify-center">
-                  {transactionSteps.length > 0 ? (
+                  <InstantSupply toToken={selectedMarketData?.cToken} />
+                  {transactionSteps.length > 0 && (
                     <TransactionStepsHandler
                       chainId={chainId}
                       resetTransactionSteps={resetTransactionSteps}
                       transactionSteps={transactionSteps}
                     />
-                  ) : (
-                    <>
-                      <InstantSupply
-                        toToken={selectedMarketData?.cToken}
-                        // handleInput={(val?: string) => setAmount(val)}
-                        // handleUtilization={() =>
-                        //   setCurrentUtilizationPercentage(100)
-                        // }
-                        // startSupply={() => supplyAmount()}
-                      />
-                    </>
                   )}
                 </div>
               </>
@@ -1535,7 +1551,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText="Max Borrow Amount"
                     isLoading={isLoadingMaxBorrowAmount}
                     max={formatUnits(
@@ -1727,7 +1743,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText={'Max Repay Amount'}
                     isLoading={isLoadingMaxRepayAmount}
                     max={formatUnits(

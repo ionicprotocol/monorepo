@@ -7427,12 +7427,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/postgrest-js@npm:1.15.7":
-  version: 1.15.7
-  resolution: "@supabase/postgrest-js@npm:1.15.7"
+"@supabase/postgrest-js@npm:1.15.8":
+  version: 1.15.8
+  resolution: "@supabase/postgrest-js@npm:1.15.8"
   dependencies:
     "@supabase/node-fetch": "npm:^2.6.14"
-  checksum: 10/2578c3ca6cbb0a99ce6c3d796205e2092ac83af5932f3b58371f859de47d0a67114c69e7a7855e4fd96dce6e6bd311dbc949b6ee895e9c75e77f2fcd80fc6f5f
+  checksum: 10/4d964c1bbb9c33f3d29b1c9f6f0aa35753b1383a377e41fa67794db567ef7ae55e5fd766bc00eeacb437b747777771498d827845cf3802b874d09be11b71aa41
   languageName: node
   linkType: hard
 
@@ -7499,16 +7499,16 @@ __metadata:
   linkType: hard
 
 "@supabase/supabase-js@npm:^2.43.2, @supabase/supabase-js@npm:^2.43.4, @supabase/supabase-js@npm:^2.7.1":
-  version: 2.44.2
-  resolution: "@supabase/supabase-js@npm:2.44.2"
+  version: 2.44.3
+  resolution: "@supabase/supabase-js@npm:2.44.3"
   dependencies:
     "@supabase/auth-js": "npm:2.64.2"
     "@supabase/functions-js": "npm:2.4.1"
     "@supabase/node-fetch": "npm:2.6.15"
-    "@supabase/postgrest-js": "npm:1.15.7"
+    "@supabase/postgrest-js": "npm:1.15.8"
     "@supabase/realtime-js": "npm:2.10.2"
     "@supabase/storage-js": "npm:2.6.0"
-  checksum: 10/5bb92e54bf7c409e75469fc1a29c88cbc9fc4aef2d81d59a5cd8a049488659a254fddf358e509d38bc473685c8994f5e37bdabad30dfcdd1468c5cb0277bc068
+  checksum: 10/dd27cde4f0b415ff2923693014df34653c28d2dccc72d35017b3627f0e6b6657e6dbb750045704ff89f6790707bbf17d05093cc48604b8908963288120cfbed8
   languageName: node
   linkType: hard
 
@@ -18270,8 +18270,8 @@ __metadata:
   linkType: hard
 
 "jayson@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "jayson@npm:4.1.0"
+  version: 4.1.1
+  resolution: "jayson@npm:4.1.1"
   dependencies:
     "@types/connect": "npm:^3.4.33"
     "@types/node": "npm:^12.12.54"
@@ -18284,10 +18284,10 @@ __metadata:
     isomorphic-ws: "npm:^4.0.1"
     json-stringify-safe: "npm:^5.0.1"
     uuid: "npm:^8.3.2"
-    ws: "npm:^7.4.5"
+    ws: "npm:^7.5.10"
   bin:
     jayson: bin/jayson.js
-  checksum: 10/d76b3f220e14388007958b8f79e793009d6bc572b6e5ea65848a0f027b324d1950d836468986d7e38ddfb30b660e8b048b459c8bc8456e9b38dbbebc60a563b4
+  checksum: 10/8ffd219abbd4fa3231530334b81effe2d079b36b71891d2e1fc8844a487087da290b9d1d80200c63c778113382afb9a3c861f59ea4f901f8ab9831ac2ecfa7e5
   languageName: node
   linkType: hard
 
@@ -19487,9 +19487,9 @@ __metadata:
   linkType: hard
 
 "lru-cache@npm:^10.0.0, lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0":
-  version: 10.3.1
-  resolution: "lru-cache@npm:10.3.1"
-  checksum: 10/52938a77f14f874e88fd9bf0fc8a39873e52deff85a4e3bb86d7c3a38b0ef2dcaddf1f7f59b2a131a66f3bdb56e26c1843eddbf7dddc02acc69279f74e4331c9
+  version: 10.4.0
+  resolution: "lru-cache@npm:10.4.0"
+  checksum: 10/5073575d9afa20eced8a776d7ac20d79d4ef10bde984faa2b67fb685a94bb014d554951b2d475cf7cdaa0da749170ba91b67144a72f571907eb417a80c649884
   languageName: node
   linkType: hard
 
@@ -25446,11 +25446,11 @@ __metadata:
   linkType: hard
 
 "text-decoder@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "text-decoder@npm:1.1.0"
+  version: 1.1.1
+  resolution: "text-decoder@npm:1.1.1"
   dependencies:
     b4a: "npm:^1.6.4"
-  checksum: 10/4c0c9997a59f5531e604d80f0e5a8a2206e25adc11bdd090d0a01190467134383dfe27d13c834b31966e411a358c6bf8c97e96098573a7080a2e205fa49fd050
+  checksum: 10/c6981b93850daeafc8bd1dbd8f984d4fb2d14632f450de0892692b5bbee2d2f4cbef8a807142527370649fd357f58491ede4915d43669eca624cb52b8dd247b6
   languageName: node
   linkType: hard
 
@@ -26974,8 +26974,8 @@ __metadata:
   linkType: hard
 
 "viem@npm:^2.16.0, viem@npm:^2.16.2, viem@npm:^2.7.16":
-  version: 2.17.2
-  resolution: "viem@npm:2.17.2"
+  version: 2.17.3
+  resolution: "viem@npm:2.17.3"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.4.0"
@@ -26990,7 +26990,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/68fee2a2649c471508c182e837b924e3b0075d89a8748b5cc07714c3deddeb23b864d87e4e4b5337b072dc9aa116e3d932a72990c8cfaafabd47628ce45dd704
+  checksum: 10/803b49f7932fd59058f41202682610a0dd767b908cdc7777ef20c62108587a069e23e5ba8fc3d278443620b057571931503dc4e1ff257d1b7fd7f2411199de8b
   languageName: node
   linkType: hard
 
@@ -27430,7 +27430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.4.5, ws@npm:^7.4.6, ws@npm:^7.5.1":
+"ws@npm:^7.4.6, ws@npm:^7.5.1, ws@npm:^7.5.10":
   version: 7.5.10
   resolution: "ws@npm:7.5.10"
   peerDependencies:
