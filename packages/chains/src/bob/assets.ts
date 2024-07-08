@@ -6,7 +6,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { utils } from "ethers";
+import { parseEther, parseUnits } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -25,7 +25,9 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: wrappedAssetDocs(SupportedChains.bob),
-    initialSupplyCap: utils.parseEther(String(10_000_000)).toString()
+    initialSupplyCap: parseEther(String(3_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   },
   {
     symbol: assetSymbols.WBTC,
@@ -37,7 +39,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x1Ff2fFada49646fB9b326EdF8A91446d3cf9a291",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC)
+    extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC),
+    initialSupplyCap: parseUnits(String(100), 8).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   },
   {
     symbol: assetSymbols.USDT,
@@ -49,7 +54,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x7D126c43B4A6e3EF39B310bbcC2c4D71C77AD627",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://explorer.gobob.xyz", USDT)
+    extraDocs: defaultDocs("https://explorer.gobob.xyz", USDT),
+    initialSupplyCap: parseUnits(String(10_000_000), 6).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   },
   {
     symbol: assetSymbols.tBTC,
@@ -61,7 +69,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0xA2C438a949171FAAED89FE05696E2FF31A1d97B3",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC)
+    extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC),
+    initialSupplyCap: parseUnits(String(100), 8).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   },
   {
     symbol: assetSymbols.USDC,
@@ -73,7 +84,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x1030Be1aFF580687Ca161a96140D146f43Edaa65",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://explorer.gobob.xyz", USDC)
+    extraDocs: defaultDocs("https://explorer.gobob.xyz", USDC),
+    initialSupplyCap: parseUnits(String(10_000_000), 6).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   },
   {
     symbol: assetSymbols.SOV,
@@ -85,7 +99,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x77466772A46895269bff44e509096E4073d4Dc67",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://explorer.gobob.xyz", SOV)
+    extraDocs: defaultDocs("https://explorer.gobob.xyz", SOV),
+    initialSupplyCap: parseUnits(String(20_000_000), 18).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0"
   }
 ];
 

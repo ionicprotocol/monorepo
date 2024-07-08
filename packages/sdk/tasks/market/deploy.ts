@@ -171,20 +171,20 @@ task("market:set-caps:optimism:main", "Sets caps on a market").setAction(async (
   }
 });
 
-task("markets:deploy:optimism:main", "deploy op main market").setAction(async (_, { ethers, run }) => {
+task("markets:deploy:bob:main", "deploy bob main market").setAction(async (_, { ethers, run }) => {
   const COMPTROLLER = "0x9cFEe81970AA10CC593B83fB96eAA9880a6DF715";
   for (const asset of bobAssets) {
     await run("market:deploy", {
       signer: "deployer",
       cf: asset.initialCf,
       underlying: asset.underlying,
-      comptroller: "0xaFB4A254D125B0395610fdc8f1D022936c7b166B",
+      comptroller: COMPTROLLER,
       symbol: "ion" + asset.symbol,
       name: `Ionic ${asset.name}`
     });
     const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
     const cToken = await pool.cTokensByUnderlying(asset.underlying);
-    console.log("cToken: ", cToken);
+    console.log(`Deployed ${asset.symbol} at ${cToken}`);
 
     await run("market:set-supply-cap", {
       market: cToken,
