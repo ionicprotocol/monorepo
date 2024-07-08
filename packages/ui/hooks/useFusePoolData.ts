@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (
   poolId: string,
@@ -13,7 +13,9 @@ export const useFusePoolData = (
 ) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
+  console.log('sdk: ', sdk);
   const { data: usdPrices } = useAllUsdPrices();
+  console.log('usdPrices: ', usdPrices);
   const usdPrice = useMemo(() => {
     if (usdPrices && poolChainId && usdPrices[poolChainId.toString()]) {
       return usdPrices[poolChainId.toString()].value;
@@ -21,6 +23,7 @@ export const useFusePoolData = (
       return undefined;
     }
   }, [usdPrices, poolChainId]);
+  console.log('usdPrice: ', usdPrice);
 
   return useQuery({
     queryKey: [
@@ -33,6 +36,9 @@ export const useFusePoolData = (
     ],
 
     queryFn: async () => {
+      console.log('poolId: ', poolId);
+      console.log('sdk?.chainId: ', sdk?.chainId);
+      console.log('usdPrice: ', usdPrice);
       if (usdPrice && sdk?.chainId && poolId) {
         const response = await sdk
           .fetchPoolData(poolId, { from: address })
@@ -45,6 +51,7 @@ export const useFusePoolData = (
 
             return null;
           });
+        console.log('response: ', response);
         if (response === null) {
           return null;
         }
