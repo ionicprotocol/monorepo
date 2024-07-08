@@ -7,7 +7,7 @@ import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/assets';
 import { createPublicClient, http } from 'viem';
 import { chainIdtoChain } from 'chains/dist';
-                                  //  testting 
+
 export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const publicClient = createPublicClient({
