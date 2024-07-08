@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { base, bsc, ganache, mode, optimism } from "@ionicprotocol/chains";
+import { base, bob, mode, optimism } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -173,26 +173,28 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
     let chainDeployment: ChainDeployment;
     let chainConfig: ChainConfig;
 
-    // for integration tests, always use live BSC deployments and config
+    // for integration tests, always use live Mode deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      return new IonicSdk(signer, bsc);
+      return new IonicSdk(signer, mode);
     }
 
     switch (chainId) {
-      case SupportedChains.ganache:
-        chainDeployment = await getLocalDeployments();
-        chainConfig = ganache;
-        chainConfig.chainDeployments = chainDeployment;
-        break;
-      case SupportedChains.base:
+      case SupportedChains.base: {
         chainConfig = base;
         break;
-      case SupportedChains.mode:
+      }
+      case SupportedChains.mode: {
         chainConfig = mode;
         break;
-      case SupportedChains.optimism:
+      }
+      case SupportedChains.optimism: {
         chainConfig = optimism;
         break;
+      }
+      case SupportedChains.bob: {
+        chainConfig = bob;
+        break;
+      }
       default:
         throw new Error("Chain not supported");
     }
