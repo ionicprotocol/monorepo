@@ -23,8 +23,8 @@ function DynamicSubNav() {
             className={`pl-14`}
           >
             Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE,
-            supply ETH and/or USDC to get OP rewards on top of the MODE and
-            IONIC points!
+            supply ETH, USDC and/or ezETH to get OP rewards on top of the MODE
+            and IONIC points!
           </span>
         ))}
       </div>
