@@ -20,8 +20,8 @@ function DynamicSubNav() {
       onClick={() => router.push('/points')}
     >
       Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
-      multipliers, new ways to earn points! See your Season 1 $ION eligibility
-      on the Claim page (Open till 6th of July).
+      multipliers, new ways to earn points! Claim your vested $ION tokens on the
+      Claim page.
     </div>
   );
 }
