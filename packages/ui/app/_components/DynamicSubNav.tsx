@@ -12,6 +12,24 @@ function DynamicSubNav() {
   const chain = searchParams.get('chain');
   const chainId = chain === null ? mode.id : chain;
 
+  function clone() {
+    return (
+      <div
+        className={`thread min-w-max   text-center animate-slide flex-shrink-0  `}
+      >
+        {Array.from({ length: 5 }).map((_, index) => (
+          <span
+            key={index}
+            className={`pl-4`}
+          >
+            Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE,
+            supply ETH and/or USDC to get OP rewards on top of the MODE and
+            IONIC points!
+          </span>
+        ))}
+      </div>
+    );
+  }
   return (
     <div
       className={`${`${pools[+chainId].bg ?? pools[mode.id].bg} ${
@@ -19,13 +37,18 @@ function DynamicSubNav() {
       }`} absolute w-full top-full left-0 text-center p-2 text-sm font-medium cursor-pointer`}
       onClick={() => router.push('/points')}
     >
-      {/* Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
-      multipliers, new ways to earn points! See your Season 1 $ION eligibility
-      on the Claim page (Open till 6th of July). */}
-      Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE, supply ETH
-      and/or USDC to get OP rewards on top of the MODE and IONIC points!
+      <div className={`h-max w-[100vw] flex group  givep overflow-x-hidden`}>
+        {clone()}
+        {clone()}
+      </div>
     </div>
   );
 }
 
 export default dynamic(() => Promise.resolve(DynamicSubNav), { ssr: false });
+
+{
+  /* Hello, {pools[+chainId].name ?? 'Mode'}! Season 2 is LIVE - New
+      multipliers, new ways to earn points! See your Season 1 $ION eligibility
+      on the Claim page (Open till 6th of July). */
+}
