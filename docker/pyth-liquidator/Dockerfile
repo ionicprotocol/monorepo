@@ -1,31 +1,34 @@
-FROM public.ecr.aws/lambda/nodejs:20 as node
-
+# Use the foundry image for necessary tools and binaries
 FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
 
-FROM node as build
+# Use a Node.js image for Node.js dependencies and runtime
+FROM node:14 as node
 
+# Use the foundry image to copy necessary binaries
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
-RUN dnf update -y 
-RUN dnf install -y git 
+# Install necessary tools for build stage
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN corepack enable
-RUN yarn set version stable
+# Set working directory
+WORKDIR /app
 
-ENV HOME=/tmp/build \
-    PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
+# Copy necessary files for dependency installation
+COPY package.json yarn.lock ./
 
-WORKDIR /tmp/build
+# Install dependencies
+RUN yarn install --frozen-lockfile
 
-ARG TEMP_DEPS_DIR
+# Copy source code
+COPY . .
 
-ARG UPTIME_LIQUIDATOR_API
-ENV UPTIME_LIQUIDATOR_API=$UPTIME_LIQUIDATOR_API
+# Build TypeScript code
+RUN yarn build:deploy:liquidator
 
-# ----- Copy only the files that affect yarn install -----
-# Allows docker to use cache and skip install if dependencies are unchanged.
-# Assumes that ./packages/*/package.json files have been copied to TEMP_DEPS_DIR
-# with that same directory structure. build.sh does this.
+# Runtime stage
+FROM node:14 as runtime
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
 
@@ -39,31 +42,21 @@ COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/chains/package.json /tmp/build/packages/chains/
 COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
 COPY yarn.lock /tmp/build/
-
-# ----- Install dependencies -----
-# Install dependencies exactly as in the yarn.lock file - no updates.
-RUN yarn install --inline-builds --mode=skip-build
-
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
 COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
-
-# ----- build -----
-RUN yarn build:deploy:liquidator
-
-# ----------------------------------------
-# Copy files to the deployment image.
-# ----------------------------------------
-
-FROM node as runtime
-
+# Set NODE_ENV to production
 ENV NODE_ENV=production
 
-# ----- Copy files required at runtime by the app -----
-WORKDIR ${LAMBDA_TASK_ROOT}
-COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
+# Set working directory for runtime
+WORKDIR /app
 
-CMD ["ts-node packages/bots/liquidator/src/runPythLiquidator.ts"]
 
+# Copy built files from the build stage
+COPY --from=node /app/dist ./dist
+COPY --from=node /app/node_modules ./node_modules
+
+# Command to run the TypeScript script with ts-node
+CMD ["ts-node", "packages/bots/liquidator/src/runPythLiquidator.ts"]
