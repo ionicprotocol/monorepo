@@ -124,14 +124,14 @@ const PoolRows = ({
               target="_blank"
             >
               <div
-                className={`flex items-center text-[10px] justify-center gap-1 py-[1px]`}
+                className={`flex items-center text-[10px] justify-center gap-0.5 py-[1px]`}
               >
                 <img
                   alt="OP fest"
                   className={`w-4 h-4 inline-block `}
                   src="/img/logo/superOP.png"
                 />
-                <span className={``}>FEST</span>
+                <span className={``}>OP FEST</span>
                 <img
                   alt="external-link"
                   className={`w-3 h-3`}
