@@ -1,11 +1,26 @@
-# Use the Lambda Node.js 20 image as base
 FROM public.ecr.aws/lambda/nodejs:20 as node
 
-# Set environment variables and install dependencies
-ENV NODE_ENV=production
+FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
 
-# Copy necessary files from the build stage
-WORKDIR ${LAMBDA_TASK_ROOT}
+FROM node as build
+
+COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
+
+RUN dnf update -y 
+RUN dnf install -y git 
+
+RUN corepack enable
+RUN yarn set version stable
+
+ENV HOME=/tmp/build \
+    PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
+
+WORKDIR /tmp/build
+
+ARG TEMP_DEPS_DIR
+
+ARG UPTIME_LIQUIDATOR_API
+ENV UPTIME_LIQUIDATOR_API=$UPTIME_LIQUIDATOR_API
 
 # ----- Copy only the files that affect yarn install -----
 # Allows docker to use cache and skip install if dependencies are unchanged.
@@ -26,7 +41,6 @@ COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
 COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
-RUN npm install -g yarn 
 # Install dependencies exactly as in the yarn.lock file - no updates.
 RUN yarn install --inline-builds --mode=skip-build
 
@@ -43,14 +57,12 @@ RUN yarn build:deploy:liquidator
 # Copy files to the deployment image.
 # ----------------------------------------
 
-# Use another node stage for runtime
 FROM node as runtime
 
 ENV NODE_ENV=production
 
-# Copy necessary files from the build stage
+# ----- Copy files required at runtime by the app -----
 WORKDIR ${LAMBDA_TASK_ROOT}
-COPY --from=node /tmp/build ${LAMBDA_TASK_ROOT}
+COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-# Set the command to run the TypeScript file using ts-node
-CMD ["npx", "ts-node", "packages/bots/liquidator/src/runPythLiquidator.ts"]
+CMD [ "npx","ts-node" ,"packages/bots/liquidator/src/runPythLiquidator.ts"]
