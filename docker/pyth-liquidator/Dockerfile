@@ -1,25 +1,11 @@
+# Use the Lambda Node.js 20 image as base
+FROM public.ecr.aws/lambda/nodejs:20 as node
 
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
+# Set environment variables and install dependencies
+ENV NODE_ENV=production
 
-FROM node as build
-
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
-
-RUN dnf update -y 
-RUN dnf install -y git 
-
-RUN corepack enable
-RUN yarn set version stable
-
-ENV HOME=/tmp/build \
-    PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
-
-WORKDIR /tmp/build
-
-ARG TEMP_DEPS_DIR
-
-ARG UPTIME_LIQUIDATOR_API
-ENV UPTIME_LIQUIDATOR_API=$UPTIME_LIQUIDATOR_API
+# Copy necessary files from the build stage
+WORKDIR ${LAMBDA_TASK_ROOT}
 
 # ----- Copy only the files that affect yarn install -----
 # Allows docker to use cache and skip install if dependencies are unchanged.
@@ -48,9 +34,22 @@ COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
 COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
-FROM node as runtime
+
 # ----- build -----
 RUN yarn build:deploy:liquidator
 
-# Command to run the TypeScript script with ts-node
+# ----------------------------------------
+# Copy files to the deployment image.
+# ----------------------------------------
+
+# Use another node stage for runtime
+FROM node as runtime
+
+ENV NODE_ENV=production
+
+# Copy necessary files from the build stage
+WORKDIR ${LAMBDA_TASK_ROOT}
+COPY --from=node /tmp/build ${LAMBDA_TASK_ROOT}
+
+# Set the command to run the TypeScript file using ts-node
 CMD ["npx", "ts-node", "packages/bots/liquidator/src/runPythLiquidator.ts"]
