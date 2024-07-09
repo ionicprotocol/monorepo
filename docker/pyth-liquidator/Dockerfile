@@ -40,14 +40,14 @@ COPY packages/types/package.json packages/types/package.json
 COPY packages/chains/package.json packages/chains/package.json
 COPY packages/bots/liquidator/package.json packages/bots/liquidator/package.json
 
-# Install dependencies
-RUN yarn install --inline-builds --mode=skip-build
-
 # Copy source code
 COPY packages/sdk packages/sdk
 COPY packages/types packages/types
 COPY packages/chains packages/chains
 COPY packages/bots/liquidator packages/bots/liquidator
+# Install dependencies
+RUN yarn install
+
 
 # Build TypeScript code
 RUN yarn build:deploy:liquidator
