@@ -26,6 +26,7 @@ COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
 COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
+RUN npm install -g yarn 
 # Install dependencies exactly as in the yarn.lock file - no updates.
 RUN yarn install --inline-builds --mode=skip-build
 
