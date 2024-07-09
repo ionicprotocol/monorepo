@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { useSearchParams } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -51,6 +52,8 @@ const PoolRows = ({
   selectedPoolId
 }: IRows) => {
   const { address } = useMultiIonic();
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-20  py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative ${
@@ -115,31 +118,33 @@ const PoolRows = ({
         </span>
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
           {supplyAPR}
-          {(asset.toLowerCase() === 'usdc' ||
-            asset.toLowerCase() === 'weth' ||
-            asset.toLowerCase() === 'ezeth') && (
-            <a
-              className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
-              href="https://jumper.exchange/superfest/"
-              target="_blank"
-            >
-              <div
-                className={`flex items-center text-[10px] justify-center gap-0.5 py-[1px]`}
+          {selectedPoolId === '0' &&
+            querychain === '34443' &&
+            (asset.toLowerCase() === 'usdc' ||
+              asset.toLowerCase() === 'weth' ||
+              asset.toLowerCase() === 'ezeth') && (
+              <a
+                className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
+                href="https://jumper.exchange/superfest/"
+                target="_blank"
               >
-                <img
-                  alt="OP fest"
-                  className={`w-4 h-4 inline-block `}
-                  src="/img/logo/superOP.png"
-                />
-                <span className={``}>OP FEST</span>
-                <img
-                  alt="external-link"
-                  className={`w-3 h-3`}
-                  src="https://img.icons8.com/material-outlined/24/external-link.png"
-                />
-              </div>
-            </a>
-          )}
+                <div
+                  className={`flex items-center text-[10px] justify-center gap-0.5 py-[1px]`}
+                >
+                  <img
+                    alt="OP fest"
+                    className={`w-4 h-4 inline-block `}
+                    src="/img/logo/superOP.png"
+                  />
+                  <span className={``}>OP FEST</span>
+                  <img
+                    alt="external-link"
+                    className={`w-3 h-3`}
+                    src="https://img.icons8.com/material-outlined/24/external-link.png"
+                  />
+                </div>
+              </a>
+            )}
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
@@ -164,22 +169,24 @@ const PoolRows = ({
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
               ?.supply?.ionic && (
               <>
-                {(asset.toLowerCase() === 'usdc' ||
-                  asset.toLowerCase() === 'weth' ||
-                  asset.toLowerCase() === 'ezeth') && (
-                  <a
-                    href="https://jumper.exchange/superfest/"
-                    target="_blank"
-                    className="flex pr-4 underline pt-4"
-                  >
-                    <img
-                      alt=""
-                      className="size-4 rounded mr-1"
-                      src="/img/logo/superOP.png"
-                    />{' '}
-                    + OP SuperFest rewards
-                  </a>
-                )}
+                {selectedPoolId === '0' &&
+                  querychain === '34443' &&
+                  (asset.toLowerCase() === 'usdc' ||
+                    asset.toLowerCase() === 'weth' ||
+                    asset.toLowerCase() === 'ezeth') && (
+                    <a
+                      href="https://jumper.exchange/superfest/"
+                      target="_blank"
+                      className="flex pr-4 underline pt-4"
+                    >
+                      <img
+                        alt=""
+                        className="size-4 rounded mr-1"
+                        src="/img/logo/superOP.png"
+                      />{' '}
+                      + OP SuperFest rewards
+                    </a>
+                  )}
                 <div className="flex">
                   <img
                     alt=""

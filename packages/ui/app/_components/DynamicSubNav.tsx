@@ -1,13 +1,13 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 
 import { pools } from '@ui/constants/index';
 
 function DynamicSubNav() {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const chain = searchParams.get('chain');
   const chainId = chain === null ? mode.id : chain;
@@ -31,17 +31,19 @@ function DynamicSubNav() {
     );
   }
   return (
-    <div
+    <a
       className={`${`${pools[+chainId].bg ?? pools[mode.id].bg} ${
         pools[+chainId].text ?? pools[mode.id].text
       }`} absolute w-full top-full left-0 text-center  text-sm font-medium cursor-pointer `}
-      onClick={() => router.push('/points')}
+      // onClick={() => router.push('/points')}
+      href="https://jumper.exchange/superfest/"
+      target="_blank"
     >
       <div className={`h-max w-[100vw] flex group  givep overflow-x-hidden`}>
         {clone()}
         {clone()}
       </div>
-    </div>
+    </a>
   );
 }
 
