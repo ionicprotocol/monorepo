@@ -95,6 +95,10 @@
   .expand {
     animation: expand 2s linear infinite;
   }
+  .pause {
+    animation-play-state: paused;
+    /* animation-duration: 40s; */
+  }
 }
 
 .bg-lime {

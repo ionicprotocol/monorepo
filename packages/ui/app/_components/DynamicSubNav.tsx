@@ -15,12 +15,12 @@ function DynamicSubNav() {
   function clone() {
     return (
       <div
-        className={`thread min-w-max   text-center animate-slide flex-shrink-0  `}
+        className={`thread min-w-max h-max group-hover:pause p-2 text-center animate-slide flex-shrink-0  `}
       >
         {Array.from({ length: 5 }).map((_, index) => (
           <span
             key={index}
-            className={`pl-4`}
+            className={`pl-14`}
           >
             Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE,
             supply ETH and/or USDC to get OP rewards on top of the MODE and
@@ -34,7 +34,7 @@ function DynamicSubNav() {
     <div
       className={`${`${pools[+chainId].bg ?? pools[mode.id].bg} ${
         pools[+chainId].text ?? pools[mode.id].text
-      }`} absolute w-full top-full left-0 text-center p-2 text-sm font-medium cursor-pointer`}
+      }`} absolute w-full top-full left-0 text-center  text-sm font-medium cursor-pointer `}
       onClick={() => router.push('/points')}
     >
       <div className={`h-max w-[100vw] flex group  givep overflow-x-hidden`}>
