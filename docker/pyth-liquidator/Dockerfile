@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y \
 
 # Enable corepack and set yarn version
 RUN corepack enable
-RUN yarn set version stable
 
 # Set environment variables
 ENV HOME=/tmp/build \
