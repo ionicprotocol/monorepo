@@ -169,6 +169,7 @@ const PoolRows = ({
                   asset.toLowerCase() === 'ezeth') && (
                   <a
                     href="https://jumper.exchange/superfest/"
+                    target="_blank"
                     className="flex pr-4 underline pt-4"
                   >
                     <img
