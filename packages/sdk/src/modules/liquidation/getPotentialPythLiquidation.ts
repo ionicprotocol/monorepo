@@ -1,7 +1,5 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber, BytesLike, constants, utils } from "ethers";
-
-import { ICErc20 } from "../../../typechain/CTokenInterfaces.sol/ICErc20";
+import { BigNumber, utils } from "ethers";
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -10,7 +8,6 @@ import {
   PoolUserWithAssets,
   PythEncodedLiquidationTx,
   SCALE_FACTOR_ONE_18_WEI,
-  SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./utils";
 
 export default async function getPotentialLiquidation(
