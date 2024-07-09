@@ -119,18 +119,23 @@ const PoolRows = ({
             asset.toLowerCase() === 'weth' ||
             asset.toLowerCase() === 'ezeth') && (
             <a
-              className="text-red-600 bg-red-50 rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
+              className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
               href="https://jumper.exchange/superfest/"
               target="_blank"
             >
               <div
                 className={`flex items-center text-[10px] justify-center gap-1 py-[1px]`}
               >
-                <span className={``}>+ OP FEST</span>
                 <img
                   alt="OP fest"
                   className={`w-4 h-4 inline-block `}
                   src="/img/logo/superOP.png"
+                />
+                <span className={``}>FEST</span>
+                <img
+                  alt="external-link"
+                  className={`w-3 h-3`}
+                  src="https://img.icons8.com/material-outlined/24/external-link.png"
                 />
               </div>
             </a>
@@ -152,7 +157,6 @@ const PoolRows = ({
               src="https://img.icons8.com/material-outlined/24/external-link.png"
             />
           </a>
-
           <div
             className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
