@@ -59,7 +59,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: false
+          submodules: true
       - name: Initialize
         run: git submodule update --init --recursive
       - name: update submodules
@@ -75,16 +75,11 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
-      - name: Install dependencies
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            yarn install --immutable
-          else
-            yarn install
-          fi
+      - name: Install `packages`
+        run: yarn install
         env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
-          YARN_ENABLE_IMMUTABLE_INSTALLS: false 
 
       - name: Build `sdk`
         run: yarn build:sdk
