@@ -13,7 +13,7 @@ const config = {
   sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
   sendgridEmailTo: process.env.SENDGRID_EMAIL_TO ?? "dev@ionic.money",
   chainName: process.env.CHAIN_NAME ?? "",
-  expressRelayEndpoint: process.env.RELAY_ENDPOINT ?? "https://per-staging.dourolabs.app/",
+  expressRelayEndpoint: process.env.RELAY_ENDPOINT ?? "https://pyth-express-relay-mainnet.asymmetric.re/",
 };
 
 export enum EXCLUDED_ERROR_CODES {
