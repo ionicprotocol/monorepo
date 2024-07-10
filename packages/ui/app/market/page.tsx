@@ -96,6 +96,29 @@ export default function Market() {
   //     name: 'Base'
   //   }
   // ];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function sendIMG(pool: string, chain: any, assetName: string): string {
+    if (pool === '0' && chain === '34443') {
+      return `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
+    }
+    if (pool === '1' && chain === '34443') {
+      const url =
+        assetName.toLowerCase() === 'ezeth' ||
+        assetName.toLowerCase() === 'usdc' ||
+        assetName.toLowerCase() === 'weth'
+          ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
+          : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
+      return url;
+    }
+    if (pool === '0' && chain !== mode.id) {
+      return assetName.toLowerCase() === 'ezeth' ||
+        assetName.toLowerCase() === 'usdc' ||
+        assetName.toLowerCase() === 'weth'
+        ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
+        : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
+    }
+    return '';
+  }
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -143,9 +166,9 @@ export default function Market() {
                       {pool.assets.map((val, idx) => (
                         <img
                           alt="modlogo"
-                          className={`w-6`}
+                          className={`w-6 h-6`}
                           key={idx}
-                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
+                          src={sendIMG(pool.id, chain, val)}
                         />
                       ))}
                     </div>
@@ -221,7 +244,7 @@ export default function Market() {
               alt=""
               className="inline-block"
               height="20"
-              src="/img/symbols/32/color/weth.png"
+              src="/img/symbols/32/color/weth(afteropfest).png"
               width="20"
             />
           </button>
@@ -321,7 +344,7 @@ export default function Market() {
                       }
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
-                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}
                       loopPossible={
                         loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                       }
