@@ -5,6 +5,7 @@ import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
@@ -41,6 +42,7 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { sendIMG } from '@ui/utils/TempImgSender';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -178,6 +180,9 @@ const Popup = ({
   );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
+
+  // const setBorrow = useStore((state) => state.setBorrowAmount);
+
   const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
   const {
     data: predictedHealthFactor,
@@ -371,7 +376,11 @@ const Popup = ({
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-
+        // setBorrow(
+        //   maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
+        //     ? formatEther(maxBorrowAmount?.bigNumber)
+        //     : ''
+        // );
         break;
       }
 
@@ -399,6 +408,7 @@ const Popup = ({
     maxRepayAmount,
     maxSupplyAmount,
     maxWithdrawAmount
+    // setBorrow
   ]);
 
   useEffect(() => {
@@ -1090,6 +1100,10 @@ const Popup = ({
     }
   };
 
+  const searchParams = useSearchParams();
+  const chain = searchParams.get('chain');
+  const pool = searchParams.get('pool');
+
   return (
     <>
       <div
@@ -1098,7 +1112,7 @@ const Popup = ({
         }`}
       >
         <div
-          className={`w-[85%] sm:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
+          className={`w-[85%] sm:w-[55%] md:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
             isMounted && 'animated'
           }`}
         >
@@ -1113,7 +1127,11 @@ const Popup = ({
               alt="modlogo"
               className="mx-auto"
               height="32"
-              src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
+              src={sendIMG(
+                pool as string,
+                chain as string,
+                selectedMarketData?.underlyingSymbol
+              )}
               width="32"
             />
           </div>

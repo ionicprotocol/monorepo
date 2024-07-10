@@ -54,7 +54,7 @@ export default function NetworkSelector({
           {Object.entries(pools).map(([chainId, network], idx: number) => (
             <Link
               className={`flex justify-between items-center p-2 mb-1 ${network.text} rounded-md ${network.bg}`}
-              href={`${pathname}?chain=${chainId}`}
+              href={`${pathname}?chain=${chainId}&pool=0`}
               key={idx}
             >
               {network.name}{' '}

@@ -10,7 +10,11 @@ const Home = () => {
   useEffect(() => {
     router.push('/market?chain=34443&pool=0');
   }, [router]);
-  return <ResultHandler isLoading={true}>Home</ResultHandler>;
+  return (
+    <div className={`flex items-center justify-center w-full min-h-[70%]`}>
+      <ResultHandler isLoading={true}>Home</ResultHandler>
+    </div>
+  );
 };
 
 export default Home;
