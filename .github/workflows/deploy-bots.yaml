@@ -76,10 +76,11 @@ jobs:
           cache: 'yarn'
 
       - name: Install `packages`
-        run: yarn install
+        run: yarn install --immutable
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
       - name: Build `sdk`
         run: yarn build:sdk
