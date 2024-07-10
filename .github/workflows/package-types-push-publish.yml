@@ -23,11 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: false
+          submodules: true
       - name: Initialize
-        run: git submodule update --init --recursive
-      - name: update
-        run: git submodule update --remote --merge   
+        run:  git submodule sync --recursive
+      - name: update submodules
+        run:  git submodule update --init --recursive
 
       - uses: actions/setup-node@v2
         with:
