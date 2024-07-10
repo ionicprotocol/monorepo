@@ -1,14 +1,11 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { BigNumber, utils } from "ethers";
+
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidatePythTx from "./encodeLiquidatePythTx";
-import {
-  PoolUserWithAssets,
-  PythEncodedLiquidationTx,
-  SCALE_FACTOR_ONE_18_WEI,
-} from "./utils";
+import { PoolUserWithAssets, PythEncodedLiquidationTx, SCALE_FACTOR_ONE_18_WEI } from "./utils";
 
 export default async function getPotentialLiquidation(
   sdk: IonicSdk,
