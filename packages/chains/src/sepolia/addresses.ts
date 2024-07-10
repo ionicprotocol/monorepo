@@ -16,7 +16,8 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V3_ROUTER: "0x403616fBc3D2d0E9a0aBAf7cDCbc6611F41f7142", // kim v4
   W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
   W_TOKEN: underlying(assets, assetSymbols.WETH),
-  W_TOKEN_USD_CHAINLINK_PRICE_FEED: ethers.constants.AddressZero
+  W_TOKEN_USD_CHAINLINK_PRICE_FEED: ethers.constants.AddressZero,
+  EXPRESS_RELAY: "0x2F968931d1B7326d2875E9500980211dcc535eE5"
 };
 
 export default chainAddresses;
