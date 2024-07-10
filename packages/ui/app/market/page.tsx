@@ -347,7 +347,7 @@ export default function Market() {
                       comptrollerAddress={poolData?.comptroller || ''}
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
-                      logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}
+                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                       loopPossible={
                         loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                       }

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
@@ -28,7 +29,7 @@ interface IRows {
   cTokenAddress: string;
   dropdownSelectedChain: number;
   logo: string;
-  loopMarkets: LoopMarketData | undefined;
+  loopMarkets?: LoopMarketData | undefined;
   loopPossible: boolean;
   membership: boolean;
   pool: string;
