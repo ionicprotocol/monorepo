@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-// import Link from 'next/link';
-import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 
@@ -68,6 +67,8 @@ const PoolRows = ({
   comptrollerAddress
 }: IRows) => {
   const { address } = useMultiIonic();
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
   return (
     <div
       className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -159,7 +160,34 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
-          <span className="mb-1">{supplyAPR}</span>
+          {supplyAPR}
+          {selectedPoolId === '0' &&
+            querychain === '34443' &&
+            (asset.toLowerCase() === 'usdc' ||
+              asset.toLowerCase() === 'weth' ||
+              asset.toLowerCase() === 'ezeth') && (
+              <a
+                className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
+                href="https://jumper.exchange/superfest/"
+                target="_blank"
+              >
+                <div
+                  className={`flex items-center text-[10px] justify-center gap-0.5 py-[1px]`}
+                >
+                  <img
+                    alt="OP fest"
+                    className={`w-4 h-4 inline-block `}
+                    src="/img/logo/superOP.png"
+                  />
+                  <span className={``}>OP FEST</span>
+                  <img
+                    alt="external-link"
+                    className={`w-3 h-3`}
+                    src="https://img.icons8.com/material-outlined/24/external-link.png"
+                  />
+                </div>
+              </a>
+            )}
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
           >
@@ -180,13 +208,31 @@ const PoolRows = ({
             </a>
           </span>
           <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
             Base APR: {supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
               ?.supply?.ionic && (
               <>
-                <div className="flex pt-4">
+                {selectedPoolId === '0' &&
+                  querychain === '34443' &&
+                  (asset.toLowerCase() === 'usdc' ||
+                    asset.toLowerCase() === 'weth' ||
+                    asset.toLowerCase() === 'ezeth') && (
+                    <a
+                      href="https://jumper.exchange/superfest/"
+                      target="_blank"
+                      className="flex pr-4 underline pt-4"
+                    >
+                      <img
+                        alt=""
+                        className="size-4 rounded mr-1"
+                        src="/img/logo/superOP.png"
+                      />{' '}
+                      + OP SuperFest rewards
+                    </a>
+                  )}
+                <div className="flex">
                   <img
                     alt=""
                     className="size-4 rounded mr-1"
@@ -350,28 +396,42 @@ const PoolRows = ({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
-            <a
-              className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
-              href="https://turtle.club/dashboard/?ref=IONIC"
-              target="_blank"
-            >
-              + TURTLE{' '}
-              <img
-                alt="external-link"
-                className={`w-3 h-3`}
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
-            </a>
-          </span>
+          <a
+            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+          >
+            + TURTLE{' '}
+            <img
+              alt="external-link"
+              className={`w-3 h-3`}
+              src="https://img.icons8.com/material-outlined/24/external-link.png"
+            />
+          </a>
+
           <div
-            className={`popover absolute w-[170px] top-full p-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
           >
             Base APR: {borrowAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
               ?.borrow && (
               <>
-                <div className="flex pt-4">
+                {/* {(asset.toLowerCase() === 'usdc' ||
+                  asset.toLowerCase() === 'weth' ||
+                  asset.toLowerCase() === 'ezeth') && (
+                  <a
+                    href="https://jumper.exchange/superfest/"
+                    className="flex pr-2 pt-4"
+                  >
+                    <img
+                      alt=""
+                      className="size-4 rounded mr-1"
+                      src="/img/logo/superOP.png"
+                    />{' '}
+                    + OP SuperFest rewards
+                  </a>
+                )} */}
+                <div className="flex pt-4 ">
                   <img
                     alt=""
                     className="size-4 rounded mr-1"
@@ -393,6 +453,15 @@ const PoolRows = ({
                   />{' '}
                   + Turtle Ionic Points
                 </div>
+                <div className="flex">
+                  <img
+                    alt=""
+                    className="size-4 rounded mr-1"
+                    src="/images/turtle-ionic.png"
+                  />{' '}
+                  + Turtle Ionic Points
+                </div>
+
                 {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
                   ?.borrow?.mode && (
                   <>
