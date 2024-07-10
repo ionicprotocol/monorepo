@@ -56,14 +56,7 @@ import { setUpSdk } from "./utils";
       const calldata = (encodeFunctionData as any)({
         abi,
         functionName: "safeLiquidate",
-        args: [
-          liquidation.args[0],
-          liquidation.args[1],
-          liquidation.args[2],
-          liquidation.args[3],
-          liquidation.args[4],
-          true,
-        ],
+        args: [liquidation.args[0], liquidation.args[1], liquidation.args[2], liquidation.args[3], liquidation.args[4]],
       });
 
       const permissionkeyPayload = (encodeAbiParameters as any)(
