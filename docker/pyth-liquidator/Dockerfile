@@ -1,6 +1,9 @@
 # Use a Node.js base image with yarn pre-installed
 FROM node:latest
+FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
+FROM node as build
 
+COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
