@@ -24,6 +24,7 @@ import { setUpSdk } from "./utils";
   const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
+  const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
 
   for (const liquidatablePool of liquidatablePools) {
     logger.info(
@@ -51,8 +52,6 @@ import { setUpSdk } from "./utils";
           }, Amount: ${liquidation.sellTokenAmount.toString()}`
         );
       }
-
-      const client: Client = new Client({ baseUrl: "https://per-staging.dourolabs.app/" });
 
       const calldata = (encodeFunctionData as any)({
         abi,
