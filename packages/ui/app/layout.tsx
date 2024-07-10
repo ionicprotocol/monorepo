@@ -199,7 +199,7 @@ export default function RootLayout({
                               DeFi Llama
                             </a>
                           </li>
-                          <li className="mb-1">
+                          <li className="mb-1.5">
                             <a
                               href="https://linktr.ee/ionicmoney"
                               target="_blank"
