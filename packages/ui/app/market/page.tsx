@@ -6,6 +6,7 @@
 
 import { BigNumber } from 'ethers';
 import { formatEther, formatUnits } from 'ethers/lib/utils.js';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { mode } from 'viem/chains';
@@ -25,6 +26,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { sendIMG } from '@ui/utils/TempImgSender';
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -96,29 +98,7 @@ export default function Market() {
   //     name: 'Base'
   //   }
   // ];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function sendIMG(pool: string, chain: any, assetName: string): string {
-    if (pool === '0' && chain === '34443') {
-      return `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
-    }
-    if (pool === '1' && chain === '34443') {
-      const url =
-        assetName.toLowerCase() === 'ezeth' ||
-        assetName.toLowerCase() === 'usdc' ||
-        assetName.toLowerCase() === 'weth'
-          ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
-          : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
-      return url;
-    }
-    if (pool === '0' && chain !== mode.id) {
-      return assetName.toLowerCase() === 'ezeth' ||
-        assetName.toLowerCase() === 'usdc' ||
-        assetName.toLowerCase() === 'weth'
-        ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
-        : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
-    }
-    return '';
-  }
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -143,7 +123,7 @@ export default function Market() {
               )
               .map(([, chainData], chainIdx) =>
                 chainData.pools.map((pool, poolIdx) => (
-                  <div
+                  <Link
                     key={`${chainIdx}-${poolIdx}`}
                     className={`flex flex-col cursor-pointer py-2 md:px-4 ${
                       selectedPool === pool.id
@@ -151,6 +131,7 @@ export default function Market() {
                         : 'rounded-md border-stone-700 border-2'
                     }`}
                     onClick={() => setSelectedPool(pool.id)}
+                    href={`/market?chain=${chain}&pool=${pool.id}`}
                   >
                     <div
                       className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
@@ -172,7 +153,7 @@ export default function Market() {
                         />
                       ))}
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
           </div>
@@ -347,7 +328,7 @@ export default function Market() {
                       comptrollerAddress={poolData?.comptroller || ''}
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
-                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}
                       loopPossible={
                         loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                       }

@@ -16,7 +16,7 @@ import {
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 // import { Link } from '@tanstack/react-router'
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { useBalance } from 'wagmi';
@@ -79,6 +79,7 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { NativePricedIonicAsset } from 'types/dist';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
+import { sendIMG } from '@ui/utils/TempImgSender';
 
 interface IGraph {
   borrowAtY: number[];
@@ -92,6 +93,7 @@ const supabase = createClient(
 );
 
 const Asset = ({ params }: IProp) => {
+  const router = useRouter();
   const { address: acc, isConnected } = useAccount();
   const { data: balance } = useBalance({
     address: acc
@@ -339,27 +341,27 @@ const Asset = ({ params }: IProp) => {
         className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
       >
         <div className={`flex items-center justify-center gap-1 py-3 pt-2 `}>
-          <Link
-            className={`w-full h-full`}
-            href={`/market`}
+          <button
+            className={`w-full h-full cursor-pointer`}
+            onClick={() => router.back()}
           >
             <img
-              alt="modlogo"
-              className={`h-5 cursor-pointer`}
+              alt="back"
+              className={`h-5 `}
               src="/img/assets/back.png"
             />
-          </Link>
+          </button>
           <img
             alt={params.asset}
             className={`w-8`}
-            src={`/img/symbols/32/color/${params.asset}.png`}
+            src={sendIMG(pool as string, chain as string, params.asset)}
           />
           <h1 className={`font-semibold`}>{params.asset}</h1>
-          <img
+          {/* <img
             alt="linkto"
             className={`w-4`}
             src="/img/assets/link.png"
-          />
+          /> */}
         </div>
         <div className={`w-full flex items-center gap-4`}>
           <div className={`flex flex-col items-start justify-center  gap-y-1`}>
@@ -389,10 +391,10 @@ const Asset = ({ params }: IProp) => {
         </div>
       </div>
       <div
-        className={`grid grid-cols-6 grid-rows-2  gap-y-3 gap-x-3 items-start justify-start  mt-4 `}
+        className={`grid grid-cols-6 md:grid-rows-2  gap-y-3 gap-x-3 items-start justify-start  mt-4 `}
       >
         <div
-          className={` rounded-xl col-span-4 min-h-[33vh] pb-3 flex-col bg-grayone flex gap-4 px-[3%] items-start justify-start`}
+          className={` rounded-xl md:col-span-4 col-span-6 min-h-[33vh] pb-3 flex-col bg-grayone flex gap-4 px-[3%] items-start justify-start`}
         >
           <div
             className={`flex  justify-center gap-4 px-4 py-2 font-bold text-base `}
@@ -535,7 +537,7 @@ const Asset = ({ params }: IProp) => {
           </div>
         </div>
         <div
-          className={` rounded-xl  col-span-2 row-span-2 min-h-[40vh] bg-grayone flex flex-col  items-start p-[3%] justify-start`}
+          className={` rounded-xl  md:col-span-2 md:row-span-2 row-start-3 col-span-6 min-h-[40vh] bg-grayone flex flex-col  items-start p-[3%] justify-start`}
         >
           <p className={` font-bold text-xl  py-2`}>Your Info </p>
           <p
@@ -597,7 +599,7 @@ const Asset = ({ params }: IProp) => {
             Available to Borrow{' '}
           </p>
           <div
-            className={`w-full font-semibold text-lg pt-1 flex items-center justify-between `}
+            className={`w-full font-semibold text-lg pt-1 mb-4 flex items-center justify-between `}
           >
             <span>
               {selectedMarketData && comptrollerAddress && chain && (
@@ -649,7 +651,7 @@ const Asset = ({ params }: IProp) => {
           </div>
         </div>
         <div
-          className={` rounded-xl row-start-2 px-[3%] col-span-4 min-h-[33vh] bg-grayone flex flex-col gap-3 items-start justify-start`}
+          className={` rounded-xl row-start-2 px-[3%] md:col-span-4 col-span-6 min-h-[33vh] bg-grayone flex flex-col gap-3 items-start justify-start`}
         >
           <div
             className={`flex w-full  justify-between items-center gap-4  py-2 font-bold text-base `}

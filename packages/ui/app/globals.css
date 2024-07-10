@@ -141,7 +141,7 @@
 }
 
 .popover-container {
-  @apply relative;
+  @apply relative; 
 }
 .popover-container .popover {
   transform-origin: 50% 0;

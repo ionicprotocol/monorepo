@@ -155,12 +155,12 @@ const PoolRows = ({
       </Link>
 
       <h3
-        className={` col-span-2 flex lg:block justify-center text-xs  py-4 items-center mb-2 lg:mb-0`}
+        className={` col-span-2 flex lg:block justify-center text-xs  py-4 items-center mb-2 lg:mb-0 `}
       >
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
           SUPPLY APR:
         </span>
-        <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
+        <div className="popover-container relative flex lg:flex-col items-center justify-center cursor-pointer">
           {supplyAPR}
           {selectedPoolId === '0' &&
             querychain === '34443' &&
@@ -233,7 +233,7 @@ const PoolRows = ({
                       + OP SuperFest rewards
                     </a>
                   )}
-                <div className="flex">
+                <div className="flex mt-1">
                   <img
                     alt=""
                     className="size-4 rounded mr-1"
@@ -390,7 +390,7 @@ const PoolRows = ({
         <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
           BORROW APR:
         </span>
-        <div className="popover-container flex lg:flex-col items-center cursor-pointer">
+        <div className="popover-container flex h-full lg:flex-col items-center justify-center  cursor-pointer">
           <span className="mb-1">{borrowAPR}</span>
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
