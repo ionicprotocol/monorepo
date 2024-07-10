@@ -2171,6 +2171,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/contracts@workspace:packages/sdk/lib/contracts"
   dependencies:
+    "@pythnetwork/express-relay-sdk-solidity": "npm:^0.2.0"
     prettier: "npm:^2.6.2"
     prettier-plugin-solidity: "npm:^1.0.0-beta.19"
   languageName: unknown
@@ -2348,6 +2349,7 @@ __metadata:
     "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.11"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": "npm:^2.0.6"
+    "@pythnetwork/express-relay-sdk-solidity": "npm:^0.2.0"
     "@supabase/supabase-js": "npm:^2.43.2"
     "@tenderly/hardhat-tenderly": "npm:^1.7.7"
     "@typechain/ethers-v5": "npm:^11.1.1"
@@ -5908,6 +5910,13 @@ __metadata:
     viem: "npm:^2.7.6"
     ws: "npm:^8.16.0"
   checksum: 10/0045e180cd2400cd924780d1f76f400f42feb24659d0670094a7e44b86b5e52a728601169b28115c20e90654fe85df4d2f39551415e946adecfed8854b5851cf
+  languageName: node
+  linkType: hard
+
+"@pythnetwork/express-relay-sdk-solidity@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@pythnetwork/express-relay-sdk-solidity@npm:0.2.0"
+  checksum: 10/15acf5a5221e6c0a26c619bebe0574f31279fba170814d9e57687014ba7f10b55e764b41d0b72c37fc7fc03195565bdcb86d28eb151372d4a02bff1e69766501
   languageName: node
   linkType: hard
 
