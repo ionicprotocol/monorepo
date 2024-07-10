@@ -1,8 +1,13 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import type { Route } from '@lifi/sdk';
+import {
+  getContractCallsQuote,
+  type ContractCallsQuoteRequest,
+  type Route
+} from '@lifi/sdk';
 import { useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import { useQueryClient } from '@tanstack/react-query';
+// import { getConnectorClient } from '@wagmi/core';
 import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
@@ -10,6 +15,9 @@ import millify from 'millify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
+import type { Address } from 'viem';
+import { encodeFunctionData, parseAbi } from 'viem';
+// import { sendTransaction } from 'viem/actions';
 import { useChainId } from 'wagmi';
 
 import InstantSupply from '../markets/InstantSupply';
@@ -43,8 +51,10 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
+// import { wagmiConfig } from '@ui/utils/connectors';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
 // import InstantSupply from '';
 
 // const InstantSupply = dynamic(() => import('../markets/InstantSupply'), {
@@ -1156,24 +1166,103 @@ const Popup = ({
       // setWidgetStatus('UPDATE');
     };
     const onRouteExecutionCompleted = async (route: Route) => {
-      // console.log('onRouteExecutionCompleted fired.');
-      // setWidgetStatus('COMPLETED');
-      // set balance to max ------
-      // if (!data) return;
       // eslint-disable-next-line no-console
       console.log('-----------------------------');
-      const amountToSet = formatUnits(
-        BigInt(route?.toAmountMin),
-        route?.toToken.decimals
+      const config = {
+        fromChain: route.fromChainId,
+        toChain: route.toChainId,
+        fromToken: route.fromToken,
+        toToken: route.toToken.address,
+        mintAmount: formatUnits(
+          BigInt(route?.toAmountMin),
+          route?.toToken.decimals
+        ), //0.002
+        ionicContractAddress:
+          '0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2' as Address,
+        ionicContractGasLimit: '2500000',
+        ionicContractAbi: [
+          'function mint(uint256 mintAmount) external returns (uint256)'
+        ]
+      };
+
+      const abi = parseAbi(config.ionicContractAbi);
+
+      const mintTxData = encodeFunctionData({
+        abi,
+        functionName: 'mint',
+        args: [config.mintAmount]
+      });
+      if (!route) return;
+      const contractCallsQuoteRequest: ContractCallsQuoteRequest = {
+        fromChain: config.fromChain,
+        fromToken: config.fromToken as unknown as string,
+        fromAddress: route?.fromAddress as string,
+        toChain: config.toChain,
+        toToken: config.toToken,
+        toAmount: config.mintAmount,
+        toFallbackAddress: route?.fromAddress,
+        allowBridges: ['hop', 'across', 'amarok'],
+        integrator: 'ionic',
+        contractCalls: [
+          {
+            fromAmount: config.mintAmount,
+            fromTokenAddress: config.toToken,
+            toContractAddress: config.ionicContractAddress,
+            toContractCallData: mintTxData,
+            toContractGasLimit: config.ionicContractGasLimit,
+            toTokenAddress: config.ionicContractAddress
+          }
+        ]
+      };
+      // eslint-disable-next-line no-console
+      console.info(
+        '>> create ContractCallsQuoteRequest',
+        contractCallsQuoteRequest
       );
-      setAmount(amountToSet);
+
+      const contactCallsQuoteResponse = await getContractCallsQuote(
+        contractCallsQuoteRequest
+      );
+      // eslint-disable-next-line no-console
+      console.info('>> Quote received', contactCallsQuoteResponse);
+
+      // if (!(await promptConfirm('Execute Quote?'))) {
+      //   return;
+      // }
+
+      // await checkTokenAllowance(contactCallsQuoteResponse, route?.fromAddress, client);
+      // eslint-disable-next-line no-console
+      console.info(
+        '>> Execute transaction',
+        contactCallsQuoteResponse.transactionRequest
+      );
+      // const client = await getConnectorClient(wagmiConfig);
+
+      // const hash = await sendTransaction(client, {
+      //   to: route.fromAddress,
+      //   value: 1000000000000000000n
+      // });
+
+      // console.info('>> Transaction sent', hash);
+
+      // const receipt = await client.waitForTransactionReceipt({
+      //   hash
+      // });
+      // console.info('>> Transaction receipt', receipt);
+      // eslint-disable-next-line no-console
+      console.log('-----------------------------');
+      // const amountToSet = formatUnits(
+      //   BigInt(route?.toAmountMin),
+      //   route?.toToken.decimals
+      // );
+      // setAmount(amountToSet);
       // handleUtilization();
-      setCurrentUtilizationPercentage(100);
+      // setCurrentUtilizationPercentage(100);
       // eslint-disable-next-line no-console
       // console.log({ route, amountToSet, amount });
       // eslint-disable-next-line no-console
       console.log('supply started');
-      await supplyAmount(true, amountToSet);
+      // await supplyAmount(true, amountToSet);
       // eslint-disable-next-line no-console
       console.log('supply completed');
     };
@@ -1870,5 +1959,106 @@ supply consist of collateral , withdraw
 manage collateral withdraw borrow repay - default
 */
 
-/* <div className={``}></div>  <p className={``}></p>
-          <p className={``}></p>  colleteralT , borrowingT , lendingT , cAPR , lAPR , bAPR} */
+/* 
+
+ const config = {
+      fromChain: ChainId.ARB,
+      toChain: ChainId.MOD,
+      fromToken: '0x0000000000000000000000000000000000000000',
+      toToken: '0x4200000000000000000000000000000000000006',
+      mintAmount: '2000000000000000', //0.002
+      ionicContractAddress: '0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2' as Address,
+      ionicContractGasLimit: '2500000',
+      ionicContractAbi: [
+        'function mint(uint256 mintAmount) external returns (uint256)'
+        ],
+    }
+
+    const abi = parseAbi(config.ionicContractAbi)
+
+    const mintTxData = encodeFunctionData({
+      abi,
+      functionName: 'mint',
+      args: [
+        config.mintAmount,
+      ],
+    })
+
+    const contractCallsQuoteRequest: ContractCallsQuoteRequest = {
+      fromChain: config.fromChain,
+      fromToken: config.fromToken,
+      fromAddress: account.address,
+      toChain: config.toChain,
+      toToken: config.toToken,
+      toAmount: config.mintAmount,
+      toFallbackAddress: account.address,
+      allowBridges: ['hop', 'across', 'amarok'],
+      integrator: "ionic",
+      contractCalls: [
+        {
+          fromAmount: config.mintAmount,
+          fromTokenAddress: config.toToken,
+          toContractAddress: config.ionicContractAddress,
+          toContractCallData: mintTxData,
+          toContractGasLimit: config.ionicContractGasLimit,
+          toTokenAddress: config.ionicContractAddress
+        },
+      ],
+    }
+    console.info(
+      '>> create ContractCallsQuoteRequest',
+      contractCallsQuoteRequest
+    )
+
+    const contactCallsQuoteResponse = await getContractCallsQuote(
+      contractCallsQuoteRequest
+    )
+    console.info('>> Quote received', contactCallsQuoteResponse)
+
+    if (!(await promptConfirm('Execute Quote?'))) {
+      return
+    }
+
+    await checkTokenAllowance(contactCallsQuoteResponse, account, client)
+
+    console.info(
+      '>> Execute transaction',
+      contactCallsQuoteResponse.transactionRequest
+    )
+
+    const hash = await client.sendTransaction(
+      transformTxRequestToSendTxParams(
+        client.account,
+        contactCallsQuoteResponse.transactionRequest
+      )
+    )
+    console.info('>> Transaction sent', hash)
+
+    const receipt = await client.waitForTransactionReceipt({
+      hash,
+    })
+    console.info('>> Transaction receipt', receipt)
+
+    // wait for execution
+    let result: StatusResponse
+    do {
+      await new Promise((res) => {
+        setTimeout(() => {
+          res(null)
+        }, 5000)
+      })
+
+      result = await getStatus({
+        txHash: receipt.transactionHash,
+        bridge: contactCallsQuoteResponse.tool,
+        fromChain: contactCallsQuoteResponse.action.fromChainId,
+        toChain: contactCallsQuoteResponse.action.toChainId,
+      })
+
+      console.info('>> Status update', result)
+    } while (result.status !== 'DONE' && result.status !== 'FAILED')
+
+    console.info('>> DONE', result)
+
+
+*/
