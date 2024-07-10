@@ -686,7 +686,8 @@ export default function Points() {
             </div>
             {leaderboard &&
               //@ts-ignore
-              leaderboard.map((val, idx) => (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              leaderboard.map((val: any, idx) => (
                 <div
                   className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl ${
                     idx + 1 < leaderboard.length ? 'mb-3' : ''

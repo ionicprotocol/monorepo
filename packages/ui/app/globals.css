@@ -25,6 +25,18 @@
   text-align: center;
 }
 
+@keyframes expand {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @layer utilities {
   .grid-cols-21 {
     grid-template-columns: repeat(21, minmax(0, 1fr));
@@ -38,11 +50,14 @@
   .grid-cols-18 {
     grid-template-columns: repeat(18, minmax(0, 1fr));
   }
-  .grid-cols-16 {
-    grid-template-columns: repeat(16, minmax(0, 1fr));
+  .grid-cols-15 {
+    grid-template-columns: repeat(15, minmax(0, 1fr));
   }
   .grid-cols-13 {
     grid-template-columns: repeat(13, minmax(0, 1fr));
+  }
+  .col-span-15 {
+    grid-column: span 15 / span 15;
   }
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -80,7 +95,13 @@
     color: rgb(255 255 255 / 0.5);
   }
 
-  
+  .expand {
+    animation: expand 2s linear infinite;
+  }
+  .pause {
+    animation-play-state: paused;
+    /* animation-duration: 40s; */
+  }
 }
 
 .bg-lime {
@@ -120,7 +141,7 @@
 }
 
 .popover-container {
-  @apply relative;
+  @apply relative; 
 }
 .popover-container .popover {
   transform-origin: 50% 0;

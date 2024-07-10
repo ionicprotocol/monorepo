@@ -3,8 +3,8 @@ import { task, types } from "hardhat/config";
 
 import { assets as baseAssets } from "../../../chains/src/base/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
-import { assets as sepoliaAssets } from "../../../chains/src/sepolia/assets";
 import { assets as optimismAssets } from "../../../chains/src/optimism/assets";
+import { assets as sepoliaAssets } from "../../../chains/src/sepolia/assets";
 import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {

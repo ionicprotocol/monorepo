@@ -1,5 +1,4 @@
-import { chainIdToConfig } from "@ionicprotocol/chains";
-import { bsc, polygon, sepolia } from "@ionicprotocol/chains";
+import { chainIdToConfig, bsc, polygon, sepolia } from "@ionicprotocol/chains";
 import { assetFilter } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
