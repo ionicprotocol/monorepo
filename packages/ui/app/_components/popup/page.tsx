@@ -1,11 +1,6 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import {
-  getContractCallsQuote,
-  type ContractCallsQuoteRequest,
-  type Route
-} from '@lifi/sdk';
-import { useWidgetEvents, WidgetEvent } from '@lifi/widget';
+
 import { useQueryClient } from '@tanstack/react-query';
 // import { getConnectorClient } from '@wagmi/core';
 import { utils } from 'ethers';
@@ -13,11 +8,9 @@ import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
-import type { Address } from 'viem';
-import { encodeFunctionData, parseAbi } from 'viem';
 // import { sendTransaction } from 'viem/actions';
 import { useChainId } from 'wagmi';
 
@@ -189,7 +182,6 @@ const Popup = ({
   //     value,
   //   '0'
   // );
-  const widgetEvents = useWidgetEvents();
 
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
@@ -1164,137 +1156,8 @@ const Popup = ({
   const chain = searchParams.get('chain');
   const pool = searchParams.get('pool');
 
-  useEffect(() => {
-    const onRouteExecutionStarted = () => {
-      // console.log('onRouteExecutionStarted fired.');
-      // setWidgetStatus('START')
-    };
-    const onRouteExecutionUpdated = () => {
-      // console.log('onRouteExecutionUpdated fired.');
-      // setWidgetStatus('UPDATE');
-    };
-    const onRouteExecutionCompleted = async (route: Route) => {
-      // eslint-disable-next-line no-console
-      console.log('-----------------------------');
-      const config = {
-        fromChain: route.fromChainId,
-        toChain: route.toChainId,
-        fromToken: route.fromToken,
-        toToken: route.toToken.address,
-        mintAmount: formatUnits(
-          BigInt(route?.toAmountMin),
-          route?.toToken.decimals
-        ), //0.002
-        ionicContractAddress:
-          '0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2' as Address,
-        ionicContractGasLimit: '2500000',
-        ionicContractAbi: [
-          'function mint(uint256 mintAmount) external returns (uint256)'
-        ]
-      };
-
-      const abi = parseAbi(config.ionicContractAbi);
-
-      const mintTxData = encodeFunctionData({
-        abi,
-        functionName: 'mint',
-        args: [config.mintAmount]
-      });
-      if (!route) return;
-      const contractCallsQuoteRequest: ContractCallsQuoteRequest = {
-        fromChain: config.fromChain,
-        fromToken: config.fromToken as unknown as string,
-        fromAddress: route?.fromAddress as string,
-        toChain: config.toChain,
-        toToken: config.toToken,
-        toAmount: config.mintAmount,
-        toFallbackAddress: route?.fromAddress,
-        allowBridges: ['hop', 'across', 'amarok'],
-        integrator: 'ionic',
-        contractCalls: [
-          {
-            fromAmount: config.mintAmount,
-            fromTokenAddress: config.toToken,
-            toContractAddress: config.ionicContractAddress,
-            toContractCallData: mintTxData,
-            toContractGasLimit: config.ionicContractGasLimit,
-            toTokenAddress: config.ionicContractAddress
-          }
-        ]
-      };
-      // eslint-disable-next-line no-console
-      console.info(
-        '>> create ContractCallsQuoteRequest',
-        contractCallsQuoteRequest
-      );
-
-      const contactCallsQuoteResponse = await getContractCallsQuote(
-        contractCallsQuoteRequest
-      );
-      // eslint-disable-next-line no-console
-      console.info('>> Quote received', contactCallsQuoteResponse);
-
-      // if (!(await promptConfirm('Execute Quote?'))) {
-      //   return;
-      // }
-
-      // await checkTokenAllowance(contactCallsQuoteResponse, route?.fromAddress, client);
-      // eslint-disable-next-line no-console
-      console.info(
-        '>> Execute transaction',
-        contactCallsQuoteResponse.transactionRequest
-      );
-      // const client = await getConnectorClient(wagmiConfig);
-
-      // const hash = await sendTransaction(client, {
-      //   to: route.fromAddress,
-      //   value: 1000000000000000000n
-      // });
-
-      // console.info('>> Transaction sent', hash);
-
-      // const receipt = await client.waitForTransactionReceipt({
-      //   hash
-      // });
-      // console.info('>> Transaction receipt', receipt);
-      // eslint-disable-next-line no-console
-      console.log('-----------------------------');
-      // const amountToSet = formatUnits(
-      //   BigInt(route?.toAmountMin),
-      //   route?.toToken.decimals
-      // );
-      // setAmount(amountToSet);
-      // handleUtilization();
-      // setCurrentUtilizationPercentage(100);
-      // eslint-disable-next-line no-console
-      // console.log({ route, amountToSet, amount });
-      // eslint-disable-next-line no-console
-      console.log('supply started');
-      // await supplyAmount(true, amountToSet);
-      // eslint-disable-next-line no-console
-      console.log('supply completed');
-    };
-    const onRouteExecutionFailed = () => {
-      // console.log('onRouteExecutionFailed fired.');
-      // setWidgetStatus('FAIL');
-    };
-    const onRouteHighValueLoss = () => {
-      // console.log('onRouteHighValueLoss continued.');
-      // setWidgetStatus('LOSS');
-    };
-
-    widgetEvents.on(WidgetEvent.RouteExecutionStarted, onRouteExecutionStarted);
-    widgetEvents.on(WidgetEvent.RouteExecutionUpdated, onRouteExecutionUpdated);
-    widgetEvents.on(
-      WidgetEvent.RouteExecutionCompleted,
-      onRouteExecutionCompleted
-    );
-    widgetEvents.on(WidgetEvent.RouteExecutionFailed, onRouteExecutionFailed);
-    widgetEvents.on(WidgetEvent.RouteHighValueLoss, onRouteHighValueLoss);
-    // setWidgetLoading(false);
-    return () => widgetEvents.all.clear();
-  }, [supplyAmount, widgetEvents]);
-
+  //setting up contract ..................
+  //  console.log(selectedMarketData);
   return (
     <>
       <div
@@ -1633,7 +1496,10 @@ const Popup = ({
                   {/* <Approved /> */}
                 </div>
                 <div className="min-w-full py-5 px-[6%] h-min flex flex-col items-center justify-center">
-                  <InstantSupply toToken={selectedMarketData?.cToken} />
+                  <InstantSupply
+                    toToken={selectedMarketData.underlyingToken}
+                    cToken={selectedMarketData?.cToken}
+                  />
                   {transactionSteps.length > 0 && (
                     <TransactionStepsHandler
                       chainId={chainId}

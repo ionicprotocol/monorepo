@@ -2634,9 +2634,9 @@ __metadata:
   linkType: hard
 
 "@lifi/types@npm:^13.17.0":
-  version: 13.17.1
-  resolution: "@lifi/types@npm:13.17.1"
-  checksum: 10/ee0f62d380a0efc1ddf028ea66e40faed5434294ed70a63f7a6e6ae8292bf103df9bf36fdd342d809943cf33e46d07594a8ee90b76fdcccc64c6e190b123a4ca
+  version: 13.18.0
+  resolution: "@lifi/types@npm:13.18.0"
+  checksum: 10/d419cc06e0e1a42c3b77f8c145fbf6bb4c287bb22e16667046cc8e78c48a1f879df02349b24a949e282a78549c42d4f715c0a890909e98d6e9bc31184c772d65
   languageName: node
   linkType: hard
 
