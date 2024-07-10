@@ -5,13 +5,11 @@ import { IonicSdk } from "../../IonicSdk";
 import { ChainLiquidationConfig } from "./config";
 import {
   BotType,
-  EncodedLiquidationTx,
   ErroredPool,
   LiquidatablePool,
   PoolUserStruct,
   PoolUserWithAssets,
   PublicPoolUserWithData,
-  PythEncodedLiquidationTx,
   PythLiquidatablePool
 } from "./utils";
 
