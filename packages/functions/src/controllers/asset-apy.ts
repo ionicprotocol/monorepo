@@ -5,13 +5,13 @@ import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/assets';
-import { createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 import { chainIdtoChain } from 'chains/dist';
 
 export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(rpcUrl),
     });
     const apyProviders = await getAPYProviders(chainId, {

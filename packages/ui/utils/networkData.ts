@@ -1,4 +1,10 @@
-import { base, chainIdToConfig, mode, optimism } from '@ionicprotocol/chains';
+import {
+  base,
+  chainIdToConfig,
+  mode,
+  optimism,
+  sepolia
+} from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -75,6 +81,7 @@ export function getEnabledChains() {
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
+  [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.optimism]: optimism.assets
 };
 

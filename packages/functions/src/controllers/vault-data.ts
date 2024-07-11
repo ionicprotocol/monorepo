@@ -1,7 +1,7 @@
 import { SupportedChains } from '@ionicprotocol/types';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk, optimizedVaultsRegistryAbi } from '@ionicprotocol/sdk';
-import { Address, createPublicClient, formatEther, getContract, http } from 'viem';
+import { Address, Chain, createPublicClient, formatEther, getContract, http } from 'viem';
 import { Handler } from '@netlify/functions';
 
 import { functionsAlert } from '../alert';
@@ -11,10 +11,10 @@ export const updateVaultData = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
     });
-    const sdk = new IonicSdk(publicClient, undefined, config);
+    const sdk = new IonicSdk(publicClient as any, undefined, config);
     const optimizedVaultsRegistry = getContract({
       address: sdk.chainDeployment.OptimizedVaultsRegistry.address as Address,
       abi: optimizedVaultsRegistryAbi,

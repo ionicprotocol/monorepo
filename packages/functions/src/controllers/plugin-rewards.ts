@@ -7,7 +7,7 @@ import { environment, supabase } from '../config';
 import { pluginsOfChain } from '../data/plugins';
 import { rpcUrls } from '../data/rpcs';
 import { getAPYProviders } from '../providers/rewards/plugins';
-import { createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 
 export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
@@ -19,7 +19,7 @@ export const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: stri
     }
 
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(rpcUrl),
     });
     const apyProviders = await getAPYProviders({

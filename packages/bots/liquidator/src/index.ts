@@ -40,7 +40,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
   const liquidator = new Liquidator(sdk);
   await axios.get(HEARTBEAT_API_URL);
-  logger.info(`Heartbeat successfully sent to ${HEARTBEAT_API_URL}`);
+  logger.info(`Heartbeat successfully sent`);
 
   sdk.logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
 

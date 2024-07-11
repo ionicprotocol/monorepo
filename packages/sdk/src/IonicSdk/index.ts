@@ -24,6 +24,7 @@ import {
   addressesProviderAbi,
   cTokenFirstExtensionAbi,
   eip20InterfaceAbi,
+  erc20Abi,
   feeDistributorAbi,
   ionicErc4626Abi,
   ionicFlywheelLensRouterAbi,
@@ -327,8 +328,11 @@ export class IonicBase {
     return oracle;
   }
 
-  getEIP20TokenInstance(address: Address, publicClient = this.publicClient) {
-    return getContract({ address, abi: eip20InterfaceAbi, client: publicClient });
+  getEIP20TokenInstance(
+    address: Address,
+    publicClient = this.publicClient
+  ): GetContractReturnType<typeof erc20Abi, PublicClient> {
+    return getContract({ address, abi: erc20Abi, client: publicClient });
   }
 
   getUnitrollerInstance(

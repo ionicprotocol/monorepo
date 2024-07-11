@@ -1,4 +1,4 @@
-import { base, mode, optimism } from "@ionicprotocol/chains";
+import { base, mode, optimism, sepolia } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -35,6 +35,7 @@ export type LensPoolsWithData = [
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
+  [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets
 };

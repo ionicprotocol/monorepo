@@ -7,7 +7,7 @@ import { Handler } from '@netlify/functions';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';
 import axios from 'axios';
-import { createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
@@ -15,10 +15,10 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
     });
-    const sdk = new IonicSdk(publicClient, undefined, config);
+    const sdk = new IonicSdk(publicClient as any, undefined, config);
 
     const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.read.getActivePools();
 

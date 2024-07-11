@@ -5,14 +5,15 @@ import { CreateContractsModule } from "../CreateContracts";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
-import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
+import { BotType, EncodedLiquidationTx, ErroredPool, LiquidatablePool, PythLiquidatablePool } from "./utils";
 
 // import { gatherLiquidations, getAllPoolUsers } from "./index";
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
 export interface ISafeLiquidator {
   getPotentialLiquidations(
-    excludedComptrollers?: Array<string>,
+    excludedComptrollers: Array<Address> | [],
+    botType: BotType,
     maxHealthFactor?: bigint,
     configOverrides?: ChainLiquidationConfig
   ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]>;
@@ -30,11 +31,12 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
   return class SafeLiquidator extends Base {
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
-    async getPotentialLiquidations(
+    async getPotentialLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(
       excludedComptrollers: Array<Address> = [],
+      botType: BotType,
       maxHealthFactor: bigint = parseEther("1"),
       configOverrides?: ChainLiquidationConfig
-    ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
+    ): Promise<[Array<T>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
       // const [poolWithUsers, erroredPools] = await getAllPoolUsers(
       const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(
@@ -48,17 +50,18 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
           ...this.chainLiquidationConfig,
           ...configOverrides
         };
-      const [liquidatablePools, erroredLiquidations] = await gatherLiquidations(
+      const [liquidatablePools, erroredLiquidations] = await gatherLiquidations<T>(
         this as unknown as IonicSdk,
         poolWithUsers,
-        this.chainLiquidationConfig
+        this.chainLiquidationConfig,
+        botType
       );
 
       // get unique comptrollers
       const errored = [...erroredPools, ...erroredLiquidations].filter(
         (value, idx, array) => array.findIndex((v2) => v2.comptroller === value.comptroller) === idx
       );
-      return [liquidatablePools, errored];
+      return [liquidatablePools as T[], errored];
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool

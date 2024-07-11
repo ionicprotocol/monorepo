@@ -17,7 +17,7 @@ import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { pluginsOfChain } from '../data/plugins';
 import { getAPYProviders as getPluginAPYProviders } from '../providers/rewards/plugins';
-import { createPublicClient, formatUnits, http } from 'viem';
+import { Chain, createPublicClient, formatUnits, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTotalHistoryApyApi;
 
@@ -50,10 +50,10 @@ export const updateAssetTotalApy = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
     });
-    const sdk = new IonicSdk(publicClient, undefined, config);
+    const sdk = new IonicSdk(publicClient as any, undefined, config);
 
     const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.read.getActivePools();
 

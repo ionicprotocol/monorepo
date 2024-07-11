@@ -24,6 +24,19 @@ const config: Config = {
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif']
+      },
+      animation: {
+        slide: 'slide 50s linear infinite'
+      },
+      keyframes: {
+        slide: {
+          '0%': {
+            transform: 'translateX(0px)'
+          },
+          '100%': {
+            transform: 'translateX(-100%)'
+          }
+        }
       }
     }
   }

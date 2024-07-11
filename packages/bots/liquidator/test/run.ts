@@ -26,7 +26,7 @@ import { setUpSdk } from "../src/utils";
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
   const liquidator = new Liquidator(ionicSdk);
-  const liquidatablePools = await liquidator.fetchLiquidations();
+  const liquidatablePools = await liquidator.fetchLiquidations(1);
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
 

@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import { parseUnits } from 'viem';
 
 import ResultHandler from '../ResultHandler';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { sendIMG } from '@ui/utils/TempImgSender';
 
 interface IAmount {
   amount?: string;
@@ -35,6 +37,9 @@ const Amount = ({
   readonly,
   setSelectedAsset
 }: IAmount) => {
+  const searchParams = useSearchParams();
+  const chain = searchParams.get('chain');
+  const pool = searchParams.get('pool');
   const [availableAssetsOpen, setAvailableAssetsOpen] =
     useState<boolean>(false);
 
@@ -126,7 +131,7 @@ const Amount = ({
           <img
             alt="link"
             height="20"
-            src={`/img/symbols/32/color/${symbol?.toLowerCase()}.png`}
+            src={sendIMG(pool as string, chain as string, symbol)}
             width="20"
           />
           <span className={`text-white pl-2`}>{symbol}</span>

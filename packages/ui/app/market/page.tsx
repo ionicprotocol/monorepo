@@ -1,6 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+// import { Listbox, Transition } from '@headlessui/react';
+// import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { formatEther, formatUnits } from 'viem';
@@ -21,6 +25,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { sendIMG } from '@ui/utils/TempImgSender';
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -92,6 +97,7 @@ export default function Market() {
   //     name: 'Base'
   //   }
   // ];
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -116,7 +122,7 @@ export default function Market() {
               )
               .map(([, chainData], chainIdx) =>
                 chainData.pools.map((pool, poolIdx) => (
-                  <div
+                  <Link
                     key={`${chainIdx}-${poolIdx}`}
                     className={`flex flex-col cursor-pointer py-2 md:px-4 ${
                       selectedPool === pool.id
@@ -124,6 +130,7 @@ export default function Market() {
                         : 'rounded-md border-stone-700 border-2'
                     }`}
                     onClick={() => setSelectedPool(pool.id)}
+                    href={`/market?chain=${chain}&pool=${pool.id}`}
                   >
                     <div
                       className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
@@ -139,13 +146,13 @@ export default function Market() {
                       {pool.assets.map((val, idx) => (
                         <img
                           alt="modlogo"
-                          className={`w-6`}
+                          className={`w-6 h-6`}
                           key={idx}
-                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
+                          src={sendIMG(pool.id, chain, val)}
                         />
                       ))}
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
           </div>
@@ -217,7 +224,7 @@ export default function Market() {
               alt=""
               className="inline-block"
               height="20"
-              src="/img/symbols/32/color/weth.png"
+              src="/img/symbols/32/color/weth(afteropfest).png"
               width="20"
             />
           </button>
@@ -311,19 +318,25 @@ export default function Market() {
                       } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                         maximumFractionDigits: 2
                       })}`}
+                      chain={chain.toString()}
                       collateralFactor={
                         (val ? Number(formatEther(val.collateralFactor)) : 0) *
                         100
                       }
+                      cTokenAddress={val.cToken}
+                      comptrollerAddress={poolData?.comptroller || ''}
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
-                      logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
+                      logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}
                       loopPossible={
                         loopMarkets ? loopMarkets[val.cToken].length > 0 : false
                       }
                       membership={val?.membership ?? false}
+                      pool={selectedPool}
                       selectedChain={chainId}
+                      selectedMarketData={selectedMarketData}
                       selectedPoolId={selectedPool}
+                      selectedSymbol={selectedSymbol as string}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       supplyAPR={`${

@@ -1,6 +1,6 @@
 import { SupportedChains } from '@ionicprotocol/types';
 import { chainIdtoChain } from '@ionicprotocol/chains';
-import { Address, createPublicClient, erc4626Abi, getContract, http } from 'viem';
+import { Address, Chain, createPublicClient, erc4626Abi, getContract, http } from 'viem';
 
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
@@ -15,7 +15,7 @@ export const updatePluginData = async (chainId: SupportedChains, rpcUrl: string)
 
   try {
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(rpcUrl),
     });
     const rows = await Promise.all(

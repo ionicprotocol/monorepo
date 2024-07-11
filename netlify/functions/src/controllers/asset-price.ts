@@ -3,7 +3,14 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import { Handler } from '@netlify/functions';
 import { chainIdToConfig, chainIdtoChain } from '@ionicprotocol/chains';
 import axios from 'axios';
-import { createPublicClient, createWalletClient, formatEther, http } from 'viem';
+import {
+  Chain,
+  createPublicClient,
+  createWalletClient,
+  formatEther,
+  http,
+  PublicClient,
+} from 'viem';
 
 import { environment, supabase } from '../config';
 import { functionsAlert } from '../alert';
@@ -17,17 +24,17 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
     });
     const account = privateKeyToAccount('0x...');
     const walletClient = createWalletClient({
-      chain: chainIdtoChain[chainId],
+      chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
       account,
     });
 
-    const sdk = new IonicSdk(publicClient, walletClient, config);
+    const sdk = new IonicSdk(publicClient as any, walletClient as any, config);
     const mpo = sdk.createMasterPriceOracle();
 
     //get USD price

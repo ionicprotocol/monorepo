@@ -40,6 +40,21 @@ export type EncodedLiquidationTx = {
   value: bigint;
 };
 
+export enum BotType {
+  Standard,
+  Pyth
+}
+
+export type PythEncodedLiquidationTx = {
+  method: string;
+  args: Array<any>;
+  value: bigint;
+  buyTokenAmount: bigint;
+  sellTokenAmount: bigint;
+  buyTokenUnderlying: string;
+  sellTokenUnderlying: string;
+};
+
 export type PoolUserWithAssets = {
   assets: ExtendedPoolAssetStructOutput[];
   account: Address;
@@ -53,6 +68,11 @@ export type PoolUserWithAssets = {
 export type LiquidatablePool = {
   comptroller: string;
   liquidations: EncodedLiquidationTx[];
+};
+
+export type PythLiquidatablePool = {
+  comptroller: string;
+  liquidations: PythEncodedLiquidationTx[];
 };
 
 export type ErroredPool = {
