@@ -35,13 +35,19 @@ variable "environment" {
   type = string
 }
 
-variable "runtime_env_vars" {
-  type = list(object({ name=string, value=string }))
+variable "provider_urls" {
+  description = "List of provider URLs"
+  type        = list(string)
 }
 
-variable "provider_urls" {
-  type = list(string)
+variable "runtime_env_vars" {
+  description = "Runtime environment variables"
+  type        = list(object({
+    name  = string
+    value = string
+  }))
 }
+
 
 
 variable "region" {
