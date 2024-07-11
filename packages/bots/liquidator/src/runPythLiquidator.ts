@@ -92,7 +92,11 @@ import { setUpSdk } from "./utils";
         await client.submitOpportunity(opportunity);
         console.log("Opportunity submitted successfully.");
       } catch (error) {
-        console.error("Failed to submit opportunity:", error);
+        console.error("Failed to submit opportunity:", {
+          error,
+          opportunity,
+          blockNumber: await provider.getBlockNumber(),
+        });
       }
     }
   }
