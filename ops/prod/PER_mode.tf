@@ -50,7 +50,9 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   # Example: Attach policies to the role
   # Replace with actual policies as needed
   managed_policy_arns = [
-    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+    "arn:aws:iam::aws:policy/AWSOpsWorksCloudWatchLogs"
+
   ]
 }
 
