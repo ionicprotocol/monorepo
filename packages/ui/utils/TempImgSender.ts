@@ -7,6 +7,7 @@ export function sendIMG(pool: string, chain: any, assetName: string): string {
     const url =
       assetName.toLowerCase() === 'ezeth' ||
       assetName.toLowerCase() === 'usdc' ||
+      assetName.toLowerCase() === 'stone' ||
       assetName.toLowerCase() === 'weth'
         ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
         : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
@@ -15,6 +16,7 @@ export function sendIMG(pool: string, chain: any, assetName: string): string {
   if (pool === '0' && chain !== '34443') {
     return assetName.toLowerCase() === 'ezeth' ||
       assetName.toLowerCase() === 'usdc' ||
+      assetName.toLowerCase() === 'stone' ||
       assetName.toLowerCase() === 'weth'
       ? `/img/symbols/32/color/${assetName.toLowerCase()}(afteropfest).png`
       : `/img/symbols/32/color/${assetName.toLowerCase()}.png`;
