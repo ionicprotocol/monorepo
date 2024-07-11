@@ -2,14 +2,13 @@ resource "aws_ecs_cluster" "my_cluster" {
   name = var.cluster_name
 }
 
-# ECS Task Definition
 resource "aws_ecs_task_definition" "perbotTaskDefinition" {
   family                   = var.task_definition_family
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "1024"   # CPU units for the task
-  memory = "2048"   # Memory (in MiB) for the task
+  cpu    = "2048"   # CPU units for the task
+  memory = "5096"   # Memory (in MiB) for the task
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
@@ -18,9 +17,18 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
       name      = var.container_name
       image     = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth:${var.bots_image_tag}"
       essential = true
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/${var.container_name}"
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
+
 
 # IAM Role for ECS task execution
 resource "aws_iam_role" "ecs_task_execution_role" {
