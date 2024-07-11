@@ -1,0 +1,9 @@
+ecr_repository_name = "liquidator-pyth"
+ecs_cluster_name   = "liquidator-pyth"
+task_family        = "liquidator-pyth-td"
+container_name     = "liquidator-pyth"
+cpu                = "256"
+memory             = "512"
+subnets            = ["subnet-0c8fb2a556e29ca39"]
+security_groups    = ["sg-01abfa630f6281705"]
+desired_count      = 2

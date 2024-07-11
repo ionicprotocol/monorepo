@@ -6,7 +6,7 @@
 
 ### Clone
 
-Make sure you clone submodules together.
+Make sure you clone submodules together
 
 `git clone --recurse-submodules`
 

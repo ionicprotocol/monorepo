@@ -10,6 +10,7 @@ import {
   neon,
   optimism,
   polygon,
+  sepolia,
   zkevm
 } from "@ionicprotocol/chains";
 import {
@@ -46,6 +47,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ethereum]: ethereum.assets,
   [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
+  [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets
 };
