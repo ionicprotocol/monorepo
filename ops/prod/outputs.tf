@@ -21,6 +21,6 @@ output "ecs_cluster_name" {
 }
 
 output "task_definition_arn" {
-  value = aws_ecs_task_definition.my_task_definition.arn
+  value = aws_ecs_task_definition.perbotTaskDefinition.arn
 }
 

@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
   container_definitions = jsonencode([
     {
       name      = var.container_name
-      image     = 058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth:${var.bots_image_tag}
+      image     = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth:${var.bots_image_tag}"
       essential = true
     }
   ])
@@ -50,7 +50,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 resource "aws_ecs_service" "my_ecs_service" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.my_cluster.id
-  task_definition = aws_ecs_task_definition.my_task_definition.arn
+  task_definition = aws_ecs_task_definition.perbotTaskDefinition.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
   network_configuration {
