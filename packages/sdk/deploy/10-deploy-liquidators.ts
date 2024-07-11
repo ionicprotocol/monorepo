@@ -16,7 +16,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
   //// Liquidator
-  let liquidatorContractName;
+  let liquidatorContractName: string;
   if (chainId !== 34443) {
     liquidatorContractName = await deployIonicLiquidator({
       run,

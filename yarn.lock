@@ -2135,6 +2135,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/contracts@workspace:packages/sdk/lib/contracts"
   dependencies:
+    "@pythnetwork/express-relay-sdk-solidity": "npm:^0.2.0"
     prettier: "npm:^2.6.2"
     prettier-plugin-solidity: "npm:^1.0.0-beta.19"
   languageName: unknown
