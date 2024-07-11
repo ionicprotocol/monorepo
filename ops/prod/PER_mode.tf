@@ -1,3 +1,10 @@
+# CloudWatch Log Group
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name              = "/ecs/${var.cluster_name}"
+  retention_in_days = 7  # Adjust retention as needed
+}
+
+# ECS Cluster
 resource "aws_ecs_cluster" "my_cluster" {
   name = var.cluster_name
 }
@@ -18,6 +25,14 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
       name      = var.container_name
       image     = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth:${var.bots_image_tag}"
       essential = true
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/${var.cluster_name}"
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = var.container_name
+        }
+      }
     }
   ])
 }
@@ -39,8 +54,6 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     ]
   })
   
-  # Example: Attach policies to the role
-  # Replace with actual policies as needed
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
   ]
