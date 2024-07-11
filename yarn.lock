@@ -2167,16 +2167,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ionicprotocol/contracts@workspace:packages/sdk/lib/contracts":
-  version: 0.0.0-use.local
-  resolution: "@ionicprotocol/contracts@workspace:packages/sdk/lib/contracts"
-  dependencies:
-    "@pythnetwork/express-relay-sdk-solidity": "npm:^0.2.0"
-    prettier: "npm:^2.6.2"
-    prettier-plugin-solidity: "npm:^1.0.0-beta.19"
-  languageName: unknown
-  linkType: soft
-
 "@ionicprotocol/functions@workspace:packages/functions":
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/functions@workspace:packages/functions"
@@ -7424,13 +7414,6 @@ __metadata:
   dependencies:
     antlr4ts: "npm:^0.5.0-alpha.4"
   checksum: 10/a95b0c45331623e587e938e69d49832814ab8867371bd58f9946346b99a18705ee47b98a1006c3da6dae33ec8c8c1bf7d203a4acfa1ced0bfd68632acf2cd19c
-  languageName: node
-  linkType: hard
-
-"@solidity-parser/parser@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@solidity-parser/parser@npm:0.17.0"
-  checksum: 10/76de7d1268de676c101b9a41576c324c0d0b9699e3ba3d846b5e580d6cae454fd7ec088011c316ce18af1b23a1482da88768d30f0e41becfd9da90f692fb9a65
   languageName: node
   linkType: hard
 
@@ -22706,19 +22689,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-solidity@npm:^1.0.0-beta.19":
-  version: 1.3.1
-  resolution: "prettier-plugin-solidity@npm:1.3.1"
-  dependencies:
-    "@solidity-parser/parser": "npm:^0.17.0"
-    semver: "npm:^7.5.4"
-    solidity-comments-extractor: "npm:^0.0.8"
-  peerDependencies:
-    prettier: ">=2.3.0"
-  checksum: 10/45c1bf16ca960e43e8dc518db95a9eecfce941480e2737272ab259ea9dcb9796a7830a8884de21637f286f80f06d4b4163418d4d55e41347aee96ee93bc4e8f0
-  languageName: node
-  linkType: hard
-
 "prettier@npm:2.7.1":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
@@ -22746,7 +22716,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.3.1, prettier@npm:^2.6.2":
+"prettier@npm:^2.3.1":
   version: 2.8.8
   resolution: "prettier@npm:2.8.8"
   bin:
@@ -24739,13 +24709,6 @@ __metadata:
   version: 0.0.7
   resolution: "solidity-comments-extractor@npm:0.0.7"
   checksum: 10/a5cedf2310709969bc1783a6c336171478536f2f0ea96ad88437e0ef1e8844c0b37dd75591b0a824ec9c30640ea7e31b5f03128e871e6235bef3426617ce96c4
-  languageName: node
-  linkType: hard
-
-"solidity-comments-extractor@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "solidity-comments-extractor@npm:0.0.8"
-  checksum: 10/615d53c2e8f5e7a1ad26e4e7e3bdc8b7c7885420611fcd690864bb54a9af2813a93cf30bdede16273791bda16eebc7a4ce1379d458ac2d7834074eb4936dea70
   languageName: node
   linkType: hard
 
