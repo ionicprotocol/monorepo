@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { base, bob, mode, optimism } from "@ionicprotocol/chains";
+import { base, bob, mode, optimism, sepolia } from "@ionicprotocol/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@ionicprotocol/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -185,6 +185,10 @@ export const getOrCreateIonic = async (signerOrProviderOrSignerName?: unknown | 
       }
       case SupportedChains.mode: {
         chainConfig = mode;
+        break;
+      }
+      case SupportedChains.optimism_sepolia: {
+        chainConfig = sepolia;
         break;
       }
       case SupportedChains.optimism: {

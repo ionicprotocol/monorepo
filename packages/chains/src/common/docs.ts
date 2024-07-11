@@ -16,6 +16,7 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapName: "Uniswap",
       swapAddress: "https://app.uniswap.org/?chain=base"
     },
+    [SupportedChains.optimism_sepolia]: {},
     [SupportedChains.optimism]: {
       swapName: "Uniswap",
       swapAddress: "https://app.uniswap.org/?chain=optimism"
@@ -28,7 +29,7 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
 
   return `
   <p><b>How to acquire the wrapped token: </b><p/><br />
-  Head over to the <a href="${wrapAddress.swapAddress}" target="_blank" style="color: #BCAC83;">${wrapAddress.swapName} Exchange</a> and swap your native token for the wrapped token.</p>
+  Head over to the <a href="${wrapAddress?.swapAddress}" target="_blank" style="color: #BCAC83;">${wrapAddress?.swapName} Exchange</a> and swap your native token for the wrapped token.</p>
   `;
 };
 

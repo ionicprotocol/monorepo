@@ -5,6 +5,7 @@ import { assets as baseAssets } from "../../../chains/src/base/assets";
 import { assets as bobAssets } from "../../../chains/src/bob/assets";
 import { assets as modeAssets } from "../../../chains/src/mode/assets";
 import { assets as optimismAssets } from "../../../chains/src/optimism/assets";
+import { assets as sepoliaAssets } from "../../../chains/src/sepolia/assets";
 import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
 
 task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { run }) => {
@@ -38,6 +39,22 @@ task("markets:deploy:mode", "deploy mode markets").setAction(async (taskArgs, { 
   }
 });
 
+task("markets:deploy:optimismSepolia", "Deploy optimism sepolia markets")
+  .addParam("underlying", "The address of the underlying asset")
+  .addParam("symbol", "The symbol for the new market token")
+  .addParam("name", "The name for the new market token")
+  .setAction(async (taskArgs, { run }) => {
+    const { underlying, symbol, name } = taskArgs;
+
+    await run("market:deploy", {
+      signer: "deployer",
+      cf: "50", // You might want to parameterize this as well if needed
+      underlying: underlying,
+      comptroller: "0x7288Bd4621F1AD56d05DD0e763BB7F0F00c5F11A",
+      symbol: "ion" + symbol,
+      name: `Ionic ${name}`
+    });
+  });
 task("markets:deploy:modenative", "deploy mode native markets").setAction(async (taskArgs, { run }) => {
   const symbols = [
     // { symbol: assetSymbols.WETH, cf: "82.5" },
@@ -284,4 +301,47 @@ task("market:deploy", "deploy market")
         throw `Failed to deploy market for ${config.underlying}`;
       }
     }
+  });
+
+task("deploy:mock", "Deploys a mock ERC20 token")
+  .addParam("name", "The name of the token")
+  .addParam("symbol", "The symbol of the token")
+  .addParam("addr", "address to receive the tokens")
+  .addParam("amount", "number of tokens to add")
+  .addParam("decimals", "The number of decimals", "18", types.string) // Default to 18 decimals
+  .setAction(async ({ name, symbol, decimals, addr, amount }, { ethers }) => {
+    const MockERC20 = await ethers.getContractFactory("MockERC20");
+    const mockERC20 = await MockERC20.deploy(name, symbol, decimals);
+    await mockERC20.deployed();
+    await mockERC20.mint(addr, ethers.utils.parseUnits(amount, decimals));
+    console.log(`MockERC20 deployed to: ${mockERC20.address}`);
+  });
+
+task("mintToken", "Mints tokens to a specified address")
+  .addParam("token", "The address of the token contract")
+  .addParam("to", "The address that will receive the tokens")
+  .addParam("amount", "The amount of tokens to mint")
+  .setAction(async (taskArgs, { ethers }) => {
+    const tokenAddress = taskArgs.token;
+    const toAddress = taskArgs.to;
+    const amount = taskArgs.amount;
+
+    // Get the signer to send transactions
+    const [signer] = await ethers.getSigners();
+
+    // Create a new contract instance with the signer
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      [
+        // ABI for the mint function
+        "function mint(address _account, uint256 _amount) public"
+      ],
+      signer
+    );
+
+    // Call the mint function
+    const transactionResponse = await tokenContract.mint(toAddress, amount);
+    await transactionResponse.wait();
+
+    console.log(`Tokens minted: ${amount} to ${toAddress}`);
   });

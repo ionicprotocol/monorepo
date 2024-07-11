@@ -3,7 +3,8 @@ import {
   bob,
   chainIdToConfig,
   mode,
-  optimism
+  optimism,
+  sepolia
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -84,7 +85,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets,
-  [SupportedChains.bob]: bob.assets
+  [SupportedChains.bob]: bob.assets,
+  [SupportedChains.optimism_sepolia]: sepolia.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
