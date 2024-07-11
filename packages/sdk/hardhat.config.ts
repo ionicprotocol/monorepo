@@ -103,6 +103,86 @@ const config: HardhatUserConfig = {
       gas: 7500000,
       url: "http://localhost:8545"
     },
+    localbsc: {
+      accounts: { mnemonic },
+      chainId: 56,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8545"
+    },
+    localchapel: {
+      accounts: { mnemonic },
+      chainId: 97,
+      gas: 25e6,
+      gasPrice: 21e10,
+      url: "http://localhost:8547"
+    },
+    localeth: {
+      accounts: { mnemonic },
+      chainId: 1,
+      gasPrice: 21e9,
+      initialBaseFeePerGas: 21e9,
+      url: "http://localhost:8545"
+    },
+    localpolygon: {
+      accounts: { mnemonic },
+      chainId: 137,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8546"
+    },
+    localarbitrum: {
+      accounts: { mnemonic },
+      chainId: 42161,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8548"
+    },
+    bsc: {
+      accounts: { mnemonic },
+      chainId: 56,
+      url: OVERRIDE_RPC_URL || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/"
+    },
+    chapel: {
+      accounts: { mnemonic },
+      chainId: 97,
+      url: OVERRIDE_RPC_URL || "https://data-seed-prebsc-1-s1.binance.org:8545/"
+    },
+    ethereum: {
+      accounts: { mnemonic },
+      chainId: 1,
+      url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth"
+    },
+    neon: {
+      accounts: { mnemonic },
+      url: OVERRIDE_RPC_URL || `https://neon-proxy-mainnet.solana.p2p.org`,
+      chainId: 245022934
+    },
+    polygon: {
+      url: OVERRIDE_RPC_URL || `https://polygon-mainnet.g.alchemy.com/v2/tldbE3dxJ4U5mH6aBYL3HhJAwwPWKVWw`,
+      accounts: { mnemonic },
+      chainId: 137
+    },
+    arbitrum: {
+      url: OVERRIDE_RPC_URL || `https://arb1.arbitrum.io/rpc`,
+      accounts: { mnemonic },
+      chainId: 42161
+    },
+    linea: {
+      url: OVERRIDE_RPC_URL || `https://linea-mainnet.infura.io/v3/`,
+      accounts: { mnemonic },
+      chainId: 59144
+    },
+    zkevm: {
+      url: OVERRIDE_RPC_URL || `https://zkevm-rpc.com`,
+      accounts: { mnemonic },
+      chainId: 1101
+    },
+    optimismSepolia: {
+      url: "https://opt-sepolia.g.alchemy.com/v2/kICdxhU4AsrkVaVnMBSszuDX309P9pMM",
+      accounts: [process.env.OPTIMISM_PK || "", process.env.BORROWER_PK || "", process.env.BORROWER_PK2 || ""],
+      chainId: 11155420
+    },
     mode: {
       url: OVERRIDE_RPC_URL || `https://mainnet.mode.network/`,
       accounts: { mnemonic },

@@ -143,6 +143,24 @@ export const configureIonicLiquidator = async ({
   } else {
     console.log("no redemption strategies for whitelisting");
   }
+
+  const poolLens = await ethers.getContract("PoolLens", deployer);
+  const healthFactorThreshold = ethers.utils.parseEther("1");
+  const expressRelay = chainIdToConfig[chainId].chainAddresses.EXPRESS_RELAY;
+
+  const lensTx = await ionicLiquidator.setPoolLens(poolLens.address);
+  await lensTx.wait();
+  console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx.hash}`);
+
+  if (expressRelay) {
+    const relayTx = await ionicLiquidator.setExpressRelay(expressRelay);
+    await relayTx.wait();
+    console.log(`Express Relay Set To ${expressRelay} at ${relayTx.hash}`);
+  }
+
+  const hfTx = await ionicLiquidator.setHealthFactorThreshold(healthFactorThreshold);
+  await hfTx.wait();
+  console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx.hash}`);
 };
 
 export const configureAddressesProviderAddresses = async ({
