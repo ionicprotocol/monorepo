@@ -17,13 +17,6 @@ resource "aws_ecs_task_definition" "my_task_definition" {
     {
       name      = var.container_name
       image     = "${var.docker_image}:latest"
-      portMappings = [
-        {
-          containerPort = var.container_port
-          hostPort      = var.host_port
-          protocol      = "tcp"
-        }
-      ]
       essential = true
     }
   ])
