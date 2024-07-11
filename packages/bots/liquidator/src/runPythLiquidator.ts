@@ -10,6 +10,10 @@ import { logger } from "./logger";
 import { Liquidator } from "./services";
 import { setUpSdk } from "./utils";
 
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 (async function () {
   const chainId: number = config.chainId;
   const chainName: string = config.chainName;
@@ -94,7 +98,7 @@ import { setUpSdk } from "./utils";
       } catch (error) {
         console.error("Failed to submit opportunity:", {
           error,
-          opportunity,
+          opportunity: JSON.stringify(opportunity, null, 2),
           blockNumber: await provider.getBlockNumber(),
         });
       }
