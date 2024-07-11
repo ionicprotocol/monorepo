@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.3.0",
+  "packageManager": "yarn@4.3.1",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -10,6 +10,7 @@
     "packages/monitors/liquidity",
     "packages/chains",
     "packages/sdk",
+    "packages/sdk/lib/contracts",
     "packages/security",
     "packages/types",
     "packages/ui"

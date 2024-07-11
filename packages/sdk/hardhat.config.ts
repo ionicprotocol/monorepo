@@ -103,6 +103,11 @@ const config: HardhatUserConfig = {
       gas: 7500000,
       url: "http://localhost:8545"
     },
+    optimismSepolia: {
+      url: "https://opt-sepolia.g.alchemy.com/v2/kICdxhU4AsrkVaVnMBSszuDX309P9pMM",
+      accounts: [process.env.OPTIMISM_PK || process.env.DEPLOYER || ""],
+      chainId: 11155420
+    },
     mode: {
       url: OVERRIDE_RPC_URL || `https://mainnet.mode.network/`,
       accounts: { mnemonic },

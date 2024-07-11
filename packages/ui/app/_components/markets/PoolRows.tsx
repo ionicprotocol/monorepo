@@ -166,6 +166,7 @@ const PoolRows = ({
             querychain === '34443' &&
             (asset.toLowerCase() === 'usdc' ||
               asset.toLowerCase() === 'weth' ||
+              asset.toLowerCase() === 'stone' ||
               asset.toLowerCase() === 'ezeth') && (
               <a
                 className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
@@ -219,6 +220,7 @@ const PoolRows = ({
                   querychain === '34443' &&
                   (asset.toLowerCase() === 'usdc' ||
                     asset.toLowerCase() === 'weth' ||
+                    asset.toLowerCase() === 'stone' ||
                     asset.toLowerCase() === 'ezeth') && (
                     <a
                       href="https://jumper.exchange/superfest/"

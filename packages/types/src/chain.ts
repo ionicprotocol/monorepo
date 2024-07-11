@@ -99,6 +99,7 @@ export type ChainAddresses = {
   GAMMA_ALGEBRA_UNI_PROXY?: string;
   GAMMA_UNISWAP_V3_SWAP_ROUTER?: string;
   GAMMA_UNISWAP_V3_UNI_PROXY?: string;
+  EXPRESS_RELAY?: string;
 };
 
 export type ChainSupportedAssets = {

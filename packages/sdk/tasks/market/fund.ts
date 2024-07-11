@@ -1,10 +1,11 @@
-import { bsc, polygon } from "@ionicprotocol/chains";
+import { bsc, polygon, sepolia } from "@ionicprotocol/chains";
 import { assetFilter } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets
+  [polygon.chainId]: polygon.assets,
+  [sepolia.chainId]: sepolia.assets
 };
 
 task("fund:mint", "deploy dynamic rewards plugin with flywheels")
