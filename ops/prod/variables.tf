@@ -103,17 +103,43 @@ variable "memory" {
   type        = string
 }
 
-variable "subnets" {
-  description = "A list of subnet IDs for the ECS service"
-  type        = list(string)
-}
-
-variable "security_groups" {
-  description = "A list of security group IDs for the ECS service"
-  type        = list(string)
-}
 
 variable "desired_count" {
   description = "The desired number of ECS service instances"
   type        = number
+}
+
+
+variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+
+variable "task_definition_family" {
+  description = "Family name of the task definition"
+  type        = string
+}
+
+
+variable "docker_image" {
+  description = "Docker image URL to deploy"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "List of subnet IDs where ECS tasks can be launched"
+  type        = list(string)
+}
+
+variable "security_group_ids" {
+  description = "List of security group IDs for ECS tasks"
+  type        = list(string)
+}
+
+variable "autoscaling_group_name" {
+  description = "Name of the Autoscaling Group to reference for ECS capacity provider"
+  type        = string
+}
+variable "ecs_service_name"{
+  
 }
