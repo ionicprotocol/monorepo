@@ -79,18 +79,6 @@ variable "container_name" {
   type        = string
 }
 
-variable "container_port" {
-  description = "The port the container will listen on"
-  type        = number
-}
-
-variable "host_port" {
-  description = "The port the host will listen on"
-  type        = number
-}
-
-
-
 
 variable "desired_count" {
   description = "The desired number of ECS service instances"
