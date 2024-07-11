@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "my_cluster" {
 }
 
 # ECS Task Definition
-resource "aws_ecs_task_definition" "my_task_definition" {
+resource "aws_ecs_task_definition" "perbotTaskDefinition" {
   family                   = var.task_definition_family
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -16,7 +16,7 @@ resource "aws_ecs_task_definition" "my_task_definition" {
   container_definitions = jsonencode([
     {
       name      = var.container_name
-      image     = var.docker_image
+      image     = 058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth:${var.bots_image_tag}
       essential = true
     }
   ])
