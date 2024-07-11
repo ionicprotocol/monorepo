@@ -73,10 +73,6 @@ variable "ecs_cluster_name" {
   type        = string
 }
 
-variable "task_family" {
-  description = "The family name of the ECS task definition"
-  type        = string
-}
 
 variable "container_name" {
   description = "The name of the container"
@@ -93,15 +89,7 @@ variable "host_port" {
   type        = number
 }
 
-variable "cpu" {
-  description = "The amount of CPU units to allocate to the task"
-  type        = string
-}
 
-variable "memory" {
-  description = "The amount of memory (in MiB) to allocate to the task"
-  type        = string
-}
 
 
 variable "desired_count" {
@@ -141,5 +129,5 @@ variable "autoscaling_group_name" {
   type        = string
 }
 variable "ecs_service_name"{
-  
+
 }
