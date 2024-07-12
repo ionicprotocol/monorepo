@@ -9,6 +9,7 @@ export enum SupportedChains {
   linea = 59144,
   zkevm = 1101,
   mode = 34443,
+  optimism_sepolia = 11155420,
   base = 8453,
   optimism = 10
 }

@@ -58,3 +58,64 @@ variable "uptime_liquidator_api" {
 variable "uptime_pyth_updater_api" {
   type = string
 }
+
+
+
+
+
+variable "ecr_repository_name" {
+  description = "The name of the ECR repository"
+  type        = string
+}
+
+variable "ecs_cluster_name" {
+  description = "The name of the ECS cluster"
+  type        = string
+}
+
+
+variable "container_name" {
+  description = "The name of the container"
+  type        = string
+}
+
+
+variable "desired_count" {
+  description = "The desired number of ECS service instances"
+  type        = number
+}
+
+
+variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+
+variable "task_definition_family" {
+  description = "Family name of the task definition"
+  type        = string
+}
+
+
+variable "docker_image" {
+  description = "Docker image URL to deploy"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "List of subnet IDs where ECS tasks can be launched"
+  type        = list(string)
+}
+
+variable "security_group_ids" {
+  description = "List of security group IDs for ECS tasks"
+  type        = list(string)
+}
+
+variable "autoscaling_group_name" {
+  description = "Name of the Autoscaling Group to reference for ECS capacity provider"
+  type        = string
+}
+variable "ecs_service_name"{
+
+}

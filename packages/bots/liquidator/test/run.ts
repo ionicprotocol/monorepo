@@ -8,12 +8,13 @@ import { setUpSdk } from "../src/utils";
 (async function () {
   const chainId: number = config.chainId;
   const provider = new JsonRpcProvider(config.rpcUrl);
+
   const ionicSdk = setUpSdk(chainId, provider);
 
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
   const liquidator = new Liquidator(ionicSdk);
-  const liquidatablePools = await liquidator.fetchLiquidations();
+  const liquidatablePools = await liquidator.fetchLiquidations(1);
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
 
