@@ -2,6 +2,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useState, useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
@@ -11,17 +12,29 @@ interface IMaxDeposit {
   token?: `0x${string}`;
   handleInput?: (val?: string) => void;
   fetchOwn?: boolean;
+  headerText?: string;
+  max?: string;
 }
+
+interface IBal {
+  decimals: number;
+  value: bigint;
+}
+
 function MaxDeposit({
+  headerText = 'Deposit',
   amount,
   tokenName = 'eth',
   token,
   handleInput,
-  fetchOwn = false
+  fetchOwn = false,
+  max = ''
 }: IMaxDeposit) {
+  const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
   const hooktoken =
     token === '0x0000000000000000000000000000000000000000' ? undefined : token;
+
   const { data } = useBalance({
     address,
     token: hooktoken,
@@ -30,11 +43,18 @@ function MaxDeposit({
     }
   });
 
+  useMemo(() => {
+    if (max) {
+      setBal({ value: BigInt(+max * 10 ** 18), decimals: 18 });
+    } else {
+      data && setBal({ value: data?.value, decimals: data?.decimals });
+    }
+  }, [data, max]);
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
-      data &&
-      Number(e.target.value) > Number(formatUnits(data?.value, data?.decimals))
+      bal &&
+      Number(e.target.value) > Number(formatUnits(bal?.value, bal?.decimals))
     )
       return;
     if (!handleInput) return;
@@ -51,22 +71,23 @@ function MaxDeposit({
           !fetchOwn ? 'flex' : 'hidden'
         }`}
       >
-        <span> Deposit </span>
+        <span>{headerText}</span>
         <div>
           {' '}
           {tokenName.toUpperCase()} Balance :{' '}
-          {data
-            ? parseFloat(
-                formatUnits(data?.value, data?.decimals)
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 3
-              })
-            : '0'}
+          {bal
+            ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
+                'en-US',
+                {
+                  maximumFractionDigits: 3
+                }
+              )
+            : max}
           {handleInput && (
             <button
               className={`text-accent ml-2`}
               onClick={() =>
-                handleMax(data ? formatUnits(data?.value, data?.decimals) : '0')
+                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max)
               }
             >
               MAX
@@ -81,9 +102,9 @@ function MaxDeposit({
           type="number"
           value={
             fetchOwn
-              ? data &&
+              ? bal &&
                 parseFloat(
-                  formatUnits(data?.value, data?.decimals)
+                  formatUnits(bal?.value, bal?.decimals)
                 ).toLocaleString('en-US', {
                   maximumFractionDigits: 3
                 })
