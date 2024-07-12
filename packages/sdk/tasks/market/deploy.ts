@@ -215,6 +215,25 @@ task("markets:deploy:bob:main", "deploy bob main market").setAction(async (_, { 
   }
 });
 
+task("market:set-caps:bob:main", "Sets caps on a market").setAction(async (_, { ethers, run }) => {
+  const COMPTROLLER = "0x9cFEe81970AA10CC593B83fB96eAA9880a6DF715";
+  for (const asset of bobAssets) {
+    const pool = (await ethers.getContractAt("IonicComptroller", COMPTROLLER)) as IonicComptroller;
+    const cToken = await pool.cTokensByUnderlying(asset.underlying);
+    console.log("cToken: ", cToken, asset.symbol);
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
+  }
+});
+
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
   .addParam("cf", "Collateral factor", "80", types.string)
