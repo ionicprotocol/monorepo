@@ -685,7 +685,6 @@ export default function Points() {
               </ResultHandler>
             </div>
             {leaderboard &&
-              //@ts-ignore
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               leaderboard.map((val: any, idx) => (
                 <div
@@ -695,7 +694,7 @@ export default function Points() {
                   key={idx}
                 >
                   <div className={``}>
-                    <span className={``}>{val.rank}</span>
+                    <span className={``}>{val?.rank}</span>
                   </div>
                   <div
                     className={`col-span-2 cursor-pointer hover:text-blue-600`}
@@ -704,13 +703,13 @@ export default function Points() {
                       href={`https://modescan.io/address/${val.address}`}
                       target="_blank"
                     >
-                      {val.ens ?? val.address}
+                      {val?.ens ?? val.address}
                     </a>
                   </div>
                   <div className={``}>
                     <span className={``}>
-                      {val.points
-                        ? val.points.toLocaleString('en-US', {
+                      {val?.points
+                        ? val?.points.toLocaleString('en-US', {
                             maximumFractionDigits: 0
                           })
                         : 'N/A'}

@@ -2409,6 +2409,7 @@ __metadata:
   resolution: "@ionicprotocol/ui@workspace:packages/ui"
   dependencies:
     "@gasbot/widget": "npm:^0.4.7"
+    "@lifi/sdk": "npm:^3.0.0-alpha.10"
     "@lifi/widget": "npm:^3.0.2"
     "@netlify/plugin-nextjs": "npm:4"
     "@sentry/nextjs": "npm:^7.48.0"
@@ -2583,7 +2584,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lifi/sdk@npm:^3.0.0":
+"@lifi/sdk@npm:^3.0.0, @lifi/sdk@npm:^3.0.0-alpha.10":
   version: 3.0.0
   resolution: "@lifi/sdk@npm:3.0.0"
   dependencies:

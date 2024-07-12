@@ -568,7 +568,13 @@ const PoolRows = ({
         <span className="text-white/40 font-semibold text-center lg:hidden ">
           COLLATERAL FACTOR:
         </span>
-        {collateralFactor}%
+        {collateralFactor}%{' '}
+        {/* <span
+         
+        >
+          {' '}
+          instant{' '}
+        </span> */}
       </h3>
       <div
         className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-[11px] font-semibold my-auto`}

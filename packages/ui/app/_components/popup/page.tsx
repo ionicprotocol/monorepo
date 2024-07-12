@@ -1,20 +1,25 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
+
 import { useQueryClient } from '@tanstack/react-query';
+// import { getConnectorClient } from '@wagmi/core';
 import { utils } from 'ethers';
 import type { BigNumber } from 'ethers';
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils.js';
 import millify from 'millify';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FundOperationMode } from 'types/dist';
+// import { sendTransaction } from 'viem/actions';
 import { useChainId } from 'wagmi';
 
+import InstantSupply from '../markets/InstantSupply';
 import ResultHandler from '../ResultHandler';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
+// import LifiChains from './LifiChains';
 import Loop from './Loop';
 import SliderComponent from './Slider';
 import Tab from './Tab';
@@ -40,6 +45,7 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
+// import { wagmiConfig } from '@ui/utils/connectors';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
@@ -49,7 +55,8 @@ export enum PopupMode {
   WITHDRAW,
   BORROW,
   REPAY,
-  LOOP
+  LOOP,
+  INSTANTSUPPLY
 }
 
 export enum HFPStatus {
@@ -147,6 +154,7 @@ const Popup = ({
   );
   const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
     useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
+  // console.log(maxSupplyAmount);
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -163,11 +171,18 @@ const Popup = ({
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<PopupMode>(mode);
   const slide = useRef<HTMLDivElement>(null!);
-  const [amount, setAmount] = useReducer(
-    (_: string | undefined, value: string | undefined): string | undefined =>
-      value,
-    '0'
-  );
+  // const [amount, setAmount] = useReducer(
+  //   (_: string | undefined, value: string | undefined): string | undefined =>
+  //     value,
+  //   '0'
+  // );
+  const [amount, setAmount] = useState<string>('0');
+  // const [selectedAssetAmount, setSelectedAssetAmount] = useReducer(
+  //   (_: string | undefined, value: string | undefined): string | undefined =>
+  //     value,
+  //   '0'
+  // );
+
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
   const amountAsBInt = useMemo<BigNumber>(
@@ -347,7 +362,7 @@ const Popup = ({
    */
   useEffect(() => {
     switch (active) {
-      case PopupMode.SUPPLY: {
+      case PopupMode.SUPPLY || PopupMode.INSTANTSUPPLY: {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
@@ -419,6 +434,12 @@ const Popup = ({
     switch (active) {
       case PopupMode.SUPPLY:
         slide.current.style.transform = 'translateX(0%)';
+
+        setCurrentFundOperation(FundOperationMode.SUPPLY);
+
+        break;
+      case PopupMode.INSTANTSUPPLY:
+        slide.current.style.transform = 'translateX(-200%)';
 
         setCurrentFundOperation(FundOperationMode.SUPPLY);
 
@@ -562,16 +583,30 @@ const Popup = ({
     });
   };
 
-  const supplyAmount = async () => {
-    if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt.gt('0') &&
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const supplyAmount = async (
+    bypass: boolean = false,
+    amountToSet: string = '0'
+  ) => {
+    // // eslint-disable-next-line no-console
+    // console.log({
+    //   bypass,
+    //   transactionSteps,
+    //   currentSdk,
+    //   address,
+    //   amount,
+    //   amountAsBInt
+    // });
+    const otherChecks =
       maxSupplyAmount &&
-      amountAsBInt.lte(maxSupplyAmount.bigNumber)
-    ) {
+      amountAsBInt.lte(maxSupplyAmount?.bigNumber) &&
+      amount &&
+      amountAsBInt.gt('0');
+    //---------------
+    if (!transactionSteps.length && currentSdk && address) {
+      if (bypass === false && otherChecks === false) return;
+      // eslint-disable-next-line no-console
+      console.log({ amount, amountToSet });
       let currentTransactionStep = 0;
       addStepsForAction([
         {
@@ -596,19 +631,30 @@ const Popup = ({
       ]);
 
       try {
+        const amountForBInt = parseUnits(
+          amountToSet,
+          selectedMarketData.underlyingDecimals
+        );
+        const decidedAmount = amountAsBInt.gt('0')
+          ? amountAsBInt
+          : amountForBInt;
+
+        // eslint-disable-next-line no-console
+        console.log(decidedAmount, selectedMarketData);
+        // everything is correct till here.........................
         const token = currentSdk.getEIP20TokenInstance(
           selectedMarketData.underlyingToken,
           currentSdk.signer
         );
         const hasApprovedEnough = (
           await token.callStatic.allowance(address, selectedMarketData.cToken)
-        ).gte(amountAsBInt);
+        ).gte(decidedAmount);
 
         if (!hasApprovedEnough) {
           const tx = await currentSdk.approve(
             selectedMarketData.cToken,
             selectedMarketData.underlyingToken,
-            amountAsBInt
+            decidedAmount
           );
 
           upsertTransactionStep({
@@ -620,6 +666,8 @@ const Popup = ({
           });
 
           await tx.wait();
+          // eslint-disable-next-line no-console
+          console.log('tx completed from supply');
         }
 
         upsertTransactionStep({
@@ -661,7 +709,7 @@ const Popup = ({
 
         const { tx, errorCode } = await currentSdk.mint(
           selectedMarketData.cToken,
-          amountAsBInt
+          decidedAmount
         );
 
         if (errorCode) {
@@ -702,7 +750,11 @@ const Popup = ({
           }
         });
       }
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('else triggered in supply');
     }
+    //this is getting triggered while running it from the lifi cross chain execution
   };
 
   const withdrawAmount = async () => {
@@ -1104,6 +1156,8 @@ const Popup = ({
   const chain = searchParams.get('chain');
   const pool = searchParams.get('pool');
 
+  //setting up contract ..................
+  //  console.log(selectedMarketData);
   return (
     <>
       <div
@@ -1151,15 +1205,18 @@ const Popup = ({
             className={`w-full transition-all duration-300 ease-linear h-min  flex`}
             ref={slide}
           >
-            {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
+            {(mode === PopupMode.SUPPLY ||
+              mode === PopupMode.WITHDRAW ||
+              mode === PopupMode.INSTANTSUPPLY) && (
               <>
                 {/* ---------------------------------------------------------------------------- */}
                 {/* SUPPLY-Collateral section */}
                 {/* ---------------------------------------------------------------------------- */}
+
                 <div className={`min-w-full py-5 px-[6%] h-min `}>
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     isLoading={isLoadingMaxSupply}
                     max={formatUnits(
                       maxSupplyAmount?.bigNumber ?? '0',
@@ -1322,7 +1379,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText="Max Withdraw"
                     isLoading={isLoadingMaxWithdrawAmount}
                     max={formatUnits(
@@ -1438,6 +1495,19 @@ const Popup = ({
                   </div>
                   {/* <Approved /> */}
                 </div>
+                <div className="min-w-full py-5 px-[6%] h-min flex flex-col items-center justify-center">
+                  <InstantSupply
+                    toToken={selectedMarketData.underlyingToken}
+                    cToken={selectedMarketData?.cToken}
+                  />
+                  {transactionSteps.length > 0 && (
+                    <TransactionStepsHandler
+                      chainId={chainId}
+                      resetTransactionSteps={resetTransactionSteps}
+                      transactionSteps={transactionSteps}
+                    />
+                  )}
+                </div>
               </>
             )}
             {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
@@ -1448,7 +1518,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText="Max Borrow Amount"
                     isLoading={isLoadingMaxBorrowAmount}
                     max={formatUnits(
@@ -1640,7 +1710,7 @@ const Popup = ({
                   {/* ---------------------------------------------------------------------------- */}
                   <Amount
                     amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
+                    handleInput={(val?: string) => setAmount(val as string)}
                     hintText={'Max Repay Amount'}
                     isLoading={isLoadingMaxRepayAmount}
                     max={formatUnits(
@@ -1767,5 +1837,106 @@ supply consist of collateral , withdraw
 manage collateral withdraw borrow repay - default
 */
 
-/* <div className={``}></div>  <p className={``}></p>
-          <p className={``}></p>  colleteralT , borrowingT , lendingT , cAPR , lAPR , bAPR} */
+/* 
+
+ const config = {
+      fromChain: ChainId.ARB,
+      toChain: ChainId.MOD,
+      fromToken: '0x0000000000000000000000000000000000000000',
+      toToken: '0x4200000000000000000000000000000000000006',
+      mintAmount: '2000000000000000', //0.002
+      ionicContractAddress: '0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2' as Address,
+      ionicContractGasLimit: '2500000',
+      ionicContractAbi: [
+        'function mint(uint256 mintAmount) external returns (uint256)'
+        ],
+    }
+
+    const abi = parseAbi(config.ionicContractAbi)
+
+    const mintTxData = encodeFunctionData({
+      abi,
+      functionName: 'mint',
+      args: [
+        config.mintAmount,
+      ],
+    })
+
+    const contractCallsQuoteRequest: ContractCallsQuoteRequest = {
+      fromChain: config.fromChain,
+      fromToken: config.fromToken,
+      fromAddress: account.address,
+      toChain: config.toChain,
+      toToken: config.toToken,
+      toAmount: config.mintAmount,
+      toFallbackAddress: account.address,
+      allowBridges: ['hop', 'across', 'amarok'],
+      integrator: "ionic",
+      contractCalls: [
+        {
+          fromAmount: config.mintAmount,
+          fromTokenAddress: config.toToken,
+          toContractAddress: config.ionicContractAddress,
+          toContractCallData: mintTxData,
+          toContractGasLimit: config.ionicContractGasLimit,
+          toTokenAddress: config.ionicContractAddress
+        },
+      ],
+    }
+    console.info(
+      '>> create ContractCallsQuoteRequest',
+      contractCallsQuoteRequest
+    )
+
+    const contactCallsQuoteResponse = await getContractCallsQuote(
+      contractCallsQuoteRequest
+    )
+    console.info('>> Quote received', contactCallsQuoteResponse)
+
+    if (!(await promptConfirm('Execute Quote?'))) {
+      return
+    }
+
+    await checkTokenAllowance(contactCallsQuoteResponse, account, client)
+
+    console.info(
+      '>> Execute transaction',
+      contactCallsQuoteResponse.transactionRequest
+    )
+
+    const hash = await client.sendTransaction(
+      transformTxRequestToSendTxParams(
+        client.account,
+        contactCallsQuoteResponse.transactionRequest
+      )
+    )
+    console.info('>> Transaction sent', hash)
+
+    const receipt = await client.waitForTransactionReceipt({
+      hash,
+    })
+    console.info('>> Transaction receipt', receipt)
+
+    // wait for execution
+    let result: StatusResponse
+    do {
+      await new Promise((res) => {
+        setTimeout(() => {
+          res(null)
+        }, 5000)
+      })
+
+      result = await getStatus({
+        txHash: receipt.transactionHash,
+        bridge: contactCallsQuoteResponse.tool,
+        fromChain: contactCallsQuoteResponse.action.fromChainId,
+        toChain: contactCallsQuoteResponse.action.toChainId,
+      })
+
+      console.info('>> Status update', result)
+    } while (result.status !== 'DONE' && result.status !== 'FAILED')
+
+    console.info('>> DONE', result)
+
+
+*/
