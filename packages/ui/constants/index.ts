@@ -51,7 +51,8 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'WBTC',
           'USDC',
-          'USDT'
+          'USDT',
+          'weETH'
         ]
       },
       {
