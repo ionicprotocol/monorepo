@@ -265,7 +265,7 @@ export default function Swap({
             <Image
               alt="weth icon"
               height="30"
-              src="/img/symbols/32/color/weth.png"
+              src="/img/symbols/32/color/weth(afteropfest).png"
               width="30"
             />
           </div>
@@ -280,7 +280,7 @@ export default function Swap({
             <Image
               alt="weth icon"
               height="30"
-              src="/img/symbols/32/color/weth.png"
+              src="/img/symbols/32/color/weth(afteropfest).png"
               width="30"
             />
             <div className="mx-1">{' -> '}</div>
