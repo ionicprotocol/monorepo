@@ -209,15 +209,17 @@ export default function Stake() {
   async function removeLiquidity() {
     try {
       const args = {
-        token: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+        token: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
         stable: false,
         liquidity: parseUnits(maxWithdrawl?.ion, 18),
-        amounTokenMin:
-          parseEther(maxWithdrawl?.ion) -
-          (parseEther(maxWithdrawl?.ion) * BigInt(5)) / BigInt(100),
-        amountETHMin: parseUnits(maxWithdrawl?.eth, 18),
+        // amounTokenMin:
+        //   parseEther(maxWithdrawl?.ion) -
+        //   (parseEther(maxWithdrawl?.ion) * BigInt(5)) / BigInt(100),
+        amounTokenMin: parseEther('0'),
+        // amountETHMin: parseUnits(maxWithdrawl?.eth, 18),
+        amountETHMin: parseEther('0'),
         to: address,
-        deadline: Math.floor((Date.now() + 3600000) / 1000)
+        deadline: Math.floor((Date.now() + 3636000) / 1000)
       };
       // console.log(args);
 
@@ -258,8 +260,8 @@ export default function Stake() {
           args.to,
           args.deadline
         ],
-        functionName: 'removeLiquidityETH',
-        value: parseUnits(maxWithdrawl?.eth, 18)
+        functionName: 'removeLiquidityETH'
+        // value: parseUnits(maxWithdrawl?.eth, 18)
       });
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
@@ -419,10 +421,10 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
+            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
           >
             <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
-            <div className={`my-2`}>
+            <div className={`my-3`}>
               <Toggle setActiveToggle={setstep2Toggle} />
             </div>
             {step2Toggle === 'Deposit' && (
@@ -451,7 +453,7 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
-                  tokenName={'ion'}
+                  tokenName={'ion/eth'}
                   token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
                   handleInput={(val?: string) =>
                     setMaxWithdrawl((p) => {
@@ -474,7 +476,7 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent ${
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm text-black w-full bg-accent ${
                 step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -505,7 +507,7 @@ export default function Stake() {
           </div>
 
           <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-6 row-start-3 col-start-1 col-span-1`}
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-5 row-start-3 col-start-1 col-span-1`}
           >
             <h1 className={` text-lg`}>Available to stake</h1>
 
@@ -519,7 +521,7 @@ export default function Stake() {
             className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}
           >
             <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
-            <div className={`my-2`}>
+            <div className={`my-3`}>
               <Toggle
                 setActiveToggle={setstep3Toggle}
                 arrText={['Stake', 'Unstake']}
@@ -595,8 +597,9 @@ export default function Stake() {
                 2x
               </span>
             </div>
+            <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-14 mb-4 text-sm text-black w-full bg-accent ${
+              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm text-black w-full bg-accent ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
