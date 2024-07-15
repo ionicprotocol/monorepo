@@ -14,8 +14,9 @@ import { coinbaseWallet } from 'wagmi/connectors';
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
 import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
+
+import { useStore } from 'ui/store/Store';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
-// import { useStore } from "@/store/Store";
 
 export const config = createConfig({
   chains: [base, mode],
@@ -34,7 +35,7 @@ export const config = createConfig({
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
-
+  const dropChain = useStore((state) => state.dropChain);
   // const signer = useEthersSigner();
 
   // useEffect(()=>{
@@ -46,7 +47,7 @@ export default function Navbar() {
       <DynamicSubNav />
       <Link
         className={`flex items-center  md:pr-10  `}
-        href={'/market'}
+        href={`/market?chain=${dropChain}&pool=0`}
       >
         <img
           alt="logo"
@@ -69,7 +70,7 @@ export default function Navbar() {
         >
           <Link
             className="relative mb-2 md:mb-0"
-            href={'/market'}
+            href={`/market?chain=${dropChain}&pool=0`}
           >
             <p
               className={`${

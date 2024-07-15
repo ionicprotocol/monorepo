@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import { pools } from '@ui/constants/index';
+import { useStore } from 'ui/store/Store';
 interface INetworkSelector {
   chainId?: string;
   dropdownSelectedChain: number;
@@ -21,6 +22,7 @@ export default function NetworkSelector({
   newRef
 }: INetworkSelector) {
   const pathname = usePathname();
+  const setDropChain = useStore((state) => state.setDropChain);
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -56,6 +58,7 @@ export default function NetworkSelector({
               className={`flex justify-between items-center p-2 mb-1 ${network.text} rounded-md ${network.bg}`}
               href={`${pathname}?chain=${chainId}&pool=0`}
               key={idx}
+              onClick={() => setDropChain(chainId)}
             >
               {network.name}{' '}
               {dropdownSelectedChain === +chainId && (
