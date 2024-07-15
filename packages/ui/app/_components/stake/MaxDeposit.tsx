@@ -44,7 +44,6 @@ function MaxDeposit({
   });
 
   useMemo(() => {
-    console.log(max);
     if (max) {
       setBal({ value: BigInt(+max * 10 ** 18), decimals: 18 });
     } else if (max == '0') {
