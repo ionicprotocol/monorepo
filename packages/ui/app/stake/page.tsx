@@ -209,7 +209,7 @@ export default function Stake() {
   async function removeLiquidity() {
     try {
       const args = {
-        token: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
+        token: '0xC6A394952c097004F83d2dfB61715d245A38735a',
         stable: false,
         liquidity: parseUnits(maxWithdrawl?.ion, 18),
         amounTokenMin:
@@ -232,7 +232,7 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
+        address: '0xC6A394952c097004F83d2dfB61715d245A38735a',
         args: [LiquidityContractAddress, args.liquidity],
         functionName: 'approve'
       });
