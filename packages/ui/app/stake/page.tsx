@@ -106,6 +106,10 @@ export default function Stake() {
         step3Loading
           ? setAllStakedAmount(formatEther(getStakedTokens))
           : setAllStakedAmount(formatEther(getStakedTokens));
+      } else {
+        step3Loading
+          ? setAllStakedAmount(formatEther(getStakedTokens))
+          : setAllStakedAmount(formatEther(getStakedTokens));
       }
       // return gettingReserves;
       // const quoteLiquidity = await publicClient?.readContract({
