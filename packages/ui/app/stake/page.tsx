@@ -84,6 +84,17 @@ export default function Stake() {
           return { ...p, eth: '' };
         });
       }
+      if (maxWithdrawl.ion && reserves) {
+        const ethVal =
+          (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
+        setMaxWithdrawl((p) => {
+          return { ...p, eth: formatEther(ethVal) || '' };
+        });
+      } else {
+        setMaxWithdrawl((p) => {
+          return { ...p, eth: '' };
+        });
+      }
 
       const getStakedTokens = (await publicClient?.readContract({
         abi: StakingContractAbi,
@@ -113,7 +124,7 @@ export default function Stake() {
       // eslint-disable-next-line no-console
       console.log(err);
     }
-  }, [address, maxDeposit.ion, publicClient, step3Loading]);
+  }, [address, maxDeposit.ion, maxWithdrawl.ion, publicClient, step3Loading]);
 
   async function addLiquidity() {
     try {
@@ -198,7 +209,7 @@ export default function Stake() {
   async function removeLiquidity() {
     try {
       const args = {
-        token: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+        token: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
         stable: false,
         liquidity: parseUnits(maxWithdrawl?.ion, 18),
         amounTokenMin:
@@ -208,6 +219,7 @@ export default function Stake() {
         to: address,
         deadline: Math.floor((Date.now() + 3600000) / 1000)
       };
+      // console.log(args);
 
       if (!isConnected) {
         console.error('Not connected');
@@ -217,21 +229,21 @@ export default function Stake() {
       if (!switched) return;
       //approving first ...
 
-      // const approval = await walletClient!.writeContract({
-      //   abi: erc20Abi,
-      //   account: walletClient?.account,
-      //   address: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
-      //   args: [LiquidityContractAddress, args.amountTokenDesired],
-      //   functionName: 'approve'
-      // });
+      const approval = await walletClient!.writeContract({
+        abi: erc20Abi,
+        account: walletClient?.account,
+        address: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
+        args: [LiquidityContractAddress, args.liquidity],
+        functionName: 'approve'
+      });
       setStep2Loading(true);
       // console.log(approval);
 
-      // const appr = await publicClient?.waitForTransactionReceipt({
-      //   hash: approval
-      // });
-      // // eslint-disable-next-line no-console
-      // console.log({ appr });
+      const appr = await publicClient?.waitForTransactionReceipt({
+        hash: approval
+      });
+      // eslint-disable-next-line no-console
+      console.log({ appr });
 
       const tx = await walletClient!.writeContract({
         abi: LiquidityContractAbi,
@@ -451,8 +463,8 @@ export default function Stake() {
                   headerText={step2Toggle}
                   amount={maxWithdrawl.eth}
                   tokenName={'eth'}
-                  // token={'0x0000000000000000000000000000000000000000'}
-                  max="0"
+                  token={'0x0000000000000000000000000000000000000000'}
+                  // max="0"
                 />
               </>
             )}
