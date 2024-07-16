@@ -70,7 +70,7 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC),
-    initialSupplyCap: parseUnits(String(100), 8).toString(),
+    initialSupplyCap: parseUnits(String(100), 18).toString(),
     initialBorrowCap: "1",
     initialCf: "0"
   },
