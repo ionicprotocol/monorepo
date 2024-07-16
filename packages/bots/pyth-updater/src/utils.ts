@@ -83,7 +83,7 @@ export const setUpSdk = (
   publicClient: PublicClient,
   walletClient: WalletClient,
 ) => {
-  return new IonicSdk(publicClient, walletClient, chainIdToConfig[chainId], logger);
+  return new IonicSdk(publicClient as any, walletClient as any, chainIdToConfig[chainId], logger);
 };
 
 export const priceFeedNeedsUpdate = (sdk: IonicSdk, assetConfig: AssetConfigWithPrice): boolean => {
