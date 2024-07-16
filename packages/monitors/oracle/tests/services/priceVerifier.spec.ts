@@ -16,7 +16,7 @@ describe("Price verifier", () => {
   let sdk: IonicSdk;
   let env: Record<string, string | undefined>;
 
-  const chainConfig = chainIdToConfig[SupportedChains.bsc];
+  const chainConfig = chainIdToConfig[SupportedChains.mode];
   const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
   const assets = chainConfig.assets.filter((x) => assetsToTest.some((y) => y === x.symbol));
   const config = configs[Services.PriceVerifier];
@@ -25,8 +25,8 @@ describe("Price verifier", () => {
     env = process.env;
     process.env = { ...process.env, SERVICE_TO_RUN: "price-verifier" };
 
-    const signer = getSigner(SupportedChains.bsc);
-    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.bsc]);
+    const signer = getSigner(SupportedChains.mode);
+    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.mode]);
     priceVerifier = new PriceVerifier(sdk, assets[0], config);
   });
   afterEach(function () {

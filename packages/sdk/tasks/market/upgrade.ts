@@ -1,9 +1,7 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegator } from "../../typechain/CErc20Delegator";
-import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
-import { ICErc20Plugin } from "../../typechain/CTokenInterfaces.sol/ICErc20Plugin";
+import { ICErc20PluginRewards, CErc20Delegator, CTokenFirstExtension, ICErc20Plugin } from "../../typechain";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
@@ -27,7 +25,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const cTokenInstances = allMarkets.map((marketAddress) => sdk.createICErc20PluginRewards(marketAddress, signer));
 
-    let cTokenInstance = undefined;
+    let cTokenInstance: ICErc20PluginRewards | undefined;
 
     for (let index = 0; index < cTokenInstances.length; index++) {
       const thisUnderlying = await cTokenInstances[index].callStatic.underlying();

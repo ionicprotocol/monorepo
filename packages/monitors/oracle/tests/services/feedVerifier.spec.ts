@@ -15,15 +15,15 @@ describe("Feed verifier", () => {
   let feedVerifier: FeedVerifier;
   let sdk: IonicSdk;
 
-  const chainConfig = chainIdToConfig[SupportedChains.bsc];
+  const chainConfig = chainIdToConfig[SupportedChains.mode];
   const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
   const assets = chainConfig.assets.filter((x) => assetsToTest.some((y) => y === x.symbol));
   // @ts-ignore
   const config = configs[Services.FeedVerifier];
 
   beforeEach(() => {
-    const signer = getSigner(SupportedChains.bsc);
-    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.bsc]);
+    const signer = getSigner(SupportedChains.mode);
+    sdk = new IonicSdk(signer, chainIdToConfig[SupportedChains.mode]);
     feedVerifier = new FeedVerifier(sdk, assets[0], config);
   });
   afterEach(function () {

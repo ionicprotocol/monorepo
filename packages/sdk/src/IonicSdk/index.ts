@@ -140,13 +140,16 @@ export class IonicBase {
         PoolLensSecondaryArtifact.abi,
         this.provider
       ) as PoolLensSecondary,
-      IonicLiquidator: new Contract(
-        this.chainId == 34443
-          ? this.chainDeployment.IonicUniV3Liquidator.address
-          : this.chainDeployment.IonicLiquidator.address,
-        IonicLiquidatorArtifact.abi,
-        this.provider
-      ) as ILiquidator,
+      IonicLiquidator:
+        this.chainId === 60808
+          ? ({} as ILiquidator) // TODO
+          : (new Contract(
+              this.chainId == 34443
+                ? this.chainDeployment.IonicUniV3Liquidator.address
+                : this.chainDeployment.IonicLiquidator.address,
+              IonicLiquidatorArtifact.abi,
+              this.provider
+            ) as ILiquidator),
       FeeDistributor: new Contract(
         this.chainDeployment.FeeDistributor.address,
         FeeDistributorArtifact.abi,

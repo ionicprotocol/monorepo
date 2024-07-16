@@ -17,7 +17,7 @@ export async function runVerifier(sdk: IonicSdk, service: Services, assetsOverri
 }
 
 (async function () {
-  const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
+  const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.mode;
   const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
   const ionicSdk = setUpSdk(chainId, signer);

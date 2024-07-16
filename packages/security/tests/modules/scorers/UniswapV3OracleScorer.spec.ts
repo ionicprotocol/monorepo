@@ -9,11 +9,7 @@ describe("Oracle", () => {
   let oracleArbitrum: InstanceType<typeof UniswapV3OracleScorer>;
   let securityBase: SecurityBase;
 
-  beforeEach(() => {
-    const provider = getProvider(SupportedChains.arbitrum);
-    oracleArbitrum = new UniswapV3OracleScorer(SupportedChains.arbitrum, provider);
-    securityBase = new SecurityBase(SupportedChains.arbitrum, provider);
-  });
+  beforeEach(() => {});
 
   describe("getOracleRating", () => {
     // it("should fetch oracle rating for bsc", async () => {

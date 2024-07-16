@@ -112,6 +112,10 @@
   background: #df1515;
 }
 
+.bg-bob {
+  background: #e56016;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -126,6 +130,10 @@
 
 .border-optimism {
   border-color: #df1515;
+}
+
+.border-bob {
+  border-color: #e56016;
 }
 
 .text-xxs {

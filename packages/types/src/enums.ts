@@ -1,17 +1,9 @@
 export enum SupportedChains {
-  ethereum = 1,
-  bsc = 56,
-  chapel = 97,
-  ganache = 1337,
-  neon = 245022934,
-  polygon = 137,
-  arbitrum = 42161,
-  linea = 59144,
-  zkevm = 1101,
   mode = 34443,
   optimism_sepolia = 11155420,
   base = 8453,
-  optimism = 10
+  optimism = 10,
+  bob = 60808
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -216,6 +208,10 @@ export enum assetSymbols {
   // optimism
   OP = "OP",
   LUSD = "LUSD",
+
+  // bob
+  tBTC = "tBTC",
+  SOV = "SOV",
 
   // legacy
   DAI = "DAI",

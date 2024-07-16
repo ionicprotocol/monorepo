@@ -47,12 +47,8 @@ interface CurveGaugeResponse {
 }
 
 class CurveAPYProvider extends AbstractPluginAPYProvider {
-  static apyEndpoints: Partial<Record<SupportedChains, string>> = {
-    [SupportedChains.polygon]: 'https://api.curve.fi/api/getFactoryAPYs-polygon',
-  };
-  static gaugeEndpoints: Partial<Record<SupportedChains, string>> = {
-    [SupportedChains.polygon]: 'https://api.curve.fi/api/getFactoGauges/polygon',
-  };
+  static apyEndpoints: Partial<Record<SupportedChains, string>> = {};
+  static gaugeEndpoints: Partial<Record<SupportedChains, string>> = {};
 
   private curveAPYs: CurveAPYs | undefined;
   private gaugeRewards: GaugeRewards | undefined;
@@ -102,7 +98,7 @@ class CurveAPYProvider extends AbstractPluginAPYProvider {
     if (apy === undefined) {
       await functionsAlert(
         `CurveAPYProvider: ${lpToken}`,
-        `Curve Vault: "${lpToken}" not included in Curve APY data`
+        `Curve Vault: "${lpToken}" not included in Curve APY data`,
       );
       throw `Curve Vault: "${lpToken}" not included in Curve APY data`;
     }
@@ -130,8 +126,8 @@ class CurveAPYProvider extends AbstractPluginAPYProvider {
                 updated_at: new Date().toISOString(),
                 token: extraReward.tokenAddress,
                 flywheel: pluginData.flywheel,
-              } as PluginWithFlywheelReward)
-          )
+              }) as PluginWithFlywheelReward,
+          ),
         );
       }
     } else {

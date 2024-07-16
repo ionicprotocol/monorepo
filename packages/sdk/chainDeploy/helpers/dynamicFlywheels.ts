@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
-import { FuseFlywheelDeployFnParams } from "..";
-import { IonicFlywheel } from "../../typechain/IonicFlywheel";
+import { IonicFlywheel } from "../../typechain";
+import { FuseFlywheelDeployFnParams } from "../helpers/types";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,

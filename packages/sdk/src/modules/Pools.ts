@@ -1,18 +1,4 @@
-import {
-  arbitrum,
-  base,
-  bsc,
-  chapel,
-  ethereum,
-  ganache,
-  linea,
-  mode,
-  neon,
-  optimism,
-  polygon,
-  sepolia,
-  zkevm
-} from "@ionicprotocol/chains";
+import { base, bob, mode, optimism, sepolia } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -37,19 +23,11 @@ export type LensPoolsWithData = [
 ];
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.neon]: neon.assets,
-  [SupportedChains.arbitrum]: arbitrum.assets,
-  [SupportedChains.linea]: linea.assets,
-  [SupportedChains.ethereum]: ethereum.assets,
-  [SupportedChains.zkevm]: zkevm.assets,
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.base]: base.assets,
-  [SupportedChains.optimism]: optimism.assets
+  [SupportedChains.optimism]: optimism.assets,
+  [SupportedChains.bob]: bob.assets
 };
 
 export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
@@ -251,10 +229,6 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
     }
 
     async isAuth(pool: string, market: string, role: Roles, user: string) {
-      if (this.chainId === SupportedChains.neon) {
-        return true;
-      }
-
       const authRegistry = this.createAuthoritiesRegistry();
       const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
 
