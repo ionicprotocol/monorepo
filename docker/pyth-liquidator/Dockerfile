@@ -43,7 +43,6 @@ COPY yarn.lock /tmp/build/
 # Install dependencies exactly as in the yarn.lock file - no updates.
 RUN yarn install --inline-builds --mode=skip-build
 
-# ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
