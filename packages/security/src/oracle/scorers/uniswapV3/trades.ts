@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { BigNumber, utils } from "ethers";
+import { formatEther, formatUnits } from "viem";
 
 import { UniswapV3Fetcher } from "../../fetchers";
 
@@ -10,7 +10,7 @@ Decimal.set({ precision: 50 });
 
 // TODO only price target
 export const searchTrade = async (
-  currPrice: BigNumber,
+  currPrice: bigint,
   tokenConfig: UniswapV3AssetConfig,
   ethPrice: number,
   target: Decimal,
@@ -101,7 +101,7 @@ export const searchTrade = async (
 };
 
 export const binarySearchTradeValues = async (
-  currPrice: BigNumber,
+  currPrice: bigint,
   tokenConfig: UniswapV3AssetConfig,
   ethPrice: number,
   target: Decimal,
@@ -114,11 +114,9 @@ export const binarySearchTradeValues = async (
   return { execPump, execDump };
 };
 
-export const getCostOfAttack = (trade: Trade, currPrice: BigNumber, ethPrice: number, token: Token, WETH_ADDRESS) => {
+export const getCostOfAttack = (trade: Trade, currPrice: bigint, ethPrice: number, token: Token, WETH_ADDRESS) => {
   return trade.tokenOut === WETH_ADDRESS
-    ? trade.value - parseFloat(utils.formatEther(trade.amountOut)) * ethPrice
+    ? trade.value - parseFloat(formatEther(trade.amountOut)) * ethPrice
     : trade.value -
-        parseFloat(utils.formatUnits(trade.amountOut, token.decimals)) *
-          parseFloat(formatPrice(currPrice, token)) *
-          ethPrice;
+        parseFloat(formatUnits(trade.amountOut, token.decimals)) * parseFloat(formatPrice(currPrice, token)) * ethPrice;
 };

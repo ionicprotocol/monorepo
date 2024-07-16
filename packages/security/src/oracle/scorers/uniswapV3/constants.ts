@@ -7,13 +7,13 @@ export const MIN_TICK_PRICE = Decimal.pow(1.0001, -887272);
 export const c1e18 = 10n ** 18n;
 export const QUOTER_ABI = [
   "function quoteExactInputSingle(tuple(address tokenIn,address tokenOut,uint256 amountIn,uint24 fee,uint160 sqrtPriceLimitX96) params) public returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)",
-];
+] as const;
 export const UNISWAP_V3_POOL_ABI = [
   "function slot0() external view returns (uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)",
-];
+] as const;
 export const UNISWAP_V3_FACTORY_ABI = [
   "function getPool(address token0, address token1, uint24 fee) public view returns (address)",
-];
+] as const;
 export const TICK_SPACINGS = {
   100: 1,
   500: 10,

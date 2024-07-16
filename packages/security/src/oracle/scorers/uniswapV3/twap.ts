@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { BigNumber, utils } from "ethers";
+import { formatEther } from "viem";
 
 import { UniswapV3AssetConfig } from "./types";
 import { priceToSqrtX96Price } from "./utils";
@@ -10,13 +10,13 @@ export const getPriceImpact = (target: Decimal, currentSqrtX96Price: Decimal) =>
 };
 
 export async function getTwapRatio(
-  currPrice: BigNumber,
+  currPrice: bigint,
   currentSqrtX96Price: Decimal,
   tokenConfig: UniswapV3AssetConfig
 ): Promise<Decimal> {
   const { targetPriceImpact } = tokenConfig;
 
-  const currPriceDecimal = new Decimal(utils.formatEther(currPrice.toString()));
+  const currPriceDecimal = new Decimal(formatEther(currPrice));
   const targetTwapPump = currPriceDecimal.mul(targetPriceImpact.div(100).add(1));
   const targetTwapDump = currPriceDecimal.mul(new Decimal(1).sub(targetPriceImpact.div(100)));
 

@@ -45,7 +45,6 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@ethersproject/providers": "^5.7.1",
     "@ionicprotocol/chains": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@types/node-cache": "^4.2.5",

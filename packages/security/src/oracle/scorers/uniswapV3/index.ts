@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { utils } from "ethers";
+import { formatEther } from "viem";
 
 import { SecurityBaseConstructor } from "../../..";
 import { uniswapV3OracleAssetMappings } from "../../constants";
@@ -12,7 +12,7 @@ import { isInverted } from "./utils";
 
 export function withUniswapV3OracleScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class UniswapV3OracleScorer extends Base {
-    fetcher: UniswapV3Fetcher = new UniswapV3Fetcher(this.chainConfig, this.provider);
+    fetcher: UniswapV3Fetcher = new UniswapV3Fetcher(this.chainConfig, this.publicClient);
 
     async #getPotentialAttack(): Promise<{ pump: Attack; dump: Attack }> {
       const { chainId } = this.chainConfig;
@@ -23,7 +23,7 @@ export function withUniswapV3OracleScorer<TBase extends SecurityBaseConstructor>
       const inverted = isInverted(tokenConfig.token.address, this.fetcher.W_TOKEN);
       tokenConfig.inverted = inverted;
 
-      const { price, sqrtPriceX96 } = await this.fetcher.getSlot0(tokenConfig, this.provider);
+      const { price, sqrtPriceX96 } = await this.fetcher.getSlot0(tokenConfig, this.publicClient);
 
       const targetRatio = await getTwapRatio(price, new Decimal(sqrtPriceX96.toString()), tokenConfig);
       console.log({ targetRatio });
@@ -63,17 +63,17 @@ export function withUniswapV3OracleScorer<TBase extends SecurityBaseConstructor>
       const { pump, dump } = await this.#getPotentialAttack();
       console.log("pump", {
         ...pump,
-        amountIn: utils.formatEther(pump.amountIn),
-        amountOut: utils.formatEther(pump.amountOut),
-        price: utils.formatEther(pump.price),
-        after: utils.formatEther(pump.after),
+        amountIn: formatEther(pump.amountIn),
+        amountOut: formatEther(pump.amountOut),
+        price: formatEther(pump.price),
+        after: formatEther(pump.after),
       });
       console.log("dump", {
         ...dump,
-        amountIn: utils.formatEther(dump.amountIn),
-        amountOut: utils.formatEther(dump.amountOut),
-        price: utils.formatEther(dump.price),
-        after: utils.formatEther(dump.after),
+        amountIn: formatEther(dump.amountIn),
+        amountOut: formatEther(dump.amountOut),
+        price: formatEther(dump.price),
+        after: formatEther(dump.after),
       });
       return [null];
     }
