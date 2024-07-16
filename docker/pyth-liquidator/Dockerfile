@@ -1,11 +1,8 @@
 # Use a Node.js base image with yarn pre-installed
-FROM node:latest
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
-FROM node as build
+FROM node:latest AS base
 
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /tmp/build/
 
 # Install necessary tools and dependencies
 RUN apt-get update && \
@@ -17,24 +14,61 @@ RUN apt-get update && \
 # Install Corepack globally (optional, if needed)
 RUN npm install -g corepack
 
-# Copy the rest of your application code
-COPY . .
+# Copy package.json and yarn.lock to install dependencies
+COPY package*.json yarn.lock ./
 
-RUN curl -L https://foundry.paradigm.xyz | bash && \
-    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup"
+# Install dependencies
+RUN yarn install
+
+# Use Foundry for the build process
+FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 AS foundry
+
+# Final build stage
+FROM base AS build
+COPY .yarn /tmp/build/.yarn/
+COPY .yarnrc.yml /tmp/build/
+
+# required for the checkout process of forge
+COPY .gitmodules .gitmodules
+COPY .git .git
+
+COPY package.json /tmp/build/
+COPY packages/sdk/package.json /tmp/build/packages/sdk/
+COPY packages/types/package.json /tmp/build/packages/types/
+COPY packages/chains/package.json /tmp/build/packages/chains/
+COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
+COPY yarn.lock /tmp/build/
+
+# ----- Install dependencies -----
+# Install dependencies exactly as in the yarn.lock file - no updates.
+RUN yarn install --inline-builds --mode=skip-build
+
+# ----- Copy source and all other files that affect lint, test, build -----
+COPY packages/sdk /tmp/build/packages/sdk
+COPY packages/types /tmp/build/packages/types
+COPY packages/chains /tmp/build/packages/chains
+COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
+
+
 # Install Yarn (optional, if needed)
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 
-# Copy package.json and yarn.lock to install dependencies
-COPY package*.json ./
-COPY yarn.lock ./
-
-# Install dependencies
-RUN yarn install 
-
+# Setup Foundry environment
+COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 # Build the application
-RUN yarn build:deploy:liquidator
+RUN curl -L https://foundry.paradigm.xyz | bash && \
+    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup" && \
+    yarn build:deploy:liquidator
+
+# Use a minimal Node.js runtime image for the final stage
+FROM node:latest AS runtime
+
+# Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Copy the built application from the build stage
+COPY --from=build /tmp/build/ /usr/src/app/
 
 # Run your TypeScript file with ts-node
 CMD ["yarn", "ts-node", "packages/bots/liquidator/src/runPythLiquidator.ts"]
