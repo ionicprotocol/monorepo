@@ -483,9 +483,7 @@ export default function Stake() {
               </>
             )}
             {step2Toggle === 'Withdraw' && (
-              <div
-                className={` flex flex-col items-center justify-center gap-4`}
-              >
+              <>
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
@@ -504,24 +502,28 @@ export default function Stake() {
                   token={'0x0000000000000000000000000000000000000000'}
                   // max="0"
                 /> */}
-                <SliderComponent
-                  currentUtilizationPercentage={Number(utilization.toFixed(0))}
-                  handleUtilization={(val?: number) => {
-                    if (!val) return;
-                    const ionval =
-                      (val / 100) *
-                      Number(
-                        formatUnits(
-                          withdrawalMaxToken?.value as bigint,
-                          withdrawalMaxToken?.decimals as number
-                        )
-                      );
-                    setMaxWithdrawl((p) => {
-                      return { ...p, ion: ionval.toString() || '' };
-                    });
-                  }}
-                />
-              </div>
+                <div className={`my-6 w-[95%] mx-auto  `}>
+                  <SliderComponent
+                    currentUtilizationPercentage={Number(
+                      utilization.toFixed(0)
+                    )}
+                    handleUtilization={(val?: number) => {
+                      if (!val && !isConnected) return;
+                      const ionval =
+                        (Number(val) / 100) *
+                        Number(
+                          formatUnits(
+                            withdrawalMaxToken?.value as bigint,
+                            withdrawalMaxToken?.decimals as number
+                          )
+                        );
+                      setMaxWithdrawl((p) => {
+                        return { ...p, ion: ionval.toString() || '' };
+                      });
+                    }}
+                  />
+                </div>
+              </>
             )}
 
             {/* liner */}
