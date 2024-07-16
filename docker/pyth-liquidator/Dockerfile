@@ -2,7 +2,6 @@
 FROM node:20
 FROM node as build
 
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
