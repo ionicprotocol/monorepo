@@ -25,10 +25,19 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
           "awslogs-stream-prefix" = "ecs"
         }
       }
+      environment = [
+        {
+          name  = "WEB3_HTTP_PROVIDER_URL"
+          value = "https://mainnet.mode.network"
+        },
+        {
+          name  = "TARGET_CHAIN_ID"
+          value = "34443"
+        }
+      ]
     }
   ])
 }
-
 
 # IAM Role for ECS task execution
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -47,12 +56,9 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     ]
   })
   
-  # Example: Attach policies to the role
-  # Replace with actual policies as needed
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
     "arn:aws:iam::aws:policy/AWSOpsWorksCloudWatchLogs"
-
   ]
 }
 
