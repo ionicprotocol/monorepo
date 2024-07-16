@@ -20,8 +20,8 @@ export type InterestRateModelType = JumpRateModel;
 
 export {
   BotType,
-  EncodedLiquidationTx,
-  LiquidatablePool,
-  PythLiquidatablePool,
-  ErroredPool
+  type EncodedLiquidationTx,
+  type LiquidatablePool,
+  type PythLiquidatablePool,
+  type ErroredPool
 } from "./modules/liquidation/utils";
