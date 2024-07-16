@@ -39,8 +39,6 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@ethersproject/contracts": "^5.6.0",
-    "@ethersproject/providers": "^5.6.0",
     "@ionicprotocol/sdk": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@supabase/supabase-js": "^1.35.4",

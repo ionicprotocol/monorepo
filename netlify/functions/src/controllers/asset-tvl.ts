@@ -2,7 +2,6 @@ import { NativePricedIonicAsset, SupportedChains } from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
 import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { Handler } from '@netlify/functions';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { utils } from 'ethers';

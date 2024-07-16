@@ -1,7 +1,7 @@
-import { TransactionResponse } from "@ethersproject/providers";
 import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk";
 import { SupportedChains } from "@ionicprotocol/types";
 import sgMail, { MailDataRequired } from "@sendgrid/mail";
+import { TransactionRequest } from "viem";
 
 import config from "../config";
 import { logger } from "../logger";
@@ -85,7 +85,7 @@ export class EmailService {
       }
     }
   }
-  public async sendLiquidationSuccess(txs: Array<TransactionResponse>, msg: string) {
+  public async sendLiquidationSuccess(txs: Array<TransactionRequest>, msg: string) {
     const message = this.create();
     message.subject = `${txs.length} liquidation(s) succeded`;
     message.text = msg;
