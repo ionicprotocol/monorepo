@@ -2,12 +2,17 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
 import {
   Address,
+  Chain,
   encodeFunctionData,
   getContract,
   GetContractReturnType,
+  HttpTransport,
+  LocalAccount,
   parseAbi,
   PublicClient,
   TransactionReceipt,
+  WalletClient,
+  WalletRpcSchema,
 } from 'viem';
 
 import config from '../config/service';
@@ -31,7 +36,7 @@ export class Updater {
   assetConfigs: PythAssetConfig[] = [];
   pythContract: GetContractReturnType<typeof pythAbi, PublicClient> = {} as GetContractReturnType<
     typeof pythAbi,
-    PublicClient
+    WalletClient<HttpTransport, Chain, LocalAccount<string, Address>, WalletRpcSchema>
   >;
 
   constructor(ionicSdk: IonicSdk) {
@@ -40,8 +45,8 @@ export class Updater {
     this.pythPriceOracle = getContract({
       address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
       abi: pythPriceOracleAbi,
-      client: this.sdk.publicClient,
-    });
+      client: this.sdk.publicClient as any,
+    }) as any;
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
 
@@ -51,8 +56,8 @@ export class Updater {
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
       abi: pythAbi,
-      client: this.sdk.publicClient,
-    });
+      client: this.sdk.publicClient as any,
+    }) as any;
     return this;
   }
 
@@ -64,7 +69,9 @@ export class Updater {
     );
     if (configWithCurrentPrices === undefined) {
       this.sdk.logger.error(
-        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map((a) => a.priceId)}`,
+        `Error fetching current priceFeeds for priceIds: ${this.assetConfigs.map(
+          (a) => a.priceId,
+        )}`,
       );
       return null;
     }
