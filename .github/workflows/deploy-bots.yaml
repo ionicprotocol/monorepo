@@ -58,19 +58,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Initialize
-        run:  git submodule sync --recursive
-      - name: update submodules
-        run:  git submodule update --init --recursive
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
@@ -107,12 +96,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
-      - name: Initialize
-        run: git submodule update --init --recursive
-      - name: update submodules
-        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -155,12 +138,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
-      - name: Initialize
-        run: git submodule update --init --recursive
-      - name: update submodules
-        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -203,12 +180,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: false
-      - name: Initialize
-        run: git submodule update --init --recursive
-      - name: update submodules
-        run: git submodule update --remote --merge  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -252,13 +223,7 @@ jobs:
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: false
-      - name: Initialize
-        run: git submodule update --init --recursive
-      - name: update submodules
-        run: git submodule update --remote --merge  
+      - uses: actions/checkout@v4 
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -317,7 +282,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
