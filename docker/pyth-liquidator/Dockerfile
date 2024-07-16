@@ -69,5 +69,4 @@ WORKDIR /usr/src/app
 # Copy the built application from the build stage
 COPY --from=build /tmp/build/ /usr/src/app/
 
-# Run your TypeScript file with ts-node
 CMD ["yarn", "ts-node", "packages/bots/liquidator/src/runPythLiquidator.ts"]
