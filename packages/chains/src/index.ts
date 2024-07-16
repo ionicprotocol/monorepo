@@ -6,6 +6,8 @@ import { default as bob } from "./bob";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
 
+export { base, bob, mode, optimism };
+
 export const chainIdtoChain: { [chainId: number]: Chain } = {
   [mode.chainId]: vMode,
   [base.chainId]: vBase,
