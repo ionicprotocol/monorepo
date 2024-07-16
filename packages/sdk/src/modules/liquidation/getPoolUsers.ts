@@ -125,7 +125,7 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
     return { user: users[i], collateralValue: r[1], liquidity: r[2], shortfall: r[3] };
   });
   const minimumTransactionCost = await sdk.publicClient.getGasPrice().then((g) => g * 500000n);
-  return results.filter((user) => user.shortfall.gt(minimumTransactionCost));
+  return results.filter((user) => user.shortfall > minimumTransactionCost);
 }
 
 export default async function getAllFusePoolUsers(
