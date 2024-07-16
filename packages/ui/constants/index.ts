@@ -43,14 +43,14 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: [
-          'wrsETH',
-          'ezETH',
-          'weETH.mode',
-          'STONE',
-          'M-BTC',
           'WETH',
-          'WBTC',
           'USDC',
+          'ezETH',
+          'STONE',
+          'wrsETH',
+          'weETH.mode',
+          'M-BTC',
+          'WBTC',
           'USDT',
           'weETH'
         ]
