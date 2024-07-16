@@ -9,7 +9,6 @@
     "packages/monitors/oracle",
     "packages/chains",
     "packages/sdk",
-    "packages/sdk/lib/contracts",
     "packages/security",
     "packages/types",
     "packages/ui"
