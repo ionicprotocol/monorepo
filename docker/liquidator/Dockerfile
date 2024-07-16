@@ -25,10 +25,6 @@ ENV UPTIME_LIQUIDATOR_API=$UPTIME_LIQUIDATOR_API
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
 
-# required for the checkout process of forge
-COPY .gitmodules .gitmodules
-COPY .git .git
-
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
