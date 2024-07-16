@@ -3,15 +3,23 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
+import {
+  erc20Abi,
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits
+} from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
+  useBalance,
   useChainId,
   usePublicClient,
   useWalletClient
 } from 'wagmi';
 
+import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 import Toggle from '../_components/Toggle';
@@ -59,7 +67,29 @@ export default function Stake() {
   //---- unstaking states
   const [allStakedAmount, setAllStakedAmount] = useState<string>('');
   const [maxUnstake, setMaxUnstake] = useState<string>('');
+  const [utilization, setUtilization] = useState<number>(0);
 
+  const { data: withdrawalMaxToken } = useBalance({
+    address,
+    token: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+    query: {
+      refetchInterval: 6000
+    }
+  });
+
+  useMemo(() => {
+    if (!maxWithdrawl.ion && !withdrawalMaxToken) return;
+    const percent =
+      (+maxWithdrawl.ion /
+        Number(
+          formatUnits(
+            withdrawalMaxToken?.value as bigint,
+            withdrawalMaxToken?.decimals as number
+          )
+        )) *
+      100;
+    setUtilization(Number(percent.toFixed(0)));
+  }, [maxWithdrawl.ion, withdrawalMaxToken]);
   useMemo(async () => {
     try {
       const reserves = (await publicClient?.readContract({
@@ -453,7 +483,9 @@ export default function Stake() {
               </>
             )}
             {step2Toggle === 'Withdraw' && (
-              <>
+              <div
+                className={` flex flex-col items-center justify-center gap-4`}
+              >
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
@@ -465,14 +497,31 @@ export default function Stake() {
                     })
                   }
                 />
-                <MaxDeposit
+                {/* <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.eth}
                   tokenName={'eth'}
                   token={'0x0000000000000000000000000000000000000000'}
                   // max="0"
+                /> */}
+                <SliderComponent
+                  currentUtilizationPercentage={Number(utilization.toFixed(0))}
+                  handleUtilization={(val?: number) => {
+                    if (!val) return;
+                    const ionval =
+                      (val / 100) *
+                      Number(
+                        formatUnits(
+                          withdrawalMaxToken?.value as bigint,
+                          withdrawalMaxToken?.decimals as number
+                        )
+                      );
+                    setMaxWithdrawl((p) => {
+                      return { ...p, ion: ionval.toString() || '' };
+                    });
+                  }}
                 />
-              </>
+              </div>
             )}
 
             {/* liner */}
