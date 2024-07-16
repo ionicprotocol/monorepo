@@ -1,6 +1,6 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
-import { BotType, ionicLiquidatorAbi } from "@ionicprotocol/sdk";
+import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
@@ -34,7 +34,7 @@ import { setUpSdk } from "./utils";
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
   const liquidator = new Liquidator(ionicSdk);
-  const liquidatablePools = await liquidator.fetchLiquidations(BotType.Pyth);
+  const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
   const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
@@ -108,7 +108,7 @@ import { setUpSdk } from "./utils";
         console.error("Failed to submit opportunity:", {
           error,
           opportunity: JSON.stringify(opportunity, null, 2),
-          blockNumber: await provider.getBlockNumber(),
+          blockNumber: await publicClient.getBlockNumber(),
         });
       }
     }
