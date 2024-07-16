@@ -1,10 +1,4 @@
-import {
-  base,
-  chainIdToConfig,
-  mode,
-  optimism,
-  sepolia
-} from '@ionicprotocol/chains';
+import { base, chainIdToConfig, mode, optimism } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -56,7 +50,9 @@ export function getBlockTimePerMinuteByChainId(chainId: number): number {
   const chain = chainIdToConfig[chainId];
 
   return chain
-    ? Number(chain.specificParams.blocksPerYear / BigInt(MINUTES_PER_YEAR))
+    ? Number(
+        BigInt(chain.specificParams.blocksPerYear) / BigInt(MINUTES_PER_YEAR)
+      )
     : 0;
 }
 
@@ -81,7 +77,6 @@ export function getEnabledChains() {
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
-  [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.optimism]: optimism.assets
 };
 
