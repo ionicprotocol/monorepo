@@ -193,6 +193,14 @@ export default function RootLayout({
                         <ul className="text-sm">
                           <li className="mb-1">
                             <a
+                              href="https://app.anthias.xyz/protocols/ionic/ionic_v1_mode/positions"
+                              target="_blank"
+                            >
+                              Analytics
+                            </a>
+                          </li>
+                          <li className="mb-1">
+                            <a
                               href="https://defillama.com/protocol/ionic-protocol"
                               target="_blank"
                             >
