@@ -1,5 +1,5 @@
 import { TransactionResponse } from "@ethersproject/providers";
-import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk/src/modules/liquidation/utils";
+import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicprotocol/sdk";
 import { SupportedChains } from "@ionicprotocol/types";
 import sgMail, { MailDataRequired } from "@sendgrid/mail";
 

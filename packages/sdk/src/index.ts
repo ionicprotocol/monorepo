@@ -17,3 +17,11 @@ export type GConstructor<T> = new (...args: any[]) => T;
 export type IonicBaseConstructor = GConstructor<IonicBase>;
 
 export type InterestRateModelType = JumpRateModel;
+
+export {
+  BotType,
+  EncodedLiquidationTx,
+  LiquidatablePool,
+  PythLiquidatablePool,
+  ErroredPool
+} from "./modules/liquidation/utils";

@@ -1,9 +1,8 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { BotType, PythLiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import { encodeAbiParameters, encodeFunctionData } from "viem";
-
-import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/IonicLiquidator.json";
+import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
+import { BotType, ionicLiquidatorAbi } from "@ionicprotocol/sdk";
+import { mode } from "viem/chains";
+import { privateKeyToAccount } from "viem/accounts";
 
 import config from "./config";
 import { logger } from "./logger";
@@ -15,17 +14,27 @@ import { setUpSdk } from "./utils";
 };
 
 (async function () {
-  const chainId: number = config.chainId;
   const chainName: string = config.chainName;
-  const provider = new JsonRpcProvider(config.rpcUrl);
-  const ionicSdk = setUpSdk(chainId, provider);
-  const abi = IonicLiquidatorABI.abi;
+  const account = privateKeyToAccount(config.adminPrivateKey as Hex);
+
+  const publicClient = createPublicClient({
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const walletClient = createWalletClient({
+    account,
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const ionicSdk = setUpSdk(config.chainId, publicClient, walletClient);
   const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
 
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
 
   const liquidator = new Liquidator(ionicSdk);
-  const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
+  const liquidatablePools = await liquidator.fetchLiquidations(BotType.Pyth);
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
   const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
@@ -58,7 +67,7 @@ import { setUpSdk } from "./utils";
       }
 
       const calldata = encodeFunctionData({
-        abi,
+        abi: ionicLiquidatorAbi,
         functionName: "safeLiquidate",
         args: [liquidation.args[0], liquidation.args[1], liquidation.args[2], liquidation.args[3], liquidation.args[4]],
       });

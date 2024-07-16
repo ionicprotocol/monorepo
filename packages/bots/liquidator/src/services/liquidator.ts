@@ -1,9 +1,4 @@
-import { IonicSdk } from "@ionicprotocol/sdk";
-import {
-  BotType,
-  LiquidatablePool,
-  PythLiquidatablePool,
-} from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+import { BotType, IonicSdk, LiquidatablePool, PythLiquidatablePool } from "@ionicprotocol/sdk";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
