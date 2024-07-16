@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Ensure the JSON file exists
-json_file="../../../chains/deployments/optimism.json"
+json_file="../../../chains/deployments/bob.json"
 if [[ ! -f "$json_file" ]]; then
   echo "Error: JSON file does not exist at path $json_file"
   exit 1
@@ -30,5 +30,5 @@ for i in $(seq 1 $length); do
 
   # Command output for verification
   echo "Verifying contract $contract at address $address"
-  forge verify-contract --watch --chain optimism $address $contract
+  forge verify-contract --verifier blockscout --verifier-url 'https://explorer.gobob.xyz/api?' --watch $address $contract
 done

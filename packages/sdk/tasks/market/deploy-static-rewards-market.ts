@@ -1,11 +1,7 @@
-import { bsc, polygon } from "@ionicprotocol/chains";
 import { underlying } from "@ionicprotocol/types";
 import { task, types } from "hardhat/config";
 
-const underlyingsMapping = {
-  [bsc.chainId]: bsc.assets,
-  [polygon.chainId]: polygon.assets
-};
+const underlyingsMapping = {};
 
 // yarn workspace @ionicprotocol/sdk deploy-dynamic-rewards-market
 // --comptroller 0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2
