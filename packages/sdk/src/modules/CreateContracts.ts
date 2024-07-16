@@ -3,7 +3,6 @@ import { Abi, Address, GetContractReturnType, PublicClient, WalletClient } from 
 import { IonicBaseConstructor } from "..";
 import {
   authoritiesRegistryAbi,
-  compoundMarketErc4626Abi,
   flywheelStaticRewardsAbi,
   icErc20Abi,
   icErc20PluginRewardsAbi,
@@ -16,9 +15,6 @@ import {
   leveredPositionAbi,
   leveredPositionsLensAbi,
   masterPriceOracleAbi,
-  optimizedAprVaultFirstExtensionAbi,
-  optimizedAprVaultSecondExtensionAbi,
-  optimizedVaultsRegistryAbi,
   poolLensAbi,
   poolLensSecondaryAbi,
   poolRolesAuthorityAbi,
@@ -69,25 +65,6 @@ export interface ICreateContracts {
     publicClient?: PublicClient,
     walletClient?: WalletClient
   ) => GetContractReturnType<typeof masterPriceOracleAbi, WalletClient>;
-  createCompoundMarketERC4626: (
-    address: Address,
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<typeof compoundMarketErc4626Abi, WalletClient>;
-  createOptimizedAPRVault: (
-    address: Address,
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<typeof optimizedAprVaultFirstExtensionAbi, WalletClient>;
-  createOptimizedAPRVaultSecond: (
-    address: Address,
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<typeof optimizedAprVaultSecondExtensionAbi, WalletClient>;
-  createOptimizedVaultsRegistry: (
-    publicClient?: PublicClient,
-    walletClient?: WalletClient
-  ) => GetContractReturnType<typeof optimizedVaultsRegistryAbi, WalletClient>;
   createIonicFlywheelLensRouter: (
     publicClient?: PublicClient,
     walletClient?: WalletClient
@@ -182,42 +159,6 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address: this.chainDeployment.MasterPriceOracle.address as Address,
         abi: masterPriceOracleAbi,
-        client: walletClient ?? publicClient
-      });
-    }
-
-    createCompoundMarketERC4626(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
-      return getContract({
-        address,
-        abi: compoundMarketErc4626Abi,
-        client: walletClient ?? publicClient
-      });
-    }
-
-    createOptimizedAPRVault(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
-      return getContract({
-        address,
-        abi: optimizedAprVaultFirstExtensionAbi,
-        client: walletClient ?? publicClient
-      });
-    }
-
-    createOptimizedAPRVaultSecond(
-      address: Address,
-      publicClient = this.publicClient,
-      walletClient = this.walletClient
-    ) {
-      return getContract({
-        address,
-        abi: optimizedAprVaultSecondExtensionAbi,
-        client: walletClient ?? publicClient
-      });
-    }
-
-    createOptimizedVaultsRegistry(publicClient = this.publicClient, walletClient = this.walletClient) {
-      return getContract({
-        address: this.chainDeployment.OptimizedVaultsRegistry.address as Address,
-        abi: optimizedVaultsRegistryAbi,
         client: walletClient ?? publicClient
       });
     }
