@@ -1,6 +1,5 @@
 # Use a Node.js base image with yarn pre-installed
-FROM node:latest
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
+FROM node:20
 FROM node as build
 
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
@@ -12,7 +11,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
     git \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Corepack globally (optional, if needed)
 RUN npm install -g corepack
@@ -20,8 +19,6 @@ RUN npm install -g corepack
 # Copy the rest of your application code
 COPY . .
 
-RUN curl -L https://foundry.paradigm.xyz | bash && \
-    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup"
 # Install Yarn (optional, if needed)
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 

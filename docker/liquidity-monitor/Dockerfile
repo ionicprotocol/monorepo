@@ -1,11 +1,6 @@
-FROM node:16.13-alpine as base
-
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
-
+FROM node:20-alpine as base
 
 FROM node as build
-
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 RUN apt update
 RUN apt install git
