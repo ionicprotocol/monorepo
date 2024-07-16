@@ -1,4 +1,4 @@
-import { bsc } from "@ionicprotocol/chains";
+import { mode } from "@ionicprotocol/chains";
 import { SupportedChains } from "@ionicprotocol/types";
 import { restore } from "sinon";
 

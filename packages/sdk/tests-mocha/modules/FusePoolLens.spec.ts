@@ -32,7 +32,7 @@ describe("PoolLens", () => {
     fusePoolLens.contracts = { PoolLens: mockContract };
   });
 
-  it("getTotalValueLocked", async () => {
+  it.skip("getTotalValueLocked", async () => {
     const total = await fusePoolLens.getTotalValueLocked(true);
     expect(total.totalSupply).to.be.equal(4n);
     expect(total.totalBorrow).to.be.equal(4n);

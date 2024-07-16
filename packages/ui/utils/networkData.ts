@@ -1,4 +1,10 @@
-import { base, chainIdToConfig, mode, optimism } from '@ionicprotocol/chains';
+import {
+  base,
+  chainIdToConfig,
+  mode,
+  optimism,
+  bob
+} from '@ionicprotocol/chains';
 import type {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -8,7 +14,8 @@ import { SupportedChains } from '@ionicprotocol/types';
 import {
   mode as vMode,
   base as vBase,
-  optimism as vOptimism
+  optimism as vOptimism,
+  bob as vBob
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -71,17 +78,23 @@ export function getEnabledChains() {
     enabledChains.push(vOptimism);
   }
 
+  if (config.isBobEnabled) {
+    enabledChains.push(vBob);
+  }
+
   return enabledChains;
 }
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
-  [SupportedChains.optimism]: optimism.assets
+  [SupportedChains.optimism]: optimism.assets,
+  [SupportedChains.bob]: bob.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.mode]: mode.deployedPlugins,
   [SupportedChains.base]: base.deployedPlugins,
-  [SupportedChains.optimism]: optimism.deployedPlugins
+  [SupportedChains.optimism]: optimism.deployedPlugins,
+  [SupportedChains.bob]: bob.deployedPlugins
 };

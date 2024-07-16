@@ -1,7 +1,7 @@
-import { SupportedChains } from "@ionicprotocol/types";
+// import { SupportedChains } from "@ionicprotocol/types";
 
-import { SecurityBase } from "../../../src/index";
-import * as OraclesModule from "../../../src/oracle";
+// import { SecurityBase } from "../../../src/index";
+// import * as OraclesModule from "../../../src/oracle";
 
 describe("Oracle", () => {
   // const Oracle = OraclesModule.withChainLinkOracleScorer(SecurityBase);

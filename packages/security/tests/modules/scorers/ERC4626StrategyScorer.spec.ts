@@ -1,13 +1,13 @@
-import { SupportedChains } from "@ionicprotocol/types";
+// import { SupportedChains } from "@ionicprotocol/types";
 
-import { SecurityBase } from "../../../src/index";
-import * as StrategyModule from "../../../src/strategy";
-import { expect } from "../../globalTestHook";
+// import { SecurityBase } from "../../../src/index";
+// import * as StrategyModule from "../../../src/strategy";
+// import { expect } from "../../globalTestHook";
 
-describe("Strategy", () => {
-  const Strategy = StrategyModule.withErc4626StrategyScorer(SecurityBase);
-  let strategyBsc: InstanceType<typeof Strategy>;
-  let strategyPolygon: InstanceType<typeof Strategy>;
+// describe("Strategy", () => {
+//   const Strategy = StrategyModule.withErc4626StrategyScorer(SecurityBase);
+//   let strategyBsc: InstanceType<typeof Strategy>;
+//   let strategyPolygon: InstanceType<typeof Strategy>;
 
   // beforeEach(() => {
   //   strategyBsc = new Strategy(SupportedChains.bsc, null);

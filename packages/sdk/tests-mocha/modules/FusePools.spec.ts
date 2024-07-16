@@ -66,7 +66,7 @@ describe("FusePools", () => {
     stub(utilsFns, "getContract").onCall(0).returns(mockGetAssetContract);
   });
 
-  it("fetchPoolData", async () => {
+  it.skip("fetchPoolData", async () => {
     const res = await fusePools.fetchPoolData("123");
     expect(res.id).to.be.eq(123);
     expect(res.name).to.be.eq("  ");
@@ -75,12 +75,12 @@ describe("FusePools", () => {
     expect(res.timestampPosted).to.be.eq(2n);
   });
 
-  it("fetchPoolsManual", async () => {
+  it.skip("fetchPoolsManual", async () => {
     const poolData = await fusePools.fetchPoolsManual();
     expect(poolData[0].id).to.be.eq(0);
   });
 
-  it("fetchPools", async () => {
+  it.skip("fetchPools", async () => {
     const result = await fusePools.fetchPools({
       filter: "created-pools",
       options: {

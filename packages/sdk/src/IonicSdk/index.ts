@@ -23,7 +23,6 @@ import {
 import {
   addressesProviderAbi,
   cTokenFirstExtensionAbi,
-  eip20InterfaceAbi,
   erc20Abi,
   feeDistributorAbi,
   ionicErc4626Abi,

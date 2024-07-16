@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import type { PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (
   poolId: string,

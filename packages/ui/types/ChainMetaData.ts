@@ -1,4 +1,4 @@
-import { base, mode, optimism } from '@ionicprotocol/chains';
+import { base, bob, mode, optimism } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
 import { config } from '@ui/config/index';
@@ -17,6 +17,10 @@ export const supportedChainIdToConfig: {
   [optimism.chainId]: {
     enabled: config.isOptimismEnabled,
     supported: config.isOptimismEnabled
+  },
+  [bob.chainId]: {
+    enabled: config.isBobEnabled,
+    supported: config.isBobEnabled
   }
 };
 
