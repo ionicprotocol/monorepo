@@ -11,12 +11,12 @@ import { BotType, EncodedLiquidationTx, ErroredPool, LiquidatablePool, PythLiqui
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
 export interface ISafeLiquidator {
-  getPotentialLiquidations(
+  getPotentialLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(
     excludedComptrollers: Array<Address> | [],
     botType: BotType,
     maxHealthFactor?: bigint,
     configOverrides?: ChainLiquidationConfig
-  ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]>;
+  ): Promise<[Array<T>, Array<ErroredPool>]>;
   liquidatePositions(
     liquidatablePool: LiquidatablePool
   ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]>;

@@ -1,4 +1,5 @@
 import { BotType, IonicSdk, LiquidatablePool, PythLiquidatablePool } from "@ionicprotocol/sdk";
+import { Address } from "viem";
 
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
@@ -20,7 +21,7 @@ export class Liquidator {
   async fetchLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(botType: BotType): Promise<T[]> {
     try {
       const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations<T>(
-        config.excludedComptrollers,
+        config.excludedComptrollers as Address[],
         botType
       );
       const filteredErroredPools = erroredPools.filter(
