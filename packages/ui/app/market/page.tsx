@@ -224,7 +224,7 @@ export default function Market() {
               alt=""
               className="inline-block"
               height="20"
-              src="/img/symbols/32/color/weth(afteropfest).png"
+              src="/img/symbols/32/color/weth.png"
               width="20"
             />
           </button>
