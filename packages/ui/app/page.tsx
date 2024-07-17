@@ -11,7 +11,7 @@ const Home = () => {
     router.push('/market?chain=34443&pool=0');
   }, [router]);
   return (
-    <div className={`flex items-center justify-center w-full min-h-[70%]`}>
+    <div className={`flex items-center justify-center w-full min-h-[70vh]`}>
       <ResultHandler isLoading={true}>Home</ResultHandler>
     </div>
   );
