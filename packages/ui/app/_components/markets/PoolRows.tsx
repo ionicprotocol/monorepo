@@ -614,7 +614,7 @@ const PoolRows = ({
             </button>
           </div>
         ) : (
-          <div className="connect-button">
+          <div className="connect-button my-3 md:my-0">
             <ConnectButton size="sm" />
           </div>
         )}
