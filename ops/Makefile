@@ -110,24 +110,22 @@ prod-deploy:
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} packages/bots/liquidator/build/test/run.js
 
 liquidator-smoke-test:
-	@docker run -t --entrypoint /bin/sh \
+	@docker run -t --entrypoint sh \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} -c \
-				'for dir in /app /src /packages /usr/local /home; do \
-					echo "Searching in $$dir:"; \
-					ls -R $$dir | grep run.js && \
-					RUN_JS=$$(ls -R $$dir | grep run.js | head -n 1) && \
-					if [ -n "$$RUN_JS" ]; then \
-						echo "Found run.js in $$dir at: $$RUN_JS"; \
-						node $$dir/$$RUN_JS; \
-						break; \
-					fi; \
-				done && \
-				[ -n "$$RUN_JS" ] || echo "run.js not found or failed to execute"'
+				'cd / && \
+				if [ -f packages/bots/liquidator/build/test/run.js ]; then \
+					echo "Found run.js at packages/bots/liquidator/build/test/run.js"; \
+					node packages/bots/liquidator/build/test/run.js; \
+				else \
+					echo "run.js not found at packages/bots/liquidator/build/test/run.js"; \
+				fi'
+
+
 
 
 
