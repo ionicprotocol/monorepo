@@ -100,14 +100,25 @@ prod-deploy:
 # -------------------------------------------------------------------
 
 
-liquidator-smoke-test:
-	@docker run -t --entrypoint node \
+#liquidator-smoke-test:
+#	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
-				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} /packages/bots/liquidator/build/test/run.js
+				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} packages/bots/liquidator/build/test/run.js
+
+liquidator-smoke-test:
+	@docker run -t --entrypoint /bin/sh \
+				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
+				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e NODE_ENV="development" \
+				-e TARGET_CHAIN_ID=34443 \
+				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} -c \
+				'find / -name run.js && node /path/to/run.js'
+
 pyth-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
