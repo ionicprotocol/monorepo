@@ -32,8 +32,8 @@ export default async function getPotentialLiquidation(
   }
 
   // Sort debt and collateral from highest to lowest ETH value
-  borrower.debt.sort((a, b) => (b.borrowBalanceWei.gt(a.borrowBalanceWei) ? 1 : -1));
-  borrower.collateral.sort((a, b) => (b.supplyBalanceWei.gt(a.supplyBalanceWei) ? 1 : -1));
+  borrower.debt.sort((a, b) => (b.borrowBalanceWei > a.borrowBalanceWei ? 1 : -1));
+  borrower.collateral.sort((a, b) => (b.supplyBalanceWei > a.supplyBalanceWei ? 1 : -1));
   // Check SUPPORTED_INPUT_CURRENCIES (if LIQUIDATION_STRATEGY === "")
   if (
     chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT &&

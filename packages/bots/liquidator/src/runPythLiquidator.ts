@@ -103,7 +103,7 @@ import { setUpSdk } from "./utils";
 
       try {
         await client.submitOpportunity(opportunity);
-        console.log("Opportunity submitted successfully.");
+        console.log("Opportunity submitted successfully: ", opportunity);
       } catch (error) {
         console.error("Failed to submit opportunity:", {
           error,
