@@ -649,7 +649,7 @@ export default function Stake() {
                   step3Toggle === 'Unstake' && 'text-red-500'
                 }`}
               >
-                2x
+                3x
               </span>
             </div>
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
