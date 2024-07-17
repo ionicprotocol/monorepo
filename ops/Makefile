@@ -117,7 +117,10 @@ liquidator-smoke-test:
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} -c \
-				'RUN_JS=$(find / -name run.js 2>&1) && echo "Found run.js at: $$RUN_JS" && [ -n "$$RUN_JS" ] && node $$RUN_JS || echo "run.js not found or failed to execute"'
+				'echo "Listing all files:" && find / -type f && \
+				echo "Searching for run.js:" && RUN_JS=$(find / -name run.js 2>&1) && \
+				echo "Found run.js at: $$RUN_JS" && [ -n "$$RUN_JS" ] && node $$RUN_JS || \
+				echo "run.js not found or failed to execute"'
 
 
 
