@@ -73,8 +73,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         const leveredPositionLens = this.createLeveredPositionLens();
         const ionicFlywheelLensRouter = this.createIonicFlywheelLensRouter();
         const [
-          poolOfMarket,
           collateralCTokens,
+          poolOfMarket,
           collateralUnderlyings,
           collateralUnderlyingPrices,
           ,
