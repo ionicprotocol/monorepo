@@ -117,7 +117,8 @@ liquidator-smoke-test:
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} -c \
-				'find / -name run.js && node /path/to/run.js'
+				'RUN_JS=$(find / -name run.js) && [ -n "$$RUN_JS" ] && node $$RUN_JS'
+
 
 pyth-smoke-test:
 	@docker run -t --entrypoint node \
