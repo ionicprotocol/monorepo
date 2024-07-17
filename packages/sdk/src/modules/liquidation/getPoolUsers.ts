@@ -1,8 +1,25 @@
-import { performance } from "perf_hooks";
+import { Performance } from "perf_hooks";
 
 import { Address, formatEther, parseEther } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
+
+let performance: Performance;
+
+if (typeof window === "undefined") {
+  // Running in Node.js environment
+  import("perf_hooks")
+    .then(({ performance: nodePerformance }) => {
+      performance = nodePerformance;
+    })
+    .catch((err) => {
+      console.error("Failed to load perf_hooks:", err);
+      // Handle error as needed
+    });
+} else {
+  // Running in browser environment
+  performance = window.performance as any;
+}
 
 import { ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
 export type PoolAssetStructOutput = {

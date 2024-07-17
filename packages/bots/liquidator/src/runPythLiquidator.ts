@@ -1,6 +1,6 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
 import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
+import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
