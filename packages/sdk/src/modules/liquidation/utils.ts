@@ -4,7 +4,8 @@ import { Address, formatEther, TransactionRequest } from "viem";
 import { IonicBase } from "../../IonicSdk";
 
 export const SCALE_FACTOR_ONE_18_WEI = 10n ** 18n;
-export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: IonicAsset) => 10n ** BigInt(18 - asset.underlyingDecimals);
+export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: IonicAsset) =>
+  10n ** BigInt(18n - BigInt(asset.underlyingDecimals));
 
 export type ExtendedPoolAssetStructOutput = {
   cToken: Address;

@@ -50,8 +50,8 @@ export default async function getPotentialLiquidation(
   }
 
   // Sort debt and collateral from highest to lowest ETH value
-  borrower.debt.sort((a, b) => (b.borrowBalanceWei.gt(a.borrowBalanceWei) ? 1 : -1));
-  borrower.collateral.sort((a, b) => (b.supplyBalanceWei.gt(a.supplyBalanceWei) ? 1 : -1));
+  borrower.debt.sort((a, b) => (b.borrowBalanceWei > a.borrowBalanceWei ? 1 : -1));
+  borrower.collateral.sort((a, b) => (b.supplyBalanceWei > a.supplyBalanceWei ? 1 : -1));
   // Check SUPPORTED_INPUT_CURRENCIES (if LIQUIDATION_STRATEGY === "")
   if (
     chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT &&
@@ -83,40 +83,42 @@ export default async function getPotentialLiquidation(
   // Get liquidation amount
 
   // USDC: 6 decimals
-  let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
+  let repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
   const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken), liquidationIncentive);
 
   // Scale to 18 decimals
-  let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(10n ** BigInt(debtAssetDecimals));
+  let liquidationValue = (repayAmount * debtAssetUnderlyingPrice) / 10n ** BigInt(debtAssetDecimals);
 
   // 18 decimals
-  let seizeValue = liquidationValue.mul(penalty).div(SCALE_FACTOR_ONE_18_WEI);
+  let seizeValue = (liquidationValue * penalty) / SCALE_FACTOR_ONE_18_WEI;
 
   // xcDOT: 10 decimals
-  let seizeAmount = seizeValue // 18 decimals
-    .mul(SCALE_FACTOR_ONE_18_WEI) // -> 36 decimals
-    .div(collateralAssetUnderlyingPrice) // -> 18 decimals
-    .div(SCALE_FACTOR_UNDERLYING_DECIMALS(collateralAsset)); // -> decimals
+  let seizeAmount =
+    (seizeValue * // 18 decimals
+      SCALE_FACTOR_ONE_18_WEI) /
+    collateralAssetUnderlyingPrice / // -> 36 decimals // -> 18 decimals
+    SCALE_FACTOR_UNDERLYING_DECIMALS(collateralAsset); // -> decimals
 
   // Check if actual collateral is too low to seize seizeAmount; if so, recalculate liquidation amount
 
-  if (seizeAmount.gt(actualCollateral)) {
+  if (seizeAmount > actualCollateral) {
     // 10 decimals
     seizeAmount = actualCollateral;
     // 18 decimals
-    seizeValue = seizeAmount
-      // 28 decimals
-      .mul(collateralAssetUnderlyingPrice)
+    seizeValue =
+      (seizeAmount *
+        // 28 decimals
+        collateralAssetUnderlyingPrice) /
       // 18 decimals
-      .div(10n ** BigInt(collateralAssetDecimals));
+      10n ** BigInt(collateralAssetDecimals);
 
     // 18 decimals
-    liquidationValue = seizeValue.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
+    liquidationValue = (seizeValue * SCALE_FACTOR_ONE_18_WEI) / penalty;
     // 18 decimals
-    repayAmount = liquidationValue
-      .mul(SCALE_FACTOR_ONE_18_WEI)
-      .div(debtAssetUnderlyingPrice)
-      .div(SCALE_FACTOR_UNDERLYING_DECIMALS(debtAsset));
+    repayAmount =
+      (liquidationValue * SCALE_FACTOR_ONE_18_WEI) /
+      debtAssetUnderlyingPrice /
+      SCALE_FACTOR_UNDERLYING_DECIMALS(debtAsset);
   }
 
   if (repayAmount <= 0n) {
@@ -232,9 +234,9 @@ export default async function getPotentialLiquidation(
   // calculate min profits
   const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
 
-  // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
+  // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth)*(SCALE_FACTOR_ONE_18_WEI)/(outputPrice);
 
-  if (seizeValue.lt(minProfitAmountEth)) {
+  if (seizeValue < minProfitAmountEth) {
     sdk.logger.info(
       `Seize amount of ${formatEther(seizeValue)} less than min break even of ${formatEther(
         minProfitAmountEth

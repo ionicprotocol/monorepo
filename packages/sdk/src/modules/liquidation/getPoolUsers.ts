@@ -1,25 +1,10 @@
+import { performance } from "perf_hooks";
+
 import { Address, formatEther, parseEther } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
 
 import { ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
-let performance: any;
-
-if (typeof window === "undefined") {
-  // Running in Node.js environment
-  import("perf_hooks")
-    .then(({ performance: nodePerformance }) => {
-      performance = nodePerformance;
-    })
-    .catch((err) => {
-      console.error("Failed to load perf_hooks:", err);
-      // Handle error as needed
-    });
-} else {
-  // Running in browser environment
-  performance = window.performance;
-}
-
 export type PoolAssetStructOutput = {
   cToken: Address;
   underlyingToken: Address;
@@ -79,20 +64,23 @@ async function getFusePoolUsers(
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.read.getAllBorrowersCount();
   const randomPage = Math.round((Math.random() * Number(borrowersCount)) / PAGE_SIZE);
-  const [_totalPages, users] = await comptrollerInstance.read.getPaginatedBorrowers([
-    BigInt(randomPage),
-    BigInt(PAGE_SIZE)
-  ]);
-  for (const user of users) {
-    const assets = (await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address])).result;
-
+  const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(randomPage), BigInt(PAGE_SIZE)]);
+  const assetsResults = await Promise.all(
+    users.map(async (user) => {
+      const assets = (
+        await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address], { account: user })
+      ).result;
+      return assets;
+    })
+  );
+  assetsResults.forEach((assets, index) => {
     const { totalBorrow, totalCollateral } = getUserTotals(assets as PoolAssetStructOutput[]);
     const health = getPositionHealth(totalBorrow, totalCollateral);
 
     if (maxHealth > health) {
-      poolUsers.push({ account: user, totalBorrow, totalCollateral, health });
+      poolUsers.push({ account: users[index], totalBorrow, totalCollateral, health });
     }
-  }
+  });
   return {
     comptroller,
     users: poolUsers,
@@ -105,10 +93,7 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.read.getAllBorrowersCount();
   const randomPage = Math.round((Math.random() * Number(borrowersCount)) / PAGE_SIZE);
-  const [_totalPages, users] = await comptrollerInstance.read.getPaginatedBorrowers([
-    BigInt(randomPage),
-    BigInt(PAGE_SIZE)
-  ]);
+  const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(randomPage), BigInt(PAGE_SIZE)]);
   const promises = users.map((user) => {
     return comptrollerInstance.read.getAccountLiquidity([user]);
   });
@@ -143,7 +128,7 @@ export default async function getAllFusePoolUsers(
     const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
       const poolStartTime = performance.now();
-      console.log(`Processing pool ${name} (${comptroller})...`);
+      sdk.logger.info(`Processing pool ${name} (${comptroller})...`);
 
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
@@ -174,7 +159,7 @@ export default async function getAllFusePoolUsers(
       }
 
       const poolEndTime = performance.now();
-      console.log(
+      sdk.logger.info(
         `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`
       );
     }
@@ -184,7 +169,7 @@ export default async function getAllFusePoolUsers(
 
   const endTime = performance.now();
 
-  console.log(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
+  sdk.logger.info(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
   // console.log(`Total users processed: ${fusePoolUsers.reduce((sum, pool) => sum + pool.users.length, 0)}`);
 
   return [fusePoolUsers, erroredPools];
