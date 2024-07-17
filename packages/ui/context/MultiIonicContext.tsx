@@ -116,7 +116,11 @@ export const MultiIonicProvider = (
   );
 
   useEffect(() => {
-    if (currentSdk && walletClient) {
+    if (
+      currentSdk &&
+      walletClient &&
+      currentSdk?.chainId === walletClient.chain.id
+    ) {
       currentSdk.setWalletClient(walletClient as any);
     }
   }, [walletClient, currentSdk]);

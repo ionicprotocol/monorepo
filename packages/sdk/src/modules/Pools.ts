@@ -41,7 +41,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
 };
 
 export interface IIonicPools {
-  fetchPoolData(poolId: string): Promise<IonicPoolData | null>;
+  fetchPoolData(poolId: string, address?: Address): Promise<IonicPoolData | null>;
   fetchPoolsManual(): Promise<(IonicPoolData | null)[] | undefined>;
   fetchPools({ filter, options }: { filter: string | null; options: { from: Address } }): Promise<IonicPoolData[]>;
   isAuth(pool: Address, market: Address, role: Roles, user: Address): Promise<boolean>;
@@ -62,7 +62,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
   new (...args: any[]): IIonicPools;
 } & TBase {
   return class IonicPools extends Base {
-    async fetchPoolData(poolId: string): Promise<IonicPoolData | null> {
+    async fetchPoolData(poolId: string, address?: Address): Promise<IonicPoolData | null> {
       const [_unfiliteredName, creator, comptroller, blockPosted, timestampPosted] =
         await this.contracts.PoolDirectory.read.pools([BigInt(poolId)]);
       if (comptroller === zeroAddress) {
@@ -71,7 +71,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       const name = filterPoolName(_unfiliteredName);
 
       const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address], {
-        account: this.walletClient?.account?.address
+        account: address ?? this.walletClient?.account?.address
       });
       const assets: NativePricedIonicAsset[] = res.result
         .map(filterOnlyObjectProperties)
