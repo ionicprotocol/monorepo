@@ -26,8 +26,8 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: wrappedAssetDocs(SupportedChains.bob),
     initialSupplyCap: parseEther(String(3_000)).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseEther("0.01").toString(),
+    initialCf: "85"
   },
   {
     symbol: assetSymbols.WBTC,
@@ -41,8 +41,8 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC),
     initialSupplyCap: parseUnits(String(100), 8).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseUnits("0.00001", 8).toString(),
+    initialCf: "85"
   },
   {
     symbol: assetSymbols.USDT,
@@ -56,8 +56,8 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", USDT),
     initialSupplyCap: parseUnits(String(10_000_000), 6).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseUnits(String(30), 6).toString(),
+    initialCf: "85"
   },
   {
     symbol: assetSymbols.tBTC,
@@ -71,8 +71,8 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", WBTC),
     initialSupplyCap: parseUnits(String(100), 18).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseUnits("0.00001", 18).toString(),
+    initialCf: "85"
   },
   {
     symbol: assetSymbols.USDC,
@@ -86,8 +86,8 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", USDC),
     initialSupplyCap: parseUnits(String(10_000_000), 6).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseUnits(String(30), 6).toString(),
+    initialCf: "85"
   },
   {
     symbol: assetSymbols.SOV,
@@ -101,8 +101,8 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.gobob.xyz", SOV),
     initialSupplyCap: parseUnits(String(20_000_000), 18).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0"
+    initialBorrowCap: parseUnits(String(69), 18).toString(),
+    initialCf: "45"
   }
 ];
 
