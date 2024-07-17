@@ -4,6 +4,7 @@ import React from 'react';
 interface IUtilization {
   currentUtilizationPercentage: number;
   handleUtilization: (val: number) => void;
+  max?: number;
 }
 const SliderComponent = ({
   currentUtilizationPercentage,
