@@ -43,7 +43,7 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
+    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
       <DynamicSubNav />
       <Link
         className={`flex items-center  md:pr-10  `}
@@ -64,7 +64,7 @@ export default function Navbar() {
         `}
       >
         <div
-          className={`absolute md:static top-full left-0 py-4 md:py-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-center my-auto   gap-3  text-sm bg-black md:bg-transparent transition-transform nav ${
+          className={`absolute md:static top-full left-0 py-4 md:py-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-center my-auto   gap-y-3  text-sm bg-black md:bg-transparent transition-transform nav overflow-x-hidden ${
             isActive && 'nav-opened'
           }`}
         >

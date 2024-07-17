@@ -72,13 +72,13 @@ const PoolRows = ({
   const querychain = searchParams.get('chain');
   return (
     <div
-      className={`w-full h-full lg:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
+      className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
         membership && `border ${pools[dropdownSelectedChain].border}`
       }`}
     >
       {membership && (
         <span
-          className={`w-min hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 py-1 px-3  gap-x-1 lg:grid -right-5 -top-5 text-xs text-white/80 font-semibold lg:text-center items-center absolute ${
+          className={`w-min hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 py-1 px-3  gap-x-1 md:grid md:-right-5 -right-3 md:-top-5 -top-1 text-xs text-white/80 font-semibold md:text-center items-center absolute ${
             membership && `border ${pools[dropdownSelectedChain].border}`
           }`}
         >
@@ -86,7 +86,7 @@ const PoolRows = ({
         </span>
       )}
       <Link
-        className={`w-full  lg:grid grid-cols-10 gap-x-1 col-span-10 py-4 text-xs text-white/80 font-semibold lg:text-center items-center relative cursor-pointer `}
+        className={`w-full  md:grid grid-cols-10 gap-x-1 col-span-10 py-4 text-xs text-white/80 font-semibold md:text-center items-center relative cursor-pointer `}
         href={{
           pathname: `/market/details/${asset}`,
           query: {
@@ -111,57 +111,59 @@ const PoolRows = ({
         // onClick={() => sendPassedData()}
       >
         <div
-          className={`col-span-2 flex justify-center items-center mb-2 lg:mb-0  gap-2 `}
+          className={`col-span-2 flex md:justify-center justify-start  items-center mb-4 md:mb-0  gap-2 pt-4 pl-2 md:pt-0 md:pl-0`}
         >
           <img
             alt={asset}
-            className="h-7"
+            className={`w-10 md:w-7`}
             src={logo}
           />
-          <h3 className={` `}>{getAssetName(asset, dropdownSelectedChain)}</h3>
+          <h3 className={` text-lg md:text-sm `}>
+            {getAssetName(asset, dropdownSelectedChain)}
+          </h3>
         </div>
         <h3
-          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+          className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
             SUPPLY BALANCE:
           </span>
-          {supplyBalance}
+          <span className={`md:text-center text-right`}> {supplyBalance}</span>
         </h3>
         <h3
-          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+          className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
             TOTAL SUPPLIED:
           </span>
-          {totalSupplied}
+          <span className={`md:text-center text-right`}>{totalSupplied}</span>
         </h3>
         <h3
-          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+          className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
             BORROW BALANCE:
           </span>
-          {borrowBalance}
+          <span className={`md:text-center text-right`}>{borrowBalance}</span>
         </h3>
         <h3
-          className={` col-span-2 flex lg:block justify-center items-center mb-2 lg:mb-0`}
+          className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
             TOTAL BORROWING:
           </span>
-          {totalBorrowing}
+          <span className={`md:text-center text-right`}>{totalBorrowing}</span>
         </h3>
       </Link>
 
       <h3
-        className={` col-span-2 flex lg:block justify-center text-xs  py-4 items-center mb-2 lg:mb-0 `}
+        className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 text-xs  md:py-4 py-0 items-center mb-2 md:mb-0 `}
       >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+        <span className="text-white/40 font-semibold mr-2 md:hidden text-left  ">
           SUPPLY APR:
         </span>
-        <div className="popover-container relative flex lg:flex-col items-center justify-center cursor-pointer">
-          {supplyAPR}
+        <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
+          <span className={`mr-1 md:mr-0`}>{supplyAPR}</span>
           {selectedPoolId === '0' &&
             querychain === '34443' &&
             (asset.toLowerCase() === 'usdc' ||
@@ -169,12 +171,12 @@ const PoolRows = ({
               asset.toLowerCase() === 'stone' ||
               asset.toLowerCase() === 'ezeth') && (
               <a
-                className="text-red-600 bg-red-50  expand rounded-lg w-20 ml-1 lg:ml-0 text-center my-1 flex items-center justify-center gap-1"
+                className="text-red-600 bg-red-50  expand rounded-md w-max ml-1 md:ml-0 text-center my-1 flex items-center justify-center gap-1"
                 href="https://jumper.exchange/superfest/"
                 target="_blank"
               >
                 <div
-                  className={`flex items-center text-[10px] justify-center gap-0.5 py-[1px]`}
+                  className={`flex items-center md:text-[10px] text-[8px] justify-center gap-0.5 py-[1px] px-[4px]`}
                 >
                   <img
                     alt="OP fest"
@@ -191,13 +193,13 @@ const PoolRows = ({
               </a>
             )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-[4px]`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <span className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1">
+          <span className="text-darkone  rounded-md w-max ml-1 md:ml-0 text-center ">
             <a
-              className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
+              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] px-[4px] flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
             >
@@ -210,7 +212,7 @@ const PoolRows = ({
             </a>
           </span>
           <div
-            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
             Base APR: {supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -387,20 +389,20 @@ const PoolRows = ({
         </div>
       </h3>
       <h3
-        className={` col-span-2  py-4 text-xs flex lg:block justify-center items-center mb-2 lg:mb-0`}
+        className={` col-span-2  md:py-4 text-xs flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
       >
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+        <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
           BORROW APR:
         </span>
-        <div className="popover-container flex h-full lg:flex-col items-center justify-center  cursor-pointer">
-          <span className="mb-1">{borrowAPR}</span>
+        <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
+          <span className="mr-1 md:mr-0 md:mb-1">{borrowAPR}</span>
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-lg w-20 ml-1 lg:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] px-[4px] ml-1 md:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <a
-            className="text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
+            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] px-[4px] ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
@@ -413,7 +415,7 @@ const PoolRows = ({
           </a>
 
           <div
-            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
           >
             Base APR: {borrowAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
@@ -563,25 +565,25 @@ const PoolRows = ({
         </div>
       </h3>
       <h3
-        className={` col-span-2 text-xs  flex lg:block justify-center font-semibold rounded-md text-center items-center  lg:my-auto  `}
+        className={` col-span-2 text-xs  flex md:block justify-between md:justify-center px-2 md:px-0 font-semibold rounded-md text-center items-center  md:my-auto  `}
       >
-        <span className="text-white/40 font-semibold text-center lg:hidden ">
+        <span className="text-white/40 font-semibold text-center md:hidden ">
           COLLATERAL FACTOR:
         </span>
         {collateralFactor}%
       </h3>
       <div
-        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-[11px] font-semibold my-auto`}
+        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[11px] font-semibold my-auto px-2`}
       >
         {address ? (
-          <div className={`grid grid-cols-2 h-min gap-x-1 w-full`}>
+          <div className={`grid grid-cols-2 h-min gap-x-1 my-3 md:my-0 w-full`}>
             {/* <button
-              className={`rounded-lg ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
+              className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
             >
               Cross Chain Supply
             </button> */}
             <button
-              className={`rounded-lg bg-accent text-black py-1.5 px-1 w-full h-full truncate  uppercase`}
+              className={`rounded-md bg-accent text-black py-1.5 px-1 w-full h-full truncate  uppercase`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
@@ -596,7 +598,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-lg ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
+              className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
