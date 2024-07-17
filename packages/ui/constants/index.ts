@@ -1,5 +1,5 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
-import { base, mode, optimism } from 'viem/chains';
+import { base, bob, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -43,14 +43,14 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: [
-          'wrsETH',
-          'ezETH',
-          'weETH.mode',
-          'STONE',
-          'M-BTC',
           'WETH',
-          'WBTC',
           'USDC',
+          'ezETH',
+          'STONE',
+          'wrsETH',
+          'weETH.mode',
+          'M-BTC',
+          'WBTC',
           'USDT',
           'weETH'
         ]
@@ -99,6 +99,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
+      }
+    ]
+  },
+  [bob.id]: {
+    name: 'BoB',
+    arrow: 'ffffff',
+    bg: 'bg-bob',
+    text: 'text-white',
+    border: 'border-bob',
+    logo: '/img/logo/BOB.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['USDC', 'USDT', 'WETH', 'WBTC']
       }
     ]
   }

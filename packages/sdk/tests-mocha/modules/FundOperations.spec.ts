@@ -1,4 +1,4 @@
-import { ganache } from "@ionicprotocol/chains";
+import { mode } from "@ionicprotocol/chains";
 import axios from "axios";
 import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
@@ -26,7 +26,7 @@ describe("FundOperation", () => {
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     (mockProvider as any).provider = mockProvider;
 
-    fundOperations = new FundOperations(mockProvider, ganache);
+    fundOperations = new FundOperations(mockProvider, mode);
   });
 
   describe("fetchGasForCall", () => {

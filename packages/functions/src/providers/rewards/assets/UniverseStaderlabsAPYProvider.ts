@@ -13,12 +13,6 @@ class UniverseStaderlabsAPYProvider extends AbstractAssetAPYProvider {
     let chainKey = '';
 
     switch (chainId) {
-      case SupportedChains.polygon:
-        chainKey = 'polygon';
-        break;
-      case SupportedChains.bsc:
-        chainKey = 'bnb';
-        break;
       default:
         break;
     }

@@ -3,17 +3,26 @@
 
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
+import {
+  erc20Abi,
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits
+} from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
+  useBalance,
   useChainId,
   usePublicClient,
   useWalletClient
 } from 'wagmi';
 
+import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
+import Toggle from '../_components/Toggle';
 
 import {
   LiquidityContractAbi,
@@ -36,7 +45,9 @@ export default function Stake() {
   // const [step1Loading, setStep1Loading] = useState<boolean>(false);
   const [step2Loading, setStep2Loading] = useState<boolean>(false);
   const [step3Loading, setStep3Loading] = useState<boolean>(false);
-
+  const [step2Toggle, setstep2Toggle] = useState<string>('');
+  const [step3Toggle, setstep3Toggle] = useState<string>('');
+  //---------------
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -45,8 +56,40 @@ export default function Stake() {
     ion: '',
     eth: ''
   });
+  const [maxWithdrawl, setMaxWithdrawl] = useState<{
+    ion: string;
+    eth: string;
+  }>({
+    ion: '',
+    eth: ''
+  });
   const [maxLp, setMaxLp] = useState<string>('');
+  //---- unstaking states
+  const [allStakedAmount, setAllStakedAmount] = useState<string>('');
+  const [maxUnstake, setMaxUnstake] = useState<string>('');
+  const [utilization, setUtilization] = useState<number>(0);
 
+  const { data: withdrawalMaxToken } = useBalance({
+    address,
+    token: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+    query: {
+      refetchInterval: 6000
+    }
+  });
+
+  useMemo(() => {
+    if (!maxWithdrawl.ion && !withdrawalMaxToken) return;
+    const percent =
+      (+maxWithdrawl.ion /
+        Number(
+          formatUnits(
+            withdrawalMaxToken?.value as bigint,
+            withdrawalMaxToken?.decimals as number
+          )
+        )) *
+      100;
+    setUtilization(Number(percent.toFixed(0)));
+  }, [maxWithdrawl.ion, withdrawalMaxToken]);
   useMemo(async () => {
     try {
       const reserves = (await publicClient?.readContract({
@@ -71,7 +114,33 @@ export default function Stake() {
           return { ...p, eth: '' };
         });
       }
+      if (maxWithdrawl.ion && reserves) {
+        const ethVal =
+          (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
+        setMaxWithdrawl((p) => {
+          return { ...p, eth: formatEther(ethVal) || '' };
+        });
+      } else {
+        setMaxWithdrawl((p) => {
+          return { ...p, eth: '' };
+        });
+      }
 
+      const getStakedTokens = (await publicClient?.readContract({
+        abi: StakingContractAbi,
+        address: StakingContractAddress,
+        args: [address],
+        functionName: 'balanceOf'
+      })) as bigint;
+      if (getStakedTokens) {
+        step3Loading
+          ? setAllStakedAmount(formatEther(getStakedTokens))
+          : setAllStakedAmount(formatEther(getStakedTokens));
+      } else {
+        step3Loading
+          ? setAllStakedAmount(formatEther(getStakedTokens))
+          : setAllStakedAmount(formatEther(getStakedTokens));
+      }
       // return gettingReserves;
       // const quoteLiquidity = await publicClient?.readContract({
       //   abi: LiquidityContractAbi,
@@ -89,7 +158,7 @@ export default function Stake() {
       // eslint-disable-next-line no-console
       console.log(err);
     }
-  }, [maxDeposit.ion, publicClient]);
+  }, [address, maxDeposit.ion, maxWithdrawl.ion, publicClient, step3Loading]);
 
   async function addLiquidity() {
     try {
@@ -171,7 +240,133 @@ export default function Stake() {
       });
     }
   }
+  async function removeLiquidity() {
+    try {
+      const args = {
+        token: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA',
+        stable: false,
+        liquidity: parseUnits(maxWithdrawl?.ion, 18),
+        // amounTokenMin:
+        //   parseEther(maxWithdrawl?.ion) -
+        //   (parseEther(maxWithdrawl?.ion) * BigInt(5)) / BigInt(100),
+        amounTokenMin: parseEther('0'),
+        // amountETHMin: parseUnits(maxWithdrawl?.eth, 18),
+        amountETHMin: parseEther('0'),
+        to: address,
+        deadline: Math.floor((Date.now() + 3636000) / 1000)
+      };
+      // console.log(args);
 
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched) return;
+      //approving first ...
+
+      const approval = await walletClient!.writeContract({
+        abi: erc20Abi,
+        account: walletClient?.account,
+        address: '0xC6A394952c097004F83d2dfB61715d245A38735a',
+        args: [LiquidityContractAddress, args.liquidity],
+        functionName: 'approve'
+      });
+      setStep2Loading(true);
+      // console.log(approval);
+
+      const appr = await publicClient?.waitForTransactionReceipt({
+        hash: approval
+      });
+      // eslint-disable-next-line no-console
+      console.log({ appr });
+
+      const tx = await walletClient!.writeContract({
+        abi: LiquidityContractAbi,
+        account: walletClient?.account,
+        address: LiquidityContractAddress,
+        args: [
+          args.token,
+          args.stable,
+          args.liquidity,
+          args.amounTokenMin,
+          args.amountETHMin,
+          args.to,
+          args.deadline
+        ],
+        functionName: 'removeLiquidityETH'
+        // value: parseUnits(maxWithdrawl?.eth, 18)
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+      setStep2Loading(false);
+      setMaxWithdrawl((p) => {
+        return { ...p, ion: '' };
+      });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+      setStep2Loading(false);
+      setMaxWithdrawl((p) => {
+        return { ...p, ion: '' };
+      });
+    } finally {
+      setStep2Loading(false);
+      setMaxWithdrawl((p) => {
+        return { ...p, ion: '' };
+      });
+    }
+  }
+
+  async function unstakingAsset() {
+    try {
+      const args = {
+        lpToken: parseUnits(maxUnstake, 18)
+      };
+
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched && maxLp == '0') return;
+
+      setStep3Loading(true);
+
+      const tx = await walletClient!.writeContract({
+        abi: StakingContractAbi,
+        account: walletClient?.account,
+        address: StakingContractAddress,
+        args: [args.lpToken],
+        functionName: 'withdraw'
+      });
+      // eslint-disable-next-line no-console
+      console.log('Transaction Hash --->>>', tx);
+      if (!tx) return;
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+
+      setStep3Loading(false);
+      setMaxUnstake('');
+      // eslint-disable-next-line no-console
+      console.log('Transaction --->>>', transaction);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+      setStep3Loading(false);
+      setMaxUnstake('');
+    } finally {
+      setStep3Loading(false);
+      setMaxUnstake('');
+    }
+  }
   async function stakingAsset() {
     try {
       const args = {
@@ -260,32 +455,89 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
+            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
           >
             <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
-            <MaxDeposit
-              amount={maxDeposit.ion}
-              tokenName={'ion'}
-              token={'0x18470019bf0e94611f15852f7e93cf5d65bc34ca'}
-              handleInput={(val?: string) =>
-                setMaxDeposit((p) => {
-                  return { ...p, ion: val || '' };
-                })
-              }
-            />
-            <MaxDeposit
-              amount={maxDeposit.eth}
-              tokenName={'eth'}
-              token={'0x0000000000000000000000000000000000000000'}
-            />
+            <div className={`my-3`}>
+              <Toggle setActiveToggle={setstep2Toggle} />
+            </div>
+            {step2Toggle === 'Deposit' && (
+              <>
+                <MaxDeposit
+                  headerText={step2Toggle}
+                  amount={maxDeposit.ion}
+                  tokenName={'ion'}
+                  token={'0x18470019bf0e94611f15852f7e93cf5d65bc34ca'}
+                  handleInput={(val?: string) =>
+                    setMaxDeposit((p) => {
+                      return { ...p, ion: val || '' };
+                    })
+                  }
+                />
+                <MaxDeposit
+                  headerText={step2Toggle}
+                  amount={maxDeposit.eth}
+                  tokenName={'eth'}
+                  token={'0x0000000000000000000000000000000000000000'}
+                />
+              </>
+            )}
+            {step2Toggle === 'Withdraw' && (
+              <>
+                <MaxDeposit
+                  headerText={step2Toggle}
+                  amount={maxWithdrawl.ion}
+                  tokenName={'ion/eth'}
+                  token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
+                  handleInput={(val?: string) =>
+                    setMaxWithdrawl((p) => {
+                      return { ...p, ion: val || '' };
+                    })
+                  }
+                />
+                {/* <MaxDeposit
+                  headerText={step2Toggle}
+                  amount={maxWithdrawl.eth}
+                  tokenName={'eth'}
+                  token={'0x0000000000000000000000000000000000000000'}
+                  // max="0"
+                /> */}
+                <div className={`my-6 w-[95%] mx-auto  `}>
+                  <SliderComponent
+                    currentUtilizationPercentage={Number(
+                      utilization.toFixed(0)
+                    )}
+                    handleUtilization={(val?: number) => {
+                      if (!val && !isConnected) return;
+                      const ionval =
+                        (Number(val) / 100) *
+                        Number(
+                          formatUnits(
+                            withdrawalMaxToken?.value as bigint,
+                            withdrawalMaxToken?.decimals as number
+                          )
+                        );
+                      setMaxWithdrawl((p) => {
+                        return { ...p, ion: ionval.toString() || '' };
+                      });
+                    }}
+                  />
+                </div>
+              </>
+            )}
 
             {/* liner */}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-4 text-sm text-black w-full bg-accent rounded-md`}
-              onClick={() => addLiquidity()}
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm text-black w-full bg-accent ${
+                step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
+              } rounded-md`}
+              onClick={() => {
+                step2Toggle === 'Deposit' && addLiquidity();
+                step2Toggle === 'Withdraw' && removeLiquidity();
+              }}
             >
               <ResultHandler
                 isLoading={step2Loading}
@@ -293,20 +545,27 @@ export default function Stake() {
                 width="20"
                 color={'#000000'}
               >
-                <img
-                  alt="lock--v1"
-                  className={`w-4 h-4 inline-block mx-2`}
-                  src="https://img.icons8.com/ios/50/lock--v1.png"
-                />
-                Provide Liquidity
+                {step2Toggle === 'Withdraw' ? (
+                  'Withdraw Liquidity'
+                ) : (
+                  <>
+                    <img
+                      alt="lock--v1"
+                      className={`w-4 h-4 inline-block mx-2`}
+                      src="https://img.icons8.com/ios/50/lock--v1.png"
+                    />
+                    Provide Liquidity
+                  </>
+                )}
               </ResultHandler>
             </button>
           </div>
 
           <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-6 row-start-3 col-start-1 col-span-1`}
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-5 row-start-3 col-start-1 col-span-1`}
           >
             <h1 className={` text-lg`}>Available to stake</h1>
+
             <MaxDeposit
               tokenName={'ion/eth'}
               token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
@@ -317,15 +576,36 @@ export default function Stake() {
             className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}
           >
             <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
-            <h1 className={`text-[12px] text-white/40 mt-2`}> Stake </h1>
-            <MaxDeposit
-              amount={maxLp}
-              tokenName={'ion/eth'}
-              token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
-              handleInput={(val?: string) => setMaxLp(val as string)}
-            />
+            <div className={`my-3`}>
+              <Toggle
+                setActiveToggle={setstep3Toggle}
+                arrText={['Stake', 'Unstake']}
+              />
+            </div>
+            {/* <h1 className={`text-[12px] text-white/40 mt-2`}> Stake </h1> */}
+            {step3Toggle === 'Stake' && (
+              <MaxDeposit
+                headerText={step3Toggle}
+                amount={maxLp}
+                tokenName={'ion/eth'}
+                token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
+                handleInput={(val?: string) => setMaxLp(val as string)}
+              />
+            )}
+            {step3Toggle === 'Unstake' && (
+              <MaxDeposit
+                max={allStakedAmount}
+                headerText={step3Toggle}
+                amount={maxUnstake}
+                tokenName={'ion/eth'}
+                handleInput={(val?: string) => setMaxUnstake(val as string)}
+              />
+            )}
+
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1 className={` mt-2`}>You will get </h1>
+            <h1 className={` mt-2`}>
+              You will {step3Toggle === 'Unstake' && 'not'} get{' '}
+            </h1>
             {/* this will get repeated */}
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -334,7 +614,13 @@ export default function Stake() {
                 src="/img/symbols/32/color/velo.png"
               />
               <span>Velodrome APY</span>
-              <span className="text-accent ml-auto">-</span>
+              <span
+                className={`text-accent ${
+                  step3Toggle === 'Unstake' && 'text-red-500'
+                } ml-auto`}
+              >
+                -
+              </span>
             </div>
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -343,7 +629,13 @@ export default function Stake() {
                 src="/img/logo/ION.png"
               />
               <span>Ionic Points</span>
-              <span className="text-accent ml-auto">3x</span>
+              <span
+                className={`text-accent ml-auto ${
+                  step3Toggle === 'Unstake' && 'text-red-500'
+                }`}
+              >
+                3x
+              </span>
             </div>
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -352,11 +644,23 @@ export default function Stake() {
                 src="/img/logo/MODE.png"
               />
               <span>Mode Points</span>
-              <span className="text-accent ml-auto">2x</span>
+              <span
+                className={`text-accent ml-auto ${
+                  step3Toggle === 'Unstake' && 'text-red-500'
+                }`}
+              >
+                2x
+              </span>
             </div>
+            <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-6 mb-4 text-sm text-black w-full bg-accent rounded-md`}
-              onClick={() => stakingAsset()}
+              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm text-black w-full bg-accent ${
+                step3Toggle === 'Unstake' && 'bg-red-500 text-white'
+              } rounded-md`}
+              onClick={() => {
+                step3Toggle === 'Stake' && stakingAsset();
+                step3Toggle === 'Unstake' && unstakingAsset();
+              }}
             >
               <ResultHandler
                 isLoading={step3Loading}
@@ -364,7 +668,7 @@ export default function Stake() {
                 width="20"
                 color={'#000000'}
               >
-                Stake
+                {step3Toggle ? step3Toggle : 'Stake'}
               </ResultHandler>
             </button>
           </div>

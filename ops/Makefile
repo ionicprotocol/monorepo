@@ -64,7 +64,6 @@ prod-plan:
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
-	export TF_VAR_docker_image=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \
@@ -83,7 +82,6 @@ prod-deploy:
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
-	export TF_VAR_docker_image=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \

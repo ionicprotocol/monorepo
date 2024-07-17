@@ -48,6 +48,18 @@ task("pool:create:optimism-main").setAction(async ({}, { run, ethers }) => {
   });
 });
 
+task("pool:create:bob:main").setAction(async ({}, { run, ethers }) => {
+  const mpo = await ethers.getContract("MasterPriceOracle");
+  await run("pool:create", {
+    name: "BoB Main Market",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 // update the MPO=0x429041250873643235cb3788871447c6fF3205aA
 // npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 
