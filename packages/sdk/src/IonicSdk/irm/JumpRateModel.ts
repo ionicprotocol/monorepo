@@ -16,10 +16,15 @@ export default class JumpRateModel {
 
   async init(interestRateModelAddress: Address, assetAddress: Address, client: PublicClient): Promise<void> {
     const jumpRateModelContract = getContract({ address: interestRateModelAddress, abi: jumpRateModelAbi, client });
+    console.log("jumpRateModelContract: ", jumpRateModelContract.address);
     this.baseRatePerBlock = await jumpRateModelContract.read.baseRatePerBlock();
+    console.log("this.baseRatePerBlock: ", this.baseRatePerBlock);
     this.multiplierPerBlock = await jumpRateModelContract.read.multiplierPerBlock();
+    console.log("this.multiplierPerBlock: ", this.multiplierPerBlock);
     this.jumpMultiplierPerBlock = await jumpRateModelContract.read.jumpMultiplierPerBlock();
+    console.log("this.jumpMultiplierPerBlock: ", this.jumpMultiplierPerBlock);
     this.kink = await jumpRateModelContract.read.kink();
+    console.log("this.kink: ", this.kink);
     const cTokenContract = getContract({ address: assetAddress, abi: cTokenFirstExtensionAbi, client });
     this.reserveFactorMantissa = await cTokenContract.read.reserveFactorMantissa();
     this.reserveFactorMantissa = this.reserveFactorMantissa + (await cTokenContract.read.adminFeeMantissa());
