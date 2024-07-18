@@ -43,7 +43,7 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black">
+    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
       <DynamicSubNav />
       <Link
         className={`flex items-center  md:pr-10  `}
@@ -64,7 +64,7 @@ export default function Navbar() {
         `}
       >
         <div
-          className={`absolute md:static top-full left-0 py-4 md:py-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-center my-auto   gap-1  text-sm bg-black md:bg-transparent transition-transform nav ${
+          className={`absolute md:static top-full left-0 py-4 md:py-0 w-full md:w-auto flex flex-col md:flex-row md:items-center md:justify-center my-auto   gap-y-3  text-sm bg-black md:bg-transparent transition-transform nav overflow-x-hidden ${
             isActive && 'nav-opened'
           }`}
         >
@@ -74,14 +74,14 @@ export default function Navbar() {
           >
             <p
               className={`${
-                pathname == '/' ? 'text-accent' : null
+                pathname == '/' || pathname == '/market' ? 'text-accent' : null
               } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Markets
             </p>
           </Link>
           <Link
-            className="relative"
+            className="relative mb-2 md:mb-0"
             href="/stake"
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
@@ -118,7 +118,7 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="relative"
+            className="relative mb-2 md:mb-0"
             href="/earn"
           >
             <p
@@ -130,7 +130,7 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="relative"
+            className="relative mb-2 md:mb-0"
             href="/claim"
           >
             <p
@@ -179,7 +179,7 @@ export default function Navbar() {
           </Link>
            */}
           <Link
-            className="relative"
+            className="relative mb-2 md:mb-0"
             href="https://app.mode.network/"
             target="_blank"
           >
@@ -190,7 +190,7 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            className="relative"
+            className="relative mb-2 md:mb-0"
             href="https://bridge.connext.network/ION-from-mode-to-base?symbol=ION"
             target="_blank"
           >
@@ -203,10 +203,17 @@ export default function Navbar() {
               xION
             </p>
           </Link>
+          <div className="relative mb-2 md:mb-0">
+            <p
+              className={`hover:text-accent px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              <BlackCreateWalletButton />
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center md:justify-center gap-4 my-auto uppercase connect-button">
-          <BlackCreateWalletButton />
+          {/*  */}
           <ConnectButton />
 
           <div

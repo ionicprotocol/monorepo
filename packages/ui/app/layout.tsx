@@ -61,7 +61,7 @@ export default function RootLayout({
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
       `}
       </Script>
-      <body className={'scrollbar-hide font-inter'}>
+      <body className={'scrollbar-hide font-inter '}>
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
@@ -73,7 +73,7 @@ export default function RootLayout({
                   shallowRouting
                 />
 
-                <div className="relative px-4 pt-[128px] pb-4 sm:pb-[280px] min-h-screen">
+                <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[280px] min-h-screen w-[100vw]">
                   <Navbar />
                   <main>{children}</main>
                   <footer
