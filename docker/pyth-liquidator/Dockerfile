@@ -1,6 +1,8 @@
 # Use a Node.js base image with yarn pre-installed
 FROM node:latest AS base
 
+ENV HOME=/tmp/build \
+    PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
 # Set the working directory inside the container
 WORKDIR /tmp/build/
 
@@ -14,7 +16,7 @@ RUN apt-get update && \
 # Install Corepack globally (optional, if needed)
 RUN npm install -g corepack
 
-# Copy package.json and yarn.lock to install dependencies
+
 COPY package*.json yarn.lock ./
 
 # Install dependencies
@@ -50,7 +52,7 @@ COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 
 
 # Install Yarn (optional, if needed)
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+
 
 # Setup Foundry environment
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
