@@ -583,7 +583,7 @@ const PoolRows = ({
               Cross Chain Supply
             </button> */}
             <button
-              className={`rounded-md bg-accent text-black py-1.5 px-1 w-full h-full uppercase`}
+              className={`rounded-md bg-accent text-black py-1.5 px-1 w-full h-full uppercase `}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
