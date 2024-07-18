@@ -7,17 +7,14 @@
     "allowJs": true,
     "target": "ES2015",
     "rootDirs": ["./src", "./tests", "./tasks"],
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "artifacts/*": ["./artifacts/*"],
-      "typechain/*": ["./typechain/*"]
-    }
+    "composite": true
   },
   "exclude": [
+    "./typechain/**/*",
     "./dist/cjs/**/*",
     "./dist/esm/**/*",
-    "./node_modules/**/*"
+    "./node_modules/**/*",
+    "./artifacts/**/*"
   ],
-  "include": ["./src/**/*", "./tests/**/*", "./tasks/**/*", "./artifacts/**/*.json"]
+  "include": ["./artifacts/**/*.json"]
 }
