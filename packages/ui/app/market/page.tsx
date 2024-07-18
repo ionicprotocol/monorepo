@@ -103,9 +103,9 @@ export default function Market() {
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
-          className={`w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
+          className={`w-full flex flex-col items-start pb-6 pt-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
         >
-          <div className={`w-[20%] mb-2 `}>
+          <div className={`w-full sm:w-[40%] md:w-[20%] mb-2 `}>
             {' '}
             <NetworkSelector
               chainId={chain as string}
@@ -138,11 +138,12 @@ export default function Market() {
                     >
                       <img
                         alt="modlogo"
-                        className={`w-8`}
+                        className={`md:w-8 w-6`}
                         src={chainData.logo}
                       />
                       <h1 className={`font-semibold`}>{pool.name}</h1>
                     </div>
+                    <div className="h-[2px] w-[60%] md:hidden block mx-auto bg-white/10 mb-3" />
                     <div className="flex items-center justify-center pb-2">
                       {pool.assets.map((val, idx) => (
                         <img
@@ -159,12 +160,16 @@ export default function Market() {
           </div>
 
           <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
-            <div className={`w-full flex flex-wrap items-center gap-4`}>
+            <div
+              className={`w-full flex flex-wrap items-center justify-center md:justify-start gap-4`}
+            >
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
               >
-                <p className={`text-white/60 text-sm`}>Total Market Size</p>
-                <p className={`font-semibold`}>
+                <p className={`text-white/60 md:text-sm text-[11px]`}>
+                  Total Market Size
+                </p>
+                <p className={`font-semibold md:text-base text-sm`}>
                   $
                   {poolData
                     ? (
@@ -181,8 +186,10 @@ export default function Market() {
               <div
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
-                <p className={`text-white/60 text-sm`}>Total Available</p>
-                <p className={`font-semibold`}>
+                <p className={`text-white/60  md:text-sm text-[11px]`}>
+                  Total Available
+                </p>
+                <p className={`font-semibold md:text-base text-sm`}>
                   $
                   {poolData?.totalSuppliedFiat.toLocaleString('en-US', {
                     maximumFractionDigits: 2,
@@ -194,8 +201,10 @@ export default function Market() {
               <div
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
-                <p className={`text-white/60 text-sm`}>Total Borrows</p>
-                <p className={`font-semibold`}>
+                <p className={`text-white/60 md:text-sm text-[11px]`}>
+                  Total Borrows
+                </p>
+                <p className={`font-semibold md:text-base text-sm`}>
                   $
                   {poolData?.totalBorrowedFiat.toLocaleString('en-US', {
                     maximumFractionDigits: 2,
@@ -208,7 +217,7 @@ export default function Market() {
           </ResultHandler>
 
           <button
-            className={`px-6 mt-4 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+            className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
             onClick={() => setSwapOpen(true)}
           >
             {'Wrap ETH '}
@@ -264,7 +273,7 @@ export default function Market() {
           {/* </div> */}
           {/* <PoolToggle /> */}
           <div
-            className={`w-full gap-x-1 hidden lg:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
+            className={`w-full gap-x-1 hidden md:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
             <h3 className={` col-span-2`}>ASSETS</h3>
             <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>
