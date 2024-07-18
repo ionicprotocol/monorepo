@@ -76,7 +76,7 @@ export default class JumpRateModel {
       !this.initialized ||
       !this.kink ||
       !this.multiplierPerBlock ||
-      !this.baseRatePerBlock ||
+      typeof this.baseRatePerBlock === "undefined" ||
       !this.jumpMultiplierPerBlock
     )
       throw new Error(
