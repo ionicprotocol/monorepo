@@ -117,11 +117,16 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
         abi: erc20Abi,
         client: this.publicClient
       });
-      const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
-        account: this.walletClient!.account!.address,
-        chain: this.walletClient!.chain
-      });
-      return tx;
+      try {
+        const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        });
+        return tx;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     }
 
     async enterMarkets(cTokenAddress: Address, comptrollerAddress: Address) {
