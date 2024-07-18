@@ -1,10 +1,11 @@
-import { NewPosition, OpenPosition, PositionInfo } from "@ionicprotocol/types";
+import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo } from "@ionicprotocol/types";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import EIP20InterfaceABI from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
+import { ChainSupportedAssets } from "./Pools";
 
 export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Leverage extends Base {
