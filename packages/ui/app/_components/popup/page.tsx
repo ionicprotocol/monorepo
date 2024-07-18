@@ -6,8 +6,14 @@ import millify from 'millify';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { type Address, formatEther, formatUnits, parseUnits } from 'viem';
-import { useChainId } from 'wagmi';
+import {
+  type Address,
+  erc20Abi,
+  formatEther,
+  formatUnits,
+  parseUnits
+} from 'viem';
+import { useChainId, useWriteContract } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
 
@@ -71,6 +77,7 @@ const Popup = ({
   closePopup,
   comptrollerAddress
 }: IPopup) => {
+  const { writeContractAsync } = useWriteContract();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
@@ -603,11 +610,17 @@ const Popup = ({
           amountAsBInt;
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(
-            selectedMarketData.cToken,
-            selectedMarketData.underlyingToken,
-            amountAsBInt
-          );
+          const tx = await writeContractAsync({
+            abi: erc20Abi,
+            address: selectedMarketData.underlyingToken,
+            functionName: 'approve',
+            args: [selectedMarketData.cToken, amountAsBInt]
+          });
+          // const tx = await currentSdk.approve(
+          //   selectedMarketData.cToken,
+          //   selectedMarketData.underlyingToken,
+          //   amountAsBInt
+          // );
 
           upsertTransactionStep({
             index: currentTransactionStep,
