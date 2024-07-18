@@ -573,17 +573,17 @@ const PoolRows = ({
         {collateralFactor}%
       </h3>
       <div
-        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[11px] font-semibold my-auto px-2`}
+        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px] font-semibold my-auto px-2 w-full`}
       >
         {address ? (
-          <div className={`grid grid-cols-2 h-min gap-x-1 my-3 md:my-0 w-full`}>
+          <div className={`flex flex-col h-min gap-y-1 my-auto md:my-0 w-full`}>
             {/* <button
               className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
             >
               Cross Chain Supply
             </button> */}
             <button
-              className={`rounded-md bg-accent text-black py-1.5 px-1 w-full h-full uppercase `}
+              className={`rounded-md bg-accent text-black py-1.5 px-1   uppercase truncate `}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
@@ -598,7 +598,7 @@ const PoolRows = ({
               Supply / Withdraw
             </button>
             <button
-              className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase`}
+              className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-1 uppercase truncate`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   dropdownSelectedChain,
