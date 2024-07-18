@@ -74,7 +74,7 @@ export default function Navbar() {
           >
             <p
               className={`${
-                pathname == '/' ? 'text-accent' : null
+                pathname == '/' || pathname == '/market' ? 'text-accent' : null
               } px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
             >
               Markets
