@@ -21,6 +21,7 @@ import {
 
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
+import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 import Toggle from '../_components/Toggle';
 
@@ -42,6 +43,7 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
+  const [rewardPopup, setRewardPopup] = useState<boolean>(false);
   // const [step1Loading, setStep1Loading] = useState<boolean>(false);
   const [step2Loading, setStep2Loading] = useState<boolean>(false);
   const [step3Loading, setStep3Loading] = useState<boolean>(false);
@@ -432,6 +434,11 @@ export default function Stake() {
           open={widgetPopup}
         />
 
+        <ClaimRewards
+          close={() => setRewardPopup(false)}
+          open={rewardPopup}
+        />
+
         <div
           className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-2 gap-4`}
         >
@@ -562,15 +569,21 @@ export default function Stake() {
           </div>
 
           <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-5 row-start-3 col-start-1 col-span-1`}
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 row-start-3 col-start-1 col-span-1`}
           >
-            <h1 className={` text-lg`}>Available to stake</h1>
-
+            <h1 className={` text-lg `}>Claim Your Rewards </h1>
+            {/* 
             <MaxDeposit
               tokenName={'ion/eth'}
               token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
               fetchOwn={true}
-            />
+            /> */}
+            <button
+              className={`my-3 py-1.5 text-sm text-black w-full bg-accent rounded-md`}
+              onClick={() => setRewardPopup(true)}
+            >
+              💰💰Claim Rewards💰💰
+            </button>
           </div>
           <div
             className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}

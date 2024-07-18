@@ -573,10 +573,12 @@ const PoolRows = ({
         {collateralFactor}%
       </h3>
       <div
-        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px] font-semibold my-auto px-2 w-full`}
+        className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px]  font-semibold  px-2 md:px-10 w-full`}
       >
         {address ? (
-          <div className={`flex flex-col h-min gap-y-1 my-auto md:my-0 w-full`}>
+          <div
+            className={`md:flex md:flex-col grid grid-cols-2 h-min md:gap-y-1 gap-x-1 md:my-0 w-full my-3 `}
+          >
             {/* <button
               className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
             >
