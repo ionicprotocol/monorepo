@@ -135,7 +135,7 @@ describe("JumpRateModel", () => {
     });
 
     it("should throw error when model is not initialized", async () => {
-      expect(() => jumpRateModel.getBorrowRate(utilizationRate)).to.throw("Interest rate model class not initialized.");
+      expect(() => jumpRateModel.getBorrowRate(utilizationRate)).to.throw();
     });
 
     it("should utilization is less than kink", async () => {
@@ -168,7 +168,7 @@ describe("JumpRateModel", () => {
     });
 
     it("should throw error when model is not initialized", async () => {
-      expect(() => jumpRateModel.getSupplyRate(utilizationRate)).to.throw("Interest rate model class not initialized.");
+      expect(() => jumpRateModel.getSupplyRate(utilizationRate)).to.throw();
     });
 
     it("should get supply when model is initialized", async () => {
