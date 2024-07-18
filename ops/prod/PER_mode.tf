@@ -7,8 +7,8 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "2048"   # CPU units for the task
-  memory = "4096"   # Memory (in MiB) for the task
+  cpu    = "4096"   # CPU units for the task
+  memory = "8192"   # Memory (in MiB) for the task
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
@@ -41,7 +41,9 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
         {
           name  = "ETHEREUM_ADMIN_PRIVATE_KEY"
           value = "${var.ethereum_admin_private_key}"
-        }  
+        },
+          name = "SERVICE"
+          value = "price-verifier"  
       ]
     }
   ])
