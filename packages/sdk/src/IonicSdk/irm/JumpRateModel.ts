@@ -74,7 +74,9 @@ export default class JumpRateModel {
       !this.baseRatePerBlock ||
       !this.jumpMultiplierPerBlock
     )
-      throw new Error("Interest rate model class not initialized.");
+      throw new Error(
+        `Interest rate model class not initialized: ${this.initialized} kink: ${this.kink} multiplierPerBlock: ${this.multiplierPerBlock} baseRatePerBlock: ${this.baseRatePerBlock} jumpMultiplierPerBlock: ${this.jumpMultiplierPerBlock}`
+      );
     if (utilizationRate <= this.kink) {
       return (utilizationRate * this.multiplierPerBlock) / parseEther("1") + this.baseRatePerBlock;
     } else {
