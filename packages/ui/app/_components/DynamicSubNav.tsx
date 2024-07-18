@@ -39,7 +39,7 @@ function DynamicSubNav() {
       href="https://jumper.exchange/superfest/"
       target="_blank"
     >
-      <div className={`h-max w-[100vw] flex group  givep overflow-x-hidden`}>
+      <div className={`h-max w-full flex group  givep overflow-x-hidden`}>
         {clone()}
         {clone()}
       </div>
