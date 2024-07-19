@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
       environment = [
         {
           name  = "WEB3_HTTP_PROVIDER_URL"
-          value = "https://mainnet.mode.network"
+          value = "https://mainnet.mode.network/"
         },
         {
           name  = "TARGET_CHAIN_ID"
