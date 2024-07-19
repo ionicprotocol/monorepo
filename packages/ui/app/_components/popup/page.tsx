@@ -617,7 +617,10 @@ const Popup = ({
             }
           });
 
-          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
+          await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx,
+            confirmations: 2
+          });
         }
 
         upsertTransactionStep({
@@ -904,7 +907,10 @@ const Popup = ({
             }
           });
 
-          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
+          await currentSdk.publicClient.waitForTransactionReceipt({
+            hash: tx,
+            confirmations: 2
+          });
         }
 
         upsertTransactionStep({
