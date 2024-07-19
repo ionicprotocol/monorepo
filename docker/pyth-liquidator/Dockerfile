@@ -56,12 +56,16 @@ COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 # Build the application
-RUN curl -L https://foundry.paradigm.xyz | bash && \
-    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup" && \
-    yarn build:deploy:liquidator
+# ----- build -----
+RUN yarn build:deploy:liquidator
 
-# Use a minimal Node.js runtime image for the final stage
-FROM node:latest AS runtime
+# ----------------------------------------
+# Copy files to the deployment image.
+# ----------------------------------------
+
+FROM node as runtime
+
+ENV NODE_ENV=production
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
