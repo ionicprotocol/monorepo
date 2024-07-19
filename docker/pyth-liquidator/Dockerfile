@@ -11,18 +11,12 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
     git \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Corepack globally (optional, if needed)
 RUN npm install -g corepack
 
-
 COPY package*.json yarn.lock ./
-
-
-
-# Use Foundry for the build process
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 AS foundry
 
 # Final build stage
 FROM base AS build
@@ -50,13 +44,8 @@ COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 # Install Yarn (optional, if needed)
 
 
-# Setup Foundry environment
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
-
 # Build the application
-RUN curl -L https://foundry.paradigm.xyz | bash && \
-    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup" && \
-    yarn build:deploy:liquidator
+RUN yarn build:deploy:liquidator
 
 # Use a minimal Node.js runtime image for the final stage
 FROM node:latest AS runtime
