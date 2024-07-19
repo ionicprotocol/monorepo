@@ -1,5 +1,5 @@
 # Use a Node.js base image with yarn pre-installed
-FROM node:latest AS base
+FROM node:20 AS base
 
 ENV HOME=/tmp/build \
     PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
