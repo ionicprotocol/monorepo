@@ -44,9 +44,6 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
         }  
         
       ]
-            command = [
-        "sh", "-c", "ping -c 4 mainnet.mode.network"
-      ]
     }
   ])
 }
