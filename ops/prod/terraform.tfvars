@@ -1,6 +1,6 @@
 ecs_cluster_name   = "opportunity-bot-cluster"
 cluster_name = "opportunity-bot-cluster1"
-task_definition_family = "my-task-definition"
+task_definition_family = "perbotTaskDefinition"
 container_name        = "opportunity_bot"
 docker_image          = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth"
 subnet_ids            = ["subnet-09bde9f5ac4ae4112"]
