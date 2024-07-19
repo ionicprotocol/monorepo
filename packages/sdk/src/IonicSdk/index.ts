@@ -19,6 +19,7 @@ import {
   PublicClient,
   WalletClient
 } from "viem";
+import { bob } from "viem/chains";
 
 import {
   addressesProviderAbi,
@@ -123,11 +124,14 @@ export class IonicBase {
         address: this.chainDeployment.PoolLensSecondary.address as Address,
         client: this.publicClient
       }),
-      IonicLiquidator: getContract({
-        abi: ionicLiquidatorAbi,
-        address: this.chainDeployment.IonicLiquidator.address as Address,
-        client: this.publicClient
-      }),
+      IonicLiquidator:
+        this.chainId === bob.id
+          ? ({} as any)
+          : getContract({
+              abi: ionicLiquidatorAbi,
+              address: this.chainDeployment.IonicLiquidator.address as Address,
+              client: this.publicClient
+            }),
       FeeDistributor: getContract({
         abi: feeDistributorAbi,
         address: this.chainDeployment.FeeDistributor.address as Address,
