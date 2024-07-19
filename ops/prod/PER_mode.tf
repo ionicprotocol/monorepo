@@ -42,6 +42,10 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
           name  = "ETHEREUM_ADMIN_PRIVATE_KEY"
           value = "${var.ethereum_admin_private_key}"
         }  
+        
+      ]
+            command = [
+        "sh", "-c", "ping -c 4 mainnet.mode.network"
       ]
     }
   ])
