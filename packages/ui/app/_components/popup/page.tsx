@@ -984,7 +984,7 @@ const Popup = ({
           let tx;
 
           switch (enableCollateral) {
-            case true:
+            case true: {
               const comptrollerContract = currentSdk.createComptroller(
                 comptrollerAddress,
                 currentSdk.publicClient
@@ -1051,8 +1051,9 @@ const Popup = ({
               });
 
               break;
+            }
 
-            case false:
+            case false: {
               addStepsForAction([
                 {
                   error: false,
@@ -1098,6 +1099,7 @@ const Popup = ({
               });
 
               break;
+            }
           }
 
           refetchUsedQueries();
