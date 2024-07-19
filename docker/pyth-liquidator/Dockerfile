@@ -19,8 +19,7 @@ RUN npm install -g corepack
 
 COPY package*.json yarn.lock ./
 
-# Install dependencies
-RUN yarn install
+
 
 # Use Foundry for the build process
 FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 AS foundry
@@ -31,7 +30,6 @@ COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
 
 # required for the checkout process of forge
-
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
@@ -56,16 +54,12 @@ COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 # Build the application
-# ----- build -----
-RUN yarn build:deploy:liquidator
+RUN curl -L https://foundry.paradigm.xyz | bash && \
+    bash -c "source ~/.bashrc && ~/.foundry/bin/foundryup" && \
+    yarn build:deploy:liquidator
 
-# ----------------------------------------
-# Copy files to the deployment image.
-# ----------------------------------------
-
-FROM node as runtime
-
-ENV NODE_ENV=production
+# Use a minimal Node.js runtime image for the final stage
+FROM node:latest AS runtime
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
