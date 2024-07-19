@@ -115,7 +115,7 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       const token = getContract({
         address: underlyingTokenAddress,
         abi: erc20Abi,
-        client: this.publicClient
+        client: this.walletClient!
       });
       try {
         const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
