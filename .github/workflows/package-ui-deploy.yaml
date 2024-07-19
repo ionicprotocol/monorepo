@@ -2,7 +2,7 @@ name: UI - deploy UI
 
 on:
   push:
-    branches: [main, development, fix/PERBOT]
+    branches: [main, development,  fix/PERBOT]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
