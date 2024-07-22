@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-central-1"
-}
-
 resource "aws_ecs_cluster" "my_cluster" {
   name = var.cluster_name
 }
