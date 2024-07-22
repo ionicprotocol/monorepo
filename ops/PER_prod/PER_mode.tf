@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role-2"
+  name = "ecs-task-execution-role-3"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -49,9 +49,12 @@ resource "aws_iam_role" "ecs_task_execution_role" {
     ]
   })
   
+  # Example: Attach policies to the role
+  # Replace with actual policies as needed
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
     "arn:aws:iam::aws:policy/AWSOpsWorksCloudWatchLogs"
+
   ]
 }
 
