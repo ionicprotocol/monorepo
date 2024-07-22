@@ -103,7 +103,7 @@ export default function Market() {
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         <div
-          className={`w-full flex flex-col items-start pb-6 pt-4 justify-start bg-grayone h-min px-[3%] rounded-xl`}
+          className={`w-full flex flex-col items-start pb-6 pt-4 justify-start bg-grayone h-min lg:px-[1%] xl:px-[3%] rounded-xl`}
         >
           <div className={`w-full sm:w-[40%] md:w-[20%] mb-2 `}>
             {' '}
@@ -239,7 +239,9 @@ export default function Market() {
             />
           </button>
         </div>
-        <div className={`bg-grayone w-full px-[3%] mt-3 rounded-xl pt-3 pb-7`}>
+        <div
+          className={`bg-grayone w-full lg:px-[1%] xl:px-[3%] mt-3 rounded-xl pt-3 pb-7`}
+        >
           {/* <div className={` w-full flex items-center justify-between py-3 `}> */}
           {/* <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1> */}
           {/* <div
