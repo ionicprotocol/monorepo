@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket = "terraform-statefile-ionicprotocol-based"
     key    = "PER_prod/ionic-deployment"
-    region = "eu-central-1"
+    region = "us-east-1"  # Region of the S3 bucket
   }
   required_providers {
     aws = {
@@ -13,5 +13,5 @@ terraform {
 }
 
 provider "aws" {
-  region = var.region
+  region = "eu-central-1"  # Region for infrastructure
 }
