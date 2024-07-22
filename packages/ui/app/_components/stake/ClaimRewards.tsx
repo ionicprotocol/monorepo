@@ -1,6 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
+import {
+  useAccount,
+  useChainId,
+  usePublicClient,
+  useWalletClient
+} from 'wagmi';
+
+import ResultHandler from '../ResultHandler';
+
+import {
+  StakingContractAbi,
+  StakingContractAddress
+} from '@ui/constants/staking';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IProps {
   close: () => void;
@@ -8,7 +24,71 @@ interface IProps {
 }
 
 export default function ClaimRewards({ close, open }: IProps) {
+  const [loading, setLoading] = useState<boolean>(false);
   const newRef = useRef(null!);
+
+  const chainId = useChainId();
+  const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const [rewards, setRewards] = useState<bigint>(BigInt(0));
+
+  async function claimRewards() {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched) return;
+      setLoading(true);
+
+      const claiming = await walletClient!.writeContract({
+        abi: StakingContractAbi,
+        account: walletClient?.account,
+        address: StakingContractAddress,
+        args: [address],
+        functionName: 'getReward'
+      });
+
+      const hash = await publicClient?.waitForTransactionReceipt({
+        hash: claiming
+      });
+      setLoading(false);
+      // eslint-disable-next-line no-console
+      console.log({ hash: hash?.transactionHash });
+    } catch (err) {
+      setLoading(false);
+      // eslint-disable-next-line no-console
+      console.log(err);
+    }
+  }
+  useEffect(() => {
+    async function getRewards() {
+      try {
+        if (!isConnected) return;
+        await handleSwitchOriginChain(mode.id, chainId);
+        if (loading) {
+          //reloading prices
+        }
+        const totalRewards = (await publicClient?.readContract({
+          abi: StakingContractAbi,
+          address: StakingContractAddress,
+          args: [address],
+          functionName: 'rewards'
+        })) as bigint;
+
+        setRewards(totalRewards);
+
+        // eslint-disable-next-line no-console
+        console.log(totalRewards);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      }
+    }
+    getRewards();
+  }, [address, chainId, isConnected, publicClient, loading]);
 
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
@@ -50,11 +130,24 @@ export default function ClaimRewards({ close, open }: IProps) {
             className={`grid grid-cols-3 justify-between w-full items-center text-sm text-white/60`}
           >
             <span className={` mx-auto`}>Mode</span>
-            <span className={` mx-auto`}>0.9</span>
+            <span className={` mx-auto`}>
+              {Number(formatEther(rewards)).toLocaleString('en-US', {
+                maximumFractionDigits: 3
+              })}
+            </span>
             <button
               className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent rounded-md`}
+              onClick={() => claimRewards()}
+              disabled={loading}
             >
-              Claim
+              <ResultHandler
+                isLoading={loading}
+                height="20"
+                width="20"
+                color={'#000000'}
+              >
+                Claim
+              </ResultHandler>
             </button>
           </div>
           <h1 className={`mt-4 mb-2 text-center`}>Trading Fees</h1>
