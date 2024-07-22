@@ -35,7 +35,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
 
 # IAM Role for ECS task execution
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role-1"
+  name = "ecs-task-execution-role-2"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
