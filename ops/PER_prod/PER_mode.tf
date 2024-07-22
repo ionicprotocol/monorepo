@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition" {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = "/ecs/${var.container_name}"
-          "awslogs-region"        = "us-east-1"
+          "awslogs-region"        = "eu-central-1"
           "awslogs-stream-prefix" = "ecs"
         }
       }
