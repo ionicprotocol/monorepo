@@ -125,6 +125,7 @@ PER_prod-deploy:
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
+	terraform destroy -auto-approve && \
 	terraform init && \
 	terraform apply -auto-approve
 
