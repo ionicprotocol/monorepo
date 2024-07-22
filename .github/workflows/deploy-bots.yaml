@@ -344,3 +344,13 @@ jobs:
       - name: Terraform Deploy
         working-directory: ./ops
         run: make prod-deploy
+
+      - name: Terraform Plan
+        working-directory: ./ops
+        run: make PER_prod-plan
+
+      - name: Terraform Deploy
+        working-directory: ./ops
+        run: make PER_prod-deploy
+
+
