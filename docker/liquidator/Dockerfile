@@ -57,4 +57,4 @@ ENV NODE_ENV=production
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-CMD ["packages/bots/liquidator/src/index.handler"]
+CMD ["packages/bots/liquidator/build/bots/liquidator/src/index.handler"]
