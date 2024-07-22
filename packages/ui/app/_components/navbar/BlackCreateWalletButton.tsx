@@ -71,11 +71,11 @@ function Gradient({
   );
 }
 
-export function BlackCreateWalletButton({ height = 40, width = 200 }) {
+export function BlackCreateWalletButton({ height = 32, width = 120 }) {
   const { connectors, connect } = useConnect();
 
-  const minButtonHeight = 48;
-  const minButtonWidth = 200;
+  const minButtonHeight = 35;
+  const minButtonWidth = 130;
   const buttonHeight = Math.max(minButtonHeight, height);
   const buttonWidth = Math.max(minButtonWidth, width);
   const gradientDiameter = Math.max(buttonHeight, buttonWidth);
@@ -111,10 +111,10 @@ export function BlackCreateWalletButton({ height = 40, width = 200 }) {
         width: buttonWidth - GRADIENT_BORDER_WIDTH * 2,
         fontFamily: 'Arial, sans-serif',
         fontWeight: 'bold',
-        fontSize: 14,
+        fontSize: 12,
         borderRadius: buttonHeight / 2,
-        position: 'relative',
-        paddingRight: 10
+        position: 'relative'
+        // paddingRight: 8
       }
     }),
     [buttonHeight, buttonWidth, gradientDiameter]

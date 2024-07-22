@@ -136,9 +136,9 @@ export default function ClaimRewards({ close, open }: IProps) {
               })}
             </span>
             <button
-              className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent rounded-md`}
+              className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent disabled:bg-accent/60 rounded-md`}
               onClick={() => claimRewards()}
-              disabled={loading}
+              disabled={loading || rewards === BigInt(0)}
             >
               <ResultHandler
                 isLoading={loading}
