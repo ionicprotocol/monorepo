@@ -18,19 +18,8 @@ jobs:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Initialize
-        run:  git submodule sync --recursive
-      - name: update submodules
-        run:  git submodule update --init --recursive
 
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'

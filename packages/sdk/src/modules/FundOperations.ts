@@ -1,135 +1,281 @@
 import { SupportedChains } from "@ionicprotocol/types";
 import axios from "axios";
-import { BigNumber, constants, ContractTransaction, utils } from "ethers";
+import { Address, erc20Abi, Hex, maxUint256, parseUnits } from "viem";
 
-import ComptrollerArtifact from "../../artifacts/Comptroller.sol/Comptroller.json";
-import ICErc20Artifact from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
-import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
-import { Comptroller } from "../../typechain/Comptroller";
-import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
+import { icErc20Abi, ionicComptrollerAbi } from "../generated";
 import { getContract } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
 
-export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IFundOperations {
+  fetchGasForCall(
+    amount: bigint,
+    address: Address
+  ): Promise<{ gasWEI: bigint; gasPrice: bigint; estimatedGas: bigint }>;
+  approve(cTokenAddress: Address, underlyingTokenAddress: Address, approveAmount?: bigint): Promise<Hex>;
+  enterMarkets(cTokenAddress: Address, comptrollerAddress: Address): Promise<Hex>;
+  mint(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  repay(
+    cTokenAddress: Address,
+    isRepayingMax: boolean,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  borrow(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  withdraw(
+    cTokenAddress: Address,
+    amount: bigint
+  ): Promise<
+    | {
+        errorCode: number;
+        tx?: undefined;
+      }
+    | {
+        tx: `0x${string}`;
+        errorCode: null;
+      }
+  >;
+  swap(inputToken: Address, amount: bigint, outputToken: Address): Promise<Hex>;
+  approveLiquidatorsRegistry(underlying: Address): Promise<Hex>;
+  getSwapTokens(outputToken: Address): Promise<
+    {
+      underlyingToken: `0x${string}`;
+      underlyingSymbol: string;
+      underlyingDecimals: number;
+    }[]
+  >;
+  getAmountOutAndSlippageOfSwap(
+    inputToken: Address,
+    amount: bigint,
+    outputToken: Address
+  ): Promise<{ outputAmount: bigint; slippage: bigint }>;
+}
+
+export function withFundOperations<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IFundOperations;
+} & TBase {
   return class FundOperations extends Base {
-    async fetchGasForCall(amount: BigNumber, address: string) {
-      const estimatedGas = BigNumber.from(
-        (
-          (
-            await this.provider.estimateGas({
-              from: address,
-              value: amount.div(BigNumber.from(2))
-            })
-          ).toNumber() * 3.13
-        ).toFixed(0)
-      );
+    async fetchGasForCall(amount: bigint, address: Address) {
+      const estimatedGas =
+        ((await this.publicClient.estimateGas({
+          to: address,
+          value: amount / BigInt(2)
+        })) *
+          313n) /
+        100n;
 
       const res = await axios.get("/api/getGasPrice");
       const average = res.data.average;
-      const gasPrice = utils.parseUnits(average.toString(), "gwei");
-      const gasWEI = estimatedGas.mul(gasPrice);
+      const gasPrice = parseUnits(average.toString(), 9);
+      const gasWEI = estimatedGas * gasPrice;
 
       return { gasWEI, gasPrice, estimatedGas };
     }
 
-    async approve(cTokenAddress: string, underlyingTokenAddress: string, approveAmount?: BigNumber) {
+    async approve(cTokenAddress: Address, underlyingTokenAddress: Address, approveAmount?: bigint) {
       let _approveAmount = approveAmount;
       if (!approveAmount) {
-        _approveAmount = constants.MaxUint256;
+        _approveAmount = maxUint256;
       }
-      const token = getContract(underlyingTokenAddress, EIP20InterfaceArtifact.abi, this.signer);
-      const tx = await token.approve(cTokenAddress, _approveAmount);
+      const token = getContract({
+        address: underlyingTokenAddress,
+        abi: erc20Abi,
+        client: this.walletClient!
+      });
+      try {
+        const tx = await token.write.approve([cTokenAddress, _approveAmount!], {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        });
+        return tx;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    }
+
+    async enterMarkets(cTokenAddress: Address, comptrollerAddress: Address) {
+      const comptrollerInstance = getContract({
+        address: comptrollerAddress,
+        abi: ionicComptrollerAbi,
+        client: this.walletClient!
+      });
+      const tx = await comptrollerInstance.write.enterMarkets([[cTokenAddress]], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
       return tx;
     }
 
-    async enterMarkets(cTokenAddress: string, comptrollerAddress: string) {
-      const comptrollerInstance = getContract(comptrollerAddress, ComptrollerArtifact.abi, this.signer) as Comptroller;
-      const tx = await comptrollerInstance.enterMarkets([cTokenAddress]);
-      return tx;
-    }
-
-    async mint(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
-      const address = await this.signer.getAddress();
+    async mint(cTokenAddress: Address, amount: bigint) {
+      const cToken = getContract({
+        address: cTokenAddress,
+        abi: icErc20Abi,
+        client: this.walletClient!
+      });
+      const address = this.walletClient!.account!.address;
       // add 10% to default estimated gas
-      const gasLimit = (await cToken.estimateGas.mint(amount, { from: address })).mul(11).div(10);
-      const response = (await cToken.callStatic.mint(amount, { gasLimit, from: address })) as BigNumber;
+      const gasLimit =
+        ((await cToken.estimateGas.mint([amount], {
+          account: address
+        })) *
+          11n) /
+        10n;
+      const response = await cToken.simulate.mint([amount], {
+        gas: gasLimit,
+        account: address
+      });
 
-      if (response.toString() !== "0") {
-        const errorCode = parseInt(response.toString());
+      if (response.result !== 0n) {
+        const errorCode = Number(response.result);
         return { errorCode };
       }
 
-      const tx: ContractTransaction = await cToken.mint(amount, { gasLimit, from: address });
+      const tx = await cToken.write.mint([amount], {
+        gas: gasLimit,
+        account: address,
+        chain: this.walletClient!.chain
+      });
       return { tx, errorCode: null };
     }
 
-    async repay(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
-      const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
+    async repay(cTokenAddress: Address, isRepayingMax: boolean, amount: bigint) {
+      const cToken = getContract({
+        address: cTokenAddress,
+        abi: icErc20Abi,
+        client: this.walletClient!
+      });
 
-      const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
+      const response = await cToken.simulate.repayBorrow([isRepayingMax ? maxUint256 : amount], {
+        account: this.walletClient!.account!.address
+      });
 
-      if (response.toString() !== "0") {
-        const errorCode = parseInt(response.toString());
+      if (response.result !== 0n) {
+        const errorCode = Number(response.result);
         return { errorCode };
       }
 
-      const tx: ContractTransaction = await cToken.repayBorrow(isRepayingMax ? max : amount);
+      const tx = await cToken.write.repayBorrow([isRepayingMax ? maxUint256 : amount], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return { tx, errorCode: null };
     }
 
-    async borrow(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
+    async borrow(cTokenAddress: Address, amount: bigint) {
+      const cToken = getContract({
+        address: cTokenAddress,
+        abi: icErc20Abi,
+        client: this.walletClient!
+      });
 
-      const address = await this.signer.getAddress();
+      const address = this.walletClient!.account!.address;
       // add 20% to default estimated gas
-      const gasLimit = (await cToken.estimateGas.borrow(amount, { from: address })).mul(12).div(10);
-      const response = (await cToken.callStatic.borrow(amount, { gasLimit, from: address })) as BigNumber;
+      const gasLimit = ((await cToken.estimateGas.borrow([amount], { account: address })) * 12n) / 10n;
+      const response = await cToken.simulate.borrow([amount], {
+        gas: gasLimit,
+        account: address
+      });
 
-      if (response.toString() !== "0") {
-        const errorCode = parseInt(response.toString());
+      if (response.result !== 0n) {
+        const errorCode = Number(response.result);
         return { errorCode };
       }
-      const tx: ContractTransaction = await cToken.borrow(amount, { gasLimit, from: address });
+      const tx = await cToken.write.borrow([amount], {
+        gas: gasLimit,
+        account: address,
+        chain: this.walletClient!.chain
+      });
 
       return { tx, errorCode: null };
     }
 
-    async withdraw(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, ICErc20Artifact.abi, this.signer) as ICErc20;
+    async withdraw(cTokenAddress: Address, amount: bigint) {
+      const cToken = getContract({
+        address: cTokenAddress,
+        abi: icErc20Abi,
+        client: this.walletClient!
+      });
 
-      const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
+      const response = await cToken.simulate.redeemUnderlying([amount], {
+        account: this.walletClient!.account!.address
+      });
 
-      if (response.toString() !== "0") {
-        const errorCode = parseInt(response.toString());
+      if (response.result !== 0n) {
+        const errorCode = Number(response.result);
         return { errorCode };
       }
-      const tx: ContractTransaction = await cToken.redeemUnderlying(amount);
+      const tx = await cToken.write.redeemUnderlying([amount], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return { tx, errorCode: null };
     }
 
-    async swap(inputToken: string, amount: BigNumber, outputToken: string) {
-      const iLiquidatorsRegistry = this.createILiquidatorsRegistry(this.signer);
-
-      return await iLiquidatorsRegistry.amountOutAndSlippageOfSwap(inputToken, amount, outputToken);
-    }
-
-    async approveLiquidatorsRegistry(underlying: string) {
-      const token = getContract(underlying, EIP20InterfaceArtifact.abi, this.signer);
-      const tx = await token.approve(this.chainDeployment.LiquidatorsRegistry.address, constants.MaxUint256);
-
-      return tx;
-    }
-
-    async getSwapTokens(outputToken: string) {
+    async swap(inputToken: Address, amount: bigint, outputToken: Address) {
       const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
 
-      const tokens = await iLiquidatorsRegistry.callStatic.getInputTokensByOutputToken(outputToken);
+      return await iLiquidatorsRegistry.write.amountOutAndSlippageOfSwap([inputToken, amount, outputToken], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
+    }
+
+    async approveLiquidatorsRegistry(underlying: Address) {
+      const token = getContract({
+        address: underlying,
+        abi: erc20Abi,
+        client: this.walletClient!
+      });
+      const tx = await token.write.approve([this.chainDeployment.LiquidatorsRegistry.address as Address, maxUint256], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
+
+      return tx;
+    }
+
+    async getSwapTokens(outputToken: Address) {
+      const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
+
+      const tokens = await iLiquidatorsRegistry.read.getInputTokensByOutputToken([outputToken]);
 
       return tokens.map((token) => {
         const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find((ass) => ass.underlying === token);
@@ -142,13 +288,15 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       });
     }
 
-    async getAmountOutAndSlippageOfSwap(inputToken: string, amount: BigNumber, outputToken: string) {
+    async getAmountOutAndSlippageOfSwap(inputToken: Address, amount: bigint, outputToken: Address) {
       const iLiquidatorsRegistry = this.createILiquidatorsRegistry();
-      const account = await this.signer.getAddress();
 
-      return await iLiquidatorsRegistry.callStatic.amountOutAndSlippageOfSwap(inputToken, amount, outputToken, {
-        from: account
-      });
+      const [outputAmount, slippage] = (
+        await iLiquidatorsRegistry.simulate.amountOutAndSlippageOfSwap([inputToken, amount, outputToken], {
+          account: this.walletClient!.account!.address
+        })
+      ).result;
+      return { outputAmount, slippage };
     }
   };
 }

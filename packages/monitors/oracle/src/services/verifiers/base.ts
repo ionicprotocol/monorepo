@@ -1,6 +1,6 @@
-import { IonicSdk } from "@ionicprotocol/sdk";
+import { IonicSdk, masterPriceOracleAbi } from "@ionicprotocol/sdk";
 import { OracleTypes, SupportedAsset } from "@ionicprotocol/types";
-import { Contract } from "ethers";
+import { GetContractReturnType, WalletClient } from "viem";
 
 import { PriceFeedValidity, ServiceConfig, VerifierInitValidity } from "../../types";
 
@@ -8,7 +8,7 @@ export abstract class AbstractOracleVerifier {
   asset: SupportedAsset;
   oracleType: OracleTypes;
   sdk: IonicSdk;
-  mpo: Contract;
+  mpo: GetContractReturnType<typeof masterPriceOracleAbi, WalletClient>;
 
   config: ServiceConfig;
 

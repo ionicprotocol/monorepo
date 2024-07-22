@@ -53,7 +53,7 @@ export class DiscordService {
 
   async sendErrorNotification(error: VerifierInitError | PriceFeedInvalidity, asset: SupportedAsset, kind: ErrorKind) {
     const lastMessageSentIndex = this.messageCache[kind].findIndex(
-      (a) => a.asset.underlying === asset.underlying && a.error === error
+      (a) => a.asset.underlying === asset.underlying && a.error === error,
     );
     if (lastMessageSentIndex !== -1) {
       const lastMessageSent = this.messageCache[kind][lastMessageSentIndex];

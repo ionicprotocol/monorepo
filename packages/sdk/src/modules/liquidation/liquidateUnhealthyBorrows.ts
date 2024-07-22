@@ -1,4 +1,4 @@
-import { TransactionResponse } from "@ethersproject/providers";
+import { TransactionReceipt } from "viem";
 
 import { IonicBase } from "../../IonicSdk";
 
@@ -9,9 +9,9 @@ import { sendTransactionToSafeLiquidator } from "./index";
 export default async function liquidateUnhealthyBorrows(
   sdk: IonicBase,
   liquidatablePool: LiquidatablePool
-): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
+): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]> {
   const erroredLiquidations: Array<{ tx: EncodedLiquidationTx; error: string }> = [];
-  const succeededLiquidations: Array<TransactionResponse> = [];
+  const succeededLiquidations: Array<TransactionReceipt> = [];
 
   for (const liquidation of liquidatablePool.liquidations) {
     const { method, args, value } = liquidation;

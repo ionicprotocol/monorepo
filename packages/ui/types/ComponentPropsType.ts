@@ -6,8 +6,8 @@ import type {
   VaultData
 } from '@ionicprotocol/types';
 import type { QueryObserverResult } from '@tanstack/react-query';
-import type { BigNumber } from 'ethers';
 import type { ReactNode } from 'react';
+import { Address } from 'viem';
 
 import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
@@ -68,7 +68,7 @@ export interface NativePricedIonicAssetWithTokenData
 }
 
 export interface TokenData {
-  address: string;
+  address: Address;
   color: string;
   decimals: number;
   extraData: ExtraData;
@@ -105,11 +105,11 @@ export interface CaptionedStatProps {
 }
 
 export interface CTokensDataForRewardsMap {
-  [cTokenAddr: string]: CTokenDataForRewards;
+  [cTokenAddr: Address]: CTokenDataForRewards;
 }
 
 export interface AddFlywheelProps {
-  comptrollerAddress: string;
+  comptrollerAddress: Address;
   onSuccess?: () => void;
 }
 
@@ -119,7 +119,7 @@ export interface AddFlywheelModalProps extends AddFlywheelProps {
 }
 
 export interface CreateFlywheelProps {
-  comptrollerAddress: string;
+  comptrollerAddress: Address;
   onSuccess?: () => void;
 }
 
@@ -128,18 +128,18 @@ export interface CreateFlywheelModalProps extends CreateFlywheelProps {
   onClose: () => void;
 }
 export interface Flywheel {
-  address: string;
-  booster: string;
-  markets: string[];
-  owner: string;
-  rewardToken: string;
-  rewards: string;
+  address: Address;
+  booster: Address;
+  markets: Address[];
+  owner: Address;
+  rewardToken: Address;
+  rewards: Address;
 }
 
 export interface CTokenRewardsDistributorIncentives {
   borrowSpeed: number;
-  rewardToken: string;
-  rewardsDistributorAddress: string;
+  rewardToken: Address;
+  rewardsDistributorAddress: Address;
   supplySpeed: number;
 }
 
@@ -180,7 +180,7 @@ export interface RewardsDataForMantissa {
   rewardEthPrice: number;
   rewardSpeed: number;
   underlyingEthPrice: number;
-  underlyingTotalSupply: BigNumber;
+  underlyingTotalSupply: bigint;
 }
 
 export interface TokenPricesMap {

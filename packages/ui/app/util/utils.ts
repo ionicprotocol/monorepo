@@ -1,3 +1,4 @@
+import { type Address } from 'viem';
 import { mode } from 'viem/chains';
 
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
@@ -8,7 +9,7 @@ export const getAssetName = (asset: string, chain: number): string =>
 
 export function useGetMaxBorrow(
   selectedMarketD: MarketData,
-  caddress: string,
+  caddress: Address,
   chain: number
 ) {
   const { data: maxBorrowAmount } = useMaxBorrowAmount(

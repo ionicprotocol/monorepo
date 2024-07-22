@@ -1,5 +1,5 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
 
@@ -9,9 +9,9 @@ import { PoolUserWithAssets } from "./utils";
 const estimateGas = async (
   sdk: IonicSdk,
   borrower: PoolUserWithAssets,
-  liquidationAmount: BigNumber,
+  liquidationAmount: bigint,
   strategiesAndDatas: StrategiesAndDatas,
-  flashSwapPair: string,
+  flashSwapPair: Address,
   liquidationStrategy: LiquidationStrategy,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
@@ -19,33 +19,31 @@ const estimateGas = async (
   switch (liquidationStrategy) {
     case LiquidationStrategy.DEFAULT:
       return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidate(
-        borrower.account,
-        liquidationAmount,
-        borrower.debt[0].cToken,
-        borrower.collateral[0].cToken,
-        0,
+        [borrower.account, liquidationAmount, borrower.debt[0].cToken, borrower.collateral[0].cToken, 0n],
         {
-          gasLimit: 1e9,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT
+          gas: BigInt(1e9),
+          account: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address
         }
       );
     case LiquidationStrategy.UNISWAP:
       return await sdk.contracts.IonicLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
+        [
+          {
+            borrower: borrower.account,
+            repayAmount: liquidationAmount,
+            cErc20: borrower.debt[0].cToken,
+            cTokenCollateral: borrower.collateral[0].cToken,
+            minProfitAmount: 0n,
+            redemptionStrategies: strategiesAndDatas.strategies,
+            strategyData: strategiesAndDatas.datas,
+            flashSwapContract: flashSwapPair,
+            debtFundingStrategies,
+            debtFundingStrategiesData
+          }
+        ],
         {
-          borrower: borrower.account,
-          repayAmount: liquidationAmount,
-          cErc20: borrower.debt[0].cToken,
-          cTokenCollateral: borrower.collateral[0].cToken,
-          minProfitAmount: 0,
-          redemptionStrategies: strategiesAndDatas.strategies,
-          strategyData: strategiesAndDatas.datas,
-          flashSwapContract: flashSwapPair,
-          debtFundingStrategies,
-          debtFundingStrategiesData
-        },
-        {
-          gasLimit: 1e9,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT
+          gas: BigInt(1e9),
+          account: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address
         }
       );
   }

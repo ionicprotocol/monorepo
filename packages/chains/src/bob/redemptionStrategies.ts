@@ -1,6 +1,4 @@
-import { assetSymbols, RedemptionStrategy, RedemptionStrategyContract, underlying } from "@ionicprotocol/types";
-
-import { assets } from "./assets";
+import { RedemptionStrategy } from "@ionicprotocol/types";
 
 const redemptionStrategies: RedemptionStrategy[] = [];
 

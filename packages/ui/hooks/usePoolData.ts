@@ -23,17 +23,15 @@ export const usePoolData = (poolId?: string, poolChainId?: number) => {
 
     queryFn: async () => {
       if (usdPrice && sdk?.chainId && poolId) {
-        const response = await sdk
-          .fetchPoolData(poolId, { from: address })
-          .catch((e) => {
-            console.warn(
-              `Getting ionic pool data error: `,
-              { address, poolChainId, poolId },
-              e
-            );
+        const response = await sdk.fetchPoolData(poolId).catch((e) => {
+          console.warn(
+            `Getting ionic pool data error: `,
+            { address, poolChainId, poolId },
+            e
+          );
 
-            return null;
-          });
+          return null;
+        });
         if (response === null) {
           return null;
         }

@@ -13,8 +13,8 @@ const Approved = ({ status = 'STEP0' }: IApproved) => {
           status === 'STEP0'
             ? 'bg-stone-600'
             : status === 'STEP1' || status === 'STEP2'
-            ? 'bg-accent'
-            : null
+              ? 'bg-accent'
+              : null
         } w-6 h-6 flex items-center justify-center text-darkone rounded-full  text-xs`}
       >
         {status === 'STEP2' ? '✔️' : '1'}
@@ -34,8 +34,8 @@ const Approved = ({ status = 'STEP0' }: IApproved) => {
           status === 'STEP0' || status === 'STEP1'
             ? 'bg-grayUnselect border border-stone-600 text-stone-500'
             : status === 'STEP2'
-            ? 'bg-accent text-darkone'
-            : null
+              ? 'bg-accent text-darkone'
+              : null
         } w-6 h-6 flex items-center justify-center  rounded-full  text-xs`}
       >
         2

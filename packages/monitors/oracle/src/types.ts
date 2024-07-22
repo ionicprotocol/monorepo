@@ -1,6 +1,11 @@
-import { IonicSdk } from "@ionicprotocol/sdk";
+import {
+  chainlinkPriceOracleV2Abi,
+  diaPriceOracleAbi,
+  IonicSdk,
+  uniswapTwapPriceOracleV2Abi,
+} from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
-import { BigNumber, Contract } from "ethers";
+import { GetContractReturnType, PublicClient } from "viem";
 
 import { FeedVerifier, PriceChangeVerifier, PriceVerifier } from "./services";
 
@@ -76,12 +81,15 @@ export type SupportedAssetPriceFeed = {
 export interface VerifyPriceParams {
   ionicSdk: IonicSdk;
   asset: PriceVerifierAsset;
-  mpoPrice: BigNumber;
+  mpoPrice: bigint;
 }
 
 export interface VerifyFeedParams {
   ionicSdk: IonicSdk;
-  underlyingOracle: Contract;
+  underlyingOracle: GetContractReturnType<
+    typeof chainlinkPriceOracleV2Abi | typeof diaPriceOracleAbi | typeof uniswapTwapPriceOracleV2Abi,
+    PublicClient
+  >;
   asset: FeedVerifierAsset;
 }
 

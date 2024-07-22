@@ -1,5 +1,5 @@
 import doetenv from "dotenv";
-doetenv.config();
+doetenv.config({ path: "packages/bots/liquidator/.env" });
 
 const config = {
   environment: process.env.NODE_ENV ?? "development",

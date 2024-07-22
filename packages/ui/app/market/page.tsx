@@ -4,11 +4,10 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-import { BigNumber } from 'ethers';
-import { formatEther, formatUnits } from 'ethers/lib/utils.js';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { formatEther, formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -37,7 +36,7 @@ export default function Market() {
     mode.id
   );
   const [open, setOpen] = useState<boolean>(false);
-  const { currentSdk } = useMultiIonic();
+  const { getSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(
@@ -307,12 +306,12 @@ export default function Market() {
                     <PoolRows
                       asset={val.underlyingSymbol}
                       borrowAPR={`${
-                        currentSdk
+                        getSdk(Number(chain))
                           ?.ratePerBlockToAPY(
-                            val?.borrowRatePerBlock ?? BigNumber.from(0),
-                            getBlockTimePerMinuteByChainId(chainId)
+                            val?.borrowRatePerBlock ?? 0n,
+                            getBlockTimePerMinuteByChainId(Number(chain))
                           )
-                          .toFixed(2) ?? '0.00'
+                          .toFixed(2) ?? '-'
                       }%`}
                       borrowBalance={`${
                         val.borrowBalanceNative
@@ -324,7 +323,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '0'
+                          : '-'
                       } ${
                         val.underlyingSymbol
                       } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
@@ -352,12 +351,12 @@ export default function Market() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       supplyAPR={`${
-                        currentSdk
+                        getSdk(Number(chain))
                           ?.ratePerBlockToAPY(
-                            val?.supplyRatePerBlock ?? BigNumber.from(0),
-                            getBlockTimePerMinuteByChainId(chainId)
+                            val?.supplyRatePerBlock ?? 0n,
+                            getBlockTimePerMinuteByChainId(Number(chain))
                           )
-                          .toFixed(2) ?? '0.00'
+                          .toFixed(2) ?? '-'
                       }%`}
                       supplyBalance={`${
                         val.supplyBalanceNative
@@ -369,7 +368,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '0'
+                          : '-'
                       } ${
                         val.underlyingSymbol
                       } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
@@ -385,7 +384,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '0'
+                          : '-'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalBorrowFiat.toLocaleString('en-US', {
@@ -401,7 +400,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '0'
+                          : '-'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalSupplyFiat.toLocaleString('en-US', {

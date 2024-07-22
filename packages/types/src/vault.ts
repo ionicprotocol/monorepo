@@ -1,32 +1,32 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import { SupportedChains } from "./enums";
 
 export interface VaultData {
   chainId: SupportedChains;
-  totalSupply: BigNumber;
+  totalSupply: bigint;
   totalSupplyNative: number;
-  asset: string;
+  asset: Address;
   symbol: string;
-  supplyApy: BigNumber;
+  supplyApy: bigint;
   adaptersCount: number;
   isEmergencyStopped: boolean;
   adapters: Adapter[];
   decimals: number;
-  underlyingPrice: BigNumber;
-  vault: string;
+  underlyingPrice: bigint;
+  vault: Address;
   extraDocs: string | undefined;
-  performanceFee: BigNumber;
-  depositFee: BigNumber;
-  withdrawalFee: BigNumber;
-  managementFee: BigNumber;
+  performanceFee: bigint;
+  depositFee: bigint;
+  withdrawalFee: bigint;
+  managementFee: bigint;
 }
 
 export interface Adapter {
-  adapter: string;
-  allocation: BigNumber;
-  market: string;
-  pool: string;
+  adapter: Address;
+  allocation: bigint;
+  market: Address;
+  pool: Address;
 }
 
 export interface VaultApy {
@@ -36,15 +36,15 @@ export interface VaultApy {
 }
 
 export type FlywheelRewardsInfoForVault = {
-  vault: string;
+  vault: Address;
   chainId: number;
   rewardsInfo: RewardsInfo[];
 };
 
 export interface RewardsInfo {
-  rewardToken: string;
-  flywheel: string;
-  rewards: BigNumber;
+  rewardToken: Address;
+  flywheel: Address;
+  rewards: bigint;
   rewardTokenDecimals: number;
   rewardTokenSymbol: string;
 }

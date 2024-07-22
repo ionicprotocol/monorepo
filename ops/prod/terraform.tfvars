@@ -1,10 +1,10 @@
 ecs_cluster_name   = "opportunity-bot-cluster"
 cluster_name = "opportunity-bot-cluster1"
-task_definition_family = "my-task-definition"
+task_definition_family = "perbotTaskDefinition"
 container_name        = "opportunity_bot"
-docker_image          = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-pyth"
-subnet_ids            = ["subnet-09bde9f5ac4ae4112"]
-security_group_ids    = ["sg-0a3996557af867ad0"]
+docker_image          = "058264122535.dkr.ecr.eu-central-1.amazonaws.com/liquidator-pyth"
+subnet_ids            = ["subnet-0a14dc2f0f924ea57"]
+security_group_ids    = ["sg-05ff9ea594c31fbe8"]
 
 autoscaling_group_name = "opportunity_bot_asg"
 desired_count  = 2

@@ -1,5 +1,5 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { BigNumber, utils } from "ethers";
+import { Address, formatEther } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
 
@@ -10,9 +10,9 @@ import { PoolUserWithAssets, PythEncodedLiquidationTx, SCALE_FACTOR_ONE_18_WEI }
 export default async function getPotentialLiquidation(
   sdk: IonicSdk,
   borrower: PoolUserWithAssets,
-  closeFactor: BigNumber,
-  liquidationIncentive: BigNumber,
-  comptroller: string,
+  closeFactor: bigint,
+  liquidationIncentive: bigint,
+  comptroller: Address,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<PythEncodedLiquidationTx | null> {
   // Get debt and collateral
@@ -20,10 +20,10 @@ export default async function getPotentialLiquidation(
 
   for (let asset of borrower.assets!) {
     asset = { ...asset };
-    asset.borrowBalanceWei = asset.borrowBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
-    asset.supplyBalanceWei = asset.supplyBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
-    if (asset.borrowBalance.gt(0)) borrower.debt.push(asset);
-    if (asset.membership && asset.supplyBalance.gt(0)) borrower.collateral.push(asset);
+    asset.borrowBalanceWei = (asset.borrowBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+    asset.supplyBalanceWei = (asset.supplyBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+    if (asset.borrowBalance > 0) borrower.debt.push(asset);
+    if (asset.membership && asset.supplyBalance > 0) borrower.collateral.push(asset);
   }
 
   if (!borrower.collateral!.length) {
@@ -32,8 +32,8 @@ export default async function getPotentialLiquidation(
   }
 
   // Sort debt and collateral from highest to lowest ETH value
-  borrower.debt.sort((a, b) => (b.borrowBalanceWei.gt(a.borrowBalanceWei) ? 1 : -1));
-  borrower.collateral.sort((a, b) => (b.supplyBalanceWei.gt(a.supplyBalanceWei) ? 1 : -1));
+  borrower.debt.sort((a, b) => (b.borrowBalanceWei > a.borrowBalanceWei ? 1 : -1));
+  borrower.collateral.sort((a, b) => (b.supplyBalanceWei > a.supplyBalanceWei ? 1 : -1));
   // Check SUPPORTED_INPUT_CURRENCIES (if LIQUIDATION_STRATEGY === "")
   if (
     chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT &&
@@ -49,39 +49,38 @@ export default async function getPotentialLiquidation(
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
   const debtAssetDecimals = debtAsset.underlyingDecimals;
 
-  const repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
+  const repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
 
-  const liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
+  const liquidationValue = (repayAmount * debtAssetUnderlyingPrice) / 10n ** debtAssetDecimals;
 
   const pool = sdk.createComptroller(comptroller);
   const collateralCToken = sdk.createICErc20(collateralAsset.cToken);
 
-  const seizeTokens = await pool.callStatic.liquidateCalculateSeizeTokens(
+  const seizeTokens = await pool.read.liquidateCalculateSeizeTokens([
     debtAsset.cToken,
     collateralAsset.cToken,
     repayAmount
-  );
+  ]);
   const seizeTokenAmount = seizeTokens[1];
-  const protocolSeizeShareMantissa = await collateralCToken.callStatic.protocolSeizeShareMantissa();
-  const feeSeizeShareMantissa = await collateralCToken.callStatic.feeSeizeShareMantissa();
-  const exchangeRate = await collateralCToken.callStatic.exchangeRateCurrent();
+  const protocolSeizeShareMantissa = await collateralCToken.read.protocolSeizeShareMantissa();
+  const feeSeizeShareMantissa = await collateralCToken.read.feeSeizeShareMantissa();
+  const exchangeRate = await collateralCToken.read.exchangeRateCurrent();
 
-  const protocolFee = seizeTokenAmount.mul(protocolSeizeShareMantissa).div(SCALE_FACTOR_ONE_18_WEI);
-  const seizeFee = seizeTokenAmount.mul(feeSeizeShareMantissa).div(SCALE_FACTOR_ONE_18_WEI);
+  const protocolFee = (seizeTokenAmount * protocolSeizeShareMantissa) / SCALE_FACTOR_ONE_18_WEI;
+  const seizeFee = (seizeTokenAmount * feeSeizeShareMantissa) / SCALE_FACTOR_ONE_18_WEI;
 
-  const actualAmountSeized = seizeTokenAmount.sub(protocolFee).sub(seizeFee);
-  const underlyingAmountSeized = actualAmountSeized.mul(exchangeRate).div(SCALE_FACTOR_ONE_18_WEI);
+  const actualAmountSeized = seizeTokenAmount - protocolFee - seizeFee;
+  const underlyingAmountSeized = (actualAmountSeized * exchangeRate) / SCALE_FACTOR_ONE_18_WEI;
 
-  const underlyingAmountSeizedValue = underlyingAmountSeized
-    .mul(collateralAssetUnderlyingPrice)
-    .div(SCALE_FACTOR_ONE_18_WEI);
+  const underlyingAmountSeizedValue =
+    (underlyingAmountSeized * collateralAssetUnderlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
 
   sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}`);
   sdk.logger.info(`Seize Token Info ${seizeTokens[1].toString()}`);
-  sdk.logger.info(`collateral exchange rate ${utils.formatEther(exchangeRate)}`);
-  sdk.logger.info(`liquidation incentive ${utils.formatEther(liquidationIncentive)}`);
-  sdk.logger.info(`protocol seize  share ${utils.formatEther(protocolSeizeShareMantissa)}`);
-  sdk.logger.info(`fee seize share ${utils.formatEther(feeSeizeShareMantissa)}`);
+  sdk.logger.info(`collateral exchange rate ${formatEther(exchangeRate)}`);
+  sdk.logger.info(`liquidation incentive ${formatEther(liquidationIncentive)}`);
+  sdk.logger.info(`protocol seize  share ${formatEther(protocolSeizeShareMantissa)}`);
+  sdk.logger.info(`fee seize share ${formatEther(feeSeizeShareMantissa)}`);
   sdk.logger.info(`protocol fee ${protocolFee.toString()}`);
   sdk.logger.info(`size fee ${seizeFee.toString()}`);
   sdk.logger.info(`actual amount seized ${actualAmountSeized.toString()}`);
@@ -89,10 +88,8 @@ export default async function getPotentialLiquidation(
 
   sdk.logger.info(
     `Transaction Details: Repay Token: ${debtAsset.underlyingToken}, Collateral Token: ${collateralAsset.underlyingToken}, ` +
-      `Repay Amount: ${utils.formatEther(repayAmount)}, Seized Collateral Amount: ${utils.formatEther(
-        underlyingAmountSeized
-      )}, ` +
-      `Repay Value: ${utils.formatEther(liquidationValue)} , Seized Collateral Value: ${utils.formatEther(
+      `Repay Amount: ${formatEther(repayAmount)}, Seized Collateral Amount: ${formatEther(underlyingAmountSeized)}, ` +
+      `Repay Value: ${formatEther(liquidationValue)} , Seized Collateral Value: ${formatEther(
         underlyingAmountSeizedValue
       )} `
   );

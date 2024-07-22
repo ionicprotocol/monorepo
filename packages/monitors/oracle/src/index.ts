@@ -1,6 +1,7 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
-import { Wallet } from "ethers";
+import { createPublicClient, createWalletClient, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base, mode, optimism } from "viem/chains";
 
 import { assets, configs, verifiers } from "./config";
 import { baseConfig } from "./config/variables";
@@ -11,10 +12,43 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
 
-  const provider = new JsonRpcProvider(baseConfig.rpcUrl);
-  const signer = new Wallet(baseConfig.adminPrivateKey, provider);
+  let chain;
+  switch (baseConfig.chainId) {
+    case 34443:
+      chain = mode;
+      break;
+    case 8453:
+      chain = base;
+      break;
+    case 10:
+      chain = optimism;
+      break;
+    case 43114:
+      break;
+    default:
+      logger.error(`Unsupported chainId: ${baseConfig.chainId}`);
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: "Unsupported chainId",
+        }),
+      };
+  }
 
-  const sdk = setUpSdk(baseConfig.chainId, signer);
+  const client = createPublicClient({
+    chain,
+    transport: http(),
+  });
+
+  const account = privateKeyToAccount(baseConfig.adminPrivateKey as Hex);
+
+  const walletClient = createWalletClient({
+    account,
+    chain,
+    transport: http(),
+  });
+
+  const sdk = setUpSdk(baseConfig.chainId, client as any, walletClient);
 
   logger.info(`RUNNING SERVICE: ${baseConfig.service}`);
   const verifier = new BatchVerifier(sdk, assets[baseConfig.service]);

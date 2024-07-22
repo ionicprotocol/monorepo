@@ -1,10 +1,9 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { chainIdToConfig } from "@ionicprotocol/chains";
 import { IonicSdk } from "@ionicprotocol/sdk";
-import { Signer } from "ethers";
+import { PublicClient, WalletClient } from "viem";
 
-const setUpSdk = (chainId: number, provider: Signer | JsonRpcProvider) => {
-  return new IonicSdk(provider, chainIdToConfig[chainId]);
+const setUpSdk = (chainId: number, publicClient: PublicClient, walletClient: WalletClient) => {
+  return new IonicSdk(publicClient, walletClient, chainIdToConfig[chainId]);
 };
 
 export default setUpSdk;

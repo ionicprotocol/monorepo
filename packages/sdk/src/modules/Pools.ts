@@ -1,4 +1,4 @@
-import { base, bob, mode, optimism, sepolia } from "@ionicprotocol/chains";
+import { base, bob, mode, optimism } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -7,47 +7,78 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { BigNumber, BigNumberish, CallOverrides, constants, utils } from "ethers";
+import { Address, formatUnits, getAbiItem, maxUint256, toFunctionHash, zeroAddress } from "viem";
 
-import { PoolDirectory } from "../../typechain/PoolDirectory";
-import { PoolLens } from "../../typechain/PoolLens";
+import { icErc20Abi } from "../generated";
 import { filterOnlyObjectProperties, filterPoolName } from "../IonicSdk/utils";
 
 import { CreateContractsModule } from "./CreateContracts";
 
 export type LensPoolsWithData = [
-  ids: BigNumberish[],
-  ionicPools: PoolDirectory.PoolStructOutput[],
-  ionicPoolsData: PoolLens.IonicPoolDataStructOutput[],
+  ids: bigint[],
+  ionicPools: {
+    name: string;
+    creator: Address;
+    comptroller: Address;
+    blockPosted: bigint;
+    timestampPosted: bigint;
+  }[],
+  ionicPoolsData: {
+    totalSupply: bigint;
+    totalBorrow: bigint;
+    underlyingTokens: Address[];
+    underlyingSymbols: string[];
+    whitelistedAdmin: boolean;
+  }[],
   errors: boolean[]
 ];
 
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
-  [SupportedChains.optimism_sepolia]: sepolia.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets,
   [SupportedChains.bob]: bob.assets
 };
 
-export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IIonicPools {
+  fetchPoolData(poolId: string, address?: Address): Promise<IonicPoolData | null>;
+  fetchPoolsManual(): Promise<(IonicPoolData | null)[] | undefined>;
+  fetchPools({ filter, options }: { filter: string | null; options: { from: Address } }): Promise<IonicPoolData[]>;
+  isAuth(pool: Address, market: Address, role: Roles, user: Address): Promise<boolean>;
+  getHealthFactor(account: Address, pool: Address): Promise<bigint>;
+  getHealthFactorPrediction(
+    pool: Address,
+    account: Address,
+    cTokenModify: Address,
+    redeemTokens: bigint,
+    borrowAmount: bigint,
+    repayAmount: bigint
+  ): Promise<bigint>;
+}
+
+export function withPools<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IIonicPools;
+} & TBase {
   return class IonicPools extends Base {
-    async fetchPoolData(poolId: string, overrides: CallOverrides = {}): Promise<IonicPoolData | null> {
-      const {
-        comptroller,
-        name: _unfiliteredName,
-        creator,
-        blockPosted,
-        timestampPosted
-      } = await this.contracts.PoolDirectory.callStatic.pools(Number(poolId), overrides);
-      if (comptroller === constants.AddressZero) {
+    async fetchPoolData(poolId: string, address?: Address): Promise<IonicPoolData | null> {
+      const [_unfiliteredName, creator, comptroller, blockPosted, timestampPosted] =
+        await this.contracts.PoolDirectory.read.pools([BigInt(poolId)]);
+      if (comptroller === zeroAddress) {
         return null;
       }
       const name = filterPoolName(_unfiliteredName);
 
-      const assets: NativePricedIonicAsset[] = (
-        await this.contracts.PoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
-      ).map(filterOnlyObjectProperties);
+      const res = await this.contracts.PoolLens.simulate.getPoolAssetsWithData([comptroller as Address], {
+        account: address ?? this.walletClient?.account?.address
+      });
+      const assets: NativePricedIonicAsset[] = res.result
+        .map(filterOnlyObjectProperties)
+        .map(
+          (asset: NativePricedIonicAsset) =>
+            ({ ...asset, underlyingDecimals: Number(asset.underlyingDecimals) }) as NativePricedIonicAsset
+        );
 
       let totalLiquidityNative = 0;
       let totalAvailableLiquidityNative = 0;
@@ -69,7 +100,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         asset.isSupplyPaused = asset.mintGuardianPaused;
         asset.plugin = this.marketToPlugin[asset.cToken];
 
-        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+        const _asset = (ChainSupportedAssets[this.chainId as SupportedChains] ?? []).find(
           (ass) => ass.underlying === asset.underlyingToken
         );
 
@@ -81,20 +112,19 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
           asset.originalSymbol = _asset.originalSymbol ? _asset.originalSymbol : undefined;
         }
 
-        asset.netSupplyBalance = asset.supplyBalance.gt(asset.borrowBalance)
-          ? asset.supplyBalance.sub(asset.borrowBalance)
-          : constants.Zero;
+        asset.netSupplyBalance =
+          asset.supplyBalance > asset.borrowBalance ? asset.supplyBalance - asset.borrowBalance : 0n;
         asset.netSupplyBalanceNative =
-          Number(utils.formatUnits(asset.netSupplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.netSupplyBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         asset.supplyBalanceNative =
-          Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         asset.borrowBalanceNative =
-          Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         if (asset.membership) {
           totalCollateralSupplyBalanceNative += asset.supplyBalanceNative;
@@ -103,11 +133,11 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;
@@ -119,8 +149,8 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         totalBorrowedNative += asset.totalBorrowNative;
 
         const assetLiquidityNative =
-          Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(formatUnits(asset.liquidity, asset.underlyingDecimals)) *
+          Number(formatUnits(asset.underlyingPrice, 18));
         asset.liquidityNative = assetLiquidityNative;
 
         totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidityNative;
@@ -151,7 +181,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
         chainId: this.chainId,
         assets,
         creator,
-        comptroller,
+        comptroller: comptroller as Address,
         name,
         totalLiquidityNative,
         totalAvailableLiquidityNative,
@@ -168,8 +198,8 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       };
     }
 
-    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(IonicPoolData | null)[] | undefined> {
-      const [poolIndexes, pools] = await this.contracts.PoolDirectory.callStatic.getActivePools(overrides);
+    async fetchPoolsManual(): Promise<(IonicPoolData | null)[] | undefined> {
+      const [poolIndexes, pools] = await this.contracts.PoolDirectory.read.getActivePools();
 
       if (!pools.length || !poolIndexes.length) {
         return undefined;
@@ -177,7 +207,7 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       const poolData = await Promise.all(
         poolIndexes.map((poolId) => {
-          return this.fetchPoolData(poolId.toString(), overrides).catch((error) => {
+          return this.fetchPoolData(poolId.toString()).catch((error) => {
             this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from PoolLens without error.`, error);
             return null;
           });
@@ -192,47 +222,47 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
       options
     }: {
       filter: string | null;
-      options: { from: string };
+      options: { from: Address };
     }): Promise<IonicPoolData[]> {
       const isCreatedPools = filter === "created-pools";
       const isVerifiedPools = filter === "verified-pools";
       const isUnverifiedPools = filter === "unverified-pools";
 
-      const req = isCreatedPools
-        ? this.contracts.PoolLens.callStatic.getPoolsByAccountWithData(options.from)
-        : isVerifiedPools
-        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(true)
-        : isUnverifiedPools
-        ? this.contracts.PoolDirectory.callStatic.getPublicPoolsByVerification(false)
-        : this.contracts.PoolLens.callStatic.getPublicPoolsWithData();
+      let _poolIds: bigint[] = [];
+      if (isCreatedPools) {
+        const res = await this.contracts.PoolLens.simulate.getPoolsByAccountWithData([options.from]);
+        _poolIds = _poolIds.concat(res.result[0]);
+      } else if (isVerifiedPools) {
+        const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([true]);
+        _poolIds = _poolIds.concat(res[0]);
+      } else if (isUnverifiedPools) {
+        const res = await this.contracts.PoolDirectory.read.getPublicPoolsByVerification([false]);
+        _poolIds = _poolIds.concat(res[0]);
+      } else {
+        const res = await this.contracts.PoolLens.simulate.getPublicPoolsWithData();
+        _poolIds = _poolIds.concat(res.result[0]);
+      }
 
-      const whitelistedPoolsRequest = this.contracts.PoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
-        options.from
-      );
+      const _whitelistedPoolIds = (
+        await this.contracts.PoolLens.simulate.getWhitelistedPoolsByAccountWithData([options.from])
+      ).result[0];
 
-      const responses = await Promise.all([req, whitelistedPoolsRequest]);
-
-      const [pools, whitelistedPools] = await Promise.all(
-        responses.map(async (poolData) => {
-          return await Promise.all(
-            poolData[0].map((_id) => {
-              return this.fetchPoolData(_id.toString());
-            })
-          );
+      const pools = await Promise.all(
+        _poolIds.concat(_whitelistedPoolIds).map(async (_id) => {
+          return this.fetchPoolData(_id.toString());
         })
       );
 
-      const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
-      const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
+      const filteredPools = pools.filter((pool) => !_whitelistedPoolIds.includes(BigInt(pool?.id ?? maxUint256)));
 
-      return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as IonicPoolData[];
+      return filteredPools.filter((p) => !!p) as IonicPoolData[];
     }
 
-    async isAuth(pool: string, market: string, role: Roles, user: string) {
+    async isAuth(pool: Address, market: Address, role: Roles, user: Address) {
       const authRegistry = this.createAuthoritiesRegistry();
-      const poolAuthAddress = await authRegistry.callStatic.poolsAuthorities(pool);
+      const poolAuthAddress = await authRegistry.read.poolsAuthorities([pool]);
 
-      if (poolAuthAddress === constants.AddressZero) {
+      if (poolAuthAddress === zeroAddress) {
         console.log(`Pool authority for pool ${pool} does not exist`);
 
         return false;
@@ -242,44 +272,38 @@ export function withPools<TBase extends CreateContractsModule = CreateContractsM
 
       if (role === Roles.SUPPLIER_ROLE) {
         // let's check if it's public
-        const cToken = this.createICErc20(market);
-        const func = cToken.interface.getFunction("mint");
-        const selectorHash = cToken.interface.getSighash(func);
-        const isPublic = await poolAuth.callStatic.isCapabilityPublic(market, selectorHash);
+        const func = getAbiItem({ abi: icErc20Abi, name: "mint" });
+        const selectorHash = toFunctionHash(func);
+        const isPublic = await poolAuth.read.isCapabilityPublic([market, selectorHash]);
 
         if (isPublic) {
           return true;
         }
       }
 
-      return await poolAuth.callStatic.doesUserHaveRole(user, role);
+      return await poolAuth.read.doesUserHaveRole([user, role]);
     }
 
-    async getHealthFactor(account: string, pool: string) {
+    async getHealthFactor(account: Address, pool: Address) {
       const poolLens = this.createPoolLens();
-      const healthFactor = await poolLens.getHealthFactor(account, pool, { from: account });
+      const healthFactor = await poolLens.read.getHealthFactor([account, pool], { account });
 
       return healthFactor;
     }
 
     async getHealthFactorPrediction(
-      pool: string,
-      account: string,
-      cTokenModify: string,
-      redeemTokens: BigNumberish,
-      borrowAmount: BigNumberish,
-      repayAmount: BigNumberish
-    ): Promise<BigNumber> {
+      pool: Address,
+      account: Address,
+      cTokenModify: Address,
+      redeemTokens: bigint,
+      borrowAmount: bigint,
+      repayAmount: bigint
+    ): Promise<bigint> {
       const poolLens = this.createPoolLens();
-      const predictedHealthFactor = await poolLens.getHealthFactorHypothetical(
-        pool,
-        account,
-        cTokenModify,
-        redeemTokens,
-        borrowAmount,
-        repayAmount,
+      const predictedHealthFactor = await poolLens.read.getHealthFactorHypothetical(
+        [pool, account, cTokenModify, redeemTokens, borrowAmount, repayAmount],
         {
-          from: account
+          account
         }
       );
 
