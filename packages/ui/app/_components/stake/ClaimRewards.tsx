@@ -125,6 +125,7 @@ export default function ClaimRewards({ close, open }: IProps) {
               src="/img/assets/close.png"
             />
           </div>
+          <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           <h1 className={` text-center mb-2`}>Emissions</h1>
           <div
             className={`grid grid-cols-3 justify-between w-full items-center text-sm text-white/60`}
@@ -150,13 +151,14 @@ export default function ClaimRewards({ close, open }: IProps) {
               </ResultHandler>
             </button>
           </div>
-          <h1 className={`mt-4 mb-2 text-center`}>Trading Fees</h1>
+          <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
+          {/* <h1 className={`mt-4 mb-2 text-center`}>Trading Fees</h1>
           <div
             className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
           >
             <span className={` mx-auto`}>ION</span>
             <span className={` mx-auto`}>0.9</span>
-          </div>
+          </div> 
           <div
             className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
           >
@@ -168,11 +170,12 @@ export default function ClaimRewards({ close, open }: IProps) {
               Claim
             </button>
           </div>
-          <div
+          */}
+          {/* <div
             className={` w-max py-1 px-10 mx-auto mt-6 text-sm text-black  bg-accent rounded-md`}
           >
             Claim All
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

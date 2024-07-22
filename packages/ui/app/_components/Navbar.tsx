@@ -62,7 +62,7 @@ export default function Navbar() {
         `}
       >
         <div
-          className={`absolute z-50 lg:static top-full left-0 py-4 lg:py-2 w-full  flex flex-col lg:flex-row lg:items-center lg:justify-center my-auto    gap-y-3  text-sm bg-black lg:bg-transparent transition-transform nav overflow-x-hidden ${
+          className={`absolute z-50 lg:static top-full left-0 py-4 lg:py-0 w-full  flex flex-col lg:flex-row lg:items-center lg:justify-center my-auto    gap-y-3  text-sm bg-black lg:bg-transparent transition-transform nav overflow-x-hidden ${
             isActive && 'nav-opened'
           }`}
         >
@@ -203,7 +203,7 @@ export default function Navbar() {
           </Link>
           <div className="relative mb-2 lg:mb-0 lg:ml-auto ">
             <p
-              className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              className={`hover:text-accent lg:px-2  text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               <BlackCreateWalletButton />
             </p>
