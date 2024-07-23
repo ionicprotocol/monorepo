@@ -13,13 +13,15 @@ interface INetworkSelector {
   newRef: any;
   open: boolean;
   setOpen: any;
+  nopool?: boolean;
 }
 
 export default function NetworkSelector({
   dropdownSelectedChain,
   setOpen,
   open,
-  newRef
+  newRef,
+  nopool = false
 }: INetworkSelector) {
   const pathname = usePathname();
   const setDropChain = useStore((state) => state.setDropChain);
@@ -56,7 +58,7 @@ export default function NetworkSelector({
           {Object.entries(pools).map(([chainId, network], idx: number) => (
             <Link
               className={`flex justify-between items-center p-2 mb-1 ${network.text} rounded-md ${network.bg}`}
-              href={`${pathname}?chain=${chainId}&pool=0`}
+              href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
               key={idx}
               onClick={() => setDropChain(chainId)}
             >

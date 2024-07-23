@@ -2,7 +2,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import {
   erc20Abi,
   formatEther,
@@ -19,6 +20,7 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import NetworkSelector from '../_components/markets/NetworkSelector';
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import ClaimRewards from '../_components/stake/ClaimRewards';
@@ -51,6 +53,11 @@ export default function Stake() {
   const [step3Toggle, setstep3Toggle] = useState<string>('');
   //---------------
   const chainId = useChainId();
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const chain = querychain ? querychain : chainId;
+  const [open, setOpen] = useState<boolean>(false);
+
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -158,7 +165,7 @@ export default function Stake() {
       // console.log(typeof reserves);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(err);
+      console.log(err, 'try chainging chain to mode network');
     }
   }, [address, maxDeposit.ion, maxWithdrawl.ion, publicClient, step3Loading]);
 
@@ -426,6 +433,23 @@ export default function Stake() {
     }
   }
 
+  const newRef = useRef(null!);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const handleOutsideClick = (e: any) => {
+    //@ts-ignore
+    if (newRef.current && !newRef.current?.contains(e?.target)) {
+      setOpen(false);
+    }
+  };
+
   return (
     <main className={``}>
       <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
@@ -445,15 +469,27 @@ export default function Stake() {
           <div
             className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3  col-start-1 row-start-1 `}
           >
-            <h1 className={` text-lg`}>
-              Step 1. Buy
-              <img
-                alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1`}
-                src="/img/symbols/32/color/ion.png"
-              />
-              ION Tokens
-            </h1>
+            <div className={`flex w-full items-center  justify-between`}>
+              <h1 className={` text-lg`}>
+                Step 1. Buy
+                <img
+                  alt="ion logo"
+                  className={`w-6 h-6 inline-block mx-1`}
+                  src="/img/symbols/32/color/ion.png"
+                />
+                ION Tokens
+              </h1>
+              <div className={` xl:w-[30%] w-[40%]`}>
+                <NetworkSelector
+                  dropdownSelectedChain={Number(chain) as number}
+                  newRef={newRef}
+                  open={open}
+                  setOpen={setOpen}
+                  nopool={true}
+                />
+              </div>
+            </div>
+
             <button
               className={` py-1.5 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => setWidgetPopup(true)}
