@@ -27,14 +27,8 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
       chain: chainIdtoChain[chainId] as Chain,
       transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
     });
-    const account = privateKeyToAccount('0x...');
-    const walletClient = createWalletClient({
-      chain: chainIdtoChain[chainId] as Chain,
-      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
-      account,
-    });
-
-    const sdk = new IonicSdk(publicClient as any, walletClient as any, config);
+    
+    const sdk = new IonicSdk(publicClient as any, undefined, config);
     const mpo = sdk.createMasterPriceOracle();
 
     //get USD price
