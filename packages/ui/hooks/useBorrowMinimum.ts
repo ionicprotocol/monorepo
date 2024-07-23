@@ -1,11 +1,10 @@
 import type { IonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { parseUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
   const { currentSdk } = useMultiIonic();
@@ -58,7 +57,7 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
         (response.data * parseUnits('1', asset.underlyingDecimals)) /
         asset.underlyingPrice,
       minBorrowNative: response.data,
-      minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice
+      minBorrowUSD: Number(formatUnits(response.data, 18)) * usdPrice
     };
   }, [response, usdPrice, asset]);
 
