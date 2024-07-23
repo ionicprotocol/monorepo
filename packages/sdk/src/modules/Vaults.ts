@@ -1,88 +1,62 @@
-import { FlywheelRewardsInfoForVault, FundOperationMode, VaultData } from "@ionicprotocol/types";
-import { BigNumber, constants, ContractTransaction, utils } from "ethers";
-
-import EIP20InterfaceArtifact from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
-import { getContract } from "../IonicSdk/utils";
+import { FlywheelRewardsInfoForVault, VaultData } from "@ionicprotocol/types";
+import { Address, erc20Abi, getContract, Hex, maxUint256 } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 
-export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface IVaults {
+  getAllVaults(): Promise<VaultData[]>;
+  getClaimableRewardsForVaults(account: Address): Promise<FlywheelRewardsInfoForVault[]>;
+  vaultApprove(vault: Address, asset: Address): Promise<Hex>;
+  vaultDeposit(vault: Address, amount: bigint): Promise<{ tx: Hex }>;
+  vaultWithdraw(vault: Address, amount: bigint): Promise<{ tx: Hex }>;
+}
+
+export function withVaults<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): IVaults;
+} & TBase {
   return class Vaults extends Base {
     async getAllVaults(): Promise<VaultData[]> {
       return [];
     }
 
-    async getClaimableRewardsForVaults(_: string): Promise<FlywheelRewardsInfoForVault[]> {
+    async getClaimableRewardsForVaults(): Promise<FlywheelRewardsInfoForVault[]> {
       return [];
     }
 
-    async vaultApprove(vault: string, asset: string) {
-      const token = getContract(asset, EIP20InterfaceArtifact.abi, this.signer);
-      const tx = await token.approve(vault, constants.MaxUint256);
+    async vaultApprove(vault: Address, asset: Address) {
+      const token = getContract({ address: asset, abi: erc20Abi, client: this.publicClient });
+      const tx = await token.write.approve([vault, maxUint256], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return tx;
     }
 
-    async vaultDeposit(vault: string, amount: BigNumber) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-      const tx: ContractTransaction = await optimizedAPRVault["deposit(uint256)"](amount);
+    async vaultDeposit(vault: Address, amount: bigint) {
+      const tx = await this.walletClient!.writeContract({
+        address: vault,
+        abi: ["function deposit(uint256)"],
+        functionName: "deposit",
+        args: [amount],
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return { tx };
     }
 
-    async vaultWithdraw(vault: string, amount: BigNumber) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-      const tx: ContractTransaction = await optimizedAPRVault["withdraw(uint256)"](amount);
-
-      return { tx };
-    }
-
-    async getUpdatedVault(mode: FundOperationMode, vault: VaultData, amount: BigNumber) {
-      let updatedVault: VaultData = vault;
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault.vault);
-
-      if (mode === FundOperationMode.SUPPLY) {
-        const totalSupply = vault.totalSupply.add(amount);
-        const totalSupplyNative =
-          Number(utils.formatUnits(totalSupply, vault.decimals)) * Number(utils.formatUnits(vault.underlyingPrice, 18));
-        const supplyApy = await optimizedAPRVault.callStatic.supplyAPY(amount);
-        updatedVault = {
-          ...vault,
-          totalSupply,
-          totalSupplyNative,
-          supplyApy
-        };
-      } else if (mode === FundOperationMode.WITHDRAW) {
-        const totalSupply = vault.totalSupply.sub(amount);
-        const totalSupplyNative =
-          Number(utils.formatUnits(totalSupply, vault.decimals)) * Number(utils.formatUnits(vault.underlyingPrice, 18));
-        const supplyApy = await optimizedAPRVault.callStatic.supplyAPY(amount);
-        updatedVault = {
-          ...vault,
-          totalSupply,
-          totalSupplyNative,
-          supplyApy
-        };
-      }
-
-      return updatedVault;
-    }
-
-    async getMaxWithdrawVault(vault: string) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-
-      return await optimizedAPRVault.callStatic.maxWithdraw(await this.signer.getAddress());
-    }
-
-    async getMaxDepositVault(vault: string) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-
-      return await optimizedAPRVault.callStatic.maxDeposit(await this.signer.getAddress());
-    }
-
-    async claimRewardsForVault(vault: string) {
-      const optimizedAPRVault = this.createOptimizedAPRVault(vault, this.signer);
-      const tx: ContractTransaction = await optimizedAPRVault.claimRewards();
+    async vaultWithdraw(vault: Address, amount: bigint) {
+      const tx = await this.walletClient!.writeContract({
+        address: vault,
+        abi: ["function withdraw(uint256)"],
+        functionName: "deposit",
+        args: [amount],
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return { tx };
     }

@@ -1,10 +1,9 @@
 import {
   base,
-  bob,
   chainIdToConfig,
   mode,
   optimism,
-  sepolia
+  bob
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -12,7 +11,12 @@ import type {
   DeployedPlugins as DeployedPluginsType
 } from '@ionicprotocol/types';
 import { SupportedChains } from '@ionicprotocol/types';
-import { BigNumber } from 'ethers';
+import {
+  mode as vMode,
+  base as vBase,
+  optimism as vOptimism,
+  bob as vBob
+} from 'viem/chains';
 
 import { config } from '@ui/config/index';
 import { MINUTES_PER_YEAR } from '@ui/constants/index';
@@ -53,29 +57,29 @@ export function getBlockTimePerMinuteByChainId(chainId: number): number {
   const chain = chainIdToConfig[chainId];
 
   return chain
-    ? chain.specificParams.blocksPerYear
-        .div(BigNumber.from(MINUTES_PER_YEAR))
-        .toNumber()
+    ? Number(
+        BigInt(chain.specificParams.blocksPerYear) / BigInt(MINUTES_PER_YEAR)
+      )
     : 0;
 }
 
 export function getEnabledChains() {
-  const enabledChains: SupportedChains[] = [];
+  const enabledChains = [];
 
   if (config.isModeEnabled) {
-    enabledChains.push(SupportedChains.mode);
+    enabledChains.push(vMode);
   }
 
   if (config.isBaseEnabled) {
-    enabledChains.push(SupportedChains.base);
+    enabledChains.push(vBase);
   }
 
   if (config.isOptimismEnabled) {
-    enabledChains.push(SupportedChains.optimism);
+    enabledChains.push(vOptimism);
   }
 
   if (config.isBobEnabled) {
-    enabledChains.push(SupportedChains.bob);
+    enabledChains.push(vBob);
   }
 
   return enabledChains;
@@ -85,8 +89,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets,
-  [SupportedChains.bob]: bob.assets,
-  [SupportedChains.optimism_sepolia]: sepolia.assets
+  [SupportedChains.bob]: bob.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {

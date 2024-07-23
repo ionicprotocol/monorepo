@@ -1,7 +1,8 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 import axios from "axios";
-import { Wallet } from "ethers";
+import { createPublicClient, createWalletClient, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { mode } from "viem/chains";
 
 import config from "./config";
 import liquidatePositions from "./liquidatePositions";
@@ -21,10 +22,21 @@ if (typeof HEARTBEAT_API_URL === "undefined") {
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
-  const provider = new JsonRpcProvider(config.rpcUrl);
-  const signer = new Wallet(config.adminPrivateKey, provider);
 
-  const sdk = setUpSdk(config.chainId, signer);
+  const account = privateKeyToAccount(config.adminPrivateKey as Hex);
+
+  const client = createPublicClient({
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const walletClient = createWalletClient({
+    account,
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const sdk = setUpSdk(config.chainId, client, walletClient);
 
   const liquidator = new Liquidator(sdk);
   await axios.get(HEARTBEAT_API_URL);

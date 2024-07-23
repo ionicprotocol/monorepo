@@ -1,44 +1,44 @@
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 export interface IonicAsset {
-  cToken: string;
-  plugin?: string;
+  cToken: Address;
+  plugin?: Address;
 
   /** scaled by `underlying.decimals()`  */
-  borrowBalance: BigNumber;
+  borrowBalance: bigint;
   /** scaled by `underlying.decimals()`  */
-  supplyBalance: BigNumber;
+  supplyBalance: bigint;
 
   /** scaled by `underlying.decimals()`  */
-  liquidity: BigNumber;
+  liquidity: bigint;
   membership: boolean;
 
   underlyingName: string;
   underlyingSymbol: string;
-  underlyingToken: string;
-  underlyingDecimals: BigNumber;
+  underlyingToken: Address;
+  underlyingDecimals: number;
 
   /** scaled by `1e18` */
-  underlyingPrice: BigNumber;
+  underlyingPrice: bigint;
 
   /** scaled by `underlying.decimals()`  */
-  underlyingBalance: BigNumber;
+  underlyingBalance: bigint;
 
   /** scaled by `1e18` */
-  collateralFactor: BigNumber;
+  collateralFactor: bigint;
   /** scaled by `1e18` */
-  reserveFactor: BigNumber;
+  reserveFactor: bigint;
 
-  adminFee: BigNumber;
-  ionicFee: BigNumber;
+  adminFee: bigint;
+  ionicFee: bigint;
 
-  borrowRatePerBlock: BigNumber;
-  supplyRatePerBlock: BigNumber;
+  borrowRatePerBlock: bigint;
+  supplyRatePerBlock: bigint;
 
   /** scaled by `underlying.decimals()`  */
-  totalBorrow: BigNumber;
+  totalBorrow: bigint;
   /** scaled by `underlying.decimals()`  */
-  totalSupply: BigNumber;
+  totalSupply: bigint;
 
   isBorrowPaused: boolean;
   isSupplyPaused: boolean;
@@ -55,7 +55,7 @@ export interface NativePricedIonicAsset extends IonicAsset {
   utilization: number;
 
   extraDocs?: string;
-  exchangeRate: BigNumber;
+  exchangeRate: bigint;
 
   borrowGuardianPaused: boolean;
   mintGuardianPaused: boolean;
@@ -63,7 +63,7 @@ export interface NativePricedIonicAsset extends IonicAsset {
   logoUrl?: string;
   originalSymbol?: string;
 
-  netSupplyBalance: BigNumber;
+  netSupplyBalance: bigint;
   netSupplyBalanceNative: number;
 }
 
@@ -71,8 +71,8 @@ export interface IonicPoolData {
   id: number;
   chainId: number;
   assets: NativePricedIonicAsset[];
-  creator: string;
-  comptroller: string;
+  creator: Address;
+  comptroller: Address;
   name: string;
   totalLiquidityNative: number;
   totalAvailableLiquidityNative: number;
@@ -85,8 +85,8 @@ export interface IonicPoolData {
   totalSupplyBalanceNative: number;
   totalCollateralSupplyBalanceNative: number;
   totalBorrowBalanceNative: number;
-  blockPosted: BigNumber;
-  timestampPosted: BigNumber;
+  blockPosted: bigint;
+  timestampPosted: bigint;
   underlyingTokens: string[];
   underlyingSymbols: string[];
   utilization: number;
@@ -94,8 +94,8 @@ export interface IonicPoolData {
 
 export interface IonicPool {
   name: string;
-  creator: string;
-  comptroller: string;
+  creator: Address;
+  comptroller: Address;
   blockPosted: number;
   timestampPosted: number;
 }

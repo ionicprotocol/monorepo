@@ -1,11 +1,13 @@
 'use client';
 
+import { type Address } from 'viem';
+
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface IBorrow {
   selectedMarketData: MarketData;
-  comptrollerAddress: string;
+  comptrollerAddress: Address;
   chain: number;
 }
 export default function BorrowAmount({

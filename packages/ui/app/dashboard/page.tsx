@@ -1,18 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import millify from 'millify';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { base, mode } from 'viem/chains';
-// import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
-// import Dropdown from '../_components/Dropdown';
 import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -28,7 +25,6 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-// import { useMaxBorrowAmounts } from '@ui/hooks/useMaxBorrowAmounts';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -91,7 +87,7 @@ export default function Dashboard() {
       positions?.openPositions.map((position) =>
         collateralsAPR &&
         collateralsAPR[position.collateral.cToken] !== undefined
-          ? parseUnits(
+          ? parseEther(
               collateralsAPR[position.collateral.cToken].totalApy.toFixed(18)
             )
           : null
@@ -448,7 +444,7 @@ export default function Dashboard() {
               >
                 <div className="popover-container">
                   <span>
-                    {Number(formatUnits(userNetApr ?? '0')).toFixed(2)}%{' '}
+                    {Number(formatEther(userNetApr ?? 0n)).toFixed(2)}%{' '}
                     <i className="popover-hint">i</i>
                   </span>
 
@@ -639,7 +635,7 @@ export default function Dashboard() {
                       apr={`${
                         currentSdk
                           ?.ratePerBlockToAPY(
-                            asset?.supplyRatePerBlock ?? BigNumber.from(0),
+                            asset?.supplyRatePerBlock ?? 0n,
                             getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
@@ -714,7 +710,7 @@ export default function Dashboard() {
                       apr={`${
                         currentSdk
                           ?.ratePerBlockToAPY(
-                            asset?.borrowRatePerBlock ?? BigNumber.from(0),
+                            asset?.borrowRatePerBlock ?? 0n,
                             getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
@@ -811,7 +807,7 @@ export default function Dashboard() {
                           {Number(
                             formatUnits(
                               currentPositionInfo.positionSupplyAmount,
-                              position.collateral.underlyingDecimals
+                              Number(position.collateral.underlyingDecimals)
                             )
                           ).toLocaleString('en-US', {
                             maximumFractionDigits: 2
@@ -821,17 +817,17 @@ export default function Dashboard() {
                             Number(
                               formatUnits(
                                 currentPositionInfo.positionSupplyAmount,
-                                position.collateral.underlyingDecimals
+                                Number(position.collateral.underlyingDecimals)
                               )
                             ) *
                               ((usdPrice ?? 0) *
                                 Number(
-                                  formatUnits(
+                                  formatEther(
                                     marketData?.assets.find(
                                       (asset) =>
                                         asset.underlyingSymbol ===
                                         position.collateral.symbol
-                                    )?.underlyingPrice ?? '0'
+                                    )?.underlyingPrice ?? 0n
                                   )
                                 ))
                           )}
@@ -859,12 +855,12 @@ export default function Dashboard() {
                             ) *
                               ((usdPrice ?? 0) *
                                 Number(
-                                  formatUnits(
+                                  formatEther(
                                     marketData?.assets.find(
                                       (asset) =>
                                         asset.underlyingSymbol ===
                                         position.borrowable.symbol
-                                    )?.underlyingPrice ?? '0'
+                                    )?.underlyingPrice ?? 0n
                                   )
                                 ))
                           )}
@@ -920,7 +916,7 @@ export default function Dashboard() {
           closeLoop={() => {
             setLoopOpen(false);
           }}
-          comptrollerAddress={marketData?.comptroller ?? ''}
+          comptrollerAddress={marketData?.comptroller ?? ('' as Address)}
           currentBorrowAsset={selectedLoopBorrowData}
           isOpen={loopOpen}
           selectedCollateralAsset={selectedMarketData}

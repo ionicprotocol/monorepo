@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { parseUnits } from 'ethers/lib/utils.js';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
+import { parseUnits } from 'viem';
 
 import ResultHandler from '../ResultHandler';
 
@@ -64,18 +64,15 @@ const Amount = ({
     if (
       newAmount &&
       newAmount.length >
-        selectedMarketData.underlyingDecimals.toNumber() +
-          1 +
-          numbersBeforeSeparator
+        selectedMarketData.underlyingDecimals + 1 + numbersBeforeSeparator
     ) {
       return;
     }
 
     if (
       newAmount &&
-      parseUnits(max, selectedMarketData.underlyingDecimals).lt(
+      parseUnits(max, selectedMarketData.underlyingDecimals) <
         parseUnits(newAmount, selectedMarketData.underlyingDecimals)
-      )
     ) {
       handleInput(max);
 

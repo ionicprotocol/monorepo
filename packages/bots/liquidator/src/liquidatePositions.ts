@@ -1,4 +1,4 @@
-import { BotType, LiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
+import { BotType, LiquidatablePool } from "@ionicprotocol/sdk";
 
 import { Liquidator } from "./services";
 

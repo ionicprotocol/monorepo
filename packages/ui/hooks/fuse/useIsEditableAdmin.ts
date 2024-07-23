@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 
 export const useIsEditableAdmin = (
-  comptrollerAddress?: string,
+  comptrollerAddress?: Address,
   poolChainId?: number
 ) => {
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);

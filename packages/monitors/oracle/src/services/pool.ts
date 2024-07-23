@@ -1,7 +1,7 @@
-import { IonicSdk } from "@ionicprotocol/sdk";
-import { IonicComptroller } from "@ionicprotocol/sdk/dist/cjs/typechain/ComptrollerInterface.sol/IonicComptroller";
+import { ionicComptrollerAbi, IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
 import { constants } from "ethers";
+import { GetContractReturnType, PublicClient } from "viem";
 
 export class PoolService {
   sdk: IonicSdk;
@@ -16,12 +16,12 @@ export class PoolService {
     return this;
   }
 
-  async getPoolsWithAsset(): Promise<IonicComptroller[]> {
-    const poolsWithAsset: IonicComptroller[] = [];
-    const [, pools] = await this.sdk.contracts.PoolDirectory.getActivePools();
+  async getPoolsWithAsset(): Promise<GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>[]> {
+    const poolsWithAsset: GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>[] = [];
+    const [, pools] = await this.sdk.contracts.PoolDirectory.read.getActivePools();
     for (const pool of pools) {
-      const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.signer);
-      const market = await comptroller.callStatic.cTokensByUnderlying(this.asset.underlying);
+      const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.publicClient, this.sdk.walletClient);
+      const market = await comptroller.read.cTokensByUnderlying([this.asset.underlying]);
       if (market !== constants.AddressZero) {
         poolsWithAsset.push(comptroller);
       }

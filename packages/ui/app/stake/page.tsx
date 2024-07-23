@@ -582,7 +582,7 @@ export default function Stake() {
               className={`my-3 py-1.5 text-sm text-black w-full bg-accent rounded-md`}
               onClick={() => setRewardPopup(true)}
             >
-              💰💰Claim Rewards💰💰
+              Claim Rewards
             </button>
           </div>
           <div

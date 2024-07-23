@@ -1,5 +1,4 @@
 import Decimal from "decimal.js";
-import { BigNumber } from "ethers";
 
 export type Direction = "pump" | "dump";
 
@@ -10,22 +9,22 @@ export type Token = {
 };
 
 export type Quote = {
-  amountOut: BigNumber;
-  sqrtPriceX96After: BigNumber;
-  initializedTicksCrossed: BigNumber;
-  gasEstimate: BigNumber;
+  amountOut: bigint;
+  sqrtPriceX96After: bigint;
+  initializedTicksCrossed: bigint;
+  gasEstimate: bigint;
 };
 
 export type Trade = {
-  amountIn: BigNumber;
+  amountIn: bigint;
   value: number;
   priceImpact: string;
   sqrtPriceX96After?: string;
-  price: BigNumber;
-  after: BigNumber;
-  amountOut: BigNumber;
+  price: bigint;
+  after: bigint;
+  amountOut: bigint;
   tokenOut: string;
-  gasEstimate?: BigNumber;
+  gasEstimate?: bigint;
   index: number;
 };
 
@@ -45,19 +44,19 @@ export type UniswapV3AssetConfig = {
 };
 
 export type Slot0 = {
-  sqrtPriceX96: BigNumber;
-  tick: BigNumber;
-  observationIndex: BigNumber;
-  price: BigNumber;
+  sqrtPriceX96: bigint;
+  tick: bigint;
+  observationIndex: bigint;
+  price: bigint;
 };
 
 export type Attack = {
   type: Direction;
-  price: BigNumber;
+  price: bigint;
   priceImpact: string;
-  after: BigNumber;
+  after: bigint;
   cost: number;
-  amountIn: BigNumber;
-  amountOut: BigNumber;
+  amountIn: bigint;
+  amountOut: bigint;
   tokenOut: string;
 };

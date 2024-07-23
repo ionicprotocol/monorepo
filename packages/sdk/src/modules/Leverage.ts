@@ -1,16 +1,70 @@
-import { LeveredBorrowable, NewPosition, OpenPosition, PositionInfo } from "@ionicprotocol/types";
-import { BigNumber, constants, ContractTransaction, utils } from "ethers";
-
-import EIP20InterfaceABI from "../../artifacts/EIP20Interface.sol/EIP20Interface.json";
-import { getContract } from "../IonicSdk/utils";
+import {
+  LeveredBorrowable,
+  MarketRewardsInfoStructOutput,
+  NewPosition,
+  OpenPosition,
+  PositionInfo
+} from "@ionicprotocol/types";
+import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
 
-export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
+export interface ILeverage {
+  getAllLeveredPositions(account: Address): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }>;
+  getPositionsByAccount(
+    account: Address
+  ): Promise<{ collateralMarket: Address; borrowMarket: Address; position: Address; isClosed: boolean }[]>;
+  getPositionSupplyApy(cTokenAddress: Address, amount: bigint): Promise<bigint>;
+  getPositionBorrowApr(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    leverageRatio: bigint,
+    amount: bigint
+  ): Promise<bigint>;
+  leveredFactoryApprove(collateralUnderlying: Address): Promise<Hex>;
+  leveredPositionApprove(positionAddress: Address, collateralUnderlying: Address): Promise<Hex>;
+  createAndFundPosition(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    fundingAsset: Address,
+    fundingAmount: bigint
+  ): Promise<Hex>;
+  createAndFundPositionAtRatio(
+    collateralMarket: Address,
+    borrowMarket: Address,
+    fundingAsset: Address,
+    fundingAmount: bigint,
+    leverageRatio: bigint
+  ): Promise<Hex>;
+  getRangeOfLeverageRatio(address: Address): Promise<[bigint, bigint]>;
+  isPositionClosed(address: Address): Promise<boolean>;
+  closeLeveredPosition(address: Address, withdrawTo?: Address): Promise<Hex | null>;
+  adjustLeverageRatio(address: Address, ratio: number): Promise<Hex>;
+  fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint): Promise<Hex>;
+  getNetAPY(
+    supplyApy: bigint,
+    supplyAmount: bigint,
+    collateralMarket: Address,
+    borrowableMarket: Address,
+    leverageRatio: bigint
+  ): Promise<bigint>;
+  getCurrentLeverageRatio(positionAddress: Address): Promise<bigint>;
+  getEquityAmount(positionAddress: Address): Promise<bigint>;
+  removeClosedPosition(positionAddress: Address): Promise<Hex>;
+  getPositionInfo(positionAddress: Address, supplyApy: bigint): Promise<PositionInfo>;
+  getNetApyForPositionAfterFunding(positionAddress: Address, supplyApy: bigint, newFunding: bigint): Promise<bigint>;
+  getLeverageRatioAfterFunding(positionAddress: Address, newFunding: bigint): Promise<bigint>;
+}
+
+export function withLeverage<TBase extends CreateContractsModule = CreateContractsModule>(
+  Base: TBase
+): {
+  new (...args: any[]): ILeverage;
+} & TBase {
   return class Leverage extends Base {
     async getAllLeveredPositions(
-      account: string
+      account: Address
     ): Promise<{ openPositions: OpenPosition[]; newPositions: NewPosition[] }> {
       try {
         const openPositions: OpenPosition[] = [];
@@ -18,42 +72,38 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
         const leveredPositionLens = this.createLeveredPositionLens();
         const ionicFlywheelLensRouter = this.createIonicFlywheelLensRouter();
-
         const [
-          {
-            markets: collateralCTokens,
-            underlyings: collateralUnderlyings,
-            decimals: collateralDecimals,
-            totalUnderlyingSupplied: collateralTotalSupplys,
-            symbols: collateralsymbols,
-            ratesPerBlock: supplyRatePerBlock,
-            underlyingPrices: collateralUnderlyingPrices,
-            poolOfMarket
-          },
-          positions
-        ] = await Promise.all([
-          leveredPositionLens.callStatic.getCollateralMarkets(),
-          this.getPositionsByAccount(account)
-        ]);
+          collateralCTokens,
+          poolOfMarket,
+          collateralUnderlyings,
+          collateralUnderlyingPrices,
+          ,
+          collateralsymbols,
+          collateralDecimals,
+          collateralTotalSupplys,
+          supplyRatePerBlock
+        ] = await leveredPositionLens.read.getCollateralMarkets();
+        const positions = await this.getPositionsByAccount(account);
 
-        const rewards = await ionicFlywheelLensRouter.callStatic.getMarketRewardsInfo(collateralCTokens);
+        const rewards = await ionicFlywheelLensRouter.simulate.getMarketRewardsInfo([collateralCTokens]);
 
         await Promise.all(
           collateralCTokens.map(async (collateralCToken, index) => {
             const collateralAsset = ChainSupportedAssets[this.chainId].find(
               (asset) => asset.underlying === collateralUnderlyings[index]
             );
-            const {
-              markets: borrowableMarkets,
-              underlyings: borrowableUnderlyings,
-              symbols: borrowableSymbols,
-              rates: borrowableRates,
-              decimals: borrowableDecimals,
-              underlyingsPrices: borrowableUnderlyingPrices
-            } = await leveredPositionLens.callStatic.getBorrowableMarketsAndRates(collateralCToken);
+            const [
+              borrowableMarkets,
+              borrowableUnderlyings,
+              borrowableUnderlyingPrices,
+              ,
+              borrowableSymbols,
+              borrowableRates,
+              borrowableDecimals
+            ] = await leveredPositionLens.read.getBorrowableMarketsAndRates([collateralCToken]);
 
             // get rewards
-            const reward = rewards.find((rw) => rw.market === collateralCToken);
+            const reward = rewards.result.find((rw) => rw.market === collateralCToken);
 
             //get borrowable asset
             const leveredBorrowable: LeveredBorrowable[] = [];
@@ -82,7 +132,6 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               leveredBorrowable.push({
                 ...borrowable
               });
-
               if (position) {
                 openPositions.push({
                   chainId: this.chainId,
@@ -90,8 +139,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                     cToken: collateralCToken,
                     underlyingToken: collateralUnderlyings[index],
                     underlyingDecimals: collateralAsset
-                      ? BigNumber.from(collateralAsset.decimals)
-                      : BigNumber.from(collateralDecimals[index]),
+                      ? BigInt(collateralAsset.decimals)
+                      : BigInt(collateralDecimals[index]),
                     totalSupplied: collateralTotalSupplys[index],
                     symbol: collateralAsset
                       ? collateralAsset.originalSymbol
@@ -99,7 +148,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                         : collateralAsset.symbol
                       : collateralsymbols[index],
                     supplyRatePerBlock: supplyRatePerBlock[index],
-                    reward,
+                    reward: reward as {
+                      underlyingPrice: bigint;
+                      market: Address;
+                      rewardsInfo: MarketRewardsInfoStructOutput[];
+                    },
                     pool: poolOfMarket[index],
                     plugin: this.marketToPlugin[collateralCToken],
                     underlyingPrice: collateralUnderlyingPrices[index]
@@ -116,9 +169,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
               collateral: {
                 cToken: collateralCToken,
                 underlyingToken: collateralUnderlyings[index],
-                underlyingDecimals: collateralAsset
-                  ? BigNumber.from(collateralAsset.decimals)
-                  : BigNumber.from(collateralDecimals[index]),
+                underlyingDecimals: BigInt(collateralAsset ? collateralAsset.decimals : collateralDecimals[index]),
                 totalSupplied: collateralTotalSupplys[index],
                 symbol: collateralAsset
                   ? collateralAsset.originalSymbol
@@ -126,7 +177,11 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
                     : collateralAsset.symbol
                   : collateralsymbols[index],
                 supplyRatePerBlock: supplyRatePerBlock[index],
-                reward,
+                reward: reward as {
+                  underlyingPrice: bigint;
+                  market: Address;
+                  rewardsInfo: MarketRewardsInfoStructOutput[];
+                },
                 pool: poolOfMarket[index],
                 plugin: this.marketToPlugin[collateralCToken],
                 underlyingPrice: collateralUnderlyingPrices[index]
@@ -147,16 +202,16 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       }
     }
 
-    async getPositionsByAccount(account: string) {
+    async getPositionsByAccount(account: Address) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
-      const [positions, states] = await leveredPositionFactory.callStatic.getPositionsByAccount(account);
+      const [positions, states] = await leveredPositionFactory.read.getPositionsByAccount([account]);
       return await Promise.all(
         positions.map(async (position, index) => {
           const positionContract = this.createLeveredPosition(position);
           const state = states[index];
           const [collateralMarket, borrowMarket] = await Promise.all([
-            positionContract.callStatic.collateralMarket(),
-            positionContract.callStatic.stableMarket()
+            positionContract.read.collateralMarket(),
+            positionContract.read.stableMarket()
           ]);
 
           return { collateralMarket, borrowMarket, position, isClosed: state };
@@ -164,102 +219,119 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
-    async getPositionSupplyApy(cTokenAddress: string, amount: BigNumber) {
+    async getPositionSupplyApy(cTokenAddress: Address, amount: bigint) {
       const cToken = this.createICErc20(cTokenAddress);
 
-      return await cToken.callStatic.supplyRatePerBlockAfterDeposit(amount);
+      return await cToken.read.supplyRatePerBlockAfterDeposit([amount]);
     }
 
     async getPositionBorrowApr(
-      collateralMarket: string,
-      borrowMarket: string,
-      leverageRatio: BigNumber,
-      amount: BigNumber
+      collateralMarket: Address,
+      borrowMarket: Address,
+      leverageRatio: bigint,
+      amount: bigint
     ) {
       const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionLens.callStatic.getBorrowRateAtRatio(
+      return await leveredPositionLens.read.getBorrowRateAtRatio([
         collateralMarket,
         borrowMarket,
         amount,
         leverageRatio
-      );
+      ]);
     }
 
-    async leveredFactoryApprove(collateralUnderlying: string) {
-      const token = getContract(collateralUnderlying, EIP20InterfaceABI, this.signer);
-      const tx = await token.approve(this.chainDeployment.LeveredPositionFactory.address, constants.MaxUint256);
+    async leveredFactoryApprove(collateralUnderlying: Address) {
+      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient! });
+      const tx = await token.write.approve(
+        [this.chainDeployment.LeveredPositionFactory.address as Address, maxUint256],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
+      );
 
       return tx;
     }
 
-    async leveredPositionApprove(positionAddress: string, collateralUnderlying: string) {
-      const token = getContract(collateralUnderlying, EIP20InterfaceABI, this.signer);
-      const tx = await token.approve(positionAddress, constants.MaxUint256);
+    async leveredPositionApprove(positionAddress: Address, collateralUnderlying: Address) {
+      const token = getContract({ address: collateralUnderlying, abi: erc20Abi, client: this.walletClient! });
+
+      const tx = await token.write.approve([positionAddress, maxUint256], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return tx;
     }
 
     async createAndFundPosition(
-      collateralMarket: string,
-      borrowMarket: string,
-      fundingAsset: string,
-      fundingAmount: BigNumber
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
+      fundingAmount: bigint
     ) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
-      return await leveredPositionFactory.createAndFundPosition(
-        collateralMarket,
-        borrowMarket,
-        fundingAsset,
-        fundingAmount
+      return await leveredPositionFactory.write.createAndFundPosition(
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
       );
     }
 
     async createAndFundPositionAtRatio(
-      collateralMarket: string,
-      borrowMarket: string,
-      fundingAsset: string,
-      fundingAmount: BigNumber,
-      leverageRatio: BigNumber
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
+      fundingAmount: bigint,
+      leverageRatio: bigint
     ) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
-      return await leveredPositionFactory.createAndFundPositionAtRatio(
-        collateralMarket,
-        borrowMarket,
-        fundingAsset,
-        fundingAmount,
-        leverageRatio
+      return await leveredPositionFactory.write.createAndFundPositionAtRatio(
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, leverageRatio],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
       );
     }
 
-    async getRangeOfLeverageRatio(address: string) {
+    async getRangeOfLeverageRatio(address: Address) {
       const leveredPosition = this.createLeveredPosition(address);
 
       return await Promise.all([
-        leveredPosition.callStatic.getMinLeverageRatio(),
-        leveredPosition.callStatic.getMaxLeverageRatio()
+        leveredPosition.read.getMinLeverageRatio(),
+        leveredPosition.read.getMaxLeverageRatio()
       ]);
     }
 
-    async isPositionClosed(address: string) {
+    async isPositionClosed(address: Address) {
       const leveredPosition = this.createLeveredPosition(address);
 
-      return await leveredPosition.callStatic.isPositionClosed();
+      return await leveredPosition.read.isPositionClosed();
     }
 
-    async closeLeveredPosition(address: string, withdrawTo?: string) {
+    async closeLeveredPosition(address: Address, withdrawTo?: Address) {
       const isPositionClosed = await this.isPositionClosed(address);
-      const leveredPosition = this.createLeveredPosition(address, this.signer);
+      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
       if (!isPositionClosed) {
-        let tx: ContractTransaction;
+        let tx: Hex;
 
         if (withdrawTo) {
-          tx = await leveredPosition["closePosition(address)"](withdrawTo);
+          tx = await leveredPosition.write.closePosition([withdrawTo], {
+            account: this.walletClient!.account!.address,
+            chain: this.walletClient!.chain
+          });
         } else {
-          tx = await leveredPosition["closePosition()"]();
+          tx = await leveredPosition.write.closePosition({
+            account: this.walletClient!.account!.address,
+            chain: this.walletClient!.chain
+          });
         }
 
         return tx;
@@ -268,76 +340,85 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       }
     }
 
-    async adjustLeverageRatio(address: string, ratio: number) {
-      const leveredPosition = this.createLeveredPosition(address, this.signer);
+    async adjustLeverageRatio(address: Address, ratio: number) {
+      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
-      const tx = await leveredPosition.adjustLeverageRatio(utils.parseUnits(ratio.toString()));
+      const tx = await leveredPosition.write.adjustLeverageRatio([parseEther(ratio.toString())], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return tx;
     }
 
-    async fundPosition(positionAddress: string, underlyingToken: string, amount: BigNumber) {
-      const leveredPosition = this.createLeveredPosition(positionAddress, this.signer);
+    async fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint) {
+      const leveredPosition = this.createLeveredPosition(positionAddress, this.publicClient);
 
-      const tx = await leveredPosition.fundPosition(underlyingToken, amount);
+      const tx = await leveredPosition.write.fundPosition([underlyingToken, amount], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return tx;
     }
 
     async getNetAPY(
-      supplyApy: BigNumber,
-      supplyAmount: BigNumber,
-      collateralMarket: string,
-      borrowableMarket: string,
-      leverageRatio: BigNumber
+      supplyApy: bigint,
+      supplyAmount: bigint,
+      collateralMarket: Address,
+      borrowableMarket: Address,
+      leverageRatio: bigint
     ) {
       const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionLens.callStatic.getNetAPY(
+      return await leveredPositionLens.read.getNetAPY([
         supplyApy,
         supplyAmount,
         collateralMarket,
         borrowableMarket,
         leverageRatio
-      );
+      ]);
     }
 
-    async getCurrentLeverageRatio(positionAddress: string) {
+    async getCurrentLeverageRatio(positionAddress: Address) {
       const leveredPosition = this.createLeveredPosition(positionAddress);
 
-      return await leveredPosition.callStatic.getCurrentLeverageRatio();
+      return await leveredPosition.read.getCurrentLeverageRatio();
     }
 
-    async getEquityAmount(positionAddress: string) {
+    async getEquityAmount(positionAddress: Address) {
       const leveredPosition = this.createLeveredPosition(positionAddress);
 
-      return await leveredPosition.callStatic.getEquityAmount();
+      return await leveredPosition.read.getEquityAmount();
     }
 
-    async removeClosedPosition(positionAddress: string) {
-      const leveredPositionFactory = this.createLeveredPositionFactory(this.signer);
+    async removeClosedPosition(positionAddress: Address) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
 
-      const tx = await leveredPositionFactory.removeClosedPosition(positionAddress);
+      const tx = await leveredPositionFactory.write.removeClosedPosition([positionAddress], {
+        account: this.walletClient!.account!.address,
+        chain: this.walletClient!.chain
+      });
 
       return tx;
     }
 
-    async getPositionInfo(positionAddress: string, supplyApy: BigNumber): Promise<PositionInfo> {
+    async getPositionInfo(positionAddress: Address, supplyApy: bigint): Promise<PositionInfo> {
       const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionLens.getPositionInfo(positionAddress, supplyApy);
+      return await leveredPositionLens.read.getPositionInfo([positionAddress, supplyApy]);
     }
 
-    async getNetApyForPositionAfterFunding(positionAddress: string, supplyApy: BigNumber, newFunding: BigNumber) {
+    async getNetApyForPositionAfterFunding(positionAddress: Address, supplyApy: bigint, newFunding: bigint) {
       const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionLens.getNetApyForPositionAfterFunding(positionAddress, supplyApy, newFunding);
+      return await leveredPositionLens.read.getNetApyForPositionAfterFunding([positionAddress, supplyApy, newFunding]);
     }
 
-    async getLeverageRatioAfterFunding(positionAddress: string, newFunding: BigNumber) {
+    async getLeverageRatioAfterFunding(positionAddress: Address, newFunding: bigint) {
       const leveredPositionLens = this.createLeveredPositionLens();
 
-      return await leveredPositionLens.getLeverageRatioAfterFunding(positionAddress, newFunding);
+      return await leveredPositionLens.read.getLeverageRatioAfterFunding([positionAddress, newFunding]);
     }
   };
 }

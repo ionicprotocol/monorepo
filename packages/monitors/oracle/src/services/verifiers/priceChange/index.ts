@@ -1,4 +1,4 @@
-import { BigNumber, utils } from "ethers";
+import { formatEther } from "viem";
 
 import { getAssetPriceCacheData } from "../../../controllers";
 import { insertAssetPriceCacheData } from "../../../controllers/assetPriceCache";
@@ -18,21 +18,21 @@ import { AbstractOracleVerifier } from "../base";
 import { calculateDelta, deltaWithinRange, observationUpdatable, updateCache } from "./utils";
 
 export class PriceChangeVerifier extends AbstractOracleVerifier {
-  mpoPrice: BigNumber;
+  mpoPrice: bigint;
   config: PriceChangeVerifierConfig;
   asset: PriceChangeVerifierAsset;
   assetInitValues: Omit<AssetPriceCache, "first_observation_deviation" | "second_observation_deviation">;
 
   async initMpoPrice(): Promise<[PriceChangeVerifier, VerifierInitValidity]> {
     try {
-      this.mpoPrice = await this.mpo.callStatic.price(this.asset.underlying);
+      this.mpoPrice = await this.mpo.read.price([this.asset.underlying]);
       this.assetInitValues = {
         asset_address: this.asset.underlying,
         markets_paused: false,
         first_observation_ts: new Date().toISOString(),
         second_observation_ts: new Date().toISOString(),
-        first_observation_value_ether: parseFloat(utils.formatEther(this.mpoPrice)),
-        second_observation_value_ether: parseFloat(utils.formatEther(this.mpoPrice)),
+        first_observation_value_ether: parseFloat(formatEther(this.mpoPrice)),
+        second_observation_value_ether: parseFloat(formatEther(this.mpoPrice)),
       };
       return [this, null];
     } catch (e) {

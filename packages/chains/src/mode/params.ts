@@ -1,10 +1,10 @@
 import { assetSymbols, ChainParams } from "@ionicprotocol/types";
-import { BigNumber } from "ethers";
+import { Address } from "viem";
 
 import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
-  blocksPerYear: BigNumber.from((30 * 60 * 24 * 365).toString()), // 30 blocks per minute = 2 sec block time
+  blocksPerYear: BigInt(30 * 60 * 24 * 365), // 30 blocks per minute = 2 sec block time
   cgId: "ethereum",
   metadata: {
     chainIdHex: "0x868B",
@@ -23,7 +23,7 @@ const specificParams: ChainParams = {
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WETH,
-      address: chainAddresses.W_TOKEN,
+      address: chainAddresses.W_TOKEN as Address,
       name: "WETH",
       decimals: 18,
       color: "#7A88A1",

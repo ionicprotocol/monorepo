@@ -1,15 +1,15 @@
 import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { ethers } from 'ethers';
 import { useMemo } from 'react';
+import { Address, getAddress } from 'viem';
 
 import { config } from '@ui/config/index';
 import type { TokenData } from '@ui/types/ComponentPropsType';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 export const fetchTokenData = async (
-  addresses: string[],
+  addresses: Address[],
   chainId: number
 ): Promise<TokenData[]> => {
   let data: Partial<TokenData>[] = [];
@@ -68,7 +68,7 @@ export const useTokenData = (address: string, chainId?: number) => {
   const validAddress = useMemo(() => {
     if (address) {
       try {
-        return ethers.utils.getAddress(address);
+        return getAddress(address);
       } catch {}
     }
 

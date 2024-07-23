@@ -1,5 +1,7 @@
+import { Hex } from 'viem';
+
 export interface PythAssetConfig {
-  priceId: string;
+  priceId: Hex;
   configRefreshRateInSeconds: number;
   validTimePeriodSeconds: number;
   deviationThresholdBps: number;

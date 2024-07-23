@@ -1,170 +1,242 @@
-import { Contract, ContractInterface } from "ethers";
+import { Abi, Address, GetContractReturnType, PublicClient, WalletClient } from "viem";
 
 import { IonicBaseConstructor } from "..";
-import AuthoritiesRegistryArtifact from "../../artifacts/AuthoritiesRegistry.sol/AuthoritiesRegistry.json";
-import CompoundMarketERC4626Artifact from "../../artifacts/CompoundMarketERC4626.sol/CompoundMarketERC4626.json";
-import IonicComptrollerArtifact from "../../artifacts/ComptrollerInterface.sol/IonicComptroller.json";
-import ICErc20PluginRewardsArtifact from "../../artifacts/CTokenInterfaces.sol/CErc20PluginRewardsInterface.json";
-import ICErc20Artifact from "../../artifacts/CTokenInterfaces.sol/ICErc20.json";
-import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
-import ILeveredPositionFactoryArtifact from "../../artifacts/ILeveredPositionFactory.sol/ILeveredPositionFactory.json";
-import ILiquidatorsRegistryArtifact from "../../artifacts/ILiquidatorsRegistry.sol/ILiquidatorsRegistry.json";
-import IonicFlywheelArtifact from "../../artifacts/IonicFlywheel.sol/IonicFlywheel.json";
-import IonicFlywheelLensRouterArtifact from "../../artifacts/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter.json";
-import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
-import LeveredPositionArtifact from "../../artifacts/LeveredPosition.sol/LeveredPosition.json";
-import LeveredPositionsLensArtifact from "../../artifacts/LeveredPositionsLens.sol/LeveredPositionsLens.json";
-import MasterPriceOracleArtifact from "../../artifacts/MasterPriceOracle.sol/MasterPriceOracle.json";
-import OptimizedAPRVaultFirstExtensionArtifact from "../../artifacts/OptimizedAPRVaultFirstExtension.sol/OptimizedAPRVaultFirstExtension.json";
-import OptimizedAPRVaultSecondExtensionArtifact from "../../artifacts/OptimizedAPRVaultSecondExtension.sol/OptimizedAPRVaultSecondExtension.json";
-import OptimizedVaultsRegistryArtifact from "../../artifacts/OptimizedVaultsRegistry.sol/OptimizedVaultsRegistry.json";
-import PoolLensArtifact from "../../artifacts/PoolLens.sol/PoolLens.json";
-import PoolLensSecondaryArtifact from "../../artifacts/PoolLensSecondary.sol/PoolLensSecondary.json";
-import PoolRolesAuthorityArtifact from "../../artifacts/PoolRolesAuthority.sol/PoolRolesAuthority.json";
-import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
-import { AuthoritiesRegistry } from "../../typechain/AuthoritiesRegistry";
-import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
-import { IonicComptroller } from "../../typechain/ComptrollerInterface.sol/IonicComptroller";
-import { ICErc20 } from "../../typechain/CTokenInterfaces.sol/ICErc20";
-import { ICErc20PluginRewards } from "../../typechain/CTokenInterfaces.sol/ICErc20PluginRewards";
-import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
-import { ILeveredPositionFactory } from "../../typechain/ILeveredPositionFactory.sol/ILeveredPositionFactory";
-import { ILiquidatorsRegistry } from "../../typechain/ILiquidatorsRegistry.sol/ILiquidatorsRegistry";
-import { IonicFlywheel } from "../../typechain/IonicFlywheel";
-import { IonicFlywheelLensRouter } from "../../typechain/IonicFlywheelLensRouter.sol/IonicFlywheelLensRouter";
-import { JumpRateModel } from "../../typechain/JumpRateModel";
-import { LeveredPosition } from "../../typechain/LeveredPosition";
-import { LeveredPositionsLens } from "../../typechain/LeveredPositionsLens";
-import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
-import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
-import { OptimizedVaultsRegistry } from "../../typechain/OptimizedVaultsRegistry";
-import { PoolLens } from "../../typechain/PoolLens";
-import { PoolLensSecondary } from "../../typechain/PoolLensSecondary.sol/PoolLensSecondary";
-import { PoolRolesAuthority } from "../../typechain/PoolRolesAuthority";
-import { Unitroller } from "../../typechain/Unitroller";
-import { SignerOrProvider } from "../IonicSdk";
+import {
+  authoritiesRegistryAbi,
+  flywheelStaticRewardsAbi,
+  icErc20Abi,
+  icErc20PluginRewardsAbi,
+  iLeveredPositionFactoryAbi,
+  iLiquidatorsRegistryAbi,
+  ionicComptrollerAbi,
+  ionicFlywheelAbi,
+  ionicFlywheelLensRouterAbi,
+  jumpRateModelAbi,
+  leveredPositionAbi,
+  leveredPositionsLensAbi,
+  masterPriceOracleAbi,
+  poolLensAbi,
+  poolLensSecondaryAbi,
+  poolRolesAuthorityAbi,
+  unitrollerAbi
+} from "../generated";
+import { getContract } from "../IonicSdk/utils";
 
-type OptimizedAPRVaultWithExtensions = OptimizedAPRVaultFirstExtension & OptimizedAPRVaultSecondExtension;
+export interface ICreateContracts {
+  createContractInstance<T extends Abi>(
+    abi: T
+  ): (address: Address, publicClient?: PublicClient) => GetContractReturnType<T, WalletClient>;
+  createUnitroller: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof unitrollerAbi, WalletClient>;
+  createIonicFlywheel: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicFlywheelAbi, WalletClient>;
+  createFlywheelStaticRewards: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof flywheelStaticRewardsAbi, WalletClient>;
+  createJumpRateModel: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof jumpRateModelAbi, WalletClient>;
+  createComptroller: (
+    comptrollerAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicComptrollerAbi, WalletClient>;
+  createICErc20: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof icErc20Abi, WalletClient>;
+  createICErc20PluginRewards: (
+    cTokenAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof icErc20PluginRewardsAbi, WalletClient>;
+  createMasterPriceOracle: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof masterPriceOracleAbi, WalletClient>;
+  createIonicFlywheelLensRouter: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof ionicFlywheelLensRouterAbi, WalletClient>;
+  createLeveredPositionFactory: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof iLeveredPositionFactoryAbi, WalletClient>;
+  createLeveredPosition: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof leveredPositionAbi, WalletClient>;
+  createLeveredPositionLens: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof leveredPositionsLensAbi, WalletClient>;
+  createPoolLens: (publicClient?: PublicClient) => GetContractReturnType<typeof poolLensAbi, WalletClient>;
+  createPoolLensSecondary: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof poolLensSecondaryAbi, WalletClient>;
+  createILiquidatorsRegistry: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof iLiquidatorsRegistryAbi, WalletClient>;
+  createAuthoritiesRegistry: (
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof authoritiesRegistryAbi, WalletClient>;
+  createPoolRolesAuthority: (
+    poolAuthAddress: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof poolRolesAuthorityAbi, WalletClient>;
+}
 
-export function withCreateContracts<TBase extends IonicBaseConstructor>(Base: TBase) {
+export function withCreateContracts<TBase extends IonicBaseConstructor>(
+  Base: TBase
+): {
+  new (...args: any[]): ICreateContracts;
+} & TBase {
   return class CreateContracts extends Base {
-    createContractInstance<T extends Contract>(abi: ContractInterface) {
-      return (address: string, signerOrProvider: SignerOrProvider = this.signer) =>
-        new Contract(address, abi, signerOrProvider) as T;
+    createContractInstance<T extends Abi>(abi: Abi) {
+      return (
+        address: Address,
+        publicClient = this.publicClient,
+        walletClient = this.walletClient
+      ): GetContractReturnType<T, WalletClient> =>
+        getContract({
+          address,
+          abi,
+          client: walletClient ?? publicClient
+        }) as unknown as GetContractReturnType<T, WalletClient>;
     }
 
-    createUnitroller = this.createContractInstance<Unitroller>(UnitrollerArtifact.abi);
-    createIonicFlywheel = this.createContractInstance<IonicFlywheel>(IonicFlywheelArtifact.abi);
-    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsArtifact.abi);
-    createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelArtifact.abi);
+    createUnitroller = this.createContractInstance<typeof unitrollerAbi>(unitrollerAbi);
+    createIonicFlywheel = this.createContractInstance<typeof ionicFlywheelAbi>(ionicFlywheelAbi);
+    createFlywheelStaticRewards =
+      this.createContractInstance<typeof flywheelStaticRewardsAbi>(flywheelStaticRewardsAbi);
+    createJumpRateModel = this.createContractInstance<typeof jumpRateModelAbi>(jumpRateModelAbi);
 
-    createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      if (this.chainDeployment.ComptrollerFirstExtension) {
-        return new Contract(
-          comptrollerAddress,
-          [...IonicComptrollerArtifact.abi],
-          signerOrProvider
-        ) as IonicComptroller;
-      }
-
-      return new Contract(comptrollerAddress, IonicComptrollerArtifact.abi, signerOrProvider) as IonicComptroller;
+    createComptroller(comptrollerAddress: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: comptrollerAddress,
+        abi: ionicComptrollerAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createICErc20(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, ICErc20Artifact.abi, signerOrProvider) as ICErc20;
-    }
-
-    createICErc20PluginRewards(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(cTokenAddress, ICErc20PluginRewardsArtifact.abi, signerOrProvider) as ICErc20PluginRewards;
-    }
-
-    createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.MasterPriceOracle.address,
-        MasterPriceOracleArtifact.abi,
-        signerOrProvider
-      ) as MasterPriceOracle;
-    }
-
-    createCompoundMarketERC4626(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, CompoundMarketERC4626Artifact.abi, signerOrProvider) as CompoundMarketERC4626;
-    }
-
-    createOptimizedAPRVault(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
+    createICErc20(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
         address,
-        [...OptimizedAPRVaultFirstExtensionArtifact.abi, ...OptimizedAPRVaultSecondExtensionArtifact.abi],
-        signerOrProvider
-      ) as OptimizedAPRVaultWithExtensions;
+        abi: icErc20Abi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createOptimizedVaultsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.OptimizedVaultsRegistry.address,
-        OptimizedVaultsRegistryArtifact.abi,
-        signerOrProvider
-      ) as OptimizedVaultsRegistry;
+    createICErc20PluginRewards(
+      cTokenAddress: Address,
+      publicClient = this.publicClient,
+      walletClient = this.walletClient
+    ) {
+      return getContract({
+        address: cTokenAddress,
+        abi: icErc20PluginRewardsAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createIonicFlywheelLensRouter(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.IonicFlywheelLensRouter.address,
-        IonicFlywheelLensRouterArtifact.abi,
-        signerOrProvider
-      ) as IonicFlywheelLensRouter;
+    createMasterPriceOracle(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.MasterPriceOracle.address as Address,
+        abi: masterPriceOracleAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createLeveredPositionFactory(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.LeveredPositionFactory.address,
-        ILeveredPositionFactoryArtifact.abi,
-        signerOrProvider
-      ) as ILeveredPositionFactory;
+    createIonicFlywheelLensRouter(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.IonicFlywheelLensRouter.address as Address,
+        abi: ionicFlywheelLensRouterAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createLeveredPosition(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(address, LeveredPositionArtifact.abi, signerOrProvider) as LeveredPosition;
+    createLeveredPositionFactory(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.LeveredPositionFactory.address as Address,
+        abi: iLeveredPositionFactoryAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createLeveredPositionLens(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.LeveredPositionsLens.address,
-        LeveredPositionsLensArtifact.abi,
-        signerOrProvider
-      ) as LeveredPositionsLens;
+    createLeveredPosition(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address,
+        abi: leveredPositionAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createPoolLens(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(this.chainDeployment.PoolLens.address, PoolLensArtifact.abi, signerOrProvider) as PoolLens;
+    createLeveredPositionLens(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.LeveredPositionsLens.address as Address,
+        abi: leveredPositionsLensAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createPoolLensSecondary(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.PoolLensSecondary.address,
-        PoolLensSecondaryArtifact.abi,
-        signerOrProvider
-      ) as PoolLensSecondary;
+    createPoolLens(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.PoolLens.address as Address,
+        abi: poolLensAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createILiquidatorsRegistry(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.LiquidatorsRegistry.address,
-        ILiquidatorsRegistryArtifact.abi,
-        signerOrProvider
-      ) as ILiquidatorsRegistry;
+    createPoolLensSecondary(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.PoolLensSecondary.address as Address,
+        abi: poolLensSecondaryAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createAuthoritiesRegistry(signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(
-        this.chainDeployment.AuthoritiesRegistry.address,
-        AuthoritiesRegistryArtifact.abi,
-        signerOrProvider
-      ) as AuthoritiesRegistry;
+    createILiquidatorsRegistry(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.LiquidatorsRegistry.address as Address,
+        abi: iLiquidatorsRegistryAbi,
+        client: walletClient ?? publicClient
+      });
     }
 
-    createPoolRolesAuthority(poolAuthAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
-      return new Contract(poolAuthAddress, PoolRolesAuthorityArtifact.abi, signerOrProvider) as PoolRolesAuthority;
+    createAuthoritiesRegistry(publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address: this.chainDeployment.AuthoritiesRegistry.address as Address,
+        abi: authoritiesRegistryAbi,
+        client: walletClient ?? publicClient
+      });
+    }
+
+    createPoolRolesAuthority(
+      poolAuthAddress: Address,
+      publicClient = this.publicClient,
+      walletClient = this.walletClient
+    ) {
+      return getContract({
+        address: poolAuthAddress,
+        abi: poolRolesAuthorityAbi,
+        client: walletClient ?? publicClient
+      });
     }
   };
 }

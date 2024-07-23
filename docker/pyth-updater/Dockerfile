@@ -1,10 +1,6 @@
 FROM public.ecr.aws/lambda/nodejs:20 as node
 
-FROM ghcr.io/foundry-rs/foundry:nightly-6672134672c8e442684d7d9c51fa8f8717b0f600 as foundry
-
 FROM node as build
-
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 RUN dnf update -y 
 RUN dnf install -y git 
@@ -28,10 +24,6 @@ ENV UPTIME_PYTH_UPDATER_API=$UPTIME_PYTH_UPDATER_API
 # with that same directory structure. build.sh does this.
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
-
-# required for the checkout process of forge
-COPY .gitmodules .gitmodules
-COPY .git .git
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/

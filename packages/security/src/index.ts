@@ -1,26 +1,20 @@
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { chainIdToConfig } from "@ionicprotocol/chains";
 import { ChainConfig } from "@ionicprotocol/types";
-import { Signer } from "ethers";
+import { PublicClient } from "viem";
 
-import { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./oracle";
 import { withErc4626StrategyScorer } from "./strategy";
 
 export { STRATEGY_HELP } from "./enums";
 export type GConstructor<T> = new (...args: any[]) => T;
 export type SecurityBaseConstructor = GConstructor<SecurityBase>;
 
-export type SupportedProvider = JsonRpcProvider | Web3Provider;
-export type SupportedSigners = Signer;
-export type SignerOrProvider = SupportedSigners | SupportedProvider;
-
 export class SecurityBase {
   chainConfig: ChainConfig;
-  provider: SignerOrProvider;
+  publicClient: PublicClient;
 
-  constructor(chainId: number, provider: SignerOrProvider) {
+  constructor(chainId: number, publicClient: PublicClient) {
     this.chainConfig = chainIdToConfig[chainId];
-    this.provider = provider;
+    this.publicClient = publicClient;
   }
 }
 

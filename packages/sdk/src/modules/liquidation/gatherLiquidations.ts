@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
@@ -10,6 +8,7 @@ import {
   PoolUserStruct,
   PoolUserWithAssets,
   PublicPoolUserWithData,
+  ExtendedPoolAssetStructOutput,
   PythLiquidatablePool
 } from "./utils";
 
@@ -24,12 +23,13 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
 ): Promise<Array<T>> {
   const users: Array<T> = [];
   for (const user of poolUsers) {
-    const userAssets = await sdk.contracts.PoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
+    const userAssets = (await sdk.contracts.PoolLens.simulate.getPoolAssetsByUser([pool.comptroller, user.account]))
+      .result;
     const userWithAssets: PoolUserWithAssets = {
       ...user,
       debt: [],
       collateral: [],
-      assets: userAssets
+      assets: userAssets as ExtendedPoolAssetStructOutput[]
     };
 
     let encodedLiquidationTX;
@@ -68,10 +68,10 @@ export default async function gatherLiquidations<T extends LiquidatablePool | Py
 
   for (const pool of pools) {
     const poolUsers = pool.users.slice().sort((a, b) => {
-      const right = BigNumber.from(b.totalBorrow);
-      const left = BigNumber.from(a.totalBorrow);
-      if (right.gt(left)) return 1;
-      if (right.lt(left)) return -1;
+      const right = b.totalBorrow;
+      const left = a.totalBorrow;
+      if (right > left) return 1;
+      if (right < left) return -1;
       return 0;
     });
     try {

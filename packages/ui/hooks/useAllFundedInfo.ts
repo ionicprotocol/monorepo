@@ -1,11 +1,8 @@
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
-import type { SupportedChains } from '@ionicprotocol/types';
-import { assetSymbols } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { utils } from 'ethers';
+import { type Address } from 'viem';
 
-import { aprDays } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { getAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
@@ -14,15 +11,11 @@ import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getAnkrBNBContract } from '@ui/utils/contracts';
-import {
-  ChainSupportedAssets,
-  getBlockTimePerMinuteByChainId
-} from '@ui/utils/networkData';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export interface FundedAsset extends MarketData {
   chainId: string;
-  comptroller: string;
+  comptroller: Address;
   poolId: string;
   poolName: string;
   totalBorrowBalanceFiat: number;
@@ -47,7 +40,9 @@ export interface resQuery {
 
 export function useAllFundedInfo() {
   const enabledChains = useEnabledChains();
-  const { poolsPerChain } = useCrossFusePools([...enabledChains]);
+  const { poolsPerChain } = useCrossFusePools([
+    ...enabledChains.map((chain) => chain.id)
+  ]);
   const { getSdk, address } = useMultiIonic();
 
   return useQuery({
@@ -159,28 +154,6 @@ export function useAllFundedInfo() {
 
                       // get totalSupplyApys
 
-                      let ankrBNBApr = 0;
-
-                      const ankrAsset = ChainSupportedAssets[
-                        Number(chainId) as SupportedChains
-                      ].find((asset) => asset.symbol === assetSymbols.ankrBNB);
-
-                      const isEnabled = !!assets.find(
-                        (asset) =>
-                          asset.underlyingSymbol === assetSymbols.ankrBNB
-                      );
-
-                      if (ankrAsset && isEnabled) {
-                        const contract = getAnkrBNBContract(sdk);
-                        const apr =
-                          await contract.callStatic.averagePercentageRate(
-                            ankrAsset.underlying,
-                            aprDays
-                          );
-
-                        ankrBNBApr = Number(utils.formatUnits(apr));
-                      }
-
                       for (const asset of assets) {
                         const apy =
                           sdk.ratePerBlockToAPY(
@@ -189,13 +162,6 @@ export function useAllFundedInfo() {
                           ) / 100;
 
                         let marketTotalAPY = apy;
-
-                        if (
-                          asset.underlyingSymbol === assetSymbols.ankrBNB &&
-                          ankrBNBApr
-                        ) {
-                          marketTotalAPY += Number(ankrBNBApr) / 100;
-                        }
 
                         if (rewards && rewards[asset.cToken]) {
                           marketTotalAPY += rewards[asset.cToken].reduce(

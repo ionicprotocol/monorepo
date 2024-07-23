@@ -1,9 +1,8 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { BotType, PythLiquidatablePool } from "@ionicprotocol/sdk/dist/cjs/src/modules/liquidation/utils";
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import { encodeAbiParameters, encodeFunctionData } from "viem";
-
-import IonicLiquidatorABI from "../../../sdk/artifacts/IonicLiquidator.sol/IonicLiquidator.json";
+import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
+import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
+import { mode } from "viem/chains";
+import { privateKeyToAccount } from "viem/accounts";
 
 import config from "./config";
 import { logger } from "./logger";
@@ -15,11 +14,21 @@ import { setUpSdk } from "./utils";
 };
 
 (async function () {
-  const chainId: number = config.chainId;
   const chainName: string = config.chainName;
-  const provider = new JsonRpcProvider(config.rpcUrl);
-  const ionicSdk = setUpSdk(chainId, provider);
-  const abi = IonicLiquidatorABI.abi;
+  const account = privateKeyToAccount(config.adminPrivateKey as Hex);
+
+  const publicClient = createPublicClient({
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const walletClient = createWalletClient({
+    account,
+    chain: mode,
+    transport: http(config.rpcUrl),
+  });
+
+  const ionicSdk = setUpSdk(config.chainId, publicClient, walletClient);
   const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
 
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
@@ -58,7 +67,7 @@ import { setUpSdk } from "./utils";
       }
 
       const calldata = encodeFunctionData({
-        abi,
+        abi: ionicLiquidatorAbi,
         functionName: "safeLiquidate",
         args: [liquidation.args[0], liquidation.args[1], liquidation.args[2], liquidation.args[3], liquidation.args[4]],
       });
@@ -94,12 +103,12 @@ import { setUpSdk } from "./utils";
 
       try {
         await client.submitOpportunity(opportunity);
-        console.log("Opportunity submitted successfully.");
+        console.log("Opportunity submitted successfully: ", opportunity);
       } catch (error) {
         console.error("Failed to submit opportunity:", {
           error,
           opportunity: JSON.stringify(opportunity, null, 2),
-          blockNumber: await provider.getBlockNumber(),
+          blockNumber: await publicClient.getBlockNumber(),
         });
       }
     }

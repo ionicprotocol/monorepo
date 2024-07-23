@@ -13,14 +13,12 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
-import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 // import { Link } from '@tanstack/react-router'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
-import { useBalance } from 'wagmi';
-import { useAccount } from 'wagmi';
+import { useBalance, useAccount } from 'wagmi';
 // import { useGetMaxBorrow } from 'ui/app/util/utils';
 //-------------------Interfaces------------
 interface IProp {
@@ -71,7 +69,7 @@ import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import millify from 'millify';
-import { formatEther, formatUnits } from 'viem';
+import { Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
@@ -256,26 +254,23 @@ const Asset = ({ params }: IProp) => {
   );
   // Borrow cap numbers -----------------
   const { data: borrowCap } = useBorrowCapsDataForAsset(
-    selectedMarketData?.cToken as string,
+    selectedMarketData!.cToken,
     Number(chain)
   );
   const { data: usdPrice } = useUsdPrice(chain as string);
 
   const pricePerSingleAsset = useMemo<number>(
     () =>
-      parseFloat(
-        formatEther(
-          selectedMarketData?.underlyingPrice?.toBigInt() || BigInt(0)
-        )
-      ) * (usdPrice ?? 0),
+      parseFloat(formatEther(selectedMarketData?.underlyingPrice || 0n)) *
+      (usdPrice ?? 0),
     [selectedMarketData, usdPrice]
   );
   const borrowCapAsNumber = useMemo<number>(
     () =>
       parseFloat(
         formatUnits(
-          borrowCap?.totalBorrowCap.toBigInt() || BigInt(0),
-          selectedMarketData?.underlyingDecimals.toNumber() || 0
+          borrowCap?.totalBorrowCap || 0n,
+          selectedMarketData?.underlyingDecimals || 0
         )
       ),
     [borrowCap, selectedMarketData?.underlyingDecimals]
@@ -289,16 +284,16 @@ const Asset = ({ params }: IProp) => {
   // Supply cap number ----------------------------
 
   const { data: supplyCap } = useSupplyCapsDataForAsset(
-    comptrollerAddress as string,
-    selectedMarketData?.cToken as string,
+    comptrollerAddress as Address,
+    selectedMarketData!.cToken,
     Number(chain)
   );
   const supplyCapAsNumber = useMemo<number>(
     () =>
       parseFloat(
         formatUnits(
-          supplyCap?.supplyCaps.toBigInt() || BigInt(0),
-          selectedMarketData?.underlyingDecimals.toNumber() || 0
+          supplyCap?.supplyCaps || 0n,
+          selectedMarketData?.underlyingDecimals || 0
         )
       ),
     [supplyCap, selectedMarketData?.underlyingDecimals]
@@ -311,8 +306,8 @@ const Asset = ({ params }: IProp) => {
     () =>
       parseFloat(
         formatUnits(
-          selectedMarketData?.totalSupply.toBigInt() || BigInt(0),
-          selectedMarketData?.underlyingDecimals.toNumber() || 0
+          selectedMarketData?.totalSupply || 0n,
+          selectedMarketData?.underlyingDecimals || 0
         )
       ),
     [selectedMarketData?.totalSupply, selectedMarketData?.underlyingDecimals]
@@ -605,7 +600,7 @@ const Asset = ({ params }: IProp) => {
               {selectedMarketData && comptrollerAddress && chain && (
                 <BorrowAmount
                   selectedMarketData={selectedMarketData}
-                  comptrollerAddress={comptrollerAddress}
+                  comptrollerAddress={comptrollerAddress as Address}
                   chain={Number(chain)}
                 />
               )}{' '}
@@ -691,7 +686,7 @@ const Asset = ({ params }: IProp) => {
       {popupMode && selectedMarketData && poolData && (
         <Popup
           closePopup={() => setPopupMode(undefined)}
-          comptrollerAddress={comptrollerAddress as string}
+          comptrollerAddress={comptrollerAddress as Address}
           loopMarkets={loopMarkets}
           mode={popupMode}
           selectedMarketData={selectedMarketData}
