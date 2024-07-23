@@ -88,7 +88,6 @@ export const updateAssetPrice = async (chainId: SupportedChains) => {
       throw `Error occurred during saving asset prices to database: ${error.message}`;
     }
   } catch (err) {
-    console.log("error", err)
     await functionsAlert('Functions.asset-price: Generic Error', JSON.stringify(err));
   }
 };
