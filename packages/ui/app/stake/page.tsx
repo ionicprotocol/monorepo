@@ -36,9 +36,9 @@ import {
   StakingContractAbi,
   StakingContractAddress
 } from '@ui/constants/staking';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false

@@ -1,7 +1,4 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { chainIdToConfig } from "@ionicprotocol/chains";
 import { SupportedChains } from "@ionicprotocol/types";
-import { Signer, Wallet } from "ethers";
 
 import { baseConfig } from "../src/config/variables";
 /**
@@ -24,13 +21,13 @@ export const mkBytes32 = (prefix = "0xa"): string => {
   return prefix.padEnd(66, "0");
 };
 
-export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
-  const { specificParams } = chainIdToConfig[chainId];
-  const providerUrl = baseConfig.rpcUrl || specificParams.metadata.rpcUrls.default.http[0];
-  return new JsonRpcProvider(providerUrl);
-};
+// export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
+//   const { specificParams } = chainIdToConfig[chainId];
+//   const providerUrl = baseConfig.rpcUrl || specificParams.metadata.rpcUrls.default.http[0];
+//   return new JsonRpcProvider(providerUrl);
+// };
 
-export const getSigner = (chainId: SupportedChains): Signer => {
-  const provider = getProvider(chainId);
-  return new Wallet(baseConfig.adminPrivateKey, provider);
-};
+// export const getSigner = (chainId: SupportedChains): Signer => {
+//   const provider = getProvider(chainId);
+//   return new Wallet(baseConfig.adminPrivateKey, provider);
+// };
