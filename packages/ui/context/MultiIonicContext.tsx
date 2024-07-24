@@ -13,7 +13,13 @@ import {
   useMemo,
   useState
 } from 'react';
-import { createPublicClient, http, type Chain, type WalletClient } from 'viem';
+import {
+  createPublicClient,
+  fallback,
+  http,
+  type Chain,
+  type WalletClient
+} from 'viem';
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
@@ -79,7 +85,11 @@ export const MultiIonicProvider = (
         chain.id === walletClient?.chain.id ? walletClient : undefined;
       const client = createPublicClient({
         chain,
-        transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
+        transport: fallback(
+          config.specificParams.metadata.rpcUrls.default.http.map((url) =>
+            http(url)
+          )
+        )
       });
       _sdks.push(new IonicSdk(client as any, _walletClient, config));
       // _securities.push(
