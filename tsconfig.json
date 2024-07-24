@@ -15,12 +15,7 @@
       "@ui/styles/*": ["ui/styles/*"],
       "@ui/images/*": ["ui/public/images/*"],
       "@ui/icons/*": ["ui/public/icons/*"],
-      "@ui/test/*": ["ui/test/*"],
-      "@chains/polygon/*": ["chains/src/polygon/*"],
-      "@chains/bsc/*": ["chains/src/bsc/*"],
-      "@chains/linea/*": ["chains/src/linea/*"],
-      "@chains/neon/*": ["chains/src/neon/*"],
-      "@chains/chapel/*": ["chains/src/chapel/*"]
+      "@ui/test/*": ["ui/test/*"]
     }
   },
   "references": [

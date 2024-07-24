@@ -15,7 +15,7 @@ import {
 } from 'chart.js';
 import { createClient } from '@supabase/supabase-js';
 // import { Link } from '@tanstack/react-router'
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { useBalance, useAccount } from 'wagmi';
@@ -46,7 +46,6 @@ import {
   chartoptions,
   chartoptions2,
   getChartData,
-  donutdata,
   donutoptions,
   getDonutData
 } from '../../../_constants/mock';
@@ -58,8 +57,6 @@ import {
 //   { name: 'Group D', value: 200 }
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-import { pools } from '@ui/constants/index';
-import { useStore } from 'ui/store/Store';
 import { INFO } from '@ui/constants/index';
 import Popup, { PopupMode } from 'ui/app/_components/popup/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
@@ -73,9 +70,6 @@ import { Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { NativePricedIonicAsset } from 'types/dist';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
 import { sendIMG } from '@ui/utils/TempImgSender';
 
@@ -104,7 +98,6 @@ const Asset = ({ params }: IProp) => {
   const availableAPR = searchParams.get('availableAPR');
   const borrowAPR = searchParams.get('borrowAPR');
   const gettingtotalSupplied = searchParams.get('totalSupplied');
-  const lendingSupply = searchParams.get('lendingSupply');
   const gettingBorrows = searchParams.get('totalBorrows');
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
   const selectedChain = searchParams.get('selectedChain');
@@ -254,7 +247,7 @@ const Asset = ({ params }: IProp) => {
   );
   // Borrow cap numbers -----------------
   const { data: borrowCap } = useBorrowCapsDataForAsset(
-    selectedMarketData!.cToken,
+    selectedMarketData?.cToken,
     Number(chain)
   );
   const { data: usdPrice } = useUsdPrice(chain as string);
@@ -285,7 +278,7 @@ const Asset = ({ params }: IProp) => {
 
   const { data: supplyCap } = useSupplyCapsDataForAsset(
     comptrollerAddress as Address,
-    selectedMarketData!.cToken,
+    selectedMarketData?.cToken,
     Number(chain)
   );
   const supplyCapAsNumber = useMemo<number>(
