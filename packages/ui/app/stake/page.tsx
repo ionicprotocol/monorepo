@@ -17,6 +17,7 @@ import {
   useBalance,
   useChainId,
   usePublicClient,
+  useReadContract,
   useWalletClient
 } from 'wagmi';
 
@@ -27,9 +28,6 @@ import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 import Toggle from '../_components/Toggle';
 
-import { pools } from '@ui/constants/index';
-import { LiquidityContractAbi } from '@ui/constants/lp';
-import { StakingContractAbi } from '@ui/constants/staking';
 import {
   getAvailableStakingToken,
   getReservesABI,
@@ -672,14 +670,7 @@ export default function Stake() {
                 className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
                 src="/img/symbols/32/color/velo.png"
               />
-              <span>Velodrome APY</span>
-              <span
-                className={`text-accent ${
-                  step3Toggle === 'Unstake' && 'text-red-500'
-                } ml-auto`}
-              >
-                {+chain === mode.id ? '-' : '+200%'}
-              </span>
+              <VelodromeAPY step3Toggle={step3Toggle} />
             </div>
             <div className="flex items-center w-full mt-3 text-xs gap-2">
               <img
@@ -737,5 +728,52 @@ export default function Stake() {
     </main>
   );
 }
+
+type VelodromeAPYProps = {
+  step3Toggle: string;
+};
+const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
+  const LP_SUGAR_ADDRESS = '0x207DfB36A449fd10d9c3bA7d75e76290a0c06731';
+  const ION_POOL_INDEX = 6n;
+  const { data: sugarData } = useReadContract({
+    abi: lpSugarAbi,
+    address: LP_SUGAR_ADDRESS,
+    args: [ION_POOL_INDEX],
+    functionName: 'byIndex',
+    chainId: mode.id
+  });
+  const { data: ionData } = useIonPrice();
+  const { data: modePriceData } = useModePrice();
+  const { data: ethPriceData } = useAllUsdPrices();
+  let apy = '-';
+  if (!!(sugarData && ionData && ethPriceData && modePriceData)) {
+    apy =
+      (
+        ((60 *
+          60 *
+          24 *
+          365.25 *
+          Number(formatEther(sugarData.emissions)) *
+          Number(modePriceData.pair.priceUsd)) /
+          (Number(formatEther(sugarData.staked0)) *
+            Number(ionData.pair.priceUsd) +
+            Number(formatEther(sugarData.staked1)) *
+              ethPriceData[mode.id].value)) *
+        100
+      ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
+  }
+  return (
+    <>
+      <span>Velodrome APY</span>
+      <span
+        className={`text-accent ${
+          step3Toggle === 'Unstake' && 'text-red-500'
+        } ml-auto`}
+      >
+        {apy}
+      </span>
+    </>
+  );
+};
 
 // export default dynamic(() => Promise.resolve(Stake), { ssr: false });

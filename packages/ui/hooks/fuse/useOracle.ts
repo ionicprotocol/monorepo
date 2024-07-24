@@ -15,10 +15,7 @@ export const useOracle = (
     queryFn: async () => {
       if (underlyingAddress && sdk) {
         try {
-          const mpo = sdk.createMasterPriceOracle(
-            sdk.publicClient,
-            sdk.walletClient
-          );
+          const mpo = sdk.createMasterPriceOracle();
           const oracle = await mpo.read.oracles([underlyingAddress]);
 
           return oracle;
