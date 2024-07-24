@@ -110,7 +110,6 @@ export default function ClaimRewards({ close, open }: IProps) {
     async function getRewards() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(mode.id, chainId);
         if (loading) {
           //reloading prices
         }
@@ -137,7 +136,6 @@ export default function ClaimRewards({ close, open }: IProps) {
     async function getTradingFees() {
       try {
         if (!isConnected) return;
-        await handleSwitchOriginChain(mode.id, chainId);
         if (claimLoading) {
           //reloading prices
         }

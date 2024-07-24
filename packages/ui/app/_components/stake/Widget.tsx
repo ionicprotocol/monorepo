@@ -2,6 +2,7 @@
 'use client';
 
 // import type { Route } from '@lifi/sdk';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import type { WidgetConfig } from '@lifi/widget';
 import { useEffect, useRef, useState } from 'react';
@@ -19,6 +20,7 @@ interface IProps {
 type IStatus = 'COMPLETED' | 'FAIL' | 'LOSS' | 'START' | 'UPDATE';
 
 export default function Widget({ close, open, chain }: IProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const widgetConfig: WidgetConfig = {
     toChain: +chain,
     fromChain: +chain,
@@ -113,7 +115,7 @@ export default function Widget({ close, open, chain }: IProps) {
           config={widgetConfig}
         />
         <button
-          className={`my-4 py-1.5 text-sm text-black w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
+          className={`my-4 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
           onClick={() => {
             (widgetStatus === 'COMPLETED' || widgetStatus === 'FAIL') &&
               close();
