@@ -4,7 +4,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useMemo } from 'react';
 import { formatUnits } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 
 interface IMaxDeposit {
   amount?: string;
@@ -14,6 +14,7 @@ interface IMaxDeposit {
   fetchOwn?: boolean;
   headerText?: string;
   max?: string;
+  chain?: number;
 }
 
 interface IBal {
@@ -28,7 +29,8 @@ function MaxDeposit({
   token,
   handleInput,
   fetchOwn = false,
-  max = ''
+  max = '',
+  chain
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
@@ -38,6 +40,7 @@ function MaxDeposit({
   const { data } = useBalance({
     address,
     token: hooktoken,
+    chainId: chain,
     query: {
       refetchInterval: 6000
     }

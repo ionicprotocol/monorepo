@@ -270,7 +270,7 @@ export default function ClaimRewards({ close, open }: IProps) {
               </ResultHandler>
             </button>
           </div>
-
+          <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           {/* <div
             className={` w-max py-1 px-10 mx-auto mt-6 text-sm text-black  bg-accent rounded-md`}
           

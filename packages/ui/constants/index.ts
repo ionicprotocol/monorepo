@@ -17,6 +17,7 @@ export const CLOSE_FACTOR = {
 };
 
 type PoolParams = {
+  hexcode?: string;
   arrow: string;
   bg: string;
   text: string;
@@ -32,6 +33,7 @@ type PoolParams = {
 
 export const pools: Record<number, PoolParams> = {
   [mode.id]: {
+    hexcode: '#dffe00',
     arrow: '000000',
     bg: 'bg-lime',
     text: 'text-darkone',
@@ -63,6 +65,7 @@ export const pools: Record<number, PoolParams> = {
     ]
   },
   [base.id]: {
+    hexcode: '#2467ed',
     name: 'Base',
     arrow: 'ffffff',
     bg: 'bg-blue-600',

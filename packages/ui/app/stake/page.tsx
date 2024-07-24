@@ -35,6 +35,7 @@ import {
   StakingContractAbi,
   StakingContractAddress
 } from '@ui/constants/staking';
+import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
@@ -450,12 +451,17 @@ export default function Stake() {
     }
   };
 
+  const ionTokenOfChain = useMemo(() => {
+    return getToken(+chain);
+  }, [chain]);
+
   return (
     <main className={``}>
       <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
         <Widget
           close={() => setWidgetPopup(false)}
           open={widgetPopup}
+          chain={+chain}
         />
 
         <ClaimRewards
@@ -510,18 +516,20 @@ export default function Stake() {
                   headerText={step2Toggle}
                   amount={maxDeposit.ion}
                   tokenName={'ion'}
-                  token={'0x18470019bf0e94611f15852f7e93cf5d65bc34ca'}
+                  token={ionTokenOfChain}
                   handleInput={(val?: string) =>
                     setMaxDeposit((p) => {
                       return { ...p, ion: val || '' };
                     })
                   }
+                  chain={+chain}
                 />
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
                   tokenName={'eth'}
                   token={'0x0000000000000000000000000000000000000000'}
+                  chain={+chain}
                 />
               </>
             )}
@@ -537,6 +545,7 @@ export default function Stake() {
                       return { ...p, ion: val || '' };
                     })
                   }
+                  chain={+chain}
                 />
                 {/* <MaxDeposit
                   headerText={step2Toggle}
@@ -639,6 +648,7 @@ export default function Stake() {
                 tokenName={'ion/eth'}
                 token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
                 handleInput={(val?: string) => setMaxLp(val as string)}
+                chain={+chain}
               />
             )}
             {step3Toggle === 'Unstake' && (
@@ -648,6 +658,7 @@ export default function Stake() {
                 amount={maxUnstake}
                 tokenName={'ion/eth'}
                 handleInput={(val?: string) => setMaxUnstake(val as string)}
+                chain={+chain}
               />
             )}
 
