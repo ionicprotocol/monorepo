@@ -28,6 +28,13 @@ import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 import Toggle from '../_components/Toggle';
 
+import { lpSugarAbi } from './abi/lpSugar';
+
+import { pools } from '@ui/constants/index';
+import { LiquidityContractAbi } from '@ui/constants/lp';
+import { StakingContractAbi } from '@ui/constants/staking';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
   getReservesABI,

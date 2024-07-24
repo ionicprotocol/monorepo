@@ -4,7 +4,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useMemo } from 'react';
 import { formatUnits } from 'viem';
-import { useAccount, useBalance, useChainId } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 
 interface IMaxDeposit {
   amount?: string;
