@@ -1,6 +1,3 @@
-import { SupportedChains } from "@ionicprotocol/types";
-
-import { baseConfig } from "../src/config/variables";
 /**
  * Creates an eth-address compatible string with given prefix
  *
