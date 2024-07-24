@@ -20,7 +20,6 @@
     "@wagmi/connectors": "^5.0.22",
     "@web3modal/wagmi": "^5.0.6",
     "chart.js": "^4.4.3",
-    "ethers": "^5",
     "mathjs": "^13.0.1",
     "millify": "^6.1.0",
     "next": "^14.2.4",

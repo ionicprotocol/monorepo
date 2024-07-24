@@ -1,6 +1,5 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { chainIdToConfig } from "@ionicprotocol/chains";
-import { SupportedChains } from "@ionicprotocol/types";
+// import { chainIdToConfig } from "@ionicprotocol/chains";
+// import { SupportedChains } from "@ionicprotocol/types";
 
 /**
  * Creates an eth-address compatible string with given prefix
@@ -22,8 +21,8 @@ export const mkBytes32 = (prefix = "0xa"): string => {
   return prefix.padEnd(66, "0");
 };
 
-export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
-  const { specificParams } = chainIdToConfig[chainId];
-  const providerUrl = process.env.ETH_PROVIDER_URL || specificParams.metadata.rpcUrls.default.http[0];
-  return new JsonRpcProvider(providerUrl);
-};
+// export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
+//   const { specificParams } = chainIdToConfig[chainId];
+//   const providerUrl = process.env.ETH_PROVIDER_URL || specificParams.metadata.rpcUrls.default.http[0];
+//   return new JsonRpcProvider(providerUrl);
+// };

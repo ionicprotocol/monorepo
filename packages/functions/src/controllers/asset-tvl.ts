@@ -4,9 +4,8 @@ import { environment, supabase } from '../config';
 import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { Handler } from '@netlify/functions';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
-import { utils } from 'ethers';
 import axios from 'axios';
-import { Chain, createPublicClient, http } from 'viem';
+import { Chain, createPublicClient, formatEther, formatUnits, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
@@ -51,12 +50,10 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
         try {
           const cTokenContract = sdk.createICErc20(asset.cToken);
           const tvlUnderlyingBig = await cTokenContract.read.getTotalUnderlyingSupplied();
-          const tvlUnderlying = Number(
-            utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals),
-          );
+          const tvlUnderlying = Number(formatUnits(tvlUnderlyingBig, asset.underlyingDecimals));
           const tvlNative =
-            Number(utils.formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)) *
-            Number(utils.formatUnits(asset.underlyingPrice));
+            Number(formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)) *
+            Number(formatEther(asset.underlyingPrice));
 
           results.push({
             cTokenAddress: asset.cToken,
