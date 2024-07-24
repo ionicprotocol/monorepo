@@ -14,8 +14,26 @@ const specificParams: ChainParams = {
     img: "https://icons.llamao.fi/icons/chains/rsz_base.jpg",
     blockExplorerUrls: { default: { name: "basescan", url: "https://basescan.org/" } },
     rpcUrls: {
-      default: { http: ["https://mainnet.base.org"] },
-      public: { http: ["https://mainnet.base.org"] }
+      default: {
+        http: [
+          "https://mainnet.base.org",
+          "https://base.llamarpc.com",
+          "https://base-rpc.publicnode.com",
+          "https://gateway.tenderly.co/public/base",
+          "https://base.meowrpc.com",
+          "https://base-mainnet.public.blastapi.io"
+        ]
+      },
+      public: {
+        http: [
+          "https://mainnet.base.org",
+          "https://base.llamarpc.com",
+          "https://base-rpc.publicnode.com",
+          "https://gateway.tenderly.co/public/base",
+          "https://base.meowrpc.com",
+          "https://base-mainnet.public.blastapi.io"
+        ]
+      }
     },
     nativeCurrency: {
       symbol: "ETH",
