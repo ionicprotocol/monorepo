@@ -2,43 +2,50 @@
 'use client';
 
 // import type { Route } from '@lifi/sdk';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import type { WidgetConfig } from '@lifi/widget';
 import { useEffect, useRef, useState } from 'react';
+import { mode } from 'viem/chains';
 
-const widgetConfig: WidgetConfig = {
-  toChain: 34443,
-  fromChain: 34443,
-  fromToken: '0x0000000000000000000000000000000000000000',
-  toToken: '0x18470019bf0e94611f15852f7e93cf5d65bc34ca',
-  theme: {
-    palette: {
-      primary: { main: '#3bff89' }
-    },
-    container: {
-      border: '1px solid #3bff89ff',
-      borderRadius: '16px'
-    }
-  },
-  sdkConfig: {
-    routeOptions: {
-      maxPriceImpact: 0.4, // increases threshold to 40%
-      slippage: 0.005
-    }
-  },
-  // theme : { palette : "grey"},
-  integrator: 'ionic.money',
-  appearance: 'dark'
-};
+import { pools } from '@ui/constants/index';
+import { getToken } from '@ui/utils/getStakingTokens';
 
 interface IProps {
   close: () => void;
   open: boolean;
+  chain: number;
 }
 
 type IStatus = 'COMPLETED' | 'FAIL' | 'LOSS' | 'START' | 'UPDATE';
 
-export default function Widget({ close, open }: IProps) {
+export default function Widget({ close, open, chain }: IProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const widgetConfig: WidgetConfig = {
+    toChain: +chain,
+    fromChain: +chain,
+    fromToken: '0x0000000000000000000000000000000000000000',
+    toToken: getToken(+chain),
+    theme: {
+      palette: {
+        primary: { main: `${pools[+chain].hexcode ?? pools[mode.id].hexcode}` }
+      },
+      container: {
+        border: `1px solid ${pools[+chain].hexcode ?? pools[mode.id].hexcode}`,
+        borderRadius: '16px'
+      }
+    },
+    sdkConfig: {
+      routeOptions: {
+        maxPriceImpact: 0.4, // increases threshold to 40%
+        slippage: 0.005
+      }
+    },
+    // theme : { palette : "grey"},
+    integrator: 'ionic.money',
+    appearance: 'dark'
+  };
+
   const [widgetStatus, setWidgetStatus] = useState<IStatus>();
   const newRef = useRef(null!);
 
@@ -108,7 +115,7 @@ export default function Widget({ close, open }: IProps) {
           config={widgetConfig}
         />
         <button
-          className={`my-4 py-1.5 text-sm text-black w-full bg-accent rounded-md`}
+          className={`my-4 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
           onClick={() => {
             (widgetStatus === 'COMPLETED' || widgetStatus === 'FAIL') &&
               close();

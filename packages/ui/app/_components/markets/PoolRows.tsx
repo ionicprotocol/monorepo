@@ -193,13 +193,13 @@ const PoolRows = ({
               </a>
             )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-[4px]`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <span className="text-darkone  rounded-md w-max ml-1 md:ml-0 text-center ">
             <a
-              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] px-[4px] flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] px-2.5 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
             >
@@ -397,12 +397,12 @@ const PoolRows = ({
         <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
           <span className="mr-1 md:mr-0 md:mb-1">{borrowAPR}</span>
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] px-[4px] ml-1 md:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] px-3 ml-1 md:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <a
-            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] px-[4px] ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
+            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] px-2.5 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >

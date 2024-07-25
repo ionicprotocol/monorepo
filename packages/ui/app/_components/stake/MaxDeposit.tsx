@@ -14,6 +14,7 @@ interface IMaxDeposit {
   fetchOwn?: boolean;
   headerText?: string;
   max?: string;
+  chain?: number;
 }
 
 interface IBal {
@@ -28,7 +29,8 @@ function MaxDeposit({
   token,
   handleInput,
   fetchOwn = false,
-  max = ''
+  max = '',
+  chain
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
@@ -38,6 +40,7 @@ function MaxDeposit({
   const { data } = useBalance({
     address,
     token: hooktoken,
+    chainId: chain,
     query: {
       refetchInterval: 6000
     }
@@ -45,7 +48,10 @@ function MaxDeposit({
 
   useMemo(() => {
     if (max) {
-      setBal({ value: BigInt(+max * 10 ** 18), decimals: 18 });
+      setBal({
+        value: BigInt(parseFloat(max) * 10 ** 18),
+        decimals: 18
+      });
     } else if (max == '0') {
       setBal({ value: BigInt(0), decimals: 0 });
     } else {
