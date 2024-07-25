@@ -563,4 +563,4 @@ export const StakingContractAbi = [
     stateMutability: 'nonpayable',
     type: 'function'
   }
-];
+] as const;

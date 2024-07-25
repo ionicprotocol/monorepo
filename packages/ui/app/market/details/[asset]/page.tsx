@@ -309,7 +309,7 @@ const Asset = ({ params }: IProp) => {
   const { address } = useAccount();
   const { data: availableToSupply } = useBalance({
     address,
-    token: selectedMarketData?.underlyingToken as `0x${string}`,
+    token: selectedMarketData?.underlyingToken as Address,
     query: {
       refetchInterval: 6000
     }

@@ -935,7 +935,7 @@ const Popup = ({
         );
         const { tx, errorCode } = await currentSdk.repay(
           selectedMarketData.cToken,
-          false,
+          isRepayingMax,
           isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
         );
 
