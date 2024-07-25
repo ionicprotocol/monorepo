@@ -4,7 +4,7 @@ import { Address } from 'viem';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useBorrowCapsDataForAsset = (
-  cTokenAddress: Address,
+  cTokenAddress?: Address,
   poolChainId?: number
 ) => {
   const sdk = useSdk(poolChainId);
