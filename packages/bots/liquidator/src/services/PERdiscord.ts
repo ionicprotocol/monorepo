@@ -74,7 +74,7 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
     const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
     const priceInETHNum = Number(formatEther(priceInETH)); 
     const usdPrice = await getUSDPrice(chainId);
-    const amountNum = Number(amount) / (10 ** 18); 
+    const amountNum = Number(formatEther(amount));
 
     console.log("eth",amountNum)
 
@@ -129,6 +129,7 @@ ${buyTokenMessages.join('\n')}
 
 **Sell Tokens:**
 ${sellTokenMessages.join('\n')}
+**----------------------------------------------------------------------------------------**
 `;
 
   try {

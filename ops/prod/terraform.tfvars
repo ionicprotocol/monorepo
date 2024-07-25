@@ -7,6 +7,6 @@ subnet_ids            = ["subnet-0a14dc2f0f924ea57"]
 security_group_ids    = ["sg-05ff9ea594c31fbe8"]
 
 autoscaling_group_name = "opportunity_bot_asg"
-desired_count  = 2
+desired_count  = 1
 ecr_repository_name = "liquidator-pyth"
 ecs_service_name = "opportunity_bot_service"
