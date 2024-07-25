@@ -4,6 +4,7 @@ import { IonicBaseConstructor } from "..";
 import {
   authoritiesRegistryAbi,
   flywheelStaticRewardsAbi,
+  flywheelDynamicRewardsAbi,
   icErc20Abi,
   icErc20PluginRewardsAbi,
   iLeveredPositionFactoryAbi,
@@ -36,6 +37,11 @@ export interface ICreateContracts {
     publicClient?: PublicClient,
     walletClient?: WalletClient
   ) => GetContractReturnType<typeof ionicFlywheelAbi, WalletClient>;
+  createFlywheelDynamicRewards: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof flywheelDynamicRewardsAbi, WalletClient>;
   createFlywheelStaticRewards: (
     address: Address,
     publicClient?: PublicClient,
@@ -125,6 +131,8 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
     createIonicFlywheel = this.createContractInstance<typeof ionicFlywheelAbi>(ionicFlywheelAbi);
     createFlywheelStaticRewards =
       this.createContractInstance<typeof flywheelStaticRewardsAbi>(flywheelStaticRewardsAbi);
+    createFlywheelDynamicRewards =
+      this.createContractInstance<typeof flywheelDynamicRewardsAbi>(flywheelDynamicRewardsAbi);
     createJumpRateModel = this.createContractInstance<typeof jumpRateModelAbi>(jumpRateModelAbi);
 
     createComptroller(comptrollerAddress: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
