@@ -28,6 +28,14 @@ const run = async () => {
     "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
   );
   console.log("getFlywheelClaimableRewardsForPool: ", markets);
+
+  const fwLensRouter = sdk.createIonicFlywheelLensRouter();
+
+  const tx = await fwLensRouter.simulate.claimRewardsForPool([
+    "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+    "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13"
+  ]);
+  console.log("tx: ", tx);
 };
 
 run()
