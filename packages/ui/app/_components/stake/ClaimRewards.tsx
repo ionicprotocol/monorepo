@@ -7,7 +7,8 @@ import {
   useAccount,
   useChainId,
   usePublicClient,
-  useWalletClient
+  useWalletClient,
+  useWriteContract
 } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
@@ -44,10 +45,11 @@ export default function ClaimRewards({ close, open }: IProps) {
     claim0: BigInt(0),
     claim1: BigInt(0)
   });
+  const { writeContractAsync } = useWriteContract();
 
   async function claimRewards() {
     try {
-      if (!isConnected) {
+      if (!isConnected || !address) {
         console.error('Not connected');
         return;
       }
@@ -55,7 +57,7 @@ export default function ClaimRewards({ close, open }: IProps) {
       if (!switched) return;
       setLoading(true);
 
-      const claiming = await walletClient!.writeContract({
+      const claiming = await writeContractAsync({
         abi: StakingContractAbi,
         account: walletClient?.account,
         address: StakingContractAddress,
@@ -85,7 +87,7 @@ export default function ClaimRewards({ close, open }: IProps) {
       if (!switched) return;
       setClaimLoading(true);
 
-      const claiming = await walletClient!.writeContract({
+      const claiming = await writeContractAsync({
         abi: TradingAbi,
         account: walletClient?.account,
         address: TradingContractAddress,
@@ -109,7 +111,7 @@ export default function ClaimRewards({ close, open }: IProps) {
   useEffect(() => {
     async function getRewards() {
       try {
-        if (!isConnected) return;
+        if (!isConnected || !address) return;
         if (loading) {
           //reloading prices
         }
@@ -135,7 +137,7 @@ export default function ClaimRewards({ close, open }: IProps) {
   useEffect(() => {
     async function getTradingFees() {
       try {
-        if (!isConnected) return;
+        if (!isConnected || !address) return;
         if (claimLoading) {
           //reloading prices
         }
