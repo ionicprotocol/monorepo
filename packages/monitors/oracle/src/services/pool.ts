@@ -1,7 +1,6 @@
 import { ionicComptrollerAbi, IonicSdk } from "@ionicprotocol/sdk";
 import { SupportedAsset } from "@ionicprotocol/types";
-import { constants } from "ethers";
-import { GetContractReturnType, PublicClient } from "viem";
+import { GetContractReturnType, PublicClient, zeroAddress } from "viem";
 
 export class PoolService {
   sdk: IonicSdk;
@@ -22,7 +21,7 @@ export class PoolService {
     for (const pool of pools) {
       const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.publicClient, this.sdk.walletClient);
       const market = await comptroller.read.cTokensByUnderlying([this.asset.underlying]);
-      if (market !== constants.AddressZero) {
+      if (market !== zeroAddress) {
         poolsWithAsset.push(comptroller);
       }
     }

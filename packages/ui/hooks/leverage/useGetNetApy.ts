@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { utils } from 'ethers';
-import { Address, parseEther } from 'viem';
+import { Address, formatEther, parseEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
@@ -51,7 +50,7 @@ export function useGetNetApy(
             return null;
           });
 
-        return netApy ? Number(utils.formatUnits(netApy)) * 100 : null;
+        return netApy ? Number(formatEther(netApy)) * 100 : null;
       } else {
         return null;
       }

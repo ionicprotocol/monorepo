@@ -61,7 +61,7 @@ export const useSupplyCapsDataForPool = (
 
 export const useSupplyCapsDataForAsset = (
   comptrollerAddress: Address,
-  cTokenAddress: Address,
+  cTokenAddress?: Address,
   poolChainId?: number
 ) => {
   const { data: supplyCapsDataForPool } = useSupplyCapsDataForPool(
