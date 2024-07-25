@@ -3,6 +3,7 @@ import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotoco
 import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
+import { sendDiscordNotification } from "./services/PERdiscord"; // Import the new module
 
 import config from "./config";
 import { logger } from "./logger";
@@ -45,14 +46,14 @@ import { setUpSdk } from "./utils";
     );
 
     for (const liquidation of liquidatablePool.liquidations) {
-      // // Log each argument of the current liquidation
+      // Log each argument of the current liquidation
       logger.info(`Borrower Address: ${liquidation.args[0]}`);
       logger.info(`Repay Amount: ${liquidation.args[1].toString()}`);
       logger.info(`cErc20 Address: ${liquidation.args[2]}`);
       logger.info(`cToken Collateral Address: ${liquidation.args[3]}`);
       logger.info(`Minimum Output Amount: ${liquidation.args[4].toString()}`);
 
-      // // Log additional details about tokens involved in the liquidation, if applicable
+      // Log additional details about tokens involved in the liquidation, if applicable
       if (liquidation.buyTokenUnderlying && liquidation.sellTokenUnderlying) {
         logger.info(
           `Buying Token (Underlying): ${
@@ -104,6 +105,9 @@ import { setUpSdk } from "./utils";
       try {
         await client.submitOpportunity(opportunity);
         console.log("Opportunity submitted successfully: ", opportunity);
+        
+        // Send a Discord notification
+        await sendDiscordNotification(opportunity);
       } catch (error) {
         console.error("Failed to submit opportunity:", {
           error,
