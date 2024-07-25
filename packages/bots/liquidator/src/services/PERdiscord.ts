@@ -1,14 +1,15 @@
 import axios from "axios";
 import { OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import { IonicSdk } from '@ionicprotocol/sdk';
-import { chainIdToConfig, chainIdtoChain } from '@ionicprotocol/chains';
-import { createPublicClient, http, formatEther, Chain } from 'viem';
-import config from "../config";
+import { IonicSdk } from "@ionicprotocol/sdk";
+import { chainIdtoChain, chainIdToConfig } from "@ionicprotocol/chains";
+import { Chain, createPublicClient, formatEther, http } from "viem";
 import { SupportedChains } from "@ionicprotocol/types";
 
+import config from "../config";
+
 const webhookUrl = config.PER_discordWebhookUrl;
-const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
-const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
+const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=";
+const DEFI_LLAMA_API = "https://coins.llama.fi/prices/current/";
 
 async function getUSDPrice(chainId: SupportedChains): Promise<number> {
   const config = chainIdToConfig[chainId];
@@ -22,17 +23,17 @@ async function getUSDPrice(chainId: SupportedChains): Promise<number> {
 
   try {
     const { data } = await axios.get(`${COINGECKO_API}${cgId}`);
-    console.log('Coingecko response:', data);
+    console.log("Coingecko response:", data);
     if (data[cgId] && data[cgId].usd) {
       price = Number(data[cgId].usd);
     } else {
       throw new Error(`Coingecko did not return price for ${cgId}`);
     }
   } catch (e) {
-    console.log('Coingecko fetch failed, trying DeFi Llama...');
+    console.log("Coingecko fetch failed, trying DeFi Llama...");
     try {
       const { data } = await axios.get(`${DEFI_LLAMA_API}coingecko:${cgId}`);
-      console.log('DeFi Llama response:', data);
+      console.log("DeFi Llama response:", data);
       if (data.coins[`coingecko:${cgId}`] && data.coins[`coingecko:${cgId}`].price) {
         price = Number(data.coins[`coingecko:${cgId}`].price);
       } else {
@@ -69,18 +70,18 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
   const mpo = sdk.createMasterPriceOracle();
 
   try {
-    const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, '')}`;
+    const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, "")}`;
     console.log("Token address:", tokenAddress);
     const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
-    const priceInETHNum = Number(formatEther(priceInETH)); 
+    const priceInETHNum = Number(formatEther(priceInETH));
     const usdPrice = await getUSDPrice(chainId);
     const amountNum = Number(formatEther(amount));
 
-    console.log("eth",amountNum)
+    console.log("eth", amountNum);
 
-    console.log("ethprice",priceInETH)
-    const usdValue = priceInETHNum * usdPrice * amountNum; 
-    return usdValue.toFixed(10); 
+    console.log("ethprice", priceInETH);
+    const usdValue = priceInETHNum * usdPrice * amountNum;
+    return usdValue.toFixed(10);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(`Failed to get USD value for token ${tokenAddress}:`, error.response?.data || error.message);
@@ -92,9 +93,10 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
 }
 
 export async function sendDiscordNotification(opportunity: OpportunityParams) {
-  const { chainId, targetContract, targetCalldata, permissionKey, targetCallValue, buyTokens, sellTokens } = opportunity;
+  const { chainId, targetContract, targetCalldata, permissionKey, targetCallValue, buyTokens, sellTokens } =
+    opportunity;
 
-  console.log('Opportunity data:', opportunity);
+  console.log("Opportunity data:", opportunity);
 
   // Convert chainId to SupportedChains type
   const chainIdConverted = 34443;
@@ -105,16 +107,20 @@ export async function sendDiscordNotification(opportunity: OpportunityParams) {
   }
 
   // Prepare buy token messages with USD values
-  const buyTokenMessages = await Promise.all(buyTokens.map(async (token) => {
-    const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
-    return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
-  }));
+  const buyTokenMessages = await Promise.all(
+    buyTokens.map(async (token) => {
+      const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
+      return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
+    })
+  );
 
   // Prepare sell token messages with USD values
-  const sellTokenMessages = await Promise.all(sellTokens.map(async (token) => {
-    const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
-    return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
-  }));
+  const sellTokenMessages = await Promise.all(
+    sellTokens.map(async (token) => {
+      const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
+      return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
+    })
+  );
 
   const message = `
 **Opportunity Submitted Successfully**
@@ -125,10 +131,10 @@ export async function sendDiscordNotification(opportunity: OpportunityParams) {
 - **Target Call Value**: ${targetCallValue}
 
 **Buy Tokens:**
-${buyTokenMessages.join('\n')}
+${buyTokenMessages.join("\n")}
 
 **Sell Tokens:**
-${sellTokenMessages.join('\n')}
+${sellTokenMessages.join("\n")}
 **----------------------------------------------------------------------------------------**
 `;
 

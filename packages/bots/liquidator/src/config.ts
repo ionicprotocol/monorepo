@@ -22,5 +22,4 @@ export enum EXCLUDED_ERROR_CODES {
   SERVER_ERROR,
 }
 
-
 export default config;

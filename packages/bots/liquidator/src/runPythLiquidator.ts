@@ -3,8 +3,8 @@ import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotoco
 import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
-import { sendDiscordNotification } from "./services/PERdiscord"; // Import the new module
 
+import { sendDiscordNotification } from "./services/PERdiscord"; // Import the new module
 import config from "./config";
 import { logger } from "./logger";
 import { Liquidator } from "./services";
@@ -105,7 +105,7 @@ import { setUpSdk } from "./utils";
       try {
         await client.submitOpportunity(opportunity);
         console.log("Opportunity submitted successfully: ", opportunity);
-        
+
         // Send a Discord notification
         await sendDiscordNotification(opportunity);
       } catch (error) {
