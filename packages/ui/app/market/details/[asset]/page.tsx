@@ -247,7 +247,7 @@ const Asset = ({ params }: IProp) => {
   );
   // Borrow cap numbers -----------------
   const { data: borrowCap } = useBorrowCapsDataForAsset(
-    selectedMarketData?.cToken as `0x${string}`,
+    selectedMarketData?.cToken,
     Number(chain)
   );
   const { data: usdPrice } = useUsdPrice(chain as string);
@@ -278,7 +278,7 @@ const Asset = ({ params }: IProp) => {
 
   const { data: supplyCap } = useSupplyCapsDataForAsset(
     comptrollerAddress as Address,
-    selectedMarketData?.cToken as `0x${string}`,
+    selectedMarketData?.cToken,
     Number(chain)
   );
   const supplyCapAsNumber = useMemo<number>(
@@ -309,7 +309,7 @@ const Asset = ({ params }: IProp) => {
   const { address } = useAccount();
   const { data: availableToSupply } = useBalance({
     address,
-    token: selectedMarketData?.underlyingToken as `0x${string}`,
+    token: selectedMarketData?.underlyingToken as Address,
     query: {
       refetchInterval: 6000
     }
