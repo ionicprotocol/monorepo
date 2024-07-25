@@ -36,6 +36,9 @@ const run = async () => {
     "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13"
   ]);
   console.log("tx: ", tx);
+
+  const all = await fwLensRouter.simulate.claimAllRewardTokens(["0x1155b614971f16758C92c4890eD338C9e3ede6b7"]);
+  console.log("all: ", all);
 };
 
 run()
