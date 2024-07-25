@@ -48,7 +48,11 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition1" {
         {
           name  = "ETHEREUM_ADMIN_PRIVATE_KEY"
           value = "${var.ethereum_admin_private_key}"
-        }  
+        },
+        {
+          name  = "PER_DISCORD_WEBHOOK_URL"
+          value = "${var.per_discord_webhook_url}"
+        } 
       ] 
     }
   ])
