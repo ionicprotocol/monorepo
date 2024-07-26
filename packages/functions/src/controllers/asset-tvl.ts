@@ -28,8 +28,8 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
     const results: {
       cTokenAddress: string;
       underlyingAddress: string;
-      tvlUnderlying: string; 
-      tvlNative: string; 
+      tvlUnderlying: string; // Store as string to maintain precision
+      tvlNative: string; // Store as string to maintain precision
     }[] = [];
 
     await Promise.all(
@@ -49,22 +49,24 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       totalAssets.map(async (asset) => {
         try {
           const cTokenContract = sdk.createICErc20(asset.cToken);
+          
+          // Fetch TVL values
           const tvlUnderlyingBig = await cTokenContract.read.getTotalUnderlyingSupplied();
           
-          // Convert the raw BigInt value to a string formatted to 18 decimal places
+          // Convert `tvlUnderlyingBig` to string formatted with 18 decimal places
           const tvlUnderlying = formatUnits(tvlUnderlyingBig, 18);
-          
-          // Convert asset.underlyingPrice to a decimal number
-          const underlyingPrice = parseFloat(formatEther(asset.underlyingPrice as unknown as string));
+
+          // Convert `underlyingPrice` from `bigint` to `number`
+          const underlyingPrice = Number(formatEther(asset.underlyingPrice)); 
 
           // Calculate TVL in native units
-          const tvlNative = (Number(tvlUnderlying) * underlyingPrice).toFixed(2); // Fixed precision
+          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(2); // Fixed precision
 
           results.push({
             cTokenAddress: asset.cToken,
             underlyingAddress: asset.underlyingToken,
-            tvlUnderlying: tvlUnderlying, 
-            tvlNative: tvlNative, 
+            tvlUnderlying: tvlUnderlying, // Storing as string
+            tvlNative: tvlNative, // Storing as string for consistency
           });
         } catch (exception) {
           console.error(`Error processing asset ${asset.cToken}:`, exception);
