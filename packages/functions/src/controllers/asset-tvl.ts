@@ -5,7 +5,7 @@ import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { Handler } from '@netlify/functions';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import axios from 'axios';
-import { Chain, createPublicClient, formatEther, formatUnits, http } from 'viem';
+import { Chain, createPublicClient, formatUnits, formatEther, http } from 'viem';
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
@@ -21,15 +21,15 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
     const [poolIndexes, pools] = await sdk.contracts.PoolDirectory.read.getActivePools();
 
     if (!pools.length || !poolIndexes.length) {
-      throw `Error occurred during saving assets tvl to database: pools not found`;
+      throw new Error(`Error occurred during saving assets TVL to database: pools not found`);
     }
 
     const totalAssets: NativePricedIonicAsset[] = [];
     const results: {
       cTokenAddress: string;
       underlyingAddress: string;
-      tvlUnderlying: number;
-      tvlNative: number;
+      tvlUnderlying: string; // Store as string to maintain precision
+      tvlNative: string; // Store as string to maintain precision
     }[] = [];
 
     await Promise.all(
@@ -49,20 +49,27 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       totalAssets.map(async (asset) => {
         try {
           const cTokenContract = sdk.createICErc20(asset.cToken);
+          
+          // Fetch TVL values
           const tvlUnderlyingBig = await cTokenContract.read.getTotalUnderlyingSupplied();
-          const tvlUnderlying = Number(formatUnits(tvlUnderlyingBig, asset.underlyingDecimals));
-          const tvlNative =
-            Number(formatUnits(tvlUnderlyingBig, asset.underlyingDecimals)) *
-            Number(formatEther(asset.underlyingPrice));
+          
+          // Convert `tvlUnderlyingBig` to string formatted with 18 decimal places
+          const tvlUnderlying = formatUnits(tvlUnderlyingBig, 18);
+
+          // Convert `underlyingPrice` from `bigint` to `number`
+          const underlyingPrice = Number(formatEther(asset.underlyingPrice)); 
+
+          // Calculate TVL in native units
+          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(2); // Fixed precision
 
           results.push({
             cTokenAddress: asset.cToken,
             underlyingAddress: asset.underlyingToken,
-            tvlUnderlying,
-            tvlNative,
+            tvlUnderlying: tvlUnderlying, // Storing as string
+            tvlNative: tvlNative, // Storing as string for consistency
           });
         } catch (exception) {
-          console.error(exception);
+          console.error(`Error processing asset ${asset.cToken}:`, exception);
           await functionsAlert(
             `Functions.asset-tvl: CToken '${asset.cToken}' / Chain '${chainId}'`,
             JSON.stringify(exception),
@@ -76,21 +83,23 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       .map((r) => ({
         chain_id: chainId,
         ctoken_address: r.cTokenAddress.toLowerCase(),
-        underlying_address: r.underlyingAddress.toLocaleLowerCase(),
+        underlying_address: r.underlyingAddress.toLowerCase(),
         info: {
-          tvlUnderlying: r.tvlUnderlying,
-          tvlNative: r.tvlNative,
+          tvlUnderlying: r.tvlUnderlying, // Storing as string
+          tvlNative: r.tvlNative, // Storing as string
           createdAt: new Date().getTime(),
         },
       }));
+
     await axios.get(HEARTBEAT_API_URL);
 
     const { error } = await supabase.from(environment.supabaseAssetTvlTableName).insert(rows);
 
     if (error) {
-      throw `Error occurred during saving asset tvl to database: ${error.message}`;
+      throw new Error(`Error occurred during saving asset TVL to database: ${error.message}`);
     }
   } catch (err) {
+    console.error('Error in updateAssetTvl:', err);
     await functionsAlert('Functions.asset-tvl: Generic Error', JSON.stringify(err));
   }
 };
@@ -106,6 +115,7 @@ export const createAssetTvlHandler =
         body: JSON.stringify({ message: 'done' }),
       };
     } catch (err) {
+      console.error('Error in createAssetTvlHandler:', err);
       return {
         statusCode: 500,
         body: JSON.stringify({ message: err }),
