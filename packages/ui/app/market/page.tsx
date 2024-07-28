@@ -58,6 +58,7 @@ export default function Market() {
     () => poolData?.assets,
     [poolData]
   );
+
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>

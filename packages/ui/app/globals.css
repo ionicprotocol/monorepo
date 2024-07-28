@@ -104,6 +104,10 @@
   }
 }
 
+.bg-pink {
+  background: #ff007f;
+}
+
 .bg-lime {
   background: #dffe00;
 }

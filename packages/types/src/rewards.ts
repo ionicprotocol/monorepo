@@ -1,3 +1,5 @@
+import { Address } from "viem";
+
 export interface AbstractReward {
   apy?: number;
   status?: "active" | "eol" | "paused" | "unknown";
@@ -5,7 +7,7 @@ export interface AbstractReward {
 }
 
 export interface PluginReward extends AbstractReward {
-  plugin: string;
+  plugin: Address;
 }
 
 export function isPluginReward(reward: any): reward is PluginReward {
@@ -17,13 +19,13 @@ export function isPluginReward(reward: any): reward is PluginReward {
  * Flywheel with Dynamic Rewards
  */
 export interface PluginWithFlywheelReward extends AbstractReward {
-  plugin: string;
-  flywheel: string;
-  token: string;
+  plugin: Address;
+  flywheel: Address;
+  token: Address;
 }
 
 export interface AssetReward extends AbstractReward {
-  asset: string;
+  asset: Address;
 }
 
 export function isAssetReward(reward: any): reward is AssetReward {
@@ -35,8 +37,8 @@ export function isAssetReward(reward: any): reward is AssetReward {
  * i.E. liquidity mining rewards with Static Rewards
  */
 export interface FlywheelReward extends AbstractReward {
-  token: string;
-  flywheel: string;
+  token: Address;
+  flywheel: Address;
 }
 
 export function isFlywheelReward(reward: any): reward is FlywheelReward {

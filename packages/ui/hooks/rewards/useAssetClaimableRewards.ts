@@ -94,7 +94,7 @@ export const useAssetsClaimableRewards = ({
   poolChainId
 }: {
   assetsAddress: Address[];
-  poolAddress: Address;
+  poolAddress?: Address;
   poolChainId: number;
 }) => {
   const { address } = useMultiIonic();
@@ -110,7 +110,7 @@ export const useAssetsClaimableRewards = ({
     ],
 
     queryFn: async () => {
-      if (sdk && address) {
+      if (sdk && address && poolAddress) {
         return await getAssetsClaimableRewards(
           poolAddress,
           assetsAddress,

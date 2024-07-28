@@ -7,6 +7,7 @@ import { CreateContractsModule } from "./CreateContracts";
 export interface FlywheelClaimableRewards {
   rewardToken: Address;
   amount: bigint;
+  flywheel?: Address;
 }
 
 export type FlywheelMarketRewardsInfo = {
