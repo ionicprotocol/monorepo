@@ -14,8 +14,8 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition1" {
   network_mode            = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "2048"
-  memory = "4096"
+  cpu    = "1024"
+  memory = "2048"
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
@@ -48,7 +48,11 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition1" {
         {
           name  = "ETHEREUM_ADMIN_PRIVATE_KEY"
           value = "${var.ethereum_admin_private_key}"
-        }  
+        },
+        {
+          name  = "PER_DISCORD_WEBHOOK_URL"
+          value = "${var.per_discord_webhook_url}"
+        } 
       ] 
     }
   ])

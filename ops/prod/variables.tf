@@ -38,6 +38,9 @@ variable "pyth_updater_discord_webhook_url" {
 variable "liquidation_discord_webhook_url" {
   type = string
 }
+variable "per_discord_webhook_url" {
+  type = string
+}
 
 variable "liquidation_sendgrid_api_key" {
   type = string

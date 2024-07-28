@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { formatEther } from 'viem';
+import { type Address, formatEther, type Hex } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
-  usePublicClient,
-  useWalletClient
+  useReadContract,
+  useReadContracts,
+  useWaitForTransactionReceipt,
+  useWriteContract
 } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
@@ -28,144 +30,8 @@ interface IProps {
 }
 
 export default function ClaimRewards({ close, open }: IProps) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [claimLoading, setClaimLoading] = useState<boolean>(false);
   const newRef = useRef(null!);
-
-  const chainId = useChainId();
   const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-  const [rewards, setRewards] = useState<bigint>(BigInt(0));
-  const [tradingFees, setTradingFees] = useState<{
-    claim0: bigint;
-    claim1: bigint;
-  }>({
-    claim0: BigInt(0),
-    claim1: BigInt(0)
-  });
-
-  async function claimRewards() {
-    try {
-      if (!isConnected) {
-        console.error('Not connected');
-        return;
-      }
-      const switched = await handleSwitchOriginChain(mode.id, chainId);
-      if (!switched) return;
-      setLoading(true);
-
-      const claiming = await walletClient!.writeContract({
-        abi: StakingContractAbi,
-        account: walletClient?.account,
-        address: StakingContractAddress,
-        args: [address],
-        functionName: 'getReward'
-      });
-
-      const hash = await publicClient?.waitForTransactionReceipt({
-        hash: claiming
-      });
-      setLoading(false);
-      // eslint-disable-next-line no-console
-      console.log({ hash: hash?.transactionHash });
-    } catch (err) {
-      setLoading(false);
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }
-  async function claimTradingFees() {
-    try {
-      if (!isConnected) {
-        console.error('Not connected');
-        return;
-      }
-      const switched = await handleSwitchOriginChain(mode.id, chainId);
-      if (!switched) return;
-      setClaimLoading(true);
-
-      const claiming = await walletClient!.writeContract({
-        abi: TradingAbi,
-        account: walletClient?.account,
-        address: TradingContractAddress,
-        args: [],
-        functionName: 'claimFees'
-      });
-
-      const hash = await publicClient?.waitForTransactionReceipt({
-        hash: claiming
-      });
-      setClaimLoading(false);
-      // eslint-disable-next-line no-console
-      console.log({ hash: hash?.transactionHash });
-    } catch (err) {
-      setLoading(false);
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }
-
-  useEffect(() => {
-    async function getRewards() {
-      try {
-        if (!isConnected) return;
-        if (loading) {
-          //reloading prices
-        }
-        const totalRewards = (await publicClient?.readContract({
-          abi: StakingContractAbi,
-          address: StakingContractAddress,
-          args: [address],
-          functionName: 'rewards'
-        })) as bigint;
-
-        setRewards(totalRewards);
-
-        // eslint-disable-next-line no-console
-        console.log(totalRewards);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
-    }
-    getRewards();
-  }, [address, chainId, isConnected, publicClient, loading]);
-
-  useEffect(() => {
-    async function getTradingFees() {
-      try {
-        if (!isConnected) return;
-        if (claimLoading) {
-          //reloading prices
-        }
-        const claimableTradingFees0 = (await publicClient?.readContract({
-          abi: TradingAbi,
-          address: TradingContractAddress,
-          args: [address],
-          functionName: 'claimable0'
-        })) as bigint;
-        const claimableTradingFees1 = (await publicClient?.readContract({
-          abi: TradingAbi,
-          address: TradingContractAddress,
-          args: [address],
-          functionName: 'claimable1'
-        })) as bigint;
-        // eslint-disable-next-line no-console
-        console.log({ claimableTradingFees0, claimableTradingFees1 });
-
-        if (!claimableTradingFees1 || !claimableTradingFees0) return;
-        setTradingFees({
-          claim0: claimableTradingFees0,
-          claim1: claimableTradingFees1
-        });
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
-    }
-    getTradingFees();
-  }, [address, chainId, isConnected, publicClient, claimLoading]);
 
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
@@ -207,67 +73,15 @@ export default function ClaimRewards({ close, open }: IProps) {
           <div
             className={`grid grid-cols-3 justify-between w-full items-center text-sm text-white/60`}
           >
-            <span className={` mx-auto`}>Mode</span>
-            <span className={` mx-auto`}>
-              {Number(formatEther(rewards)).toLocaleString('en-US', {
-                maximumFractionDigits: 3
-              })}
-            </span>
-            <button
-              className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent disabled:bg-accent/60 rounded-md`}
-              onClick={() => claimRewards()}
-              disabled={loading || rewards === BigInt(0)}
-            >
-              <ResultHandler
-                isLoading={loading}
-                height="20"
-                width="20"
-                color={'#000000'}
-              >
-                Claim
-              </ResultHandler>
-            </button>
+            {address && isConnected && (
+              <DisplayAndClaimRewards address={address} />
+            )}
           </div>
           <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           <h1 className={`mt-4 mb-2 text-center`}>Trading Fees</h1>
-          <div
-            className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
-          >
-            <span className={` mx-auto`}>ION</span>
-            <span className={` mx-auto`}>
-              {Number(formatEther(tradingFees.claim0)).toLocaleString('en-US', {
-                maximumFractionDigits: 3
-              })}
-            </span>
-          </div>
-          <div
-            className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
-          >
-            <span className={` mx-auto`}>Weth</span>
-            <span className={` mx-auto`}>
-              {Number(formatEther(tradingFees.claim1)).toLocaleString('en-US', {
-                maximumFractionDigits: 7
-              })}
-            </span>
-            <button
-              className={` mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent rounded-md`}
-              onClick={() => claimTradingFees()}
-              disabled={
-                claimLoading ||
-                tradingFees.claim0 === BigInt(0) ||
-                tradingFees.claim1 === BigInt(0)
-              }
-            >
-              <ResultHandler
-                isLoading={claimLoading}
-                height="20"
-                width="20"
-                color={'#000000'}
-              >
-                Claim
-              </ResultHandler>
-            </button>
-          </div>
+          {address && isConnected && (
+            <DisplayAndClaimTradingFees address={address} />
+          )}
           <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           {/* <div
             className={` w-max py-1 px-10 mx-auto mt-6 text-sm text-black  bg-accent rounded-md`}
@@ -280,3 +94,178 @@ export default function ClaimRewards({ close, open }: IProps) {
     </div>
   );
 }
+
+type DisplayAndClaimRewardsProps = {
+  address: Address;
+};
+const DisplayAndClaimRewards = ({ address }: DisplayAndClaimRewardsProps) => {
+  const { data: rewards, isLoading } = useReadContract({
+    abi: StakingContractAbi,
+    address: StakingContractAddress,
+    args: [address],
+    functionName: 'earned'
+  });
+  const { writeContractAsync } = useWriteContract();
+  const chainId = useChainId();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hash, setHash] = useState<Address | undefined>();
+  const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (claimReceipt) {
+      setLoading(false);
+    }
+  }, [claimReceipt]);
+
+  async function claimRewards() {
+    try {
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched) return;
+      setLoading(true);
+
+      const claiming = await writeContractAsync({
+        abi: StakingContractAbi,
+        address: StakingContractAddress,
+        args: [address],
+        functionName: 'getReward'
+      });
+      setHash(claiming);
+
+      setLoading(false);
+    } catch (err) {
+      console.error('Error claiming rewards: ', err);
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <span className={` mx-auto`}>MODE</span>
+      <span className={` mx-auto`}>
+        {rewards
+          ? Number(formatEther(rewards)).toLocaleString('en-US', {
+              maximumFractionDigits: 3
+            })
+          : '-'}
+      </span>
+      <button
+        className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent disabled:bg-accent/60 rounded-md`}
+        onClick={() => claimRewards()}
+        disabled={loading || isLoading || rewards === BigInt(0)}
+      >
+        <ResultHandler
+          isLoading={loading || isLoading}
+          height="20"
+          width="20"
+          color={'#000000'}
+        >
+          Claim
+        </ResultHandler>
+      </button>
+    </>
+  );
+};
+
+const DisplayAndClaimTradingFees = ({
+  address
+}: DisplayAndClaimRewardsProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const chainId = useChainId();
+  const { data: tradingFees, isLoading } = useReadContracts({
+    contracts: [
+      {
+        abi: TradingAbi,
+        address: TradingContractAddress,
+        args: [address],
+        functionName: 'claimable0'
+      },
+      {
+        abi: TradingAbi,
+        address: TradingContractAddress,
+        args: [address],
+        functionName: 'claimable1'
+      }
+    ]
+  });
+  const { writeContractAsync } = useWriteContract();
+  const [hash, setHash] = useState<Hex | undefined>();
+  const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (claimReceipt) {
+      setLoading(false);
+    }
+  }, [claimReceipt]);
+
+  async function claimTradingFees() {
+    try {
+      const switched = await handleSwitchOriginChain(mode.id, chainId);
+      if (!switched) return;
+      setLoading(true);
+
+      const claiming = await writeContractAsync({
+        abi: TradingAbi,
+        address: TradingContractAddress,
+        args: [],
+        functionName: 'claimFees'
+      });
+      setHash(claiming);
+    } catch (err) {
+      console.error('Error claiming trading fees: ', err);
+    }
+  }
+
+  return (
+    <>
+      <div
+        className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
+      >
+        <span className={` mx-auto`}>ION</span>
+        <span className={` mx-auto`}>
+          {tradingFees && tradingFees[0].result
+            ? Number(formatEther(tradingFees[0].result)).toLocaleString(
+                'en-US',
+                {
+                  maximumFractionDigits: 3
+                }
+              )
+            : '0'}
+        </span>
+      </div>
+      <div
+        className={`grid grid-cols-3  w-full items-center text-sm text-white/60`}
+      >
+        <span className={` mx-auto`}>WETH</span>
+        <span className={` mx-auto`}>
+          {tradingFees && tradingFees[1].result
+            ? Number(formatEther(tradingFees[1].result)).toLocaleString(
+                'en-US',
+                {
+                  maximumFractionDigits: 7
+                }
+              )
+            : '0'}
+        </span>
+        <button
+          className={` mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent rounded-md`}
+          onClick={() => claimTradingFees()}
+          disabled={
+            isLoading ||
+            loading ||
+            (tradingFees && tradingFees[0].result === BigInt(0)) ||
+            (tradingFees && tradingFees[1].result === BigInt(0))
+          }
+        >
+          <ResultHandler
+            isLoading={isLoading || loading}
+            height="20"
+            width="20"
+            color={'#000000'}
+          >
+            Claim
+          </ResultHandler>
+        </button>
+      </div>
+    </>
+  );
+};

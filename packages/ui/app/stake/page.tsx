@@ -151,13 +151,16 @@ export default function Stake() {
           return { ...p, eth: '' };
         });
       }
-
-      const getStakedTokens = (await publicClient?.readContract({
-        abi: StakingContractAbi,
-        address: getStakingToContract(+chain),
-        args: [address],
-        functionName: 'balanceOf'
-      })) as bigint;
+      let getStakedTokens = 0n;
+      if (address) {
+        getStakedTokens =
+          (await publicClient?.readContract({
+            abi: StakingContractAbi,
+            address: getStakingToContract(+chain),
+            args: [address],
+            functionName: 'balanceOf'
+          })) ?? 0n;
+      }
       if (getStakedTokens || step3Loading) {
         step3Loading
           ? setAllStakedAmount(formatEther(getStakedTokens))
@@ -345,7 +348,7 @@ export default function Stake() {
         lpToken: parseUnits(maxLp, 18)
       };
 
-      if (!isConnected) {
+      if (!isConnected || !address) {
         console.error('Not connected');
         return;
       }

@@ -1518,4 +1518,4 @@ export const TradingAbi = [
     stateMutability: 'nonpayable',
     type: 'function'
   }
-];
+] as const;
