@@ -7,7 +7,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatEther, formatUnits } from 'viem';
+import { type Address, formatEther, formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -336,7 +336,9 @@ export default function Market() {
                         100
                       }
                       cTokenAddress={val.cToken}
-                      comptrollerAddress={poolData?.comptroller || ''}
+                      comptrollerAddress={
+                        poolData?.comptroller || ('' as Address)
+                      }
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
                       logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}

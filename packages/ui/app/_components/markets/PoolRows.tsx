@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import { formatEther, type Address } from 'viem';
+import { base } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
@@ -11,13 +12,12 @@ import { PopupMode } from '../popup/page';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { base } from 'viem/chains';
-import { useSdk } from '@ui/hooks/ionic/useSdk';
 // import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 // import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
@@ -35,7 +35,7 @@ interface IRows {
   loopMarkets?: LoopMarketData | undefined;
   loopPossible: boolean;
   membership: boolean;
-  pool: Address;
+  pool: string;
   selectedChain: number;
   selectedMarketData: MarketData | undefined;
   selectedPoolId: string;
