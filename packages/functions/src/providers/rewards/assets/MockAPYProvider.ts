@@ -1,4 +1,6 @@
 import { Reward } from '@ionicprotocol/types';
+import { Address } from 'viem';
+
 import { AbstractAssetAPYProvider } from './AbstractAssetAPYProvider';
 
 class MockAPYProvider extends AbstractAssetAPYProvider {
@@ -10,7 +12,7 @@ class MockAPYProvider extends AbstractAssetAPYProvider {
     return Promise.resolve();
   }
 
-  async getApy(assetAddress: string): Promise<Reward[]> {
+  async getApy(assetAddress: Address): Promise<Reward[]> {
     return [
       {
         updated_at: new Date().toISOString(),
