@@ -37,8 +37,9 @@ export default function Widget({ close, open, chain }: IProps) {
         slippage: 0.005
       }
     },
+    fee: 0.01,
     // theme : { palette : "grey"},
-    integrator: 'ionic.money',
+    integrator: 'ionic',
     appearance: 'dark'
   };
 
