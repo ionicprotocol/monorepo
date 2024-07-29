@@ -11,7 +11,7 @@ import {
   parseEther,
   parseUnits
 } from 'viem';
-import { mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 import {
   useAccount,
   useBalance,
@@ -34,7 +34,11 @@ import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
+import {
+  useAeroPrice,
+  useIonPrice,
+  useModePrice
+} from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
   getReservesABI,
@@ -64,7 +68,7 @@ export default function Stake() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  const chain = querychain ? querychain : chainId;
+  const chain = querychain ? querychain : String(chainId);
   const [open, setOpen] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
@@ -499,12 +503,13 @@ export default function Stake() {
                   open={open}
                   setOpen={setOpen}
                   nopool={true}
+                  enabledChains={[mode.id, base.id]}
                 />
               </div>
             </div>
 
             <button
-              className={` py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={` py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
@@ -590,7 +595,7 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -611,7 +616,7 @@ export default function Stake() {
                     <img
                       alt="lock--v1"
                       className={`w-4 h-4 inline-block mx-2`}
-                      src="https://img.icons8.com/ios/50/lock--v1.png"
+                      src={`https://img.icons8.com/${+chain === mode.id ? '000000' : 'ffffff'}/ios/50/lock--v1.png`}
                     />
                     Provide Liquidity
                   </>
@@ -631,7 +636,7 @@ export default function Stake() {
               fetchOwn={true}
             /> */}
             <button
-              className={`my-3 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setRewardPopup(true)}
             >
               Claim Rewards
@@ -674,47 +679,11 @@ export default function Stake() {
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
             </h1>
             {/* this will get repeated */}
-            <div className="flex items-center w-full mt-3 text-xs gap-2">
-              <img
-                alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
-                src="/img/symbols/32/color/velo.png"
-              />
-              <VelodromeAPY step3Toggle={step3Toggle} />
-            </div>
-            <div className="flex items-center w-full mt-3 text-xs gap-2">
-              <img
-                alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1`}
-                src="/img/logo/ION.png"
-              />
-              <span>Ionic Points</span>
-              <span
-                className={`text-accent ml-auto ${
-                  step3Toggle === 'Unstake' && 'text-red-500'
-                }`}
-              >
-                3x
-              </span>
-            </div>
-            <div className="flex items-center w-full mt-3 text-xs gap-2">
-              <img
-                alt="ion logo"
-                className={`w-6 h-6 inline-block mx-1`}
-                src="/img/logo/MODE.png"
-              />
-              <span>Mode Points</span>
-              <span
-                className={`text-accent ml-auto ${
-                  step3Toggle === 'Unstake' && 'text-red-500'
-                }`}
-              >
-                {+chain === mode.id ? '3x' : '-'}
-              </span>
-            </div>
+            {+chain === mode.id && <ModeBreakdown step3Toggle={step3Toggle} />}
+            {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -738,6 +707,54 @@ export default function Stake() {
     </main>
   );
 }
+
+type ModeBreakdownProps = {
+  step3Toggle: string;
+};
+const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
+  return (
+    <>
+      <div className="flex items-center w-full mt-3 text-xs gap-2">
+        <img
+          alt="ion logo"
+          className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
+          src="/img/symbols/32/color/velo.png"
+        />
+        <VelodromeAPY step3Toggle={step3Toggle} />
+      </div>
+      <div className="flex items-center w-full mt-3 text-xs gap-2">
+        <img
+          alt="ion logo"
+          className={`w-6 h-6 inline-block mx-1`}
+          src="/img/logo/ION.png"
+        />
+        <span>Ionic Points</span>
+        <span
+          className={`text-accent ml-auto ${
+            step3Toggle === 'Unstake' && 'text-red-500'
+          }`}
+        >
+          3x
+        </span>
+      </div>
+      <div className="flex items-center w-full mt-3 text-xs gap-2">
+        <img
+          alt="ion logo"
+          className={`w-6 h-6 inline-block mx-1`}
+          src="/img/logo/MODE.png"
+        />
+        <span>Mode Points</span>
+        <span
+          className={`text-accent ml-auto ${
+            step3Toggle === 'Unstake' && 'text-red-500'
+          }`}
+        >
+          3x
+        </span>
+      </div>
+    </>
+  );
+};
 
 type VelodromeAPYProps = {
   step3Toggle: string;
@@ -786,4 +803,82 @@ const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
   );
 };
 
-// export default dynamic(() => Promise.resolve(Stake), { ssr: false });
+type BaseBreakdownProps = {
+  step3Toggle: string;
+};
+const BaseBreakdown = ({ step3Toggle }: BaseBreakdownProps) => {
+  return (
+    <>
+      <div className="flex items-center w-full mt-3 text-xs gap-2">
+        <img
+          alt="ion logo"
+          className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
+          src="/img/logo/AERO.png"
+        />
+        <AerodromeAPY step3Toggle={step3Toggle} />
+      </div>
+      <div className="flex items-center w-full mt-3 text-xs gap-2">
+        <img
+          alt="ion logo"
+          className={`w-6 h-6 inline-block mx-1`}
+          src="/img/logo/ION.png"
+        />
+        <span>Ionic Points</span>
+        <span
+          className={`text-accent ml-auto ${
+            step3Toggle === 'Unstake' && 'text-red-500'
+          }`}
+        >
+          3x
+        </span>
+      </div>
+    </>
+  );
+};
+
+type AerodromeAPYProps = {
+  step3Toggle: string;
+};
+const AerodromeAPY = ({ step3Toggle }: AerodromeAPYProps) => {
+  const LP_SUGAR_ADDRESS = '0x68c19e13618C41158fE4bAba1B8fb3A9c74bDb0A';
+  const ION_POOL_INDEX = 1489n;
+  const { data: sugarData } = useReadContract({
+    abi: lpSugarAbi,
+    address: LP_SUGAR_ADDRESS,
+    args: [ION_POOL_INDEX],
+    functionName: 'byIndex',
+    chainId: base.id
+  });
+  const { data: ionData } = useIonPrice();
+  const { data: aeroPriceData } = useAeroPrice();
+  const { data: ethPriceData } = useAllUsdPrices();
+  let apy = '-';
+  if (!!(sugarData && ionData && ethPriceData && aeroPriceData)) {
+    apy =
+      (
+        ((60 *
+          60 *
+          24 *
+          365.25 *
+          Number(formatEther(sugarData.emissions)) *
+          Number(aeroPriceData.pair.priceUsd)) /
+          (Number(formatEther(sugarData.staked0)) *
+            Number(ionData.pair.priceUsd) +
+            Number(formatEther(sugarData.staked1)) *
+              ethPriceData[base.id].value)) *
+        100
+      ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
+  }
+  return (
+    <>
+      <span>Aerodrome APY</span>
+      <span
+        className={`text-accent ${
+          step3Toggle === 'Unstake' && 'text-red-500'
+        } ml-auto`}
+      >
+        {apy}
+      </span>
+    </>
+  );
+};

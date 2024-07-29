@@ -41,3 +41,22 @@ export function useModePrice() {
     staleTime: Infinity
   });
 }
+
+export function useAeroPrice() {
+  return useQuery({
+    queryKey: ['aeroPrice'],
+
+    queryFn: async () => {
+      const res = await axios.get(
+        'https://api.dexscreener.com/latest/dex/pairs/base/0x7f670f78b17dec44d5ef68a48740b6f8849cc2e6'
+      );
+
+      const pairData = res.data;
+
+      return pairData as DexScreenerPriceData;
+    },
+
+    gcTime: Infinity,
+    staleTime: Infinity
+  });
+}
