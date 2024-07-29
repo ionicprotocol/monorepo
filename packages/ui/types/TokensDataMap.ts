@@ -2,7 +2,7 @@ import type {
   NativePricedIonicAsset,
   IonicPoolData as SDKFusePoolData
 } from '@ionicprotocol/types';
-import { Address } from 'viem';
+import { type Address } from 'viem';
 
 export type IonicApiTokenData = {
   address: Address;
@@ -24,6 +24,10 @@ export interface MarketData extends NativePricedIonicAsset {
   supplyBalanceFiat: number;
   totalBorrowFiat: number;
   totalSupplyFiat: number;
+  rewardsInfo?: {
+    rewardToken: Address;
+    flywheel: Address;
+  }[];
 }
 
 export interface PoolData extends SDKFusePoolData {

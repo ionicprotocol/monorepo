@@ -1,16 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { type Reward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import type { Dispatch, SetStateAction } from 'react';
-import React from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
+import { formatEther, type Address } from 'viem';
+import { base } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
+import ResultHandler from '../ResultHandler';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/ionic/useSdk';
+import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { multipliers } from '@ui/utils/multipliers';
@@ -21,12 +27,12 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IRows {
   asset: string;
-  borrowAPR: string;
+  borrowAPR?: number;
   borrowBalance: string;
   chain: string;
   collateralFactor: number;
-  comptrollerAddress: string;
-  cTokenAddress: string;
+  comptrollerAddress: Address;
+  cTokenAddress: Address;
   dropdownSelectedChain: number;
   logo: string;
   loopMarkets?: LoopMarketData | undefined;
@@ -34,6 +40,7 @@ interface IRows {
   membership: boolean;
   pool: string;
   selectedChain: number;
+  rewards?: Reward[];
   selectedMarketData: MarketData | undefined;
   selectedPoolId: string;
   selectedSymbol: string;
@@ -65,11 +72,15 @@ const PoolRows = ({
   setPopupMode,
   selectedChain,
   selectedPoolId,
-  comptrollerAddress
+  comptrollerAddress,
+  rewards
 }: IRows) => {
   const { address } = useMultiIonic();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+  const rewardsAPR =
+    rewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0;
+  const borrowAPRTotal = borrowAPR ? 0 - borrowAPR + rewardsAPR : undefined;
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -91,7 +102,7 @@ const PoolRows = ({
           pathname: `/market/details/${asset}`,
           query: {
             availableAPR: parseInt(supplyAPR),
-            borrowAPR: parseInt(borrowAPR),
+            borrowAPR: borrowAPR ? borrowAPR : 0,
             chain: chain,
             collateralAPR: collateralFactor,
             comptrollerAddress,
@@ -163,7 +174,7 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
-          <span className={`mr-1 md:mr-0`}>{supplyAPR}</span>
+          <span className={`mr-1 md:mr-0`}>+{supplyAPR}</span>
           {selectedPoolId === '0' &&
             querychain === '34443' &&
             (asset.toLowerCase() === 'usdc' ||
@@ -192,6 +203,14 @@ const PoolRows = ({
                 </div>
               </a>
             )}
+          {multipliers[dropdownSelectedChain][selectedPoolId][asset]?.supply
+            ?.flywheel && (
+            <span
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
+            >
+              + REWARDS <i className="popover-hint">i</i>
+            </span>
+          )}
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
           >
@@ -214,7 +233,7 @@ const PoolRows = ({
           <div
             className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
-            Base APR: {supplyAPR}
+            Base APR: +{supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
               ?.supply?.ionic && (
               <>
@@ -395,7 +414,23 @@ const PoolRows = ({
           BORROW APR:
         </span>
         <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
-          <span className="mr-1 md:mr-0 md:mb-1">{borrowAPR}</span>
+          <span className="mr-1 md:mr-0 md:mb-1">
+            {borrowAPRTotal ? (borrowAPRTotal > 0 ? '+' : '') : ''}
+            {borrowAPRTotal
+              ? borrowAPRTotal.toLocaleString('en-US', {
+                  maximumFractionDigits: 2
+                })
+              : '-'}
+            %
+          </span>
+          {multipliers[dropdownSelectedChain][selectedPoolId][asset]?.borrow
+            ?.flywheel && (
+            <span
+              className={`text-white bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
+            >
+              + REWARDS <i className="popover-hint">i</i>
+            </span>
+          )}
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] px-3 ml-1 md:ml-0 text-center`}
           >
@@ -414,154 +449,15 @@ const PoolRows = ({
             />
           </a>
 
-          <div
-            className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
-          >
-            Base APR: {borrowAPR}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow && (
-              <>
-                {/* {(asset.toLowerCase() === 'usdc' ||
-                  asset.toLowerCase() === 'weth' ||
-                  asset.toLowerCase() === 'ezeth') && (
-                  <a
-                    href="https://jumper.exchange/superfest/"
-                    className="flex pr-2 pt-4"
-                  >
-                    <img
-                      alt=""
-                      className="size-4 rounded mr-1"
-                      src="/img/logo/superOP.png"
-                    />{' '}
-                    + OP SuperFest rewards
-                  </a>
-                )} */}
-                <div className="flex pt-4 ">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/img/ionic-sq.png"
-                  />{' '}
-                  +{' '}
-                  {
-                    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                      asset
-                    ]?.borrow?.ionic
-                  }
-                  x Ionic Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/images/turtle-ionic.png"
-                  />{' '}
-                  + Turtle Ionic Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 rounded mr-1"
-                    src="/images/turtle-ionic.png"
-                  />{' '}
-                  + Turtle Ionic Points
-                </div>
-
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.mode && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.mode
-                      }
-                      x Mode Points
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-mode.png"
-                      />{' '}
-                      + Turtle Mode Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.etherfi && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/etherfi.png"
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.etherfi
-                      }
-                      x ether.fi Points
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-etherfi.png"
-                      />{' '}
-                      + Turtle ether.fi Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.kelp && (
-                  <>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/kelpmiles.png"
-                      />{' '}
-                      +{' '}
-                      {
-                        multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
-                          asset
-                        ]?.borrow?.kelp
-                      }
-                      x Kelp Miles
-                    </div>
-                    <div className="flex">
-                      <img
-                        alt=""
-                        className="size-4 mr-1"
-                        src="/images/turtle-renzo.png"
-                      />{' '}
-                      + Turtle Kelp Points
-                    </div>
-                  </>
-                )}
-                {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.eigenlayer && (
-                  <div className="flex">
-                    <img
-                      alt=""
-                      className="size-4 mr-1"
-                      src="/images/eigen.png"
-                    />{' '}
-                    + EigenLayer Points
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+          <BorrowPopover
+            asset={asset}
+            borrowAPR={borrowAPR}
+            rewardsAPR={rewardsAPR}
+            dropdownSelectedChain={dropdownSelectedChain}
+            selectedPoolId={selectedPoolId}
+            cToken={cTokenAddress}
+            pool={comptrollerAddress}
+          />
         </div>
       </h3>
       <h3
@@ -621,6 +517,272 @@ const PoolRows = ({
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
+  [base.id]: {
+    '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION'
+  }
+};
+
+type RewardsProps = {
+  cToken: Address;
+  pool: Address;
+  poolChainId: number;
+};
+const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data: rewardsData } = useAssetClaimableRewards(
+    cToken,
+    pool,
+    poolChainId
+  );
+  const chainId = useChainId();
+  const sdk = useSdk(poolChainId);
+
+  const claimRewards = async () => {
+    try {
+      const result = await handleSwitchOriginChain(poolChainId, chainId);
+      if (result) {
+        setIsLoading(true);
+        const tx = await sdk?.claimRewardsForMarket(
+          cToken,
+          rewardsData?.map((r) => r.flywheel!) ?? []
+        );
+        setIsLoading(false);
+        console.warn('claim tx: ', tx);
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.warn(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const totalRewards =
+    rewardsData?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
+
+  return (
+    <div className="pb-4">
+      {rewardsData?.map((rewards, index) => (
+        <div
+          className="flex"
+          key={index}
+        >
+          <img
+            alt=""
+            className="size-4 rounded mr-1"
+            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken].toLowerCase()}.png`}
+          />{' '}
+          +{' '}
+          {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
+            maximumFractionDigits: 1
+          })}{' '}
+          {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+        </div>
+      ))}
+      {totalRewards > 0n && (
+        <div className="flex justify-center pt-1">
+          <button
+            className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+            onClick={claimRewards}
+          >
+            <ResultHandler
+              isLoading={isLoading}
+              height="20"
+              width="20"
+              color={'#000000'}
+            >
+              Claim Rewards
+            </ResultHandler>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+type BorrowPopoverProps = {
+  dropdownSelectedChain: number;
+  borrowAPR?: number;
+  rewardsAPR?: number;
+  selectedPoolId: string;
+  asset: string;
+  cToken: Address;
+  pool: Address;
+};
+const BorrowPopover = ({
+  dropdownSelectedChain,
+  borrowAPR,
+  rewardsAPR,
+  selectedPoolId,
+  asset,
+  cToken,
+  pool
+}: BorrowPopoverProps) => {
+  return (
+    <div
+      className={`popover absolute min-w-[175px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+    >
+      <div className="">
+        Base APR: {borrowAPR ? (borrowAPR > 0 ? '-' : '') : ''}
+        {borrowAPR
+          ? borrowAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : '-'}
+        %
+      </div>
+      <div className="pb-4">
+        Rewards APR: {rewardsAPR ? (rewardsAPR > 0 ? '+' : '') : ''}
+        {rewardsAPR
+          ? rewardsAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : '-'}
+        %
+      </div>
+      {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+        ?.borrow && (
+        <>
+          {/* {(asset.toLowerCase() === 'usdc' ||
+          asset.toLowerCase() === 'weth' ||
+          asset.toLowerCase() === 'ezeth') && (
+          <a
+            href="https://jumper.exchange/superfest/"
+            className="flex pr-2 pt-4"
+          >
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/img/logo/superOP.png"
+            />{' '}
+            + OP SuperFest rewards
+          </a>
+        )} */}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.flywheel && (
+            <Rewards
+              cToken={cToken}
+              pool={pool}
+              poolChainId={dropdownSelectedChain}
+            />
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.ionic > 0 && (
+            <div className="flex ">
+              <img
+                alt=""
+                className="size-4 rounded mr-1"
+                src="/img/ionic-sq.png"
+              />{' '}
+              +{' '}
+              {
+                multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                  ?.borrow?.ionic
+              }
+              x Ionic Points
+            </div>
+          )}
+          <div className="flex">
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/images/turtle-ionic.png"
+            />{' '}
+            + Turtle Ionic Points
+          </div>
+
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.mode && (
+            <>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzM4OTZfMzU4MDcpIj4KPHBhdGggZD0iTTEyLjIzNTYgMC44MDAwNDlIMy43NjQ0NkwwLjgwMDA0OSAzLjc2NDQ1VjEyLjIzNTZMMy43NjQ0NiAxNS4ySDEyLjIzNTZMMTUuMiAxMi4yMzU2VjMuNzY0NDVMMTIuMjM1NiAwLjgwMDA0OVpNMTIuMzM3NyAxMS44Mzc0SDEwLjY0NjJWOC4wMTE5NkwxMS4zMjM1IDUuODMwMzVMMTAuODQzNiA1LjY2MDE4TDguNjQ4NDEgMTEuODM3NEg3LjM2MTkxTDUuMTY2NjggNS42NjAxOEw0LjY4Njc5IDUuODMwMzVMNS4zNjQwOCA4LjAxMTk2VjExLjgzNzRIMy42NzI1N1Y0LjE2MjY2SDYuMTkxMTJMNy43NTMzIDguNTU2NTFWOS44NDY0Mkg4LjI2MzgyVjguNTU2NTFMOS44MjYgNC4xNjI2NkgxMi4zNDQ1VjExLjgzNzRIMTIuMzM3N1oiIGZpbGw9IiNERkZFMDAiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zODk2XzM1ODA3Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="
+                />{' '}
+                +{' '}
+                {
+                  multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.mode
+                }
+                x Mode Points
+              </div>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/turtle-mode.png"
+                />{' '}
+                + Turtle Mode Points
+              </div>
+            </>
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.etherfi && (
+            <>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/etherfi.png"
+                />{' '}
+                +{' '}
+                {
+                  multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.etherfi
+                }
+                x ether.fi Points
+              </div>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/turtle-etherfi.png"
+                />{' '}
+                + Turtle ether.fi Points
+              </div>
+            </>
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.kelp && (
+            <>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/kelpmiles.png"
+                />{' '}
+                +{' '}
+                {
+                  multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.kelp
+                }
+                x Kelp Miles
+              </div>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 mr-1"
+                  src="/images/turtle-renzo.png"
+                />{' '}
+                + Turtle Kelp Points
+              </div>
+            </>
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.eigenlayer && (
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 mr-1"
+                src="/images/eigen.png"
+              />{' '}
+              + EigenLayer Points
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

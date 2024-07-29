@@ -10,6 +10,7 @@ export type Multipliers = {
   kelp?: number;
   mode?: number;
   renzo?: number;
+  flywheel?: boolean;
 };
 
 export const multipliers: Record<
@@ -21,9 +22,9 @@ export const multipliers: Record<
       {
         borrow?: Multipliers;
         decimals?: number;
-        market: string;
+        market?: string;
         multiplier?: number;
-        supply: Multipliers;
+        supply?: Multipliers;
       }
     >
   >
@@ -201,6 +202,8 @@ export const multipliers: Record<
   },
   [base.id]: {
     '0': {
+      eUSD: { borrow: { flywheel: true, ionic: 0 } },
+      bsdETH: { borrow: { flywheel: true, ionic: 0 } },
       AERO: {
         borrow: {
           ionic: 3

@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatEther, formatUnits } from 'viem';
+import { type Address, formatEther, formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -24,6 +24,7 @@ import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
+import { useRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
@@ -64,6 +65,7 @@ export default function Market() {
     () => poolData?.assets,
     [poolData]
   );
+
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
@@ -92,6 +94,11 @@ export default function Market() {
       setOpen(false);
     }
   };
+
+  const { data: rewards } = useRewards({
+    chainId: dropdownSelectedChain,
+    poolId: selectedPool
+  });
 
   // const networkOptionstest = [
   //   {
@@ -326,16 +333,12 @@ export default function Market() {
                   .map((val: MarketData, idx: number) => (
                     <PoolRows
                       asset={val.underlyingSymbol}
-                      borrowAPR={`${
-                        getSdk(Number(chain))
-                          ?.ratePerBlockToAPY(
-                            val?.borrowRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(Number(chain))
-                          )
-                          .toFixed(2) ?? '-'
-                      }%`}
+                      borrowAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
+                        val?.borrowRatePerBlock ?? 0n,
+                        getBlockTimePerMinuteByChainId(Number(chain))
+                      )}
                       borrowBalance={`${
-                        val.borrowBalanceNative
+                        typeof val.borrowBalance === 'bigint'
                           ? parseFloat(
                               formatUnits(
                                 val.borrowBalance,
@@ -356,7 +359,9 @@ export default function Market() {
                         100
                       }
                       cTokenAddress={val.cToken}
-                      comptrollerAddress={poolData?.comptroller || ''}
+                      comptrollerAddress={
+                        poolData?.comptroller || ('' as Address)
+                      }
                       dropdownSelectedChain={dropdownSelectedChain}
                       key={idx}
                       logo={sendIMG(selectedPool, chain, val.underlyingSymbol)}
@@ -365,6 +370,7 @@ export default function Market() {
                       }
                       membership={val?.membership ?? false}
                       pool={selectedPool}
+                      rewards={rewards?.[val.cToken]}
                       selectedChain={chainId}
                       selectedMarketData={selectedMarketData}
                       selectedPoolId={selectedPool}
@@ -380,7 +386,7 @@ export default function Market() {
                           .toFixed(2) ?? '-'
                       }%`}
                       supplyBalance={`${
-                        val.supplyBalanceNative
+                        typeof val.supplyBalance === 'bigint'
                           ? parseFloat(
                               formatUnits(
                                 val.supplyBalance,
@@ -405,7 +411,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '-'
+                          : '0'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalBorrowFiat.toLocaleString('en-US', {
@@ -421,7 +427,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '-'
+                          : '0'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalSupplyFiat.toLocaleString('en-US', {
