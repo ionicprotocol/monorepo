@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 import { formatEther, type Address } from 'viem';
 import { base } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
@@ -456,7 +457,6 @@ const PoolRows = ({
             selectedPoolId={selectedPoolId}
             cToken={cTokenAddress}
             pool={comptrollerAddress}
-            poolChainId={selectedChain}
           />
         </div>
       </h3>
@@ -539,17 +539,21 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
     pool,
     poolChainId
   );
+  const chainId = useChainId();
   const sdk = useSdk(poolChainId);
 
   const claimRewards = async () => {
     try {
-      setIsLoading(true);
-      const tx = await sdk?.claimRewardsForMarket(
-        pool,
-        rewardsData?.map((r) => r.flywheel!) ?? []
-      );
-      setIsLoading(false);
-      console.warn('claim tx: ', tx);
+      const result = await handleSwitchOriginChain(poolChainId, chainId);
+      if (result) {
+        setIsLoading(true);
+        const tx = await sdk?.claimRewardsForMarket(
+          pool,
+          rewardsData?.map((r) => r.flywheel!) ?? []
+        );
+        setIsLoading(false);
+        console.warn('claim tx: ', tx);
+      }
     } catch (err) {
       setIsLoading(false);
       console.warn(err);
@@ -557,6 +561,9 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
       setIsLoading(false);
     }
   };
+
+  const totalRewards =
+    rewardsData?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   return (
     <div className="pb-4">
@@ -577,21 +584,23 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
           {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
         </div>
       ))}
-      <div className="flex justify-center pt-1">
-        <button
-          className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
-          onClick={claimRewards}
-        >
-          <ResultHandler
-            isLoading={isLoading}
-            height="20"
-            width="20"
-            color={'#000000'}
+      {totalRewards > 0n && (
+        <div className="flex justify-center pt-1">
+          <button
+            className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+            onClick={claimRewards}
           >
-            Claim Rewards
-          </ResultHandler>
-        </button>
-      </div>
+            <ResultHandler
+              isLoading={isLoading}
+              height="20"
+              width="20"
+              color={'#000000'}
+            >
+              Claim Rewards
+            </ResultHandler>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -604,7 +613,6 @@ type BorrowPopoverProps = {
   asset: string;
   cToken: Address;
   pool: Address;
-  poolChainId: number;
 };
 const BorrowPopover = ({
   dropdownSelectedChain,
@@ -613,12 +621,11 @@ const BorrowPopover = ({
   selectedPoolId,
   asset,
   cToken,
-  pool,
-  poolChainId
+  pool
 }: BorrowPopoverProps) => {
   return (
     <div
-      className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+      className={`popover absolute min-w-[175px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
     >
       <div className="">
         Base APR: {borrowAPR ? (borrowAPR > 0 ? '-' : '') : ''}
@@ -657,7 +664,7 @@ const BorrowPopover = ({
             <Rewards
               cToken={cToken}
               pool={pool}
-              poolChainId={poolChainId}
+              poolChainId={dropdownSelectedChain}
             />
           )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
