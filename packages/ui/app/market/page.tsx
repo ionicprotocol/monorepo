@@ -26,6 +26,7 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
+import { useRewards } from '@ui/hooks/useRewards';
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -87,6 +88,11 @@ export default function Market() {
       setOpen(false);
     }
   };
+
+  const { data: rewards } = useRewards({
+    chainId: dropdownSelectedChain,
+    poolId: selectedPool
+  });
 
   // const networkOptionstest = [
   //   {
@@ -306,16 +312,12 @@ export default function Market() {
                   .map((val: MarketData, idx: number) => (
                     <PoolRows
                       asset={val.underlyingSymbol}
-                      borrowAPR={`${
-                        getSdk(Number(chain))
-                          ?.ratePerBlockToAPY(
-                            val?.borrowRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(Number(chain))
-                          )
-                          .toFixed(2) ?? '-'
-                      }%`}
+                      borrowAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
+                        val?.borrowRatePerBlock ?? 0n,
+                        getBlockTimePerMinuteByChainId(Number(chain))
+                      )}
                       borrowBalance={`${
-                        val.borrowBalanceNative
+                        typeof val.borrowBalance === 'bigint'
                           ? parseFloat(
                               formatUnits(
                                 val.borrowBalance,
@@ -347,6 +349,7 @@ export default function Market() {
                       }
                       membership={val?.membership ?? false}
                       pool={selectedPool}
+                      rewards={rewards?.[val.cToken]}
                       selectedChain={chainId}
                       selectedMarketData={selectedMarketData}
                       selectedPoolId={selectedPool}
@@ -362,7 +365,7 @@ export default function Market() {
                           .toFixed(2) ?? '-'
                       }%`}
                       supplyBalance={`${
-                        val.supplyBalanceNative
+                        typeof val.supplyBalance === 'bigint'
                           ? parseFloat(
                               formatUnits(
                                 val.supplyBalance,
@@ -387,7 +390,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '-'
+                          : '0'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalBorrowFiat.toLocaleString('en-US', {
@@ -403,7 +406,7 @@ export default function Market() {
                             ).toLocaleString('en-US', {
                               maximumFractionDigits: 2
                             })
-                          : '-'
+                          : '0'
                       } ${
                         val.underlyingSymbol
                       } / $${val.totalSupplyFiat.toLocaleString('en-US', {

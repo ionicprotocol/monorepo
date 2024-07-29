@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { type Reward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
@@ -24,7 +25,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IRows {
   asset: string;
-  borrowAPR: string;
+  borrowAPR?: number;
   borrowBalance: string;
   chain: string;
   collateralFactor: number;
@@ -37,6 +38,7 @@ interface IRows {
   membership: boolean;
   pool: string;
   selectedChain: number;
+  rewards?: Reward[];
   selectedMarketData: MarketData | undefined;
   selectedPoolId: string;
   selectedSymbol: string;
@@ -68,11 +70,16 @@ const PoolRows = ({
   setPopupMode,
   selectedChain,
   selectedPoolId,
-  comptrollerAddress
+  comptrollerAddress,
+  rewards
 }: IRows) => {
+  console.log('poolrows rewards: ', rewards);
   const { address } = useMultiIonic();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+  const rewardsAPR =
+    rewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0;
+  const borrowAPRTotal = borrowAPR ? 0 - borrowAPR + rewardsAPR : undefined;
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -94,7 +101,7 @@ const PoolRows = ({
           pathname: `/market/details/${asset}`,
           query: {
             availableAPR: parseInt(supplyAPR),
-            borrowAPR: parseInt(borrowAPR),
+            borrowAPR: borrowAPR ? borrowAPR : 0,
             chain: chain,
             collateralAPR: collateralFactor,
             comptrollerAddress,
@@ -166,7 +173,7 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
-          <span className={`mr-1 md:mr-0`}>{supplyAPR}</span>
+          <span className={`mr-1 md:mr-0`}>+{supplyAPR}</span>
           {selectedPoolId === '0' &&
             querychain === '34443' &&
             (asset.toLowerCase() === 'usdc' ||
@@ -225,7 +232,7 @@ const PoolRows = ({
           <div
             className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
           >
-            Base APR: {supplyAPR}
+            Base APR: +{supplyAPR}
             {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
               ?.supply?.ionic && (
               <>
@@ -406,7 +413,15 @@ const PoolRows = ({
           BORROW APR:
         </span>
         <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
-          <span className="mr-1 md:mr-0 md:mb-1">{borrowAPR}</span>
+          <span className="mr-1 md:mr-0 md:mb-1">
+            {borrowAPRTotal ? (borrowAPRTotal > 0 ? '+' : '') : ''}
+            {borrowAPRTotal
+              ? borrowAPRTotal.toLocaleString('en-US', {
+                  maximumFractionDigits: 2
+                })
+              : '-'}
+            %
+          </span>
           {multipliers[dropdownSelectedChain][selectedPoolId][asset]?.borrow
             ?.flywheel && (
             <span
@@ -436,6 +451,7 @@ const PoolRows = ({
           <BorrowPopover
             asset={asset}
             borrowAPR={borrowAPR}
+            rewardsAPR={rewardsAPR}
             dropdownSelectedChain={dropdownSelectedChain}
             selectedPoolId={selectedPoolId}
             cToken={cTokenAddress}
@@ -565,7 +581,8 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
 
 type BorrowPopoverProps = {
   dropdownSelectedChain: number;
-  borrowAPR: string;
+  borrowAPR?: number;
+  rewardsAPR?: number;
   selectedPoolId: string;
   asset: string;
   cToken: Address;
@@ -575,6 +592,7 @@ type BorrowPopoverProps = {
 const BorrowPopover = ({
   dropdownSelectedChain,
   borrowAPR,
+  rewardsAPR,
   selectedPoolId,
   asset,
   cToken,
@@ -585,7 +603,20 @@ const BorrowPopover = ({
     <div
       className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
     >
-      <div className="pb-4">Base APR: {borrowAPR}</div>
+      <div className="">
+        Base APR: {borrowAPR ? (borrowAPR > 0 ? '-' : '') : ''}
+        {borrowAPR
+          ? borrowAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : '-'}
+        %
+      </div>
+      <div className="pb-4">
+        Rewards APR: {rewardsAPR ? (rewardsAPR > 0 ? '+' : '') : ''}
+        {rewardsAPR
+          ? rewardsAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : '-'}
+        %
+      </div>
       {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
         ?.borrow && (
         <>
