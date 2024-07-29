@@ -14,6 +14,7 @@ interface INetworkSelector {
   open: boolean;
   setOpen: any;
   nopool?: boolean;
+  enabledChains?: number[];
 }
 
 export default function NetworkSelector({
@@ -21,7 +22,8 @@ export default function NetworkSelector({
   setOpen,
   open,
   newRef,
-  nopool = false
+  nopool = false,
+  enabledChains
 }: INetworkSelector) {
   const pathname = usePathname();
   const setDropChain = useStore((state) => state.setDropChain);
@@ -55,23 +57,27 @@ export default function NetworkSelector({
             open ? 'block' : 'hidden transition-all  delay-1000'
           } top-full w-full  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md py-2 border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-2 `}
         >
-          {Object.entries(pools).map(([chainId, network], idx: number) => (
-            <Link
-              className={`flex justify-between items-center p-2 mb-1 ${network.text} rounded-md ${network.bg}`}
-              href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
-              key={idx}
-              onClick={() => setDropChain(chainId)}
-            >
-              {network.name}{' '}
-              {dropdownSelectedChain === +chainId && (
-                <img
-                  alt="checkmark--v1"
-                  className={`w-4 h-4 stroke-lime`}
-                  src="https://img.icons8.com/ios-filled/50/000000/checkmark--v1.png"
-                />
-              )}
-            </Link>
-          ))}
+          {Object.entries(pools)
+            .filter(([chainId]) =>
+              enabledChains ? enabledChains?.includes(+chainId) : true
+            )
+            .map(([chainId, network], idx: number) => (
+              <Link
+                className={`flex justify-between items-center p-2 mb-1 ${network.text} rounded-md ${network.bg}`}
+                href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
+                key={idx}
+                onClick={() => setDropChain(chainId)}
+              >
+                {network.name}{' '}
+                {dropdownSelectedChain === +chainId && (
+                  <img
+                    alt="checkmark--v1"
+                    className={`w-4 h-4 stroke-lime`}
+                    src="https://img.icons8.com/ios-filled/50/000000/checkmark--v1.png"
+                  />
+                )}
+              </Link>
+            ))}
         </ul>
       </div>
     </div>
