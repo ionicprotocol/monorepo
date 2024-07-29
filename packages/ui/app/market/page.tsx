@@ -4,6 +4,7 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -28,11 +29,16 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
 
+const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
+  ssr: false
+});
+
 export default function Market() {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const pool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
     mode.id
   );
@@ -222,28 +228,43 @@ export default function Market() {
             </div>
           </ResultHandler>
 
-          <button
-            className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
-            onClick={() => setSwapOpen(true)}
-          >
-            {'Wrap ETH '}
+          <div className="w-full flex flex-row gap-x-2">
+            <button
+              className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+              onClick={() => setSwapOpen(true)}
+            >
+              {'Wrap ETH '}
 
-            <img
-              alt=""
-              className="inline-block"
-              height="20"
-              src="/img/symbols/32/color/eth.png"
-              width="20"
+              <img
+                alt=""
+                className="inline-block"
+                height="20"
+                src="/img/symbols/32/color/eth.png"
+                width="20"
+              />
+              <span>{' -> '}</span>
+              <img
+                alt=""
+                className="inline-block"
+                height="20"
+                src="/img/symbols/32/color/weth.png"
+                width="20"
+              />
+            </button>
+
+            <button
+              className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+              onClick={() => setSwapWidgetOpen(true)}
+            >
+              {'Swap Assets'}
+            </button>
+
+            <SwapWidget
+              close={() => setSwapWidgetOpen(false)}
+              open={swapWidgetOpen}
+              chain={+chain}
             />
-            <span>{' -> '}</span>
-            <img
-              alt=""
-              className="inline-block"
-              height="20"
-              src="/img/symbols/32/color/weth.png"
-              width="20"
-            />
-          </button>
+          </div>
         </div>
         <div
           className={`bg-grayone w-full lg:px-[1%] xl:px-[3%] mt-3 rounded-xl pt-3 pb-7`}
