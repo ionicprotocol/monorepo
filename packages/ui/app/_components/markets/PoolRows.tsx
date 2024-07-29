@@ -3,13 +3,14 @@
 import { type Reward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import type { Dispatch, SetStateAction } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { formatEther, type Address } from 'viem';
 import { base } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
+import ResultHandler from '../ResultHandler';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -532,6 +533,7 @@ type RewardsProps = {
   poolChainId: number;
 };
 const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: rewardsData } = useAssetClaimableRewards(
     cToken,
     pool,
@@ -540,11 +542,20 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
   const sdk = useSdk(poolChainId);
 
   const claimRewards = async () => {
-    const tx = await sdk?.claimRewardsForMarket(
-      pool,
-      rewardsData?.map((r) => r.flywheel!) ?? []
-    );
-    console.warn('claim tx: ', tx);
+    try {
+      setIsLoading(true);
+      const tx = await sdk?.claimRewardsForMarket(
+        pool,
+        rewardsData?.map((r) => r.flywheel!) ?? []
+      );
+      setIsLoading(false);
+      console.warn('claim tx: ', tx);
+    } catch (err) {
+      setIsLoading(false);
+      console.warn(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -566,12 +577,19 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
           {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
         </div>
       ))}
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center pt-1">
         <button
-          className={`rounded-md bg-accent text-black py-1.5 px-1 uppercase truncate `}
+          className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
           onClick={claimRewards}
         >
-          Claim Rewards
+          <ResultHandler
+            isLoading={isLoading}
+            height="20"
+            width="20"
+            color={'#000000'}
+          >
+            Claim Rewards
+          </ResultHandler>
         </button>
       </div>
     </div>
