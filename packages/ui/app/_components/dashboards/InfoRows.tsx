@@ -62,10 +62,12 @@ const InfoRows = ({
       >
         <img
           alt={asset}
-          className="h-7"
+          className="w-10 md:w-7"
           src={logo}
         />
-        <h3 className={` `}>{getAssetName(asset, selectedChain)}</h3>
+        <h3 className={`  text-lg md:text-sm  `}>
+          {getAssetName(asset, selectedChain)}
+        </h3>
       </div>
       <h3
         className={` flex justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
