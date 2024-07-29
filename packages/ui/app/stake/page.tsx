@@ -509,7 +509,7 @@ export default function Stake() {
             </div>
 
             <button
-              className={` py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={` py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
@@ -595,7 +595,7 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -616,7 +616,7 @@ export default function Stake() {
                     <img
                       alt="lock--v1"
                       className={`w-4 h-4 inline-block mx-2`}
-                      src="https://img.icons8.com/ios/50/lock--v1.png"
+                      src={`https://img.icons8.com/${+chain === mode.id ? '000000' : 'ffffff'}/ios/50/lock--v1.png`}
                     />
                     Provide Liquidity
                   </>
@@ -636,7 +636,7 @@ export default function Stake() {
               fetchOwn={true}
             /> */}
             <button
-              className={`my-3 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setRewardPopup(true)}
             >
               Claim Rewards
@@ -683,7 +683,7 @@ export default function Stake() {
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
