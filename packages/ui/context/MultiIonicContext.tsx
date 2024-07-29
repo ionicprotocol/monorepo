@@ -84,6 +84,7 @@ export const MultiIonicProvider = (
       const _walletClient =
         chain.id === walletClient?.chain.id ? walletClient : undefined;
       const client = createPublicClient({
+        batch: { multicall: true },
         chain,
         transport: fallback(
           config.specificParams.metadata.rpcUrls.default.http.map((url) =>

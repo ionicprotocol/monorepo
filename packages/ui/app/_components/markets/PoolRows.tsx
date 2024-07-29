@@ -548,7 +548,7 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
       if (result) {
         setIsLoading(true);
         const tx = await sdk?.claimRewardsForMarket(
-          pool,
+          cToken,
           rewardsData?.map((r) => r.flywheel!) ?? []
         );
         setIsLoading(false);
