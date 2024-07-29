@@ -23,10 +23,10 @@ import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
+import { useRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
-import { useRewards } from '@ui/hooks/useRewards';
 
 export default function Market() {
   const searchParams = useSearchParams();

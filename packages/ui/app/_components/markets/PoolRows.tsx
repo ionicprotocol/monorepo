@@ -73,7 +73,6 @@ const PoolRows = ({
   comptrollerAddress,
   rewards
 }: IRows) => {
-  console.log('poolrows rewards: ', rewards);
   const { address } = useMultiIonic();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
