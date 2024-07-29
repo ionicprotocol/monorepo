@@ -607,7 +607,7 @@ export default function Dashboard() {
               {suppliedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden lg:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden xl:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>SUPPLY ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
