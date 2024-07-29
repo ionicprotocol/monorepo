@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-import { base, mode } from 'viem/chains';
+import { base } from 'viem/chains';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
@@ -607,11 +607,12 @@ export default function Dashboard() {
               {suppliedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden xl:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>SUPPLY ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
                     <h3 className={` `}>SUPPLY APR</h3>
+                    <h3 className={` `}>REWARDS</h3>
                   </div>
 
                   {suppliedAssets.map((asset) => (
@@ -646,11 +647,16 @@ export default function Dashboard() {
                           ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
                           : ''
                       }%`}
+                      cToken={asset.cToken}
                       key={`supply-row-${asset.underlyingSymbol}`}
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.SUPPLY}
-                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
+                      comptrollerAddress={
+                        marketData?.comptroller ?? ('' as Address)
+                      }
+                      pool={pool}
+                      selectedChain={+chain}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
@@ -682,11 +688,12 @@ export default function Dashboard() {
               {borrowedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>BORROW ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
                     <h3 className={` `}>BORROW APR</h3>
+                    <h3 className={` `}>REWARDS</h3>
                   </div>
 
                   {borrowedAssets.map((asset) => (
@@ -721,11 +728,16 @@ export default function Dashboard() {
                           ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
                           : ''
                       }%`}
+                      cToken={asset.cToken}
+                      comptrollerAddress={
+                        marketData?.comptroller ?? ('' as Address)
+                      }
+                      pool={pool}
                       key={`supply-row-${asset.underlyingSymbol}`}
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
-                      selectedChain={selectedTab === 'BASE' ? base.id : mode.id}
+                      selectedChain={+chain}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
