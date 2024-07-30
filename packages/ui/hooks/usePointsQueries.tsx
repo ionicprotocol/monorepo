@@ -108,7 +108,7 @@ export type QueryData = {
 
 const getSupplyQuery = (
   address: string | undefined,
-  ionMultiplier: number,
+  ionMultiplier: number | undefined,
   marketName: string,
   startDate: string,
   priceMultiplier: number = 1,
@@ -347,8 +347,8 @@ const usePointsForSupplyModeMain = () => {
             {
               query: getSupplyQuery(
                 address?.toLowerCase(),
-                asset.supply.ionic,
-                asset.market,
+                asset.supply!.ionic,
+                asset.market!,
                 SEASON_2_START_DATE,
                 asset.multiplier,
                 asset.decimals
@@ -392,7 +392,7 @@ const usePointsForBorrowModeMain = () => {
                 query: getBorrowQuery(
                   address?.toLowerCase(),
                   asset.borrow!.ionic,
-                  asset.market,
+                  asset.market!,
                   SEASON_2_START_DATE,
                   asset.multiplier,
                   asset.decimals
@@ -433,8 +433,8 @@ const usePointsForSupplyModeNative = () => {
             {
               query: getSupplyQuery(
                 address?.toLowerCase(),
-                asset.supply.ionic,
-                asset.market,
+                asset.supply!.ionic,
+                asset.market!,
                 SEASON_2_START_DATE,
                 asset.multiplier,
                 asset.decimals
@@ -478,7 +478,7 @@ const usePointsForBorrowModeNative = () => {
                 query: getBorrowQuery(
                   address?.toLowerCase(),
                   asset.borrow!.ionic,
-                  asset.market,
+                  asset.market!,
                   SEASON_2_START_DATE,
                   asset.multiplier,
                   asset.decimals
@@ -607,8 +607,8 @@ const usePointsForSupplyBaseMain = () => {
             {
               query: getSupplyQuery(
                 address?.toLowerCase(),
-                asset.supply.ionic,
-                asset.market,
+                asset.supply!.ionic,
+                asset.market!,
                 SEASON_2_BASE_START_DATE,
                 asset.multiplier,
                 asset.decimals
@@ -652,7 +652,7 @@ const usePointsForBorrowBaseMain = () => {
                 query: getBorrowQuery(
                   address?.toLowerCase(),
                   asset.borrow!.ionic,
-                  asset.market,
+                  asset.market!,
                   SEASON_2_BASE_START_DATE,
                   asset.multiplier,
                   asset.decimals

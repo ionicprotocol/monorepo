@@ -26,7 +26,7 @@
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "test:integration": "ts-node tests-integration/index.ts",
-    "test:foo": "ts-node tests-integration/foo.ts"
+    "test:rewards": "ts-node tests-integration/rewards-testing.ts"
   },
   "keywords": [],
   "author": "Ionic Protocol",

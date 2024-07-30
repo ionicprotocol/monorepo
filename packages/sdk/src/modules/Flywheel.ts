@@ -7,6 +7,7 @@ import { CreateContractsModule } from "./CreateContracts";
 export interface FlywheelClaimableRewards {
   rewardToken: Address;
   amount: bigint;
+  flywheel?: Address;
 }
 
 export type FlywheelMarketRewardsInfo = {
@@ -166,10 +167,10 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getFlywheelRewardsInfoForMarket(flywheelAddress: Address, marketAddress: Address) {
       const fwCoreInstance = this.createIonicFlywheel(flywheelAddress, this.publicClient);
       const fwRewardsAddress = await fwCoreInstance.read.flywheelRewards();
-      const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress, this.publicClient);
+      const fwRewardsInstance = this.createFlywheelDynamicRewards(fwRewardsAddress, this.publicClient);
       const [marketState, rewardsInfo] = await Promise.all([
         fwCoreInstance.read.marketState([marketAddress]),
-        fwRewardsInstance.read.rewardsInfo([marketAddress])
+        fwRewardsInstance.read.rewardsCycle([marketAddress])
       ]);
       return {
         enabled: marketState[1] > 0,
