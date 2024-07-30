@@ -203,7 +203,7 @@ const PoolRows = ({
                 </div>
               </a>
             )}
-          {multipliers[dropdownSelectedChain][selectedPoolId][asset]?.supply
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.flywheel && (
             <span
               className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
@@ -423,7 +423,7 @@ const PoolRows = ({
               : '-'}
             %
           </span>
-          {multipliers[dropdownSelectedChain][selectedPoolId][asset]?.borrow
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
             ?.flywheel && (
             <span
               className={`text-white bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
