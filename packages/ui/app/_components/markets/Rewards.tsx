@@ -2,20 +2,15 @@
 
 import { useState } from 'react';
 import { formatEther, type Address } from 'viem';
-import { base } from 'viem/chains';
+// import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
 
+import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-
-const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
-  [base.id]: {
-    '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION'
-  }
-};
 
 type RewardsProps = {
   cToken: Address;

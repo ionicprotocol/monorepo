@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { base } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
@@ -15,14 +16,15 @@ import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
-import { pools } from '@ui/constants/index';
+import { pools, REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -37,6 +39,7 @@ import {
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
@@ -56,16 +59,6 @@ export default function Dashboard() {
   const [selectedTab] = useState('');
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
   const pathname = usePathname();
-
-  // TODO: @shikhar360 - add UI for all rewards
-  const { data: rewards } = useAllClaimableRewards([+chain]);
-  console.log('rewards: ', rewards);
-
-  // // claim all rewards
-  // const sdk = useSdk(+chain);
-  // await sdk?.claimAllRewards();
-  // END TODO
-
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
@@ -560,6 +553,9 @@ export default function Dashboard() {
             Base Market
           </button>
         </div> */}
+        <div className={`w-[20%] mt-2 `}>
+          <ClaimAllBaseRewards chain={+chain} />
+        </div>
         <div className={`w-[20%]  `}>
           {/* <Dropdown
             chainId={chain as string}
@@ -601,6 +597,7 @@ export default function Dashboard() {
             );
           })}
         </div>
+
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
@@ -956,3 +953,74 @@ export default function Dashboard() {
     </>
   );
 }
+
+interface IClaimAllBaseRewards {
+  chain: number;
+}
+const ClaimAllBaseRewards = ({ chain }: IClaimAllBaseRewards) => {
+  const { data: rewards } = useAllClaimableRewards([+chain]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const sdk = useSdk(+chain);
+  const chainId = useChainId();
+  async function claimAll() {
+    try {
+      const result = await handleSwitchOriginChain(+chain, chainId);
+      if (!result) return;
+      setLoading(true);
+      await sdk?.claimAllRewards();
+      setLoading(false);
+    } catch (err) {
+      console.warn(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const totalRewards =
+    rewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
+
+  const getSymbol = (chain: number, token: string) =>
+    //@ts-ignore
+    REWARDS_TO_SYMBOL[chain][token];
+  return (
+    <div
+      className={` ${rewards ? '' : 'hidden'}  bg-grayone px-3 py-1 rounded-lg flex flex-col items-start justify-start`}
+    >
+      <span className={`text-white/60 text-xs mb-2`}> All Rewards </span>
+      {rewards?.map((reward, idx) => (
+        <div
+          key={idx}
+          className=" w-full flex items-center justify-between "
+        >
+          <div className={`text-white/80 text-sm flex`}>
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src={`/img/symbols/32/color/${getSymbol(+chain, reward.rewardToken)}.png`}
+            />{' '}
+            <span>{getSymbol(+chain, reward.rewardToken)}</span>
+          </div>
+          <span className={`text-accent text-sm`}>
+            {Number(formatEther(reward.amount)).toLocaleString('en-US', {
+              maximumFractionDigits: 1
+            })}
+          </span>
+        </div>
+      ))}
+      <button
+        className={`rounded-md bg-accent text-black disabled:bg-accent/50 py-0.5 px-3 uppercase truncate text-[11px] mx-auto mt-2 mb-1 font-semibold `}
+        onClick={claimAll}
+        disabled={loading && totalRewards > 0n}
+      >
+        <ResultHandler
+          isLoading={loading}
+          height="20"
+          width="20"
+          color={'#000000'}
+        >
+          Claim All Rewards
+        </ResultHandler>
+      </button>
+    </div>
+  );
+};
