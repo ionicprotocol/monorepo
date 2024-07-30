@@ -21,6 +21,7 @@ import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageR
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -55,6 +56,15 @@ export default function Dashboard() {
   const [selectedTab] = useState('');
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
   const pathname = usePathname();
+
+  // TODO: @shikhar360 - add UI for all rewards
+  const { data: rewards } = useAllClaimableRewards([+chain]);
+  console.log('rewards: ', rewards);
+
+  // // claim all rewards
+  // const sdk = useSdk(+chain);
+  // await sdk?.claimAllRewards();
+  // END TODO
 
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
