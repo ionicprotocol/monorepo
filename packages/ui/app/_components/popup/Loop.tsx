@@ -678,10 +678,11 @@ export default function Loop({
         amountAsBInt;
 
       if (!hasApprovedEnough) {
-        const tx = await token.write.approve([factory.address, amountAsBInt], {
-          account: currentSdk.walletClient!.account!.address,
-          chain: currentSdk.walletClient!.chain
-        });
+        const tx = await currentSdk.approve(
+          factory.address,
+          selectedCollateralAsset.underlyingToken,
+          amountAsBInt
+        );
 
         upsertTransactionStep({
           index: currentTransactionStep,

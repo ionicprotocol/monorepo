@@ -126,7 +126,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['USDC', 'USDT', 'WETH', 'WBTC']
+        assets: ['USDC', 'USDT', 'WETH', 'WBTC', 'tBTC', 'SOV']
       }
     ]
   }
