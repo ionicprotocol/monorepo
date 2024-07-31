@@ -575,7 +575,7 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
           <img
             alt=""
             className="size-4 rounded mr-1"
-            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken].toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
           />{' '}
           +{' '}
           {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
