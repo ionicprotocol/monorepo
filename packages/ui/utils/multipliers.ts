@@ -202,8 +202,14 @@ export const multipliers: Record<
   },
   [base.id]: {
     '0': {
-      eUSD: { borrow: { flywheel: true, ionic: 0 } },
-      bsdETH: { borrow: { flywheel: true, ionic: 0 } },
+      eUSD: {
+        borrow: { flywheel: true, ionic: 0 },
+        supply: { flywheel: true, ionic: 0 }
+      },
+      bsdETH: {
+        borrow: { flywheel: true, ionic: 0 },
+        supply: { flywheel: true, ionic: 0 }
+      },
       AERO: {
         borrow: {
           ionic: 3

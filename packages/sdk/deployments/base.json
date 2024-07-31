@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c"
     },
+    "AerodromePriceOracle": {
+      "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
+    },
     "AuthoritiesRegistry": {
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
@@ -21,19 +24,19 @@
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
     "CErc20Delegate": {
-      "address": "0x284bb7298F3d7B99CA105a468c4E696D11150E6E"
+      "address": "0x0afb29b4eed720173cA0b4940542cDB44014edCe"
     },
     "CErc20PluginDelegate": {
-      "address": "0xA7B9F9B18587A3854aE41C80a08291eca149bCB7"
+      "address": "0x51034947FF57342290b73539b1e52fc9fe79B284"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xb1d020336794CEdE46F644A6e2bC8Df5195aD1bB"
+      "address": "0x2860B30f9368a26219f5F33f76AE4943cD824bf6"
     },
     "CErc20RewardsDelegate": {
-      "address": "0xbEDA60c0ac487e3081e539c8074894AE64e282Ab"
+      "address": "0xAEC1259Ed88cde4dCdCf2cB33Dc1D97C89f8CC8c"
     },
     "CTokenFirstExtension": {
-      "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
+      "address": "0x69459f510dB7AcC93cBb2389095D0e8ad19E453a"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
@@ -68,8 +71,35 @@
     "GlobalPauser": {
       "address": "0x48F0F46F56C2Ca5def59fd673fF69495b7272Eb0"
     },
+    "IonicFlywheelBorrowBooster_ION": {
+      "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
+    },
+    "IonicFlywheelBorrow_Borrow_ION": {
+      "address": "0x327410E4D3A32EF37712e77fCB005e5327F082De"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_Implementation": {
+      "address": "0xB4c0522F595eA2B407FE3e3D55B36291cC2b2Ced"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_Proxy": {
+      "address": "0x327410E4D3A32EF37712e77fCB005e5327F082De"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_ION": {
+      "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
+    },
+    "IonicFlywheelDynamicRewards_RSR": {
+      "address": "0xCdfF6BA3613f37E719234A26775fF72BD937f22B"
+    },
     "IonicFlywheelLensRouter": {
       "address": "0x248ea91EF9CCf682a0d516Db148C079396581C53"
+    },
+    "IonicFlywheel_RSR": {
+      "address": "0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4"
+    },
+    "IonicFlywheel_RSR_Implementation": {
+      "address": "0x83e954E49201345563d3740f4D2A6930ce8d7dc1"
+    },
+    "IonicFlywheel_RSR_Proxy": {
+      "address": "0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4"
     },
     "IonicLiquidator": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
@@ -156,10 +186,10 @@
       "address": "0xBbDcA7858ac2417b06636F7BA35e7d9EA39402ea"
     },
     "SolidlySwapLiquidator": {
-      "address": "0x6f307eA8Bcc55A00e46822058a12B8317488E534"
+      "address": "0x88911E638f04b5d25242e8b587B3F8C8054B0d8F"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0xeC7D0330E86485474C13A2152Fa867ddd41Bb12B"
+      "address": "0x0cd073083129423799601587f1bD49Fe980f2D9C"
     }
   }
 }

@@ -99,6 +99,7 @@ export default function Market() {
     chainId: dropdownSelectedChain,
     poolId: selectedPool
   });
+  console.log('rewards: ', rewards);
 
   // const networkOptionstest = [
   //   {
@@ -377,14 +378,10 @@ export default function Market() {
                       selectedSymbol={selectedSymbol as string}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      supplyAPR={`${
-                        getSdk(Number(chain))
-                          ?.ratePerBlockToAPY(
-                            val?.supplyRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(Number(chain))
-                          )
-                          .toFixed(2) ?? '-'
-                      }%`}
+                      supplyAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
+                        val?.supplyRatePerBlock ?? 0n,
+                        getBlockTimePerMinuteByChainId(Number(chain))
+                      )}
                       supplyBalance={`${
                         typeof val.supplyBalance === 'bigint'
                           ? parseFloat(
