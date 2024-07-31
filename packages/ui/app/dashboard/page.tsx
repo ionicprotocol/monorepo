@@ -3,7 +3,7 @@
 
 import millify from 'millify';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { base } from 'viem/chains';
@@ -553,11 +553,12 @@ export default function Dashboard() {
             Base Market
           </button>
         </div> */}
-        <div className={`w-[20%] mt-2 `}>
-          <ClaimAllBaseRewards chain={+chain} />
-        </div>
-        <div className={`w-[20%]  `}>
-          {/* <Dropdown
+        <div
+          className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
+        >
+          <div className={`col-span-3 flex flex-col`}>
+            <div className={`w-[50%]  `}>
+              {/* <Dropdown
             chainId={chain as string}
             dropdownSelectedChain={+chain}
             newRef={newRef}
@@ -566,38 +567,44 @@ export default function Dashboard() {
             pool={pool || '0'}
             setOpen={setOpen}
           /> */}
-          <NetworkSelector
-            chainId={chain as string}
-            dropdownSelectedChain={+chain}
-            newRef={newRef}
-            open={open}
-            // options={networkOptionstest}
-            setOpen={setOpen}
-          />
+              <NetworkSelector
+                chainId={chain as string}
+                dropdownSelectedChain={+chain}
+                newRef={newRef}
+                open={open}
+                // options={networkOptionstest}
+                setOpen={setOpen}
+              />
+            </div>
+            <div className={`flex items-center justify-start w-max gap-2`}>
+              {pools[+chain].pools.map((poolx, idx) => {
+                return (
+                  <Link
+                    className={` cursor-pointer py-2 px-4 rounded-lg ${
+                      pool === poolx.id
+                        ? `border ${
+                            +chain == base.id
+                              ? 'border-blue-600'
+                              : 'border-lime'
+                          }`
+                        : 'border border-stone-700'
+                    }`}
+                    href={`${pathname}?chain=${chain}${
+                      poolx.id ? `&pool=${poolx.id}` : ''
+                    }`}
+                    key={idx}
+                    // onClick={() => setSelectedPool(pools[0].id)}
+                  >
+                    {poolx.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+          <div className={`w-full mt-2  col-span-5`}>
+            <ClaimAllBaseRewards chain={+chain} />
+          </div>
         </div>
-        <div className={`flex items-center justify-start w-max gap-2`}>
-          {pools[+chain].pools.map((poolx, idx) => {
-            return (
-              <Link
-                className={` cursor-pointer py-2 px-4 rounded-lg ${
-                  pool === poolx.id
-                    ? `border ${
-                        +chain == base.id ? 'border-blue-600' : 'border-lime'
-                      }`
-                    : 'border border-stone-700'
-                }`}
-                href={`${pathname}?chain=${chain}${
-                  poolx.id ? `&pool=${poolx.id}` : ''
-                }`}
-                key={idx}
-                // onClick={() => setSelectedPool(pools[0].id)}
-              >
-                {poolx.name}
-              </Link>
-            );
-          })}
-        </div>
-
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
@@ -975,52 +982,67 @@ const ClaimAllBaseRewards = ({ chain }: IClaimAllBaseRewards) => {
       setLoading(false);
     }
   }
-
+  // console.log(rewards);
   const totalRewards =
     rewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   const getSymbol = (chain: number, token: string) =>
     //@ts-ignore
     REWARDS_TO_SYMBOL[chain][token];
+
+  const router = useRouter();
+
+  const hrefTOStake = () => router.push('/stake');
   return (
     <div
-      className={` ${rewards ? '' : 'hidden'}  bg-grayone px-3 py-1 rounded-lg flex flex-col items-start justify-start`}
+      className={`  bg-grayone px-3 py-3 rounded-lg flex flex-col items-start justify-start`}
     >
-      <span className={`text-white/60 text-xs mb-2`}> All Rewards </span>
-      {rewards?.map((reward, idx) => (
-        <div
-          key={idx}
-          className=" w-full flex items-center justify-between "
-        >
-          <div className={`text-white/80 text-sm flex`}>
+      <div className={` mb-2 w-full grid grid-cols-3 items-center`}>
+        <p className="text-white/60 text-md">Emissions </p>
+        {rewards ? (
+          rewards?.map((reward, idx) => (
             <img
-              alt=""
-              className="size-4 rounded mr-1"
+              alt="icon"
+              key={idx}
+              className="size-6 rounded mr-1 col-start-3"
               src={`/img/symbols/32/color/${getSymbol(+chain, reward.rewardToken)}.png`}
-            />{' '}
+            />
+          ))
+        ) : (
+          <p className="text-white/60 text-xs col-start-3">No Emissions </p>
+        )}
+        {/* {rewards ? "" : } */}
+      </div>
+      <div className=" w-full grid grid-cols-3 ">
+        {rewards?.map((reward, idx) => (
+          <div
+            key={idx}
+            className={`text-white/80 text-sm flex gap-3 items-center justify-start `}
+          >
             <span>{getSymbol(+chain, reward.rewardToken)}</span>
+            <span className={`text-accent text-sm`}>
+              {Number(formatEther(reward.amount)).toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}
+            </span>
           </div>
-          <span className={`text-accent text-sm`}>
-            {Number(formatEther(reward.amount)).toLocaleString('en-US', {
-              maximumFractionDigits: 1
-            })}
-          </span>
-        </div>
-      ))}
-      <button
-        className={`rounded-md bg-accent text-black disabled:bg-accent/50 py-0.5 px-3 uppercase truncate text-[11px] mx-auto mt-2 mb-1 font-semibold `}
-        onClick={claimAll}
-        disabled={loading && totalRewards > 0n}
-      >
-        <ResultHandler
-          isLoading={loading}
-          height="20"
-          width="20"
-          color={'#000000'}
+        ))}
+
+        <button
+          className={`rounded-md bg-accent text-black disabled:bg-accent/50 py-0.5 px-3 uppercase truncate text-[11px]  font-semibold col-start-3 `}
+          onClick={totalRewards > 0n ? claimAll : hrefTOStake}
+          disabled={loading && totalRewards > 0n}
         >
-          Claim All Rewards
-        </ResultHandler>
-      </button>
+          <ResultHandler
+            isLoading={loading}
+            height="20"
+            width="20"
+            color={'#000000'}
+          >
+            {totalRewards > 0n ? 'Claim All Rewards' : 'Stake Rewards'}
+          </ResultHandler>
+        </button>
+      </div>
     </div>
   );
 };

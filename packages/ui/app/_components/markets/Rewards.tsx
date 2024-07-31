@@ -55,7 +55,7 @@ export default function Rewards({
     rewardsData?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   return (
-    <div className="pb-4 flex flex-col items-center justify-center">
+    <div className=" flex flex-col items-center justify-center">
       {rewardsData?.map((rewards, index) => (
         <div
           className="flex"
@@ -73,7 +73,7 @@ export default function Rewards({
           {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
         </div>
       ))}
-      {totalRewards > 0n && (
+      {totalRewards > 0n ? (
         <div className="flex justify-center pt-1">
           <button
             className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
@@ -89,6 +89,8 @@ export default function Rewards({
             </ResultHandler>
           </button>
         </div>
+      ) : (
+        <p className="text-white/60 text-xs text-center h-full">Claimed</p>
       )}
     </div>
   );
