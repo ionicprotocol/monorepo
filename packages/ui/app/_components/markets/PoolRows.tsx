@@ -523,7 +523,8 @@ const PoolRows = ({
 
 const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [base.id]: {
-    '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION'
+    '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
+    '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR'
   }
 };
 
@@ -575,7 +576,7 @@ const Rewards = ({ cToken, pool, poolChainId }: RewardsProps) => {
           <img
             alt=""
             className="size-4 rounded mr-1"
-            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken].toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
           />{' '}
           +{' '}
           {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
