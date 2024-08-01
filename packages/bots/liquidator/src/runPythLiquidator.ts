@@ -1,6 +1,6 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { BotType, ionicUniV3LiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
-import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
+import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http, erc20Abi } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
@@ -12,10 +12,8 @@ import { setUpSdk } from "./utils";
 
 // Ensure BigInt.prototype.toJSON is correctly implemented
 (BigInt.prototype as any).toJSON = function () {
-  return this.toString();
+    return this.toString();
 };
-
-
 
 // Function to calculate total token value in ETH
 (async function () {
@@ -36,29 +34,46 @@ import { setUpSdk } from "./utils";
     const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
     const mpo = ionicSdk.createMasterPriceOracle();
     const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
-    async function calculateTotalValueInEth(
-      tokenAddress: string,
-      tokenAmount: bigint
-    ): Promise<bigint> {
-      // Remove the '0x' prefix if it exists and format the address correctly
-      const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, "")}`;
-      console.log("Token address:", formattedTokenAddress);
-    
-      // Fetch the price of the token in ETH using Master Price Oracle
-      const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
-    
-      // Convert the price from the response to a BigInt
-      const priceInEthBigInt = BigInt(priceInETH.toString());
-    
-      // Calculate the total value in ETH (price per token * amount of tokens)
-      const totalValueInEth = priceInEthBigInt * tokenAmount / BigInt(1e18);
-    
-      console.log("Total value in ETH:", totalValueInEth);
-    
-      return totalValueInEth;
+
+    async function getTokenDecimals(
+        tokenAddress: string,
+        publicClient: ReturnType<typeof createPublicClient>
+    ): Promise<number> {
+        try {
+            const decimals = await publicClient.readContract({
+                abi: erc20Abi,
+                address: tokenAddress as `0x${string}`,
+                functionName: "decimals",
+            });
+            return Number(decimals);
+        } catch (error) {
+            console.error(`Failed to fetch decimals for token ${tokenAddress}:`, error);
+            throw error;
+        }
     }
-    
-  
+
+    async function calculateTotalValueInEth(
+        tokenAddress: string,
+        tokenAmount: bigint,
+    ): Promise<bigint> {
+        console.log("Token address:", tokenAddress);
+        const decimals = await getTokenDecimals(tokenAddress, publicClient);
+        // Fetch the price of the token in ETH using Master Price Oracle
+        const priceInETH = await mpo.read.price([tokenAddress as `0x${string}`]);
+
+        const priceInEthBigInt = BigInt(priceInETH.toString());
+
+        // Calculate the scaling factor (10 ** (18 - decimals))
+        const scalingFactor = BigInt(10 ** (18 - decimals));
+
+        // Calculate the total value in ETH
+        const totalValueInEth = (priceInEthBigInt * tokenAmount * scalingFactor) / BigInt(10 ** 18);
+
+        console.log("Total value in ETH:", totalValueInEth);
+
+        return totalValueInEth;
+    }
+
     logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
     const liquidator = new Liquidator(ionicSdk);
     const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
@@ -90,7 +105,7 @@ import { setUpSdk } from "./utils";
                     BigInt(liquidation.sellTokenAmount.toString())
                 );
                 const potentialProfit = totalBuyValueInEth - totalSellValueInEth;
-                console.log("PP", potentialProfit)
+                console.log("PP", potentialProfit);
 
                 logger.info(`Potential Profit in ETH: ${potentialProfit}`);
 
@@ -99,7 +114,7 @@ import { setUpSdk } from "./utils";
                 const expectedGasFee: bigint = gasPrice * BigInt(750000); // Use actual gas estimate if available
 
                 const minProfitAmountEth: bigint = expectedGasFee + BigInt(ionicSdk.chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
-                console.log("MP", minProfitAmountEth)
+                console.log("MP", minProfitAmountEth);
                 logger.info(`Min Profit Amount in ETH: ${minProfitAmountEth}`);
 
                 if (potentialProfit < minProfitAmountEth) {
