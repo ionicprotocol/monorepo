@@ -88,36 +88,44 @@ const PoolRows = ({
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
 
-  const supplyRewardsAPR =
-    rewards?.reduce(
-      (acc, reward) =>
-        acc +
-        (flywheelTypeMap[dropdownSelectedChain].supply.includes(
+  const supplyRewards = useMemo(
+    () =>
+      rewards?.filter((reward) =>
+        flywheelTypeMap[dropdownSelectedChain].supply.includes(
           (reward as FlywheelReward).flywheel
         )
-          ? reward.apy ?? 0
-          : 0),
-      0
-    ) ?? 0;
+      ),
+    [dropdownSelectedChain, rewards]
+  );
+  const totalSupplyRewardsAPR = useMemo(
+    () =>
+      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
+    [supplyRewards]
+  );
 
-  const borrowRewardsAPR =
-    rewards?.reduce(
-      (acc, reward) =>
-        acc +
-        (flywheelTypeMap[dropdownSelectedChain].borrow.includes(
+  const borrowRewards = useMemo(
+    () =>
+      rewards?.filter((reward) =>
+        flywheelTypeMap[dropdownSelectedChain].borrow.includes(
           (reward as FlywheelReward).flywheel
         )
-          ? reward.apy ?? 0
-          : 0),
-      0
-    ) ?? 0;
+      ),
+    [dropdownSelectedChain, rewards]
+  );
+  const totalBorrowRewardsAPR = useMemo(
+    () =>
+      borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
+    [borrowRewards]
+  );
 
   const borrowAPRTotal =
     typeof borrowAPR !== 'undefined'
-      ? 0 - borrowAPR + borrowRewardsAPR
+      ? 0 - borrowAPR + totalBorrowRewardsAPR
       : undefined;
   const supplyAPRTotal =
-    typeof supplyAPR !== 'undefined' ? supplyAPR + supplyRewardsAPR : undefined;
+    typeof supplyAPR !== 'undefined'
+      ? supplyAPR + totalSupplyRewardsAPR
+      : undefined;
 
   return (
     <div
@@ -277,7 +285,7 @@ const PoolRows = ({
           <SupplyPopover
             asset={asset}
             supplyAPR={supplyAPR}
-            rewardsAPR={supplyRewardsAPR}
+            rewards={supplyRewards}
             dropdownSelectedChain={dropdownSelectedChain}
             selectedPoolId={selectedPoolId}
             cToken={cTokenAddress}
@@ -328,11 +336,12 @@ const PoolRows = ({
           <BorrowPopover
             asset={asset}
             borrowAPR={borrowAPR}
-            rewardsAPR={borrowRewardsAPR}
+            rewardsAPR={totalBorrowRewardsAPR}
             dropdownSelectedChain={dropdownSelectedChain}
             selectedPoolId={selectedPoolId}
             cToken={cTokenAddress}
             pool={comptrollerAddress}
+            rewards={borrowRewards}
           />
         </div>
       </h3>
@@ -409,8 +418,15 @@ type RewardsProps = {
   pool: Address;
   poolChainId: number;
   type: 'borrow' | 'supply';
+  rewards?: FlywheelReward[];
 };
-const Rewards = ({ cToken, pool, poolChainId, type }: RewardsProps) => {
+const Rewards = ({
+  cToken,
+  pool,
+  poolChainId,
+  type,
+  rewards
+}: RewardsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: rewardsData } = useAssetClaimableRewards(
     cToken,
@@ -454,42 +470,53 @@ const Rewards = ({ cToken, pool, poolChainId, type }: RewardsProps) => {
     filteredRewards.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   return (
-    <div className="pb-4">
-      {filteredRewards.map((rewards, index) => (
-        <div
-          className="flex"
-          key={index}
-        >
-          <img
-            alt=""
-            className="size-4 rounded mr-1"
-            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
-          />{' '}
-          +{' '}
-          {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
-            maximumFractionDigits: 1
-          })}{' '}
-          {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+    <>
+      {rewards?.map((rewards, index) => (
+        <div key={index}>
+          {REWARDS_TO_SYMBOL[poolChainId]?.[rewards.token]} Rewards APR: +
+          {rewards.apy
+            ? rewards.apy.toLocaleString('en-US', { maximumFractionDigits: 2 })
+            : '-'}
+          %
         </div>
       ))}
-      {totalRewards > 0n && (
-        <div className="flex justify-center pt-1">
-          <button
-            className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
-            onClick={claimRewards}
+      <div className="py-4">
+        {filteredRewards.map((rewards, index) => (
+          <div
+            className="flex"
+            key={index}
           >
-            <ResultHandler
-              isLoading={isLoading}
-              height="20"
-              width="20"
-              color={'#000000'}
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
+            />{' '}
+            +{' '}
+            {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
+              maximumFractionDigits: 1
+            })}{' '}
+            {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+          </div>
+        ))}
+        {totalRewards > 0n && (
+          <div className="flex justify-center pt-1">
+            <button
+              className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+              onClick={claimRewards}
             >
-              Claim Rewards
-            </ResultHandler>
-          </button>
-        </div>
-      )}
-    </div>
+              <ResultHandler
+                isLoading={isLoading}
+                height="20"
+                width="20"
+                color={'#000000'}
+              >
+                Claim Rewards
+              </ResultHandler>
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
@@ -501,11 +528,12 @@ type BorrowPopoverProps = {
   asset: string;
   cToken: Address;
   pool: Address;
+  rewards?: FlywheelReward[];
 };
 const BorrowPopover = ({
   dropdownSelectedChain,
   borrowAPR,
-  rewardsAPR,
+  rewards,
   selectedPoolId,
   asset,
   cToken,
@@ -513,19 +541,12 @@ const BorrowPopover = ({
 }: BorrowPopoverProps) => {
   return (
     <div
-      className={`popover absolute min-w-[175px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+      className={`popover absolute min-w-[185px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
     >
       <div className="">
         Base APR: {borrowAPR ? (borrowAPR > 0 ? '-' : '') : ''}
         {borrowAPR
           ? borrowAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : '-'}
-        %
-      </div>
-      <div className="pb-4">
-        Rewards APR: {rewardsAPR ? (rewardsAPR > 0 ? '+' : '') : ''}
-        {rewardsAPR
-          ? rewardsAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
           : '-'}
         %
       </div>
@@ -554,6 +575,7 @@ const BorrowPopover = ({
               pool={pool}
               poolChainId={dropdownSelectedChain}
               type="borrow"
+              rewards={rewards}
             />
           )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
@@ -684,8 +706,8 @@ type SupplyPopoverProps = {
   dropdownSelectedChain: number;
   pool: Address;
   selectedPoolId: string;
-  rewardsAPR: number;
   supplyAPR?: number;
+  rewards?: FlywheelReward[];
 };
 
 const SupplyPopover = ({
@@ -694,25 +716,18 @@ const SupplyPopover = ({
   dropdownSelectedChain,
   pool,
   selectedPoolId,
-  rewardsAPR,
-  supplyAPR
+  supplyAPR,
+  rewards
 }: SupplyPopoverProps) => {
   return (
     <div
-      className={`popover absolute min-w-[170px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+      className={`popover absolute min-w-[185px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
     >
       Base APR: +
       {supplyAPR
         ? supplyAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
         : '-'}
       %
-      <div className="pb-4">
-        Rewards APR: {rewardsAPR ? (rewardsAPR > 0 ? '+' : '') : ''}
-        {rewardsAPR
-          ? rewardsAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : '-'}
-        %
-      </div>
       {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.flywheel && (
         <Rewards
@@ -720,6 +735,7 @@ const SupplyPopover = ({
           pool={pool}
           poolChainId={dropdownSelectedChain}
           type="supply"
+          rewards={rewards}
         />
       )}
       {selectedPoolId === '0' &&
