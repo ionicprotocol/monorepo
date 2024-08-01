@@ -4,7 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { Address } from 'viem';
 
 import { getAssetName } from '../../util/utils';
-import Rewards from '../markets/Rewards';
+import { Rewards } from '../markets/Rewards';
 import { PopupMode } from '../popup/page';
 
 import { multipliers } from '@ui/utils/multipliers';
@@ -89,8 +89,9 @@ const InfoRows = ({
       mode == InfoMode.BORROW ? (
         <Rewards
           cToken={cToken as `0x${string}`}
-          comptrollerAddress={comptrollerAddress}
+          pool={comptrollerAddress}
           poolChainId={selectedChain}
+          type="borrow"
         />
       ) : (
         <div />

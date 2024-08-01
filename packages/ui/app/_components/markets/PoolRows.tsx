@@ -3,8 +3,8 @@
 import { type FlywheelReward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { type Address } from 'viem';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { type Address } from 'viem';
 import { mode } from 'viem/chains';
 
 import { getAssetName } from '../../util/utils';
