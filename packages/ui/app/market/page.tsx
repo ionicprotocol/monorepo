@@ -109,7 +109,6 @@ export default function Market() {
     chainId: dropdownSelectedChain,
     poolId: selectedPool
   });
-  console.log('rewards: ', rewards);
 
   // const networkOptionstest = [
   //   {
