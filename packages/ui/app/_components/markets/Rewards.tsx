@@ -1,35 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { type FlywheelReward } from '@ionicprotocol/types';
+import { useMemo, useState } from 'react';
 import { formatEther, type Address } from 'viem';
 // import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
 
-import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
+import { FLYWHEEL_TYPE_MAP, REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 type RewardsProps = {
   cToken: Address;
-  comptrollerAddress: Address;
+  pool: Address;
   poolChainId: number;
+  type: 'borrow' | 'supply';
+  rewards?: FlywheelReward[];
 };
-export default function Rewards({
+export const Rewards = ({
   cToken,
-  comptrollerAddress,
-  poolChainId
-}: RewardsProps) {
+  pool,
+  poolChainId,
+  type,
+  rewards
+}: RewardsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: rewardsData } = useAssetClaimableRewards(
     cToken,
-    comptrollerAddress,
+    pool,
     poolChainId
   );
   const chainId = useChainId();
   const sdk = useSdk(poolChainId);
+
+  const filteredRewards = useMemo(
+    () =>
+      rewardsData?.filter((reward) =>
+        FLYWHEEL_TYPE_MAP[poolChainId][type]
+          .map((f) => f.toLowerCase())
+          .includes(reward.flywheel?.toLowerCase() ?? '')
+      ) ?? [],
+    [poolChainId, rewardsData, type]
+  );
 
   const claimRewards = async () => {
     try {
@@ -52,46 +67,55 @@ export default function Rewards({
   };
 
   const totalRewards =
-    rewardsData?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
+    filteredRewards.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   return (
-    <div className=" flex flex-col items-center justify-center">
-      {rewardsData?.map((rewards, index) => (
-        <div
-          className="flex"
-          key={index}
-        >
-          <img
-            alt=""
-            className="size-4 rounded mr-1"
-            src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken].toLowerCase()}.png`}
-          />{' '}
-          +{' '}
-          {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
-            maximumFractionDigits: 1
-          })}{' '}
-          {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+    <>
+      {rewards?.map((rewards, index) => (
+        <div key={index}>
+          {REWARDS_TO_SYMBOL[poolChainId]?.[rewards.token]} Rewards APR: +
+          {rewards.apy
+            ? rewards.apy.toLocaleString('en-US', { maximumFractionDigits: 2 })
+            : '-'}
+          %
         </div>
       ))}
-      {totalRewards > 0n ? (
-        <div className="flex justify-center pt-1">
-          <button
-            className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
-            onClick={claimRewards}
+      <div className="py-4">
+        {filteredRewards.map((rewards, index) => (
+          <div
+            className="flex"
+            key={index}
           >
-            <ResultHandler
-              isLoading={isLoading}
-              height="20"
-              width="20"
-              color={'#000000'}
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
+            />{' '}
+            +{' '}
+            {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
+              maximumFractionDigits: 1
+            })}{' '}
+            {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+          </div>
+        ))}
+        {totalRewards > 0n && (
+          <div className="flex justify-center pt-1">
+            <button
+              className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+              onClick={claimRewards}
             >
-              Claim Rewards
-            </ResultHandler>
-          </button>
-        </div>
-      ) : (
-        <p className="text-white/60 text-xs text-center h-full">Claimed</p>
-      )}
-    </div>
+              <ResultHandler
+                isLoading={isLoading}
+                height="20"
+                width="20"
+                color={'#000000'}
+              >
+                Claim Rewards
+              </ResultHandler>
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
-}
+};

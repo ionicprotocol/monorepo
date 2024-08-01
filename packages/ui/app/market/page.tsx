@@ -4,6 +4,7 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
+import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -21,12 +22,12 @@ import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
 
 import { pools } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
+import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
@@ -43,7 +44,6 @@ export default function Market() {
     mode.id
   );
   const [open, setOpen] = useState<boolean>(false);
-  const { getSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(
@@ -64,6 +64,16 @@ export default function Market() {
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
+  );
+
+  const { data: borrowRates } = useBorrowAPYs(
+    assets ?? [],
+    dropdownSelectedChain
+  );
+
+  const { data: supplyRates } = useSupplyAPYs(
+    assets ?? [],
+    dropdownSelectedChain
   );
 
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
@@ -335,10 +345,7 @@ export default function Market() {
                   .map((val: MarketData, idx: number) => (
                     <PoolRows
                       asset={val.underlyingSymbol}
-                      borrowAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
-                        val?.borrowRatePerBlock ?? 0n,
-                        getBlockTimePerMinuteByChainId(Number(chain))
-                      )}
+                      borrowAPR={borrowRates?.[val.cToken]}
                       borrowBalance={`${
                         typeof val.borrowBalance === 'bigint'
                           ? parseFloat(
@@ -372,21 +379,16 @@ export default function Market() {
                       }
                       membership={val?.membership ?? false}
                       pool={selectedPool}
-                      rewards={rewards?.[val.cToken]}
+                      rewards={
+                        (rewards?.[val.cToken] as FlywheelReward[]) ?? []
+                      }
                       selectedChain={chainId}
                       selectedMarketData={selectedMarketData}
                       selectedPoolId={selectedPool}
                       selectedSymbol={selectedSymbol as string}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      supplyAPR={`${
-                        getSdk(Number(chain))
-                          ?.ratePerBlockToAPY(
-                            val?.supplyRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(Number(chain))
-                          )
-                          .toFixed(2) ?? '-'
-                      }%`}
+                      supplyAPR={supplyRates?.[val.cToken]}
                       supplyBalance={`${
                         typeof val.supplyBalance === 'bigint'
                           ? parseFloat(
