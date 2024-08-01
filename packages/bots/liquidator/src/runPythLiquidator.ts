@@ -14,66 +14,64 @@ import { setUpSdk } from "./utils";
 (BigInt.prototype as any).toJSON = function () {
     return this.toString();
 };
+const account = privateKeyToAccount(config.adminPrivateKey as Hex);
+const publicClient = createPublicClient({
+  chain: mode,
+  transport: http(config.rpcUrl),
+});
 
+const walletClient = createWalletClient({
+  account,
+  chain: mode,
+  transport: http(config.rpcUrl),
+});
+
+const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
+const mpo = ionicSdk.createMasterPriceOracle();
+async function getTokenDecimals(
+  tokenAddress: string,
+  publicClient: ReturnType<typeof createPublicClient>
+): Promise<number> {
+  try {
+      const decimals = await publicClient.readContract({
+          abi: erc20Abi,
+          address: tokenAddress as `0x${string}`,
+          functionName: "decimals",
+      });
+      return Number(decimals);
+  } catch (error) {
+      console.error(`Failed to fetch decimals for token ${tokenAddress}:`, error);
+      throw error;
+  }
+}
+
+async function calculateTotalValueInEth(
+  tokenAddress: string,
+  tokenAmount: bigint,
+): Promise<bigint> {
+  console.log("Token address:", tokenAddress);
+  const decimals = await getTokenDecimals(tokenAddress, publicClient);
+  // Fetch the price of the token in ETH using Master Price Oracle
+  const priceInETH = await mpo.read.price([tokenAddress as `0x${string}`]);
+
+  const priceInEthBigInt = BigInt(priceInETH.toString());
+
+  // Calculate the scaling factor (10 ** (18 - decimals))
+  const scalingFactor = BigInt(10 ** (18 - decimals));
+
+  // Calculate the total value in ETH
+  const totalValueInEth = (priceInEthBigInt * tokenAmount * scalingFactor) / BigInt(10 ** 18);
+
+  console.log("Total value in ETH:", totalValueInEth);
+
+  return totalValueInEth;
+}
 // Function to calculate total token value in ETH
 (async function () {
     const chainName: string = config.chainName;
-    const account = privateKeyToAccount(config.adminPrivateKey as Hex);
-
-    const publicClient = createPublicClient({
-        chain: mode,
-        transport: http(config.rpcUrl),
-    });
-
-    const walletClient = createWalletClient({
-        account,
-        chain: mode,
-        transport: http(config.rpcUrl),
-    });
 
     const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
-    const mpo = ionicSdk.createMasterPriceOracle();
     const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
-
-    async function getTokenDecimals(
-        tokenAddress: string,
-        publicClient: ReturnType<typeof createPublicClient>
-    ): Promise<number> {
-        try {
-            const decimals = await publicClient.readContract({
-                abi: erc20Abi,
-                address: tokenAddress as `0x${string}`,
-                functionName: "decimals",
-            });
-            return Number(decimals);
-        } catch (error) {
-            console.error(`Failed to fetch decimals for token ${tokenAddress}:`, error);
-            throw error;
-        }
-    }
-
-    async function calculateTotalValueInEth(
-        tokenAddress: string,
-        tokenAmount: bigint,
-    ): Promise<bigint> {
-        console.log("Token address:", tokenAddress);
-        const decimals = await getTokenDecimals(tokenAddress, publicClient);
-        // Fetch the price of the token in ETH using Master Price Oracle
-        const priceInETH = await mpo.read.price([tokenAddress as `0x${string}`]);
-
-        const priceInEthBigInt = BigInt(priceInETH.toString());
-
-        // Calculate the scaling factor (10 ** (18 - decimals))
-        const scalingFactor = BigInt(10 ** (18 - decimals));
-
-        // Calculate the total value in ETH
-        const totalValueInEth = (priceInEthBigInt * tokenAmount * scalingFactor) / BigInt(10 ** 18);
-
-        console.log("Total value in ETH:", totalValueInEth);
-
-        return totalValueInEth;
-    }
-
     logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
     const liquidator = new Liquidator(ionicSdk);
     const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
