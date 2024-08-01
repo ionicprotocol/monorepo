@@ -413,7 +413,7 @@ const BorrowPopover = ({
 }: BorrowPopoverProps) => {
   return (
     <div
-      className={`popover absolute min-w-[185px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
+      className={`popover absolute min-w-[190px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
     >
       <div className="">
         Base APR: {borrowAPR ? (borrowAPR > 0 ? '-' : '') : ''}
@@ -593,7 +593,7 @@ const SupplyPopover = ({
 }: SupplyPopoverProps) => {
   return (
     <div
-      className={`popover absolute min-w-[185px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+      className={`popover absolute min-w-[190px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
     >
       Base APR: +
       {supplyAPR
