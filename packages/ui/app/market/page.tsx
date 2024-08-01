@@ -70,13 +70,11 @@ export default function Market() {
     assets ?? [],
     dropdownSelectedChain
   );
-  console.log('borrowRates: ', borrowRates);
 
   const { data: supplyRates } = useSupplyAPYs(
     assets ?? [],
     dropdownSelectedChain
   );
-  console.log('supplyRates: ', supplyRates);
 
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
