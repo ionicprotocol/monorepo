@@ -82,7 +82,7 @@ export const MultiIonicProvider = (
     enabledChains.map((chain) => {
       const config = chainIdToConfig[chain.id];
       const _walletClient =
-        chain.id === walletClient?.chain.id ? walletClient : undefined;
+        chain.id === walletClient?.chain?.id ? walletClient : undefined;
       const client = createPublicClient({
         batch: { multicall: { wait: 16 } },
         chain,

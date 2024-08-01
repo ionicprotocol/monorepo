@@ -93,6 +93,14 @@ const InfoRows = ({
           poolChainId={selectedChain}
           type="borrow"
         />
+      ) : multipliers[selectedChain]?.[pool]?.[asset]?.supply?.flywheel &&
+        mode == InfoMode.SUPPLY ? (
+        <Rewards
+          cToken={cToken as `0x${string}`}
+          pool={comptrollerAddress}
+          poolChainId={selectedChain}
+          type="supply"
+        />
       ) : (
         <div />
       )}
