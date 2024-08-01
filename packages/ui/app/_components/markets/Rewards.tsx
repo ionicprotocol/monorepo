@@ -53,7 +53,7 @@ export const Rewards = ({
         setIsLoading(true);
         const tx = await sdk?.claimRewardsForMarket(
           cToken,
-          rewardsData?.map((r) => r.flywheel!) ?? []
+          filteredRewards?.map((r) => r.flywheel!) ?? []
         );
         setIsLoading(false);
         console.warn('claim tx: ', tx);
