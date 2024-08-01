@@ -1,4 +1,5 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
+import { type Address } from 'viem';
 import { base, bob, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
@@ -9,6 +10,23 @@ export const SUPPORTED_NETWORKS_REGEX = new RegExp(
 export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
+
+export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
+  [base.id]: {
+    '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
+    '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR'
+  }
+};
+
+export const FLYWHEEL_TYPE_MAP: Record<
+  number,
+  Record<'borrow' | 'supply', Address[]>
+> = {
+  [base.id]: {
+    supply: ['0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4'],
+    borrow: ['0x327410E4D3A32EF37712e77fCB005e5327F082De']
+  }
+};
 
 export const CLOSE_FACTOR = {
   DEFAULT: 50,

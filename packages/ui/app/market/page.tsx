@@ -181,9 +181,11 @@ export default function Market() {
               )}
           </div>
 
-          <ResultHandler isLoading={isLoadingPoolData || isLoadingLoopMarkets}>
-            <div
-              className={`w-full flex flex-wrap items-center justify-center md:justify-start gap-4`}
+          <div
+            className={`w-full flex flex-wrap items-center justify-center md:justify-start gap-4`}
+          >
+            <ResultHandler
+              isLoading={isLoadingPoolData || isLoadingLoopMarkets}
             >
               <div
                 className={`flex flex-col items-start justify-center  gap-y-1`}
@@ -235,8 +237,8 @@ export default function Market() {
                 </p>
                 {/* this neeeds to be changed */}
               </div>
-            </div>
-          </ResultHandler>
+            </ResultHandler>
+          </div>
 
           <div className="w-full flex flex-row gap-x-2">
             <button
