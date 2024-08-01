@@ -3,7 +3,7 @@
 import { type FlywheelReward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { formatEther, type Address } from 'viem';
 import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
@@ -87,6 +87,7 @@ const PoolRows = ({
   const { address } = useMultiIonic();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+
   const supplyRewardsAPR =
     rewards?.reduce(
       (acc, reward) =>
@@ -110,10 +111,14 @@ const PoolRows = ({
           : 0),
       0
     ) ?? 0;
-  const borrowAPRTotal = borrowAPR
-    ? 0 - borrowAPR + borrowRewardsAPR
-    : undefined;
-  const supplyAPRTotal = supplyAPR ? supplyAPR + supplyRewardsAPR : undefined;
+
+  const borrowAPRTotal =
+    typeof borrowAPR !== 'undefined'
+      ? 0 - borrowAPR + borrowRewardsAPR
+      : undefined;
+  const supplyAPRTotal =
+    typeof supplyAPR !== 'undefined' ? supplyAPR + supplyRewardsAPR : undefined;
+
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -209,11 +214,9 @@ const PoolRows = ({
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
           <span className={`mr-1 md:mr-0`}>
             +
-            {supplyAPRTotal
-              ? supplyAPRTotal.toLocaleString('en-US', {
-                  maximumFractionDigits: 2
-                })
-              : '-'}
+            {supplyAPRTotal?.toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            }) ?? '-'}
             %
           </span>
           {selectedPoolId === '0' &&
@@ -291,11 +294,9 @@ const PoolRows = ({
         <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
           <span className="mr-1 md:mr-0 md:mb-1">
             {borrowAPRTotal ? (borrowAPRTotal > 0 ? '+' : '') : ''}
-            {borrowAPRTotal
-              ? borrowAPRTotal.toLocaleString('en-US', {
-                  maximumFractionDigits: 2
-                })
-              : '-'}
+            {borrowAPRTotal?.toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            }) ?? '-'}
             %
           </span>
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
@@ -419,6 +420,16 @@ const Rewards = ({ cToken, pool, poolChainId, type }: RewardsProps) => {
   const chainId = useChainId();
   const sdk = useSdk(poolChainId);
 
+  const filteredRewards = useMemo(
+    () =>
+      rewardsData?.filter((reward) =>
+        flywheelTypeMap[poolChainId][type]
+          .map((f) => f.toLowerCase())
+          .includes(reward.flywheel?.toLowerCase() ?? '')
+      ) ?? [],
+    [poolChainId, rewardsData, type]
+  );
+
   const claimRewards = async () => {
     try {
       const result = await handleSwitchOriginChain(poolChainId, chainId);
@@ -438,13 +449,6 @@ const Rewards = ({ cToken, pool, poolChainId, type }: RewardsProps) => {
       setIsLoading(false);
     }
   };
-
-  const filteredRewards =
-    rewardsData?.filter((reward) =>
-      flywheelTypeMap[poolChainId][type]
-        .map((f) => f.toLowerCase())
-        .includes(reward.flywheel?.toLowerCase() ?? '')
-    ) ?? [];
 
   const totalRewards =
     filteredRewards.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
@@ -554,28 +558,30 @@ const BorrowPopover = ({
           )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
             ?.ionic > 0 && (
-            <div className="flex ">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/ionic-sq.png"
-              />{' '}
-              +{' '}
-              {
-                multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                  ?.borrow?.ionic
-              }
-              x Ionic Points
-            </div>
+            <>
+              <div className="flex ">
+                <img
+                  alt=""
+                  className="size-4 rounded mr-1"
+                  src="/img/ionic-sq.png"
+                />{' '}
+                +{' '}
+                {
+                  multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                    ?.borrow?.ionic
+                }
+                x Ionic Points
+              </div>
+              <div className="flex">
+                <img
+                  alt=""
+                  className="size-4 rounded mr-1"
+                  src="/images/turtle-ionic.png"
+                />{' '}
+                + Turtle Ionic Points
+              </div>
+            </>
           )}
-          <div className="flex">
-            <img
-              alt=""
-              className="size-4 rounded mr-1"
-              src="/images/turtle-ionic.png"
-            />{' '}
-            + Turtle Ionic Points
-          </div>
 
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
             ?.mode && (
@@ -716,54 +722,49 @@ const SupplyPopover = ({
           type="supply"
         />
       )}
-      {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-        ?.ionic && (
+      {selectedPoolId === '0' &&
+        dropdownSelectedChain === mode.id &&
+        (asset.toLowerCase() === 'usdc' ||
+          asset.toLowerCase() === 'weth' ||
+          asset.toLowerCase() === 'stone' ||
+          asset.toLowerCase() === 'ezeth') && (
+          <a
+            href="https://jumper.exchange/superfest/"
+            target="_blank"
+            className="flex pr-4 underline pt-4"
+          >
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/img/logo/superOP.png"
+            />{' '}
+            + OP SuperFest rewards
+          </a>
+        )}
+      {(multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+        ?.ionic ?? 0) > 0 && (
         <>
-          {selectedPoolId === '0' &&
-            dropdownSelectedChain === mode.id &&
-            (asset.toLowerCase() === 'usdc' ||
-              asset.toLowerCase() === 'weth' ||
-              asset.toLowerCase() === 'stone' ||
-              asset.toLowerCase() === 'ezeth') && (
-              <a
-                href="https://jumper.exchange/superfest/"
-                target="_blank"
-                className="flex pr-4 underline pt-4"
-              >
-                <img
-                  alt=""
-                  className="size-4 rounded mr-1"
-                  src="/img/logo/superOP.png"
-                />{' '}
-                + OP SuperFest rewards
-              </a>
-            )}
-          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.ionic > 0 && (
-            <>
-              <div className="flex mt-1">
-                <img
-                  alt=""
-                  className="size-4 rounded mr-1"
-                  src="/img/ionic-sq.png"
-                />{' '}
-                +{' '}
-                {
-                  multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                    ?.supply?.ionic
-                }
-                x Ionic Points
-              </div>
-              <div className="flex">
-                <img
-                  alt=""
-                  className="size-4 rounded mr-1"
-                  src="/images/turtle-ionic.png"
-                />{' '}
-                + Turtle Ionic Points
-              </div>
-            </>
-          )}
+          <div className="flex mt-1">
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/img/ionic-sq.png"
+            />{' '}
+            +{' '}
+            {
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.ionic
+            }
+            x Ionic Points
+          </div>
+          <div className="flex">
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/images/turtle-ionic.png"
+            />{' '}
+            + Turtle Ionic Points
+          </div>
         </>
       )}
       {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply

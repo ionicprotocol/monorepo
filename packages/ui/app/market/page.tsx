@@ -23,11 +23,12 @@ import ResultHandler from '../_components/ResultHandler';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sendIMG } from '@ui/utils/TempImgSender';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
@@ -66,6 +67,19 @@ export default function Market() {
     () => poolData?.assets,
     [poolData]
   );
+  console.log('assets: ', assets);
+
+  const { data: borrowRates } = useBorrowAPYs(
+    assets ?? [],
+    dropdownSelectedChain
+  );
+  console.log('borrowRates: ', borrowRates);
+
+  const { data: supplyRates } = useSupplyAPYs(
+    assets ?? [],
+    dropdownSelectedChain
+  );
+  console.log('supplyRates: ', supplyRates);
 
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -334,10 +348,7 @@ export default function Market() {
                   .map((val: MarketData, idx: number) => (
                     <PoolRows
                       asset={val.underlyingSymbol}
-                      borrowAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
-                        val?.borrowRatePerBlock ?? 0n,
-                        getBlockTimePerMinuteByChainId(Number(chain))
-                      )}
+                      borrowAPR={borrowRates?.[val.cToken]}
                       borrowBalance={`${
                         typeof val.borrowBalance === 'bigint'
                           ? parseFloat(
@@ -380,10 +391,7 @@ export default function Market() {
                       selectedSymbol={selectedSymbol as string}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      supplyAPR={getSdk(Number(chain))?.ratePerBlockToAPY(
-                        val?.supplyRatePerBlock ?? 0n,
-                        getBlockTimePerMinuteByChainId(Number(chain))
-                      )}
+                      supplyAPR={supplyRates?.[val.cToken]}
                       supplyBalance={`${
                         typeof val.supplyBalance === 'bigint'
                           ? parseFloat(

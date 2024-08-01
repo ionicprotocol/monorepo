@@ -4,18 +4,19 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const useBorrowAPYs = (
-  assets: Pick<MarketData, 'borrowRatePerBlock' | 'cToken'>[],
+export const useSupplyAPYs = (
+  assets: Pick<MarketData, 'cToken' | 'supplyRatePerBlock'>[],
   chainId?: number
 ) => {
   const sdk = useSdk(chainId);
 
   return useQuery({
     queryKey: [
-      'useBorrowAPYs',
+      'useSuAPYs',
       { chain: sdk?.chainId },
       { assets: assets.map((a) => a.cToken).sort() }
     ],
+
     queryFn: () => {
       if (!sdk || !assets || !chainId) return null;
 
@@ -23,13 +24,13 @@ export const useBorrowAPYs = (
 
       for (const asset of assets) {
         try {
-          const marketBorrowApy =
+          const marketSupplyApy =
             sdk.ratePerBlockToAPY(
-              asset.borrowRatePerBlock,
+              asset.supplyRatePerBlock,
               getBlockTimePerMinuteByChainId(chainId)
             ) / 100;
 
-          result[asset.cToken] = marketBorrowApy;
+          result[asset.cToken] = marketSupplyApy;
         } catch (e) {
           console.warn(
             `Getting apy from rate per block error: `,
