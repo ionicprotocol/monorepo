@@ -4,6 +4,7 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
+import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -99,7 +100,6 @@ export default function Market() {
     chainId: dropdownSelectedChain,
     poolId: selectedPool
   });
-  console.log('rewards: ', rewards);
 
   // const networkOptionstest = [
   //   {
@@ -371,7 +371,9 @@ export default function Market() {
                       }
                       membership={val?.membership ?? false}
                       pool={selectedPool}
-                      rewards={rewards?.[val.cToken]}
+                      rewards={
+                        (rewards?.[val.cToken] as FlywheelReward[]) ?? []
+                      }
                       selectedChain={chainId}
                       selectedMarketData={selectedMarketData}
                       selectedPoolId={selectedPool}

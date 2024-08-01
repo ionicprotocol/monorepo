@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { FlywheelReward, type Reward } from '@ionicprotocol/types';
+import { type FlywheelReward } from '@ionicprotocol/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, type Dispatch, type SetStateAction } from 'react';
