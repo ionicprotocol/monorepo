@@ -999,35 +999,38 @@ const ClaimAllBaseRewards = ({ chain }: IClaimAllBaseRewards) => {
     >
       <div className={` mb-2 w-full grid grid-cols-3 items-center`}>
         <p className="text-white/60 text-md">Emissions </p>
-        {rewards ? (
-          rewards?.map((reward, idx) => (
-            <img
-              alt="icon"
-              key={idx}
-              className="size-6 rounded mr-1 col-start-3"
-              src={`/img/symbols/32/color/${getSymbol(+chain, reward.rewardToken)}.png`}
-            />
-          ))
-        ) : (
-          <p className="text-white/60 text-xs col-start-3">No Emissions </p>
-        )}
+        <div className="flex items-center justify-start gap-1 col-start-3">
+          {rewards ? (
+            rewards?.map((reward, idx) => (
+              <img
+                alt="icon"
+                key={idx}
+                className="size-6 rounded mr-1  inline-block"
+                src={`/img/symbols/32/color/${getSymbol(+chain, reward.rewardToken)}.png`}
+              />
+            ))
+          ) : (
+            <p className="text-white/60 text-xs col-start-3">No Emissions </p>
+          )}
+        </div>
         {/* {rewards ? "" : } */}
       </div>
       <div className=" w-full grid grid-cols-3 ">
-        {rewards?.map((reward, idx) => (
-          <div
-            key={idx}
-            className={`text-white/80 text-sm flex gap-3 items-center justify-start `}
-          >
-            <span>{getSymbol(+chain, reward.rewardToken)}</span>
-            <span className={`text-accent text-sm`}>
-              {Number(formatEther(reward.amount)).toLocaleString('en-US', {
-                maximumFractionDigits: 1
-              })}
-            </span>
-          </div>
-        ))}
-
+        <div className="flex items-center justify-start gap-4 ">
+          {rewards?.map((reward, idx) => (
+            <div
+              key={idx}
+              className={`text-white/80 text-sm flex gap-2 items-center justify-start `}
+            >
+              <span>{getSymbol(+chain, reward.rewardToken)}</span>
+              <span className={`text-accent text-sm`}>
+                {Number(formatEther(reward.amount)).toLocaleString('en-US', {
+                  maximumFractionDigits: 1
+                })}
+              </span>
+            </div>
+          ))}
+        </div>
         <button
           className={`rounded-md bg-accent text-black disabled:bg-accent/50 py-0.5 px-3 uppercase truncate text-[11px]  font-semibold col-start-3 `}
           onClick={totalRewards > 0n ? claimAll : hrefTOStake}
