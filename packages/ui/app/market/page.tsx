@@ -70,11 +70,13 @@ export default function Market() {
     assets ?? [],
     dropdownSelectedChain
   );
+  console.log('borrowRates: ', borrowRates);
 
   const { data: supplyRates } = useSupplyAPYs(
     assets ?? [],
     dropdownSelectedChain
   );
+  console.log('supplyRates: ', supplyRates);
 
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
@@ -345,7 +347,11 @@ export default function Market() {
                   .map((val: MarketData, idx: number) => (
                     <PoolRows
                       asset={val.underlyingSymbol}
-                      borrowAPR={borrowRates?.[val.cToken]}
+                      borrowAPR={
+                        typeof borrowRates?.[val.cToken] !== 'undefined'
+                          ? borrowRates?.[val.cToken] * 100
+                          : undefined
+                      }
                       borrowBalance={`${
                         typeof val.borrowBalance === 'bigint'
                           ? parseFloat(
@@ -388,7 +394,11 @@ export default function Market() {
                       selectedSymbol={selectedSymbol as string}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
-                      supplyAPR={supplyRates?.[val.cToken]}
+                      supplyAPR={
+                        typeof supplyRates?.[val.cToken] !== 'undefined'
+                          ? supplyRates?.[val.cToken] * 100
+                          : undefined
+                      }
                       supplyBalance={`${
                         typeof val.supplyBalance === 'bigint'
                           ? parseFloat(
