@@ -22,12 +22,11 @@ import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
 
 import { pools } from '@ui/constants/index';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
+import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { sendIMG } from '@ui/utils/TempImgSender';
 
@@ -45,7 +44,6 @@ export default function Market() {
     mode.id
   );
   const [open, setOpen] = useState<boolean>(false);
-  const { getSdk } = useMultiIonic();
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const [selectedPool, setSelectedPool] = useState(
@@ -67,19 +65,16 @@ export default function Market() {
     () => poolData?.assets,
     [poolData]
   );
-  console.log('assets: ', assets);
 
   const { data: borrowRates } = useBorrowAPYs(
     assets ?? [],
     dropdownSelectedChain
   );
-  console.log('borrowRates: ', borrowRates);
 
   const { data: supplyRates } = useSupplyAPYs(
     assets ?? [],
     dropdownSelectedChain
   );
-  console.log('supplyRates: ', supplyRates);
 
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const selectedMarketData = useMemo<MarketData | undefined>(
