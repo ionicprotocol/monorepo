@@ -416,7 +416,6 @@ const Rewards = ({ cToken, pool, poolChainId, type }: RewardsProps) => {
     pool,
     poolChainId
   );
-  console.log('rewardsData: ', rewardsData, type);
   const chainId = useChainId();
   const sdk = useSdk(poolChainId);
 
