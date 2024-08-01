@@ -83,8 +83,20 @@
     "IonicFlywheelBorrow_Borrow_ION_Proxy": {
       "address": "0x327410E4D3A32EF37712e77fCB005e5327F082De"
     },
+    "IonicFlywheelBorrow_Borrow_RSR": {
+      "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d"
+    },
+    "IonicFlywheelBorrow_Borrow_RSR_Implementation": {
+      "address": "0x56a33fac656E88d9F364727eEcc831A4b1E795F5"
+    },
+    "IonicFlywheelBorrow_Borrow_RSR_Proxy": {
+      "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION": {
       "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_RSR": {
+      "address": "0xBF5993b07C0EDC54Ca41C04EF5120a30224d2C33"
     },
     "IonicFlywheelDynamicRewards_RSR": {
       "address": "0xCdfF6BA3613f37E719234A26775fF72BD937f22B"
