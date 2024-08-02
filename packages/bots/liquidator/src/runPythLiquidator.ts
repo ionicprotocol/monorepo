@@ -105,7 +105,7 @@ async function calculateTotalValueInEth(tokenAddress: string, tokenAmount: bigin
         const potentialProfit = totalBuyValueInEth - totalSellValueInEth;
         console.log("PP", potentialProfit);
         logger.info(`Potential Profit in ETH: ${potentialProfit}`);
-        const minProfitAmountEth: bigint = BigInt(ionicSdk.chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
+        const minProfitAmountEth: bigint = BigInt(ionicSdk.chainLiquidationConfig.MINIMUM_PROFIT_NATIVE / BigInt(2));
         console.log("MP", minProfitAmountEth);
         logger.info(`Min Profit Amount in ETH: ${minProfitAmountEth}`);
         if (potentialProfit < minProfitAmountEth) {
@@ -160,11 +160,11 @@ async function calculateTotalValueInEth(tokenAddress: string, tokenAmount: bigin
           logger.info("Opportunity:", JSON.stringify(opportunity, null, 2));
           try {
             await client.submitOpportunity(opportunity);
-            logger.info("Opportunity submitted successfully:", opportunity);
+            console.info("Opportunity submitted successfully:", opportunity);
             await sendDiscordNotification(opportunity);
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : error;
-            logger.error("Failed to submit opportunity:", {
+            console.error("Failed to submit opportunity:", {
               error: errorMessage,
               opportunity: JSON.stringify(opportunity, null, 2),
               blockNumber: await publicClient.getBlockNumber(),
