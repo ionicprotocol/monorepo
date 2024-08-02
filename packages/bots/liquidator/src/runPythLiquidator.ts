@@ -1,5 +1,5 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
-import { BotType, ionicUniV3LiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
+import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
 import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http, erc20Abi } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
@@ -10,7 +10,7 @@ import { logger } from "./logger";
 import { Liquidator } from "./services";
 import { setUpSdk } from "./utils";
 
-// Ensure BigInt.prototype.toJSON is correctly implemented
+
 (BigInt.prototype as any).toJSON = function () {
     return this.toString();
 };
@@ -107,11 +107,7 @@ async function calculateTotalValueInEth(
 
                 logger.info(`Potential Profit in ETH: ${potentialProfit}`);
 
-                const gasPrice: bigint = BigInt(await publicClient.getGasPrice());
-                logger.info(`Gas Price: ${gasPrice}`);
-                const expectedGasFee: bigint = gasPrice * BigInt(750000); // Use actual gas estimate if available
-
-                const minProfitAmountEth: bigint = expectedGasFee + BigInt(ionicSdk.chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
+                const minProfitAmountEth: bigint = BigInt(ionicSdk.chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
                 console.log("MP", minProfitAmountEth);
                 logger.info(`Min Profit Amount in ETH: ${minProfitAmountEth}`);
 
@@ -119,9 +115,9 @@ async function calculateTotalValueInEth(
                     logger.info(`Potential profit of ${potentialProfit} is less than the minimum required profit of ${minProfitAmountEth}, skipping liquidation.`);
                     continue;
                 }
-
+                else {
                 const calldata = encodeFunctionData({
-                    abi: ionicUniV3LiquidatorAbi,
+                    abi: ionicLiquidatorAbi,
                     functionName: "safeLiquidate",
                     args: [liquidation.args[0], liquidation.args[1], liquidation.args[2], liquidation.args[3], liquidation.args[4]],
                 });
@@ -159,18 +155,20 @@ async function calculateTotalValueInEth(
                 logger.info("Opportunity:", JSON.stringify(opportunity, null, 2));
 
                 try {
-                    await client.submitOpportunity(opportunity);
-                    console.info("Opportunity submitted successfully: ", opportunity);
-
-                    await sendDiscordNotification(opportunity);
-                } catch (error) {
-                    console.error("Failed to submit opportunity:", {
-                        error,
-                        opportunity: JSON.stringify(opportunity, null, 2),
-                        blockNumber: await publicClient.getBlockNumber(),
-                    });
-                }
+                  await client.submitOpportunity(opportunity);
+                  logger.info("Opportunity submitted successfully:", opportunity);
+                  await sendDiscordNotification(opportunity);
+              } catch (error) {
+                  const errorMessage = error instanceof Error ? error.message : error;
+                  logger.error("Failed to submit opportunity:", {
+                      error: errorMessage,
+                      opportunity: JSON.stringify(opportunity, null, 2),
+                      blockNumber: await publicClient.getBlockNumber(),
+                  });
+                  console.error("Detailed Error:", error);
+              }
             }
         }
     }
+  }
 })();
