@@ -387,7 +387,7 @@ export default function Market() {
                         membership={val?.membership ?? false}
                         pool={selectedPool}
                         rewards={
-                          (rewards?.[val.cToken].map((r) => ({
+                          (rewards?.[val?.cToken]?.map((r) => ({
                             ...r,
                             apy:
                               typeof r.apy !== 'undefined'
