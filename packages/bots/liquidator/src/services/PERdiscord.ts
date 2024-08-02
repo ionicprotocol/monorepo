@@ -4,6 +4,7 @@ import { IonicSdk } from "@ionicprotocol/sdk";
 import { chainIdtoChain, chainIdToConfig } from "@ionicprotocol/chains";
 import { Chain, createPublicClient, formatEther, http } from "viem";
 import { SupportedChains } from "@ionicprotocol/types";
+
 import config from "../config";
 const webhookUrl = config.PER_discordWebhookUrl;
 const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=";
