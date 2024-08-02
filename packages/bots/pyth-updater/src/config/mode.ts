@@ -25,6 +25,20 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
+  {
+    // price feed for SUSDE/USD 
+    priceId: '0xca3ba9a619a4b3755c10ac7d5e760275aa95e9823d38a84fedd416856cdba37c',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
+  {
+    // price feed for USDE/USD 
+    priceId: '0x6ec879b1e9963de5ee97e9c8710b742d6228252a5e2ca12d4ae81d7fe5ee8c5d',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
   // {
   //   // price feed for WBTC
   //   priceId: '0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33',
