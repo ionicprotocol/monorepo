@@ -387,7 +387,13 @@ export default function Market() {
                         membership={val?.membership ?? false}
                         pool={selectedPool}
                         rewards={
-                          (rewards?.[val.cToken] as FlywheelReward[]) ?? []
+                          (rewards?.[val?.cToken]?.map((r) => ({
+                            ...r,
+                            apy:
+                              typeof r.apy !== 'undefined'
+                                ? r.apy * 100
+                                : undefined
+                          })) as FlywheelReward[]) ?? []
                         }
                         selectedChain={chainId}
                         selectedMarketData={selectedMarketData}
