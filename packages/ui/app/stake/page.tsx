@@ -190,13 +190,17 @@ export default function Stake() {
   async function addLiquidity() {
     try {
       const args = {
-        token: getToken(+chain),
+        tokenA: getToken(+chain),
+        tokenB: '0x4200000000000000000000000000000000000006' as `0x${string}`,
         stable: false,
-        amountTokenDesired: parseUnits(maxDeposit?.ion, 18),
-        amounTokenMin:
+        amountTokenADesired: parseUnits(maxDeposit?.ion, 18),
+        amounTokenAMin:
           parseEther(maxDeposit?.ion) -
           (parseEther(maxDeposit?.ion) * BigInt(5)) / BigInt(100),
-        amountETHMin: parseUnits(maxDeposit?.eth, 18),
+        amountTokenBDesired: parseUnits(maxDeposit?.eth, 18),
+        amounTokenBMin:
+          parseEther(maxDeposit?.eth) -
+          (parseEther(maxDeposit?.eth) * BigInt(5)) / BigInt(100),
         to: address,
         deadline: Math.floor((Date.now() + 3600000) / 1000)
       };
@@ -206,37 +210,50 @@ export default function Stake() {
         return;
       }
 
-      const approval = await walletClient!.writeContract({
+      const approvalA = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getToken(+chain),
-        args: [getSpenderContract(+chain), args.amountTokenDesired],
+        address: args.tokenA,
+        args: [getSpenderContract(+chain), args.amountTokenADesired],
+        functionName: 'approve'
+      });
+      const approvalB = await walletClient!.writeContract({
+        abi: erc20Abi,
+        account: walletClient?.account,
+        address: args.tokenB,
+        args: [getSpenderContract(+chain), args.amountTokenBDesired],
         functionName: 'approve'
       });
       setStep2Loading(true);
       // console.log(approval);
 
-      const appr = await publicClient?.waitForTransactionReceipt({
-        hash: approval
+      const apprA = await publicClient?.waitForTransactionReceipt({
+        hash: approvalA
+      });
+
+      const apprB = await publicClient?.waitForTransactionReceipt({
+        hash: approvalB
       });
       // eslint-disable-next-line no-console
-      console.log({ appr });
+      console.log({ apprA, apprB });
 
       const tx = await walletClient!.writeContract({
         abi: LiquidityContractAbi,
         account: walletClient?.account,
         address: getSpenderContract(+chain),
         args: [
-          args.token,
+          args.tokenA,
+          args.tokenB,
           args.stable,
-          args.amountTokenDesired,
-          args.amounTokenMin,
-          args.amountETHMin,
+          args.amountTokenADesired,
+          args.amountTokenBDesired,
+          args.amounTokenAMin,
+          args.amounTokenBMin,
           args.to,
           args.deadline
         ],
-        functionName: 'addLiquidityETH',
-        value: parseUnits(maxDeposit?.eth, 18)
+        functionName: 'addLiquidity'
+        // value: parseUnits(maxDeposit?.eth, 18)
       });
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
@@ -264,6 +281,7 @@ export default function Stake() {
       });
     }
   }
+
   async function removeLiquidity() {
     try {
       const args = {
@@ -539,8 +557,8 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
-                  tokenName={'eth'}
-                  token={'0x0000000000000000000000000000000000000000'}
+                  tokenName={'weth'}
+                  token={'0x4200000000000000000000000000000000000006'}
                   chain={+chain}
                 />
               </>
