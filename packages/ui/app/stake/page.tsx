@@ -41,6 +41,7 @@ import {
 } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
+  getEthToken,
   getReservesABI,
   getReservesArgs,
   getReservesContract,
@@ -68,6 +69,8 @@ export default function Stake() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+  const queryToken = searchParams.get('token');
+  const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -191,7 +194,7 @@ export default function Stake() {
     try {
       const args = {
         tokenA: getToken(+chain),
-        tokenB: '0x4200000000000000000000000000000000000006' as `0x${string}`,
+        tokenB: getEthToken(selectedtoken as 'eth' | 'weth'),
         stable: false,
         amountTokenADesired: parseUnits(maxDeposit?.ion, 18),
         amounTokenAMin:
@@ -217,13 +220,19 @@ export default function Stake() {
         args: [getSpenderContract(+chain), args.amountTokenADesired],
         functionName: 'approve'
       });
-      const approvalB = await walletClient!.writeContract({
-        abi: erc20Abi,
-        account: walletClient?.account,
-        address: args.tokenB,
-        args: [getSpenderContract(+chain), args.amountTokenBDesired],
-        functionName: 'approve'
-      });
+
+      if (selectedtoken !== 'eth') {
+        const approvalB = await walletClient!.writeContract({
+          abi: erc20Abi,
+          account: walletClient?.account,
+          address: args.tokenB,
+          args: [getSpenderContract(+chain), args.amountTokenBDesired],
+          functionName: 'approve'
+        });
+        await publicClient?.waitForTransactionReceipt({
+          hash: approvalB
+        });
+      }
       setStep2Loading(true);
       // console.log(approval);
 
@@ -231,38 +240,64 @@ export default function Stake() {
         hash: approvalA
       });
 
-      const apprB = await publicClient?.waitForTransactionReceipt({
-        hash: approvalB
-      });
       // eslint-disable-next-line no-console
-      console.log({ apprA, apprB });
+      console.log({ apprA });
 
-      const tx = await walletClient!.writeContract({
-        abi: LiquidityContractAbi,
-        account: walletClient?.account,
-        address: getSpenderContract(+chain),
-        args: [
-          args.tokenA,
-          args.tokenB,
-          args.stable,
-          args.amountTokenADesired,
-          args.amountTokenBDesired,
-          args.amounTokenAMin,
-          args.amounTokenBMin,
-          args.to,
-          args.deadline
-        ],
-        functionName: 'addLiquidity'
-        // value: parseUnits(maxDeposit?.eth, 18)
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction Hash --->>>', tx);
-      if (!tx) return;
-      const transaction = await publicClient?.waitForTransactionReceipt({
-        hash: tx
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction --->>>', transaction);
+      if (selectedtoken !== 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.tokenA,
+            args.tokenB,
+            args.stable,
+            args.amountTokenADesired,
+            args.amountTokenBDesired,
+            args.amounTokenAMin,
+            args.amounTokenBMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidity'
+          // value: parseUnits(maxDeposit?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
+
+      if (selectedtoken === 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.tokenA,
+            args.stable,
+            args.amountTokenADesired,
+            args.amounTokenAMin,
+            args.amountTokenBDesired,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidityETH',
+          value: parseUnits(maxDeposit?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
       setStep2Loading(false);
       setMaxDeposit((p) => {
         return { ...p, ion: '' };
@@ -558,8 +593,9 @@ export default function Stake() {
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
                   tokenName={'weth'}
-                  token={'0x4200000000000000000000000000000000000006'}
+                  token={getEthToken(selectedtoken as 'eth' | 'weth')}
                   chain={+chain}
+                  tokenSelector={true}
                 />
               </>
             )}
