@@ -92,6 +92,7 @@ const InfoRows = ({
           pool={comptrollerAddress}
           poolChainId={selectedChain}
           type="borrow"
+          className="items-center justify-center"
         />
       ) : multipliers[selectedChain]?.[pool]?.[asset]?.supply?.flywheel &&
         mode == InfoMode.SUPPLY ? (
@@ -100,6 +101,7 @@ const InfoRows = ({
           pool={comptrollerAddress}
           poolChainId={selectedChain}
           type="supply"
+          className="items-center justify-center"
         />
       ) : (
         <div />

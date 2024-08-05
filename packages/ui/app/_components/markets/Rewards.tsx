@@ -19,13 +19,15 @@ type RewardsProps = {
   poolChainId: number;
   type: 'borrow' | 'supply';
   rewards?: FlywheelReward[];
+  className?: string;
 };
 export const Rewards = ({
   cToken,
   pool,
   poolChainId,
   type,
-  rewards
+  rewards,
+  className
 }: RewardsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: rewardsData } = useAssetClaimableRewards(
@@ -83,7 +85,7 @@ export const Rewards = ({
       <div className="py-4">
         {filteredRewards.map((rewards, index) => (
           <div
-            className="flex"
+            className={`flex ${className}`}
             key={index}
           >
             <img
