@@ -111,10 +111,10 @@ export default function Widget({ close, open, chain }: IProps) {
         className={`w-max h-max relative flex flex-col items-center justify-center`}
         ref={newRef}
       >
-        {/* <LiFiWidget
+        <LiFiWidget
           integrator="Ionic Money"
           config={widgetConfig}
-        /> */}
+        />
         <button
           className={`my-4 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
           onClick={() => {
