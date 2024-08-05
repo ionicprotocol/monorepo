@@ -103,7 +103,7 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'eUSD',
           'bsdETH',
-          // 'hyUSD',
+          'hyUSD',
           'WETH',
           'ezETH',
           'weETH.mode',
