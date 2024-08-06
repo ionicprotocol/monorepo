@@ -1,4 +1,4 @@
-import { base, bob, mode, optimism } from '@ionicprotocol/chains';
+import { base, bob, mode, optimism, fraxtal } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
 import { config } from '@ui/config/index';
@@ -21,6 +21,10 @@ export const supportedChainIdToConfig: {
   [bob.chainId]: {
     enabled: config.isBobEnabled,
     supported: config.isBobEnabled
+  },
+  [fraxtal.chainId]: {
+    enabled: config.isFraxtalEnabled,
+    supported: config.isFraxtalEnabled
   }
 };
 
