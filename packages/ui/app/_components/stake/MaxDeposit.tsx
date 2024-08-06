@@ -3,7 +3,7 @@
 
 import dynamic from 'next/dynamic';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { formatUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
 import TokenSelector from './TokenSelector';
@@ -53,7 +53,7 @@ function MaxDeposit({
   useMemo(() => {
     if (max) {
       setBal({
-        value: BigInt(parseFloat(max) * 10 ** 18),
+        value: parseUnits(max, 18),
         decimals: 18
       });
     } else if (max == '0') {
@@ -125,10 +125,10 @@ function MaxDeposit({
         </div>
       </div>
       <div
-        className={`flex w-full mt-2 items-center justify-between text-md gap-x-1 `}
+        className={`flex max-w-full mt-2 items-center justify-between text-md gap-x-1 `}
       >
         <input
-          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto block w-min trucnate`}
+          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
           placeholder={`0.0`}
           type="number"
           value={
@@ -144,7 +144,7 @@ function MaxDeposit({
           onChange={(e) => handlInpData(e)}
           disabled={handleInput ? false : true}
         />
-        <div className="ml-auto flex items-center md:w-[70%] w-full justify-end">
+        <div className={`ml-auto min-w-max  flex items-center justify-end`}>
           {tokenSelector ? (
             <TokenSelector
               newRef={newRef}
@@ -157,7 +157,7 @@ function MaxDeposit({
               {' '}
               <img
                 alt="ion logo"
-                className={`w-5 h-5 inline-block ml-4`}
+                className={`w-5 h-5 inline-block ml-2`}
                 src={`/img/logo/${tokenName.toUpperCase()}.png`}
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null; // prevents looping

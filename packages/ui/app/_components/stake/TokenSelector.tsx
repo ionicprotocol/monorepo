@@ -36,7 +36,7 @@ export default function TokenSelector({
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-2 px-3 w-full gap-1 flex relative items-center border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
+          className={`py-1.5 pl-3 pr-7 w-full gap-1.5 flex relative items-start justify-center border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
         >
           <img
             alt="expand-arrow--v2"

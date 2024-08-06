@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { type FlywheelReward } from '@ionicprotocol/types';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
@@ -11,7 +12,10 @@ import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
-import { Rewards } from './Rewards';
+// import { Rewards } from './Rewards';
+const Rewards = dynamic(() => import('./Rewards'), {
+  ssr: false
+});
 
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';

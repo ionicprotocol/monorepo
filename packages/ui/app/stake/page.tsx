@@ -21,7 +21,13 @@ import {
   useWalletClient
 } from 'wagmi';
 
-import NetworkSelector from '../_components/markets/NetworkSelector';
+// import NetworkSelector from '../_components/markets/NetworkSelector';
+const NetworkSelector = dynamic(
+  () => import('../_components/markets/NetworkSelector'),
+  {
+    ssr: false
+  }
+);
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import ClaimRewards from '../_components/stake/ClaimRewards';
@@ -115,72 +121,74 @@ export default function Stake() {
   }, [chain, chainId, router]);
 
   useMemo(() => {
-    if (!maxWithdrawl.ion && !withdrawalMaxToken) return;
+    if (!maxWithdrawl.ion || !withdrawalMaxToken) return;
     const percent =
       (+maxWithdrawl.ion /
         Number(
           formatUnits(
-            withdrawalMaxToken?.value as bigint,
-            withdrawalMaxToken?.decimals as number
+            withdrawalMaxToken.value as bigint,
+            withdrawalMaxToken.decimals as number
           )
         )) *
       100;
     setUtilization(Number(percent.toFixed(0)));
-  }, [maxWithdrawl.ion, withdrawalMaxToken]);
+  }, [maxWithdrawl.ion, withdrawalMaxToken, chain]);
 
-  useMemo(async () => {
-    try {
-      const reserves = (await publicClient?.readContract({
-        abi: getReservesABI(+chain),
-        address: getReservesContract(+chain),
-        args: getReservesArgs(+chain),
-        functionName: 'getReserves'
-      })) as bigint[];
-      if (maxDeposit.ion && reserves) {
-        const ethVal =
-          (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
-        setMaxDeposit((p) => {
-          return { ...p, eth: formatEther(ethVal) || '' };
-        });
-      } else {
-        setMaxDeposit((p) => {
-          return { ...p, eth: '' };
-        });
-      }
-      if (maxWithdrawl.ion && reserves) {
-        const ethVal =
-          (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
-        setMaxWithdrawl((p) => {
-          return { ...p, eth: formatEther(ethVal) || '' };
-        });
-      } else {
-        setMaxWithdrawl((p) => {
-          return { ...p, eth: '' };
-        });
-      }
-      let getStakedTokens = 0n;
-      if (address) {
-        getStakedTokens =
+  useEffect(() => {
+    async function getReservesAndStakes() {
+      try {
+        const reserves = (await publicClient?.readContract({
+          abi: getReservesABI(+chain),
+          address: getReservesContract(+chain),
+          args: getReservesArgs(+chain),
+          functionName: 'getReserves'
+        })) as bigint[];
+        if (maxDeposit.ion && reserves) {
+          const ethVal =
+            (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
+          setMaxDeposit((p) => {
+            return { ...p, eth: formatEther(ethVal) || '' };
+          });
+        } else {
+          setMaxDeposit((p) => {
+            return { ...p, eth: '' };
+          });
+        }
+        if (maxWithdrawl.ion && reserves) {
+          const ethVal =
+            (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
+          setMaxWithdrawl((p) => {
+            return { ...p, eth: formatEther(ethVal) || '' };
+          });
+        } else {
+          setMaxWithdrawl((p) => {
+            return { ...p, eth: '' };
+          });
+        }
+
+        const getStakedTokens =
           (await publicClient?.readContract({
             abi: StakingContractAbi,
             address: getStakingToContract(+chain),
-            args: [address],
+            args: [address as `0x${string}`],
             functionName: 'balanceOf'
           })) ?? 0n;
+
+        if (getStakedTokens || step3Loading) {
+          step3Loading
+            ? setAllStakedAmount(formatEther(getStakedTokens))
+            : setAllStakedAmount(formatEther(getStakedTokens));
+        } else {
+          step3Loading
+            ? setAllStakedAmount(formatEther(getStakedTokens))
+            : setAllStakedAmount(formatEther(getStakedTokens));
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
       }
-      if (getStakedTokens || step3Loading) {
-        step3Loading
-          ? setAllStakedAmount(formatEther(getStakedTokens))
-          : setAllStakedAmount(formatEther(getStakedTokens));
-      } else {
-        step3Loading
-          ? setAllStakedAmount(formatEther(getStakedTokens))
-          : setAllStakedAmount(formatEther(getStakedTokens));
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
     }
+    getReservesAndStakes();
   }, [
     address,
     chain,
@@ -531,6 +539,7 @@ export default function Stake() {
         <ClaimRewards
           close={() => setRewardPopup(false)}
           open={rewardPopup}
+          chain={chain}
         />
 
         <div
@@ -560,9 +569,8 @@ export default function Stake() {
                 />
               </div>
             </div>
-
             <button
-              className={` py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={` py-1.5 text-sm ${chain && pools[+chain].text} w-full ${(chain && pools[+chain].accentbg) ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
@@ -630,9 +638,9 @@ export default function Stake() {
                       const ionval =
                         (Number(val) / 100) *
                         Number(
-                          formatUnits(
-                            withdrawalMaxToken?.value as bigint,
-                            withdrawalMaxToken?.decimals as number
+                          formatEther(
+                            withdrawalMaxToken?.value as bigint
+                            // withdrawalMaxToken?.decimals as number
                           )
                         );
                       setMaxWithdrawl((p) => {
@@ -649,8 +657,16 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
-                step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
+              disabled={
+                (step2Toggle === 'Deposit' &&
+                  (maxDeposit.ion === '' || maxDeposit.ion === '0')) ||
+                (step2Toggle === 'Withdraw' &&
+                  (maxWithdrawl.ion === '' || maxWithdrawl.ion === '0'))
+                  ? true
+                  : false
+              }
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm disabled:opacity-70 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+                step2Toggle === 'Withdraw' && 'bg-red-500  text-white'
               } rounded-md`}
               onClick={() => {
                 step2Toggle === 'Deposit' && addLiquidity();
@@ -737,7 +753,14 @@ export default function Stake() {
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              disabled={
+                (step3Toggle === 'Stake' && (maxLp === '' || maxLp === '0')) ||
+                (step3Toggle === 'Unstake' &&
+                  (maxUnstake === '' || maxUnstake === '0'))
+                  ? true
+                  : false
+              }
+              className={`flex disabled:opacity-70   items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
