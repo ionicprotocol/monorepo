@@ -745,7 +745,13 @@ export default function Stake() {
             )}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1 className={` mt-2`}>
+            <h1 className={`text-end text-[11px] text-white/40 mt-2`}>
+              Total Staked :{' '}
+              {Number(allStakedAmount).toLocaleString('en-US', {
+                maximumFractionDigits: 3
+              })} ION/ETH
+            </h1>
+            <h1 className={` mt-1`}>
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
             </h1>
             {/* this will get repeated */}
