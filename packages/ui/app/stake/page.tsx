@@ -665,7 +665,7 @@ export default function Stake() {
                   ? true
                   : false
               }
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm disabled:opacity-70 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm disabled:opacity-80 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step2Toggle === 'Withdraw' && 'bg-red-500  text-white'
               } rounded-md`}
               onClick={() => {
@@ -766,7 +766,7 @@ export default function Stake() {
                   ? true
                   : false
               }
-              className={`flex disabled:opacity-70   items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex disabled:opacity-80   items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
