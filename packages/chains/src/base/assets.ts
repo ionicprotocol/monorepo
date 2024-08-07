@@ -21,6 +21,9 @@ export const WBTC = "0x1ceA84203673764244E05693e42E6Ace62bE9BA5";
 export const weETH = "0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A";
 export const eUSD = "0xcfa3ef56d303ae4faaba0592388f19d7c3399fb4";
 export const bsdETH = "0xcb327b99ff831bf8223cced12b1338ff3aa322ff";
+export const RSR = "0xaB36452DbAC151bE02b16Ca17d8919826072f64a";
+export const ION = "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5";
+export const hyUSD = "0xCc7FF230365bD730eE4B352cC2492CEdAC49383e";
 
 export const assets: SupportedAsset[] = [
   {
@@ -125,8 +128,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0xFC1415403EbB0c693f9a7844b92aD2Ff24775C65",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
     },
-    extraDocs: defaultDocs("https://basescan.org", weETH),
-    initialCf: "70"
+    initialCf: "0.70",
+    extraDocs: defaultDocs("https://basescan.org", weETH)
   },
   {
     symbol: assetSymbols.eUSD,
@@ -138,10 +141,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x9b2C948dbA5952A1f5Ab6fA16101c1392b8da1ab",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
-    extraDocs: defaultDocs("https://basescan.org", eUSD),
     initialSupplyCap: parseEther(String(10_000_000)).toString(),
     initialBorrowCap: parseEther(String(8_000_000)).toString(),
-    initialCf: "80"
+    initialCf: "0.80",
+    extraDocs: defaultDocs("https://basescan.org", eUSD)
   },
   {
     symbol: assetSymbols.bsdETH,
@@ -153,11 +156,50 @@ export const assets: SupportedAsset[] = [
       aggregator: "0xC49F0Dd98F38C525A7ce15E73E60675456F3a161",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
     },
-    extraDocs: defaultDocs("https://basescan.org", bsdETH),
     initialSupplyCap: parseEther(String(6_500)).toString(),
     initialBorrowCap: parseEther(String(5_200)).toString(),
-    initialCf: "70"
+    initialCf: "0.70",
+    extraDocs: defaultDocs("https://basescan.org", bsdETH)
+  },
+  {
+    symbol: assetSymbols.RSR,
+    underlying: RSR,
+    name: "Reserve Rights",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xAa98aE504658766Dfe11F31c5D95a0bdcABDe0b1",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialSupplyCap: parseEther(String(180_000_000)).toString(),
+    initialBorrowCap: parseEther(String(144_000_000)).toString(),
+    initialCf: "0.70",
+    extraDocs: defaultDocs("https://basescan.org", RSR)
+  },
+  {
+    symbol: assetSymbols.hyUSD,
+    underlying: hyUSD,
+    name: "High Yield USD",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x834c4f996B8a6411AEC0f8a0cF6fAfd4423dBEe2",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(200_000)).toString(),
+    initialBorrowCap: parseEther(String(160_000)).toString(),
+    initialCf: "0.70",
+    extraDocs: defaultDocs("https://basescan.org", hyUSD)
   }
+  // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
+  // {
+  //   symbol: assetSymbols.ION,
+  //   underlying: ION,
+  //   name: "Ionic",
+  //   decimals: 18,
+  //   oracle: OracleTypes.AerodromePriceOracle
+  // },
+  //////////////////////////////////////////
 ];
 
 export default assets;

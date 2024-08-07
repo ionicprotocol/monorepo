@@ -120,6 +120,10 @@
   background: #e56016;
 }
 
+.bg-fraxtal {
+  background: #504F57;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -138,6 +142,10 @@
 
 .border-bob {
   border-color: #e56016;
+}
+
+.border-fraxtal {
+  border-color: #504F57;
 }
 
 .text-xxs {

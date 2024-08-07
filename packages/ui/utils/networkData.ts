@@ -3,7 +3,8 @@ import {
   chainIdToConfig,
   mode,
   optimism,
-  bob
+  bob,
+  fraxtal
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -15,7 +16,8 @@ import {
   mode as vMode,
   base as vBase,
   optimism as vOptimism,
-  bob as vBob
+  bob as vBob,
+  fraxtal as vFraxtal
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -82,6 +84,10 @@ export function getEnabledChains() {
     enabledChains.push(vBob);
   }
 
+  if (config.isFraxtalEnabled) {
+    enabledChains.push(vFraxtal);
+  }
+
   return enabledChains;
 }
 
@@ -89,12 +95,14 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.mode]: mode.assets,
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets,
-  [SupportedChains.bob]: bob.assets
+  [SupportedChains.bob]: bob.assets,
+  [SupportedChains.fraxtal]: fraxtal.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.mode]: mode.deployedPlugins,
   [SupportedChains.base]: base.deployedPlugins,
   [SupportedChains.optimism]: optimism.deployedPlugins,
-  [SupportedChains.bob]: bob.deployedPlugins
+  [SupportedChains.bob]: bob.deployedPlugins,
+  [SupportedChains.fraxtal]: fraxtal.deployedPlugins
 };

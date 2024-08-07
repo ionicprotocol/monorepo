@@ -22,8 +22,10 @@ export function useAllUsdPrices() {
       await Promise.all(
         chainIds.map(async (id) => {
           const config = chainIdToConfig[id];
+          console.log('config: ', config);
           if (config) {
             const _cgId = config.specificParams.cgId;
+            console.log('_cgId: ', _cgId);
             try {
               const { data } = await axios.get(`${COINGECKO_API}${_cgId}`);
 

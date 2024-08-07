@@ -7,6 +7,7 @@ type CONFIG = {
   isModeEnabled: boolean;
   isOptimismEnabled: boolean;
   isBobEnabled: boolean;
+  isFraxtalEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
@@ -32,6 +33,7 @@ const config: CONFIG = {
   isModeEnabled: true,
   isOptimismEnabled: true,
   isBobEnabled: true,
+  isFraxtalEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
