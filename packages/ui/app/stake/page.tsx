@@ -579,7 +579,9 @@ export default function Stake() {
           <div
             className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2 `}
           >
-            <h1 className={` md:text-lg text-md`}>Step 2. LP your ION Tokens</h1>
+            <h1 className={` md:text-lg text-md`}>
+              Step 2. LP your ION Tokens
+            </h1>
             <div className={`my-3`}>
               <Toggle setActiveToggle={setstep2Toggle} />
             </div>
