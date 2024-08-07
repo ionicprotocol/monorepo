@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
+import { mode } from 'viem/chains';
 
 import TokenSelector from './TokenSelector';
 
@@ -151,6 +152,9 @@ function MaxDeposit({
               open={open}
               setOpen={setOpen}
               chain={+chain}
+              tokenArr={
+                +chain === mode.id ? ['eth', 'weth', 'mode'] : ['eth', 'weth']
+              }
             />
           ) : (
             <>

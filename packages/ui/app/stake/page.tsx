@@ -47,7 +47,7 @@ import {
 } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
-  getEthToken,
+  getPoolToken,
   getReservesABI,
   getReservesArgs,
   getReservesContract,
@@ -202,7 +202,7 @@ export default function Stake() {
     try {
       const args = {
         tokenA: getToken(+chain),
-        tokenB: getEthToken(selectedtoken as 'eth' | 'weth'),
+        tokenB: getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth'),
         stable: false,
         amountTokenADesired: parseUnits(maxDeposit?.ion, 18),
         amounTokenAMin:
@@ -602,8 +602,8 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
-                  tokenName={'weth'}
-                  token={getEthToken(selectedtoken as 'eth' | 'weth')}
+                  tokenName={selectedtoken ?? 'eth'}
+                  token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
                   tokenSelector={true}
                 />

@@ -10,8 +10,9 @@ import {
 import { TradingContractAddress } from '@ui/constants/modetradingfees';
 import { StakingContractAddress } from '@ui/constants/staking';
 
-export function getEthToken(token?: 'eth' | 'weth'): `0x${string}` {
+export function getPoolToken(token?: 'eth' | 'mode' | 'weth'): `0x${string}` {
   if (token === 'weth') return '0x4200000000000000000000000000000000000006';
+  if (token === 'mode') return '0xDfc7C877a950e49D2610114102175A06C2e3167a';
   return '0x0000000000000000000000000000000000000000';
 }
 export function getToken(chain: number): `0x${string}` {
