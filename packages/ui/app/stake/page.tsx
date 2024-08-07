@@ -140,7 +140,10 @@ export default function Stake() {
         const reserves = (await publicClient?.readContract({
           abi: getReservesABI(+chain),
           address: getReservesContract(+chain),
-          args: getReservesArgs(+chain),
+          args: getReservesArgs(
+            +chain,
+            selectedtoken as 'eth' | 'mode' | 'weth'
+          ),
           functionName: 'getReserves'
         })) as bigint[];
         if (maxDeposit.ion && reserves) {
@@ -195,6 +198,7 @@ export default function Stake() {
     maxDeposit.ion,
     maxWithdrawl.ion,
     publicClient,
+    selectedtoken,
     step3Loading
   ]);
 
@@ -835,7 +839,7 @@ const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
             step3Toggle === 'Unstake' && 'text-red-500'
           }`}
         >
-          3x
+          5x
         </span>
       </div>
     </>

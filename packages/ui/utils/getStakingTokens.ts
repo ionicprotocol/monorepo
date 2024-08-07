@@ -54,13 +54,10 @@ export function getReservesABI(chain: number) {
   if (chain === 8453) return BaseContractABI;
   return LiquidityContractAbi;
 }
-export function getReservesArgs(chain: number) {
+
+export function getReservesArgs(chain: number, token: 'eth' | 'mode' | 'weth') {
   if (chain === 34443) {
-    return [
-      getToken(+chain),
-      '0x4200000000000000000000000000000000000006',
-      false
-    ];
+    return [getToken(+chain), getPoolToken(token), false];
   }
   if (chain === 8453) return [];
   return [];
