@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { type Address, formatEther, type Hex } from 'viem';
-import { mode, base } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -14,13 +14,12 @@ import {
 
 import ResultHandler from '../ResultHandler';
 
-import {
-  TradingAbi,
-  TradingContractAddress
-} from '@ui/constants/modetradingfees';
+import { TradingAbi } from '@ui/constants/modetradingfees';
 import { StakingContractAbi } from '@ui/constants/staking';
-import { getStakingToContract } from '@ui/utils/getStakingTokens';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import {
+  getStakingToContract,
+  getTradingContractAddress
+} from '@ui/utils/getStakingTokens';
 
 interface IProps {
   close: () => void;
@@ -185,13 +184,13 @@ const DisplayAndClaimTradingFees = ({
     contracts: [
       {
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [address],
         functionName: 'claimable0'
       },
       {
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [address],
         functionName: 'claimable1'
       }
@@ -209,13 +208,13 @@ const DisplayAndClaimTradingFees = ({
 
   async function claimTradingFees() {
     try {
-      const switched = await handleSwitchOriginChain(mode.id, chainId);
-      if (!switched) return;
+      // const switched = await handleSwitchOriginChain(mode.id, chainId);
+      // if (!switched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [],
         functionName: 'claimFees'
       });

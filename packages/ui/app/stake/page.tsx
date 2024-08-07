@@ -132,7 +132,7 @@ export default function Stake() {
         )) *
       100;
     setUtilization(Number(percent.toFixed(0)));
-  }, [maxWithdrawl.ion, withdrawalMaxToken, chain]);
+  }, [maxWithdrawl.ion, withdrawalMaxToken]);
 
   useEffect(() => {
     async function getReservesAndStakes() {
@@ -749,7 +749,8 @@ export default function Stake() {
               Total Staked :{' '}
               {Number(allStakedAmount).toLocaleString('en-US', {
                 maximumFractionDigits: 3
-              })} ION/ETH
+              })}{' '}
+              ION/ETH
             </h1>
             <h1 className={` mt-1`}>
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}

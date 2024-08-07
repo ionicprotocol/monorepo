@@ -7,6 +7,7 @@ import {
   LiquidityContractAbi,
   LiquidityContractAddress
 } from '@ui/constants/lp';
+import { TradingContractAddress } from '@ui/constants/modetradingfees';
 import { StakingContractAddress } from '@ui/constants/staking';
 
 export function getEthToken(token?: 'eth' | 'weth'): `0x${string}` {
@@ -20,6 +21,11 @@ export function getToken(chain: number): `0x${string}` {
 }
 export function getAvailableStakingToken(chain: number): `0x${string}` {
   if (chain === 34443) return '0xC6A394952c097004F83d2dfB61715d245A38735a';
+  if (chain === 8453) return BaseReservesContractAddr;
+  return '0x0000000000000000000000000000000000000000';
+}
+export function getTradingContractAddress(chain: number): `0x${string}` {
+  if (chain === 34443) return TradingContractAddress;
   if (chain === 8453) return BaseReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
