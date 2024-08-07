@@ -1,6 +1,7 @@
 'use client';
 
 import { type FlywheelReward } from '@ionicprotocol/types';
+import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import { formatEther, type Address } from 'viem';
 // import { base } from 'viem/chains';
@@ -19,13 +20,15 @@ type RewardsProps = {
   poolChainId: number;
   type: 'borrow' | 'supply';
   rewards?: FlywheelReward[];
+  className?: string;
 };
-export const Rewards = ({
+const Rewards = ({
   cToken,
   pool,
   poolChainId,
   type,
-  rewards
+  rewards,
+  className
 }: RewardsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: rewardsData } = useAssetClaimableRewards(
@@ -83,7 +86,7 @@ export const Rewards = ({
       <div className="py-4">
         {filteredRewards.map((rewards, index) => (
           <div
-            className="flex"
+            className={`flex ${className ?? 'none'}`}
             key={index}
           >
             <img
@@ -119,3 +122,5 @@ export const Rewards = ({
     </>
   );
 };
+
+export default dynamic(() => Promise.resolve(Rewards), { ssr: false });

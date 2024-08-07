@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { type Address, formatEther, type Hex } from 'viem';
-import { mode } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -14,22 +14,20 @@ import {
 
 import ResultHandler from '../ResultHandler';
 
+import { TradingAbi } from '@ui/constants/modetradingfees';
+import { StakingContractAbi } from '@ui/constants/staking';
 import {
-  TradingAbi,
-  TradingContractAddress
-} from '@ui/constants/modetradingfees';
-import {
-  StakingContractAbi,
-  StakingContractAddress
-} from '@ui/constants/staking';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+  getStakingToContract,
+  getTradingContractAddress
+} from '@ui/utils/getStakingTokens';
 
 interface IProps {
   close: () => void;
   open: boolean;
+  chain: string;
 }
 
-export default function ClaimRewards({ close, open }: IProps) {
+export default function ClaimRewards({ close, open, chain }: IProps) {
   const newRef = useRef(null!);
   const { address, isConnected } = useAccount();
 
@@ -53,7 +51,7 @@ export default function ClaimRewards({ close, open }: IProps) {
       } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm`}
     >
       <div
-        className={`w-[30%] h-max relative flex flex-col items-center justify-cente `}
+        className={`md:w-[30%] w-[80%] h-max relative flex flex-col items-center justify-cente `}
         ref={newRef}
       >
         <div className={`bg-grayUnselect w-full p-4 rounded-md`}>
@@ -74,13 +72,19 @@ export default function ClaimRewards({ close, open }: IProps) {
             className={`grid grid-cols-3 justify-between w-full items-center text-sm text-white/60`}
           >
             {address && isConnected && (
-              <DisplayAndClaimRewards address={address} />
+              <DisplayAndClaimRewards
+                address={address}
+                chain={chain}
+              />
             )}
           </div>
           <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           <h1 className={`mt-4 mb-2 text-center`}>Trading Fees</h1>
           {address && isConnected && (
-            <DisplayAndClaimTradingFees address={address} />
+            <DisplayAndClaimTradingFees
+              address={address}
+              chain={chain}
+            />
           )}
           <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
           {/* <div
@@ -97,16 +101,20 @@ export default function ClaimRewards({ close, open }: IProps) {
 
 type DisplayAndClaimRewardsProps = {
   address: Address;
+  chain: string;
 };
-const DisplayAndClaimRewards = ({ address }: DisplayAndClaimRewardsProps) => {
-  const { data: rewards, isLoading } = useReadContract({
+const DisplayAndClaimRewards = ({
+  address,
+  chain
+}: DisplayAndClaimRewardsProps) => {
+  const { data: rewards } = useReadContract({
     abi: StakingContractAbi,
-    address: StakingContractAddress,
+    address: getStakingToContract(+chain),
     args: [address],
     functionName: 'earned'
   });
   const { writeContractAsync } = useWriteContract();
-  const chainId = useChainId();
+  // const chainId = useChainId();
   const [loading, setLoading] = useState<boolean>(false);
   const [hash, setHash] = useState<Address | undefined>();
   const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
@@ -119,13 +127,13 @@ const DisplayAndClaimRewards = ({ address }: DisplayAndClaimRewardsProps) => {
 
   async function claimRewards() {
     try {
-      const switched = await handleSwitchOriginChain(mode.id, chainId);
-      if (!switched) return;
+      // const switched = await handleSwitchOriginChain(mode.id, chainId);
+      // if (!switched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
         abi: StakingContractAbi,
-        address: StakingContractAddress,
+        address: getStakingToContract(+chain),
         args: [address],
         functionName: 'getReward'
       });
@@ -137,10 +145,11 @@ const DisplayAndClaimRewards = ({ address }: DisplayAndClaimRewardsProps) => {
       setLoading(false);
     }
   }
+  // console.log(rewards);
 
   return (
     <>
-      <span className={` mx-auto`}>MODE</span>
+      <span className={` mx-auto`}>{+chain === base.id ? 'AERO' : 'MODE'}</span>
       <span className={` mx-auto`}>
         {rewards
           ? Number(formatEther(rewards)).toLocaleString('en-US', {
@@ -151,10 +160,10 @@ const DisplayAndClaimRewards = ({ address }: DisplayAndClaimRewardsProps) => {
       <button
         className={`mx-auto py-0.5 px-4 text-sm text-black w-max bg-accent disabled:bg-accent/60 rounded-md`}
         onClick={() => claimRewards()}
-        disabled={loading || isLoading || rewards === BigInt(0)}
+        disabled={loading || rewards === BigInt(0)}
       >
         <ResultHandler
-          isLoading={loading || isLoading}
+          isLoading={loading}
           height="20"
           width="20"
           color={'#000000'}
@@ -175,13 +184,13 @@ const DisplayAndClaimTradingFees = ({
     contracts: [
       {
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [address],
         functionName: 'claimable0'
       },
       {
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [address],
         functionName: 'claimable1'
       }
@@ -199,13 +208,13 @@ const DisplayAndClaimTradingFees = ({
 
   async function claimTradingFees() {
     try {
-      const switched = await handleSwitchOriginChain(mode.id, chainId);
-      if (!switched) return;
+      // const switched = await handleSwitchOriginChain(mode.id, chainId);
+      // if (!switched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
         abi: TradingAbi,
-        address: TradingContractAddress,
+        address: getTradingContractAddress(+chainId),
         args: [],
         functionName: 'claimFees'
       });

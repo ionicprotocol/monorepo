@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 // import { base } from 'viem/chains';
-// import { useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 // import '@gasbot/widget/style.css';
 import { http, createConfig } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
@@ -36,6 +36,7 @@ export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const pathname = usePathname();
   const dropChain = useStore((state) => state.dropChain);
+  const chainId = useChainId();
   // const signer = useEthersSigner();
 
   // useEffect(()=>{
@@ -80,7 +81,7 @@ export default function Navbar() {
           </Link>
           <Link
             className="relative mb-2 lg:mb-0"
-            href="/stake"
+            href={`/stake?chain=${chainId}`}
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!

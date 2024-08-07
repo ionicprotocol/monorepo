@@ -1000,7 +1000,7 @@ const ClaimAllBaseRewards = ({ chain }: IClaimAllBaseRewards) => {
       <div className={` mb-2 w-full grid grid-cols-3 items-center`}>
         <p className="text-white/60 text-md">Emissions </p>
         <div className="flex items-center justify-start gap-1 col-start-3">
-          {rewards ? (
+          {rewards && totalRewards > 0n ? (
             rewards?.map((reward, idx) => (
               <img
                 alt="icon"
