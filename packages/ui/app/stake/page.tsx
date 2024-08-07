@@ -529,7 +529,7 @@ export default function Stake() {
 
   return (
     <main className={``}>
-      <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
+      <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
         <Widget
           close={() => setWidgetPopup(false)}
           open={widgetPopup}
@@ -543,13 +543,13 @@ export default function Stake() {
         />
 
         <div
-          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-2 gap-4`}
+          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4`}
         >
           <div
-            className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3  col-start-1 row-start-1 `}
+            className={`bg-grayone md:col-span-2 flex flex-col items-center justify-center py-4 md:px-8 px-4 rounded-xl gap-y-3  md:col-start-1 md:row-start-1 `}
           >
-            <div className={`flex w-full items-center  justify-between`}>
-              <h1 className={` text-lg`}>
+            <div className={`flex w-full items-center   justify-between`}>
+              <h1 className={` md:text-lg text-md `}>
                 Step 1. Buy
                 <img
                   alt="ion logo"
@@ -577,9 +577,9 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
+            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2 `}
           >
-            <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
+            <h1 className={` md:text-lg text-md`}>Step 2. LP your ION Tokens</h1>
             <div className={`my-3`}>
               <Toggle setActiveToggle={setstep2Toggle} />
             </div>
@@ -696,9 +696,9 @@ export default function Stake() {
           </div>
 
           <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 row-start-3 col-start-1 col-span-1`}
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 md:row-start-3 row-start-4 md:col-start-1 md:col-span-1`}
           >
-            <h1 className={` text-lg `}>Claim Your Rewards </h1>
+            <h1 className={` md:text-lg text-md `}>Claim Your Rewards </h1>
             {/* 
             <MaxDeposit
               tokenName={'ion/eth'}
@@ -713,9 +713,9 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}
+            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2`}
           >
-            <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
+            <h1 className={` md:text-lg text-md`}>Step 3. Stake your LP</h1>
             <div className={`my-3`}>
               <Toggle
                 setActiveToggle={setstep3Toggle}

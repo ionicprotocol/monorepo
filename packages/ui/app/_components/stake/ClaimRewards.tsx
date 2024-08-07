@@ -51,7 +51,7 @@ export default function ClaimRewards({ close, open, chain }: IProps) {
       } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm`}
     >
       <div
-        className={`w-[30%] h-max relative flex flex-col items-center justify-cente `}
+        className={`md:w-[30%] w-[80%] h-max relative flex flex-col items-center justify-cente `}
         ref={newRef}
       >
         <div className={`bg-grayUnselect w-full p-4 rounded-md`}>
