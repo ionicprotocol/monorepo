@@ -23,8 +23,9 @@ import { setUpSdk } from "./utils";
 };
 const account = privateKeyToAccount(config.adminPrivateKey as Hex);
 const publicClient = createPublicClient({
+  batch: { multicall: { wait: 16 } },
   chain: mode,
-  transport: http(config.rpcUrl),
+  transport: http(config.rpcUrl)
 });
 const walletClient = createWalletClient({
   account,
