@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
+import { assetSymbols, OracleTypes, PythSpecificParams, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -19,6 +19,8 @@ export const mBTC = "0x59889b7021243dB5B1e065385F918316cD90D46c";
 export const MODE = "0xDfc7C877a950e49D2610114102175A06C2e3167a";
 // export const ION = "0x18470019bf0e94611f15852f7e93cf5d65bc34ca";
 export const KIM = "0x6863fb62Ed27A9DdF458105B507C15b5d741d62e";
+export const sUSDe = "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2";
+export const USDe = "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34";
 
 export const assets: SupportedAsset[] = [
   {
@@ -108,6 +110,28 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", mBTC)
+  },
+  {
+    symbol: assetSymbols.sUSDe,
+    underlying: sUSDe,
+    name: "Staked USDe",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0xca3ba9a619a4b3755c10ac7d5e760275aa95e9823d38a84fedd416856cdba37c"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", sUSDe)
+  },
+  {
+    symbol: assetSymbols.USDe,
+    underlying: USDe,
+    name: "USDe",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x6ec879b1e9963de5ee97e9c8710b742d6228252a5e2ca12d4ae81d7fe5ee8c5d"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", USDe)
   }
 ];
 
