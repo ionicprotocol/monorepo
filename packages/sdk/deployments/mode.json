@@ -53,6 +53,9 @@
     "ComptrollerFirstExtension": {
       "address": "0xdc4aBE2cd9a276b187200d4896d4B219c0B8920A"
     },
+    "ComptrollerPrudentiaCapsExt": {
+      "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
+    },
     "DefaultProxyAdmin": {
       "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
     },
@@ -96,7 +99,7 @@
       "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
     },
     "JumpRateModel": {
-      "address": "0x21a455cEd9C79BC523D4E340c2B97521F4217817"
+      "address": "0x22cc2474f1578d7e311F3aFa0256Fc9F52bC5636"
     },
     "KimUniV2Liquidator": {
       "address": "0x6aC17D406a820fa464fFdc0940FCa7E60b3b36B7"
@@ -163,6 +166,15 @@
     },
     "PoolLensSecondary": {
       "address": "0x7Ea7BB80F3bBEE9b52e6Ed3775bA06C9C80D4154"
+    },
+    "PrudentiaInterestRateModel_USDC": {
+      "address": "0x6a40D802080a37E210Ec87735ABF995b5BC636A6"
+    },
+    "PrudentiaInterestRateModel_USDT": {
+      "address": "0xC58DCC0cbc02355cF1aD6b5398dE49152ae72E2E"
+    },
+    "PrudentiaInterestRateModel_WETH": {
+      "address": "0xb0a9B9F6FD960108df5B508DA5abe476d8e37F09"
     },
     "PythPriceOracle": {
       "address": "0x52Ee6E740C1785412e51A381B0d87fb1692a7b23"
