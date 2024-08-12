@@ -42,25 +42,7 @@ export type PoolAssetStructOutput = {
   borrowGuardianPaused: boolean;
   mintGuardianPaused: boolean;
 };
-function getUserTotals(assets: PoolAssetStructOutput[]): {
-  totalBorrow: bigint;
-  totalCollateral: bigint;
-} {
-  let totalBorrow = 0n;
-  let totalCollateral = 0n;
-  for (const a of assets) {
-    totalBorrow = totalBorrow + (a.borrowBalance * a.underlyingPrice) / parseEther("1");
-    if (a.membership) {
-      totalCollateral =
-        totalCollateral +
-        (((a.supplyBalance * a.underlyingPrice) / parseEther("1")) * a.collateralFactor) / parseEther("1");
-    }
-  }
-  return { totalBorrow, totalCollateral };
-}
-function getPositionHealth(totalBorrow: bigint, totalCollateral: bigint): bigint {
-  return totalBorrow > 0n ? (totalCollateral * parseEther("1")) / totalBorrow : 10n ** 36n;
-}
+
 const PAGE_SIZE = 1000;
 async function getFusePoolUsers(
   sdk: IonicSdk,
@@ -80,11 +62,10 @@ async function getFusePoolUsers(
       return assets;
     })
   );
-  assetsResults.forEach((assets, index) => {
-    const { totalBorrow, totalCollateral } = getUserTotals(assets as PoolAssetStructOutput[]);
-    const health = getPositionHealth(totalBorrow, totalCollateral);
+  assetsResults.forEach(async (assets, index) => {
+    const health = await sdk.contracts.PoolLens.read.getHealthFactor([users[index], comptroller]);
     if (maxHealth > health) {
-      poolUsers.push({ account: users[index], totalBorrow, totalCollateral, health });
+      poolUsers.push({ account: users[index], health });
     }
   });
   return {
