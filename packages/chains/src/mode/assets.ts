@@ -1,4 +1,13 @@
-import { assetSymbols, OracleTypes, PythSpecificParams, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
+import {
+  assetSymbols,
+  ChainlinkFeedBaseCurrency,
+  ChainlinkSpecificParams,
+  OracleTypes,
+  PythSpecificParams,
+  SupportedAsset,
+  SupportedChains
+} from "@ionicprotocol/types";
+import { parseEther } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -127,11 +136,14 @@ export const assets: SupportedAsset[] = [
     underlying: USDe,
     name: "USDe",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      feed: "0x6ec879b1e9963de5ee97e9c8710b742d6228252a5e2ca12d4ae81d7fe5ee8c5d"
-    } as PythSpecificParams,
-    extraDocs: defaultDocs("https://explorer.mode.network", USDe)
+      aggregator: "0x1bB8f2dF000553E5Af2AEd5c42FEd3a73cd5144b",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", USDe),
+    initialSupplyCap: parseEther(String(5_000_000)).toString(),
+    initialBorrowCap: "1"
   }
 ];
 
