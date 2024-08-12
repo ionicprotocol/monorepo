@@ -66,7 +66,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: [
           'WETH',
           'USDC',
@@ -82,7 +82,7 @@ export const pools: Record<number, PoolParams> = {
       },
       {
         id: '1',
-        name: 'Native Market',
+        name: 'Native Pool',
         assets: ['MODE', 'WETH', 'USDC', 'USDT']
       }
     ]
@@ -99,7 +99,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: [
           'eUSD',
           'bsdETH',
@@ -126,7 +126,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
       }
     ]
@@ -141,7 +141,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['USDC', 'USDT', 'WETH', 'WBTC', 'tBTC', 'SOV']
       }
     ]
