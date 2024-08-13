@@ -5,7 +5,6 @@ import { type Address, formatEther, type Hex } from 'viem';
 import { base } from 'viem/chains';
 import {
   useAccount,
-  useChainId,
   useReadContract,
   useReadContracts,
   useWaitForTransactionReceipt,
@@ -25,9 +24,15 @@ interface IProps {
   close: () => void;
   open: boolean;
   chain: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 }
 
-export default function ClaimRewards({ close, open, chain }: IProps) {
+export default function ClaimRewards({
+  close,
+  open,
+  chain,
+  selectedtoken
+}: IProps) {
   const newRef = useRef(null!);
   const { address, isConnected } = useAccount();
 
@@ -75,6 +80,7 @@ export default function ClaimRewards({ close, open, chain }: IProps) {
               <DisplayAndClaimRewards
                 address={address}
                 chain={chain}
+                selectedtoken={selectedtoken}
               />
             )}
           </div>
@@ -84,6 +90,7 @@ export default function ClaimRewards({ close, open, chain }: IProps) {
             <DisplayAndClaimTradingFees
               address={address}
               chain={chain}
+              selectedtoken={'eth'}
             />
           )}
           <div className="h-[2px] w-[75%] mx-auto bg-white/10 my-5" />
@@ -102,14 +109,16 @@ export default function ClaimRewards({ close, open, chain }: IProps) {
 type DisplayAndClaimRewardsProps = {
   address: Address;
   chain: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 };
 const DisplayAndClaimRewards = ({
   address,
-  chain
+  chain,
+  selectedtoken
 }: DisplayAndClaimRewardsProps) => {
   const { data: rewards } = useReadContract({
     abi: StakingContractAbi,
-    address: getStakingToContract(+chain),
+    address: getStakingToContract(+chain, selectedtoken),
     args: [address],
     functionName: 'earned'
   });
@@ -133,7 +142,7 @@ const DisplayAndClaimRewards = ({
 
       const claiming = await writeContractAsync({
         abi: StakingContractAbi,
-        address: getStakingToContract(+chain),
+        address: getStakingToContract(+chain, selectedtoken),
         args: [address],
         functionName: 'getReward'
       });
@@ -176,21 +185,21 @@ const DisplayAndClaimRewards = ({
 };
 
 const DisplayAndClaimTradingFees = ({
-  address
+  address,
+  chain
 }: DisplayAndClaimRewardsProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const chainId = useChainId();
   const { data: tradingFees, isLoading } = useReadContracts({
     contracts: [
       {
         abi: TradingAbi,
-        address: getTradingContractAddress(+chainId),
+        address: getTradingContractAddress(+chain),
         args: [address],
         functionName: 'claimable0'
       },
       {
         abi: TradingAbi,
-        address: getTradingContractAddress(+chainId),
+        address: getTradingContractAddress(+chain),
         args: [address],
         functionName: 'claimable1'
       }
@@ -214,7 +223,7 @@ const DisplayAndClaimTradingFees = ({
 
       const claiming = await writeContractAsync({
         abi: TradingAbi,
-        address: getTradingContractAddress(+chainId),
+        address: getTradingContractAddress(+chain),
         args: [],
         functionName: 'claimFees'
       });

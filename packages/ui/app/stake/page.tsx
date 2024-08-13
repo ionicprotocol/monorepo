@@ -568,6 +568,7 @@ export default function Stake() {
           close={() => setRewardPopup(false)}
           open={rewardPopup}
           chain={chain}
+          selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
         />
 
         <div
