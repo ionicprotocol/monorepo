@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { type FlywheelReward } from '@ionicprotocol/types';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
@@ -11,7 +12,10 @@ import { getAssetName } from '../../util/utils';
 import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
-import { Rewards } from './Rewards';
+// import { Rewards } from './Rewards';
+const Rewards = dynamic(() => import('./Rewards'), {
+  ssr: false
+});
 
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -168,7 +172,7 @@ const PoolRows = ({
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
+          <span className="text-white/40 font-semibold mr-2 text-[11px] md:hidden text-left">
             SUPPLY BALANCE:
           </span>
           <span className={`md:text-center text-right`}> {supplyBalance}</span>
@@ -176,7 +180,7 @@ const PoolRows = ({
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
+          <span className="text-white/40 font-semibold mr-2  text-[11px] md:hidden text-left">
             TOTAL SUPPLIED:
           </span>
           <span className={`md:text-center text-right`}>{totalSupplied}</span>
@@ -184,7 +188,7 @@ const PoolRows = ({
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
+          <span className="text-white/40 font-semibold mr-2 text-[11px] md:hidden text-left">
             BORROW BALANCE:
           </span>
           <span className={`md:text-center text-right`}>{borrowBalance}</span>
@@ -192,7 +196,7 @@ const PoolRows = ({
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
         >
-          <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
+          <span className="text-white/40 font-semibold mr-2 md:hidden  text-[11px] text-left">
             TOTAL BORROWING:
           </span>
           <span className={`md:text-center text-right`}>{totalBorrowing}</span>
@@ -202,14 +206,14 @@ const PoolRows = ({
       <h3
         className={` col-span-2 flex  justify-between md:justify-center px-2 md:px-0 text-xs  md:py-4 py-0 items-center mb-2 md:mb-0 `}
       >
-        <span className="text-white/40 font-semibold mr-2 md:hidden text-left  ">
+        <span className="text-white/40 font-semibold mr-2 md:hidden text-left text-[11px]  ">
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
           <span className={`mr-1 md:mr-0`}>
             +
             {supplyAPRTotal?.toLocaleString('en-US', {
-              maximumFractionDigits: 2
+              maximumFractionDigits: 1
             }) ?? '-'}
             %
           </span>
@@ -244,19 +248,19 @@ const PoolRows = ({
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.flywheel && (
             <span
-              className={`${pools[dropdownSelectedChain].text} bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
+              className={`${pools[dropdownSelectedChain].text} bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
             >
               + REWARDS <i className="popover-hint">i</i>
             </span>
           )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <span className="text-darkone  rounded-md w-max ml-1 md:ml-0 text-center ">
+          <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
             <a
-              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] px-2.5 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
             >
@@ -282,32 +286,32 @@ const PoolRows = ({
       <h3
         className={` col-span-2  md:py-4 text-xs flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
       >
-        <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
+        <span className="text-white/40 font-semibold mr-1 sm:mr-2 md:hidden text-[11px] text-left">
           BORROW APR:
         </span>
         <div className="popover-container flex h-full md:flex-col items-center justify-center  cursor-pointer">
           <span className="mr-1 md:mr-0 md:mb-1">
             {borrowAPRTotal ? (borrowAPRTotal > 0 ? '+' : '') : ''}
             {borrowAPRTotal?.toLocaleString('en-US', {
-              maximumFractionDigits: 2
+              maximumFractionDigits: 1
             }) ?? '-'}
             %
           </span>
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
             ?.flywheel && (
             <span
-              className={`text-white bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] px-3`}
+              className={`text-white bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
             >
               + REWARDS <i className="popover-hint">i</i>
             </span>
           )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] px-3 ml-1 md:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <a
-            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] px-2.5 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
+            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
@@ -334,7 +338,7 @@ const PoolRows = ({
       <h3
         className={` col-span-2 text-xs  flex md:block justify-between md:justify-center px-2 md:px-0 font-semibold rounded-md text-center items-center  md:my-auto  `}
       >
-        <span className="text-white/40 font-semibold text-center md:hidden ">
+        <span className="text-white/40 font-semibold text-[11px] text-center md:hidden ">
           COLLATERAL FACTOR:
         </span>
         {collateralFactor}%
@@ -342,7 +346,7 @@ const PoolRows = ({
       <div
         className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px]  font-semibold  px-2 lg:px-10 w-full`}
       >
-        {address ? (
+        {address && (
           <div
             className={`md:flex md:flex-col grid grid-cols-2 h-min md:gap-y-1 gap-x-1 md:my-0 w-full my-3 `}
           >
@@ -382,7 +386,9 @@ const PoolRows = ({
               Borrow / Repay {loopPossible && '/ Loop'}
             </button>
           </div>
-        ) : (
+        )}
+
+        {!address && (
           <div className="connect-button my-3 md:my-0">
             <ConnectButton size="sm" />
           </div>

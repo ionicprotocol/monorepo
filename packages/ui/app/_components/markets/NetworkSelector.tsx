@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -17,7 +18,7 @@ interface INetworkSelector {
   enabledChains?: number[];
 }
 
-export default function NetworkSelector({
+function NetworkSelector({
   dropdownSelectedChain,
   setOpen,
   open,
@@ -83,3 +84,5 @@ export default function NetworkSelector({
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(NetworkSelector), { ssr: false });

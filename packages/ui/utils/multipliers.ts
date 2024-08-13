@@ -210,6 +210,9 @@ export const multipliers: Record<
         borrow: { flywheel: true, ionic: 0 },
         supply: { flywheel: true, ionic: 0 }
       },
+      hyUSD: {
+        supply: { flywheel: true, ionic: 0 }
+      },
       AERO: {
         borrow: {
           ionic: 3
