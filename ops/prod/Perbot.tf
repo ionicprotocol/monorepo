@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "perbotTaskDefinition1" {
   requires_compatibilities = ["FARGATE"]
 
   cpu    = "2048"
-  memory = "4096"
+  memory = "8192"
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
