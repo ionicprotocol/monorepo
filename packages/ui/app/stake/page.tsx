@@ -339,6 +339,7 @@ export default function Stake() {
     try {
       const args = {
         token: getToken(+chain),
+        tokenB: getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth'),
         stable: false,
         liquidity: parseUnits(maxWithdrawl?.ion, 18),
         // amounTokenMin:
@@ -378,30 +379,60 @@ export default function Stake() {
       // eslint-disable-next-line no-console
       console.log({ appr });
 
-      const tx = await walletClient!.writeContract({
-        abi: LiquidityContractAbi,
-        account: walletClient?.account,
-        address: getSpenderContract(+chain),
-        args: [
-          args.token,
-          args.stable,
-          args.liquidity,
-          args.amounTokenMin,
-          args.amountETHMin,
-          args.to,
-          args.deadline
-        ],
-        functionName: 'removeLiquidityETH'
-        // value: parseUnits(maxWithdrawl?.eth, 18)
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction Hash --->>>', tx);
-      if (!tx) return;
-      const transaction = await publicClient?.waitForTransactionReceipt({
-        hash: tx
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction --->>>', transaction);
+      if (selectedtoken === 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.token,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidityETH'
+          // value: parseUnits(maxWithdrawl?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
+
+      if (selectedtoken !== 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.token,
+            args.tokenB,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidity'
+          // value: parseUnits(maxWithdrawl?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
       setStep2Loading(false);
       setMaxWithdrawl((p) => {
         return { ...p, ion: '' };
@@ -775,7 +806,7 @@ export default function Stake() {
                 max={allStakedAmount}
                 headerText={step3Toggle}
                 amount={maxUnstake}
-                tokenName={'ion/eth'}
+                tokenName={`ion/${selectedtoken}`}
                 handleInput={(val?: string) => setMaxUnstake(val as string)}
                 chain={+chain}
               />
