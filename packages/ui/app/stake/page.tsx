@@ -793,7 +793,12 @@ export default function Stake() {
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
             </h1>
             {/* this will get repeated */}
-            {+chain === mode.id && <ModeBreakdown step3Toggle={step3Toggle} />}
+            {+chain === mode.id && (
+              <ModeBreakdown
+                step3Toggle={step3Toggle}
+                selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
+              />
+            )}
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
@@ -831,8 +836,9 @@ export default function Stake() {
 
 type ModeBreakdownProps = {
   step3Toggle: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 };
-const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
+const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
   return (
     <>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
@@ -870,7 +876,7 @@ const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
             step3Toggle === 'Unstake' && 'text-red-500'
           }`}
         >
-          5x
+          {selectedtoken === 'mode' ? '5x' : '3x'}
         </span>
       </div>
     </>
