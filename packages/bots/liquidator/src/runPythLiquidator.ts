@@ -78,6 +78,7 @@ async function calculateTotalValueInEth(tokenAddress: string, tokenAmount: bigin
       `Liquidating pool: ${liquidatablePool.comptroller} -- ${liquidatablePool.liquidations.length} liquidations found`
     );
     for (const liquidation of liquidatablePool.liquidations) {
+      logger.info(`--------------------------------------------------------`);
       logger.info(`Borrower Address: ${liquidation.args[0]}`);
       logger.info(`Repay Amount: ${liquidation.args[1].toString()}`);
       logger.info(`cErc20 Address: ${liquidation.args[2]}`);

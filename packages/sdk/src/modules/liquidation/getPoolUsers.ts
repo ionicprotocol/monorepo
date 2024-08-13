@@ -16,7 +16,7 @@ if (typeof window === "undefined") {
   // Running in browser environment
   performance = window.performance as any;
 }
-import { ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
+import { BotType, ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
 export type PoolAssetStructOutput = {
   cToken: Address;
   underlyingToken: Address;
@@ -47,7 +47,8 @@ const PAGE_SIZE = 1000;
 async function getFusePoolUsers(
   sdk: IonicSdk,
   comptroller: Address,
-  maxHealth: bigint
+  maxHealth: bigint,
+  botType: BotType
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
@@ -64,7 +65,9 @@ async function getFusePoolUsers(
   );
   assetsResults.forEach(async (assets, index) => {
     const health = await sdk.contracts.PoolLens.read.getHealthFactor([users[index], comptroller]);
-    if (maxHealth > health) {
+    const hfThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
+    if (health < maxHealth && (botType !== BotType.Pyth || (botType === BotType.Pyth && health > hfThreshold))) {
+      sdk.logger.info(`${users[index]} health is ${formatEther(health)}`);
       poolUsers.push({ account: users[index], health });
     }
   });
@@ -98,7 +101,8 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
 export default async function getAllFusePoolUsers(
   sdk: IonicSdk,
   maxHealth: bigint,
-  excludedComptrollers: Array<Address>
+  excludedComptrollers: Array<Address>,
+  botType: BotType
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
   const [, allPools] = await sdk.contracts.PoolDirectory.read.getActivePools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
@@ -117,7 +121,8 @@ export default async function getAllFusePoolUsers(
           });
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
-            const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth)).users;
+            const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth, botType))
+              .users;
             const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
             fusePoolUsers.push({
               comptroller,
