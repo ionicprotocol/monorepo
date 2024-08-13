@@ -1,6 +1,9 @@
 import { Performance } from "perf_hooks";
+
 import { Address, formatEther, parseEther } from "viem";
+
 import { IonicSdk } from "../../IonicSdk";
+
 let performance: Performance;
 if (typeof window === "undefined") {
   // Running in Node.js environment
