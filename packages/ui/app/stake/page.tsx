@@ -102,7 +102,10 @@ export default function Stake() {
   const router = useRouter();
   const { data: withdrawalMaxToken } = useBalance({
     address,
-    token: getAvailableStakingToken(+chain),
+    token: getAvailableStakingToken(
+      +chain,
+      selectedtoken as 'eth' | 'mode' | 'weth'
+    ),
     query: {
       refetchInterval: 6000
     }
@@ -172,7 +175,10 @@ export default function Stake() {
         const getStakedTokens =
           (await publicClient?.readContract({
             abi: StakingContractAbi,
-            address: getStakingToContract(+chain),
+            address: getStakingToContract(
+              +chain,
+              selectedtoken as 'eth' | 'mode' | 'weth'
+            ),
             args: [address as `0x${string}`],
             functionName: 'balanceOf'
           })) ?? 0n;
@@ -356,7 +362,10 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(+chain),
+        address: getAvailableStakingToken(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [getSpenderContract(+chain), args.liquidity],
         functionName: 'approve'
       });
@@ -416,7 +425,6 @@ export default function Stake() {
       const args = {
         lpToken: parseUnits(maxLp, 18)
       };
-
       if (!isConnected || !address) {
         console.error('Not connected');
         return;
@@ -427,8 +435,17 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(+chain),
-        args: [getStakingToContract(+chain), args.lpToken],
+        address: getAvailableStakingToken(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
+        args: [
+          getStakingToContract(
+            +chain,
+            selectedtoken as 'eth' | 'mode' | 'weth'
+          ),
+          args.lpToken
+        ],
         functionName: 'approve'
       });
 
@@ -438,14 +455,18 @@ export default function Stake() {
       });
       // eslint-disable-next-line no-console
       console.log({ appr });
-
+      // console.log(args.lpToken, getStakingToContract(+chain));
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(+chain),
+        address: getStakingToContract(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [args.lpToken, address],
         functionName: 'deposit'
       });
+      // 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
       if (!tx) return;
@@ -484,7 +505,10 @@ export default function Stake() {
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(+chain),
+        address: getStakingToContract(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [args.lpToken],
         functionName: 'withdraw'
       });
@@ -618,8 +642,11 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
-                  tokenName={'ion/eth'}
-                  token={getAvailableStakingToken(+chain)}
+                  tokenName={`ion/${selectedtoken}`}
+                  token={getAvailableStakingToken(
+                    +chain,
+                    selectedtoken as 'eth' | 'mode' | 'weth'
+                  )}
                   handleInput={(val?: string) =>
                     setMaxWithdrawl((p) => {
                       return { ...p, ion: val || '' };
@@ -733,8 +760,11 @@ export default function Stake() {
               <MaxDeposit
                 headerText={step3Toggle}
                 amount={maxLp}
-                tokenName={'ion/eth'}
-                token={getAvailableStakingToken(+chain)}
+                tokenName={`ion/${selectedtoken}`}
+                token={getAvailableStakingToken(
+                  +chain,
+                  selectedtoken as 'eth' | 'mode' | 'weth'
+                )}
                 handleInput={(val?: string) => setMaxLp(val as string)}
                 chain={+chain}
               />
@@ -756,7 +786,7 @@ export default function Stake() {
               {Number(allStakedAmount).toLocaleString('en-US', {
                 maximumFractionDigits: 3
               })}{' '}
-              ION/ETH
+              ION/{selectedtoken.toUpperCase()}
             </h1>
             <h1 className={` mt-1`}>
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
