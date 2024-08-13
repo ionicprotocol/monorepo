@@ -43,9 +43,7 @@ export type PoolAssetStructOutput = {
   mintGuardianPaused: boolean;
 };
 
-const PAGE_SIZE = 300;
-const CONCURRENT_PAGE_REQUESTS = 20; // Adjust based on your system's capability
-
+const PAGE_SIZE = 1000;
 async function getFusePoolUsers(
   sdk: IonicSdk,
   comptroller: Address,
@@ -54,83 +52,46 @@ async function getFusePoolUsers(
   const poolUsers: PoolUserStruct[] = [];
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.read.getAllBorrowersCount();
-  const totalPages = Math.ceil(Number(borrowersCount) / PAGE_SIZE);
-
-  const pageBatches = Array.from({ length: Math.ceil(totalPages / CONCURRENT_PAGE_REQUESTS) }, (_, i) =>
-    Array.from({ length: Math.min(CONCURRENT_PAGE_REQUESTS, totalPages - i * CONCURRENT_PAGE_REQUESTS) }, (_, j) =>
-      i * CONCURRENT_PAGE_REQUESTS + j
-    )
+  const randomPage = Math.round((Math.random() * Number(borrowersCount)) / PAGE_SIZE);
+  const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(randomPage), BigInt(PAGE_SIZE)]);
+  const assetsResults = await Promise.all(
+    users.map(async (user) => {
+      const assets = (
+        await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address], { account: user })
+      ).result;
+      return assets;
+    })
   );
-
-  for (const batch of pageBatches) {
-    const pagePromises = batch.map(async (page) => {
-      const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
-      const assetsResults = await Promise.all(
-        users.map(async (user) => {
-          const assets = (
-            await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address], { account: user })
-          ).result;
-          return assets;
-        })
-      );
-
-      return users.map(async (user, index) => {
-        const health = await sdk.contracts.PoolLens.read.getHealthFactor([user, comptroller]);
-        if (maxHealth > health) {
-          poolUsers.push({ account: user, health });
-        }
-      });
-    });
-
-    await Promise.all(pagePromises.flat());
-  }
-
+  assetsResults.forEach(async (assets, index) => {
+    const health = await sdk.contracts.PoolLens.read.getHealthFactor([users[index], comptroller]);
+    if (maxHealth > health) {
+      poolUsers.push({ account: users[index], health });
+    }
+  });
   return {
     comptroller,
     users: poolUsers,
     closeFactor: await comptrollerInstance.read.closeFactorMantissa(),
-    liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa(),
+    liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa()
   };
 }
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   const borrowersCount = await comptrollerInstance.read.getAllBorrowersCount();
-  const totalPages = Math.ceil(Number(borrowersCount) / PAGE_SIZE);
-
-  const results: { user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint }[] = [];
-
-  const pageBatches = Array.from({ length: Math.ceil(totalPages / CONCURRENT_PAGE_REQUESTS) }, (_, i) =>
-    Array.from({ length: Math.min(CONCURRENT_PAGE_REQUESTS, totalPages - i * CONCURRENT_PAGE_REQUESTS) }, (_, j) =>
-      i * CONCURRENT_PAGE_REQUESTS + j
-    )
-  );
-
-  for (const batch of pageBatches) {
-    const pagePromises = batch.map(async (page) => {
-      const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
-      const promises = users.map((user) => comptrollerInstance.read.getAccountLiquidity([user]));
-
-      const allResults = await Promise.all(promises.map((p) => p.catch((e) => e)));
-      const validResults = allResults.filter((r) => !(r instanceof Error));
-      const erroredResults = allResults.filter((r) => r instanceof Error);
-
-      if (erroredResults.length > 0) {
-        sdk.logger.error("Errored results", { erroredResults });
-      }
-
-      results.push(
-        ...validResults.map((r, i) => ({
-          user: users[i],
-          collateralValue: r[1],
-          liquidity: r[2],
-          shortfall: r[3],
-        }))
-      );
-    });
-
-    await Promise.all(pagePromises.flat());
+  const randomPage = Math.round((Math.random() * Number(borrowersCount)) / PAGE_SIZE);
+  const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(randomPage), BigInt(PAGE_SIZE)]);
+  const promises = users.map((user) => {
+    return comptrollerInstance.read.getAccountLiquidity([user]);
+  });
+  const allResults = await Promise.all(promises.map((p) => p.catch((e) => e)));
+  const validResults = allResults.filter((r) => !(r instanceof Error));
+  const erroredResults = allResults.filter((r) => r instanceof Error);
+  if (erroredResults.length > 0) {
+    sdk.logger.error("Errored results", { erroredResults });
   }
-
+  const results = validResults.map((r, i) => {
+    return { user: users[i], collateralValue: r[1], liquidity: r[2], shortfall: r[3] };
+  });
   const minimumTransactionCost = await sdk.publicClient.getGasPrice().then((g) => g * 500000n);
   return results.filter((user) => user.shortfall > minimumTransactionCost);
 }
@@ -143,23 +104,21 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   const startTime = performance.now();
-
-  // Process pools concurrently
-  const poolPromises = allPools
-    .filter(pool => !excludedComptrollers.includes(pool.comptroller))
-    .map(async pool => {
-      const { comptroller, name } = pool;
+  const poolPromises = allPools.map(async (pool) => {
+    const { comptroller, name } = pool;
+    if (!excludedComptrollers.includes(comptroller)) {
       const poolStartTime = performance.now();
       sdk.logger.info(`Processing pool ${name} (${comptroller})...`);
-
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
-          const users = hasShortfall.map(user => `- user: ${user.user}, shortfall: ${formatEther(user.shortfall)}\n`);
+          const users = hasShortfall.map((user) => {
+            return `- user: ${user.user}, shortfall: ${formatEther(user.shortfall)}\n`;
+          });
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
             const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth)).users;
-            const comptrollerInstance = sdk.createComptroller(comptroller);
+            const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
             fusePoolUsers.push({
               comptroller,
               users: poolUserParams,
@@ -177,16 +136,15 @@ export default async function getAllFusePoolUsers(
         const msg = `Error getting shortfalled users for pool ${name} (${comptroller}): ${e}`;
         erroredPools.push({ comptroller, msg, error: e });
       }
-
       const poolEndTime = performance.now();
       sdk.logger.info(
         `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`
       );
-    });
-
+    }
+  });
   await Promise.all(poolPromises);
   const endTime = performance.now();
   sdk.logger.info(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
-
+  // console.log(`Total users processed: ${fusePoolUsers.reduce((sum, pool) => sum + pool.users.length, 0)}`);
   return [fusePoolUsers, erroredPools];
 }
