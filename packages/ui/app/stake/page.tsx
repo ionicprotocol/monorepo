@@ -21,7 +21,13 @@ import {
   useWalletClient
 } from 'wagmi';
 
-import NetworkSelector from '../_components/markets/NetworkSelector';
+// import NetworkSelector from '../_components/markets/NetworkSelector';
+const NetworkSelector = dynamic(
+  () => import('../_components/markets/NetworkSelector'),
+  {
+    ssr: false
+  }
+);
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import ClaimRewards from '../_components/stake/ClaimRewards';
@@ -41,6 +47,7 @@ import {
 } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
+  getPoolToken,
   getReservesABI,
   getReservesArgs,
   getReservesContract,
@@ -68,6 +75,8 @@ export default function Stake() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+  const queryToken = searchParams.get('token');
+  const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -93,7 +102,10 @@ export default function Stake() {
   const router = useRouter();
   const { data: withdrawalMaxToken } = useBalance({
     address,
-    token: getAvailableStakingToken(+chain),
+    token: getAvailableStakingToken(
+      +chain,
+      selectedtoken as 'eth' | 'mode' | 'weth'
+    ),
     query: {
       refetchInterval: 6000
     }
@@ -112,91 +124,104 @@ export default function Stake() {
   }, [chain, chainId, router]);
 
   useMemo(() => {
-    if (!maxWithdrawl.ion && !withdrawalMaxToken) return;
+    if (!maxWithdrawl.ion || !withdrawalMaxToken) return;
     const percent =
       (+maxWithdrawl.ion /
         Number(
           formatUnits(
-            withdrawalMaxToken?.value as bigint,
-            withdrawalMaxToken?.decimals as number
+            withdrawalMaxToken.value as bigint,
+            withdrawalMaxToken.decimals as number
           )
         )) *
       100;
     setUtilization(Number(percent.toFixed(0)));
   }, [maxWithdrawl.ion, withdrawalMaxToken]);
 
-  useMemo(async () => {
-    try {
-      const reserves = (await publicClient?.readContract({
-        abi: getReservesABI(+chain),
-        address: getReservesContract(+chain),
-        args: getReservesArgs(+chain),
-        functionName: 'getReserves'
-      })) as bigint[];
-      if (maxDeposit.ion && reserves) {
-        const ethVal =
-          (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
-        setMaxDeposit((p) => {
-          return { ...p, eth: formatEther(ethVal) || '' };
-        });
-      } else {
-        setMaxDeposit((p) => {
-          return { ...p, eth: '' };
-        });
-      }
-      if (maxWithdrawl.ion && reserves) {
-        const ethVal =
-          (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
-        setMaxWithdrawl((p) => {
-          return { ...p, eth: formatEther(ethVal) || '' };
-        });
-      } else {
-        setMaxWithdrawl((p) => {
-          return { ...p, eth: '' };
-        });
-      }
-      let getStakedTokens = 0n;
-      if (address) {
-        getStakedTokens =
+  useEffect(() => {
+    async function getReservesAndStakes() {
+      try {
+        const reserves = (await publicClient?.readContract({
+          abi: getReservesABI(+chain),
+          address: getReservesContract(+chain),
+          args: getReservesArgs(
+            +chain,
+            selectedtoken as 'eth' | 'mode' | 'weth'
+          ),
+          functionName: 'getReserves'
+        })) as bigint[];
+        if (maxDeposit.ion && reserves) {
+          const ethVal =
+            (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
+          setMaxDeposit((p) => {
+            return { ...p, eth: formatEther(ethVal) || '' };
+          });
+        } else {
+          setMaxDeposit((p) => {
+            return { ...p, eth: '' };
+          });
+        }
+        if (maxWithdrawl.ion && reserves) {
+          const ethVal =
+            (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
+          setMaxWithdrawl((p) => {
+            return { ...p, eth: formatEther(ethVal) || '' };
+          });
+        } else {
+          setMaxWithdrawl((p) => {
+            return { ...p, eth: '' };
+          });
+        }
+
+        const getStakedTokens =
           (await publicClient?.readContract({
             abi: StakingContractAbi,
-            address: getStakingToContract(+chain),
-            args: [address],
+            address: getStakingToContract(
+              +chain,
+              selectedtoken as 'eth' | 'mode' | 'weth'
+            ),
+            args: [address as `0x${string}`],
             functionName: 'balanceOf'
           })) ?? 0n;
+
+        if (getStakedTokens || step3Loading) {
+          step3Loading
+            ? setAllStakedAmount(formatEther(getStakedTokens))
+            : setAllStakedAmount(formatEther(getStakedTokens));
+        } else {
+          step3Loading
+            ? setAllStakedAmount(formatEther(getStakedTokens))
+            : setAllStakedAmount(formatEther(getStakedTokens));
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err);
       }
-      if (getStakedTokens || step3Loading) {
-        step3Loading
-          ? setAllStakedAmount(formatEther(getStakedTokens))
-          : setAllStakedAmount(formatEther(getStakedTokens));
-      } else {
-        step3Loading
-          ? setAllStakedAmount(formatEther(getStakedTokens))
-          : setAllStakedAmount(formatEther(getStakedTokens));
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
     }
+    getReservesAndStakes();
   }, [
     address,
     chain,
     maxDeposit.ion,
     maxWithdrawl.ion,
     publicClient,
+    selectedtoken,
     step3Loading
   ]);
 
   async function addLiquidity() {
     try {
       const args = {
-        token: getToken(+chain),
+        tokenA: getToken(+chain),
+        tokenB: getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth'),
         stable: false,
-        amountTokenDesired: parseUnits(maxDeposit?.ion, 18),
-        amounTokenMin:
+        amountTokenADesired: parseUnits(maxDeposit?.ion, 18),
+        amounTokenAMin:
           parseEther(maxDeposit?.ion) -
           (parseEther(maxDeposit?.ion) * BigInt(5)) / BigInt(100),
-        amountETHMin: parseUnits(maxDeposit?.eth, 18),
+        amountTokenBDesired: parseUnits(maxDeposit?.eth, 18),
+        amounTokenBMin:
+          parseEther(maxDeposit?.eth) -
+          (parseEther(maxDeposit?.eth) * BigInt(5)) / BigInt(100),
         to: address,
         deadline: Math.floor((Date.now() + 3600000) / 1000)
       };
@@ -206,46 +231,91 @@ export default function Stake() {
         return;
       }
 
-      const approval = await walletClient!.writeContract({
+      const approvalA = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getToken(+chain),
-        args: [getSpenderContract(+chain), args.amountTokenDesired],
+        address: args.tokenA,
+        args: [getSpenderContract(+chain), args.amountTokenADesired],
         functionName: 'approve'
       });
+
+      if (selectedtoken !== 'eth') {
+        const approvalB = await walletClient!.writeContract({
+          abi: erc20Abi,
+          account: walletClient?.account,
+          address: args.tokenB,
+          args: [getSpenderContract(+chain), args.amountTokenBDesired],
+          functionName: 'approve'
+        });
+        await publicClient?.waitForTransactionReceipt({
+          hash: approvalB
+        });
+      }
       setStep2Loading(true);
       // console.log(approval);
 
-      const appr = await publicClient?.waitForTransactionReceipt({
-        hash: approval
+      const apprA = await publicClient?.waitForTransactionReceipt({
+        hash: approvalA
       });
-      // eslint-disable-next-line no-console
-      console.log({ appr });
 
-      const tx = await walletClient!.writeContract({
-        abi: LiquidityContractAbi,
-        account: walletClient?.account,
-        address: getSpenderContract(+chain),
-        args: [
-          args.token,
-          args.stable,
-          args.amountTokenDesired,
-          args.amounTokenMin,
-          args.amountETHMin,
-          args.to,
-          args.deadline
-        ],
-        functionName: 'addLiquidityETH',
-        value: parseUnits(maxDeposit?.eth, 18)
-      });
       // eslint-disable-next-line no-console
-      console.log('Transaction Hash --->>>', tx);
-      if (!tx) return;
-      const transaction = await publicClient?.waitForTransactionReceipt({
-        hash: tx
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction --->>>', transaction);
+      console.log({ apprA });
+
+      if (selectedtoken !== 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.tokenA,
+            args.tokenB,
+            args.stable,
+            args.amountTokenADesired,
+            args.amountTokenBDesired,
+            args.amounTokenAMin,
+            args.amounTokenBMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidity'
+          // value: parseUnits(maxDeposit?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
+
+      if (selectedtoken === 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.tokenA,
+            args.stable,
+            args.amountTokenADesired,
+            args.amounTokenAMin,
+            args.amountTokenBDesired,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidityETH',
+          value: parseUnits(maxDeposit?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
       setStep2Loading(false);
       setMaxDeposit((p) => {
         return { ...p, ion: '' };
@@ -264,10 +334,12 @@ export default function Stake() {
       });
     }
   }
+
   async function removeLiquidity() {
     try {
       const args = {
         token: getToken(+chain),
+        tokenB: getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth'),
         stable: false,
         liquidity: parseUnits(maxWithdrawl?.ion, 18),
         // amounTokenMin:
@@ -291,7 +363,10 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(+chain),
+        address: getAvailableStakingToken(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [getSpenderContract(+chain), args.liquidity],
         functionName: 'approve'
       });
@@ -304,30 +379,60 @@ export default function Stake() {
       // eslint-disable-next-line no-console
       console.log({ appr });
 
-      const tx = await walletClient!.writeContract({
-        abi: LiquidityContractAbi,
-        account: walletClient?.account,
-        address: getSpenderContract(+chain),
-        args: [
-          args.token,
-          args.stable,
-          args.liquidity,
-          args.amounTokenMin,
-          args.amountETHMin,
-          args.to,
-          args.deadline
-        ],
-        functionName: 'removeLiquidityETH'
-        // value: parseUnits(maxWithdrawl?.eth, 18)
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction Hash --->>>', tx);
-      if (!tx) return;
-      const transaction = await publicClient?.waitForTransactionReceipt({
-        hash: tx
-      });
-      // eslint-disable-next-line no-console
-      console.log('Transaction --->>>', transaction);
+      if (selectedtoken === 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.token,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidityETH'
+          // value: parseUnits(maxWithdrawl?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
+
+      if (selectedtoken !== 'eth') {
+        const tx = await walletClient!.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient?.account,
+          address: getSpenderContract(+chain),
+          args: [
+            args.token,
+            args.tokenB,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidity'
+          // value: parseUnits(maxWithdrawl?.eth, 18)
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction Hash --->>>', tx);
+        if (!tx) return;
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        // eslint-disable-next-line no-console
+        console.log('Transaction --->>>', transaction);
+      }
       setStep2Loading(false);
       setMaxWithdrawl((p) => {
         return { ...p, ion: '' };
@@ -351,7 +456,6 @@ export default function Stake() {
       const args = {
         lpToken: parseUnits(maxLp, 18)
       };
-
       if (!isConnected || !address) {
         console.error('Not connected');
         return;
@@ -362,8 +466,17 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(+chain),
-        args: [getStakingToContract(+chain), args.lpToken],
+        address: getAvailableStakingToken(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
+        args: [
+          getStakingToContract(
+            +chain,
+            selectedtoken as 'eth' | 'mode' | 'weth'
+          ),
+          args.lpToken
+        ],
         functionName: 'approve'
       });
 
@@ -373,14 +486,18 @@ export default function Stake() {
       });
       // eslint-disable-next-line no-console
       console.log({ appr });
-
+      // console.log(args.lpToken, getStakingToContract(+chain));
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(+chain),
+        address: getStakingToContract(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [args.lpToken, address],
         functionName: 'deposit'
       });
+      // 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC
       // eslint-disable-next-line no-console
       console.log('Transaction Hash --->>>', tx);
       if (!tx) return;
@@ -419,7 +536,10 @@ export default function Stake() {
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(+chain),
+        address: getStakingToContract(
+          +chain,
+          selectedtoken as 'eth' | 'mode' | 'weth'
+        ),
         args: [args.lpToken],
         functionName: 'withdraw'
       });
@@ -468,7 +588,7 @@ export default function Stake() {
 
   return (
     <main className={``}>
-      <div className="w-full flex items-center justify-center py-20 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
+      <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
         <Widget
           close={() => setWidgetPopup(false)}
           open={widgetPopup}
@@ -478,16 +598,18 @@ export default function Stake() {
         <ClaimRewards
           close={() => setRewardPopup(false)}
           open={rewardPopup}
+          chain={chain}
+          selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
         />
 
         <div
-          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-2 gap-4`}
+          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4`}
         >
           <div
-            className={`bg-grayone col-span-2 flex flex-col items-center justify-center py-4 px-8 rounded-xl gap-y-3  col-start-1 row-start-1 `}
+            className={`bg-grayone md:col-span-2 flex flex-col items-center justify-center py-4 md:px-8 px-4 rounded-xl gap-y-3  md:col-start-1 md:row-start-1 `}
           >
-            <div className={`flex w-full items-center  justify-between`}>
-              <h1 className={` text-lg`}>
+            <div className={`flex w-full items-center   justify-between`}>
+              <h1 className={` md:text-lg text-md `}>
                 Step 1. Buy
                 <img
                   alt="ion logo"
@@ -507,18 +629,19 @@ export default function Stake() {
                 />
               </div>
             </div>
-
             <button
-              className={` py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
+              className={` py-1.5 text-sm ${chain && pools[+chain].text} w-full ${(chain && pools[+chain].accentbg) ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
             </button>
           </div>
           <div
-            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 col-start-1 col-span-1 row-start-2 `}
+            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2 `}
           >
-            <h1 className={` text-lg`}>Step 2. LP your ION Tokens</h1>
+            <h1 className={` md:text-lg text-md`}>
+              Step 2. LP your ION Tokens
+            </h1>
             <div className={`my-3`}>
               <Toggle setActiveToggle={setstep2Toggle} />
             </div>
@@ -539,9 +662,10 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
-                  tokenName={'eth'}
-                  token={'0x0000000000000000000000000000000000000000'}
+                  tokenName={selectedtoken ?? 'eth'}
+                  token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
+                  tokenSelector={true}
                 />
               </>
             )}
@@ -550,8 +674,11 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
-                  tokenName={'ion/eth'}
-                  token={getAvailableStakingToken(+chain)}
+                  tokenName={`ion/${selectedtoken}`}
+                  token={getAvailableStakingToken(
+                    +chain,
+                    selectedtoken as 'eth' | 'mode' | 'weth'
+                  )}
                   handleInput={(val?: string) =>
                     setMaxWithdrawl((p) => {
                       return { ...p, ion: val || '' };
@@ -576,9 +703,9 @@ export default function Stake() {
                       const ionval =
                         (Number(val) / 100) *
                         Number(
-                          formatUnits(
-                            withdrawalMaxToken?.value as bigint,
-                            withdrawalMaxToken?.decimals as number
+                          formatEther(
+                            withdrawalMaxToken?.value as bigint
+                            // withdrawalMaxToken?.decimals as number
                           )
                         );
                       setMaxWithdrawl((p) => {
@@ -595,8 +722,16 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
-                step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
+              disabled={
+                (step2Toggle === 'Deposit' &&
+                  (maxDeposit.ion === '' || maxDeposit.ion === '0')) ||
+                (step2Toggle === 'Withdraw' &&
+                  (maxWithdrawl.ion === '' || maxWithdrawl.ion === '0'))
+                  ? true
+                  : false
+              }
+              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm disabled:opacity-80 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+                step2Toggle === 'Withdraw' && 'bg-red-500  text-white'
               } rounded-md`}
               onClick={() => {
                 step2Toggle === 'Deposit' && addLiquidity();
@@ -626,9 +761,9 @@ export default function Stake() {
           </div>
 
           <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 row-start-3 col-start-1 col-span-1`}
+            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 md:row-start-3 row-start-4 md:col-start-1 md:col-span-1`}
           >
-            <h1 className={` text-lg `}>Claim Your Rewards </h1>
+            <h1 className={` md:text-lg text-md `}>Claim Your Rewards </h1>
             {/* 
             <MaxDeposit
               tokenName={'ion/eth'}
@@ -643,9 +778,9 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 col-start-2 row-start-2 row-span-2`}
+            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2`}
           >
-            <h1 className={` text-lg`}>Step 3. Stake your LP</h1>
+            <h1 className={` md:text-lg text-md`}>Step 3. Stake your LP</h1>
             <div className={`my-3`}>
               <Toggle
                 setActiveToggle={setstep3Toggle}
@@ -657,8 +792,11 @@ export default function Stake() {
               <MaxDeposit
                 headerText={step3Toggle}
                 amount={maxLp}
-                tokenName={'ion/eth'}
-                token={getAvailableStakingToken(+chain)}
+                tokenName={`ion/${selectedtoken}`}
+                token={getAvailableStakingToken(
+                  +chain,
+                  selectedtoken as 'eth' | 'mode' | 'weth'
+                )}
                 handleInput={(val?: string) => setMaxLp(val as string)}
                 chain={+chain}
               />
@@ -668,22 +806,41 @@ export default function Stake() {
                 max={allStakedAmount}
                 headerText={step3Toggle}
                 amount={maxUnstake}
-                tokenName={'ion/eth'}
+                tokenName={`ion/${selectedtoken}`}
                 handleInput={(val?: string) => setMaxUnstake(val as string)}
                 chain={+chain}
               />
             )}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1 className={` mt-2`}>
+            <h1 className={`text-end text-[11px] text-white/40 mt-2`}>
+              Total Staked :{' '}
+              {Number(allStakedAmount).toLocaleString('en-US', {
+                maximumFractionDigits: 3
+              })}{' '}
+              ION/{selectedtoken.toUpperCase()}
+            </h1>
+            <h1 className={` mt-1`}>
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
             </h1>
             {/* this will get repeated */}
-            {+chain === mode.id && <ModeBreakdown step3Toggle={step3Toggle} />}
+            {+chain === mode.id && (
+              <ModeBreakdown
+                step3Toggle={step3Toggle}
+                selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
+              />
+            )}
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <button
-              className={`flex items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              disabled={
+                (step3Toggle === 'Stake' && (maxLp === '' || maxLp === '0')) ||
+                (step3Toggle === 'Unstake' &&
+                  (maxUnstake === '' || maxUnstake === '0'))
+                  ? true
+                  : false
+              }
+              className={`flex disabled:opacity-80   items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -710,8 +867,9 @@ export default function Stake() {
 
 type ModeBreakdownProps = {
   step3Toggle: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 };
-const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
+const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
   return (
     <>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
@@ -749,7 +907,7 @@ const ModeBreakdown = ({ step3Toggle }: ModeBreakdownProps) => {
             step3Toggle === 'Unstake' && 'text-red-500'
           }`}
         >
-          3x
+          {selectedtoken === 'mode' ? '5x' : '3x'}
         </span>
       </div>
     </>
