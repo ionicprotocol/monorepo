@@ -110,33 +110,13 @@ export default async function sendTransactionToPyth(
   data: Hex,
   value: bigint,
 ) {
-  // Build data
-  const txCount = await sdk.publicClient.getTransactionCount({
-    address: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address,
-  });
-
-  // Build transaction
-  const tx = {
-    from: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address,
-    to,
-    value,
-    data,
-    nonce: txCount,
-  };
-  // Estimate gas for transaction
-  const gasLimit = await fetchGasLimitForTransaction(sdk, tx);
-  const txRequest: TransactionRequest = {
-    ...tx,
-    gas: gasLimit,
-    gasPrice: ((await sdk.publicClient.getGasPrice()) * 15n) / 10n,
-  };
-
-  sdk.logger.info('Signing and sending update price transaction:', tx);
-
-  let sentTx;
+  sdk.logger.info('Signing and sending update price transaction');
   try {
-    sentTx = await sdk.walletClient!.sendTransaction({
-      ...txRequest,
+    const sentTx = await sdk.walletClient!.sendTransaction({
+      from: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address,
+      to,
+      value,
+      data,
       account: sdk.walletClient!.account!.address,
       chain: sdk.walletClient!.chain,
     });
