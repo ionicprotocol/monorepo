@@ -28,6 +28,7 @@ export const run = async (): Promise<void> => {
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
   sdk.logger.info(`Config for bot: ${JSON.stringify({ ...config, adminPrivateKey: '*****' })}`);
   await updater.updateFeeds();
+  // await updater.forceUpdateFeeds(assetConfig);
 };
 
 run();
