@@ -1,6 +1,9 @@
 import { Performance } from "perf_hooks";
+
 import { Address, formatEther, parseEther } from "viem";
+
 import { IonicSdk } from "../../IonicSdk";
+
 import { BotType, ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
 
 let performance: Performance;
@@ -49,8 +52,8 @@ const PAGE_SIZE = 1000; // Define the page size for pagination
 const BATCH_SIZE = 100; // Define the batch size for processing assets
 async function processAssetsInBatches(
   assetsResults: any[], // Replace `any` with actual type if available
-  users: readonly `0x${string}`[], 
-  comptroller: Address, 
+  users: readonly `0x${string}`[],
+  comptroller: Address,
   maxHealth: bigint,
   hfThreshold: bigint,
   botType: BotType,
@@ -63,16 +66,18 @@ async function processAssetsInBatches(
     const batch = assetsResults.slice(i, i + BATCH_SIZE);
     const batchUsers = mutableUsers.slice(i, i + BATCH_SIZE);
 
-    await Promise.all(batch.map(async (assets, index) => {
-      try {
-        const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-        if (health < maxHealth && (botType !== BotType.Pyth || (botType === BotType.Pyth && health > hfThreshold))) {
-          poolUsers.push({ account: batchUsers[index], health });
+    await Promise.all(
+      batch.map(async (assets, index) => {
+        try {
+          const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
+          if (health < maxHealth && (botType !== BotType.Pyth || (botType === BotType.Pyth && health > hfThreshold))) {
+            poolUsers.push({ account: batchUsers[index], health });
+          }
+        } catch (error) {
+          sdk.logger.error(`Error getting health factor for ${batchUsers[index]}: ${error}`);
         }
-      } catch (error) {
-        sdk.logger.error(`Error getting health factor for ${batchUsers[index]}: ${error}`);
-      }
-    }));
+      })
+    );
   }
 }
 
@@ -103,7 +108,7 @@ async function getFusePoolUsers(
     );
 
     const hfThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
-    
+
     // Process assets in batches
     await processAssetsInBatches(assetsResults, users, comptroller, maxHealth, hfThreshold, botType, sdk, poolUsers);
 
@@ -122,7 +127,7 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   let page = 0;
   let hasMoreData = true;
-  let results: Array<{ user: Address, collateralValue: bigint, liquidity: bigint, shortfall: bigint }> = [];
+  let results: Array<{ user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint }> = [];
   const erroredResults: Array<ErroredPool> = [];
 
   while (hasMoreData) {
@@ -142,7 +147,12 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
     });
 
     const pageResults = await Promise.all(promises);
-    results.push(...pageResults.filter((result): result is { user: Address, collateralValue: bigint, liquidity: bigint, shortfall: bigint } => result !== null));
+    results.push(
+      ...pageResults.filter(
+        (result): result is { user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint } =>
+          result !== null
+      )
+    );
 
     results = results.filter((user) => user.shortfall);
     page++;
