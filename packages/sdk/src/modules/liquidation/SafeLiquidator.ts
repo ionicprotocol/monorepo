@@ -42,7 +42,8 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
       const [poolWithUsers, erroredPools] = await getAllFusePoolUsers(
         this as unknown as IonicSdk,
         maxHealthFactor,
-        excludedComptrollers
+        excludedComptrollers,
+        botType
       );
 
       if (configOverrides)
