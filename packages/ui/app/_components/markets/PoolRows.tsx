@@ -224,7 +224,7 @@ const PoolRows = ({
               asset.toLowerCase() === 'stone' ||
               asset.toLowerCase() === 'ezeth') && (
               <a
-                className="text-red-600 bg-red-50  expand rounded-md w-max ml-1 md:ml-0 text-center my-1 flex items-center justify-center gap-1"
+                className="text-red-600 bg-red-50  expan rounded-md w-max ml-1 md:ml-0 text-center my-1 flex items-center justify-center gap-1"
                 href="https://jumper.exchange/superfest/"
                 target="_blank"
               >
@@ -246,21 +246,21 @@ const PoolRows = ({
               </a>
             )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.flywheel && (
+            ?.ionRewards && (
             <span
-              className={`${pools[dropdownSelectedChain].text} bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
+              className={` bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
             >
-              + REWARDS <i className="popover-hint">i</i>
+              + ION APR <i className="popover-hint">i</i>
             </span>
           )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
           >
-            + POINTS <i className="popover-hint">i</i>
+            + REWARDS <i className="popover-hint">i</i>
           </span>
           <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
             <a
-              className="text-darkone bg-accent rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+              className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
             >
@@ -298,20 +298,20 @@ const PoolRows = ({
             %
           </span>
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.flywheel && (
+            ?.ionRewards && (
             <span
-              className={`text-white bg-pink rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1`}
+              className={`bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
             >
-              + REWARDS <i className="popover-hint">i</i>
+              + ION APR <i className="popover-hint">i</i>
             </span>
           )}
           <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center`}
+            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
           >
-            + POINTS <i className="popover-hint">i</i>
+            + REWARDS <i className="popover-hint">i</i>
           </span>
           <a
-            className="text-darkone bg-accent rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
+            className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
