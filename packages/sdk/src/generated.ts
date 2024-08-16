@@ -2509,6 +2509,34 @@ export const adjustableJumpRateModelAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AerodromePriceOracle
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const aerodromePriceOracleAbi = [
+  {
+    type: 'constructor',
+    inputs: [{ name: '_prices', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cToken', internalType: 'contract ICErc20', type: 'address' },
+    ],
+    name: 'getUnderlyingPrice',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'underlying', internalType: 'address', type: 'address' }],
+    name: 'price',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // AggregatorInterface
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -5318,7 +5346,7 @@ export const baseFlywheelRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -5361,6 +5389,23 @@ export const basePriceOracleAbi = [
     inputs: [{ name: 'underlying', internalType: 'address', type: 'address' }],
     name: 'price',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BasePrices
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const basePricesAbi = [
+  {
+    type: 'function',
+    inputs: [
+      { name: 'src_len', internalType: 'uint8', type: 'uint8' },
+      { name: 'connectors', internalType: 'address[]', type: 'address[]' },
+    ],
+    name: 'getManyRatesWithConnectors',
+    outputs: [{ name: 'rates', internalType: 'uint256[]', type: 'uint256[]' }],
     stateMutability: 'view',
   },
 ] as const
@@ -5513,6 +5558,15 @@ export const cErc20Abi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -6153,6 +6207,15 @@ export const cErc20AdminBaseAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'borrowIndex',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
@@ -6326,6 +6389,15 @@ export const cErc20DelegateAbi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -7039,6 +7111,15 @@ export const cErc20DelegatorAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'borrowIndex',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
@@ -7592,6 +7673,15 @@ export const cErc20DelegatorBaseAbi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -8151,6 +8241,15 @@ export const cErc20FirstExtensionBaseAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [
       { name: 'spender', internalType: 'address', type: 'address' },
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
@@ -8682,6 +8781,15 @@ export const cErc20PluginDelegateAbi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -9384,6 +9492,15 @@ export const cErc20PluginRewardsDelegateAbi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -10450,6 +10567,15 @@ export const cErc20RewardsDelegateAbi = [
   },
   {
     type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [
       { name: '_token', internalType: 'address', type: 'address' },
       { name: '_spender', internalType: 'address', type: 'address' },
@@ -11103,6 +11229,15 @@ export const cErc20StorageAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'borrowIndex',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
@@ -11570,6 +11705,13 @@ export const cTokenFirstExtensionAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: '_ap', internalType: 'address', type: 'address' }],
+    name: '_setAddressesProvider',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [
       { name: 'newAdminFeeMantissa', internalType: 'uint256', type: 'uint256' },
     ],
@@ -11642,6 +11784,15 @@ export const cTokenFirstExtensionAbi = [
     ],
     name: 'allowance',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -12530,6 +12681,15 @@ export const cTokenSecondExtensionBaseAbi = [
     inputs: [],
     name: 'adminFeeMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ap',
+    outputs: [
+      { name: '', internalType: 'contract AddressesProvider', type: 'address' },
+    ],
     stateMutability: 'view',
   },
   {
@@ -14072,6 +14232,20 @@ export const comptrollerAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'enforceWhitelist',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -14685,6 +14859,20 @@ export const comptrollerBaseAbi = [
     inputs: [],
     name: 'closeFactorMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -15482,6 +15670,20 @@ export const comptrollerFirstExtensionAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'enforceWhitelist',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -16074,6 +16276,20 @@ export const comptrollerInterfaceAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'cTokens', internalType: 'address[]', type: 'address[]' }],
     name: 'enterMarkets',
     outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }],
@@ -16254,6 +16470,485 @@ export const comptrollerInterfaceAbi = [
     name: 'transferAllowed',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ComptrollerPrudentiaCapsExt
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const comptrollerPrudentiaCapsExtAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: '_borrowGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: '_getExtensionFunctions',
+    outputs: [{ name: '', internalType: 'bytes4[]', type: 'bytes4[]' }],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: '_mintGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    name: '_setBorrowCapConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    name: '_setSupplyCapConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'accountAssets',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'admin',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'adminHasRights',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allBorrowers',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allMarkets',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'borrowCapForCollateral',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'borrowCapGuardian',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'borrowCaps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'borrowGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'borrowingAgainstCollateralBlacklist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'cTokensByUnderlying',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'closeFactorMantissa',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'enforceWhitelist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getBorrowCapConfig',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getSupplyCapConfig',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ionicAdmin',
+    outputs: [{ name: '', internalType: 'address payable', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ionicAdminHasRights',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'isComptroller',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'liquidationIncentiveMantissa',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'markets',
+    outputs: [
+      { name: 'isListed', internalType: 'bool', type: 'bool' },
+      {
+        name: 'collateralFactorMantissa',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'mintGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'nonAccruingRewardsDistributors',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'oracle',
+    outputs: [
+      { name: '', internalType: 'contract BasePriceOracle', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pauseGuardian',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pendingAdmin',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'rewardsDistributors',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'seizeGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'suppliers',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'supplyCaps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'transferGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'whitelist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'whitelistArray',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+        indexed: false,
+      },
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+        indexed: false,
+      },
+    ],
+    name: 'NewBorrowCapConfig',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+        indexed: false,
+      },
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+        indexed: false,
+      },
+    ],
+    name: 'NewSupplyCapConfig',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ComptrollerPrudentiaCapsExtInterface
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const comptrollerPrudentiaCapsExtInterfaceAbi = [
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    name: '_setBorrowCapConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newConfig',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    name: '_setSupplyCapConfig',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getBorrowCapConfig',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getSupplyCapConfig',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct PrudentiaLib.PrudentiaConfig',
+        type: 'tuple',
+        components: [
+          { name: 'controller', internalType: 'address', type: 'address' },
+          { name: 'offset', internalType: 'uint8', type: 'uint8' },
+          { name: 'decimalShift', internalType: 'int8', type: 'int8' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
   },
 ] as const
 
@@ -16706,6 +17401,248 @@ export const comptrollerV2StorageAbi = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const comptrollerV3StorageAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: '_borrowGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: '_mintGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'accountAssets',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'admin',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'adminHasRights',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allBorrowers',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allMarkets',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'borrowCapForCollateral',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'borrowCapGuardian',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'borrowCaps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'borrowGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'address', type: 'address' },
+    ],
+    name: 'borrowingAgainstCollateralBlacklist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'cTokensByUnderlying',
+    outputs: [{ name: '', internalType: 'contract ICErc20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'closeFactorMantissa',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'enforceWhitelist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ionicAdmin',
+    outputs: [{ name: '', internalType: 'address payable', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'ionicAdminHasRights',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'liquidationIncentiveMantissa',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'markets',
+    outputs: [
+      { name: 'isListed', internalType: 'bool', type: 'bool' },
+      {
+        name: 'collateralFactorMantissa',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'mintGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'nonAccruingRewardsDistributors',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'oracle',
+    outputs: [
+      { name: '', internalType: 'contract BasePriceOracle', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pauseGuardian',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pendingAdmin',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'rewardsDistributors',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'seizeGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'suppliers',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'supplyCaps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'transferGuardianPaused',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'whitelist',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'whitelistArray',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ComptrollerV4Storage
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const comptrollerV4StorageAbi = [
   {
     type: 'function',
     inputs: [],
@@ -23161,7 +24098,7 @@ export const flywheelDynamicRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -23228,7 +24165,7 @@ export const flywheelStaticRewardsAbi = [
     inputs: [
       {
         name: '_flywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       { name: '_owner', internalType: 'address', type: 'address' },
@@ -23254,7 +24191,7 @@ export const flywheelStaticRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -23390,562 +24327,6 @@ export const flywheelStaticRewardsAbi = [
       },
     ],
     name: 'RewardsInfoUpdate',
-  },
-  { type: 'error', inputs: [], name: 'FlywheelError' },
-] as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FuseFlywheelCore
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const fuseFlywheelCoreAbi = [
-  {
-    type: 'constructor',
-    inputs: [
-      { name: '_rewardToken', internalType: 'contract ERC20', type: 'address' },
-      {
-        name: '_flywheelRewards',
-        internalType: 'contract IFlywheelRewards',
-        type: 'address',
-      },
-      {
-        name: '_flywheelBooster',
-        internalType: 'contract IFlywheelBooster',
-        type: 'address',
-      },
-      { name: '_owner', internalType: 'address', type: 'address' },
-      {
-        name: '_authority',
-        internalType: 'contract Authority',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'ONE',
-    outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-      { name: 'user', internalType: 'address', type: 'address' },
-    ],
-    name: 'accrue',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-      { name: 'user', internalType: 'address', type: 'address' },
-      { name: 'secondUser', internalType: 'address', type: 'address' },
-    ],
-    name: 'accrue',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-    ],
-    name: 'addMarketForRewards',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-    ],
-    name: 'addStrategyForRewards',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'allStrategies',
-    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'authority',
-    outputs: [
-      { name: '', internalType: 'contract Authority', type: 'address' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
-    name: 'claimRewards',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
-    name: 'compAccrued',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'flywheelBooster',
-    outputs: [
-      { name: '', internalType: 'contract IFlywheelBooster', type: 'address' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'market', internalType: 'contract ERC20', type: 'address' },
-      { name: 'borrower', internalType: 'address', type: 'address' },
-    ],
-    name: 'flywheelPreBorrowerAction',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'market', internalType: 'contract ERC20', type: 'address' },
-      { name: 'supplier', internalType: 'address', type: 'address' },
-    ],
-    name: 'flywheelPreSupplierAction',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'market', internalType: 'contract ERC20', type: 'address' },
-      { name: 'src', internalType: 'address', type: 'address' },
-      { name: 'dst', internalType: 'address', type: 'address' },
-    ],
-    name: 'flywheelPreTransferAction',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'flywheelRewards',
-    outputs: [
-      { name: '', internalType: 'contract IFlywheelRewards', type: 'address' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'getAllStrategies',
-    outputs: [
-      { name: '', internalType: 'contract ERC20[]', type: 'address[]' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'isFlywheel',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'isRewardsDistributor',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-    ],
-    name: 'marketState',
-    outputs: [
-      {
-        name: '',
-        internalType: 'struct FlywheelCore.RewardsState',
-        type: 'tuple',
-        components: [
-          { name: 'index', internalType: 'uint224', type: 'uint224' },
-          {
-            name: 'lastUpdatedTimestamp',
-            internalType: 'uint32',
-            type: 'uint32',
-          },
-        ],
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'owner',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'rewardToken',
-    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'rewardsAccrued',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      {
-        name: 'newAuthority',
-        internalType: 'contract Authority',
-        type: 'address',
-      },
-    ],
-    name: 'setAuthority',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      {
-        name: 'newBooster',
-        internalType: 'contract IFlywheelBooster',
-        type: 'address',
-      },
-    ],
-    name: 'setBooster',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      {
-        name: 'newFlywheelRewards',
-        internalType: 'contract IFlywheelRewards',
-        type: 'address',
-      },
-    ],
-    name: 'setFlywheelRewards',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
-    name: 'setOwner',
-    outputs: [],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    name: 'strategyState',
-    outputs: [
-      { name: 'index', internalType: 'uint224', type: 'uint224' },
-      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'contract ERC20', type: 'address' },
-      { name: '', internalType: 'address', type: 'address' },
-    ],
-    name: 'userIndex',
-    outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'strategy',
-        internalType: 'contract ERC20',
-        type: 'address',
-        indexed: true,
-      },
-      { name: 'user', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'rewardsDelta',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-      {
-        name: 'rewardsIndex',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'AccrueRewards',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'newStrategy',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'AddStrategy',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'user', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'newAuthority',
-        internalType: 'contract Authority',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'AuthorityUpdated',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'user', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'ClaimRewards',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'newBooster',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'FlywheelBoosterUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'newFlywheelRewards',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'FlywheelRewardsUpdate',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'user', internalType: 'address', type: 'address', indexed: true },
-      {
-        name: 'newOwner',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'OwnerUpdated',
-  },
-] as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FuseFlywheelDynamicRewards
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const fuseFlywheelDynamicRewardsAbi = [
-  {
-    type: 'constructor',
-    inputs: [
-      {
-        name: '_flywheel',
-        internalType: 'contract FlywheelCore',
-        type: 'address',
-      },
-      { name: '_cycleLength', internalType: 'uint32', type: 'uint32' },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'flywheel',
-    outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
-    ],
-    name: 'getAccruedRewards',
-    outputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'rewardToken',
-    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    name: 'rewardsCycle',
-    outputs: [
-      { name: 'start', internalType: 'uint32', type: 'uint32' },
-      { name: 'end', internalType: 'uint32', type: 'uint32' },
-      { name: 'reward', internalType: 'uint192', type: 'uint192' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'rewardsCycleLength',
-    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'start', internalType: 'uint32', type: 'uint32', indexed: true },
-      { name: 'end', internalType: 'uint32', type: 'uint32', indexed: true },
-      {
-        name: 'reward',
-        internalType: 'uint192',
-        type: 'uint192',
-        indexed: false,
-      },
-    ],
-    name: 'NewRewardsCycle',
-  },
-  { type: 'error', inputs: [], name: 'FlywheelError' },
-] as const
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FuseFlywheelDynamicRewardsPlugin
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const fuseFlywheelDynamicRewardsPluginAbi = [
-  {
-    type: 'constructor',
-    inputs: [
-      {
-        name: '_flywheel',
-        internalType: 'contract FlywheelCore',
-        type: 'address',
-      },
-      { name: '_cycleLength', internalType: 'uint32', type: 'uint32' },
-    ],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'flywheel',
-    outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
-      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
-    ],
-    name: 'getAccruedRewards',
-    outputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'rewardToken',
-    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
-    name: 'rewardsCycle',
-    outputs: [
-      { name: 'start', internalType: 'uint32', type: 'uint32' },
-      { name: 'end', internalType: 'uint32', type: 'uint32' },
-      { name: 'reward', internalType: 'uint192', type: 'uint192' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [],
-    name: 'rewardsCycleLength',
-    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'start', internalType: 'uint32', type: 'uint32', indexed: true },
-      { name: 'end', internalType: 'uint32', type: 'uint32', indexed: true },
-      {
-        name: 'reward',
-        internalType: 'uint192',
-        type: 'uint192',
-        indexed: false,
-      },
-    ],
-    name: 'NewRewardsCycle',
   },
   { type: 'error', inputs: [], name: 'FlywheelError' },
 ] as const
@@ -26565,10 +26946,10 @@ export const iBeaconAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ICERC20_FFDR
+// ICERC20
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const icerc20FfdrAbi = [
+export const icerc20Abi = [
   {
     type: 'function',
     inputs: [],
@@ -31416,7 +31797,7 @@ export const iFlywheelRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -31576,6 +31957,102 @@ export const iGenericLenderAbi = [
     inputs: [],
     name: 'withdrawAll',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IHistoricalRates
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iHistoricalRatesAbi = [
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token', internalType: 'address', type: 'address' },
+      { name: 'index', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getRateAt',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct RateLibrary.Rate',
+        type: 'tuple',
+        components: [
+          { name: 'target', internalType: 'uint64', type: 'uint64' },
+          { name: 'current', internalType: 'uint64', type: 'uint64' },
+          { name: 'timestamp', internalType: 'uint32', type: 'uint32' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'offset', internalType: 'uint256', type: 'uint256' },
+      { name: 'increment', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getRates',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct RateLibrary.Rate[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'target', internalType: 'uint64', type: 'uint64' },
+          { name: 'current', internalType: 'uint64', type: 'uint64' },
+          { name: 'timestamp', internalType: 'uint32', type: 'uint32' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getRates',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct RateLibrary.Rate[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'target', internalType: 'uint64', type: 'uint64' },
+          { name: 'current', internalType: 'uint64', type: 'uint64' },
+          { name: 'timestamp', internalType: 'uint32', type: 'uint32' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+    name: 'getRatesCapacity',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+    name: 'getRatesCount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'token', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'setRatesCapacity',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
 ] as const
@@ -31891,6 +32368,32 @@ export const iIonicFlywheelAbi = [
       { name: 'index', internalType: 'uint224', type: 'uint224' },
       { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
     ],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IIonicFlywheelBorrowBooster
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iIonicFlywheelBorrowBoosterAbi = [
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ICErc20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'boostedBalanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ICErc20', type: 'address' },
+    ],
+    name: 'boostedTotalSupply',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
 ] as const
@@ -35856,10 +36359,10 @@ export const iPluginAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// IPlugin_FFDR
+// IPlugin_FDR
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const iPluginFfdrAbi = [
+export const iPluginFdrAbi = [
   {
     type: 'function',
     inputs: [],
@@ -36586,6 +37089,20 @@ export const iQuoterAbi = [
     ],
     name: 'estimateMinSwapUniswapV3',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IRateComputer
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iRateComputerAbi = [
+  {
+    type: 'function',
+    inputs: [{ name: 'token', internalType: 'address', type: 'address' }],
+    name: 'computeRate',
+    outputs: [{ name: '', internalType: 'uint64', type: 'uint64' }],
     stateMutability: 'view',
   },
 ] as const
@@ -41122,6 +41639,20 @@ export const ionicComptrollerAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveBorrowCaps',
+    outputs: [{ name: 'borrowCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'address', type: 'address' }],
+    name: 'effectiveSupplyCaps',
+    outputs: [{ name: 'supplyCap', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'enforceWhitelist',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -42604,6 +43135,518 @@ export const ionicFlywheelAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IonicFlywheelBorrow
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ionicFlywheelBorrowAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: '_acceptOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'newPendingOwner', internalType: 'address', type: 'address' },
+    ],
+    name: '_setPendingOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'accrue',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'secondUser', internalType: 'address', type: 'address' },
+    ],
+    name: 'accrue',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+    ],
+    name: 'addMarketForRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+    ],
+    name: 'addStrategyForRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allStrategies',
+    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'claimRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'compAccrued',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'flywheelBooster',
+    outputs: [
+      { name: '', internalType: 'contract IFlywheelBooster', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'market', internalType: 'address', type: 'address' },
+      { name: 'borrower', internalType: 'address', type: 'address' },
+    ],
+    name: 'flywheelPreBorrowerAction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'market', internalType: 'address', type: 'address' },
+      { name: 'supplier', internalType: 'address', type: 'address' },
+    ],
+    name: 'flywheelPreSupplierAction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'market', internalType: 'address', type: 'address' },
+      { name: 'src', internalType: 'address', type: 'address' },
+      { name: 'dst', internalType: 'address', type: 'address' },
+    ],
+    name: 'flywheelPreTransferAction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'flywheelRewards',
+    outputs: [
+      { name: '', internalType: 'contract IFlywheelRewards', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getAllStrategies',
+    outputs: [
+      { name: '', internalType: 'contract ERC20[]', type: 'address[]' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_rewardToken', internalType: 'contract ERC20', type: 'address' },
+      {
+        name: '_flywheelRewards',
+        internalType: 'contract IFlywheelRewards',
+        type: 'address',
+      },
+      {
+        name: '_flywheelBooster',
+        internalType: 'contract IFlywheelBooster',
+        type: 'address',
+      },
+      { name: '_owner', internalType: 'address', type: 'address' },
+    ],
+    name: 'initialize',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'isFlywheel',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'isRewardsDistributor',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+    ],
+    name: 'marketState',
+    outputs: [
+      { name: '', internalType: 'uint224', type: 'uint224' },
+      { name: '', internalType: 'uint32', type: 'uint32' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'pendingOwner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'performanceFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardToken',
+    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'rewardsAccrued',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newBooster',
+        internalType: 'contract IFlywheelBooster',
+        type: 'address',
+      },
+    ],
+    name: 'setBooster',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'newFlywheelRewards',
+        internalType: 'contract IFlywheelRewards',
+        type: 'address',
+      },
+    ],
+    name: 'setFlywheelRewards',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+    ],
+    name: 'strategyState',
+    outputs: [
+      { name: 'index', internalType: 'uint224', type: 'uint224' },
+      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_performanceFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_feeRecipient', internalType: 'address', type: 'address' },
+    ],
+    name: 'updateFeeSettings',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'userIndex',
+    outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'strategy',
+        internalType: 'contract ERC20',
+        type: 'address',
+        indexed: true,
+      },
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'rewardsDelta',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'rewardsIndex',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'AccrueRewards',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newStrategy',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'AddStrategy',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'ClaimRewards',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newBooster',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'FlywheelBoosterUpdate',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'newFlywheelRewards',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'FlywheelRewardsUpdate',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'version', internalType: 'uint8', type: 'uint8', indexed: false },
+    ],
+    name: 'Initialized',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'NewOwner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldPendingOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'newPendingOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'NewPendingOwner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'previousOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'newOwner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'OwnershipTransferred',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'oldPerformanceFee',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'newPerformanceFee',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'oldFeeRecipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'newFeeRecipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+    ],
+    name: 'UpdatedFeeSettings',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IonicFlywheelBorrowBooster
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ionicFlywheelBorrowBoosterAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'BOOSTER_TYPE',
+    outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ICErc20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'boostedBalanceOf',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ICErc20', type: 'address' },
+    ],
+    name: 'boostedTotalSupply',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IonicFlywheelCore
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -43008,6 +44051,164 @@ export const ionicFlywheelCoreAbi = [
     ],
     name: 'UpdatedFeeSettings',
   },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IonicFlywheelDynamicRewards
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ionicFlywheelDynamicRewardsAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      {
+        name: '_flywheel',
+        internalType: 'contract IonicFlywheelCore',
+        type: 'address',
+      },
+      { name: '_cycleLength', internalType: 'uint32', type: 'uint32' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'flywheel',
+    outputs: [
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
+    ],
+    name: 'getAccruedRewards',
+    outputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardToken',
+    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    name: 'rewardsCycle',
+    outputs: [
+      { name: 'start', internalType: 'uint32', type: 'uint32' },
+      { name: 'end', internalType: 'uint32', type: 'uint32' },
+      { name: 'reward', internalType: 'uint192', type: 'uint192' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardsCycleLength',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'start', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: 'end', internalType: 'uint32', type: 'uint32', indexed: true },
+      {
+        name: 'reward',
+        internalType: 'uint192',
+        type: 'uint192',
+        indexed: false,
+      },
+    ],
+    name: 'NewRewardsCycle',
+  },
+  { type: 'error', inputs: [], name: 'FlywheelError' },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IonicFlywheelDynamicRewardsPlugin
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const ionicFlywheelDynamicRewardsPluginAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      {
+        name: '_flywheel',
+        internalType: 'contract IonicFlywheelCore',
+        type: 'address',
+      },
+      { name: '_cycleLength', internalType: 'uint32', type: 'uint32' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'flywheel',
+    outputs: [
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'lastUpdatedTimestamp', internalType: 'uint32', type: 'uint32' },
+    ],
+    name: 'getAccruedRewards',
+    outputs: [{ name: 'amount', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardToken',
+    outputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'contract ERC20', type: 'address' }],
+    name: 'rewardsCycle',
+    outputs: [
+      { name: 'start', internalType: 'uint32', type: 'uint32' },
+      { name: 'end', internalType: 'uint32', type: 'uint32' },
+      { name: 'reward', internalType: 'uint192', type: 'uint192' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rewardsCycleLength',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'start', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: 'end', internalType: 'uint32', type: 'uint32', indexed: true },
+      {
+        name: 'reward',
+        internalType: 'uint192',
+        type: 'uint192',
+        indexed: false,
+      },
+    ],
+    name: 'NewRewardsCycle',
+  },
+  { type: 'error', inputs: [], name: 'FlywheelError' },
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43436,6 +44637,23 @@ export const ionicLiquidatorAbi = [
   {
     type: 'function',
     inputs: [
+      { name: 'borrower', internalType: 'address', type: 'address' },
+      { name: 'repayAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'cErc20', internalType: 'contract ICErc20', type: 'address' },
+      {
+        name: 'cTokenCollateral',
+        internalType: 'contract ICErc20',
+        type: 'address',
+      },
+      { name: 'minOutputAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'safeLiquidatePyth',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       {
         name: 'vars',
         internalType: 'struct ILiquidator.LiquidateToTokensWithFlashSwapVars',
@@ -43844,6 +45062,13 @@ export const ionicLiquidatorTestAbi = [
     type: 'function',
     inputs: [],
     name: 'testLiquidateAfterUpgradeLiquidator',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'testLiquidateAfterUpgradeLiquidatorExpressRelay',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -44745,6 +45970,23 @@ export const ionicUniV3LiquidatorAbi = [
       { name: 'minOutputAmount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'safeLiquidate',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'borrower', internalType: 'address', type: 'address' },
+      { name: 'repayAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'cErc20', internalType: 'contract ICErc20', type: 'address' },
+      {
+        name: 'cTokenCollateral',
+        internalType: 'contract ICErc20',
+        type: 'address',
+      },
+      { name: 'minOutputAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'safeLiquidatePyth',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
   },
@@ -48798,7 +50040,7 @@ export const mockErc4626DynamicAbi = [
       { name: '_asset', internalType: 'contract ERC20', type: 'address' },
       {
         name: '_flywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
     ],
@@ -48888,7 +50130,7 @@ export const mockErc4626DynamicAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -52520,6 +53762,25 @@ export const priceOracleAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Prices
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const pricesAbi = [
+  {
+    type: 'function',
+    inputs: [
+      { name: 'srcToken', internalType: 'address', type: 'address' },
+      { name: 'useSrcWrappers', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'getRateToEth',
+    outputs: [
+      { name: 'weightedRate', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Proxy
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52641,6 +53902,94 @@ export const proxyAdminAbi = [
       },
     ],
     name: 'OwnershipTransferred',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PrudentiaInterestRateModel
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const prudentiaInterestRateModelAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: 'blocksPerYear_', internalType: 'uint256', type: 'uint256' },
+      { name: 'underlyingToken_', internalType: 'address', type: 'address' },
+      {
+        name: 'rateController_',
+        internalType: 'contract IRateComputer',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'blocksPerYear',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cash', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrows', internalType: 'uint256', type: 'uint256' },
+      { name: 'reserves', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getBorrowRate',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cash', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrows', internalType: 'uint256', type: 'uint256' },
+      { name: 'reserves', internalType: 'uint256', type: 'uint256' },
+      {
+        name: 'reserveFactorMantissa',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    name: 'getSupplyRate',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'isInterestRateModel',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'rateController',
+    outputs: [
+      { name: '', internalType: 'contract IRateComputer', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'underlyingToken',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cash', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrows', internalType: 'uint256', type: 'uint256' },
+      { name: 'reserves', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'utilizationRate',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'pure',
   },
 ] as const
 
@@ -53047,12 +54396,12 @@ export const replacingFlywheelDynamicRewardsAbi = [
     inputs: [
       {
         name: '_replacedFlywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       {
         name: '_flywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       { name: '_cycleLength', internalType: 'uint32', type: 'uint32' },
@@ -53064,7 +54413,7 @@ export const replacingFlywheelDynamicRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -53083,7 +54432,7 @@ export const replacingFlywheelDynamicRewardsAbi = [
     inputs: [],
     name: 'replacedFlywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -53140,12 +54489,12 @@ export const replacingFlywheelStaticRewardsAbi = [
     inputs: [
       {
         name: '_replacedFlywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       {
         name: '_flywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       { name: '_owner', internalType: 'address', type: 'address' },
@@ -53171,7 +54520,7 @@ export const replacingFlywheelStaticRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -53197,7 +54546,7 @@ export const replacingFlywheelStaticRewardsAbi = [
     inputs: [],
     name: 'replacedFlywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
@@ -59743,6 +61092,34 @@ export const upgradesBaseTestAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// VelodromePriceOracle
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const velodromePriceOracleAbi = [
+  {
+    type: 'constructor',
+    inputs: [{ name: '_prices', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cToken', internalType: 'contract ICErc20', type: 'address' },
+    ],
+    name: 'getUnderlyingPrice',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'underlying', internalType: 'address', type: 'address' }],
+    name: 'price',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WETH
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61170,7 +62547,7 @@ export const withdrawableFlywheelStaticRewardsAbi = [
     inputs: [
       {
         name: '_flywheel',
-        internalType: 'contract FlywheelCore',
+        internalType: 'contract IonicFlywheelCore',
         type: 'address',
       },
       { name: '_owner', internalType: 'address', type: 'address' },
@@ -61196,7 +62573,7 @@ export const withdrawableFlywheelStaticRewardsAbi = [
     inputs: [],
     name: 'flywheel',
     outputs: [
-      { name: '', internalType: 'contract FlywheelCore', type: 'address' },
+      { name: '', internalType: 'contract IonicFlywheelCore', type: 'address' },
     ],
     stateMutability: 'view',
   },
