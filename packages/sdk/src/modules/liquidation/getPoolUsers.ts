@@ -1,86 +1,43 @@
-import { Performance } from "perf_hooks";
-
-import { Address, formatEther, parseEther } from "viem";
-
+import pLimit from 'p-limit';
+import { Address, formatEther } from 'viem';
 import { IonicSdk } from "../../IonicSdk";
-
 import { BotType, ErroredPool, PoolUserStruct, PublicPoolUserWithData } from "./utils";
 
-let performance: Performance;
-if (typeof window === "undefined") {
-  // Running in Node.js environment
-  import("perf_hooks")
-    .then(({ performance: nodePerformance }) => {
-      performance = nodePerformance;
-    })
-    .catch((err) => {
-      console.error("Failed to load perf_hooks:", err);
-      // Handle error as needed
-    });
-} else {
-  // Running in browser environment
-  performance = window.performance as any;
-}
-
-export type PoolAssetStructOutput = {
-  cToken: Address;
-  underlyingToken: Address;
-  underlyingName: string;
-  underlyingSymbol: string;
-  underlyingDecimals: bigint;
-  underlyingBalance: bigint;
-  supplyRatePerBlock: bigint;
-  borrowRatePerBlock: bigint;
-  totalSupply: bigint;
-  totalBorrow: bigint;
-  supplyBalance: bigint;
-  borrowBalance: bigint;
-  liquidity: bigint;
-  membership: boolean;
-  exchangeRate: bigint;
-  underlyingPrice: bigint;
-  oracle: Address;
-  collateralFactor: bigint;
-  reserveFactor: bigint;
-  adminFee: bigint;
-  ionicFee: bigint;
-  borrowGuardianPaused: boolean;
-  mintGuardianPaused: boolean;
-};
-
+// Constants
+const CONCURRENCY_LIMIT = 50; // Adjust concurrency limit based on system capacity
+const BATCH_SIZE = 20; // Process users in batches
 const PAGE_SIZE = 1000; // Define the page size for pagination
-const BATCH_SIZE = 100; // Define the batch size for processing assets
+
+// Initialize p-limit with the specified concurrency limit
+const limit = pLimit(CONCURRENCY_LIMIT);
+
+// Function to process assets in batches
 async function processAssetsInBatches(
   assetsResults: any[], // Replace `any` with actual type if available
   users: readonly `0x${string}`[],
-  comptroller: Address,
-  maxHealth: bigint,
-  hfThreshold: bigint,
-  botType: BotType,
-  sdk: IonicSdk,
   poolUsers: PoolUserStruct[]
-) {
-  const mutableUsers: `0x${string}`[] = [...users];
+): Promise<void> {
+  const batchPromises: Array<Promise<void>> = [];
 
   for (let i = 0; i < assetsResults.length; i += BATCH_SIZE) {
     const batch = assetsResults.slice(i, i + BATCH_SIZE);
-    const batchUsers = mutableUsers.slice(i, i + BATCH_SIZE);
+    const batchUsers = users.slice(i, i + BATCH_SIZE);
 
-    await Promise.all(
-      batch.map(async (assets, index) => {
-        try {
-          const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-          if (health < maxHealth && (botType !== BotType.Pyth || (botType === BotType.Pyth && health > hfThreshold))) {
-            poolUsers.push({ account: batchUsers[index], health });
-          }
-        } catch (error) {
-          sdk.logger.error(`Error getting health factor for ${batchUsers[index]}: ${error}`);
+    // Explicitly specify the type of function passed to limit
+    batchPromises.push(
+      limit(async (): Promise<void> => {
+        for (let j = 0; j < batch.length; j++) {
+          const user = batchUsers[j];
+          poolUsers.push({ account: user, health: 0n });
         }
       })
     );
   }
+
+  await Promise.all(batchPromises);
 }
 
+// Function to get users from the Fuse pool
 async function getFusePoolUsers(
   sdk: IonicSdk,
   comptroller: Address,
@@ -96,23 +53,23 @@ async function getFusePoolUsers(
     const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
     if (users.length === 0) {
       hasMoreData = false;
+    } else {
+      const assetsResults = await Promise.all(
+        users.map(async (user) => {
+          const assets = (
+            await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address], { account: user })
+          ).result;
+          return assets;
+        })
+      );
+
+      const hfThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
+
+      // Process assets in batches
+      await processAssetsInBatches(assetsResults, users, poolUsers);
+
+      page++;
     }
-
-    const assetsResults = await Promise.all(
-      users.map(async (user) => {
-        const assets = (
-          await sdk.contracts.PoolLens.simulate.getPoolAssetsWithData([comptrollerInstance.address], { account: user })
-        ).result;
-        return assets;
-      })
-    );
-
-    const hfThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
-
-    // Process assets in batches
-    await processAssetsInBatches(assetsResults, users, comptroller, maxHealth, hfThreshold, botType, sdk, poolUsers);
-
-    page++;
   }
 
   return {
@@ -123,6 +80,7 @@ async function getFusePoolUsers(
   };
 }
 
+// Function to get pools with shortfall
 async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
   const comptrollerInstance = sdk.createComptroller(comptroller);
   let page = 0;
@@ -134,28 +92,25 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
     const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
     if (users.length === 0) {
       hasMoreData = false;
+    } else {
+      const pageResults = await Promise.all(
+        users.map(async (user) => {
+          try {
+            const liquidity = await comptrollerInstance.read.getAccountLiquidity([user]);
+            return { user, collateralValue: liquidity[1], liquidity: liquidity[2], shortfall: liquidity[3] };
+          } catch (error) {
+            erroredResults.push({ comptroller, msg: `Error getting liquidity for ${user}: ${error}`, error });
+            return null;
+          }
+        })
+      );
+
+      results.push(...pageResults.filter((result): result is { user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint } => result !== null));
+
+      // Filter results with shortfall
+      results = results.filter(user => user.shortfall);
+      page++;
     }
-
-    const promises = users.map(async (user) => {
-      try {
-        const liquidity = await comptrollerInstance.read.getAccountLiquidity([user]);
-        return { user, collateralValue: liquidity[1], liquidity: liquidity[2], shortfall: liquidity[3] };
-      } catch (error) {
-        erroredResults.push({ comptroller, msg: `Error getting liquidity for ${user}: ${error}`, error });
-        return null;
-      }
-    });
-
-    const pageResults = await Promise.all(promises);
-    results.push(
-      ...pageResults.filter(
-        (result): result is { user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint } =>
-          result !== null
-      )
-    );
-
-    results = results.filter((user) => user.shortfall);
-    page++;
   }
 
   if (erroredResults.length > 0) {
@@ -165,6 +120,7 @@ async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
   return results;
 }
 
+// Main function to get all Fuse pool users
 export default async function getAllFusePoolUsers(
   sdk: IonicSdk,
   maxHealth: bigint,
@@ -175,6 +131,7 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   const startTime = performance.now();
+  
   const poolPromises = allPools.map(async (pool) => {
     const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
@@ -183,14 +140,11 @@ export default async function getAllFusePoolUsers(
       try {
         const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
-          const users = hasShortfall.map((user) => {
-            return `- user: ${user.user}, shortfall: ${formatEther(user.shortfall)}\n`;
-          });
+          const users = hasShortfall.map(user => `- user: ${user.user}, shortfall: ${formatEther(user.shortfall)}\n`);
           sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
-            const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth, botType))
-              .users;
-            const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
+            const poolUserParams = (await getFusePoolUsers(sdk, comptroller, maxHealth, botType)).users;
+            const comptrollerInstance = sdk.createComptroller(comptroller);
             fusePoolUsers.push({
               comptroller,
               users: poolUserParams,
@@ -198,24 +152,22 @@ export default async function getAllFusePoolUsers(
               liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa()
             });
           } catch (e) {
-            const msg = `Error getting pool users for ${comptroller}: ${e}`;
-            erroredPools.push({ comptroller, msg, error: e });
+            erroredPools.push({ comptroller, msg: `Error getting pool users for ${comptroller}: ${e}`, error: e });
           }
         } else {
           sdk.logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
         }
       } catch (e) {
-        const msg = `Error getting shortfalled users for pool ${name} (${comptroller}): ${e}`;
-        erroredPools.push({ comptroller, msg, error: e });
+        erroredPools.push({ comptroller, msg: `Error getting shortfalled users for pool ${name} (${comptroller}): ${e}`, error: e });
       }
       const poolEndTime = performance.now();
-      sdk.logger.info(
-        `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`
-      );
+      sdk.logger.info(`Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`);
     }
   });
+
   await Promise.all(poolPromises);
   const endTime = performance.now();
   sdk.logger.info(`Total time taken to read all users: ${(endTime - startTime).toFixed(2)} milliseconds`);
+  
   return [fusePoolUsers, erroredPools];
 }
