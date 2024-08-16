@@ -98,11 +98,23 @@
     "IonicFlywheelDynamicRewards_Borrow_RSR": {
       "address": "0xBF5993b07C0EDC54Ca41C04EF5120a30224d2C33"
     },
+    "IonicFlywheelDynamicRewards_ION": {
+      "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
+    },
     "IonicFlywheelDynamicRewards_RSR": {
       "address": "0xCdfF6BA3613f37E719234A26775fF72BD937f22B"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0x72f50583b4320830DF5236E5535d12bC8bfc6C0B"
+      "address": "0xB1402333b12fc066C3D7F55d37944D5e281a3e8B"
+    },
+    "IonicFlywheel_ION": {
+      "address": "0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54"
+    },
+    "IonicFlywheel_ION_Implementation": {
+      "address": "0x51A022B23bFE99A4C50B94E9AffF3bBa7fa1bdE7"
+    },
+    "IonicFlywheel_ION_Proxy": {
+      "address": "0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54"
     },
     "IonicFlywheel_RSR": {
       "address": "0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4"
