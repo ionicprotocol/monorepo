@@ -72,6 +72,7 @@ export const pools: Record<number, PoolParams> = {
           'USDC',
           'ezETH',
           'STONE',
+          'sUSDe',
           'USDe',
           'wrsETH',
           'weETH.mode',
