@@ -23,7 +23,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [base.id]: {
-    supply: ['0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4'],
+    supply: [
+      '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
+      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54'
+    ],
     borrow: [
       '0x327410E4D3A32EF37712e77fCB005e5327F082De',
       '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d'
