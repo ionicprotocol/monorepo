@@ -75,24 +75,24 @@ export default async function getPotentialLiquidation(
   const underlyingAmountSeizedValue =
     (underlyingAmountSeized * collateralAssetUnderlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
 
-  sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}`);
-  sdk.logger.info(`Seize Token Info ${seizeTokens[1].toString()}`);
-  sdk.logger.info(`collateral exchange rate ${formatEther(exchangeRate)}`);
-  sdk.logger.info(`liquidation incentive ${formatEther(liquidationIncentive)}`);
-  sdk.logger.info(`protocol seize  share ${formatEther(protocolSeizeShareMantissa)}`);
-  sdk.logger.info(`fee seize share ${formatEther(feeSeizeShareMantissa)}`);
-  sdk.logger.info(`protocol fee ${protocolFee.toString()}`);
-  sdk.logger.info(`size fee ${seizeFee.toString()}`);
-  sdk.logger.info(`actual amount seized ${actualAmountSeized.toString()}`);
-  sdk.logger.info(`underlying amount siezed ${underlyingAmountSeized.toString()}`);
+  // sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}`);
+  // sdk.logger.info(`Seize Token Info ${seizeTokens[1].toString()}`);
+  // sdk.logger.info(`collateral exchange rate ${formatEther(exchangeRate)}`);
+  // sdk.logger.info(`liquidation incentive ${formatEther(liquidationIncentive)}`);
+  // sdk.logger.info(`protocol seize  share ${formatEther(protocolSeizeShareMantissa)}`);
+  // sdk.logger.info(`fee seize share ${formatEther(feeSeizeShareMantissa)}`);
+  // sdk.logger.info(`protocol fee ${protocolFee.toString()}`);
+  // sdk.logger.info(`size fee ${seizeFee.toString()}`);
+  // sdk.logger.info(`actual amount seized ${actualAmountSeized.toString()}`);
+  // sdk.logger.info(`underlying amount siezed ${underlyingAmountSeized.toString()}`);
 
-  sdk.logger.info(
-    `Transaction Details: Repay Token: ${debtAsset.underlyingToken}, Collateral Token: ${collateralAsset.underlyingToken}, ` +
-      `Repay Amount: ${formatEther(repayAmount)}, Seized Collateral Amount: ${formatEther(underlyingAmountSeized)}, ` +
-      `Repay Value: ${formatEther(liquidationValue)} , Seized Collateral Value: ${formatEther(
-        underlyingAmountSeizedValue
-      )} `
-  );
+  // sdk.logger.info(
+  //   `Transaction Details: Repay Token: ${debtAsset.underlyingToken}, Collateral Token: ${collateralAsset.underlyingToken}, ` +
+  //     `Repay Amount: ${formatEther(repayAmount)}, Seized Collateral Amount: ${formatEther(underlyingAmountSeized)}, ` +
+  //     `Repay Value: ${formatEther(liquidationValue)} , Seized Collateral Value: ${formatEther(
+  //       underlyingAmountSeizedValue
+  //     )} `
+  // );
 
   return await encodeLiquidatePythTx(borrower, repayAmount, underlyingAmountSeized);
 }

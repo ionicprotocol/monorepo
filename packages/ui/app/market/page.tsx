@@ -14,7 +14,7 @@ import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
-import NetworkSelector from '../_components/markets/NetworkSelector';
+// import NetworkSelector from '../_components/markets/NetworkSelector';
 import PoolRows from '../_components/markets/PoolRows';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -33,7 +33,12 @@ import { sendIMG } from '@ui/utils/TempImgSender';
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
   ssr: false
 });
-
+const NetworkSelector = dynamic(
+  () => import('../_components/markets/NetworkSelector'),
+  {
+    ssr: false
+  }
+);
 export default function Market() {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
