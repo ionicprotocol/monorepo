@@ -1,6 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { mode } from 'viem/chains';
+
+import { pools } from '@ui/constants/index';
 
 export type EarnRow = {
   apr?: number | string;
@@ -17,15 +21,18 @@ type EarnRowsParams = {
   rows: EarnRow[];
 };
 export default function EarnRows({ rows }: EarnRowsParams) {
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const chain = querychain ?? mode.id;
   return (
     <>
       {rows.map(({ apr, asset, network, protocol, tvl, link }, idx) => (
         <div
-          className=" w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl my-3 px-2 gap-x-1 md:grid  grid-cols-13  py-4 text-sm text-white lg:text-center items-center relative flex flex-col "
+          className=" w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 md:px-3 px-3 gap-x-1 md:grid grid-cols-13  py-4 text-sm text-white md:text-center items-center relative flex flex-col "
           key={idx}
         >
-          <div className="col-span-3 w-full flex justify-between md:justify-center  gap-x-2 ">
-            <span className="text-white/40 text-xs font-semibold md:hidden">
+          <div className="col-span-3 w-full flex justify-between md:justify-center  gap-x-2 mb-1.5 ">
+            <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
               ASSET
             </span>
             <div className={` flex ml-auto md:ml-0 `}>
@@ -53,14 +60,14 @@ export default function EarnRows({ rows }: EarnRowsParams) {
             </div>
             {/* <OverlayingAssetImg /> */}
           </div>
-          <p className="col-span-2 w-full flex justify-between md:justify-center gap-x-2 ">
-            <span className="text-white/40 text-xs font-semibold md:hidden">
+          <p className="col-span-2 w-full flex justify-between md:justify-center gap-x-2 mb-1.5 ">
+            <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
               PROTOCOL
             </span>
             {protocol}
           </p>
-          <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
-            <span className="text-white/40 text-xs font-semibold md:hidden">
+          <div className="col-span-2 w-full flex justify-between md:justify-center gap-x-2 mb-1.5">
+            <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
               NETWORK
             </span>
             <img
@@ -69,27 +76,27 @@ export default function EarnRows({ rows }: EarnRowsParams) {
               src={`/img/logo/${network}.png`}
             />
           </div>
-          <div className="popover-container relative flex lg:flex-col items-center cursor-pointer">
-            <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
-              <span className="text-white/40 text-xs font-semibold md:hidden">
+          <div className="popover-container relative flex md:flex-col items-center w-full  cursor-pointer mb-1.5 col-span-2">
+            <div className=" w-max flex  md:justify-center gap-x-2">
+              <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
                 APR
               </span>
               {apr && Number(apr) > 0 ? apr : '-'}%
             </div>
             <span
-              className={`text-xs font-bold rounded-lg bg-lime text-darkone w-20 ml-1 lg:ml-0 text-center`}
+              className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-auto md:ml-0 text-center`}
             >
               + POINTS <i className="popover-hint">i</i>
             </span>
             <a
-              className="text-xs font-bold text-darkone bg-accent rounded-lg w-20 ml-1 lg:ml-0 text-center mt-1 flex items-center justify-center gap-1"
+              className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 text-center ml-1 md:ml-0`}
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
             >
               + TURTLE{' '}
               <img
                 alt="external-link"
-                className={`w-3 h-3`}
+                className={`w-3 h-3 inline-block`}
                 src="https://img.icons8.com/material-outlined/24/external-link.png"
               />
             </a>
@@ -115,7 +122,7 @@ export default function EarnRows({ rows }: EarnRowsParams) {
               </div>
             </div>
           </div>
-          <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2">
+          <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-2 ">
             <span className="text-white/40 text-xs font-semibold md:hidden">
               TVL
             </span>
@@ -124,9 +131,9 @@ export default function EarnRows({ rows }: EarnRowsParams) {
               ? tvl.toLocaleString(undefined, { maximumFractionDigits: 2 })
               : '-'}
           </div>
-          <div className="col-span-3"> </div>
+          <div className="col-span-1"> </div>
           <Link
-            className="col-span-2 w-max bg-accent text-darkone rounded-xl py-2 px-6 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-2"
+            className="col-span-2 w-full text-xs bg-accent text-darkone rounded-md py-1.5 px-3 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-1.5"
             href={link}
             target="_blank"
           >

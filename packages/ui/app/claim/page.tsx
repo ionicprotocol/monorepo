@@ -243,10 +243,10 @@ export default function Claim() {
         >
           <p className={`font-semibold text-lg `}>General info</p>
           <div
-            className={` grid grid-cols-5 justify-between items-center md:gap-x-6 gap-x-4 mt-8`}
+            className={` grid lg:grid-cols-5  grid-cols-3 justify-between items-center md:gap-x-6 gap-x-4 mt-8`}
           >
-            <div className={`flex flex-col w-full  col-span-2`}>
-              <span className={`opacity-40 text-xs `}>CHOOSE CAMPAIGN</span>
+            <div className={`flex flex-col w-full  lg:col-span-2`}>
+              <span className={`opacity-40 lg:text-xs text-[11px] `}>CHOOSE CAMPAIGN</span>
               <SeasonSelector
                 dropdownSelectedCampaign={dropdownSelectedCampaign}
                 newRef={newRef}
@@ -255,21 +255,21 @@ export default function Claim() {
                 setOpen={setOpen}
               />
             </div>
-            <div className={`flex flex-col w-full h-full col-span-1`}>
-              <span className={`opacity-40 text-xs self-start`}>
+            <div className={`flex flex-col w-full h-full lg:col-span-1`}>
+              <span className={`opacity-40 lg:text-xs text-[11px] self-start`}>
                 VESTING PERIOD
               </span>
               {haveClaimed &&
               dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 ? (
-                <span className={`text-xs my-auto`}>Already Claimed</span>
+                <span className={`lg:text-xs text-[11px] my-auto`}>Already Claimed</span>
               ) : (
                 <CountdownTimer
                   dropdownSelectedCampaign={dropdownSelectedCampaign}
                 />
               )}
             </div>
-            <div className={`flex flex-col  w-full h-full col-span-2`}>
-              <span className={`opacity-40 text-xs self-start`}>
+            <div className={`flex flex-col  w-full h-full lg:col-span-2`}>
+              <span className={`opacity-40 lg:text-xs text-[11px] self-start`}>
                 TOTAL TOKENS
               </span>
               <div

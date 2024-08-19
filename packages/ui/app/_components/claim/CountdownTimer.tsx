@@ -59,7 +59,7 @@ const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
     // console.log(timeLeft);
   }
   return (
-    <div className="flex w-max my-auto items-center justify-between gap-x-1 ">
+    <div className="flex w-max my-auto items-center justify-between gap-x-1">
       <span>{timeLeft?.days}d</span>
       <span>:</span>
       <span>{timeLeft?.hours}h</span>
