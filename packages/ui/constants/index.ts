@@ -25,7 +25,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
   [base.id]: {
     supply: [
       '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
-      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54'
+      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
+      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122'
     ],
     borrow: [
       '0x327410E4D3A32EF37712e77fCB005e5327F082De',
