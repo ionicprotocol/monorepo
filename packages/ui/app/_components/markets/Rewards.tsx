@@ -1,5 +1,6 @@
 'use client';
 
+import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
 import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
@@ -72,6 +73,17 @@ const Rewards = ({
   const totalRewards =
     filteredRewards.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
+  // combine rewards for asset
+  const combinedRewards = filteredRewards.reduce((acc, reward) => {
+    const el = acc.find((a) => a.rewardToken === reward.rewardToken);
+    if (el) {
+      el.amount += reward.amount;
+    } else {
+      acc.push({ rewardToken: reward.rewardToken, amount: reward.amount });
+    }
+    return acc;
+  }, [] as FlywheelClaimableRewards[]);
+
   return (
     <>
       {rewards?.map((rewards, index) => (
@@ -84,7 +96,7 @@ const Rewards = ({
         </div>
       ))}
       <div className="py-4">
-        {filteredRewards.map((rewards, index) => (
+        {combinedRewards.map((rewards, index) => (
           <div
             className={`flex ${className ?? 'none'}`}
             key={index}
