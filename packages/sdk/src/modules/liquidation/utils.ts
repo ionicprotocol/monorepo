@@ -59,8 +59,6 @@ export type PythEncodedLiquidationTx = {
 export type PoolUserWithAssets = {
   assets: ExtendedPoolAssetStructOutput[];
   account: Address;
-  totalBorrow: bigint;
-  totalCollateral: bigint;
   health: bigint;
   debt: Array<any>;
   collateral: Array<any>;
@@ -84,8 +82,6 @@ export type ErroredPool = {
 
 export type PoolUserStruct = {
   account: Address;
-  totalBorrow: bigint;
-  totalCollateral: bigint;
   health: bigint;
 };
 

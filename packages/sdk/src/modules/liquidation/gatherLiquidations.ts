@@ -67,13 +67,7 @@ export default async function gatherLiquidations<T extends LiquidatablePool | Py
   const erroredPools: Array<ErroredPool> = [];
 
   for (const pool of pools) {
-    const poolUsers = pool.users.slice().sort((a, b) => {
-      const right = b.totalBorrow;
-      const left = a.totalBorrow;
-      if (right > left) return 1;
-      if (right < left) return -1;
-      return 0;
-    });
+    const poolUsers = pool.users;
     try {
       const liquidatableUsers = await getLiquidatableUsers<T>(sdk, poolUsers, pool, chainLiquidationConfig, botType);
       if (liquidatableUsers.length > 0) {

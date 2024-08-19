@@ -23,7 +23,11 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [base.id]: {
-    supply: ['0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4'],
+    supply: [
+      '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
+      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
+      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122'
+    ],
     borrow: [
       '0x327410E4D3A32EF37712e77fCB005e5327F082De',
       '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d'
@@ -66,12 +70,14 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: [
           'WETH',
           'USDC',
           'ezETH',
           'STONE',
+          'sUSDe',
+          'USDe',
           'wrsETH',
           'weETH.mode',
           'M-BTC',
@@ -82,7 +88,7 @@ export const pools: Record<number, PoolParams> = {
       },
       {
         id: '1',
-        name: 'Native Market',
+        name: 'Native Pool',
         assets: ['MODE', 'WETH', 'USDC', 'USDT']
       }
     ]
@@ -99,7 +105,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: [
           'eUSD',
           'bsdETH',
@@ -126,7 +132,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
       }
     ]
@@ -141,7 +147,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['USDC', 'USDT', 'WETH', 'WBTC', 'tBTC', 'SOV']
       }
     ]

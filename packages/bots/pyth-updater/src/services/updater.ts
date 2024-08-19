@@ -3,7 +3,6 @@ import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
 import {
   Address,
   Chain,
-  encodeFunctionData,
   getContract,
   GetContractReturnType,
   HttpTransport,
@@ -18,11 +17,7 @@ import {
 import config from '../config/service';
 import { pythAbi } from '../pythAbi';
 import { PythAssetConfig } from '../types';
-import sendTransactionToPyth, {
-  getCurrentPrices,
-  getLastPrices,
-  priceFeedNeedsUpdate,
-} from '../utils';
+import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils';
 
 import { DiscordService } from './discord';
 
@@ -56,7 +51,7 @@ export class Updater {
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
       abi: pythAbi,
-      client: this.sdk.publicClient as any,
+      client: this.sdk.walletClient as any,
     }) as any;
     return this;
   }
@@ -97,13 +92,15 @@ export class Updater {
         priceIdsToUpdate,
       )) as Address[];
       const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
-      const callData = encodeFunctionData({
-        abi: pythAbi,
-        functionName: 'updatePriceFeedsIfNecessary',
-        args: [updatePriceData, priceIdsToUpdate, publishTimes],
-      });
       try {
-        const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
+        const tx = await this.pythContract.write.updatePriceFeedsIfNecessary(
+          [updatePriceData, priceIdsToUpdate, publishTimes],
+          {
+            value: fee,
+            account: this.sdk.walletClient!.account as any,
+            chain: this.sdk.walletClient!.chain as any,
+          },
+        );
         const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx });
         this.alert.sendPriceUpdateSuccess(assetConfigsToUpdate, receipt);
         return receipt;
@@ -130,13 +127,12 @@ export class Updater {
       priceIdsToUpdate,
     )) as Address[];
     const fee = await this.pythContract.read.getUpdateFee([updatePriceData]);
-    const callData = encodeFunctionData({
-      abi: pythAbi,
-      functionName: 'updatePriceFeeds',
-      args: [updatePriceData],
-    });
     try {
-      const tx = await sendTransactionToPyth(this.sdk, this.pythNetworkAddress, callData, fee);
+      const tx = await this.pythContract.write.updatePriceFeeds([updatePriceData], {
+        value: fee,
+        account: this.sdk.walletClient!.account as any,
+        chain: this.sdk.walletClient!.chain as any,
+      });
       const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx });
       this.alert.sendPriceUpdateSuccess(assetConfig, receipt);
       return receipt;
