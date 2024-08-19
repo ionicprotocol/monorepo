@@ -68,6 +68,7 @@ async function calculateTotalValueInEth(tokenAddress: string, tokenAmount: bigin
   const chainName: string = config.chainName;
   const ionicSdk = setUpSdk(mode.id, publicClient, walletClient);
   const ionicLiquidator = ionicSdk.contracts.IonicLiquidator.address as `0x${string}`;
+  logger.info(`Target Liquidator Contract: ${ionicLiquidator}`);
   logger.info(`Config for bot: ${JSON.stringify({ ...ionicSdk.chainLiquidationConfig, ...config })}`);
   const liquidator = new Liquidator(ionicSdk);
   const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
@@ -118,7 +119,7 @@ async function calculateTotalValueInEth(tokenAddress: string, tokenAmount: bigin
         } else {
           const calldata = encodeFunctionData({
             abi: ionicLiquidatorAbi,
-            functionName: "safeLiquidate",
+            functionName: "safeLiquidatePyth",
             args: [
               liquidation.args[0],
               liquidation.args[1],

@@ -20,8 +20,9 @@ export default async function getPotentialLiquidation(
 
   for (let asset of borrower.assets!) {
     asset = { ...asset };
-    asset.borrowBalanceWei = (asset.borrowBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
-    asset.supplyBalanceWei = (asset.supplyBalance * asset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+    const scaleFactor = BigInt(10) ** (BigInt(18) - asset.underlyingDecimals);
+    asset.borrowBalanceWei = (asset.borrowBalance * asset.underlyingPrice * scaleFactor) / SCALE_FACTOR_ONE_18_WEI;
+    asset.supplyBalanceWei = (asset.supplyBalance * asset.underlyingPrice * scaleFactor) / SCALE_FACTOR_ONE_18_WEI;
     if (asset.borrowBalance > 0) borrower.debt.push(asset);
     if (asset.membership && asset.supplyBalance > 0) borrower.collateral.push(asset);
   }
@@ -70,7 +71,11 @@ export default async function getPotentialLiquidation(
   const seizeFee = (seizeTokenAmount * feeSeizeShareMantissa) / SCALE_FACTOR_ONE_18_WEI;
 
   const actualAmountSeized = seizeTokenAmount - protocolFee - seizeFee;
-  const underlyingAmountSeized = (actualAmountSeized * exchangeRate) / SCALE_FACTOR_ONE_18_WEI;
+
+  const BUY_TOKENS_SCALE_FACTOR = 1000n;
+  const BUY_TOKENS_OFFSET = 999n;
+  const underlyingAmountSeized =
+    (actualAmountSeized * exchangeRate * BUY_TOKENS_OFFSET) / (BUY_TOKENS_SCALE_FACTOR * SCALE_FACTOR_ONE_18_WEI);
 
   const underlyingAmountSeizedValue =
     (underlyingAmountSeized * collateralAssetUnderlyingPrice) / SCALE_FACTOR_ONE_18_WEI;

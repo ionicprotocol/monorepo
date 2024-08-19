@@ -70,7 +70,7 @@ async function processAssetsInBatches(
       batch.map(async (assets, index) => {
         try {
           const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-          if (health < maxHealth && (botType !== BotType.Pyth || (botType === BotType.Pyth && health > hfThreshold))) {
+          if (health < maxHealth) {
             poolUsers.push({ account: batchUsers[index], health });
           }
         } catch (error) {
