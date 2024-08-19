@@ -279,7 +279,7 @@ export default function Market() {
             <SwapWidget
               close={() => setSwapWidgetOpen(false)}
               open={swapWidgetOpen}
-              chain={+chain}
+              toChain={+chain}
             />
           </div>
         </div>
