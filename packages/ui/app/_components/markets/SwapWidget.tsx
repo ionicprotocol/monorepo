@@ -4,6 +4,7 @@
 import { LiFiWidget } from '@lifi/widget';
 import type { WidgetConfig } from '@lifi/widget';
 import { useEffect, useRef } from 'react';
+import { type Address, zeroAddress } from 'viem';
 import { mode } from 'viem/chains';
 
 import { pools } from '@ui/constants/index';
@@ -12,22 +13,34 @@ import { getToken } from '@ui/utils/getStakingTokens';
 interface IProps {
   close: () => void;
   open: boolean;
-  chain: number;
+  toChain: number;
+  fromChain?: number;
+  toToken?: Address;
+  fromToken?: Address;
 }
 
-export default function Widget({ close, open, chain }: IProps) {
+export default function Widget({
+  close,
+  open,
+  toChain,
+  fromChain,
+  toToken,
+  fromToken
+}: IProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const widgetConfig: WidgetConfig = {
-    toChain: +chain,
-    fromChain: +chain,
-    fromToken: '0x0000000000000000000000000000000000000000',
-    toToken: getToken(+chain),
+    toChain,
+    fromChain: fromChain ?? toChain,
+    fromToken: fromToken ?? zeroAddress,
+    toToken: toToken ?? getToken(toChain),
     theme: {
       palette: {
-        primary: { main: `${pools[+chain].hexcode ?? pools[mode.id].hexcode}` }
+        primary: {
+          main: `${pools[toChain]?.hexcode ?? pools[mode.id].hexcode}`
+        }
       },
       container: {
-        border: `1px solid ${pools[+chain].hexcode ?? pools[mode.id].hexcode}`,
+        border: `1px solid ${pools[toChain]?.hexcode ?? pools[mode.id].hexcode}`,
         borderRadius: '16px'
       }
     },
