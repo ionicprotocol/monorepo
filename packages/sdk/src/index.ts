@@ -10,6 +10,8 @@ import JumpRateModel from "./IonicSdk/irm/JumpRateModel";
 
 export { filterOnlyObjectProperties } from "./IonicSdk/utils";
 
+export type { FlywheelClaimableRewards } from "./modules/Flywheel";
+
 export type { ChainLiquidationConfig } from "./modules/liquidation/config";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
