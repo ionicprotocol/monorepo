@@ -245,14 +245,17 @@ const PoolRows = ({
                 </div>
               </a>
             )}
-          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.ionRewards && (
-            <span
-              className={` bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
-            >
-              + ION APR <i className="popover-hint">i</i>
-            </span>
-          )}
+          <span
+            className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.ionRewards
+                ? 'bg-accent text-green-900 '
+                : 'bg-gray-600 text-white'
+            }`}
+          >
+            + ION APR <i className="popover-hint">i</i>
+          </span>
+
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
           >
@@ -297,14 +300,18 @@ const PoolRows = ({
             }) ?? '-'}
             %
           </span>
-          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.ionRewards && (
-            <span
-              className={`bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
-            >
-              + ION APR <i className="popover-hint">i</i>
-            </span>
-          )}
+
+          <span
+            className={` rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.borrow?.ionRewards
+                ? 'bg-accent text-green-900 '
+                : 'bg-gray-600 text-white '
+            }`}
+          >
+            + ION APR <i className="popover-hint">i</i>
+          </span>
+
           <span
             className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
           >
