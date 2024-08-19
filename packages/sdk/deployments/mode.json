@@ -47,6 +47,15 @@
     "ChainlinkPriceOracleV2_Proxy": {
       "address": "0xACea9bfBD6A1DA56a27bada1a8D0e5bb35bFF4E7"
     },
+    "ChainlinkPriceOracleV2_Redstone": {
+      "address": "0xa1917C72E86E8e6Db08943e2E6d45CdB87653E0f"
+    },
+    "ChainlinkPriceOracleV2_Redstone_Implementation": {
+      "address": "0x8BC91e5d93e475B680D2dEB73f6EDBc5977645De"
+    },
+    "ChainlinkPriceOracleV2_Redstone_Proxy": {
+      "address": "0xa1917C72E86E8e6Db08943e2E6d45CdB87653E0f"
+    },
     "Comptroller": {
       "address": "0xa855F8697D82F840c511433A36f7c60efF6c6BE7"
     },
@@ -57,7 +66,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0x985a323A1CccA8Cd5fb8935590EE33FbcFE849d0"
+      "address": "0xd122669FeF7e62Aa5Df85e945b68dd0B02A42343"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
