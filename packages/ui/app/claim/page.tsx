@@ -246,7 +246,9 @@ export default function Claim() {
             className={` grid lg:grid-cols-5  grid-cols-3 justify-between items-center md:gap-x-6 gap-x-4 mt-8`}
           >
             <div className={`flex flex-col w-full  lg:col-span-2`}>
-              <span className={`opacity-40 lg:text-xs text-[11px] `}>CHOOSE CAMPAIGN</span>
+              <span className={`opacity-40 lg:text-xs text-[11px] `}>
+                CHOOSE CAMPAIGN
+              </span>
               <SeasonSelector
                 dropdownSelectedCampaign={dropdownSelectedCampaign}
                 newRef={newRef}
@@ -261,7 +263,9 @@ export default function Claim() {
               </span>
               {haveClaimed &&
               dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 ? (
-                <span className={`lg:text-xs text-[11px] my-auto`}>Already Claimed</span>
+                <span className={`lg:text-xs text-[11px] my-auto`}>
+                  Already Claimed
+                </span>
               ) : (
                 <CountdownTimer
                   dropdownSelectedCampaign={dropdownSelectedCampaign}
