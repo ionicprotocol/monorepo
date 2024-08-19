@@ -606,7 +606,7 @@ const Popup = ({
           const tx = await currentSdk.approve(
             selectedMarketData.cToken,
             selectedMarketData.underlyingToken,
-            amountAsBInt
+            (amountAsBInt * 105n) / 100n
           );
 
           upsertTransactionStep({
@@ -896,7 +896,7 @@ const Popup = ({
           const tx = await currentSdk.approve(
             selectedMarketData.cToken,
             selectedMarketData.underlyingToken,
-            amountAsBInt
+            (amountAsBInt * 105n) / 100n
           );
 
           upsertTransactionStep({
