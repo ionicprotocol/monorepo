@@ -37,7 +37,7 @@ const writeSingleTransactionToFile = async (tx: any) => {
         batch = {
           version: "1.0",
           chainId: "34443",
-          createdAt: Math.floor(Date.now() / 1000),
+          createdAt: String(Math.floor(Date.now() / 1000)),
           meta: {
             name: "Transactions Batch",
             description: "",

@@ -2,6 +2,7 @@ import { Deployment } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
 import { upgradeMarketToSupportFlywheel } from "./upgrade";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 export const setupRewards = async (
   type: "supply" | "borrow",
@@ -14,21 +15,18 @@ export const setupRewards = async (
   deployments: HardhatRuntimeEnvironment["deployments"]
 ) => {
   const publicClient = await viem.getPublicClient();
-  await upgradeMarketToSupportFlywheel(market, viem, deployments);
+  await upgradeMarketToSupportFlywheel(market, viem, deployer, deployments);
 
   let booster: Deployment | undefined;
-  let contractName;
+  let contractName = "IonicFlywheel";
   if (type === "borrow") {
     contractName = "IonicFlywheelBorrow";
-    booster = await deployments.deploy(`IonicFlywheelBorrowBooster_${rewardTokenName}`, {
-      contract: contractName,
+    booster = await deployments.deploy(`IonicFlywheelBorrowBooster`, {
       from: deployer,
       log: true,
       waitConfirmations: 1
     });
     console.log(`Deployed booster: ${booster.address}`);
-  } else {
-    contractName = "IonicFlywheel";
   }
 
   const _flywheel = await deployments.deploy(`${contractName}_${rewardTokenName}`, {
@@ -46,9 +44,9 @@ export const setupRewards = async (
     },
     waitConfirmations: 1
   });
-  console.log(`Deployed flywheel: ${_flywheel.address}`);
+  console.log(`Deployed flywheel: ${_flywheel.address} - ${_flywheel.transactionHash}`);
 
-  const flywheelRewards = await deployments.deploy(`IonicFlywheelDynamicRewards_${name}`, {
+  const flywheelRewards = await deployments.deploy(`IonicFlywheelDynamicRewards_${rewardTokenName}`, {
     contract: "IonicFlywheelDynamicRewards",
     from: deployer,
     log: true,
@@ -58,7 +56,7 @@ export const setupRewards = async (
     ],
     waitConfirmations: 1
   });
-  console.log(`Deployed flywheel rewards: ${flywheelRewards.address}`);
+  console.log(`Deployed flywheel rewards: ${flywheelRewards.address} - ${flywheelRewards.transactionHash}`);
 
   const flywheel = await viem.getContractAt(
     `${contractName}`,
@@ -83,16 +81,31 @@ export const setupRewards = async (
   const _comptroller = await cErc20.read.comptroller();
   const comptroller = await viem.getContractAt("IonicComptroller", _comptroller);
   const rewardsDistributors = (await comptroller.read.getRewardsDistributors()) as Address[];
+  const feeDistributor = await viem.getContractAt(
+    "FeeDistributor",
+    (await deployments.get("FeeDistributor")).address as Address
+  );
+  const owner = await feeDistributor.read.owner();
   if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheel.address.toLowerCase())) {
-    const addTx = await comptroller.write._addRewardsDistributor([flywheel.address]);
-    await publicClient.waitForTransactionReceipt({ hash: addTx });
-    console.log({ addTx });
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: comptroller,
+        functionName: "_addRewardsDistributor",
+        args: [flywheel.address],
+        inputs: [{ internalType: "address", name: "distributor", type: "address" }],
+        description: `Add flywheel ${flywheel.address} to pool ${_comptroller}`
+      });
+    } else {
+      const addTx = await comptroller.write._addRewardsDistributor([flywheel.address]);
+      await publicClient.waitForTransactionReceipt({ hash: addTx });
+      console.log({ addTx });
+    }
   } else {
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
   }
   console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller})`);
 
-  // Approving token sepening for fwRewards contract
+  // Approving token spending for fwRewards contract
   const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
   const fwRewards = await flywheel.read.flywheelRewards();
   const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);

@@ -48,11 +48,11 @@ const config: HardhatUserConfig = {
       saveDeployments: false
     },
     mode: {
-      url: process.env.OVERRIDE_RPC_URL ?? "https://mainnet.mode.network",
+      url: process.env.OVERRIDE_RPC_URL_MODE ?? "https://mainnet.mode.network",
       accounts: [process.env.DEPLOYER!]
     },
     base: {
-      url: process.env.OVERRIDE_RPC_URL ?? "https://base.meowrpc.com",
+      url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base.meowrpc.com",
       accounts: [process.env.DEPLOYER!],
       verify: {
         etherscan: {
