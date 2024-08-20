@@ -26,7 +26,7 @@ export const setupRewards = async (
       log: true,
       waitConfirmations: 1
     });
-    console.log(`Deployed booster: ${booster.address}`);
+    console.log(`Deployed booster: ${booster.address} - ${booster.transactionHash}`);
   }
 
   const _flywheel = await deployments.deploy(`${contractName}_${rewardTokenName}`, {
@@ -86,6 +86,8 @@ export const setupRewards = async (
     (await deployments.get("FeeDistributor")).address as Address
   );
   const owner = await feeDistributor.read.owner();
+  const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
+  const fwRewards = await flywheel.read.flywheelRewards();
   if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheel.address.toLowerCase())) {
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
@@ -95,21 +97,30 @@ export const setupRewards = async (
         inputs: [{ internalType: "address", name: "distributor", type: "address" }],
         description: `Add flywheel ${flywheel.address} to pool ${_comptroller}`
       });
+
+      await prepareAndLogTransaction({
+        contractInstance: _market,
+        functionName: "approve",
+        args: [rewardToken, fwRewards],
+        inputs: [
+          { internalType: "address", name: "_token", type: "address" },
+          { internalType: "address", name: "_spender", type: "address" }
+        ],
+        description: `Approve flywheel ${flywheel.address} to pull reward tokens from market ${market}`
+      });
     } else {
       const addTx = await comptroller.write._addRewardsDistributor([flywheel.address]);
       await publicClient.waitForTransactionReceipt({ hash: addTx });
       console.log({ addTx });
+      console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller})`);
+
+      // Approving token spending for fwRewards contract
+      const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);
+      console.log(`mining tx ${tx}`);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log(`approved flywheel ${flywheel.address} to pull reward tokens from market ${market}`);
     }
   } else {
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
   }
-  console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller})`);
-
-  // Approving token spending for fwRewards contract
-  const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
-  const fwRewards = await flywheel.read.flywheelRewards();
-  const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);
-  console.log(`mining tx ${tx}`);
-  await publicClient.waitForTransactionReceipt({ hash: tx });
-  console.log(`approved flywheel ${flywheel.address} to pull reward tokens from market ${market}`);
 };
