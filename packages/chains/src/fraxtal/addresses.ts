@@ -14,7 +14,7 @@ const chainAddresses: ChainAddresses = {
   },
   UNISWAP_V3_ROUTER: "0x0000000000000000000000000000000000000000", // universal router, need to check if this works
   W_BTC_TOKEN: underlying(assets, assetSymbols.frxBTC),
-  W_TOKEN: underlying(assets, assetSymbols.WETH),
+  W_TOKEN: underlying(assets, assetSymbols.wFRXETH),
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x89e60b56efD70a1D4FBBaE947bC33cae41e37A72"
 };
 
