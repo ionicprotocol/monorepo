@@ -1,11 +1,11 @@
 import { task } from "hardhat/config";
 import { Address, formatUnits, zeroAddress } from "viem";
-
 import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
-import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
-const COMPTROLLER = "0xfb3323e24743caf4add0fdccfb268565c0685556";
+import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
+import { COMPTROLLER_MAIN } from ".";
+
 const modeAssets = mode.assets;
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
   const assetsToDeploy: string[] = ["sUSDe"];
@@ -17,11 +17,11 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
       signer: "deployer",
       cf: "0",
       underlying: asset.underlying,
-      comptroller: COMPTROLLER,
+      comptroller: COMPTROLLER_MAIN,
       symbol,
       name
     });
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
+    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log(`Deployed ${asset.symbol} at ${cToken}`);
 
@@ -41,7 +41,7 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
 
 task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {
   for (const asset of modeAssets) {
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
+    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
 
@@ -67,7 +67,7 @@ task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
       "assets: ",
       assets.map((a) => a.symbol)
     );
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
+    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const ffd = await viem.getContractAt(
       "FeeDistributor",
       (await deployments.get("FeeDistributor")).address as Address
