@@ -245,33 +245,42 @@ const PoolRows = ({
                 </div>
               </a>
             )}
+          <span
+            className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.ionAPR
+                ? 'bg-accent text-green-900 '
+                : 'bg-accent/50 text-green-900'
+            }`}
+          >
+            + ION APR <i className="popover-hint">i</i>
+          </span>
+
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.ionRewards && (
+            ?.rewards && (
             <span
-              className={` bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
             >
-              + ION APR <i className="popover-hint">i</i>
+              + REWARDS <i className="popover-hint">i</i>
             </span>
           )}
-          <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
-          >
-            + REWARDS <i className="popover-hint">i</i>
-          </span>
-          <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
-            <a
-              className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
-              href="https://turtle.club/dashboard/?ref=IONIC"
-              target="_blank"
-            >
-              + TURTLE{' '}
-              <img
-                alt="external-link"
-                className={`w-3 h-3`}
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
-            </a>
-          </span>
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+            ?.turtle && (
+            <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
+              <a
+                className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+                href="https://turtle.club/dashboard/?ref=IONIC"
+                target="_blank"
+              >
+                + TURTLE{' '}
+                <img
+                  alt="external-link"
+                  className={`w-3 h-3`}
+                  src="https://img.icons8.com/material-outlined/24/external-link.png"
+                />
+              </a>
+            </span>
+          )}
           <SupplyPopover
             asset={asset}
             supplyAPR={supplyAPR}
@@ -297,31 +306,41 @@ const PoolRows = ({
             }) ?? '-'}
             %
           </span>
+
+          <span
+            className={` rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.borrow?.ionAPR
+                ? 'bg-accent text-green-900 '
+                : 'bg-accent/50 text-green-900 '
+            }`}
+          >
+            + ION APR <i className="popover-hint">i</i>
+          </span>
+
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.ionRewards && (
+            ?.rewards && (
             <span
-              className={`bg-accent text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1`}
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
             >
-              + ION APR <i className="popover-hint">i</i>
+              + REWARDS <i className="popover-hint">i</i>
             </span>
           )}
-          <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
-          >
-            + REWARDS <i className="popover-hint">i</i>
-          </span>
-          <a
-            className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            + TURTLE{' '}
-            <img
-              alt="external-link"
-              className={`w-3 h-3`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.turtle && (
+            <a
+              className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
+              + TURTLE{' '}
+              <img
+                alt="external-link"
+                className={`w-3 h-3`}
+                src="https://img.icons8.com/material-outlined/24/external-link.png"
+              />
+            </a>
+          )}
 
           <BorrowPopover
             asset={asset}
@@ -573,6 +592,17 @@ const BorrowPopover = ({
               + EigenLayer Points
             </div>
           )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.spice && (
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 mr-1"
+                src="/img/symbols/32/color/bob.png"
+              />{' '}
+              + Spice Points
+            </div>
+          )}
         </>
       )}
     </div>
@@ -780,6 +810,17 @@ const SupplyPopover = ({
             src="/images/eigen.png"
           />{' '}
           + EigenLayer Points
+        </div>
+      )}
+      {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+        ?.spice && (
+        <div className="flex">
+          <img
+            alt=""
+            className="size-4 mr-1"
+            src="/img/symbols/32/color/bob.png"
+          />{' '}
+          + Spice Points
         </div>
       )}
     </div>

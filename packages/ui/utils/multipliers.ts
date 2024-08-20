@@ -1,4 +1,4 @@
-import { base, mode } from 'viem/chains';
+import { base, bob, mode } from 'viem/chains';
 
 export const SEASON_2_START_DATE = '2024-5-15';
 export const SEASON_2_BASE_START_DATE = '2024-5-20';
@@ -11,7 +11,10 @@ export type Multipliers = {
   mode?: number;
   renzo?: number;
   flywheel?: boolean;
-  ionRewards?: boolean;
+  ionAPR?: boolean;
+  turtle?: boolean;
+  rewards?: boolean;
+  spice?: boolean;
 };
 
 export const multipliers: Record<
@@ -37,63 +40,81 @@ export const multipliers: Record<
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'm_btc_market',
         multiplier: 66000,
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       STONE: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ststone_market',
         multiplier: 3000,
         supply: {
           ionic: 2,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       USDC: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         decimals: 6,
         market: 'usdc_market',
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       USDT: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         decimals: 6,
         market: 'usdt_market',
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       WBTC: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         decimals: 8,
         market: 'wbtc_market',
@@ -101,25 +122,31 @@ export const multipliers: Record<
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       WETH: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'weth_market',
         multiplier: 3000,
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       ezETH: {
-        borrow: undefined,
+        borrow: { turtle: true, rewards: true, ionAPR: false, ionic: 0 },
         market: 'ezeth_market',
         multiplier: 3000,
         supply: {
@@ -127,7 +154,29 @@ export const multipliers: Record<
           ionic: 2,
           mode: 2,
           renzo: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      sUSDe: {
+        borrow: { turtle: true, rewards: true, ionAPR: false, ionic: 0 },
+        multiplier: 0,
+        supply: {
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      USDe: {
+        borrow: { turtle: true, rewards: true, ionAPR: false, ionic: 0 },
+        multiplier: 0,
+        supply: {
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       'weETH.mode': {
@@ -136,7 +185,9 @@ export const multipliers: Record<
           etherfi: 1,
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'weeth_market_new',
         multiplier: 3000,
@@ -145,7 +196,9 @@ export const multipliers: Record<
           etherfi: 2,
           ionic: 2,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       wrsETH: {
@@ -154,7 +207,9 @@ export const multipliers: Record<
           ionic: 3,
           kelp: 1,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'wrsteth_market',
         multiplier: 3000,
@@ -163,7 +218,9 @@ export const multipliers: Record<
           ionic: 2,
           kelp: 2,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       }
     },
@@ -172,56 +229,72 @@ export const multipliers: Record<
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
         supply: {
           ionic: 3,
           mode: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       USDC: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         decimals: 6,
         market: 'ionusdc_modenative',
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       USDT: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         decimals: 6,
         market: 'ionusdt_modenative',
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       WETH: {
         borrow: {
           ionic: 3,
           mode: 1,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionweth_modenative',
         multiplier: 3000,
         supply: {
           ionic: 1.5,
           mode: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       }
     }
@@ -229,84 +302,266 @@ export const multipliers: Record<
   [base.id]: {
     '0': {
       eUSD: {
-        borrow: { flywheel: true, ionic: 0, ionRewards: true },
-        supply: { flywheel: true, ionic: 0, ionRewards: false }
+        borrow: {
+          flywheel: true,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: true
+        },
+        supply: {
+          flywheel: true,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
       },
       bsdETH: {
-        borrow: { flywheel: true, ionic: 0, ionRewards: true },
-        supply: { flywheel: true, ionic: 0, ionRewards: true }
+        borrow: {
+          flywheel: true,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: true
+        },
+        supply: {
+          flywheel: true,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: true
+        }
       },
       hyUSD: {
-        supply: { flywheel: true, ionic: 0, ionRewards: true }
+        supply: {
+          flywheel: true,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: true
+        },
+        borrow: {
+          flywheel: false,
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: true
+        }
       },
       AERO: {
         borrow: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionaero_base',
         multiplier: 1.15,
         supply: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       USDC: {
         borrow: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionusdc_base',
         supply: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       WETH: {
         borrow: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionweth_base',
         multiplier: 3000,
         supply: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       cbETH: {
         borrow: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ioncbeth_base',
         multiplier: 3000,
         supply: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         }
       },
       ezETH: {
-        borrow: undefined,
         market: 'ionezeth_base',
         multiplier: 3000,
         supply: {
           eigenlayer: true,
           ionic: 3,
           renzo: 2,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        },
+        borrow: {
+          turtle: true,
+          rewards: true,
+          ionAPR: false,
+          ionic: 0
+        }
+      },
+      'weETH.mode': {
+        borrow: { turtle: true, rewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      RSR: {
+        borrow: { turtle: false, rewards: false, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
         }
       },
       wstETH: {
         borrow: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
         },
         market: 'ionwsteth_base',
         multiplier: 3000,
         supply: {
           ionic: 3,
-          ionRewards: false
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
+      }
+    }
+  },
+  [bob.id]: {
+    '0': {
+      USDC: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      USDT: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      WETH: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      WBTC: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      tBTC: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      SOV: {
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          spice: true,
+          ionic: 0
+        },
+        supply: {
+          spice: true,
+          ionic: 0,
+          rewards: true,
+          turtle: false,
+          ionAPR: false
         }
       }
     }
