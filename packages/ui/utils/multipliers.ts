@@ -1,4 +1,4 @@
-import { base, mode } from 'viem/chains';
+import { base, bob, mode } from 'viem/chains';
 
 export const SEASON_2_START_DATE = '2024-5-15';
 export const SEASON_2_BASE_START_DATE = '2024-5-20';
@@ -381,6 +381,58 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           ionic: 3,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      }
+    }
+  },
+  [bob.id]: {
+    '0': {
+      USDC: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      },
+      USDT: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      },
+      WETH: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      },
+      WBTC: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      },
+      tBTC: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
+          turtleRewards: true,
+          ionAPR: false
+        }
+      },
+      SOV: {
+        borrow: { turtleRewards: true, ionAPR: false, ionic: 0 },
+        supply: {
+          ionic: 0,
           turtleRewards: true,
           ionAPR: false
         }
