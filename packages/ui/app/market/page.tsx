@@ -256,7 +256,7 @@ export default function Market() {
                 alt=""
                 className="inline-block"
                 height="20"
-                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'eth'}.png`}
+                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'frxeth' : 'eth'}.png`}
                 width="20"
               />
               <span>{' -> '}</span>
@@ -264,7 +264,7 @@ export default function Market() {
                 alt=""
                 className="inline-block"
                 height="20"
-                src={`/img/symbols/32/color/weth.png`}
+                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'weth'}.png`}
                 width="20"
               />
             </button>
