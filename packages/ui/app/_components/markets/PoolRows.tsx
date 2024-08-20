@@ -257,7 +257,7 @@ const PoolRows = ({
           </span>
 
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.turtleRewards && (
+            ?.rewards && (
             <span
               className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
             >
@@ -265,7 +265,7 @@ const PoolRows = ({
             </span>
           )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.turtleRewards && (
+            ?.turtle && (
             <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
               <a
                 className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -319,7 +319,7 @@ const PoolRows = ({
           </span>
 
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.turtleRewards && (
+            ?.rewards && (
             <span
               className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
             >
@@ -327,7 +327,7 @@ const PoolRows = ({
             </span>
           )}
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.turtleRewards && (
+            ?.turtle && (
             <a
               className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
               href="https://turtle.club/dashboard/?ref=IONIC"
@@ -592,6 +592,17 @@ const BorrowPopover = ({
               + EigenLayer Points
             </div>
           )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.spice && (
+            <div className="flex">
+              <img
+                alt=""
+                className="size-4 mr-1"
+                src="/img/symbols/32/color/bob.png"
+              />{' '}
+              + Spice Points
+            </div>
+          )}
         </>
       )}
     </div>
@@ -799,6 +810,17 @@ const SupplyPopover = ({
             src="/images/eigen.png"
           />{' '}
           + EigenLayer Points
+        </div>
+      )}
+      {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+        ?.spice && (
+        <div className="flex">
+          <img
+            alt=""
+            className="size-4 mr-1"
+            src="/img/symbols/32/color/bob.png"
+          />{' '}
+          + Spice Points
         </div>
       )}
     </div>
