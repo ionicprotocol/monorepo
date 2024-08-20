@@ -1,0 +1,276 @@
+{
+  "address": "0xb0a9B9F6FD960108df5B508DA5abe476d8e37F09",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "blocksPerYear_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "underlyingToken_",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IRateComputer",
+          "name": "rateController_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "blocksPerYear",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "cash",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "borrows",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reserves",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBorrowRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "cash",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "borrows",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reserves",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reserveFactorMantissa",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSupplyRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isInterestRateModel",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rateController",
+      "outputs": [
+        {
+          "internalType": "contract IRateComputer",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "underlyingToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "cash",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "borrows",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "reserves",
+          "type": "uint256"
+        }
+      ],
+      "name": "utilizationRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x894c106de2b00381c49a9c95bdcea0c4ea77f3bf727d5bada73465a436f7c616",
+  "receipt": {
+    "to": null,
+    "from": "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+    "contractAddress": "0xb0a9B9F6FD960108df5B508DA5abe476d8e37F09",
+    "transactionIndex": 7,
+    "gasUsed": "314953",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x2e4da7d73f2e9767edfd7bfe86ebbe2b630514982fc7a472b1ece22a298e667c",
+    "transactionHash": "0x894c106de2b00381c49a9c95bdcea0c4ea77f3bf727d5bada73465a436f7c616",
+    "logs": [],
+    "blockNumber": 11423626,
+    "cumulativeGasUsed": "3068722",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    15768000,
+    "0x4200000000000000000000000000000000000006",
+    "0xC40753877CfeF6f50E13695395c58357505719F8"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "5b8c5f5813b84412a483d91baee9e592",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.10+commit.fc410830\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"blocksPerYear_\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"underlyingToken_\",\"type\":\"address\"},{\"internalType\":\"contract IRateComputer\",\"name\":\"rateController_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"blocksPerYear\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"cash\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"borrows\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reserves\",\"type\":\"uint256\"}],\"name\":\"getBorrowRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"cash\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"borrows\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reserves\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reserveFactorMantissa\",\"type\":\"uint256\"}],\"name\":\"getSupplyRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isInterestRateModel\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rateController\",\"outputs\":[{\"internalType\":\"contract IRateComputer\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"underlyingToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"cash\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"borrows\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reserves\",\"type\":\"uint256\"}],\"name\":\"utilizationRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"TRILEZ SOFTWARE INC.\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"blocksPerYear_\":\"The approximate number of blocks per year that is assumed by the interest rate model.\",\"rateController_\":\"The address of the Adrastia Prudentia interest rate controller.\",\"underlyingToken_\":\"The address of the underlying token for which the interest rate model calculates rates.\"}},\"getBorrowRate(uint256,uint256,uint256)\":{\"params\":{\"borrows\":\"Not used.\",\"cash\":\"Not used.\",\"reserves\":\"Not used.\"},\"returns\":{\"_0\":\"The borrow rate percentage per block as a mantissa (scaled by 1e18).\"}},\"getSupplyRate(uint256,uint256,uint256,uint256)\":{\"params\":{\"borrows\":\"The amount of borrows in the market.\",\"cash\":\"The amount of cash in the market.\",\"reserveFactorMantissa\":\"The current reserve factor for the market.\",\"reserves\":\"The amount of reserves in the market.\"},\"returns\":{\"_0\":\"The supply rate percentage per block as a mantissa (scaled by 1e18).\"}},\"utilizationRate(uint256,uint256,uint256)\":{\"params\":{\"borrows\":\"The amount of borrows in the market.\",\"cash\":\"The amount of cash in the market.\",\"reserves\":\"The amount of reserves in the market.\"},\"returns\":{\"_0\":\"The utilization rate as a mantissa between [0, 1e18].\"}}},\"title\":\"Adrastia Prudentia Interest Rate Model\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"blocksPerYear()\":{\"notice\":\"The approximate number of blocks per year that is assumed by the interest rate model.\"},\"constructor\":{\"notice\":\"Construct a new interest rate model that reads from an Adrastia Prudentia interest rate controller.\"},\"getBorrowRate(uint256,uint256,uint256)\":{\"notice\":\"Calculates the current borrow rate per block by reading the current rate from the Adrastia Prudentia interest rate controller.\"},\"getSupplyRate(uint256,uint256,uint256,uint256)\":{\"notice\":\"Calculates the current supply rate per block.\"},\"isInterestRateModel()\":{\"notice\":\"Indicator that this is an InterestRateModel contract (for inspection)\"},\"rateController()\":{\"notice\":\"The address of the Adrastia Prudentia interest rate controller.\"},\"underlyingToken()\":{\"notice\":\"The address of the underlying token for which the interest rate model calculates rates.\"},\"utilizationRate(uint256,uint256,uint256)\":{\"notice\":\"Calculates the utilization rate of the market: `borrows / (cash + borrows - reserves)`.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ionic/irms/PrudentiaInterestRateModel.sol\":\"PrudentiaInterestRateModel\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/utils/math/Math.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (utils/math/Math.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Standard math utilities missing in the Solidity language.\\n */\\nlibrary Math {\\n    enum Rounding {\\n        Down, // Toward negative infinity\\n        Up, // Toward infinity\\n        Zero // Toward zero\\n    }\\n\\n    /**\\n     * @dev Returns the largest of two numbers.\\n     */\\n    function max(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a > b ? a : b;\\n    }\\n\\n    /**\\n     * @dev Returns the smallest of two numbers.\\n     */\\n    function min(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a < b ? a : b;\\n    }\\n\\n    /**\\n     * @dev Returns the average of two numbers. The result is rounded towards\\n     * zero.\\n     */\\n    function average(uint256 a, uint256 b) internal pure returns (uint256) {\\n        // (a + b) / 2 can overflow.\\n        return (a & b) + (a ^ b) / 2;\\n    }\\n\\n    /**\\n     * @dev Returns the ceiling of the division of two numbers.\\n     *\\n     * This differs from standard division with `/` in that it rounds up instead\\n     * of rounding down.\\n     */\\n    function ceilDiv(uint256 a, uint256 b) internal pure returns (uint256) {\\n        // (a + b - 1) / b can overflow on addition, so we distribute.\\n        return a == 0 ? 0 : (a - 1) / b + 1;\\n    }\\n\\n    /**\\n     * @notice Calculates floor(x * y / denominator) with full precision. Throws if result overflows a uint256 or denominator == 0\\n     * @dev Original credit to Remco Bloemen under MIT license (https://xn--2-umb.com/21/muldiv)\\n     * with further edits by Uniswap Labs also under MIT license.\\n     */\\n    function mulDiv(\\n        uint256 x,\\n        uint256 y,\\n        uint256 denominator\\n    ) internal pure returns (uint256 result) {\\n        unchecked {\\n            // 512-bit multiply [prod1 prod0] = x * y. Compute the product mod 2^256 and mod 2^256 - 1, then use\\n            // use the Chinese Remainder Theorem to reconstruct the 512 bit result. The result is stored in two 256\\n            // variables such that product = prod1 * 2^256 + prod0.\\n            uint256 prod0; // Least significant 256 bits of the product\\n            uint256 prod1; // Most significant 256 bits of the product\\n            assembly {\\n                let mm := mulmod(x, y, not(0))\\n                prod0 := mul(x, y)\\n                prod1 := sub(sub(mm, prod0), lt(mm, prod0))\\n            }\\n\\n            // Handle non-overflow cases, 256 by 256 division.\\n            if (prod1 == 0) {\\n                return prod0 / denominator;\\n            }\\n\\n            // Make sure the result is less than 2^256. Also prevents denominator == 0.\\n            require(denominator > prod1);\\n\\n            ///////////////////////////////////////////////\\n            // 512 by 256 division.\\n            ///////////////////////////////////////////////\\n\\n            // Make division exact by subtracting the remainder from [prod1 prod0].\\n            uint256 remainder;\\n            assembly {\\n                // Compute remainder using mulmod.\\n                remainder := mulmod(x, y, denominator)\\n\\n                // Subtract 256 bit number from 512 bit number.\\n                prod1 := sub(prod1, gt(remainder, prod0))\\n                prod0 := sub(prod0, remainder)\\n            }\\n\\n            // Factor powers of two out of denominator and compute largest power of two divisor of denominator. Always >= 1.\\n            // See https://cs.stackexchange.com/q/138556/92363.\\n\\n            // Does not overflow because the denominator cannot be zero at this stage in the function.\\n            uint256 twos = denominator & (~denominator + 1);\\n            assembly {\\n                // Divide denominator by twos.\\n                denominator := div(denominator, twos)\\n\\n                // Divide [prod1 prod0] by twos.\\n                prod0 := div(prod0, twos)\\n\\n                // Flip twos such that it is 2^256 / twos. If twos is zero, then it becomes one.\\n                twos := add(div(sub(0, twos), twos), 1)\\n            }\\n\\n            // Shift in bits from prod1 into prod0.\\n            prod0 |= prod1 * twos;\\n\\n            // Invert denominator mod 2^256. Now that denominator is an odd number, it has an inverse modulo 2^256 such\\n            // that denominator * inv = 1 mod 2^256. Compute the inverse by starting with a seed that is correct for\\n            // four bits. That is, denominator * inv = 1 mod 2^4.\\n            uint256 inverse = (3 * denominator) ^ 2;\\n\\n            // Use the Newton-Raphson iteration to improve the precision. Thanks to Hensel's lifting lemma, this also works\\n            // in modular arithmetic, doubling the correct bits in each step.\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^8\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^16\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^32\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^64\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^128\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^256\\n\\n            // Because the division is now exact we can divide by multiplying with the modular inverse of denominator.\\n            // This will give us the correct result modulo 2^256. Since the preconditions guarantee that the outcome is\\n            // less than 2^256, this is the final result. We don't need to compute the high bits of the result and prod1\\n            // is no longer required.\\n            result = prod0 * inverse;\\n            return result;\\n        }\\n    }\\n\\n    /**\\n     * @notice Calculates x * y / denominator with full precision, following the selected rounding direction.\\n     */\\n    function mulDiv(\\n        uint256 x,\\n        uint256 y,\\n        uint256 denominator,\\n        Rounding rounding\\n    ) internal pure returns (uint256) {\\n        uint256 result = mulDiv(x, y, denominator);\\n        if (rounding == Rounding.Up && mulmod(x, y, denominator) > 0) {\\n            result += 1;\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Returns the square root of a number. If the number is not a perfect square, the value is rounded down.\\n     *\\n     * Inspired by Henry S. Warren, Jr.'s \\\"Hacker's Delight\\\" (Chapter 11).\\n     */\\n    function sqrt(uint256 a) internal pure returns (uint256) {\\n        if (a == 0) {\\n            return 0;\\n        }\\n\\n        // For our first guess, we get the biggest power of 2 which is smaller than the square root of the target.\\n        //\\n        // We know that the \\\"msb\\\" (most significant bit) of our target number `a` is a power of 2 such that we have\\n        // `msb(a) <= a < 2*msb(a)`. This value can be written `msb(a)=2**k` with `k=log2(a)`.\\n        //\\n        // This can be rewritten `2**log2(a) <= a < 2**(log2(a) + 1)`\\n        // \\u2192 `sqrt(2**k) <= sqrt(a) < sqrt(2**(k+1))`\\n        // \\u2192 `2**(k/2) <= sqrt(a) < 2**((k+1)/2) <= 2**(k/2 + 1)`\\n        //\\n        // Consequently, `2**(log2(a) / 2)` is a good first approximation of `sqrt(a)` with at least 1 correct bit.\\n        uint256 result = 1 << (log2(a) >> 1);\\n\\n        // At this point `result` is an estimation with one bit of precision. We know the true value is a uint128,\\n        // since it is the square root of a uint256. Newton's method converges quadratically (precision doubles at\\n        // every iteration). We thus need at most 7 iteration to turn our partial result with one bit of precision\\n        // into the expected uint128 result.\\n        unchecked {\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            return min(result, a / result);\\n        }\\n    }\\n\\n    /**\\n     * @notice Calculates sqrt(a), following the selected rounding direction.\\n     */\\n    function sqrt(uint256 a, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = sqrt(a);\\n            return result + (rounding == Rounding.Up && result * result < a ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 2, rounded down, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log2(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >> 128 > 0) {\\n                value >>= 128;\\n                result += 128;\\n            }\\n            if (value >> 64 > 0) {\\n                value >>= 64;\\n                result += 64;\\n            }\\n            if (value >> 32 > 0) {\\n                value >>= 32;\\n                result += 32;\\n            }\\n            if (value >> 16 > 0) {\\n                value >>= 16;\\n                result += 16;\\n            }\\n            if (value >> 8 > 0) {\\n                value >>= 8;\\n                result += 8;\\n            }\\n            if (value >> 4 > 0) {\\n                value >>= 4;\\n                result += 4;\\n            }\\n            if (value >> 2 > 0) {\\n                value >>= 2;\\n                result += 2;\\n            }\\n            if (value >> 1 > 0) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 2, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log2(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log2(value);\\n            return result + (rounding == Rounding.Up && 1 << result < value ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 10, rounded down, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log10(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >= 10**64) {\\n                value /= 10**64;\\n                result += 64;\\n            }\\n            if (value >= 10**32) {\\n                value /= 10**32;\\n                result += 32;\\n            }\\n            if (value >= 10**16) {\\n                value /= 10**16;\\n                result += 16;\\n            }\\n            if (value >= 10**8) {\\n                value /= 10**8;\\n                result += 8;\\n            }\\n            if (value >= 10**4) {\\n                value /= 10**4;\\n                result += 4;\\n            }\\n            if (value >= 10**2) {\\n                value /= 10**2;\\n                result += 2;\\n            }\\n            if (value >= 10**1) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 10, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log10(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log10(value);\\n            return result + (rounding == Rounding.Up && 10**result < value ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 256, rounded down, of a positive value.\\n     * Returns 0 if given 0.\\n     *\\n     * Adding one to the result gives the number of pairs of hex symbols needed to represent `value` as a hex string.\\n     */\\n    function log256(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >> 128 > 0) {\\n                value >>= 128;\\n                result += 16;\\n            }\\n            if (value >> 64 > 0) {\\n                value >>= 64;\\n                result += 8;\\n            }\\n            if (value >> 32 > 0) {\\n                value >>= 32;\\n                result += 4;\\n            }\\n            if (value >> 16 > 0) {\\n                value >>= 16;\\n                result += 2;\\n            }\\n            if (value >> 8 > 0) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 10, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log256(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log256(value);\\n            return result + (rounding == Rounding.Up && 1 << (result << 3) < value ? 1 : 0);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xbb9b373ec337797b9f8822171cb191095cb11e729a4fde4c207d25b8b642fb93\",\"license\":\"MIT\"},\"adrastia-periphery/rates/IRateComputer.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\npragma solidity >=0.5.0 <0.9.0;\\n\\n/**\\n * @title IRateComputer\\n * @notice An interface that defines a contract that computes rates.\\n */\\ninterface IRateComputer {\\n    /// @notice Computes the rate for a token.\\n    /// @param token The address of the token to compute the rate for.\\n    /// @return rate The rate for the token.\\n    function computeRate(address token) external view returns (uint64);\\n}\\n\",\"keccak256\":\"0x94c88b8c50bf6020c06b59e647fe36f5cc429970e535f6448dae52d2281af4ca\",\"license\":\"MIT\"},\"contracts/compound/InterestRateModel.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity >=0.8.0;\\n\\n/**\\n * @title Compound's InterestRateModel Interface\\n * @author Compound\\n */\\nabstract contract InterestRateModel {\\n  /// @notice Indicator that this is an InterestRateModel contract (for inspection)\\n  bool public constant isInterestRateModel = true;\\n\\n  /**\\n   * @notice Calculates the current borrow interest rate per block\\n   * @param cash The total amount of cash the market has\\n   * @param borrows The total amount of borrows the market has outstanding\\n   * @param reserves The total amount of reserves the market has\\n   * @return The borrow rate per block (as a percentage, and scaled by 1e18)\\n   */\\n  function getBorrowRate(\\n    uint256 cash,\\n    uint256 borrows,\\n    uint256 reserves\\n  ) public view virtual returns (uint256);\\n\\n  /**\\n   * @notice Calculates the current supply interest rate per block\\n   * @param cash The total amount of cash the market has\\n   * @param borrows The total amount of borrows the market has outstanding\\n   * @param reserves The total amount of reserves the market has\\n   * @param reserveFactorMantissa The current reserve factor the market has\\n   * @return The supply rate per block (as a percentage, and scaled by 1e18)\\n   */\\n  function getSupplyRate(\\n    uint256 cash,\\n    uint256 borrows,\\n    uint256 reserves,\\n    uint256 reserveFactorMantissa\\n  ) public view virtual returns (uint256);\\n}\\n\",\"keccak256\":\"0x587a54b49d48df2cd91583eac93ddde4e2849f79d0441f179bf835e9dffe24e9\",\"license\":\"UNLICENSED\"},\"contracts/ionic/irms/PrudentiaInterestRateModel.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity >=0.8.0;\\n\\nimport { InterestRateModel } from \\\"../../compound/InterestRateModel.sol\\\";\\n\\nimport { IRateComputer } from \\\"adrastia-periphery/rates/IRateComputer.sol\\\";\\n\\nimport { Math } from \\\"@openzeppelin/contracts/utils/math/Math.sol\\\";\\n\\n/**\\n * @title Adrastia Prudentia Interest Rate Model\\n * @author TRILEZ SOFTWARE INC.\\n */\\ncontract PrudentiaInterestRateModel is InterestRateModel {\\n  using Math for uint256;\\n\\n  /**\\n   * @notice The address of the underlying token for which the interest rate model calculates rates.\\n   */\\n  address public immutable underlyingToken;\\n\\n  /**\\n   * @notice The address of the Adrastia Prudentia interest rate controller.\\n   */\\n  IRateComputer public immutable rateController;\\n\\n  /**\\n   * @notice The approximate number of blocks per year that is assumed by the interest rate model.\\n   */\\n  uint256 public immutable blocksPerYear;\\n\\n  /**\\n   * @notice Construct a new interest rate model that reads from an Adrastia Prudentia interest rate controller.\\n   *\\n   * @param blocksPerYear_ The approximate number of blocks per year that is assumed by the interest rate model.\\n   * @param underlyingToken_ The address of the underlying token for which the interest rate model calculates rates.\\n   * @param rateController_ The address of the Adrastia Prudentia interest rate controller.\\n   */\\n  constructor(\\n    uint256 blocksPerYear_,\\n    address underlyingToken_,\\n    IRateComputer rateController_\\n  ) {\\n    if (underlyingToken_ == address(0)) {\\n      revert(\\\"PrudentiaInterestRateModel: underlyingToken is the zero address\\\");\\n    }\\n    if (address(rateController_) == address(0)) {\\n      revert(\\\"PrudentiaInterestRateModel: rateController is the zero address\\\");\\n    }\\n\\n    blocksPerYear = blocksPerYear_;\\n    underlyingToken = underlyingToken_;\\n    rateController = rateController_;\\n  }\\n\\n  /**\\n   * @notice Calculates the utilization rate of the market: `borrows / (cash + borrows - reserves)`.\\n   *\\n   * @param cash The amount of cash in the market.\\n   * @param borrows The amount of borrows in the market.\\n   * @param reserves The amount of reserves in the market.\\n   *\\n   * @return The utilization rate as a mantissa between [0, 1e18].\\n   */\\n  function utilizationRate(\\n    uint256 cash,\\n    uint256 borrows,\\n    uint256 reserves\\n  ) public pure returns (uint256) {\\n    uint256 total = cash + borrows - reserves;\\n    if (total == 0) {\\n      // Utilization rate is zero when nothing is available (prevents division by zero)\\n      return 0;\\n    }\\n\\n    return (borrows * 1e18) / total;\\n  }\\n\\n  /**\\n   * @notice Calculates the current borrow rate per block by reading the current rate from the Adrastia Prudentia\\n   * interest rate controller.\\n   *\\n   * @param cash Not used.\\n   * @param borrows Not used.\\n   * @param reserves Not used.\\n   *\\n   * @return The borrow rate percentage per block as a mantissa (scaled by 1e18).\\n   */\\n  function getBorrowRate(\\n    uint256 cash,\\n    uint256 borrows,\\n    uint256 reserves\\n  ) public view override returns (uint256) {\\n    // Silence unused variable warnings\\n    cash;\\n    borrows;\\n    reserves;\\n\\n    uint256 annualRate = rateController.computeRate(underlyingToken);\\n\\n    return annualRate.ceilDiv(blocksPerYear); // Convert the annual rate to a per-block rate, rounding up\\n  }\\n\\n  /**\\n   * @notice Calculates the current supply rate per block.\\n   *\\n   * @param cash The amount of cash in the market.\\n   * @param borrows The amount of borrows in the market.\\n   * @param reserves The amount of reserves in the market.\\n   * @param reserveFactorMantissa The current reserve factor for the market.\\n   *\\n   * @return The supply rate percentage per block as a mantissa (scaled by 1e18).\\n   */\\n  function getSupplyRate(\\n    uint256 cash,\\n    uint256 borrows,\\n    uint256 reserves,\\n    uint256 reserveFactorMantissa\\n  ) public view virtual override returns (uint256) {\\n    uint256 oneMinusReserveFactor = 1e18 - reserveFactorMantissa;\\n    uint256 borrowRate = getBorrowRate(cash, borrows, reserves);\\n    uint256 rateToPool = (borrowRate * oneMinusReserveFactor) / 1e18;\\n\\n    return (utilizationRate(cash, borrows, reserves) * rateToPool) / 1e18;\\n  }\\n}\\n\",\"keccak256\":\"0x9bfa7e7655660b071563ede0b2b003103364aa2847d2868bc6aeedeae8208cba\",\"license\":\"UNLICENSED\"}},\"version\":1}",
+  "bytecode": "0x60e060405234801561001057600080fd5b5060405161068738038061068783398101604081905261002f91610161565b6001600160a01b0382166100b05760405162461bcd60e51b815260206004820152603f60248201527f50727564656e746961496e746572657374526174654d6f64656c3a20756e646560448201527f726c79696e67546f6b656e20697320746865207a65726f20616464726573730060648201526084015b60405180910390fd5b6001600160a01b03811661012c5760405162461bcd60e51b815260206004820152603e60248201527f50727564656e746961496e746572657374526174654d6f64656c3a207261746560448201527f436f6e74726f6c6c657220697320746865207a65726f2061646472657373000060648201526084016100a7565b60c0929092526001600160a01b039081166080521660a0526101a4565b6001600160a01b038116811461015e57600080fd5b50565b60008060006060848603121561017657600080fd5b83519250602084015161018881610149565b604085015190925061019981610149565b809150509250925092565b60805160a05160c0516104a06101e76000396000818161013e015261023401526000818161010401526101b701526000818160c5015261018a01526104a06000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80633aa276e41161005b5780633aa276e4146100ff5780636e71e2d814610126578063a385fb9614610139578063b81688161461016057600080fd5b806315f24053146100825780632191f92a146100a85780632495a599146100c0575b600080fd5b61009561009036600461035c565b610173565b6040519081526020015b60405180910390f35b6100b0600181565b604051901515815260200161009f565b6100e77f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200161009f565b6100e77f000000000000000000000000000000000000000000000000000000000000000081565b61009561013436600461035c565b610263565b6100957f000000000000000000000000000000000000000000000000000000000000000081565b61009561016e366004610388565b6102a9565b60405163ea10320f60e01b81526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116600483015260009182917f0000000000000000000000000000000000000000000000000000000000000000169063ea10320f90602401602060405180830381865afa1580156101fe573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061022291906103ba565b67ffffffffffffffff169050610258817f0000000000000000000000000000000000000000000000000000000000000000610325565b9150505b9392505050565b6000808261027185876103fa565b61027b9190610412565b90508061028c57600091505061025c565b8061029f85670de0b6b3a7640000610429565b6102589190610448565b6000806102be83670de0b6b3a7640000610412565b905060006102cd878787610173565b90506000670de0b6b3a76400006102e48484610429565b6102ee9190610448565b9050670de0b6b3a7640000816103058a8a8a610263565b61030f9190610429565b6103199190610448565b98975050505050505050565b600082156103535781610339600185610412565b6103439190610448565b61034e9060016103fa565b61025c565b60009392505050565b60008060006060848603121561037157600080fd5b505081359360208301359350604090920135919050565b6000806000806080858703121561039e57600080fd5b5050823594602084013594506040840135936060013592509050565b6000602082840312156103cc57600080fd5b815167ffffffffffffffff8116811461025c57600080fd5b634e487b7160e01b600052601160045260246000fd5b6000821982111561040d5761040d6103e4565b500190565b600082821015610424576104246103e4565b500390565b6000816000190483118215151615610443576104436103e4565b500290565b60008261046557634e487b7160e01b600052601260045260246000fd5b50049056fea2646970667358221220323945bbb744c57f9d18a08f0c204543a836d0e0753458c9d121abdf9250b57264736f6c634300080a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80633aa276e41161005b5780633aa276e4146100ff5780636e71e2d814610126578063a385fb9614610139578063b81688161461016057600080fd5b806315f24053146100825780632191f92a146100a85780632495a599146100c0575b600080fd5b61009561009036600461035c565b610173565b6040519081526020015b60405180910390f35b6100b0600181565b604051901515815260200161009f565b6100e77f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200161009f565b6100e77f000000000000000000000000000000000000000000000000000000000000000081565b61009561013436600461035c565b610263565b6100957f000000000000000000000000000000000000000000000000000000000000000081565b61009561016e366004610388565b6102a9565b60405163ea10320f60e01b81526001600160a01b037f00000000000000000000000000000000000000000000000000000000000000008116600483015260009182917f0000000000000000000000000000000000000000000000000000000000000000169063ea10320f90602401602060405180830381865afa1580156101fe573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061022291906103ba565b67ffffffffffffffff169050610258817f0000000000000000000000000000000000000000000000000000000000000000610325565b9150505b9392505050565b6000808261027185876103fa565b61027b9190610412565b90508061028c57600091505061025c565b8061029f85670de0b6b3a7640000610429565b6102589190610448565b6000806102be83670de0b6b3a7640000610412565b905060006102cd878787610173565b90506000670de0b6b3a76400006102e48484610429565b6102ee9190610448565b9050670de0b6b3a7640000816103058a8a8a610263565b61030f9190610429565b6103199190610448565b98975050505050505050565b600082156103535781610339600185610412565b6103439190610448565b61034e9060016103fa565b61025c565b60009392505050565b60008060006060848603121561037157600080fd5b505081359360208301359350604090920135919050565b6000806000806080858703121561039e57600080fd5b5050823594602084013594506040840135936060013592509050565b6000602082840312156103cc57600080fd5b815167ffffffffffffffff8116811461025c57600080fd5b634e487b7160e01b600052601160045260246000fd5b6000821982111561040d5761040d6103e4565b500190565b600082821015610424576104246103e4565b500390565b6000816000190483118215151615610443576104436103e4565b500290565b60008261046557634e487b7160e01b600052601260045260246000fd5b50049056fea2646970667358221220323945bbb744c57f9d18a08f0c204543a836d0e0753458c9d121abdf9250b57264736f6c634300080a0033",
+  "devdoc": {
+    "author": "TRILEZ SOFTWARE INC.",
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "blocksPerYear_": "The approximate number of blocks per year that is assumed by the interest rate model.",
+          "rateController_": "The address of the Adrastia Prudentia interest rate controller.",
+          "underlyingToken_": "The address of the underlying token for which the interest rate model calculates rates."
+        }
+      },
+      "getBorrowRate(uint256,uint256,uint256)": {
+        "params": {
+          "borrows": "Not used.",
+          "cash": "Not used.",
+          "reserves": "Not used."
+        },
+        "returns": {
+          "_0": "The borrow rate percentage per block as a mantissa (scaled by 1e18)."
+        }
+      },
+      "getSupplyRate(uint256,uint256,uint256,uint256)": {
+        "params": {
+          "borrows": "The amount of borrows in the market.",
+          "cash": "The amount of cash in the market.",
+          "reserveFactorMantissa": "The current reserve factor for the market.",
+          "reserves": "The amount of reserves in the market."
+        },
+        "returns": {
+          "_0": "The supply rate percentage per block as a mantissa (scaled by 1e18)."
+        }
+      },
+      "utilizationRate(uint256,uint256,uint256)": {
+        "params": {
+          "borrows": "The amount of borrows in the market.",
+          "cash": "The amount of cash in the market.",
+          "reserves": "The amount of reserves in the market."
+        },
+        "returns": {
+          "_0": "The utilization rate as a mantissa between [0, 1e18]."
+        }
+      }
+    },
+    "title": "Adrastia Prudentia Interest Rate Model",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "blocksPerYear()": {
+        "notice": "The approximate number of blocks per year that is assumed by the interest rate model."
+      },
+      "constructor": {
+        "notice": "Construct a new interest rate model that reads from an Adrastia Prudentia interest rate controller."
+      },
+      "getBorrowRate(uint256,uint256,uint256)": {
+        "notice": "Calculates the current borrow rate per block by reading the current rate from the Adrastia Prudentia interest rate controller."
+      },
+      "getSupplyRate(uint256,uint256,uint256,uint256)": {
+        "notice": "Calculates the current supply rate per block."
+      },
+      "isInterestRateModel()": {
+        "notice": "Indicator that this is an InterestRateModel contract (for inspection)"
+      },
+      "rateController()": {
+        "notice": "The address of the Adrastia Prudentia interest rate controller."
+      },
+      "underlyingToken()": {
+        "notice": "The address of the underlying token for which the interest rate model calculates rates."
+      },
+      "utilizationRate(uint256,uint256,uint256)": {
+        "notice": "Calculates the utilization rate of the market: `borrows / (cash + borrows - reserves)`."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

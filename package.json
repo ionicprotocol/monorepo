@@ -11,7 +11,8 @@
     "packages/sdk",
     "packages/security",
     "packages/types",
-    "packages/ui"
+    "packages/ui",
+    "packages/contracts"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
