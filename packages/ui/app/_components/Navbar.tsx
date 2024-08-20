@@ -1,13 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 // import { Gasbot } from '@gasbot/widget';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-// import { base } from 'viem/chains';
-import { useChainId } from 'wagmi';
-// import '@gasbot/widget/style.css';
-import { http, createConfig } from 'wagmi';
+import { zeroAddress } from 'viem';
+import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
@@ -17,6 +16,10 @@ import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 
 import { useStore } from 'ui/store/Store';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
+
+const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
+  ssr: false
+});
 
 export const config = createConfig({
   chains: [base, mode],
@@ -34,6 +37,7 @@ export const config = createConfig({
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const dropChain = useStore((state) => state.dropChain);
   const chainId = useChainId();
@@ -177,17 +181,23 @@ export default function Navbar() {
             </p>
           </Link>
            */}
-          <Link
+          <span
             className="relative mb-2 lg:mb-0"
-            href="https://app.mode.network/"
-            target="_blank"
+            onClick={() => setSwapWidgetOpen(true)}
           >
             <p
               className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
             </p>
-          </Link>
+            <SwapWidget
+              close={() => setSwapWidgetOpen(false)}
+              open={swapWidgetOpen}
+              toChain={+dropChain}
+              fromChain={+dropChain === base.id ? mode.id : base.id}
+              toToken={zeroAddress}
+            />
+          </span>
           <Link
             className="relative mb-2 lg:mb-0"
             href="https://bridge.connext.network/ION-from-mode-to-base?symbol=ION"
