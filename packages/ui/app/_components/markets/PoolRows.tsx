@@ -248,33 +248,39 @@ const PoolRows = ({
           <span
             className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
               multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                ?.supply?.ionRewards
+                ?.supply?.ionAPR
                 ? 'bg-accent text-green-900 '
-                : 'bg-gray-600 text-white'
+                : 'bg-accent/50 text-green-900'
             }`}
           >
             + ION APR <i className="popover-hint">i</i>
           </span>
 
-          <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
-          >
-            + REWARDS <i className="popover-hint">i</i>
-          </span>
-          <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
-            <a
-              className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
-              href="https://turtle.club/dashboard/?ref=IONIC"
-              target="_blank"
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+            ?.turtleRewards && (
+            <span
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
             >
-              + TURTLE{' '}
-              <img
-                alt="external-link"
-                className={`w-3 h-3`}
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
-            </a>
-          </span>
+              + REWARDS <i className="popover-hint">i</i>
+            </span>
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+            ?.turtleRewards && (
+            <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
+              <a
+                className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+                href="https://turtle.club/dashboard/?ref=IONIC"
+                target="_blank"
+              >
+                + TURTLE{' '}
+                <img
+                  alt="external-link"
+                  className={`w-3 h-3`}
+                  src="https://img.icons8.com/material-outlined/24/external-link.png"
+                />
+              </a>
+            </span>
+          )}
           <SupplyPopover
             asset={asset}
             supplyAPR={supplyAPR}
@@ -304,31 +310,37 @@ const PoolRows = ({
           <span
             className={` rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
               multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                ?.borrow?.ionRewards
+                ?.borrow?.ionAPR
                 ? 'bg-accent text-green-900 '
-                : 'bg-gray-600 text-white '
+                : 'bg-accent/50 text-green-900 '
             }`}
           >
             + ION APR <i className="popover-hint">i</i>
           </span>
 
-          <span
-            className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
-          >
-            + REWARDS <i className="popover-hint">i</i>
-          </span>
-          <a
-            className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            + TURTLE{' '}
-            <img
-              alt="external-link"
-              className={`w-3 h-3`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.turtleRewards && (
+            <span
+              className={`${pools[dropdownSelectedChain].text} ${pools[dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
+            >
+              + REWARDS <i className="popover-hint">i</i>
+            </span>
+          )}
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
+            ?.turtleRewards && (
+            <a
+              className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
+              + TURTLE{' '}
+              <img
+                alt="external-link"
+                className={`w-3 h-3`}
+                src="https://img.icons8.com/material-outlined/24/external-link.png"
+              />
+            </a>
+          )}
 
           <BorrowPopover
             asset={asset}
