@@ -38,7 +38,7 @@ task("market:base:add-rewards-to-existing-flywheel", "Adds rewards to existing f
     const implementationAddress = (await deployments.get("CErc20RewardsDelegate")).address;
     console.log(`Setting implementation to ${implementationAddress}`);
     const setImplementationTx = await cTokenInstance.write._setImplementationSafe([
-      implementationAddress,
+      implementationAddress as Address,
       implementationData
     ]);
 
