@@ -2,7 +2,8 @@ export enum SupportedChains {
   mode = 34443,
   base = 8453,
   optimism = 10,
-  bob = 60808
+  bob = 60808,
+  fraxtal = 252
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -82,7 +83,9 @@ export enum OracleTypes {
   ERC4626Oracle = "ERC4626Oracle",
   PythPriceOracle = "PythPriceOracle",
   RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle",
-  RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle"
+  RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle",
+  AerodromePriceOracle = "AerodromePriceOracle",
+  VelodromePriceOracle = "VelodromePriceOracle"
 }
 
 export enum IrmTypes {
@@ -205,6 +208,8 @@ export enum assetSymbols {
   AERO = "AERO",
   bsdETH = "bsdETH",
   eUSD = "eUSD",
+  hyUSD = "hyUSD",
+  RSR = "RSR",
 
   // optimism
   OP = "OP",
@@ -213,6 +218,12 @@ export enum assetSymbols {
   // bob
   tBTC = "tBTC",
   SOV = "SOV",
+
+  // fraxtal
+  wFRXETH = "wFRXETH",
+  sFRXETH = "sFRXETH",
+  sFRAX = "sFRAX",
+  frxBTC = "frxBTC",
 
   // legacy
   DAI = "DAI",

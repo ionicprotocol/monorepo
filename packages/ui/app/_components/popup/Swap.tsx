@@ -12,7 +12,7 @@ import {
   parseEther,
   type PublicClient
 } from 'viem';
-import { mode } from 'viem/chains';
+import { fraxtal, mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
 import type { GetBalanceData } from 'wagmi/query';
 
@@ -36,6 +36,15 @@ enum SwapType {
   ETH_WETH = 1,
   WETH_ETH
 }
+
+const assetName = (chain: number, wrapped: boolean) =>
+  chain === fraxtal.id
+    ? wrapped
+      ? 'wfrxETH'
+      : 'frxETH'
+    : wrapped
+      ? 'WETH'
+      : 'ETH';
 
 export default function Swap({
   close,
@@ -162,8 +171,8 @@ export default function Swap({
           error: false,
           message:
             swapType === SwapType.ETH_WETH
-              ? 'Wrapping ETH -> WETH'
-              : 'Unwrapping WETH -> ETH',
+              ? `Wrapping ${assetName(dropdownSelectedChain, false)} -> ${assetName(dropdownSelectedChain, true)}`
+              : `Unwrapping ${assetName(dropdownSelectedChain, true)} -> ${assetName(dropdownSelectedChain, false)}`,
           success: false
         }
       ]);
@@ -269,14 +278,14 @@ export default function Swap({
             <Image
               alt="eth icon"
               height="30"
-              src="/img/symbols/32/color/eth.png"
+              src={`/img/symbols/32/color/${assetName(dropdownSelectedChain, false).toLowerCase()}.png`}
               width="30"
             />
             <div className="mx-1">{' -> '}</div>
             <Image
               alt="weth icon"
               height="30"
-              src="/img/symbols/32/color/weth.png"
+              src={`/img/symbols/32/color/${assetName(dropdownSelectedChain, true).toLowerCase()}.png`}
               width="30"
             />
           </div>
@@ -291,14 +300,14 @@ export default function Swap({
             <Image
               alt="weth icon"
               height="30"
-              src="/img/symbols/32/color/weth.png"
+              src={`/img/symbols/32/color/${assetName(dropdownSelectedChain, true).toLowerCase()}.png`}
               width="30"
             />
             <div className="mx-1">{' -> '}</div>
             <Image
               alt="eth icon"
               height="30"
-              src="/img/symbols/32/color/eth.png"
+              src={`/img/symbols/32/color/${assetName(dropdownSelectedChain, false).toLowerCase()}.png`}
               width="30"
             />
           </div>
@@ -312,7 +321,9 @@ export default function Swap({
                   className={`focus:outline-none w-full h-12 amount-field font-bold text-center bg-zinc-900 rounded-md`}
                   onChange={(e) => handlInpData(e)}
                   placeholder={`${
-                    swapType === SwapType.ETH_WETH ? 'ETH' : 'WETH'
+                    swapType === SwapType.ETH_WETH
+                      ? assetName(dropdownSelectedChain, false)
+                      : assetName(dropdownSelectedChain, true)
                   } Amount`}
                   type="number"
                   value={amount}
