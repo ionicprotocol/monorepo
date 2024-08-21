@@ -32,53 +32,55 @@ export const setupRewards = async (
     );
   }
 
-  const _flywheel = await deployments.deploy(
-    `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`,
-    {
-      contract: contractName,
-      from: deployer,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
-          }
+  const flywheelName = `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`;
+  const _flywheel = await deployments.deploy(flywheelName, {
+    contract: contractName,
+    from: deployer,
+    log: true,
+    proxy: {
+      proxyContract: "OpenZeppelinTransparentProxy",
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
-      },
-      waitConfirmations: 1
-    }
-  );
+      }
+    },
+    waitConfirmations: 1
+  });
   console.log(
-    `Deployed flywheel: ${_flywheel.address} - ${_flywheel.newlyDeployed ? "NEW: " : "reused: "} ${_flywheel.transactionHash}`
+    `Deployed flywheel ${flywheelName}: ${_flywheel.address} - ${_flywheel.newlyDeployed ? "NEW: " : "reused: "} ${_flywheel.transactionHash}`
   );
 
-  const flywheelRewards = await deployments.deploy(
-    `IonicFlywheelDynamicRewards_${type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`,
-    {
-      contract: "IonicFlywheelDynamicRewards",
-      from: deployer,
-      log: true,
-      args: [
-        _flywheel.address, // flywheel
-        epochDuration // epoch duration
-      ],
-      waitConfirmations: 1
-    }
-  );
+  const flywheelRewardsName = `IonicFlywheelDynamicRewards_${type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`;
+  const flywheelRewards = await deployments.deploy(flywheelRewardsName, {
+    contract: "IonicFlywheelDynamicRewards",
+    from: deployer,
+    log: true,
+    args: [
+      _flywheel.address, // flywheel
+      epochDuration // epoch duration
+    ],
+    waitConfirmations: 1
+  });
   console.log(
-    `Deployed flywheel rewards: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
+    `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
   );
 
   const flywheel = await viem.getContractAt(
     `${contractName}`,
-    (await deployments.get(`${contractName}_${rewardTokenName}`)).address as Address
+    (await deployments.get(flywheelName)).address as Address
   );
 
-  const txFlywheel = await flywheel.write.setFlywheelRewards([flywheelRewards.address as Address]);
-  await publicClient.waitForTransactionReceipt({ hash: txFlywheel });
-  console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address})`);
+  const setFlywheelRewards = await flywheel.read.flywheelRewards();
+  console.log("setFlywheelRewards: ", setFlywheelRewards);
+  if ((setFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
+    const txFlywheel = await flywheel.write.setFlywheelRewards([flywheelRewards.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: txFlywheel });
+    console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address})`);
+  } else {
+    console.log(`Rewards (${flywheelRewards.address}) already set to flywheel (${flywheel.address})`);
+  }
 
   // Adding strategies to flywheel
   const allFlywheelStrategies = (await flywheel.read.getAllStrategies()) as Address[];
