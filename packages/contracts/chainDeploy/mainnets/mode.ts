@@ -9,6 +9,7 @@ import { underlying } from "../helpers/utils";
 import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, OracleTypes, ChainlinkSpecificParams, PythSpecificParams } from "@ionicprotocol/types";
 import { ChainlinkAsset, PythAsset } from "../types";
+import { deployVelodromeOracle } from "../helpers/oracles/velodrome";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: 30 * 60 * 24 * 365, // 30 blocks per minute = 2 sec block time
@@ -30,24 +31,26 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: mode.chainAddresses.W_TOKEN as Address
 };
 
-// TODO add more assets https://pyth.network/developers/price-feed-ids
-const newAssets = ["USDe", "sUSDe"];
-const pythAssets: PythAsset[] = mode.assets
-  .filter((a) => a.oracle === OracleTypes.PythPriceOracle)
-  .filter((a) => newAssets.includes(a.symbol as assetSymbols))
-  .map((a) => ({
-    feed: (a.oracleSpecificParams as PythSpecificParams).feed as Hex,
-    underlying: underlying(mode.assets, a.symbol)
-  }));
+// // TODO add more assets https://pyth.network/developers/price-feed-ids
+// const newAssets = ["USDe", "sUSDe"];
+// const pythAssets: PythAsset[] = mode.assets
+//   .filter((a) => a.oracle === OracleTypes.PythPriceOracle)
+//   .filter((a) => newAssets.includes(a.symbol as assetSymbols))
+//   .map((a) => ({
+//     feed: (a.oracleSpecificParams as PythSpecificParams).feed as Hex,
+//     underlying: underlying(mode.assets, a.symbol)
+//   }));
 
-const chainlinkAssets: ChainlinkAsset[] = mode.assets
-  .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
-  .filter((a) => a.symbol === assetSymbols.USDe)
-  .map((a) => ({
-    aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
-    feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
-    symbol: a.symbol as assetSymbols
-  }));
+// const chainlinkAssets: ChainlinkAsset[] = mode.assets
+//   .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
+//   .filter((a) => a.symbol === assetSymbols.USDe)
+//   .map((a) => ({
+//     aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+//     feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+//     symbol: a.symbol as assetSymbols
+//   }));
+
+const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
 
 // const api3Assets = [
 //   {
@@ -74,29 +77,36 @@ const chainlinkAssets: ChainlinkAsset[] = mode.assets
 // }));
 
 export const deploy = async ({ run, viem, getNamedAccounts, deployments }: HardhatRuntimeEnvironment): Promise<void> => {
-  await deployPythPriceOracle({
-    run,
-    deployConfig,
+  await deployVelodromeOracle({
     viem,
-    getNamedAccounts,
-    deployments,
-    usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
-    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
-    pythAssets,
-    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
-  });
-
-  await deployChainlinkOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
+    assets: velodromeAssets,
     deployConfig,
-    assets: mode.assets,
-    chainlinkAssets,
-    namePostfix: "Redstone"
+    deployments,
+    getNamedAccounts,
+    pricesContract: "0xE60bf3d27842fdCAFC2F859032507bA653e0E9A6",
+    run
   });
-
+  // await deployPythPriceOracle({
+  //   run,
+  //   deployConfig,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
+  //   pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+  //   pythAssets,
+  //   nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  // });
+  // await deployChainlinkOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   assets: mode.assets,
+  //   chainlinkAssets,
+  //   namePostfix: "Redstone"
+  // });
   // await addRedstoneFallbacks({
   //   viem,
   //   getNamedAccounts,
@@ -106,7 +116,6 @@ export const deploy = async ({ run, viem, getNamedAccounts, deployments }: Hardh
   //   run,
   //   deployConfig
   // });
-
   // await addRedstoneWeETHFallbacks({
   //   viem,
   //   getNamedAccounts,
@@ -116,7 +125,6 @@ export const deploy = async ({ run, viem, getNamedAccounts, deployments }: Hardh
   //   run,
   //   deployConfig
   // });
-
   // await deployRedStoneWrsETHPriceOracle({
   //   run,
   //   deployConfig,
@@ -126,7 +134,6 @@ export const deploy = async ({ run, viem, getNamedAccounts, deployments }: Hardh
   //   redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
   //   redStoneAssets: redStoneWrsETHAssets
   // });
-
   // const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
   //   from: deployer,
   //   args: [],

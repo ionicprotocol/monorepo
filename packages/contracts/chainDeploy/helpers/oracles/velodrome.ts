@@ -1,12 +1,12 @@
 import { prepareAndLogTransaction } from "../logging";
 import { DeployResult } from "hardhat-deploy/types";
-import { Address } from "viem";
+import { Address, Hex } from "viem";
 
 import { addUnderlyingsToMpo } from "./utils";
 import { underlying } from "../utils";
 import { AerodromeDeployFnParams } from "../../types";
 
-export const deployAerodromeOracle = async ({
+export const deployVelodromeOracle = async ({
   viem,
   getNamedAccounts,
   deployments,
@@ -15,20 +15,21 @@ export const deployAerodromeOracle = async ({
 }: AerodromeDeployFnParams): Promise<{ apo: DeployResult }> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
-  let tx;
+  let tx: Hex;
 
-  //// Aerodrome Oracle
-  const apo = await deployments.deploy("AerodromePriceOracle", {
+  //// Velodrome Oracle
+  const apo = await deployments.deploy("VelodromePriceOracle", {
     from: deployer,
     args: [pricesContract],
     log: true,
     waitConfirmations: 1
   });
   if (apo.transactionHash) await publicClient.waitForTransactionReceipt({ hash: apo.transactionHash as Address });
+  console.log("VelodromePriceOracle: ", apo.address);
 
-  const aerodrome = await viem.getContractAt(
-    "AerodromePriceOracle",
-    (await deployments.get("AerodromePriceOracle")).address as Address
+  const velodrome = await viem.getContractAt(
+    "VelodromePriceOracle",
+    (await deployments.get("VelodromePriceOracle")).address as Address
   );
 
   const underlyings = assets.map((c) => underlying(assets, c.symbol));
@@ -38,30 +39,30 @@ export const deployAerodromeOracle = async ({
     (await deployments.get("MasterPriceOracle")).address as Address
   );
   console.log("underlyings: ", underlyings);
-  await addUnderlyingsToMpo(mpo as any, underlyings, aerodrome.address, deployer, publicClient);
+  await addUnderlyingsToMpo(mpo as any, underlyings, velodrome.address, deployer, publicClient);
 
   const addressesProvider = await viem.getContractAt(
     "AddressesProvider",
     (await deployments.get("AddressesProvider")).address as Address
   );
-  const aerodromeAddress = await addressesProvider.read.getAddress(["AerodromePriceOracle"]);
-  if (aerodromeAddress !== aerodrome.address) {
+  const velodromeAddress = await addressesProvider.read.getAddress(["VelodromePriceOracle"]);
+  if (velodromeAddress !== velodrome.address) {
     if (((await addressesProvider.read.owner()) as Address).toLowerCase() === deployer.toLowerCase()) {
-      tx = await addressesProvider.write.setAddress(["AerodromePriceOracle", aerodrome.address]);
+      tx = await addressesProvider.write.setAddress(["VelodromePriceOracle", velodrome.address]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
-      console.log(`setAddress AerodromePriceOracle at ${tx}`);
+      console.log(`setAddress VelodromePriceOracle at ${tx}`);
     } else {
-      prepareAndLogTransaction({
+      await prepareAndLogTransaction({
         contractInstance: addressesProvider,
         functionName: "setAddress",
-        args: ["AerodromePriceOracle", aerodrome.address],
-        description: "Set AerodromePriceOracle address on AddressProvider",
+        args: ["VelodromePriceOracle", velodrome.address],
+        description: "Set VelodromePriceOracle address on AddressProvider",
         inputs: [
           { internalType: "string", name: "id", type: "string" },
           { internalType: "address", name: "newAddress", type: "address" }
         ]
       });
-      console.log("Logged Transaction to setAddress AerodromePriceOracle on AddressProvider");
+      console.log("Logged Transaction to setAddress VelodromePriceOracle on AddressProvider");
     }
   }
 

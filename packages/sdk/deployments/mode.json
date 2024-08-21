@@ -108,7 +108,7 @@
       "address": "0x3D662de3f1780A4a76406EBB80275A4653eD3dD4"
     },
     "IonicFlywheelLensRouter": {
-      "address": "0x79eb8e77dA2621Bd368f4cb41F328529B6f5db70"
+      "address": "0x01aB485A0fae0667be36AB876c95ADc1A2a5e449"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -226,6 +226,9 @@
     },
     "SimplePriceOracle_Proxy": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
+    },
+    "VelodromePriceOracle": {
+      "address": "0x9Bb6eFb9c1C16f4561591Fe13ea06AF8d1Fce2a9"
     }
   }
 }

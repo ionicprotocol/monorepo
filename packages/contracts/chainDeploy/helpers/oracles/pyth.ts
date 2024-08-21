@@ -85,7 +85,7 @@ export const deployPythPriceOracle = async ({
   }
 
   const underlyings = pythAssets.map((f) => f.underlying);
-  await addUnderlyingsToMpo(mpo as any, underlyings, pythOracle.address, deployer, publicClient, walletClient);
+  await addUnderlyingsToMpo(mpo as any, underlyings, pythOracle.address, deployer, publicClient);
 
   return { pythOracle: pythOracle as any };
 };
