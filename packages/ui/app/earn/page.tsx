@@ -75,17 +75,17 @@ export default function Earn() {
         ✨ Earn extra yield using the opportunities listed to make use of your
         Ionic deposits! ✨
       </h1>
-      <div className="flex flex-col items-start justify-start px-6 rounded-2xl bg-graylite dark:bg-grayone w-full  ">
+      <div className="flex flex-col items-start justify-start md:px-3 rounded-2xl bg-graylite dark:bg-grayone w-full  ">
         <div
-          className={`w-full md:grid grid-cols-13  my-3 px-2  gap-x-1  text-white/40 font-semibold lg:text-center items-start  text-xs hidden  `}
+          className={`w-full md:grid grid-cols-13  my-3  px-2  gap-x-1  text-white/40 font-semibold md:text-center items-start  text-xs hidden  `}
         >
           <h1 className="col-span-3 ">ASSETS</h1>
           <h1 className="col-span-2">PROTOCOL</h1>
-          <h1 className="col-span-1">NETWORK</h1>
-          <h1 className="col-span-1">APR</h1>
+          <h1 className="col-span-2">NETWORK</h1>
+          <h1 className="col-span-2">APR</h1>
           <h1 className="col-span-1">TVL</h1>
-          <h1 className="col-span-3"> </h1>
-          <h1 className="col-span-2"> </h1>
+          <h1 className="col-span-1"> </h1>
+          <h1 className="col-span-1"> </h1>
         </div>
 
         {/* this will get mapped out in future with the possible api data structure mentioned below */}

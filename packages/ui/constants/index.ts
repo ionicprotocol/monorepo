@@ -1,6 +1,6 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
-import { base, bob, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -27,6 +27,7 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
       '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
       '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122'
+      // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x327410E4D3A32EF37712e77fCB005e5327F082De',
@@ -149,6 +150,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: ['USDC', 'USDT', 'WETH', 'WBTC', 'tBTC', 'SOV']
+      }
+    ]
+  },
+  [fraxtal.id]: {
+    name: 'Fraxtal',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/FRAXTAL.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['FRAX', 'wfrxETH', 'FXS']
       }
     ]
   }

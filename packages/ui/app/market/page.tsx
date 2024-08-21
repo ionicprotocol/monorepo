@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Address, formatEther, formatUnits } from 'viem';
-import { mode } from 'viem/chains';
+import { fraxtal, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
@@ -250,13 +250,13 @@ export default function Market() {
               className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
               onClick={() => setSwapOpen(true)}
             >
-              {'Wrap ETH '}
+              {`Wrap ${dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
 
               <img
                 alt=""
                 className="inline-block"
                 height="20"
-                src="/img/symbols/32/color/eth.png"
+                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'frxeth' : 'eth'}.png`}
                 width="20"
               />
               <span>{' -> '}</span>
@@ -264,7 +264,7 @@ export default function Market() {
                 alt=""
                 className="inline-block"
                 height="20"
-                src="/img/symbols/32/color/weth.png"
+                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'weth'}.png`}
                 width="20"
               />
             </button>
