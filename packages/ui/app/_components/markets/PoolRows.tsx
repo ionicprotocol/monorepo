@@ -81,7 +81,7 @@ const PoolRows = ({
   const supplyRewards = useMemo(
     () =>
       rewards?.filter((reward) =>
-        FLYWHEEL_TYPE_MAP[dropdownSelectedChain].supply.includes(
+        FLYWHEEL_TYPE_MAP[dropdownSelectedChain]?.supply?.includes(
           (reward as FlywheelReward).flywheel
         )
       ),
@@ -96,7 +96,7 @@ const PoolRows = ({
   const borrowRewards = useMemo(
     () =>
       rewards?.filter((reward) =>
-        FLYWHEEL_TYPE_MAP[dropdownSelectedChain].borrow.includes(
+        FLYWHEEL_TYPE_MAP[dropdownSelectedChain]?.borrow?.includes(
           (reward as FlywheelReward).flywheel
         )
       ),
