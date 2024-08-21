@@ -1,0 +1,116 @@
+name: UI - build, lint & test
+
+on:
+  push:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/contracts/**'
+      - '.github/workflows/package-contracts-test.yml'
+      - 'yarn.lock'
+  pull_request:
+    branches: [main, staging, development]
+    paths:
+      - 'packages/contracts/**'
+      - '.github/workflows/package-contracts-test.yml'
+      - 'yarn.lock'
+
+env:
+  EXCLUDE_TESTS: "Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test"
+  FLAKY_TESTS: "AnyLiquidationTest|LiquidityMiningTest"
+  SLOW_TESTS: "MaxBorrowTest|OraclesDecimalsScalingTest|MinBorrowTest|LeveredPositionTest|OraclesDecimalsScalingTest"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install NPM packages
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Lint
+        run: yarn lint
+
+  build-and-test-mode:
+    needs: [lint]
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      TEST_RUN_CHAINID: 34443
+      TEST_RUN_LEVEL: ${{ github.event_name == 'pull_request' && '100' || '90' }}
+      MODE_MAINNET_RPC_URL: https://mainnet.mode.network/
+      MODE_ARCHIVE_RPC_URL: https://mainnet.mode.network/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Npm dependencies
+        run: yarn install
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - name: Forge RPC cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.foundry/cache"
+          key: rpc-cache-local-${{ hashFiles('rpc-cache-keyfile') }}
+
+      - name: Run base tests for Mode mainnet
+        run: forge test -vv --no-match-contract '${{ env.EXCLUDE_TESTS }}|${{ env.FLAKY_TESTS }}|${{ env.SLOW_TESTS }}'
+
+      - name: Run slow tests for Mode mainnet
+        if: always()
+        run: forge test -vv --match-contract '${{ env.SLOW_TESTS }}'
+
+      - name: Run flaky tests for Mode mainnet
+        if: always()
+        run: forge test -vv --match-contract '${{ env.FLAKY_TESTS }}'
+
+  build-and-test-local:
+    needs: [lint]
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      TEST_RUN_CHAINID: 0
+      TEST_RUN_LEVEL: ${{ github.event_name == 'pull_request' && '100' || '90' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Npm dependencies
+        run: yarn install
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - name: Forge RPC cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.foundry/cache"
+          key: rpc-cache-local-${{ hashFiles('rpc-cache-keyfile') }}
+
+      - name: Run forge tests locally
+        run: forge test -vv --no-match-contract 'Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test'
