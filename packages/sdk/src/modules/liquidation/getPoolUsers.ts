@@ -109,48 +109,6 @@ async function getFusePoolUsers(
   };
 }
 
-async function getPoolsWithShortfall(sdk: IonicSdk, comptroller: Address) {
-  const comptrollerInstance = sdk.createComptroller(comptroller);
-  let page = 0;
-  let hasMoreData = true;
-  let results: Array<{ user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint }> = [];
-  const erroredResults: Array<ErroredPool> = [];
-
-  while (hasMoreData) {
-    const [, users] = await comptrollerInstance.read.getPaginatedBorrowers([BigInt(page), BigInt(PAGE_SIZE)]);
-    if (users.length === 0) {
-      hasMoreData = false;
-    }
-
-    const promises = users.map(async (user) => {
-      try {
-        const liquidity = await comptrollerInstance.read.getAccountLiquidity([user]);
-        return { user, collateralValue: liquidity[1], liquidity: liquidity[2], shortfall: liquidity[3] };
-      } catch (error) {
-        erroredResults.push({ comptroller, msg: `Error getting liquidity for ${user}: ${error}`, error });
-        return null;
-      }
-    });
-
-    const pageResults = await Promise.all(promises);
-    results.push(
-      ...pageResults.filter(
-        (result): result is { user: Address; collateralValue: bigint; liquidity: bigint; shortfall: bigint } =>
-          result !== null
-      )
-    );
-
-    results = results.filter((user) => user.shortfall);
-    page++;
-  }
-
-  if (erroredResults.length > 0) {
-    sdk.logger.error("Errored results", { erroredResults });
-  }
-
-  return results;
-}
-
 export default async function getAllFusePoolUsers(
   sdk: IonicSdk,
   maxHealth: bigint,
@@ -163,39 +121,27 @@ export default async function getAllFusePoolUsers(
   const startTime = performance.now();
   const poolPromises = allPools.map(async (pool) => {
     const { comptroller, name } = pool;
+    let userCount;
     if (!excludedComptrollers.includes(comptroller)) {
       const poolStartTime = performance.now();
       sdk.logger.info(`Processing pool ${name} (${comptroller})...`);
       try {
-        // const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
-        // if (hasShortfall.length > 0) {
-        // const users = hasShortfall.map((user) => {
-        //   return `- user: ${user.user}, shortfall: ${formatEther(user.shortfall)}\n`;
-        // });
-        // sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
-        try {
-          const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth, botType)).users;
-          const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
-          fusePoolUsers.push({
-            comptroller,
-            users: poolUserParams,
-            closeFactor: await comptrollerInstance.read.closeFactorMantissa(),
-            liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa()
-          });
-        } catch (e) {
-          const msg = `Error getting pool users for ${comptroller}: ${e}`;
-          erroredPools.push({ comptroller, msg, error: e });
-        }
-        // } else {
-        //   sdk.logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
-        // }
+        const poolUserParams: PoolUserStruct[] = (await getFusePoolUsers(sdk, comptroller, maxHealth, botType)).users;
+        const comptrollerInstance = sdk.createComptroller(comptroller); // Defined here
+        fusePoolUsers.push({
+          comptroller,
+          users: poolUserParams,
+          closeFactor: await comptrollerInstance.read.closeFactorMantissa(),
+          liquidationIncentive: await comptrollerInstance.read.liquidationIncentiveMantissa()
+        });
+        userCount = poolUserParams.length;
       } catch (e) {
-        const msg = `Error getting shortfalled users for pool ${name} (${comptroller}): ${e}`;
+        const msg = `Error getting pool users for ${comptroller}: ${e}`;
         erroredPools.push({ comptroller, msg, error: e });
       }
       const poolEndTime = performance.now();
       sdk.logger.info(
-        `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds`
+        `Processing pool ${name} (${comptroller}) took ${(poolEndTime - poolStartTime).toFixed(2)} milliseconds, ${userCount} users in shortfall`
       );
     }
   });

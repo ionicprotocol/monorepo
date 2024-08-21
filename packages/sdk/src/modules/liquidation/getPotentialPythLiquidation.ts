@@ -20,7 +20,7 @@ export default async function getPotentialLiquidation(
 
   for (let asset of borrower.assets!) {
     asset = { ...asset };
-    const scaleFactor = BigInt(10) ** (BigInt(18) - asset.underlyingDecimals);
+    const scaleFactor = 10n ** (18n - asset.underlyingDecimals);
     asset.borrowBalanceWei = (asset.borrowBalance * asset.underlyingPrice * scaleFactor) / SCALE_FACTOR_ONE_18_WEI;
     asset.supplyBalanceWei = (asset.supplyBalance * asset.underlyingPrice * scaleFactor) / SCALE_FACTOR_ONE_18_WEI;
     if (asset.borrowBalance > 0) borrower.debt.push(asset);
@@ -45,14 +45,14 @@ export default async function getPotentialLiquidation(
   const debtAsset = borrower.debt[0];
   const collateralAsset = borrower.collateral[0];
 
+  if (debtAsset.borrowBalanceWei < 3877938057596160n) {
+    sdk.logger.info(`Borrow too small, skipping liquidation. Vault: ${borrower.account}`);
+    return null;
+  } else {
+    sdk.logger.info(`Sufficiently Large Borrow, processing liquidation. Vault: ${borrower.account}`);
+  }
   // Get debt and collateral prices
-  const debtAssetUnderlyingPrice = debtAsset.underlyingPrice;
-  const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
-  const debtAssetDecimals = debtAsset.underlyingDecimals;
-
   const repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
-
-  const liquidationValue = (repayAmount * debtAssetUnderlyingPrice) / 10n ** debtAssetDecimals;
 
   const pool = sdk.createComptroller(comptroller);
   const collateralCToken = sdk.createICErc20(collateralAsset.cToken);
@@ -76,28 +76,6 @@ export default async function getPotentialLiquidation(
   const BUY_TOKENS_OFFSET = 999n;
   const underlyingAmountSeized =
     (actualAmountSeized * exchangeRate * BUY_TOKENS_OFFSET) / (BUY_TOKENS_SCALE_FACTOR * SCALE_FACTOR_ONE_18_WEI);
-
-  const underlyingAmountSeizedValue =
-    (underlyingAmountSeized * collateralAssetUnderlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
-
-  // sdk.logger.info(`Calculated repay amount: ${repayAmount.toString()}`);
-  // sdk.logger.info(`Seize Token Info ${seizeTokens[1].toString()}`);
-  // sdk.logger.info(`collateral exchange rate ${formatEther(exchangeRate)}`);
-  // sdk.logger.info(`liquidation incentive ${formatEther(liquidationIncentive)}`);
-  // sdk.logger.info(`protocol seize  share ${formatEther(protocolSeizeShareMantissa)}`);
-  // sdk.logger.info(`fee seize share ${formatEther(feeSeizeShareMantissa)}`);
-  // sdk.logger.info(`protocol fee ${protocolFee.toString()}`);
-  // sdk.logger.info(`size fee ${seizeFee.toString()}`);
-  // sdk.logger.info(`actual amount seized ${actualAmountSeized.toString()}`);
-  // sdk.logger.info(`underlying amount siezed ${underlyingAmountSeized.toString()}`);
-
-  // sdk.logger.info(
-  //   `Transaction Details: Repay Token: ${debtAsset.underlyingToken}, Collateral Token: ${collateralAsset.underlyingToken}, ` +
-  //     `Repay Amount: ${formatEther(repayAmount)}, Seized Collateral Amount: ${formatEther(underlyingAmountSeized)}, ` +
-  //     `Repay Value: ${formatEther(liquidationValue)} , Seized Collateral Value: ${formatEther(
-  //       underlyingAmountSeizedValue
-  //     )} `
-  // );
 
   return await encodeLiquidatePythTx(borrower, repayAmount, underlyingAmountSeized);
 }
