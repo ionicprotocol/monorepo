@@ -12,6 +12,10 @@ export type ChainlinkSpecificParams = {
 
 export type PythSpecificParams = { feed: string };
 
+export type VelodromeSpecificParams = {
+  pricesContract: Address;
+};
+
 export type SupportedAsset = {
   symbol: string;
   underlying: Address;
@@ -22,7 +26,7 @@ export type SupportedAsset = {
   oracle?: OracleTypes;
   simplePriceOracleAssetPrice?: bigint;
   originalSymbol?: string;
-  oracleSpecificParams?: ChainlinkSpecificParams | PythSpecificParams;
+  oracleSpecificParams?: ChainlinkSpecificParams | PythSpecificParams | VelodromeSpecificParams;
   initialCf?: string;
   initialBorrowCap?: string;
   initialSupplyCap?: string;
