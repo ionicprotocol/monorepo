@@ -40,7 +40,7 @@ export default function SeasonSelector({
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-2 px-2 w-full relative items-center border-2 border-stone-700 bg-graylite text-sm  ${
+          className={`py-2 px-2 pr-5 w-full relative items-center border-2 border-stone-700 bg-graylite text-[11px] lg:text-sm  ${
             open ? 'rounded-t-md' : 'rounded-xl '
           }`}
         >
