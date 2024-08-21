@@ -3,7 +3,7 @@
 import type { Dispatch } from 'react';
 import { useReducer } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
-import { base, bob, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
 
 export type TransactionStep = {
   error: boolean;
@@ -81,7 +81,8 @@ const explorerLinks: Record<number, string> = {
   [mode.id]: 'https://explorer.mode.network',
   [base.id]: 'https://basescan.org',
   [optimism.id]: 'https://optimistic.etherscan.io',
-  [bob.id]: 'https://explorer.gobob.xyz'
+  [bob.id]: 'https://explorer.gobob.xyz',
+  [fraxtal.id]: 'https://fraxscan.com'
 };
 
 function TransactionStepsHandler({

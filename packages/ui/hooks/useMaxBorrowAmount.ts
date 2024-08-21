@@ -32,7 +32,8 @@ export function useMaxBorrowAmount(
       if (
         sdk &&
         address &&
-        borrowCapsDataForAsset?.nonWhitelistedTotalBorrows
+        typeof borrowCapsDataForAsset?.nonWhitelistedTotalBorrows !==
+          'undefined'
       ) {
         try {
           const maxBorrow = (
@@ -96,7 +97,7 @@ export function useMaxBorrowAmount(
       !!asset &&
       !!sdk &&
       !!comptrollerAddress &&
-      !!borrowCapsDataForAsset?.nonWhitelistedTotalBorrows,
+      typeof borrowCapsDataForAsset?.nonWhitelistedTotalBorrows !== 'undefined',
 
     staleTime: Infinity
   });
