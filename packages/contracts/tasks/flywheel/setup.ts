@@ -29,21 +29,24 @@ export const setupRewards = async (
     console.log(`Deployed booster: ${booster.address} - ${booster.transactionHash}`);
   }
 
-  const _flywheel = await deployments.deploy(`${contractName}_${rewardTokenName}`, {
-    contract: contractName,
-    from: deployer,
-    log: true,
-    proxy: {
-      proxyContract: "OpenZeppelinTransparentProxy",
-      execute: {
-        init: {
-          methodName: "initialize",
-          args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
+  const _flywheel = await deployments.deploy(
+    `${contractName}_${rewardTokenName}${type === "borrow" ? "_Borrow" : ""}}`,
+    {
+      contract: contractName,
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
+          }
         }
-      }
-    },
-    waitConfirmations: 1
-  });
+      },
+      waitConfirmations: 1
+    }
+  );
   console.log(`Deployed flywheel: ${_flywheel.address} - ${_flywheel.transactionHash}`);
 
   const flywheelRewards = await deployments.deploy(`IonicFlywheelDynamicRewards_${rewardTokenName}`, {
