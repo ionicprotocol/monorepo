@@ -1,8 +1,9 @@
-import { Deployment } from "hardhat-deploy/types";
+import { Deployment, DeployResult } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
 import { upgradeMarketToSupportFlywheel } from "./upgrade";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
+import { base } from "viem/chains";
 
 export const setupRewards = async (
   type: "supply" | "borrow",
@@ -17,20 +18,22 @@ export const setupRewards = async (
   const publicClient = await viem.getPublicClient();
   await upgradeMarketToSupportFlywheel(market, viem, deployer, deployments);
 
-  let booster: Deployment | undefined;
+  let booster: DeployResult | undefined;
   let contractName = "IonicFlywheel";
   if (type === "borrow") {
     contractName = "IonicFlywheelBorrow";
-    booster = await deployments.deploy(`IonicFlywheelBorrowBooster`, {
+    booster = await deployments.deploy(`IonicFlywheelBorrowBooster_${rewardTokenName}`, {
       from: deployer,
       log: true,
       waitConfirmations: 1
     });
-    console.log(`Deployed booster: ${booster.address} - ${booster.transactionHash}`);
+    console.log(
+      `Deployed booster: ${booster.address} - ${booster.newlyDeployed ? "NEW: " : "reused: "} ${booster.transactionHash}`
+    );
   }
 
   const _flywheel = await deployments.deploy(
-    `${contractName}_${rewardTokenName}${type === "borrow" ? "_Borrow" : ""}}`,
+    `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`,
     {
       contract: contractName,
       from: deployer,
@@ -47,19 +50,26 @@ export const setupRewards = async (
       waitConfirmations: 1
     }
   );
-  console.log(`Deployed flywheel: ${_flywheel.address} - ${_flywheel.transactionHash}`);
+  console.log(
+    `Deployed flywheel: ${_flywheel.address} - ${_flywheel.newlyDeployed ? "NEW: " : "reused: "} ${_flywheel.transactionHash}`
+  );
 
-  const flywheelRewards = await deployments.deploy(`IonicFlywheelDynamicRewards_${rewardTokenName}`, {
-    contract: "IonicFlywheelDynamicRewards",
-    from: deployer,
-    log: true,
-    args: [
-      _flywheel.address, // flywheel
-      epochDuration // epoch duration
-    ],
-    waitConfirmations: 1
-  });
-  console.log(`Deployed flywheel rewards: ${flywheelRewards.address} - ${flywheelRewards.transactionHash}`);
+  const flywheelRewards = await deployments.deploy(
+    `IonicFlywheelDynamicRewards_${type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`,
+    {
+      contract: "IonicFlywheelDynamicRewards",
+      from: deployer,
+      log: true,
+      args: [
+        _flywheel.address, // flywheel
+        epochDuration // epoch duration
+      ],
+      waitConfirmations: 1
+    }
+  );
+  console.log(
+    `Deployed flywheel rewards: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
+  );
 
   const flywheel = await viem.getContractAt(
     `${contractName}`,
