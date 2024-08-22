@@ -73,7 +73,7 @@ jobs:
 
       - name: Verify Foundry Installation
         run: forge --version
-#install foundary
+#install 
       - name: Install `packages`
         run: yarn install
         env:
