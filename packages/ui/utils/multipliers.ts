@@ -379,7 +379,8 @@ export const multipliers: Record<
           ionic: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WETH: {
@@ -395,7 +396,8 @@ export const multipliers: Record<
           ionic: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       cbETH: {
