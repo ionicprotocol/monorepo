@@ -7,6 +7,10 @@ import { config as dotenv } from "dotenv";
 
 import "./tasks";
 
+const accounts = [
+  process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
+];
+
 dotenv();
 
 (BigInt.prototype as any).toJSON = function () {
@@ -43,17 +47,17 @@ const config: HardhatUserConfig = {
   },
   networks: {
     local: {
-      accounts: [process.env.DEPLOYER!],
+      accounts,
       url: "http://localhost:8545",
       saveDeployments: false
     },
     mode: {
       url: process.env.OVERRIDE_RPC_URL_MODE ?? "https://mainnet.mode.network",
-      accounts: [process.env.DEPLOYER!]
+      accounts
     },
     base: {
       url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base.meowrpc.com",
-      accounts: [process.env.DEPLOYER!],
+      accounts,
       verify: {
         etherscan: {
           apiUrl: "https://api.basescan.org/api?",
@@ -63,15 +67,15 @@ const config: HardhatUserConfig = {
     },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL ?? "https://mainnet.optimism.io",
-      accounts: [process.env.DEPLOYER!]
+      accounts
     },
     bob: {
       url: process.env.OVERRIDE_RPC_URL ?? "https://rpc.gobob.xyz",
-      accounts: [process.env.DEPLOYER!]
+      accounts
     },
     fraxtal: {
       url: process.env.OVERRIDE_RPC_URL ?? "https://rpc.frax.com",
-      accounts: [process.env.DEPLOYER!],
+      accounts,
       verify: {
         etherscan: {
           apiUrl: "https://api.fraxscan.com/api?",
