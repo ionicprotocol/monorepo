@@ -66,11 +66,9 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    */
   uint256 public healthFactorThreshold;
 
-  modifier onlyPERPermissioned(address borrower, ICErc20 cToken) {
+  modifier onlyLowHF(address borrower, ICErc20 cToken) {
     uint256 currentHealthFactor = lens.getHealthFactor(borrower, cToken.comptroller());
-    if (currentHealthFactor > healthFactorThreshold) {
-      require(expressRelay.isPermissioned(address(this), abi.encode(borrower)), "invalid liquidation");
-    }
+    require(currentHealthFactor < healthFactorThreshold, "HF not low enough, reserving for PYTH");
     _;
   }
 
@@ -88,13 +86,13 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    * @param cTokenCollateral The cToken collateral to be liquidated.
    * @param minOutputAmount The minimum amount of collateral to seize (or the minimum exchange output if applicable) required for execution. Reverts if this condition is not met.
    */
-  function safeLiquidate(
+  function _safeLiquidate(
     address borrower,
     uint256 repayAmount,
     ICErc20 cErc20,
     ICErc20 cTokenCollateral,
     uint256 minOutputAmount
-  ) external onlyPERPermissioned(borrower, cTokenCollateral) returns (uint256) {
+  ) internal returns (uint256) {
     // Transfer tokens in, approve to cErc20, and liquidate borrow
     require(repayAmount > 0, "Repay amount (transaction value) must be greater than 0.");
     IERC20Upgradeable underlying = IERC20Upgradeable(cErc20.underlying());
@@ -109,6 +107,27 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
     require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
 
     return transferSeizedFunds(address(cTokenCollateral.underlying()), minOutputAmount);
+  }
+
+  function safeLiquidate(
+    address borrower,
+    uint256 repayAmount,
+    ICErc20 cErc20,
+    ICErc20 cTokenCollateral,
+    uint256 minOutputAmount
+  ) external onlyLowHF(borrower, cTokenCollateral) returns (uint256) {
+    return _safeLiquidate(borrower, repayAmount, cErc20, cTokenCollateral, minOutputAmount);
+  }
+
+  function safeLiquidatePyth(
+    address borrower,
+    uint256 repayAmount,
+    ICErc20 cErc20,
+    ICErc20 cTokenCollateral,
+    uint256 minOutputAmount
+  ) external returns (uint256) {
+    require(expressRelay.isPermissioned(address(this), abi.encode(borrower)), "invalid liquidation");
+    return _safeLiquidate(borrower, repayAmount, cErc20, cTokenCollateral, minOutputAmount);
   }
 
   /**
@@ -127,7 +146,7 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
 
   function safeLiquidateToTokensWithFlashLoan(LiquidateToTokensWithFlashSwapVars calldata vars)
     external
-    onlyPERPermissioned(vars.borrower, vars.cTokenCollateral)
+    onlyLowHF(vars.borrower, vars.cTokenCollateral)
     returns (uint256)
   {
     // Input validation

@@ -7,7 +7,7 @@ interface ICERC20 {
     function plugin() external returns (address);
 }
 
-interface IPlugin {
+interface IPlugin_FDR {
     function claimRewards() external;
 }
 
@@ -28,7 +28,7 @@ contract IonicFlywheelDynamicRewardsPlugin is FlywheelDynamicRewards {
         override
         returns (uint192)
     {
-        IPlugin plugin = IPlugin(ICERC20(address(strategy)).plugin());
+        IPlugin_FDR plugin = IPlugin_FDR(ICERC20(address(strategy)).plugin());
         try plugin.claimRewards() {} catch {}
 
         uint256 rewardAmount = rewardToken.balanceOf(address(strategy));

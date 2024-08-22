@@ -7,7 +7,6 @@ import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { Auth, Authority } from "solmate/auth/Auth.sol";
 import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import { IonicFlywheelDynamicRewardsPlugin } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewardsPlugin.sol";
-import { FlywheelCore } from "flywheel/FlywheelCore.sol";
 import { IFlywheelBooster } from "../ionic/strategies/flywheel/IFlywheelBooster.sol";
 import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";

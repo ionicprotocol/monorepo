@@ -36,7 +36,7 @@
     "next": "^14.2.4"
   },
   "scripts": {
-    "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/sdk build",
+    "build:sdk": "yarn build:types && yarn build:chains && yarn build:contracts && yarn workspace @ionicprotocol/sdk build",
     "build:types": "yarn workspace @ionicprotocol/types build",
     "build:chains": "yarn build:types && yarn workspace @ionicprotocol/chains build",
     "build:security": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/security build",

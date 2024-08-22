@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.10;
 
-import "./BaseFlywheelRewards.sol";
+import {BaseFlywheelRewards} from "./BaseFlywheelRewards.sol";
+import {IonicFlywheelCore} from "../IonicFlywheelCore.sol";
+import {SafeTransferLib, ERC20} from "solmate/utils/SafeTransferLib.sol";
 import {SafeCastLib} from "solmate/utils/SafeCastLib.sol";
 
 /** 

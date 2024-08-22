@@ -2,7 +2,6 @@
 pragma solidity ^0.8.10;
 
 import { FlywheelStaticRewards } from "./FlywheelStaticRewards.sol";
-import { BaseFlywheelRewards } from "./BaseFlywheelRewards.sol";
 import { IonicFlywheelCore } from "../IonicFlywheelCore.sol";
 import { Auth, Authority } from "solmate/auth/Auth.sol";
 import { SafeTransferLib, ERC20 } from "solmate/utils/SafeTransferLib.sol";

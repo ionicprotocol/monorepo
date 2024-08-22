@@ -49,8 +49,7 @@ export const deployIonicLiquidator = async ({
             args: initializeArgs
           }
         },
-        proxyContract: "OpenZeppelinTransparentProxy",
-        owner: multisig
+        proxyContract: "OpenZeppelinTransparentProxy"
       }
     });
   }

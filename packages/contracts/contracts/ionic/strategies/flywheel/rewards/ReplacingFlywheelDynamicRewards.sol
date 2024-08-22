@@ -2,7 +2,6 @@
 pragma solidity ^0.8.10;
 
 import { FlywheelDynamicRewards } from "./FlywheelDynamicRewards.sol";
-import { BaseFlywheelRewards } from "./BaseFlywheelRewards.sol";
 import { IonicFlywheelCore } from "../IonicFlywheelCore.sol";
 import { Auth, Authority } from "solmate/auth/Auth.sol";
 import { SafeTransferLib, ERC20 } from "solmate/utils/SafeTransferLib.sol";
@@ -11,7 +10,7 @@ interface ICERC20_RFDR {
   function plugin() external returns (address);
 }
 
-interface IPlugin {
+interface IPlugin_RFDR {
   function claimRewards() external;
 }
 
@@ -35,7 +34,7 @@ contract ReplacingFlywheelDynamicRewards is FlywheelDynamicRewards {
     } else {
       // make it work for both pulled (claimed) and pushed (transferred some other way) rewards
       try ICERC20_RFDR(address(strategy)).plugin() returns (address plugin) {
-        try IPlugin(plugin).claimRewards() {} catch {}
+        try IPlugin_RFDR(plugin).claimRewards() {} catch {}
       } catch {}
 
       uint256 rewardAmount = rewardToken.balanceOf(address(strategy));
