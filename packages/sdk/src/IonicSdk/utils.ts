@@ -1,3 +1,4 @@
+import UnitrollerArtifact from "@ionicprotocol/contracts/artifacts/contracts/compound/Unitroller.sol/Unitroller.json";
 import Filter from "bad-words";
 import {
   Address,
@@ -14,7 +15,6 @@ import {
   PublicClient
 } from "viem";
 
-import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
 import { ionicComptrollerAbi, unitrollerAbi } from "../generated";
 
 export function filterOnlyObjectProperties(obj: any) {
@@ -34,7 +34,7 @@ export const getSaltsHash = (from: Address, poolName: string, blockNumber: bigin
 
 export const getBytecodeHash = (feeDistributorAddress: Address): Hash => {
   return keccak256(
-    ((UnitrollerArtifact.bytecode.object as Hex) +
+    ((UnitrollerArtifact.bytecode as Hex) +
       encodeAbiParameters(parseAbiParameters("address"), [feeDistributorAddress]).slice(2)) as Hex
   );
 };

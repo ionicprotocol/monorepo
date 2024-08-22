@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/contracts": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@supabase/supabase-js": "^2.44.1",
     "bad-words": "^3.0.4",

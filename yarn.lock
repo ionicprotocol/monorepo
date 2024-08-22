@@ -2195,7 +2195,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ionicprotocol/contracts@workspace:packages/contracts":
+"@ionicprotocol/contracts@workspace:*, @ionicprotocol/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/contracts@workspace:packages/contracts"
   dependencies:
@@ -2329,6 +2329,7 @@ __metadata:
   resolution: "@ionicprotocol/sdk@workspace:packages/sdk"
   dependencies:
     "@ionicprotocol/chains": "workspace:*"
+    "@ionicprotocol/contracts": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
     "@supabase/supabase-js": "npm:^2.44.1"
     "@types/bad-words": "npm:^3.0.1"
