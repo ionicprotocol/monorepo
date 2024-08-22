@@ -36,7 +36,6 @@
     "@nomicfoundation/hardhat-verify": "^2.0.9",
     "@nomicfoundation/hardhat-viem": "^2.0.3",
     "@nomicfoundation/ignition-core": "^0.15.5",
-    "@pythnetwork/express-relay-sdk-solidity": "^0.2.0",
     "@wagmi/cli": "^2.1.15",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",

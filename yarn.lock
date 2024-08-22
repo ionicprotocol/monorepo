@@ -2209,7 +2209,6 @@ __metadata:
     "@nomicfoundation/hardhat-verify": "npm:^2.0.9"
     "@nomicfoundation/hardhat-viem": "npm:^2.0.3"
     "@nomicfoundation/ignition-core": "npm:^0.15.5"
-    "@pythnetwork/express-relay-sdk-solidity": "npm:^0.2.0"
     "@wagmi/cli": "npm:^2.1.15"
     axios: "npm:^1.7.2"
     dotenv: "npm:^16.4.5"
@@ -5141,13 +5140,6 @@ __metadata:
     viem: "npm:^2.7.6"
     ws: "npm:^8.16.0"
   checksum: 10/0045e180cd2400cd924780d1f76f400f42feb24659d0670094a7e44b86b5e52a728601169b28115c20e90654fe85df4d2f39551415e946adecfed8854b5851cf
-  languageName: node
-  linkType: hard
-
-"@pythnetwork/express-relay-sdk-solidity@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@pythnetwork/express-relay-sdk-solidity@npm:0.2.0"
-  checksum: 10/15acf5a5221e6c0a26c619bebe0574f31279fba170814d9e57687014ba7f10b55e764b41d0b72c37fc7fc03195565bdcb86d28eb151372d4a02bff1e69766501
   languageName: node
   linkType: hard
 
