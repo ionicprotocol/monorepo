@@ -69,8 +69,14 @@ jobs:
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
-      - name: Verify Foundry Installation
-        run: forge --version
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+        
       - name: Build `sdk`
         run: yarn build:sdk
 
