@@ -6,7 +6,7 @@ export default async function encodeLiquidateTx(
   seizeAmount: bigint
 ): Promise<PythEncodedLiquidationTx> {
   return {
-    method: "safeLiquidate(address,uint256,address,address,uint256)",
+    method: "safeLiquidatePyth(address,uint256,address,address,uint256)",
     args: [borrower.account, liquidationAmount, borrower.debt[0].cToken, borrower.collateral[0].cToken, 0],
     value: 0n,
     buyTokenAmount: seizeAmount,

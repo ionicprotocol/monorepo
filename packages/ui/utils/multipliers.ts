@@ -78,7 +78,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         decimals: 6,
         market: 'usdc_market',
@@ -133,7 +134,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'weth_market',
         multiplier: 3000,
@@ -377,7 +379,8 @@ export const multipliers: Record<
           ionic: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WETH: {
@@ -393,7 +396,8 @@ export const multipliers: Record<
           ionic: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       cbETH: {

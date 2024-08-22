@@ -12,6 +12,9 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 export const ABILLY = 1e9;
 
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
+  [mode.id]: {
+    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
+  },
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR'
@@ -22,6 +25,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
   number,
   Record<'borrow' | 'supply', Address[]>
 > = {
+  [mode.id]: {
+    supply: [],
+    borrow: ['0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec']
+  },
   [base.id]: {
     supply: [
       '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',

@@ -66,7 +66,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0xd122669FeF7e62Aa5Df85e945b68dd0B02A42343"
+      "address": "0x30d608929d8b61fF35A4358Ca0E9D298d43672C2"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
@@ -114,13 +114,13 @@
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
     },
     "IonicUniV3Liquidator": {
-      "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
+      "address": "0x50F13EC4B68c9522260d3ccd4F19826679B3Ce5C"
     },
     "IonicUniV3Liquidator_Implementation": {
-      "address": "0xe807Fec91F6f2c7A1c4881d3b1236c9aF23DF5B1"
+      "address": "0x0472dE8cB207aa872796De41bB1f21C077740a9d"
     },
     "IonicUniV3Liquidator_Proxy": {
-      "address": "0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A"
+      "address": "0x50F13EC4B68c9522260d3ccd4F19826679B3Ce5C"
     },
     "JumpRateModel": {
       "address": "0x22cc2474f1578d7e311F3aFa0256Fc9F52bC5636"

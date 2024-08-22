@@ -88,7 +88,7 @@ const Rewards = ({
     <>
       {rewards?.map((rewards, index) => (
         <div key={index}>
-          {REWARDS_TO_SYMBOL[poolChainId]?.[rewards.token]} Rewards APR: +
+          {REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.token]} Rewards APR: +
           {rewards.apy
             ? rewards.apy.toLocaleString('en-US', { maximumFractionDigits: 2 })
             : '-'}
@@ -104,7 +104,7 @@ const Rewards = ({
             <img
               alt=""
               className="size-4 rounded mr-1"
-              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]?.toLowerCase()}.png`}
+              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.rewardToken]?.toLowerCase()}.png`}
             />{' '}
             +{' '}
             {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
