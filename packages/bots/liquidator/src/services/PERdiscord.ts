@@ -2,7 +2,7 @@ import axios from "axios";
 import { OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { IonicSdk } from "@ionicprotocol/sdk";
 import { chainIdtoChain, chainIdToConfig } from "@ionicprotocol/chains";
-import { Chain, createPublicClient, formatEther, http } from "viem";
+import { Chain, createPublicClient, erc20Abi, formatEther, http } from "viem";
 import { SupportedChains } from "@ionicprotocol/types";
 
 import config from "../config";
@@ -60,14 +60,29 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
   const sdk = new IonicSdk(publicClient as any, undefined, config);
   const mpo = sdk.createMasterPriceOracle();
   try {
-    const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, "")}`;
+    const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, "")}` as `0x${string}`;
     console.log("Token address:", tokenAddress);
+    // Get the token's price in ETH
     const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
     const priceInETHNum = Number(formatEther(priceInETH));
+    
+    // Get the token's decimals
+    const tokenDecimals = await publicClient.readContract({
+      address: formattedTokenAddress,
+      abi: erc20Abi,
+      functionName: "decimals",
+    });
+    
+    // Adjust the amount to 18 decimals
+    const scaleFactor = BigInt(10 ** (18 - tokenDecimals));
+    const scaledAmount = amount * scaleFactor;
+    // Get the USD price of ETH
     const usdPrice = await getUSDPrice(chainId);
-    const amountNum = Number(formatEther(amount));
-    console.log("eth", amountNum);
-    console.log("ethprice", priceInETH);
+    const amountNum = Number(formatEther(scaledAmount));
+    // Debugging logs
+    console.log("Price in ETH:", priceInETHNum);
+    console.log("USD Price:", usdPrice);
+    console.log("Token Amount:", amountNum);
     const usdValue = priceInETHNum * usdPrice * amountNum;
     return usdValue.toFixed(10);
   } catch (error) {
