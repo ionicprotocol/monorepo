@@ -25,7 +25,11 @@
   "license": "ISC",
   "dependencies": {
     "@ionicprotocol/chains": "workspace:*",
-    "@ionicprotocol/types": "workspace:*"
+    "@ionicprotocol/types": "workspace:*",
+    "@types/chai": "^4.3.17",
+    "@types/chai-as-promised": "^7.1.8",
+    "@types/mocha": "^10.0.7",
+    "chai": "^5.1.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.2",
