@@ -23,16 +23,18 @@ export const setupRewards = async (
   if (type === "borrow") {
     contractName = "IonicFlywheelBorrow";
     booster = await deployments.deploy(`IonicFlywheelBorrowBooster_${rewardTokenName}`, {
+      contract: "IonicFlywheelBorrowBooster",
       from: deployer,
       log: true,
-      waitConfirmations: 1
+      waitConfirmations: 1,
+      skipIfAlreadyDeployed: true
     });
     console.log(
       `Deployed booster: ${booster.address} - ${booster.newlyDeployed ? "NEW: " : "reused: "} ${booster.transactionHash}`
     );
   }
 
-  const flywheelName = `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`;
+  const flywheelName = `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
   const _flywheel = await deployments.deploy(flywheelName, {
     contract: contractName,
     from: deployer,
@@ -52,7 +54,7 @@ export const setupRewards = async (
     `Deployed flywheel ${flywheelName}: ${_flywheel.address} - ${_flywheel.newlyDeployed ? "NEW: " : "reused: "} ${_flywheel.transactionHash}`
   );
 
-  const flywheelRewardsName = `IonicFlywheelDynamicRewards_${type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${publicClient.chain.id === base.id ? "_v3" : ""}`;
+  const flywheelRewardsName = `IonicFlywheelDynamicRewards_${type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
   const flywheelRewards = await deployments.deploy(flywheelRewardsName, {
     contract: "IonicFlywheelDynamicRewards",
     from: deployer,
