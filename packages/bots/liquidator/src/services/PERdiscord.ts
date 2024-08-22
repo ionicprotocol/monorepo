@@ -65,14 +65,14 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
     // Get the token's price in ETH
     const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
     const priceInETHNum = Number(formatEther(priceInETH));
-    
+
     // Get the token's decimals
     const tokenDecimals = await publicClient.readContract({
       address: formattedTokenAddress,
       abi: erc20Abi,
       functionName: "decimals",
     });
-    
+
     // Adjust the amount to 18 decimals
     const scaleFactor = BigInt(10 ** (18 - tokenDecimals));
     const scaledAmount = amount * scaleFactor;
