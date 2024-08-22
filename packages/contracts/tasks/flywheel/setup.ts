@@ -114,30 +114,32 @@ export const setupRewards = async (
         inputs: [{ internalType: "address", name: "distributor", type: "address" }],
         description: `Add flywheel ${flywheel.address} to pool ${_comptroller}`
       });
-
-      await prepareAndLogTransaction({
-        contractInstance: _market,
-        functionName: "approve",
-        args: [rewardToken, fwRewards],
-        inputs: [
-          { internalType: "address", name: "_token", type: "address" },
-          { internalType: "address", name: "_spender", type: "address" }
-        ],
-        description: `Approve flywheel ${flywheel.address} to pull reward tokens from market ${market}`
-      });
     } else {
       const addTx = await comptroller.write._addRewardsDistributor([flywheel.address]);
       await publicClient.waitForTransactionReceipt({ hash: addTx });
       console.log({ addTx });
       console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller})`);
-
-      // Approving token spending for fwRewards contract
-      const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);
-      console.log(`mining tx ${tx}`);
-      await publicClient.waitForTransactionReceipt({ hash: tx });
-      console.log(`approved flywheel ${flywheel.address} to pull reward tokens from market ${market}`);
     }
   } else {
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
+  }
+
+  if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    await prepareAndLogTransaction({
+      contractInstance: _market,
+      functionName: "approve",
+      args: [rewardToken, fwRewards],
+      inputs: [
+        { internalType: "address", name: "_token", type: "address" },
+        { internalType: "address", name: "_spender", type: "address" }
+      ],
+      description: `Approve flywheel ${flywheel.address} to pull reward tokens from market ${market}`
+    });
+  } else {
+    // Approving token spending for fwRewards contract
+    const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);
+    console.log(`mining tx ${tx}`);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`approved flywheel ${flywheel.address} to pull reward tokens from market ${market}`);
   }
 };
