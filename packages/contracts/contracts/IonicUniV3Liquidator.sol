@@ -12,13 +12,13 @@ import "./ILiquidator.sol";
 
 import "./external/uniswap/IUniswapV3FlashCallback.sol";
 import "./external/uniswap/IUniswapV3Pool.sol";
+import "./external/pyth/IExpressRelay.sol";
+import "./external/pyth/IExpressRelayFeeReceiver.sol";
 import { IUniswapV3Quoter } from "./external/uniswap/quoter/interfaces/IUniswapV3Quoter.sol";
 
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
 
 import "./PoolLens.sol";
-import "@pythnetwork/express-relay-sdk-solidity/IExpressRelay.sol";
-import "@pythnetwork/express-relay-sdk-solidity/IExpressRelayFeeReceiver.sol";
 
 /**
  * @title IonicUniV3Liquidator

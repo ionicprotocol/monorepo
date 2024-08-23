@@ -16,11 +16,11 @@ import "./external/uniswap/IUniswapV2Router02.sol";
 import "./external/uniswap/IUniswapV2Pair.sol";
 import "./external/uniswap/IUniswapV2Callee.sol";
 import "./external/uniswap/UniswapV2Library.sol";
+import "./external/pyth/IExpressRelay.sol";
+import "./external/pyth/IExpressRelayFeeReceiver.sol";
 
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
 
-import "@pythnetwork/express-relay-sdk-solidity/IExpressRelay.sol";
-import "@pythnetwork/express-relay-sdk-solidity/IExpressRelayFeeReceiver.sol";
 
 import "./PoolLens.sol";
 
