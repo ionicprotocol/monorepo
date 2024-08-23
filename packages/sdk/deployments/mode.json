@@ -66,7 +66,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0x30d608929d8b61fF35A4358Ca0E9D298d43672C2"
+      "address": "0x4De2d8ef97D19def01f236b7a12e5Fb39c087b56"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
@@ -202,6 +202,15 @@
     },
     "PythPriceOracle": {
       "address": "0x52Ee6E740C1785412e51A381B0d87fb1692a7b23"
+    },
+    "PythPriceOracleDmBTC": {
+      "address": "0x99e8d6FcB217379c5b8f497123BE4eFd0983748b"
+    },
+    "PythPriceOracleDmBTC_Implementation": {
+      "address": "0xaC986B9b549ba5E98bAeb78919d4E4aA5F4b342e"
+    },
+    "PythPriceOracleDmBTC_Proxy": {
+      "address": "0x99e8d6FcB217379c5b8f497123BE4eFd0983748b"
     },
     "PythPriceOracle_Implementation": {
       "address": "0x13fD2701C3017bCc375Ad14Dd8433c6d7a441794"

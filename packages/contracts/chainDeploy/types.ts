@@ -1,6 +1,6 @@
+import { SupportedAsset } from "@ionicprotocol/types";
 import { Address, Hash } from "viem";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
-import { SupportedAsset } from "../../monorepo/packages/types";
 
 export type TokenPair = {
   token: Address;

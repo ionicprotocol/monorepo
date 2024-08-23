@@ -13,9 +13,10 @@ interface PrepareAndLogTransactionParams {
   }[];
 }
 
-export const logTransaction = (description: string, data: string) => {
+export const logTransaction = (description: string, data: string, target: string) => {
   console.log(`Transaction: ${description}`);
   console.log(`Data: ${data}`);
+  console.log(`Target: ${target}`);
 };
 
 const transactions: any[] = [];
@@ -90,5 +91,5 @@ export const prepareAndLogTransaction = async ({
     }, {})
   });
 
-  logTransaction(description, data);
+  logTransaction(description, data, contractInstance.address);
 };

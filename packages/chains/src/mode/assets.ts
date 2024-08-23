@@ -30,6 +30,7 @@ export const ION = "0x18470019bf0e94611f15852f7e93cf5d65bc34ca";
 export const KIM = "0x6863fb62Ed27A9DdF458105B507C15b5d741d62e";
 export const sUSDe = "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2";
 export const USDe = "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34";
+export const dMBTC = "0x93a397fb0db16BA4bb045a4C08Ee639Cb5639495";
 
 export const assets: SupportedAsset[] = [
   {
@@ -144,6 +145,17 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://explorer.mode.network", USDe),
     initialSupplyCap: parseEther(String(5_000_000)).toString(),
     initialBorrowCap: "1"
+  },
+  {
+    symbol: assetSymbols.dMBTC,
+    underlying: dMBTC,
+    name: "dMBTC",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", dMBTC)
   }
 ];
 

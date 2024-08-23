@@ -7,11 +7,12 @@ import { config as dotenv } from "dotenv";
 
 import "./tasks";
 
+dotenv();
+
 const accounts = [
   process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
 ];
 
-dotenv();
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();

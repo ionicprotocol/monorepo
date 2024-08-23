@@ -54,7 +54,7 @@ task("market:deploy", "deploy market")
     );
 
     const feeDistributor = await viem.getContractAt("FeeDistributor", config.feeDistributor);
-    const owner = await feeDistributor.read.owner();
+    const owner = (await feeDistributor.read.owner()) as Address;
     // Test Transaction
     const errorCode = await comptroller.simulate._deployMarket(
       [delegateType, constructorData, implementationData, collateralFactorBN],

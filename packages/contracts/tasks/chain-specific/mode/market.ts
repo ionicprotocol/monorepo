@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { Address, formatUnits, zeroAddress } from "viem";
+import { Address, formatUnits, parseEther, zeroAddress } from "viem";
 import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
@@ -8,7 +8,7 @@ import { COMPTROLLER_MAIN } from ".";
 
 const modeAssets = mode.assets;
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = ["sUSDe"];
+  const assetsToDeploy: string[] = [assetSymbols.dMBTC];
   for (const asset of modeAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
@@ -37,6 +37,19 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
       });
     }
   }
+});
+
+task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
+  const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4";
+  await run("market:set-supply-cap", {
+    market: cToken,
+    maxSupply: parseEther("2400").toString()
+  });
+
+  await run("market:set-borrow-cap", {
+    market: cToken,
+    maxBorrow: "1"
+  });
 });
 
 task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {

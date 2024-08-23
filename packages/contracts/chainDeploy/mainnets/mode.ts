@@ -1,14 +1,14 @@
-import { Address, Hash, Hex, zeroAddress } from "viem";
+import { Address, formatEther, Hash, Hex, zeroAddress } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracleDmBTC } from "../helpers";
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { addRedstoneWeETHFallbacks } from "../helpers/oracles/redstoneWeETHFallbacks";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
 import { underlying } from "../helpers/utils";
 import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, OracleTypes, ChainlinkSpecificParams, PythSpecificParams } from "@ionicprotocol/types";
-import { ChainlinkAsset, PythAsset } from "../types";
+import { ChainlinkAsset, PythAsset, UmbrellaAsset } from "../types";
 import { deployVelodromeOracle } from "../helpers/oracles/velodrome";
 
 export const deployConfig: ChainDeployConfig = {
@@ -50,7 +50,13 @@ export const deployConfig: ChainDeployConfig = {
 //     symbol: a.symbol as assetSymbols
 //   }));
 
-const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
+// const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
+
+const dMBTC = mode.assets.find((a) => a.symbol === assetSymbols.dMBTC);
+const pythDMBTC = {
+  feed: (dMBTC!.oracleSpecificParams as PythSpecificParams).feed,
+  underlying: dMBTC!.underlying
+} as UmbrellaAsset;
 
 // const api3Assets = [
 //   {
@@ -76,27 +82,38 @@ const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.Velod
 //   feed: asset.aggregator
 // }));
 
-export const deploy = async ({ run, viem, getNamedAccounts, deployments }: HardhatRuntimeEnvironment): Promise<void> => {
-  await deployVelodromeOracle({
-    viem,
-    assets: velodromeAssets,
-    deployConfig,
-    deployments,
-    getNamedAccounts,
-    pricesContract: "0xE60bf3d27842fdCAFC2F859032507bA653e0E9A6",
-    run
-  });
-  // await deployPythPriceOracle({
-  //   run,
-  //   deployConfig,
+export const deploy = async ({
+  run,
+  viem,
+  getNamedAccounts,
+  deployments
+}: HardhatRuntimeEnvironment): Promise<void> => {
+  const deployer = (await getNamedAccounts()).deployer;
+  console.log("deployer: ", deployer);
+  const publicClient = await viem.getPublicClient();
+  const balance = await publicClient.getBalance({ address: deployer as Address });
+  console.log("balance: ", formatEther(balance));
+  // await deployVelodromeOracle({
   //   viem,
-  //   getNamedAccounts,
+  //   assets: velodromeAssets,
+  //   deployConfig,
   //   deployments,
-  //   usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
-  //   pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
-  //   pythAssets,
-  //   nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
+  //   getNamedAccounts,
+  //   pricesContract: "0xE60bf3d27842fdCAFC2F859032507bA653e0E9A6",
+  //   run
   // });
+  await deployPythPriceOracleDmBTC({
+    run,
+    deployConfig,
+    viem,
+    getNamedAccounts,
+    deployments,
+    usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
+    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+    pythAssets: [pythDMBTC],
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+    dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
+  });
   // await deployChainlinkOracle({
   //   run,
   //   viem,
