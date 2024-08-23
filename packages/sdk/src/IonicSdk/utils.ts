@@ -1,4 +1,3 @@
-import UnitrollerArtifact from "../artifacts/Unitroller.json";
 import Filter from "bad-words";
 import {
   Address,
@@ -15,6 +14,7 @@ import {
   PublicClient
 } from "viem";
 
+import UnitrollerArtifact from "../artifacts/Unitroller.json";
 import { ionicComptrollerAbi, unitrollerAbi } from "../generated";
 
 export function filterOnlyObjectProperties(obj: any) {

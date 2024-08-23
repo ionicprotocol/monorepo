@@ -1,4 +1,3 @@
-import CErc20DelegatorArtifact from "../artifacts/CErc20Delegator.json";
 import { FundOperationMode, MarketConfig, NativePricedIonicAsset } from "@ionicprotocol/types";
 import {
   parseEther,
@@ -12,6 +11,7 @@ import {
   formatUnits
 } from "viem";
 
+import CErc20DelegatorArtifact from "../artifacts/CErc20Delegator.json";
 import { COMPTROLLER_ERROR_CODES } from "../IonicSdk/config";
 
 import { withCreateContracts } from "./CreateContracts";

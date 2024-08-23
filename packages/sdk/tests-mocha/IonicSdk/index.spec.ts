@@ -10,7 +10,7 @@ import {
   WalletClient
 } from "viem";
 
-import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
+import JumpRateModelArtifact from "../../src/artifacts/JumpRateModel.json";
 import { ionicComptrollerAbi, poolDirectoryAbi, unitrollerAbi } from "../../src/generated";
 import { IonicBase } from "../../src/IonicSdk/index";
 import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
