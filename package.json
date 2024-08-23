@@ -36,7 +36,7 @@
     "next": "^14.2.4"
   },
   "scripts": {
-    "build:sdk": "yarn build:types && yarn build:chains && yarn build:contracts && yarn workspace @ionicprotocol/sdk build",
+    "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/sdk build",
     "build:types": "yarn workspace @ionicprotocol/types build",
     "build:chains": "yarn build:types && yarn workspace @ionicprotocol/chains build",
     "build:security": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/security build",
@@ -49,7 +49,7 @@
     "build:pyth-updater": "yarn workspace @ionicprotocol/pyth-updater build",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:pyth-updater": "yarn build:sdk && yarn build:pyth-updater",
-    "build:deploy:ui": "yarn build:contracts && yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
+    "build:deploy:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && yarn build:functions",
     "dev:ui": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn workspace @ionicprotocol/ui dev",
     "dev:liquidator": "yarn workspace @ionicprotocol/liquidator dev",
     "dev:functions": "yarn build:sdk && yarn workspace @ionicprotocol/security build && yarn build:ui && netlify dev",

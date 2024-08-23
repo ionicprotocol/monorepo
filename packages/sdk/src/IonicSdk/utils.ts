@@ -1,4 +1,4 @@
-import UnitrollerArtifact from "@ionicprotocol/contracts/artifacts/contracts/compound/Unitroller.sol/Unitroller.json";
+import UnitrollerArtifact from "../artifacts/Unitroller.json";
 import Filter from "bad-words";
 import {
   Address,

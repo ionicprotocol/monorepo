@@ -1956,11 +1956,11 @@ __metadata:
     typescript: "npm:^5.5.3"
     typescript-eslint: "npm:^7.14.1"
     utf-8-validate: "npm:^6.0.4"
-    viem: "npm:^2.16.5"
+    viem: "npm:^2.16.3"
   languageName: unknown
   linkType: soft
 
-"@ionicprotocol/contracts@workspace:*, @ionicprotocol/contracts@workspace:packages/contracts":
+"@ionicprotocol/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
   resolution: "@ionicprotocol/contracts@workspace:packages/contracts"
   dependencies:
@@ -2097,7 +2097,6 @@ __metadata:
   resolution: "@ionicprotocol/sdk@workspace:packages/sdk"
   dependencies:
     "@ionicprotocol/chains": "workspace:*"
-    "@ionicprotocol/contracts": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
     "@supabase/supabase-js": "npm:^2.44.1"
     "@types/bad-words": "npm:^3.0.1"

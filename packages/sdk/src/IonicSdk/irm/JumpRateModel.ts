@@ -1,6 +1,6 @@
-import JumpRateModelArtifact from "@ionicprotocol/contracts/artifacts/contracts/compound/JumpRateModel.sol/JumpRateModel.json";
 import { Address, Hex, keccak256, parseEther, PublicClient } from "viem";
 
+import JumpRateModelArtifact from "../../artifacts/JumpRateModel.json";
 import { cTokenFirstExtensionAbi, jumpRateModelAbi } from "../../generated";
 import { getContract } from "../utils";
 

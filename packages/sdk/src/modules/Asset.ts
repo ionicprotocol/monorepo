@@ -1,4 +1,4 @@
-import CErc20DelegatorArtifact from "@ionicprotocol/contracts/artifacts/contracts/compound/CErc20Delegator.sol/CErc20Delegator.json";
+import CErc20DelegatorArtifact from "../artifacts/CErc20Delegator.json";
 import { FundOperationMode, MarketConfig, NativePricedIonicAsset } from "@ionicprotocol/types";
 import {
   parseEther,
