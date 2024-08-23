@@ -58,14 +58,14 @@ export const getPoolUnitroller = (
   poolAddress: Address,
   walletClient: WalletClient
 ): GetContractReturnType<typeof unitrollerAbi, PublicClient> => {
-  return getContract({ address: poolAddress, abi: unitrollerAbi, client: walletClient });
+  return getContract({ address: poolAddress, abi: unitrollerAbi, client: walletClient }) as any;
 };
 
 export const getPoolComptroller = (
   poolAddress: Address,
   walletClient: WalletClient
 ): GetContractReturnType<typeof ionicComptrollerAbi, PublicClient> => {
-  return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient });
+  return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient }) as any;
 };
 
 export const getContract = vGetContract;

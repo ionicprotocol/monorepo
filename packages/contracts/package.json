@@ -51,7 +51,7 @@
     "solidity-coverage": "^0.8.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
-    "viem": "^2.17.3"
+    "viem": "^2.16.3"
   },
   "overrides": {
     "typescript": "^5.5.3"

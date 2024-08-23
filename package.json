@@ -27,8 +27,7 @@
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "viem": "^2.7.16"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@next/react-dev-overlay": "^14.1.4",
