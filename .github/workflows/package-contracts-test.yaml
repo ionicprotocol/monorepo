@@ -39,7 +39,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Lint
-        run: yarn lint
+        run: yarn workspace @ionicprotocol/contracts lint
 
   build-and-test-mode:
     needs: [lint]
@@ -64,7 +64,7 @@ jobs:
           version: nightly
 
       - name: Install Forge dependencies
-        run: forge install
+        run: yarn workspace @ionicprotocol/contracts forge install
 
       - name: Forge RPC cache
         uses: actions/cache@v3
@@ -73,15 +73,15 @@ jobs:
           key: rpc-cache-local-${{ hashFiles('rpc-cache-keyfile') }}
 
       - name: Run base tests for Mode mainnet
-        run: forge test -vv --no-match-contract '${{ env.EXCLUDE_TESTS }}|${{ env.FLAKY_TESTS }}|${{ env.SLOW_TESTS }}'
+        run: yarn workspace @ionicprotocol/contracts forge test -vv --no-match-contract '${{ env.EXCLUDE_TESTS }}|${{ env.FLAKY_TESTS }}|${{ env.SLOW_TESTS }}'
 
       - name: Run slow tests for Mode mainnet
         if: always()
-        run: forge test -vv --match-contract '${{ env.SLOW_TESTS }}'
+        run: yarn workspace @ionicprotocol/contracts forge test -vv --match-contract '${{ env.SLOW_TESTS }}'
 
       - name: Run flaky tests for Mode mainnet
         if: always()
-        run: forge test -vv --match-contract '${{ env.FLAKY_TESTS }}'
+        run: yarn workspace @ionicprotocol/contracts forge test -vv --match-contract '${{ env.FLAKY_TESTS }}'
 
   build-and-test-local:
     needs: [lint]
@@ -104,7 +104,7 @@ jobs:
           version: nightly
 
       - name: Install Forge dependencies
-        run: forge install
+        run: yarn workspace @ionicprotocol/contracts forge install
 
       - name: Forge RPC cache
         uses: actions/cache@v3
@@ -113,4 +113,4 @@ jobs:
           key: rpc-cache-local-${{ hashFiles('rpc-cache-keyfile') }}
 
       - name: Run forge tests locally
-        run: forge test -vv --no-match-contract 'Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test'
+        run: yarn workspace @ionicprotocol/contracts forge test -vv --no-match-contract 'Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test'
