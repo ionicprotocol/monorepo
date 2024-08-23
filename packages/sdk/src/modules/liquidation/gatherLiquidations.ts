@@ -22,6 +22,7 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
   botType: BotType
 ): Promise<Array<T>> {
   const users: Array<T> = [];
+  let i: number = 0;
   for (const user of poolUsers) {
     const userAssets = (await sdk.contracts.PoolLens.simulate.getPoolAssetsByUser([pool.comptroller, user.account]))
       .result;
@@ -52,6 +53,7 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
         chainLiquidationConfig
       );
     }
+    sdk.logger.info(`${++i}/${poolUsers.length}`);
     if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as unknown as T);
   }
   return users;
