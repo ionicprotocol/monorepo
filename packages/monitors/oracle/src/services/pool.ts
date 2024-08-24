@@ -22,7 +22,7 @@ export class PoolService {
       const comptroller: any = this.sdk.createComptroller(
         pool.comptroller,
         this.sdk.publicClient as PublicClient,
-        this.sdk.walletClient as WalletClient
+        this.sdk.walletClient as WalletClient,
       );
       const market = await comptroller.read.cTokensByUnderlying([this.asset.underlying]);
       if (market !== zeroAddress) {

@@ -22,7 +22,7 @@ export class AdminService {
   async pauseAllPools(pools: Array<GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>>) {
     for (const pool of pools) {
       const cTokenAddress = await pool.read.cTokensByUnderlying([this.asset.underlying]);
-      const cToken : any = this.sdk.createICErc20(cTokenAddress, this.publicClient, this.admin);
+      const cToken: any = this.sdk.createICErc20(cTokenAddress, this.publicClient, this.admin);
       await this.pauseMarketActivity(pool, cToken);
     }
   }
