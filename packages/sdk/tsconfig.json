@@ -6,20 +6,20 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "outDir": "./dist",                   // Output compiled files to the dist directory
-    "rootDir": "./src",                   // Specify the root directory of input files
+    "outDir": "./dist", // Output compiled files to the dist directory
+    "rootDir": "./src", // Specify the root directory of input files
     "composite": true,
-    "declaration": true,                  // Generate .d.ts files for TypeScript types
-    "declarationMap": true,               // Create sourcemaps for .d.ts files
-    "sourceMap": true,                    // Create sourcemaps for JavaScript files
-    "strict": true,                       // Enable all strict type-checking options
-    "skipLibCheck": true                  // Skip type checking of declaration files
+    "declaration": true, // Generate .d.ts files for TypeScript types
+    "declarationMap": true, // Create sourcemaps for .d.ts files
+    "sourceMap": true, // Create sourcemaps for JavaScript files
+    "strict": true, // Enable all strict type-checking options
+    "skipLibCheck": true // Skip type checking of declaration files
   },
-  "include": ["./src/**/*", "./artifacts/**/*.json"],  // Include source files and JSON files
+  "include": ["./src/**/*", "./artifacts/**/*.json"], // Include source files and JSON files
   "exclude": [
-    "./typechain/**/*",                   // Exclude typechain generated files
-    "./dist/**/*",                        // Exclude the dist directory
-    "./node_modules/**/*",                // Exclude node_modules
-    "./artifacts/**/*"                    // Exclude artifacts if needed
+    "./typechain/**/*", // Exclude typechain generated files
+    "./dist/**/*", // Exclude the dist directory
+    "./node_modules/**/*", // Exclude node_modules
+    "./artifacts/**/*" // Exclude artifacts if needed
   ]
 }
