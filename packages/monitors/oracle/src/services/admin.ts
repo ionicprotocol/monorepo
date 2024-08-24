@@ -3,7 +3,7 @@ import { SupportedAsset } from "@ionicprotocol/types";
 import { Address, GetContractReturnType, PublicClient, WalletClient, zeroAddress } from "viem";
 
 export class AdminService {
-  admin: WalletClient;
+  admin: WalletClient | any;
   publicClient: PublicClient;
   adminAddress: Address;
   sdk: IonicSdk;
@@ -22,7 +22,7 @@ export class AdminService {
   async pauseAllPools(pools: Array<GetContractReturnType<typeof ionicComptrollerAbi, PublicClient>>) {
     for (const pool of pools) {
       const cTokenAddress = await pool.read.cTokensByUnderlying([this.asset.underlying]);
-      const cToken = this.sdk.createICErc20(cTokenAddress, this.publicClient, this.admin);
+      const cToken : any = this.sdk.createICErc20(cTokenAddress, this.publicClient, this.admin);
       await this.pauseMarketActivity(pool, cToken);
     }
   }
