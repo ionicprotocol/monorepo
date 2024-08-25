@@ -43,7 +43,7 @@ task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { 
   const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4";
   await run("market:set-supply-cap", {
     market: cToken,
-    maxSupply: parseEther("2400").toString()
+    maxSupply: parseEther(String(2400 * 100000)).toString()
   });
 
   await run("market:set-borrow-cap", {
