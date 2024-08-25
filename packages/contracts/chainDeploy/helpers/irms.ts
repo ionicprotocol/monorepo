@@ -7,7 +7,7 @@ import { IrmDeployFnParams } from "../types";
 
 import { underlying } from "./utils";
 
-const PRUDENTIA_RATE_CONTROLLER_MODE = "0xC40753877CfeF6f50E13695395c58357505719F8";
+const PRUDENTIA_RATE_CONTROLLER_MODE = "0x09D7EC8d023859b48a634d425bfEf29622272aFa";
 
 type PrudentiaConfig = {
   blocksPerYear: number;

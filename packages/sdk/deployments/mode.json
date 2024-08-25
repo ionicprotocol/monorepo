@@ -192,13 +192,13 @@
       "address": "0x7Ea7BB80F3bBEE9b52e6Ed3775bA06C9C80D4154"
     },
     "PrudentiaInterestRateModel_USDC": {
-      "address": "0x6a40D802080a37E210Ec87735ABF995b5BC636A6"
+      "address": "0x3FA7F3a4127860C7c9b8130e472315c0a60275E1"
     },
     "PrudentiaInterestRateModel_USDT": {
-      "address": "0xC58DCC0cbc02355cF1aD6b5398dE49152ae72E2E"
+      "address": "0x50a06Be730df06849b15d3dF9eC4ef6AE281Cd03"
     },
     "PrudentiaInterestRateModel_WETH": {
-      "address": "0xb0a9B9F6FD960108df5B508DA5abe476d8e37F09"
+      "address": "0xF2202a89b19c7f395187DC1e374814EF56180Af8"
     },
     "PythPriceOracle": {
       "address": "0x52Ee6E740C1785412e51A381B0d87fb1692a7b23"
