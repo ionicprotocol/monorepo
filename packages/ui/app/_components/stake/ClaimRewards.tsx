@@ -122,7 +122,13 @@ const DisplayAndClaimRewards = ({
     abi: StakingContractAbi,
     address: getStakingToContract(+chain, selectedtoken),
     args: [address],
-    functionName: 'earned'
+    functionName: 'earned',
+    chainId: +chain,
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error']
+    }
   });
   const { writeContractAsync } = useWriteContract();
   // const chainId = useChainId();
@@ -148,7 +154,8 @@ const DisplayAndClaimRewards = ({
         abi: StakingContractAbi,
         address: getStakingToContract(+chain, selectedtoken),
         args: [address],
-        functionName: 'getReward'
+        functionName: 'getReward',
+        chainId: +chain
       });
       setHash(claiming);
 
@@ -199,15 +206,22 @@ const DisplayAndClaimTradingFees = ({
         abi: TradingAbi,
         address: getTradingContractAddress(+chain),
         args: [address],
-        functionName: 'claimable0'
+        functionName: 'claimable0',
+        chainId: +chain
       },
       {
         abi: TradingAbi,
         address: getTradingContractAddress(+chain),
         args: [address],
-        functionName: 'claimable1'
+        functionName: 'claimable1',
+        chainId: +chain
       }
-    ]
+    ],
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error']
+    }
   });
   const { writeContractAsync } = useWriteContract();
   const [hash, setHash] = useState<Hex | undefined>();

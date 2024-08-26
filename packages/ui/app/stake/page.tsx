@@ -141,7 +141,7 @@ export default function Stake() {
       // refetchInterval: 5000
     }
   });
-  console.log(reserves);
+  // console.log(reserves);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function calculateReserves(ion: string, data: [bigint, bigint]) {
@@ -187,7 +187,7 @@ export default function Stake() {
       enabled: true,
       gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
-      placeholderData: 0n,
+      placeholderData: 0n
       // refetchInterval: 4000
     }
   });
