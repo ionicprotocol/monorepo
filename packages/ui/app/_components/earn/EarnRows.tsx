@@ -22,6 +22,7 @@ export type EarnRow = {
   protocol: string;
   tvl: number;
   tvlpool?: string;
+  rewards: Record<number, { peaks: boolean }>;
 };
 
 // type EarnRowsParams = {
@@ -35,7 +36,8 @@ export default function EarnRows({
   tvlpool,
   tvl,
   link,
-  poolChain
+  poolChain,
+  rewards
   // getTvl,
   // getApr,
 }: EarnRow) {
@@ -48,7 +50,7 @@ export default function EarnRows({
     poolChainId: poolChain,
     assets: asset
   });
-  // console.log(tvlval);
+  // console.log(rewards);
 
   const totaltvl = tvlval?.reduce((acc, tvl) => acc + Number(tvl), 0) ?? 0;
   return (
@@ -107,12 +109,12 @@ export default function EarnRows({
             {apr && Number(apr) > 0 ? apr : '∞'}%
           </div>
           <span
-            className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-auto md:ml-0 text-center`}
+            className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
           <a
-            className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 text-center ml-1 md:ml-0`}
+            className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
@@ -123,27 +125,11 @@ export default function EarnRows({
               src="https://img.icons8.com/material-outlined/24/external-link.png"
             />
           </a>
-          <div
-            className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
-          >
-            Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
-            <div className="flex pt-4">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/ionic-sq.png"
-              />{' '}
-              + 3x Ionic Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/images/turtle-ionic.png"
-              />{' '}
-              + Turtle Ionic Points
-            </div>
-          </div>
+          <EarnPopup
+            apr={apr}
+            rewards={rewards}
+            poolChain={poolChain}
+          />
         </div>
         <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-2 ">
           <span className="text-white/40 text-xs font-semibold md:hidden">
@@ -175,3 +161,47 @@ export default function EarnRows({
     </>
   );
 }
+
+export const EarnPopup = ({
+  apr,
+  rewards,
+  poolChain
+}: {
+  apr: number;
+  rewards: Record<number, { peaks: boolean }>;
+  poolChain: number;
+}) => {
+  return (
+    <div
+      className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+    >
+      Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
+      <div className="flex pt-4">
+        <img
+          alt=""
+          className="size-4 rounded mr-1"
+          src="/img/ionic-sq.png"
+        />{' '}
+        + 3x Ionic Points
+      </div>
+      <div className="flex">
+        <img
+          alt=""
+          className="size-4 rounded mr-1"
+          src="/images/turtle-ionic.png"
+        />{' '}
+        + Turtle Ionic Points
+      </div>
+      {rewards[poolChain]?.peaks && (
+        <div className="flex">
+          <img
+            alt=""
+            className="size-4 rounded mr-1 inline-block"
+            src="/img/symbols/32/color/peaks.png"
+          />
+          + Peaks Points
+        </div>
+      )}
+    </div>
+  );
+};

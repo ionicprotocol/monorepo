@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { base, mode } from 'viem/chains';
 
+import CommingSoon from '../_components/earn/CommingSoon';
 import EarnRows, { type EarnRow } from '../_components/earn/EarnRows';
 
 const earnOpps: EarnRow[] = [
@@ -11,7 +12,12 @@ const earnOpps: EarnRow[] = [
     asset: ['ION', 'WETH'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
-    link: 'https://velodrome.finance/deposit?token0=0x18470019bF0E94611f15852F7e93cf5D65BC34CA&token1=0x4200000000000000000000000000000000000006&type=-1',
+    rewards: {
+      [mode.id]: {
+        peaks: false
+      }
+    },
+    link: 'https://app.ionic.money/stake?chain=34443&token=weth',
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',
@@ -23,7 +29,12 @@ const earnOpps: EarnRow[] = [
     asset: ['ION', 'WETH'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
-    link: '-',
+    rewards: {
+      [base.id]: {
+        peaks: false
+      }
+    },
+    link: 'https://app.ionic.money/stake?chain=8453',
     network: 'base',
     poolChain: base.id,
     protocol: 'Aerodrome Finance',
@@ -35,7 +46,12 @@ const earnOpps: EarnRow[] = [
     asset: ['ION', 'MODE'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
-    link: 'https://velodrome.finance/deposit?token0=0x18470019bF0E94611f15852F7e93cf5D65BC34CA&token1=0x4200000000000000000000000000000000000006&type=-1',
+    rewards: {
+      [mode.id]: {
+        peaks: false
+      }
+    },
+    link: 'https://app.ionic.money/stake?chain=34443&token=mode',
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',
@@ -73,6 +89,11 @@ const earnOpps: EarnRow[] = [
         console.error(err);
       }
     },
+    rewards: {
+      [mode.id]: {
+        peaks: false
+      }
+    },
     link: 'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443',
     network: 'mode',
     protocol: 'Steer',
@@ -84,6 +105,11 @@ const earnOpps: EarnRow[] = [
     asset: ['ionUSDC'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
+    rewards: {
+      [mode.id]: {
+        peaks: true
+      }
+    },
     link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDC',
     network: 'mode',
     protocol: 'Davos',
@@ -95,6 +121,11 @@ const earnOpps: EarnRow[] = [
     asset: ['ionUSDT'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
+    rewards: {
+      [mode.id]: {
+        peaks: true
+      }
+    },
     link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDT',
     network: 'mode',
     protocol: 'Davos',
@@ -143,7 +174,17 @@ export default function Earn() {
         {/* this will get mapped out in future with the possible api data structure mentioned below */}
         {rows.map(
           (
-            { apr, asset, network, protocol, tvl, link, poolChain, tvlpool },
+            {
+              apr,
+              asset,
+              network,
+              protocol,
+              tvl,
+              link,
+              poolChain,
+              tvlpool,
+              rewards
+            },
             idx
           ) => (
             <EarnRows
@@ -156,9 +197,18 @@ export default function Earn() {
               poolChain={poolChain}
               link={link}
               key={idx}
+              rewards={rewards}
             />
           )
         )}
+        <CommingSoon
+          linktoProtocol={'https://www.tren.finance'}
+          additionalText={'Tren Finance'}
+        />
+        <CommingSoon
+          linktoProtocol={'https://peapods.finance'}
+          additionalText={'Peapods Finance'}
+        />
       </div>
     </>
   );
