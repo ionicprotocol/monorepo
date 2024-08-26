@@ -1,0 +1,59 @@
+{
+  "name": "@ionicprotocol/contracts",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "build": "hardhat compile",
+    "test:forge": "forge test",
+    "forge": "forge",
+    "forge:install": "forge install",
+    "forge:build": "forge build",
+    "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol' --config .prettierrc",
+    "lint": "prettier --list-different 'contracts/**/*.sol'",
+    "export:all": "yarn export:mode && yarn export:base && yarn export:optimism && yarn export:fraxtal",
+    "export:mode": "hardhat export --network mode --export ../sdk/deployments/mode.json && node ./scripts/prune.js ../sdk/deployments/mode.json",
+    "export:base": "hardhat export --network base --export ../sdk/deployments/base.json && node ./scripts/prune.js ../sdk/deployments/base.json",
+    "export:optimism": "hardhat export --network optimism --export ../sdk/deployments/optimism.json && node ./scripts/prune.js ../sdk/deployments/optimism.json",
+    "export:fraxtal": "hardhat export --network fraxtal --export ../sdk/deployments/fraxtal.json && node ./scripts/prune.js ../sdk/deployments/fraxtal.json",
+    "prune": "node ./scripts/prune.js ../sdk/deployments/*.json",
+    "generate": "yarn forge:build && wagmi generate"
+  },
+  "files": [
+    "contracts"
+  ],
+  "author": "Ionic Protocol",
+  "license": "ISC",
+  "dependencies": {
+    "@ionicprotocol/chains": "workspace:*",
+    "@ionicprotocol/types": "workspace:*",
+    "@types/chai": "^4.3.17",
+    "@types/chai-as-promised": "^7.1.8",
+    "@types/mocha": "^10.0.7",
+    "chai": "^4"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-foundry": "^1.1.2",
+    "@nomicfoundation/hardhat-ignition": "^0.15.5",
+    "@nomicfoundation/hardhat-ignition-viem": "^0.15.5",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.11",
+    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.9",
+    "@nomicfoundation/hardhat-viem": "^2.0.3",
+    "@nomicfoundation/ignition-core": "^0.15.5",
+    "@wagmi/cli": "^2.1.15",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.6",
+    "hardhat-deploy": "^0.12.4",
+    "hardhat-gas-reporter": "^2.2.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-solidity": "^1.3.1",
+    "solidity-coverage": "^0.8.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "viem": "^2.16.3"
+  },
+  "overrides": {
+    "typescript": "^5.5.3"
+  }
+}

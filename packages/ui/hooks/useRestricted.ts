@@ -36,7 +36,7 @@ export const useRestricted = (
           const comptroller = sdk.createComptroller(
             comptrollerAddress,
             sdk.publicClient,
-            sdk.walletClient
+            sdk.walletClient as any
           );
 
           await Promise.all(

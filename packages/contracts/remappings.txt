@@ -1,0 +1,6 @@
+flywheel/=lib/fuse-flywheel/lib/flywheel-v2/src/
+solidity-bytes-utils/=lib/solidity-bytes-utils/
+@openzeppelin=lib/openzeppelin-contracts/
+@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/
+@pythnetwork/express-relay-sdk-solidity/=lib/pyth-crosschain/express_relay/sdk/solidity
+adrastia-periphery/=lib/adrastia-periphery/contracts/

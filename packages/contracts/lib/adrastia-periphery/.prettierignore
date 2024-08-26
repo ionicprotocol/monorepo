@@ -1,0 +1,21 @@
+# Node files
+node_modules
+package.json
+yarn.lock
+
+# Hardhat files
+cache
+artifacts
+
+# Coverage reports
+coverage.json
+coverage
+
+# IDEs
+.vscode
+
+# Compilers
+soljson-*
+
+# Markdown files
+*.md

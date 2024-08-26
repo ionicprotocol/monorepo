@@ -11,8 +11,12 @@
     "packages/sdk",
     "packages/security",
     "packages/types",
-    "packages/ui"
+    "packages/ui",
+    "packages/contracts"
   ],
+  "resolutions": {
+    "viem": "^2.16.3"
+  },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.6",
@@ -20,14 +24,13 @@
     "@types/rimraf": "^3",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
-    "eslint": "^9.6.0",
+    "eslint": "^8",
     "eslint-config-prettier": "^9.1.0",
     "netlify-cli": "^17.32.0",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "viem": "^2.7.16"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@next/react-dev-overlay": "^14.1.4",
@@ -41,6 +44,7 @@
     "build:security": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/security build",
     "build:ui": "yarn workspace @ionicprotocol/ui build",
     "build:functions": "yarn workspace @ionicprotocol/functions build",
+    "build:contracts": "yarn workspace @ionicprotocol/contracts build",
     "build:liquidator": "yarn workspace @ionicprotocol/liquidator build",
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
     "build:oracles-monitor": "yarn workspace @ionicprotocol/oracles-monitor build",

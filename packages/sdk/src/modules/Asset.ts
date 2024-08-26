@@ -11,7 +11,7 @@ import {
   formatUnits
 } from "viem";
 
-import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.sol/CErc20Delegator.json";
+import CErc20DelegatorArtifact from "../artifacts/CErc20Delegator.json";
 import { COMPTROLLER_ERROR_CODES } from "../IonicSdk/config";
 
 import { withCreateContracts } from "./CreateContracts";
@@ -136,7 +136,7 @@ export function withAsset<TBase extends IonicBaseConstructorWithModules>(
         encodePacked(["address", "address", "uint"], [config.comptroller, config.underlying, marketCounter])
       );
       const byteCodeHash = keccak256(
-        ((CErc20DelegatorArtifact.bytecode.object as Address) + constructorData.substring(2)) as Address
+        ((CErc20DelegatorArtifact.bytecode as Address) + constructorData.substring(2)) as Address
       );
       const cErc20DelegatorAddress = getContractAddress({
         bytecode: byteCodeHash,

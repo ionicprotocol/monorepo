@@ -9,11 +9,14 @@
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
-    "outDir": "./dist/esm",
+    "outDir": "./dist/esm/src", // Output directory for ES modules
+    "rootDir": "./src", // Root directory for the input files
     "declaration": true,
+    "declarationMap": true, // Optional: Generate declaration maps
+    "sourceMap": true, // Optional: Generate source maps
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false
   },
-  "include": ["./src"],
-  "exclude": ["./typechain"]
+  "include": ["./src/**/*"], // Include all files in the src directory
+  "exclude": ["./typechain", "./dist", "./node_modules"] // Exclude generated, output, and dependency files
 }

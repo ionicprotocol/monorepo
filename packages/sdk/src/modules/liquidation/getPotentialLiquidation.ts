@@ -84,7 +84,7 @@ export default async function getPotentialLiquidation(
 
   // USDC: 6 decimals
   let repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
-  const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken), liquidationIncentive);
+  const penalty = await getLiquidationPenalty(sdk.createICErc20(collateralAsset.cToken) as any, liquidationIncentive);
 
   // Scale to 18 decimals
   let liquidationValue = (repayAmount * debtAssetUnderlyingPrice) / 10n ** BigInt(debtAssetDecimals);
