@@ -10,19 +10,7 @@ import { mode } from 'viem/chains';
 // import { BaseContractABI } from '@ui/constants/baselp';
 import { pools } from '@ui/constants/index';
 import { useTvl } from '@ui/hooks/useTvl';
-
-export type EarnRow = {
-  apr: number;
-  asset: string[]; //name of the asset in uppercase array
-  getApr?: () => Promise<number>;
-  getTvl?: () => Promise<number>;
-  link: string;
-  network: string;
-  poolChain: number;
-  protocol: string;
-  tvl: number;
-  tvlpool?: string;
-};
+import type { EarnRow, IRewards } from '@ui/utils/earnUtils';
 
 // type EarnRowsParams = {
 //   rows: EarnRow[];
@@ -35,7 +23,9 @@ export default function EarnRows({
   tvlpool,
   tvl,
   link,
-  poolChain
+  poolChain,
+  rewards,
+  live
   // getTvl,
   // getApr,
 }: EarnRow) {
@@ -48,7 +38,7 @@ export default function EarnRows({
     poolChainId: poolChain,
     assets: asset
   });
-  // console.log(tvlval);
+  // console.log(rewards);
 
   const totaltvl = tvlval?.reduce((acc, tvl) => acc + Number(tvl), 0) ?? 0;
   return (
@@ -107,43 +97,29 @@ export default function EarnRows({
             {apr && Number(apr) > 0 ? apr : '∞'}%
           </div>
           <span
-            className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-auto md:ml-0 text-center`}
+            className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <a
-            className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 text-center ml-1 md:ml-0`}
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            + TURTLE{' '}
-            <img
-              alt="external-link"
-              className={`w-3 h-3 inline-block`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
-          <div
-            className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
-          >
-            Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
-            <div className="flex pt-4">
+          {rewards[poolChain]?.turtle && (
+            <a
+              className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
+              + TURTLE{' '}
               <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/ionic-sq.png"
-              />{' '}
-              + 3x Ionic Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/images/turtle-ionic.png"
-              />{' '}
-              + Turtle Ionic Points
-            </div>
-          </div>
+                alt="external-link"
+                className={`w-3 h-3 inline-block`}
+                src="https://img.icons8.com/material-outlined/24/external-link.png"
+              />
+            </a>
+          )}
+          <EarnPopup
+            apr={apr}
+            rewards={rewards}
+            poolChain={poolChain}
+          />
         </div>
         <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-2 ">
           <span className="text-white/40 text-xs font-semibold md:hidden">
@@ -160,11 +136,11 @@ export default function EarnRows({
         </div>
         <div className="col-span-1"> </div>
         <Link
-          className="col-span-2 w-full text-xs bg-accent text-darkone rounded-md py-1.5 px-3 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-1.5"
+          className={`col-span-2 w-full text-xs ${live ? 'bg-accent' : 'bg-accent/50'} text-darkone rounded-md py-1.5 px-3 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-1.5`}
           href={link}
           target="_blank"
         >
-          <span>DEPOSIT</span>
+          <span>{live ? 'DEPOSIT' : 'Coming Soon'}</span>
           <img
             alt="external-link"
             className={`w-3 h-3`}
@@ -175,3 +151,47 @@ export default function EarnRows({
     </>
   );
 }
+
+export const EarnPopup = ({
+  apr,
+  rewards,
+  poolChain
+}: {
+  apr: number;
+  rewards: Record<number, IRewards>;
+  poolChain: number;
+}) => {
+  return (
+    <div
+      className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+    >
+      Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
+      <div className="flex pt-4">
+        <img
+          alt=""
+          className="size-4 rounded mr-1"
+          src="/img/ionic-sq.png"
+        />{' '}
+        + {rewards[poolChain]?.points?.ionic}x Ionic Points
+      </div>
+      <div className="flex">
+        <img
+          alt=""
+          className="size-4 rounded mr-1"
+          src="/images/turtle-ionic.png"
+        />{' '}
+        + {rewards[poolChain]?.points?.turtle}x Turtle Points
+      </div>
+      {rewards[poolChain]?.peaks && (
+        <div className="flex">
+          <img
+            alt=""
+            className="size-4 rounded mr-1 inline-block"
+            src="/img/symbols/32/color/peaks.png"
+          />
+          + Peaks Points
+        </div>
+      )}
+    </div>
+  );
+};
