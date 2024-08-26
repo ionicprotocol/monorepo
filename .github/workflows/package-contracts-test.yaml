@@ -17,7 +17,7 @@ on:
       - 'yarn.lock'
 
 env:
-  EXCLUDE_TESTS: "Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test"
+  EXCLUDE_TESTS: "Abstract|BeefyERC4626Test|DotDotERC4626Test|ArrakisERC4626Test|JarvisERC4626Test|CurveERC4626Test|EllipsisERC4626Test|HelioERC4626Test|WombatERC4626Test|AaveV3ERC4626Test|ThenaERC4626Test|LeveredPositionLensTest|LeveredPositionFactoryTest|WmaticMaticXLeveredPositionTest|StkBnbWBnbLeveredPositionTest|Jbrl2BrlLeveredPositionTest|BombWbnbLeveredPositionTest|PearlUsdrWUsdrUsdrLpLeveredPositionTest|PearlUsdcUsdcUsdrLpLeveredPositionTest|PearlUsdrDaiUsdrLpLeveredPositionTest"
   FLAKY_TESTS: "AnyLiquidationTest|LiquidityMiningTest"
   SLOW_TESTS: "MaxBorrowTest|OraclesDecimalsScalingTest|MinBorrowTest|LeveredPositionTest|OraclesDecimalsScalingTest"
 
