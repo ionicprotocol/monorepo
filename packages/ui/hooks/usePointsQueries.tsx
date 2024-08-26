@@ -510,21 +510,6 @@ const usePointsForBorrowModeNative = () => {
 const usePointsForIonLpMode = () => {
   const { address } = useMultiIonic();
 
-  console.log(
-    '🚀 ~ queryFn: ~ usePointsForIonLpMode: ',
-    getSupplyQuery(
-      address?.toLowerCase(),
-      ionLPMultipliersMode.ionMultiplier,
-      ionLPMultipliersMode.market,
-      SEASON_2_START_DATE,
-      ionLPMultipliersMode.priceMultiplier,
-      ionLPMultipliersMode.decimals,
-      true,
-      ionLPMultipliersMode.filterIn,
-      ionLPMultipliersMode.filterOut
-    )
-  );
-
   return useQuery({
     gcTime: Infinity,
     queryFn: async () => {
@@ -562,21 +547,6 @@ const usePointsForIonLpMode = () => {
 
 const usePointsForIonLpBase = () => {
   const { address } = useMultiIonic();
-
-  console.log(
-    '🚀 ~ queryFn: ~ usePointsForIonLpBase:',
-    getSupplyQuery(
-      address?.toLowerCase(),
-      ionLPMultipliersBase.ionMultiplier,
-      ionLPMultipliersBase.market,
-      SEASON_2_START_DATE,
-      ionLPMultipliersBase.priceMultiplier,
-      ionLPMultipliersBase.decimals,
-      true,
-      ionLPMultipliersBase.filterIn,
-      ionLPMultipliersBase.filterOut
-    )
-  );
 
   return useQuery({
     gcTime: Infinity,
