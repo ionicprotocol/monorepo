@@ -10,20 +10,7 @@ import { mode } from 'viem/chains';
 // import { BaseContractABI } from '@ui/constants/baselp';
 import { pools } from '@ui/constants/index';
 import { useTvl } from '@ui/hooks/useTvl';
-
-export type EarnRow = {
-  apr: number;
-  asset: string[]; //name of the asset in uppercase array
-  getApr?: () => Promise<number>;
-  getTvl?: () => Promise<number>;
-  link: string;
-  network: string;
-  poolChain: number;
-  protocol: string;
-  tvl: number;
-  tvlpool?: string;
-  rewards: Record<number, { peaks: boolean }>;
-};
+import type { EarnRow, IRewards } from '@ui/utils/earnUtils';
 
 // type EarnRowsParams = {
 //   rows: EarnRow[];
@@ -37,7 +24,8 @@ export default function EarnRows({
   tvl,
   link,
   poolChain,
-  rewards
+  rewards,
+  live
   // getTvl,
   // getApr,
 }: EarnRow) {
@@ -113,18 +101,20 @@ export default function EarnRows({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          <a
-            className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
-            href="https://turtle.club/dashboard/?ref=IONIC"
-            target="_blank"
-          >
-            + TURTLE{' '}
-            <img
-              alt="external-link"
-              className={`w-3 h-3 inline-block`}
-              src="https://img.icons8.com/material-outlined/24/external-link.png"
-            />
-          </a>
+          {rewards[poolChain]?.turtle && (
+            <a
+              className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
+              href="https://turtle.club/dashboard/?ref=IONIC"
+              target="_blank"
+            >
+              + TURTLE{' '}
+              <img
+                alt="external-link"
+                className={`w-3 h-3 inline-block`}
+                src="https://img.icons8.com/material-outlined/24/external-link.png"
+              />
+            </a>
+          )}
           <EarnPopup
             apr={apr}
             rewards={rewards}
@@ -146,11 +136,11 @@ export default function EarnRows({
         </div>
         <div className="col-span-1"> </div>
         <Link
-          className="col-span-2 w-full text-xs bg-accent text-darkone rounded-md py-1.5 px-3 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-1.5"
+          className={`col-span-2 w-full text-xs ${live ? 'bg-accent' : 'bg-accent/50'} text-darkone rounded-md py-1.5 px-3 font-semibold cursor-pointer mx-auto flex items-center justify-center gap-1.5`}
           href={link}
           target="_blank"
         >
-          <span>DEPOSIT</span>
+          <span>{live ? 'DEPOSIT' : 'Coming Soon'}</span>
           <img
             alt="external-link"
             className={`w-3 h-3`}
@@ -168,7 +158,7 @@ export const EarnPopup = ({
   poolChain
 }: {
   apr: number;
-  rewards: Record<number, { peaks: boolean }>;
+  rewards: Record<number, IRewards>;
   poolChain: number;
 }) => {
   return (
@@ -182,7 +172,7 @@ export const EarnPopup = ({
           className="size-4 rounded mr-1"
           src="/img/ionic-sq.png"
         />{' '}
-        + 3x Ionic Points
+        + {rewards[poolChain]?.points?.ionic}x Ionic Points
       </div>
       <div className="flex">
         <img
@@ -190,7 +180,7 @@ export const EarnPopup = ({
           className="size-4 rounded mr-1"
           src="/images/turtle-ionic.png"
         />{' '}
-        + Turtle Ionic Points
+        + {rewards[poolChain]?.points?.turtle}x Turtle Points
       </div>
       {rewards[poolChain]?.peaks && (
         <div className="flex">
