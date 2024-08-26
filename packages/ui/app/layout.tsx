@@ -188,6 +188,14 @@ export default function RootLayout({
                               GitHub
                             </a>
                           </li>
+                          <li className="mb-1">
+                            <a
+                              href="https://status.ionic.money/"
+                              target="_blank"
+                            >
+                              Status
+                            </a>
+                          </li>
                         </ul>
                       </div>
 
