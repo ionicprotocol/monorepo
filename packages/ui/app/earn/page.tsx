@@ -2,56 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-import EarnRows, { type EarnRow } from '../_components/earn/EarnRows';
+import EarnRows from '../_components/earn/EarnRows';
 
-const earnOpps: EarnRow[] = [
-  {
-    apr: 0,
-    asset: ['ION', 'WETH'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    link: 'https://velodrome.finance/deposit?token0=0x18470019bF0E94611f15852F7e93cf5D65BC34CA&token1=0x4200000000000000000000000000000000000006&type=-1',
-    network: 'mode',
-    protocol: 'Velodrome',
-    tvl: 0
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDC', 'ionUSDT'],
-    getApr: async () => {
-      try {
-        const response = await fetch(
-          'https://api.steer.finance/pool/fee-apr?address=0x17694615caba46ef765a3673fa488e04332b522a&chain=34443&interval=604800'
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error: Status ${response.status}`);
-        }
-        const val = await response.json();
-        return val?.apr ?? 0;
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    getTvl: async () => {
-      try {
-        const response = await fetch(
-          'https://api.steer.finance/pool/lp/value?chain=34443&address=0x17694615caba46ef765a3673fa488e04332b522a'
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error: Status ${response.status}`);
-        }
-        const val = await response.json();
-        return val?.tvl ?? 0;
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    link: 'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443',
-    network: 'mode',
-    protocol: 'Steer',
-    tvl: 0
-  }
-];
+import type { EarnRow } from '@ui/utils/earnUtils';
+import { earnOpps } from '@ui/utils/earnUtils';
 
 export default function Earn() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);
@@ -60,7 +14,9 @@ export default function Earn() {
     const populateVals = async () => {
       await Promise.all(
         rows.map(async (row) => {
+          //@ts-ignore
           row.apr = await row.getApr();
+          //@ts-ignore
           row.tvl = await row.getTvl();
         })
       );
@@ -89,7 +45,45 @@ export default function Earn() {
         </div>
 
         {/* this will get mapped out in future with the possible api data structure mentioned below */}
-        <EarnRows rows={rows} />
+        {rows.map(
+          (
+            {
+              apr,
+              asset,
+              network,
+              protocol,
+              tvl,
+              link,
+              poolChain,
+              tvlpool,
+              rewards,
+              live
+            },
+            idx
+          ) => (
+            <EarnRows
+              apr={apr}
+              asset={asset}
+              network={network}
+              protocol={protocol}
+              tvl={tvl}
+              tvlpool={tvlpool}
+              poolChain={poolChain}
+              link={link}
+              key={idx}
+              rewards={rewards}
+              live={live}
+            />
+          )
+        )}
+        {/* <CommingSoon
+          linktoProtocol={'https://www.tren.finance'}
+          additionalText={'Tren Finance'}
+        />
+        <CommingSoon
+          linktoProtocol={'https://peapods.finance'}
+          additionalText={'Peapods Finance'}
+        /> */}
       </div>
     </>
   );

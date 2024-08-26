@@ -69,8 +69,11 @@ export function getReservesABI(chain: number) {
 }
 
 export function getReservesArgs(chain: number, token: 'eth' | 'mode' | 'weth') {
-  if (chain === 34443) {
-    return [getToken(+chain), getPoolToken(token), false];
+  if (chain === 34443 && token === 'eth') {
+    return [getToken(+chain), getPoolToken('weth'), false];
+  }
+  if (chain === 34443 && token === 'weth') {
+    return [getToken(+chain), getPoolToken('weth'), false];
   }
   if (chain === 8453) return [];
   return [];
