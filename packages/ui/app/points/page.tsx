@@ -22,8 +22,9 @@ import {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
   usePointsForSupplyModeNative,
-  usePointsForIonLp,
-  usePointsForSteerLp
+  usePointsForIonLpMode,
+  usePointsForSteerLp,
+  usePointsForIonLpBase
 } from '@ui/hooks/usePointsQueries';
 
 const pools: { [key: number]: { [key: number]: string } } = {
@@ -62,8 +63,10 @@ export default function Points() {
     data: supplyPointsModeNative,
     isLoading: isLoadingSupplyPointsModeNative
   } = usePointsForSupplyModeNative();
-  const { data: pointsIonLp, isLoading: isLoadingPointsIonLp } =
-    usePointsForIonLp();
+  const { data: pointsIonLpMode, isLoading: isLoadingPointsIonLpMode } =
+    usePointsForIonLpMode();
+  const { data: pointsIonLpBase, isLoading: isLoadingPointsIonLpBase } =
+    usePointsForIonLpBase();
   const { data: pointsSteerLp, isLoading: isLoadingPointsSteerLp } =
     usePointsForSteerLp();
   const {
@@ -119,9 +122,9 @@ export default function Points() {
 
     return 0;
   }, [supplyPointsModeNative]);
-  const summedPointsIonLp = useMemo<number>(() => {
-    if (pointsIonLp) {
-      return pointsIonLp.rows.reduce(
+  const summedPointsIonLpMode = useMemo<number>(() => {
+    if (pointsIonLpMode) {
+      return pointsIonLpMode.rows.reduce(
         (accumulator, current) =>
           accumulator +
           current.reduce(
@@ -133,7 +136,30 @@ export default function Points() {
     }
 
     return 0;
-  }, [pointsIonLp]);
+  }, [pointsIonLpMode]);
+  console.log(
+    '🚀 ~ summedPointsIonLp ~ summedPointsIonLp:',
+    summedPointsIonLpMode
+  );
+  const summedPointsIonLpBase = useMemo<number>(() => {
+    if (pointsIonLpBase) {
+      return pointsIonLpBase.rows.reduce(
+        (accumulator, current) =>
+          accumulator +
+          current.reduce(
+            (innerAccumulator, innerCurrent) => innerAccumulator + innerCurrent,
+            0
+          ),
+        0
+      );
+    }
+
+    return 0;
+  }, [pointsIonLpBase]);
+  console.log(
+    '🚀 ~ summedPointsIonLpBase ~ summedPointsIonLpBase:',
+    summedPointsIonLpBase
+  );
   const summedPointsSteerLp = useMemo<number>(() => {
     if (pointsSteerLp) {
       return pointsSteerLp.rows.reduce(
@@ -213,7 +239,8 @@ export default function Points() {
     const summedSupplyPointsMarkets =
       summedSupplyPointsModeMain +
       summedSupplyPointsModeNative +
-      summedPointsIonLp +
+      summedPointsIonLpMode +
+      summedPointsIonLpBase +
       summedPointsSteerLp +
       summedSupplyPointsBaseMain;
     const summedBorrowPointsMarkets =
@@ -229,7 +256,8 @@ export default function Points() {
   }, [
     summedSupplyPointsModeMain,
     summedSupplyPointsModeNative,
-    summedPointsIonLp,
+    summedPointsIonLpMode,
+    summedPointsIonLpBase,
     summedPointsSteerLp,
     summedSupplyPointsBaseMain,
     summedBorrowPointsModeMain,
@@ -262,7 +290,8 @@ export default function Points() {
               isLoadingBorrowPointsModeMain ||
               isLoadingBorrowPointsModeNative ||
               isLoadingBorrowPointsBaseMain ||
-              isLoadingPointsIonLp ||
+              isLoadingPointsIonLpMode ||
+              isLoadingPointsIonLpBase ||
               isLoadingPointsSteerLp
             }
             width="36"
@@ -305,9 +334,14 @@ export default function Points() {
             points: summedSupplyPointsBaseMain
           },
           {
-            loading: isLoadingPointsIonLp,
-            name: 'Ion LP',
-            points: summedPointsIonLp
+            loading: isLoadingPointsIonLpMode,
+            name: 'Ion LP Mode',
+            points: summedPointsIonLpMode
+          },
+          {
+            loading: isLoadingPointsIonLpBase,
+            name: 'Ion LP Base',
+            points: summedPointsIonLpBase
           },
           {
             loading: isLoadingPointsSteerLp,
@@ -405,7 +439,8 @@ export default function Points() {
               isLoadingBorrowPointsModeMain ||
               isLoadingSupplyPointsModeNative ||
               isLoadingBorrowPointsModeNative ||
-              isLoadingPointsIonLp ||
+              isLoadingPointsIonLpMode ||
+              isLoadingPointsIonLpBase ||
               isLoadingPointsSteerLp ||
               isLoadingSupplyPointsBaseMain ||
               isLoadingBorrowPointsBaseMain
@@ -428,7 +463,8 @@ export default function Points() {
             isLoadingBaseMarketDataMain ||
             isLoadingSupplyPointsModeNative ||
             isLoadingBorrowPointsModeNative ||
-            isLoadingPointsIonLp ||
+            isLoadingPointsIonLpMode ||
+            isLoadingPointsIonLpBase ||
             isLoadingPointsSteerLp ||
             isLoadingSupplyPointsBaseMain ||
             isLoadingBorrowPointsBaseMain
@@ -450,8 +486,8 @@ export default function Points() {
                   summedBorrowPointsModeMain +
                     summedBorrowPointsModeNative +
                     summedBorrowPointsBaseMain,
-                  +summedPointsIonLp,
-                  +summedPointsSteerLp
+                  summedPointsIonLpMode + summedPointsIonLpBase,
+                  summedPointsSteerLp
                 ]}
               />
             </div>
@@ -520,13 +556,19 @@ export default function Points() {
 
             {[
               {
-                name: 'Ion',
-                market: pointsIonLp,
-                points: summedPointsIonLp,
+                name: 'Ion LP - Mode (Velodrome)',
+                market: pointsIonLpMode,
+                points: summedPointsIonLpMode,
                 backgroundColor: colors.ionLp
               },
               {
-                name: 'Steer',
+                name: 'Ion LP - Base (Aerodrome)',
+                market: pointsIonLpBase,
+                points: summedPointsIonLpBase,
+                backgroundColor: colors.ionLp
+              },
+              {
+                name: 'Steer LP',
                 market: pointsSteerLp,
                 points: summedPointsSteerLp,
                 backgroundColor: colors.steerLp
@@ -543,7 +585,7 @@ export default function Points() {
                     className="h-4 w-4 rounded-full"
                     style={{ backgroundColor }}
                   />
-                  <span className={` `}>Supply - {name} LP</span>
+                  <span className={` `}>{name}</span>
                 </div>
                 <div className={`mb-2 md:mb-0`}>
                   <span className="text-white/40 font-semibold mr-2 md:hidden text-right">
