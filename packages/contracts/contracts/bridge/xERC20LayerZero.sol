@@ -60,7 +60,7 @@ contract xERC20LayerZero is Ownable, OApp {
     emit FeeBpsSet(_feeBps);
   }
 
-  function setDstToken(uint32 _chainId, address _srcToken, address _dstToken) public onlyOwner {
+  function setMappedToken(uint32 _chainId, address _srcToken, address _dstToken) public onlyOwner {
     mappedTokens[_srcToken][_chainId] = _dstToken;
     emit TokenMapped(_srcToken, _chainId, _dstToken);
   }
@@ -76,6 +76,34 @@ contract xERC20LayerZero is Ownable, OApp {
   }
 
   // PUBLIC FUNCTIONS
+  function quote(
+    uint32 _dstChainId,
+    address _token,
+    uint256 _amount,
+    address _to
+  ) external view returns (uint256 nativeFee, uint256 zroFee) {
+    return _quoteInternal(_dstChainId, _token, _amount, _to, bytes(""), false);
+  }
+
+  function quote(
+    uint32 _dstChainId, // destination endpoint id
+    address _token,
+    uint256 _amount,
+    address _to,
+    bytes memory _options, // your message execution options
+    bool _payInLzToken // boolean for which token to return fee in
+  ) external view returns (uint256 nativeFee, uint256 zroFee) {
+    return _quoteInternal(_dstChainId, _token, _amount, _to, _options, _payInLzToken);
+  }
+
+  function send(
+    address _token,
+    uint256 _amount,
+    address _to,
+    uint32 _dstChainId
+  ) external payable {
+    _send(_dstChainId, _token, _amount, _to, bytes(""));
+  }
 
   /**
    * @notice Sends tokens to a destination chain
@@ -92,11 +120,35 @@ contract xERC20LayerZero is Ownable, OApp {
     address _to,
     uint32 _dstChainId,
     bytes calldata _options
-  ) public payable {
-    if (mappedTokens[_token][_dstChainId] == address(0)) {
-      revert TokenNotSet();
-    }
+  ) external payable {
+    _send(_dstChainId, _token, _amount, _to, _options);
+  }
 
+  // INTERNAL FUNCTIONS
+  function _quoteInternal(
+    uint32 _dstChainId,
+    address _token,
+    uint256 _amount,
+    address _to,
+    bytes memory _options,
+    bool _payInLzToken
+  ) internal view returns (uint256 nativeFee, uint256 zroFee) {
+    uint32 _dstEid = chainIdToEid[_dstChainId];
+    if (_dstEid == 0) {
+      revert ChainIdNotSet();
+    }
+    bytes memory _payload = abi.encode(_to, _token, _amount);
+    MessagingFee memory fee = _quote(_dstEid, _payload, _options, _payInLzToken);
+    return (fee.nativeFee, fee.lzTokenFee);
+  }
+
+  function _send(
+    uint32 _dstChainId,
+    address _token,
+    uint256 _amount,
+    address _to,
+    bytes memory _options
+  ) internal {
     uint32 _dstEid = chainIdToEid[_dstChainId];
     if (_dstEid == 0) {
       revert ChainIdNotSet();
