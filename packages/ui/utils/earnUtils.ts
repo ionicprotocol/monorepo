@@ -38,7 +38,7 @@ export const earnOpps: EarnRow[] = [
         turtle: true
       }
     },
-    link: 'https://app.ionic.money/stake?chain=34443&token=weth',
+    link: '/stake?chain=34443&token=weth',
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',
@@ -61,7 +61,7 @@ export const earnOpps: EarnRow[] = [
         turtle: true
       }
     },
-    link: 'https://app.ionic.money/stake?chain=8453',
+    link: '/stake?chain=8453',
     network: 'base',
     poolChain: base.id,
     protocol: 'Aerodrome Finance',
@@ -84,7 +84,7 @@ export const earnOpps: EarnRow[] = [
         turtle: true
       }
     },
-    link: 'https://app.ionic.money/stake?chain=34443&token=mode',
+    link: '/stake?chain=34443&token=mode',
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',

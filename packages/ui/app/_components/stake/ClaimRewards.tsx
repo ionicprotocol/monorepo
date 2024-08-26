@@ -5,6 +5,7 @@ import { type Address, formatEther, type Hex } from 'viem';
 import { base } from 'viem/chains';
 import {
   useAccount,
+  useChainId,
   useReadContract,
   useReadContracts,
   useWaitForTransactionReceipt,
@@ -19,6 +20,7 @@ import {
   getStakingToContract,
   getTradingContractAddress
 } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IProps {
   close: () => void;
@@ -127,7 +129,7 @@ const DisplayAndClaimRewards = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [hash, setHash] = useState<Address | undefined>();
   const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
-
+  const chainId = useChainId();
   useEffect(() => {
     if (claimReceipt) {
       setLoading(false);
@@ -138,6 +140,8 @@ const DisplayAndClaimRewards = ({
     try {
       // const switched = await handleSwitchOriginChain(mode.id, chainId);
       // if (!switched) return;
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
@@ -208,6 +212,7 @@ const DisplayAndClaimTradingFees = ({
   const { writeContractAsync } = useWriteContract();
   const [hash, setHash] = useState<Hex | undefined>();
   const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
+  const chainId = useChainId();
 
   useEffect(() => {
     if (claimReceipt) {
@@ -219,6 +224,8 @@ const DisplayAndClaimTradingFees = ({
     try {
       // const switched = await handleSwitchOriginChain(mode.id, chainId);
       // if (!switched) return;
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
