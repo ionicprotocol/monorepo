@@ -137,10 +137,6 @@ export default function Points() {
 
     return 0;
   }, [pointsIonLpMode]);
-  console.log(
-    '🚀 ~ summedPointsIonLp ~ summedPointsIonLp:',
-    summedPointsIonLpMode
-  );
   const summedPointsIonLpBase = useMemo<number>(() => {
     if (pointsIonLpBase) {
       return pointsIonLpBase.rows.reduce(
@@ -156,10 +152,6 @@ export default function Points() {
 
     return 0;
   }, [pointsIonLpBase]);
-  console.log(
-    '🚀 ~ summedPointsIonLpBase ~ summedPointsIonLpBase:',
-    summedPointsIonLpBase
-  );
   const summedPointsSteerLp = useMemo<number>(() => {
     if (pointsSteerLp) {
       return pointsSteerLp.rows.reduce(
