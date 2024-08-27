@@ -2,11 +2,14 @@
 pragma solidity ^0.8.22;
 
 import { OApp, Origin, MessagingFee, MessagingReceipt } from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
+import { OptionsBuilder } from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IXERC20 } from "./interface/IXERC20.sol";
 
 contract xERC20LayerZero is Ownable, OApp {
+  using OptionsBuilder for bytes;
+
   uint256 public feeBps;
   mapping(address => mapping(uint32 => address)) public mappedTokens;
   mapping(uint32 => uint32) public chainIdToEid;
@@ -83,7 +86,8 @@ contract xERC20LayerZero is Ownable, OApp {
     uint256 _amount,
     address _to
   ) external view returns (uint256 nativeFee, uint256 zroFee) {
-    return _quoteInternal(_dstChainId, _token, _amount, _to, bytes(""), false);
+    bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(50000, 0);
+    return _quoteInternal(_dstChainId, _token, _amount, _to, options, false);
   }
 
   function quote(

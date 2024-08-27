@@ -40,15 +40,16 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4";
-  await run("market:set-supply-cap", {
-    market: cToken,
-    maxSupply: parseEther(String(2400 * 100000)).toString()
-  });
-
+  let cToken = "0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2";
   await run("market:set-borrow-cap", {
     market: cToken,
-    maxBorrow: "1"
+    maxBorrow: parseEther(String(4100)).toString()
+  });
+
+  cToken = "0x4341620757Bee7EB4553912FaFC963e59C949147";
+  await run("market:set-supply-cap", {
+    market: cToken,
+    maxSupply: parseEther(String(25500000)).toString()
   });
 });
 
