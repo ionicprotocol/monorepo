@@ -362,7 +362,7 @@ const usePointsForSupplyModeMain = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -406,7 +406,7 @@ const usePointsForBorrowModeMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -448,7 +448,7 @@ const usePointsForSupplyModeNative = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -492,7 +492,7 @@ const usePointsForBorrowModeNative = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -532,7 +532,7 @@ const usePointsForIonLpMode = () => {
           method: 'POST'
         }
       );
-      const totalPoints = response.data.rows[0][1];
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
 
       return {
         ...response.data,
@@ -570,7 +570,7 @@ const usePointsForIonLpBase = () => {
           method: 'POST'
         }
       );
-      const totalPoints = response.data.rows[0][1];
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
 
       return {
         ...response.data,
@@ -611,7 +611,7 @@ const usePointsForSteerLp = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -653,7 +653,7 @@ const usePointsForSupplyBaseMain = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -697,7 +697,7 @@ const usePointsForBorrowBaseMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 

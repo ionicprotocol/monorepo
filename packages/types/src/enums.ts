@@ -203,6 +203,7 @@ export enum assetSymbols {
   IUSDCIUSDT = "ionUSDC-ionUSDT",
   USDe = "USDe",
   sUSDe = "sUSDe",
+  dMBTC = "dMBTC",
 
   // base
   AERO = "AERO",

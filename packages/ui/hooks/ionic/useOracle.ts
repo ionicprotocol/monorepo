@@ -17,7 +17,7 @@ export const useOracle = (
         try {
           const mpo = sdk.createMasterPriceOracle(
             sdk.publicClient,
-            sdk.walletClient
+            sdk.walletClient as any
           );
           const oracle = await mpo.read.oracles([underlyingAddress]);
 

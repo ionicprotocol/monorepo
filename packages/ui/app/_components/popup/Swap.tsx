@@ -82,14 +82,14 @@ export default function Swap({
     GetContractReturnType<typeof wethAbi, PublicClient> | undefined
   >(() => {
     if (!currentSdk || !address) {
-      return;
+      return undefined;
     }
 
     return getContract({
       address: currentSdk.chainSpecificAddresses.W_TOKEN as Address,
       abi: wethAbi,
       client: currentSdk.walletClient!
-    });
+    }) as any;
   }, [address, currentSdk]);
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();

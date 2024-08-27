@@ -137,10 +137,7 @@ const PoolRows = ({
         href={{
           pathname: `/market/details/${asset}`,
           query: {
-            availableAPR: supplyAPR ? supplyAPR : 0,
-            borrowAPR: borrowAPR ? borrowAPR : 0,
             chain: chain,
-            collateralAPR: collateralFactor,
             comptrollerAddress,
             cTokenAddress,
             dropdownSelectedChain,
@@ -149,10 +146,7 @@ const PoolRows = ({
             pool: pool,
             selectedChain: selectedChain,
             // selectedMarketData: selectedMarketDataPassing,
-            selectedSymbol: asset,
-            totalBorrows: totalBorrowing,
-            totalSupplied,
-            totalCollateral: 123456
+            selectedSymbol: asset
           }
         }}
         // onClick={() => sendPassedData()}

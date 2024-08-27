@@ -42,7 +42,7 @@ export const useDebtCeilingForAssetForCollateral = ({
       const comptroller = sdk.createComptroller(
         comptrollerAddress,
         sdk.publicClient,
-        sdk.walletClient
+        sdk.walletClient as any
       );
 
       await Promise.all(

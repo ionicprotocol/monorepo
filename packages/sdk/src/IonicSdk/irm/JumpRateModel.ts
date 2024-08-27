@@ -1,11 +1,11 @@
 import { Address, Hex, keccak256, parseEther, PublicClient } from "viem";
 
-import JumpRateModelArtifact from "../../../artifacts/JumpRateModel.sol/JumpRateModel.json";
+import JumpRateModelArtifact from "../../artifacts/JumpRateModel.json";
 import { cTokenFirstExtensionAbi, jumpRateModelAbi } from "../../generated";
 import { getContract } from "../utils";
 
 export default class JumpRateModel {
-  static RUNTIME_BYTECODE_HASH = keccak256(JumpRateModelArtifact.deployedBytecode.object as Hex);
+  static RUNTIME_BYTECODE_HASH = keccak256(JumpRateModelArtifact.deployedBytecode as Hex);
 
   initialized: boolean | undefined;
   baseRatePerBlock: bigint | undefined;
