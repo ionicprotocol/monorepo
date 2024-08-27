@@ -2,7 +2,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import {
   erc20Abi,
@@ -96,32 +96,22 @@ export default function Stake() {
   });
   const [maxLp, setMaxLp] = useState<string>('');
   //---- unstaking states
-  const [allStakedAmount, setAllStakedAmount] = useState<string>('');
+  // const [allStakedAmount, setAllStakedAmount] = useState<string>('');
   const [maxUnstake, setMaxUnstake] = useState<string>('');
   const [utilization, setUtilization] = useState<number>(0);
-  const router = useRouter();
+  // const router = useRouter();
   const { data: withdrawalMaxToken } = useBalance({
     address,
     token: getAvailableStakingToken(
       +chain,
       selectedtoken as 'eth' | 'mode' | 'weth'
     ),
+    chainId: +chain,
     query: {
-      refetchInterval: 6000
+      // refetchInterval: 6000
+      notifyOnChangeProps: ['data', 'error']
     }
   });
-
-  useEffect(() => {
-    async function switchin() {
-      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
-      if (!isSwitched) {
-        router.push(`/stake?chain=${chainId}`);
-        return;
-      }
-      return;
-    }
-    switchin();
-  }, [chain, chainId, router]);
 
   useMemo(() => {
     if (!maxWithdrawl.ion || !withdrawalMaxToken) return;
@@ -137,76 +127,70 @@ export default function Stake() {
     setUtilization(Number(percent.toFixed(0)));
   }, [maxWithdrawl.ion, withdrawalMaxToken]);
 
-  useEffect(() => {
-    async function getReservesAndStakes() {
-      try {
-        const reserves = (await publicClient?.readContract({
-          abi: getReservesABI(+chain),
-          address: getReservesContract(+chain),
-          args: getReservesArgs(
-            +chain,
-            selectedtoken as 'eth' | 'mode' | 'weth'
-          ),
-          functionName: 'getReserves'
-        })) as bigint[];
-        if (maxDeposit.ion && reserves) {
-          const ethVal =
-            (parseUnits(maxDeposit?.ion, 18) * reserves[1]) / reserves[0];
-          setMaxDeposit((p) => {
-            return { ...p, eth: formatEther(ethVal) || '' };
-          });
-        } else {
-          setMaxDeposit((p) => {
-            return { ...p, eth: '' };
-          });
-        }
-        if (maxWithdrawl.ion && reserves) {
-          const ethVal =
-            (parseUnits(maxWithdrawl?.ion, 18) * reserves[1]) / reserves[0];
-          setMaxWithdrawl((p) => {
-            return { ...p, eth: formatEther(ethVal) || '' };
-          });
-        } else {
-          setMaxWithdrawl((p) => {
-            return { ...p, eth: '' };
-          });
-        }
-
-        const getStakedTokens =
-          (await publicClient?.readContract({
-            abi: StakingContractAbi,
-            address: getStakingToContract(
-              +chain,
-              selectedtoken as 'eth' | 'mode' | 'weth'
-            ),
-            args: [address as `0x${string}`],
-            functionName: 'balanceOf'
-          })) ?? 0n;
-
-        if (getStakedTokens || step3Loading) {
-          step3Loading
-            ? setAllStakedAmount(formatEther(getStakedTokens))
-            : setAllStakedAmount(formatEther(getStakedTokens));
-        } else {
-          step3Loading
-            ? setAllStakedAmount(formatEther(getStakedTokens))
-            : setAllStakedAmount(formatEther(getStakedTokens));
-        }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
+  const reserves = useReadContract({
+    abi: getReservesABI(+chain),
+    address: getReservesContract(+chain),
+    args: getReservesArgs(+chain, selectedtoken as 'eth' | 'mode' | 'weth'),
+    functionName: 'getReserves',
+    chainId: +chain,
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error'],
+      placeholderData: [0n, 0n]
+      // refetchInterval: 5000
     }
-    getReservesAndStakes();
-  }, [
-    address,
-    chain,
-    maxDeposit.ion,
-    maxWithdrawl.ion,
-    publicClient,
-    selectedtoken,
-    step3Loading
-  ]);
+  });
+  // console.log(reserves);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  function calculateReserves(ion: string, data: [bigint, bigint]) {
+    if (ion && data) {
+      const ethVal = (parseUnits(maxDeposit?.ion, 18) * data[1]) / data[0];
+      return formatEther(ethVal);
+    } else {
+      return '0';
+    }
+  }
+
+  useMemo(() => {
+    const data = (reserves?.data as [bigint, bigint]) ?? [0n, 0n];
+    // console.log(data, reserves.data);
+
+    if (
+      reserves.status === 'success' &&
+      data[0] > 0n &&
+      (maxDeposit.ion ?? '0')
+    ) {
+      const deposits = calculateReserves(
+        maxDeposit.ion,
+        data as [bigint, bigint]
+      );
+      setMaxDeposit((p) => ({ ...p, eth: deposits }));
+    } else {
+      setMaxDeposit((p) => ({ ...p, eth: '' }));
+      console.warn('Error while fetching Reserves or insert ionAmount');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxDeposit.ion, reserves.status, reserves?.data]);
+
+  const allStakedAmount = useReadContract({
+    abi: StakingContractAbi,
+    address: getStakingToContract(
+      +chain,
+      selectedtoken as 'eth' | 'mode' | 'weth'
+    ),
+    args: [address as `0x${string}`],
+    functionName: 'balanceOf',
+    chainId: +chain,
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error'],
+      placeholderData: 0n
+      // refetchInterval: 4000
+    }
+  });
 
   async function addLiquidity() {
     try {
@@ -230,7 +214,8 @@ export default function Stake() {
         console.error('Not connected');
         return;
       }
-
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
       const approvalA = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
@@ -352,6 +337,8 @@ export default function Stake() {
         deadline: Math.floor((Date.now() + 3636000) / 1000)
       };
       // console.log(args);
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
 
       if (!isConnected) {
         console.error('Not connected');
@@ -460,6 +447,8 @@ export default function Stake() {
         console.error('Not connected');
         return;
       }
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
 
       if (maxLp == '0') return;
 
@@ -529,6 +518,9 @@ export default function Stake() {
         console.error('Not connected');
         return;
       }
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
+
       if (maxLp == '0') return;
 
       setStep3Loading(true);
@@ -623,7 +615,7 @@ export default function Stake() {
               </h1>
               <div className={` xl:w-[30%] w-[40%]`}>
                 <NetworkSelector
-                  dropdownSelectedChain={Number(chain) as number}
+                  dropdownSelectedChain={+chain}
                   newRef={newRef}
                   open={open}
                   setOpen={setOpen}
@@ -807,7 +799,11 @@ export default function Stake() {
             )}
             {step3Toggle === 'Unstake' && (
               <MaxDeposit
-                max={allStakedAmount}
+                max={
+                  allStakedAmount.status === 'success'
+                    ? formatEther(allStakedAmount?.data as bigint)
+                    : '0'
+                }
                 headerText={step3Toggle}
                 amount={maxUnstake}
                 tokenName={`ion/${selectedtoken}`}
@@ -819,7 +815,11 @@ export default function Stake() {
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
             <h1 className={`text-end text-[11px] text-white/40 mt-2`}>
               Total Staked :{' '}
-              {Number(allStakedAmount).toLocaleString('en-US', {
+              {Number(
+                allStakedAmount.status === 'success'
+                  ? formatEther(allStakedAmount?.data as bigint)
+                  : '0'
+              ).toLocaleString('en-US', {
                 maximumFractionDigits: 3
               })}{' '}
               ION/{selectedtoken.toUpperCase()}

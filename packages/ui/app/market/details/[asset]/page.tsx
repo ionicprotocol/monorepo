@@ -72,6 +72,8 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
 import { sendIMG } from '@ui/utils/TempImgSender';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
 interface IGraph {
   borrowAtY: number[];
@@ -95,10 +97,6 @@ const Asset = ({ params }: IProp) => {
   const searchParams = useSearchParams();
 
   //URL passed Data ----------------------------
-  const availableAPR = searchParams.get('availableAPR');
-  const borrowAPR = searchParams.get('borrowAPR');
-  const gettingtotalSupplied = searchParams.get('totalSupplied');
-  const gettingBorrows = searchParams.get('totalBorrows');
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
   const selectedChain = searchParams.get('selectedChain');
   const comptrollerAddress = searchParams.get('comptrollerAddress');
@@ -120,17 +118,31 @@ const Asset = ({ params }: IProp) => {
     valAtX: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
   });
   //Hooks -----------------------------------------------------
-  const totalBorrows = extractAndConvertStringTOValue(
-    gettingBorrows as string
-  ).value1;
-  const totalSupplied = extractAndConvertStringTOValue(
-    gettingtotalSupplied as string
-  ).value1;
+  const { data: poolData } = useFusePoolData(pool as string, Number(chain));
 
-  const { data: poolData, isLoading: isLoadingPool1Data } = useFusePoolData(
-    pool as string,
-    Number(chain)
+  const assetData = useMemo<MarketData | undefined>(
+    () => poolData?.assets.find((a) => a.cToken === cTokenAddress),
+    [poolData, cTokenAddress]
   );
+  const { data: borrowAPYs } = useBorrowAPYs(assetData ? [assetData] : []);
+  const borrowAPR = assetData?.cToken ? borrowAPYs?.[assetData?.cToken] : 0;
+  const { data: supplyAPYs } = useSupplyAPYs(assetData ? [assetData] : []);
+  const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
+  const totalSupplied = assetData?.totalSupplyNative
+    ? parseFloat(
+        formatUnits(assetData!.totalSupply, assetData.underlyingDecimals)
+      ).toLocaleString('en-US', {
+        maximumFractionDigits: 2
+      })
+    : '0';
+
+  const totalBorrows = assetData?.totalBorrowNative
+    ? parseFloat(
+        formatUnits(assetData!.totalBorrow, assetData.underlyingDecimals)
+      ).toLocaleString('en-US', {
+        maximumFractionDigits: 2
+      })
+    : '0';
 
   function extractTime(isoTimestamp: number) {
     // Parse the ISO 8601 timestamp
@@ -153,9 +165,6 @@ const Asset = ({ params }: IProp) => {
   }
 
   useEffect(() => {
-    const SUPABASE_CLIENT_ANON_KEY =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
-    // console.log(process.env.SUPABASE_CLIENT_ANON_KEY);
     async function fetchData() {
       try {
         const { data, error } = await supabase
