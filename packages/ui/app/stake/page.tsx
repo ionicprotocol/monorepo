@@ -578,9 +578,12 @@ export default function Stake() {
     return getToken(+chain);
   }, [chain]);
 
-  // const tokenArrOfChain = {
-  //   [mode.id]: ['eth', 'weth', 'mode']
-  // };
+  const tokenArrOfChain: Record<number, string[]> = {
+    34443: ['eth', 'weth', 'mode'],
+    8453: ['eth', 'weth']
+  };
+
+  // console.log(tokenArrOfChain[+chain]);
   return (
     <main className={``}>
       <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
@@ -661,7 +664,7 @@ export default function Stake() {
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
                   tokenSelector={true}
-                  // tokenArr={}
+                  tokenArr={tokenArrOfChain[+chain]}
                 />
               </>
             )}

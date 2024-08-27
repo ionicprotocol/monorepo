@@ -4,7 +4,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { formatUnits, parseUnits } from 'viem';
-import { mode } from 'viem/chains';
+// import { mode } from 'viem/chains';
 import { useAccount, useBalance } from 'wagmi';
 
 import TokenSelector from './TokenSelector';
@@ -19,6 +19,7 @@ interface IMaxDeposit {
   max?: string;
   chain: number;
   tokenSelector?: boolean;
+  tokenArr?: string[];
 }
 
 interface IBal {
@@ -35,7 +36,8 @@ function MaxDeposit({
   fetchOwn = false,
   max = '',
   chain,
-  tokenSelector = false
+  tokenSelector = false,
+  tokenArr
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
@@ -145,16 +147,16 @@ function MaxDeposit({
           onChange={(e) => handlInpData(e)}
           disabled={handleInput ? false : true}
         />
-        <div className={`ml-auto min-w-max  flex items-center justify-end`}>
+        <div
+          className={`ml-auto min-w-max px-0.5 flex items-center justify-end`}
+        >
           {tokenSelector ? (
             <TokenSelector
               newRef={newRef}
               open={open}
               setOpen={setOpen}
               chain={+chain}
-              tokenArr={
-                +chain === mode.id ? ['eth', 'weth', 'mode'] : ['eth', 'weth']
-              }
+              tokenArr={tokenArr}
             />
           ) : (
             <>
