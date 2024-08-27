@@ -37,11 +37,21 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       xerc20LayerZeroDeployment.transactionHash
     );
 
-    for (const [, token] of Object.entries(ionTokens).filter(([_chainId]) => Number(_chainId) !== Number(chainId))) {
+    for (const [otherChainId, token] of Object.entries(ionTokens).filter(
+      ([_chainId]) => Number(_chainId) !== Number(chainId)
+    )) {
       const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
-      const tx = await xerc20LayerZero.write.setMappedToken([chainId, ionTokens[chainId], token]);
-      await publicClient.waitForTransactionReceipt({ hash: tx });
-      console.log("tx: ", tx);
+      const mappedToken = await xerc20LayerZero.read.mappedTokens([ionTokens[chainId], Number(otherChainId)]);
+      console.log(
+        `xERC20LayerZero mappedToken for ${ionTokens[chainId]} on chain ${otherChainId} is ${mappedToken}, expected ${token}`
+      );
+      if (mappedToken.toLowerCase() !== token.toLowerCase()) {
+        const tx = await xerc20LayerZero.write.setMappedToken([Number(otherChainId), ionTokens[chainId], token]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log(
+          `xERC20LayerZero setMappedToken for ${ionTokens[chainId]} to ${token} on chain ${otherChainId} - tx: ${tx}`
+        );
+      }
     }
   }
 };
