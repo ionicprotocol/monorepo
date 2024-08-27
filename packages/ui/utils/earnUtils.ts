@@ -226,5 +226,49 @@ export const earnOpps: EarnRow[] = [
     protocol: 'Peapods',
     tvl: 0,
     poolChain: mode.id
+  },
+  {
+    apr: 0,
+    asset: ['ionUSDT'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: false,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: '#',
+    network: 'mode',
+    protocol: 'Otomato',
+    tvl: 0,
+    poolChain: mode.id
+  },
+  {
+    apr: 0,
+    asset: ['ionUSDT'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: false,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: '#',
+    network: 'mode',
+    protocol: 'Lynx',
+    tvl: 0,
+    poolChain: mode.id
   }
 ];
