@@ -16,7 +16,7 @@ module "mode_mainnet_liquidation_rpc_0" {
     { WEB3_HTTP_PROVIDER_URL = local.mode_mainnet_rpc_0 }
   )
   schedule_expression = "rate(30 minutes)"
-  timeout             = 2400
+  timeout             = 900
   memory_size         = 512
 }
 module "mode_mainnet_pyth_rpc_0" {
