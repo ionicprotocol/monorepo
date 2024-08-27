@@ -17,8 +17,8 @@ const ionTokens: Record<number, Address> = {
 };
 
 const adapters: Record<number, { address: Address; eid: number }> = {
-  [base.id]: { address: "0x4e055E4A1d66DeA2525f3eD4281388659649832D", eid: 30184 },
-  [mode.id]: { address: "0x00425568A3EafeC62eA711fC5e8F7C3732dF7Cf3", eid: 30260 }
+  [base.id]: { address: "0xCCe0fE8EEfd041b17E29cb73f959F1d4CD602451", eid: 30184 },
+  [mode.id]: { address: "0xa6233522a3f9A2c356ba8b339604815E9e1efdD9", eid: 30260 }
 };
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
