@@ -5,6 +5,7 @@ import { type Address, formatEther, type Hex } from 'viem';
 import { base } from 'viem/chains';
 import {
   useAccount,
+  useChainId,
   useReadContract,
   useReadContracts,
   useWaitForTransactionReceipt,
@@ -19,6 +20,7 @@ import {
   getStakingToContract,
   getTradingContractAddress
 } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IProps {
   close: () => void;
@@ -120,14 +122,20 @@ const DisplayAndClaimRewards = ({
     abi: StakingContractAbi,
     address: getStakingToContract(+chain, selectedtoken),
     args: [address],
-    functionName: 'earned'
+    functionName: 'earned',
+    chainId: +chain,
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error']
+    }
   });
   const { writeContractAsync } = useWriteContract();
   // const chainId = useChainId();
   const [loading, setLoading] = useState<boolean>(false);
   const [hash, setHash] = useState<Address | undefined>();
   const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
-
+  const chainId = useChainId();
   useEffect(() => {
     if (claimReceipt) {
       setLoading(false);
@@ -138,13 +146,16 @@ const DisplayAndClaimRewards = ({
     try {
       // const switched = await handleSwitchOriginChain(mode.id, chainId);
       // if (!switched) return;
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({
         abi: StakingContractAbi,
         address: getStakingToContract(+chain, selectedtoken),
         args: [address],
-        functionName: 'getReward'
+        functionName: 'getReward',
+        chainId: +chain
       });
       setHash(claiming);
 
@@ -195,19 +206,27 @@ const DisplayAndClaimTradingFees = ({
         abi: TradingAbi,
         address: getTradingContractAddress(+chain),
         args: [address],
-        functionName: 'claimable0'
+        functionName: 'claimable0',
+        chainId: +chain
       },
       {
         abi: TradingAbi,
         address: getTradingContractAddress(+chain),
         args: [address],
-        functionName: 'claimable1'
+        functionName: 'claimable1',
+        chainId: +chain
       }
-    ]
+    ],
+    query: {
+      enabled: true,
+      gcTime: Infinity,
+      notifyOnChangeProps: ['data', 'error']
+    }
   });
   const { writeContractAsync } = useWriteContract();
   const [hash, setHash] = useState<Hex | undefined>();
   const { data: claimReceipt } = useWaitForTransactionReceipt({ hash });
+  const chainId = useChainId();
 
   useEffect(() => {
     if (claimReceipt) {
@@ -219,6 +238,8 @@ const DisplayAndClaimTradingFees = ({
     try {
       // const switched = await handleSwitchOriginChain(mode.id, chainId);
       // if (!switched) return;
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
       setLoading(true);
 
       const claiming = await writeContractAsync({

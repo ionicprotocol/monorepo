@@ -46,6 +46,13 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
+  {
+    // price feed for mBTC
+    priceId: '0x6665073f5bc307b97e68654ff11f3d8875abd6181855814d23ab01b8085c0906',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
   // {
   //   // price feed for UNI
   //   priceId: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',
