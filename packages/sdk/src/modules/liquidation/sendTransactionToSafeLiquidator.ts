@@ -12,7 +12,24 @@ export default async function sendTransactionToSafeLiquidator(
   value: bigint
 ): Promise<TransactionReceipt> {
   // Build data
-  const data = encodeFunctionData({ abi: ionicLiquidatorAbi, functionName: method, args: params });
+  const data = encodeFunctionData({
+    abi: ionicLiquidatorAbi,
+    functionName: "safeLiquidateToTokensWithFlashLoan",
+    args: [
+      {
+        borrower: params[0].borrower,
+        repayAmount: params[0].repayAmount,
+        cErc20: params[0].cErc20,
+        cTokenCollateral: params[0].cTokenCollateral,
+        flashSwapContract: params[0].flashSwapContract,
+        minProfitAmount: params[0].minProfitAmount,
+        redemptionStrategies: params[0].redemptionStrategies,
+        strategyData: params[0].strategyData,
+        debtFundingStrategies: params[0].debtFundingStrategies,
+        debtFundingStrategiesData: params[0].debtFundingStrategiesData
+      }
+    ]
+  });
   const txCount = await sdk.publicClient.getTransactionCount({
     address: process.env.ETHEREUM_ADMIN_ACCOUNT! as Address
   });
