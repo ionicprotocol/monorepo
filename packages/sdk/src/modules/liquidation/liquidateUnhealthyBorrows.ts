@@ -21,7 +21,7 @@ export default async function liquidateUnhealthyBorrows(
       }\n method: ${method}\n params: ${JSON.stringify(args)}\n value: ${value}\n`
     );
     try {
-      const transactionResponse = await sendTransactionToSafeLiquidator(sdk, method, args, value);
+      const transactionResponse = await sendTransactionToSafeLiquidator(sdk, method, args);
       succeededLiquidations.push(transactionResponse);
     } catch (error) {
       const msg = "Error sending sendTransactionToSafeLiquidator transaction: " + error;
