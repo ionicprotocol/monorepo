@@ -1,5 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, toBytes } from "viem";
+import { Address, fromBytes, pad, toBytes } from "viem";
 import { base, bob, fraxtal, mode, optimism } from "viem/chains";
 
 const lzEndpoints: Record<number, Address> = {
@@ -71,13 +71,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       }
     }
 
-    for (const [otherChainId, adapter] of Object.entries(adapters).filter(([_chainId]) => +_chainId !== chainId)) {
-      const addressInBytes = fromBytes(toBytes(adapter.address, { size: 32 }), "hex");
-      console.log("🚀 ~ constfunc:DeployFunction= ~ addressInBytes:", addressInBytes);
-      const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", adapter.address as Address);
+    for (const [, adapter] of Object.entries(adapters).filter(([otherChainId]) => +otherChainId !== chainId)) {
+      const addressInBytes = pad(adapter.address);
+      const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
       const peers = await xerc20LayerZero.read.peers([adapter.eid]);
-      const tx = await xerc20LayerZero.write.setPeer([adapter.eid, lzEndpoints[chainId]]);
-      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log(`Peer set to ${peers}, expected ${addressInBytes}`);
+      if (peers.toLowerCase() !== addressInBytes.toLowerCase()) {
+        const tx = await xerc20LayerZero.write.setPeer([adapter.eid, addressInBytes]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log(`xERC20LayerZero setPeer for ${adapter.eid} to ${addressInBytes} on chain ${chainId} - tx: ${tx}`);
+      }
     }
   }
 };
