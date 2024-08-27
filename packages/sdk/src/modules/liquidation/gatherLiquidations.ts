@@ -1,5 +1,4 @@
 import { IonicSdk } from "../../IonicSdk";
-
 import { ChainLiquidationConfig } from "./config";
 import {
   BotType,
@@ -9,9 +8,8 @@ import {
   PoolUserWithAssets,
   PublicPoolUserWithData,
   ExtendedPoolAssetStructOutput,
-  PythLiquidatablePool
+  PythLiquidatablePool,
 } from "./utils";
-
 import { getPotentialLiquidation, getPotentialPythLiquidation } from "./index";
 
 async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatablePool>(
@@ -23,39 +21,61 @@ async function getLiquidatableUsers<T extends LiquidatablePool | PythLiquidatabl
 ): Promise<Array<T>> {
   const users: Array<T> = [];
   let i: number = 0;
+
   for (const user of poolUsers) {
-    const userAssets = (await sdk.contracts.PoolLens.simulate.getPoolAssetsByUser([pool.comptroller, user.account]))
-      .result;
-    const userWithAssets: PoolUserWithAssets = {
-      ...user,
-      debt: [],
-      collateral: [],
-      assets: userAssets as ExtendedPoolAssetStructOutput[]
-    };
+    try {
+      const userAssets = (
+        await sdk.contracts.PoolLens.simulate.getPoolAssetsByUser([pool.comptroller, user.account])
+      ).result;
 
-    let encodedLiquidationTX;
+      const userWithAssets: PoolUserWithAssets = {
+        ...user,
+        debt: [],
+        collateral: [],
+        assets: userAssets as ExtendedPoolAssetStructOutput[],
+      };
 
-    if (botType == BotType.Standard) {
-      encodedLiquidationTX = await getPotentialLiquidation(
-        sdk,
-        userWithAssets,
-        pool.closeFactor,
-        pool.liquidationIncentive,
-        chainLiquidationConfig
-      );
-    } else {
-      encodedLiquidationTX = await getPotentialPythLiquidation(
-        sdk,
-        userWithAssets,
-        pool.closeFactor,
-        pool.liquidationIncentive,
-        pool.comptroller,
-        chainLiquidationConfig
-      );
+      let encodedLiquidationTX;
+
+      if (botType === BotType.Standard) {
+        encodedLiquidationTX = await getPotentialLiquidation(
+          sdk,
+          userWithAssets,
+          pool.closeFactor,
+          pool.liquidationIncentive,
+          chainLiquidationConfig
+        );
+      } else {
+        encodedLiquidationTX = await getPotentialPythLiquidation(
+          sdk,
+          userWithAssets,
+          pool.closeFactor,
+          pool.liquidationIncentive,
+          pool.comptroller,
+          chainLiquidationConfig
+        );
+      }
+
+      sdk.logger.info(`${++i}/${poolUsers.length} users processed for pool ${pool.comptroller}`);
+
+      if (encodedLiquidationTX !== null) {
+        users.push(encodedLiquidationTX as unknown as T);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        sdk.logger.error(
+          `Error processing user ${i + 1}/${poolUsers.length} in pool ${pool.comptroller}: ${error.message}`
+        );
+      } else {
+        sdk.logger.error(
+          `Unknown error processing user ${i + 1}/${poolUsers.length} in pool ${pool.comptroller}: ${String(error)}`
+        );
+      }
+      // Continue processing the remaining users
+      continue;
     }
-    sdk.logger.info(`${++i}/${poolUsers.length}`);
-    if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as unknown as T);
   }
+
   return users;
 }
 
@@ -70,23 +90,51 @@ export default async function gatherLiquidations<T extends LiquidatablePool | Py
 
   for (const pool of pools) {
     const poolUsers = pool.users;
+
     try {
-      const liquidatableUsers = await getLiquidatableUsers<T>(sdk, poolUsers, pool, chainLiquidationConfig, botType);
+      const liquidatableUsers = await getLiquidatableUsers<T>(
+        sdk,
+        poolUsers,
+        pool,
+        chainLiquidationConfig,
+        botType
+      );
+
       if (liquidatableUsers.length > 0) {
         liquidations.push({
           comptroller: pool.comptroller,
-          liquidations: liquidatableUsers
+          liquidations: liquidatableUsers,
         } as unknown as T);
       }
-    } catch (e) {
-      erroredPools.push({
-        msg: "Error while fetching liquidatable users " + (e as Error).stack,
-        comptroller: pool.comptroller,
-        error: {
-          chainLiquidationConfig
-        }
-      });
+    } catch (error) {
+      if (error instanceof Error) {
+        sdk.logger.error(
+          `Error processing pool ${pool.comptroller}: ${error.message}`
+        );
+
+        erroredPools.push({
+          msg: `Error while fetching liquidatable users: ${error.message}`,
+          comptroller: pool.comptroller,
+          error: {
+            chainLiquidationConfig,
+          },
+        });
+      } else {
+        sdk.logger.error(
+          `Unknown error processing pool ${pool.comptroller}: ${String(error)}`
+        );
+
+        erroredPools.push({
+          msg: `Unknown error while fetching liquidatable users: ${String(error)}`,
+          comptroller: pool.comptroller,
+          error: {
+            chainLiquidationConfig,
+          },
+        });
+      }
     }
   }
+
+  sdk.logger.info("Finished processing all pools.");
   return [liquidations, erroredPools];
 }
