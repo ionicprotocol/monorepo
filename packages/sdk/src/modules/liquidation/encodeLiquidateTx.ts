@@ -30,7 +30,7 @@ export default async function encodeLiquidateTx(
   switch (liquidationStrategy) {
     case LiquidationStrategy.DEFAULT:
       return {
-        method: "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])",
+        method: "safeLiquidate",
         args: [
           borrower.account,
           liquidationAmount,
