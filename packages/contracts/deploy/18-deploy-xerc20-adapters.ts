@@ -37,9 +37,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       xerc20LayerZeroDeployment.transactionHash
     );
 
-    for (const [otherChainId, token] of Object.entries(ionTokens).filter(
-      ([_chainId]) => Number(_chainId) !== Number(chainId)
-    )) {
+    for (const [otherChainId, token] of Object.entries(ionTokens)) {
       const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
       const mappedToken = await xerc20LayerZero.read.mappedTokens([ionTokens[chainId], Number(otherChainId)]);
       console.log(

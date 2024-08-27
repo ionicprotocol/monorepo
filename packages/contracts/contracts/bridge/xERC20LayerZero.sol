@@ -33,6 +33,7 @@ contract xERC20LayerZero is Ownable, OApp {
 
   error TokenNotSet();
   error ChainIdNotSet();
+  error OriginNotMirrorAdapter();
 
   constructor(uint256 _feeBps, address _endpoint) OApp(_endpoint, msg.sender) Ownable() {
     feeBps = _feeBps;
@@ -156,6 +157,8 @@ contract xERC20LayerZero is Ownable, OApp {
 
     // transfer tokens to this contract
     IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+
+    // take fee and burn the tokens
     uint256 _amountAfterFee = (_amount * (10000 - feeBps)) / 10000;
     IXERC20(_token).burn(msg.sender, _amountAfterFee);
 
@@ -189,14 +192,16 @@ contract xERC20LayerZero is Ownable, OApp {
     bytes calldata // Any extra data or options to trigger on receipt.
   ) internal override {
     // Decode the payload to get the message
-    // In this case, type is string, but depends on your encoding!
     (address _to, address _srcToken, uint256 _amount) = abi.decode(payload, (address, address, uint256));
-    address _dstToken = mappedTokens[_srcToken][eidToChainId[_origin.srcEid]];
+
+    // get the mapped token using the current chain id and received source token
+    address _dstToken = mappedTokens[_srcToken][eidToChainId[uint32(block.chainid)]];
     if (_dstToken == address(0)) {
       revert TokenNotSet();
     }
 
+    // mint the tokens to the destination address
     IXERC20(_srcToken).mint(_to, _amount);
-    emit TokenReceived(_srcToken, _amount, _to, eidToChainId[_origin.srcEid], _guid);
+    emit TokenReceived(_dstToken, _amount, _to, eidToChainId[_origin.srcEid], _guid);
   }
 }
