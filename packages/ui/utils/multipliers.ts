@@ -382,7 +382,8 @@ export const multipliers: Record<
           rewards: true,
           ionAPR: true,
           flywheel: true
-        }
+        },
+        decimals: 6
       },
       WETH: {
         borrow: {
