@@ -15606,6 +15606,19 @@ export const dsTestAbi = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DVNOptions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const dvnOptionsAbi = [
+  { type: 'error', inputs: [], name: 'DVN_InvalidDVNIdx' },
+  {
+    type: 'error',
+    inputs: [{ name: 'cursor', internalType: 'uint256', type: 'uint256' }],
+    name: 'DVN_InvalidDVNOptions',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Denominations
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17583,6 +17596,16 @@ export const erc4626UpgradeableAbi = [
     ],
     name: 'Withdraw',
   },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ExecutorOptions
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const executorOptionsAbi = [
+  { type: 'error', inputs: [], name: 'Executor_InvalidLzComposeOption' },
+  { type: 'error', inputs: [], name: 'Executor_InvalidLzReceiveOption' },
+  { type: 'error', inputs: [], name: 'Executor_InvalidNativeDropOption' },
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43754,6 +43777,26 @@ export const olympusStakingAbi = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OptionsBuilder
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const optionsBuilderAbi = [
+  {
+    type: 'error',
+    inputs: [{ name: 'optionType', internalType: 'uint16', type: 'uint16' }],
+    name: 'InvalidOptionType',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'max', internalType: 'uint256', type: 'uint256' },
+      { name: 'actual', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'InvalidSize',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Ownable
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53103,6 +53146,7 @@ export const xErc20LayerZeroAbi = [
     ],
     stateMutability: 'nonpayable',
   },
+  { type: 'receive', stateMutability: 'payable' },
   {
     type: 'function',
     inputs: [
@@ -53361,6 +53405,31 @@ export const xErc20LayerZeroAbi = [
     outputs: [],
     stateMutability: 'nonpayable',
   },
+  { type: 'function', inputs: [], name: 'withdrawEth', outputs: [], stateMutability: 'nonpayable' },
+  {
+    type: 'function',
+    inputs: [{ name: '_amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'withdrawEth',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_token', internalType: 'address', type: 'address' }],
+    name: 'withdrawFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'withdrawFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
   {
     type: 'event',
     anonymous: false,
@@ -53440,6 +53509,11 @@ export const xErc20LayerZeroAbi = [
   { type: 'error', inputs: [], name: 'ChainIdNotSet' },
   { type: 'error', inputs: [], name: 'InvalidDelegate' },
   { type: 'error', inputs: [], name: 'InvalidEndpointCall' },
+  {
+    type: 'error',
+    inputs: [{ name: 'optionType', internalType: 'uint16', type: 'uint16' }],
+    name: 'InvalidOptionType',
+  },
   { type: 'error', inputs: [], name: 'LzTokenUnavailable' },
   {
     type: 'error',
@@ -53464,5 +53538,6 @@ export const xErc20LayerZeroAbi = [
     ],
     name: 'OnlyPeer',
   },
+  { type: 'error', inputs: [], name: 'OriginNotMirrorAdapter' },
   { type: 'error', inputs: [], name: 'TokenNotSet' },
 ] as const;
