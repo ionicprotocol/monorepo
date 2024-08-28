@@ -43,10 +43,10 @@ export default function TxPopup({
         className={`md:w-[45%] w-[80%] h-max relative flex flex-col items-center justify-cente `}
         ref={bridgeref}
       >
-        <div className={`bg-grayUnselect w-full p-4 flex flex-col gap-y-2 rounded-md`}>
-          <div
-            className={`  mb-5 text-xl  flex items-center justify-between`}
-          >
+        <div
+          className={`bg-grayUnselect w-full p-4 flex flex-col gap-y-2 rounded-md`}
+        >
+          <div className={`  mb-5 text-xl  flex items-center justify-between`}>
             <span>Bridging</span>
             <img
               alt="close"

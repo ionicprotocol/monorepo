@@ -18,7 +18,7 @@ export default function Bridge() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  const toChain = searchParams.get('toChain');
+  // const toChain = searchParams.get('toChain');
   const chain = querychain ?? String(chainId);
 
   const {
