@@ -163,7 +163,7 @@ export const EarnPopup = ({
 }) => {
   return (
     <div
-      className={`font-bold popover absolute w-[160px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
     >
       Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
       <div className="flex pt-4">
@@ -180,7 +180,7 @@ export const EarnPopup = ({
           className="size-4 rounded mr-1"
           src="/images/turtle-ionic.png"
         />{' '}
-        + {rewards[poolChain]?.points?.turtle}x Turtle Points
+        + {rewards[poolChain]?.points?.turtle}x Turtle Ionic Points
       </div>
       {rewards[poolChain]?.peaks && (
         <div className="flex">

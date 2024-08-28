@@ -342,27 +342,29 @@ const usePointsForSupplyModeMain = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[mode.id]['0']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[mode.id]['0'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -385,6 +387,7 @@ const usePointsForBorrowModeMain = () => {
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0'])
+          .filter((asset) => !!asset.market)
           .filter((asset) => !!asset.borrow)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
@@ -406,7 +409,7 @@ const usePointsForBorrowModeMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -428,27 +431,29 @@ const usePointsForSupplyModeNative = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[mode.id]['1']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[mode.id]['1'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -472,6 +477,7 @@ const usePointsForBorrowModeNative = () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1'])
           .filter((asset) => !!asset.borrow)
+          .filter((asset) => !!asset.market)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -492,7 +498,7 @@ const usePointsForBorrowModeNative = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -532,7 +538,7 @@ const usePointsForIonLpMode = () => {
           method: 'POST'
         }
       );
-      const totalPoints = response.data.rows[0][1];
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
 
       return {
         ...response.data,
@@ -570,7 +576,7 @@ const usePointsForIonLpBase = () => {
           method: 'POST'
         }
       );
-      const totalPoints = response.data.rows[0][1];
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
 
       return {
         ...response.data,
@@ -611,7 +617,7 @@ const usePointsForSteerLp = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -633,27 +639,29 @@ const usePointsForSupplyBaseMain = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[base.id]['0']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_BASE_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[base.id]['0'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_BASE_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -677,6 +685,7 @@ const usePointsForBorrowBaseMain = () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0'])
           .filter((asset) => !!asset.borrow)
+          .filter((asset) => !!asset.market)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -697,7 +706,7 @@ const usePointsForBorrowBaseMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
