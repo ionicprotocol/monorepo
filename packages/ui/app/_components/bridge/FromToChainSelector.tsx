@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import React, { useCallback } from 'react';
 
+import { chainsArr } from '@ui/constants/index';
+
 interface IChainSelector {
   newRef: any;
   open: boolean;
@@ -30,14 +32,6 @@ export default function FromTOChainSelector({
   const toChain = searchParams.get('toChain');
   const selectedChain = queryChain ?? '34443';
   const selectedToChain = toChain ?? '34443';
-
-  const chainsArr: Record<number, string> = {
-    34443: 'Mode',
-    8453: 'Base',
-    10: 'Optimism',
-    60808: 'Bob',
-    252: 'Frax'
-  };
 
   const createQueryString = useCallback(
     (value: string) => {

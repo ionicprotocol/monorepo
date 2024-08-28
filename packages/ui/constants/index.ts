@@ -21,6 +21,14 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   }
 };
 
+export const chainsArr: Record<number, string> = {
+  34443: 'Mode',
+  8453: 'Base',
+  10: 'Optimism',
+  60808: 'Bob',
+  252: 'Frax'
+};
+
 export const FLYWHEEL_TYPE_MAP: Record<
   number,
   Record<'borrow' | 'supply', Address[]>

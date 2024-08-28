@@ -9,6 +9,7 @@ import { useChainId } from 'wagmi';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
 import ProgressSteps from '../_components/bridge/ProgressSteps';
+import TxPopup from '../_components/bridge/TxPopup';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import { pools } from '@ui/constants/index';
@@ -17,6 +18,7 @@ export default function Bridge() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
+  const toChain = searchParams.get('toChain');
   const chain = querychain ?? String(chainId);
 
   const {
@@ -29,43 +31,23 @@ export default function Bridge() {
     isopen: toIsOpen,
     toggle: toToggle
   } = useOutsideClick();
+  const {
+    componentRef: bridgeRef,
+    isopen: bridgeIsOpen,
+    toggle: bridgeToggle
+  } = useOutsideClick();
   //----------------------
   const [deposit, setDeposit] = useState<string>('');
 
-  // function returnedTokenFn(token: string) {
-  //   console.log(token);
-  // }
-
-  // const chainsArr = [
-  //   {
-  //     name: 'Mode',
-  //     id: 34443
-  //   },
-  //   {
-  //     name: 'Eth',
-  //     id: 1
-  //   },
-  //   {
-  //     name: 'Base',
-  //     id: 8453
-  //   },
-  //   {
-  //     name: 'Polygon',
-  //     id: 137
-  //   },
-  //   {
-  //     name: 'Arbitrum',
-  //     id: 42161
-  //   },
-  //   {
-  //     name: 'Optimism',
-  //     id: 10
-  //   }
-  // ];
-
   return (
-    <main className={``}>
-      <div className="bg-grayone  p-6 rounded-xl max-w-[55%] mx-auto mt-10">
+    <div className={` `}>
+      <TxPopup
+        close={bridgeToggle}
+        open={bridgeIsOpen}
+        bridgeref={bridgeRef}
+        // mock={mockTx}
+      />
+      <div className="bg-grayone  p-6 rounded-xl max-w-[55%] mx-auto my-20">
         <div className={`mb-2 flex items-center justify-between`}>
           <h2 className="text-lg ">Bridge</h2>
           <h2 className="text-xs text-white/50 ">
@@ -122,7 +104,7 @@ export default function Bridge() {
           </button>
           <button
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
-            // onClick={() => setRewardPopup(true)}
+            onClick={() => bridgeToggle()}
           >
             Send
           </button>
@@ -131,6 +113,6 @@ export default function Bridge() {
           <ProgressSteps bg={`${pools[+chain]?.bg ?? pools[mode.id]?.bg}`} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }
