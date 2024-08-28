@@ -71,17 +71,17 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       }
     }
 
-    for (const [, adapter] of Object.entries(adapters).filter(([otherChainId]) => +otherChainId !== chainId)) {
-      const addressInBytes = pad(adapter.address);
-      const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
-      const peers = await xerc20LayerZero.read.peers([adapter.eid]);
-      console.log(`Peer set to ${peers}, expected ${addressInBytes}`);
-      if (peers.toLowerCase() !== addressInBytes.toLowerCase()) {
-        const tx = await xerc20LayerZero.write.setPeer([adapter.eid, addressInBytes]);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
-        console.log(`xERC20LayerZero setPeer for ${adapter.eid} to ${addressInBytes} on chain ${chainId} - tx: ${tx}`);
-      }
-    }
+    // for (const [, adapter] of Object.entries(adapters).filter(([otherChainId]) => +otherChainId !== chainId)) {
+    //   const addressInBytes = pad(adapter.address);
+    //   const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
+    //   const peers = await xerc20LayerZero.read.peers([adapter.eid]);
+    //   console.log(`Peer set to ${peers}, expected ${addressInBytes}`);
+    //   if (peers.toLowerCase() !== addressInBytes.toLowerCase()) {
+    //     const tx = await xerc20LayerZero.write.setPeer([adapter.eid, addressInBytes]);
+    //     await publicClient.waitForTransactionReceipt({ hash: tx });
+    //     console.log(`xERC20LayerZero setPeer for ${adapter.eid} to ${addressInBytes} on chain ${chainId} - tx: ${tx}`);
+    //   }
+    // }
   }
 };
 

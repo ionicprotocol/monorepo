@@ -58,7 +58,6 @@ contract xERC20LayerZero is Ownable, OApp {
   }
 
   // ADMIN FUNCTIONS
-
   function setFeeBps(uint256 _feeBps) public onlyOwner {
     feeBps = _feeBps;
     emit FeeBpsSet(_feeBps);
@@ -77,6 +76,24 @@ contract xERC20LayerZero is Ownable, OApp {
   function setEidToChainId(uint32 _eid, uint32 _chainId) public onlyOwner {
     eidToChainId[_eid] = _chainId;
     emit EidToChainIdSet(_eid, _chainId);
+  }
+
+  function withdrawFee(address _token) public onlyOwner {
+    uint256 _amount = IERC20(_token).balanceOf(address(this));
+    IERC20(_token).transfer(msg.sender, _amount);
+  }
+
+  function withdrawFee(address _token, uint256 _amount) public onlyOwner {
+    IERC20(_token).transfer(msg.sender, _amount);
+  }
+
+  function withdrawEth() public onlyOwner {
+    uint256 _amount = address(this).balance;
+    payable(msg.sender).transfer(_amount);
+  }
+
+  function withdrawEth(uint256 _amount) public onlyOwner {
+    payable(msg.sender).transfer(_amount);
   }
 
   // PUBLIC FUNCTIONS
@@ -107,7 +124,8 @@ contract xERC20LayerZero is Ownable, OApp {
     address _to,
     uint32 _dstChainId
   ) external payable {
-    _send(_dstChainId, _token, _amount, _to, bytes(""));
+    bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(50000, 0);
+    _send(_dstChainId, _token, _amount, _to, options);
   }
 
   /**
@@ -142,7 +160,8 @@ contract xERC20LayerZero is Ownable, OApp {
     if (_dstEid == 0) {
       revert ChainIdNotSet();
     }
-    bytes memory _payload = abi.encode(_to, _token, _amount);
+    uint256 _amountAfterFee = (_amount * (10000 - feeBps)) / 10000;
+    bytes memory _payload = abi.encode(_to, _token, _amountAfterFee);
     MessagingFee memory fee = _quote(_dstEid, _payload, _options, _payInLzToken);
     return (fee.nativeFee, fee.lzTokenFee);
   }
@@ -180,7 +199,6 @@ contract xERC20LayerZero is Ownable, OApp {
   }
 
   // LAYERZERO FUNCTIONS
-
   /**
    * @dev Called when data is received from the protocol. It overrides the equivalent function in the parent contract.
    * Protocol messages are defined as packets, comprised of the following parameters.
@@ -208,4 +226,6 @@ contract xERC20LayerZero is Ownable, OApp {
     IXERC20(_srcToken).mint(_to, _amount);
     emit TokenReceived(_dstToken, _amount, _to, eidToChainId[_origin.srcEid], _guid);
   }
+
+  receive() external payable {}
 }

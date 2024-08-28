@@ -54,18 +54,12 @@ task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { 
 });
 
 task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of modeAssets) {
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
-    const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
-    console.log("cToken: ", cToken, asset.symbol);
+  const cToken = "0x4341620757Bee7EB4553912FaFC963e59C949147"; // ionMODE
 
-    if (asset.initialCf) {
-      await run("market:set:ltv", {
-        marketAddress: cToken,
-        ltv: asset.initialCf
-      });
-    }
-  }
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: "0.5"
+  });
 });
 
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
