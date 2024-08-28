@@ -183,7 +183,7 @@ contract xERC20LayerZero is Ownable, OApp {
 
     // take fee and burn the tokens
     uint256 _amountAfterFee = (_amount * (10000 - feeBps)) / 10000;
-    IXERC20(_token).burn(msg.sender, _amountAfterFee);
+    IXERC20(_token).burn(address(this), _amountAfterFee);
 
     bytes memory _payload = abi.encode(_to, _token, _amountAfterFee);
     MessagingReceipt memory _receipt = _lzSend(
