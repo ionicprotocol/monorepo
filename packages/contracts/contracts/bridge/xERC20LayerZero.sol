@@ -216,15 +216,16 @@ contract xERC20LayerZero is Ownable, OApp {
     // Decode the payload to get the message
     (address _to, address _srcToken, uint256 _amount) = abi.decode(payload, (address, address, uint256));
 
+    uint32 _srcChainId = eidToChainId[_origin.srcEid];
     // get the mapped token using the current chain id and received source token
-    address _dstToken = mappedTokens[_srcToken][eidToChainId[uint32(block.chainid)]];
+    address _dstToken = mappedTokens[_srcToken][_srcChainId];
     if (_dstToken == address(0)) {
       revert TokenNotSet();
     }
 
     // mint the tokens to the destination address
-    IXERC20(_srcToken).mint(_to, _amount);
-    emit TokenReceived(_dstToken, _amount, _to, eidToChainId[_origin.srcEid], _guid);
+    IXERC20(_dstToken).mint(_to, _amount);
+    emit TokenReceived(_dstToken, _amount, _to, _srcChainId, _guid);
   }
 
   receive() external payable {}
