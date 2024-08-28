@@ -3,11 +3,15 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
+import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
+import ProgressSteps from '../_components/bridge/ProgressSteps';
 import MaxDeposit from '../_components/stake/MaxDeposit';
-import TokenSelector from '../_components/stake/TokenSelector';
+
+import { pools } from '@ui/constants/index';
 
 export default function Bridge() {
   const chainId = useChainId();
@@ -28,9 +32,37 @@ export default function Bridge() {
   //----------------------
   const [deposit, setDeposit] = useState<string>('');
 
-  function returnedTokenFn(token: string) {
-    console.log(token);
-  }
+  // function returnedTokenFn(token: string) {
+  //   console.log(token);
+  // }
+
+  // const chainsArr = [
+  //   {
+  //     name: 'Mode',
+  //     id: 34443
+  //   },
+  //   {
+  //     name: 'Eth',
+  //     id: 1
+  //   },
+  //   {
+  //     name: 'Base',
+  //     id: 8453
+  //   },
+  //   {
+  //     name: 'Polygon',
+  //     id: 137
+  //   },
+  //   {
+  //     name: 'Arbitrum',
+  //     id: 42161
+  //   },
+  //   {
+  //     name: 'Optimism',
+  //     id: 10
+  //   }
+  // ];
+
   return (
     <main className={``}>
       <div className="bg-grayone  p-6 rounded-xl max-w-[55%] mx-auto mt-10">
@@ -56,45 +88,48 @@ export default function Bridge() {
               token={'0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'}
               handleInput={(val?: string) => setDeposit(val ?? '')}
               chain={+chain}
-              tokenSelector={true}
-              tokenArr={['ion', 'eth', 'mode', 'weth']}
+              // tokenSelector={true}
+              tokenArr={['ion']}
             />
           </div>
         </div>
         <div className={`grid grid-cols-2 gap-x-4`}>
           <div className="mb-2 ">
             <p className=" text-xs text-white/50">FROM</p>
-            <TokenSelector
+            <FromTOChainSelector
               newRef={fromRef}
               open={fromIsOpen}
               setOpen={fromToggle}
-              chain={+chain}
-              tokenArr={[
-                'polygon',
-                'mode',
-                'eth',
-                'arbitrum',
-                'optimism',
-                'base'
-              ]}
-              tokenReturned={(token) => returnedTokenFn(token)}
             />
           </div>
 
           <div className="mb-2 ">
             <p className=" text-xs text-white/50">TO</p>
-            <TokenSelector
+            <FromTOChainSelector
               newRef={toRef}
               open={toIsOpen}
               setOpen={toToggle}
-              chain={+chain}
-              tokenArr={['mode', 'eth', 'arbitrum', 'optimism', 'base']}
+              mode="toChain"
             />
           </div>
         </div>
-        {/* <button className="bg-accent  hover:bg-green-600 text-black  py-1 px-4 rounded w-full mt-4">
-          Connect Wallet
-        </button> */}
+        <div className={`flex items-center justify-center w-full gap-2`}>
+          <button
+            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
+            // onClick={() => setRewardPopup(true)}
+          >
+            Approve
+          </button>
+          <button
+            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
+            // onClick={() => setRewardPopup(true)}
+          >
+            Send
+          </button>
+        </div>
+        <div className={`w-[70%] mx-auto mt-3`}>
+          <ProgressSteps bg={`${pools[+chain]?.bg ?? pools[mode.id]?.bg}`} />
+        </div>
       </div>
     </main>
   );

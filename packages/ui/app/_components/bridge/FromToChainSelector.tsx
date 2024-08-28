@@ -5,36 +5,63 @@ import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import React, { useCallback } from 'react';
 
-interface ITokenSelector {
+interface IChainSelector {
   newRef: any;
   open: boolean;
   setOpen: any;
-  tokenArr?: string[];
-  chain: number;
+  // chainArr?: Record<number, string>;
+  // chain: number;
+  mode?: string;
 }
 
-export default function TokenSelector({
+export default function FromTOChainSelector({
   setOpen,
   open,
   newRef,
-  tokenArr = ['eth', 'weth'],
-  chain
-}: ITokenSelector) {
+  // chainArr = { 1: 'eth' },
+  // chain,
+  mode = 'from'
+}: IChainSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   //URL passed Data ----------------------------
-  const queryToken = searchParams.get('token');
-  const selectedtoken = queryToken ?? tokenArr[0];
+  const queryChain = searchParams.get('chain');
+  const toChain = searchParams.get('toChain');
+  const selectedChain = queryChain ?? '34443';
+  const selectedToChain = toChain ?? '34443';
+
+  const chainsArr: Record<number, string> = {
+    34443: 'Mode',
+    8453: 'Base',
+    10: 'Optimism',
+    60808: 'Bob',
+    252: 'Frax'
+  };
 
   const createQueryString = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      params.set('token', value);
+      if (mode === 'from') {
+        params.set('chain', value);
+      }
+      // params.set(mode, value);
+      if (mode === 'toChain') {
+        params.set('toChain', value);
+      }
+
+      //  params.
       return params.toString();
     },
-    [searchParams]
+    [mode, searchParams]
   );
+
+  const fromArr = Object.entries(chainsArr);
+  const toArr = Object.entries(chainsArr).filter(
+    ([key]) => key !== selectedChain
+  );
+
+  const arrofMode = mode === 'toChain' ? toArr : fromArr;
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -50,9 +77,10 @@ export default function TokenSelector({
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/symbols/32/color/${selectedtoken.toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain].toLowerCase()}.png`}
           />
-          {selectedtoken ?? 'Select Token'}
+          {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
+            'Select Token'}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -66,14 +94,16 @@ export default function TokenSelector({
             open ? 'block' : 'hidden transition-all  delay-1000'
           } top-full w-full  origin-top z-40 shadow-xl shadow-black/10 rounded-b-md py-2 border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-1.5 gap-2 `}
         >
-          {tokenArr.map((token: string, idx: number) => (
+          {arrofMode.map((chainslist: [string, string], idx: number) => (
             <Link
               className={`flex justify-between items-center p-2 mb-1  rounded-md`}
-              href={pathname + '?' + createQueryString(token)}
+              href={pathname + '?' + createQueryString(chainslist[0])}
               key={idx}
             >
-              {token}{' '}
-              {selectedtoken === token ? (
+              {chainslist[1]}{' '}
+              {chainsArr[
+                mode === 'toChain' ? +selectedToChain : +selectedChain
+              ] === chainslist[0] ? (
                 <img
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
@@ -83,7 +113,7 @@ export default function TokenSelector({
                 <img
                   alt="logos"
                   className={`w-4 h-4`}
-                  src={`/img/symbols/32/color/${token.toLowerCase()}.png`}
+                  src={`/img/symbols/32/color/${chainslist[1].toLowerCase()}.png`}
                 />
               )}
             </Link>
