@@ -155,7 +155,7 @@ function MaxDeposit({
               newRef={newRef}
               open={open}
               setOpen={setOpen}
-              chain={+chain}
+              // chain={+chain}
               tokenArr={tokenArr}
             />
           ) : (

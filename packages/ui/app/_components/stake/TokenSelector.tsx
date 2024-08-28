@@ -10,15 +10,14 @@ interface ITokenSelector {
   open: boolean;
   setOpen: any;
   tokenArr?: string[];
-  chain: number;
+  // chain: number;
 }
 
 export default function TokenSelector({
   setOpen,
   open,
   newRef,
-  tokenArr = ['eth', 'weth'],
-  chain
+  tokenArr = ['eth', 'weth']
 }: ITokenSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
