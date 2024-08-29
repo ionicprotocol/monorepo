@@ -81,7 +81,7 @@ export default function FromTOChainSelector({
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase() || 'search'}.png`}
             onError={({ currentTarget }) => {
               currentTarget.onerror = null;
               currentTarget.src = '/img/assets/search.png';
