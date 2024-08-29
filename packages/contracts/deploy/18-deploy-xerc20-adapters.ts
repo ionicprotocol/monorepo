@@ -13,12 +13,9 @@ const lzEndpoints: Record<number, Address> = {
 const ionTokens: Record<number, Address> = {
   [base.id]: "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
   [optimism.id]: "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC",
-  [mode.id]: "0x18470019bf0e94611f15852f7e93cf5d65bc34ca"
-};
-
-const adapters: Record<number, { address: Address; eid: number }> = {
-  [base.id]: { address: "0xCCe0fE8EEfd041b17E29cb73f959F1d4CD602451", eid: 30184 },
-  [mode.id]: { address: "0xa6233522a3f9A2c356ba8b339604815E9e1efdD9", eid: 30260 }
+  [mode.id]: "0x18470019bf0e94611f15852f7e93cf5d65bc34ca",
+  [fraxtal.id]: "0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE",
+  [bob.id]: "0xb90f229f27851e205d77fd46487989ad6e44c17c"
 };
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -73,18 +70,6 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         );
       }
     }
-
-    // for (const [, adapter] of Object.entries(adapters).filter(([otherChainId]) => +otherChainId !== chainId)) {
-    //   const addressInBytes = pad(adapter.address);
-    //   const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
-    //   const peers = await xerc20LayerZero.read.peers([adapter.eid]);
-    //   console.log(`Peer set to ${peers}, expected ${addressInBytes}`);
-    //   if (peers.toLowerCase() !== addressInBytes.toLowerCase()) {
-    //     const tx = await xerc20LayerZero.write.setPeer([adapter.eid, addressInBytes]);
-    //     await publicClient.waitForTransactionReceipt({ hash: tx });
-    //     console.log(`xERC20LayerZero setPeer for ${adapter.eid} to ${addressInBytes} on chain ${chainId} - tx: ${tx}`);
-    //   }
-    // }
   }
 };
 
