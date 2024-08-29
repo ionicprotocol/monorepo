@@ -42,7 +42,7 @@ export default function TxPopup({
       } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm`}
     >
       <div
-        className={`md:w-[45%] w-[80%] h-max relative flex flex-col items-center justify-cente `}
+        className={`xl:max-w-[45%] sm:w-[75%] md:w-[60%]  w-[80%] h-max relative flex flex-col items-center justify-cente `}
         ref={bridgeref}
       >
         <div
