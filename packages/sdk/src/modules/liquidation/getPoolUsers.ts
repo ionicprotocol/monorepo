@@ -56,6 +56,7 @@ async function processAssetsInBatches(
   comptroller: Address,
   maxHealth: bigint,
   sdk: IonicSdk,
+  botType:BotType,
   poolUsers: PoolUserStruct[]
 ) {
   const mutableUsers: `0x${string}`[] = [...users];
@@ -67,8 +68,15 @@ async function processAssetsInBatches(
       batchUsers.map(async (assets, index) => {
         try {
           const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-          if (health < maxHealth && health > HF_MIN) {
-            poolUsers.push({ account: batchUsers[index], health });
+      
+          if (botType === BotType.Pyth) {
+            if (health <= maxHealth && health > HF_MIN) {
+              poolUsers.push({ account: batchUsers[index], health });
+            }
+          } else {
+            if (health < maxHealth && health > HF_MIN) {
+              poolUsers.push({ account: batchUsers[index], health });
+            }
           }
         } catch (error) {
           sdk.logger.error(`Error getting health factor for ${batchUsers[index]}: ${error}`);
@@ -96,7 +104,7 @@ async function getFusePoolUsers(
     }
 
     // Process assets in batches
-    await processAssetsInBatches(users, comptroller, maxHealth, sdk, poolUsers);
+    await processAssetsInBatches(users, comptroller, maxHealth,sdk, botType, poolUsers);
 
     page++;
   }
