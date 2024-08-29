@@ -43,11 +43,10 @@ export default function FromTOChainSelector({
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       if (mode === 'from') {
-        selectedToChain === value
-          ? params.set('toChain', '')
-          : params.set('chain', value);
+        selectedToChain === value && params.set('toChain', '');
+        params.set('chain', value);
       }
-      // params.set(mode, value);
+
       if (mode === 'toChain') {
         params.set('toChain', value);
       }
@@ -66,11 +65,6 @@ export default function FromTOChainSelector({
     }
   }, []);
 
-  function isComingSoon(chain: string) {
-    if (chain === '8453' || chain === '34443') return false;
-    // if () return true
-    return true;
-  }
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -94,11 +88,6 @@ export default function FromTOChainSelector({
           />
           {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
             'Select Token'}{' '}
-          {isComingSoon(
-            mode === 'toChain'
-              ? selectedToChain.toString()
-              : selectedChain.toString()
-          ) ?? <span className={`text-[8px]`}>(Coming Soon)</span>}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -120,9 +109,6 @@ export default function FromTOChainSelector({
             >
               {chainslist[1]}
               {'  '}
-              {isComingSoon(chainslist[0]) ? (
-                <span className={`text-[8px]`}>(Coming Soon)</span>
-              ) : null}
               {chainsArr[
                 mode === 'toChain' ? +selectedToChain : +selectedChain
               ] === chainslist[0] ? (

@@ -49,7 +49,7 @@ function MaxDeposit({
     token: hooktoken,
     chainId: chain,
     query: {
-      refetchInterval: 6000
+      refetchInterval: 5000
     }
   });
 

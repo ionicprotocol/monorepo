@@ -2,7 +2,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { mode } from 'viem/chains';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
@@ -56,7 +56,6 @@ export default function Bridge() {
     bridgingStatus: false
   });
 
-
   const [popup, setPopup] = useState<{
     status: boolean;
     amount: bigint;
@@ -85,6 +84,7 @@ export default function Bridge() {
       }
       if (amount <= BigInt(0)) return;
       setLoading((p) => ({ ...p, approvalStatus: true }));
+      setProgress(1);
       const approval = await writeContractAsync({
         abi: erc20Abi,
         account: address,
@@ -99,7 +99,7 @@ export default function Bridge() {
         ...p,
         approvalHash: approval
       }));
-      setProgress(1);
+      setProgress(2);
     } catch (err) {
       console.warn(err);
       setLoading((p) => ({ ...p, approvalStatus: false }));
@@ -137,7 +137,7 @@ export default function Bridge() {
       console.warn('Bridging hash -->  ' + bridging);
 
       setLoading((p) => ({ ...p, bridgingStatus: false }));
-      setProgress(2);
+      // setProgress(2);
       setPopup((p) => ({
         ...p,
         status: true,
@@ -146,11 +146,13 @@ export default function Bridge() {
         fromChain: chain,
         toChain: args.destinationChain.toString()
       }));
+      setDeposit('');
       bridgeToggle();
+      setProgress(0);
     } catch (err) {
       console.error('Error claiming rewards: ', err);
       setLoading((p) => ({ ...p, bridgingStatus: false }));
-      setProgress(1);
+      setProgress(2);
     }
   }
   return (
@@ -161,15 +163,16 @@ export default function Bridge() {
         bridgeref={bridgeRef}
         mock={popup}
       />
-      <div className="bg-grayone  p-6 rounded-xl max-w-[55%] mx-auto my-20">
+      <div className="bg-grayone  p-6 rounded-xl md:max-w-[55%] w-[95%] mx-auto my-20">
         <div className={`mb-2 flex items-center justify-between`}>
           <h2 className="text-lg ">Bridge</h2>
           <h2 className="text-xs text-white/50 ">
-            Finish Bridge{' '}
+            Finished Bridge{' '}
             <img
-              className={`inline-block w-3 h-3 mx-0.5`}
+              className={`inline-block w-3 h-3 mx-0.5 cursor-pointer`}
               src="https://img.icons8.com/ios/50/ffffff/info--v1.png"
               alt="info--v1"
+              onClick={() => bridgeToggle()}
             />
           </h2>
         </div>
@@ -225,7 +228,8 @@ export default function Bridge() {
 
         <div className={`flex items-center justify-center w-full gap-2`}>
           <button
-            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
+            disabled={progress >= 1 || !deposit ? true : false}
+            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
             onClick={() => approval(parseUnits(deposit, 18))}
           >
             <ResultHandler
@@ -238,7 +242,8 @@ export default function Bridge() {
             </ResultHandler>
           </button>
           <button
-            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
+            disabled={progress < 2 ? true : false}
+            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
             onClick={() =>
               bridging({
                 token: getToken(+chain),

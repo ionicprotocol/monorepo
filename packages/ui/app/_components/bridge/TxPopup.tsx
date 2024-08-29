@@ -1,8 +1,10 @@
 'use client';
 import type { MutableRefObject } from 'react';
 
-import { chainsArr } from '@ui/constants/index';
+import { chainsArr, pools } from '@ui/constants/index';
+import { mode } from 'viem/chains';
 import { formatEther } from 'viem';
+import { useSearchParams } from 'next/navigation';
 
 interface IProps {
   close: () => void;
@@ -30,13 +32,9 @@ export default function TxPopup({
     approvalHash: ''
   }
 }: IProps) {
-  // const {
-  //   componentRef: refto,
-  //   isopen,
-  //   toggle
-  // } = useOutsideClick();
-  // const { address, isConnected } = useAccount();
-
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const chain = querychain ?? '34443';
   return (
     <div
       className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
@@ -60,9 +58,13 @@ export default function TxPopup({
             />
           </div>
           <div className={`w-full items-center justify-start flex `}>
-            <span className={`text-xs`}>Amount</span>
+            <span className={`text-xs  min-w-max`}>Amount</span>
             <div className={`ml-auto flex gap-2`}>
-              <span className={`text-xs text-white/50`}>{mock?.amount}</span>
+              <span className={`text-xs text-white/50`}>
+                {Number(formatEther(mock.amount)).toLocaleString('en-US', {
+                  maximumFractionDigits: 6
+                })}
+              </span>
               <img
                 alt="close"
                 className={` h-4 w-4 `}
@@ -72,7 +74,7 @@ export default function TxPopup({
             </div>
           </div>
           <div className={`w-full items-center justify-start flex `}>
-            <span className={`text-xs`}>Received</span>
+            <span className={`text-xs  min-w-max`}>Received</span>
             <div className={`ml-auto flex gap-2`}>
               <span className={`text-xs text-white/50`}>
                 {(
@@ -91,7 +93,7 @@ export default function TxPopup({
             </div>
           </div>
           <div className={`w-full items-center justify-start flex `}>
-            <span className={`text-xs`}>Networks</span>
+            <span className={`text-xs  min-w-max`}>Networks</span>
             <div className={`ml-auto flex items-center gap-2`}>
               <span className={`text-xs text-white/50`}>
                 {chainsArr[+mock?.fromChain]}
@@ -102,30 +104,38 @@ export default function TxPopup({
               </span>
             </div>
           </div>
-          <div className={`w-full items-center justify-start flex `}>
-            <span className={`text-xs`}>Approval Hash</span>
-            <div className={`ml-auto`}>
+          <div className={`w-full items-center justify-start flex gap-4`}>
+            <span className={`text-xs min-w-max`}>Approval Hash</span>
+            <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
                 href={`https://layerzeroscan.com/tx/${mock?.approvalHash}`}
-                className={`text-xs text-white/50`}
+                className={`text-xs text-white/50 `}
               >
                 {mock?.approvalHash}
               </a>
             </div>
           </div>
-          <div className={`w-full items-center justify-start flex `}>
-            <span className={`text-xs`}>Transaction Hash</span>
-            <div className={`ml-auto`}>
+          <div className={`w-full items-center justify-start flex gap-4 `}>
+            <span className={`text-xs  min-w-max`}>Transaction Hash</span>
+            <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
                 href={`https://layerzeroscan.com/tx/${mock?.hash}`}
-                className={`text-xs text-white/50`}
+                className={`text-xs text-white/50  `}
               >
                 {mock?.hash}
               </a>
             </div>
           </div>
+
+          <a
+            target="_blank"
+            href={`https://layerzeroscan.com/tx/${mock?.hash}`}
+            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
+          >
+            EXPLORE
+          </a>
         </div>
       </div>
     </div>
