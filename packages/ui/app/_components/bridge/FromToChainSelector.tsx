@@ -60,11 +60,11 @@ export default function FromTOChainSelector({
 
   const arrofMode = mode === 'toChain' ? toArr : fromArr;
 
-  (() => {
+  useEffect(() => {
     if (!queryChain && !toChain) {
       router.push(pathname + '?chain=34443&toChain=8453');
     }
-  })();
+  }, []);
 
   function isComingSoon(chain: string) {
     if (chain === '8453' || chain === '34443') return false;
@@ -95,7 +95,9 @@ export default function FromTOChainSelector({
           {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
             'Select Token'}{' '}
           {isComingSoon(
-            mode === 'toChain' ? selectedToChain.toString() : selectedChain.toString()
+            mode === 'toChain'
+              ? selectedToChain.toString()
+              : selectedChain.toString()
           ) ?? <span className={`text-[8px]`}>(Coming Soon)</span>}
           <img
             alt="expand-arrow--v2"
@@ -116,8 +118,9 @@ export default function FromTOChainSelector({
               href={pathname + '?' + createQueryString(chainslist[0])}
               key={idx}
             >
-              {chainslist[1]}{'  '}
-              {isComingSoon(chainslist[0])  ? (
+              {chainslist[1]}
+              {'  '}
+              {isComingSoon(chainslist[0]) ? (
                 <span className={`text-[8px]`}>(Coming Soon)</span>
               ) : null}
               {chainsArr[

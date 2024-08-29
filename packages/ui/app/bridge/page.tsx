@@ -2,9 +2,9 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { mode } from 'viem/chains';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
@@ -14,8 +14,11 @@ import TxPopup from '../_components/bridge/TxPopup';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import { pools } from '@ui/constants/index';
-import { getToken } from '@ui/utils/getStakingTokens';
-import { parseUnits } from 'viem';
+import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+import { Address, erc20Abi, parseEther, parseUnits } from 'viem';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { xErc20LayerZeroAbi } from 'sdk/src';
+import ResultHandler from '../_components/ResultHandler';
 
 export default function Bridge() {
   const chainId = useChainId();
@@ -24,6 +27,7 @@ export default function Bridge() {
   const toChain = searchParams.get('toChain');
   const chain = querychain ?? String(chainId);
   const { address, isConnected } = useAccount();
+  const { writeContractAsync } = useWriteContract();
 
   const {
     componentRef: fromRef,
@@ -42,25 +46,120 @@ export default function Bridge() {
   } = useOutsideClick();
   //----------------------
   const [deposit, setDeposit] = useState<string>('');
+  const [progress, setProgress] = useState<number>(0);
+  const [nativeEth, setNativeEth] = useState<bigint>(BigInt(0));
+  const [loading, setLoading] = useState<{
+    approvalStatus: boolean;
+    bridgingStatus: boolean;
+  }>({
+    approvalStatus: false,
+    bridgingStatus: false
+  });
 
-  function handleQuote(data: string) {
-    console.log(data);
+
+  const [popup, setPopup] = useState<{
+    status: boolean;
+    amount: bigint;
+    hash: string;
+    approvalHash: string;
+    fromChain: string;
+    toChain: string;
+  }>({
+    status: false,
+    amount: BigInt(0),
+    hash: '',
+    approvalHash: '',
+    fromChain: '',
+    toChain: ''
+  });
+
+  // console.log(bridgeArgs);
+
+  async function approval(amount: bigint) {
+    try {
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
+      if (!isConnected) {
+        console.warn('Wallet not connected');
+        return;
+      }
+      if (amount <= BigInt(0)) return;
+      setLoading((p) => ({ ...p, approvalStatus: true }));
+      const approval = await writeContractAsync({
+        abi: erc20Abi,
+        account: address,
+        address: getToken(+chain),
+        args: [BridgingContractAddress[+chain], amount],
+        functionName: 'approve'
+      });
+
+      console.warn('Approval hash --> ' + approval);
+      setLoading((p) => ({ ...p, approvalStatus: false }));
+      setPopup((p) => ({
+        ...p,
+        approvalHash: approval
+      }));
+      setProgress(1);
+    } catch (err) {
+      console.warn(err);
+      setLoading((p) => ({ ...p, approvalStatus: false }));
+      setProgress(0);
+    }
   }
 
-  // const isComingSoon =
-  //   +chain !== 8453 ||
-  //   +chain !== 34443 ||
-  //   +toChain! !== 8453 ||
-  //   +toChain! !== 34443
-  //     ? true
-  //     : false;
+  interface IBridgeArgs {
+    token: Address;
+    amount: bigint;
+    toAddress: Address;
+    destinationChain: number;
+    nativeEth: bigint;
+  }
+  async function bridging(args: IBridgeArgs) {
+    try {
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
+      if (!isConnected) {
+        console.warn('Wallet not connected');
+        return;
+      }
+      if (args.amount <= BigInt(0)) return;
+      setLoading((p) => ({ ...p, bridgingStatus: true }));
+
+      const bridging = await writeContractAsync({
+        abi: xErc20LayerZeroAbi,
+        address: BridgingContractAddress[+chain],
+        args: [args.token, args.amount, args.toAddress, args.destinationChain],
+        functionName: 'send',
+        chainId: +chain,
+        value: args.nativeEth
+      });
+
+      console.warn('Bridging hash -->  ' + bridging);
+
+      setLoading((p) => ({ ...p, bridgingStatus: false }));
+      setProgress(2);
+      setPopup((p) => ({
+        ...p,
+        status: true,
+        amount: args.amount,
+        hash: bridging,
+        fromChain: chain,
+        toChain: args.destinationChain.toString()
+      }));
+      bridgeToggle();
+    } catch (err) {
+      console.error('Error claiming rewards: ', err);
+      setLoading((p) => ({ ...p, bridgingStatus: false }));
+      setProgress(1);
+    }
+  }
   return (
     <div className={` `}>
       <TxPopup
         close={bridgeToggle}
         open={bridgeIsOpen}
         bridgeref={bridgeRef}
-        // mock={mockTx}
+        mock={popup}
       />
       <div className="bg-grayone  p-6 rounded-xl max-w-[55%] mx-auto my-20">
         <div className={`mb-2 flex items-center justify-between`}>
@@ -115,7 +214,7 @@ export default function Bridge() {
         <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" />
         <Quote
           chain={+chain}
-          getQuote={handleQuote}
+          getQuote={(data) => setNativeEth(parseEther(data))}
           args={{
             amount: parseUnits(deposit, 18),
             destinationChain: Number(toChain),
@@ -127,19 +226,44 @@ export default function Bridge() {
         <div className={`flex items-center justify-center w-full gap-2`}>
           <button
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
-            // onClick={() => setRewardPopup(true)}
+            onClick={() => approval(parseUnits(deposit, 18))}
           >
-            Approve
+            <ResultHandler
+              isLoading={loading.approvalStatus}
+              height="20"
+              width="20"
+              color={'#000000'}
+            >
+              Approve
+            </ResultHandler>
           </button>
           <button
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}
-            onClick={() => bridgeToggle()}
+            onClick={() =>
+              bridging({
+                token: getToken(+chain),
+                amount: parseUnits(deposit, 18),
+                toAddress: address!,
+                destinationChain: Number(toChain),
+                nativeEth: nativeEth
+              })
+            }
           >
-            Send
+            <ResultHandler
+              isLoading={loading.bridgingStatus}
+              height="20"
+              width="20"
+              color={'#000000'}
+            >
+              Bridge
+            </ResultHandler>
           </button>
         </div>
         <div className={`w-[70%] mx-auto mt-3`}>
-          <ProgressSteps bg={`${pools[+chain]?.bg ?? pools[mode.id]?.bg}`} />
+          <ProgressSteps
+            bg={`${pools[+chain]?.bg ?? pools[mode.id]?.bg}`}
+            progress={progress}
+          />
         </div>
       </div>
     </div>

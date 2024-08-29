@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
 import { formatEther, type Address } from 'viem';
 import {
@@ -51,7 +51,7 @@ export default function Quote({
     }
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (quotation) getQuote(formatEther(quotation[0]));
   }, [getQuote, quotation]);
   // console.log(quotation);

@@ -2,16 +2,19 @@
 import type { MutableRefObject } from 'react';
 
 import { chainsArr } from '@ui/constants/index';
+import { formatEther } from 'viem';
 
 interface IProps {
   close: () => void;
   open: boolean;
   bridgeref: MutableRefObject<never>;
   mock?: {
-    amount: string;
+    amount: bigint;
     hash: string;
+    approvalHash: string;
     fromChain: string;
     toChain: string;
+    status?: boolean;
   };
 }
 
@@ -20,10 +23,11 @@ export default function TxPopup({
   open,
   bridgeref,
   mock = {
-    amount: '20',
+    amount: BigInt(0),
     hash: '0x1234567890abcdef1234567890abcdef12345678',
-    fromChain: '10',
-    toChain: '8453'
+    fromChain: '',
+    toChain: '',
+    approvalHash: ''
   }
 }: IProps) {
   // const {
@@ -68,6 +72,25 @@ export default function TxPopup({
             </div>
           </div>
           <div className={`w-full items-center justify-start flex `}>
+            <span className={`text-xs`}>Received</span>
+            <div className={`ml-auto flex gap-2`}>
+              <span className={`text-xs text-white/50`}>
+                {(
+                  Number(formatEther(mock?.amount)) -
+                  Number(formatEther(mock?.amount)) * 0.01
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 3
+                })}
+              </span>
+              <img
+                alt="close"
+                className={` h-4 w-4 `}
+                src="/img/logo/ION.png"
+              />
+              <span className={`text-xs text-white/50`}>ION</span>
+            </div>
+          </div>
+          <div className={`w-full items-center justify-start flex `}>
             <span className={`text-xs`}>Networks</span>
             <div className={`ml-auto flex items-center gap-2`}>
               <span className={`text-xs text-white/50`}>
@@ -82,13 +105,25 @@ export default function TxPopup({
           <div className={`w-full items-center justify-start flex `}>
             <span className={`text-xs`}>Approval Hash</span>
             <div className={`ml-auto`}>
-              <span className={`text-xs text-white/50`}>{mock?.hash}</span>
+              <a
+                target="_blank"
+                href={`https://layerzeroscan.com/tx/${mock?.approvalHash}`}
+                className={`text-xs text-white/50`}
+              >
+                {mock?.approvalHash}
+              </a>
             </div>
           </div>
           <div className={`w-full items-center justify-start flex `}>
             <span className={`text-xs`}>Transaction Hash</span>
             <div className={`ml-auto`}>
-              <span className={`text-xs text-white/50`}>{mock?.hash}</span>
+              <a
+                target="_blank"
+                href={`https://layerzeroscan.com/tx/${mock?.hash}`}
+                className={`text-xs text-white/50`}
+              >
+                {mock?.hash}
+              </a>
             </div>
           </div>
         </div>
