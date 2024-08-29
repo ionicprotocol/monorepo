@@ -1,3 +1,5 @@
+import type { Address } from 'viem';
+
 import {
   BaseContractABI,
   BaseLiquidityContractAdd,
@@ -79,3 +81,9 @@ export function getReservesArgs(chain: number, token: 'eth' | 'mode' | 'weth') {
   return [];
 }
 //=========================================================
+// Bridging Contract address
+
+export const BridgingContractAddress: Record<number, Address> = {
+  34443: '0xb750c43F9338313c7A8af6922dcA1910Ee3583c8',
+  8453: '0xD9E3f9D761f3fC2Adb0DC70E5284494dEc0D7C30'
+};

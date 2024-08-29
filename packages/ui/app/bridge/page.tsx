@@ -4,22 +4,26 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
 import ProgressSteps from '../_components/bridge/ProgressSteps';
+import Quote from '../_components/bridge/Quote';
 import TxPopup from '../_components/bridge/TxPopup';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import { pools } from '@ui/constants/index';
+import { getToken } from '@ui/utils/getStakingTokens';
+import { parseUnits } from 'viem';
 
 export default function Bridge() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  // const toChain = searchParams.get('toChain');
+  const toChain = searchParams.get('toChain');
   const chain = querychain ?? String(chainId);
+  const { address, isConnected } = useAccount();
 
   const {
     componentRef: fromRef,
@@ -39,6 +43,17 @@ export default function Bridge() {
   //----------------------
   const [deposit, setDeposit] = useState<string>('');
 
+  function handleQuote(data: string) {
+    console.log(data);
+  }
+
+  // const isComingSoon =
+  //   +chain !== 8453 ||
+  //   +chain !== 34443 ||
+  //   +toChain! !== 8453 ||
+  //   +toChain! !== 34443
+  //     ? true
+  //     : false;
   return (
     <div className={` `}>
       <TxPopup
@@ -67,7 +82,7 @@ export default function Bridge() {
               headerText="Token Amount"
               amount={deposit}
               tokenName={'ion'}
-              token={'0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'}
+              token={getToken(+chain)}
               handleInput={(val?: string) => setDeposit(val ?? '')}
               chain={+chain}
               // tokenSelector={true}
@@ -75,6 +90,7 @@ export default function Bridge() {
             />
           </div>
         </div>
+        {/* <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" /> */}
         <div className={`grid grid-cols-2 gap-x-4`}>
           <div className="mb-2 ">
             <p className=" text-xs text-white/50">FROM</p>
@@ -82,6 +98,7 @@ export default function Bridge() {
               newRef={fromRef}
               open={fromIsOpen}
               setOpen={fromToggle}
+              fromChainId={+chain}
             />
           </div>
 
@@ -95,6 +112,18 @@ export default function Bridge() {
             />
           </div>
         </div>
+        <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" />
+        <Quote
+          chain={+chain}
+          getQuote={handleQuote}
+          args={{
+            amount: parseUnits(deposit, 18),
+            destinationChain: Number(toChain),
+            toAddress: address!,
+            token: getToken(+chain)
+          }}
+        />
+
         <div className={`flex items-center justify-center w-full gap-2`}>
           <button
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md`}

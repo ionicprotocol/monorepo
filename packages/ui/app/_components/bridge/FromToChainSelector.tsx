@@ -2,8 +2,8 @@
 'use client';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import React, { useCallback } from 'react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import React, { useCallback, useEffect } from 'react';
 
 import { chainsArr } from '@ui/constants/index';
 
@@ -12,8 +12,9 @@ interface IChainSelector {
   open: boolean;
   setOpen: any;
   // chainArr?: Record<number, string>;
-  // chain: number;
+  fromChainId?: number;
   mode?: string;
+  // isComingSoon?: boolean;
 }
 
 export default function FromTOChainSelector({
@@ -21,7 +22,7 @@ export default function FromTOChainSelector({
   open,
   newRef,
   // chainArr = { 1: 'eth' },
-  // chain,
+  fromChainId,
   mode = 'from'
 }: IChainSelector) {
   const pathname = usePathname();
@@ -30,14 +31,21 @@ export default function FromTOChainSelector({
   //URL passed Data ----------------------------
   const queryChain = searchParams.get('chain');
   const toChain = searchParams.get('toChain');
-  const selectedChain = queryChain ?? '34443';
-  const selectedToChain = toChain ?? '34443';
+  const selectedChain = queryChain ?? fromChainId ?? '';
+  const selectedToChain = toChain ?? '8453';
+  const router = useRouter();
 
+  const fromArr = Object.entries(chainsArr);
+  const toArr = Object.entries(chainsArr).filter(
+    ([key]) => key !== selectedChain
+  );
   const createQueryString = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       if (mode === 'from') {
-        params.set('chain', value);
+        selectedToChain === value
+          ? params.set('toChain', '')
+          : params.set('chain', value);
       }
       // params.set(mode, value);
       if (mode === 'toChain') {
@@ -47,15 +55,22 @@ export default function FromTOChainSelector({
       //  params.
       return params.toString();
     },
-    [mode, searchParams]
-  );
-
-  const fromArr = Object.entries(chainsArr);
-  const toArr = Object.entries(chainsArr).filter(
-    ([key]) => key !== selectedChain
+    [mode, searchParams, selectedToChain]
   );
 
   const arrofMode = mode === 'toChain' ? toArr : fromArr;
+
+  (() => {
+    if (!queryChain && !toChain) {
+      router.push(pathname + '?chain=34443&toChain=8453');
+    }
+  })();
+
+  function isComingSoon(chain: string) {
+    if (chain === '8453' || chain === '34443') return false;
+    // if () return true
+    return true;
+  }
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -71,10 +86,17 @@ export default function FromTOChainSelector({
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain].toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase()}.png`}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = '/img/assets/search.png';
+            }}
           />
           {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
-            'Select Token'}
+            'Select Token'}{' '}
+          {isComingSoon(
+            mode === 'toChain' ? selectedToChain.toString() : selectedChain.toString()
+          ) ?? <span className={`text-[8px]`}>(Coming Soon)</span>}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -90,23 +112,26 @@ export default function FromTOChainSelector({
         >
           {arrofMode.map((chainslist: [string, string], idx: number) => (
             <Link
-              className={`flex justify-between items-center p-2 mb-1  rounded-md`}
+              className={`flex justify-start gap-2 items-center p-2 mb-1  rounded-md`}
               href={pathname + '?' + createQueryString(chainslist[0])}
               key={idx}
             >
-              {chainslist[1]}{' '}
+              {chainslist[1]}{'  '}
+              {isComingSoon(chainslist[0])  ? (
+                <span className={`text-[8px]`}>(Coming Soon)</span>
+              ) : null}
               {chainsArr[
                 mode === 'toChain' ? +selectedToChain : +selectedChain
               ] === chainslist[0] ? (
                 <img
                   alt="checkmark--v1"
-                  className={`w-4 h-4 stroke-lime`}
+                  className={`w-4 h-4 stroke-lime ml-auto`}
                   src="https://img.icons8.com/ios-filled/50/ffffff/checkmark--v1.png"
                 />
               ) : (
                 <img
                   alt="logos"
-                  className={`w-4 h-4`}
+                  className={`w-4 h-4 ml-auto`}
                   src={`/img/symbols/32/color/${chainslist[1].toLowerCase()}.png`}
                 />
               )}
