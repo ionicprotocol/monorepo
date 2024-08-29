@@ -18,11 +18,11 @@ export function getPoolToken(token?: 'eth' | 'mode' | 'weth'): `0x${string}` {
   return '0x0000000000000000000000000000000000000000';
 }
 export function getToken(chain: number): `0x${string}` {
-  if (chain === 34443) return '0x18470019bf0e94611f15852f7e93cf5d65bc34ca';
-  if (chain === 8453) return '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5';
-  if (chain === 252) return '0xb90f229f27851e205d77fd46487989ad6e44c17c';
-  if (chain === 10) return '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC';
-  if (chain === 60808) return '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE';
+  if (chain === 34443) return '0x18470019bf0e94611f15852f7e93cf5d65bc34ca'; //mode
+  if (chain === 8453) return '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'; //base
+  if (chain === 252) return '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'; //frax
+  if (chain === 10) return '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'; //op
+  if (chain === 60808) return '0xb90f229f27851e205d77fd46487989ad6e44c17c'; //bob
   return '0x0000000000000000000000000000000000000000';
 }
 export function getAvailableStakingToken(

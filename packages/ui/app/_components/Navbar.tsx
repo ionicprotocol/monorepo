@@ -186,7 +186,9 @@ export default function Navbar() {
             href="/bridge"
           >
             <p
-              className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              className={` ${
+                pathname == '/bridge' ? 'text-accent' : null
+              } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
             </p>

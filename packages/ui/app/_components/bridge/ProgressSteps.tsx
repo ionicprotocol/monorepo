@@ -31,7 +31,7 @@ export default function ProgressSteps({
         <div className={` absolute w-full top-1/2 -translate-y-1/2`}>
           <div
             style={{ width: calculateProgress() }}
-            className={` absolute top-1/2 -translate-y-1/2 z-50 h-[3px] ${+calculateProgress() > 0 ? bg : 'bg-gray-500'} transition-all duration-300 ease-linear`}
+            className={` absolute top-1/2 -translate-y-1/2 z-50 h-[3px] ${progress > 0 && bg} ${progress === 0 && 'bg-gray-500'} transition-all duration-300 ease-linear`}
           />
           <div
             className={`absolute top-1/2 -translate-y-1/2 w-full bg-gray-500 h-[3px] z-10`}
