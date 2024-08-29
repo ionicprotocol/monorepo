@@ -1,10 +1,10 @@
 'use client';
+import { useSearchParams } from 'next/navigation';
 import type { MutableRefObject } from 'react';
+import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
 
 import { chainsArr, pools } from '@ui/constants/index';
-import { mode } from 'viem/chains';
-import { formatEther } from 'viem';
-import { useSearchParams } from 'next/navigation';
 
 interface IProps {
   close: () => void;

@@ -63,6 +63,7 @@ export default function FromTOChainSelector({
     if (!queryChain && !toChain) {
       router.push(pathname + '?chain=34443&toChain=8453');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

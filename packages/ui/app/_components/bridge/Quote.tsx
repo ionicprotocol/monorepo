@@ -1,16 +1,9 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
 import { formatEther, type Address } from 'viem';
-import {
-  // useAccount,
-  // useChainId,
-  useReadContract
-  // useReadContracts,
-  // useWaitForTransactionReceipt,
-  // useWriteContract
-} from 'wagmi';
+import { useReadContract } from 'wagmi';
 
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 

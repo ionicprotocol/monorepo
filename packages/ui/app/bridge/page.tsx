@@ -3,6 +3,9 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { xErc20LayerZeroAbi } from 'sdk/src';
+import type { Address } from 'viem';
+import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
@@ -11,14 +14,12 @@ import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
 import ProgressSteps from '../_components/bridge/ProgressSteps';
 import Quote from '../_components/bridge/Quote';
 import TxPopup from '../_components/bridge/TxPopup';
+import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 
 import { pools } from '@ui/constants/index';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
-import { Address, erc20Abi, parseEther, parseUnits } from 'viem';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { xErc20LayerZeroAbi } from 'sdk/src';
-import ResultHandler from '../_components/ResultHandler';
 
 export default function Bridge() {
   const chainId = useChainId();

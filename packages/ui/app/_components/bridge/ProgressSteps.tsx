@@ -16,7 +16,7 @@ export default function ProgressSteps({
   const calculateProgress = () => {
     return ((progress - 1) / (totalSteps - 1)) * 100 + '%';
   };
-  console.log(calculateProgress());
+  // console.log(calculateProgress());
   return (
     <div className={`relative`}>
       <div className={`flex flex-nowrap w-full justify-between items-center`}>
