@@ -443,7 +443,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       RSR: {
