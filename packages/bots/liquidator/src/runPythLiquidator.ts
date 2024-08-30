@@ -4,7 +4,7 @@ import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunc
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
-import { sendStartNotification, sendEndNotification, sendDiscordNotification } from "./services/PERdiscord";
+import { sendDiscordNotification, sendEndNotification, sendStartNotification } from "./services/PERdiscord";
 import config from "./config";
 import { logger } from "./logger";
 import { Liquidator } from "./services";

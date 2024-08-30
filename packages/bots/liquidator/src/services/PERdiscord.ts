@@ -92,11 +92,12 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
 }
 
 export async function sendDiscordNotification(opportunity: OpportunityParams) {
-  const { chainId, targetContract, targetCalldata, permissionKey, targetCallValue, buyTokens, sellTokens } = opportunity;
+  const { chainId, targetContract, targetCalldata, permissionKey, targetCallValue, buyTokens, sellTokens } =
+    opportunity;
   console.log("Opportunity data:", opportunity);
 
   // Use correct chainId here if applicable
-  const chainIdConverted = 34443; 
+  const chainIdConverted = 34443;
 
   if (!chainIdConverted) {
     console.error(`Invalid chainId: ${chainId}`);
