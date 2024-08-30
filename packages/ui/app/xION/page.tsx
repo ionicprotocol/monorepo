@@ -18,6 +18,7 @@ import Quote from '../_components/xION/Quote';
 import TxPopup from '../_components/xION/TxPopup';
 
 import { pools } from '@ui/constants/index';
+import useLocalStorage from '@ui/hooks/useLocalStorage';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -64,16 +65,19 @@ export default function XION() {
     approvalHash: string;
     fromChain: string;
     toChain: string;
+    bridgeStatus: 'completed' | 'error' | 'pending' | 'unknown';
   }>({
     status: false,
     amount: BigInt(0),
-    hash: '',
-    approvalHash: '',
-    fromChain: '',
-    toChain: ''
+    hash: '0x1234567890abcdef1234567890abcdef12345678',
+    fromChain: chain,
+    toChain: toChain ?? '34443',
+    approvalHash: '0x123456789',
+    bridgeStatus: 'unknown'
   });
 
   // console.log(bridgeArgs);
+  const [,] = useLocalStorage('bridgeTx', '');
 
   async function approval(amount: bigint) {
     try {
@@ -138,15 +142,26 @@ export default function XION() {
       console.warn('Bridging hash -->  ' + bridging);
 
       setLoading((p) => ({ ...p, bridgingStatus: false }));
-      // setProgress(2);
       setPopup((p) => ({
         ...p,
         status: true,
         amount: args.amount,
         hash: bridging,
         fromChain: chain,
-        toChain: args.destinationChain.toString()
+        toChain: args.destinationChain.toString(),
+        bridgeStatus: 'pending'
       }));
+
+      // setInit(
+      //   JSON.stringify({
+      //     amount: args.amount,
+      //     hash: bridging,
+      //     fromChain: chain,
+      //     toChain: args.destinationChain.toString(),
+      //     bridgeStatus: 'pending',
+      //     approvalHash: popup.approvalHash
+      //   })
+      // );
       setDeposit('');
       bridgeToggle();
       setProgress(0);
@@ -168,7 +183,7 @@ export default function XION() {
         <div className={`mb-2 flex items-center justify-between`}>
           <h2 className="text-lg ">Bridge</h2>
           <h2 className="text-xs text-white/50 ">
-            Finished Bridge{' '}
+            Track Bridge{' '}
             <img
               className={`inline-block w-3 h-3 mx-0.5 cursor-pointer`}
               src="https://img.icons8.com/ios/50/ffffff/info--v1.png"
