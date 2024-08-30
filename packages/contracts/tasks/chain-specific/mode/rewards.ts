@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { ION } from ".";
+import { ION, WEETH_MARKET } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 
@@ -26,5 +26,32 @@ task("mode:add-rewards:epoch1", "add rewards to a market").setAction(
     }
 
     await setupRewards("borrow", ionWETH, "ION", ION, 30 * (24 * 60 * 60), deployer as Address, viem, deployments);
+  }
+);
+
+task("mode:add-rewards:supply:epoch1", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const rewardAmount = "25000";
+    const market = WEETH_MARKET;
+    const rewardTokenName = "ION";
+
+    // Sending tokens
+    const ionToken = await viem.getContractAt("EIP20Interface", ION);
+    let balance = await ionToken.read.balanceOf([market]);
+    if (balance < parseEther(rewardAmount)) {
+      await ionToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      ION,
+      29 * (24 * 60 * 60) + 1 * (23 * 60 * 60), // 29 days 23 hours
+      deployer as Address,
+      viem,
+      deployments
+    );
   }
 );
