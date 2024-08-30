@@ -115,7 +115,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
     }
 
-    // manage memory better?
     GlobalPoint memory lastPoint = GlobalPoint({
       bias: 0,
       slope: 0,
