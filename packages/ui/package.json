@@ -12,6 +12,7 @@
     "@gasbot/widget": "^0.4.7",
     "@ionicprotocol/sdk": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
+    "@layerzerolabs/lz-v2-utilities": "^2.3.40",
     "@lifi/widget": "^3.4.4",
     "@netlify/plugin-nextjs": "5",
     "@sentry/nextjs": "^8.13.0",
