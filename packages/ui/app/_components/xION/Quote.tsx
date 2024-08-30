@@ -1,11 +1,16 @@
 'use client';
 
+import { Options } from '@layerzerolabs/lz-v2-utilities';
 import { useEffect } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
-import { formatEther, type Address } from 'viem';
+import { formatEther, type Hex, type Address } from 'viem';
 import { useReadContract } from 'wagmi';
 
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+
+export const lzOptions = Options.newOptions()
+  .addExecutorLzReceiveOption(100_000, 0)
+  .toHex();
 
 interface IQuotes {
   chain: number;
@@ -25,14 +30,21 @@ export default function Quote({
     destinationChain: 34443,
     token: getToken(+chain),
     amount: BigInt(0),
-    toAddress: '0x26f52740670Ef678b254aa3559d823C29122E9c2' as `0x${string}`
+    toAddress: '0x26f52740670Ef678b254aa3559d823C29122E9c2' as Address
   }
 }: IQuotes) {
   // const ;
   const { data: quotation } = useReadContract({
     abi: xErc20LayerZeroAbi,
     address: BridgingContractAddress[+chain],
-    args: [args.destinationChain, args.token, args.amount, args.toAddress],
+    args: [
+      args.destinationChain,
+      args.token,
+      args.amount,
+      args.toAddress,
+      lzOptions as Hex,
+      false
+    ],
     functionName: 'quote',
     chainId: +chain,
     query: {

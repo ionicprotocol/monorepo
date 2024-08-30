@@ -4,7 +4,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
@@ -14,7 +14,7 @@ import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
 import FromTOChainSelector from '../_components/xION/FromToChainSelector';
 import ProgressSteps from '../_components/xION/ProgressSteps';
-import Quote from '../_components/xION/Quote';
+import Quote, { lzOptions } from '../_components/xION/Quote';
 import TxPopup from '../_components/xION/TxPopup';
 
 import { pools } from '@ui/constants/index';
@@ -133,7 +133,13 @@ export default function XION() {
       const bridging = await writeContractAsync({
         abi: xErc20LayerZeroAbi,
         address: BridgingContractAddress[+chain],
-        args: [args.token, args.amount, args.toAddress, args.destinationChain],
+        args: [
+          args.token,
+          args.amount,
+          args.toAddress,
+          args.destinationChain,
+          lzOptions as Hex
+        ],
         functionName: 'send',
         chainId: +chain,
         value: args.nativeEth
