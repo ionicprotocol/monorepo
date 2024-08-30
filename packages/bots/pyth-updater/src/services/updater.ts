@@ -29,6 +29,7 @@ export class Updater {
   pythNetworkAddress: Address;
   connection: EvmPriceServiceConnection;
   assetConfigs: PythAssetConfig[] = [];
+  // @ts-ignore
   pythContract: GetContractReturnType<typeof pythAbi, PublicClient> = {} as GetContractReturnType<
     typeof pythAbi,
     WalletClient<HttpTransport, Chain, LocalAccount<string, Address>, WalletRpcSchema>

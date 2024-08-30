@@ -38,3 +38,8 @@ cypress
 ionic-monorepo.iml
 
 .vscode
+packages/contracts/artifacts/
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/cache_hardhat/
+packages/contracts/transactions.json

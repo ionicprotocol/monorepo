@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+
+#Hardhat files
+cache
+artifacts
+
+# Coverage reports
+coverage.json
+coverage
+
+# IDEs
+.vscode
+
+# Generated files
+node_modules
+dist
+typechain
+cache
+
+# OS files
+.DS_Store
+
+# Compilers
+soljson-*
+
+#Local deployment
+deployments/localhost

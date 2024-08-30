@@ -382,7 +382,8 @@ export const multipliers: Record<
           rewards: true,
           ionAPR: true,
           flywheel: true
-        }
+        },
+        decimals: 6
       },
       WETH: {
         borrow: {
@@ -442,7 +443,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       RSR: {
@@ -583,14 +585,20 @@ export type LpMultipliers = {
   decimals?: number;
 };
 
-export const ionLPMultipliers: Record<string, LpMultipliers> = {
-  'ION-WETH': {
-    ionMultiplier: 3,
-    market: 'ion_weth_pool',
-    priceMultiplier: -120,
-    filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
-    filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
-  }
+export const ionLPMultipliersMode: LpMultipliers = {
+  ionMultiplier: 3,
+  market: 'ion_weth_pool',
+  priceMultiplier: -120,
+  filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
+  filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
+};
+
+export const ionLPMultipliersBase: LpMultipliers = {
+  ionMultiplier: 3,
+  market: 'ion_weth_pool_base',
+  priceMultiplier: -120,
+  filterIn: "AND event_to='0x9b42e5f8c45222b2715f804968251c747c588fd7'",
+  filterOut: "AND event_from='0x9b42e5f8c45222b2715f804968251c747c588fd7'"
 };
 
 export const steerLPMultipliers: Record<string, LpMultipliers> = {

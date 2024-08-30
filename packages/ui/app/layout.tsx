@@ -188,6 +188,14 @@ export default function RootLayout({
                               GitHub
                             </a>
                           </li>
+                          <li className="mb-1">
+                            <a
+                              href="https://status.ionic.money/"
+                              target="_blank"
+                            >
+                              Status
+                            </a>
+                          </li>
                         </ul>
                       </div>
 
@@ -209,6 +217,14 @@ export default function RootLayout({
                               target="_blank"
                             >
                               DeFi Llama
+                            </a>
+                          </li>
+                          <li className="mb-1.5">
+                            <a
+                              href="https://dune.com/mrwildcat/ionic-protocol"
+                              target="_blank"
+                            >
+                              Dune
                             </a>
                           </li>
                           <li className="mb-1.5">

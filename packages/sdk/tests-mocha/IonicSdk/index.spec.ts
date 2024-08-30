@@ -10,7 +10,7 @@ import {
   WalletClient
 } from "viem";
 
-import JumpRateModelArtifact from "../../artifacts/JumpRateModel.sol/JumpRateModel.json";
+import JumpRateModelArtifact from "../../src/artifacts/JumpRateModel.json";
 import { ionicComptrollerAbi, poolDirectoryAbi, unitrollerAbi } from "../../src/generated";
 import { IonicBase } from "../../src/IonicSdk/index";
 import JumpRateModel from "../../src/IonicSdk/irm/JumpRateModel";
@@ -163,8 +163,8 @@ describe("Ionic Index", () => {
     });
 
     it("should return new IRM when model address hash matches", async () => {
-      interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
-      mockPublicClient.getCode = stub().resolves(JumpRateModelArtifact.deployedBytecode.object);
+      interestRateModelAddress = mkAddress();
+      mockPublicClient.getCode = stub().resolves(JumpRateModelArtifact.deployedBytecode);
       model = await ionicBase.identifyInterestRateModel(interestRateModelAddress);
       expect(model).not.to.be.null;
     });
@@ -173,7 +173,7 @@ describe("Ionic Index", () => {
   describe("#getInterestRateModel", () => {
     let model: InterestRateModel | Promise<InterestRateModel>;
     let getAssetContractStub: SinonStub;
-    let mockAssetContract;
+    let mockAssetContract: any;
 
     beforeEach(() => {
       mockAssetContract = stubbedContract;
@@ -189,8 +189,7 @@ describe("Ionic Index", () => {
 
     it("should init interest Rate Model when model is not null ", async () => {
       const initStub = stub(JumpRateModel.prototype, "init");
-      const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
-      mockAssetContract.read.interestRateModel = stub().resolves(interestRateModelAddress);
+      mockAssetContract.read.interestRateModel = stub().resolves(JumpRateModelArtifact.deployedBytecode);
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
       model = await ionicBase.getInterestRateModel(mkAddress("0xabc"));
       expect(initStub).to.be.calledOnce;

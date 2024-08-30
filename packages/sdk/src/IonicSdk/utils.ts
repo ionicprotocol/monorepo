@@ -14,7 +14,7 @@ import {
   PublicClient
 } from "viem";
 
-import UnitrollerArtifact from "../../artifacts/Unitroller.sol/Unitroller.json";
+import UnitrollerArtifact from "../artifacts/Unitroller.json";
 import { ionicComptrollerAbi, unitrollerAbi } from "../generated";
 
 export function filterOnlyObjectProperties(obj: any) {
@@ -34,7 +34,7 @@ export const getSaltsHash = (from: Address, poolName: string, blockNumber: bigin
 
 export const getBytecodeHash = (feeDistributorAddress: Address): Hash => {
   return keccak256(
-    ((UnitrollerArtifact.bytecode.object as Hex) +
+    ((UnitrollerArtifact.bytecode as Hex) +
       encodeAbiParameters(parseAbiParameters("address"), [feeDistributorAddress]).slice(2)) as Hex
   );
 };
@@ -58,14 +58,14 @@ export const getPoolUnitroller = (
   poolAddress: Address,
   walletClient: WalletClient
 ): GetContractReturnType<typeof unitrollerAbi, PublicClient> => {
-  return getContract({ address: poolAddress, abi: unitrollerAbi, client: walletClient });
+  return getContract({ address: poolAddress, abi: unitrollerAbi, client: walletClient }) as any;
 };
 
 export const getPoolComptroller = (
   poolAddress: Address,
   walletClient: WalletClient
 ): GetContractReturnType<typeof ionicComptrollerAbi, PublicClient> => {
-  return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient });
+  return getContract({ address: poolAddress, abi: ionicComptrollerAbi, client: walletClient }) as any;
 };
 
 export const getContract = vGetContract;

@@ -5,11 +5,12 @@ import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
 
 import {
-  ionLPMultipliers,
   steerLPMultipliers,
   multipliers,
   SEASON_2_BASE_START_DATE,
-  SEASON_2_START_DATE
+  SEASON_2_START_DATE,
+  ionLPMultipliersBase,
+  ionLPMultipliersMode
 } from '../../ui/utils/multipliers';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -341,27 +342,29 @@ const usePointsForSupplyModeMain = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[mode.id]['0']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[mode.id]['0'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -384,6 +387,7 @@ const usePointsForBorrowModeMain = () => {
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0'])
+          .filter((asset) => !!asset.market)
           .filter((asset) => !!asset.borrow)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
@@ -405,7 +409,7 @@ const usePointsForBorrowModeMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -427,27 +431,29 @@ const usePointsForSupplyModeNative = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[mode.id]['1']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[mode.id]['1'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -471,6 +477,7 @@ const usePointsForBorrowModeNative = () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1'])
           .filter((asset) => !!asset.borrow)
+          .filter((asset) => !!asset.market)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -491,7 +498,7 @@ const usePointsForBorrowModeNative = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -506,46 +513,77 @@ const usePointsForBorrowModeNative = () => {
   });
 };
 
-const usePointsForIonLp = () => {
+const usePointsForIonLpMode = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
     gcTime: Infinity,
     queryFn: async () => {
-      const response = await Promise.all(
-        Object.values(ionLPMultipliers).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.ionMultiplier,
-                asset.market,
-                SEASON_2_START_DATE,
-                asset.priceMultiplier,
-                asset.decimals,
-                true,
-                asset.filterIn,
-                asset.filterOut
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+      const response = await fetchData<QueryResponse, QueryData>(
+        'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+        {
+          query: getSupplyQuery(
+            address?.toLowerCase(),
+            ionLPMultipliersMode.ionMultiplier,
+            ionLPMultipliersMode.market,
+            SEASON_2_START_DATE,
+            ionLPMultipliersMode.priceMultiplier,
+            ionLPMultipliersMode.decimals,
+            true,
+            ionLPMultipliersMode.filterIn,
+            ionLPMultipliersMode.filterOut
+          )
+        },
+        {
+          method: 'POST'
+        }
       );
-      const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
-        0
-      );
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
 
       return {
-        ...response[0].data,
+        ...response.data,
         rows: [[totalPoints]]
       };
     },
-    queryKey: ['points', 'supply', 'ion-lp', address],
+    queryKey: ['points', 'supply', 'ion-lp-mode', address],
+    refetchOnWindowFocus: false,
+    staleTime: Infinity
+  });
+};
+
+const usePointsForIonLpBase = () => {
+  const { address } = useMultiIonic();
+
+  return useQuery({
+    gcTime: Infinity,
+    queryFn: async () => {
+      const response = await fetchData<QueryResponse, QueryData>(
+        'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+        {
+          query: getSupplyQuery(
+            address?.toLowerCase(),
+            ionLPMultipliersBase.ionMultiplier,
+            ionLPMultipliersBase.market,
+            SEASON_2_START_DATE,
+            ionLPMultipliersBase.priceMultiplier,
+            ionLPMultipliersBase.decimals,
+            true,
+            ionLPMultipliersBase.filterIn,
+            ionLPMultipliersBase.filterOut
+          )
+        },
+        {
+          method: 'POST'
+        }
+      );
+      const totalPoints = response.data.rows[0]?.[1] ?? 0;
+
+      return {
+        ...response.data,
+        rows: [[totalPoints]]
+      };
+    },
+    queryKey: ['points', 'supply', 'ion-lp-base', address],
     refetchOnWindowFocus: false,
     staleTime: Infinity
   });
@@ -579,7 +617,7 @@ const usePointsForSteerLp = () => {
         })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -601,27 +639,29 @@ const usePointsForSupplyBaseMain = () => {
     gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
-        Object.values(multipliers[base.id]['0']).map((asset) => {
-          return fetchData<QueryResponse, QueryData>(
-            'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
-            {
-              query: getSupplyQuery(
-                address?.toLowerCase(),
-                asset.supply!.ionic,
-                asset.market!,
-                SEASON_2_BASE_START_DATE,
-                asset.multiplier,
-                asset.decimals
-              )
-            },
-            {
-              method: 'POST'
-            }
-          );
-        })
+        Object.values(multipliers[base.id]['0'])
+          .filter((asset) => !!asset.market)
+          .map((asset) => {
+            return fetchData<QueryResponse, QueryData>(
+              'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
+              {
+                query: getSupplyQuery(
+                  address?.toLowerCase(),
+                  asset.supply!.ionic,
+                  asset.market!,
+                  SEASON_2_BASE_START_DATE,
+                  asset.multiplier,
+                  asset.decimals
+                )
+              },
+              {
+                method: 'POST'
+              }
+            );
+          })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -645,6 +685,7 @@ const usePointsForBorrowBaseMain = () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0'])
           .filter((asset) => !!asset.borrow)
+          .filter((asset) => !!asset.market)
           .map((asset) => {
             return fetchData<QueryResponse, QueryData>(
               'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -665,7 +706,7 @@ const usePointsForBorrowBaseMain = () => {
           })
       );
       const totalPoints = response.reduce(
-        (acc, current) => acc + current.data.rows[0][1],
+        (acc, current) => acc + (current.data.rows[0]?.[1] ?? 0),
         0
       );
 
@@ -761,7 +802,8 @@ export {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain,
   usePointsForSupplyModeNative,
-  usePointsForIonLp,
+  usePointsForIonLpMode,
+  usePointsForIonLpBase,
   usePointsForSteerLp,
   usePointsForBorrowBaseMain,
   usePointsForBorrowModeMain,

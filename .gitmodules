@@ -1,0 +1,30 @@
+[submodule "packages/contracts/lib/forge-std"]
+path = packages/contracts/lib/forge-std
+url = https://github.com/brockelmore/forge-std
+[submodule "packages/contracts/lib/openzeppelin-contracts-upgradeable"]
+path = packages/contracts/lib/openzeppelin-contracts-upgradeable
+url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "packages/contracts/lib/solmate"]
+path = packages/contracts/lib/solmate
+url = https://github.com/rari-capital/solmate
+[submodule "packages/contracts/lib/openzeppelin-contracts"]
+path = packages/contracts/lib/openzeppelin-contracts
+url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "packages/contracts/lib/pyth-sdk-solidity"]
+path = packages/contracts/lib/pyth-sdk-solidity
+url = https://github.com/pyth-network/pyth-sdk-solidity
+[submodule "packages/contracts/lib/solidity-bytes-utils"]
+path = packages/contracts/lib/solidity-bytes-utils
+url = https://github.com/GNSPS/solidity-bytes-utils
+[submodule "packages/contracts/lib/ops"]
+path = packages/contracts/lib/ops
+url = https://github.com/gelatodigital/ops
+[submodule "packages/contracts/lib/adrastia-periphery"]
+path = packages/contracts/lib/adrastia-periphery
+url = https://github.com/adrastia-oracle/adrastia-periphery
+[submodule "packages/contracts/lib/devtools"]
+	path = packages/contracts/lib/devtools
+	url = https://github.com/LayerZero-Labs/devtools
+[submodule "packages/contracts/lib/layerzero-v2"]
+	path = packages/contracts/lib/layerzero-v2
+	url = https://github.com/LayerZero-Labs/layerzero-v2
