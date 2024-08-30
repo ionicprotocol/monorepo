@@ -10,12 +10,12 @@ import { mode } from 'viem/chains';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
-import FromTOChainSelector from '../_components/bridge/FromToChainSelector';
-import ProgressSteps from '../_components/bridge/ProgressSteps';
-import Quote from '../_components/bridge/Quote';
-import TxPopup from '../_components/bridge/TxPopup';
 import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
+import FromTOChainSelector from '../_components/xION/FromToChainSelector';
+import ProgressSteps from '../_components/xION/ProgressSteps';
+import Quote from '../_components/xION/Quote';
+import TxPopup from '../_components/xION/TxPopup';
 
 import { pools } from '@ui/constants/index';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';

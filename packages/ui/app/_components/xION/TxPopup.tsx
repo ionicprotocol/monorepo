@@ -4,7 +4,7 @@ import type { MutableRefObject } from 'react';
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 
-import { chainsArr, pools } from '@ui/constants/index';
+import { chainsArr, pools, scans } from '@ui/constants/index';
 
 interface IProps {
   close: () => void;
@@ -109,7 +109,7 @@ export default function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`https://layerzeroscan.com/tx/${mock?.approvalHash}`}
+                href={`${scans[+mock?.fromChain]}${mock?.approvalHash}`}
                 className={`text-xs text-white/50 `}
               >
                 {mock?.approvalHash}
@@ -121,7 +121,7 @@ export default function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`https://layerzeroscan.com/tx/${mock?.hash}`}
+                href={`${scans[+mock?.fromChain]}${mock?.hash}`}
                 className={`text-xs text-white/50  `}
               >
                 {mock?.hash}
@@ -134,7 +134,7 @@ export default function TxPopup({
             href={`https://layerzeroscan.com/tx/${mock?.hash}`}
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
           >
-            EXPLORE
+            TRACK
           </a>
         </div>
       </div>
