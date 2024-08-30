@@ -40,6 +40,7 @@ const Rewards = ({
   const chainId = useChainId();
   const sdk = useSdk(poolChainId);
 
+  console.log('🚀 ~ rewardsData:', rewardsData);
   const filteredRewards = useMemo(
     () =>
       rewardsData?.filter((reward) =>
