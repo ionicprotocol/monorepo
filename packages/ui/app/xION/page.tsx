@@ -21,7 +21,7 @@ import { pools } from '@ui/constants/index';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-export default function Bridge() {
+export default function XION() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
