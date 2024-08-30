@@ -48,7 +48,8 @@ export const setupRewards = async (
         }
       }
     },
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
   console.log(
     `Deployed flywheel ${flywheelName}: ${_flywheel.address} - ${_flywheel.newlyDeployed ? "NEW: " : "reused: "} ${_flywheel.transactionHash}`
@@ -63,7 +64,8 @@ export const setupRewards = async (
       _flywheel.address, // flywheel
       epochDuration // epoch duration
     ],
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
   console.log(
     `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
