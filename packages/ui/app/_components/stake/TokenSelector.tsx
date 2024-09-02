@@ -51,7 +51,7 @@ export default function TokenSelector({
             className={`w-6 inline-block`}
             src={`/img/symbols/32/color/${selectedtoken.toLowerCase()}.png`}
           />
-          {selectedtoken ?? 'Select Token'}
+          {selectedtoken.toUpperCase() ?? 'Select Token'}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -71,7 +71,7 @@ export default function TokenSelector({
               href={pathname + '?' + createQueryString(token)}
               key={idx}
             >
-              {token}{' '}
+              {token.toUpperCase()}{' '}
               {selectedtoken === token ? (
                 <img
                   alt="checkmark--v1"
