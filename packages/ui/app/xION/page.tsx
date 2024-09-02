@@ -22,11 +22,11 @@ import ProgressSteps from '../_components/xION/ProgressSteps';
 import Quote, { lzOptions } from '../_components/xION/Quote';
 import TxPopup from '../_components/xION/TxPopup';
 
+import { ixErc20 } from '@ui/constants/bridge';
 import { pools } from '@ui/constants/index';
 import useLocalStorage from '@ui/hooks/useLocalStorage';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { ixErc20 } from '@ui/constants/bridge';
 
 export default function XION() {
   const chainId = useChainId();
