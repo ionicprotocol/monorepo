@@ -878,7 +878,10 @@ const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
           className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
           src="/img/symbols/32/color/velo.png"
         />
-        <VelodromeAPY step3Toggle={step3Toggle} />
+        <VelodromeAPY
+          step3Toggle={step3Toggle}
+          selectedtoken={selectedtoken}
+        />
       </div>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
         <img
@@ -916,14 +919,18 @@ const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
 
 type VelodromeAPYProps = {
   step3Toggle: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 };
-const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
+const VelodromeAPY = ({ step3Toggle, selectedtoken }: VelodromeAPYProps) => {
   const LP_SUGAR_ADDRESS = '0x207DfB36A449fd10d9c3bA7d75e76290a0c06731';
-  const ION_POOL_INDEX = 6n;
+  const ION_WETH_POOL_INDEX = 6n;
+  const ION_MODE_POOL_INDEX = 26n;
   const { data: sugarData } = useReadContract({
     abi: lpSugarAbi,
     address: LP_SUGAR_ADDRESS,
-    args: [ION_POOL_INDEX],
+    args: [
+      selectedtoken === 'mode' ? ION_MODE_POOL_INDEX : ION_WETH_POOL_INDEX
+    ],
     functionName: 'byIndex',
     chainId: mode.id
   });
@@ -943,7 +950,9 @@ const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
           (Number(formatEther(sugarData.staked0)) *
             Number(ionData.pair.priceUsd) +
             Number(formatEther(sugarData.staked1)) *
-              ethPriceData[mode.id].value)) *
+              (selectedtoken !== 'mode'
+                ? ethPriceData[mode.id].value
+                : Number(modePriceData.pair.priceUsd)))) *
         100
       ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
   }
