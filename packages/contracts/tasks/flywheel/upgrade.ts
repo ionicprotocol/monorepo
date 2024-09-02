@@ -10,6 +10,7 @@ export const upgradeMarketToSupportFlywheel = async (
 ) => {
   const _ctoken = await viem.getContractAt("ICErc20", market);
   const type = await _ctoken.read.delegateType();
+  let needsMultisig = false;
   if (type !== 3) {
     // upgrade pool
     const cErc20 = await viem.getContractAt("ICErc20", market);
@@ -27,6 +28,7 @@ export const upgradeMarketToSupportFlywheel = async (
     );
     const owner = await ffd.read.owner();
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      needsMultisig = true;
       await prepareAndLogTransaction({
         contractInstance: cErc20,
         functionName: "_setImplementationSafe",
@@ -63,4 +65,5 @@ export const upgradeMarketToSupportFlywheel = async (
   } else {
     console.log("Market does not need to be upgraded. type: ", type);
   }
+  return needsMultisig;
 };
