@@ -43,7 +43,6 @@ export default function XION() {
     args: [BridgingContractAddress[+chain]],
     chainId: +chain
   });
-  console.log('🚀 ~ XION ~ sourceLimits:', sourceLimits);
   const { data: destinationLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+(toChain ?? mode.id)),
@@ -51,7 +50,6 @@ export default function XION() {
     args: [BridgingContractAddress[+(toChain ?? mode.id)]],
     chainId: +(toChain ?? mode.id)
   });
-  console.log('🚀 ~ XION ~ destinationLimits:', destinationLimits);
 
   const {
     componentRef: fromRef,
