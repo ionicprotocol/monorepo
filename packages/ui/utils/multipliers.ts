@@ -200,7 +200,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       wrsETH: {
@@ -443,7 +444,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       RSR: {
