@@ -5,9 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
 import type { Address, Hex } from 'viem';
-import { erc20Abi, parseEther, parseUnits } from 'viem';
+import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
-import { useAccount, useChainId, useWriteContract } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  useReadContract,
+  useWriteContract
+} from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import ResultHandler from '../_components/ResultHandler';
@@ -21,6 +26,7 @@ import { pools } from '@ui/constants/index';
 import useLocalStorage from '@ui/hooks/useLocalStorage';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { ixErc20 } from '@ui/constants/bridge';
 
 export default function XION() {
   const chainId = useChainId();
@@ -30,6 +36,22 @@ export default function XION() {
   const chain = querychain ?? String(chainId);
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { data: sourceLimits } = useReadContract({
+    abi: ixErc20,
+    address: getToken(+chain),
+    functionName: 'bridges',
+    args: [BridgingContractAddress[+chain]],
+    chainId: +chain
+  });
+  console.log('🚀 ~ XION ~ sourceLimits:', sourceLimits);
+  const { data: destinationLimits } = useReadContract({
+    abi: ixErc20,
+    address: getToken(+(toChain ?? mode.id)),
+    functionName: 'bridges',
+    args: [BridgingContractAddress[+(toChain ?? mode.id)]],
+    chainId: +(toChain ?? mode.id)
+  });
+  console.log('🚀 ~ XION ~ destinationLimits:', destinationLimits);
 
   const {
     componentRef: fromRef,
@@ -291,6 +313,27 @@ export default function XION() {
             bg={`${pools[+chain]?.bg ?? pools[mode.id]?.bg}`}
             progress={progress}
           />
+        </div>
+
+        <div className="text-sm pt-4">Bridge Capacity</div>
+        <div className="flex items-center">
+          <div className="text-xs text-white/50 pr-2">
+            Source:{' '}
+            {Number(
+              formatEther(sourceLimits?.[1].currentLimit ?? 0n)
+            ).toLocaleString('en-US', { maximumFractionDigits: 0 })}{' '}
+            ION
+          </div>
+          <div className="text-xs text-white/50">
+            Destination:{' '}
+            {Number(
+              formatEther(destinationLimits?.[1].currentLimit ?? 0n)
+            ).toLocaleString('en-US', { maximumFractionDigits: 0 })}{' '}
+            ION
+          </div>
+        </div>
+        <div className="text-xxs text-white/50">
+          Bridge Capacity resets every 24h
         </div>
       </div>
     </div>
