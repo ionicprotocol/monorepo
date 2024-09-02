@@ -6,9 +6,11 @@ import { Chain, createPublicClient, erc20Abi, formatEther, http } from "viem";
 import { SupportedChains } from "@ionicprotocol/types";
 
 import config from "../config";
+
 const webhookUrl = config.PER_discordWebhookUrl;
 const COINGECKO_API = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=";
 const DEFI_LLAMA_API = "https://coins.llama.fi/prices/current/";
+
 async function getUSDPrice(chainId: SupportedChains): Promise<number> {
   const config = chainIdToConfig[chainId];
   const cgId = config?.specificParams?.cgId;
@@ -46,6 +48,7 @@ async function getUSDPrice(chainId: SupportedChains): Promise<number> {
   console.log(`USD price for ${cgId}: ${price}`);
   return price;
 }
+
 async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, amount: bigint): Promise<string> {
   const config = chainIdToConfig[chainId];
   const chain = chainIdtoChain[chainId] as Chain;
@@ -62,24 +65,17 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
   try {
     const formattedTokenAddress = `0x${tokenAddress.replace(/^0x/, "")}` as `0x${string}`;
     console.log("Token address:", tokenAddress);
-    // Get the token's price in ETH
     const priceInETH = await mpo.read.price([formattedTokenAddress as `0x${string}`]);
     const priceInETHNum = Number(formatEther(priceInETH));
-
-    // Get the token's decimals
     const tokenDecimals = await publicClient.readContract({
       address: formattedTokenAddress,
       abi: erc20Abi,
       functionName: "decimals",
     });
-
-    // Adjust the amount to 18 decimals
     const scaleFactor = BigInt(10 ** (18 - tokenDecimals));
     const scaledAmount = amount * scaleFactor;
-    // Get the USD price of ETH
     const usdPrice = await getUSDPrice(chainId);
     const amountNum = Number(formatEther(scaledAmount));
-    // Debugging logs
     console.log("Price in ETH:", priceInETHNum);
     console.log("USD Price:", usdPrice);
     console.log("Token Amount:", amountNum);
@@ -94,30 +90,34 @@ async function getTokenUSDValue(chainId: SupportedChains, tokenAddress: string, 
     return "N/A";
   }
 }
+
 export async function sendDiscordNotification(opportunity: OpportunityParams) {
   const { chainId, targetContract, targetCalldata, permissionKey, targetCallValue, buyTokens, sellTokens } =
     opportunity;
   console.log("Opportunity data:", opportunity);
-  // Convert chainId to SupportedChains type
+
+  // Use correct chainId here if applicable
   const chainIdConverted = 34443;
+
   if (!chainIdConverted) {
     console.error(`Invalid chainId: ${chainId}`);
     return;
   }
-  // Prepare buy token messages with USD values
+
   const buyTokenMessages = await Promise.all(
     buyTokens.map(async (token) => {
       const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
       return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
     })
   );
-  // Prepare sell token messages with USD values
+
   const sellTokenMessages = await Promise.all(
     sellTokens.map(async (token) => {
       const usdValue = await getTokenUSDValue(chainIdConverted, token.token, token.amount);
       return `- **Token**: ${token.token}, **Amount**: ${token.amount}, **USD Value**: ${usdValue}`;
     })
   );
+
   const message = `
 **Opportunity Submitted Successfully**
 - **Chain ID**: ${chainId}
@@ -131,10 +131,40 @@ ${buyTokenMessages.join("\n")}
 ${sellTokenMessages.join("\n")}
 **----------------------------------------------------------------------------------------**
 `;
+
   try {
     await axios.post(webhookUrl, { content: message });
     console.log("Notification sent successfully.");
   } catch (error) {
     console.error("Failed to send Discord notification:", error);
+  }
+}
+
+export async function sendStartNotification(startTime: number) {
+  const message = `
+**runPythLiquidator Loop Started**
+- **Start Time**: ${new Date(startTime * 1000).toISOString()}
+**----------------------------------------------------------------------------------------**
+`;
+  try {
+    await axios.post(webhookUrl, { content: message });
+    console.log("Start notification sent successfully.");
+  } catch (error) {
+    console.error("Failed to send start notification:", error);
+  }
+}
+
+export async function sendEndNotification(startTime: number) {
+  const message = `
+**runPythLiquidator Loop Ended**
+- **Start Time**: ${new Date(startTime * 1000).toISOString()}
+- **End Time**: ${new Date().toISOString()}
+**----------------------------------------------------------------------------------------**
+`;
+  try {
+    await axios.post(webhookUrl, { content: message });
+    console.log("End notification sent successfully.");
+  } catch (error) {
+    console.error("Failed to send end notification:", error);
   }
 }
