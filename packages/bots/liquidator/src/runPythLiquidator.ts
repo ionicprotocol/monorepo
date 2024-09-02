@@ -44,7 +44,7 @@ const walletClient = createWalletClient({
 - **Start Time**: ${new Date(startTime * 1000).toISOString()}
 **----------------------------------------------------------------------------------------**
 `;
-logger.info(`${message}`);
+    logger.info(`${message}`);
     const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
     logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
     const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
