@@ -70,14 +70,13 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
           ionicFeeTotal = ionicFeeTotal + nativeFee;
           poolIonicFeesTotal = poolIonicFeesTotal + nativeFee;
 
-          if (LOG)
-            console.log(
-              `Pool: ${pool.name} (${
-                pool.comptroller
-              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
-            );
+          console.log(
+            `Pool: ${pool.name} (${
+              pool.comptroller
+            }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
+          );
         } else {
-          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
         }
 
         if (adminFee > 0) {
@@ -88,10 +87,10 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
           console.log(
             `Pool: ${pool.name} (${
               pool.comptroller
-            }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
+            }) - Market: ${market} (underlying: ${underlying}) - Admin Fee: ${formatEther(nativeFee)}`
           );
         } else {
-          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Admin Fees`);
         }
       }
       if (LOG) {
