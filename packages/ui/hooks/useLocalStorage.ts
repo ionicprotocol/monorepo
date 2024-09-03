@@ -1,56 +1,120 @@
-import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-export default function useLocalStorage<T>(
+type Serializer<T> = (object: T | undefined) => string;
+type Parser<T> = (val: string) => T | undefined;
+type Setter<T> = React.Dispatch<React.SetStateAction<T | undefined>>;
+
+type Options<T> = Partial<{
+  serializer: Serializer<T>;
+  parser: Parser<T>;
+  logger: (error: any) => void;
+  syncData: boolean;
+}>;
+
+function useLocalStorage<T>(
   key: string,
-  initialValue: T
-): [T, Dispatch<SetStateAction<T>>] {
-  const [storedValue, setStoredValue] = useState(initialValue);
-  // We will use this flag to trigger the reading from localStorage
-  const [firstLoadDone, setFirstLoadDone] = useState(false);
+  defaultValue: T,
+  options?: Options<T>
+): [T, Setter<T>];
+function useLocalStorage<T>(
+  key: string,
+  defaultValue?: T,
+  options?: Options<T>
+) {
+  const opts = useMemo(() => {
+    return {
+      serializer: JSON.stringify,
+      parser: JSON.parse,
+      // eslint-disable-next-line no-console
+      logger: console.log,
+      syncData: true,
+      ...options
+    };
+  }, [options]);
 
-  // Use an effect hook in order to prevent SSR inconsistencies and errors.
-  // This will update the state with the value from the local storage after
-  // the first initial value is applied.
+  const { serializer, parser, logger, syncData } = opts;
+
+  const rawValueRef = useRef<string | null>(null);
+
+  const [value, setValue] = useState(() => {
+    if (typeof window === 'undefined') return defaultValue;
+
+    try {
+      rawValueRef.current = window.localStorage.getItem(key);
+      const res: T = rawValueRef.current
+        ? parser(parser(rawValueRef.current))
+        : defaultValue;
+      return res;
+    } catch (e) {
+      logger(e);
+      return defaultValue;
+    }
+  });
+
   useEffect(() => {
-    const fromLocal = () => {
-      if (typeof window === 'undefined') {
-        return initialValue;
-      }
-      try {
-        const item = window.localStorage.getItem(key);
-        return item ? (JSON.parse(item) as T) : initialValue;
-      } catch (error) {
-        console.error(error);
-        return initialValue;
+    if (typeof window === 'undefined') return;
+
+    const updateLocalStorage = () => {
+      // Browser ONLY dispatch storage events to other tabs, NOT current tab.
+      // We need to manually dispatch storage event for current tab
+      if (value !== undefined) {
+        const newValue = serializer(value);
+        const oldValue = rawValueRef.current;
+        rawValueRef.current = newValue;
+        window.localStorage.setItem(key, newValue);
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            storageArea: window.localStorage,
+            url: window.location.href,
+            key,
+            newValue,
+            oldValue
+          })
+        );
+      } else {
+        window.localStorage.removeItem(key);
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            storageArea: window.localStorage,
+            url: window.location.href,
+            key
+          })
+        );
       }
     };
 
-    // Set the value from localStorage
-    setStoredValue(fromLocal);
-    // First load is done
-    setFirstLoadDone(true);
-  }, [initialValue, key]);
-
-  // Instead of replacing the setState function, react to changes.
-  // Whenever the state value changes, save it in the local storage.
-  useEffect(() => {
-    // If it's the first load, don't store the value.
-    // Otherwise, the initial value will overwrite the local storage.
-    if (!firstLoadDone) {
-      return;
-    }
-
     try {
-      if (typeof window !== 'undefined') {
-        // window.localStorage.removeItem(key);
-        window.localStorage.setItem(key, JSON.stringify(storedValue));
-      }
-    } catch (error) {
-      console.warn(error);
+      updateLocalStorage();
+    } catch (e) {
+      logger(e);
     }
-  }, [storedValue, firstLoadDone, key]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
-  // Return the original useState functions
-  return [storedValue, setStoredValue];
+  useEffect(() => {
+    if (!syncData) return;
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key !== key || e.storageArea !== window.localStorage) return;
+
+      try {
+        if (e.newValue !== rawValueRef.current) {
+          rawValueRef.current = e.newValue;
+          setValue(e.newValue ? parser(e.newValue) : undefined);
+        }
+      } catch (e) {
+        logger(e);
+      }
+    };
+
+    if (typeof window === 'undefined') return;
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, syncData]);
+
+  return [value, setValue];
 }
+
+export default useLocalStorage;

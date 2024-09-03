@@ -1,31 +1,38 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
+
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useState, type MutableRefObject } from 'react';
-import { xErc20LayerZeroAbi } from 'sdk/src';
+import { type MutableRefObject } from 'react';
+// import { xErc20LayerZeroAbi } from 'sdk/src';
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
-import { useWatchContractEvent } from 'wagmi';
+// import { useWatchContractEvent } from 'wagmi';
 
 import { chainsArr, pools, scans } from '@ui/constants/index';
-import useLocalStorage from '@ui/hooks/useLocalStorage';
-import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
+// import useLocalStorage from '@ui/hooks/useLocalStorage';
+// import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
 
 interface IProps {
   close: () => void;
   open: boolean;
   bridgeref: MutableRefObject<never>;
-  mock: {
-    amount: bigint;
-    hash: string;
-    approvalHash: string;
-    fromChain: string;
-    toChain: string;
-    status?: boolean;
-    bridgeStatus: 'completed' | 'error' | 'pending' | 'unknown';
-  };
+  mock: Imock;
 }
 
-export default function TxPopup({
+interface Imock {
+  // hasHistory: boolean;
+  amount: bigint;
+  hash: string;
+  fromChain: string;
+  toChain: string;
+  approvalHash: string;
+  bridgeStatus: string;
+  status: boolean;
+  // bridgingBlock: string;
+}
+
+function TxPopup({
   close,
   open,
   bridgeref,
@@ -43,32 +50,45 @@ export default function TxPopup({
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const chain = querychain ?? '34443';
-  const [bridgeStatus, setBridgeStatus] = useState<
-    'completed' | 'error' | 'pending' | 'unknown'
-  >('unknown');
+  // const [bridgeStatus, setBridgeStatus] = useState<
+  //   'completed' | 'error' | 'pending' | 'unknown'
+  // >('unknown');
 
-  const [, setInit] = useLocalStorage('bridgeTx', '');
-
-  useWatchContractEvent({
-    address: BridgingContractAddress[+mock?.toChain],
-    abi: xErc20LayerZeroAbi,
-    eventName: 'TokenReceived',
-    chainId: +mock?.toChain,
-    onLogs(logs) {
-      console.warn('New logs!', logs);
-      setBridgeStatus('completed');
-      setInit(JSON.stringify({ ...mock, bridgeStatus: 'completed' }));
-    }
-    // syncConnectedChain: true
-  });
-
-  const statusimg: Record<string, string> = {
-    completed: 'https://img.icons8.com/ios-glyphs/30/ffffff/checkmark--v1.png',
-    error: '/img/assets/close.png',
-    pending: '/img/assets/loading.gif',
-    unknown: '/img/assets/search.png'
+  const temp = {
+    hasHistory: false,
+    amount: BigInt(0),
+    hash: '0x1234567890abcdef1234567890abcdef12345678',
+    fromChain: '34443',
+    toChain: '8453',
+    approvalHash: '0x123456789',
+    bridgeStatus: 'unknown',
+    status: false,
+    bridgingBlock: '21212'
   };
-  // <img width="30" height="30" src="" alt="checkmark--v1"/>
+
+  //-------------------------- for future use
+  // const [mock] = useLocalStorage('bridgeTx', '');
+  // console.log(mock);
+  // useWatchContractEvent({
+  //   address: BridgingContractAddress[+mock?.toChain],
+  //   abi: xErc20LayerZeroAbi,
+  //   eventName: 'TokenReceived',
+  //   chainId: +mock?.toChain,
+  //   onLogs(logs) {
+  //     console.warn('New logs!', logs);
+  //     setBridgeStatus('completed');
+  //     setInit(JSON.stringify({ ...mock, bridgeStatus: 'completed' }));
+  //   }
+  //   // syncConnectedChain: true
+  // });
+
+  // const statusimg: Record<string, string> = {
+  //   completed: 'https://img.icons8.com/ios-glyphs/30/ffffff/checkmark--v1.png',
+  //   error: '/img/assets/close.png',
+  //   pending: '/img/assets/loading.gif',
+  //   unknown: '/img/assets/search.png'
+  // };
+  //-----------------------------------------------------------
   return (
     <div
       className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
@@ -95,7 +115,9 @@ export default function TxPopup({
             <span className={`text-xs  min-w-max`}>Amount</span>
             <div className={`ml-auto flex gap-2`}>
               <span className={`text-xs text-white/50`}>
-                {Number(formatEther(mock?.amount)).toLocaleString('en-US', {
+                {Number(
+                  formatEther(mock?.amount ?? temp.amount)
+                ).toLocaleString('en-US', {
                   maximumFractionDigits: 6
                 })}
               </span>
@@ -112,8 +134,8 @@ export default function TxPopup({
             <div className={`ml-auto flex gap-2`}>
               <span className={`text-xs text-white/50`}>
                 {(
-                  Number(formatEther(mock?.amount)) -
-                  Number(formatEther(mock?.amount)) * 0.01
+                  Number(formatEther(mock?.amount ?? temp.amount)) -
+                  Number(formatEther(mock?.amount ?? temp.amount)) * 0.01
                 ).toLocaleString('en-US', {
                   maximumFractionDigits: 3
                 })}
@@ -130,11 +152,11 @@ export default function TxPopup({
             <span className={`text-xs  min-w-max`}>Networks</span>
             <div className={`ml-auto flex items-center gap-2`}>
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock?.fromChain]}
+                {chainsArr[+mock?.fromChain ?? temp.fromChain]}
               </span>
               {'->'}
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock?.toChain]}
+                {chainsArr[+mock?.toChain ?? temp.toChain]}
               </span>
             </div>
           </div>
@@ -143,10 +165,10 @@ export default function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain]}${mock?.approvalHash}`}
+                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.approvalHash ?? temp.approvalHash}`}
                 className={`text-xs text-white/50 `}
               >
-                {mock?.approvalHash}
+                {mock?.approvalHash ?? temp.approvalHash}
               </a>
             </div>
           </div>
@@ -155,14 +177,14 @@ export default function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain]}${mock?.hash}`}
+                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.hash ?? temp.hash}`}
                 className={`text-xs text-white/50  `}
               >
-                {mock?.hash}
+                {mock?.hash ?? temp.hash}
               </a>
             </div>
           </div>
-          <div className={`w-full items-center justify-start flex gap-4 `}>
+          {/* <div className={`w-full items-center justify-start flex gap-4 `}>
             <span className={`text-xs  min-w-max`}>Bridging Status</span>
             <div className={`ml-auto truncate`}>
               {
@@ -173,11 +195,11 @@ export default function TxPopup({
                 />
               }
             </div>
-          </div>
+          </div> */}
 
           <a
             target="_blank"
-            href={`https://layerzeroscan.com/tx/${mock?.hash || ''}`}
+            href={`https://layerzeroscan.com/tx/${mock?.hash ?? temp.hash}`}
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
           >
             TRACK
@@ -187,3 +209,5 @@ export default function TxPopup({
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(TxPopup), { ssr: false });

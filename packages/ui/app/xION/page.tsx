@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { xErc20LayerZeroAbi } from 'sdk/src';
@@ -12,6 +13,7 @@ import {
   useChainId,
   useReadContract,
   useWriteContract
+  // useBlock
 } from 'wagmi';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
@@ -20,11 +22,14 @@ import MaxDeposit from '../_components/stake/MaxDeposit';
 import FromTOChainSelector from '../_components/xION/FromToChainSelector';
 import ProgressSteps from '../_components/xION/ProgressSteps';
 import Quote, { lzOptions } from '../_components/xION/Quote';
-import TxPopup from '../_components/xION/TxPopup';
+// import TxPopup from '../_components/xION/TxPopup';
+const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
+  ssr: false
+});
 
 import { ixErc20 } from '@ui/constants/bridge';
 import { pools } from '@ui/constants/index';
-import useLocalStorage from '@ui/hooks/useLocalStorage';
+// import useLocalStorage from '@ui/hooks/useLocalStorage';
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -67,6 +72,9 @@ export default function XION() {
     toggle: bridgeToggle
   } = useOutsideClick();
   //----------------------
+  // const blockInitial = useBlock({
+  //   chainId: +(toChain ?? mode.id)
+  // });
   const [deposit, setDeposit] = useState<string>('');
   const [progress, setProgress] = useState<number>(0);
   const [nativeEth, setNativeEth] = useState<bigint>(BigInt(0));
@@ -97,7 +105,7 @@ export default function XION() {
   });
 
   // console.log(bridgeArgs);
-  const [,] = useLocalStorage('bridgeTx', '');
+  // const [, setInit] = useLocalStorage('bridgeTx', '');
 
   async function approval(amount: bigint) {
     try {
@@ -131,6 +139,8 @@ export default function XION() {
       setProgress(0);
     }
   }
+
+  // console.log(blockInitial);
 
   interface IBridgeArgs {
     token: Address;
@@ -176,16 +186,19 @@ export default function XION() {
         fromChain: chain,
         toChain: args.destinationChain.toString(),
         bridgeStatus: 'pending'
+        // bridgeInitialBLock: ''
       }));
-
+      //---------------- for future use
       // setInit(
       //   JSON.stringify({
+      //     hasHistory: true,
       //     amount: args.amount,
       //     hash: bridging,
       //     fromChain: chain,
       //     toChain: args.destinationChain.toString(),
       //     bridgeStatus: 'pending',
-      //     approvalHash: popup.approvalHash
+      //     approvalHash: popup.approvalHash,
+      //     bridgingBlock: blockInitial.data?.number
       //   })
       // );
       setDeposit('');
