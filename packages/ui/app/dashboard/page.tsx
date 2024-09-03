@@ -493,7 +493,7 @@ export default function Dashboard() {
             className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between items-center mb-2`}>
-              <span>TOTAL POINTS</span>
+              <span>Claimable Rewards</span>
               <ResultHandler
                 height="24"
                 isLoading={
@@ -556,8 +556,8 @@ export default function Dashboard() {
         <div
           className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
         >
-          <div className={`col-span-3 flex flex-col`}>
-            <div className={`w-[50%]  `}>
+          <div className={`col-span-4 flex flex-col`}>
+            <div className={`  `}>
               {/* <Dropdown
             chainId={chain as string}
             dropdownSelectedChain={+chain}
@@ -568,7 +568,7 @@ export default function Dashboard() {
             setOpen={setOpen}
           /> */}
               <NetworkSelector
-                chainId={chain as string}
+                chain={chain as string}
                 dropdownSelectedChain={+chain}
                 newRef={newRef}
                 open={open}
@@ -576,36 +576,32 @@ export default function Dashboard() {
                 setOpen={setOpen}
               />
             </div>
-            <div className={`flex items-center justify-start w-max gap-2`}>
-              {pools[+chain].pools.map((poolx, idx) => {
-                return (
-                  <Link
-                    className={` cursor-pointer py-2 px-4 rounded-lg ${
-                      pool === poolx.id
-                        ? `border ${
-                            +chain == base.id
-                              ? 'border-blue-600'
-                              : 'border-lime'
-                          }`
-                        : 'border border-stone-700'
-                    }`}
-                    href={`${pathname}?chain=${chain}${
-                      poolx.id ? `&pool=${poolx.id}` : ''
-                    }`}
-                    key={idx}
-                    // onClick={() => setSelectedPool(pools[0].id)}
-                  >
-                    {poolx.name}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
-          <div className={`w-full mt-2  col-span-5`}>
+          {/* <div className={`w-full mt-2  col-span-5`}>
             <ClaimAllBaseRewards chain={+chain} />
-          </div>
+          </div> */}
         </div>
-        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
+        <div className={`bg-grayone  w-full px-6 py-3  rounded-xl`}>
+          <div className={`flex items-center justify-start w-max gap-2`}>
+            {pools[+chain].pools.map((poolx, idx) => {
+              return (
+                <Link
+                  className={` cursor-pointer  px-4 rounded-md ${
+                    pool === poolx.id
+                      ? ` ${pools[+chain].bg} ${pools[+chain].text}`
+                      : 'bg-black '
+                  }`}
+                  href={`${pathname}?chain=${chain}${
+                    poolx.id ? `&pool=${poolx.id}` : ''
+                  }`}
+                  key={idx}
+                  // onClick={() => setSelectedPool(pools[0].id)}
+                >
+                  {poolx.name}
+                </Link>
+              );
+            })}
+          </div>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
           </div>
