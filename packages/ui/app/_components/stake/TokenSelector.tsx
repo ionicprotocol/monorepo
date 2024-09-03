@@ -3,22 +3,21 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 interface ITokenSelector {
   newRef: any;
   open: boolean;
   setOpen: any;
   tokenArr?: string[];
-  chain: number;
+  // chain: number;
 }
 
 export default function TokenSelector({
   setOpen,
   open,
   newRef,
-  tokenArr = ['eth', 'weth'],
-  chain
+  tokenArr = ['eth', 'weth']
 }: ITokenSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -26,6 +25,15 @@ export default function TokenSelector({
   //URL passed Data ----------------------------
   const queryToken = searchParams.get('token');
   const selectedtoken = queryToken ?? tokenArr[0];
+
+  const createQueryString = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('token', value);
+      return params.toString();
+    },
+    [searchParams]
+  );
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -36,10 +44,10 @@ export default function TokenSelector({
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-1.5 pl-3 pr-7 w-full gap-1.5 flex relative items-start justify-center border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
+          className={`py-1.5 pl-3.5 pr-7 w-full gap-1.5 flex relative items-center justify-start border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
         >
           <img
-            alt="expand-arrow--v2"
+            alt="symbol"
             className={`w-6 inline-block`}
             src={`/img/symbols/32/color/${selectedtoken.toLowerCase()}.png`}
           />
@@ -55,20 +63,26 @@ export default function TokenSelector({
         <ul
           className={`  left-0   ${
             open ? 'block' : 'hidden transition-all  delay-1000'
-          } top-full w-full  origin-top z-40 shadow-xl shadow-black/10 rounded-b-md py-2 border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-2 gap-2`}
+          } top-full w-full  origin-top z-40 shadow-xl shadow-black/10 rounded-b-md py-2 border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-1.5 gap-2 `}
         >
           {tokenArr.map((token: string, idx: number) => (
             <Link
               className={`flex justify-between items-center p-2 mb-1  rounded-md`}
-              href={`${pathname}?chain=${chain}&token=${token}`}
+              href={pathname + '?' + createQueryString(token)}
               key={idx}
             >
               {token.toUpperCase()}{' '}
-              {selectedtoken === token && (
+              {selectedtoken === token ? (
                 <img
                   alt="checkmark--v1"
                   className={`w-4 h-4 stroke-lime`}
                   src="https://img.icons8.com/ios-filled/50/ffffff/checkmark--v1.png"
+                />
+              ) : (
+                <img
+                  alt="logos"
+                  className={`w-4 h-4`}
+                  src={`/img/symbols/32/color/${token.toLowerCase()}.png`}
                 />
               )}
             </Link>
