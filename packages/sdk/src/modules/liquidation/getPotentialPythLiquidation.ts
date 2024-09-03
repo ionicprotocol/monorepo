@@ -79,9 +79,10 @@ export default async function getPotentialLiquidation(
 
   // Calculate how much of the debt can be repaid based on the available collateral
   const maxRepayAmount = (underlyingAmountSeized * SCALE_FACTOR_ONE_18_WEI) / (liquidationIncentive * exchangeRate);
-  const repayAmount = maxRepayAmount < debtAsset.borrowBalanceWei
-    ? maxRepayAmount
-    : (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
+  const repayAmount =
+    maxRepayAmount < debtAsset.borrowBalanceWei
+      ? maxRepayAmount
+      : (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
 
   // Send the liquidation opportunity even if the full close factor cannot be repaid
   return await encodeLiquidatePythTx(borrower, repayAmount, underlyingAmountSeized);
