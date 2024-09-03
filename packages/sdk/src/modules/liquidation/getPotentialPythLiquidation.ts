@@ -35,6 +35,7 @@ export default async function getPotentialLiquidation(
   // Sort debt and collateral from highest to lowest ETH value
   borrower.debt.sort((a, b) => (b.borrowBalanceWei > a.borrowBalanceWei ? 1 : -1));
   borrower.collateral.sort((a, b) => (b.supplyBalanceWei > a.supplyBalanceWei ? 1 : -1));
+
   // Check SUPPORTED_INPUT_CURRENCIES (if LIQUIDATION_STRATEGY === "")
   if (
     chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT &&
@@ -51,16 +52,15 @@ export default async function getPotentialLiquidation(
   } else {
     sdk.logger.info(`Sufficiently Large Borrow, processing liquidation. Vault: ${borrower.account}`);
   }
-  // Get debt and collateral prices
-  const repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
 
+  // Calculate the maximum repayable amount based on available collateral
   const pool = sdk.createComptroller(comptroller);
   const collateralCToken = sdk.createICErc20(collateralAsset.cToken);
 
   const seizeTokens = await pool.read.liquidateCalculateSeizeTokens([
     debtAsset.cToken,
     collateralAsset.cToken,
-    repayAmount
+    debtAsset.borrowBalanceWei
   ]);
   const seizeTokenAmount = seizeTokens[1];
   const protocolSeizeShareMantissa = await collateralCToken.read.protocolSeizeShareMantissa();
@@ -77,5 +77,12 @@ export default async function getPotentialLiquidation(
   const underlyingAmountSeized =
     (actualAmountSeized * exchangeRate * BUY_TOKENS_OFFSET) / (BUY_TOKENS_SCALE_FACTOR * SCALE_FACTOR_ONE_18_WEI);
 
+  // Calculate how much of the debt can be repaid based on the available collateral
+  const maxRepayAmount = (underlyingAmountSeized * SCALE_FACTOR_ONE_18_WEI) / (liquidationIncentive * exchangeRate);
+  const repayAmount = maxRepayAmount < debtAsset.borrowBalanceWei
+    ? maxRepayAmount
+    : (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
+
+  // Send the liquidation opportunity even if the full close factor cannot be repaid
   return await encodeLiquidatePythTx(borrower, repayAmount, underlyingAmountSeized);
 }
