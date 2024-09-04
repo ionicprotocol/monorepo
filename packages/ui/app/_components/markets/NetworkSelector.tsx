@@ -20,9 +20,9 @@ interface INetworkSelector {
 
 function NetworkSelector({
   dropdownSelectedChain,
-  setOpen,
-  open,
-  newRef,
+  // setOpen,
+  // open,
+  // newRef,
   nopool = false,
   enabledChains,
   chain
@@ -52,10 +52,10 @@ function NetworkSelector({
     //       />
     //     </div>
     <div
-      className={`  left-0    min-w-max  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md  px-2 flex gap-x-1  items-center `}
+      className={`  left-0    md:min-w-max w-full  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md  px-2 flex flex-wrap gap-x-1  items-center `}
     >
       <Link
-        className={`flex justify-start gap-2 items-center p-2 mb-1  w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
+        className={`flex justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
         href={`${pathname}?chain=${dropdownSelectedChain}${nopool ? '' : '&pool=0'}`}
         // key={idx}
         // onClick={() => setDropChain(chainId)}
@@ -75,7 +75,7 @@ function NetworkSelector({
         )
         .map(([chainId, network], idx: number) => (
           <Link
-            className={`flex justify-start gap-2 items-center p-2 mb-1  w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
+            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
             href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
             key={idx}
             onClick={() => setDropChain(chainId)}

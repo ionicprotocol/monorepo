@@ -135,8 +135,8 @@ export default function Market() {
           <div className={`w-full sm:w-[40%] md:w-[20%] mb-2 `}>
             {' '}
             <NetworkSelector
-              chainId={chain as string}
-              dropdownSelectedChain={dropdownSelectedChain}
+              // chain={dropdownSelectedChain.toString()}
+              dropdownSelectedChain={+chain}
               newRef={newRef}
               open={open}
               // options={networkOptionstest}
