@@ -617,7 +617,7 @@ export default function Dashboard() {
               {suppliedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>SUPPLY ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
@@ -698,7 +698,7 @@ export default function Dashboard() {
               {borrowedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>BORROW ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>

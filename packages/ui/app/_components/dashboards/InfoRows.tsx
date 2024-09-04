@@ -51,7 +51,7 @@ const InfoRows = ({
 }: InfoRowsProps) => {
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-6  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
         membership && 'border border-lime'
       }`}
     >
@@ -110,7 +110,9 @@ const InfoRows = ({
       ) : (
         <div />
       )}
-      <div className={` col-span-2 flex items-center justify-center gap-3`}>
+      <div
+        className={` flex md:flex-col   mx-auto items-center justify-center gap-3`}
+      >
         <button
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
           onClick={() => {
