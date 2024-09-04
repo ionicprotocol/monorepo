@@ -28,7 +28,6 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { sendIMG } from '@ui/utils/TempImgSender';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
   ssr: false
@@ -177,7 +176,7 @@ export default function Market() {
                           alt="modlogo"
                           className={`w-6 h-6`}
                           key={idx}
-                          src={sendIMG(pool.id, chain, val)}
+                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
                         />
                       ))}
                     </div>
@@ -379,11 +378,7 @@ export default function Market() {
                         }
                         dropdownSelectedChain={dropdownSelectedChain}
                         key={idx}
-                        logo={sendIMG(
-                          selectedPool,
-                          chain,
-                          val.underlyingSymbol
-                        )}
+                        logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                         loopPossible={
                           loopMarkets
                             ? loopMarkets[val.cToken].length > 0
