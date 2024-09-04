@@ -160,4 +160,92 @@ contract VotingEscrowNFTTest is BaseTest {
     // console.log("Global latest point - slope:", uint256(int256(vars.globalSlope)));
     // console.log("Global latest point - ts:", vars.globalTs);
   }
+
+  function testCreateLockMultipleVE() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+
+    // Create a user
+    vars.user = address(0x1234);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+    modeBalancer8020IonEth.mint(vars.user, vars.amount);
+    baseAerodrome5050IonWstEth.mint(vars.user, vars.amount);
+    baseBalancer8020IonEth.mint(vars.user, vars.amount);
+    optimismVelodrome5050IonOp.mint(vars.user, vars.amount);
+    optimismBalancer8020IonEth.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.startPrank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+    modeBalancer8020IonEth.approve(address(ve), vars.amount);
+    baseAerodrome5050IonWstEth.approve(address(ve), vars.amount);
+    baseBalancer8020IonEth.approve(address(ve), vars.amount);
+    optimismVelodrome5050IonOp.approve(address(ve), vars.amount);
+    optimismBalancer8020IonEth.approve(address(ve), vars.amount);
+    vm.stopPrank();
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](6);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    vars.tokenAddresses[1] = address(modeBalancer8020IonEth);
+    vars.tokenAddresses[2] = address(baseAerodrome5050IonWstEth);
+    vars.tokenAddresses[3] = address(baseBalancer8020IonEth);
+    vars.tokenAddresses[4] = address(optimismVelodrome5050IonOp);
+    vars.tokenAddresses[5] = address(optimismBalancer8020IonEth);
+
+    vars.tokenAmounts = new uint256[](6);
+    vars.tokenAmounts[0] = vars.amount;
+    vars.tokenAmounts[1] = vars.amount;
+    vars.tokenAmounts[2] = vars.amount;
+    vars.tokenAmounts[3] = vars.amount;
+    vars.tokenAmounts[4] = vars.amount;
+    vars.tokenAmounts[5] = vars.amount;
+
+    vars.durations = new uint256[](6);
+    vars.durations[0] = 52 weeks;
+    vars.durations[1] = 52 weeks;
+    vars.durations[2] = 52 weeks;
+    vars.durations[3] = 52 weeks;
+    vars.durations[4] = 52 weeks;
+    vars.durations[5] = 52 weeks;
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Assert the lock was created successfully
+    assertEq(ve.ownerOf(vars.tokenId), vars.user, "Lock should be created for the user");
+
+    // Display relevant state changes after creating a lock
+
+    // Display token balance of user after lock
+    vars.userBalanceAfterLock = modeVelodrome5050IonMode.balanceOf(vars.user);
+    console.log("User's token balance after lock:", vars.userBalanceAfterLock);
+
+    // Display token balance of veION contract
+    vars.veIONBalance = modeVelodrome5050IonMode.balanceOf(address(ve));
+    console.log("veION contract token balance:", vars.veIONBalance);
+
+    // Get and display locks for each LP token type
+    IveION.LpTokenType[6] memory lpTokenTypes = [
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH,
+      IveION.LpTokenType.Base_Balancer_8020_ION_ETH,
+      IveION.LpTokenType.Optimism_Velodrome_5050_ION_OP,
+      IveION.LpTokenType.Optimism_Balancer_8020_ION_ETH
+    ];
+
+    for (uint i = 0; i < lpTokenTypes.length; i++) {
+      IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpTokenTypes[i]);
+
+      console.log("Lock for LP Token Type:", uint(lpTokenTypes[i]));
+      console.log("Token address:", locked.tokenAddress);
+      console.log("Amount:", uint256(int256(locked.amount)));
+      console.log("End time:", locked.end);
+      console.log("--------------------");
+    }
+  }
 }
