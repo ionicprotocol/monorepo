@@ -3,7 +3,7 @@
 import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import { type Address } from 'viem';
 import { mode } from 'viem/chains';
@@ -75,8 +75,6 @@ const PoolRows = ({
   rewards
 }: IRows) => {
   const { address } = useMultiIonic();
-  const searchParams = useSearchParams();
-  const querychain = searchParams.get('chain');
 
   const supplyRewards = useMemo(
     () =>
@@ -211,34 +209,6 @@ const PoolRows = ({
             }) ?? '-'}
             %
           </span>
-          {selectedPoolId === '0' &&
-            querychain === '34443' &&
-            (asset.toLowerCase() === 'usdc' ||
-              asset.toLowerCase() === 'weth' ||
-              asset.toLowerCase() === 'stone' ||
-              asset.toLowerCase() === 'ezeth') && (
-              <a
-                className="text-red-600 bg-red-50  expan rounded-md w-max ml-1 md:ml-0 text-center my-1 flex items-center justify-center gap-1"
-                href="https://jumper.exchange/superfest/"
-                target="_blank"
-              >
-                <div
-                  className={`flex items-center md:text-[10px] text-[8px] justify-center gap-0.5 py-[1px] px-[4px]`}
-                >
-                  <img
-                    alt="OP fest"
-                    className={`w-4 h-4 inline-block `}
-                    src="/img/logo/superOP.png"
-                  />
-                  <span className={``}>OP FEST</span>
-                  <img
-                    alt="external-link"
-                    className={`w-3 h-3`}
-                    src="https://img.icons8.com/material-outlined/24/external-link.png"
-                  />
-                </div>
-              </a>
-            )}
           <span
             className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
               multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]

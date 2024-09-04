@@ -62,6 +62,15 @@ task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { v
   });
 });
 
+task("market:set-cf:mode:dmbtc", "Sets caps on a market").setAction(async (_, { viem, run }) => {
+  const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4"; // ionMODE
+
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: "0.1"
+  });
+});
+
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
