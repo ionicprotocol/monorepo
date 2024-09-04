@@ -11,7 +11,9 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const usdtToken = mode.assets.find((asset) => asset.symbol === assetSymbols.USDT);
     const stoneToken = mode.assets.find((asset) => asset.symbol === assetSymbols.STONE);
     const mbtcToken = mode.assets.find((asset) => asset.symbol === assetSymbols.mBTC);
-    if (!modeToken || !usdtToken || !stoneToken || !mbtcToken) {
+    const weethToken = mode.assets.find((asset) => asset.symbol === assetSymbols.weETH);
+    const weEthOld = "0x028227c4dd1e5419d11Bb6fa6e661920c519D4F5";
+    if (!modeToken || !usdtToken || !stoneToken || !mbtcToken || !weethToken) {
       throw new Error("Tokens not found");
     }
     const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
@@ -34,6 +36,16 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: mbtcToken.underlying,
         outputToken: usdtToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: weethToken.underlying,
+        outputToken: stoneToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: weEthOld,
+        outputToken: stoneToken.underlying,
         strategy: kimLiquidator.address as Address
       }
     ]);
