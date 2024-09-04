@@ -104,6 +104,7 @@ export const pools: Record<number, PoolParams> = {
           'USDe',
           'wrsETH',
           'weETH.mode',
+          'dMBTC',
           'M-BTC',
           'WBTC',
           'USDT',

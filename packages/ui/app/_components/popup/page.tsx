@@ -738,10 +738,15 @@ const Popup = ({
           selectedMarketData.cToken,
           amountToWithdraw.toString()
         );
+        let isMax = false;
+        if (amountToWithdraw === maxWithdrawAmount) {
+          isMax = true;
+        }
 
         const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
-          amountToWithdraw
+          amountToWithdraw,
+          isMax
         );
 
         if (errorCode) {
