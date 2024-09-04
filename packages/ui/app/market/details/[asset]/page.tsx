@@ -71,7 +71,6 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
-import { sendIMG } from '@ui/utils/TempImgSender';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -351,7 +350,7 @@ const Asset = ({ params }: IProp) => {
           <img
             alt={params.asset}
             className={`w-8`}
-            src={sendIMG(pool as string, chain as string, params.asset)}
+            src={`/img/symbols/32/color/${params.asset?.toLowerCase()}.png`}
           />
           <h1 className={`font-semibold`}>{params.asset}</h1>
           {/* <img
