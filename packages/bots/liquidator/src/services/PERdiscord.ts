@@ -139,32 +139,3 @@ ${sellTokenMessages.join("\n")}
     console.error("Failed to send Discord notification:", error);
   }
 }
-
-export async function sendStartNotification(startTime: number) {
-  const message = `
-**runPythLiquidator Loop Started**
-- **Start Time**: ${new Date(startTime * 1000).toISOString()}
-**----------------------------------------------------------------------------------------**
-`;
-  try {
-    await axios.post(webhookUrl, { content: message });
-    console.log("Start notification sent successfully.");
-  } catch (error) {
-    console.error("Failed to send start notification:", error);
-  }
-}
-
-export async function sendEndNotification(startTime: number) {
-  const message = `
-**runPythLiquidator Loop Ended**
-- **Start Time**: ${new Date(startTime * 1000).toISOString()}
-- **End Time**: ${new Date().toISOString()}
-**----------------------------------------------------------------------------------------**
-`;
-  try {
-    await axios.post(webhookUrl, { content: message });
-    console.log("End notification sent successfully.");
-  } catch (error) {
-    console.error("Failed to send end notification:", error);
-  }
-}

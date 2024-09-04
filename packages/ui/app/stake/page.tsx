@@ -578,6 +578,12 @@ export default function Stake() {
     return getToken(+chain);
   }, [chain]);
 
+  const tokenArrOfChain: Record<number, string[]> = {
+    34443: ['eth', 'weth', 'mode'],
+    8453: ['eth', 'weth']
+  };
+
+  // console.log(tokenArrOfChain[+chain]);
   return (
     <main className={``}>
       <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
@@ -632,7 +638,7 @@ export default function Stake() {
             className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2 `}
           >
             <h1 className={` md:text-lg text-md`}>
-              Step 2. LP your ION Tokens
+              Step 2. LP Your ION Tokens
             </h1>
             <div className={`my-3`}>
               <Toggle setActiveToggle={setstep2Toggle} />
@@ -658,6 +664,7 @@ export default function Stake() {
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
                   tokenSelector={true}
+                  tokenArr={tokenArrOfChain[+chain]}
                 />
               </>
             )}
@@ -772,7 +779,7 @@ export default function Stake() {
           <div
             className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2`}
           >
-            <h1 className={` md:text-lg text-md`}>Step 3. Stake your LP</h1>
+            <h1 className={` md:text-lg text-md`}>Step 3. Stake Your LP</h1>
             <div className={`my-3`}>
               <Toggle
                 setActiveToggle={setstep3Toggle}
@@ -878,7 +885,10 @@ const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
           className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
           src="/img/symbols/32/color/velo.png"
         />
-        <VelodromeAPY step3Toggle={step3Toggle} />
+        <VelodromeAPY
+          step3Toggle={step3Toggle}
+          selectedtoken={selectedtoken}
+        />
       </div>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
         <img
@@ -916,14 +926,18 @@ const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
 
 type VelodromeAPYProps = {
   step3Toggle: string;
+  selectedtoken: 'eth' | 'mode' | 'weth';
 };
-const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
+const VelodromeAPY = ({ step3Toggle, selectedtoken }: VelodromeAPYProps) => {
   const LP_SUGAR_ADDRESS = '0x207DfB36A449fd10d9c3bA7d75e76290a0c06731';
-  const ION_POOL_INDEX = 6n;
+  const ION_WETH_POOL_INDEX = 6n;
+  const ION_MODE_POOL_INDEX = 26n;
   const { data: sugarData } = useReadContract({
     abi: lpSugarAbi,
     address: LP_SUGAR_ADDRESS,
-    args: [ION_POOL_INDEX],
+    args: [
+      selectedtoken === 'mode' ? ION_MODE_POOL_INDEX : ION_WETH_POOL_INDEX
+    ],
     functionName: 'byIndex',
     chainId: mode.id
   });
@@ -943,7 +957,9 @@ const VelodromeAPY = ({ step3Toggle }: VelodromeAPYProps) => {
           (Number(formatEther(sugarData.staked0)) *
             Number(ionData.pair.priceUsd) +
             Number(formatEther(sugarData.staked1)) *
-              ethPriceData[mode.id].value)) *
+              (selectedtoken !== 'mode'
+                ? ethPriceData[mode.id].value
+                : Number(modePriceData.pair.priceUsd)))) *
         100
       ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
   }

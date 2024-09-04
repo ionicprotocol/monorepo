@@ -621,6 +621,9 @@ const Popup = ({
             hash: tx,
             confirmations: 2
           });
+
+          // wait for 5 seconds to resolve timing issue
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
         upsertTransactionStep({
@@ -911,6 +914,9 @@ const Popup = ({
             hash: tx,
             confirmations: 2
           });
+
+          // wait for 5 seconds to resolve timing issue
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
         upsertTransactionStep({

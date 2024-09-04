@@ -22,7 +22,7 @@ function DynamicSubNav() {
             key={index}
             className={`pl-14`}
           >
-            Hello, {pools[+chainId].name ?? 'Mode'}! OP SuperFest is LIVE,
+            Hello, {pools[+chainId]?.name ?? 'Mode'}! OP SuperFest is LIVE,
             supply ETH, USDC and/or ezETH to get OP rewards on top of the MODE
             and IONIC points!
           </span>
@@ -32,8 +32,8 @@ function DynamicSubNav() {
   }
   return (
     <a
-      className={`${`${pools[+chainId].bg ?? pools[mode.id].bg} ${
-        pools[+chainId].text ?? pools[mode.id].text
+      className={`${`${pools[+chainId]?.bg ?? pools[mode.id]?.bg} ${
+        pools[+chainId]?.text ?? pools[mode.id]?.text
       }`} absolute w-full top-full left-0 text-center  text-sm font-medium cursor-pointer `}
       // onClick={() => router.push('/points')}
       href="https://jumper.exchange/superfest/"

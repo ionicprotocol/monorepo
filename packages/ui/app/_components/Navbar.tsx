@@ -183,10 +183,13 @@ export default function Navbar() {
            */}
           <span
             className="relative mb-2 lg:mb-0"
+            // href="/bridge"
             onClick={() => setSwapWidgetOpen(true)}
           >
             <p
-              className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              className={` ${
+                pathname == '/bridge' ? 'text-accent' : null
+              } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Bridge
             </p>
@@ -200,14 +203,16 @@ export default function Navbar() {
           </span>
           <Link
             className="relative mb-2 lg:mb-0"
-            href="https://bridge.connext.network/ION-from-mode-to-base?symbol=ION"
-            target="_blank"
+            href="/xION?chain=34443&toChain=8453"
+            // target="_blank"
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
             </span>
             <p
-              className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+              className={`${
+                pathname == '/xION' ? 'text-accent' : null
+              } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               xION
             </p>

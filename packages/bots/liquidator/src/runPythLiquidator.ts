@@ -4,7 +4,7 @@ import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunc
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
-import { sendDiscordNotification, sendEndNotification, sendStartNotification } from "./services/PERdiscord";
+import { sendDiscordNotification } from "./services/PERdiscord";
 import config from "./config";
 import { logger } from "./logger";
 import { Liquidator } from "./services";
@@ -39,8 +39,12 @@ const walletClient = createWalletClient({
   const liquidator = new Liquidator(ionicSdk);
 
   try {
-    await sendStartNotification(startTime); // Notify that the process is starting with startTime
-
+    const message = `
+**runPythLiquidator Loop Started**
+- **Start Time**: ${new Date(startTime * 1000).toISOString()}
+**----------------------------------------------------------------------------------------**
+`;
+    logger.info(`${message}`);
     const liquidatablePools = await liquidator.fetchLiquidations<PythLiquidatablePool>(BotType.Pyth);
     logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
     const client: Client = new Client({ baseUrl: config.expressRelayEndpoint });
@@ -137,6 +141,12 @@ const walletClient = createWalletClient({
   } catch (error) {
     console.error("Error during liquidation process:", error);
   } finally {
-    await sendEndNotification(startTime); // Notify that the process has ended with startTime
+    const endMessage = `
+    **runPythLiquidator Loop Ended**
+    - **Start Time**: ${new Date(startTime * 1000).toISOString()}
+    - **End Time**: ${new Date().toISOString()}
+    **----------------------------------------------------------------------------------------**
+    `;
+    logger.info(`${endMessage}`);
   }
 })();
