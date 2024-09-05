@@ -122,3 +122,11 @@ variable "autoscaling_group_name" {
 variable "ecs_service_name"{
 
 }
+variable "base_mainnet_rpcs" {
+  type    = list(string)
+  default = ["https://mainnet.base.org/"]
+}
+variable "mode_mainnet_rpcs" {
+  type    = list(string)
+  default = ["https://mainnet.mode.network"]
+}

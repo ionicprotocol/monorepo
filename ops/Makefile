@@ -74,6 +74,8 @@ prod-plan:
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
+	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPCS} && \ 
+	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPCS} && \ 
 	terraform init && \
 	terraform plan
 
@@ -93,6 +95,8 @@ prod-deploy:
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
+	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPCS} && \ 
+	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPCS} && \ 
 	terraform init && \
 	terraform apply -auto-approve
 
@@ -105,7 +109,7 @@ liquidator-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
-				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-liquidator:${IMAGE_TAG} packages/bots/liquidator/build/test/run.js
@@ -116,7 +120,7 @@ pyth-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
-				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
 				ghcr.io/ionicprotocol/ionic-pyth-updater:${IMAGE_TAG} packages/bots/pyth-updater/build/test/run.js
@@ -128,7 +132,7 @@ feed-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=feed-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
@@ -139,7 +143,7 @@ price-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=price-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
@@ -150,7 +154,7 @@ price-change-verifier-smoke-test:
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e NODE_ENV="development" \
-				-e WEB3_HTTP_PROVIDER_URL="https://mainnet.mode.network" \
+				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e TARGET_CHAIN_ID=34443 \
 				-e SERVICE=price-change-verifier \
 				ghcr.io/ionicprotocol/ionic-oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
