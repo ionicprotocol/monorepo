@@ -1,6 +1,6 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { BotType, ionicLiquidatorAbi, PythLiquidatablePool } from "@ionicprotocol/sdk";
-import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, Hex, http } from "viem";
+import { createPublicClient, createWalletClient, encodeAbiParameters, encodeFunctionData, fallback, Hex, http } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
@@ -21,12 +21,12 @@ const account = privateKeyToAccount(config.adminPrivateKey as Hex);
 const publicClient = createPublicClient({
   batch: { multicall: { wait: 16 } },
   chain: mode,
-  transport: http(config.rpcUrl),
+  transport: fallback(config.rpcUrls.map((url) => http(url))),
 });
 const walletClient = createWalletClient({
   account,
   chain: mode,
-  transport: http(config.rpcUrl),
+  transport: fallback(config.rpcUrls.map((url) => http(url))),
 });
 
 // Main function to handle liquidations
