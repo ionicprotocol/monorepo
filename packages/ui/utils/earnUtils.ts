@@ -144,7 +144,7 @@ export const earnOpps: EarnRow[] = [
     asset: ['ion'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
-    live: false,
+    live: true,
     rewards: {
       [mode.id]: {
         points: {
@@ -166,7 +166,7 @@ export const earnOpps: EarnRow[] = [
     asset: ['ion'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
-    live: false,
+    live: true,
     rewards: {
       [mode.id]: {
         points: {
