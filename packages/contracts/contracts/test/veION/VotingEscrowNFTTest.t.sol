@@ -45,6 +45,8 @@ contract VotingEscrowNFTTest is BaseTest {
     ve.setLpTokenType(address(baseBalancer8020IonEth), IveION.LpTokenType.Base_Balancer_8020_ION_ETH);
     ve.setLpTokenType(address(optimismVelodrome5050IonOp), IveION.LpTokenType.Optimism_Velodrome_5050_ION_OP);
     ve.setLpTokenType(address(optimismBalancer8020IonEth), IveION.LpTokenType.Optimism_Balancer_8020_ION_ETH);
+
+    ve.setTeam(address(this));
   }
 
   struct TestVars {
@@ -76,7 +78,6 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 globalPermanentLockBalance;
     uint256 unlockTime;
     int128 slopeChange;
-    // New local variables for multiple LP test
     uint256 firstTokenId;
     uint256 secondTokenId;
     uint256 firstTs;
@@ -588,5 +589,228 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("User Balance After Withdraw", userBalanceAfterWithdraw);
     emit log_named_uint("Lock Amount After Withdraw", uint256(int256(locked.amount)));
     emit log_named_uint("Lock End Time After Withdraw", locked.end);
+  }
+
+  function testMergeLocks() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount * 2);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount * 2);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create first lock for the user
+    vm.prank(vars.user);
+    vars.firstTokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Create second lock for the user
+    vm.prank(vars.user);
+    vars.secondTokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Merge the locks
+    vm.prank(vars.user);
+    ve.merge(address(modeVelodrome5050IonMode), vars.firstTokenId, vars.secondTokenId);
+
+    // Verify the merged lock
+    IveION.LockedBalance memory mergedLock = ve.getUserLock(vars.secondTokenId, lpType);
+    assertEq(
+      uint256(int256(mergedLock.amount)),
+      vars.amount * 2,
+      "Merged lock amount should be the sum of the original locks"
+    );
+
+    // Verify the first lock is burned
+    IveION.LockedBalance memory burnedLock = ve.getUserLock(vars.firstTokenId, lpType);
+    assertEq(uint256(int256(burnedLock.amount)), 0, "First lock amount should be zero after merge");
+    assertEq(burnedLock.end, 0, "First lock end time should be zero after merge");
+  }
+
+  function testSplitLock() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    ve.toggleSplit(vars.user, true);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Split the lock
+    uint256 splitAmount = vars.amount / 2;
+    vm.prank(vars.user);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(address(modeVelodrome5050IonMode), vars.tokenId, splitAmount);
+
+    // Verify the split locks
+    IveION.LockedBalance memory locked1 = ve.getUserLock(tokenId1, lpType);
+    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenId2, lpType);
+    assertEq(uint256(int256(locked1.amount)), splitAmount, "First split lock amount should be half of the original");
+    assertEq(uint256(int256(locked2.amount)), splitAmount, "Second split lock amount should be half of the original");
+  }
+
+  function testLockPermanent() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Lock the tokens permanently
+    vm.prank(vars.user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), vars.tokenId);
+
+    // Verify the permanent lock
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.isPermanent, true, "Lock should be permanent");
+    assertEq(locked.end, 0, "Lock end time should be zero for permanent lock");
+
+    // Verify the latest user point history for the lock
+    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, lpType);
+    (vars.userBias, vars.userSlope, vars.userTs, vars.userBlk, vars.userPermanent) = ve.s_userPointHistory(
+      vars.tokenId,
+      vars.userEpoch,
+      lpType
+    );
+    assertEq(vars.userBias, 0, "User point bias should be zero for permanent lock");
+    assertEq(vars.userSlope, 0, "User point slope should be zero for permanent lock");
+    assertEq(vars.userTs, block.timestamp, "User point timestamp should be current block timestamp");
+    assertEq(vars.userBlk, block.number, "User point block number should be current block number");
+    assertEq(vars.userPermanent, uint256(int256(locked.amount)), "User point permanent lock should match lock amount");
+
+    // Verify the latest global point history
+    uint256 epoch = ve.s_epoch(lpType);
+    (vars.globalBias, vars.globalSlope, vars.globalTs, vars.globalBlk, vars.globalPermanentLockBalance) = ve
+      .s_pointHistory(epoch, lpType);
+    assertEq(vars.globalBias, 0, "Global point bias should be zero for permanent lock");
+    assertEq(vars.globalSlope, 0, "Global point slope should be zero for permanent lock");
+    assertEq(vars.globalTs, block.timestamp, "Global point timestamp should be current block timestamp");
+    assertEq(vars.globalBlk, block.number, "Global point block number should be current block number");
+    assertEq(
+      vars.globalPermanentLockBalance,
+      uint256(int256(locked.amount)),
+      "Global permanent lock balance should match lock amount"
+    );
+  }
+
+  function testUnlockPermanent() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Lock the tokens permanently
+    vm.prank(vars.user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), vars.tokenId);
+
+    // Unlock the permanent lock
+    vm.prank(vars.user);
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), vars.tokenId);
+
+    // Verify the lock is no longer permanent
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.isPermanent, false, "Lock should no longer be permanent");
+    assertGt(locked.end, block.timestamp, "Lock end time should be in the future");
+
+    uint256 epoch = ve.s_epoch(lpType);
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("User Balance After Unlock", modeVelodrome5050IonMode.balanceOf(vars.user));
+    emit log_named_uint("Lock Amount After Unlock", uint256(int256(locked.amount)));
+    emit log_named_uint("Lock End Time After Unlock", locked.end);
+    emit log_named_uint("User Point Epoch", vars.userEpoch);
+    emit log_named_int("User Point - Bias", vars.userBias);
+    emit log_named_int("User Point - Slope", vars.userSlope);
+    emit log_named_uint("User Point - Timestamp", vars.userTs);
+    emit log_named_uint("User Point - Block", vars.userBlk);
+    emit log_named_uint("User Point - Permanent", vars.userPermanent);
+    emit log_named_uint("Global Point Epoch", epoch);
+    emit log_named_int("Global Point - Bias", vars.globalBias);
+    emit log_named_int("Global Point - Slope", vars.globalSlope);
+    emit log_named_uint("Global Point - Timestamp", vars.globalTs);
+    emit log_named_uint("Global Point - Block", vars.globalBlk);
+    emit log_named_uint("Global Point - Permanent Lock Balance", vars.globalPermanentLockBalance);
   }
 }

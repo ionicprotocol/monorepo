@@ -67,6 +67,12 @@ interface IveION {
   error NoLockFound();
   error LockExpired();
   error SameNFT();
+  error SplitNoOwner();
+  error SplitNotAllowed();
+  error AmountTooBig();
+  error NotTeam();
+  error NotPermanentLock();
+  error ZeroAddress();
 
   event Deposit(
     address indexed provider,

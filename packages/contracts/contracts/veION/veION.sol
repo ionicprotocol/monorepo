@@ -26,6 +26,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_epoch;
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
+  mapping(address => bool) public s_canSplit;
+
+  address public s_team;
 
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 4 * 365 * 86400;
@@ -388,6 +391,81 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_to][_lpType] = newLockedTo;
   }
 
+  function split(
+    address _tokenAddress,
+    uint256 _from,
+    uint256 _amount
+  ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
+    address sender = _msgSender();
+    address owner = _ownerOf(_from);
+    if (owner == address(0)) revert SplitNoOwner();
+    if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
+    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory newLocked = s_locked[_from][_lpType];
+    if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
+    int128 _splitAmount = int128(int256(_amount));
+    if (_splitAmount == 0) revert ZeroAmount();
+    if (newLocked.amount <= _splitAmount) revert AmountTooBig();
+
+    _burn(_from);
+    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, false);
+    _checkpoint(_from, newLocked, LockedBalance(address(0), 0, 0, false), _lpType);
+
+    newLocked.amount -= _splitAmount;
+    _tokenId1 = _createSplitVE(owner, newLocked, _lpType);
+
+    newLocked.amount = _splitAmount;
+    _tokenId2 = _createSplitVE(owner, newLocked, _lpType);
+  }
+
+  function _createSplitVE(
+    address _to,
+    LockedBalance memory _newLocked,
+    LpTokenType _lpType
+  ) private returns (uint256 _tokenId) {
+    _tokenId = ++s_tokenId;
+    s_locked[_tokenId][_lpType] = _newLocked;
+    _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, false), _newLocked, _lpType);
+    _mint(_to, _tokenId);
+  }
+
+  function toggleSplit(address _account, bool _bool) external {
+    if (_msgSender() != s_team) revert NotTeam();
+    s_canSplit[_account] = _bool;
+  }
+
+  function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (_newLocked.isPermanent) revert PermanentLock();
+    if (_newLocked.end <= block.timestamp) revert LockExpired();
+    if (_newLocked.amount <= 0) revert NoLockFound();
+
+    uint256 _amount = uint256(int256(_newLocked.amount));
+    s_permanentLockBalance[_lpType] += _amount;
+    _newLocked.end = 0;
+    _newLocked.isPermanent = true;
+    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    s_locked[_tokenId][_lpType] = _newLocked;
+  }
+
+  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (!_newLocked.isPermanent) revert NotPermanentLock();
+
+    uint256 _amount = uint256(int256(_newLocked.amount));
+    s_permanentLockBalance[_lpType] -= _amount;
+    _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
+    _newLocked.isPermanent = false;
+    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    s_locked[_tokenId][_lpType] = _newLocked;
+  }
   /**
    * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
    * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
@@ -412,5 +490,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
     return s_locked[_tokenId][_lpType];
+  }
+
+  function setTeam(address _team) external onlyOwner {
+    if (_team == address(0)) revert ZeroAddress();
+    s_team = _team;
   }
 }

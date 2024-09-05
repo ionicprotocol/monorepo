@@ -20,6 +20,8 @@ import { PoolLens } from "../PoolLens.sol";
 import { PoolLensSecondary } from "../PoolLensSecondary.sol";
 import { JumpRateModel } from "../compound/JumpRateModel.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
+import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
+import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
