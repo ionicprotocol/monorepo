@@ -141,6 +141,50 @@ export const earnOpps: EarnRow[] = [
   },
   {
     apr: 0,
+    asset: ['ion'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: false,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: 'https://peapods.finance/app?pod=0xFa1D1f89e64A1b5ba50fb867d2aa660D9E6dE029',
+    network: 'mode',
+    protocol: 'Peapods',
+    tvl: 0,
+    poolChain: mode.id
+  },
+  {
+    apr: 0,
+    asset: ['ion'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: false,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: 'https://perps.ionic.money/',
+    network: 'mode',
+    protocol: 'Lynx',
+    tvl: 0,
+    poolChain: mode.id
+  },
+  {
+    apr: 0,
     asset: ['ionUSDC'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
@@ -221,53 +265,9 @@ export const earnOpps: EarnRow[] = [
         turtle: false
       }
     },
-    link: 'https://peapods.finance',
-    network: 'mode',
-    protocol: 'Peapods',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDT'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: false,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 0,
-          turtle: 0
-        },
-        peaks: false,
-        turtle: false
-      }
-    },
     link: '#',
     network: 'mode',
     protocol: 'Otomato',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDT'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: false,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 0,
-          turtle: 0
-        },
-        peaks: false,
-        turtle: false
-      }
-    },
-    link: '#',
-    network: 'mode',
-    protocol: 'Lynx',
     tvl: 0,
     poolChain: mode.id
   }
