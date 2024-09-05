@@ -359,6 +359,35 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Supply(supplyBefore, supplyBefore - value);
   }
 
+  function merge(address _tokenAddress, uint256 _from, uint256 _to) external {
+    address sender = _msgSender();
+    if (_from == _to) revert SameNFT();
+    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
+    if (!_isApprovedOrOwner(sender, _to)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLockedTo = s_locked[_to][_lpType];
+    if (oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
+
+    LockedBalance memory oldLockedFrom = s_locked[_from][_lpType];
+    if (oldLockedFrom.isPermanent) revert PermanentLock();
+    uint256 end = oldLockedFrom.end >= oldLockedTo.end ? oldLockedFrom.end : oldLockedTo.end;
+
+    _burn(_from);
+    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, false);
+    _checkpoint(_from, oldLockedFrom, LockedBalance(address(0), 0, 0, false), _lpType);
+
+    LockedBalance memory newLockedTo;
+    newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
+    newLockedTo.isPermanent = oldLockedTo.isPermanent;
+    if (newLockedTo.isPermanent) {
+      s_permanentLockBalance[_lpType] += uint256(int256(oldLockedFrom.amount));
+    } else {
+      newLockedTo.end = end;
+    }
+    _checkpoint(_to, oldLockedTo, newLockedTo, _lpType);
+    s_locked[_to][_lpType] = newLockedTo;
+  }
+
   /**
    * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
    * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
