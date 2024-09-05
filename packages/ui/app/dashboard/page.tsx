@@ -10,6 +10,7 @@ import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { base } from 'viem/chains';
 // import { useChainId } from 'wagmi';
 
+import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
@@ -29,6 +30,7 @@ import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -377,8 +379,20 @@ export default function Dashboard() {
     ) ?? 0n;
   // console.log(claimableRewardsAcrossAllChains , totalRewardsAcrossAllChains)
 
+  const {
+    componentRef: rewardRef,
+    isopen: rewardisopen,
+    toggle: rewardToggle
+  } = useOutsideClick();
   return (
     <>
+      <ClaimRewardPopover
+        chain={+chain}
+        allchain={allChains}
+        rewardRef={rewardRef}
+        isOpen={rewardisopen}
+        close={() => rewardToggle()}
+      />
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
         <div
           className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
@@ -534,12 +548,13 @@ export default function Dashboard() {
                 </span>
               </ResultHandler>
             </div>
-            <Link
-              className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
-              href={`/points`}
+            <div
+              className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
+              // href={`/points`}
+              onClick={() => rewardToggle()}
             >
               CLAIM ALL REWARDS
-            </Link>
+            </div>
           </div>
         </div>
         {/* <div
