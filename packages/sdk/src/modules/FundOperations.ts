@@ -57,7 +57,8 @@ export interface IFundOperations {
   >;
   withdraw(
     cTokenAddress: Address,
-    amount: bigint
+    amount: bigint,
+    isMax?: boolean
   ): Promise<
     | {
         errorCode: number;
@@ -226,25 +227,43 @@ export function withFundOperations<TBase extends CreateContractsModule = CreateC
       return { tx, errorCode: null };
     }
 
-    async withdraw(cTokenAddress: Address, amount: bigint) {
+    async withdraw(cTokenAddress: Address, amount: bigint, isMax = false) {
       const cToken = getContract({
         address: cTokenAddress,
         abi: icErc20Abi,
         client: this.walletClient!
       });
 
-      const response = await cToken.simulate.redeemUnderlying([amount], {
-        account: this.walletClient!.account!.address
-      });
+      let tx: Hex;
 
-      if (response.result !== 0n) {
-        const errorCode = Number(response.result);
-        return { errorCode };
+      if (isMax) {
+        amount = await cToken.read.balanceOf([this.walletClient!.account!.address]);
+        const response = await cToken.simulate.redeem([amount], {
+          account: this.walletClient!.account!.address
+        });
+
+        if (response.result !== 0n) {
+          const errorCode = Number(response.result);
+          return { errorCode };
+        }
+        tx = await cToken.write.redeem([amount], {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        });
+      } else {
+        const response = await cToken.simulate.redeemUnderlying([amount], {
+          account: this.walletClient!.account!.address
+        });
+
+        if (response.result !== 0n) {
+          const errorCode = Number(response.result);
+          return { errorCode };
+        }
+        tx = await cToken.write.redeemUnderlying([amount], {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        });
       }
-      const tx = await cToken.write.redeemUnderlying([amount], {
-        account: this.walletClient!.account!.address,
-        chain: this.walletClient!.chain
-      });
 
       return { tx, errorCode: null };
     }

@@ -1,5 +1,57 @@
-// import { BigNumber, providers } from "ethers";
-// import { task, types } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { Address } from "viem";
+import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+
+export const setLiquidationStrategies = async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"],
+  deployer: Address,
+  pairs: { inputToken: Address; outputToken: Address; strategy: Address }[]
+) => {
+  const liquidatorRegistry = await viem.getContractAt(
+    "ILiquidatorsRegistry",
+    (await deployments.get("LiquidatorsRegistry")).address as Address
+  );
+  const owner = await liquidatorRegistry.read.owner();
+  const filteredPairs = [];
+  for (const pair of pairs) {
+    const strategy = await liquidatorRegistry.read.redemptionStrategiesByTokens([pair.inputToken, pair.outputToken]);
+    console.log(`Strategy for ${pair.inputToken} and ${pair.outputToken} is ${strategy}`);
+    if (strategy.toLowerCase() !== pair.strategy.toLowerCase()) {
+      filteredPairs.push(pair);
+    } else {
+      console.log("Redemption strategy already set for pair", pair);
+    }
+  }
+  if (filteredPairs.length > 0) {
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: liquidatorRegistry,
+        functionName: "_setRedemptionStrategies",
+        args: [
+          filteredPairs.map((pair) => pair.strategy),
+          filteredPairs.map((pair) => pair.inputToken),
+          filteredPairs.map((pair) => pair.outputToken)
+        ],
+        description: "Set redemption strategies",
+        inputs: [
+          { internalType: "address[]", name: "strategies", type: "address[]" },
+          { internalType: "address[]", name: "inputTokens", type: "address[]" },
+          { internalType: "address[]", name: "outputTokens", type: "address[]" }
+        ]
+      });
+    } else {
+      const tx = await liquidatorRegistry.write._setRedemptionStrategies([
+        filteredPairs.map((pair) => pair.strategy),
+        filteredPairs.map((pair) => pair.inputToken),
+        filteredPairs.map((pair) => pair.outputToken)
+      ]);
+      console.log("Transaction sent:", tx);
+    }
+  } else {
+    console.log("Redemption strategy already set");
+  }
+};
 
 // import { CErc20Delegate } from "../typechain/CErc20Delegate";
 // import { ERC20 } from "../typechain/ERC20";
