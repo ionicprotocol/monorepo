@@ -407,4 +407,111 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_int("Slope Change", vars.slopeChange);
     emit log("--------------------");
   }
+
+  function testIncreaseLockAmount() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Assert the lock was created successfully
+    assertEq(ve.ownerOf(vars.tokenId), vars.user, "Lock should be created for the user");
+
+    // Mint additional tokens to the user for increasing the lock amount
+    uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
+    modeVelodrome5050IonMode.mint(vars.user, additionalAmount);
+
+    // Approve veION contract to spend user's additional tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
+
+    // Increase the lock amount
+    vm.prank(vars.user);
+    ve.increaseAmount(address(modeVelodrome5050IonMode), vars.tokenId, additionalAmount);
+
+    // Verify the lock amount has increased
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(uint256(int256(locked.amount)), vars.amount + additionalAmount, "Lock amount should be increased");
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("Initial Amount", vars.amount);
+    emit log_named_uint("Additional Amount", additionalAmount);
+    emit log_named_uint("Total Locked Amount", uint256(int256(locked.amount)));
+
+    emit log_named_address("Token Address", locked.tokenAddress);
+    emit log_named_uint("Lock End Time", locked.end);
+  }
+
+  function testIncreaseUnlockTime() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Assert the lock was created successfully
+    assertEq(ve.ownerOf(vars.tokenId), vars.user, "Lock should be created for the user");
+
+    // Increase the unlock time
+    uint256 newLockTime = 104 weeks;
+    vm.prank(vars.user);
+    ve.increaseUnlockTime(address(modeVelodrome5050IonMode), vars.tokenId, newLockTime);
+
+    // Verify the unlock time has increased
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    uint256 expectedEndTime = ((block.timestamp + newLockTime) / WEEK) * WEEK;
+    assertEq(locked.end, expectedEndTime, "Lock end time should be increased");
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("Initial Duration", vars.durations[0]);
+    emit log_named_uint("Additional Duration", newLockTime);
+    emit log_named_uint("New Lock End Time", locked.end);
+  }
 }

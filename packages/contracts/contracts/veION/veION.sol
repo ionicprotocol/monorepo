@@ -281,6 +281,44 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return _createLock(_tokenAddress, _tokenAmount, _duration, msg.sender);
   }
 
+  function _increaseAmountFor(
+    address _tokenAddress,
+    uint256 _tokenId,
+    uint256 _value,
+    DepositType _depositType
+  ) internal {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+
+    if (_value == 0) revert ZeroAmount();
+    if (oldLocked.amount <= 0) revert NoLockFound();
+    if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
+
+    if (oldLocked.isPermanent) s_permanentLockBalance[_lpType] += _value;
+    _depositFor(_tokenAddress, _tokenId, _value, 0, oldLocked, _depositType, _lpType);
+  }
+
+  function increaseAmount(address _tokenAddress, uint256 _tokenId, uint256 _tokenAmount) external {
+    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    _increaseAmountFor(_tokenAddress, _tokenId, _tokenAmount, DepositType.INCREASE_LOCK_AMOUNT);
+  }
+
+  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
+    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+    if (oldLocked.isPermanent) revert PermanentLock();
+    uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
+
+    if (oldLocked.end <= block.timestamp) revert LockExpired();
+    if (oldLocked.amount <= 0) revert NoLockFound();
+    if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
+    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+
+    _depositFor(_tokenAddress, _tokenId, 0, unlockTime, oldLocked, DepositType.INCREASE_UNLOCK_TIME, _lpType);
+  }
+
   function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
     require(_tokens.length == _isWhitelisted.length, "Unequal Arrays");
     for (uint256 i; i < _tokens.length; i++) s_whitelistedToken[_tokens[i]] = _isWhitelisted[i];
