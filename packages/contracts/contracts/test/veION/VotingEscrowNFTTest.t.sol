@@ -76,6 +76,12 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 globalPermanentLockBalance;
     uint256 unlockTime;
     int128 slopeChange;
+    // New local variables for multiple LP test
+    uint256 firstTokenId;
+    uint256 secondTokenId;
+    uint256 firstTs;
+    uint256 firstBlk;
+    uint256 userEpoch2;
   }
 
   function testCreateLockVE() public fork(MODE_MAINNET) {
@@ -217,16 +223,6 @@ contract VotingEscrowNFTTest is BaseTest {
     assertEq(ve.ownerOf(vars.tokenId), vars.user, "Lock should be created for the user");
 
     // Display relevant state changes after creating a lock
-
-    // Display token balance of user after lock
-    vars.userBalanceAfterLock = modeVelodrome5050IonMode.balanceOf(vars.user);
-    console.log("User's token balance after lock:", vars.userBalanceAfterLock);
-
-    // Display token balance of veION contract
-    vars.veIONBalance = modeVelodrome5050IonMode.balanceOf(address(ve));
-    console.log("veION contract token balance:", vars.veIONBalance);
-
-    // Get and display locks for each LP token type
     IveION.LpTokenType[6] memory lpTokenTypes = [
       IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
       IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
@@ -237,13 +233,178 @@ contract VotingEscrowNFTTest is BaseTest {
     ];
 
     for (uint i = 0; i < lpTokenTypes.length; i++) {
-      IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpTokenTypes[i]);
+      IveION.LpTokenType lpType = lpTokenTypes[i];
 
-      console.log("Lock for LP Token Type:", uint(lpTokenTypes[i]));
-      console.log("Token address:", locked.tokenAddress);
-      console.log("Amount:", uint256(int256(locked.amount)));
-      console.log("End time:", locked.end);
+      console.log("Testing for LP Token Type:", uint(lpType));
+
+      // Test user point history
+      vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, lpType);
+      assertEq(vars.userEpoch, 1, "User point epoch should be 1");
+
+      (vars.userBias, vars.userSlope, vars.userTs, vars.userBlk, vars.userPermanent) = ve.s_userPointHistory(
+        vars.tokenId,
+        vars.userEpoch,
+        lpType
+      );
+      assertGt(vars.userBias, 0, "User point bias should be greater than 0");
+      assertGt(vars.userSlope, 0, "User point slope should be greater than 0");
+      assertEq(vars.userTs, block.timestamp, "User point timestamp should be current block timestamp");
+      assertEq(vars.userBlk, block.number, "User point block number should be current block number");
+      assertEq(vars.userPermanent, 0, "User point permanent lock should be 0");
+
+      // Test global point history
+      vars.currentEpoch = ve.s_epoch(lpType);
+      assertEq(vars.currentEpoch, 1, "Global epoch should be 1");
+
+      (vars.globalBias, vars.globalSlope, vars.globalTs, vars.globalBlk, vars.globalPermanentLockBalance) = ve
+        .s_pointHistory(vars.currentEpoch, lpType);
+      assertGt(vars.globalBias, 0, "Global point bias should be greater than 0");
+      assertGt(vars.globalSlope, 0, "Global point slope should be greater than 0");
+      assertEq(vars.globalTs, block.timestamp, "Global point timestamp should be current block timestamp");
+      assertEq(vars.globalBlk, block.number, "Global point block number should be current block number");
+      assertEq(vars.globalPermanentLockBalance, 0, "Global permanent lock balance should be 0");
+
+      // Test supply
+      vars.totalSupply = ve.s_supply(lpType);
+      assertEq(vars.totalSupply, vars.amount, "Supply should be equal to the locked amount");
+
+      // Display results
+      console.log("User Point History:");
+      console.log("  Bias:", uint256(int256(vars.userBias)));
+      console.log("  Slope:", uint256(int256(vars.userSlope)));
+      console.log("  Timestamp:", vars.userTs);
+      console.log("  Block:", vars.userBlk);
+      console.log("  Permanent:", vars.userPermanent);
+
+      console.log("Global Point History:");
+      console.log("  Bias:", uint256(int256(vars.globalBias)));
+      console.log("  Slope:", uint256(int256(vars.globalSlope)));
+      console.log("  Timestamp:", vars.globalTs);
+      console.log("  Block:", vars.globalBlk);
+      console.log("  Permanent Lock Balance:", vars.globalPermanentLockBalance);
+
+      console.log("User Epoch:", vars.userEpoch);
+      console.log("Global Epoch:", vars.currentEpoch);
+      console.log("Supply:", vars.totalSupply);
       console.log("--------------------");
     }
+  }
+
+  function testCreateMultipleLocksInSameWeek() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    vars.user = address(0x5678);
+    vars.amount = 500 * 10 ** 18; // 500 tokens
+
+    // Mint and approve tokens for the user
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount * 2); // Mint double the amount for two locks
+
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount * 2);
+
+    // First lock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    vm.prank(vars.user);
+    vars.firstTokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    console.log("lock interrupt");
+    // Second lock within the same week
+    // Wait a few days
+    vars.firstTs = block.timestamp;
+    vars.firstBlk = block.number;
+    vm.warp(block.timestamp + 1 days);
+    vm.prank(vars.user);
+    vars.secondTokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Check balances and states after locks
+    vars.userBalanceAfterLock = modeVelodrome5050IonMode.balanceOf(vars.user);
+    emit log_named_uint("User's token balance after locks", vars.userBalanceAfterLock);
+
+    vars.veIONBalance = modeVelodrome5050IonMode.balanceOf(address(ve));
+    emit log_named_uint("veION contract token balance", vars.veIONBalance);
+
+    // Verify first lock
+    IveION.LockedBalance memory firstLocked = ve.getUserLock(vars.firstTokenId, lpType);
+    assertEq(firstLocked.amount, int128(uint128(vars.amount)), "First lock amount should be correct");
+
+    // Verify second lock
+    IveION.LockedBalance memory secondLocked = ve.getUserLock(vars.secondTokenId, lpType);
+    assertEq(secondLocked.amount, int128(uint128(vars.amount)), "Second lock amount should be correct");
+
+    // Verify total supply
+    vars.totalSupply = ve.s_supply(lpType);
+    assertEq(vars.totalSupply, vars.amount * 2, "Total supply should be the sum of both locks");
+
+    // Verify epochs
+    uint256 epoch = ve.s_epoch(lpType);
+    assertEq(epoch, 2, "Global epoch should be 2");
+
+    // Verify global point history
+    (vars.globalBias, vars.globalSlope, vars.globalTs, vars.globalBlk, vars.globalPermanentLockBalance) = ve
+      .s_pointHistory(epoch, lpType);
+    assertGt(vars.globalBias, 0, "Global point bias should be greater than 0");
+    assertGt(vars.globalSlope, 0, "Global point slope should be greater than 0");
+    assertEq(vars.globalTs, block.timestamp, "Global point timestamp should be current block timestamp");
+    assertEq(vars.globalBlk, block.number, "Global point block number should be current block number");
+    assertEq(vars.globalPermanentLockBalance, 0, "Global permanent lock balance should be 0");
+
+    // Verify user point history for the first lock
+    vars.userEpoch = ve.s_userPointEpoch(vars.firstTokenId, lpType);
+    (vars.userBias, vars.userSlope, vars.userTs, vars.userBlk, vars.userPermanent) = ve.s_userPointHistory(
+      vars.firstTokenId,
+      vars.userEpoch,
+      lpType
+    );
+    assertGt(vars.userBias, 0, "User point bias should be greater than 0");
+    assertGt(vars.userSlope, 0, "User point slope should be greater than 0");
+    assertEq(vars.userTs, vars.firstTs, "User point timestamp should be current block timestamp");
+    assertEq(vars.userBlk, vars.firstBlk, "User point block number should be current block number");
+    assertEq(vars.userPermanent, 0, "User point permanent lock should be 0");
+
+    // Verify user point history for the second lock
+    uint256 userEpoch2 = ve.s_userPointEpoch(vars.secondTokenId, lpType);
+    vars.userEpoch = ve.s_userPointEpoch(vars.secondTokenId, lpType);
+    (vars.userBias, vars.userSlope, vars.userTs, vars.userBlk, vars.userPermanent) = ve.s_userPointHistory(
+      vars.secondTokenId,
+      userEpoch2,
+      lpType
+    );
+    assertGt(vars.userBias, 0, "User point bias should be greater than 0");
+    assertGt(vars.userSlope, 0, "User point slope should be greater than 0");
+    assertEq(vars.userTs, block.timestamp, "User point timestamp should be current block timestamp");
+    assertEq(vars.userBlk, block.number, "User point block number should be current block number");
+    assertEq(vars.userPermanent, 0, "User point permanent lock should be 0");
+
+    // Verify slope changes
+    vars.unlockTime = ((block.timestamp + vars.durations[0]) / WEEK) * WEEK;
+    vars.slopeChange = ve.s_slopeChanges(vars.unlockTime, lpType);
+    assertLt(vars.slopeChange, 0, "Slope change should be negative");
+
+    // Display results
+    emit log_named_uint("First Lock - Token ID", vars.firstTokenId);
+    emit log_named_uint("Second Lock - Token ID", vars.secondTokenId);
+    emit log_named_uint("Total Supply", vars.totalSupply);
+    emit log_named_int("Global Point - Bias", vars.globalBias);
+    emit log_named_int("Global Point - Slope", vars.globalSlope);
+    emit log_named_uint("Global Point - Timestamp", vars.globalTs);
+    emit log_named_uint("Global Point - Block", vars.globalBlk);
+    emit log_named_uint("Global Point - Permanent Lock Balance", vars.globalPermanentLockBalance);
+    emit log_named_int("User Point - Bias", vars.userBias);
+    emit log_named_int("User Point - Slope", vars.userSlope);
+    emit log_named_uint("User Point - Timestamp", vars.userTs);
+    emit log_named_uint("User Point - Block", vars.userBlk);
+    emit log_named_uint("User Point - Permanent", vars.userPermanent);
+    emit log_named_uint("User Point Epoch", vars.userEpoch);
+    emit log_named_int("Slope Change", vars.slopeChange);
+    emit log("--------------------");
   }
 }
