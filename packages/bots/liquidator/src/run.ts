@@ -12,21 +12,13 @@ const run = async () => {
 
   const client = createPublicClient({
     chain: mode,
-    transport: fallback(
-      config.rpcUrls.map((url) =>
-        http(url)
-      )
-    )
+    transport: fallback(config.rpcUrls.map((url) => http(url))),
   });
 
   const walletClient = createWalletClient({
     account,
     chain: mode,
-    transport: fallback(
-      config.rpcUrls.map((url) =>
-        http(url)
-      )
-    )
+    transport: fallback(config.rpcUrls.map((url) => http(url))),
   });
 
   const sdk = setUpSdk(config.chainId, client, walletClient);
