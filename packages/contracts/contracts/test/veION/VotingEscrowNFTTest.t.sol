@@ -514,4 +514,79 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("Additional Duration", newLockTime);
     emit log_named_uint("New Lock End Time", locked.end);
   }
+
+  function testWithdrawVE() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Fast forward time to after the lock duration
+    vm.warp(block.timestamp + 52 weeks + 1);
+
+    // Withdraw the tokens
+    vm.prank(vars.user);
+    ve.withdraw(address(modeVelodrome5050IonMode), vars.tokenId);
+
+    // Verify the lock has been withdrawn
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.amount, 0, "Lock amount should be zero after withdrawal");
+    assertEq(locked.end, 0, "Lock end time should be zero after withdrawal");
+
+    // Verify the user's token balance has increased
+    uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(vars.user);
+    assertEq(userBalanceAfterWithdraw, vars.amount, "User should receive the locked tokens back");
+
+    // Verify the latest user point history for the lock
+    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, lpType);
+    (vars.userBias, vars.userSlope, vars.userTs, vars.userBlk, vars.userPermanent) = ve.s_userPointHistory(
+      vars.tokenId,
+      vars.userEpoch,
+      lpType
+    );
+    assertEq(vars.userBias, 0, "User point bias should be zero after withdrawal");
+    assertEq(vars.userSlope, 0, "User point slope should be zero after withdrawal");
+    assertEq(vars.userTs, block.timestamp, "User point timestamp should be current block timestamp");
+    assertEq(vars.userBlk, block.number, "User point block number should be current block number");
+    assertEq(vars.userPermanent, 0, "User point permanent lock should be zero after withdrawal");
+
+    // Verify the latest global point history
+    uint256 epoch = ve.s_epoch(lpType);
+    (vars.globalBias, vars.globalSlope, vars.globalTs, vars.globalBlk, vars.globalPermanentLockBalance) = ve
+      .s_pointHistory(epoch, lpType);
+    assertEq(vars.globalBias, 0, "Global point bias should be zero after withdrawal");
+    assertEq(vars.globalSlope, 0, "Global point slope should be zero after withdrawal");
+    assertEq(vars.globalTs, block.timestamp, "Global point timestamp should be current block timestamp");
+    assertEq(vars.globalBlk, block.number, "Global point block number should be current block number");
+    assertEq(vars.globalPermanentLockBalance, 0, "Global permanent lock balance should be zero after withdrawal");
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("User Balance After Withdraw", userBalanceAfterWithdraw);
+    emit log_named_uint("Lock Amount After Withdraw", uint256(int256(locked.amount)));
+    emit log_named_uint("Lock End Time After Withdraw", locked.end);
+  }
 }

@@ -339,24 +339,24 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * If unlock time has not passed, uses a formula to unlock early with penalty.
    * @param _tokenId Token ID.
    */
-  function withdraw(uint256 _tokenId) external override {
-    // address sender = _msgSender();
-    // if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
-    // if (s_voted[_tokenId]) revert AlreadyVoted();
-    // if (s_escrowType[_tokenId] != EscrowType.NORMAL) revert NotNormalNFT();
-    // LockedBalance memory oldLocked = s_locked[_tokenId];
-    // if (oldLocked.isPermanent) revert PermanentLock();
-    // if (block.timestamp < oldLocked.end) revert LockNotExpired();
-    // uint256 value = uint256(int256(oldLocked.amount));
-    // address _tokenAddress = oldLocked.tokenAddress;
-    // _burn(_tokenId);
-    // s_locked[_tokenId] = LockedBalance(address(0), 0, 0, false);
-    // uint256 supplyBefore = s_supply;
-    // s_supply = supplyBefore - value;
-    // _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, false));
-    // IERC20(_tokenAddress).safeTransfer(sender, value);
-    // emit Withdraw(sender, _tokenId, value, block.timestamp);
-    // emit Supply(supplyBefore, supplyBefore - value);
+  function withdraw(address _tokenAddress, uint256 _tokenId) external override {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    if (s_voted[_tokenId]) revert AlreadyVoted();
+    if (s_escrowType[_tokenId] != EscrowType.NORMAL) revert NotNormalNFT();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+    if (oldLocked.isPermanent) revert PermanentLock();
+    if (block.timestamp < oldLocked.end) revert LockNotExpired();
+    uint256 value = uint256(int256(oldLocked.amount));
+    _burn(_tokenId);
+    s_locked[_tokenId][_lpType] = LockedBalance(address(0), 0, 0, false);
+    uint256 supplyBefore = s_supply[_lpType];
+    s_supply[_lpType] = supplyBefore - value;
+    _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, false), _lpType);
+    IERC20(_tokenAddress).safeTransfer(sender, value);
+    emit Withdraw(sender, _tokenId, value, block.timestamp);
+    emit Supply(supplyBefore, supplyBefore - value);
   }
 
   /**

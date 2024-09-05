@@ -111,7 +111,7 @@ interface IveION {
    * If unlock time has not passed, uses a formula to unlock early with penalty.
    * @param _tokenId Token ID.
    */
-  function withdraw(uint256 _tokenId) external;
+  function withdraw(address _tokenAddress, uint256 _tokenId) external;
 
   /**
    * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
