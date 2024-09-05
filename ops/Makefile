@@ -74,8 +74,8 @@ prod-plan:
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
-	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPCS} && \ 
-	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPCS} && \ 
+	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPC_URLS} && \
+	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPC_URLS} && \
 	terraform init && \
 	terraform plan
 
@@ -95,8 +95,8 @@ prod-deploy:
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	export TF_VAR_uptime_liquidator_api=${UPTIME_LIQUIDATOR_API} && \
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
-	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPCS} && \ 
-	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPCS} && \ 
+	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPC_URLS} && \
+	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPC_URLS} && \
 	terraform init && \
 	terraform apply -auto-approve
 

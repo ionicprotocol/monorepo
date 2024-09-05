@@ -123,10 +123,10 @@ variable "ecs_service_name"{
 
 }
 variable "base_mainnet_rpcs" {
-  type    = list(string)
-  default = ["https://mainnet.base.org/"]
+  description = "Comma-separated list of base mainnet RPC URLs"
+  type        = string
 }
 variable "mode_mainnet_rpcs" {
-  type    = list(string)
-  default = ["https://mainnet.mode.network"]
+  description = "Comma-separated list of base mainnet RPC URLs"
+  type        = string
 }

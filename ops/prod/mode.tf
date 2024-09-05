@@ -13,7 +13,7 @@ module "mode_mainnet_liquidation_rpc_0" {
   chain_id            = local.mode_mainnet_chain_id
   container_env_vars = merge(
     local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URLS = join(",", local.mode_mainnet_rpcs) }  # Pass multiple RPC URLs as a comma-separated string
+    { WEB3_HTTP_PROVIDER_URLS = local.mode_mainnet_rpcs }  # Directly use the string
   )
   schedule_expression = "rate(5 minutes)"
   timeout             = 700
@@ -28,8 +28,8 @@ module "mode_mainnet_pyth_rpc_0" {
   environment         = "mainnet"
   chain_id            = local.mode_mainnet_chain_id
   container_env_vars = merge(
-    local.pyth_updater_lambda_variables,
-    { WEB3_HTTP_PROVIDER_URLS = join(",", local.mode_mainnet_rpcs) }  # Pass multiple RPC URLs as a comma-separated string
+    local.liquidation_variables,
+    { WEB3_HTTP_PROVIDER_URLS = local.mode_mainnet_rpcs }  # Directly use the string
   )
   schedule_expression = "rate(5 minutes)"
   timeout             = 700
