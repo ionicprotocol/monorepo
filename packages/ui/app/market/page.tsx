@@ -21,6 +21,9 @@ import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
 import { getAssetName } from '../util/utils';
+const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
+  ssr: false
+});
 
 import { pools } from '@ui/constants/index';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
@@ -132,17 +135,6 @@ export default function Market() {
         <div
           className={`w-full flex flex-col items-start pb-6 pt-4 justify-start bg-grayone h-min lg:px-[1%] xl:px-[3%] rounded-xl`}
         >
-          <div className={`w-full sm:w-[40%] md:w-[20%] mb-2 `}>
-            {' '}
-            <NetworkSelector
-              // chain={dropdownSelectedChain.toString()}
-              dropdownSelectedChain={+chain}
-              newRef={newRef}
-              open={open}
-              // options={networkOptionstest}
-              setOpen={setOpen}
-            />
-          </div>
           <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
             {Object.entries(pools)
               .filter(
@@ -283,41 +275,21 @@ export default function Market() {
             />
           </div>
         </div>
+        <div className={`w-full my-2  `}>
+          <NetworkSelector
+            dropdownSelectedChain={+chain}
+            newRef={newRef}
+            open={open}
+            setOpen={setOpen}
+          />
+        </div>
         <div
-          className={`bg-grayone w-full lg:px-[1%] xl:px-[3%] mt-3 rounded-xl pt-3 pb-7`}
+          className={`bg-grayone w-full lg:px-[1%] xl:px-[3%]  rounded-xl pt-3 pb-7`}
         >
-          {/* <div className={` w-full flex items-center justify-between py-3 `}> */}
-          {/* <h1 className={`font-semibold`}>Mode Lending & Borrowing</h1> */}
-          {/* <div
-              className={` min-w-[30%] flex gap-x-2  items-center justify-center `}
-            >
-              <img
-                src="/img/assets/search.png"
-                alt="searchico"
-                className={`h-4`}
-              />
-              <input
-                type="text"
-                name=""
-                id=""
-                placeholder="Search by asset name, symbol or address"
-                className={
-                  ' w-full focus:outline-none placeholder:text-xs  bg-grayone border-r px-2 border-white/20'
-                }
-              />
-              <div
-                className={`flex w-[30%] flex-nowrap items-center justify-center text-xs px-2`}
-              >
-                <p className="w-full truncate flex-nowrap">Sort By</p>
-                <img
-                  src="/img/assets/downarr.png"
-                  alt="downarr"
-                  className={`w-4`}
-                />
-              </div>
-            </div> */}
-          {/* </div> */}
-          {/* <PoolToggle /> */}
+          <PoolToggle
+            chain={+chain}
+            pool={selectedPool}
+          />
           <div
             className={`w-full gap-x-1 hidden md:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
