@@ -5,8 +5,10 @@ interface IveION {
   struct LockedBalance {
     address tokenAddress;
     int128 amount;
+    uint256 start;
     uint256 end;
     bool isPermanent;
+    uint256 boost;
   }
 
   struct UserPoint {
