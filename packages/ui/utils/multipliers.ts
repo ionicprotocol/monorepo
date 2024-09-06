@@ -196,7 +196,7 @@ export const multipliers: Record<
         supply: {
           eigenlayer: true,
           etherfi: 3,
-          ionic: 2,
+          ionic: 3,
           mode: 2,
           turtle: true,
           rewards: true,
