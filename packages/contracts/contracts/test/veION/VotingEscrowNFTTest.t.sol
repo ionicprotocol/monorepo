@@ -813,4 +813,54 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("Global Point - Block", vars.globalBlk);
     emit log_named_uint("Global Point - Permanent Lock Balance", vars.globalPermanentLockBalance);
   }
+
+  function testBoostOnLockCreationAndExtension() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    // Mint ModeVelodrome tokens to the user
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 54 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Verify the boost after 1 year lock
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.boost, 1.25 * 1 ether, "Boost should be 1.25 after 1 year lock");
+
+    // Extend the lock for another year
+    vars.durations[0] += 52 weeks; // 1 additional year
+    vm.prank(vars.user);
+    ve.increaseUnlockTime(address(modeVelodrome5050IonMode), vars.tokenId, vars.durations[0]);
+
+    // Verify the boost after extending the lock to 2 years
+    locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.boost, 2 * 1 ether, "Boost should be 2 after extending lock to 2 years");
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("User Balance After Lock", modeVelodrome5050IonMode.balanceOf(vars.user));
+    emit log_named_uint("Lock Amount", uint256(int256(locked.amount)));
+    emit log_named_uint("Lock End Time", locked.end);
+    emit log_named_uint("Lock Boost", locked.boost);
+  }
 }

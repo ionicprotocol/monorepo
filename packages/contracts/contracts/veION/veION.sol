@@ -266,12 +266,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
       if (!s_whitelistedToken[_tokenAddress[i]]) revert TokenNotWhitelisted();
 
-      uint256 boost = _calculateBoost(_duration[i]);
-
       _depositFor(
         _tokenAddress[i],
         _tokenId,
-        _tokenAmount[i] * boost,
+        _tokenAmount[i],
         unlockTime,
         s_locked[_tokenId][_lpType],
         DepositType.CREATE_LOCK_TYPE,
