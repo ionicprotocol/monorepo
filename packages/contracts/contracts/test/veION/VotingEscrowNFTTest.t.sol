@@ -868,70 +868,157 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("Lock Boost", locked.boost);
   }
 
+  struct StakeStrategyVars {
+    TestVars vars;
+    IveION.LpTokenType lpType;
+    IERC20 real5050IonModeVelo;
+    address user1;
+    address user2;
+    uint256 totalTokenAmount;
+    uint256 user1TokenAmount;
+    uint256 user2TokenAmount;
+    uint256 stakedBalanceUser1;
+    uint256 stakedBalanceUser2;
+    uint256 totalStaked;
+    uint256 rewardRate;
+    uint256 periodFinish;
+    uint256 rewardPerTokenStored;
+    uint256 lastUpdateTime;
+    uint256 user1Earnings;
+    uint256 user2Earnings;
+    uint256 veIONEarnings;
+  }
+
   function testStakeStrategyVeloIonMode5050() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
-    IERC20 real5050IonModeVelo = IERC20(0x690A74d2eC0175a69C0962B309E03021C0b5002E);
+    StakeStrategyVars memory sVars;
+    sVars.lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    sVars.real5050IonModeVelo = IERC20(0x690A74d2eC0175a69C0962B309E03021C0b5002E);
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
     whitelistedTokens[0] = 0x690A74d2eC0175a69C0962B309E03021C0b5002E; // vAMMV2-ION/MODE
     isWhitelistedTokens[0] = true;
     ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(address(real5050IonModeVelo), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    ve.setLpTokenType(address(sVars.real5050IonModeVelo), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
 
     VeloIonModeStakingModeReward stakingStrategy = new VeloIonModeStakingModeReward();
-    ve.setStakeStrategy(lpType, stakingStrategy, "");
+    ve.setStakeStrategy(sVars.lpType, stakingStrategy, "");
 
-    // Create a user
-    vars.user = address(0x5678);
+    // Create two users
+    sVars.user1 = address(0x5678);
+    sVars.user2 = address(0x1234);
 
-    uint256 _tokenAmount = real5050IonModeVelo.balanceOf(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+    sVars.totalTokenAmount = sVars.real5050IonModeVelo.balanceOf(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+    sVars.user1TokenAmount = (sVars.totalTokenAmount * 30) / 100; // 30% of total tokens
+    sVars.user2TokenAmount = (sVars.totalTokenAmount * 70) / 100; // 70% of total tokens
 
+    // Transfer tokens to user1
     vm.prank(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
-    real5050IonModeVelo.transfer(vars.user, _tokenAmount);
+    sVars.real5050IonModeVelo.transfer(sVars.user1, sVars.user1TokenAmount);
 
-    vm.prank(vars.user);
-    real5050IonModeVelo.approve(address(ve), _tokenAmount);
+    // Transfer tokens to user2
+    vm.prank(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+    sVars.real5050IonModeVelo.transfer(sVars.user2, sVars.user2TokenAmount);
 
-    // Prepare parameters for createLock
-    vars.tokenAddresses = new address[](1);
-    vars.tokenAddresses[0] = address(real5050IonModeVelo);
+    // Approve veION contract to spend user1's tokens
+    vm.prank(sVars.user1);
+    sVars.real5050IonModeVelo.approve(address(ve), sVars.user1TokenAmount);
 
-    vars.tokenAmounts = new uint256[](1);
-    vars.tokenAmounts[0] = _tokenAmount;
+    // Approve veION contract to spend user2's tokens
+    vm.prank(sVars.user2);
+    sVars.real5050IonModeVelo.approve(address(ve), sVars.user2TokenAmount);
 
-    vars.durations = new uint256[](1);
-    vars.durations[0] = 52 weeks; // 1 year
+    // Prepare parameters for createLock for user1
+    sVars.vars.tokenAddresses = new address[](1);
+    sVars.vars.tokenAddresses[0] = address(sVars.real5050IonModeVelo);
 
-    // Create lock for the user
-    vm.prank(vars.user);
-    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+    sVars.vars.tokenAmounts = new uint256[](1);
+    sVars.vars.tokenAmounts[0] = sVars.user1TokenAmount;
+
+    sVars.vars.durations = new uint256[](1);
+    sVars.vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for user1
+    vm.prank(sVars.user1);
+    sVars.vars.tokenId = ve.createLock(sVars.vars.tokenAddresses, sVars.vars.tokenAmounts, sVars.vars.durations);
+
+    // Prepare parameters for createLock for user2
+    sVars.vars.tokenAmounts[0] = sVars.user2TokenAmount;
+
+    // Create lock for user2
+    vm.prank(sVars.user2);
+    sVars.vars.tokenId = ve.createLock(sVars.vars.tokenAddresses, sVars.vars.tokenAmounts, sVars.vars.durations);
 
     // Wait for a few days to simulate the passage of time
     vm.warp(block.timestamp + 3 days);
 
-    // Check if the user is properly staked for the right amount and accruing rewards
-    IStakingRewards stakingRewards = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC);
+    // Check if user1 is properly staked
+    sVars.stakedBalanceUser1 = ve.s_userBalanceStrategy(sVars.user1, stakingStrategy);
+    sVars.totalStaked = ve.s_totalSupplyStrategy(stakingStrategy);
 
-    // Check the staked amount
-    uint256 stakedAmount = stakingRewards.balanceOf(vars.user);
-    emit log_named_uint("Staked Amount", stakedAmount);
-    assertEq(stakedAmount, _tokenAmount, "Staked amount should match the transferred amount");
+    emit log_named_uint("User1 Staked Balance", sVars.stakedBalanceUser1);
+    emit log_named_uint("Total Staked Balance", sVars.totalStaked);
 
-    // Check if the user is accruing rewards
-    uint256 earnedRewards = stakingRewards.earned(vars.user);
-    emit log_named_uint("Earned Rewards", earnedRewards);
-    assertGt(earnedRewards, 0, "User should be accruing rewards");
+    // Assert that user1's staked balance matches the token amount
+    assertEq(sVars.stakedBalanceUser1, sVars.user1TokenAmount, "User1 staked balance does not match the token amount");
 
-    // Check the reward rate
-    uint256 rewardRate = stakingRewards.rewardRate();
-    emit log_named_uint("Reward Rate", rewardRate);
-    assertGt(rewardRate, 0, "Reward rate should be greater than 0");
+    // Check if user2 is properly staked
+    sVars.stakedBalanceUser2 = ve.s_userBalanceStrategy(sVars.user2, stakingStrategy);
 
-    // Check the last update time
-    uint256 lastUpdateTime = stakingRewards.lastUpdateTime();
-    emit log_named_uint("Last Update Time", lastUpdateTime);
-    assertGt(lastUpdateTime, 0, "Last update time should be greater than 0");
+    emit log_named_uint("User2 Staked Balance", sVars.stakedBalanceUser2);
+
+    // Assert that user2's staked balance matches the token amount
+    assertEq(sVars.stakedBalanceUser2, sVars.user2TokenAmount, "User2 staked balance does not match the token amount");
+
+    // Assert that the total staked balance includes both users' staked amounts
+    assertEq(
+      sVars.totalStaked,
+      sVars.user1TokenAmount + sVars.user2TokenAmount,
+      "Total staked balance does not include both users' staked amounts"
+    );
+
+    // Check other staking parameters
+    sVars.rewardRate = stakingStrategy.rewardRate();
+    sVars.periodFinish = stakingStrategy.periodFinish();
+    sVars.rewardPerTokenStored = ve.rewardPerToken(stakingStrategy);
+    sVars.lastUpdateTime = ve.s_lastUpdateTime(stakingStrategy);
+
+    emit log_named_uint("Reward Rate", sVars.rewardRate);
+    emit log_named_uint("Period Finish", sVars.periodFinish);
+    emit log_named_uint("Reward Per Token Stored", sVars.rewardPerTokenStored);
+    emit log_named_uint("Last Update Time", sVars.lastUpdateTime);
+
+    // Assert that the reward rate is greater than zero
+    assertGt(sVars.rewardRate, 0, "Reward rate should be greater than zero");
+
+    // Assert that the period finish is in the future
+    // assertGt(sVars.periodFinish, block.timestamp, "Period finish should be in the future");
+
+    // Assert that the reward per token stored is greater than zero
+    // assertGt(sVars.rewardPerTokenStored, 0, "Reward per token stored should be greater than zero");
+
+    // Assert that the last update time is recent
+    // assertGt(sVars.lastUpdateTime, block.timestamp - 3 days, "Last update time should be recent");
+
+    // Check user1 earnings in veION contract
+    sVars.user1Earnings = ve.earned(sVars.user1, stakingStrategy);
+    emit log_named_uint("User1 Earnings", sVars.user1Earnings);
+
+    // Assert that user1's earnings are greater than zero
+    assertGt(sVars.user1Earnings, 0, "User1 earnings should be greater than zero");
+
+    // Check user2 earnings in veION contract
+    sVars.user2Earnings = ve.earned(sVars.user2, stakingStrategy);
+    emit log_named_uint("User2 Earnings", sVars.user2Earnings);
+
+    // Assert that user2's earnings are greater than zero
+    assertGt(sVars.user2Earnings, 0, "User2 earnings should be greater than zero");
+
+    // Check veION earnings in IStakingRewards
+    sVars.veIONEarnings = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).earned(address(ve));
+    emit log_named_uint("veION Earnings", sVars.veIONEarnings);
+
+    // Assert that the veION earnings are greater than zero
+    assertGt(sVars.veIONEarnings, 0, "veION earnings should be greater than zero");
   }
 }

@@ -8,6 +8,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { console } from "forge-std/console.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
+import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
@@ -25,7 +26,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(uint256 => EscrowType) public s_escrowType;
   mapping(address => LpTokenType) public s_lpType;
 
-  uint256 s_tokenId;
+  uint256 public s_tokenId;
   mapping(LpTokenType => uint256) public s_epoch;
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
@@ -38,6 +39,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   uint256 internal constant MAXTIME = 4 * 365 * 86400;
   int128 internal constant iMAXTIME = 4 * 365 * 86400;
   uint256 internal constant MULTIPLIER = 1 ether;
+  uint256 public constant PRECISION = 1e18;
+
+  mapping(IStakeStrategy => uint256) public s_lastUpdateTime;
+  mapping(IStakeStrategy => uint256) public s_rewardPerTokenStored;
+  mapping(IStakeStrategy => mapping(address => uint256)) public s_userRewardPerTokenPaid;
+  mapping(IStakeStrategy => mapping(address => uint256)) public s_rewards;
+  mapping(address => mapping(IStakeStrategy => uint256)) public s_userBalanceStrategy;
+  mapping(IStakeStrategy => uint256) public s_totalSupplyStrategy;
 
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
@@ -96,15 +105,60 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0)) {
-        _functionDelegateCall(
-          address(_stakeStrategy),
-          abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
-        );
+        _handleTokenStake(_from, _tokenAmount, _stakeStrategy, _stakeData);
       }
     }
 
     emit Deposit(_from, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
     emit Supply(supplyBefore, s_supply[_lpType]);
+  }
+
+  function _handleTokenStake(
+    address _from,
+    uint256 _tokenAmount,
+    IStakeStrategy _stakeStrategy,
+    bytes memory _stakeData
+  ) internal {
+    s_userBalanceStrategy[_from][_stakeStrategy] += _tokenAmount;
+    s_totalSupplyStrategy[_stakeStrategy] += _tokenAmount;
+    _updateRewards(_from, _stakeStrategy);
+    _functionDelegateCall(
+      address(_stakeStrategy),
+      abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
+    );
+  }
+
+  function _updateRewards(address _account, IStakeStrategy _stakeStrategy) internal {
+    s_rewardPerTokenStored[_stakeStrategy] = rewardPerToken(_stakeStrategy);
+    s_lastUpdateTime[_stakeStrategy] = lastTimeRewardApplicable(_stakeStrategy);
+    s_rewards[_stakeStrategy][_account] = earned(_account, _stakeStrategy);
+    s_userRewardPerTokenPaid[_stakeStrategy][_account] = s_rewardPerTokenStored[_stakeStrategy];
+  }
+
+  function rewardPerToken(IStakeStrategy _stakeStrategy) public view returns (uint256) {
+    if (s_totalSupplyStrategy[_stakeStrategy] == 0) {
+      return s_rewardPerTokenStored[_stakeStrategy];
+    }
+    uint256 rewardRate = _stakeStrategy.rewardRate();
+    uint256 totalSupply = _stakeStrategy.totalSupply();
+    uint256 balance = _stakeStrategy.balanceOf(address(this));
+    return
+      s_rewardPerTokenStored[_stakeStrategy] +
+      ((lastTimeRewardApplicable(_stakeStrategy) - s_lastUpdateTime[_stakeStrategy]) * rewardRate * balance * 1e18) /
+      (s_totalSupplyStrategy[_stakeStrategy] * totalSupply);
+  }
+
+  function lastTimeRewardApplicable(IStakeStrategy _stakeStrategy) public view returns (uint256) {
+    uint256 periodFinish = _stakeStrategy.periodFinish();
+    return Math.min(block.timestamp, periodFinish);
+  }
+
+  function earned(address _account, IStakeStrategy _stakeStrategy) public view returns (uint256) {
+    return
+      (s_userBalanceStrategy[_account][_stakeStrategy] *
+        (rewardPerToken(_stakeStrategy) - s_userRewardPerTokenPaid[_stakeStrategy][_account])) /
+      1e18 +
+      s_rewards[_stakeStrategy][_account];
   }
 
   struct CheckpointVars {
