@@ -289,8 +289,7 @@ export const earnOpps: EarnRow[] = [
     network: 'mode',
     protocol: 'Otomato',
     strategy: '-',
-    // img: '/img/symbols/32/color/otomato.png',
-    img: 'https://img.icons8.com/fluency-systems-regular/50/ffffff/info--v1.png',
+    img: '/img/symbols/32/color/otomato.png',
     tvl: 0,
     poolChain: mode.id
   }
