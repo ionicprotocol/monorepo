@@ -6,16 +6,19 @@
 
 import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Address, formatEther, formatUnits } from 'viem';
-import { fraxtal, mode } from 'viem/chains';
+import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
 // import NetworkSelector from '../_components/markets/NetworkSelector';
+import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import PoolRows from '../_components/markets/PoolRows';
+import StakingTile from '../_components/markets/StakingTile';
+import TvlTile from '../_components/markets/TvlTile';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
@@ -26,6 +29,7 @@ const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
 });
 
 import { pools } from '@ui/constants/index';
+// import { useAllTvlAcrossChain } from '@ui/hooks/useAllTvlAcrossChain';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -33,19 +37,20 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
-  ssr: false
-});
+// const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
+//   ssr: false
+// });
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   {
     ssr: false
   }
 );
+
 export default function Market() {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  const pool = searchParams.get('pool');
+  const querypool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
@@ -54,10 +59,10 @@ export default function Market() {
   const [open, setOpen] = useState<boolean>(false);
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  const [selectedPool, setSelectedPool] = useState(
-    pool ? pool : pools[mode.id].pools[0].id
-  );
-
+  // const [selectedPool, setSelectedPool] = useState(
+  //   pool ? pool : pools[mode.id].pools[0].id
+  // );
+  const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id;
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
@@ -118,163 +123,29 @@ export default function Market() {
     poolId: selectedPool
   });
 
-  // const networkOptionstest = [
-  //   {
-  //     chain: mode.id,
-  //     name: 'Mode'
-  //   },
-  //   {
-  //     chain: base.id,
-  //     name: 'Base'
-  //   }
-  // ];
-
+  // const { data: alltvl } = useAllTvlAcrossChain();
+  // console.log(alltvl);
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
+        {/* //........ */}
         <div
-          className={`w-full flex flex-col items-start pb-6 pt-4 justify-start bg-grayone h-min lg:px-[1%] xl:px-[3%] rounded-xl`}
+          className={`w-full grid grid-cols-8 flex-col items-start  justify-start bg-darkone h-min rounded-xl`}
         >
-          <div className="flex md:flex-row flex-col mb-4 w-full md:gap-2 gap-y-2">
-            {Object.entries(pools)
-              .filter(
-                ([chainId]) => chainId === dropdownSelectedChain.toString()
-              )
-              .map(([, chainData], chainIdx) =>
-                chainData.pools.map((pool, poolIdx) => (
-                  <Link
-                    key={`${chainIdx}-${poolIdx}`}
-                    className={`flex flex-col cursor-pointer py-2 md:px-4 ${
-                      selectedPool === pool.id
-                        ? 'rounded-md border-2 ' + chainData.border
-                        : 'rounded-md border-stone-700 border-2'
-                    }`}
-                    onClick={() => setSelectedPool(pool.id)}
-                    href={`/market?chain=${chain}&pool=${pool.id}`}
-                  >
-                    <div
-                      className={`flex items-center justify-center gap-2 py-3 pt-2 pr-2 pl-2 mr-8`}
-                    >
-                      <img
-                        alt="modlogo"
-                        className={`md:w-8 w-6`}
-                        src={chainData.logo}
-                      />
-                      <h1 className={`font-semibold`}>{pool.name}</h1>
-                    </div>
-                    <div className="h-[2px] w-[60%] md:hidden block mx-auto bg-white/10 mb-3" />
-                    <div className="flex items-center justify-center pb-2">
-                      {pool.assets.map((val, idx) => (
-                        <img
-                          alt="modlogo"
-                          className={`w-6 h-6`}
-                          key={idx}
-                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
-                        />
-                      ))}
-                    </div>
-                  </Link>
-                ))
-              )}
-          </div>
-
-          <div
-            className={`w-full flex flex-wrap items-center justify-center md:justify-start gap-4`}
-          >
-            <ResultHandler
-              isLoading={isLoadingPoolData || isLoadingLoopMarkets}
-            >
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 md:text-sm text-[11px]`}>
-                  Total Market Size
-                </p>
-                <p className={`font-semibold md:text-base text-sm`}>
-                  $
-                  {poolData
-                    ? (
-                        poolData?.totalSuppliedFiat +
-                        poolData?.totalBorrowedFiat
-                      ).toLocaleString('en-US', {
-                        maximumFractionDigits: 2,
-                        minimumFractionDigits: 2
-                      })
-                    : '0'}
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60  md:text-sm text-[11px]`}>
-                  Total Available
-                </p>
-                <p className={`font-semibold md:text-base text-sm`}>
-                  $
-                  {poolData?.totalSuppliedFiat.toLocaleString('en-US', {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2
-                  }) ?? '0'}
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60 md:text-sm text-[11px]`}>
-                  Total Borrows
-                </p>
-                <p className={`font-semibold md:text-base text-sm`}>
-                  $
-                  {poolData?.totalBorrowedFiat.toLocaleString('en-US', {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2
-                  }) ?? '0'}
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-            </ResultHandler>
-          </div>
-
-          <div className="w-full flex flex-row gap-x-2">
-            <button
-              className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
-              onClick={() => setSwapOpen(true)}
-            >
-              {`Wrap ${dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
-
-              <img
-                alt=""
-                className="inline-block"
-                height="20"
-                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'frxeth' : 'eth'}.png`}
-                width="20"
-              />
-              <span>{' -> '}</span>
-              <img
-                alt=""
-                className="inline-block"
-                height="20"
-                src={`/img/symbols/32/color/${dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'weth'}.png`}
-                width="20"
-              />
-            </button>
-
-            <button
-              className={`px-6 mt-4 mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
-              onClick={() => setSwapWidgetOpen(true)}
-            >
-              {'Swap Assets'}
-            </button>
-
-            <SwapWidget
-              close={() => setSwapWidgetOpen(false)}
-              open={swapWidgetOpen}
-              toChain={+chain}
-            />
-          </div>
+          <TvlTile
+            dropdownSelectedChain={dropdownSelectedChain.toString()}
+            poolData={poolData!}
+            isLoadingPoolData={isLoadingPoolData}
+            isLoadingLoopMarkets={isLoadingLoopMarkets}
+            setSwapWidgetOpen={setSwapWidgetOpen}
+            selectedPool={selectedPool}
+            swapWidgetOpen={swapWidgetOpen}
+            setSwapOpen={setSwapOpen}
+          />
+          <FeaturedMarketTile />
+          <StakingTile />
         </div>
+        {/* //............................................ */}
         <div className={`w-full my-2  `}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
