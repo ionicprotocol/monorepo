@@ -13,7 +13,7 @@ module "optimism_mainnet_liquidation_rpc_0" {
   chain_id            = local.optimism_mainnet_chain_id
   container_env_vars = merge(
     local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.optimism_mainnet_rpc_0 }
+    { WEB3_HTTP_PROVIDER_URLS = local.optimism_mainnet_rpc_0 }
   )
   schedule_expression = "rate(5 minutes)"
   timeout             = 700
