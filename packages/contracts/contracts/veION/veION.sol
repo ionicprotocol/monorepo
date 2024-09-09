@@ -7,8 +7,11 @@ import { IveION } from "./IveION.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { console } from "forge-std/console.sol";
+import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
+import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
+  using AddressUpgradeable for address;
   using SafeERC20 for IERC20;
 
   mapping(address => bool) public s_bridges;
@@ -27,6 +30,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
   mapping(address => bool) public s_canSplit;
+  mapping(LpTokenType => StakeStrategy) public s_stakeStrategy;
 
   address public s_team;
 
@@ -87,12 +91,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     _checkpoint(_tokenId, _oldLocked, newLocked, _lpType);
 
-    address from = _msgSender();
+    address _from = _msgSender();
     if (_tokenAmount != 0) {
-      IERC20(_tokenAddress).safeTransferFrom(from, address(this), _tokenAmount);
+      IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
+      (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
+      // _functionDelegateCall(
+      //   address(_stakeStrategy),
+      //   abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
+      // );
     }
 
-    emit Deposit(from, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
+    emit Deposit(_from, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
     emit Supply(supplyBefore, s_supply[_lpType]);
   }
 
@@ -362,6 +371,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   /**
+   * @notice Sets the strategy for a given LP token type
+   * @param _lpType LP token type to set the strategy for
+   * @param _strategy Address of the strategy contract
+   * @param _strategyData Additional data for the strategy
+   */
+  function setStakeStrategy(LpTokenType _lpType, address _strategy, bytes memory _strategyData) external onlyOwner {
+    require(_strategy != address(0), "Invalid strategy address");
+    s_stakeStrategy[_lpType] = StakeStrategy(_strategy, _strategyData);
+  }
+
+  /**
    * @notice Withdraws underlying assets from the veNFT.
    * If unlock time has not passed, uses a formula to unlock early with penalty.
    * @param _tokenId Token ID.
@@ -519,5 +539,36 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setTeam(address _team) external onlyOwner {
     if (_team == address(0)) revert ZeroAddress();
     s_team = _team;
+  }
+
+  function _getStakeStrategy(
+    LpTokenType _lpType
+  ) internal returns (IStakeStrategy _stakeStrategy, bytes memory _stakeData) {
+    StakeStrategy memory strategy = s_stakeStrategy[_lpType];
+  }
+
+  function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {
+    require(AddressUpgradeable.isContract(target), "Address: delegate call to non-contract");
+    (bool success, bytes memory returndata) = target.delegatecall(data);
+    return _verifyCallResult(success, returndata, "Address: low-level delegate call failed");
+  }
+
+  function _verifyCallResult(
+    bool success,
+    bytes memory returndata,
+    string memory errorMessage
+  ) private pure returns (bytes memory) {
+    if (success) {
+      return returndata;
+    } else {
+      if (returndata.length > 0) {
+        assembly {
+          let returndata_size := mload(returndata)
+          revert(add(32, returndata), returndata_size)
+        }
+      } else {
+        revert(errorMessage);
+      }
+    }
   }
 }

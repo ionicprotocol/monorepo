@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+import "./stake/IStakeStrategy.sol";
+
 interface IveION {
   struct LockedBalance {
     address tokenAddress;
@@ -9,6 +11,11 @@ interface IveION {
     uint256 end;
     bool isPermanent;
     uint256 boost;
+  }
+
+  struct StakeStrategy {
+    IStakeStrategy strategy;
+    bytes strategyData;
   }
 
   struct UserPoint {
