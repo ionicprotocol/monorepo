@@ -30,7 +30,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
   mapping(address => bool) public s_canSplit;
-  mapping(LpTokenType => StakeStrategy) public s_stakeStrategy;
+  mapping(LpTokenType => IStakeStrategy) public s_stakeStrategy;
 
   address public s_team;
 
@@ -95,10 +95,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (_tokenAmount != 0) {
       IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
-      // _functionDelegateCall(
-      //   address(_stakeStrategy),
-      //   abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
-      // );
+      if (address(_stakeStrategy) != address(0)) {
+        _functionDelegateCall(
+          address(_stakeStrategy),
+          abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
+        );
+      }
     }
 
     emit Deposit(_from, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
@@ -376,9 +378,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _strategy Address of the strategy contract
    * @param _strategyData Additional data for the strategy
    */
-  function setStakeStrategy(LpTokenType _lpType, address _strategy, bytes memory _strategyData) external onlyOwner {
-    require(_strategy != address(0), "Invalid strategy address");
-    s_stakeStrategy[_lpType] = StakeStrategy(_strategy, _strategyData);
+  function setStakeStrategy(
+    LpTokenType _lpType,
+    IStakeStrategy _strategy,
+    bytes memory _strategyData
+  ) external onlyOwner {
+    require(address(_strategy) != address(0), "Invalid strategy address");
+    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
   }
 
   /**
@@ -543,8 +549,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function _getStakeStrategy(
     LpTokenType _lpType
-  ) internal returns (IStakeStrategy _stakeStrategy, bytes memory _stakeData) {
-    StakeStrategy memory strategy = s_stakeStrategy[_lpType];
+  ) internal view returns (IStakeStrategy _stakeStrategy, bytes memory _stakeData) {
+    IStakeStrategy strategy = s_stakeStrategy[_lpType];
+    return (strategy, "");
   }
 
   function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {

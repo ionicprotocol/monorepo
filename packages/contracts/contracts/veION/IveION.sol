@@ -13,11 +13,6 @@ interface IveION {
     uint256 boost;
   }
 
-  struct StakeStrategy {
-    IStakeStrategy strategy;
-    bytes strategyData;
-  }
-
   struct UserPoint {
     int128 bias;
     int128 slope; // # -dweight / dt

@@ -4,6 +4,10 @@ import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "../config/BaseTest.t.sol";
 import "../../veION/veION.sol";
 import "../../veION/IveION.sol";
+import "../../veION/stake/IStakeStrategy.sol";
+import "../../veION/stake/VeloIonModeStakingModeReward.sol";
+import "../../veION/stake/IStakingRewards.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract VotingEscrowNFTTest is BaseTest {
   veION ve;
@@ -862,5 +866,72 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("Lock Amount", uint256(int256(locked.amount)));
     emit log_named_uint("Lock End Time", locked.end);
     emit log_named_uint("Lock Boost", locked.boost);
+  }
+
+  function testStakeStrategyVeloIonMode5050() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    IERC20 real5050IonModeVelo = IERC20(0x690A74d2eC0175a69C0962B309E03021C0b5002E);
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = 0x690A74d2eC0175a69C0962B309E03021C0b5002E; // vAMMV2-ION/MODE
+    isWhitelistedTokens[0] = true;
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(address(real5050IonModeVelo), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+
+    VeloIonModeStakingModeReward stakingStrategy = new VeloIonModeStakingModeReward();
+    ve.setStakeStrategy(lpType, stakingStrategy, "");
+
+    // Create a user
+    vars.user = address(0x5678);
+
+    uint256 _tokenAmount = real5050IonModeVelo.balanceOf(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+
+    vm.prank(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+    real5050IonModeVelo.transfer(vars.user, _tokenAmount);
+
+    vm.prank(vars.user);
+    real5050IonModeVelo.approve(address(ve), _tokenAmount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(real5050IonModeVelo);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = _tokenAmount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    // Create lock for the user
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Wait for a few days to simulate the passage of time
+    vm.warp(block.timestamp + 3 days);
+
+    // Check if the user is properly staked for the right amount and accruing rewards
+    IStakingRewards stakingRewards = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC);
+
+    // Check the staked amount
+    uint256 stakedAmount = stakingRewards.balanceOf(vars.user);
+    emit log_named_uint("Staked Amount", stakedAmount);
+    assertEq(stakedAmount, _tokenAmount, "Staked amount should match the transferred amount");
+
+    // Check if the user is accruing rewards
+    uint256 earnedRewards = stakingRewards.earned(vars.user);
+    emit log_named_uint("Earned Rewards", earnedRewards);
+    assertGt(earnedRewards, 0, "User should be accruing rewards");
+
+    // Check the reward rate
+    uint256 rewardRate = stakingRewards.rewardRate();
+    emit log_named_uint("Reward Rate", rewardRate);
+    assertGt(rewardRate, 0, "Reward rate should be greater than 0");
+
+    // Check the last update time
+    uint256 lastUpdateTime = stakingRewards.lastUpdateTime();
+    emit log_named_uint("Last Update Time", lastUpdateTime);
+    assertGt(lastUpdateTime, 0, "Last update time should be greater than 0");
   }
 }
