@@ -874,11 +874,15 @@ contract VotingEscrowNFTTest is BaseTest {
     IERC20 real5050IonModeVelo;
     address user1;
     address user2;
+    address user3;
     uint256 totalTokenAmount;
     uint256 user1TokenAmount;
     uint256 user2TokenAmount;
+    uint256 user3TokenAmount;
     uint256 stakedBalanceUser1;
     uint256 stakedBalanceUser2;
+    uint256 stakedBalanceUser3;
+    uint256 stakedBalanceUsere;
     uint256 totalStaked;
     uint256 rewardRate;
     uint256 periodFinish;
@@ -886,15 +890,18 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 lastUpdateTime;
     uint256 user1Earnings;
     uint256 user2Earnings;
+    uint256 user3Earnings;
     uint256 veIONEarnings;
     uint256 user1EarningsAfterClaim;
     uint256 user2EarningsAfterClaim;
+    uint256 user3EarningsAfterClaim;
     uint256 veIONEarningsAfterClaim;
     uint256 user1RewardTokenBalance;
     uint256 user2RewardTokenBalance;
+    uint256 user3RewardTokenBalance;
   }
 
-  function testStakeStrategyVeloIonMode5050() public fork(MODE_MAINNET) {
+  function testStakeStrategyVeloIonMode5050() public forkAtBlock(MODE_MAINNET, 12711533) {
     StakeStrategyVars memory sVars;
     sVars.lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     sVars.real5050IonModeVelo = IERC20(0x690A74d2eC0175a69C0962B309E03021C0b5002E);
@@ -915,7 +922,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     sVars.totalTokenAmount = sVars.real5050IonModeVelo.balanceOf(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
     sVars.user1TokenAmount = (sVars.totalTokenAmount * 30) / 100; // 30% of total tokens
-    sVars.user2TokenAmount = (sVars.totalTokenAmount * 70) / 100; // 70% of total tokens
+    sVars.user2TokenAmount = (sVars.totalTokenAmount * 10) / 100; // 20% of total tokens
 
     // Transfer tokens to user1
     vm.prank(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
@@ -954,33 +961,53 @@ contract VotingEscrowNFTTest is BaseTest {
     vm.prank(sVars.user2);
     sVars.vars.tokenId = ve.createLock(sVars.vars.tokenAddresses, sVars.vars.tokenAmounts, sVars.vars.durations);
 
+    // Wait for a day to simulate the passage of time
+    vm.warp(block.timestamp + 1 days);
+    emit log_named_uint("block timestamp after 1 more day", block.timestamp);
+
+    // Create a new user
+    sVars.user3 = address(0x7890);
+
+    // Transfer tokens to newUser
+    sVars.user3TokenAmount = (sVars.totalTokenAmount * 60) / 100; // 10% of total tokens
+    vm.prank(0x148F4e63611be189601f1F1555d4C79e8cEBddC8);
+    sVars.real5050IonModeVelo.transfer(sVars.user3, sVars.user3TokenAmount);
+
+    // Approve veION contract to spend newUser's tokens
+    vm.prank(sVars.user3);
+    sVars.real5050IonModeVelo.approve(address(ve), sVars.user3TokenAmount);
+
+    // Prepare parameters for createLock for newUser
+    sVars.vars.tokenAmounts[0] = sVars.user3TokenAmount;
+
+    // Create lock for newUser
+    vm.prank(sVars.user3);
+    sVars.vars.tokenId = ve.createLock(sVars.vars.tokenAddresses, sVars.vars.tokenAmounts, sVars.vars.durations);
+
     emit log_named_uint("block timestamp", block.timestamp);
     // Wait for a few days to simulate the passage of time
-    vm.warp(block.timestamp + 0.5 days);
-    emit log_named_uint("block timestamp after half a day", block.timestamp);
+    vm.warp(block.timestamp + 2 days);
+    emit log_named_uint("block timestamp after 2 days", block.timestamp);
 
-    // Check if user1 is properly staked
     sVars.stakedBalanceUser1 = ve.s_userBalanceStrategy(sVars.user1, stakingStrategy);
+    sVars.stakedBalanceUser2 = ve.s_userBalanceStrategy(sVars.user2, stakingStrategy);
+    sVars.stakedBalanceUser3 = ve.s_userBalanceStrategy(sVars.user3, stakingStrategy);
     sVars.totalStaked = ve.s_totalSupplyStrategy(stakingStrategy);
 
     emit log_named_uint("User1 Staked Balance", sVars.stakedBalanceUser1);
+    emit log_named_uint("User2 Staked Balance", sVars.stakedBalanceUser2);
+    emit log_named_uint("User3 Staked Balance", sVars.stakedBalanceUser3);
     emit log_named_uint("Total Staked Balance", sVars.totalStaked);
 
     // Assert that user1's staked balance matches the token amount
     assertEq(sVars.stakedBalanceUser1, sVars.user1TokenAmount, "User1 staked balance does not match the token amount");
-
-    // Check if user2 is properly staked
-    sVars.stakedBalanceUser2 = ve.s_userBalanceStrategy(sVars.user2, stakingStrategy);
-
-    emit log_named_uint("User2 Staked Balance", sVars.stakedBalanceUser2);
-
     // Assert that user2's staked balance matches the token amount
     assertEq(sVars.stakedBalanceUser2, sVars.user2TokenAmount, "User2 staked balance does not match the token amount");
 
     // Assert that the total staked balance includes both users' staked amounts
     assertEq(
       sVars.totalStaked,
-      sVars.user1TokenAmount + sVars.user2TokenAmount,
+      sVars.user1TokenAmount + sVars.user2TokenAmount + sVars.user3TokenAmount,
       "Total staked balance does not include both users' staked amounts"
     );
 
@@ -1009,6 +1036,10 @@ contract VotingEscrowNFTTest is BaseTest {
     sVars.user2Earnings = ve.earned(sVars.user2, stakingStrategy);
     emit log_named_uint("User2 Earnings", sVars.user2Earnings);
 
+    // Check user2 earnings in veION contract
+    sVars.user3Earnings = ve.earned(sVars.user3, stakingStrategy);
+    emit log_named_uint("User3 Earnings", sVars.user3Earnings);
+
     // Assert that user2's earnings are greater than zero
     assertGt(sVars.user2Earnings, 0, "User2 earnings should be greater than zero");
 
@@ -1028,11 +1059,20 @@ contract VotingEscrowNFTTest is BaseTest {
     vm.prank(sVars.user2);
     ve.claimEmissions(tokenAddress);
 
+    emit log(
+      "===========================================================AFTER CLAIM==========================================================="
+    );
+
     sVars.user1RewardTokenBalance = IERC20(rewardToken).balanceOf(sVars.user1);
     emit log_named_uint("User1 Reward Token Balance", sVars.user1RewardTokenBalance);
 
     sVars.user2RewardTokenBalance = IERC20(rewardToken).balanceOf(sVars.user2);
     emit log_named_uint("User2 Reward Token Balance", sVars.user2RewardTokenBalance);
+
+    sVars.user3RewardTokenBalance = IERC20(rewardToken).balanceOf(sVars.user3);
+    emit log_named_uint("User3 Reward Token Balance", sVars.user3RewardTokenBalance);
+
+    emit log_named_uint("VE Reward Token Balance", IERC20(rewardToken).balanceOf(address(ve)));
 
     // Assert that user1's reward token balance is greater than zero
     assertGt(sVars.user1RewardTokenBalance, 0, "User1 reward token balance should be greater than zero");
@@ -1048,6 +1088,10 @@ contract VotingEscrowNFTTest is BaseTest {
     sVars.user2EarningsAfterClaim = ve.earned(sVars.user2, stakingStrategy);
     emit log_named_uint("User2 Earnings After Claim", sVars.user2EarningsAfterClaim);
 
+    // Check the updated earnings for user2 after claiming emissions
+    sVars.user3EarningsAfterClaim = ve.earned(sVars.user3, stakingStrategy);
+    emit log_named_uint("User3 Earnings After Claim", sVars.user3EarningsAfterClaim);
+
     // Check the updated veION earnings in IStakingRewards after claiming emissions
     sVars.veIONEarningsAfterClaim = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).earned(address(ve));
     emit log_named_uint("veION Earnings After Claim", sVars.veIONEarningsAfterClaim);
@@ -1062,6 +1106,10 @@ contract VotingEscrowNFTTest is BaseTest {
     // Check the updated earnings for user2 after 2 days
     sVars.user2Earnings = ve.earned(sVars.user2, stakingStrategy);
     emit log_named_uint("User2 Earnings After 1 Day", sVars.user2Earnings);
+
+    // Check the updated earnings for user2 after 2 days
+    sVars.user3Earnings = ve.earned(sVars.user3, stakingStrategy);
+    emit log_named_uint("User3 Earnings After 1 Day", sVars.user3Earnings);
 
     // Check the updated veION earnings in IStakingRewards after 2 days
     sVars.veIONEarnings = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).earned(address(ve));
