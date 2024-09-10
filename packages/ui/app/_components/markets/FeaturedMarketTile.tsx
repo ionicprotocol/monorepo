@@ -7,9 +7,9 @@ import { PopupMode } from '../popup/page';
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
 
+import { pools } from '@ui/constants/index';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { useStore } from 'ui/store/Store';
-import { pools } from '@ui/constants/index';
 
 interface Iprop {
   selectedChain: number;
@@ -55,7 +55,7 @@ export default function FeaturedMarketTile({
             alt="abc"
             className={`w-4 inline-block`}
           />
-          <span className='text-xs'>{featuredSupply.asset}</span>
+          <span className="text-xs">{featuredSupply.asset}</span>
         </div>
         <div
           className={`popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer`}

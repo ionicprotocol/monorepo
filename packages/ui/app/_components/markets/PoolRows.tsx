@@ -167,6 +167,7 @@ const PoolRows = ({
     cTokenAddress,
     comptrollerAddress,
     dropdownSelectedChain,
+    loopPossible,
     pool,
     selectedPoolId,
     setFeaturedBorrow,

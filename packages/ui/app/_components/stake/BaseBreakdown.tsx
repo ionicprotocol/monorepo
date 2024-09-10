@@ -1,14 +1,15 @@
-import { useAllUsdPrices } from "@ui/hooks/useAllUsdPrices";
-import { useIonPrice, useAeroPrice } from "@ui/hooks/useDexScreenerPrices";
-import { lpSugarAbi } from "ui/app/stake/abi/lpSugar";
-import { formatEther } from "viem";
-import { base } from "viem/chains";
-import { useReadContract } from "wagmi";
+import { formatEther } from 'viem';
+import { base } from 'viem/chains';
+import { useReadContract } from 'wagmi';
+
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useIonPrice, useAeroPrice } from '@ui/hooks/useDexScreenerPrices';
+import { lpSugarAbi } from 'ui/app/stake/abi/lpSugar';
 
 type BaseBreakdownProps = {
   step3Toggle: string;
 };
-export default function BaseBreakdown ({ step3Toggle }: BaseBreakdownProps)  {
+export default function BaseBreakdown({ step3Toggle }: BaseBreakdownProps) {
   return (
     <>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
@@ -36,7 +37,7 @@ export default function BaseBreakdown ({ step3Toggle }: BaseBreakdownProps)  {
       </div>
     </>
   );
-};
+}
 
 type AerodromeAPYProps = {
   step3Toggle: string;

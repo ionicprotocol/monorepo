@@ -1,16 +1,19 @@
-import { useAllUsdPrices } from "@ui/hooks/useAllUsdPrices";
-import { useIonPrice, useModePrice } from "@ui/hooks/useDexScreenerPrices";
+import { formatEther } from 'viem';
+import { mode } from 'viem/chains';
+import { useReadContract } from 'wagmi';
 
-import { lpSugarAbi } from "ui/app/stake/abi/lpSugar";
-import { formatEther } from "viem";
-import { mode } from "viem/chains";
-import { useReadContract } from "wagmi";
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
+import { lpSugarAbi } from 'ui/app/stake/abi/lpSugar';
 
 type ModeBreakdownProps = {
   step3Toggle: string;
   selectedtoken: 'eth' | 'mode' | 'weth';
 };
-export default function ModeBreakdown ({ step3Toggle, selectedtoken }: ModeBreakdownProps)  {
+export default function ModeBreakdown({
+  step3Toggle,
+  selectedtoken
+}: ModeBreakdownProps) {
   return (
     <>
       <div className="flex items-center w-full mt-3 text-xs gap-2">
@@ -56,7 +59,7 @@ export default function ModeBreakdown ({ step3Toggle, selectedtoken }: ModeBreak
       </div>
     </>
   );
-};
+}
 
 type VelodromeAPYProps = {
   step3Toggle: string;
@@ -110,4 +113,3 @@ const VelodromeAPY = ({ step3Toggle, selectedtoken }: VelodromeAPYProps) => {
     </>
   );
 };
-

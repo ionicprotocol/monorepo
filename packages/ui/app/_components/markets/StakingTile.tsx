@@ -1,9 +1,10 @@
 'use client';
 
-import { base, mode } from 'viem/chains';
-import ModeBreakdown from '../stake/ModeBreakdown';
-import BaseBreakdown from '../stake/BaseBreakdown';
 import Link from 'next/link';
+import { base, mode } from 'viem/chains';
+
+import BaseBreakdown from '../stake/BaseBreakdown';
+import ModeBreakdown from '../stake/ModeBreakdown';
 
 interface Iprop {
   chain: number;
@@ -38,7 +39,7 @@ export default function StakingTile({ chain }: Iprop) {
         )}
       </div>
       <Link
-        href={`/stake?chain=${(+chain === mode.id || +chain === base.id )? chain : '34443'}`}
+        href={`/stake?chain=${+chain === mode.id || +chain === base.id ? chain : '34443'}`}
         className={`rounded-md bg-accent text-black py-1.5 px-1 uppercase truncate text-xs w-[80%] mx-auto text-center mt-auto`}
       >
         Stake

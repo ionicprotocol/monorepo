@@ -148,7 +148,7 @@ export default function Market() {
             setSelectedSymbol={setSelectedSymbol}
             selectedChain={chainId}
           />
-          <StakingTile chain={+chain}/>
+          <StakingTile chain={+chain} />
         </div>
         {/* //............................................ */}
         <div className={`w-full my-2  `}>

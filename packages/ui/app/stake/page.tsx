@@ -30,11 +30,11 @@ const NetworkSelector = dynamic(
 );
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
+import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
+import ModeBreakdown from '../_components/stake/ModeBreakdown';
 import Toggle from '../_components/Toggle';
-
-import { lpSugarAbi } from './abi/lpSugar';
 
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
@@ -56,8 +56,6 @@ import {
   getToken
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import ModeBreakdown from '../_components/stake/ModeBreakdown';
-import BaseBreakdown from '../_components/stake/BaseBreakdown';
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false
@@ -873,5 +871,3 @@ export default function Stake() {
     </main>
   );
 }
-
-
