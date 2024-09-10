@@ -10,6 +10,11 @@ interface IStakeStrategy {
   function stake(address from, uint256 amount, bytes memory data) external;
 
   /**
+   * @notice Claims rewards for the caller.
+   */
+  function claim() external;
+
+  /**
    * @notice Returns the current reward rate for the staking strategy.
    * @return The reward rate as a uint256.
    */
@@ -33,4 +38,10 @@ interface IStakeStrategy {
    * @return The total supply as a uint256.
    */
   function totalSupply() external view returns (uint256);
+
+  /**
+   * @notice Returns the address of the reward token for the staking strategy.
+   * @return The address of the reward token.
+   */
+  function rewardToken() external view returns (address);
 }

@@ -21,6 +21,14 @@ contract VeloIonModeStakingModeReward is IStakeStrategy {
   }
 
   /**
+   * @notice Claims rewards for the caller.
+   */
+  function claim() external {
+    IStakingRewards stakingRewards = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC);
+    stakingRewards.getReward(address(this));
+  }
+
+  /**
    * @inheritdoc IStakeStrategy
    */
   function rewardRate() external view override returns (uint256) {
@@ -46,5 +54,12 @@ contract VeloIonModeStakingModeReward is IStakeStrategy {
    */
   function totalSupply() external view override returns (uint256) {
     return IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).totalSupply();
+  }
+
+  /**
+   * @inheritdoc IStakeStrategy
+   */
+  function rewardToken() external view returns (address) {
+    return IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).rewardToken();
   }
 }

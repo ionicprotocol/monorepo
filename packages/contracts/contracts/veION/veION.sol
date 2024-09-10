@@ -161,6 +161,22 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       s_rewards[_stakeStrategy][_account];
   }
 
+  function claimEmissions(address _tokenAddress) external {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+
+    _functionDelegateCall(address(_stakeStrategy), abi.encodeWithSelector(_stakeStrategy.claim.selector));
+
+    address _account = _msgSender();
+    address _rewardToken = _stakeStrategy.rewardToken();
+    _updateRewards(_account, _stakeStrategy);
+    uint256 reward = s_rewards[_stakeStrategy][_account];
+    if (reward > 0) {
+      s_rewards[_stakeStrategy][_account] = 0;
+      IERC20(_rewardToken).transfer(_account, reward);
+    }
+  }
+
   struct CheckpointVars {
     UserPoint uOld;
     UserPoint uNew;

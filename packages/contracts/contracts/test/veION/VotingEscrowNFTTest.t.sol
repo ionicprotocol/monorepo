@@ -887,6 +887,11 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 user1Earnings;
     uint256 user2Earnings;
     uint256 veIONEarnings;
+    uint256 user1EarningsAfterClaim;
+    uint256 user2EarningsAfterClaim;
+    uint256 veIONEarningsAfterClaim;
+    uint256 user1RewardTokenBalance;
+    uint256 user2RewardTokenBalance;
   }
 
   function testStakeStrategyVeloIonMode5050() public fork(MODE_MAINNET) {
@@ -949,8 +954,10 @@ contract VotingEscrowNFTTest is BaseTest {
     vm.prank(sVars.user2);
     sVars.vars.tokenId = ve.createLock(sVars.vars.tokenAddresses, sVars.vars.tokenAmounts, sVars.vars.durations);
 
+    emit log_named_uint("block timestamp", block.timestamp);
     // Wait for a few days to simulate the passage of time
-    vm.warp(block.timestamp + 3 days);
+    vm.warp(block.timestamp + 0.5 days);
+    emit log_named_uint("block timestamp after half a day", block.timestamp);
 
     // Check if user1 is properly staked
     sVars.stakedBalanceUser1 = ve.s_userBalanceStrategy(sVars.user1, stakingStrategy);
@@ -991,15 +998,6 @@ contract VotingEscrowNFTTest is BaseTest {
     // Assert that the reward rate is greater than zero
     assertGt(sVars.rewardRate, 0, "Reward rate should be greater than zero");
 
-    // Assert that the period finish is in the future
-    // assertGt(sVars.periodFinish, block.timestamp, "Period finish should be in the future");
-
-    // Assert that the reward per token stored is greater than zero
-    // assertGt(sVars.rewardPerTokenStored, 0, "Reward per token stored should be greater than zero");
-
-    // Assert that the last update time is recent
-    // assertGt(sVars.lastUpdateTime, block.timestamp - 3 days, "Last update time should be recent");
-
     // Check user1 earnings in veION contract
     sVars.user1Earnings = ve.earned(sVars.user1, stakingStrategy);
     emit log_named_uint("User1 Earnings", sVars.user1Earnings);
@@ -1020,5 +1018,62 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Assert that the veION earnings are greater than zero
     assertGt(sVars.veIONEarnings, 0, "veION earnings should be greater than zero");
+
+    // Attempt to claim emissions for a specific token address
+    address tokenAddress = address(sVars.real5050IonModeVelo); // Replace with the actual token address
+    address rewardToken = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).rewardToken();
+
+    vm.prank(sVars.user1);
+    ve.claimEmissions(tokenAddress);
+    vm.prank(sVars.user2);
+    ve.claimEmissions(tokenAddress);
+
+    sVars.user1RewardTokenBalance = IERC20(rewardToken).balanceOf(sVars.user1);
+    emit log_named_uint("User1 Reward Token Balance", sVars.user1RewardTokenBalance);
+
+    sVars.user2RewardTokenBalance = IERC20(rewardToken).balanceOf(sVars.user2);
+    emit log_named_uint("User2 Reward Token Balance", sVars.user2RewardTokenBalance);
+
+    // Assert that user1's reward token balance is greater than zero
+    assertGt(sVars.user1RewardTokenBalance, 0, "User1 reward token balance should be greater than zero");
+
+    // Assert that user2's reward token balance is greater than zero
+    assertGt(sVars.user2RewardTokenBalance, 0, "User2 reward token balance should be greater than zero");
+
+    // Check the updated earnings for user1 after claiming emissions
+    sVars.user1EarningsAfterClaim = ve.earned(sVars.user1, stakingStrategy);
+    emit log_named_uint("User1 Earnings After Claim", sVars.user1EarningsAfterClaim);
+
+    // Check the updated earnings for user2 after claiming emissions
+    sVars.user2EarningsAfterClaim = ve.earned(sVars.user2, stakingStrategy);
+    emit log_named_uint("User2 Earnings After Claim", sVars.user2EarningsAfterClaim);
+
+    // Check the updated veION earnings in IStakingRewards after claiming emissions
+    sVars.veIONEarningsAfterClaim = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).earned(address(ve));
+    emit log_named_uint("veION Earnings After Claim", sVars.veIONEarningsAfterClaim);
+
+    // Wait for half a day
+    vm.warp(block.timestamp + 1 days);
+
+    // Check the updated earnings for user1 after 2 days
+    sVars.user1Earnings = ve.earned(sVars.user1, stakingStrategy);
+    emit log_named_uint("User1 Earnings After 1 Day", sVars.user1Earnings);
+
+    // Check the updated earnings for user2 after 2 days
+    sVars.user2Earnings = ve.earned(sVars.user2, stakingStrategy);
+    emit log_named_uint("User2 Earnings After 1 Day", sVars.user2Earnings);
+
+    // Check the updated veION earnings in IStakingRewards after 2 days
+    sVars.veIONEarnings = IStakingRewards(0x8EE410cC13948e7e684ebACb36b552e2c2A125fC).earned(address(ve));
+    emit log_named_uint("veION Earnings After 1 Day", sVars.veIONEarnings);
+
+    // Assert that user1's earnings are greater than zero after 2 days
+    assertGt(sVars.user1Earnings, 0, "User1 earnings should be greater than zero after 1 days");
+
+    // Assert that user2's earnings are greater than zero after 2 days
+    assertGt(sVars.user2Earnings, 0, "User2 earnings should be greater than zero after 1 days");
+
+    // Assert that the veION earnings are greater than zero after 2 days
+    assertGt(sVars.veIONEarnings, 0, "veION earnings should be greater than zero after 1 days");
   }
 }
