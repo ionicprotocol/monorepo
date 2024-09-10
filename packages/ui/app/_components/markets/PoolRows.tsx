@@ -4,7 +4,7 @@ import { type FlywheelReward } from '@ionicprotocol/types';
 // import dynamic from 'next/dynamic';
 import Link from 'next/link';
 // import { useSearchParams } from 'next/navigation';
-import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { type Address } from 'viem';
 
 import { getAssetName } from '../../util/utils';
@@ -19,12 +19,17 @@ import { PopupMode } from '../popup/page';
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
 
-import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import {
+  FLYWHEEL_TYPE_MAP,
+  pools,
+  shouldGetFeatured
+} from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 // import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { useStore } from 'ui/store/Store';
 
 interface IRows {
   asset: string;
@@ -117,6 +122,61 @@ const PoolRows = ({
       ? supplyAPR + totalSupplyRewardsAPR
       : undefined;
 
+  //type the asset name to get it featured
+  // shouldGetFeatured
+  const setFeaturedBorrow = useStore((state) => state.setFeaturedBorrow);
+  const setFeaturedSupply = useStore((state) => state.setFeaturedSupply);
+
+  useEffect(() => {
+    if (
+      shouldGetFeatured.featuredBorrow[+dropdownSelectedChain][
+        pool
+      ].toLowerCase() === asset.toLowerCase()
+    ) {
+      setFeaturedBorrow({
+        dropdownSelectedChain,
+        borrowAPR,
+        rewardsAPR: totalBorrowRewardsAPR,
+        selectedPoolId,
+        cToken: cTokenAddress,
+        pool: comptrollerAddress,
+        rewards: borrowRewards,
+        asset,
+        loopPossible
+      });
+    }
+    if (
+      shouldGetFeatured.featuredSupply[+dropdownSelectedChain][
+        pool
+      ].toLowerCase() === asset.toLowerCase()
+    ) {
+      setFeaturedSupply({
+        asset: asset,
+        supplyAPR: supplyAPR,
+        rewards: supplyRewards,
+        dropdownSelectedChain: dropdownSelectedChain,
+        selectedPoolId: selectedPoolId,
+        cToken: cTokenAddress,
+        pool: comptrollerAddress
+      });
+    }
+  }, [
+    asset,
+    borrowAPR,
+    borrowRewards,
+    cTokenAddress,
+    comptrollerAddress,
+    dropdownSelectedChain,
+    pool,
+    selectedPoolId,
+    setFeaturedBorrow,
+    setFeaturedSupply,
+    supplyAPR,
+    supplyRewards,
+    totalBorrowRewardsAPR
+  ]);
+
+  // console.log( , dropdownSelectedChain , pool );
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${

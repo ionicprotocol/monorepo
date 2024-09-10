@@ -11,7 +11,7 @@ const Rewards = dynamic(() => import('./Rewards'), {
 import { pools } from '@ui/constants/index';
 import { multipliers } from '@ui/utils/multipliers';
 
-type SupplyPopoverProps = {
+export type SupplyPopoverProps = {
   asset: string;
   cToken: Address;
   dropdownSelectedChain: number;

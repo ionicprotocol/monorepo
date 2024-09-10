@@ -11,6 +11,48 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
+export const shouldGetFeatured: Record<
+  string,
+  Record<number, Record<string, string>>
+> = {
+  featuredBorrow: {
+    [mode.id]: {
+      '0': 'usdc',
+      '1': 'weth'
+    },
+    [optimism.id]: {
+      '0': 'usdt'
+    },
+    [base.id]: {
+      '0': 'bsdETH'
+    },
+    [bob.id]: {
+      '0': 'usdt'
+    },
+    [fraxtal.id]: {
+      '0': 'frax'
+    }
+  },
+  featuredSupply: {
+    [mode.id]: {
+      '0': 'usdt',
+      '1': 'weth'
+    },
+    [optimism.id]: {
+      '0': 'usdt'
+    },
+    [base.id]: {
+      '0': 'hyusd'
+    },
+    [bob.id]: {
+      '0': 'usdt'
+    },
+    [fraxtal.id]: {
+      '0': 'frax'
+    }
+  }
+};
+
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
     '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'

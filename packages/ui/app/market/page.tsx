@@ -18,6 +18,7 @@ import { useChainId } from 'wagmi';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import PoolRows from '../_components/markets/PoolRows';
 import StakingTile from '../_components/markets/StakingTile';
+import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
@@ -36,15 +37,12 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-
 // const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
 //   ssr: false
 // });
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
-  {
-    ssr: false
-  }
+  { ssr: false }
 );
 
 export default function Market() {
@@ -130,20 +128,27 @@ export default function Market() {
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         {/* //........ */}
         <div
-          className={`w-full grid grid-cols-8 flex-col items-start  justify-start bg-darkone h-min rounded-xl`}
+          className={`w-full grid grid-cols-8 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-x-2`}
         >
-          <TvlTile
-            dropdownSelectedChain={dropdownSelectedChain.toString()}
-            poolData={poolData!}
-            isLoadingPoolData={isLoadingPoolData}
-            isLoadingLoopMarkets={isLoadingLoopMarkets}
-            setSwapWidgetOpen={setSwapWidgetOpen}
-            selectedPool={selectedPool}
-            swapWidgetOpen={swapWidgetOpen}
-            setSwapOpen={setSwapOpen}
+          <div className={`grid gap-y-2 col-span-3 `}>
+            <TotalTvlTile />
+            <TvlTile
+              dropdownSelectedChain={dropdownSelectedChain.toString()}
+              poolData={poolData!}
+              isLoadingPoolData={isLoadingPoolData}
+              isLoadingLoopMarkets={isLoadingLoopMarkets}
+              setSwapWidgetOpen={setSwapWidgetOpen}
+              selectedPool={selectedPool}
+              swapWidgetOpen={swapWidgetOpen}
+              setSwapOpen={setSwapOpen}
+            />
+          </div>
+          <FeaturedMarketTile
+            setPopupMode={setPopupMode}
+            setSelectedSymbol={setSelectedSymbol}
+            selectedChain={chainId}
           />
-          <FeaturedMarketTile />
-          <StakingTile />
+          <StakingTile chain={+chain}/>
         </div>
         {/* //............................................ */}
         <div className={`w-full my-2  `}>
