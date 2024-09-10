@@ -48,6 +48,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(address => mapping(IStakeStrategy => uint256)) public s_userBalanceStrategy;
   mapping(IStakeStrategy => uint256) public s_totalSupplyStrategy;
 
+  mapping(LpTokenType => uint256) public s_protocolFees;
+  mapping(LpTokenType => uint256) public s_distributedFees;
+
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
       revert NotMinter();
@@ -462,6 +465,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * If unlock time has not passed, uses a formula to unlock early with penalty.
    * @param _tokenId Token ID.
    */
+
   function withdraw(address _tokenAddress, uint256 _tokenId) external override {
     address sender = _msgSender();
     if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
@@ -470,16 +474,37 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
     if (oldLocked.isPermanent) revert PermanentLock();
-    if (block.timestamp < oldLocked.end) revert LockNotExpired();
+
     uint256 value = uint256(int256(oldLocked.amount));
+    uint256 fee = 0;
+
+    if (block.timestamp < oldLocked.end) {
+      uint256 daysLocked = (oldLocked.end - oldLocked.start) / 1 days;
+      uint256 daysLeft = (oldLocked.end - block.timestamp) / 1 days;
+      uint256 timeFactor = (daysLeft * 1e18) / daysLocked;
+      uint256 veIONInCirculation = s_supply[_lpType];
+      uint256 IONInCirculation = IERC20(_tokenAddress).totalSupply();
+      uint256 ratioFactor = 1e18 - (veIONInCirculation * 1e18) / IONInCirculation;
+      fee = (daysLocked * timeFactor * ratioFactor) / 1e18;
+      if (fee > 0.8e18) fee = 0.8e18;
+      fee = (value * fee) / 1e18;
+      value -= fee;
+
+      // Distribute fee
+      uint256 feeToDistribute = (fee * 75) / 100;
+      uint256 feeToProtocol = fee - feeToDistribute;
+      s_protocolFees[_lpType] += feeToProtocol;
+      s_distributedFees[_lpType] += feeToDistribute;
+    }
+
     _burn(_tokenId);
     s_locked[_tokenId][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
     uint256 supplyBefore = s_supply[_lpType];
-    s_supply[_lpType] = supplyBefore - value;
+    s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
     _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
     IERC20(_tokenAddress).safeTransfer(sender, value);
     emit Withdraw(sender, _tokenId, value, block.timestamp);
-    emit Supply(supplyBefore, supplyBefore - value);
+    emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
   }
 
   function merge(address _tokenAddress, uint256 _from, uint256 _to) external {

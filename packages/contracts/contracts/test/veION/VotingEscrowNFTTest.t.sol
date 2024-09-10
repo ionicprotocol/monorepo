@@ -1124,4 +1124,49 @@ contract VotingEscrowNFTTest is BaseTest {
     // Assert that the veION earnings are greater than zero after 2 days
     assertGt(sVars.veIONEarnings, 0, "veION earnings should be greater than zero after 1 days");
   }
+
+  function testRewardsConsistency() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    vars.user = address(0x7890);
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+
+    // Mint and approve tokens for the user
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+
+    // Create lock in veION
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks; // 1 year
+
+    vm.prank(vars.user);
+    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+
+    // Check rewards in veION
+    vm.warp(block.timestamp + 1 weeks);
+    uint256 veIONRewards = ve.earned(vars.user, stakingStrategy);
+    emit log_named_uint("Rewards from veION", veIONRewards);
+
+    // Stake directly in the staking contract
+    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+    vm.prank(vars.user);
+    modeVelodrome5050IonMode.approve(address(stakingStrategy), vars.amount);
+
+    vm.prank(vars.user);
+    stakingStrategy.stake(vars.amount);
+
+    // Check rewards in the staking contract
+    vm.warp(block.timestamp + 1 weeks);
+    uint256 directStakingRewards = stakingStrategy.earned(vars.user);
+    emit log_named_uint("Rewards from direct staking", directStakingRewards);
+
+    // Assert that the rewards are the same
+    assertEq(veIONRewards, directStakingRewards, "Rewards from veION should match direct staking rewards");
+  }
 }
