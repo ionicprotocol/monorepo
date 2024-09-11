@@ -1,7 +1,9 @@
 locals {
-  base_mainnet_rpc_0    = "https://mainnet.base.org/"
+  # Base Network RPC URLs (this will be passed in via GitHub Secrets)
+  base_mainnet_rpcs = var.base_mainnet_rpcs # List of RPC URLs from environment variable
   base_mainnet_chain_id = "8453"
 }
+
 
 
 module "base_mainnet_liquidation_rpc_0" {
@@ -13,7 +15,7 @@ module "base_mainnet_liquidation_rpc_0" {
   chain_id            = local.base_mainnet_chain_id
   container_env_vars = merge(
     local.liquidation_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.base_mainnet_rpc_0 }
+    { WEB3_HTTP_PROVIDER_URLS = local.base_mainnet_rpcs }  # Directly use the string
   )
   schedule_expression = "rate(5 minutes)"
   timeout             = 700
