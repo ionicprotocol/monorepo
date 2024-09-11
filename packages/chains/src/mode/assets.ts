@@ -32,6 +32,7 @@ export const sUSDe = "0x211Cc4DD073734dA055fbF44a2b4667d5E5fE5d2";
 export const USDe = "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34";
 export const dMBTC = "0x93a397fb0db16BA4bb045a4C08Ee639Cb5639495";
 export const STONE = "0x80137510979822322193FC997d400D5A6C747bf7";
+export const msDAI = "0x3f51c6c5927B88CDEc4b61e2787F9BD0f5249138";
 
 export const assets: SupportedAsset[] = [
   {
@@ -165,6 +166,21 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
     extraDocs: defaultDocs("https://explorer.mode.network", STONE)
+  },
+  {
+    symbol: assetSymbols.msDAI,
+    underlying: msDAI,
+    name: "Mode Savings Dai",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x97e0E416dA48a0592E6ea8ac0dfD26D410Ba5C22",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", msDAI),
+    initialSupplyCap: parseEther(String(100_000)).toString(),
+    initialBorrowCap: parseEther(String(100_000)).toString(),
+    initialCf: "0.5"
   }
 ];
 

@@ -205,6 +205,7 @@ export enum assetSymbols {
   sUSDe = "sUSDe",
   dMBTC = "dMBTC",
   STONE = "STONE",
+  msDAI = "msDAI",
 
   // base
   AERO = "AERO",

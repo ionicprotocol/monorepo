@@ -17,7 +17,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenName: "Mode",
   nativeTokenSymbol: "ETH",
   stableToken: mode.chainAddresses.STABLE_TOKEN as Address,
-  nativeTokenUsdChainlinkFeed: "0xa47Fd122b11CdD7aad7c3e8B740FB91D83Ce43D1",
+  nativeTokenUsdChainlinkFeed: "0x61A31634B4Bb4B9C2556611f563Ed86cE2D4643B",
   uniswap: {
     flashSwapFee: 30, // TODO set the correct fee
     hardcoded: [],
@@ -41,22 +41,22 @@ export const deployConfig: ChainDeployConfig = {
 //     underlying: underlying(mode.assets, a.symbol)
 //   }));
 
-// const chainlinkAssets: ChainlinkAsset[] = mode.assets
-//   .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
-//   .filter((a) => a.symbol === assetSymbols.USDe)
-//   .map((a) => ({
-//     aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
-//     feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
-//     symbol: a.symbol as assetSymbols
-//   }));
+const chainlinkAssets: ChainlinkAsset[] = mode.assets
+  .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
+  .filter((a) => a.symbol === assetSymbols.msDAI)
+  .map((a) => ({
+    aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+    feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+    symbol: a.symbol as assetSymbols
+  }));
 
 // const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
 
-const dMBTC = mode.assets.find((a) => a.symbol === assetSymbols.dMBTC);
-const pythDMBTC = {
-  feed: (dMBTC!.oracleSpecificParams as PythSpecificParams).feed,
-  underlying: dMBTC!.underlying
-} as UmbrellaAsset;
+// const dMBTC = mode.assets.find((a) => a.symbol === assetSymbols.dMBTC);
+// const pythDMBTC = {
+//   feed: (dMBTC!.oracleSpecificParams as PythSpecificParams).feed,
+//   underlying: dMBTC!.underlying
+// } as UmbrellaAsset;
 
 // const api3Assets = [
 //   {
@@ -93,6 +93,7 @@ export const deploy = async ({
   const publicClient = await viem.getPublicClient();
   const balance = await publicClient.getBalance({ address: deployer as Address });
   console.log("balance: ", formatEther(balance));
+
   // await deployVelodromeOracle({
   //   viem,
   //   assets: velodromeAssets,
@@ -102,28 +103,30 @@ export const deploy = async ({
   //   pricesContract: "0xE60bf3d27842fdCAFC2F859032507bA653e0E9A6",
   //   run
   // });
-  await deployPythPriceOracleDmBTC({
-    run,
-    deployConfig,
-    viem,
-    getNamedAccounts,
-    deployments,
-    usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
-    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
-    pythAssets: [pythDMBTC],
-    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-    dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
-  });
-  // await deployChainlinkOracle({
+
+  // await deployPythPriceOracleDmBTC({
   //   run,
+  //   deployConfig,
   //   viem,
   //   getNamedAccounts,
   //   deployments,
-  //   deployConfig,
-  //   assets: mode.assets,
-  //   chainlinkAssets,
-  //   namePostfix: "Redstone"
+  //   usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
+  //   pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+  //   pythAssets: [pythDMBTC],
+  //   nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+  //   dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
   // });
+
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: mode.assets,
+    chainlinkAssets
+  });
+
   // await addRedstoneFallbacks({
   //   viem,
   //   getNamedAccounts,
@@ -133,6 +136,7 @@ export const deploy = async ({
   //   run,
   //   deployConfig
   // });
+
   // await addRedstoneWeETHFallbacks({
   //   viem,
   //   getNamedAccounts,
@@ -142,6 +146,7 @@ export const deploy = async ({
   //   run,
   //   deployConfig
   // });
+
   // await deployRedStoneWrsETHPriceOracle({
   //   run,
   //   deployConfig,
@@ -151,12 +156,14 @@ export const deploy = async ({
   //   redStoneAddress: "0x7C1DAAE7BB0688C9bfE3A918A4224041c7177256",
   //   redStoneAssets: redStoneWrsETHAssets
   // });
+
   // const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
   //   from: deployer,
   //   args: [],
   //   log: true,
   //   waitConfirmations: 1
   // });
+
   // if (algebraSwapLiquidator.transactionHash) {
   //   await publicClient.waitForTransactionReceipt({ hash: algebraSwapLiquidator.transactionHash as Hash });
   // }
