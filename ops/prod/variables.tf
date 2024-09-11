@@ -122,3 +122,11 @@ variable "autoscaling_group_name" {
 variable "ecs_service_name"{
 
 }
+variable "base_mainnet_rpcs" {
+  description = "Comma-separated list of base mainnet RPC URLs"
+  type        = string
+}
+variable "mode_mainnet_rpcs" {
+  description = "Comma-separated list of base mainnet RPC URLs"
+  type        = string
+}
