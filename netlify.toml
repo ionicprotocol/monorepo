@@ -80,3 +80,6 @@ schedule = "@hourly"
 
 [functions."asset-total-history-*"]
 schedule = "0 0 * * *"
+
+[functions."total-tvl-*"]
+schedule = "0 0 * * *"
