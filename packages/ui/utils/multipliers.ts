@@ -195,8 +195,8 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           eigenlayer: true,
-          etherfi: 2,
-          ionic: 2,
+          etherfi: 3,
+          ionic: 3,
           mode: 2,
           turtle: true,
           rewards: true,
@@ -442,6 +442,7 @@ export const multipliers: Record<
         borrow: { turtle: true, rewards: true, ionAPR: false, ionic: 0 },
         supply: {
           ionic: 0,
+          etherfi: 3,
           turtle: true,
           rewards: true,
           ionAPR: true,

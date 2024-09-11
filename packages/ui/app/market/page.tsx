@@ -20,6 +20,7 @@ import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
+import { getAssetName } from '../util/utils';
 
 import { pools } from '@ui/constants/index';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
@@ -215,7 +216,7 @@ export default function Market() {
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
                 <p className={`text-white/60  md:text-sm text-[11px]`}>
-                  Total Available
+                  Total Supplied
                 </p>
                 <p className={`font-semibold md:text-base text-sm`}>
                   $
@@ -361,9 +362,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         chain={chain.toString()}
@@ -417,9 +419,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.supplyBalanceFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         totalBorrowing={`${
@@ -433,9 +436,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.totalBorrowFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.totalBorrowFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         totalSupplied={`${
@@ -449,9 +453,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.totalSupplyFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.totalSupplyFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                       />
