@@ -280,6 +280,8 @@ jobs:
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
       UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
+      MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
+      BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
 
     steps:
       - name: Checkout repository
@@ -328,6 +330,8 @@ jobs:
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
+      MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
+      BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
     steps:
       - name: Checkout
         uses: actions/checkout@master

@@ -9,7 +9,9 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const { deployer } = await getNamedAccounts();
     const wethToken = base.assets.find((asset) => asset.symbol === assetSymbols.WETH);
     const aeroToken = base.assets.find((asset) => asset.symbol === assetSymbols.AERO);
-    if (!wethToken || !aeroToken) {
+    const usdcToken = base.assets.find((asset) => asset.symbol === assetSymbols.USDC);
+    const ezETHToken = base.assets.find((asset) => asset.symbol === assetSymbols.ezETH);
+    if (!wethToken || !aeroToken || !usdcToken || !ezETHToken) {
       throw new Error("Tokens not found");
     }
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
@@ -22,6 +24,21 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: aeroToken.underlying,
         outputToken: wethToken.underlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcToken.underlying,
+        outputToken: wethToken.underlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: usdcToken.underlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: ezETHToken.underlying,
+        outputToken: usdcToken.underlying,
         strategy: uniLiquidator.address as Address
       }
     ]);
