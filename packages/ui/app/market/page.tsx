@@ -216,7 +216,7 @@ export default function Market() {
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
                 <p className={`text-white/60  md:text-sm text-[11px]`}>
-                  Total Available
+                  Total Supplied
                 </p>
                 <p className={`font-semibold md:text-base text-sm`}>
                   $
