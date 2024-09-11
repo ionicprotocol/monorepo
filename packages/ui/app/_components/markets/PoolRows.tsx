@@ -8,7 +8,7 @@ import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { type Address } from 'viem';
 
 import { getAssetName } from '../../util/utils';
-import ConnectButton from '../ConnectButton';
+// import ConnectButton from '../ConnectButton';
 import { PopupMode } from '../popup/page';
 
 // import { Rewards } from './Rewards';
@@ -30,6 +30,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 // import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { useStore } from 'ui/store/Store';
+// import { useAccount } from 'wagmi';
 
 interface IRows {
   asset: string;
@@ -82,6 +83,7 @@ const PoolRows = ({
   rewards
 }: IRows) => {
   const { address } = useMultiIonic();
+  // const { isConnected } = useAccount();
 
   const supplyRewards = useMemo(
     () =>
@@ -186,7 +188,7 @@ const PoolRows = ({
     >
       {membership && (
         <span
-          className={`w-min hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 py-1 px-3  gap-x-1 md:grid md:-right-5 -right-3 md:-top-5 -top-1 text-xs text-white/80 font-semibold md:text-center items-center absolute ${
+          className={`w-min hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 py-1 px-3  gap-x-1 md:grid md:-right-5 -right-3 md:-top-5 -top-1 text-xs text-white/80 font-semibold md:text-center  items-center absolute ${
             membership && `border ${pools[dropdownSelectedChain].border}`
           }`}
         >
@@ -194,7 +196,7 @@ const PoolRows = ({
         </span>
       )}
       <Link
-        className={`w-full  md:grid grid-cols-10 gap-x-1 col-span-10 py-4 text-xs text-white/80 font-semibold md:text-center items-center relative cursor-pointer `}
+        className={`w-full  md:grid grid-cols-10 gap-x-2 md:gap-x-1 col-span-10 py-4 text-[11px] text-white/80 font-semibold md:text-center items-center relative cursor-pointer `}
         href={{
           pathname: `/market/details/${asset}`,
           query: {
@@ -322,53 +324,52 @@ const PoolRows = ({
       <div
         className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px]  font-semibold  px-2 lg:px-10 w-full`}
       >
-        {address && (
-          <div
-            className={`md:flex md:flex-col grid grid-cols-2 h-min md:gap-y-1 gap-x-1 md:my-0 w-full my-3 `}
-          >
-            {/* <button
+        <div
+          className={`md:flex md:flex-col grid grid-cols-2 h-min md:gap-y-1 gap-x-1 md:my-0 w-full my-3 `}
+        >
+          {/* <button
               className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-3 uppercase truncate`}
             >
               Cross Chain Supply
             </button> */}
-            <button
-              className={`rounded-md bg-accent text-black py-1.5 px-1   uppercase truncate `}
-              onClick={async () => {
-                const result = await handleSwitchOriginChain(
-                  dropdownSelectedChain,
-                  selectedChain
-                );
-                if (result) {
-                  setSelectedSymbol(asset);
-                  setPopupMode(PopupMode.SUPPLY);
-                }
-              }}
-            >
-              Supply / Withdraw
-            </button>
-            <button
-              className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} py-1.5 px-1 uppercase truncate`}
-              onClick={async () => {
-                const result = await handleSwitchOriginChain(
-                  dropdownSelectedChain,
-                  selectedChain
-                );
-                if (result) {
-                  setSelectedSymbol(asset);
-                  setPopupMode(PopupMode.BORROW);
-                }
-              }}
-            >
-              Borrow / Repay {loopPossible && '/ Loop'}
-            </button>
-          </div>
-        )}
-
-        {!address && (
+          <button
+            className={`rounded-md bg-accent disabled:opacity-50 text-black py-1.5 px-1   uppercase truncate `}
+            onClick={async () => {
+              const result = await handleSwitchOriginChain(
+                dropdownSelectedChain,
+                selectedChain
+              );
+              if (result) {
+                setSelectedSymbol(asset);
+                setPopupMode(PopupMode.SUPPLY);
+              }
+            }}
+            disabled={!address}
+          >
+            Supply / Withdraw
+          </button>
+          <button
+            className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} disabled:opacity-50 py-1.5 px-1 uppercase truncate`}
+            onClick={async () => {
+              const result = await handleSwitchOriginChain(
+                dropdownSelectedChain,
+                selectedChain
+              );
+              if (result) {
+                setSelectedSymbol(asset);
+                setPopupMode(PopupMode.BORROW);
+              }
+            }}
+            disabled={!address}
+          >
+            Borrow / Repay {loopPossible && '/ Loop'}
+          </button>
+        </div>
+        {/* {!address && (
           <div className="connect-button my-3 md:my-0">
             <ConnectButton size="sm" />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -128,7 +128,7 @@ export default function Market() {
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         {/* //........ */}
         <div
-          className={`w-full grid grid-cols-8 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-x-2`}
+          className={`w-full grid md:grid-cols-8  grid-cols-1 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-2 `}
         >
           <div className={`grid gap-y-2 col-span-3 `}>
             <TotalTvlTile />
@@ -147,6 +147,7 @@ export default function Market() {
             setPopupMode={setPopupMode}
             setSelectedSymbol={setSelectedSymbol}
             selectedChain={chainId}
+            isLoadingPoolData={isLoadingPoolData}
           />
           <StakingTile chain={+chain} />
         </div>

@@ -32,7 +32,7 @@ export default function BorrowPopover({
   return (
     <>
       <span
-        className={` rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+        className={` rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 ${
           multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
             ?.ionAPR
             ? 'bg-accent text-green-900 '
@@ -45,25 +45,27 @@ export default function BorrowPopover({
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
         ?.rewards && (
         <span
-          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 py-[1px] md:px-2.5 px-1 ml-1 md:ml-0 text-center`}
+          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 py-[1px] md:px-1 lg:px-2.5 px-1 ml-1 md:ml-0 text-center`}
         >
           + REWARDS <i className="popover-hint">i</i>
         </span>
       )}
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
         ?.turtle && (
-        <a
-          className="text-darkone bg-white rounded-md w-max md:text-[10px] text-[8px]  py-[1px] md:px-3 px-1 ml-1 md:ml-0 text-center  flex items-center justify-center gap-1"
-          href="https://turtle.club/dashboard/?ref=IONIC"
-          target="_blank"
-        >
-          + TURTLE{' '}
-          <img
-            alt="external-link"
-            className={`w-3 h-3`}
-            src="https://img.icons8.com/material-outlined/24/external-link.png"
-          />
-        </a>
+        <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
+          <a
+            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+          >
+            + TURTLE{' '}
+            <img
+              alt="external-link"
+              className={`w-3 h-3`}
+              src="https://img.icons8.com/material-outlined/24/external-link.png"
+            />
+          </a>
+        </span>
       )}
       <div
         className={`popover absolute min-w-[190px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}

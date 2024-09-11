@@ -33,7 +33,7 @@ export default function SupplyPopover({
   return (
     <>
       <span
-        className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+        className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 ${
           multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.ionAPR
             ? 'bg-accent text-green-900 '
@@ -46,7 +46,7 @@ export default function SupplyPopover({
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.rewards && (
         <span
-          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
+          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1`}
         >
           + REWARDS <i className="popover-hint">i</i>
         </span>
@@ -55,7 +55,7 @@ export default function SupplyPopover({
         ?.turtle && (
         <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
           <a
-            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >

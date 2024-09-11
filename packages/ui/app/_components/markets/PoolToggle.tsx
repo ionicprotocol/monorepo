@@ -9,7 +9,9 @@ import { pools } from '@ui/constants/index';
 const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
   const pathname = usePathname();
   return (
-    <div className={`flex items-center justify-start w-max gap-2`}>
+    <div
+      className={`flex items-center justify-start w-max gap-2 sm:mx-0 mx-auto p-2`}
+    >
       {pools[+chain].pools.map((poolx, idx) => {
         return (
           <Link

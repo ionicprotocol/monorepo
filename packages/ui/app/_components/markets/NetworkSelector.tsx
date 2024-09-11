@@ -70,7 +70,8 @@ function NetworkSelector({
       {Object.entries(pools)
         .filter(([chainId]) =>
           enabledChains
-            ? enabledChains?.includes(+chainId)
+            ? enabledChains?.includes(+chainId) &&
+              +chainId !== dropdownSelectedChain
             : +chainId !== dropdownSelectedChain
         )
         .map(([chainId, network], idx: number) => (

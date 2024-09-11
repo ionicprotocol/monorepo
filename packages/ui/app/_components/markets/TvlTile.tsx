@@ -105,9 +105,9 @@ export default function TvlTile({
           </div>
         </ResultHandler>
       </div>
-      <div className="w-full flex flex-row gap-x-3">
+      <div className="w-full flex flex-row gap-x-3 justify-center md:mx-0">
         <button
-          className={`px-6  mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+          className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
           onClick={() => setSwapOpen(true)}
         >
           {`Wrap ${+dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
@@ -130,7 +130,7 @@ export default function TvlTile({
         </button>
 
         <button
-          className={`px-6  mx-auto md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs font-bold uppercase`}
+          className={`px-6  md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs font-bold uppercase`}
           onClick={() => setSwapWidgetOpen(true)}
         >
           {'Swap Assets'}
