@@ -3,12 +3,14 @@
 
 import millify from 'millify';
 import Link from 'next/link';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FlywheelReward } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-import { base } from 'viem/chains';
-import { useChainId } from 'wagmi';
+// import { base } from 'viem/chains';
+// import { useChainId } from 'wagmi';
 
+import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
@@ -16,9 +18,9 @@ import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
-import { pools, REWARDS_TO_SYMBOL } from '@ui/constants/index';
+import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
+// import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
@@ -28,6 +30,7 @@ import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import {
   usePointsForBorrowModeNative,
   usePointsForSupplyModeNative,
@@ -36,10 +39,10 @@ import {
   usePointsForSupplyBaseMain,
   usePointsForSupplyModeMain
 } from '@ui/hooks/usePointsQueries';
+import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
@@ -219,6 +222,8 @@ export default function Dashboard() {
   //     marketData?.comptroller ?? '',
   //     +chain
   //   );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const totalPoints = useMemo<number>(() => {
     if (
       supplyPointsNative &&
@@ -359,8 +364,35 @@ export default function Dashboard() {
   //   return marketData?.assets.map(() => '0.00%') ?? [];
   // }, [borrowCaps, marketData]);
 
+  const { data: rewards } = useRewards({
+    chainId: +chain,
+    poolId: pool
+  });
+
+  const allChains: number[] = Object.keys(pools).map(Number);
+  const { data: claimableRewardsAcrossAllChains } =
+    useAllClaimableRewards(allChains);
+  const totalRewardsAcrossAllChains =
+    claimableRewardsAcrossAllChains?.reduce(
+      (acc, reward) => acc + reward.amount,
+      0n
+    ) ?? 0n;
+  // console.log(claimableRewardsAcrossAllChains , totalRewardsAcrossAllChains)
+
+  const {
+    componentRef: rewardRef,
+    isopen: rewardisopen,
+    toggle: rewardToggle
+  } = useOutsideClick();
   return (
     <>
+      <ClaimRewardPopover
+        chain={+chain}
+        allchain={allChains}
+        rewardRef={rewardRef}
+        isOpen={rewardisopen}
+        close={() => rewardToggle()}
+      />
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
         <div
           className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
@@ -493,7 +525,7 @@ export default function Dashboard() {
             className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
           >
             <div className={`w-full flex justify-between items-center mb-2`}>
-              <span>TOTAL POINTS</span>
+              <span>Claimable Rewards</span>
               <ResultHandler
                 height="24"
                 isLoading={
@@ -506,19 +538,23 @@ export default function Dashboard() {
                 }
                 width="24"
               >
-                <span>
-                  {Math.round(totalPoints).toLocaleString('en-us', {
+                <span className={`flex items-center justify-center gap-1`}>
+                  {Math.round(
+                    +formatEther(totalRewardsAcrossAllChains)
+                  ).toLocaleString('en-us', {
                     maximumFractionDigits: 0
-                  })}
+                  })}{' '}
+                  <span className={`text-[8px] text-white/50`}>(ION+RSR)</span>
                 </span>
               </ResultHandler>
             </div>
-            <Link
-              className={`w-full rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
-              href={`/points`}
+            <div
+              className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
+              // href={`/points`}
+              onClick={() => rewardToggle()}
             >
-              VIEW POINTS
-            </Link>
+              CLAIM ALL REWARDS
+            </div>
           </div>
         </div>
         {/* <div
@@ -556,8 +592,8 @@ export default function Dashboard() {
         <div
           className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
         >
-          <div className={`col-span-3 flex flex-col`}>
-            <div className={`w-[50%]  `}>
+          <div className={`col-span-4 flex flex-col`}>
+            <div className={`  `}>
               {/* <Dropdown
             chainId={chain as string}
             dropdownSelectedChain={+chain}
@@ -568,7 +604,7 @@ export default function Dashboard() {
             setOpen={setOpen}
           /> */}
               <NetworkSelector
-                chainId={chain as string}
+                chain={chain as string}
                 dropdownSelectedChain={+chain}
                 newRef={newRef}
                 open={open}
@@ -576,36 +612,32 @@ export default function Dashboard() {
                 setOpen={setOpen}
               />
             </div>
-            <div className={`flex items-center justify-start w-max gap-2`}>
-              {pools[+chain].pools.map((poolx, idx) => {
-                return (
-                  <Link
-                    className={` cursor-pointer py-2 px-4 rounded-lg ${
-                      pool === poolx.id
-                        ? `border ${
-                            +chain == base.id
-                              ? 'border-blue-600'
-                              : 'border-lime'
-                          }`
-                        : 'border border-stone-700'
-                    }`}
-                    href={`${pathname}?chain=${chain}${
-                      poolx.id ? `&pool=${poolx.id}` : ''
-                    }`}
-                    key={idx}
-                    // onClick={() => setSelectedPool(pools[0].id)}
-                  >
-                    {poolx.name}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
-          <div className={`w-full mt-2  col-span-5`}>
+          {/* <div className={`w-full mt-2  col-span-5`}>
             <ClaimAllBaseRewards chain={+chain} />
-          </div>
+          </div> */}
         </div>
-        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
+        <div className={`bg-grayone  w-full px-6 py-3  rounded-xl`}>
+          <div className={`flex items-center justify-start w-max gap-2`}>
+            {pools[+chain].pools.map((poolx, idx) => {
+              return (
+                <Link
+                  className={` cursor-pointer  px-4 rounded-md ${
+                    pool === poolx.id
+                      ? ` ${pools[+chain].bg} ${pools[+chain].text}`
+                      : 'bg-black '
+                  }`}
+                  href={`${pathname}?chain=${chain}${
+                    poolx.id ? `&pool=${poolx.id}` : ''
+                  }`}
+                  key={idx}
+                  // onClick={() => setSelectedPool(pools[0].id)}
+                >
+                  {poolx.name}
+                </Link>
+              );
+            })}
+          </div>
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
           </div>
@@ -621,7 +653,7 @@ export default function Dashboard() {
               {suppliedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>SUPPLY ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
@@ -670,6 +702,15 @@ export default function Dashboard() {
                         marketData?.comptroller ?? ('' as Address)
                       }
                       pool={pool}
+                      rewards={
+                        (rewards?.[asset?.cToken]?.map((r) => ({
+                          ...r,
+                          apy:
+                            typeof r.apy !== 'undefined'
+                              ? r.apy * 100
+                              : undefined
+                        })) as FlywheelReward[]) ?? []
+                      }
                       selectedChain={+chain}
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
@@ -702,7 +743,7 @@ export default function Dashboard() {
               {borrowedAssets.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>BORROW ASSETS</h3>
                     <h3 className={` `}>AMOUNT</h3>
@@ -747,6 +788,15 @@ export default function Dashboard() {
                         marketData?.comptroller ?? ('' as Address)
                       }
                       pool={pool}
+                      rewards={
+                        (rewards?.[asset?.cToken]?.map((r) => ({
+                          ...r,
+                          apy:
+                            typeof r.apy !== 'undefined'
+                              ? r.apy * 100
+                              : undefined
+                        })) as FlywheelReward[]) ?? []
+                      }
                       key={`supply-row-${asset.underlyingSymbol}`}
                       logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
                       membership={asset.membership}
@@ -960,92 +1010,3 @@ export default function Dashboard() {
     </>
   );
 }
-
-interface IClaimAllBaseRewards {
-  chain: number;
-}
-const ClaimAllBaseRewards = ({ chain }: IClaimAllBaseRewards) => {
-  const { data: rewards } = useAllClaimableRewards([+chain]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const sdk = useSdk(+chain);
-  const chainId = useChainId();
-  async function claimAll() {
-    try {
-      const result = await handleSwitchOriginChain(+chain, chainId);
-      if (!result) return;
-      setLoading(true);
-      await sdk?.claimAllRewards();
-      setLoading(false);
-    } catch (err) {
-      console.warn(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-  // console.log(rewards);
-  const totalRewards =
-    rewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
-
-  const getSymbol = (chain: number, token: string) =>
-    //@ts-ignore
-    REWARDS_TO_SYMBOL[chain][token];
-
-  const router = useRouter();
-
-  const hrefTOStake = () => router.push('/stake');
-  return (
-    <div
-      className={`  bg-grayone px-3 py-3 rounded-lg flex flex-col items-start justify-start`}
-    >
-      <div className={` mb-2 w-full grid grid-cols-3 items-center`}>
-        <p className="text-white/60 text-md">Emissions </p>
-        <div className="flex items-center justify-start gap-1 col-start-3">
-          {rewards && totalRewards > 0n ? (
-            rewards?.map((reward, idx) => (
-              <img
-                alt="icon"
-                key={idx}
-                className="size-6 rounded mr-1  inline-block"
-                src={`/img/symbols/32/color/${getSymbol(+chain, reward.rewardToken)}.png`}
-              />
-            ))
-          ) : (
-            <p className="text-white/60 text-xs col-start-3">No Emissions </p>
-          )}
-        </div>
-        {/* {rewards ? "" : } */}
-      </div>
-      <div className=" w-full grid grid-cols-3 ">
-        <div className="flex items-center justify-start gap-4 ">
-          {rewards?.map((reward, idx) => (
-            <div
-              key={idx}
-              className={`text-white/80 text-sm flex gap-2 items-center justify-start `}
-            >
-              <span>{getSymbol(+chain, reward.rewardToken)}</span>
-              <span className={`text-accent text-sm`}>
-                {Number(formatEther(reward.amount)).toLocaleString('en-US', {
-                  maximumFractionDigits: 1
-                })}
-              </span>
-            </div>
-          ))}
-        </div>
-        <button
-          className={`rounded-md bg-accent text-black disabled:bg-accent/50 py-0.5 px-3 uppercase truncate text-[11px]  font-semibold col-start-3 `}
-          onClick={totalRewards > 0n ? claimAll : hrefTOStake}
-          disabled={loading && totalRewards > 0n}
-        >
-          <ResultHandler
-            isLoading={loading}
-            height="20"
-            width="20"
-            color={'#000000'}
-          >
-            {totalRewards > 0n ? 'Claim All Rewards' : 'Stake Rewards'}
-          </ResultHandler>
-        </button>
-      </div>
-    </div>
-  );
-};
