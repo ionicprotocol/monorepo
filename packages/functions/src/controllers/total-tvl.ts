@@ -26,7 +26,7 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
 
     // Log each asset's TVL
     results.forEach((asset: { tvlNative: string }) => {
-      console.log(`Asset TVL (native): ${asset.tvlNative}`);
+      // console.log(`Asset TVL (native): ${asset.tvlNative}`);
     });
 
     // Summing up the total TVL (native) in ETH
@@ -35,15 +35,15 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
     }, 0);
 
     // Log the total TVL in native ETH
-    console.log(`Total TVL (native ETH): ${totalTvlNative}`);
+    // console.log(`Total TVL (native ETH): ${totalTvlNative}`);
 
     // Fetch ETH to USD conversion rate
     const ethToUsdRate = await getEthToUsdRate();
-    console.log(`ETH to USD rate: ${ethToUsdRate}`);
+    // console.log(`ETH to USD rate: ${ethToUsdRate}`);
 
     // Convert total TVL from ETH to USD
     const totalTvlUsd = totalTvlNative * ethToUsdRate;
-    console.log(`Total TVL (USD): ${totalTvlUsd}`);
+    // console.log(`Total TVL (USD): ${totalTvlUsd}`);
 
     // Create row for the total TVL data
     const totalTvlRow = {
