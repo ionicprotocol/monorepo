@@ -15,15 +15,15 @@ export const updateTotalTvl = async (chainId: SupportedChains) => {
       return total + parseFloat(asset.tvlNative);
     }, 0);
      //underlying
-    const totaltvlUnderlying = results.reduce((total: number, asset: { tvlUnderlying: string; }) => {
-        return total + parseFloat(asset.tvlUnderlying);
-      }, 0);
+    // const totaltvlUnderlying = results.reduce((total: number, asset: { tvlUnderlying: string; }) => {
+    //     return total + parseFloat(asset.tvlUnderlying);
+    //   }, 0);
     
     // Create row for the total TVL data
     const totalTvlRow = {
       chain_id: chainId,
       total_tvl_native: totalTvlNative.toFixed(2), // Storing as string for fixed precision
-      total_tvl_Underlying: totaltvlUnderlying.toFixed(2),
+      // total_tvl_Underlying: totaltvlUnderlying.toFixed(2),
     //   created_at: new Date().getTime(),
     };
 
