@@ -35,9 +35,10 @@ export default function Earn() {
         <div
           className={`w-full md:grid grid-cols-13  my-3  px-2  gap-x-1  text-white/40 font-semibold md:text-center items-start  text-xs hidden  `}
         >
-          <h1 className="col-span-3 ">ASSETS</h1>
+          <h1 className="col-span-2 ">ASSETS</h1>
           <h1 className="col-span-2">PROTOCOL</h1>
-          <h1 className="col-span-2">NETWORK</h1>
+          <h1 className="col-span-2">STRATEGY</h1>
+          <h1 className="col-span-1">NETWORK</h1>
           <h1 className="col-span-2">APR</h1>
           <h1 className="col-span-1">TVL</h1>
           <h1 className="col-span-1"> </h1>
@@ -57,7 +58,9 @@ export default function Earn() {
               poolChain,
               tvlpool,
               rewards,
-              live
+              live,
+              img,
+              strategy
             },
             idx
           ) => (
@@ -73,6 +76,8 @@ export default function Earn() {
               key={idx}
               rewards={rewards}
               live={live}
+              img={img}
+              strategy={strategy}
             />
           )
         )}

@@ -25,7 +25,9 @@ export default function EarnRows({
   link,
   poolChain,
   rewards,
-  live
+  live,
+  img,
+  strategy
   // getTvl,
   // getApr,
 }: EarnRow) {
@@ -44,7 +46,7 @@ export default function EarnRows({
   return (
     <>
       <div className=" w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 md:px-3 px-3 gap-x-1 md:grid grid-cols-13  py-4 text-sm text-white md:text-center items-center relative flex flex-col ">
-        <div className="col-span-3 w-full flex justify-between md:justify-center  gap-x-2 mb-1.5 ">
+        <div className="col-span-2 w-full flex justify-between md:justify-center  md:gap-x-2 gap-x-1 mb-1.5 ">
           <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
             ASSET
           </span>
@@ -63,7 +65,7 @@ export default function EarnRows({
           <div>
             {asset.map((val: string, idx: number) => (
               <span
-                className="text-center"
+                className="text-center text-[11px] lg:text-sm"
                 key={idx}
               >
                 {idx !== 0 && '/'}
@@ -77,9 +79,32 @@ export default function EarnRows({
           <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
             PROTOCOL
           </span>
-          {protocol}
+          <span
+            className={`flex items-center justify-center gap-1 text-[11px] lg:text-sm`}
+          >
+            <img
+              alt="logos"
+              className={` w-4 h-4  md:mx-auto ml-auto top-0 left-0 inline-block `}
+              src={img}
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null;
+                currentTarget.src = '/img/assets/info.png';
+              }}
+            />
+            {protocol}
+          </span>
         </p>
-        <div className="col-span-2 w-full flex justify-between md:justify-center gap-x-2 mb-1.5">
+        <p className="col-span-2 w-full flex justify-between md:justify-center gap-x-2 mb-1.5 ">
+          <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
+            Strategy
+          </span>
+          <span
+            className={`flex items-center justify-center gap-1 text-[11px] lg:text-sm`}
+          >
+            {strategy}
+          </span>
+        </p>
+        <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-1.5">
           <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
             NETWORK
           </span>
@@ -94,8 +119,12 @@ export default function EarnRows({
             <span className="text-white/40 font-semibold text-[11px] text-center md:hidden">
               APR
             </span>
-            {apr && Number(apr) > 0 ? apr : '∞'}%
           </div>
+          <span
+            className={`w-max md:mb-1 ml-auto md:ml-0 text-center text-[11px] lg:text-sm  md:px-2.5 px-1`}
+          >
+            {apr && Number(apr) > 0 ? apr : '∞'}%
+          </span>
           <span
             className={`${pools[+chain].text} ${pools[+chain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
           >
@@ -121,7 +150,7 @@ export default function EarnRows({
             poolChain={poolChain}
           />
         </div>
-        <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-2 ">
+        <div className="col-span-1 w-full flex justify-between md:justify-center gap-x-2 mb-2 text-[11px] lg:text-sm ">
           <span className="text-white/40 text-xs font-semibold md:hidden">
             TVL
           </span>
