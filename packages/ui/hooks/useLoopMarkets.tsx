@@ -7,8 +7,12 @@ export type LoopMarketData = {
   [key: Address]: Address[];
 };
 
-export const useLoopMarkets = (collateralMarkets: Address[]) => {
-  const { currentSdk } = useMultiIonic();
+export const useLoopMarkets = (
+  collateralMarkets: Address[],
+  chainId: number
+) => {
+  const { getSdk } = useMultiIonic();
+  const currentSdk = getSdk(chainId);
 
   return useQuery({
     queryFn: async (): Promise<LoopMarketData> => {
