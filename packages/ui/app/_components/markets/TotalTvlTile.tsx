@@ -2,7 +2,11 @@
 
 import ResultHandler from '../ResultHandler';
 
+import { useAllTvlAcrossChain } from '@ui/hooks/useAllTvlAcrossChain';
+
 export default function TotalTvlTile() {
+  const {data} = useAllTvlAcrossChain();
+  console.log(data);
   return (
     <div
       className={`w-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
