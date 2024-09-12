@@ -31,7 +31,7 @@ contract UniswapV3LiquidatorFunder is UniswapV3Liquidator, IFundsConversionStrat
   {
     (address _inputToken, address _outputToken, uint24 fee, , Quoter quoter) = abi.decode(
       strategyData,
-      (address, address, uint24, ISwapRouter, Quoter)
+      (address, address, uint24, IV3SwapRouter, Quoter)
     );
 
     inputAmount = quoter.estimateMinSwapUniswapV3(_inputToken, _outputToken, outputAmount, fee);

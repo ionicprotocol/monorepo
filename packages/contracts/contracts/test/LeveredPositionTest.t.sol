@@ -38,6 +38,7 @@ contract LeveredPositionLensTest is BaseTest {
 
   function afterForkSetUp() internal override {
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
+    emit log_named_address("factory", address(factory));
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
     //    lens = new LeveredPositionsLens();
     //    lens.initialize(factory);

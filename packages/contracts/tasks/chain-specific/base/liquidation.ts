@@ -40,6 +40,11 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: ezETHToken.underlying,
         outputToken: usdcToken.underlying,
         strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: ezETHToken.underlying,
+        strategy: uniLiquidator.address as Address
       }
     ]);
   }
