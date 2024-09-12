@@ -30,6 +30,8 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       underlyingAddress: string;
       tvlUnderlying: string;
       tvlNative: string;
+      totalMarketBorrow: string
+      borrowtotal: string
     }[] = [];
 
     await Promise.all(
@@ -42,6 +44,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
         ).map(filterOnlyObjectProperties);
 
         totalAssets.push(...assets);
+        console.log("assets", totalAssets)
       })
     );
 
@@ -62,7 +65,9 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
           // Adjust the formatting based on token decimals
           const tvlUnderlying = formatUnits(tvlUnderlyingBig, tokenDecimals);
           const underlyingPrice = Number(formatEther(asset.underlyingPrice));
-          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(2);
+          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(8);
+          const totalMarketBorrow = formatUnits(asset.totalBorrow, tokenDecimals);
+          const borrowtotal = (parseFloat(totalMarketBorrow) * underlyingPrice).toFixed(8);
           
 
           results.push({
@@ -70,7 +75,10 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
             underlyingAddress: asset.underlyingToken,
             tvlUnderlying,
             tvlNative,
+            totalMarketBorrow,
+            borrowtotal
           });
+          // console.log("result",results)
         } catch (exception) {
           console.error(`Error processing asset ${asset.cToken}:`, exception);
           await functionsAlert(
