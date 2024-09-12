@@ -117,7 +117,8 @@ export default function Dashboard() {
     [marketData]
   );
   const { data: loopData } = useLoopMarkets(
-    marketData?.assets.map((asset) => asset.cToken) ?? []
+    marketData?.assets.map((asset) => asset.cToken) ?? [],
+    +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
