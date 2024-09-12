@@ -3,8 +3,8 @@ import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
 
-task("markets:deploy:base:main", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.hyUSD, assetSymbols.RSR];
+task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
+  const assetsToDeploy: string[] = [assetSymbols.cbBTC];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     await run("market:deploy", {
       signer: "deployer",
@@ -31,7 +31,7 @@ task("markets:deploy:base:main", "deploy base market").setAction(async (_, { vie
 });
 
 task("base:set-caps-hyusd", "one time setup").setAction(async (_, { viem, run }) => {
-  const hyUsd = baseAssets.find((asset) => asset.symbol === assetSymbols.hyUSD);
+  const hyUsd = base.assets.find((asset) => asset.symbol === assetSymbols.hyUSD);
   if (!hyUsd) {
     throw new Error("hyUSD not found in base assets");
   }
@@ -50,7 +50,7 @@ task("base:set-caps-hyusd", "one time setup").setAction(async (_, { viem, run })
 });
 
 task("market:set-cf:base:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of baseAssets) {
+  for (const asset of base.assets) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
