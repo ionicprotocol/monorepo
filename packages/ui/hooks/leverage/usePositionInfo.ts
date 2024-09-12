@@ -68,7 +68,7 @@ export function usePositionsInfo(
             const position = positions[i];
             const totalApy = totalApys[i];
 
-            if (sdk && totalApy) {
+            if (sdk && typeof totalApy === 'bigint') {
               const info = await getPositionInfo(position, totalApy, sdk);
 
               if (info) {
