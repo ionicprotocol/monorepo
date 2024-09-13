@@ -1,7 +1,7 @@
 import { NativePricedIonicAsset, SupportedChains } from '@ionicprotocol/types';
 import { functionsAlert } from '../alert';
 import { environment, supabase } from '../config';
-import { IonicSdk, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
+import { IonicSdk, erc20Abi, filterOnlyObjectProperties } from '@ionicprotocol/sdk';
 import { Handler } from '@netlify/functions';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import axios from 'axios';
@@ -30,6 +30,8 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       underlyingAddress: string;
       tvlUnderlying: string;
       tvlNative: string;
+      totalMarketBorrow: string
+      borrowtotal: string
     }[] = [];
 
     await Promise.all(
@@ -42,6 +44,7 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
         ).map(filterOnlyObjectProperties);
 
         totalAssets.push(...assets);
+        console.log("assets", totalAssets)
       })
     );
 
@@ -50,16 +53,32 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
         try {
           const cTokenContract = sdk.createICErc20(asset.cToken);
           const tvlUnderlyingBig = await cTokenContract.read.getTotalUnderlyingSupplied();
-          const tvlUnderlying = formatUnits(tvlUnderlyingBig, 18);
+          const formattedTokenAddress = `0x${asset.underlyingToken.replace(/^0x/, "")}` as `0x${string}`;
+
+          // Fetch the token decimals
+          const tokenDecimals = await publicClient.readContract({
+            address: formattedTokenAddress,
+            abi: erc20Abi,
+            functionName: "decimals",
+          });
+          
+          // Adjust the formatting based on token decimals
+          const tvlUnderlying = formatUnits(tvlUnderlyingBig, tokenDecimals);
           const underlyingPrice = Number(formatEther(asset.underlyingPrice));
-          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(2);
+          const tvlNative = (parseFloat(tvlUnderlying) * underlyingPrice).toFixed(8);
+          const totalMarketBorrow = formatUnits(asset.totalBorrow, tokenDecimals);
+          const borrowtotal = (parseFloat(totalMarketBorrow) * underlyingPrice).toFixed(8);
+          
 
           results.push({
             cTokenAddress: asset.cToken,
             underlyingAddress: asset.underlyingToken,
             tvlUnderlying,
             tvlNative,
+            totalMarketBorrow,
+            borrowtotal
           });
+          // console.log("result",results)
         } catch (exception) {
           console.error(`Error processing asset ${asset.cToken}:`, exception);
           await functionsAlert(

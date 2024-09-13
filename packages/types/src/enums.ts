@@ -205,6 +205,7 @@ export enum assetSymbols {
   sUSDe = "sUSDe",
   dMBTC = "dMBTC",
   STONE = "STONE",
+  msDAI = "msDAI",
 
   // base
   AERO = "AERO",
@@ -212,6 +213,7 @@ export enum assetSymbols {
   eUSD = "eUSD",
   hyUSD = "hyUSD",
   RSR = "RSR",
+  cbBTC = "cbBTC",
 
   // optimism
   OP = "OP",

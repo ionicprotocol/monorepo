@@ -4,12 +4,16 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
-import { COMPTROLLER_MAIN } from ".";
+import { COMPTROLLER_MAIN, MS_DAI_MARKET } from ".";
 
 const modeAssets = mode.assets;
+
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.dMBTC];
+  const assetsToDeploy: string[] = [assetSymbols.msDAI];
   for (const asset of modeAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+    if (!asset.name || !asset.symbol || !asset.underlying) {
+      throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
+    }
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
     console.log(`Deploying ctoken ${name} with symbol ${symbol}`);
@@ -39,35 +43,20 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
   }
 });
 
-task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  let cToken = "0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2";
+task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
   await run("market:set-borrow-cap", {
-    market: cToken,
-    maxBorrow: parseEther(String(4100)).toString()
+    market: MS_DAI_MARKET,
+    maxBorrow: parseEther(String(100_000)).toString()
   });
 
-  cToken = "0x4341620757Bee7EB4553912FaFC963e59C949147";
   await run("market:set-supply-cap", {
-    market: cToken,
-    maxSupply: parseEther(String(25500000)).toString()
+    market: MS_DAI_MARKET,
+    maxSupply: parseEther(String(100_000)).toString()
   });
-});
-
-task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  const cToken = "0x4341620757Bee7EB4553912FaFC963e59C949147"; // ionMODE
 
   await run("market:set:ltv", {
-    marketAddress: cToken,
+    marketAddress: MS_DAI_MARKET,
     ltv: "0.5"
-  });
-});
-
-task("market:set-cf:mode:dmbtc", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4"; // ionMODE
-
-  await run("market:set:ltv", {
-    marketAddress: cToken,
-    ltv: "0.1"
   });
 });
 

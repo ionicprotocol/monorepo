@@ -21,7 +21,12 @@ export const deployChainlinkOracle = async ({
 
   //// Chainlink Oracle
 
-  const contractName = ["ChainlinkPriceOracleV2", namePostfix].join("_");
+  let contractName: string;
+  if (namePostfix) {
+    contractName = ["ChainlinkPriceOracleV2", namePostfix].join("_");
+  } else {
+    contractName = "ChainlinkPriceOracleV2";
+  }
 
   console.log("deployConfig.stableToken: ", deployConfig.stableToken);
   console.log("deployConfig.nativeTokenUsdChainlinkFeed: ", deployConfig.nativeTokenUsdChainlinkFeed);
@@ -34,12 +39,13 @@ export const deployChainlinkOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [deployConfig.stableToken, zeroAddress]
+          args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy"
     },
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
   if (cpo.transactionHash) await publicClient.waitForTransactionReceipt({ hash: cpo.transactionHash as Address });
   console.log("ChainlinkPriceOracleV2: ", cpo.address);
