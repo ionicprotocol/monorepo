@@ -17,14 +17,15 @@
 
 //   function test_ezEthWeth() public {
 //     vm.createSelectFork(vm.rpcUrl("base_archive"));
-//     vm.rollFork(19677401);
+//     vm.rollFork(19713666);
 
 //     ILeveredPositionFactory factory = ILeveredPositionFactory(0x0Bd42a5226db7FCEb9D3e50539778A15C3665da8);
-//     ICErc20 collateralMarket = ICErc20(0x079f84161642D81aaFb67966123C9949F9284bf5);
-//     ICErc20 stableMarket = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3);
-//     uint256 depositAmount = 8338179027698429;
+//     ICErc20 collateralMarket = ICErc20(0x014e08F05ac11BB532BE62774A4C548368f59779);
+//     ICErc20 stableMarket = ICErc20(0xa900A17a49Bc4D442bA7F72c39FA2108865671f0);
+//     uint256 depositAmount = 48672877617700471281;
 
 //     IERC20Upgradeable collateralToken = IERC20Upgradeable(collateralMarket.underlying());
+//     emit log_named_uint("collateral balance", collateralToken.balanceOf(me));
 
 //     vm.startPrank(me);
 //     collateralToken.approve(address(factory), depositAmount);
