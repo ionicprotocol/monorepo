@@ -206,15 +206,31 @@ export default function Navbar() {
             href="/xION?chain=34443&toChain=8453"
             // target="_blank"
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+            {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
-            </span>
+            </span> */}
             <p
               className={`${
                 pathname == '/xION' ? 'text-accent' : null
               } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               xION
+            </p>
+          </Link>
+          <Link
+            className="relative mb-2 lg:mb-0"
+            href="/veion"
+            // target="_blank"
+          >
+            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+              NEW!
+            </span>
+            <p
+              className={`${
+                pathname == '/veion' ? 'text-accent' : null
+              } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
+            >
+              veION
             </p>
           </Link>
           <div className="relative mb-2 lg:mb-0 lg:ml-auto ">
