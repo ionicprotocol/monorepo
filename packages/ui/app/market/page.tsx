@@ -95,7 +95,8 @@ export default function Market() {
     [selectedSymbol, poolData]
   );
   const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
-    poolData?.assets.map((asset) => asset.cToken) ?? []
+    poolData?.assets.map((asset) => asset.cToken) ?? [],
+    +chain
   );
 
   const { data: rewards } = useRewards({

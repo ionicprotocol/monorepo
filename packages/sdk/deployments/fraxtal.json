@@ -148,6 +148,9 @@
     },
     "UniswapV2LiquidatorFunder": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
+    },
+    "xERC20LayerZero": {
+      "address": "0x0e2269dac22f8e90D48c92237c90829979e42243"
     }
   }
 }

@@ -1,8 +1,8 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, encodeFunctionData, Hash, zeroAddress } from "viem";
+import { Address, Hash, zeroAddress } from "viem";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
-import { logTransaction } from "../chainDeploy/helpers/logging";
+import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -69,14 +69,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   if (currentLPFExtensions.length == 1) {
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Replace LeveredPositionFactory First Extension",
-        encodeFunctionData({
-          abi: leveredPositionFactory.abi,
-          functionName: "_registerExtension",
-          args: [lpfExt1Dep.address as Address, currentLPFExtensions[0]]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt1Dep.address as Address, currentLPFExtensions[0]],
+        description: "Replace LeveredPositionFactory First Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
     } else {
       tx = await leveredPositionFactory.write._registerExtension([
         lpfExt1Dep.address as Address,
@@ -86,14 +88,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       console.log("replaced the LeveredPositionFactory first extension: ", tx);
     }
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Register LeveredPositionFactory Second Extension",
-        encodeFunctionData({
-          abi: leveredPositionFactory.abi,
-          functionName: "_registerExtension",
-          args: [lpfExt2Dep.address as Address, zeroAddress]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt2Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory Second Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
     } else {
       tx = await leveredPositionFactory.write._registerExtension([lpfExt2Dep.address as Address, zeroAddress]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
@@ -103,14 +107,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
       console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt1Dep.address}`);
       if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-        logTransaction(
-          "Replace LeveredPositionFactory First Extension",
-          encodeFunctionData({
-            abi: leveredPositionFactory.abi,
-            functionName: "_registerExtension",
-            args: [lpfExt1Dep.address as Address, currentLPFExtensions[0]]
-          })
-        );
+        await prepareAndLogTransaction({
+          contractInstance: leveredPositionFactory,
+          functionName: "_registerExtension",
+          args: [lpfExt1Dep.address as Address, currentLPFExtensions[0]],
+          description: "Replace LeveredPositionFactory First Extension",
+          inputs: [
+            { internalType: "address", name: "extensionToAdd", type: "address" },
+            { internalType: "address", name: "extensionToReplace", type: "address" }
+          ]
+        });
       } else {
         tx = await leveredPositionFactory.write._registerExtension([
           lpfExt1Dep.address as Address,
@@ -123,14 +129,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
       console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt2Dep.address}`);
       if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-        logTransaction(
-          "Replace LeveredPositionFactory Second Extension",
-          encodeFunctionData({
-            abi: leveredPositionFactory.abi,
-            functionName: "_registerExtension",
-            args: [lpfExt2Dep.address as Address, currentLPFExtensions[1]]
-          })
-        );
+        await prepareAndLogTransaction({
+          contractInstance: leveredPositionFactory,
+          functionName: "_registerExtension",
+          args: [lpfExt2Dep.address as Address, currentLPFExtensions[1]],
+          description: "Replace LeveredPositionFactory Second Extension",
+          inputs: [
+            { internalType: "address", name: "extensionToAdd", type: "address" },
+            { internalType: "address", name: "extensionToReplace", type: "address" }
+          ]
+        });
       } else {
         tx = await leveredPositionFactory.write._registerExtension([
           lpfExt2Dep.address as Address,
@@ -143,28 +151,32 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   } else if (currentLPFExtensions.length == 0) {
     console.log(`no LeveredPositionFactory extensions configured, adding them`);
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Register LeveredPositionFactory First Extension",
-        encodeFunctionData({
-          abi: leveredPositionFactory.abi,
-          functionName: "_registerExtension",
-          args: [lpfExt1Dep.address as Address, zeroAddress]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt1Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory First Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
     } else {
       tx = await leveredPositionFactory.write._registerExtension([lpfExt1Dep.address as Address, zeroAddress]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
       console.log("registered the LeveredPositionFactory first extension: ", tx);
     }
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Register LeveredPositionFactory Second Extension",
-        encodeFunctionData({
-          abi: leveredPositionFactory.abi,
-          functionName: "_registerExtension",
-          args: [lpfExt2Dep.address as Address, zeroAddress]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt2Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory Second Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
     } else {
       tx = await leveredPositionFactory.write._registerExtension([lpfExt2Dep.address as Address, zeroAddress]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
@@ -177,14 +189,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const lr = await leveredPositionFactory.read.liquidatorsRegistry();
   if (lr.toLowerCase() != liquidatorsRegistry.address.toLowerCase()) {
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Set LiquidatorsRegistry Address",
-        encodeFunctionData({
-          abi: leveredPositionFactory.abi,
-          functionName: "_setLiquidatorsRegistry",
-          args: [liquidatorsRegistry.address]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_setLiquidatorsRegistry",
+        args: [liquidatorsRegistry.address],
+        description: "Set LiquidatorsRegistry Address",
+        inputs: [{ internalType: "address", name: "liquidatorsRegistry", type: "address" }]
+      });
     } else {
       tx = await leveredPositionFactory.write._setLiquidatorsRegistry([liquidatorsRegistry.address]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
@@ -254,14 +265,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   if (ffdAuthRegistry.toLowerCase() != authoritiesRegistry.address.toLowerCase()) {
     // set the address in the FFD
     if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Set AuthoritiesRegistry in FeeDistributor",
-        encodeFunctionData({
-          abi: fuseFeeDistributor.abi,
-          functionName: "reinitialize",
-          args: [authoritiesRegistry.address]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: fuseFeeDistributor,
+        functionName: "reinitialize",
+        args: [authoritiesRegistry.address],
+        description: "Set AuthoritiesRegistry in FeeDistributor",
+        inputs: [{ internalType: "address", name: "authoritiesRegistry", type: "address" }]
+      });
     } else {
       tx = await fuseFeeDistributor.write.reinitialize([authoritiesRegistry.address]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
@@ -272,14 +282,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   if (leveredPosFactoryAr.toLowerCase() != leveredPositionFactory.address.toLowerCase()) {
     // set the address in the AR
     if ((await authoritiesRegistry.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Set LeveredPositionsFactory in AuthoritiesRegistry",
-        encodeFunctionData({
-          abi: authoritiesRegistry.abi,
-          functionName: "reinitialize",
-          args: [leveredPositionFactory.address]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: authoritiesRegistry,
+        functionName: "reinitialize",
+        args: [leveredPositionFactory.address],
+        description: "Set LeveredPositionsFactory in AuthoritiesRegistry",
+        inputs: [{ internalType: "address", name: "leveredPositionsFactory", type: "address" }]
+      });
     } else {
       tx = await authoritiesRegistry.write.reinitialize([leveredPositionFactory.address]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
