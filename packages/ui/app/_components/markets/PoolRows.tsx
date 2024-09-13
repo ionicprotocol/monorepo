@@ -126,25 +126,35 @@ const PoolRows = ({
 
   //type the asset name to get it featured
   // shouldGetFeatured
-  const setFeaturedBorrow = useStore((state) => state.setFeaturedBorrow);
+  // const setFeaturedBorrow = useStore((state) => state.setFeaturedBorrow);
   const setFeaturedSupply = useStore((state) => state.setFeaturedSupply);
+  const setFeaturedSupply2 = useStore((state) => state.setFeaturedSupply2);
 
   useEffect(() => {
     if (
-      shouldGetFeatured.featuredBorrow[+dropdownSelectedChain][
+      shouldGetFeatured.featuredSupply2[+dropdownSelectedChain][
         pool
       ].toLowerCase() === asset.toLowerCase()
     ) {
-      setFeaturedBorrow({
-        dropdownSelectedChain,
-        borrowAPR,
-        rewardsAPR: totalBorrowRewardsAPR,
-        selectedPoolId,
+      // setFeaturedBorrow({
+      //   dropdownSelectedChain,
+      //   borrowAPR,
+      //   rewardsAPR: totalBorrowRewardsAPR,
+      //   selectedPoolId,
+      //   cToken: cTokenAddress,
+      //   pool: comptrollerAddress,
+      //   rewards: borrowRewards,
+      //   asset,
+      //   loopPossible
+      // });
+      setFeaturedSupply2({
+        asset: asset,
+        supplyAPR: supplyAPR,
+        rewards: supplyRewards,
+        dropdownSelectedChain: dropdownSelectedChain,
+        selectedPoolId: selectedPoolId,
         cToken: cTokenAddress,
-        pool: comptrollerAddress,
-        rewards: borrowRewards,
-        asset,
-        loopPossible
+        pool: comptrollerAddress
       });
     }
     if (
@@ -172,7 +182,7 @@ const PoolRows = ({
     loopPossible,
     pool,
     selectedPoolId,
-    setFeaturedBorrow,
+    setFeaturedSupply2,
     setFeaturedSupply,
     supplyAPR,
     supplyRewards,

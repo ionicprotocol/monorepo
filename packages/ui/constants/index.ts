@@ -15,40 +15,40 @@ export const shouldGetFeatured: Record<
   string,
   Record<number, Record<string, string>>
 > = {
-  featuredBorrow: {
-    [mode.id]: {
-      '0': 'usdc',
-      '1': 'weth'
-    },
-    [optimism.id]: {
-      '0': 'usdt'
-    },
-    [base.id]: {
-      '0': 'bsdETH'
-    },
-    [bob.id]: {
-      '0': 'usdt'
-    },
-    [fraxtal.id]: {
-      '0': 'frax'
-    }
-  },
   featuredSupply: {
     [mode.id]: {
-      '0': 'usdt',
+      '0': 'usdc',
+      '1': 'usdc'
+    },
+    [optimism.id]: {
+      '0': 'usdc'
+    },
+    [base.id]: {
+      '0': 'usdc'
+    },
+    [bob.id]: {
+      '0': 'usdc'
+    },
+    [fraxtal.id]: {
+      '0': ''
+    }
+  },
+  featuredSupply2: {
+    [mode.id]: {
+      '0': 'weth',
       '1': 'weth'
     },
     [optimism.id]: {
-      '0': 'usdt'
+      '0': 'weth'
     },
     [base.id]: {
-      '0': 'hyusd'
+      '0': 'weth'
     },
     [bob.id]: {
-      '0': 'usdt'
+      '0': 'weth'
     },
     [fraxtal.id]: {
-      '0': 'frax'
+      '0': 'wfrxeth'
     }
   }
 };
@@ -167,7 +167,7 @@ export const pools: Record<number, PoolParams> = {
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
-    border: 'border-blue-600',
+    border: 'border-base',
     logo: '/img/logo/BASE.png',
     pools: [
       {
