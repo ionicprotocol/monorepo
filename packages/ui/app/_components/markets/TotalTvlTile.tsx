@@ -11,7 +11,9 @@ export default function TotalTvlTile() {
     <div
       className={`w-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
-      <span className={` mr-auto md:text-xl text-lg font-semibold`}>
+      <span
+        className={` md:mr-auto mx-auto md:mx-0 md:text-xl text-lg font-semibold`}
+      >
         Total Protocol TVL{' '}
         <span className={`text-[8px] text-white/50 `}>(ALL CHAIN)</span>{' '}
       </span>

@@ -103,7 +103,7 @@ export default function FeaturedMarketTile({
         )}
         {featuredSupply2.asset && (
           <div
-            className={`lg:grid lg:grid-cols-4 flex flex-col gap-x-3 w-full  items-center justify-center px-1 py-3 col-span-2 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl  `}
+            className={`lg:grid lg:grid-cols-4 flex flex-col gap-x-3 w-full items-center justify-center px-1 py-3 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl   `}
           >
             <div className="flex items-center justify-center gap-1 mr-auto sm:mr-0 ml-2 lg:ml-0">
               <img
@@ -132,7 +132,7 @@ export default function FeaturedMarketTile({
               </div>
             </div>
             <button
-              className={`rounded-md bg-accent text-black lg:py-1.5 py-1 px-1 col-span-2  uppercase truncate text-xs w-[80%] mx-auto `}
+              className={`rounded-md bg-accent text-black lg:py-1.5 py-2 px-1 col-span-2  uppercase truncate text-xs w-[80%] mx-auto flex items-center justify-center`}
               onClick={async () => {
                 const result = await handleSwitchOriginChain(
                   featuredSupply2.dropdownSelectedChain,
