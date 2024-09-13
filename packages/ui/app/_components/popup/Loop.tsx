@@ -487,7 +487,7 @@ export default function Loop({
   );
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [chainId]
+    positions?.openPositions.map((position) => position.chainId) ?? []
   );
   const { data: positionInfo, isFetching: isFetchingPositionInfo } =
     usePositionInfo(
