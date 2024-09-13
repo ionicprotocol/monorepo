@@ -21,12 +21,28 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   }
 };
 
+export const chainsArr: Record<number, string> = {
+  34443: 'Mode',
+  8453: 'Base',
+  10: 'Optimism',
+  60808: 'Bob',
+  252: 'Frax'
+};
+
+export const scans: Record<number, string> = {
+  34443: 'https://explorer.mode.network/tx/',
+  8453: 'https://basescan.org/tx/',
+  10: 'https://optimistic.etherscan.io/tx/',
+  60808: 'https://explorer.gobob.xyz/tx/',
+  252: 'https://fraxscan.com/tx/'
+};
+
 export const FLYWHEEL_TYPE_MAP: Record<
   number,
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: [],
+    supply: ['0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062'],
     borrow: ['0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec']
   },
   [base.id]: {
@@ -84,10 +100,12 @@ export const pools: Record<number, PoolParams> = {
           'USDC',
           'ezETH',
           'STONE',
+          'msDAI',
           'sUSDe',
           'USDe',
           'wrsETH',
           'weETH.mode',
+          'dMBTC',
           'M-BTC',
           'WBTC',
           'USDT',
@@ -115,16 +133,17 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: [
+          'USDC',
+          'WETH',
+          'cbBTC',
           'eUSD',
           'bsdETH',
           'hyUSD',
-          'WETH',
           'ezETH',
           'weETH.mode',
           'AERO',
           'RSR',
           'wstETH',
-          'USDC',
           'cbETH'
         ]
       }

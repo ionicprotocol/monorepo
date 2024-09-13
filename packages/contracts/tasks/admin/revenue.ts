@@ -2,8 +2,9 @@ import axios from "axios";
 import { DeploymentsExtension } from "hardhat-deploy/types";
 import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address, formatEther, GetContractReturnType, parseEther } from "viem";
+import { Address, formatEther, formatUnits, GetContractReturnType, Hex, parseEther } from "viem";
 import { IonicComptroller$Type } from "../../artifacts/contracts/compound/ComptrollerInterface.sol/IonicComptroller";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 const LOG = process.env.LOG ? true : false;
 
@@ -70,14 +71,13 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
           ionicFeeTotal = ionicFeeTotal + nativeFee;
           poolIonicFeesTotal = poolIonicFeesTotal + nativeFee;
 
-          if (LOG)
-            console.log(
-              `Pool: ${pool.name} (${
-                pool.comptroller
-              }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
-            );
+          console.log(
+            `Pool: ${pool.name} (${
+              pool.comptroller
+            }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
+          );
         } else {
-          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
         }
 
         if (adminFee > 0) {
@@ -88,10 +88,10 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
           console.log(
             `Pool: ${pool.name} (${
               pool.comptroller
-            }) - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(nativeFee)}`
+            }) - Market: ${market} (underlying: ${underlying}) - Admin Fee: ${formatEther(nativeFee)}`
           );
         } else {
-          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Ionic Fees`);
+          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Admin Fees`);
         }
       }
       if (LOG) {
@@ -210,6 +210,11 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
       const threshold = parseEther(taskArgs.threshold);
       const priceUsd = await cgPrice(cgId);
       console.log("priceUsd: ", priceUsd);
+      const ffd = await hre.viem.getContractAt(
+        "FeeDistributor",
+        (await hre.deployments.get("FeeDistributor")).address as Address
+      );
+      const admin = await ffd.read.owner();
 
       for (const market of markets) {
         const cToken = await hre.viem.getContractAt("ICErc20", market);
@@ -227,38 +232,101 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from admin fees")
         // await accTx.wait();
         console.log(`Withdrawing fee from ${await cToken.read.symbol()} (underlying: ${underlying})`);
         console.log("deployer: ", deployer);
-        let tx = await cToken.write._withdrawIonicFees([ionicFee]);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
-        console.log("tx: ", tx);
-        console.log(
-          `Pool: ${comptroller.address} - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(
-            nativeFee
-          )}`
-        );
-        // } else {
-        //   console.log(`Pool: ${comptroller.address} - Market: ${market} - No Ionic Fees: ${ionicFee}`);
-        // }
+        let tx: Hex;
+        if (admin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: cToken,
+            functionName: "_withdrawIonicFees",
+            args: [ionicFee],
+            description: `Withdrawing ionic fees from ${await cToken.read.symbol()} (underlying: ${underlying})`,
+            inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }]
+          });
+        } else {
+          tx = await cToken.write._withdrawIonicFees([ionicFee]);
+          await publicClient.waitForTransactionReceipt({ hash: tx });
+          console.log("tx: ", tx);
+          console.log(
+            `Pool: ${comptroller.address} - Market: ${market} (underlying: ${underlying}) - Ionic Fee: ${formatEther(
+              nativeFee
+            )}`
+          );
+        }
 
         const adminFee = await cToken.read.totalAdminFees();
         const nativeFeeAdmin = (adminFee * nativePrice) / 10n ** 18n;
 
         console.log("USD FEE VALUE", parseFloat(formatEther(nativeFeeAdmin)) * priceUsd);
         console.log("USD THRESHOLD VALUE", parseFloat(taskArgs.threshold) * priceUsd);
-        // if (adminFee > threshold) {
-        // const accTx = await cToken.accrueInterest();
-        // await accTx.wait();
         console.log(`Withdrawing fee from ${await cToken.read.symbol()} (underlying: ${underlying})`);
-        tx = await cToken.write._withdrawAdminFees([adminFee]);
-         await publicClient.waitForTransactionReceipt({ hash: tx });
-         console.log("tx: ", tx);
-         console.log(
-           `Pool: ${comptroller.address} - Market: ${market} (underlying: ${underlying}) - Admin Fee: ${formatEther(
-             nativeFeeAdmin
-           )}`
-         );
-        // } else {
-        //   console.log(`Pool: ${comptroller.address} - Market: ${market} - No Ionic Fees: ${ionicFee}`);
-        // }
+
+        if (admin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: cToken,
+            functionName: "_withdrawAdminFees",
+            args: [adminFee],
+            description: `Withdrawing admin fees from ${await cToken.read.symbol()} (underlying: ${underlying})`,
+            inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }]
+          });
+        } else {
+          tx = await cToken.write._withdrawAdminFees([adminFee]);
+          await publicClient.waitForTransactionReceipt({ hash: tx });
+          console.log("tx: ", tx);
+          console.log(
+            `Pool: ${comptroller.address} - Market: ${market} (underlying: ${underlying}) - Admin Fee: ${formatEther(
+              nativeFeeAdmin
+            )}`
+          );
+        }
+      }
+    }
+  });
+
+task("revenue:feedistrubutor:withdraw", "Calculate the fees accrued from admin fees")
+  .addParam("signer", "The address of the current deployer", "deployer", types.string)
+  .addParam("threshold", "Threshold for ionic fee seizing denominated in native", "0.01", types.string)
+  .setAction(async (_taskArgs, hre) => {
+    const publicClient = await hre.viem.getPublicClient();
+    const { deployer } = await hre.getNamedAccounts();
+
+    const ffd = await hre.viem.getContractAt(
+      "FeeDistributor",
+      (await hre.deployments.get("FeeDistributor")).address as Address
+    );
+    const admin = await ffd.read.owner();
+
+    const { pools } = await setUpFeeCalculation(hre);
+    for (const pool of pools) {
+      const comptroller = await hre.viem.getContractAt("IonicComptroller", pool.comptroller);
+      const markets = await comptroller.read.getAllMarkets();
+      for (const market of markets) {
+        const cToken = await hre.viem.getContractAt("ICErc20", market);
+        const _underlying = await cToken.read.underlying();
+        const underlying = await hre.viem.getContractAt("ERC20", _underlying);
+        const balance = await underlying.read.balanceOf([ffd.address]);
+        console.log(
+          "underlying: ",
+          await underlying.read.symbol(),
+          " balance: ",
+          formatUnits(balance, await underlying.read.decimals())
+        );
+        if (balance > 0n) {
+          console.log("Withdrawing balance: ", balance);
+          if (admin.toLowerCase() !== deployer.toLowerCase()) {
+            await prepareAndLogTransaction({
+              contractInstance: ffd,
+              functionName: "_withdrawAssets",
+              args: [underlying.address],
+              description: `Withdrawing assets from ${ffd.address} (underlying: ${underlying.address})`,
+              inputs: [{ internalType: "address", name: "erc20Contract", type: "address" }]
+            });
+          } else {
+            const tx = await ffd.write._withdrawAssets([underlying.address]);
+            await publicClient.waitForTransactionReceipt({ hash: tx });
+            console.log("tx: ", tx);
+          }
+        } else {
+          console.log("No balance to withdraw");
+        }
       }
     }
   });

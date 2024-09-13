@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.4.0",
+  "packageManager": "yarn@4.4.1",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -44,7 +44,7 @@
     "build:security": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/security build",
     "build:ui": "yarn workspace @ionicprotocol/ui build",
     "build:functions": "yarn workspace @ionicprotocol/functions build",
-    "build:contracts": "yarn workspace @ionicprotocol/contracts build",
+    "build:contracts": "yarn build:types && yarn build:chains && yarn workspace @ionicprotocol/contracts build",
     "build:liquidator": "yarn workspace @ionicprotocol/liquidator build",
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
     "build:oracles-monitor": "yarn workspace @ionicprotocol/oracles-monitor build",

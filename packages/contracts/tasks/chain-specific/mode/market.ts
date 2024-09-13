@@ -4,12 +4,16 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
-import { COMPTROLLER_MAIN } from ".";
+import { COMPTROLLER_MAIN, MS_DAI_MARKET } from ".";
 
 const modeAssets = mode.assets;
+
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.dMBTC];
+  const assetsToDeploy: string[] = [assetSymbols.msDAI];
   for (const asset of modeAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+    if (!asset.name || !asset.symbol || !asset.underlying) {
+      throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
+    }
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
     console.log(`Deploying ctoken ${name} with symbol ${symbol}`);
@@ -39,32 +43,21 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
   }
 });
 
-task("market:set-caps:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  const cToken = "0x5158ae44c1351682b3dc046541edf84bf28c8ca4";
-  await run("market:set-supply-cap", {
-    market: cToken,
-    maxSupply: parseEther(String(2400 * 100000)).toString()
-  });
-
+task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
   await run("market:set-borrow-cap", {
-    market: cToken,
-    maxBorrow: "1"
+    market: MS_DAI_MARKET,
+    maxBorrow: parseEther(String(100_000)).toString()
   });
-});
 
-task("market:set-cf:mode:main", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of modeAssets) {
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
-    const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
-    console.log("cToken: ", cToken, asset.symbol);
+  await run("market:set-supply-cap", {
+    market: MS_DAI_MARKET,
+    maxSupply: parseEther(String(100_000)).toString()
+  });
 
-    if (asset.initialCf) {
-      await run("market:set:ltv", {
-        marketAddress: cToken,
-        ltv: asset.initialCf
-      });
-    }
-  }
+  await run("market:set:ltv", {
+    marketAddress: MS_DAI_MARKET,
+    ltv: "0.5"
+  });
 });
 
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(

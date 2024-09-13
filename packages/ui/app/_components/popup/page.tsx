@@ -3,7 +3,7 @@
 import { FundOperationMode } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { type Address, formatEther, formatUnits, parseUnits } from 'viem';
@@ -40,7 +40,6 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { sendIMG } from '@ui/utils/TempImgSender';
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -621,6 +620,9 @@ const Popup = ({
             hash: tx,
             confirmations: 2
           });
+
+          // wait for 5 seconds to resolve timing issue
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
         upsertTransactionStep({
@@ -735,10 +737,15 @@ const Popup = ({
           selectedMarketData.cToken,
           amountToWithdraw.toString()
         );
+        let isMax = false;
+        if (amountToWithdraw === maxWithdrawAmount) {
+          isMax = true;
+        }
 
         const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
-          amountToWithdraw
+          amountToWithdraw,
+          isMax
         );
 
         if (errorCode) {
@@ -911,6 +918,9 @@ const Popup = ({
             hash: tx,
             confirmations: 2
           });
+
+          // wait for 5 seconds to resolve timing issue
+          await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
         upsertTransactionStep({
@@ -1128,10 +1138,6 @@ const Popup = ({
     }
   };
 
-  const searchParams = useSearchParams();
-  const chain = searchParams.get('chain');
-  const pool = searchParams.get('pool');
-
   return (
     <>
       <div
@@ -1155,11 +1161,7 @@ const Popup = ({
               alt="modlogo"
               className="mx-auto"
               height="32"
-              src={sendIMG(
-                pool as string,
-                chain as string,
-                selectedMarketData?.underlyingSymbol
-              )}
+              src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
               width="32"
             />
           </div>

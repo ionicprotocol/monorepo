@@ -11,6 +11,8 @@ export type EarnRow = {
   protocol: string;
   tvl: number;
   tvlpool?: string;
+  img: string;
+  strategy: string;
   rewards: Record<number, IRewards>;
   live?: boolean;
 };
@@ -42,6 +44,8 @@ export const earnOpps: EarnRow[] = [
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',
+    strategy: 'Liquidty Pool',
+    img: '/img/symbols/32/color/velo.png',
     tvl: 0,
     tvlpool: '0xC6A394952c097004F83d2dfB61715d245A38735a'
   },
@@ -65,6 +69,8 @@ export const earnOpps: EarnRow[] = [
     network: 'base',
     poolChain: base.id,
     protocol: 'Aerodrome Finance',
+    strategy: 'Liquidty Pool',
+    img: '/img/symbols/32/color/aero.png',
     tvl: 0,
     tvlpool: '0x0FAc819628a7F612AbAc1CaD939768058cc0170c'
   },
@@ -88,6 +94,8 @@ export const earnOpps: EarnRow[] = [
     network: 'mode',
     poolChain: mode.id,
     protocol: 'Velodrome',
+    strategy: 'Liquidty Pool',
+    img: '/img/symbols/32/color/velo.png',
     tvl: 0,
     tvlpool: '0x690A74d2eC0175a69C0962B309E03021C0b5002E'
   },
@@ -136,6 +144,56 @@ export const earnOpps: EarnRow[] = [
     link: 'https://app.steer.finance/vault/0x17694615caba46ef765a3673fa488e04332b522a/34443',
     network: 'mode',
     protocol: 'Steer',
+    strategy: 'Liquidty Pool',
+    img: '/img/symbols/32/color/steer.png',
+    tvl: 0,
+    poolChain: mode.id
+  },
+  {
+    apr: 0,
+    asset: ['ion'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: true,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: 'https://peapods.finance/app?pod=0xFa1D1f89e64A1b5ba50fb867d2aa660D9E6dE029',
+    network: 'mode',
+    protocol: 'Peapods',
+    strategy: 'Volatility Farming / Single Staking',
+    img: '/img/symbols/32/color/peapods.png',
+    tvl: 0,
+    poolChain: mode.id
+  },
+  {
+    apr: 0,
+    asset: ['ion'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: true,
+    rewards: {
+      [mode.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: 'https://perps.ionic.money/',
+    network: 'mode',
+    protocol: 'Lynx',
+    strategy: 'Perps / Single Staking',
+    img: '/img/symbols/32/color/lynx.png',
     tvl: 0,
     poolChain: mode.id
   },
@@ -158,6 +216,8 @@ export const earnOpps: EarnRow[] = [
     link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDC',
     network: 'mode',
     protocol: 'Davos',
+    strategy: 'CDP Stablecoin',
+    img: '/img/symbols/32/color/davos.png',
     tvl: 0,
     poolChain: mode.id
   },
@@ -180,6 +240,8 @@ export const earnOpps: EarnRow[] = [
     link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDT',
     network: 'mode',
     protocol: 'Davos',
+    strategy: 'CDP Stablecoin',
+    img: '/img/symbols/32/color/davos.png',
     tvl: 0,
     poolChain: mode.id
   },
@@ -202,6 +264,8 @@ export const earnOpps: EarnRow[] = [
     link: 'https://www.tren.finance',
     network: 'mode',
     protocol: 'Tren',
+    strategy: 'CDP Stablecoin',
+    img: '/img/symbols/32/color/tren.png',
     tvl: 0,
     poolChain: mode.id
   },
@@ -221,9 +285,11 @@ export const earnOpps: EarnRow[] = [
         turtle: false
       }
     },
-    link: 'https://peapods.finance',
+    link: '#',
     network: 'mode',
-    protocol: 'Peapods',
+    protocol: 'Otomato',
+    strategy: '-',
+    img: '/img/symbols/32/color/otomato.png',
     tvl: 0,
     poolChain: mode.id
   }

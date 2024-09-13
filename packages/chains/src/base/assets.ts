@@ -6,7 +6,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { parseEther } from "viem";
+import { parseEther, parseUnits } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -24,6 +24,7 @@ export const bsdETH = "0xcb327b99ff831bf8223cced12b1338ff3aa322ff";
 export const RSR = "0xaB36452DbAC151bE02b16Ca17d8919826072f64a";
 export const ION = "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5";
 export const hyUSD = "0xCc7FF230365bD730eE4B352cC2492CEdAC49383e";
+export const cbBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 export const assets: SupportedAsset[] = [
   {
@@ -190,6 +191,21 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(160_000)).toString(),
     initialCf: "0.70",
     extraDocs: defaultDocs("https://basescan.org", hyUSD)
+  },
+  {
+    symbol: assetSymbols.cbBTC,
+    underlying: cbBTC,
+    name: "Coinbase Wrapped BTC",
+    decimals: 8,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x64c911996D3c6aC71f9b455B1E8E7266BcbD848F",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialSupplyCap: parseUnits(String(1), 8).toString(),
+    initialBorrowCap: parseUnits(String(1), 8).toString(),
+    initialCf: "0.30",
+    extraDocs: defaultDocs("https://basescan.org", cbBTC)
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

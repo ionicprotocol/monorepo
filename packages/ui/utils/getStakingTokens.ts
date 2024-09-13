@@ -1,3 +1,5 @@
+import type { Address } from 'viem';
+
 import {
   BaseContractABI,
   BaseLiquidityContractAdd,
@@ -16,8 +18,11 @@ export function getPoolToken(token?: 'eth' | 'mode' | 'weth'): `0x${string}` {
   return '0x0000000000000000000000000000000000000000';
 }
 export function getToken(chain: number): `0x${string}` {
-  if (chain === 34443) return '0x18470019bf0e94611f15852f7e93cf5d65bc34ca';
-  if (chain === 8453) return '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5';
+  if (chain === 34443) return '0x18470019bf0e94611f15852f7e93cf5d65bc34ca'; //mode
+  if (chain === 8453) return '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'; //base
+  if (chain === 252) return '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'; //frax
+  if (chain === 10) return '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'; //op
+  if (chain === 60808) return '0xb90f229f27851e205d77fd46487989ad6e44c17c'; //bob
   return '0x0000000000000000000000000000000000000000';
 }
 export function getAvailableStakingToken(
@@ -79,3 +84,22 @@ export function getReservesArgs(chain: number, token: 'eth' | 'mode' | 'weth') {
   return [];
 }
 //=========================================================
+// Bridging Contract address
+
+export const BridgingContractAddress: Record<number, Address> = {
+  34443: '0xb750c43F9338313c7A8af6922dcA1910Ee3583c8', //mode
+  8453: '0xD9E3f9D761f3fC2Adb0DC70E5284494dEc0D7C30', //base
+  60808: '0x48F0F46F56C2Ca5def59fd673fF69495b7272Eb0', //bob
+  252: '0x0e2269dac22f8e90D48c92237c90829979e42243', //frax
+  10: '0x7901d0967596727d68713d39ae8F92501C704826' //optimism
+};
+
+/*
+const ionTokens: Record<number, Address> = {
+  [base.id]: "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
+  [optimism.id]: "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC",
+  [mode.id]: "0x18470019bf0e94611f15852f7e93cf5d65bc34ca",
+  [fraxtal.id]: "0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE",
+  [bob.id]: "0xb90f229f27851e205d77fd46487989ad6e44c17c"
+};
+*/

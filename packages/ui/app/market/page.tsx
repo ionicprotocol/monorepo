@@ -20,6 +20,7 @@ import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
+import { getAssetName } from '../util/utils';
 
 import { pools } from '@ui/constants/index';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
@@ -28,7 +29,6 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { sendIMG } from '@ui/utils/TempImgSender';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
   ssr: false
@@ -135,8 +135,8 @@ export default function Market() {
           <div className={`w-full sm:w-[40%] md:w-[20%] mb-2 `}>
             {' '}
             <NetworkSelector
-              chainId={chain as string}
-              dropdownSelectedChain={dropdownSelectedChain}
+              // chain={dropdownSelectedChain.toString()}
+              dropdownSelectedChain={+chain}
               newRef={newRef}
               open={open}
               // options={networkOptionstest}
@@ -177,7 +177,7 @@ export default function Market() {
                           alt="modlogo"
                           className={`w-6 h-6`}
                           key={idx}
-                          src={sendIMG(pool.id, chain, val)}
+                          src={`/img/symbols/32/color/${val.toLowerCase()}.png`}
                         />
                       ))}
                     </div>
@@ -216,7 +216,7 @@ export default function Market() {
                 className={`flex flex-col items-start justify-center gap-y-1`}
               >
                 <p className={`text-white/60  md:text-sm text-[11px]`}>
-                  Total Available
+                  Total Supplied
                 </p>
                 <p className={`font-semibold md:text-base text-sm`}>
                   $
@@ -362,9 +362,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.borrowBalanceFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.borrowBalanceFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         chain={chain.toString()}
@@ -379,11 +380,7 @@ export default function Market() {
                         }
                         dropdownSelectedChain={dropdownSelectedChain}
                         key={idx}
-                        logo={sendIMG(
-                          selectedPool,
-                          chain,
-                          val.underlyingSymbol
-                        )}
+                        logo={`/img/symbols/32/color/${val.underlyingSymbol.toLowerCase()}.png`}
                         loopPossible={
                           loopMarkets
                             ? loopMarkets[val.cToken].length > 0
@@ -422,9 +419,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.supplyBalanceFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.supplyBalanceFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         totalBorrowing={`${
@@ -438,9 +436,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.totalBorrowFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.totalBorrowFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                         totalSupplied={`${
@@ -454,9 +453,10 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${
-                          val.underlyingSymbol
-                        } / $${val.totalSupplyFiat.toLocaleString('en-US', {
+                        } ${getAssetName(
+                          val.underlyingSymbol,
+                          dropdownSelectedChain
+                        )} / $${val.totalSupplyFiat.toLocaleString('en-US', {
                           maximumFractionDigits: 2
                         })}`}
                       />

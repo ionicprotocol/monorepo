@@ -221,6 +221,14 @@ export default function RootLayout({
                           </li>
                           <li className="mb-1.5">
                             <a
+                              href="https://dune.com/mrwildcat/ionic-protocol"
+                              target="_blank"
+                            >
+                              Dune
+                            </a>
+                          </li>
+                          <li className="mb-1.5">
+                            <a
                               href="https://linktr.ee/ionicmoney"
                               target="_blank"
                             >
