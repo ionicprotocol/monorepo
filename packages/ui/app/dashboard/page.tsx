@@ -82,10 +82,10 @@ export default function Dashboard() {
     +chain
   );
   const { data: positions, isLoading: isLoadingPositions } =
-    usePositionsQuery();
+    usePositionsQuery(+chain);
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [+chain]
+    positions?.openPositions.map((position) => position.chainId) ?? []
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
@@ -98,7 +98,7 @@ export default function Dashboard() {
             )
           : null
       ),
-      positions?.openPositions.map(() => +chain) ?? []
+      positions?.openPositions.map((p) => p.chainId) ?? []
     );
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
@@ -117,7 +117,8 @@ export default function Dashboard() {
     [marketData]
   );
   const { data: loopData } = useLoopMarkets(
-    marketData?.assets.map((asset) => asset.cToken) ?? []
+    marketData?.assets.map((asset) => asset.cToken) ?? [],
+    +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
@@ -850,7 +851,7 @@ export default function Dashboard() {
                       : undefined;
 
                     if (!currentPositionInfo) {
-                      return <></>;
+                      return <div key={`position-${i}`} />;
                     }
 
                     return (

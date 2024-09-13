@@ -35,15 +35,11 @@ export function usePositionInfo(
     queryKey: ['usePositionInfo', sdk?.chainId, position, supplyApy],
 
     queryFn: async () => {
-      if (sdk && supplyApy) {
-        return await getPositionInfo(position, supplyApy, sdk);
-      } else {
-        return null;
-      }
+      return await getPositionInfo(position, supplyApy!, sdk!);
     },
 
     gcTime: Infinity,
-    enabled: !!sdk && !!position && !!supplyApy && !!chainId,
+    enabled: !!sdk && !!position && typeof supplyApy === 'bigint' && !!chainId,
     staleTime: Infinity
   });
 }
@@ -68,7 +64,7 @@ export function usePositionsInfo(
             const position = positions[i];
             const totalApy = totalApys[i];
 
-            if (sdk && totalApy) {
+            if (sdk && typeof totalApy === 'bigint') {
               const info = await getPositionInfo(position, totalApy, sdk);
 
               if (info) {
