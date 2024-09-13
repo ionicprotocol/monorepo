@@ -5,7 +5,7 @@ import millify from 'millify';
 // import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { FlywheelReward } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { base } from 'viem/chains';
@@ -51,35 +51,13 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
-  // const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const chain = querychain ? querychain : 34443;
   const pool = querypool ? querypool : '0';
-  const [open, setOpen] = useState<boolean>(false);
-  const newRef = useRef(null!);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
-  // const [poolMarket, setPoolMarket] = useState<string>('0');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTab] = useState('');
-  // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -610,10 +588,6 @@ export default function Dashboard() {
               <NetworkSelector
                 chain={chain as string}
                 dropdownSelectedChain={+chain}
-                newRef={newRef}
-                open={open}
-                // options={networkOptionstest}
-                setOpen={setOpen}
               />
             </div>
           </div>

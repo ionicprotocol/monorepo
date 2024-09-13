@@ -3,7 +3,7 @@
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import {
   erc20Abi,
   formatEther,
@@ -78,7 +78,6 @@ export default function Stake() {
   const queryToken = searchParams.get('token');
   const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
-  const [open, setOpen] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -557,23 +556,6 @@ export default function Stake() {
     }
   }
 
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
-
   const ionTokenOfChain = useMemo(() => {
     return getToken(+chain);
   }, [chain]);
@@ -619,9 +601,6 @@ export default function Stake() {
               <div className={` xl:w-[30%] w-[40%]`}>
                 <NetworkSelector
                   dropdownSelectedChain={+chain}
-                  newRef={newRef}
-                  open={open}
-                  setOpen={setOpen}
                   nopool={true}
                   enabledChains={[mode.id, base.id]}
                 />
