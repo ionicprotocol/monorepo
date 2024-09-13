@@ -174,19 +174,15 @@ const PoolRows = ({
     }
   }, [
     asset,
-    borrowAPR,
-    borrowRewards,
     cTokenAddress,
     comptrollerAddress,
     dropdownSelectedChain,
-    loopPossible,
     pool,
     selectedPoolId,
-    setFeaturedSupply2,
     setFeaturedSupply,
+    setFeaturedSupply2,
     supplyAPR,
-    supplyRewards,
-    totalBorrowRewardsAPR
+    supplyRewards
   ]);
 
   // console.log( , dropdownSelectedChain , pool );
