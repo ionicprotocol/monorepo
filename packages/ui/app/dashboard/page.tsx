@@ -85,7 +85,7 @@ export default function Dashboard() {
     usePositionsQuery(+chain);
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [+chain]
+    positions?.openPositions.map((position) => position.chainId) ?? []
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
