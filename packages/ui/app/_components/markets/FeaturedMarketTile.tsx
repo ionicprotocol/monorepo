@@ -56,7 +56,7 @@ export default function FeaturedMarketTile({
         <div
           className={`lg:grid lg:grid-cols-4 flex flex-col gap-x-3 w-full items-center justify-center px-1 py-3 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl`}
         >
-          <div className="flex items-center justify-center gap-1 mr-auto ml-2 lg:ml-0 ">
+          <div className="flex items-center justify-center gap-1 mr-auto sm:mr-0 ml-2 lg:ml-0 ">
             <img
               src={`/img/symbols/32/color/${featuredSupply.asset.toLowerCase()}.png`}
               alt="abc"
@@ -70,7 +70,7 @@ export default function FeaturedMarketTile({
             <span className="text-white/40 font-semibold lg:mr-0 mr-auto ml-2 lg:ml-0 text-[11px] lg:hidden text-left   ">
               APR
             </span>
-            <div className=" flex lg:flex-col flex-wrap ml-auto ">
+            <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto ">
               <SupplyPopover
                 asset={featuredSupply.asset}
                 supplyAPR={featuredSupply.supplyAPR}
@@ -83,7 +83,7 @@ export default function FeaturedMarketTile({
             </div>
           </div>
           <button
-            className={`rounded-md bg-accent text-black lg:py-1.5 py-1 px-1 col-span-2  uppercase truncate text-xs w-[80%]  `}
+            className={`rounded-md bg-accent text-black lg:py-1.5 py-1 px-1 col-span-2  uppercase truncate text-xs w-[80%] mx-auto `}
             onClick={async () => {
               const result = await handleSwitchOriginChain(
                 dropdownSelectedChain,
@@ -101,7 +101,7 @@ export default function FeaturedMarketTile({
         <div
           className={`lg:grid lg:grid-cols-4 flex flex-col gap-x-3 w-full  items-center justify-center px-1 py-3 col-span-2 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl `}
         >
-          <div className="flex items-center justify-center gap-1 mr-auto ml-2 lg:ml-0">
+          <div className="flex items-center justify-center gap-1 mr-auto sm:mr-0 ml-2 lg:ml-0">
             <img
               src={`/img/symbols/32/color/${asset.toLowerCase()}.png`}
               alt="asset"
@@ -115,7 +115,7 @@ export default function FeaturedMarketTile({
             <span className="text-white/40 font-semibold  text-[11px] lg:hidden text-left lg:mr-0 mr-auto ml-2 lg:ml-0">
               APR
             </span>
-            <div className=" flex lg:flex-col flex-wrap  ml-auto">
+            <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto">
               <BorrowPopover
                 asset={asset}
                 borrowAPR={borrowAPR}
@@ -129,7 +129,7 @@ export default function FeaturedMarketTile({
             </div>
           </div>
           <button
-            className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} text-xs w-[80%] col-span-2  py-2  lg:py-1.5 text-center px-1  uppercase truncate flex items-center justify-center`}
+            className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} text-xs w-[80%] col-span-2  py-2  lg:py-1.5 text-center px-1  uppercase truncate flex items-center justify-center mx-auto`}
             onClick={async () => {
               const result = await handleSwitchOriginChain(
                 dropdownSelectedChain,

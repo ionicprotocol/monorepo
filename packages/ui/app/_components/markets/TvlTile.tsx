@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import dynamic from 'next/dynamic';
-import { fraxtal } from 'viem/chains';
+// import dynamic from 'next/dynamic';
+// import { fraxtal } from 'viem/chains';
 
 // import SwapWidget from './SwapWidget';
-const SwapWidget = dynamic(() => import('./SwapWidget'), {
-  ssr: false
-});
+// const SwapWidget = dynamic(() => import('./SwapWidget'), {
+//   ssr: false
+// });
 import ResultHandler from '../ResultHandler';
 
 import { pools } from '@ui/constants/index';
@@ -18,24 +18,18 @@ interface IProp {
   poolData: PoolData;
   isLoadingPoolData: boolean;
   isLoadingLoopMarkets: boolean;
-  setSwapWidgetOpen: any;
   selectedPool: string;
-  swapWidgetOpen: boolean;
-  setSwapOpen: any;
 }
 export default function TvlTile({
   dropdownSelectedChain,
   poolData,
   isLoadingPoolData,
   isLoadingLoopMarkets,
-  setSwapWidgetOpen,
-  selectedPool,
-  swapWidgetOpen,
-  setSwapOpen
+  selectedPool
 }: IProp) {
   return (
     <div
-      className={`w-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full h-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
       <div className="flex md:flex-row flex-col  w-full md:gap-2 ">
         {Object.entries(pools)
@@ -105,7 +99,7 @@ export default function TvlTile({
           </div>
         </ResultHandler>
       </div>
-      <div className="w-full flex flex-row gap-x-3 justify-center md:mx-0">
+      {/* <div className="w-full flex flex-row gap-x-3 justify-center md:justify-start md:mx-0">
         <button
           className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
           onClick={() => setSwapOpen(true)}
@@ -141,7 +135,7 @@ export default function TvlTile({
           open={swapWidgetOpen}
           toChain={+dropdownSelectedChain}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

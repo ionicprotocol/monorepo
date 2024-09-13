@@ -8,9 +8,9 @@ import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type Address, formatEther, formatUnits } from 'viem';
-import { mode } from 'viem/chains';
+import { fraxtal, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
@@ -37,9 +37,10 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-// const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
-//   ssr: false
-// });
+// import SwapWidget from '../_components/markets/SwapWidget';
+const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
+  ssr: false
+});
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   { ssr: false }
@@ -54,12 +55,10 @@ export default function Market() {
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
     mode.id
   );
-  const [open, setOpen] = useState<boolean>(false);
+
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
-  // const [selectedPool, setSelectedPool] = useState(
-  //   pool ? pool : pools[mode.id].pools[0].id
-  // );
+
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id;
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
@@ -99,23 +98,6 @@ export default function Market() {
     poolData?.assets.map((asset) => asset.cToken) ?? []
   );
 
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
-
   const { data: rewards } = useRewards({
     chainId: dropdownSelectedChain,
     poolId: selectedPool
@@ -130,17 +112,14 @@ export default function Market() {
         <div
           className={`w-full grid md:grid-cols-8  grid-cols-1 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-2 `}
         >
-          <div className={`grid gap-y-2 col-span-3 `}>
+          <div className={`grid gap-y-2 col-span-3 h-full`}>
             <TotalTvlTile />
             <TvlTile
               dropdownSelectedChain={dropdownSelectedChain.toString()}
               poolData={poolData!}
               isLoadingPoolData={isLoadingPoolData}
               isLoadingLoopMarkets={isLoadingLoopMarkets}
-              setSwapWidgetOpen={setSwapWidgetOpen}
               selectedPool={selectedPool}
-              swapWidgetOpen={swapWidgetOpen}
-              setSwapOpen={setSwapOpen}
             />
           </div>
           <FeaturedMarketTile
@@ -153,20 +132,54 @@ export default function Market() {
         </div>
         {/* //............................................ */}
         <div className={`w-full my-2  `}>
-          <NetworkSelector
-            dropdownSelectedChain={+chain}
-            newRef={newRef}
-            open={open}
-            setOpen={setOpen}
-          />
+          <NetworkSelector dropdownSelectedChain={+chain} />
         </div>
         <div
           className={`bg-grayone w-full lg:px-[1%] xl:px-[3%]  rounded-xl pt-3 pb-7`}
         >
-          <PoolToggle
-            chain={+chain}
-            pool={selectedPool}
-          />
+          <div className={`w-full flex-wrap flex justify-between items-center`}>
+            <PoolToggle
+              chain={+chain}
+              pool={selectedPool}
+            />
+            <div className=" flex flex-row gap-3 md:mb-0 mb-3 justify-center md:justify-start md:mx-0 mx-auto">
+              <button
+                className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+                onClick={() => setSwapOpen(true)}
+              >
+                {`Wrap ${+dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
+
+                <img
+                  alt=""
+                  className="inline-block"
+                  height="20"
+                  src={`/img/symbols/32/color/${+dropdownSelectedChain === fraxtal.id ? 'frxeth' : 'eth'}.png`}
+                  width="20"
+                />
+                <span>{' -> '}</span>
+                <img
+                  alt=""
+                  className="inline-block"
+                  height="20"
+                  src={`/img/symbols/32/color/${+dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'weth'}.png`}
+                  width="20"
+                />
+              </button>
+
+              <button
+                className={`px-6  md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs font-bold uppercase`}
+                onClick={() => setSwapWidgetOpen(true)}
+              >
+                {'Swap Assets'}
+              </button>
+
+              <SwapWidget
+                close={() => setSwapWidgetOpen(false)}
+                open={swapWidgetOpen}
+                toChain={+dropdownSelectedChain}
+              />
+            </div>
+          </div>
           <div
             className={`w-full gap-x-1 hidden md:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
@@ -191,7 +204,7 @@ export default function Market() {
                     const val = assets.find(
                       (asset) => asset.underlyingSymbol === symbol
                     );
-                    if (!val) return <>/</>;
+                    if (!val) return <></>;
                     return (
                       <PoolRows
                         asset={val.underlyingSymbol}
