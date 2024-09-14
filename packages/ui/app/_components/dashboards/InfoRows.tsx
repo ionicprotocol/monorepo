@@ -79,14 +79,17 @@ const InfoRows = ({
       borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
     [borrowRewards]
   );
+
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative ${
-        membership && 'border border-lime'
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 md:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative  ${
+        membership && `${pools[+selectedChain].border} border`
       }`}
     >
       {membership && (
-        <span className="absolute top-[-9px] right-[-15px] px-2 text-darkone bg-lime rounded-lg">
+        <span
+          className={`absolute top-[-9px] right-[-15px] px-2 text-darkone  ${pools[selectedChain].bg} ${pools[+selectedChain].text} rounded-lg`}
+        >
           Collateral
         </span>
       )}
