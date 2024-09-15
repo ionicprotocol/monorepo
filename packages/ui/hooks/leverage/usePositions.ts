@@ -3,8 +3,9 @@ import type { NewPosition, OpenPosition } from 'types/dist';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-export const usePositionsQuery = () => {
-  const { address, currentSdk } = useMultiIonic();
+export const usePositionsQuery = (chain: number) => {
+  const { address, getSdk } = useMultiIonic();
+  const currentSdk = getSdk(chain);
 
   return useQuery({
     enabled: !!currentSdk && !!address,

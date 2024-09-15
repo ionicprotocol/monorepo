@@ -18,6 +18,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
+import { mode } from 'viem/chains';
 import { useBalance, useAccount } from 'wagmi';
 // import { useGetMaxBorrow } from 'ui/app/util/utils';
 //-------------------Interfaces------------
@@ -251,7 +252,8 @@ const Asset = ({ params }: IProp) => {
   }, [selectedSymbol, poolData]);
 
   const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
-    poolData?.assets.map((asset) => asset.cToken) ?? []
+    poolData?.assets.map((asset) => asset.cToken) ?? [],
+    chain ? +chain : mode.id
   );
   // Borrow cap numbers -----------------
   const { data: borrowCap } = useBorrowCapsDataForAsset(

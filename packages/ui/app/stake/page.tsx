@@ -3,7 +3,7 @@
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import {
   erc20Abi,
   formatEther,
@@ -30,21 +30,21 @@ const NetworkSelector = dynamic(
 );
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
+import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
+import ModeBreakdown from '../_components/stake/ModeBreakdown';
 import Toggle from '../_components/Toggle';
-
-import { lpSugarAbi } from './abi/lpSugar';
 
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import {
-  useAeroPrice,
-  useIonPrice,
-  useModePrice
-} from '@ui/hooks/useDexScreenerPrices';
+// import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+// import {
+//   useAeroPrice,
+//   useIonPrice,
+//   useModePrice
+// } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
   getPoolToken,
@@ -78,7 +78,6 @@ export default function Stake() {
   const queryToken = searchParams.get('token');
   const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
-  const [open, setOpen] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -557,23 +556,6 @@ export default function Stake() {
     }
   }
 
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
-
   const ionTokenOfChain = useMemo(() => {
     return getToken(+chain);
   }, [chain]);
@@ -619,9 +601,6 @@ export default function Stake() {
               <div className={` xl:w-[30%] w-[40%]`}>
                 <NetworkSelector
                   dropdownSelectedChain={+chain}
-                  newRef={newRef}
-                  open={open}
-                  setOpen={setOpen}
                   nopool={true}
                   enabledChains={[mode.id, base.id]}
                 />
@@ -871,188 +850,3 @@ export default function Stake() {
     </main>
   );
 }
-
-type ModeBreakdownProps = {
-  step3Toggle: string;
-  selectedtoken: 'eth' | 'mode' | 'weth';
-};
-const ModeBreakdown = ({ step3Toggle, selectedtoken }: ModeBreakdownProps) => {
-  return (
-    <>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
-        <img
-          alt="ion logo"
-          className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
-          src="/img/symbols/32/color/velo.png"
-        />
-        <VelodromeAPY
-          step3Toggle={step3Toggle}
-          selectedtoken={selectedtoken}
-        />
-      </div>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
-        <img
-          alt="ion logo"
-          className={`w-6 h-6 inline-block mx-1`}
-          src="/img/logo/ION.png"
-        />
-        <span>Ionic Points</span>
-        <span
-          className={`text-accent ml-auto ${
-            step3Toggle === 'Unstake' && 'text-red-500'
-          }`}
-        >
-          3x
-        </span>
-      </div>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
-        <img
-          alt="ion logo"
-          className={`w-6 h-6 inline-block mx-1`}
-          src="/img/logo/MODE.png"
-        />
-        <span>Mode Points</span>
-        <span
-          className={`text-accent ml-auto ${
-            step3Toggle === 'Unstake' && 'text-red-500'
-          }`}
-        >
-          {selectedtoken === 'mode' ? '5x' : '3x'}
-        </span>
-      </div>
-    </>
-  );
-};
-
-type VelodromeAPYProps = {
-  step3Toggle: string;
-  selectedtoken: 'eth' | 'mode' | 'weth';
-};
-const VelodromeAPY = ({ step3Toggle, selectedtoken }: VelodromeAPYProps) => {
-  const LP_SUGAR_ADDRESS = '0x207DfB36A449fd10d9c3bA7d75e76290a0c06731';
-  const ION_WETH_POOL_INDEX = 6n;
-  const ION_MODE_POOL_INDEX = 26n;
-  const { data: sugarData } = useReadContract({
-    abi: lpSugarAbi,
-    address: LP_SUGAR_ADDRESS,
-    args: [
-      selectedtoken === 'mode' ? ION_MODE_POOL_INDEX : ION_WETH_POOL_INDEX
-    ],
-    functionName: 'byIndex',
-    chainId: mode.id
-  });
-  const { data: ionData } = useIonPrice();
-  const { data: modePriceData } = useModePrice();
-  const { data: ethPriceData } = useAllUsdPrices();
-  let apy = '-';
-  if (!!(sugarData && ionData && ethPriceData && modePriceData)) {
-    apy =
-      (
-        ((60 *
-          60 *
-          24 *
-          365.25 *
-          Number(formatEther(sugarData.emissions)) *
-          Number(modePriceData.pair.priceUsd)) /
-          (Number(formatEther(sugarData.staked0)) *
-            Number(ionData.pair.priceUsd) +
-            Number(formatEther(sugarData.staked1)) *
-              (selectedtoken !== 'mode'
-                ? ethPriceData[mode.id].value
-                : Number(modePriceData.pair.priceUsd)))) *
-        100
-      ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
-  }
-  return (
-    <>
-      <span>Velodrome APY</span>
-      <span
-        className={`text-accent ${
-          step3Toggle === 'Unstake' && 'text-red-500'
-        } ml-auto`}
-      >
-        {apy}
-      </span>
-    </>
-  );
-};
-
-type BaseBreakdownProps = {
-  step3Toggle: string;
-};
-const BaseBreakdown = ({ step3Toggle }: BaseBreakdownProps) => {
-  return (
-    <>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
-        <img
-          alt="ion logo"
-          className={`w-6 h-6 inline-block mx-1 bg-blend-screen`}
-          src="/img/logo/AERO.png"
-        />
-        <AerodromeAPY step3Toggle={step3Toggle} />
-      </div>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
-        <img
-          alt="ion logo"
-          className={`w-6 h-6 inline-block mx-1`}
-          src="/img/logo/ION.png"
-        />
-        <span>Ionic Points</span>
-        <span
-          className={`text-accent ml-auto ${
-            step3Toggle === 'Unstake' && 'text-red-500'
-          }`}
-        >
-          3x
-        </span>
-      </div>
-    </>
-  );
-};
-
-type AerodromeAPYProps = {
-  step3Toggle: string;
-};
-const AerodromeAPY = ({ step3Toggle }: AerodromeAPYProps) => {
-  const LP_SUGAR_ADDRESS = '0x68c19e13618C41158fE4bAba1B8fb3A9c74bDb0A';
-  const ION_POOL_INDEX = 1489n;
-  const { data: sugarData } = useReadContract({
-    abi: lpSugarAbi,
-    address: LP_SUGAR_ADDRESS,
-    args: [ION_POOL_INDEX],
-    functionName: 'byIndex',
-    chainId: base.id
-  });
-  const { data: ionData } = useIonPrice();
-  const { data: aeroPriceData } = useAeroPrice();
-  const { data: ethPriceData } = useAllUsdPrices();
-  let apy = '-';
-  if (!!(sugarData && ionData && ethPriceData && aeroPriceData)) {
-    apy =
-      (
-        ((60 *
-          60 *
-          24 *
-          365.25 *
-          Number(formatEther(sugarData.emissions)) *
-          Number(aeroPriceData.pair.priceUsd)) /
-          (Number(formatEther(sugarData.staked0)) *
-            Number(ionData.pair.priceUsd) +
-            Number(formatEther(sugarData.staked1)) *
-              ethPriceData[base.id].value)) *
-        100
-      ).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
-  }
-  return (
-    <>
-      <span>Aerodrome APY</span>
-      <span
-        className={`text-accent ${
-          step3Toggle === 'Unstake' && 'text-red-500'
-        } ml-auto`}
-      >
-        {apy}
-      </span>
-    </>
-  );
-};

@@ -1,32 +1,36 @@
-import React, { useState } from 'react';
+'use client';
 
-const PoolToggle = () => {
-  const [active, setActive] = useState<string>('all');
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { pools } from '@ui/constants/index';
+
+const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
+  const pathname = usePathname();
   return (
     <div
-      className={`w-max  rounded-xl bg-grayUnselect p-1 flex gap-x-3 text-xs items-center justify-center`}
+      className={`flex items-center justify-start w-max gap-2 sm:mx-0 mx-auto p-2`}
     >
-      <p
-        className={`rounded-xl py-1 px-3  cursor-pointer ${
-          active === 'all' ? 'bg-darkone text-accent ' : 'text-white/40 '
-        } transition-all duration-200 ease-linear `}
-        onClick={() => setActive('all')}
-      >
-        All Pools
-      </p>
-      {/* <p
-        onClick={() => setActive('stable')}
-        className={` rounded-xl py-1 px-3   ${
-          active === 'stable' ? 'bg-darkone text-accent ' : 'text-white/40'
-        } cursor-pointer transition-all duration-200 ease-linear`}
-      >
-        Stablecoin Pools
-      </p> */}
+      {pools[+chain].pools.map((poolx, idx) => {
+        return (
+          <Link
+            className={` cursor-pointer  px-4 rounded-md ${
+              pool === poolx.id
+                ? ` ${pools[+chain].bg} ${pools[+chain].text}`
+                : 'bg-black '
+            }`}
+            href={`${pathname}?chain=${chain}${
+              poolx.id ? `&pool=${poolx.id}` : ''
+            }`}
+            key={idx}
+          >
+            {poolx.name}
+          </Link>
+        );
+      })}
     </div>
   );
 };
 
-export default PoolToggle;
-{
-  /* <div className={``}></div> */
-}
+export default dynamic(() => Promise.resolve(PoolToggle), { ssr: false });

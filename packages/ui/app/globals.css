@@ -64,7 +64,7 @@
     -webkit-appearance: none;
     appearance: none;
   }
-
+  
   .amount-field {
     color: #fff;
   }
@@ -134,6 +134,10 @@
 
 .border-mode {
   border-color: #dffd04;
+}
+
+.border-base {
+  border-color: rgb(37 99 235);
 }
 
 .border-optimism {

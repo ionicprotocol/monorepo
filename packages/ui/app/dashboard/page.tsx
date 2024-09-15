@@ -2,9 +2,10 @@
 'use client';
 
 import millify from 'millify';
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+// import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import type { FlywheelReward } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { base } from 'viem/chains';
@@ -17,6 +18,9 @@ import Loop from '../_components/popup/Loop';
 import type { PopupMode } from '../_components/popup/page';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
+const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
+  ssr: false
+});
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -47,45 +51,23 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
-  // const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const chain = querychain ? querychain : 34443;
   const pool = querypool ? querypool : '0';
-  const [open, setOpen] = useState<boolean>(false);
-  const newRef = useRef(null!);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
-  // const [poolMarket, setPoolMarket] = useState<string>('0');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedTab] = useState('');
-  // const [selectedPool, setSelectedPool] = useState(pool ? pool : '0');
-  const pathname = usePathname();
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
     +chain
   );
   const { data: positions, isLoading: isLoadingPositions } =
-    usePositionsQuery();
+    usePositionsQuery(+chain);
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [+chain]
+    positions?.openPositions.map((position) => position.chainId) ?? []
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
@@ -98,7 +80,7 @@ export default function Dashboard() {
             )
           : null
       ),
-      positions?.openPositions.map(() => +chain) ?? []
+      positions?.openPositions.map((p) => p.chainId) ?? []
     );
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
@@ -117,7 +99,8 @@ export default function Dashboard() {
     [marketData]
   );
   const { data: loopData } = useLoopMarkets(
-    marketData?.assets.map((asset) => asset.cToken) ?? []
+    marketData?.assets.map((asset) => asset.cToken) ?? [],
+    +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
     if (marketData && assetsSupplyAprData && currentSdk) {
@@ -606,10 +589,6 @@ export default function Dashboard() {
               <NetworkSelector
                 chain={chain as string}
                 dropdownSelectedChain={+chain}
-                newRef={newRef}
-                open={open}
-                // options={networkOptionstest}
-                setOpen={setOpen}
               />
             </div>
           </div>
@@ -618,30 +597,13 @@ export default function Dashboard() {
           </div> */}
         </div>
         <div className={`bg-grayone  w-full px-6 py-3  rounded-xl`}>
-          <div className={`flex items-center justify-start w-max gap-2`}>
-            {pools[+chain].pools.map((poolx, idx) => {
-              return (
-                <Link
-                  className={` cursor-pointer  px-4 rounded-md ${
-                    pool === poolx.id
-                      ? ` ${pools[+chain].bg} ${pools[+chain].text}`
-                      : 'bg-black '
-                  }`}
-                  href={`${pathname}?chain=${chain}${
-                    poolx.id ? `&pool=${poolx.id}` : ''
-                  }`}
-                  key={idx}
-                  // onClick={() => setSelectedPool(pools[0].id)}
-                >
-                  {poolx.name}
-                </Link>
-              );
-            })}
-          </div>
+          <PoolToggle
+            chain={+chain}
+            pool={pool}
+          />
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
           </div>
-
           <ResultHandler
             center
             isLoading={
@@ -850,7 +812,7 @@ export default function Dashboard() {
                       : undefined;
 
                     if (!currentPositionInfo) {
-                      return <></>;
+                      return <div key={`position-${i}`} />;
                     }
 
                     return (

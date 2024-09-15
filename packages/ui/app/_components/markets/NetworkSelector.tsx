@@ -11,18 +11,12 @@ import { useStore } from 'ui/store/Store';
 interface INetworkSelector {
   chain?: string;
   dropdownSelectedChain: number;
-  newRef: any;
-  open: boolean;
-  setOpen: any;
   nopool?: boolean;
   enabledChains?: number[];
 }
 
 function NetworkSelector({
   dropdownSelectedChain,
-  // setOpen,
-  // open,
-  // newRef,
   nopool = false,
   enabledChains,
   chain
@@ -30,35 +24,12 @@ function NetworkSelector({
   const pathname = usePathname();
   const setDropChain = useStore((state) => state.setDropChain);
   return (
-    // <div
-    //   className="w-max capitalize text-md  relative font-bold"
-    //   ref={newRef}
-    // >
-
-    //   <div
-    //       className={`py-2 px-2 w-full relative items-center border-2 border-stone-700 ${
-    //         pools[dropdownSelectedChain].bg
-    //       } ${open ? 'rounded-t-md' : 'rounded-xl '} ${
-    //         pools[dropdownSelectedChain].text
-    //       }`}
-    //     >
-    //       {pools[dropdownSelectedChain].name ?? 'Select Chain'}
-    //       <img
-    //         alt="expand-arrow--v2"
-    //         className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
-    //           open ? 'rotate-180' : 'rotate-0'
-    //         } `}
-    //         src={`https://img.icons8.com/ios/50/${pools[dropdownSelectedChain].arrow}/expand-arrow--v2.png`}
-    //       />
-    //     </div>
     <div
       className={`  left-0    md:min-w-max w-full  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
     >
       <Link
         className={`flex justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
         href={`${pathname}?chain=${dropdownSelectedChain}${nopool ? '' : '&pool=0'}`}
-        // key={idx}
-        // onClick={() => setDropChain(chainId)}
       >
         <img
           alt="checkmark--v1"
@@ -70,7 +41,8 @@ function NetworkSelector({
       {Object.entries(pools)
         .filter(([chainId]) =>
           enabledChains
-            ? enabledChains?.includes(+chainId)
+            ? enabledChains?.includes(+chainId) &&
+              +chainId !== dropdownSelectedChain
             : +chainId !== dropdownSelectedChain
         )
         .map(([chainId, network], idx: number) => (
@@ -89,7 +61,6 @@ function NetworkSelector({
           </Link>
         ))}
     </div>
-    // </div>
   );
 }
 
