@@ -257,7 +257,8 @@ export const multipliers: Record<
           mode: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       USDC: {

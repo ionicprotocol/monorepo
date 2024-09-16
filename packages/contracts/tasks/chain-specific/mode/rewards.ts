@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { dmBTC_MARKET, ION, WEETH_MARKET } from ".";
+import { dmBTC_MARKET, ION, MODE_NATIVE_MARKET, WEETH_MARKET } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 
@@ -60,7 +60,7 @@ task("mode:add-rewards:supply:epoch2", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const rewardAmount = "35000";
-    const market = dmBTC_MARKET;
+    const market = MODE_NATIVE_MARKET;
     const rewardTokenName = "ION";
 
     // Sending tokens
