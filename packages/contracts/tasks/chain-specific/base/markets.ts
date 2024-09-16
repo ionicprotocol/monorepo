@@ -53,7 +53,7 @@ task("base:set-caps-hyusd", "one time setup").setAction(async (_, { viem, run })
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.cbBTC)) {
+  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.wsuperOETHb)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
