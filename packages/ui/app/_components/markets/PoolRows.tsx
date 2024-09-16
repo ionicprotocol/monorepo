@@ -150,6 +150,7 @@ const PoolRows = ({
       setFeaturedSupply2({
         asset: asset,
         supplyAPR: supplyAPR,
+        supplyAPRTotal: supplyAPRTotal,
         rewards: supplyRewards,
         dropdownSelectedChain: dropdownSelectedChain,
         selectedPoolId: selectedPoolId,
@@ -165,6 +166,7 @@ const PoolRows = ({
       setFeaturedSupply({
         asset: asset,
         supplyAPR: supplyAPR,
+        supplyAPRTotal: supplyAPRTotal,
         rewards: supplyRewards,
         dropdownSelectedChain: dropdownSelectedChain,
         selectedPoolId: selectedPoolId,
@@ -182,6 +184,7 @@ const PoolRows = ({
     setFeaturedSupply,
     setFeaturedSupply2,
     supplyAPR,
+    supplyAPRTotal,
     supplyRewards
   ]);
 

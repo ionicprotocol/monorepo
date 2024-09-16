@@ -43,7 +43,7 @@ export default function FeaturedMarketTile({
       className={`w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center lg:justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
       {/* this will get maped on basis of featured  */}
-      <span className={` mr-auto text-xl font-semibold`}>Featured Market </span>
+      <span className={` mr-auto text-xl font-semibold`}>Featured Markets</span>
       <div
         className={`w-full gap-x-3 hidden lg:grid  grid-cols-4 items-start  text-[10px] text-white/40 font-semibold text-center px-2 `}
       >
@@ -73,6 +73,15 @@ export default function FeaturedMarketTile({
                 APR
               </span>
               <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto ">
+                <span
+                  className={`mr-1 md:mr-0 text-xs lg:w-full lg:mb-1 text-center`}
+                >
+                  +
+                  {featuredSupply.supplyAPRTotal?.toLocaleString('en-US', {
+                    maximumFractionDigits: 1
+                  }) ?? '-'}
+                  %
+                </span>
                 <SupplyPopover
                   asset={featuredSupply.asset}
                   supplyAPR={featuredSupply.supplyAPR}
@@ -120,6 +129,15 @@ export default function FeaturedMarketTile({
                 APR
               </span>
               <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto">
+                <span
+                  className={`mr-1 md:mr-0 text-xs lg:w-full  lg:mb-1 text-center`}
+                >
+                  +
+                  {featuredSupply2.supplyAPRTotal?.toLocaleString('en-US', {
+                    maximumFractionDigits: 1
+                  }) ?? '-'}
+                  %
+                </span>
                 <SupplyPopover
                   asset={featuredSupply2.asset}
                   supplyAPR={featuredSupply2.supplyAPR}

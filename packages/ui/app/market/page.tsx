@@ -111,9 +111,9 @@ export default function Market() {
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
         {/* //........ */}
         <div
-          className={`w-full grid md:grid-cols-8  grid-cols-1 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-2 `}
+          className={`w-full grid lg:grid-cols-9 md:grid-cols-8  grid-cols-1 flex-col items-start  justify-start bg-darkone h-min rounded-xl gap-2 `}
         >
-          <div className={`grid gap-y-2 col-span-3 h-full`}>
+          <div className={`grid gap-y-2 col-span-3  h-full`}>
             <TotalTvlTile />
             <TvlTile
               dropdownSelectedChain={dropdownSelectedChain.toString()}
@@ -145,7 +145,7 @@ export default function Market() {
             />
             <div className=" flex flex-row gap-3 md:mb-0 mb-3 justify-center md:justify-start md:mx-0 mx-auto">
               <button
-                className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm font-bold uppercase`}
+                className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm  uppercase`}
                 onClick={() => setSwapOpen(true)}
               >
                 {`Wrap ${+dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
@@ -168,7 +168,7 @@ export default function Market() {
               </button>
 
               <button
-                className={`px-6  md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs font-bold uppercase`}
+                className={`px-6  md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs  uppercase`}
                 onClick={() => setSwapWidgetOpen(true)}
               >
                 {'Swap Assets'}

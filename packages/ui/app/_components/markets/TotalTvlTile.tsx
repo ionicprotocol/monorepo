@@ -9,7 +9,7 @@ export default function TotalTvlTile() {
   // console.log(data);
   return (
     <div
-      className={`w-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start  bg-grayone  py-4 rounded-md`}
     >
       <span
         className={` md:mr-auto mx-auto md:mx-0 md:text-xl text-lg font-semibold`}
@@ -17,6 +17,7 @@ export default function TotalTvlTile() {
         Total Protocol TVL{' '}
         <span className={`text-[8px] text-white/50 `}>(ALL CHAIN)</span>{' '}
       </span>
+      <div className="h-[2px] w-[95%] mx-auto bg-white/10 lg:my-3 my-2 " />
       <div
         className={` w-full   flex flex-wrap   items-center justify-center md:justify-start gap-4`}
       >
