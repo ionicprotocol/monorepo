@@ -223,7 +223,10 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Super OETH",
     decimals: 18,
     oracle: OracleTypes.ERC4626Oracle,
-    extraDocs: defaultDocs("https://basescan.org", wsuperOETHb)
+    extraDocs: defaultDocs("https://basescan.org", wsuperOETHb),
+    initialSupplyCap: parseEther(String(6000)).toString(),
+    initialBorrowCap: parseEther(String(4800)).toString(),
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

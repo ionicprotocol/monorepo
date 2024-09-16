@@ -4,8 +4,11 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.cbBTC];
+  const assetsToDeploy: string[] = [assetSymbols.wsuperOETHb];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+    if (!asset.underlying || !asset.symbol) {
+      throw new Error("Invalid asset");
+    }
     await run("market:deploy", {
       signer: "deployer",
       cf: "0",
