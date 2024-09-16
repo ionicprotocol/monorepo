@@ -1,5 +1,6 @@
 ecs_cluster_name   = "opportunity-bot-cluster"
 cluster_name = "opportunity-bot-cluster1"
+liquidator_cluster_name = "liquidator-cluster"
 task_definition_family = "perbotTaskDefinition"
 container_name        = "opportunity_bot"
 docker_image          = "058264122535.dkr.ecr.eu-central-1.amazonaws.com/liquidator-pyth"
@@ -10,3 +11,5 @@ autoscaling_group_name = "opportunity_bot_asg"
 desired_count  = 1
 ecr_repository_name = "liquidator-pyth"
 ecs_service_name = "opportunity_bot_service"
+
+liquidator_service_name = "liquidator-service"
