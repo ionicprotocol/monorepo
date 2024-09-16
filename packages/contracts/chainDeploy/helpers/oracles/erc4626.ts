@@ -11,7 +11,6 @@ export const deployErc4626PriceOracle = async ({
 }: Erc4626OracleFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
-  const walletClient = await viem.getWalletClient(deployer as Address);
 
   const mpo = await viem.getContractAt(
     "MasterPriceOracle",
@@ -37,5 +36,5 @@ export const deployErc4626PriceOracle = async ({
   console.log("ERC4626Oracle: ", e4626o.address);
 
   const underlyings = erc4626Assets.map((f) => f.assetAddress);
-  await addUnderlyingsToMpo(mpo, underlyings, e4626o.address, deployer, publicClient, walletClient);
+  await addUnderlyingsToMpo(mpo as any, underlyings, e4626o.address as Address, deployer, publicClient);
 };
