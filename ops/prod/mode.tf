@@ -34,6 +34,7 @@ module "mode_mainnet_liquidator_ecs" {
   ethereum_admin_private_key = var.ethereum_admin_private_key
   ecs_service_name           = var.liquidator_service_name
   desired_count              = var.desired_count
+  liquidation_discord_webhook_url = var.liquidation_discord_webhook_url
   subnet_ids                 = ["subnet-0cd439d262800846e"]
   security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region
