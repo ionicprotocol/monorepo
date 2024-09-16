@@ -132,8 +132,11 @@ export default function Market() {
           <StakingTile chain={+chain} />
         </div>
         {/* //............................................ */}
-        <div className={`w-full my-2  `}>
-          <NetworkSelector dropdownSelectedChain={+chain} />
+        <div className={`w-full my-2 flex flex-wrap  `}>
+          <NetworkSelector
+            dropdownSelectedChain={+chain}
+            upcomingChains={['MetalsL2', 'Lisk', 'Ozean', 'Soneium']}
+          />
         </div>
         <div
           className={`bg-grayone w-full lg:px-[1%] xl:px-[3%]  rounded-xl pt-3 pb-7`}
