@@ -25,6 +25,8 @@ export const RSR = "0xaB36452DbAC151bE02b16Ca17d8919826072f64a";
 export const ION = "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5";
 export const hyUSD = "0xCc7FF230365bD730eE4B352cC2492CEdAC49383e";
 export const cbBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
+export const superOETHb = "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3";
+export const wsuperOETHb = "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6";
 
 export const assets: SupportedAsset[] = [
   {
@@ -206,6 +208,25 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseUnits(String(1), 8).toString(),
     initialCf: "0.30",
     extraDocs: defaultDocs("https://basescan.org", cbBTC)
+  },
+  {
+    symbol: assetSymbols.superOETHb,
+    underlying: superOETHb,
+    name: "Super OETH",
+    decimals: 18,
+    oracle: OracleTypes.FixedNativePriceOracle,
+    extraDocs: defaultDocs("https://basescan.org", superOETHb)
+  },
+  {
+    symbol: assetSymbols.wsuperOETHb,
+    underlying: wsuperOETHb,
+    name: "Wrapped Super OETH",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", wsuperOETHb),
+    initialSupplyCap: parseEther(String(6000)).toString(),
+    initialBorrowCap: parseEther(String(4800)).toString(),
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
