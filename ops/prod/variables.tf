@@ -93,6 +93,10 @@ variable "cluster_name" {
   description = "Name of the ECS cluster"
   type        = string
 }
+variable "liquidator_cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
 
 variable "task_definition_family" {
   description = "Family name of the task definition"
@@ -120,6 +124,9 @@ variable "autoscaling_group_name" {
   type        = string
 }
 variable "ecs_service_name"{
+
+}
+variable "liquidator_service_name"{
 
 }
 variable "base_mainnet_rpcs" {
