@@ -40,7 +40,7 @@ export default function FeaturedMarketTile({
   const featuredSupply2 = useStore((state) => state.featuredSupply2);
   return (
     <div
-      className={`w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center lg:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
       {/* this will get maped on basis of featured  */}
       <span className={` mr-auto text-xl font-semibold`}>Featured Markets</span>
