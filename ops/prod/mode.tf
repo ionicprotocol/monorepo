@@ -23,7 +23,7 @@ module "mode_mainnet_liquidation_rpc_0" {
 module "mode_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
-  cluster_name               = var.cluster_name
+  cluster_name               = liquidator_bot
   task_definition_family     = var.task_definition_family
   container_name             = var.container_name
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
@@ -32,7 +32,7 @@ module "mode_mainnet_liquidator_ecs" {
   target_chain_id            = local.mode_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
   ethereum_admin_private_key = var.ethereum_admin_private_key
-  ecs_service_name           = var.ecs_service_name
+  ecs_service_name           = liquidator_service
   desired_count              = var.desired_count
   subnet_ids                 = ["subnet-0cd439d262800846e"]
   security_group_ids         = ["sg-0a3996557af867ad0"]
