@@ -25,7 +25,6 @@ module "mode_mainnet_liquidator_ecs" {
 
   cluster_name               = var.liquidator_cluster_name
   task_definition_family     = var.task_definition_family
-  container_name             = var.container_name
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag
   web3_http_provider_url     = var.mode_mainnet_rpcs
@@ -38,6 +37,7 @@ module "mode_mainnet_liquidator_ecs" {
   subnet_ids                 = ["subnet-0cd439d262800846e"]
   security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region
+  liquidator_container_name  = var.liquidator_container_name
 }
 module "mode_mainnet_pyth_rpc_0" {
   source              = "../modules/lambda"

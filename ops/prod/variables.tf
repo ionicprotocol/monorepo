@@ -81,6 +81,11 @@ variable "container_name" {
   description = "The name of the container"
   type        = string
 }
+variable "liquidator_container_name" {
+  description = "The name of the container"
+  type        = string
+}
+
 
 
 variable "desired_count" {

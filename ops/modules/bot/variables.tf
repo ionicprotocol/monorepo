@@ -20,7 +20,7 @@ variable "memory" {
   default     = "8192"
 }
 
-variable "container_name" {
+variable "liquidator_container_name" {
   description = "Name of the container"
   type        = string
 }
