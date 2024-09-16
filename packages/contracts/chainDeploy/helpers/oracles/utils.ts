@@ -1,7 +1,7 @@
 import { Address, encodeFunctionData, PublicClient, WalletClient, zeroAddress } from "viem";
 import { addTransaction, prepareAndLogTransaction } from "../logging";
-import { masterPriceOracleAbi } from "../../../generated";
 import type { GetContractReturnType } from "@nomicfoundation/hardhat-viem/types.js";
+import { masterPriceOracleAbi } from "../../../../sdk/src/generated";
 
 export async function addUnderlyingsToMpo(
   mpo: GetContractReturnType<typeof masterPriceOracleAbi>,
