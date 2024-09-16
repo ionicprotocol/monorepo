@@ -147,4 +147,33 @@ interface IveION {
   // function merge() external;
   // function split() external;
   // function stake() external;
+
+  /**
+   * @notice Checks if the given address is approved or the owner of the token.
+   * @param _spender Address to check.
+   * @param _tokenId Token ID to check.
+   * @return bool True if the address is approved or the owner, false otherwise.
+   */
+  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool);
+
+  /**
+   * @notice Checks if the given token ID is deactivated.
+   * @param _tokenId Token ID to check.
+   * @return bool True if the token is deactivated, false otherwise.
+   */
+  function deactivated(uint256 _tokenId) external view returns (bool);
+
+  /**
+   * @notice Updates the voting status of a token.
+   * @param _tokenId Token ID to update.
+   * @param _voting Boolean indicating if the token is voting or not.
+   */
+  function voting(uint256 _tokenId, bool _voting) external;
+
+  /**
+   * @notice Gets the balance of a specific NFT.
+   * @param _tokenId Token ID to check.
+   * @return uint256 Balance of the NFT.
+   */
+  function balanceOfNFT(uint256 _tokenId) external view returns (uint256);
 }
