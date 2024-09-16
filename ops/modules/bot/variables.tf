@@ -55,11 +55,6 @@ variable "ethereum_admin_private_key" {
   type        = string
 }
 
-variable "per_discord_webhook_url" {
-  description = "Discord webhook URL for notifications"
-  type        = string
-}
-
 variable "ecs_service_name" {
   description = "Name of the ECS service"
   type        = string

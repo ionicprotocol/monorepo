@@ -32,11 +32,10 @@ module "mode_mainnet_liquidator_ecs" {
   target_chain_id            = local.mode_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
   ethereum_admin_private_key = var.ethereum_admin_private_key
-  per_discord_webhook_url    = var.per_discord_webhook_url
   ecs_service_name           = var.ecs_service_name
   desired_count              = var.desired_count
-  subnet_ids                 = var.subnet_ids
-  security_group_ids         = var.security_group_ids
+  subnet_ids                 = ["subnet-0cd439d262800846e"]
+  security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region
 }
 module "mode_mainnet_pyth_rpc_0" {
