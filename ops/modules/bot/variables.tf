@@ -83,7 +83,3 @@ variable "liquidation_discord_webhook_url" {
   description = "The Discord webhook URL for liquidation notifications."
   type        = string
 }
-variable "liquidation_discord_webhook_url" {
-  description = "The Discord webhook URL for liquidation notifications."
-  type        = string
-}
