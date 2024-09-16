@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group"         = "/ecs/${var. liquidator_container_name}"
+          "awslogs-group"         = "/ecs/${var.liquidator_container_name}"
           "awslogs-region"        = "us-east-1"
           "awslogs-stream-prefix" = "ecs"
         }
@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
           value = "${var.ethereum_admin_private_key}"
         },
         {
-          name  = "PER_DISCORD_WEBHOOK_URL"
+          name  = "DISCORD_WEBHOOK_URL"
           value = "${var.liquidation_discord_webhook_url}"
         } 
       ] 
