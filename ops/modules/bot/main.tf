@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
   container_definitions = jsonencode([
     {
       name      = var.liquidator_container_name
-      image     = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator/test:${var.bots_image_tag}"
+      image     = "058264122535.dkr.ecr.us-east-1.amazonaws.com/liquidator-ecs:${var.bots_image_tag}"
       essential = true
       logConfiguration = {
         logDriver = "awslogs"
