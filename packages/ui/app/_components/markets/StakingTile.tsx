@@ -13,9 +13,9 @@ interface Iprop {
 export default function StakingTile({ chain }: Iprop) {
   return (
     <div
-      className={`w-full h-full col-span-2 px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full h-full lg:col-span-3 md:col-span-2 col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
-      <h1 className={` mr-auto text-xl font-semibold`}>Staking</h1>
+      <h1 className={` mr-auto text-xl font-semibold`}>$ION Staking</h1>
       <div className={`w-full flex flex-col items-center justify-start `}>
         {/* <div>
           <span>APY</span>
@@ -38,9 +38,10 @@ export default function StakingTile({ chain }: Iprop) {
           </span>
         )}
       </div>
+      <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto " />
       <Link
         href={`/stake?chain=${+chain === mode.id || +chain === base.id ? chain : '34443'}`}
-        className={`rounded-md bg-accent text-black py-1.5 px-1 uppercase truncate text-xs w-[80%] mx-auto text-center mt-auto`}
+        className={`rounded-md bg-accent text-black py-1.5 px-1  uppercase truncate text-xs w-[80%] mx-auto text-center mt-2`}
       >
         Stake
       </Link>

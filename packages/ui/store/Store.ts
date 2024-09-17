@@ -13,6 +13,7 @@ interface IFeaturedBorrow extends BorrowPopoverProps {
 interface IFeaturedSupply extends SupplyPopoverProps {
   // asset: string;
   // isVerified: boolean;
+  supplyAPRTotal: number | undefined;
 }
 
 interface IStore {
@@ -55,6 +56,7 @@ export const useStore = create<IStore>((set) => ({
     pool: '0x',
     selectedPoolId: '0',
     supplyAPR: 0,
+    supplyAPRTotal: 0,
     rewards: []
   },
   featuredSupply2: {
@@ -64,6 +66,7 @@ export const useStore = create<IStore>((set) => ({
     pool: '0x',
     selectedPoolId: '0',
     supplyAPR: 0,
+    supplyAPRTotal: 0,
     rewards: []
   },
   setFeaturedBorrow: (data: IFeaturedBorrow) =>

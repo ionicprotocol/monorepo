@@ -81,6 +81,11 @@ variable "container_name" {
   description = "The name of the container"
   type        = string
 }
+variable "liquidator_container_name" {
+  description = "The name of the container"
+  type        = string
+}
+
 
 
 variable "desired_count" {
@@ -90,6 +95,10 @@ variable "desired_count" {
 
 
 variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+variable "liquidator_cluster_name" {
   description = "Name of the ECS cluster"
   type        = string
 }
@@ -120,6 +129,9 @@ variable "autoscaling_group_name" {
   type        = string
 }
 variable "ecs_service_name"{
+
+}
+variable "liquidator_service_name"{
 
 }
 variable "base_mainnet_rpcs" {

@@ -1,55 +1,85 @@
-variable "execution_role_arn" {}
+variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
 
-variable "cluster_id" {}
-
-
-variable "docker_image" {}
-
-variable "container_family" {}
-
-variable "instance_count" {
-  default = 1
+variable "task_definition_family" {
+  description = "Family name of the task definition"
+  type        = string
 }
 
 variable "cpu" {
-  default = 256
+  description = "CPU units for the task definition"
+  type        = string
+  default     = "4096"
 }
 
 variable "memory" {
-  default = 512
+  description = "Memory for the task definition"
+  type        = string
+  default     = "8192"
 }
 
-
-variable "service_security_groups" {
+variable "liquidator_container_name" {
+  description = "Name of the container"
+  type        = string
 }
 
-variable "subnets" {
+variable "ecr_repository_url" {
+  description = "URL of the ECR repository"
+  type        = string
 }
 
-
-variable "chain_id" {
-  type = string
+variable "bots_image_tag" {
+  description = "Tag for the bot image"
+  type        = string
 }
 
-variable "environment" {
-  type = string
+variable "web3_http_provider_url" {
+  description = "URL for Web3 HTTP Provider"
+  type        = string
 }
 
-variable "provider_urls" {
-  description = "List of provider URLs"
+variable "target_chain_id" {
+  description = "Target chain ID"
+  type        = string
+}
+
+variable "ethereum_admin_account" {
+  description = "Ethereum admin account"
+  type        = string
+}
+
+variable "ethereum_admin_private_key" {
+  description = "Private key for Ethereum admin"
+  type        = string
+}
+
+variable "ecs_service_name" {
+  description = "Name of the ECS service"
+  type        = string
+}
+
+variable "desired_count" {
+  description = "Desired number of ECS service instances"
+  type        = number
+}
+
+variable "subnet_ids" {
+  description = "Subnets for the ECS service"
   type        = list(string)
 }
 
-variable "runtime_env_vars" {
-  description = "Runtime environment variables"
-  type        = list(object({
-    name  = string
-    value = string
-  }))
+variable "security_group_ids" {
+  description = "Security groups for the ECS service"
+  type        = list(string)
 }
 
-
-
 variable "region" {
-
+  description = "AWS region"
+  type        = string
+}
+variable "liquidation_discord_webhook_url" {
+  description = "The Discord webhook URL for liquidation notifications."
+  type        = string
 }

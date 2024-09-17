@@ -13,13 +13,15 @@ interface INetworkSelector {
   dropdownSelectedChain: number;
   nopool?: boolean;
   enabledChains?: number[];
+  upcomingChains?: string[];
 }
 
 function NetworkSelector({
   dropdownSelectedChain,
   nopool = false,
   enabledChains,
-  chain
+  chain,
+  upcomingChains
 }: INetworkSelector) {
   const pathname = usePathname();
   const setDropChain = useStore((state) => state.setDropChain);
@@ -47,7 +49,7 @@ function NetworkSelector({
         )
         .map(([chainId, network], idx: number) => (
           <Link
-            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
+            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
             href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
             key={idx}
             onClick={() => setDropChain(chainId)}
@@ -59,6 +61,24 @@ function NetworkSelector({
             />{' '}
             {network.name}
           </Link>
+        ))}
+      {!!upcomingChains &&
+        upcomingChains.map((upcomingChain, idx) => (
+          <div
+            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md  relative border border-gray-800 `}
+            // href={`${pathname}?chain=${dropdownSelectedChain}${nopool ? '' : '&pool=0'}`}
+            key={idx}
+          >
+            <img
+              alt="checkmark--v1"
+              className={`w-4 h-4 stroke-lime `}
+              src={`/img/logo/${upcomingChain.toUpperCase()}.png`}
+            />{' '}
+            {upcomingChain}
+            <div
+              className={`absolute   right-0 w-full h-full bg-gray-700/50  `}
+            />
+          </div>
         ))}
     </div>
   );
