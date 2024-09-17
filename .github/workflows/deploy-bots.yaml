@@ -131,7 +131,7 @@ jobs:
 
 
 
-  build-and-push-liquidator-test-image:
+  build-and-push-liquidator-ecs-image:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
@@ -307,11 +307,10 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       [
-        build-and-push-liquidator-image,
         build-and-push-oracles-monitor-image,
         build-and-push-pyth-updater-image,
         build-and-push-pyth-liquidator-image,
-        build-and-push-liquidator-test-image,
+        build-and-push-liquidator-ecs-image,
         # build-and-push-liquidator-base-image,
         lint-bots,
       ]
