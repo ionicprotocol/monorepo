@@ -1,7 +1,10 @@
 import { task } from "hardhat/config";
-import { ION, weETH_MARKET } from ".";
+import { AERO_MARKET, ION, RSR_MARKET, weETH_MARKET } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
+
+const SUPPLY_DURATION = 29 * (24 * 60 * 60) + 1 * (23 * 60 * 60); // 29 days 23 hours
+const BORROW_DURATION = 30 * (24 * 60 * 60); // 30 days
 
 task("base:add-rewards:epoch1:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
@@ -44,7 +47,7 @@ task("base:add-rewards:epoch1:supply", "add rewards to a market").setAction(
         market,
         rewardTokenName,
         rewardToken,
-        29 * (24 * 60 * 60) + 1 * (23 * 60 * 60), // 29 days 23 hours
+        SUPPLY_DURATION,
         deployer as Address,
         viem,
         deployments
@@ -77,7 +80,7 @@ task("base:add-rewards:epoch1:weeth:supply", "add rewards to a market").setActio
       market,
       rewardTokenName,
       rewardToken,
-      29 * (24 * 60 * 60) + 1 * (23 * 60 * 60), // 29 days 23 hours
+      SUPPLY_DURATION,
       deployer as Address,
       viem,
       deployments
@@ -126,11 +129,43 @@ task("base:add-rewards:epoch1:borrow", "add rewards to a market").setAction(
         market,
         rewardTokenName,
         rewardToken,
-        30 * (24 * 60 * 60), // 30 days
+        BORROW_DURATION,
         deployer as Address,
         viem,
         deployments
       );
     }
+  }
+);
+
+task("base:add-rewards:epoch2:supply", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const rewardToken = ION;
+    const rewardTokenName = "ION";
+    const market = RSR_MARKET;
+    const rewardAmount = "35000";
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments
+    );
   }
 );

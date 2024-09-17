@@ -345,11 +345,11 @@ export const multipliers: Record<
           ionAPR: true
         },
         supply: {
-          flywheel: true,
+          flywheel: false,
           ionic: 0,
           turtle: true,
           rewards: true,
-          ionAPR: true
+          ionAPR: false
         }
       },
       hyUSD: {
@@ -365,7 +365,7 @@ export const multipliers: Record<
           ionic: 0,
           turtle: true,
           rewards: true,
-          ionAPR: true
+          ionAPR: false
         }
       },
       AERO: {
@@ -381,7 +381,8 @@ export const multipliers: Record<
           ionic: 3,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       USDC: {
@@ -461,17 +462,18 @@ export const multipliers: Record<
           etherfi: 3,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       RSR: {
-        borrow: { turtle: false, rewards: false, ionAPR: false, ionic: 0 },
+        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: false,
-          ionAPR: false
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
         }
       },
       wstETH: {
