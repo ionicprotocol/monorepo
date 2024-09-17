@@ -4,6 +4,7 @@ import { FundOperationMode } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
 // import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { type Address, formatEther, formatUnits, parseUnits } from 'viem';
@@ -40,6 +41,10 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
+  ssr: false
+});
 
 export enum PopupMode {
   SUPPLY = 1,
@@ -297,6 +302,7 @@ const Popup = ({
   );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const hfpStatus = useMemo<HFPStatus>(() => {
     if (!predictedHealthFactor) {
       return HFPStatus.UNKNOWN;
@@ -1145,6 +1151,13 @@ const Popup = ({
           isMounted && 'animated'
         }`}
       >
+        <SwapWidget
+          close={() => setSwapWidgetOpen(false)}
+          open={swapWidgetOpen}
+          fromChain={chainId}
+          toChain={chainId}
+          toToken={selectedMarketData.underlyingToken}
+        />
         <div
           className={`w-[85%] sm:w-[55%] md:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
             isMounted && 'animated'
@@ -1186,7 +1199,15 @@ const Popup = ({
                 {/* ---------------------------------------------------------------------------- */}
                 {/* SUPPLY-Collateral section */}
                 {/* ---------------------------------------------------------------------------- */}
-                <div className={`min-w-full py-5 px-[6%] h-min `}>
+                <div className={`min-w-full pb-5 px-[6%] h-min `}>
+                  <button
+                    className={`w-full font-bold uppercase rounded-md py-1 transition-colors bg-accent text-darkone text-xs mx-auto my-2`}
+                    onClick={() => setSwapWidgetOpen(true)}
+                  >
+                    Get {selectedMarketData.underlyingSymbol}
+                  </button>
+                  {/* <div className={`w-full flex items-center justify-center`}> */}
+                  {/* </div> */}
                   <Amount
                     amount={amount}
                     handleInput={(val?: string) => setAmount(val)}
