@@ -19,7 +19,6 @@ interface Iprop {
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   isLoadingPoolData: boolean;
-  setSwapOpen: any;
   dropdownSelectedChain: string;
   setSwapWidgetOpen: any;
   swapWidgetOpen: boolean;
@@ -30,7 +29,6 @@ export default function FeaturedMarketTile({
   setPopupMode,
   setSelectedSymbol,
   isLoadingPoolData = true,
-  setSwapOpen,
   dropdownSelectedChain,
   setSwapWidgetOpen,
   swapWidgetOpen
@@ -194,7 +192,6 @@ export default function FeaturedMarketTile({
       <WrapEthSwaps
         setSwapWidgetOpen={setSwapWidgetOpen}
         swapWidgetOpen={swapWidgetOpen}
-        setSwapOpen={setSwapOpen}
         dropdownSelectedChain={+dropdownSelectedChain}
       />
     </div>
