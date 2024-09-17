@@ -673,4 +673,16 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
     }
   }
+
+  /// @inheritdoc IveION
+  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool) {}
+
+  /// @inheritdoc IveION
+  function deactivated(uint256 _tokenId) external view returns (bool) {}
+
+  /// @inheritdoc IveION
+  function voting(uint256 _tokenId, bool _voting) external {}
+
+  /// @inheritdoc IveION
+  function balanceOfNFT(uint256 _tokenId) external view returns (uint256) {}
 }

@@ -315,4 +315,34 @@ contract Voter is IVoter {
       supplyIndex[_gauge] = index; // new users are set to the default global state
     }
   }
+
+  /// @inheritdoc IVoter
+  function depositManaged(uint256 _tokenId, uint256 _mTokenId) external {}
+
+  /// @inheritdoc IVoter
+  function withdrawManaged(uint256 _tokenId) external {}
+
+  /// @inheritdoc IVoter
+  function distribute(address[] memory _gauges) external {}
+
+  /// @inheritdoc IVoter
+  function distribute(uint256 _start, uint256 _finish) external {}
+  
+  /// @inheritdoc IVoter
+  function claimRewards(address[] memory _gauges) external {}
+
+  /// @inheritdoc IVoter
+  function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {}
+
+  /// @inheritdoc IVoter
+  function claimFees(address[] memory _fees, address[][] memory _tokens, uint256 _tokenId) external {}
+
+  /// @inheritdoc IVoter
+  function createGauge(address _poolFactory, address _pool) external returns (address) {}
+
+  /// @inheritdoc IVoter
+  function killGauge(address _gauge) external {}
+  
+  /// @inheritdoc IVoter
+  function reviveGauge(address _gauge) external {}
 }
