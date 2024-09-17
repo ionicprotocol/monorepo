@@ -2,7 +2,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { fraxtal } from 'viem/chains';
 
 const SwapWidget = dynamic(() => import('./SwapWidget'), {
   ssr: false
