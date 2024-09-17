@@ -29,7 +29,7 @@ export default function TvlTile({
 }: IProp) {
   return (
     <div
-      className={`w-full h-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full h-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap  flex-col items-center justify-center md:justify-start  bg-grayone  py-4 rounded-md`}
     >
       <div className="flex md:flex-row flex-col  w-full md:gap-2 ">
         {Object.entries(pools)
@@ -50,6 +50,7 @@ export default function TvlTile({
             ))
           )}
       </div>
+      <div className="h-[2px] w-[95%] mx-auto bg-white/10 lg:my-3 my-2  " />
       <div
         className={` w-full   flex flex-wrap   items-center justify-center md:justify-start gap-4`}
       >

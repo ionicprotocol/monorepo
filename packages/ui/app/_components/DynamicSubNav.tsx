@@ -22,10 +22,9 @@ function DynamicSubNav() {
             key={index}
             className={`pl-14`}
           >
-            veION coming soon! Supply and borrow assets from{' '}
-            {pools[+chainId]?.name ?? 'Mode'} to earn $ION. Accumulate and lock
-            $ION to increase emissions to your favorite assets to maximize
-            yields
+            veION COMING SOON! Supply & Borrow Assets to earn $ION. Accumulate &
+            Lock $ION to increase Emissions to your favorite Assets and Maximize
+            Yields!
           </span>
         ))}
       </div>
