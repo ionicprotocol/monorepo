@@ -58,14 +58,16 @@ export const multipliers: Record<
         borrow: {
           rewards: true,
           ionAPR: false,
-          turtle: false,
-          ionic: 0
+          turtle: true,
+          ionic: 0,
+          mode: 1
         },
         market: 'dmBTC_market',
         supply: {
           ionic: 0,
+          mode: 2,
           rewards: true,
-          turtle: false,
+          turtle: true,
           ionAPR: true,
           flywheel: true
         }
@@ -178,21 +180,52 @@ export const multipliers: Record<
         }
       },
       sUSDe: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          mode: 1,
+          turtle: true,
+          rewards: true,
+          ionAPR: false,
+          ionic: 0
+        },
         multiplier: 0,
         supply: {
           ionic: 0,
-          turtle: false,
+          mode: 2,
+          turtle: true,
           rewards: true,
           ionAPR: false
         }
       },
       USDe: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          mode: 1,
+          turtle: true,
+          rewards: true,
+          ionAPR: false,
+          ionic: 0
+        },
         multiplier: 0,
         supply: {
           ionic: 0,
-          turtle: false,
+          mode: 2,
+          turtle: true,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      msDAI: {
+        borrow: {
+          mode: 1,
+          turtle: true,
+          rewards: true,
+          ionAPR: false,
+          ionic: 0
+        },
+        multiplier: 0,
+        supply: {
+          ionic: 0,
+          mode: 2,
+          turtle: true,
           rewards: true,
           ionAPR: false
         }

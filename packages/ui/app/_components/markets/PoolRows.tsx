@@ -216,6 +216,8 @@ const PoolRows = ({
             lendingSupply: parseInt(supplyBalance),
             // loopMarkets: loopMarketsPassing,
             pool: pool,
+            borrowAPR:borrowAPR ?? '-' ,
+            supplyAPR: supplyAPR ?? '-' ,
             selectedChain: selectedChain,
             // selectedMarketData: selectedMarketDataPassing,
             selectedSymbol: asset

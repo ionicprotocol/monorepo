@@ -78,7 +78,7 @@ export default function FeaturedMarketTile({
               <span className="text-xs">{featuredSupply.asset}</span>
             </div>
             <div
-              className={`popover-container  relative flex lg:flex-col items-center justify-between lg:justify-center cursor-pointer w-full  gap-2 lg:pt-0  `}
+              className={`popover-container  relative flex lg:flex-col items-center justify-between lg:justify-center cursor-pointer w-full  gap-2 lg:pt-0 py-3 lg:py-0  `}
             >
               <span className="text-white/40 font-semibold lg:mr-0 mr-auto ml-2 lg:ml-0 text-[11px] lg:hidden text-left   ">
                 APR
