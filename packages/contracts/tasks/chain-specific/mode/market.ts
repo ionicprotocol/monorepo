@@ -4,7 +4,7 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
-import { COMPTROLLER_MAIN, MS_DAI_MARKET } from ".";
+import { COMPTROLLER_MAIN, dmBTC_MARKET, MS_DAI_MARKET } from ".";
 
 const modeAssets = mode.assets;
 
@@ -44,19 +44,9 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
-  await run("market:set-borrow-cap", {
-    market: MS_DAI_MARKET,
-    maxBorrow: parseEther(String(100_000)).toString()
-  });
-
   await run("market:set-supply-cap", {
-    market: MS_DAI_MARKET,
-    maxSupply: parseEther(String(100_000)).toString()
-  });
-
-  await run("market:set:ltv", {
-    marketAddress: MS_DAI_MARKET,
-    ltv: "0.5"
+    market: dmBTC_MARKET,
+    maxSupply: parseEther(String(2400 * 100000)).toString()
   });
 });
 

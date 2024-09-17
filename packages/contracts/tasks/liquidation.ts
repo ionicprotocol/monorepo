@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address } from "viem";
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { task } from "hardhat/config";
 
 export const setLiquidationStrategies = async (
   viem: HardhatRuntimeEnvironment["viem"],
@@ -41,6 +42,7 @@ export const setLiquidationStrategies = async (
         ]
       });
     } else {
+      console.log(`Setting redemption strategies for ${filteredPairs.length} pairs`);
       const tx = await liquidatorRegistry.write._setRedemptionStrategies([
         filteredPairs.map((pair) => pair.strategy),
         filteredPairs.map((pair) => pair.inputToken),
@@ -52,6 +54,59 @@ export const setLiquidationStrategies = async (
     console.log("Redemption strategy already set");
   }
 };
+
+task("liquidation:set-strategies", "Set redemption strategies for liquidators").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const univ2 = await deployments.getOrNull("KimUniV2Liquidator");
+    const algebra = await deployments.getOrNull("AlgebraSwapLiquidator");
+    const solidly = await deployments.getOrNull("SolidlySwapLiquidator");
+    const univ3 = await deployments.getOrNull("UniswapV3LiquidatorFunder");
+    const strategies = [univ2, algebra, solidly, univ3]
+      .map((strategy) => strategy?.address)
+      .filter((address) => address !== undefined) as Address[];
+
+    const liquidator = await viem.getContractAt(
+      "IonicLiquidator",
+      (await deployments.get("IonicLiquidator")).address as Address
+    );
+    const liquidators: any[] = [liquidator];
+    if (await deployments.getOrNull("IonicUniV3Liquidator")) {
+      const liquidatorV3 = await viem.getContractAt(
+        "IonicUniV3Liquidator",
+        (await deployments.get("IonicUniV3Liquidator")).address as Address
+      );
+      liquidators.push(liquidatorV3);
+    }
+    for (const liquidator of liquidators) {
+      const toBeSet: Address[] = [];
+      for (const strategy of strategies) {
+        const strat = await liquidator.read.redemptionStrategiesWhitelist([strategy]);
+        console.log(`Strategy ${strategy} is whitelisted: ${strat}`);
+        if (!strat) {
+          toBeSet.push(strategy);
+        }
+      }
+      console.log(`Setting strategies: ${toBeSet}`);
+      const owner = await liquidator.read.owner();
+      if (owner.toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: liquidator,
+          functionName: "_whitelistRedemptionStrategies",
+          args: [toBeSet, Array(toBeSet.length).fill(true)],
+          description: "Whitelist redemption strategies",
+          inputs: [
+            { internalType: "address[]", name: "strategies", type: "address[]" },
+            { internalType: "bool[]", name: "whitelisted", type: "bool[]" }
+          ]
+        });
+      } else {
+        const tx = await liquidator.write._whitelistRedemptionStrategies([toBeSet, Array(toBeSet.length).fill(true)]);
+        console.log("Transaction sent:", tx);
+      }
+    }
+  }
+);
 
 // import { CErc20Delegate } from "../typechain/CErc20Delegate";
 // import { ERC20 } from "../typechain/ERC20";
