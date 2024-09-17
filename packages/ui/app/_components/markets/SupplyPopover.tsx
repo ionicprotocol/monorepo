@@ -2,7 +2,6 @@
 import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import type { Address } from 'viem';
-import { mode } from 'viem/chains';
 
 const Rewards = dynamic(() => import('./Rewards'), {
   ssr: false
@@ -86,25 +85,6 @@ export default function SupplyPopover({
             rewards={rewards}
           />
         )}
-        {selectedPoolId === '0' &&
-          dropdownSelectedChain === mode.id &&
-          (asset.toLowerCase() === 'usdc' ||
-            asset.toLowerCase() === 'weth' ||
-            asset.toLowerCase() === 'stone' ||
-            asset.toLowerCase() === 'ezeth') && (
-            <a
-              href="https://jumper.exchange/superfest/"
-              target="_blank"
-              className="flex pr-4 underline pt-4"
-            >
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/logo/superOP.png"
-              />{' '}
-              + OP SuperFest rewards
-            </a>
-          )}
         {(multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
           ?.ionic ?? 0) > 0 && (
           <>

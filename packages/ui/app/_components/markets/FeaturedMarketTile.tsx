@@ -6,9 +6,11 @@ import { PopupMode } from '../popup/page';
 import ResultHandler from '../ResultHandler';
 
 // import BorrowPopover from './BorrowPopover';
-import SupplyPopover from './SupplyPopover';
+// import SupplyPopover from './SupplyPopover';
 
 // import { pools } from '@ui/constants/index';
+import WrapEthSwaps from './WrapEthSwaps';
+
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { useStore } from 'ui/store/Store';
 
@@ -17,13 +19,21 @@ interface Iprop {
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   isLoadingPoolData: boolean;
+  setSwapOpen: any;
+  dropdownSelectedChain: string;
+  setSwapWidgetOpen: any;
+  swapWidgetOpen: boolean;
 }
 
 export default function FeaturedMarketTile({
   selectedChain,
   setPopupMode,
   setSelectedSymbol,
-  isLoadingPoolData = true
+  isLoadingPoolData = true,
+  setSwapOpen,
+  dropdownSelectedChain,
+  setSwapWidgetOpen,
+  swapWidgetOpen
 }: Iprop) {
   // const {
   //   asset,
@@ -38,12 +48,13 @@ export default function FeaturedMarketTile({
   // } = useStore((state) => state.featuredBorrow);
   const featuredSupply = useStore((state) => state.featuredSupply);
   const featuredSupply2 = useStore((state) => state.featuredSupply2);
+
   return (
     <div
-      className={`w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center lg:justify-start gap-3 bg-grayone  py-4 rounded-md`}
+      className={`w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
       {/* this will get maped on basis of featured  */}
-      <span className={` mr-auto text-xl font-semibold`}>Featured Market </span>
+      <span className={` mr-auto text-xl font-semibold`}>Featured Markets</span>
       <div
         className={`w-full gap-x-3 hidden lg:grid  grid-cols-4 items-start  text-[10px] text-white/40 font-semibold text-center px-2 `}
       >
@@ -67,13 +78,20 @@ export default function FeaturedMarketTile({
               <span className="text-xs">{featuredSupply.asset}</span>
             </div>
             <div
-              className={`popover-container  relative flex lg:flex-col items-center justify-between lg:justify-center cursor-pointer w-full  gap-2 lg:pt-0 py-3 `}
+              className={`popover-container  relative flex lg:flex-col items-center justify-between lg:justify-center cursor-pointer w-full  gap-2 lg:pt-0 py-3 lg:py-0  `}
             >
               <span className="text-white/40 font-semibold lg:mr-0 mr-auto ml-2 lg:ml-0 text-[11px] lg:hidden text-left   ">
                 APR
               </span>
-              <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto ">
-                <SupplyPopover
+              <div className=" flex lg:flex-col  md:ml-0  my-auto items-center justify-center">
+                <span className={`mr-1 md:mr-0 text-xs  text-center `}>
+                  +
+                  {featuredSupply.supplyAPRTotal?.toLocaleString('en-US', {
+                    maximumFractionDigits: 1
+                  }) ?? '-'}
+                  %
+                </span>
+                {/* <SupplyPopover
                   asset={featuredSupply.asset}
                   supplyAPR={featuredSupply.supplyAPR}
                   rewards={featuredSupply.rewards}
@@ -81,7 +99,7 @@ export default function FeaturedMarketTile({
                   selectedPoolId={featuredSupply.selectedPoolId}
                   cToken={featuredSupply.cToken}
                   pool={featuredSupply.pool}
-                />
+                /> */}
               </div>
             </div>
             <button
@@ -120,7 +138,16 @@ export default function FeaturedMarketTile({
                 APR
               </span>
               <div className=" flex lg:flex-col flex-wrap md:ml-0 ml-auto">
-                <SupplyPopover
+                <span
+                  className={`mr-1 md:mr-0 text-xs lg:w-full   text-center`}
+                >
+                  +
+                  {featuredSupply2.supplyAPRTotal?.toLocaleString('en-US', {
+                    maximumFractionDigits: 1
+                  }) ?? '-'}
+                  %
+                </span>
+                {/* <SupplyPopover
                   asset={featuredSupply2.asset}
                   supplyAPR={featuredSupply2.supplyAPR}
                   rewards={featuredSupply2.rewards}
@@ -128,7 +155,7 @@ export default function FeaturedMarketTile({
                   selectedPoolId={featuredSupply2.selectedPoolId}
                   cToken={featuredSupply2.cToken}
                   pool={featuredSupply2.pool}
-                />
+                /> */}
               </div>
             </div>
             <button
@@ -164,6 +191,12 @@ export default function FeaturedMarketTile({
           </div>
         )}
       </ResultHandler>
+      <WrapEthSwaps
+        setSwapWidgetOpen={setSwapWidgetOpen}
+        swapWidgetOpen={swapWidgetOpen}
+        setSwapOpen={setSwapOpen}
+        dropdownSelectedChain={+dropdownSelectedChain}
+      />
     </div>
   );
 }
