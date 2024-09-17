@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { type Address, formatEther, formatUnits } from 'viem';
-import { fraxtal, mode } from 'viem/chains';
+import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
@@ -38,9 +38,7 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 // import SwapWidget from '../_components/markets/SwapWidget';
-const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
-  ssr: false
-});
+
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   { ssr: false }
@@ -128,11 +126,15 @@ export default function Market() {
             setSelectedSymbol={setSelectedSymbol}
             selectedChain={chainId}
             isLoadingPoolData={isLoadingPoolData}
+            setSwapWidgetOpen={setSwapWidgetOpen}
+            swapWidgetOpen={swapWidgetOpen}
+            setSwapOpen={setSwapOpen}
+            dropdownSelectedChain={dropdownSelectedChain.toString()}
           />
           <StakingTile chain={+chain} />
         </div>
         {/* //............................................ */}
-        <div className={`w-full my-2 flex flex-wrap  `}>
+        <div className={`w-full my-3 flex flex-wrap  `}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
             upcomingChains={['MetalsL2', 'Lisk', 'Ozean', 'Soneium']}
@@ -146,43 +148,6 @@ export default function Market() {
               chain={+chain}
               pool={selectedPool}
             />
-            <div className=" flex flex-row gap-3 md:mb-0 mb-3 justify-center md:justify-start md:mx-0 mx-auto">
-              <button
-                className={`px-6   md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-sm  uppercase`}
-                onClick={() => setSwapOpen(true)}
-              >
-                {`Wrap ${+dropdownSelectedChain === fraxtal.id ? 'frxETH' : 'ETH'} `}
-
-                <img
-                  alt=""
-                  className="inline-block"
-                  height="20"
-                  src={`/img/symbols/32/color/${+dropdownSelectedChain === fraxtal.id ? 'frxeth' : 'eth'}.png`}
-                  width="20"
-                />
-                <span>{' -> '}</span>
-                <img
-                  alt=""
-                  className="inline-block"
-                  height="20"
-                  src={`/img/symbols/32/color/${+dropdownSelectedChain === fraxtal.id ? 'wfrxeth' : 'weth'}.png`}
-                  width="20"
-                />
-              </button>
-
-              <button
-                className={`px-6  md:mx-0 rounded-md py-1 transition-colors bg-accent text-darkone text-xs  uppercase`}
-                onClick={() => setSwapWidgetOpen(true)}
-              >
-                {'Swap Assets'}
-              </button>
-
-              <SwapWidget
-                close={() => setSwapWidgetOpen(false)}
-                open={swapWidgetOpen}
-                toChain={+dropdownSelectedChain}
-              />
-            </div>
           </div>
           <div
             className={`w-full gap-x-1 hidden md:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}

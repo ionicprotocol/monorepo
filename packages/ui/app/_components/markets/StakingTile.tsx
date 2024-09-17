@@ -41,7 +41,7 @@ export default function StakingTile({ chain }: Iprop) {
       <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto " />
       <Link
         href={`/stake?chain=${+chain === mode.id || +chain === base.id ? chain : '34443'}`}
-        className={`rounded-md bg-accent text-black py-1.5 px-1  uppercase truncate text-xs w-[80%] mx-auto text-center mt-auto`}
+        className={`rounded-md bg-accent text-black py-1.5 px-1  uppercase truncate text-xs w-[80%] mx-auto text-center mt-2`}
       >
         Stake
       </Link>

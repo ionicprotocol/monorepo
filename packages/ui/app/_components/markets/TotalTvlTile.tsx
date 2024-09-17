@@ -15,7 +15,7 @@ export default function TotalTvlTile() {
         className={` md:mr-auto mx-auto md:mx-0 md:text-xl text-lg font-semibold`}
       >
         Total Protocol TVL{' '}
-        <span className={`text-[8px] text-white/50 `}>(ALL CHAIN)</span>{' '}
+        <span className={`text-[8px] text-white/50 `}>(ALL CHAINS)</span>{' '}
       </span>
       <div className="h-[2px] w-[95%] mx-auto bg-white/10 lg:my-3 my-2 " />
       <div
