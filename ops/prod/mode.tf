@@ -47,7 +47,7 @@ module "mode_mainnet_pyth_rpc_0" {
   environment         = "mainnet"
   chain_id            = local.mode_mainnet_chain_id
   container_env_vars = merge(
-    local.liquidation_variables,
+    local.pyth_updater_lambda_variables,
     { WEB3_HTTP_PROVIDER_URLS = local.mode_mainnet_rpcs }  # Directly use the string
   )
   schedule_expression = "rate(5 minutes)"
