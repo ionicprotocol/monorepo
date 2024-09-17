@@ -128,7 +128,6 @@ export default function Market() {
             isLoadingPoolData={isLoadingPoolData}
             setSwapWidgetOpen={setSwapWidgetOpen}
             swapWidgetOpen={swapWidgetOpen}
-            setSwapOpen={setSwapOpen}
             dropdownSelectedChain={dropdownSelectedChain.toString()}
           />
           <StakingTile chain={+chain} />
@@ -137,7 +136,7 @@ export default function Market() {
         <div className={`w-full my-3 flex flex-wrap  `}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
-            upcomingChains={['MetalsL2', 'Lisk', 'Ozean', 'Soneium']}
+            upcomingChains={['MetalL2', 'Lisk', 'Ozean', 'Soneium']}
           />
         </div>
         <div
