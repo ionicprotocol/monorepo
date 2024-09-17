@@ -133,6 +133,26 @@ contract Voter is IVoter {
     maxVotingNum = _maxVotingNum;
   }
 
+  function setGauges(address[] memory _pools, address[] memory _gauges) external {
+    if (msg.sender != governor) revert NotGovernor();
+    uint256 _length = _pools.length;
+    if (_gauges.length != _length) revert MismatchedArrayLengths();
+    for (uint256 i = 0; i < _length; i++) {
+      gauges[_pools[i]] = _gauges[i];
+      isGauge[_gauges[i]] = true;
+    }
+  }
+
+  function distributeRewards(address[] memory _pools) external {
+    if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
+    if (_pools.length != pools.length) revert NotAllPools();
+    uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
+    for (uint256 i = 0; i < _pools.length; i++) {
+      if (!isGauge[gauges[_pools[i]]]) revert GaugeDoesNotExist(_pools[i]);
+      IERC20(rewardToken).safeTransfer(gauges[_pools[i]], _reward * weights[_pools[i]] / totalWeight); 
+    }
+  }
+
   /// @inheritdoc IVoter
   function reset(uint256 _tokenId) external onlyNewEpoch(_tokenId) {
     if (!IveION(ve).isApprovedOrOwner(msg.sender, _tokenId)) revert NotApprovedOrOwner();

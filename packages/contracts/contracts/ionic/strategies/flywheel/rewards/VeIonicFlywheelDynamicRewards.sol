@@ -9,7 +9,7 @@ contract VeIonicFlywheelDynamicRewards is FlywheelDynamicRewards {
     using SafeTransferLib for ERC20;
 
     address public owner;
-    mapping(address => address) rewardAccumulators;
+    mapping(address => address) public gauges;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "You are not the owner");
@@ -22,8 +22,12 @@ contract VeIonicFlywheelDynamicRewards is FlywheelDynamicRewards {
         owner = msg.sender;
     }
 
-    function setAccumulator(address strategy, address accumulator) external onlyOwner {
-        rewardAccumulators[strategy] = accumulator;
+    function setGauges(address[] memory _strategies, address[] memory _gauges) external onlyOwner {
+        uint256 _length = _strategies.length;
+        require(_gauges.length == _length, "parameters");
+        for (uint256 i = 0; i < _length; i++) {
+            gauges[_strategies[i]] = _gauges[i];
+        }
     }
 
     function getNextCycleRewards(ERC20 strategy)
@@ -31,11 +35,11 @@ contract VeIonicFlywheelDynamicRewards is FlywheelDynamicRewards {
         override
         returns (uint192)
     {
-        address rewardAccumulator = rewardAccumulators[address(strategy)];
-        uint256 rewardAmount = rewardToken.balanceOf(rewardAccumulator);
+        address gauge = gauges[address(strategy)];
+        uint256 rewardAmount = rewardToken.balanceOf(gauge);
         if (rewardAmount != 0) {
             rewardToken.safeTransferFrom(
-                rewardAccumulator,
+                gauge,
                 address(this),
                 rewardAmount
             );

@@ -12,9 +12,12 @@ interface IVoter {
   error GaugeNotAlive(address _gauge);
   error InactiveManagedNFT();
   error MaximumVotingNumberTooLow();
+  error MismatchedArrayLengths();
   error NonZeroVotes();
+  error NotAllPools();
   error NotAPool();
   error NotApprovedOrOwner();
+  error NotDistributeWindow();
   error NotGovernor();
   error NotEmergencyCouncil();
   error NotMinter();

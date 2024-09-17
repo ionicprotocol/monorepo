@@ -2,15 +2,15 @@
 pragma solidity >=0.8.0;
 
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "../../../compound/EIP20Interface.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract RewardAccumulator is OwnableUpgradeable {
+contract Gauge is OwnableUpgradeable {
 
   function initialize() external initializer {
     __Ownable_init();
   }
 
   function approve(address _token, address _spender) external onlyOwner {
-    EIP20Interface(_token).approve(_spender, type(uint256).max);
+    IERC20(_token).approve(_spender, type(uint256).max);
   }
 }
