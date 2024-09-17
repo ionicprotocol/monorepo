@@ -25,6 +25,11 @@ export default function WrapEthSwaps({
         onClick={() => setSwapWidgetOpen(true)}
       >
         {'Swap Assets'}
+        <img
+          alt="back"
+          className={`h-4 md:h-3 ml-2 inline-block `}
+          src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/48/external-swap-arrows-tanah-basah-basic-outline-tanah-basah.png"
+        />
       </button>
 
       <SwapWidget
