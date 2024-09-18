@@ -27,19 +27,19 @@
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
     "CErc20Delegate": {
-      "address": "0x0afb29b4eed720173cA0b4940542cDB44014edCe"
+      "address": "0x3CDb3420666ec775bC73C1073A5d1144Bb57EF65"
     },
     "CErc20PluginDelegate": {
-      "address": "0x51034947FF57342290b73539b1e52fc9fe79B284"
+      "address": "0xEC95173531709CCA9789864a8c3128E6EeB634a4"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x2860B30f9368a26219f5F33f76AE4943cD824bf6"
+      "address": "0x75Eb7517d9842E4D4E5074D9C6702e3876C51f5b"
     },
     "CErc20RewardsDelegate": {
-      "address": "0xAEC1259Ed88cde4dCdCf2cB33Dc1D97C89f8CC8c"
+      "address": "0x471bdE4b179f0d9317b77273893B1b4C6d38DF43"
     },
     "CTokenFirstExtension": {
-      "address": "0x69459f510dB7AcC93cBb2389095D0e8ad19E453a"
+      "address": "0xEc18C1CD348bff23aB508CcC4616555F6D448134"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
@@ -119,6 +119,9 @@
     "IonicFlywheelDynamicRewards_RSR": {
       "address": "0xCdfF6BA3613f37E719234A26775fF72BD937f22B"
     },
+    "IonicFlywheelDynamicRewards_eUSD_v3": {
+      "address": "0xC4AAe8D289877A193279dc8F52bdF2BAfB8A6d58"
+    },
     "IonicFlywheelLensRouter": {
       "address": "0xB1402333b12fc066C3D7F55d37944D5e281a3e8B"
     },
@@ -157,6 +160,15 @@
     },
     "IonicFlywheel_RSR_Proxy": {
       "address": "0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4"
+    },
+    "IonicFlywheel_eUSD_v3": {
+      "address": "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4"
+    },
+    "IonicFlywheel_eUSD_v3_Implementation": {
+      "address": "0x44D15DdC0d5feeee86Fde7ba0c1bDF35F8D7Dbd1"
+    },
+    "IonicFlywheel_eUSD_v3_Proxy": {
+      "address": "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4"
     },
     "IonicLiquidator": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
