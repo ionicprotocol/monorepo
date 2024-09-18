@@ -87,6 +87,7 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           ionic: 0,
+          underlyingAPR: 2.94,
           mode: 2,
           turtle: true,
           rewards: true,
