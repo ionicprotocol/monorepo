@@ -27,7 +27,7 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
-// import { multipliers } from '@ui/utils/multipliers';
+import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { useStore } from 'ui/store/Store';
 // import { useAccount } from 'wagmi';
@@ -280,8 +280,12 @@ const PoolRows = ({
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
           <span className={`mr-1 md:mr-0`}>
             +
-            {supplyAPRTotal?.toLocaleString('en-US', {
-              maximumFractionDigits: 1
+            {(
+              +supplyAPRTotal! +
+              (multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.underlyingAPR ?? 0)
+            )?.toLocaleString('en-US', {
+              maximumFractionDigits: 2
             }) ?? '-'}
             %
           </span>
