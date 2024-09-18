@@ -14,6 +14,9 @@
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
     },
+    "AlgebraSwapLiquidator": {
+      "address": "0x368E9E9c4226f5DcD496987d70b602Cc9ad56007"
+    },
     "AuthoritiesRegistry": {
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
