@@ -81,11 +81,11 @@ export default function VeIon() {
                 className="size-6 rounded-full -ml-2"
               />
             </span>
-            <p className="text-white font-medium text-md ">iON/WETH</p>
+            <p className="text-white font-medium text-md ">ION/WETH</p>
             <button className="bg-green-400 p-2 text-grayUnselect rounded-lg text-xs font-bold tracking-tight flex items-center gap-2">
               Add Liquidity
             </button>
-            <p className="text-white font-medium text-md">iON/WETH LP</p>
+            <p className="text-white font-medium text-md">ION/WETH LP</p>
           </div>
         </div>
         <div className="xl:col-span-2 col-span-2 space-y-3 bg-graylite p-5 rounded-2xl">
@@ -126,11 +126,11 @@ export default function VeIon() {
                 className="size-6 rounded-full -ml-2"
               />
             </span>
-            <p className="text-white font-medium text-md">iON/WETH</p>
+            <p className="text-white font-medium text-md">ION/WETH</p>
             <button className="bg-accent p-2 text-grayUnselect rounded-lg text-xs font-bold tracking-tight flex items-center gap-2">
               Lock and get
             </button>
-            <p className="text-white font-medium text-md">iON/WETH LP</p>
+            <p className="text-white font-medium text-md">ION/WETH LP</p>
           </div>
         </div>
 
