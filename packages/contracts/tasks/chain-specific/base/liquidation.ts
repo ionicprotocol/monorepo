@@ -110,16 +110,6 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       },
       {
         inputToken: ezETHUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: ezETHUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: ezETHUnderlying,
         outputToken: wethUnderlying,
         strategy: uniLiquidator.address as Address
       },
