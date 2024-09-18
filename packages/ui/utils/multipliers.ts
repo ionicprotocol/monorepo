@@ -389,7 +389,7 @@ export const multipliers: Record<
           ionAPR: true
         },
         supply: {
-          flywheel: false,
+          flywheel: true,
           ionic: 0,
           nektar: 1,
           underlyingAPR: 2.6,
