@@ -75,6 +75,15 @@ export default function SupplyPopover({
           ? supplyAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
           : '-'}
         %
+        <p>
+          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+            ?.underlyingAPR &&
+            `Underlying APR: +${multipliers[dropdownSelectedChain]?.[
+              selectedPoolId
+            ]?.[asset]?.supply?.underlyingAPR?.toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            })}%`}
+        </p>
         {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
           ?.flywheel && (
           <Rewards
@@ -240,6 +249,17 @@ export default function SupplyPopover({
               src="/img/symbols/32/color/bob.png"
             />{' '}
             + Spice Points
+          </div>
+        )}
+        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+          ?.nektar && (
+          <div className="flex mt-1">
+            <img
+              alt=""
+              className="size-4 mr-1"
+              src="/img/symbols/32/color/nektar.png"
+            />{' '}
+            + Nektar Points
           </div>
         )}
       </div>

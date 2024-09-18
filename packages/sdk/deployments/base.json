@@ -14,6 +14,9 @@
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
     },
+    "AlgebraSwapLiquidator": {
+      "address": "0x368E9E9c4226f5DcD496987d70b602Cc9ad56007"
+    },
     "AuthoritiesRegistry": {
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
@@ -55,6 +58,15 @@
     },
     "DefaultProxyAdmin": {
       "address": "0x04C21Db52CcA974dF3Dc019C92E52e522ce57156"
+    },
+    "ERC4626Oracle": {
+      "address": "0xa87c5D63AC47911639A3Cbf65a618E397B7De144"
+    },
+    "ERC4626Oracle_Implementation": {
+      "address": "0x95fc22BF6764A74CF3b8614f600600a5044e7065"
+    },
+    "ERC4626Oracle_Proxy": {
+      "address": "0xa87c5D63AC47911639A3Cbf65a618E397B7De144"
     },
     "FeeDistributor": {
       "address": "0x9BAD1f7685f33ad855AE81089dFe79040864E2F6"
@@ -155,6 +167,15 @@
     "IonicLiquidator_Proxy": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
     },
+    "IonicUniV3Liquidator": {
+      "address": "0x1c6518B495FdCB1E087A9EC9669DB8C584cE3C1d"
+    },
+    "IonicUniV3Liquidator_Implementation": {
+      "address": "0xfffFed6428f486794aAD5E60afD4EAdE620263fF"
+    },
+    "IonicUniV3Liquidator_Proxy": {
+      "address": "0x1c6518B495FdCB1E087A9EC9669DB8C584cE3C1d"
+    },
     "JumpRateModel": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
     },
@@ -234,7 +255,7 @@
       "address": "0x88911E638f04b5d25242e8b587B3F8C8054B0d8F"
     },
     "UniswapV3LiquidatorFunder": {
-      "address": "0x83fa5224C7218a731DB18E26ad6Df47dcf7fB73d"
+      "address": "0x3A50e48D9e95737e74Ca7eAD0C9Fef8fd0301a5c"
     },
     "xERC20LayerZero": {
       "address": "0xD9E3f9D761f3fC2Adb0DC70E5284494dEc0D7C30"
