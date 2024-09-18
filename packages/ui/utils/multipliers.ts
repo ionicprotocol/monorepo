@@ -1,4 +1,4 @@
-import { base, bob, mode } from 'viem/chains';
+import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
 
 export const SEASON_2_START_DATE = '2024-5-15';
 export const SEASON_2_BASE_START_DATE = '2024-5-20';
@@ -15,6 +15,8 @@ export type Multipliers = {
   turtle?: boolean;
   rewards?: boolean;
   spice?: boolean;
+  underlyingAPR?: number;
+  nektar?: number;
 };
 
 export const multipliers: Record<
@@ -66,6 +68,7 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           mode: 2,
+          underlyingAPR: 10,
           rewards: true,
           turtle: true,
           ionAPR: true,
@@ -174,6 +177,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 2,
           renzo: 2,
+          underlyingAPR: 3.25,
           turtle: true,
           rewards: true,
           ionAPR: false
@@ -191,6 +195,7 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           mode: 2,
+          underlyingAPR: 4.5,
           turtle: true,
           rewards: true,
           ionAPR: false
@@ -225,6 +230,7 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           mode: 2,
+          underlyingAPR: 6,
           turtle: true,
           rewards: true,
           ionAPR: false
@@ -248,6 +254,7 @@ export const multipliers: Record<
           etherfi: 3,
           ionic: 0,
           mode: 2,
+          underlyingAPR: 2.99,
           turtle: true,
           rewards: true,
           ionAPR: false,
@@ -271,6 +278,7 @@ export const multipliers: Record<
           ionic: 0,
           kelp: 2,
           mode: 2,
+          underlyingAPR: 3.63,
           turtle: true,
           rewards: true,
           ionAPR: false
@@ -382,6 +390,8 @@ export const multipliers: Record<
         supply: {
           flywheel: false,
           ionic: 0,
+          nektar: 1,
+          underlyingAPR: 2.6,
           turtle: false,
           rewards: true,
           ionAPR: false
@@ -391,6 +401,7 @@ export const multipliers: Record<
         supply: {
           flywheel: true,
           ionic: 0,
+          underlyingAPR: 3.5,
           turtle: false,
           rewards: true,
           ionAPR: true
@@ -479,6 +490,7 @@ export const multipliers: Record<
           eigenlayer: true,
           ionic: 0,
           renzo: 2,
+          underlyingAPR: 3.25,
           turtle: false,
           rewards: true,
           ionAPR: false
@@ -495,6 +507,7 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           etherfi: 3,
+          underlyingAPR: 2.99,
           turtle: false,
           rewards: true,
           ionAPR: false,
@@ -522,6 +535,22 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           ionic: 0,
+          underlyingAPR: 2.9,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      },
+      wsuperOETHb: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
+        },
+        supply: {
+          ionic: 0,
+          underlyingAPR: 15,
           turtle: false,
           rewards: true,
           ionAPR: false
@@ -624,6 +653,44 @@ export const multipliers: Record<
           ionic: 0,
           rewards: true,
           turtle: false,
+          ionAPR: false
+        }
+      }
+    }
+  },
+  [optimism.id]: {
+    '0': {
+      wstETH: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
+        },
+        supply: {
+          ionic: 0,
+          underlyingAPR: 2.9,
+          turtle: false,
+          rewards: true,
+          ionAPR: false
+        }
+      }
+    }
+  },
+  [fraxtal.id]: {
+    '0': {
+      wfrxETH: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
+        },
+        supply: {
+          ionic: 0,
+          underlyingAPR: 3.46,
+          turtle: false,
+          rewards: true,
           ionAPR: false
         }
       }
