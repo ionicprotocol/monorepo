@@ -20,7 +20,7 @@ export default function BaseBreakdown({ step3Toggle }: BaseBreakdownProps) {
         />
         <AerodromeAPY step3Toggle={step3Toggle} />
       </div>
-      <div className="flex items-center w-full mt-3 text-xs gap-2">
+      {/* <div className="flex items-center w-full mt-3 text-xs gap-2">
         <img
           alt="ion logo"
           className={`w-6 h-6 inline-block mx-1`}
@@ -34,7 +34,7 @@ export default function BaseBreakdown({ step3Toggle }: BaseBreakdownProps) {
         >
           3x
         </span>
-      </div>
+      </div> */}
     </>
   );
 }
