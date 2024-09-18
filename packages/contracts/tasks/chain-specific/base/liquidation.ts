@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import { setLiquidationStrategies } from "../../liquidation";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { assetSymbols } from "@ionicprotocol/types";
 import { base } from "@ionicprotocol/chains";
 import {
@@ -60,6 +60,9 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
   async (_, { viem, getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
+    console.log("🚀 ~ uniLiquidator:", uniLiquidator.address);
+    const algebraSwapLiquidator = await deployments.get("AlgebraSwapLiquidator");
+    console.log("🚀 ~ algebraSwapLiquidator:", algebraSwapLiquidator.address);
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
     const wstETHContract = await viem.getContractAt("ICErc20", wstETH_MARKET);
@@ -70,56 +73,80 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const usdcUnderlying = await usdcContract.read.underlying();
     const aeroContract = await viem.getContractAt("ICErc20", AERO_MARKET);
     const aeroUnderlying = await aeroContract.read.underlying();
+    const bsdETHContract = await viem.getContractAt("ICErc20", bsdETH_MARKET);
+    const bsdETHUnderlying = await bsdETHContract.read.underlying();
+    const eusdContract = await viem.getContractAt("ICErc20", eUSD_MARKET);
+    const eusdUnderlying = await eusdContract.read.underlying();
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
+        inputToken: wethUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: aeroUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: aeroUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: aeroUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: aeroUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
         inputToken: ezETHUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: ezETHUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
         outputToken: wstETHUnderlying,
         strategy: uniLiquidator.address as Address
       },
       {
         inputToken: wstETHUnderlying,
-        outputToken: ezETHUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: wethUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
         outputToken: wethUnderlying,
         strategy: uniLiquidator.address as Address
       },
       {
-        inputToken: aeroUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        inputToken: bsdETHUnderlying,
+        outputToken: wethUnderlying,
+        strategy: algebraSwapLiquidator.address as Address
       },
       {
         inputToken: wethUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        outputToken: bsdETHUnderlying,
+        strategy: algebraSwapLiquidator.address as Address
       },
       {
-        inputToken: aeroUnderlying,
-        outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: ezETHUnderlying,
+        inputToken: eusdUnderlying,
         outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: algebraSwapLiquidator.address as Address
       },
       {
         inputToken: usdcUnderlying,
-        outputToken: ezETHUnderlying,
-        strategy: uniLiquidator.address as Address
+        outputToken: eusdUnderlying,
+        strategy: algebraSwapLiquidator.address as Address
       }
     ];
 
