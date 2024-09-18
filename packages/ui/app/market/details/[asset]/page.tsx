@@ -18,6 +18,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
+import { mode } from 'viem/chains';
 import { useBalance, useAccount } from 'wagmi';
 // import { useGetMaxBorrow } from 'ui/app/util/utils';
 //-------------------Interfaces------------
@@ -71,8 +72,8 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
+// import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+// import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
 interface IGraph {
   borrowAtY: number[];
@@ -103,6 +104,8 @@ const Asset = ({ params }: IProp) => {
   const pool = searchParams.get('pool');
   const chain = searchParams.get('chain');
   const selectedSymbol = searchParams.get('selectedSymbol');
+  const borrowAPR = searchParams.get('borrowAPR');
+  const availableAPR = searchParams.get('supplyAPR');
   //--------------------------------------------------------
 
   const [popupMode, setPopupMode] = useState<PopupMode>();
@@ -118,15 +121,17 @@ const Asset = ({ params }: IProp) => {
   });
   //Hooks -----------------------------------------------------
   const { data: poolData } = useFusePoolData(pool as string, Number(chain));
-
   const assetData = useMemo<MarketData | undefined>(
     () => poolData?.assets.find((a) => a.cToken === cTokenAddress),
     [poolData, cTokenAddress]
   );
-  const { data: borrowAPYs } = useBorrowAPYs(assetData ? [assetData] : []);
-  const borrowAPR = assetData?.cToken ? borrowAPYs?.[assetData?.cToken] : 0;
-  const { data: supplyAPYs } = useSupplyAPYs(assetData ? [assetData] : []);
-  const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
+
+  // const { data: borrowAPYs } = useBorrowAPYs(assetData ? [assetData] : []);
+  // const borrowAPR = assetData?.cToken ? borrowAPYs?.[assetData?.cToken] : 0;
+  // const { data: supplyAPYs } = useSupplyAPYs(assetData ? [assetData] : []);
+  // console.log(supplyAPYs);
+
+  // const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
   const totalSupplied = assetData?.totalSupplyNative
     ? parseFloat(
         formatUnits(assetData!.totalSupply, assetData.underlyingDecimals)
@@ -251,7 +256,8 @@ const Asset = ({ params }: IProp) => {
   }, [selectedSymbol, poolData]);
 
   const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
-    poolData?.assets.map((asset) => asset.cToken) ?? []
+    poolData?.assets.map((asset) => asset.cToken) ?? [],
+    chain ? +chain : mode.id
   );
   // Borrow cap numbers -----------------
   const { data: borrowCap } = useBorrowCapsDataForAsset(
@@ -369,7 +375,12 @@ const Asset = ({ params }: IProp) => {
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Supply APY</p>
-            <p className={`font-semibold`}>{availableAPR}%</p>
+            <p className={`font-semibold`}>
+              {Number(availableAPR)?.toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}
+              %
+            </p>
             {/* this neeeds to be changed */}
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
@@ -381,7 +392,12 @@ const Asset = ({ params }: IProp) => {
           </div>
           <div className={`flex flex-col items-start justify-center gap-y-1`}>
             <p className={`text-white/60 text-[10px]`}>Borrowing APR</p>
-            <p className={`font-semibold`}>{borrowAPR}%</p>
+            <p className={`font-semibold`}>
+              {Number(borrowAPR).toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}
+              %
+            </p>
             {/* this neeeds to be changed */}
           </div>
         </div>
@@ -466,7 +482,14 @@ const Asset = ({ params }: IProp) => {
               >
                 <p className={`text-white/60 text-[10px]`}>APR</p>
                 <p className={`font-semibold`}>
-                  {info === INFO.BORROW ? borrowAPR : availableAPR}%
+                  {info === INFO.BORROW
+                    ? Number(borrowAPR).toLocaleString('en-US', {
+                        maximumFractionDigits: 1
+                      })
+                    : Number(availableAPR).toLocaleString('en-US', {
+                        maximumFractionDigits: 1
+                      })}
+                  %
                 </p>
                 {/* this neeeds to be changed */}
               </div>

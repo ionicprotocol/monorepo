@@ -1,10 +1,9 @@
 import { task } from "hardhat/config";
-import { Address, formatEther, parseEther } from "viem";
+import { Address } from "viem";
 import { COMPTROLLER } from ".";
 
 task("market:base:disable-flywheel", "Deploys flywheel and adds rewards").setAction(
   async (_, { viem, run, deployments, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
 
     const flywheel = await viem.getContractAt(

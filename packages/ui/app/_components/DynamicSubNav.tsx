@@ -22,9 +22,9 @@ function DynamicSubNav() {
             key={index}
             className={`pl-14`}
           >
-            Hello, {pools[+chainId]?.name ?? 'Mode'}! OP SuperFest is LIVE,
-            supply ETH, USDC and/or ezETH to get OP rewards on top of the MODE
-            and IONIC points!
+            veION COMING SOON! Supply & Borrow Assets to earn $ION. Accumulate &
+            Lock $ION to increase Emissions to your favorite Assets and Maximize
+            Yields!
           </span>
         ))}
       </div>

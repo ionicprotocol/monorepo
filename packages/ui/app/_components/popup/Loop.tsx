@@ -470,7 +470,7 @@ export default function Loop({
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(currentBorrowAsset);
-  const { data: positions } = usePositionsQuery();
+  const { data: positions } = usePositionsQuery(chainId);
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
       (position) =>
@@ -487,7 +487,7 @@ export default function Loop({
   );
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
-    [chainId]
+    positions?.openPositions.map((position) => position.chainId) ?? []
   );
   const { data: positionInfo, isFetching: isFetchingPositionInfo } =
     usePositionInfo(

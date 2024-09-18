@@ -11,6 +11,48 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
+export const shouldGetFeatured: Record<
+  string,
+  Record<number, Record<string, string>>
+> = {
+  featuredSupply: {
+    [mode.id]: {
+      '0': 'usdc',
+      '1': 'usdc'
+    },
+    [optimism.id]: {
+      '0': 'usdc'
+    },
+    [base.id]: {
+      '0': 'usdc'
+    },
+    [bob.id]: {
+      '0': 'usdc'
+    },
+    [fraxtal.id]: {
+      '0': ''
+    }
+  },
+  featuredSupply2: {
+    [mode.id]: {
+      '0': 'weth',
+      '1': 'weth'
+    },
+    [optimism.id]: {
+      '0': 'weth'
+    },
+    [base.id]: {
+      '0': 'weth'
+    },
+    [bob.id]: {
+      '0': 'weth'
+    },
+    [fraxtal.id]: {
+      '0': 'wfrxeth'
+    }
+  }
+};
+
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
     '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
@@ -98,16 +140,16 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'WETH',
           'USDC',
-          'ezETH',
-          'STONE',
           'msDAI',
-          'sUSDe',
-          'USDe',
-          'wrsETH',
           'weETH.mode',
           'dMBTC',
           'M-BTC',
+          'sUSDe',
+          'wrsETH',
+          'ezETH',
+          'STONE',
           'WBTC',
+          'USDe',
           'USDT',
           'weETH'
         ]
@@ -126,23 +168,25 @@ export const pools: Record<number, PoolParams> = {
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
-    border: 'border-blue-600',
+    border: 'border-base',
     logo: '/img/logo/BASE.png',
     pools: [
       {
         id: '0',
         name: 'Main Pool',
         assets: [
+          'USDC',
+          'WETH',
+          'wsuperOETHb',
+          'cbBTC',
           'eUSD',
           'bsdETH',
           'hyUSD',
-          'WETH',
           'ezETH',
           'weETH.mode',
           'AERO',
           'RSR',
           'wstETH',
-          'USDC',
           'cbETH'
         ]
       }

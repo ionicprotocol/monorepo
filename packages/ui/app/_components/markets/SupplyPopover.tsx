@@ -2,7 +2,6 @@
 import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
 import type { Address } from 'viem';
-import { mode } from 'viem/chains';
 
 const Rewards = dynamic(() => import('./Rewards'), {
   ssr: false
@@ -11,7 +10,7 @@ const Rewards = dynamic(() => import('./Rewards'), {
 import { pools } from '@ui/constants/index';
 import { multipliers } from '@ui/utils/multipliers';
 
-type SupplyPopoverProps = {
+export type SupplyPopoverProps = {
   asset: string;
   cToken: Address;
   dropdownSelectedChain: number;
@@ -33,7 +32,7 @@ export default function SupplyPopover({
   return (
     <>
       <span
-        className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-3.5 px-1 ${
+        className={`  text-green-900 rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 ${
           multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.ionAPR
             ? 'bg-accent text-green-900 '
@@ -46,7 +45,7 @@ export default function SupplyPopover({
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.rewards && (
         <span
-          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-2.5 px-1`}
+          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1`}
         >
           + REWARDS <i className="popover-hint">i</i>
         </span>
@@ -55,7 +54,7 @@ export default function SupplyPopover({
         ?.turtle && (
         <span className="text-darkone  rounded-md w-max  md:ml-0 text-center ">
           <a
-            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-3 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
           >
@@ -86,25 +85,6 @@ export default function SupplyPopover({
             rewards={rewards}
           />
         )}
-        {selectedPoolId === '0' &&
-          dropdownSelectedChain === mode.id &&
-          (asset.toLowerCase() === 'usdc' ||
-            asset.toLowerCase() === 'weth' ||
-            asset.toLowerCase() === 'stone' ||
-            asset.toLowerCase() === 'ezeth') && (
-            <a
-              href="https://jumper.exchange/superfest/"
-              target="_blank"
-              className="flex pr-4 underline pt-4"
-            >
-              <img
-                alt=""
-                className="size-4 rounded mr-1"
-                src="/img/logo/superOP.png"
-              />{' '}
-              + OP SuperFest rewards
-            </a>
-          )}
         {(multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
           ?.ionic ?? 0) > 0 && (
           <>

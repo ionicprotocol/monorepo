@@ -85,11 +85,11 @@ export default function Navbar() {
           </Link>
           <Link
             className="relative mb-2 lg:mb-0"
-            href={`/stake?chain=${chainId}`}
+            href={`/stake?chain=${chainId === mode.id || chainId === base.id ? chainId : '34443'}`}
           >
-            <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+            {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
-            </span>
+            </span> */}
             <p
               className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >

@@ -30,6 +30,10 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
     });
 
     // Summing up the total TVL (native) in ETH
+    const totalMarketBorrow = results.reduce((total: number, asset: { borrowtotal : string }) => {
+      return total + parseFloat(asset.borrowtotal);
+    }, 0);
+    // console.log("hereee",totalMarketBorrow)
     const totalTvlNative = results.reduce((total: number, asset: { tvlNative: string }) => {
       return total + parseFloat(asset.tvlNative);
     }, 0);
@@ -39,10 +43,14 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
 
     // Fetch ETH to USD conversion rate
     const ethToUsdRate = await getEthToUsdRate();
+
     // console.log(`ETH to USD rate: ${ethToUsdRate}`);
 
     // Convert total TVL from ETH to USD
     const totalTvlUsd = totalTvlNative * ethToUsdRate;
+    // console.log("Borrow", totalMarketBorrow * ethToUsdRate )
+    const borrow = totalMarketBorrow * ethToUsdRate;
+    // console.log("TOTAL SIZE", borrow + totalTvlUsd)
     // console.log(`Total TVL (USD): ${totalTvlUsd}`);
 
     // Create row for the total TVL data
@@ -50,6 +58,7 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
       chain_id: chainId,
       total_tvl_native: totalTvlNative.toFixed(18), // Storing as string for fixed precision
       total_tvl_usd: totalTvlUsd.toFixed(2), // Store the USD equivalent
+      total_barrow_usd: borrow.toFixed(2),
     };
 
     // Insert the total TVL row into the database
