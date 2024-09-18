@@ -5,6 +5,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
 import { prepareAndLogTransaction } from "../helpers/logging";
+import { assetSymbols } from "@ionicprotocol/types";
 
 const assets = base.assets;
 
@@ -42,16 +43,16 @@ export const deploy = async ({
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
-  //// Aerodrome Oracle
-  await deployAerodromeOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    assets: aerodromeAssets,
-    pricesContract
-  });
+  // //// Aerodrome Oracle
+  // await deployAerodromeOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   assets: aerodromeAssets,
+  //   pricesContract
+  // });
 
   //// ChainlinkV2 Oracle
   const chainlinkAssets = assets
@@ -72,52 +73,52 @@ export const deploy = async ({
   });
 
   //// Uniswap V3 Liquidator Funder
-  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+  // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+  //   from: deployer,
+  //   args: [],
+  //   log: true,
+  //   waitConfirmations: 1
+  // });
+  // console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
-  const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
-  const ap = await viem.getContractAt(
-    "AddressesProvider",
-    (await deployments.get("AddressesProvider")).address as Address
-  );
-  const algebraSwapRouter = await ap.read.getAddress(["ALGEBRA_SWAP_ROUTER"]);
-  console.log("algebraSwapRouter: ", algebraSwapRouter);
-  if (algebraSwapRouter !== AERODROME_SWAP_ROUTER) {
-    console.log("AlgebraSwapLiquidator is not set for Aero CL");
-    const owner = await ap.read.owner();
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
-      await prepareAndLogTransaction({
-        contractInstance: ap,
-        functionName: "setAddress",
-        args: ["ALGEBRA_SWAP_ROUTER", AERODROME_SWAP_ROUTER],
-        description: "Set AlgebraSwapLiquidator for Aero CL",
-        inputs: [
-          {
-            internalType: "address",
-            name: "key",
-            type: "address"
-          },
-          {
-            internalType: "address",
-            name: "value",
-            type: "address"
-          }
-        ]
-      });
-    } else {
-      const tx = await ap.write.setAddress(["ALGEBRA_SWAP_ROUTER", AERODROME_SWAP_ROUTER]);
-      console.log(`Sent tx to set AlgebraSwapLiquidator for Aero CL: ${tx}`);
-    }
-  }
+  // const algebraSwapLiquidator = await deployments.deploy("AlgebraSwapLiquidator", {
+  //   from: deployer,
+  //   args: [],
+  //   log: true,
+  //   waitConfirmations: 1
+  // });
+  // console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
+  // const ap = await viem.getContractAt(
+  //   "AddressesProvider",
+  //   (await deployments.get("AddressesProvider")).address as Address
+  // );
+  // const algebraSwapRouter = await ap.read.getAddress(["ALGEBRA_SWAP_ROUTER"]);
+  // console.log("algebraSwapRouter: ", algebraSwapRouter);
+  // if (algebraSwapRouter !== AERODROME_SWAP_ROUTER) {
+  //   console.log("AlgebraSwapLiquidator is not set for Aero CL");
+  //   const owner = await ap.read.owner();
+  //   if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  //     await prepareAndLogTransaction({
+  //       contractInstance: ap,
+  //       functionName: "setAddress",
+  //       args: ["ALGEBRA_SWAP_ROUTER", AERODROME_SWAP_ROUTER],
+  //       description: "Set AlgebraSwapLiquidator for Aero CL",
+  //       inputs: [
+  //         {
+  //           internalType: "address",
+  //           name: "key",
+  //           type: "address"
+  //         },
+  //         {
+  //           internalType: "address",
+  //           name: "value",
+  //           type: "address"
+  //         }
+  //       ]
+  //     });
+  //   } else {
+  //     const tx = await ap.write.setAddress(["ALGEBRA_SWAP_ROUTER", AERODROME_SWAP_ROUTER]);
+  //     console.log(`Sent tx to set AlgebraSwapLiquidator for Aero CL: ${tx}`);
+  //   }
+  // }
 };

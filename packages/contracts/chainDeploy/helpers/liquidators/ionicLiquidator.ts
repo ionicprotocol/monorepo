@@ -251,6 +251,9 @@ export const configureAddressesProviderAddresses = async ({
     const lr = await deployments.getOrNull("LiquidatorsRegistry");
     await configureAddress(ap, publicClient, "LiquidatorsRegistry", lr?.address);
 
+    const poolLens = await deployments.getOrNull("PoolLens");
+    await configureAddress(ap, publicClient, "PoolLens", poolLens?.address);
+
     if (chainId !== 1) {
       const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
       await configureAddress(ap, publicClient, "OptimizedVaultsRegistry", ovr?.address);
