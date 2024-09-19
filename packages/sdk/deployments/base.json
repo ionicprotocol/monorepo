@@ -14,6 +14,9 @@
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
     },
+    "AerodromeV2Liquidator": {
+      "address": "0xD46b85409C43571145206B11D370A62AaeB22475"
+    },
     "AlgebraSwapLiquidator": {
       "address": "0x368E9E9c4226f5DcD496987d70b602Cc9ad56007"
     },
@@ -213,7 +216,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x7263c5495D28f1BCA9212b416AB823285A7568bf"
+      "address": "0x2aBcbed2ECd06d9B9B2b40f9527afd52Ba1d86E8"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0xE19815995BeAe56278CF2C99d5fFe0A37127f144"
