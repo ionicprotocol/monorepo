@@ -239,9 +239,9 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(100_000)).toString(),
-    initialBorrowCap: "1",
-    initialCf: "0.80",
+    initialSupplyCap: parseEther(String(140_000)).toString(),
+    initialBorrowCap: parseEther(String(110_000)).toString(),
+    initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
