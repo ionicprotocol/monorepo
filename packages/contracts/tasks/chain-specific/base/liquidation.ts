@@ -58,11 +58,18 @@ task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy
 
 task("base:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
+    const SPECIAL_ROUTER = "0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF";
     const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
-    console.log("🚀 ~ uniLiquidator:", uniLiquidator.address);
-    const univ2Liquidator = await deployments.get("UniswapV2LiquidatorFunder");
-    console.log("🚀 ~ univ2Liquidator:", univ2Liquidator.address);
+
+    const liquidatorRegistry = await viem.getContractAt(
+      "ILiquidatorsRegistry",
+      (await deployments.get("LiquidatorsRegistry")).address as Address
+    );
+
+    const aeroV2Liquidator = await deployments.get("AerodromeV2Liquidator");
+
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
     const wstETHContract = await viem.getContractAt("ICErc20", wstETH_MARKET);
@@ -79,6 +86,21 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const eusdUnderlying = await eusdContract.read.underlying();
     const hyusdContract = await viem.getContractAt("ICErc20", hyUSD_MARKET);
     const hyusdUnderlying = await hyusdContract.read.underlying();
+
+    const read1 = await liquidatorRegistry.read.customUniV3Router([hyusdUnderlying, usdcUnderlying]);
+    const read2 = await liquidatorRegistry.read.customUniV3Router([usdcUnderlying, hyusdUnderlying]);
+    console.log("🚀 ~ read1, read2:", read1, read2);
+    if (read1 !== SPECIAL_ROUTER || read2 !== SPECIAL_ROUTER) {
+      const setTx = await liquidatorRegistry.write._setUniswapV3Routers([
+        [hyusdUnderlying, usdcUnderlying],
+        [usdcUnderlying, hyusdUnderlying],
+        [SPECIAL_ROUTER, SPECIAL_ROUTER]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: setTx });
+      console.log("Transaction sent to set aeroV2Liquidator:", setTx);
+    } else {
+      console.log("Custom Routers already set");
+    }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
         inputToken: wethUnderlying,
@@ -133,32 +155,32 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: bsdETHUnderlying,
         outputToken: wethUnderlying,
-        strategy: univ2Liquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: wethUnderlying,
         outputToken: bsdETHUnderlying,
-        strategy: univ2Liquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: eusdUnderlying,
         outputToken: usdcUnderlying,
-        strategy: univ2Liquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: usdcUnderlying,
         outputToken: eusdUnderlying,
-        strategy: univ2Liquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: hyusdUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: univ2Liquidator.address as Address
+        outputToken: eusdUnderlying,
+        strategy: aeroV2Liquidator.address as Address
       },
       {
-        inputToken: usdcUnderlying,
+        inputToken: eusdUnderlying,
         outputToken: hyusdUnderlying,
-        strategy: univ2Liquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       }
     ];
 

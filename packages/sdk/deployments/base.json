@@ -213,10 +213,10 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0xdd7F712Af76074993F05C0d544331792997Bd39b"
+      "address": "0x7263c5495D28f1BCA9212b416AB823285A7568bf"
     },
     "LiquidatorsRegistrySecondExtension": {
-      "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
+      "address": "0xE19815995BeAe56278CF2C99d5fFe0A37127f144"
     },
     "LooplessFlywheelBooster": {
       "address": "0xBc97F93657186ad3614D05AaB83ee744Fc8CEf48"
@@ -265,6 +265,9 @@
     },
     "SolidlySwapLiquidator": {
       "address": "0x88911E638f04b5d25242e8b587B3F8C8054B0d8F"
+    },
+    "UniswapV2LiquidatorFunder": {
+      "address": "0x41fBA660B6D75e018dD101c6c26A262120C875eD"
     },
     "UniswapV3LiquidatorFunder": {
       "address": "0x3A50e48D9e95737e74Ca7eAD0C9Fef8fd0301a5c"

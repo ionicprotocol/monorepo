@@ -273,7 +273,7 @@ export const configureAddressesProviderAddresses = async ({
   }
 };
 
-async function configureAddress(ap: any, publicClient: PublicClient, key: string, value?: string) {
+export async function configureAddress(ap: any, publicClient: PublicClient, key: string, value?: string) {
   if (!value) {
     console.log(`empty value for key ${key}`);
     return;
@@ -285,5 +285,7 @@ async function configureAddress(ap: any, publicClient: PublicClient, key: string
 
     await publicClient.waitForTransactionReceipt({ hash });
     console.log(`setAddress ${key}: ${hash}`);
+  } else {
+    console.log(`${key} already set to ${value}`);
   }
 }

@@ -25,7 +25,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
     from: deployer,
     log: true,
-    args: [addressesProvider.address]
+    args: [addressesProvider.address],
+    skipIfAlreadyDeployed: true
   });
   if (liquidatorsRegistryDep.transactionHash)
     await publicClient.waitForTransactionReceipt({ hash: liquidatorsRegistryDep.transactionHash as Hash });
@@ -197,17 +198,17 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
-  try {
-    //// Configure Liquidators Registry
-    await configureLiquidatorsRegistry({
-      viem,
-      getNamedAccounts,
-      chainId,
-      deployments
-    });
-  } catch (error) {
-    console.error(error);
-  }
+  // try {
+  //   //// Configure Liquidators Registry
+  //   await configureLiquidatorsRegistry({
+  //     viem,
+  //     getNamedAccounts,
+  //     chainId,
+  //     deployments
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  // }
 };
 
 func.tags = ["prod", "deploy-liquidators-registry"];

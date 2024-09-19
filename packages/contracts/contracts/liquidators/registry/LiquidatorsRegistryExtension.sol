@@ -347,6 +347,11 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     return ap.getAddress("IUniswapV2Router02");
   }
 
+  function getAerodromeV2Router(IERC20Upgradeable inputToken) internal view returns (address) {
+    // get asset specific router or default
+    return ap.getAddress("AERODROME_V2_ROUTER");
+  }
+
   function solidlySwapLiquidatorData(
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
@@ -462,10 +467,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     swapPath[0] = IAerodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
-      stable: false,
+      stable: getUniswapV3Router(inputToken, outputToken) == 0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF, // special case for stable token, fix in next deployment
       factory: ap.getAddress("AERODROME_V2_FACTORY")
     });
-    strategyData = abi.encode(getUniswapV2Router(inputToken), swapPath);
+    strategyData = abi.encode(getAerodromeV2Router(inputToken), swapPath);
   }
 
   function algebraSwapLiquidatorData(

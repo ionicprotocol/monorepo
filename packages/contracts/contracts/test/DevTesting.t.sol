@@ -667,20 +667,23 @@ contract DevTesting is BaseTest {
     AerodromeV2Liquidator liquidator = new AerodromeV2Liquidator();
     IERC20Upgradeable hyUSD = IERC20Upgradeable(0xCc7FF230365bD730eE4B352cC2492CEdAC49383e);
     IERC20Upgradeable eUSD = IERC20Upgradeable(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4);
+    IERC20Upgradeable usdc = IERC20Upgradeable(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913);
     address hyusdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address usdcWhale = 0xaac391f166f33CdaEfaa4AfA6616A3BEA66B694d;
+    address eusdWhale = 0xEE8Bd6594E046d72D592ac0e278E3CA179b8f189;
     address aerodromeV2Router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
 
-    vm.startPrank(hyusdWhale);
-    hyUSD.transfer(address(liquidator), 1000 ether);
+    vm.startPrank(eusdWhale);
+    eUSD.transfer(address(liquidator), 1000 ether);
     IRouter.Route[] memory path = new IRouter.Route[](1);
     path[0] = IRouter.Route({
-      from: address(hyUSD),
-      to: address(eUSD),
-      stable: false,
+      from: address(eUSD),
+      to: address(usdc),
+      stable: true,
       factory: 0x420DD381b31aEf6683db6B902084cB0FFECe40Da
     });
-    liquidator.redeem(hyUSD, 1000 ether, abi.encode(aerodromeV2Router, path));
-    emit log_named_uint("eUSD received", eUSD.balanceOf(address(liquidator)));
+    liquidator.redeem(eUSD, 1000 ether, abi.encode(aerodromeV2Router, path));
+    emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
     vm.stopPrank();
   }
 
