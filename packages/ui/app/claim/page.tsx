@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
@@ -19,10 +19,12 @@ import {
   PublicSaleContractAddress
 } from '../../constants/publicsale';
 import CountdownTimer from '../_components/claim/CountdownTimer';
+import EligibilityPopup from '../_components/claim/EligibilityPopup';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import ResultHandler from '../_components/ResultHandler';
 
 import { DROPDOWN } from '@ui/constants/index';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export default function Claim() {
@@ -36,7 +38,7 @@ export default function Claim() {
   const [publicSaleAlreadyClaimed, setPublicSaleAlreadyClaimed] = useState(
     BigInt(0)
   );
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [haveClaimed, setHaveClaimed] = useState(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
@@ -47,7 +49,7 @@ export default function Claim() {
   const { data: walletClient } = useWalletClient();
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
-  const newRef = useRef(null!);
+  // const newRef = useRef(null!);
 
   useEffect(() => {
     async function getVested() {
@@ -187,20 +189,20 @@ export default function Claim() {
     }
   }
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener('mousedown', handleOutsideClick);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleOutsideClick);
+  //   };
+  // }, []);
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
+  // // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  // const handleOutsideClick = (e: any) => {
+  //   //@ts-ignore
+  //   if (newRef.current && !newRef.current?.contains(e?.target)) {
+  //     setOpen(false);
+  //   }
+  // };
   // console.log(
   //   Number(
   //     formatEther(
@@ -214,14 +216,38 @@ export default function Claim() {
   //   publicClaimable
   // );
   //  console.log(eligibleForToken ,  alreadyClaimed);
+  const {
+    componentRef: eligibleRef,
+    isopen: eligibleOpen,
+    toggle: eligibletoggle
+  } = useOutsideClick();
+  const {
+    componentRef: newRef,
+    isopen: open,
+    toggle: seasonclose
+  } = useOutsideClick();
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
     >
+      {eligibleOpen && (
+        <EligibilityPopup
+          eligibilityOpen={eligibleOpen}
+          // loading={false}
+          eligibleRef={eligibleRef}
+          close={() => eligibletoggle()}
+        />
+      )}
       <div className={`flex w-full transition-all duration-500 ease-out `}>
         <div className="min-w-full flex items-center justify-between  md:px-8 px-2 py-4 ">
           <div className="md:text-5xl text-lg md:m-8 m-2 tracking-wide md:gap-y-3 gap-y-1 flex flex-col md:leading-10 leading-6 ">
             <p>Welcome to the </p> <p>$ION Airdrop </p>
+            <button
+              className={`rounded-md bg-accent disabled:opacity-50 text-black py-1.5  text-xs  uppercase truncate w-max px-6 mt-4 `}
+              onClick={() => eligibletoggle()}
+            >
+              Check Eligibility
+            </button>
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
             {[...Array(6)].map((_, index) => (
@@ -254,7 +280,7 @@ export default function Claim() {
                 newRef={newRef}
                 open={open}
                 setDropdownSelectedCampaign={setDropdownSelectedCampaign}
-                setOpen={setOpen}
+                setOpen={() => seasonclose()}
               />
             </div>
             <div className={`flex flex-col w-full h-full lg:col-span-1`}>
