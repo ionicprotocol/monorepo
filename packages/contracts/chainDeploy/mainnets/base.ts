@@ -32,6 +32,7 @@ export const deployConfig: ChainDeployConfig = {
 };
 
 const AERODROME_SWAP_ROUTER = "0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5"; // aero CL
+const AERODROME_V2_ROUTER = "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"; // aero v2
 
 const aerodromeAssets = base.assets.filter((asset) => asset.oracle === OracleTypes.AerodromePriceOracle);
 
@@ -55,22 +56,64 @@ export const deploy = async ({
   // });
 
   //// ChainlinkV2 Oracle
-  const chainlinkAssets = assets
-    .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
-    .map((asset) => ({
-      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator,
-      feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
-      symbol: asset.symbol
-    }));
-  await deployChainlinkOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    assets: base.assets,
-    chainlinkAssets
+  // const chainlinkAssets = assets
+  //   .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
+  //   .map((asset) => ({
+  //     aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator,
+  //     feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+  //     symbol: asset.symbol
+  //   }));
+  // await deployChainlinkOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   assets: base.assets,
+  //   chainlinkAssets
+  // });
+
+  const ap = await viem.getContractAt(
+    "AddressesProvider",
+    (await deployments.get("AddressesProvider")).address as Address
+  );
+
+  const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
   });
+  console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+  const univ2Router = await ap.read.getAddress(["IUniswapV2Router02"]);
+  console.log("univ2Router: ", univ2Router);
+  if (univ2Router !== AERODROME_V2_ROUTER) {
+    console.log("IUniswapV2Router02 is not set for Aero v2");
+    const owner = await ap.read.owner();
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: ap,
+        functionName: "setAddress",
+        args: ["IUniswapV2Router02", AERODROME_V2_ROUTER],
+        description: "Set IUniswapV2Router02 for Aero v2",
+        inputs: [
+          {
+            internalType: "address",
+            name: "key",
+            type: "address"
+          },
+          {
+            internalType: "address",
+            name: "value",
+            type: "address"
+          }
+        ]
+      });
+    } else {
+      const tx = await ap.write.setAddress(["IUniswapV2Router02", AERODROME_V2_ROUTER]);
+      console.log(`Sent tx to set IUniswapV2Router02 for Aero v2: ${tx}`);
+    }
+  }
 
   //// Uniswap V3 Liquidator Funder
   // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
@@ -88,10 +131,6 @@ export const deploy = async ({
   //   waitConfirmations: 1
   // });
   // console.log("AlgebraSwapLiquidator: ", algebraSwapLiquidator.address);
-  // const ap = await viem.getContractAt(
-  //   "AddressesProvider",
-  //   (await deployments.get("AddressesProvider")).address as Address
-  // );
   // const algebraSwapRouter = await ap.read.getAddress(["ALGEBRA_SWAP_ROUTER"]);
   // console.log("algebraSwapRouter: ", algebraSwapRouter);
   // if (algebraSwapRouter !== AERODROME_SWAP_ROUTER) {
