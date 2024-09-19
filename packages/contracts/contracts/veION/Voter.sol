@@ -2,14 +2,14 @@
 pragma solidity ^0.8.10;
 
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
-// import { IReward } from "./interfaces/IReward.sol";
-import { IVoter } from "./IVoter.sol";
+import { IVoter } from "./interfaces/IVoter.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { ERC2771Context } from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { IonicTimeLibrary } from "./libraries/IonicTimeLibrary.sol";
-import { IveION } from "./IveION.sol";
+import { IveION } from "./interfaces/IveION.sol";
+import { IBribeRewards } from "./interfaces/IBribeRewards.sol";
 
 contract Voter is IVoter {
   using SafeERC20 for IERC20;
@@ -149,7 +149,7 @@ contract Voter is IVoter {
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
     for (uint256 i = 0; i < _pools.length; i++) {
       if (!isGauge[gauges[_pools[i]]]) revert GaugeDoesNotExist(_pools[i]);
-      IERC20(rewardToken).safeTransfer(gauges[_pools[i]], _reward * weights[_pools[i]] / totalWeight); 
+      IERC20(rewardToken).safeTransfer(gauges[_pools[i]], (_reward * weights[_pools[i]]) / totalWeight);
     }
   }
 
@@ -172,8 +172,7 @@ contract Voter is IVoter {
         _updateFor(gauges[_pool]);
         weights[_pool] -= _votes;
         delete votes[_tokenId][_pool];
-        // IReward(gaugeToFees[gauges[_pool]])._withdraw(uint256(_votes), _tokenId);
-        // IReward(gaugeToBribe[gauges[_pool]])._withdraw(uint256(_votes), _tokenId);
+        IBribeRewards(gaugeToBribe[gauges[_pool]])._withdraw(uint256(_votes), _tokenId);
         _totalWeight += _votes;
         emit Abstained(msg.sender, _pool, _tokenId, _votes, weights[_pool], block.timestamp);
       }
@@ -229,8 +228,7 @@ contract Voter is IVoter {
 
         weights[_pool] += _poolWeight;
         votes[_tokenId][_pool] += _poolWeight;
-        // IReward(gaugeToFees[_gauge])._deposit(uint256(_poolWeight), _tokenId);
-        // IReward(gaugeToBribe[_gauge])._deposit(uint256(_poolWeight), _tokenId);
+        IBribeRewards(gaugeToBribe[_gauge])._deposit(uint256(_poolWeight), _tokenId);
         _usedWeight += _poolWeight;
         _totalWeight += _poolWeight;
         emit Voted(msg.sender, _pool, _tokenId, _poolWeight, weights[_pool], block.timestamp);
@@ -347,7 +345,7 @@ contract Voter is IVoter {
 
   /// @inheritdoc IVoter
   function distribute(uint256 _start, uint256 _finish) external {}
-  
+
   /// @inheritdoc IVoter
   function claimRewards(address[] memory _gauges) external {}
 
@@ -362,7 +360,7 @@ contract Voter is IVoter {
 
   /// @inheritdoc IVoter
   function killGauge(address _gauge) external {}
-  
+
   /// @inheritdoc IVoter
   function reviveGauge(address _gauge) external {}
 }

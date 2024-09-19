@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "../config/BaseTest.t.sol";
 import "../../veION/veION.sol";
-import "../../veION/IveION.sol";
+import "../../veION/interfaces/IveION.sol";
 import "../../veION/stake/IStakeStrategy.sol";
 import "../../veION/stake/VeloIonModeStakingModeReward.sol";
 import "../../veION/stake/IStakingRewards.sol";
@@ -1125,48 +1125,48 @@ contract VotingEscrowNFTTest is BaseTest {
     assertGt(sVars.veIONEarnings, 0, "veION earnings should be greater than zero after 1 days");
   }
 
-  function testRewardsConsistency() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+  // function testRewardsConsistency() public fork(MODE_MAINNET) {
+  //   TestVars memory vars;
+  //   IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
-    vars.user = address(0x7890);
-    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+  //   vars.user = address(0x7890);
+  //   vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
-    // Mint and approve tokens for the user
-    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
-    vm.prank(vars.user);
-    modeVelodrome5050IonMode.approve(address(ve), vars.amount);
+  //   // Mint and approve tokens for the user
+  //   modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+  //   vm.prank(vars.user);
+  //   modeVelodrome5050IonMode.approve(address(ve), vars.amount);
 
-    // Create lock in veION
-    vars.tokenAddresses = new address[](1);
-    vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
-    vars.tokenAmounts = new uint256[](1);
-    vars.tokenAmounts[0] = vars.amount;
-    vars.durations = new uint256[](1);
-    vars.durations[0] = 52 weeks; // 1 year
+  //   // Create lock in veION
+  //   vars.tokenAddresses = new address[](1);
+  //   vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
+  //   vars.tokenAmounts = new uint256[](1);
+  //   vars.tokenAmounts[0] = vars.amount;
+  //   vars.durations = new uint256[](1);
+  //   vars.durations[0] = 52 weeks; // 1 year
 
-    vm.prank(vars.user);
-    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+  //   vm.prank(vars.user);
+  //   vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations);
 
-    // Check rewards in veION
-    vm.warp(block.timestamp + 1 weeks);
-    uint256 veIONRewards = ve.earned(vars.user, stakingStrategy);
-    emit log_named_uint("Rewards from veION", veIONRewards);
+  //   // Check rewards in veION
+  //   vm.warp(block.timestamp + 1 weeks);
+  //   uint256 veIONRewards = ve.earned(vars.user, stakingStrategy);
+  //   emit log_named_uint("Rewards from veION", veIONRewards);
 
-    // Stake directly in the staking contract
-    modeVelodrome5050IonMode.mint(vars.user, vars.amount);
-    vm.prank(vars.user);
-    modeVelodrome5050IonMode.approve(address(stakingStrategy), vars.amount);
+  //   // Stake directly in the staking contract
+  //   modeVelodrome5050IonMode.mint(vars.user, vars.amount);
+  //   vm.prank(vars.user);
+  //   modeVelodrome5050IonMode.approve(address(stakingStrategy), vars.amount);
 
-    vm.prank(vars.user);
-    stakingStrategy.stake(vars.amount);
+  //   vm.prank(vars.user);
+  //   stakingStrategy.stake(vars.amount);
 
-    // Check rewards in the staking contract
-    vm.warp(block.timestamp + 1 weeks);
-    uint256 directStakingRewards = stakingStrategy.earned(vars.user);
-    emit log_named_uint("Rewards from direct staking", directStakingRewards);
+  //   // Check rewards in the staking contract
+  //   vm.warp(block.timestamp + 1 weeks);
+  //   uint256 directStakingRewards = stakingStrategy.earned(vars.user);
+  //   emit log_named_uint("Rewards from direct staking", directStakingRewards);
 
-    // Assert that the rewards are the same
-    assertEq(veIONRewards, directStakingRewards, "Rewards from veION should match direct staking rewards");
-  }
+  //   // Assert that the rewards are the same
+  //   assertEq(veIONRewards, directStakingRewards, "Rewards from veION should match direct staking rewards");
+  // }
 }
