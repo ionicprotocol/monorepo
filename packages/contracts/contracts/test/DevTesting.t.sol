@@ -667,7 +667,7 @@ contract DevTesting is BaseTest {
     AerodromeV2Liquidator liquidator = new AerodromeV2Liquidator();
     IERC20Upgradeable hyUSD = IERC20Upgradeable(0xCc7FF230365bD730eE4B352cC2492CEdAC49383e);
     IERC20Upgradeable eUSD = IERC20Upgradeable(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4);
-    address hyusdWhale = 0xb5E331615FdbA7DF49e05CdEACEb14Acdd5091c3;
+    address hyusdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
     address aerodromeV2Router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
 
     vm.startPrank(hyusdWhale);
