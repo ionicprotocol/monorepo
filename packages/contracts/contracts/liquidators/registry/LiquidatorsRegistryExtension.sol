@@ -8,6 +8,7 @@ import "../IRedemptionStrategy.sol";
 import "../../ionic/DiamondExtension.sol";
 import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 
+import { IRouter as IAerodromeV2Router } from "../../external/aerodrome/IRouter.sol";
 import { IRouter } from "../../external/solidly/IRouter.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
@@ -54,11 +55,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     return functionSelectors;
   }
 
-  function getSlippage(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (uint256 slippage)
-  {
+  function getSlippage(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (uint256 slippage) {
     slippage = conversionSlippage[inputToken][outputToken];
     // TODO slippage == 0 should be allowed
     if (slippage == 0) return MAX_SLIPPAGE;
@@ -107,8 +107,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     uint256 tokenDecimals = uint256(ERC20Upgradeable(address(token)).decimals());
     return
       tokenDecimals <= 18
-        ? uint256(unscaledPrice) * (10**(18 - tokenDecimals))
-        : uint256(unscaledPrice) / (10**(tokenDecimals - 18));
+        ? uint256(unscaledPrice) * (10 ** (18 - tokenDecimals))
+        : uint256(unscaledPrice) / (10 ** (tokenDecimals - 18));
   }
 
   function swap(
@@ -191,11 +191,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     return inputTokensByOutputToken[outputToken].values();
   }
 
-  function getRedemptionStrategies(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    public
-    view
-    returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData)
-  {
+  function getRedemptionStrategies(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) public view returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData) {
     IERC20Upgradeable tokenToRedeem = inputToken;
     IERC20Upgradeable targetOutputToken = outputToken;
     IRedemptionStrategy[] memory strategiesTemp = new IRedemptionStrategy[](10);
@@ -242,11 +241,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     }
   }
 
-  function getRedemptionStrategy(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    public
-    view
-    returns (IRedemptionStrategy strategy, bytes memory strategyData)
-  {
+  function getRedemptionStrategy(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) public view returns (IRedemptionStrategy strategy, bytes memory strategyData) {
     strategy = redemptionStrategiesByTokens[inputToken][outputToken];
 
     if (isStrategy(strategy, "SolidlySwapLiquidator")) {
@@ -265,6 +263,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
         swapRouter = ap.getAddress("ALGEBRA_SWAP_ROUTER");
       }
       strategyData = algebraSwapLiquidatorData(inputToken, outputToken, swapRouter);
+    } else if (isStrategy(strategy, "AerodromeV2Liquidator")) {
+      strategyData = aerodromeV2LiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "GammaAlgebraLpTokenLiquidator")) {
       strategyData = gammaAlgebraLpTokenLiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "GammaUniswapV3LpTokenLiquidator")) {
@@ -325,11 +325,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     return tokens[0];
   }
 
-  function getUniswapV3Router(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (address)
-  {
+  function getUniswapV3Router(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (address) {
     address customRouter = customUniV3Router[inputToken][outputToken];
     if (customRouter == address(0)) {
       customRouter = customUniV3Router[outputToken][inputToken];
@@ -348,11 +347,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     return ap.getAddress("IUniswapV2Router02");
   }
 
-  function solidlySwapLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function solidlySwapLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     // assuming bsc for the chain
     IRouter solidlyRouter = IRouter(ap.getAddress("SOLIDLY_SWAP_ROUTER"));
     address tokenTo = address(outputToken);
@@ -385,11 +383,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(solidlyRouter, outputToken, stable);
   }
 
-  function solidlyLpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function solidlyLpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     IPair lpToken = IPair(address(inputToken));
     require(
       address(outputToken) == lpToken.token0() || address(outputToken) == lpToken.token1(),
@@ -399,19 +396,17 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(ap.getAddress("SOLIDLY_SWAP_ROUTER"), outputToken);
   }
 
-  function aaveLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    pure
-    returns (bytes memory strategyData)
-  {
+  function aaveLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal pure returns (bytes memory strategyData) {
     strategyData = abi.encode(outputToken);
   }
 
-  function gammaAlgebraLpTokenWrapperData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function gammaAlgebraLpTokenWrapperData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     address swapRouter = ap.getAddress("GAMMA_ALGEBRA_SWAP_ROUTER");
     address proxy = ap.getAddress("GAMMA_ALGEBRA_UNI_PROXY"); // IUniProxy
     address vault = address(outputToken); // IHypervisor
@@ -419,11 +414,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(swapRouter, proxy, vault);
   }
 
-  function gammaUniswapV3LpTokenWrapperData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function gammaUniswapV3LpTokenWrapperData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     address swapRouter = ap.getAddress("GAMMA_UNISWAP_V3_SWAP_ROUTER");
     address proxy = ap.getAddress("GAMMA_UNISWAP_V3_UNI_PROXY"); // IUniProxy
     address vault = address(outputToken); // IHypervisor
@@ -431,19 +425,17 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(swapRouter, proxy, vault);
   }
 
-  function balancerLpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    pure
-    returns (bytes memory strategyData)
-  {
+  function balancerLpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal pure returns (bytes memory strategyData) {
     strategyData = abi.encode(outputToken);
   }
 
-  function uniswapV3LiquidatorFunderData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function uniswapV3LiquidatorFunderData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     uint24 fee = uniswapV3Fees[inputToken][outputToken];
     if (fee == 0) fee = uniswapV3Fees[outputToken][inputToken];
     if (fee == 0) fee = 500;
@@ -452,14 +444,33 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(inputToken, outputToken, fee, router, ap.getAddress("Quoter"));
   }
 
-  function uniswapV2LiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function uniswapV2LiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     IERC20Upgradeable[] memory swapPath = new IERC20Upgradeable[](2);
     swapPath[0] = inputToken;
     swapPath[1] = outputToken;
+    strategyData = abi.encode(getUniswapV2Router(inputToken), swapPath);
+  }
+
+  function aerodromeV2LiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
+    IAerodromeV2Router.Route[] memory swapPath = new IAerodromeV2Router.Route[](2);
+    swapPath[0] = IAerodromeV2Router.Route({
+      from: address(inputToken),
+      to: address(outputToken),
+      stable: false,
+      factory: ap.getAddress("AERODROME_V2_FACTORY")
+    });
+    swapPath[1] = IAerodromeV2Router.Route({
+      from: address(outputToken),
+      to: address(inputToken),
+      stable: false,
+      factory: ap.getAddress("AERODROME_V2_FACTORY")
+    });
     strategyData = abi.encode(getUniswapV2Router(inputToken), swapPath);
   }
 
@@ -471,27 +482,24 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(outputToken, swapRouter);
   }
 
-  function gammaAlgebraLpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function gammaAlgebraLpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     strategyData = abi.encode(outputToken, ap.getAddress("GAMMA_ALGEBRA_SWAP_ROUTER"));
   }
 
-  function gammaUniswapV3LpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function gammaUniswapV3LpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     strategyData = abi.encode(outputToken, ap.getAddress("GAMMA_UNISWAP_V3_SWAP_ROUTER"));
   }
 
-  function uniswapLpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function uniswapLpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     IUniswapV2Pair lpToken = IUniswapV2Pair(address(inputToken));
     address token0 = lpToken.token0();
     address token1 = lpToken.token1();
@@ -518,11 +526,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(getUniswapV2Router(inputToken), swap0Path, swap1Path);
   }
 
-  function saddleLpTokenLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function saddleLpTokenLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     SaddleLpPriceOracle saddleLpPriceOracle = SaddleLpPriceOracle(ap.getAddress("SaddleLpPriceOracle"));
     address[] memory tokens = saddleLpPriceOracle.getUnderlyingTokens(address(inputToken));
 
@@ -537,11 +544,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(preferredToken, saddleLpPriceOracle, wnative);
   }
 
-  function curveLpTokenLiquidatorNoRegistryData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function curveLpTokenLiquidatorNoRegistryData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     CurveLpTokenPriceOracleNoRegistry curveLpOracle = CurveLpTokenPriceOracleNoRegistry(
       ap.getAddress("CurveLpTokenPriceOracleNoRegistry")
     );
@@ -573,11 +579,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     }
   }
 
-  function curveLpTokenWrapperData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function curveLpTokenWrapperData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     CurveLpTokenPriceOracleNoRegistry curveLpOracle = CurveLpTokenPriceOracleNoRegistry(
       ap.getAddress("CurveLpTokenPriceOracleNoRegistry")
     );
@@ -585,11 +590,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(curveLpOracle.poolOf(address(outputToken)), outputToken);
   }
 
-  function curveSwapLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function curveSwapLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     address curveV1Oracle = ap.getAddress("CurveLpTokenPriceOracleNoRegistry");
     address curveV2Oracle = ap.getAddress("CurveV2LpTokenPriceOracleNoRegistry");
     address wnative = ap.getAddress("wtoken");
@@ -597,11 +601,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(curveV1Oracle, curveV2Oracle, inputToken, outputToken, wnative);
   }
 
-  function jarvisLiquidatorFunderData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function jarvisLiquidatorFunderData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     AddressesProvider.JarvisPool[] memory pools = ap.getJarvisPools();
     for (uint256 i = 0; i < pools.length; i++) {
       AddressesProvider.JarvisPool memory pool = pools[i];
@@ -615,11 +618,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     }
   }
 
-  function balancerSwapLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function balancerSwapLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     address poolAddress = ap.getBalancerPoolForTokens(address(inputToken), address(outputToken));
     if (poolAddress == address(0)) {
       // throw an error
@@ -628,11 +630,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(outputToken, poolAddress);
   }
 
-  function solidlyLpTokenWrapperData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function solidlyLpTokenWrapperData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     IRouter solidlyRouter = IRouter(ap.getAddress("SOLIDLY_SWAP_ROUTER"));
     IPair pair = IPair(address(outputToken));
 
@@ -656,11 +657,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
   }
 
   // TODO remove after testing
-  function xBombLiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function xBombLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     if (block.chainid == 56) {
       address xbomb = 0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b;
       address bomb = 0x522348779DCb2911539e76A1042aA922F9C47Ee3;
@@ -689,11 +689,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
   }
 
   // @notice addresses hardcoded, use only for ETHEREUM
-  function erc4626LiquidatorData(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    internal
-    view
-    returns (bytes memory strategyData)
-  {
+  function erc4626LiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
     uint256 fee;
     address[] memory underlyingTokens;
     address inputTokenAddr = address(inputToken);
