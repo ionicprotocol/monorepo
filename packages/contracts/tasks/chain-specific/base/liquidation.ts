@@ -61,8 +61,8 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const { deployer } = await getNamedAccounts();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
     console.log("🚀 ~ uniLiquidator:", uniLiquidator.address);
-    const algebraSwapLiquidator = await deployments.get("AlgebraSwapLiquidator");
-    console.log("🚀 ~ algebraSwapLiquidator:", algebraSwapLiquidator.address);
+    const univ2Liquidator = await deployments.get("UniswapV2LiquidatorFunder");
+    console.log("🚀 ~ univ2Liquidator:", univ2Liquidator.address);
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
     const wstETHContract = await viem.getContractAt("ICErc20", wstETH_MARKET);
@@ -77,6 +77,8 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const bsdETHUnderlying = await bsdETHContract.read.underlying();
     const eusdContract = await viem.getContractAt("ICErc20", eUSD_MARKET);
     const eusdUnderlying = await eusdContract.read.underlying();
+    const hyusdContract = await viem.getContractAt("ICErc20", hyUSD_MARKET);
+    const hyusdUnderlying = await hyusdContract.read.underlying();
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
         inputToken: wethUnderlying,
@@ -131,22 +133,32 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: bsdETHUnderlying,
         outputToken: wethUnderlying,
-        strategy: algebraSwapLiquidator.address as Address
+        strategy: univ2Liquidator.address as Address
       },
       {
         inputToken: wethUnderlying,
         outputToken: bsdETHUnderlying,
-        strategy: algebraSwapLiquidator.address as Address
+        strategy: univ2Liquidator.address as Address
       },
       {
         inputToken: eusdUnderlying,
         outputToken: usdcUnderlying,
-        strategy: algebraSwapLiquidator.address as Address
+        strategy: univ2Liquidator.address as Address
       },
       {
         inputToken: usdcUnderlying,
         outputToken: eusdUnderlying,
-        strategy: algebraSwapLiquidator.address as Address
+        strategy: univ2Liquidator.address as Address
+      },
+      {
+        inputToken: hyusdUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: univ2Liquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: hyusdUnderlying,
+        strategy: univ2Liquidator.address as Address
       }
     ];
 
