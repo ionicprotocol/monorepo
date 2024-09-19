@@ -40,7 +40,7 @@ export default function Claim() {
   const [loading, setLoading] = useState(false);
   const [haveClaimed, setHaveClaimed] = useState(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
-    useState<number>(DROPDOWN.AirdropSZN1);
+    useState<number>(DROPDOWN.AirdropSZN2);
   const [popupV2, setPopupV2] = useState(false);
   const [agreement, setAgreement] = useState(false);
   const publicClient = usePublicClient();

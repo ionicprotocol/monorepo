@@ -28,6 +28,10 @@ export default function SeasonSelector({
     {
       id: 1,
       name: 'Airdrop SZN 1'
+    },
+    {
+      id: 2,
+      name: 'Airdrop SZN 2'
     }
   ];
   return (

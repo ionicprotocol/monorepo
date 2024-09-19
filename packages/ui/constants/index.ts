@@ -241,6 +241,7 @@ export const pools: Record<number, PoolParams> = {
 
 export const DROPDOWN = {
   AirdropSZN1: 1,
+  AirdropSZN2: 2,
   PublicSale: 0
 };
 // export const pools = [
