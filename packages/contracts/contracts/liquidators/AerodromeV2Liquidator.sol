@@ -41,7 +41,7 @@ contract AerodromeV2Liquidator {
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
     // Get Uniswap router and path
     (IRouter router, IRouter.Route[] memory swapPath) = abi.decode(strategyData, (IRouter, IRouter.Route[]));
-    require(swapPath.length >= 2 && swapPath[0].from == address(inputToken), "Invalid UniswapLiquidator swap path.");
+    require(swapPath.length >= 1 && swapPath[0].from == address(inputToken), "Invalid AerodromeV2Liquidator swap path.");
 
     // Swap underlying tokens
     inputToken.approve(address(router), inputAmount);

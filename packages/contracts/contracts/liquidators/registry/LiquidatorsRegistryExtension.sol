@@ -458,16 +458,10 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
-    IAerodromeV2Router.Route[] memory swapPath = new IAerodromeV2Router.Route[](2);
+    IAerodromeV2Router.Route[] memory swapPath = new IAerodromeV2Router.Route[](1);
     swapPath[0] = IAerodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
-      stable: false,
-      factory: ap.getAddress("AERODROME_V2_FACTORY")
-    });
-    swapPath[1] = IAerodromeV2Router.Route({
-      from: address(outputToken),
-      to: address(inputToken),
       stable: false,
       factory: ap.getAddress("AERODROME_V2_FACTORY")
     });
