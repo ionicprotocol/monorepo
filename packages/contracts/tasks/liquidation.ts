@@ -9,6 +9,7 @@ export const setLiquidationStrategies = async (
   deployer: Address,
   pairs: { inputToken: Address; outputToken: Address; strategy: Address }[]
 ) => {
+  const publicClient = await viem.getPublicClient();
   const liquidatorRegistry = await viem.getContractAt(
     "ILiquidatorsRegistry",
     (await deployments.get("LiquidatorsRegistry")).address as Address
@@ -49,6 +50,7 @@ export const setLiquidationStrategies = async (
         filteredPairs.map((pair) => pair.outputToken)
       ]);
       console.log("Transaction sent:", tx);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
     }
   } else {
     console.log("Redemption strategy already set");
