@@ -24,6 +24,7 @@ export class Liquidator {
         config.excludedComptrollers as Address[],
         botType
       );
+      console.log("botTypefromliquidator.ts", botType)
       const filteredErroredPools = erroredPools.filter(
         (pool) => !Object.values(EXCLUDED_ERROR_CODES).includes(pool.error.code)
       );
