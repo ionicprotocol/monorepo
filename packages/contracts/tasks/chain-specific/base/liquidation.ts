@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import { setLiquidationStrategies } from "../../liquidation";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { assetSymbols } from "@ionicprotocol/types";
 import { base } from "@ionicprotocol/chains";
 import {
@@ -58,8 +58,18 @@ task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy
 
 task("base:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
+    const SPECIAL_ROUTER = "0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF";
     const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
+
+    const liquidatorRegistry = await viem.getContractAt(
+      "ILiquidatorsRegistry",
+      (await deployments.get("LiquidatorsRegistry")).address as Address
+    );
+
+    const aeroV2Liquidator = await deployments.get("AerodromeV2Liquidator");
+
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
     const wstETHContract = await viem.getContractAt("ICErc20", wstETH_MARKET);
@@ -70,56 +80,107 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const usdcUnderlying = await usdcContract.read.underlying();
     const aeroContract = await viem.getContractAt("ICErc20", AERO_MARKET);
     const aeroUnderlying = await aeroContract.read.underlying();
+    const bsdETHContract = await viem.getContractAt("ICErc20", bsdETH_MARKET);
+    const bsdETHUnderlying = await bsdETHContract.read.underlying();
+    const eusdContract = await viem.getContractAt("ICErc20", eUSD_MARKET);
+    const eusdUnderlying = await eusdContract.read.underlying();
+    const hyusdContract = await viem.getContractAt("ICErc20", hyUSD_MARKET);
+    const hyusdUnderlying = await hyusdContract.read.underlying();
+
+    const read1 = await liquidatorRegistry.read.customUniV3Router([usdcUnderlying, eusdUnderlying]);
+    const read2 = await liquidatorRegistry.read.customUniV3Router([eusdUnderlying, usdcUnderlying]);
+    console.log("🚀 ~ read1, read2:", read1, read2);
+    if (read1 !== SPECIAL_ROUTER || read2 !== SPECIAL_ROUTER) {
+      const setTx = await liquidatorRegistry.write._setUniswapV3Routers([
+        [usdcUnderlying, eusdUnderlying],
+        [eusdUnderlying, usdcUnderlying],
+        [SPECIAL_ROUTER, SPECIAL_ROUTER]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: setTx });
+      console.log("Transaction sent to set special routers to indicate stable pairs:", setTx);
+    } else {
+      console.log("Custom Routers already set");
+    }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
+        inputToken: wethUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: aeroUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: aeroUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: aeroUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: aeroUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
         inputToken: ezETHUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: ezETHUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
         outputToken: wstETHUnderlying,
         strategy: uniLiquidator.address as Address
       },
       {
         inputToken: wstETHUnderlying,
-        outputToken: ezETHUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: wethUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
         outputToken: wethUnderlying,
         strategy: uniLiquidator.address as Address
       },
       {
-        inputToken: aeroUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        inputToken: bsdETHUnderlying,
+        outputToken: wethUnderlying,
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: wethUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        outputToken: bsdETHUnderlying,
+        strategy: aeroV2Liquidator.address as Address
       },
       {
-        inputToken: aeroUnderlying,
-        outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: ezETHUnderlying,
+        inputToken: eusdUnderlying,
         outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: aeroV2Liquidator.address as Address
       },
       {
         inputToken: usdcUnderlying,
-        outputToken: ezETHUnderlying,
-        strategy: uniLiquidator.address as Address
+        outputToken: eusdUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: hyusdUnderlying,
+        outputToken: eusdUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: eusdUnderlying,
+        outputToken: hyusdUnderlying,
+        strategy: aeroV2Liquidator.address as Address
       }
     ];
 

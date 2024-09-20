@@ -89,7 +89,7 @@ export function useMaxSupplyAmount(
     enabled:
       !!address && !!asset && !!sdk && !!comptrollerAddress && !!balanceData,
 
-    refetchInterval: 10000,
+    refetchInterval: 5000,
 
     staleTime: Infinity
   });
