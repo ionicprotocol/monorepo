@@ -59,21 +59,20 @@ async function processAssetsInBatches(
   poolUsers: PoolUserStruct[],
   botType: BotType
 ) {
-const mutableUsers: `0x${string}`[] = [...users];
-// console.log("BotTypefromGetPOOlUsers", botType)
-const healthFactorThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold()
-// console.log("healthFactorThreshold", healthFactorThreshold)
+  const mutableUsers: `0x${string}`[] = [...users];
+  // console.log("BotTypefromGetPOOlUsers", botType)
+  const healthFactorThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
+  // console.log("healthFactorThreshold", healthFactorThreshold)
   for (let i = 0; i < mutableUsers.length; i += BATCH_SIZE) {
     const batchUsers = mutableUsers.slice(i, i + BATCH_SIZE);
     await Promise.all(
       batchUsers.map(async (assets, index) => {
         try {
           const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
-          if (health < maxHealth && health > HF_MIN && botType === BotType.Pyth ) {
+          if (health < maxHealth && health > HF_MIN && botType === BotType.Pyth) {
             // console.log("I am in pyth loop")
             poolUsers.push({ account: batchUsers[index], health });
-          }
-          else if (health < healthFactorThreshold && botType == BotType.Standard)  {
+          } else if (health < healthFactorThreshold && botType == BotType.Standard) {
             // console.log("I am in standard loop, ")
             poolUsers.push({ account: batchUsers[index], health });
           }
