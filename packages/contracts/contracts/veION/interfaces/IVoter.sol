@@ -30,6 +30,12 @@ interface IVoter {
   error ZeroBalance();
   error ZeroAddress();
 
+  enum MarketSide {
+     Supply,
+     Borrow,
+     Utilization
+  }
+
   event GaugeCreated(
     address indexed poolFactory,
     address indexed votingRewardsFactory,
@@ -66,15 +72,15 @@ interface IVoter {
   // mappings
   function gauges(address pool) external view returns (address);
 
-  function poolForGauge(address gauge) external view returns (address);
+  function marketForGauge(address gauge) external view returns (address);
 
   function gaugeToFees(address gauge) external view returns (address);
 
   function gaugeToBribe(address gauge) external view returns (address);
 
-  function weights(address pool) external view returns (uint256);
+  function weights(address pool, MarketSide marketSide) external view returns (uint256);
 
-  function votes(uint256 tokenId, address pool) external view returns (uint256);
+  function votes(uint256 tokenId, address pool, MarketSide marketSide) external view returns (uint256);
 
   function usedWeights(uint256 tokenId) external view returns (uint256);
 
@@ -122,10 +128,11 @@ interface IVoter {
   ///         Can only vote for gauges that have not been killed.
   /// @dev Weights are distributed proportional to the sum of the weights in the array.
   ///      Throws if length of _poolVote and _weights do not match.
-  /// @param _tokenId     Id of veNFT you are voting with.
-  /// @param _poolVote    Array of pools you are voting for.
-  /// @param _weights     Weights of pools.
-  function vote(uint256 _tokenId, address[] calldata _poolVote, uint256[] calldata _weights) external;
+  /// @param _tokenId           Id of veNFT you are voting with.
+  /// @param _poolVote          Array of pools you are voting for.
+  /// @param _marketVoteSide    Array of market vote sides you are voting for.
+  /// @param _weights           Weights of pools.
+  function vote(uint256 _tokenId, address[] calldata _poolVote, MarketSide[] calldata _marketVoteSide, uint256[] calldata _weights) external;
 
   /// @notice Called by users to reset voting state. Required if you wish to make changes to
   ///         veNFT state (e.g. merge, split, deposit into managed etc).
