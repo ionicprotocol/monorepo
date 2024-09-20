@@ -15,27 +15,34 @@ interface IProp {
 
 const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
   const diffSeason1 = +new Date('2024-08-31T00:00:00+00:00') - +new Date();
+  const diffSeason2 = +new Date('2025-01-23T00:00:00+00:00') - +new Date();
   const diffS1presale = +new Date('2024-08-21T00:00:00+00:00') - +new Date();
 
-  const [timeLeft, setTimeLeft] = useState<ITime>(
-    calculateTimeLeft(
-      dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
-        ? diffSeason1
-        : diffS1presale
-    )
-  );
+  // let timeLeft: ITime;
+
+  useEffect(() => {
+    if (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1)
+      setTimeLeft(calculateTimeLeft(diffSeason1));
+    if (dropdownSelectedCampaign === DROPDOWN.AirdropSZN2)
+      setTimeLeft(calculateTimeLeft(diffSeason2));
+    if (dropdownSelectedCampaign === DROPDOWN.PublicSale)
+      setTimeLeft(calculateTimeLeft(diffS1presale));
+  }, [diffS1presale, diffSeason1, diffSeason2, dropdownSelectedCampaign]);
+
+  const [timeLeft, setTimeLeft] = useState<ITime>();
 
   useEffect(() => {
     setTimeout(() => {
-      setTimeLeft(
-        calculateTimeLeft(
-          dropdownSelectedCampaign === DROPDOWN.AirdropSZN1
-            ? diffSeason1
-            : diffS1presale
-        )
-      );
+      let timeremaining;
+      if (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1)
+        timeremaining = calculateTimeLeft(diffSeason1);
+      if (dropdownSelectedCampaign === DROPDOWN.AirdropSZN2)
+        timeremaining = calculateTimeLeft(diffSeason2);
+      if (dropdownSelectedCampaign === DROPDOWN.PublicSale)
+        timeremaining = calculateTimeLeft(diffS1presale);
+      setTimeLeft(timeremaining);
     }, 1000);
-  }, [diffS1presale, diffSeason1, dropdownSelectedCampaign]);
+  }, [diffS1presale, diffSeason1, diffSeason2, dropdownSelectedCampaign]);
 
   function calculateTimeLeft(expiresAt: number) {
     let timeLeft: ITime = {
