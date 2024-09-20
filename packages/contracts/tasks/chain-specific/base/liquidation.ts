@@ -87,17 +87,17 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const hyusdContract = await viem.getContractAt("ICErc20", hyUSD_MARKET);
     const hyusdUnderlying = await hyusdContract.read.underlying();
 
-    const read1 = await liquidatorRegistry.read.customUniV3Router([hyusdUnderlying, usdcUnderlying]);
-    const read2 = await liquidatorRegistry.read.customUniV3Router([usdcUnderlying, hyusdUnderlying]);
+    const read1 = await liquidatorRegistry.read.customUniV3Router([usdcUnderlying, eusdUnderlying]);
+    const read2 = await liquidatorRegistry.read.customUniV3Router([eusdUnderlying, usdcUnderlying]);
     console.log("🚀 ~ read1, read2:", read1, read2);
     if (read1 !== SPECIAL_ROUTER || read2 !== SPECIAL_ROUTER) {
       const setTx = await liquidatorRegistry.write._setUniswapV3Routers([
-        [hyusdUnderlying, usdcUnderlying],
-        [usdcUnderlying, hyusdUnderlying],
+        [usdcUnderlying, eusdUnderlying],
+        [eusdUnderlying, usdcUnderlying],
         [SPECIAL_ROUTER, SPECIAL_ROUTER]
       ]);
       await publicClient.waitForTransactionReceipt({ hash: setTx });
-      console.log("Transaction sent to set aeroV2Liquidator:", setTx);
+      console.log("Transaction sent to set special routers to indicate stable pairs:", setTx);
     } else {
       console.log("Custom Routers already set");
     }
