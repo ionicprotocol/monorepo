@@ -72,7 +72,7 @@ async function processAssetsInBatches(
           if (health < maxHealth && health > HF_MIN && botType === BotType.Pyth) {
             // console.log("I am in pyth loop")
             poolUsers.push({ account: batchUsers[index], health });
-          } else if (health < healthFactorThreshold && botType == BotType.Standard) {
+          } else if (health < healthFactorThreshold && health > HF_MIN && botType == BotType.Standard) {
             // console.log("I am in standard loop, ")
             poolUsers.push({ account: batchUsers[index], health });
           }
