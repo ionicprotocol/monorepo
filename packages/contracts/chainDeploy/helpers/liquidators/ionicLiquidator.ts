@@ -251,6 +251,9 @@ export const configureAddressesProviderAddresses = async ({
     const lr = await deployments.getOrNull("LiquidatorsRegistry");
     await configureAddress(ap, publicClient, "LiquidatorsRegistry", lr?.address);
 
+    const poolLens = await deployments.getOrNull("PoolLens");
+    await configureAddress(ap, publicClient, "PoolLens", poolLens?.address);
+
     if (chainId !== 1) {
       const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
       await configureAddress(ap, publicClient, "OptimizedVaultsRegistry", ovr?.address);
@@ -270,7 +273,7 @@ export const configureAddressesProviderAddresses = async ({
   }
 };
 
-async function configureAddress(ap: any, publicClient: PublicClient, key: string, value?: string) {
+export async function configureAddress(ap: any, publicClient: PublicClient, key: string, value?: string) {
   if (!value) {
     console.log(`empty value for key ${key}`);
     return;
@@ -282,5 +285,7 @@ async function configureAddress(ap: any, publicClient: PublicClient, key: string
 
     await publicClient.waitForTransactionReceipt({ hash });
     console.log(`setAddress ${key}: ${hash}`);
+  } else {
+    console.log(`${key} already set to ${value}`);
   }
 }

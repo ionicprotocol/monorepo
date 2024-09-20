@@ -216,6 +216,7 @@ export enum assetSymbols {
   cbBTC = "cbBTC",
   superOETHb = "superOETHb",
   wsuperOETHb = "wsuperOETHb",
+  wUSDM = "wUSDM",
 
   // optimism
   OP = "OP",

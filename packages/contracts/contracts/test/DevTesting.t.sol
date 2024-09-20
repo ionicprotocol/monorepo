@@ -2,6 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
+import {IERC20Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 import "./config/BaseTest.t.sol";
@@ -22,7 +23,9 @@ import { JumpRateModel } from "../compound/JumpRateModel.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
-
+import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
+import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
+import { IRouter } from "../external/aerodrome/IRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -89,10 +92,10 @@ contract DevTesting is BaseTest {
       stoneMarket = ICErc20(0x959FA710CCBb22c7Ce1e59Da82A247e686629310);
       weEthMarket = ICErc20(0xA0D844742B4abbbc43d8931a6Edb00C56325aA18);
       merlinBTCMarket = ICErc20(0x19F245782b1258cf3e11Eda25784A378cC18c108);
-    } else {
       ICErc20[] memory markets = pool.getAllMarkets();
       wethMarket = markets[0];
       usdcMarket = markets[1];
+    } else {
     }
     levPosLens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
@@ -658,6 +661,30 @@ contract DevTesting is BaseTest {
 
     //vm.prank(dpa.owner());
     //proxy.upgradeTo(address(newImpl));
+  }
+
+  function testAerodromeV2Liquidator() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+    AerodromeV2Liquidator liquidator = new AerodromeV2Liquidator();
+    IERC20Upgradeable hyUSD = IERC20Upgradeable(0xCc7FF230365bD730eE4B352cC2492CEdAC49383e);
+    IERC20Upgradeable eUSD = IERC20Upgradeable(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4);
+    IERC20Upgradeable usdc = IERC20Upgradeable(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913);
+    address hyusdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address usdcWhale = 0xaac391f166f33CdaEfaa4AfA6616A3BEA66B694d;
+    address eusdWhale = 0xEE8Bd6594E046d72D592ac0e278E3CA179b8f189;
+    address aerodromeV2Router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
+
+    vm.startPrank(eusdWhale);
+    eUSD.transfer(address(liquidator), 1000 ether);
+    IRouter.Route[] memory path = new IRouter.Route[](1);
+    path[0] = IRouter.Route({
+      from: address(eUSD),
+      to: address(usdc),
+      stable: true,
+      factory: 0x420DD381b31aEf6683db6B902084cB0FFECe40Da
+    });
+    liquidator.redeem(eUSD, 1000 ether, abi.encode(aerodromeV2Router, path));
+    emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
+    vm.stopPrank();
   }
 
   function _functionCall(
