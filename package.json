@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.4.1",
+  "packageManager": "yarn@4.5.0",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
