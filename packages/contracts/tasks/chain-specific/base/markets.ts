@@ -4,7 +4,7 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.wsuperOETHb];
+  const assetsToDeploy: string[] = [assetSymbols.wUSDM];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.underlying || !asset.symbol) {
       throw new Error("Invalid asset");
@@ -33,22 +33,27 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
   }
 });
 
-task("base:set-caps-hyusd", "one time setup").setAction(async (_, { viem, run }) => {
-  const hyUsd = base.assets.find((asset) => asset.symbol === assetSymbols.hyUSD);
-  if (!hyUsd) {
-    throw new Error("hyUSD not found in base assets");
+task("base:set-caps-new", "one time setup").setAction(async (_, { viem, run }) => {
+  const wUSDM = base.assets.find((asset) => asset.symbol === assetSymbols.wUSDM);
+  if (!wUSDM) {
+    throw new Error("wUSDM not found in base assets");
   }
   const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
-  const cToken = await pool.read.cTokensByUnderlying([hyUsd.underlying]);
+  const cToken = await pool.read.cTokensByUnderlying([wUSDM.underlying]);
 
   await run("market:set-supply-cap", {
     market: cToken,
-    maxSupply: hyUsd.initialSupplyCap
+    maxSupply: wUSDM.initialSupplyCap
   });
 
   await run("market:set-borrow-cap", {
     market: cToken,
-    maxBorrow: hyUsd.initialBorrowCap
+    maxBorrow: wUSDM.initialBorrowCap
+  });
+
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: wUSDM.initialCf
   });
 });
 
