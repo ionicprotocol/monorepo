@@ -25,6 +25,7 @@ import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
 import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
+import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { IRouter } from "../external/aerodrome/IRouter.sol";
 import "forge-std/console.sol";
 
@@ -684,6 +685,56 @@ contract DevTesting is BaseTest {
     });
     liquidator.redeem(eUSD, 1000 ether, abi.encode(aerodromeV2Router, path));
     emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function testAerodromeCLLiquidator() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
+    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
+    address superOETHWhale = 0xF1010eE787Ee588766b441d7cC397b40DdFB17a3;
+    address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
+
+    vm.startPrank(superOETHWhale);
+    superOETH.transfer(address(liquidator), 1 ether);
+    liquidator.redeem(superOETH, 1 ether, abi.encode(address(superOETH), address(weth), int24(1), aerodromeCLRouter));
+    emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+    IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
+    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
+    address wethWhale = 0x751b77C43643a63362Ab024d466fcC1d75354295;
+    address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
+
+    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
+    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
+    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
+
+    vm.startPrank(wethWhale);
+    weth.transfer(address(liquidator), 1 ether);
+    liquidator.redeem(weth, 1 ether, abi.encode(address(weth), address(wsuperOETH), aerodromeCLRouter));
+    emit log_named_uint("wsuperOETH received", wsuperOETH.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function testAerodromeCLLiquidatorUnwrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+    IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
+    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
+    address wsuperOethWhale = 0x0EEaCD4c475040463389d15EAd034d1291b008b1;
+    address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
+
+    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
+    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
+    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
+
+    vm.startPrank(wsuperOethWhale);
+    wsuperOETH.transfer(address(liquidator), 1 ether);
+    liquidator.redeem(wsuperOETH, 1 ether, abi.encode(address(wsuperOETH), address(weth), aerodromeCLRouter));
+    emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
   }
 
