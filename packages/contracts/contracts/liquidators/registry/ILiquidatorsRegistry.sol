@@ -125,6 +125,17 @@ interface ILiquidatorsRegistrySecondExtension {
     IERC20Upgradeable[] calldata outputTokens,
     uint256[] calldata slippages
   ) external;
+
+  function getOptimalSwapPath(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IERC20Upgradeable[] memory);
+
+  function _setOptimalSwapPath(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken,
+    IERC20Upgradeable[] calldata optimalPath
+  ) external;
 }
 
 interface ILiquidatorsRegistry is

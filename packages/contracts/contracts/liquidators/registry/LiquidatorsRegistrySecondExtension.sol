@@ -290,8 +290,8 @@ contract LiquidatorsRegistrySecondExtension is
   function _setOptimalSwapPath(
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken,
-    IERC20Upgradeable[] calldata bestPath
+    IERC20Upgradeable[] calldata optimalPath
   ) external onlyOwner {
-    optimalSwapPath[inputToken][outputToken] = bestPath;
+    optimalSwapPath[inputToken][outputToken] = optimalPath;
   }
 }

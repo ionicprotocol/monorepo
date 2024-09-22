@@ -1140,12 +1140,40 @@ contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
 
+    upgradeRegistry();
+
     uint256 depositAmount = 20e18;
 
     address hyUsdMarket = 0x751911bDa88eFcF412326ABE649B7A3b28c4dEDe;
     address usdcMarket = 0xa900A17a49Bc4D442bA7F72c39FA2108865671f0;
     address hyUsdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
     address usdcWhale = 0x70FF197c32E922700d3ff2483D250c645979855d;
+
+    {
+      IERC20Upgradeable x = IERC20Upgradeable(ICErc20(hyUsdMarket).underlying());
+      IERC20Upgradeable y = IERC20Upgradeable(ICErc20(usdcMarket).underlying());
+      IERC20Upgradeable[] memory xToYPath = new IERC20Upgradeable[](2);
+      IERC20Upgradeable[] memory yToXPath = new IERC20Upgradeable[](2);
+
+      IERC20Upgradeable eUSD = IERC20Upgradeable(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4);
+      xToYPath[0] = eUSD;
+      yToXPath[0] = eUSD;
+      xToYPath[1] = y;
+      yToXPath[1] = x;
+
+      vm.startPrank(registry.owner());
+      registry._setOptimalSwapPath(
+        IERC20Upgradeable(x),
+        IERC20Upgradeable(y),
+        xToYPath
+      );
+      registry._setOptimalSwapPath(
+        IERC20Upgradeable(y),
+        IERC20Upgradeable(x),
+        yToXPath
+      );
+      vm.stopPrank();
+    }
 
     //    IRedemptionStrategy liquidator = new IRedemptionStrategy();
     _configurePair(hyUsdMarket, usdcMarket);
