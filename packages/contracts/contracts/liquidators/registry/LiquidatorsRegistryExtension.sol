@@ -200,6 +200,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IRedemptionStrategy[] memory strategiesTemp = new IRedemptionStrategy[](10);
     bytes[] memory strategiesDataTemp = new bytes[](10);
     IERC20Upgradeable[] memory tokenPath = new IERC20Upgradeable[](10);
+    IERC20Upgradeable[] memory optimalPath = new IERC20Upgradeable[](0);
+    uint256 optimalPathIterator = 0;
 
     uint256 k = 0;
     while (tokenToRedeem != targetOutputToken) {
@@ -208,8 +210,16 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       if (address(directStrategy) != address(0)) {
         nextRedeemedToken = targetOutputToken;
       } else {
-        // chain the next redeemed token from the default path
-        nextRedeemedToken = defaultOutputToken[tokenToRedeem];
+        // check if an optimal path is preconfigured
+        if (optimalPath.length == 0 && optimalSwapPath[tokenToRedeem][targetOutputToken].length != 0) {
+          optimalPath = optimalSwapPath[tokenToRedeem][targetOutputToken];
+        }
+        if (optimalPath.length != 0 && optimalPathIterator < optimalPath.length) {
+          nextRedeemedToken = optimalPath[optimalPathIterator++];
+        } else {
+          // else if no optimal path is available, use the default
+          nextRedeemedToken = defaultOutputToken[tokenToRedeem];
+        }
       }
 
       // check if going in an endless loop

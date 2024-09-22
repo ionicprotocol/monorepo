@@ -14,7 +14,7 @@ contract LiquidatorsRegistrySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 12;
+    uint8 fnsCount = 14;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.getAllPairsStrategies.selector;
     functionSelectors[--fnsCount] = this.pairsStrategiesMatch.selector;
@@ -28,6 +28,8 @@ contract LiquidatorsRegistrySecondExtension is
     functionSelectors[--fnsCount] = this._setRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this._removeRedemptionStrategy.selector;
     functionSelectors[--fnsCount] = this._resetRedemptionStrategies.selector;
+    functionSelectors[--fnsCount] = this.getOptimalSwapPath.selector;
+    functionSelectors[--fnsCount] = this._setOptimalSwapPath.selector;
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
   }
@@ -275,5 +277,21 @@ contract LiquidatorsRegistrySecondExtension is
         pairsCounter++;
       }
     }
+  }
+
+  function getOptimalSwapPath(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
+    external
+    view
+    returns (IERC20Upgradeable[] memory)
+  {
+    return optimalSwapPath[inputToken][outputToken];
+  }
+
+  function _setOptimalSwapPath(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken,
+    IERC20Upgradeable[] calldata bestPath
+  ) external onlyOwner {
+    optimalSwapPath[inputToken][outputToken] = bestPath;
   }
 }
