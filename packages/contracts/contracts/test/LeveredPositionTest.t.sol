@@ -1134,6 +1134,28 @@ contract ModeWbtcUSDTLeveredPositionTest is LeveredPositionTest {
   }
 }
 
+contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
+  function setUp() public fork(BASE_MAINNET) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    uint256 depositAmount = 20e18;
+
+    address hyUsdMarket = 0x751911bDa88eFcF412326ABE649B7A3b28c4dEDe;
+    address usdcMarket = 0xa900A17a49Bc4D442bA7F72c39FA2108865671f0;
+    address hyUsdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address usdcWhale = 0x70FF197c32E922700d3ff2483D250c645979855d;
+
+    //    IRedemptionStrategy liquidator = new IRedemptionStrategy();
+    _configurePair(hyUsdMarket, usdcMarket);
+    _fundMarketAndSelf(ICErc20(hyUsdMarket), hyUsdWhale);
+    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
+
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
+
 /*
 contract XYLeveredPositionTest is LeveredPositionTest {
   function setUp() public fork(X_CHAIN_ID) {}
