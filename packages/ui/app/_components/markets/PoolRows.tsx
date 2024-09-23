@@ -280,14 +280,19 @@ const PoolRows = ({
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
           <span className={`mr-1 md:mr-0`}>
             +
-            {(
-              +supplyAPRTotal! +
-              (multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-                ?.supply?.underlyingAPR ?? 0)
-            )?.toLocaleString('en-US', {
+            {supplyAPRTotal?.toLocaleString('en-US', {
               maximumFractionDigits: 2
             }) ?? '-'}
-            %
+            %{' '}
+            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+              ?.supply?.underlyingAPR &&
+              '(+' +
+                (multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[
+                  asset
+                ]?.supply?.underlyingAPR).toLocaleString('en-US', {
+                  maximumFractionDigits: 2
+                }) +
+                '%)'}
           </span>
 
           <SupplyPopover

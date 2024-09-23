@@ -78,7 +78,7 @@ export default function SupplyPopover({
         <p>
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.underlyingAPR &&
-            `Underlying APR: +${multipliers[dropdownSelectedChain]?.[
+            `Native Asset Yield: +${multipliers[dropdownSelectedChain]?.[
               selectedPoolId
             ]?.[asset]?.supply?.underlyingAPR?.toLocaleString('en-US', {
               maximumFractionDigits: 2
