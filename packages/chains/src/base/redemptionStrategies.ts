@@ -50,23 +50,13 @@ const redemptionStrategies: RedemptionStrategy[] = [
   },
   {
     inputToken: underlying(assets, assetSymbols.AERO),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
   },
   {
     inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
     outputToken: underlying(assets, assetSymbols.AERO)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.SNX),
-    strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.WETH)
-  },
-  {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.UniswapV3LiquidatorFunder,
-    outputToken: underlying(assets, assetSymbols.SNX)
   },
   {
     inputToken: underlying(assets, assetSymbols.WBTC),
@@ -90,22 +80,22 @@ const redemptionStrategies: RedemptionStrategy[] = [
   },
   {
     inputToken: underlying(assets, assetSymbols.eUSD),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
-    outputToken: underlying(assets, assetSymbols.WETH)
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
+    outputToken: underlying(assets, assetSymbols.USDC)
   },
   {
-    inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    inputToken: underlying(assets, assetSymbols.USDC),
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
     outputToken: underlying(assets, assetSymbols.eUSD)
   },
   {
     inputToken: underlying(assets, assetSymbols.bsdETH),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
     outputToken: underlying(assets, assetSymbols.WETH)
   },
   {
     inputToken: underlying(assets, assetSymbols.WETH),
-    strategy: RedemptionStrategyContract.SolidlySwapLiquidator,
+    strategy: RedemptionStrategyContract.AerodromeCLLiquidator,
     outputToken: underlying(assets, assetSymbols.bsdETH)
   }
 ];
