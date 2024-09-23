@@ -128,7 +128,7 @@ export class IonicBase {
       IonicLiquidator:
         this.chainId === bob.id
           ? ({} as any)
-          : this.chainId === mode.id || this.chainId === base.id
+          : this.chainId === mode.id
             ? getContract({
                 abi: ionicUniV3LiquidatorAbi,
                 address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
