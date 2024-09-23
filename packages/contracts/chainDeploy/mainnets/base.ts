@@ -32,10 +32,9 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenUsdChainlinkFeed: base.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address
 };
 
-const AERODROME_SWAP_ROUTER = "0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5"; // aero CL
 const AERODROME_V2_ROUTER = "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"; // aero v2
 const AERODROME_V2_FACTORY = "0x420DD381b31aEf6683db6B902084cB0FFECe40Da"; // aero v2
-
+const AERODROME_CL_ROUTER = "0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5"; // aero CL
 const aerodromeAssets = base.assets.filter((asset) => asset.oracle === OracleTypes.AerodromePriceOracle);
 
 export const deploy = async ({
@@ -90,6 +89,15 @@ export const deploy = async ({
   console.log("AerodromeV2Liquidator: ", aerodromeV2LiquidatorFunder.address);
   await configureAddress(ap, publicClient, "AERODROME_V2_ROUTER", AERODROME_V2_ROUTER);
   await configureAddress(ap, publicClient, "AERODROME_V2_FACTORY", AERODROME_V2_FACTORY);
+
+  const aerodromeCLLiquidator = await deployments.deploy("AerodromeCLLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("AerodromeCLLiquidator: ", aerodromeCLLiquidator.address);
+  await configureAddress(ap, publicClient, "AERODROME_CL_ROUTER", AERODROME_CL_ROUTER);
 
   //// Uniswap V3 Liquidator Funder
   // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {

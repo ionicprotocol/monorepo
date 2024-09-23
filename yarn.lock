@@ -1907,7 +1907,7 @@ __metadata:
     typescript: "npm:^5.5.3"
     typescript-eslint: "npm:^7.14.1"
     utf-8-validate: "npm:^6.0.4"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -1920,27 +1920,27 @@ __metadata:
     "@nomicfoundation/hardhat-foundry": "npm:^1.1.2"
     "@nomicfoundation/hardhat-ignition": "npm:^0.15.5"
     "@nomicfoundation/hardhat-ignition-viem": "npm:^0.15.5"
-    "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.11"
+    "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.12"
     "@nomicfoundation/hardhat-toolbox-viem": "npm:^3.0.0"
     "@nomicfoundation/hardhat-verify": "npm:^2.0.9"
-    "@nomicfoundation/hardhat-viem": "npm:^2.0.3"
+    "@nomicfoundation/hardhat-viem": "npm:^2.0.5"
     "@nomicfoundation/ignition-core": "npm:^0.15.5"
     "@types/chai": "npm:^4.3.17"
     "@types/chai-as-promised": "npm:^7.1.8"
     "@types/mocha": "npm:^10.0.7"
-    "@wagmi/cli": "npm:^2.1.15"
-    axios: "npm:^1.7.2"
+    "@wagmi/cli": "npm:^2.1.16"
+    axios: "npm:^1.7.7"
     chai: "npm:^4"
     dotenv: "npm:^16.4.5"
-    hardhat: "npm:^2.22.6"
+    hardhat: "npm:^2.22.11"
     hardhat-deploy: "npm:^0.12.4"
     hardhat-gas-reporter: "npm:^2.2.1"
     prettier: "npm:^3.3.3"
-    prettier-plugin-solidity: "npm:^1.3.1"
-    solidity-coverage: "npm:^0.8.12"
+    prettier-plugin-solidity: "npm:^1.4.1"
+    solidity-coverage: "npm:^0.8.13"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.3"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -1982,7 +1982,7 @@ __metadata:
     rimraf: "npm:^5.0.7"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.3"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2015,7 +2015,7 @@ __metadata:
     rimraf: "npm:^5.0.7"
     sinon: "npm:^14.0.0"
     typescript: "npm:^5.5.3"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2040,7 +2040,7 @@ __metadata:
     rimraf: "npm:^5.0.7"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.5.3"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2079,7 +2079,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.3"
     utf-8-validate: "npm:^6.0.4"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2110,7 +2110,7 @@ __metadata:
     ts-mocha: "npm:^10.0.0"
     typescript: "npm:^5.5.3"
     utf-8-validate: "npm:^5.0.9"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2126,7 +2126,7 @@ __metadata:
     tsup: "npm:^8.1.0"
     typescript: "npm:^5.5.3"
     utf-8-validate: "npm:^6.0.4"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
   languageName: unknown
   linkType: soft
 
@@ -2175,7 +2175,7 @@ __metadata:
     tailwind-scrollbar-hide: "npm:^1.1.7"
     tailwindcss: "npm:^3.4.4"
     typescript: "npm:^5.5.3"
-    viem: "npm:^2.16.3"
+    viem: "npm:^2.21.12"
     wagmi: "npm:^2.12.5"
     zustand: "npm:^4.5.4"
   languageName: unknown
@@ -3748,6 +3748,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/hashes@npm:~1.5.0":
+  version: 1.5.0
+  resolution: "@noble/hashes@npm:1.5.0"
+  checksum: 10/da7fc7af52af7afcf59810a7eea6155075464ff462ffda2572dc6d57d53e2669b1ea2ec774e814f6273f1697e567f28d36823776c9bf7068cba2a2855140f26e
+  languageName: node
+  linkType: hard
+
 "@noble/secp256k1@npm:1.7.1, @noble/secp256k1@npm:~1.7.0":
   version: 1.7.1
   resolution: "@noble/secp256k1@npm:1.7.1"
@@ -3937,14 +3944,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/hardhat-network-helpers@npm:^1.0.11":
-  version: 1.0.11
-  resolution: "@nomicfoundation/hardhat-network-helpers@npm:1.0.11"
+"@nomicfoundation/hardhat-network-helpers@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "@nomicfoundation/hardhat-network-helpers@npm:1.0.12"
   dependencies:
     ethereumjs-util: "npm:^7.1.4"
   peerDependencies:
     hardhat: ^2.9.5
-  checksum: 10/ebf11dc9f6e2c1059eb9e3e5f6c78dd2e78e0b7364521dd492576cad5be1855934246d4b1e4945faf98f456299ff2f704b61eead8ab62d9376eeb098da4e2fe1
+  checksum: 10/6774bdaa76b6792b408dbdf9b4ff5c19315fa9d5be53e53d6b68cd56aba82d18cfa2548a71a2ced41542989bddd3ab4d11e009579d34678202e26f11c43c2a44
   languageName: node
   linkType: hard
 
@@ -3992,17 +3999,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/hardhat-viem@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@nomicfoundation/hardhat-viem@npm:2.0.3"
+"@nomicfoundation/hardhat-viem@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@nomicfoundation/hardhat-viem@npm:2.0.5"
   dependencies:
     abitype: "npm:^0.9.8"
     lodash.memoize: "npm:^4.1.2"
   peerDependencies:
-    hardhat: "*"
+    hardhat: ^2.17.0
     typescript: ~5.0.0
     viem: ^2.7.6
-  checksum: 10/a392b18025554821b626eddb48c3d7aa173ea83ee808241eb7781f9f12abcda5c5c989f64539c66ce99a49d1ce99a0af4379319938918243b2ef814df91afd26
+  checksum: 10/48768e7c3d2e14c320ff1a59c43075087a7ba5bff7d37728a8d071bb7bd7fc7d62729f1ee8f5fee709ac3e903512bf62c9d52a050ee06bc6dda53b9e3d79c6de
   languageName: node
   linkType: hard
 
@@ -5731,6 +5738,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@scure/base@npm:~1.1.8":
+  version: 1.1.9
+  resolution: "@scure/base@npm:1.1.9"
+  checksum: 10/f0ab7f687bbcdee2a01377fe3cd808bf63977999672751295b6a92625d5322f4754a96d40f6bd579bc367aad48ecf8a4e6d0390e70296e6ded1076f52adb16bb
+  languageName: node
+  linkType: hard
+
 "@scure/bip32@npm:1.1.5":
   version: 1.1.5
   resolution: "@scure/bip32@npm:1.1.5"
@@ -5770,6 +5784,16 @@ __metadata:
     "@noble/hashes": "npm:~1.4.0"
     "@scure/base": "npm:~1.1.6"
   checksum: 10/7d71fd58153de22fe8cd65b525f6958a80487bc9d0fbc32c71c328aeafe41fa259f989d2f1e0fa4fdfeaf83b8fcf9310d52ed9862987e46c2f2bfb9dd8cf9fc1
+  languageName: node
+  linkType: hard
+
+"@scure/bip39@npm:1.4.0":
+  version: 1.4.0
+  resolution: "@scure/bip39@npm:1.4.0"
+  dependencies:
+    "@noble/hashes": "npm:~1.5.0"
+    "@scure/base": "npm:~1.1.8"
+  checksum: 10/f86e0e79768c95bc684ed6de92892b1a6f228db0f8fab836f091c0ec0f6d1e291b8c4391cfbeaa9ea83f41045613535b1940cd10e7d780a5b73db163b1e7f151
   languageName: node
   linkType: hard
 
@@ -8007,9 +8031,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/cli@npm:^2.1.15":
-  version: 2.1.15
-  resolution: "@wagmi/cli@npm:2.1.15"
+"@wagmi/cli@npm:^2.1.16":
+  version: 2.1.16
+  resolution: "@wagmi/cli@npm:2.1.16"
   dependencies:
     abitype: "npm:^1.0.4"
     bundle-require: "npm:^4.0.2"
@@ -8038,7 +8062,7 @@ __metadata:
       optional: true
   bin:
     wagmi: dist/esm/cli.js
-  checksum: 10/495d4d3036f963162a0a6e4a3a7061831295448c2d5522ea021f23a578db256c4268657e28cd1c4c79be7551759adc6bd0aa614dc948ac66355288d7660b2b9c
+  checksum: 10/bdd75236c34056b1982be13892f9fb811baa637b3da4991b6f6df550049bb78df3b14f5ebe1f1365013a43837848c484c44553e7352bb240da034ff076871535
   languageName: node
   linkType: hard
 
@@ -9856,6 +9880,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.7.7":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10/7f875ea13b9298cd7b40fd09985209f7a38d38321f1118c701520939de2f113c4ba137832fe8e3f811f99a38e12c8225481011023209a77b0c0641270e20cde1
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:~3.1.1":
   version: 3.1.1
   resolution: "axobject-query@npm:3.1.1"
@@ -10723,7 +10758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:3.6.0, chokidar@npm:^3.4.0, chokidar@npm:^3.5.1, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
+"chokidar@npm:3.6.0, chokidar@npm:^3.5.1, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -10739,6 +10774,15 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10/c327fb07704443f8d15f7b4a7ce93b2f0bc0e6cea07ec28a7570aa22cd51fcf0379df589403976ea956c369f25aa82d84561947e227cd925902e1751371658df
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "chokidar@npm:4.0.1"
+  dependencies:
+    readdirp: "npm:^4.0.1"
+  checksum: 10/62749d2173a60cc5632d6c6e0b7024f33aadce47b06d02e55ad03c7b8daaaf2fc85d4296c047473d04387fd992dab9384cc5263c70a3dc3018b7ebecfb5b5217
   languageName: node
   linkType: hard
 
@@ -15566,9 +15610,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat@npm:^2.22.6":
-  version: 2.22.9
-  resolution: "hardhat@npm:2.22.9"
+"hardhat@npm:^2.22.11":
+  version: 2.22.11
+  resolution: "hardhat@npm:2.22.11"
   dependencies:
     "@ethersproject/abi": "npm:^5.1.2"
     "@metamask/eth-sig-util": "npm:^4.0.0"
@@ -15585,7 +15629,7 @@ __metadata:
     ansi-escapes: "npm:^4.3.0"
     boxen: "npm:^5.1.2"
     chalk: "npm:^2.4.2"
-    chokidar: "npm:^3.4.0"
+    chokidar: "npm:^4.0.0"
     ci-info: "npm:^2.0.0"
     debug: "npm:^4.1.1"
     enquirer: "npm:^2.3.0"
@@ -15598,6 +15642,7 @@ __metadata:
     glob: "npm:7.2.0"
     immutable: "npm:^4.0.0-rc.12"
     io-ts: "npm:1.10.4"
+    json-stream-stringify: "npm:^3.1.4"
     keccak: "npm:^3.0.2"
     lodash: "npm:^4.17.11"
     mnemonist: "npm:^0.38.0"
@@ -15623,7 +15668,7 @@ __metadata:
       optional: true
   bin:
     hardhat: internal/cli/bootstrap.js
-  checksum: 10/16a169e2d74f1cf8ce3c84462d168a3545cd9846f4799051b0149af5af746749e5422c055350fc73fe192aa94af79dd40abc94102ddcfce183cf2be0ce9afe26
+  checksum: 10/1ffea61000d234ff935721bfbd435bde7a02f52052aa9693ca969a6a025bb58cda150967762eb28c5d22a16ff432f3f55014838d241e91dd801c3aadf998b307
   languageName: node
   linkType: hard
 
@@ -17273,6 +17318,13 @@ __metadata:
   version: 1.0.1
   resolution: "json-stable-stringify-without-jsonify@npm:1.0.1"
   checksum: 10/12786c2e2f22c27439e6db0532ba321f1d0617c27ad8cb1c352a0e9249a50182fd1ba8b52a18899291604b0c32eafa8afd09e51203f19109a0537f68db2b652d
+  languageName: node
+  linkType: hard
+
+"json-stream-stringify@npm:^3.1.4":
+  version: 3.1.4
+  resolution: "json-stream-stringify@npm:3.1.4"
+  checksum: 10/34cffd309b15742e21a3323a2a4d93d957f0cd8c6613d602f635bd2a370b176397b90ec1e699c332e6ac02a6346c5da6684369d439e6ccd2b86f5c4bded77eb2
   languageName: node
   linkType: hard
 
@@ -21196,7 +21248,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-solidity@npm:^1.3.1":
+"prettier-plugin-solidity@npm:^1.4.1":
   version: 1.4.1
   resolution: "prettier-plugin-solidity@npm:1.4.1"
   dependencies:
@@ -21955,6 +22007,13 @@ __metadata:
   dependencies:
     picomatch: "npm:^2.2.1"
   checksum: 10/196b30ef6ccf9b6e18c4e1724b7334f72a093d011a99f3b5920470f0b3406a51770867b3e1ae9711f227ef7a7065982f6ee2ce316746b2cb42c88efe44297fe7
+  languageName: node
+  linkType: hard
+
+"readdirp@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "readdirp@npm:4.0.1"
+  checksum: 10/f8a2d3308c9dd19d9da4fc7f19a02fc057259a80014949d8f3d98f4e6042896119fb96eb3f3e6a743747d12f0bf781b771902b0b03aba58f884589c50968fad4
   languageName: node
   linkType: hard
 
@@ -23140,9 +23199,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solidity-coverage@npm:^0.8.12":
-  version: 0.8.12
-  resolution: "solidity-coverage@npm:0.8.12"
+"solidity-coverage@npm:^0.8.13":
+  version: 0.8.13
+  resolution: "solidity-coverage@npm:0.8.13"
   dependencies:
     "@ethersproject/abi": "npm:^5.0.9"
     "@solidity-parser/parser": "npm:^0.18.0"
@@ -23167,7 +23226,7 @@ __metadata:
     hardhat: ^2.11.0
   bin:
     solidity-coverage: plugins/bin.js
-  checksum: 10/69f73bba3f3b24bddac00f88a1e739b08b7b37edad46757f477c7ae0422e9f0f16c9da4e8521cb5d83054e2e990dc16d8ea931a334af245e48238577f64be00f
+  checksum: 10/c92e4c1356155e1445241fe0a004c14656517c29e7fec42cc76737dd91e555891861cd716bd5ebb08fbf004f479d2c1ea45bd6dca9350c1ead2ae72c1271f37a
   languageName: node
   linkType: hard
 
@@ -24883,7 +24942,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.0, typescript@npm:^5.4.4, typescript@npm:^5.5.3":
+"typescript@npm:^5.5.3":
   version: 5.5.4
   resolution: "typescript@npm:5.5.4"
   bin:
@@ -24893,7 +24952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.4.4#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
   version: 5.5.4
   resolution: "typescript@patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"
   bin:
@@ -25451,15 +25510,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.16.3":
-  version: 2.20.0
-  resolution: "viem@npm:2.20.0"
+"viem@npm:^2.21.12":
+  version: 2.21.12
+  resolution: "viem@npm:2.21.12"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.4.0"
     "@noble/hashes": "npm:1.4.0"
     "@scure/bip32": "npm:1.4.0"
-    "@scure/bip39": "npm:1.3.0"
+    "@scure/bip39": "npm:1.4.0"
     abitype: "npm:1.0.5"
     isows: "npm:1.0.4"
     webauthn-p256: "npm:0.0.5"
@@ -25469,7 +25528,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/d4163e0afb245fb0a3564586e4530a5ae543145c96db09292454dbfa4014c88b13518f4f10e1b9b6e40a5f18034c1015a6d417e2ae8790b90f48095eaedd88e8
+  checksum: 10/01caf655cb906ab040b0aa7acd88050d5447bcd3e7cdb167aa8f9212620890d4ce9ffe72254268887f60dc3670c1225d7a8b7466b0e72ed97cdbb93034d8b43f
   languageName: node
   linkType: hard
 
