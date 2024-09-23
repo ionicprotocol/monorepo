@@ -210,7 +210,7 @@ export default function EligibilityPopup({
             disabled={claimed}
             onClick={() => claimTokens()}
           >
-            {claimed ? 'Claimed' : 'Sign Using Your Wallet'}
+            {claimed ? 'Signed-Up' : 'Sign Using Your Wallet'}
           </button>
         ) : null}
       </div>
