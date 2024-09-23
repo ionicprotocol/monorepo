@@ -8,10 +8,10 @@ import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeab
 interface ILiquidatorsRegistryStorage {
   function redemptionStrategiesByName(string memory name) external view returns (IRedemptionStrategy);
 
-  function redemptionStrategiesByTokens(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy);
+  function redemptionStrategiesByTokens(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy);
 
   function defaultOutputToken(IERC20Upgradeable inputToken) external view returns (IERC20Upgradeable);
 
@@ -19,31 +19,31 @@ interface ILiquidatorsRegistryStorage {
 
   function uniswapV3Fees(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken) external view returns (uint24);
 
-  function customUniV3Router(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (address);
+  function customUniV3Router(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (address);
 }
 
 interface ILiquidatorsRegistryExtension {
   function getInputTokensByOutputToken(IERC20Upgradeable outputToken) external view returns (address[] memory);
 
-  function getRedemptionStrategies(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData);
+  function getRedemptionStrategies(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData);
 
-  function getRedemptionStrategy(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy strategy, bytes memory strategyData);
+  function getRedemptionStrategy(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy strategy, bytes memory strategyData);
 
   function getAllRedemptionStrategies() external view returns (address[] memory);
 
-  function getSlippage(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (uint256 slippage);
+  function getSlippage(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (uint256 slippage);
 
   function swap(
     IERC20Upgradeable inputToken,
@@ -136,6 +136,12 @@ interface ILiquidatorsRegistrySecondExtension {
     IERC20Upgradeable outputToken,
     IERC20Upgradeable[] calldata optimalPath
   ) external;
+
+  function _setWrappedToUnwrapped4626(address wrapped, address unwrapped) external;
+
+  function _setAeroCLTickSpacings(address inputToken, address outputToken, int24 tickSpacing) external;
+
+  function _setAeroV2IsStable(address inputToken, address outputToken, bool isStable) external;
 }
 
 interface ILiquidatorsRegistry is

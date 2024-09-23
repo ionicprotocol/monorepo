@@ -12,6 +12,7 @@ import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol"
 import { SolidlyLpTokenLiquidator, SolidlyLpTokenWrapper } from "../liquidators/SolidlyLpTokenLiquidator.sol";
 import { SolidlySwapLiquidator } from "../liquidators/SolidlySwapLiquidator.sol";
 import { UniswapV3LiquidatorFunder } from "../liquidators/UniswapV3LiquidatorFunder.sol";
+import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 
 import { CurveLpTokenLiquidatorNoRegistry } from "../liquidators/CurveLpTokenLiquidatorNoRegistry.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
@@ -1162,16 +1163,8 @@ contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
       yToXPath[1] = x;
 
       vm.startPrank(registry.owner());
-      registry._setOptimalSwapPath(
-        IERC20Upgradeable(x),
-        IERC20Upgradeable(y),
-        xToYPath
-      );
-      registry._setOptimalSwapPath(
-        IERC20Upgradeable(y),
-        IERC20Upgradeable(x),
-        yToXPath
-      );
+      registry._setOptimalSwapPath(IERC20Upgradeable(x), IERC20Upgradeable(y), xToYPath);
+      registry._setOptimalSwapPath(IERC20Upgradeable(y), IERC20Upgradeable(x), yToXPath);
       vm.stopPrank();
     }
 
@@ -1183,8 +1176,9 @@ contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
 }
+
 contract WSuperOETHWETHLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(BASE_MAINNET) {}
+  function setUp() public forkAtBlock(BASE_MAINNET, 20145648) {}
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -1208,11 +1202,18 @@ contract WSuperOETHWETHLeveredPositionTest is LeveredPositionTest {
     vm.prank(comptroller.admin());
     comptroller._setMarketSupplyCaps(cTokens, newSupplyCaps);
 
-    IRedemptionStrategy aerodomeClLiquidator = IRedemptionStrategy(0xb50De36105F6053006306553AB54e77224818B9B);
-    _configurePairAndLiquidator(wsuperOethMarket, wethMarket, aerodomeClLiquidator);
+    AerodromeCLLiquidator aerodomeClLiquidator = new AerodromeCLLiquidator();
+    vm.prank(registry.owner());
+    registry._setWrappedToUnwrapped4626(address(wsuperOeth), address(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3));
+    // vm.prank(aerodomeClLiquidator.owner());
+    // emit log_named_address("wsuperOeth", address(wsuperOeth));
+    // aerodomeClLiquidator.setWrappedToUnwrapped(
+    //   address(wsuperOeth),
+    //   0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3
+    // );
+    _configurePairAndLiquidator(wsuperOethMarket, wethMarket, IRedemptionStrategy(address(aerodomeClLiquidator)));
     _fundMarketAndSelf(ICErc20(wsuperOethMarket), wsuperOethWhale);
     _fundMarketAndSelf(ICErc20(wethMarket), wethWhale);
-
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
 }

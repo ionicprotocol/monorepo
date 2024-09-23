@@ -14,7 +14,7 @@ contract LiquidatorsRegistrySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 14;
+    uint8 fnsCount = 17;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.getAllPairsStrategies.selector;
     functionSelectors[--fnsCount] = this.pairsStrategiesMatch.selector;
@@ -30,6 +30,9 @@ contract LiquidatorsRegistrySecondExtension is
     functionSelectors[--fnsCount] = this._resetRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this.getOptimalSwapPath.selector;
     functionSelectors[--fnsCount] = this._setOptimalSwapPath.selector;
+    functionSelectors[--fnsCount] = this._setWrappedToUnwrapped4626.selector;
+    functionSelectors[--fnsCount] = this._setAeroCLTickSpacings.selector;
+    functionSelectors[--fnsCount] = this._setAeroV2IsStable.selector;
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
   }
@@ -293,5 +296,17 @@ contract LiquidatorsRegistrySecondExtension is
     IERC20Upgradeable[] calldata optimalPath
   ) external onlyOwner {
     optimalSwapPath[inputToken][outputToken] = optimalPath;
+  }
+
+  function _setWrappedToUnwrapped4626(address wrapped, address unwrapped) external onlyOwner {
+    wrappedToUnwrapped4626[wrapped] = unwrapped;
+  }
+
+  function _setAeroCLTickSpacings(address inputToken, address outputToken, int24 tickSpacing) external onlyOwner {
+    aeroCLTickSpacings[inputToken][outputToken] = tickSpacing;
+  }
+
+  function _setAeroV2IsStable(address inputToken, address outputToken, bool isStable) external onlyOwner {
+    aeroV2IsStable[inputToken][outputToken] = isStable;
   }
 }
