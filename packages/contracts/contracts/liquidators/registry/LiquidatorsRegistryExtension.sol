@@ -275,6 +275,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       strategyData = algebraSwapLiquidatorData(inputToken, outputToken, swapRouter);
     } else if (isStrategy(strategy, "AerodromeV2Liquidator")) {
       strategyData = aerodromeV2LiquidatorData(inputToken, outputToken);
+    } else if (isStrategy(strategy, "AerodromeCLLiquidator")) {
+      strategyData = aerodromeCLLiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "GammaAlgebraLpTokenLiquidator")) {
       strategyData = gammaAlgebraLpTokenLiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "GammaUniswapV3LpTokenLiquidator")) {
@@ -360,6 +362,11 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
   function getAerodromeV2Router(IERC20Upgradeable inputToken) internal view returns (address) {
     // get asset specific router or default
     return ap.getAddress("AERODROME_V2_ROUTER");
+  }
+
+  function getAerodromeCLRouter(IERC20Upgradeable inputToken) internal view returns (address) {
+    // get asset specific router or default
+    return ap.getAddress("AERODROME_CL_ROUTER");
   }
 
   function solidlySwapLiquidatorData(
@@ -481,6 +488,13 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       factory: ap.getAddress("AERODROME_V2_FACTORY")
     });
     strategyData = abi.encode(getAerodromeV2Router(inputToken), swapPath);
+  }
+
+  function aerodromeCLLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
+    strategyData = abi.encode(inputToken, outputToken, getAerodromeCLRouter(inputToken));
   }
 
   function algebraSwapLiquidatorData(

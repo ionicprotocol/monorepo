@@ -1051,7 +1051,9 @@ export default function Loop({
                   %
               `}
               aprText={'Collateral APR'}
-              isLoading={isFetchingPositionInfo || !collateralsAPR}
+              isLoading={
+                isFetchingPositionInfo || typeof collateralsAPR === 'undefined'
+              }
               nativeAmount={
                 currentPosition
                   ? formatUnits(
@@ -1062,14 +1064,18 @@ export default function Loop({
               }
               symbol={selectedCollateralAsset.underlyingSymbol}
               title={'My Collateral'}
-              usdAmount={millify(
-                Number(
-                  formatUnits(
-                    positionInfo?.equityAmount ?? 0n,
-                    selectedCollateralAsset.underlyingDecimals
-                  )
-                ) * selectedCollateralAssetUSDPrice
-              )}
+              usdAmount={
+                currentPosition
+                  ? millify(
+                      Number(
+                        formatUnits(
+                          positionInfo?.equityAmount ?? 0n,
+                          selectedCollateralAsset.underlyingDecimals
+                        )
+                      ) * selectedCollateralAssetUSDPrice
+                    )
+                  : '0'
+              }
             />
 
             <div className="separator lg:hidden" />
