@@ -13,6 +13,7 @@ import { SolidlyLpTokenLiquidator, SolidlyLpTokenWrapper } from "../liquidators/
 import { SolidlySwapLiquidator } from "../liquidators/SolidlySwapLiquidator.sol";
 import { UniswapV3LiquidatorFunder } from "../liquidators/UniswapV3LiquidatorFunder.sol";
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
+import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
 
 import { CurveLpTokenLiquidatorNoRegistry } from "../liquidators/CurveLpTokenLiquidatorNoRegistry.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
@@ -1172,6 +1173,31 @@ contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
     _configurePair(hyUsdMarket, usdcMarket);
     _fundMarketAndSelf(ICErc20(hyUsdMarket), hyUsdWhale);
     _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
+
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
+
+contract HyUSDeUSDLeveredPositionTest is LeveredPositionTest {
+  function setUp() public fork(BASE_MAINNET) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    upgradeRegistry();
+
+    uint256 depositAmount = 20e18;
+
+    address hyUsdMarket = 0x751911bDa88eFcF412326ABE649B7A3b28c4dEDe;
+    address eUsdMarket = 0x9c2A4f9c5471fd36bE3BBd8437A33935107215A1;
+    address hyUsdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address eUsdWhale = 0xa9E0588E82E9Ee1440f7e5375970a429D09646c1;
+    AerodromeV2Liquidator aerodomeV2Liquidator = AerodromeV2Liquidator(0xD46b85409C43571145206B11D370A62AaeB22475);
+
+    //    IRedemptionStrategy liquidator = new IRedemptionStrategy();
+    _configurePairAndLiquidator(hyUsdMarket, eUsdMarket, IRedemptionStrategy(address(aerodomeV2Liquidator)));
+    _fundMarketAndSelf(ICErc20(hyUsdMarket), hyUsdWhale);
+    _fundMarketAndSelf(ICErc20(eUsdMarket), eUsdWhale);
 
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
