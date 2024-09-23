@@ -18,7 +18,9 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
 
   //// Liquidator
   let liquidatorContractName: string | undefined;
-  if (chainId === mode.id || chainId === base.id) {
+  if (chainId === bob.id) {
+    // TODO
+  } else {
     liquidatorContractName = await deployIonicUniV3Liquidator({
       run,
       viem,
@@ -27,9 +29,15 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       deployConfig: chainDeployParams,
       chainId
     });
-  } else if (chainId === bob.id) {
-    // TODO
-  } else {
+
+    await configureIonicLiquidator({
+      contractName: liquidatorContractName,
+      viem,
+      getNamedAccounts,
+      chainId,
+      deployments
+    });
+
     liquidatorContractName = await deployIonicLiquidator({
       run,
       viem,
@@ -38,10 +46,7 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       deployConfig: chainDeployParams,
       chainId
     });
-  }
 
-  //// Configure Liquidator
-  if (liquidatorContractName) {
     await configureIonicLiquidator({
       contractName: liquidatorContractName,
       viem,
