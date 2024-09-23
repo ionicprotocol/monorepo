@@ -13,7 +13,8 @@ import {
   USDC_MARKET,
   weETH_MARKET,
   WETH_MARKET,
-  wstETH_MARKET
+  wstETH_MARKET,
+  wsuperOETH_MARKET
 } from ".";
 
 task("base:leverage:configure-pairs", "Configure leverage pairs").setAction(
@@ -42,3 +43,15 @@ task("base:leverage:configure-pairs", "Configure leverage pairs").setAction(
     await configureLeveredPairs({ viem, deployments, deployer: deployer as Address, leveredPairs });
   }
 );
+
+task("base:levered-positions:configure-pairs:new").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  console.log("deployer: ", deployer);
+  const leveredPairs: LeveragePair[] = [{ borrow: WETH_MARKET, collateral: wsuperOETH_MARKET }];
+  await configureLeveredPairs({
+    viem,
+    deployments,
+    deployer: deployer as Address,
+    leveredPairs
+  });
+});
