@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c"
     },
+    "AerodromeCLLiquidator": {
+      "address": "0xb50De36105F6053006306553AB54e77224818B9B"
+    },
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
     },
@@ -216,7 +219,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x2aBcbed2ECd06d9B9B2b40f9527afd52Ba1d86E8"
+      "address": "0x449a61825DF5C5C996B655A81ca40F2f649A757a"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0xE19815995BeAe56278CF2C99d5fFe0A37127f144"
