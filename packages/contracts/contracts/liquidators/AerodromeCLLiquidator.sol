@@ -5,24 +5,9 @@ import { IRedemptionStrategy } from "./IRedemptionStrategy.sol";
 import { ISwapRouter } from "../external/aerodrome/ISwapRouter.sol";
 
 import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import { Ownable2Step } from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import { IERC4626 } from "../compound/IERC4626.sol";
 
-contract AerodromeCLLiquidator is IRedemptionStrategy, Ownable2Step {
-  mapping(address => address) public wrappedToUnwrapped;
-  mapping(address => mapping(address => int24)) public tickSpacings;
-
-  constructor() Ownable2Step() {}
-
-  // ADMIN FUNCTIONS
-  function setWrappedToUnwrapped(address token, address unwrapped) external onlyOwner {
-    wrappedToUnwrapped[token] = unwrapped;
-  }
-
-  function setTickSpacing(address inputToken, address outputToken, int24 tickSpacing) external onlyOwner {
-    tickSpacings[inputToken][outputToken] = tickSpacing;
-    tickSpacings[outputToken][inputToken] = tickSpacing; // allow bidirectional search
-  }
+contract AerodromeCLLiquidator is IRedemptionStrategy {
 
   /**
    * @dev Redeems `inputToken` for `outputToken` where `inputAmount` < `outputAmount`
@@ -43,15 +28,20 @@ contract AerodromeCLLiquidator is IRedemptionStrategy, Ownable2Step {
     uint256 inputAmount,
     bytes memory strategyData
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
-    (, address _outputToken, ISwapRouter swapRouter) = abi.decode(strategyData, (address, address, ISwapRouter));
-    address _unwrappedOutput = wrappedToUnwrapped[address(_outputToken)];
+    (
+      ,
+      address _outputToken,
+      ISwapRouter swapRouter,
+      address _unwrappedInput,
+      address _unwrappedOutput,
+      int24 _tickSpacing
+    ) = abi.decode(strategyData, (address, address, ISwapRouter, address, address, int24));
     if (_unwrappedOutput != address(0)) {
       outputToken = IERC20Upgradeable(_unwrappedOutput);
     } else {
       outputToken = IERC20Upgradeable(_outputToken);
     }
 
-    address _unwrappedInput = wrappedToUnwrapped[address(inputToken)];
     if (_unwrappedInput != address(0)) {
       inputToken.approve(address(inputToken), inputAmount);
       IERC4626(address(inputToken)).redeem(inputAmount, address(this), address(this));
@@ -60,16 +50,11 @@ contract AerodromeCLLiquidator is IRedemptionStrategy, Ownable2Step {
 
     inputToken.approve(address(swapRouter), inputAmount);
 
-    int24 tickSpacing = tickSpacings[address(inputToken)][address(outputToken)];
-    if (tickSpacing == 0) {
-      tickSpacing = 1;
-    }
-
     outputAmount = swapRouter.exactInputSingle(
       ISwapRouter.ExactInputSingleParams(
         address(inputToken),
         address(outputToken),
-        tickSpacing,
+        _tickSpacing,
         address(this),
         block.timestamp,
         inputAmount,

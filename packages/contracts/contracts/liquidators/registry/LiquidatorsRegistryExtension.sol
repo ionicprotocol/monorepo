@@ -338,6 +338,25 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     strategyData = abi.encode(inputToken, outputToken, fee, router, ap.getAddress("Quoter"));
   }
 
+  function getWrappedToUnwrapped4626(IERC20Upgradeable inputToken) internal view returns (address) {
+    return wrappedToUnwrapped4626[address(inputToken)];
+  }
+
+  function getAeroCLTickSpacing(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (int24) {
+    int24 tickSpacing = aeroCLTickSpacings[address(inputToken)][address(outputToken)];
+    if (tickSpacing == 0) {
+      tickSpacing = 1;
+    }
+    return tickSpacing;
+  }
+
+  function getAeroV2IsStable(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken) internal view returns (bool) {
+    return aeroV2IsStable[address(inputToken)][address(outputToken)];
+  }
+
   function uniswapV2LiquidatorData(
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
@@ -356,7 +375,7 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     swapPath[0] = IAerodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
-      stable: getUniswapV3Router(inputToken, outputToken) == 0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF, // special case for stable token, fix in next deployment
+      stable: getAeroV2IsStable(inputToken, outputToken),
       factory: ap.getAddress("AERODROME_V2_FACTORY")
     });
     strategyData = abi.encode(getAerodromeV2Router(inputToken), swapPath);
@@ -366,7 +385,14 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
-    strategyData = abi.encode(inputToken, outputToken, getAerodromeCLRouter(inputToken));
+    strategyData = abi.encode(
+      inputToken,
+      outputToken,
+      getAerodromeCLRouter(inputToken),
+      getWrappedToUnwrapped4626(inputToken),
+      getWrappedToUnwrapped4626(outputToken),
+      getAeroCLTickSpacing(inputToken, outputToken)
+    );
   }
 
   function algebraSwapLiquidatorData(

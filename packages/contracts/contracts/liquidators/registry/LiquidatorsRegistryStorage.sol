@@ -25,4 +25,7 @@ abstract contract LiquidatorsRegistryStorage is SafeOwnable {
   mapping(IERC20Upgradeable => mapping(IERC20Upgradeable => address)) public customUniV3Router;
 
   mapping(IERC20Upgradeable => mapping(IERC20Upgradeable => IERC20Upgradeable[])) public optimalSwapPath;
+  mapping(address => address) public wrappedToUnwrapped4626;
+  mapping(address => mapping(address => int24)) public aeroCLTickSpacings;
+  mapping(address => mapping(address => bool)) public aeroV2IsStable;
 }
