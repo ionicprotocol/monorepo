@@ -15,7 +15,8 @@
     "packages/contracts"
   ],
   "resolutions": {
-    "viem": "^2.16.3"
+    "viem": "^2.21.12",
+    "typescript": "^5.5.3"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",

@@ -33,7 +33,7 @@
     "react-hot-toast": "^2.4.1",
     "react-loader-spinner": "^6.1.6",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "viem": "^2.16.3",
+    "viem": "^2.21.12",
     "wagmi": "^2.12.5",
     "zustand": "^4.5.4"
   },
