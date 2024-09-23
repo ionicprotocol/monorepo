@@ -702,16 +702,14 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+  function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 20145648) {
     IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
     IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
     IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     address wethWhale = 0x751b77C43643a63362Ab024d466fcC1d75354295;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
 
-    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
-    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
-    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
+    AerodromeCLLiquidator liquidator = AerodromeCLLiquidator(0xb50De36105F6053006306553AB54e77224818B9B);
 
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
@@ -720,16 +718,14 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function testAerodromeCLLiquidatorUnwrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+  function testAerodromeCLLiquidatorUnwrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 20145648) {
     IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
     IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
     IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     address wsuperOethWhale = 0x0EEaCD4c475040463389d15EAd034d1291b008b1;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
 
-    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
-    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
-    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
+    AerodromeCLLiquidator liquidator = AerodromeCLLiquidator(0xb50De36105F6053006306553AB54e77224818B9B);
 
     vm.startPrank(wsuperOethWhale);
     wsuperOETH.transfer(address(liquidator), 1 ether);
