@@ -1183,6 +1183,39 @@ contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
 }
+contract WSuperOETHWETHLeveredPositionTest is LeveredPositionTest {
+  function setUp() public fork(BASE_MAINNET) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    address wsuperOeth = 0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6;
+    address weth = 0x4200000000000000000000000000000000000006;
+
+    uint256 depositAmount = 1e18;
+
+    address wsuperOethMarket = 0xC462eb5587062e2f2391990b8609D2428d8Cf598;
+    address wethMarket = 0x49420311B518f3d0c94e897592014de53831cfA3;
+    address wsuperOethWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address wethWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+
+    IonicComptroller comptroller = IonicComptroller(ICErc20(wethMarket).comptroller());
+    ICErc20[] memory cTokens = new ICErc20[](1);
+    cTokens[0] = ICErc20(wethMarket);
+
+    uint256[] memory newSupplyCaps = new uint256[](1);
+    newSupplyCaps[0] = 1e36;
+    vm.prank(comptroller.admin());
+    comptroller._setMarketSupplyCaps(cTokens, newSupplyCaps);
+
+    IRedemptionStrategy aerodomeClLiquidator = IRedemptionStrategy(0xb50De36105F6053006306553AB54e77224818B9B);
+    _configurePairAndLiquidator(wsuperOethMarket, wethMarket, aerodomeClLiquidator);
+    _fundMarketAndSelf(ICErc20(wsuperOethMarket), wsuperOethWhale);
+    _fundMarketAndSelf(ICErc20(wethMarket), wethWhale);
+
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
 
 /*
 contract XYLeveredPositionTest is LeveredPositionTest {
