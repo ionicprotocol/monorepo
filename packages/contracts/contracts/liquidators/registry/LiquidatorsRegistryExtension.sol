@@ -255,13 +255,7 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     } else if (isStrategy(strategy, "UniswapV3LiquidatorFunder")) {
       strategyData = uniswapV3LiquidatorFunderData(inputToken, outputToken);
     } else if (isStrategy(strategy, "AlgebraSwapLiquidator")) {
-      address swapRouter;
-      if (block.chainid == 34443) {
-        swapRouter = 0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8;
-      } else {
-        swapRouter = ap.getAddress("ALGEBRA_SWAP_ROUTER");
-      }
-      strategyData = algebraSwapLiquidatorData(inputToken, outputToken, swapRouter);
+      strategyData = algebraSwapLiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "AerodromeV2Liquidator")) {
       strategyData = aerodromeV2LiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "AerodromeCLLiquidator")) {
@@ -397,9 +391,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
 
   function algebraSwapLiquidatorData(
     IERC20Upgradeable inputToken,
-    IERC20Upgradeable outputToken,
-    address swapRouter
+    IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
-    strategyData = abi.encode(outputToken, swapRouter);
+    strategyData = abi.encode(outputToken, ap.getAddress("ALGEBRA_SWAP_ROUTER"));
   }
 }
