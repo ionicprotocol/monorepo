@@ -556,6 +556,21 @@ export const multipliers: Record<
           rewards: true,
           ionAPR: false
         }
+      },
+      wUSDM: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
+        },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
