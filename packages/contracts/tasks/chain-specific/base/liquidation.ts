@@ -208,6 +208,11 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: wsuperOETHUnderlying,
         outputToken: wethUnderlying,
         strategy: aeroCLLiquidator.address as Address
+      },
+      {
+        inputToken: wsuperOETHUnderlying,
+        outputToken: wethUnderlying,
+        strategy: aeroCLLiquidator.address as Address
       }
     ];
     const liqTx = await liquidatorRegistry.write._resetRedemptionStrategies([
