@@ -92,6 +92,9 @@
     "IonicFlywheelBorrowBooster_ION": {
       "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
     },
+    "IonicFlywheelBorrowBooster_hyUSD": {
+      "address": "0xb311700a8b49Cd5Af7A435aC39b80AdDd3dabed1"
+    },
     "IonicFlywheelBorrow_Borrow_ION": {
       "address": "0x327410E4D3A32EF37712e77fCB005e5327F082De"
     },
@@ -110,11 +113,23 @@
     "IonicFlywheelBorrow_Borrow_RSR_Proxy": {
       "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d"
     },
+    "IonicFlywheelBorrow_Borrow_hyUSD": {
+      "address": "0xf9cef193bAC6103405228e4B29Ba8abab5A1001D"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_Implementation": {
+      "address": "0xbA48Cd1c84f89018daEAa2c30aA77D021F6CF902"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_Proxy": {
+      "address": "0xf9cef193bAC6103405228e4B29Ba8abab5A1001D"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION": {
       "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
     },
     "IonicFlywheelDynamicRewards_Borrow_RSR": {
       "address": "0xBF5993b07C0EDC54Ca41C04EF5120a30224d2C33"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_hyUSD": {
+      "address": "0x201FD80ccdefa0C261252ed391fFBD713F790d9d"
     },
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
