@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { AERO_MARKET, bsdETH_MARKET, eUSD, eUSD_MARKET, hyUSD_MARKET, ION, RSR_MARKET, weETH_MARKET } from ".";
+import { AERO_MARKET, bsdETH_MARKET, eUSD, eUSD_MARKET, hyUSD, hyUSD_MARKET, ION, RSR_MARKET, weETH_MARKET } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 
@@ -173,10 +173,10 @@ task("base:add-rewards:epoch2:supply", "add rewards to a market").setAction(
 task("base:add-rewards:epoch2:supply:eusd", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const rewardToken = eUSD;
-    const rewardTokenName = "eUSD";
-    const market = hyUSD_MARKET;
-    const rewardAmount = "2000";
+    const rewardToken = hyUSD;
+    const rewardTokenName = "hyUSD";
+    const market = eUSD_MARKET;
+    const rewardAmount = (2848.31346728 * (2 / 3)).toString();
 
     // Sending tokens
     const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
