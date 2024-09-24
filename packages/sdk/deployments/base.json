@@ -92,6 +92,9 @@
     "IonicFlywheelBorrowBooster_ION": {
       "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
     },
+    "IonicFlywheelBorrowBooster_hyUSD": {
+      "address": "0xb311700a8b49Cd5Af7A435aC39b80AdDd3dabed1"
+    },
     "IonicFlywheelBorrow_Borrow_ION": {
       "address": "0x327410E4D3A32EF37712e77fCB005e5327F082De"
     },
@@ -110,11 +113,23 @@
     "IonicFlywheelBorrow_Borrow_RSR_Proxy": {
       "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d"
     },
+    "IonicFlywheelBorrow_Borrow_hyUSD": {
+      "address": "0xf9cef193bAC6103405228e4B29Ba8abab5A1001D"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_Implementation": {
+      "address": "0xbA48Cd1c84f89018daEAa2c30aA77D021F6CF902"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_Proxy": {
+      "address": "0xf9cef193bAC6103405228e4B29Ba8abab5A1001D"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION": {
       "address": "0xbC6D8Da615003323B77D442b34976BB9D1124d39"
     },
     "IonicFlywheelDynamicRewards_Borrow_RSR": {
       "address": "0xBF5993b07C0EDC54Ca41C04EF5120a30224d2C33"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_hyUSD": {
+      "address": "0x201FD80ccdefa0C261252ed391fFBD713F790d9d"
     },
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
@@ -127,6 +142,9 @@
     },
     "IonicFlywheelDynamicRewards_eUSD_v3": {
       "address": "0xC4AAe8D289877A193279dc8F52bdF2BAfB8A6d58"
+    },
+    "IonicFlywheelDynamicRewards_hyUSD_v3": {
+      "address": "0x6C94DF5aA9d2a750780e71085bD1CA7bbB94145B"
     },
     "IonicFlywheelLensRouter": {
       "address": "0xB1402333b12fc066C3D7F55d37944D5e281a3e8B"
@@ -176,11 +194,20 @@
     "IonicFlywheel_eUSD_v3_Proxy": {
       "address": "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4"
     },
+    "IonicFlywheel_hyUSD_v3": {
+      "address": "0xc39441b305705AfD07de97237bC835a4501AbbEC"
+    },
+    "IonicFlywheel_hyUSD_v3_Implementation": {
+      "address": "0x104595CfB618A414867eEDAaF7836D329410666C"
+    },
+    "IonicFlywheel_hyUSD_v3_Proxy": {
+      "address": "0xc39441b305705AfD07de97237bC835a4501AbbEC"
+    },
     "IonicLiquidator": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
     },
     "IonicLiquidator_Implementation": {
-      "address": "0x4e7676B20B86Beea9c197bE756361680FaE3C9AE"
+      "address": "0x9262c04B631B2aCCEa81E34745af8740f38967Fd"
     },
     "IonicLiquidator_Proxy": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"

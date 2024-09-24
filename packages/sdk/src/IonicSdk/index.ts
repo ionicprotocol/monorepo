@@ -19,7 +19,7 @@ import {
   PublicClient,
   WalletClient
 } from "viem";
-import { bob, mode } from "viem/chains";
+import { base, bob, mode } from "viem/chains";
 
 import {
   addressesProviderAbi,
