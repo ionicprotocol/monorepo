@@ -204,8 +204,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
         nextRedeemedToken = targetOutputToken;
       } else {
         // check if an optimal path is preconfigured
-        if (optimalPath.length == 0 && optimalSwapPath[tokenToRedeem][targetOutputToken].length != 0) {
-          optimalPath = optimalSwapPath[tokenToRedeem][targetOutputToken];
+        if (optimalPath.length == 0 && _optimalSwapPath[tokenToRedeem][targetOutputToken].length != 0) {
+          optimalPath = _optimalSwapPath[tokenToRedeem][targetOutputToken];
         }
         if (optimalPath.length != 0 && optimalPathIterator < optimalPath.length) {
           nextRedeemedToken = optimalPath[optimalPathIterator++];
@@ -339,22 +339,22 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
   }
 
   function getWrappedToUnwrapped4626(IERC20Upgradeable inputToken) internal view returns (address) {
-    return wrappedToUnwrapped4626[address(inputToken)];
+    return _wrappedToUnwrapped4626[address(inputToken)];
   }
 
   function getAeroCLTickSpacing(
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
   ) internal view returns (int24) {
-    int24 tickSpacing = aeroCLTickSpacings[address(inputToken)][address(outputToken)];
+    int24 tickSpacing = _aeroCLTickSpacings[address(inputToken)][address(outputToken)];
     if (tickSpacing == 0) {
       tickSpacing = 1;
     }
     return tickSpacing;
   }
 
-  function getAeroV2IsStable(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken) internal view returns (bool) {
-    return aeroV2IsStable[address(inputToken)][address(outputToken)];
+  function aeroV2IsStable(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken) internal view returns (bool) {
+    return _aeroV2IsStable[address(inputToken)][address(outputToken)];
   }
 
   function uniswapV2LiquidatorData(
@@ -375,7 +375,7 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     swapPath[0] = IAerodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
-      stable: getAeroV2IsStable(inputToken, outputToken),
+      stable: aeroV2IsStable(inputToken, outputToken),
       factory: ap.getAddress("AERODROME_V2_FACTORY")
     });
     strategyData = abi.encode(getAerodromeV2Router(inputToken), swapPath);

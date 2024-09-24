@@ -28,7 +28,7 @@ contract LiquidatorsRegistrySecondExtension is
     functionSelectors[--fnsCount] = this._setRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this._removeRedemptionStrategy.selector;
     functionSelectors[--fnsCount] = this._resetRedemptionStrategies.selector;
-    functionSelectors[--fnsCount] = this.getOptimalSwapPath.selector;
+    functionSelectors[--fnsCount] = this.optimalSwapPath.selector;
     functionSelectors[--fnsCount] = this._setOptimalSwapPath.selector;
     functionSelectors[--fnsCount] = this._setWrappedToUnwrapped4626.selector;
     functionSelectors[--fnsCount] = this._setAeroCLTickSpacings.selector;
@@ -282,12 +282,12 @@ contract LiquidatorsRegistrySecondExtension is
     }
   }
 
-  function getOptimalSwapPath(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
+  function optimalSwapPath(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
     external
     view
     returns (IERC20Upgradeable[] memory)
   {
-    return optimalSwapPath[inputToken][outputToken];
+    return _optimalSwapPath[inputToken][outputToken];
   }
 
   function _setOptimalSwapPath(
@@ -295,18 +295,18 @@ contract LiquidatorsRegistrySecondExtension is
     IERC20Upgradeable outputToken,
     IERC20Upgradeable[] calldata optimalPath
   ) external onlyOwner {
-    optimalSwapPath[inputToken][outputToken] = optimalPath;
+    _optimalSwapPath[inputToken][outputToken] = optimalPath;
   }
 
   function _setWrappedToUnwrapped4626(address wrapped, address unwrapped) external onlyOwner {
-    wrappedToUnwrapped4626[wrapped] = unwrapped;
+    _wrappedToUnwrapped4626[wrapped] = unwrapped;
   }
 
   function _setAeroCLTickSpacings(address inputToken, address outputToken, int24 tickSpacing) external onlyOwner {
-    aeroCLTickSpacings[inputToken][outputToken] = tickSpacing;
+    _aeroCLTickSpacings[inputToken][outputToken] = tickSpacing;
   }
 
   function _setAeroV2IsStable(address inputToken, address outputToken, bool isStable) external onlyOwner {
-    aeroV2IsStable[inputToken][outputToken] = isStable;
+    _aeroV2IsStable[inputToken][outputToken] = isStable;
   }
 }
