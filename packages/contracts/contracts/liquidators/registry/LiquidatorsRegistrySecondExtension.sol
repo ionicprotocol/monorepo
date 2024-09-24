@@ -14,7 +14,7 @@ contract LiquidatorsRegistrySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 17;
+    uint8 fnsCount = 19;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.getAllPairsStrategies.selector;
     functionSelectors[--fnsCount] = this.pairsStrategiesMatch.selector;
@@ -30,6 +30,9 @@ contract LiquidatorsRegistrySecondExtension is
     functionSelectors[--fnsCount] = this._resetRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this.optimalSwapPath.selector;
     functionSelectors[--fnsCount] = this._setOptimalSwapPath.selector;
+    functionSelectors[--fnsCount] = this.wrappedToUnwrapped4626.selector;
+    functionSelectors[--fnsCount] = this.aeroCLTickSpacings.selector;
+    functionSelectors[--fnsCount] = this.aeroV2IsStable.selector;
     functionSelectors[--fnsCount] = this._setWrappedToUnwrapped4626.selector;
     functionSelectors[--fnsCount] = this._setAeroCLTickSpacings.selector;
     functionSelectors[--fnsCount] = this._setAeroV2IsStable.selector;
@@ -296,6 +299,18 @@ contract LiquidatorsRegistrySecondExtension is
     IERC20Upgradeable[] calldata optimalPath
   ) external onlyOwner {
     _optimalSwapPath[inputToken][outputToken] = optimalPath;
+  }
+
+  function wrappedToUnwrapped4626(address wrapped) external view returns (address) {
+    return _wrappedToUnwrapped4626[wrapped];
+  }
+
+  function aeroCLTickSpacings(address inputToken, address outputToken) external view returns (int24) {
+    return _aeroCLTickSpacings[inputToken][outputToken];
+  }
+
+  function aeroV2IsStable(address inputToken, address outputToken) external view returns (bool) {
+    return _aeroV2IsStable[inputToken][outputToken];
   }
 
   function _setWrappedToUnwrapped4626(address wrapped, address unwrapped) external onlyOwner {
