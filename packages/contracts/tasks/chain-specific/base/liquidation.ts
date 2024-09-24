@@ -59,7 +59,6 @@ task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy
 
 task("base:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
-    const SPECIAL_ROUTER = "0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF";
     const publicClient = await viem.getPublicClient();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
 
