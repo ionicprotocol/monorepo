@@ -63,6 +63,266 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     __ERC721_init("veION", "veION");
   }
 
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           External Functions                              ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  function createLockFor(
+    address[] memory _tokenAddress,
+    uint256[] memory _tokenAmount,
+    uint256[] memory _duration,
+    address _to
+  ) external override returns (uint256) {
+    return _createLock(_tokenAddress, _tokenAmount, _duration, _to);
+  }
+
+  function createLock(
+    address[] calldata _tokenAddress,
+    uint256[] calldata _tokenAmount,
+    uint256[] calldata _duration
+  ) external override returns (uint256) {
+    return _createLock(_tokenAddress, _tokenAmount, _duration, msg.sender);
+  }
+
+  function claimEmissions(address _tokenAddress) external {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+
+    _functionDelegateCall(address(_stakeStrategy), abi.encodeWithSelector(_stakeStrategy.claim.selector));
+
+    address _account = _msgSender();
+    address _rewardToken = _stakeStrategy.rewardToken();
+    _updateRewards(_account, _stakeStrategy);
+    uint256 reward = s_rewards[_stakeStrategy][_account];
+    if (reward > 0) {
+      s_rewards[_stakeStrategy][_account] = 0;
+      IERC20(_rewardToken).transfer(_account, reward);
+    }
+  }
+
+  function increaseAmount(address _tokenAddress, uint256 _tokenId, uint256 _tokenAmount) external {
+    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    _increaseAmountFor(_tokenAddress, _tokenId, _tokenAmount, DepositType.INCREASE_LOCK_AMOUNT);
+  }
+
+  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
+    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+    if (oldLocked.isPermanent) revert PermanentLock();
+    uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
+
+    if (oldLocked.end <= block.timestamp) revert LockExpired();
+    if (oldLocked.amount <= 0) revert NoLockFound();
+    if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
+    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+
+    _depositFor(_tokenAddress, _tokenId, 0, unlockTime, oldLocked, DepositType.INCREASE_UNLOCK_TIME, _lpType);
+  }
+
+  /**
+   * @notice Withdraws underlying assets from the veNFT.
+   * If unlock time has not passed, uses a formula to unlock early with penalty.
+   * @param _tokenId Token ID.
+   */
+
+  function withdraw(address _tokenAddress, uint256 _tokenId) external override {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    if (s_voted[_tokenId]) revert AlreadyVoted();
+    if (s_escrowType[_tokenId] != EscrowType.NORMAL) revert NotNormalNFT();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+    if (oldLocked.isPermanent) revert PermanentLock();
+
+    uint256 value = uint256(int256(oldLocked.amount));
+    uint256 fee = 0;
+
+    if (block.timestamp < oldLocked.end) {
+      uint256 daysLocked = (oldLocked.end - oldLocked.start) / 1 days;
+      uint256 daysLeft = (oldLocked.end - block.timestamp) / 1 days;
+      uint256 timeFactor = (daysLeft * 1e18) / daysLocked;
+      uint256 veIONInCirculation = s_supply[_lpType];
+      uint256 IONInCirculation = IERC20(_tokenAddress).totalSupply();
+      uint256 ratioFactor = 1e18 - (veIONInCirculation * 1e18) / IONInCirculation;
+      fee = (daysLocked * timeFactor * ratioFactor) / 1e18;
+      if (fee > 0.8e18) fee = 0.8e18;
+      fee = (value * fee) / 1e18;
+      value -= fee;
+
+      // Distribute fee
+      uint256 feeToDistribute = (fee * 75) / 100;
+      uint256 feeToProtocol = fee - feeToDistribute;
+      s_protocolFees[_lpType] += feeToProtocol;
+      s_distributedFees[_lpType] += feeToDistribute;
+    }
+
+    _burn(_tokenId);
+    s_locked[_tokenId][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
+    uint256 supplyBefore = s_supply[_lpType];
+    s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
+    _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+    IERC20(_tokenAddress).safeTransfer(sender, value);
+    emit Withdraw(sender, _tokenId, value, block.timestamp);
+    emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
+  }
+
+  function merge(address _tokenAddress, uint256 _from, uint256 _to) external {
+    address sender = _msgSender();
+    if (_from == _to) revert SameNFT();
+    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
+    if (!_isApprovedOrOwner(sender, _to)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLockedTo = s_locked[_to][_lpType];
+    if (oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
+
+    LockedBalance memory oldLockedFrom = s_locked[_from][_lpType];
+    if (oldLockedFrom.isPermanent) revert PermanentLock();
+    uint256 end = oldLockedFrom.end >= oldLockedTo.end ? oldLockedFrom.end : oldLockedTo.end;
+
+    _burn(_from);
+    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
+    _checkpoint(_from, oldLockedFrom, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+
+    LockedBalance memory newLockedTo;
+    newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
+    newLockedTo.isPermanent = oldLockedTo.isPermanent;
+    if (newLockedTo.isPermanent) {
+      s_permanentLockBalance[_lpType] += uint256(int256(oldLockedFrom.amount));
+    } else {
+      newLockedTo.end = end;
+    }
+    _checkpoint(_to, oldLockedTo, newLockedTo, _lpType);
+    s_locked[_to][_lpType] = newLockedTo;
+  }
+
+  function split(
+    address _tokenAddress,
+    uint256 _from,
+    uint256 _amount
+  ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
+    address sender = _msgSender();
+    address owner = _ownerOf(_from);
+    if (owner == address(0)) revert SplitNoOwner();
+    if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
+    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory newLocked = s_locked[_from][_lpType];
+    if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
+    int128 _splitAmount = int128(int256(_amount));
+    if (_splitAmount == 0) revert ZeroAmount();
+    if (newLocked.amount <= _splitAmount) revert AmountTooBig();
+
+    _burn(_from);
+    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
+    _checkpoint(_from, newLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+
+    newLocked.amount -= _splitAmount;
+    _tokenId1 = _createSplitVE(owner, newLocked, _lpType);
+
+    newLocked.amount = _splitAmount;
+    _tokenId2 = _createSplitVE(owner, newLocked, _lpType);
+  }
+
+  function toggleSplit(address _account, bool _bool) external {
+    if (_msgSender() != s_team) revert NotTeam();
+    s_canSplit[_account] = _bool;
+  }
+
+  function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (_newLocked.isPermanent) revert PermanentLock();
+    if (_newLocked.end <= block.timestamp) revert LockExpired();
+    if (_newLocked.amount <= 0) revert NoLockFound();
+
+    uint256 _amount = uint256(int256(_newLocked.amount));
+    s_permanentLockBalance[_lpType] += _amount;
+    _newLocked.end = 0;
+    _newLocked.isPermanent = true;
+    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    s_locked[_tokenId][_lpType] = _newLocked;
+  }
+
+  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
+    address sender = _msgSender();
+    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (!_newLocked.isPermanent) revert NotPermanentLock();
+
+    uint256 _amount = uint256(int256(_newLocked.amount));
+    s_permanentLockBalance[_lpType] -= _amount;
+    _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
+    _newLocked.isPermanent = false;
+    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    s_locked[_tokenId][_lpType] = _newLocked;
+  }
+
+  /**
+   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
+   * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
+   * @param tokenId Token ID to mint.
+   * @param to Address to mint to.
+   * @param unlockTime Timestamp of unlock (needs to be preserved across chains).
+   */
+  function mint(uint256 tokenId, address to, uint256 unlockTime) external override onlyBridge {
+    // TODO: Implement function logic
+  }
+
+  /**
+   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
+   * Burns a token and returns relevant metadata.
+   * @param tokenId Token ID to burn.
+   * @return to Address which owned the token.
+   * @return unlockTime Timestamp of unlock (needs to be preserved across chains).
+   */
+  function burn(uint256 tokenId) external override onlyBridge returns (address to, uint256 unlockTime) {
+    // TODO: Implement function logic
+  }
+
+  function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
+    require(_tokens.length == _isWhitelisted.length, "Unequal Arrays");
+    for (uint256 i; i < _tokens.length; i++) s_whitelistedToken[_tokens[i]] = _isWhitelisted[i];
+  }
+
+  /**
+   * @notice Sets the LP token type for a given token address
+   * @param _token Address of the token
+   * @param _type LP token type to be set
+   */
+  function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
+    require(_token != address(0), "Invalid token address");
+    s_lpType[_token] = _type;
+  }
+
+  /**
+   * @notice Sets the strategy for a given LP token type
+   * @param _lpType LP token type to set the strategy for
+   * @param _strategy Address of the strategy contract
+   * @param _strategyData Additional data for the strategy
+   */
+  function setStakeStrategy(
+    LpTokenType _lpType,
+    IStakeStrategy _strategy,
+    bytes memory _strategyData
+  ) external onlyOwner {
+    require(address(_strategy) != address(0), "Invalid strategy address");
+    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
+  }
+
+  function setTeam(address _team) external onlyOwner {
+    if (_team == address(0)) revert ZeroAddress();
+    s_team = _team;
+  }
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           Internal Functions                              ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+
   function _depositFor(
     address _tokenAddress,
     uint256 _tokenId,
@@ -162,22 +422,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         (rewardPerToken(_stakeStrategy) - s_userRewardPerTokenPaid[_stakeStrategy][_account])) /
       1e18 +
       s_rewards[_stakeStrategy][_account];
-  }
-
-  function claimEmissions(address _tokenAddress) external {
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
-
-    _functionDelegateCall(address(_stakeStrategy), abi.encodeWithSelector(_stakeStrategy.claim.selector));
-
-    address _account = _msgSender();
-    address _rewardToken = _stakeStrategy.rewardToken();
-    _updateRewards(_account, _stakeStrategy);
-    uint256 reward = s_rewards[_stakeStrategy][_account];
-    if (reward > 0) {
-      s_rewards[_stakeStrategy][_account] = 0;
-      IERC20(_rewardToken).transfer(_account, reward);
-    }
   }
 
   struct CheckpointVars {
@@ -375,23 +619,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
-  function createLockFor(
-    address[] memory _tokenAddress,
-    uint256[] memory _tokenAmount,
-    uint256[] memory _duration,
-    address _to
-  ) external override returns (uint256) {
-    return _createLock(_tokenAddress, _tokenAmount, _duration, _to);
-  }
-
-  function createLock(
-    address[] calldata _tokenAddress,
-    uint256[] calldata _tokenAmount,
-    uint256[] calldata _duration
-  ) external override returns (uint256) {
-    return _createLock(_tokenAddress, _tokenAmount, _duration, msg.sender);
-  }
-
   function _increaseAmountFor(
     address _tokenAddress,
     uint256 _tokenId,
@@ -409,161 +636,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _depositFor(_tokenAddress, _tokenId, _value, 0, oldLocked, _depositType, _lpType);
   }
 
-  function increaseAmount(address _tokenAddress, uint256 _tokenId, uint256 _tokenAmount) external {
-    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
-    _increaseAmountFor(_tokenAddress, _tokenId, _tokenAmount, DepositType.INCREASE_LOCK_AMOUNT);
-  }
-
-  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
-    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
-
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
-    if (oldLocked.isPermanent) revert PermanentLock();
-    uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
-
-    if (oldLocked.end <= block.timestamp) revert LockExpired();
-    if (oldLocked.amount <= 0) revert NoLockFound();
-    if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
-    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
-
-    _depositFor(_tokenAddress, _tokenId, 0, unlockTime, oldLocked, DepositType.INCREASE_UNLOCK_TIME, _lpType);
-  }
-
-  function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
-    require(_tokens.length == _isWhitelisted.length, "Unequal Arrays");
-    for (uint256 i; i < _tokens.length; i++) s_whitelistedToken[_tokens[i]] = _isWhitelisted[i];
-  }
-
-  /**
-   * @notice Sets the LP token type for a given token address
-   * @param _token Address of the token
-   * @param _type LP token type to be set
-   */
-  function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
-    require(_token != address(0), "Invalid token address");
-    s_lpType[_token] = _type;
-  }
-
-  /**
-   * @notice Sets the strategy for a given LP token type
-   * @param _lpType LP token type to set the strategy for
-   * @param _strategy Address of the strategy contract
-   * @param _strategyData Additional data for the strategy
-   */
-  function setStakeStrategy(
-    LpTokenType _lpType,
-    IStakeStrategy _strategy,
-    bytes memory _strategyData
-  ) external onlyOwner {
-    require(address(_strategy) != address(0), "Invalid strategy address");
-    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
-  }
-
-  /**
-   * @notice Withdraws underlying assets from the veNFT.
-   * If unlock time has not passed, uses a formula to unlock early with penalty.
-   * @param _tokenId Token ID.
-   */
-
-  function withdraw(address _tokenAddress, uint256 _tokenId) external override {
-    address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
-    if (s_voted[_tokenId]) revert AlreadyVoted();
-    if (s_escrowType[_tokenId] != EscrowType.NORMAL) revert NotNormalNFT();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
-    if (oldLocked.isPermanent) revert PermanentLock();
-
-    uint256 value = uint256(int256(oldLocked.amount));
-    uint256 fee = 0;
-
-    if (block.timestamp < oldLocked.end) {
-      uint256 daysLocked = (oldLocked.end - oldLocked.start) / 1 days;
-      uint256 daysLeft = (oldLocked.end - block.timestamp) / 1 days;
-      uint256 timeFactor = (daysLeft * 1e18) / daysLocked;
-      uint256 veIONInCirculation = s_supply[_lpType];
-      uint256 IONInCirculation = IERC20(_tokenAddress).totalSupply();
-      uint256 ratioFactor = 1e18 - (veIONInCirculation * 1e18) / IONInCirculation;
-      fee = (daysLocked * timeFactor * ratioFactor) / 1e18;
-      if (fee > 0.8e18) fee = 0.8e18;
-      fee = (value * fee) / 1e18;
-      value -= fee;
-
-      // Distribute fee
-      uint256 feeToDistribute = (fee * 75) / 100;
-      uint256 feeToProtocol = fee - feeToDistribute;
-      s_protocolFees[_lpType] += feeToProtocol;
-      s_distributedFees[_lpType] += feeToDistribute;
-    }
-
-    _burn(_tokenId);
-    s_locked[_tokenId][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
-    uint256 supplyBefore = s_supply[_lpType];
-    s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
-    _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
-    IERC20(_tokenAddress).safeTransfer(sender, value);
-    emit Withdraw(sender, _tokenId, value, block.timestamp);
-    emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
-  }
-
-  function merge(address _tokenAddress, uint256 _from, uint256 _to) external {
-    address sender = _msgSender();
-    if (_from == _to) revert SameNFT();
-    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
-    if (!_isApprovedOrOwner(sender, _to)) revert NotApprovedOrOwner();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory oldLockedTo = s_locked[_to][_lpType];
-    if (oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
-
-    LockedBalance memory oldLockedFrom = s_locked[_from][_lpType];
-    if (oldLockedFrom.isPermanent) revert PermanentLock();
-    uint256 end = oldLockedFrom.end >= oldLockedTo.end ? oldLockedFrom.end : oldLockedTo.end;
-
-    _burn(_from);
-    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
-    _checkpoint(_from, oldLockedFrom, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
-
-    LockedBalance memory newLockedTo;
-    newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
-    newLockedTo.isPermanent = oldLockedTo.isPermanent;
-    if (newLockedTo.isPermanent) {
-      s_permanentLockBalance[_lpType] += uint256(int256(oldLockedFrom.amount));
-    } else {
-      newLockedTo.end = end;
-    }
-    _checkpoint(_to, oldLockedTo, newLockedTo, _lpType);
-    s_locked[_to][_lpType] = newLockedTo;
-  }
-
-  function split(
-    address _tokenAddress,
-    uint256 _from,
-    uint256 _amount
-  ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
-    address sender = _msgSender();
-    address owner = _ownerOf(_from);
-    if (owner == address(0)) revert SplitNoOwner();
-    if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
-    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory newLocked = s_locked[_from][_lpType];
-    if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
-    int128 _splitAmount = int128(int256(_amount));
-    if (_splitAmount == 0) revert ZeroAmount();
-    if (newLocked.amount <= _splitAmount) revert AmountTooBig();
-
-    _burn(_from);
-    s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
-    _checkpoint(_from, newLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
-
-    newLocked.amount -= _splitAmount;
-    _tokenId1 = _createSplitVE(owner, newLocked, _lpType);
-
-    newLocked.amount = _splitAmount;
-    _tokenId2 = _createSplitVE(owner, newLocked, _lpType);
-  }
-
   function _createSplitVE(
     address _to,
     LockedBalance memory _newLocked,
@@ -573,73 +645,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_tokenId][_lpType] = _newLocked;
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, false, 0), _newLocked, _lpType);
     _mint(_to, _tokenId);
-  }
-
-  function toggleSplit(address _account, bool _bool) external {
-    if (_msgSender() != s_team) revert NotTeam();
-    s_canSplit[_account] = _bool;
-  }
-
-  function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
-    if (_newLocked.isPermanent) revert PermanentLock();
-    if (_newLocked.end <= block.timestamp) revert LockExpired();
-    if (_newLocked.amount <= 0) revert NoLockFound();
-
-    uint256 _amount = uint256(int256(_newLocked.amount));
-    s_permanentLockBalance[_lpType] += _amount;
-    _newLocked.end = 0;
-    _newLocked.isPermanent = true;
-    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
-    s_locked[_tokenId][_lpType] = _newLocked;
-  }
-
-  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
-    if (!_newLocked.isPermanent) revert NotPermanentLock();
-
-    uint256 _amount = uint256(int256(_newLocked.amount));
-    s_permanentLockBalance[_lpType] -= _amount;
-    _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
-    _newLocked.isPermanent = false;
-    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
-    s_locked[_tokenId][_lpType] = _newLocked;
-  }
-  /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
-   * @param tokenId Token ID to mint.
-   * @param to Address to mint to.
-   * @param unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function mint(uint256 tokenId, address to, uint256 unlockTime) external override onlyBridge {
-    // TODO: Implement function logic
-  }
-
-  /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Burns a token and returns relevant metadata.
-   * @param tokenId Token ID to burn.
-   * @return to Address which owned the token.
-   * @return unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function burn(uint256 tokenId) external override onlyBridge returns (address to, uint256 unlockTime) {
-    // TODO: Implement function logic
-  }
-
-  function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
-    return s_locked[_tokenId][_lpType];
-  }
-
-  function setTeam(address _team) external onlyOwner {
-    if (_team == address(0)) revert ZeroAddress();
-    s_team = _team;
   }
 
   function _getStakeStrategy(
@@ -674,6 +679,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           View Functions                                  ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
+    return s_locked[_tokenId][_lpType];
+  }
   /// @inheritdoc IveION
   function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool) {}
 
