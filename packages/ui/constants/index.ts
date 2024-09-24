@@ -209,7 +209,17 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Pool',
-        assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
+        assets: [
+          'USDC',
+          'USDT',
+          'WETH',
+          'wUSDM',
+          'OP',
+          'wstETH',
+          'SNX',
+          'WBTC',
+          'LUSD'
+        ]
       }
     ]
   },
