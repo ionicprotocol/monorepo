@@ -70,10 +70,6 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
 
     const aeroV2Liquidator = await deployments.get("AerodromeV2Liquidator");
     const aeroCLLiquidator = await deployments.get("AerodromeCLLiquidator");
-    const aeroCLLiquidatorContract = await viem.getContractAt(
-      "AerodromeCLLiquidator",
-      aeroCLLiquidator.address as Address
-    );
 
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
@@ -95,34 +91,38 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const wsuperOETHUnderlying = await wsuperOETHContract.read.underlying();
     const superOETH = "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3";
 
-    const readTick = await aeroCLLiquidatorContract.read.tickSpacings([wsuperOETHUnderlying, wethUnderlying]);
+    const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
     console.log("🚀 ~ readTick:", readTick);
     if (readTick !== 1) {
-      const tickTx = await aeroCLLiquidatorContract.write.setTickSpacing([wsuperOETHUnderlying, wethUnderlying, 1]);
+      const tickTx = await liquidatorRegistry.write._setAeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying, 1]);
       await publicClient.waitForTransactionReceipt({ hash: tickTx });
       console.log("Transaction sent to set tick spacing:", tickTx);
     }
-    const readWrapped = await aeroCLLiquidatorContract.read.wrappedToUnwrapped([wsuperOETHUnderlying]);
+    const readWrapped = await liquidatorRegistry.read.wrappedToUnwrapped4626([wsuperOETHUnderlying]);
     console.log("🚀 ~ readWrapped:", readWrapped);
     if (readWrapped.toLowerCase() !== superOETH.toLowerCase()) {
-      const setTx = await aeroCLLiquidatorContract.write.setWrappedToUnwrapped([wsuperOETHUnderlying, superOETH]);
+      const setTx = await liquidatorRegistry.write._setWrappedToUnwrapped4626([wsuperOETHUnderlying, superOETH]);
       await publicClient.waitForTransactionReceipt({ hash: setTx });
       console.log("Transaction sent to set wrapped to unwrapped:", setTx);
     }
 
-    const read1 = await liquidatorRegistry.read.customUniV3Router([usdcUnderlying, eusdUnderlying]);
-    const read2 = await liquidatorRegistry.read.customUniV3Router([eusdUnderlying, usdcUnderlying]);
+    const read1 = await liquidatorRegistry.read.aeroV2IsStable([usdcUnderlying, eusdUnderlying]);
+    const read2 = await liquidatorRegistry.read.aeroV2IsStable([eusdUnderlying, usdcUnderlying]);
     console.log("🚀 ~ read1, read2:", read1, read2);
-    if (read1 !== SPECIAL_ROUTER || read2 !== SPECIAL_ROUTER) {
-      const setTx = await liquidatorRegistry.write._setUniswapV3Routers([
-        [usdcUnderlying, eusdUnderlying],
-        [eusdUnderlying, usdcUnderlying],
-        [SPECIAL_ROUTER, SPECIAL_ROUTER]
-      ]);
+    if (!read1) {
+      const setTx = await liquidatorRegistry.write._setAeroV2IsStable([usdcUnderlying, eusdUnderlying, true]);
       await publicClient.waitForTransactionReceipt({ hash: setTx });
       console.log("Transaction sent to set special routers to indicate stable pairs:", setTx);
     } else {
-      console.log("Custom Routers already set");
+      console.log("Stable pairs already set");
+    }
+
+    if (!read2) {
+      const setTx = await liquidatorRegistry.write._setAeroV2IsStable([eusdUnderlying, usdcUnderlying, true]);
+      await publicClient.waitForTransactionReceipt({ hash: setTx });
+      console.log("Transaction sent to set special routers to indicate stable pairs for read2:", setTx);
+    } else {
+      console.log("Stable pairs already set for read2");
     }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {

@@ -48,13 +48,14 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     await publicClient.waitForTransactionReceipt({
       hash: liquidatorsRegistrySecondExtensionDep.transactionHash as Hash
     });
-  console.log("LiquidatorsRegistrySecondExtension: ", liquidatorsRegistryExtensionDep.address);
+  console.log("LiquidatorsRegistrySecondExtension: ", liquidatorsRegistrySecondExtensionDep.address);
 
   const liquidatorsRegistry = await viem.getContractAt(
     "LiquidatorsRegistry",
     (await deployments.get("LiquidatorsRegistry")).address as Address
   );
   const currentLRExtensions = await liquidatorsRegistry.read._listExtensions();
+  console.log("🚀 ~ constfunc:DeployFunction= ~ currentLRExtensions:", currentLRExtensions);
   if (currentLRExtensions.length == 0) {
     if ((await liquidatorsRegistry.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({

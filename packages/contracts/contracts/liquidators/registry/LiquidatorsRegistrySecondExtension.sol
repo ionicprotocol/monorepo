@@ -14,7 +14,7 @@ contract LiquidatorsRegistrySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 19;
+    uint8 fnsCount = 20;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.getAllPairsStrategies.selector;
     functionSelectors[--fnsCount] = this.pairsStrategiesMatch.selector;
