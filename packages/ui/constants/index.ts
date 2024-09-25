@@ -70,6 +70,9 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
     '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
     '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
+  },
+  [optimism.id]: {
+    '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
   }
 };
 
@@ -111,6 +114,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d',
       '0xf9cef193bAC6103405228e4B29Ba8abab5A1001D'
     ]
+  },
+  [optimism.id]: {
+    supply: ['0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'],
+    borrow: []
   }
 };
 
