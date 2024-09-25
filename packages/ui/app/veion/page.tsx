@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 
-import GetveIon from '../_components/veion/GetveIon';
+import GetveIon from '../_components/veion/GetveIonPopup';
 
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 

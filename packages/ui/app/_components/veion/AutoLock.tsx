@@ -4,6 +4,7 @@ interface IProp {
   setAutoLock: any;
 }
 // import { useState } from 'react';
+import InfoPopover from './InfoPopover';
 
 export default function AutoLock({ autoLock, setAutoLock }: IProp) {
   // const [autoLock, setAutoLock] = useState(false);
@@ -15,9 +16,9 @@ export default function AutoLock({ autoLock, setAutoLock }: IProp) {
           onClick={() => setAutoLock((p: any) => !p)}
         />
       </div>
-      <span className="text-white/50 text-sm ">
-        AutoLock <i className="popover-hint">i</i>
-      </span>
+      <div className="text-white/50 text-sm ">
+        AutoLock <InfoPopover content="The auto-prolong option extends the lock indefinitely, which keeps your voting power at the same peak level. You can disable this option any time later." />
+      </div>
     </div>
   );
 }

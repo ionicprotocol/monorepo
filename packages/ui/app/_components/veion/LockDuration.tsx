@@ -7,6 +7,8 @@ interface Iprops {
   setLockDuration: React.Dispatch<React.SetStateAction<string>>;
 }
 
+import InfoPopover from './InfoPopover';
+
 export default function DateSlider({ setLockDuration }: Iprops) {
   const [currentValue, setCurrentValue] = useState(180);
 
@@ -35,9 +37,9 @@ export default function DateSlider({ setLockDuration }: Iprops) {
   // console.log(currentDate);
   return (
     <div className="w-full mx-auto mt-3 mb-5 ">
-      <p className="text-xs text-white/50 mb-2">
-        LOCK UNTIL <i className="popover-hint">i</i>{' '}
-      </p>
+      <div className="text-xs text-white/50 mb-2">
+        LOCK UNTIL <InfoPopover content='A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power'/>.{' '}
+      </div>
       <p className="text-lg text-white/50 mb-4">
         {format(currentDate, 'dd/MM/yyyy')}
       </p>
