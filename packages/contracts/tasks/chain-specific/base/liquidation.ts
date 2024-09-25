@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { setLiquidationStrategies } from "../../liquidation";
+import { resetLiquidationStrategies } from "../../liquidation";
 import { Address, zeroAddress } from "viem";
 import { assetSymbols } from "@ionicprotocol/types";
 import { base } from "@ionicprotocol/chains";
@@ -15,7 +15,8 @@ import {
   USDC_MARKET,
   eUSD_MARKET,
   WETH_MARKET,
-  wsuperOETH_MARKET
+  wsuperOETH_MARKET,
+  wusdm_MARKET
 } from ".";
 
 task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy").setAction(
@@ -53,7 +54,7 @@ task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy
         });
       }
     }
-    await setLiquidationStrategies(viem, deployments, deployer as Address, pairs);
+    await resetLiquidationStrategies(viem, deployments, deployer as Address, pairs);
   }
 );
 
@@ -90,7 +91,7 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
 
     const aeroV2Liquidator = await deployments.get("AerodromeV2Liquidator");
     const aeroCLLiquidator = await deployments.get("AerodromeCLLiquidator");
-
+    const curveSwapLiquidator = await deployments.get("CurveSwapLiquidator");
     const ezETHContract = await viem.getContractAt("ICErc20", ezETH_MARKET);
     const ezETHUnderlying = await ezETHContract.read.underlying();
     const wstETHContract = await viem.getContractAt("ICErc20", wstETH_MARKET);
@@ -110,6 +111,9 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const wsuperOETHContract = await viem.getContractAt("ICErc20", wsuperOETH_MARKET);
     const wsuperOETHUnderlying = await wsuperOETHContract.read.underlying();
     const superOETH = "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3";
+    const wusdmContract = await viem.getContractAt("ICErc20", wusdm_MARKET);
+    const wusdmUnderlying = await wusdmContract.read.underlying();
+    const usdm = "0x59d9356e565ab3a36dd77763fc0d87feaf85508c";
 
     const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
     console.log("🚀 ~ readTick:", readTick);
@@ -122,6 +126,14 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     console.log("🚀 ~ readWrapped:", readWrapped);
     if (readWrapped.toLowerCase() !== superOETH.toLowerCase()) {
       const setTx = await liquidatorRegistry.write._setWrappedToUnwrapped4626([wsuperOETHUnderlying, superOETH]);
+      await publicClient.waitForTransactionReceipt({ hash: setTx });
+      console.log("Transaction sent to set wrapped to unwrapped:", setTx);
+    }
+
+    const readUsdm = await liquidatorRegistry.read.wrappedToUnwrapped4626([wusdmUnderlying]);
+    console.log("🚀 ~ readUsdm:", readUsdm);
+    if (readUsdm.toLowerCase() !== usdm.toLowerCase()) {
+      const setTx = await liquidatorRegistry.write._setWrappedToUnwrapped4626([wusdmUnderlying, usdm]);
       await publicClient.waitForTransactionReceipt({ hash: setTx });
       console.log("Transaction sent to set wrapped to unwrapped:", setTx);
     }
@@ -234,6 +246,16 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: wethUnderlying,
         outputToken: wsuperOETHUnderlying,
         strategy: aeroCLLiquidator.address as Address
+      },
+      {
+        inputToken: wusdmUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: curveSwapLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: wusdmUnderlying,
+        strategy: curveSwapLiquidator.address as Address
       }
     ];
     const liqTx = await liquidatorRegistry.write._resetRedemptionStrategies([

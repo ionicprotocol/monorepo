@@ -26,6 +26,8 @@ import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
 import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
+import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
+import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
 import { IRouter } from "../external/aerodrome/IRouter.sol";
 import "forge-std/console.sol";
 
@@ -744,6 +746,39 @@ contract DevTesting is BaseTest {
     );
     emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
+  }
+
+  function testCurveSwapLiquidatorUSDCtowUSDM() public debuggingOnly forkAtBlock(BASE_MAINNET, 20237792) {
+    address _pool = 0x63Eb7846642630456707C3efBb50A03c79B89D81;
+    address usdc = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+    address usdm = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
+    address wUSDM = 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812;
+    address usdcWhale = 0x134575ff75F9882ca905EE1D78C9340C091d6056;
+    CurveV2LpTokenPriceOracleNoRegistry oracle = new CurveV2LpTokenPriceOracleNoRegistry();
+    CurveSwapLiquidator liquidator = new CurveSwapLiquidator();
+    vm.prank(oracle.owner());
+    oracle.registerPool(_pool, _pool);
+    vm.prank(usdcWhale);
+    IERC20Upgradeable(usdc).transfer(address(liquidator), 100e6);
+    liquidator.redeem(IERC20Upgradeable(usdc), 100e6, abi.encode(oracle, wUSDM, address(0), usdm));
+    emit log_named_uint("wUSDM received", IERC20Upgradeable(wUSDM).balanceOf(address(liquidator)));
+  }
+
+  function testCurveSwapLiquidatorwUSDMtoUSDC() public debuggingOnly forkAtBlock(BASE_MAINNET, 20237792) {
+    address _pool = 0x63Eb7846642630456707C3efBb50A03c79B89D81;
+    address usdc = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+    address usdm = 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C;
+    address wUSDM = 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812;
+    address wusdmWhale = 0x9b8b04B6f82cD5e1dae58cA3614d445F93DeFc5c;
+    CurveV2LpTokenPriceOracleNoRegistry oracle = new CurveV2LpTokenPriceOracleNoRegistry();
+    CurveSwapLiquidator liquidator = new CurveSwapLiquidator();
+    vm.prank(oracle.owner());
+    oracle.registerPool(_pool, _pool);
+
+    vm.startPrank(wusdmWhale);
+    IERC20Upgradeable(wUSDM).transfer(address(liquidator), 30 ether);
+    liquidator.redeem(IERC20Upgradeable(wUSDM), 30 ether, abi.encode(oracle, usdc, usdm, address(0)));
+    emit log_named_uint("usdc received", IERC20Upgradeable(usdc).balanceOf(address(liquidator)));
   }
 
   function _functionCall(

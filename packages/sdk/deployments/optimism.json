@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
     },
+    "AerodromePriceOracle": {
+      "address": "0xdc4aBE2cd9a276b187200d4896d4B219c0B8920A"
+    },
     "AuthoritiesRegistry": {
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
@@ -21,19 +24,19 @@
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "CErc20Delegate": {
-      "address": "0x20808c1A73737016bBBF8Acc6959A30446eA1D2d"
+      "address": "0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7"
     },
     "CErc20PluginDelegate": {
-      "address": "0x39C353Cf9041CcF467A04d0e78B63d961E81458a"
+      "address": "0xB828A7e95ae1097E3c3d0efB3c3544Ce6bcD77A1"
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xAeE8AA2c69CaA9F6D2C6a78198243C348d0C07D2"
+      "address": "0xB4c0522F595eA2B407FE3e3D55B36291cC2b2Ced"
     },
     "CErc20RewardsDelegate": {
-      "address": "0x0ef63b0223d3a519094020f16b6267E85FB99b5E"
+      "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
     },
     "CTokenFirstExtension": {
-      "address": "0x798Ee06Eb08151fadf5fFD07B7931B79985884D1"
+      "address": "0xD83ba0673090ba85f190e320a1C280AC816ba3aD"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x13fD2701C3017bCc375Ad14Dd8433c6d7a441794"
@@ -68,8 +71,20 @@
     "GlobalPauser": {
       "address": "0xAD310a60005EAB54137f7EFBf0Acc521f0A8eBbb"
     },
+    "IonicFlywheelDynamicRewards_ION_v3": {
+      "address": "0xe5bB1c9C58CF3C9F505f63A843779c6E614F8102"
+    },
     "IonicFlywheelLensRouter": {
       "address": "0xa6BA5F1164dc66F9C5bDCE33A6d2fC70bE8Da108"
+    },
+    "IonicFlywheel_ION": {
+      "address": "0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162"
+    },
+    "IonicFlywheel_ION_Implementation": {
+      "address": "0x463dc86FF32eBE7309246C26224171d83Eaad9ED"
+    },
+    "IonicFlywheel_ION_Proxy": {
+      "address": "0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162"
     },
     "IonicLiquidator": {
       "address": "0x6545D2030D95ad0c8eFFF95c47eD55c0f6F5ee73"

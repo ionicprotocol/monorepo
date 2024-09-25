@@ -57,26 +57,36 @@ export const setOptimalSwapPath = async (
     "ILiquidatorsRegistry",
     (await deployments.get("LiquidatorsRegistry")).address as Address
   );
-  const owner = await liquidatorRegistry.read.owner();
-  if (owner.toLowerCase() !== deployer.toLowerCase()) {
-    await prepareAndLogTransaction({
-      contractInstance: liquidatorRegistry,
-      functionName: "_setOptimalSwapPath",
-      args: [pair.inputToken, pair.outputToken, pair.optimalPath],
-      description: "Set optimal swap path",
-      inputs: [
-        { internalType: "address", name: "inputToken", type: "address" },
-        { internalType: "address", name: "outputToken", type: "address" },
-        { internalType: "address[]", name: "optimalPath", type: "address[]" }
-      ]
-    });
+  const path = await liquidatorRegistry.read.optimalSwapPath([pair.inputToken, pair.outputToken]);
+  console.log("🚀 ~ path:", path);
+  if (
+    !path.reduce((acc, curr, i) => {
+      return acc && curr.toLowerCase() === pair.optimalPath[i].toLowerCase();
+    }, true)
+  ) {
+    const owner = await liquidatorRegistry.read.owner();
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: liquidatorRegistry,
+        functionName: "_setOptimalSwapPath",
+        args: [pair.inputToken, pair.outputToken, pair.optimalPath],
+        description: "Set optimal swap path",
+        inputs: [
+          { internalType: "address", name: "inputToken", type: "address" },
+          { internalType: "address", name: "outputToken", type: "address" },
+          { internalType: "address[]", name: "optimalPath", type: "address[]" }
+        ]
+      });
+    } else {
+      const tx = await liquidatorRegistry.write._setOptimalSwapPath([
+        pair.inputToken,
+        pair.outputToken,
+        pair.optimalPath
+      ]);
+      console.log("Transaction sent:", tx);
+    }
   } else {
-    const tx = await liquidatorRegistry.write._setOptimalSwapPath([
-      pair.inputToken,
-      pair.outputToken,
-      pair.optimalPath
-    ]);
-    console.log("Transaction sent:", tx);
+    console.log("Optimal swap path already set");
   }
 };
 

@@ -30,6 +30,11 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
         strategy: kimLiquidator.address as Address
       },
       {
+        inputToken: wethToken.underlying,
+        outputToken: usdtToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
         inputToken: stoneToken.underlying,
         outputToken: wethToken.underlying,
         strategy: kimLiquidator.address as Address
