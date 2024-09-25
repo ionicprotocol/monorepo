@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
-import {IERC20Upgradeable} from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 import "./config/BaseTest.t.sol";
@@ -96,8 +96,7 @@ contract DevTesting is BaseTest {
       ICErc20[] memory markets = pool.getAllMarkets();
       wethMarket = markets[0];
       usdcMarket = markets[1];
-    } else {
-    }
+    } else {}
     levPosLens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
 
@@ -637,15 +636,20 @@ contract DevTesting is BaseTest {
 
   function testPERLiquidation() public debuggingOnly forkAtBlock(MODE_MAINNET, 10255413) {
     vm.prank(0x5Cc070844E98F4ceC5f2fBE1592fB1ed73aB7b48);
-    _functionCall(0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A, hex"20b72325000000000000000000000000f28570694a6c9cd0494955966ae75af61abf5a0700000000000000000000000000000000000000000000000001bc1214ed792fbb0000000000000000000000004341620757bee7eb4553912fafc963e59c949147000000000000000000000000c53edeafb6d502daec5a7015d67936cea0cd0f520000000000000000000000000000000000000000000000000000000000000000", "error in call");
+    _functionCall(
+      0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A,
+      hex"20b72325000000000000000000000000f28570694a6c9cd0494955966ae75af61abf5a0700000000000000000000000000000000000000000000000001bc1214ed792fbb0000000000000000000000004341620757bee7eb4553912fafc963e59c949147000000000000000000000000c53edeafb6d502daec5a7015d67936cea0cd0f520000000000000000000000000000000000000000000000000000000000000000",
+      "error in call"
+    );
   }
 
   function testCtokenUpgrade() public debuggingOnly forkAtBlock(MODE_MAINNET, 10255413) {
     CErc20PluginRewardsDelegate newImpl = new CErc20PluginRewardsDelegate();
     TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(address(wethMarket)));
 
-
-    (uint256[] memory poolIds, PoolDirectory.Pool[] memory pools) = PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a).getActivePools();
+    (uint256[] memory poolIds, PoolDirectory.Pool[] memory pools) = PoolDirectory(
+      0x39C353Cf9041CcF467A04d0e78B63d961E81458a
+    ).getActivePools();
 
     emit log_named_uint("First Pool ID", poolIds[0]);
     emit log_named_uint("First Pool ID", poolIds[1]);
@@ -702,20 +706,22 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
+  function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 20203998) {
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
     IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
-    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     address wethWhale = 0x751b77C43643a63362Ab024d466fcC1d75354295;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
 
-    AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
-    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
-    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
+    AerodromeCLLiquidator liquidator = AerodromeCLLiquidator(0xb50De36105F6053006306553AB54e77224818B9B);
 
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
-    liquidator.redeem(weth, 1 ether, abi.encode(address(weth), address(wsuperOETH), aerodromeCLRouter));
+    liquidator.redeem(
+      weth,
+      1 ether,
+      abi.encode(address(weth), address(wsuperOETH), aerodromeCLRouter, address(0), address(superOETH), 1)
+    );
     emit log_named_uint("wsuperOETH received", wsuperOETH.balanceOf(address(liquidator)));
     vm.stopPrank();
   }
@@ -728,12 +734,14 @@ contract DevTesting is BaseTest {
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
 
     AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
-    liquidator.setWrappedToUnwrapped(address(wsuperOETH), address(superOETH));
-    liquidator.setTickSpacing(address(weth), address(superOETH), 1);
 
     vm.startPrank(wsuperOethWhale);
     wsuperOETH.transfer(address(liquidator), 1 ether);
-    liquidator.redeem(wsuperOETH, 1 ether, abi.encode(address(wsuperOETH), address(weth), aerodromeCLRouter));
+    liquidator.redeem(
+      wsuperOETH,
+      1 ether,
+      abi.encode(address(wsuperOETH), address(weth), aerodromeCLRouter, address(superOETH), address(0), 1)
+    );
     emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
   }

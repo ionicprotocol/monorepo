@@ -34,12 +34,12 @@ function DynamicSubNav() {
     <a
       className={`${`${pools[+chainId]?.bg ?? pools[mode.id]?.bg} ${
         pools[+chainId]?.text ?? pools[mode.id]?.text
-      }`} absolute w-full top-full left-0 text-center  text-sm font-medium cursor-pointer `}
+      }`} absolute w-full z-20 top-full left-0 text-center  text-sm font-medium cursor-pointer `}
       // onClick={() => router.push('/points')}
       href="https://jumper.exchange/superfest/"
       target="_blank"
     >
-      <div className={`h-max w-full flex group  givep overflow-x-hidden`}>
+      <div className={`h-max w-full flex group z-20 givep overflow-x-hidden`}>
         {clone()}
         {clone()}
       </div>

@@ -27,7 +27,7 @@ function NetworkSelector({
   const setDropChain = useStore((state) => state.setDropChain);
   return (
     <div
-      className={`  left-0    md:min-w-max w-full  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
+      className={`  left-0    md:min-w-max w-full  text-lime origin-top   shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
     >
       <Link
         className={`flex justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
