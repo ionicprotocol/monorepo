@@ -12,7 +12,7 @@
       "address": "0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c"
     },
     "AerodromeCLLiquidator": {
-      "address": "0xb50De36105F6053006306553AB54e77224818B9B"
+      "address": "0xA36d49Ca6E1b48D3919455b1CEcC450Ab090136D"
     },
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
@@ -246,10 +246,10 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x449a61825DF5C5C996B655A81ca40F2f649A757a"
+      "address": "0x5159d2D4e3Ce7bcA482d1F8408f00acFEF8A9C1e"
     },
     "LiquidatorsRegistrySecondExtension": {
-      "address": "0xE19815995BeAe56278CF2C99d5fFe0A37127f144"
+      "address": "0x63E036573B3D7D5d6F4BBE262df6324103161594"
     },
     "LooplessFlywheelBooster": {
       "address": "0xBc97F93657186ad3614D05AaB83ee744Fc8CEf48"

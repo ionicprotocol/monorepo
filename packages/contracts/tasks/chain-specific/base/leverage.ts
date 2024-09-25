@@ -20,25 +20,17 @@ import {
 task("base:leverage:configure-pairs", "Configure leverage pairs").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const collaterals = [
-      weETH_MARKET,
-      ezETH_MARKET,
-      wstETH_MARKET,
-      cbETH_MARKET,
-      AERO_MARKET,
-      bsdETH_MARKET,
-      hyUSD_MARKET,
-      RSR_MARKET
+    const leveredPairs: LeveragePair[] = [
+      { borrow: WETH_MARKET, collateral: wsuperOETH_MARKET },
+      { borrow: WETH_MARKET, collateral: weETH_MARKET },
+      { borrow: WETH_MARKET, collateral: ezETH_MARKET },
+      { borrow: WETH_MARKET, collateral: wstETH_MARKET },
+      { borrow: WETH_MARKET, collateral: cbETH_MARKET },
+      { borrow: WETH_MARKET, collateral: AERO_MARKET },
+      { borrow: WETH_MARKET, collateral: bsdETH_MARKET },
+      { borrow: WETH_MARKET, collateral: wsuperOETH_MARKET },
+      { borrow: eUSD_MARKET, collateral: hyUSD_MARKET }
     ];
-    const borrows = [USDC_MARKET, eUSD_MARKET, WETH_MARKET];
-    const leveredPairs: LeveragePair[] = collaterals
-      .map((collateral) => {
-        return borrows.map((borrow) => ({
-          collateral: collateral as Address,
-          borrow: borrow as Address
-        }));
-      })
-      .flat();
 
     await configureLeveredPairs({ viem, deployments, deployer: deployer as Address, leveredPairs });
   }
