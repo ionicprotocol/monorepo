@@ -5,16 +5,10 @@ import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import { IVoter } from "./interfaces/IVoter.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ERC2771Context } from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { IonicTimeLibrary } from "./libraries/IonicTimeLibrary.sol";
 import { IveION } from "./interfaces/IveION.sol";
 import { IBribeRewards } from "./interfaces/IBribeRewards.sol";
-import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
-
-interface IPoolLens {
-  function getPoolSummary(IonicComptroller comptroller) external returns (uint256, uint256, address[] memory, string[] memory, bool);
-}
+import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 
 contract Voter is IVoter {
   using SafeERC20 for IERC20;
@@ -29,7 +23,6 @@ contract Voter is IVoter {
   /// @notice Base token of ve contract
   address internal immutable rewardToken;
   address public minter;
-  address public poolLens;
   /// @notice Standard OZ IGovernor using ve for vote weights.
   address public governor;
   /// @notice Custom Epoch Governor using ve for vote weights.
@@ -98,14 +91,13 @@ contract Voter is IVoter {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, address _minter, address _poolLens) external {
+  function initialize(address[] calldata _tokens, address _minter) external {
     if (msg.sender != minter) revert NotMinter();
     uint256 _length = _tokens.length;
     for (uint256 i = 0; i < _length; i++) {
       _whitelistToken(_tokens[i], true);
     }
     minter = _minter;
-    poolLens = _poolLens;
   }
 
   /// @inheritdoc IVoter
@@ -162,7 +154,7 @@ contract Voter is IVoter {
     maxVotingNum = _maxVotingNum;
   }
 
-  function distributeRewards(address _comptroller) external {
+  function distributeRewards() external {
     if (msg.sender != governor) revert NotGovernor();
     if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
@@ -171,8 +163,9 @@ contract Voter is IVoter {
         uint256 _weight = weights[markets[i]][MarketSide(j)];
         if (MarketSide(j) == MarketSide.Utilization && _weight > 0) {
           // TODO: receive borrow and supply for specific market
-          (uint256 totalSupply, uint256 totalBorrow, , , ) = IPoolLens(poolLens).getPoolSummary(IonicComptroller(_comptroller));
-          uint256 _utilization = totalSupply * 100 / totalBorrow;
+          uint256 totalSupply = ICErc20(markets[i]).totalSupply();
+          uint256 totalBorrow = ICErc20(markets[i]).totalBorrows();
+          uint256 _utilization = totalBorrow * 100 / totalSupply;
           uint256 _marketReward = _reward * _weight  / totalWeight;
           IERC20(rewardToken).safeTransfer(marketToRewardAccumulators[markets[i]][MarketSide.Supply], _marketReward * _utilization / 100); 
           IERC20(rewardToken).safeTransfer(marketToRewardAccumulators[markets[i]][MarketSide.Borrow], _marketReward * (100 - _utilization) / 100); 
