@@ -1147,7 +1147,7 @@ const Popup = ({
   return (
     <>
       <div
-        className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
+        className={` z-40 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
           isMounted && 'animated'
         }`}
       >
