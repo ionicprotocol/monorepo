@@ -13,9 +13,7 @@ import {
 } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
-
-const SUPPLY_DURATION = 29 * (24 * 60 * 60) + 1 * (23 * 60 * 60); // 29 days 23 hours
-const BORROW_DURATION = 30 * (24 * 60 * 60); // 30 days
+import { BORROW_DURATION, SUPPLY_DURATION } from "..";
 
 task("base:add-rewards:epoch1:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {

@@ -2,7 +2,7 @@ import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { base } from "@ionicprotocol/chains";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
 import { prepareAndLogTransaction } from "../helpers/logging";
 import { assetSymbols } from "@ionicprotocol/types";
@@ -79,6 +79,42 @@ export const deploy = async ({
     "AddressesProvider",
     (await deployments.get("AddressesProvider")).address as Address
   );
+
+  const curveV2OracleNoRegistry = await deployments.deploy("CurveV2LpTokenPriceOracleNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+    proxy: {
+      proxyContract: "OpenZeppelinTransparentProxy",
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [[], []]
+        }
+      }
+    }
+  });
+  console.log("CurveV2LpTokenPriceOracleNoRegistry: ", curveV2OracleNoRegistry.address);
+  await configureAddress(ap, publicClient, "CURVE_V2_ORACLE_NO_REGISTRY", curveV2OracleNoRegistry.address);
+  const oracle = await viem.getContractAt(
+    "CurveV2LpTokenPriceOracleNoRegistry",
+    curveV2OracleNoRegistry.address as Address
+  );
+
+  const usdmPool = "0x63Eb7846642630456707C3efBb50A03c79B89D81";
+  const registered = await oracle.read.poolOf([usdmPool]);
+  if (registered === zeroAddress) {
+    await oracle.write.registerPool([usdmPool, usdmPool]);
+  }
+
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
   const aerodromeV2LiquidatorFunder = await deployments.deploy("AerodromeV2Liquidator", {
     from: deployer,

@@ -4,8 +4,7 @@ pragma solidity >=0.8.0;
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 import "../external/curve/ICurvePool.sol";
-
-import { WETH } from "solmate/tokens/WETH.sol";
+import { IERC4626 } from "../compound/IERC4626.sol";
 
 import "./IRedemptionStrategy.sol";
 
@@ -40,15 +39,23 @@ contract CurveSwapLiquidator is IRedemptionStrategy {
     bytes memory strategyData
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
     (
-      CurveLpTokenPriceOracleNoRegistry curveV1Oracle,
       CurveV2LpTokenPriceOracleNoRegistry curveV2Oracle,
-      ,
       address outputTokenAddress,
-      address payable wtoken
-    ) = abi.decode(
-        strategyData,
-        (CurveLpTokenPriceOracleNoRegistry, CurveV2LpTokenPriceOracleNoRegistry, address, address, address)
-      );
+      address _unwrappedInput,
+      address _unwrappedOutput
+    ) = abi.decode(strategyData, (CurveV2LpTokenPriceOracleNoRegistry, address, address, address));
+
+    if (_unwrappedOutput != address(0)) {
+      outputToken = IERC20Upgradeable(_unwrappedOutput);
+    } else {
+      outputToken = IERC20Upgradeable(outputTokenAddress);
+    }
+
+    if (_unwrappedInput != address(0)) {
+      inputToken.approve(address(inputToken), inputAmount);
+      IERC4626(address(inputToken)).redeem(inputAmount, address(this), address(this));
+      inputToken = IERC20Upgradeable(_unwrappedInput);
+    }
 
     address inputTokenAddress = address(inputToken);
 
@@ -56,25 +63,21 @@ contract CurveSwapLiquidator is IRedemptionStrategy {
     int128 i;
     int128 j;
     if (address(curveV2Oracle) != address(0)) {
-      (curvePool, i, j) = curveV2Oracle.getPoolForSwap(inputTokenAddress, outputTokenAddress);
-    }
-    if (address(curvePool) == address(0)) {
-      (curvePool, i, j) = curveV1Oracle.getPoolForSwap(inputTokenAddress, outputTokenAddress);
+      (curvePool, i, j) = curveV2Oracle.getPoolForSwap(inputTokenAddress, address(outputToken));
     }
     require(address(curvePool) != address(0), "!curve pool");
 
     inputToken.approve(address(curvePool), inputAmount);
-    curvePool.exchange(i, j, inputAmount, 0);
+    outputAmount = curvePool.exchange(i, j, inputAmount, 0);
 
-    // Convert to W_NATIVE if ETH
-    if (outputTokenAddress == address(0) || outputTokenAddress == 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE) {
-      WETH(wtoken).deposit{ value: outputAmount }();
-      outputToken = IERC20Upgradeable(wtoken);
-    } else {
+    if (_unwrappedOutput != address(0)) {
+      IERC20Upgradeable(_unwrappedOutput).approve(address(outputTokenAddress), outputAmount);
+      IERC4626(outputTokenAddress).deposit(outputAmount, address(this));
+      outputAmount = IERC4626(_unwrappedOutput).balanceOf(address(this));
       outputToken = IERC20Upgradeable(outputTokenAddress);
     }
-    outputAmount = outputToken.balanceOf(address(this));
 
+    outputAmount = outputToken.balanceOf(address(this));
     return (outputToken, outputAmount);
   }
 

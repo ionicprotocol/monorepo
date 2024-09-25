@@ -260,6 +260,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       strategyData = aerodromeV2LiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "AerodromeCLLiquidator")) {
       strategyData = aerodromeCLLiquidatorData(inputToken, outputToken);
+    } else if (isStrategy(strategy, "CurveSwapLiquidator")) {
+      strategyData = curveSwapLiquidatorData(inputToken, outputToken);
     } else {
       revert("no strategy data");
     }
@@ -394,5 +396,17 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
     strategyData = abi.encode(outputToken, ap.getAddress("ALGEBRA_SWAP_ROUTER"));
+  }
+
+  function curveSwapLiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
+    strategyData = abi.encode(
+      ap.getAddress("CURVE_V2_ORACLE_NO_REGISTRY"),
+      outputToken,
+      getWrappedToUnwrapped4626(inputToken),
+      getWrappedToUnwrapped4626(outputToken)
+    );
   }
 }
