@@ -35,9 +35,9 @@ variable "bots_image_tag" {
   type        = string
 }
 
-variable "web3_http_provider_url" {
-  description = "URL for Web3 HTTP Provider"
+variable "web3_http_provider_urls" {
   type        = string
+  description = "List of Web3 HTTP Provider URLs"
 }
 
 variable "target_chain_id" {
