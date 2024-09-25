@@ -328,7 +328,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             chain: this.walletClient!.chain
           });
         } else {
-          tx = await leveredPosition.write.closePosition({
+          const leveredPositionFactory = this.createLeveredPositionFactory();
+          tx = await leveredPositionFactory.write.closeAndRemoveUserPosition([leveredPosition.address], {
             account: this.walletClient!.account!.address,
             chain: this.walletClient!.chain
           });

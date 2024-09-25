@@ -57,6 +57,27 @@ task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy
   }
 );
 
+task("base:liquidation:get-redemption-strategies", "Get redemption strategies").setAction(
+  async (_, { viem, getNamedAccounts, deployments }) => {
+    const publicClient = await viem.getPublicClient();
+    const liquidatorRegistry = await viem.getContractAt(
+      "ILiquidatorsRegistry",
+      (await deployments.get("LiquidatorsRegistry")).address as Address
+    );
+    const wsuperOETHContract = await viem.getContractAt("ICErc20", wsuperOETH_MARKET);
+    const wsuperOETHUnderlying = await wsuperOETHContract.read.underlying();
+    const wethContract = await viem.getContractAt("ICErc20", WETH_MARKET);
+    const wethUnderlying = await wethContract.read.underlying();
+    const strat = await liquidatorRegistry.read.redemptionStrategiesByTokens([wethUnderlying, wsuperOETHUnderlying]);
+    console.log("liquidatorRegistry.read.redemptionStrategiesByTokens weth to wsuperOETH:", strat);
+    const strategies = await liquidatorRegistry.read.redemptionStrategiesByTokens([
+      wsuperOETHUnderlying,
+      wethUnderlying
+    ]);
+    console.log("liquidatorRegistry.read.redemptionStrategiesByTokens strategies superOETH to weth:", strategies);
+  }
+);
+
 task("base:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
     const publicClient = await viem.getPublicClient();
@@ -210,8 +231,8 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         strategy: aeroCLLiquidator.address as Address
       },
       {
-        inputToken: wsuperOETHUnderlying,
-        outputToken: wethUnderlying,
+        inputToken: wethUnderlying,
+        outputToken: wsuperOETHUnderlying,
         strategy: aeroCLLiquidator.address as Address
       }
     ];
