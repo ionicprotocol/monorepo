@@ -152,13 +152,13 @@ export default function VeIon() {
         </div>
 
         <Link
-          href="#"
+          href="/veion/governance?watch=myveion"
           className={`xl:col-span-3 bg-accent  space-y-3 text-black hover:-translate-y-1 hover:bg-accent/90 tansition-all duration-100 ease-linear p-5 rounded-2xl`}
         >
           My veIon
         </Link>
         <Link
-          href="#"
+          href="/veion/governance?watch=overview"
           className={`xl:col-span-3 bg-accent space-y-3 text-black hover:-translate-y-1 hover:bg-accent/90 tansition-all duration-100 ease-linear p-5 rounded-2xl`}
         >
           veIon Overview

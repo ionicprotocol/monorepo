@@ -107,7 +107,10 @@ export default function GetveIon({
               </div>
               <p>0.00 veIon</p>
             </div>
-            <button onClick={() => setSuccess(true)} className="bg-accent py-1 text-sm text-black rounded-md  mt-4 ">
+            <button
+              onClick={() => setSuccess(true)}
+              className="bg-accent py-1 text-sm text-black rounded-md  mt-4 "
+            >
               Lock LP and get veION
             </button>
           </>
