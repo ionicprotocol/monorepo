@@ -4,6 +4,14 @@ import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
+export const explorerLinks: Record<number, string> = {
+  [mode.id]: 'https://explorer.mode.network',
+  [base.id]: 'https://basescan.org',
+  [optimism.id]: 'https://optimistic.etherscan.io',
+  [bob.id]: 'https://explorer.gobob.xyz',
+  [fraxtal.id]: 'https://fraxscan.com'
+};
+
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
 );
@@ -60,7 +68,8 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
-    '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD'
+    '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
+    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
   }
 };
 
@@ -93,12 +102,14 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
       '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
       '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
-      '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4'
+      '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
+      '0xc39441b305705AfD07de97237bC835a4501AbbEC'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x327410E4D3A32EF37712e77fCB005e5327F082De',
-      '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d'
+      '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d',
+      '0xf9cef193bAC6103405228e4B29Ba8abab5A1001D'
     ]
   }
 };
@@ -206,7 +217,17 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Pool',
-        assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
+        assets: [
+          'USDC',
+          'USDT',
+          'WETH',
+          'wUSDM',
+          'OP',
+          'wstETH',
+          'SNX',
+          'WBTC',
+          'LUSD'
+        ]
       }
     ]
   },

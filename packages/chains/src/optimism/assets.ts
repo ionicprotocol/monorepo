@@ -18,6 +18,7 @@ export const wstETH = "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb";
 export const SNX = "0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4";
 export const WBTC = "0x68f180fcCe6836688e9084f035309E29Bf0A2095";
 export const LUSD = "0xc40F949F8a4e094D1b49a23ea9241D289B7b2819";
+export const wUSDM = "0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812";
 
 export const assets: SupportedAsset[] = [
   {
@@ -129,6 +130,21 @@ export const assets: SupportedAsset[] = [
     initialCf: "70",
     initialSupplyCap: parseEther(String(2_200_000)).toString(),
     initialBorrowCap: parseEther(String(1_700_000)).toString()
+  },
+  {
+    symbol: assetSymbols.wUSDM,
+    underlying: wUSDM,
+    name: "Wrapped USDM",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xD673873c8627b29d9e245cDC133c6dA0a398b65A",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://optimistic.etherscan.io", wUSDM),
+    initialCf: "0.82",
+    initialSupplyCap: parseEther(String(1_300_000)).toString(),
+    initialBorrowCap: parseEther(String(1_000_000)).toString()
   }
 ];
 
