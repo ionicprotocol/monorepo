@@ -84,7 +84,7 @@ export default function Widget({
         ref={newRef}
       >
         <LiFiWidget
-          integrator="Ionic Money"
+          integrator="ionic"
           config={widgetConfig}
         />
       </div>
