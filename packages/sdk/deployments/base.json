@@ -62,6 +62,18 @@
     "ComptrollerFirstExtension": {
       "address": "0x151af46d007Cb7E60759318Ec1553c3Bdd8b93dB"
     },
+    "CurveSwapLiquidator": {
+      "address": "0x5c15fb1Dd522bd60D77DE3a4fad9A0aF27b1DC64"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry": {
+      "address": "0xd39979D73Acbf12fa88134d2B27eabBe2F18C7dA"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
+      "address": "0x5d9dF491F353Cf866AFccDe033406893C7D23A0D"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
+      "address": "0xd39979D73Acbf12fa88134d2B27eabBe2F18C7dA"
+    },
     "DefaultProxyAdmin": {
       "address": "0x04C21Db52CcA974dF3Dc019C92E52e522ce57156"
     },
@@ -246,7 +258,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x5159d2D4e3Ce7bcA482d1F8408f00acFEF8A9C1e"
+      "address": "0xc615004c63856f9d5D36B80167CA2da3264DE6A7"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x63E036573B3D7D5d6F4BBE262df6324103161594"
