@@ -47,6 +47,16 @@ function NetworkSelector({
               +chainId !== dropdownSelectedChain
             : +chainId !== dropdownSelectedChain
         )
+        .sort((a, b) => {
+          const sortingOrder = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Bob'];
+          const indexA = sortingOrder.indexOf(a[1].name);
+          const indexB = sortingOrder.indexOf(b[1].name);
+
+          if (indexA === -1 || indexB === -1) {
+            return 0; // if the network name is not found, don't change the order
+          }
+          return indexA - indexB;
+        })
         .map(([chainId, network], idx: number) => (
           <Link
             className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
