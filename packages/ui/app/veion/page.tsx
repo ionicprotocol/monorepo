@@ -3,9 +3,23 @@
 
 import Link from 'next/link';
 
+import GetveIon from '../_components/veion/GetveIon';
+
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+
 export default function VeIon() {
+  const {
+    componentRef: getIonRef,
+    isopen: isGetIonOpen,
+    toggle: toggleGetIon
+  } = useOutsideClick();
   return (
-    <div className="lg:size-[60%] lg:p-8 lg:pt-12  text-white bg-grayone xl:rounded-3xl xl:space-y-6 space-y-8 mx-auto my-20">
+    <div className="lg:size-[60%] lg:p-8 lg:pt-12  text-white bg-grayone xl:rounded-3xl xl:space-y-6 space-y-8 mx-auto my-20 ">
+      <GetveIon
+        getIonRef={getIonRef}
+        isGetIonOpen={isGetIonOpen}
+        toggleGetIon={toggleGetIon}
+      />
       <div className="xl:text-xl text-2xl font-semibold flex flex-col gap-2">
         <img
           className={`size-10`}
@@ -127,7 +141,10 @@ export default function VeIon() {
               />
             </span>
             <p className="text-white font-medium text-md">ION/WETH</p>
-            <button className="bg-accent p-2 text-grayUnselect rounded-lg text-xs font-bold tracking-tight flex items-center gap-2">
+            <button
+              onClick={() => toggleGetIon()}
+              className="bg-accent p-2 text-grayUnselect rounded-lg text-xs font-bold tracking-tight flex items-center gap-2"
+            >
               Lock and get
             </button>
             <p className="text-white font-medium text-md">ION/WETH LP</p>

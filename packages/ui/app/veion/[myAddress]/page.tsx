@@ -7,19 +7,8 @@ interface IProp {
 }
 
 export default function MyVeIon({ params }: IProp) {
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await fetch(
-  //       'https://api.blockchair.com/bitcoin/dashboards/address/' + address
-  //     );
-  //     const data = await response.json();
-  //     setBalance(data.data.balance);
-  //   };
-  //   fetchData();
-  // }, [address]);
-
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="w-full flex flex-col items-start py-4 justify-start bg-grayone h-min px-[3%] rounded-xl">
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold">my Address</h1>
         <h1 className="text-4xl font-bold">{params.myAddress}</h1>
