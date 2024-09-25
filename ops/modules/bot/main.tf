@@ -34,8 +34,8 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
       }
            environment = [
         {
-          name  = "WEB3_HTTP_PROVIDER_URL"
-          value = "https://mainnet.mode.network"
+          name  = "WEB3_HTTP_PROVIDER_URLS"
+          value = "${var.web3_http_provider_urls}"
         },
         {
           name  = "TARGET_CHAIN_ID"
