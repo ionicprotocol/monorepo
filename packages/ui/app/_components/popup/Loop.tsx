@@ -1,6 +1,7 @@
 import type { OpenPosition } from '@ionicprotocol/types';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -23,7 +24,7 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 
-import { INFO_MESSAGES } from '@ui/constants/index';
+import { explorerLinks, INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
@@ -35,6 +36,10 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
+  ssr: false
+});
 
 export type LoopProps = {
   borrowableAssets: Address[];
@@ -357,7 +362,7 @@ function BorrowActions({
     <ResultHandler isLoading={isLoadingMarketData}>
       {selectedBorrowAsset && (
         <div className="grow-0 shrink-0 basis-[45%]">
-          <div className="relative z-50">
+          <div className="relative z-49">
             <Amount
               amount={borrowAmount}
               availableAssets={marketData?.assets.filter((asset) =>
@@ -465,6 +470,7 @@ export default function Loop({
     () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
     [amount, selectedCollateralAsset]
   );
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const { data: marketData } = useFusePoolData('0', chainId, true);
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
@@ -975,6 +981,36 @@ export default function Loop({
 
             {selectedCollateralAsset.underlyingSymbol}
           </div>
+
+          <div className="flex mb-4 items-center text-sm font-bold">
+            {currentPosition
+              ? `Loop Position Found: `
+              : 'No Loop Position Found, Create a New One'}
+            {currentPosition && (
+              <a
+                href={`${explorerLinks[chainId]}/address/${currentPosition.address}`}
+                target="_blank"
+                className="text-cyan-400 pl-2"
+              >
+                0x{currentPosition.address.slice(2, 4)}...
+                {currentPosition.address.slice(-6)}
+              </a>
+            )}
+          </div>
+
+          <SwapWidget
+            close={() => setSwapWidgetOpen(false)}
+            open={swapWidgetOpen}
+            fromChain={chainId}
+            toChain={chainId}
+            toToken={selectedCollateralAsset.underlyingToken}
+          />
+          <button
+            className={`w-full font-bold uppercase rounded-md py-1 transition-colors bg-accent text-darkone text-xs mx-auto mb-4`}
+            onClick={() => setSwapWidgetOpen(true)}
+          >
+            Get {selectedCollateralAsset.underlyingSymbol}
+          </button>
 
           <div className="lg:flex justify-between items-center">
             <div className="grow-0 shrink-0 basis-[45%]">
