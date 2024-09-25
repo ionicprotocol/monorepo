@@ -1,12 +1,14 @@
 import { optimism } from "@ionicprotocol/chains";
-import { ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
 import { Address } from "viem";
 import { ChainlinkAsset } from "../types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 
 const assets = optimism.assets;
+const PRICES_CONTRACT = "0x07F544813E9Fb63D57a92f28FbD3FF0f7136F5cE";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: Number(optimism.specificParams.blocksPerYear),
@@ -36,8 +38,23 @@ const chainlinkAssets: ChainlinkAsset[] = optimism.assets
     symbol: asset.symbol
   }));
 
-export const deploy = async ({ run, viem, getNamedAccounts, deployments }: HardhatRuntimeEnvironment): Promise<void> => {
+export const deploy = async ({
+  run,
+  viem,
+  getNamedAccounts,
+  deployments
+}: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+
+  await deployAerodromeOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: assets.filter((a) => a.symbol === assetSymbols.ION),
+    pricesContract: PRICES_CONTRACT
+  });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({
