@@ -48,7 +48,7 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-30 flex items-center justify-between w-full py-2 sm:py-4 px-[3%]  xl:px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
+    <nav className="fixed z-40 flex items-center justify-between w-full py-2 sm:py-4 px-[3%]  xl:px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
       <DynamicSubNav />
       <Link
         className={`flex items-center  lg:pr-1 xl:pr-10 pr-4 `}
