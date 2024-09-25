@@ -112,7 +112,7 @@ export default function Widget({ close, open, chain }: IProps) {
         ref={newRef}
       >
         <LiFiWidget
-          integrator="Ionic Money"
+          integrator="ionic"
           config={widgetConfig}
         />
         <button
