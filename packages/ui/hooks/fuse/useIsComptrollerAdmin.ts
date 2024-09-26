@@ -32,7 +32,6 @@ export const useIsComptrollerAdmin = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });

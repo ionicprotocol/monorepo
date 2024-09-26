@@ -18,7 +18,6 @@ export function useIonPrice() {
       return pairData as DexScreenerPriceData;
     },
 
-    gcTime: Infinity,
     staleTime: Infinity
   });
 }
@@ -37,7 +36,6 @@ export function useModePrice() {
       return pairData as DexScreenerPriceData;
     },
 
-    gcTime: Infinity,
     staleTime: Infinity
   });
 }
@@ -56,7 +54,6 @@ export function useAeroPrice() {
       return pairData as DexScreenerPriceData;
     },
 
-    gcTime: Infinity,
     staleTime: Infinity
   });
 }

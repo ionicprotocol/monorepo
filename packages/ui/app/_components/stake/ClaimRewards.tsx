@@ -126,7 +126,6 @@ const DisplayAndClaimRewards = ({
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error']
     }
   });
@@ -219,7 +218,6 @@ const DisplayAndClaimTradingFees = ({
     ],
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error']
     }
   });

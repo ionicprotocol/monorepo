@@ -27,7 +27,6 @@ export function useAssets(chainIds?: number[]) {
       return assetsRewards;
     },
 
-    gcTime: Infinity,
     enabled: !!chainIds && chainIds.length > 0,
     staleTime: Infinity
   });

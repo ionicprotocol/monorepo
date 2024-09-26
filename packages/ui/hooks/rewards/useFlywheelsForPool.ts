@@ -86,7 +86,6 @@ export const useFlywheelsForPool = (
       return flywheels;
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });

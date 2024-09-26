@@ -134,7 +134,6 @@ export default function Stake() {
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
       placeholderData: [0n, 0n]
       // refetchInterval: 5000
@@ -184,7 +183,6 @@ export default function Stake() {
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
       placeholderData: 0n
       // refetchInterval: 4000

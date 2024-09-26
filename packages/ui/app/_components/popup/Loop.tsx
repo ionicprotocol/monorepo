@@ -476,7 +476,8 @@ export default function Loop({
   const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<
     MarketData | undefined
   >(currentBorrowAsset);
-  const { data: positions } = usePositionsQuery(chainId);
+  const { data: positions, refetch: refetchPositions } =
+    usePositionsQuery(chainId);
   const currentPosition = useMemo<OpenPosition | undefined>(() => {
     return positions?.openPositions.find(
       (position) =>
@@ -728,6 +729,8 @@ export default function Loop({
       });
 
       await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
+
+      await refetchPositions();
 
       setAmount('0');
 

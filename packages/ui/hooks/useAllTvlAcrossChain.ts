@@ -55,7 +55,6 @@ export const useAllTvlAcrossChain = () => {
         return { totalTvlSupply: 0, totalTvlBorrow: 0 };
       }
     },
-    gcTime: Infinity,
     enabled: true
   });
 };

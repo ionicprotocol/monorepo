@@ -38,7 +38,6 @@ export function usePositionInfo(
       return await getPositionInfo(position, supplyApy!, sdk!);
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!position && typeof supplyApy === 'bigint' && !!chainId,
     staleTime: Infinity
   });
@@ -80,7 +79,6 @@ export function usePositionsInfo(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!positions && !!totalApys && !!chainIds,
     staleTime: Infinity
   });

@@ -56,8 +56,6 @@ export function useTokenBalance(
       }
     },
 
-    // gcTime: Infinity,
-    // staleTime: Infinity,
     enabled: !!tokenAddress && !!addressToCheck && !!sdk
   });
 }

@@ -49,7 +49,6 @@ export default function Quote({
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
       refetchInterval: 10000,
       initialData: [0n, 0n]

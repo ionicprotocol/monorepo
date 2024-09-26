@@ -42,7 +42,6 @@ export function useUpdatedLeverageRatioAfterFunding(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!amount && !!positionAddress,
     staleTime: Infinity
   });

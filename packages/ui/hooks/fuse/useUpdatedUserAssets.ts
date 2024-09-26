@@ -75,7 +75,6 @@ const useUpdatedUserAssets = <T extends MarketData>({
       return assetsWithPrice;
     },
 
-    gcTime: Infinity,
     enabled: !!assets && !!usdPrice && !!currentSdk,
     staleTime: Infinity
   });
