@@ -13,8 +13,21 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const stoneToken = mode.assets.find((asset) => asset.symbol === assetSymbols.STONE);
     const mbtcToken = mode.assets.find((asset) => asset.symbol === assetSymbols.mBTC);
     const weethToken = mode.assets.find((asset) => asset.symbol === assetSymbols.weETH);
+    const ezethToken = mode.assets.find((asset) => asset.symbol === assetSymbols.ezETH);
+    const usdcToken = mode.assets.find((asset) => asset.symbol === assetSymbols.USDC);
+    const rsETHToken = mode.assets.find((asset) => asset.symbol === assetSymbols.wrsETH);
     const weEthOld = "0x028227c4dd1e5419d11Bb6fa6e661920c519D4F5";
-    if (!modeToken || !usdtToken || !stoneToken || !mbtcToken || !weethToken || !wethToken) {
+    if (
+      !modeToken ||
+      !usdtToken ||
+      !stoneToken ||
+      !mbtcToken ||
+      !weethToken ||
+      !wethToken ||
+      !ezethToken ||
+      !usdcToken ||
+      !rsETHToken
+    ) {
       throw new Error("Tokens not found");
     }
     const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
@@ -32,6 +45,16 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: wethToken.underlying,
         outputToken: usdtToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: usdcToken.underlying,
+        outputToken: wethToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: usdcToken.underlying,
         strategy: kimLiquidator.address as Address
       },
       {
@@ -53,6 +76,36 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: weEthOld,
         outputToken: wethToken.underlying,
         strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: ezethToken.underlying,
+        outputToken: wethToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: ezethToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: usdcToken.underlying,
+        outputToken: usdtToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: usdtToken.underlying,
+        outputToken: usdcToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: rsETHToken.underlying,
+        outputToken: wethToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: rsETHToken.underlying,
+        strategy: kimLiquidator.address as Address
       }
     ]);
 
@@ -60,6 +113,24 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       inputToken: modeToken.underlying,
       outputToken: usdtToken.underlying,
       optimalPath: [wethToken.underlying, usdtToken.underlying]
+    });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: ezethToken.underlying,
+      outputToken: usdtToken.underlying,
+      optimalPath: [wethToken.underlying, usdtToken.underlying]
+    });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: ezethToken.underlying,
+      outputToken: usdcToken.underlying,
+      optimalPath: [wethToken.underlying, usdcToken.underlying]
+    });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: rsETHToken.underlying,
+      outputToken: stoneToken.underlying,
+      optimalPath: [wethToken.underlying, stoneToken.underlying]
     });
   }
 );

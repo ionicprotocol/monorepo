@@ -62,7 +62,8 @@ export const setOptimalSwapPath = async (
   if (
     !path.reduce((acc, curr, i) => {
       return acc && curr.toLowerCase() === pair.optimalPath[i].toLowerCase();
-    }, true)
+    }, true) ||
+    path.length === 0
   ) {
     const owner = await liquidatorRegistry.read.owner();
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
