@@ -38,6 +38,11 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
         strategy: kimLiquidator.address as Address
       },
       {
+        inputToken: wethToken.underlying,
+        outputToken: modeToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
         inputToken: usdtToken.underlying,
         outputToken: wethToken.underlying,
         strategy: kimLiquidator.address as Address
@@ -63,13 +68,28 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
         strategy: kimLiquidator.address as Address
       },
       {
+        inputToken: wethToken.underlying,
+        outputToken: stoneToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
         inputToken: mbtcToken.underlying,
         outputToken: wethToken.underlying,
         strategy: kimLiquidator.address as Address
       },
       {
+        inputToken: wethToken.underlying,
+        outputToken: mbtcToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
         inputToken: weethToken.underlying,
         outputToken: wethToken.underlying,
+        strategy: kimLiquidator.address as Address
+      },
+      {
+        inputToken: wethToken.underlying,
+        outputToken: weethToken.underlying,
         strategy: kimLiquidator.address as Address
       },
       {
