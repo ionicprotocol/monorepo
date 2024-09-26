@@ -147,8 +147,11 @@ const Popup = ({
     selectedMarketData,
     chainId
   );
-  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
-    useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
+  const {
+    data: maxSupplyAmount,
+    isLoading: isLoadingMaxSupply,
+    refetch: refetchMaxSupplyAmount
+  } = useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
   const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
     [selectedMarketData],
     chainId
@@ -1157,6 +1160,7 @@ const Popup = ({
           fromChain={chainId}
           toChain={chainId}
           toToken={selectedMarketData.underlyingToken}
+          onRouteExecutionCompleted={() => refetchMaxSupplyAmount()}
         />
         <div
           className={`w-[85%] sm:w-[55%] md:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${

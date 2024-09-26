@@ -114,6 +114,8 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const wusdmContract = await viem.getContractAt("ICErc20", wusdm_MARKET);
     const wusdmUnderlying = await wusdmContract.read.underlying();
     const usdm = "0x59d9356e565ab3a36dd77763fc0d87feaf85508c";
+    const weethContract = await viem.getContractAt("ICErc20", weETH_MARKET);
+    const weethUnderlying = await weethContract.read.underlying();
 
     const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
     console.log("🚀 ~ readTick:", readTick);
@@ -256,6 +258,16 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: usdcUnderlying,
         outputToken: wusdmUnderlying,
         strategy: curveSwapLiquidator.address as Address
+      },
+      {
+        inputToken: weethUnderlying,
+        outputToken: wethUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: weethUnderlying,
+        strategy: aeroV2Liquidator.address as Address
       }
     ];
     const liqTx = await liquidatorRegistry.write._resetRedemptionStrategies([
