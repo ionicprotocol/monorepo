@@ -831,19 +831,17 @@ export default function Loop({
     try {
       const token = currentSdk.getEIP20TokenInstance(
         selectedCollateralAsset.underlyingToken,
-        currentSdk.publicClient as any
+        currentSdk.walletClient as any
       );
       const hasApprovedEnough =
         (await token.read.allowance([address, currentPosition.address])) >=
         amountAsBInt;
 
       if (!hasApprovedEnough) {
-        const tx = await token.write.approve(
-          [currentPosition.address, amountAsBInt],
-          {
-            account: currentSdk.walletClient!.account!.address,
-            chain: currentSdk.walletClient!.chain
-          }
+        const tx = await currentSdk.approve(
+          currentPosition.address,
+          selectedCollateralAsset.underlyingToken,
+          amountAsBInt
         );
 
         upsertTransactionStep({

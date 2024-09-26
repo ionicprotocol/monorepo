@@ -96,7 +96,7 @@ export const deploy = async ({
     }
   });
   console.log("CurveV2LpTokenPriceOracleNoRegistry: ", curveV2OracleNoRegistry.address);
-  await configureAddress(ap, publicClient, "CURVE_V2_ORACLE_NO_REGISTRY", curveV2OracleNoRegistry.address);
+  await configureAddress(ap, publicClient, deployer, "CURVE_V2_ORACLE_NO_REGISTRY", curveV2OracleNoRegistry.address);
   const oracle = await viem.getContractAt(
     "CurveV2LpTokenPriceOracleNoRegistry",
     curveV2OracleNoRegistry.address as Address
@@ -123,8 +123,8 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("AerodromeV2Liquidator: ", aerodromeV2LiquidatorFunder.address);
-  await configureAddress(ap, publicClient, "AERODROME_V2_ROUTER", AERODROME_V2_ROUTER);
-  await configureAddress(ap, publicClient, "AERODROME_V2_FACTORY", AERODROME_V2_FACTORY);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_ROUTER", AERODROME_V2_ROUTER);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_FACTORY", AERODROME_V2_FACTORY);
 
   const aerodromeCLLiquidator = await deployments.deploy("AerodromeCLLiquidator", {
     from: deployer,
@@ -133,7 +133,7 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("AerodromeCLLiquidator: ", aerodromeCLLiquidator.address);
-  await configureAddress(ap, publicClient, "AERODROME_CL_ROUTER", AERODROME_CL_ROUTER);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_CL_ROUTER", AERODROME_CL_ROUTER);
 
   //// Uniswap V3 Liquidator Funder
   // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
