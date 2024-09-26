@@ -788,6 +788,8 @@ export default function Loop({
 
       await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
 
+      await refetchPositions();
+
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -886,6 +888,8 @@ export default function Loop({
 
       setAmount('0');
 
+      await refetchPositions();
+
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -938,6 +942,8 @@ export default function Loop({
       });
 
       await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
+
+      await refetchPositions();
 
       upsertTransactionStep({
         index: currentTransactionStep,
