@@ -699,6 +699,15 @@ export const multipliers: Record<
           rewards: true,
           ionAPR: false
         }
+      },
+      wUSDM: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
