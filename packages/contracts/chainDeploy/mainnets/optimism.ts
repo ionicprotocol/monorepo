@@ -2,10 +2,11 @@ import { optimism } from "@ionicprotocol/chains";
 import { assetSymbols, ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
 
 import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { ChainlinkAsset } from "../types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
+import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 
 const assets = optimism.assets;
 const PRICES_CONTRACT = "0x07F544813E9Fb63D57a92f28FbD3FF0f7136F5cE";
@@ -45,6 +46,50 @@ export const deploy = async ({
   deployments
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+  const publicClient = await viem.getPublicClient();
+
+  const ap = await viem.getContractAt(
+    "AddressesProvider",
+    (await deployments.get("AddressesProvider")).address as Address
+  );
+
+  const curveV2OracleNoRegistry = await deployments.deploy("CurveV2LpTokenPriceOracleNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+    proxy: {
+      proxyContract: "OpenZeppelinTransparentProxy",
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [[], []]
+        }
+      }
+    }
+  });
+  console.log("CurveV2LpTokenPriceOracleNoRegistry: ", curveV2OracleNoRegistry.address);
+  await configureAddress(ap, publicClient, deployer, "CURVE_V2_ORACLE_NO_REGISTRY", curveV2OracleNoRegistry.address);
+  const oracle = await viem.getContractAt(
+    "CurveV2LpTokenPriceOracleNoRegistry",
+    curveV2OracleNoRegistry.address as Address
+  );
+
+  const usdmPool = "0xb52c9213d318956bFa26Df2656B161e3cAcbB64d";
+  const registered = await oracle.read.poolOf([usdmPool]);
+  if (registered === zeroAddress) {
+    await oracle.write.registerPool([usdmPool, usdmPool]);
+  } else {
+    console.log("USDM pool already registered");
+  }
+
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
   await deployAerodromeOracle({
     run,
@@ -57,22 +102,22 @@ export const deploy = async ({
   });
 
   //// ChainLinkV2 Oracle
-  await deployChainlinkOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    assets,
-    chainlinkAssets
-  });
+  // await deployChainlinkOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   assets,
+  //   chainlinkAssets
+  // });
 
-  //// Uniswap V3 Liquidator Funder
-  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+  // //// Uniswap V3 Liquidator Funder
+  // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+  //   from: deployer,
+  //   args: [],
+  //   log: true,
+  //   waitConfirmations: 1
+  // });
+  // console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 };

@@ -496,17 +496,20 @@ export default function Loop({
     positions?.openPositions.map((position) => position.collateral) ?? [],
     positions?.openPositions.map((position) => position.chainId) ?? []
   );
-  const { data: positionInfo, isFetching: isFetchingPositionInfo } =
-    usePositionInfo(
-      currentPosition?.address ?? ('' as Address),
-      collateralsAPR &&
-        collateralsAPR[selectedCollateralAsset.cToken] !== undefined
-        ? parseEther(
-            collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
-          )
-        : undefined,
-      chainId
-    );
+  const {
+    data: positionInfo,
+    isFetching: isFetchingPositionInfo,
+    refetch: refetchPositionInfo
+  } = usePositionInfo(
+    currentPosition?.address ?? ('' as Address),
+    collateralsAPR &&
+      collateralsAPR[selectedCollateralAsset.cToken] !== undefined
+      ? parseEther(
+          collateralsAPR[selectedCollateralAsset.cToken].totalApy.toFixed(18)
+        )
+      : undefined,
+    chainId
+  );
   const { data: positionNetApy, isFetching: isFetchingPositionNetApy } =
     useGetNetApy(
       selectedCollateralAsset.cToken,
@@ -642,13 +645,15 @@ export default function Loop({
   /**
    * Reset neccessary queries after actions
    */
-  const resetQueries = () => {
+  const resetQueries = async (): Promise<void> => {
     queryClient.invalidateQueries({ queryKey: ['useCurrentLeverageRatio'] });
     queryClient.invalidateQueries({ queryKey: ['useGetNetApy'] });
     queryClient.invalidateQueries({ queryKey: ['usePositionInfo'] });
     queryClient.invalidateQueries({ queryKey: ['positions'] });
     queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
-    refetchBalance();
+    await refetchBalance();
+    await refetchPositionInfo();
+    await refetchPositions();
   };
 
   /**
@@ -729,9 +734,7 @@ export default function Loop({
       });
 
       await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
-
       await refetchPositions();
-
       setAmount('0');
 
       upsertTransactionStep({
@@ -787,9 +790,7 @@ export default function Loop({
       });
 
       await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
-
       await refetchPositions();
-
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -887,9 +888,7 @@ export default function Loop({
       await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
 
       setAmount('0');
-
       await refetchPositions();
-
       upsertTransactionStep({
         index: currentTransactionStep,
         transactionStep: {
@@ -968,7 +967,7 @@ export default function Loop({
   /**
    * Handle transaction steps reset
    */
-  const handleTransactionStepsReset = (): void => {
+  const handleTransactionStepsReset = async (): Promise<void> => {
     resetQueries();
     upsertTransactionStep(undefined);
   };

@@ -18,7 +18,7 @@
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x926292ccEc4D04996EEef6C64710ED15cED3B1FC"
+      "address": "0x113573b6238972164F14093785f1F142F053936C"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
@@ -52,6 +52,18 @@
     },
     "ComptrollerFirstExtension": {
       "address": "0xb3788b3C421348E43beEa88551acC16d2f6a6332"
+    },
+    "CurveSwapLiquidator": {
+      "address": "0x07De1d04AbE286F4bB7797A962D5C9DA90DD3054"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry": {
+      "address": "0xA16D99e4133D858E5b73784AA2F65E7EdfC49a19"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
+      "address": "0xf4C628736A4abBB3790BC8035bC12689AA7eB30c"
+    },
+    "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
+      "address": "0xA16D99e4133D858E5b73784AA2F65E7EdfC49a19"
     },
     "DefaultProxyAdmin": {
       "address": "0xA7B9F9B18587A3854aE41C80a08291eca149bCB7"
@@ -99,31 +111,31 @@
       "address": "0x21a455cEd9C79BC523D4E340c2B97521F4217817"
     },
     "LeveredPositionFactory": {
-      "address": "0x50766FD9C93e65124f0160C8f301caC6f399B572"
+      "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x2B15438B2b1eE2bD6f7B08d02017e00dAE2Cf37F"
+      "address": "0x91B3001124ac5A5C0Bc3329c3523A8dcD9ce44E3"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x1fD400764EaA8a2cAc8DEa057bD9227C14Bb47Ea"
+      "address": "0x1A2a71f124E1691bb48147949168126aE7387275"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
     },
     "LeveredPositionsLens_Implementation": {
-      "address": "0x301be952b3e56a069224317FDB3A84D67249421C"
+      "address": "0xE555C0E2DBd8e520a5Cb35387B577C926251f0D7"
     },
     "LeveredPositionsLens_Proxy": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
     },
     "LiquidatorsRegistry": {
-      "address": "0x1Bc38822E8818C62C6C48BbBe44EE097d6E0ca5d"
+      "address": "0xdC706Ef0A4b8a3760FD27679b8bD59Eed9C2ae68"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x8f55Cac621413848c567De976948d2dC6A511Cda"
+      "address": "0xe1e25f45B273251eba817a2e0BEB31f5bEB6a154"
     },
     "LiquidatorsRegistrySecondExtension": {
-      "address": "0xD9a5677594694819F69D0907C3094EAb480F3a28"
+      "address": "0x4Ec459a204b68e5f483aCa879C7e2e4b2F0654fF"
     },
     "LooplessFlywheelBooster": {
       "address": "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4"
