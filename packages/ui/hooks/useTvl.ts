@@ -60,7 +60,6 @@ export const useTvl = ({
 
       return [ion, token2];
     },
-    gcTime: Infinity,
     enabled: !!ionData && !!ethPriceData && !!reserves && !!ionData
   });
 };

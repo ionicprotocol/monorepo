@@ -32,7 +32,6 @@ export function useRangeOfLeverageRatio(address?: Address, chainId?: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!address && !!sdk,
     staleTime: Infinity
   });

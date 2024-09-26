@@ -87,9 +87,6 @@ export const useFusePoolData = (
         return null;
       }
     },
-
-    gcTime: Infinity,
-    enabled: !!poolId && !!usdPrice && !!sdk,
-    staleTime: Infinity
+    enabled: !!poolId && !!usdPrice && !!sdk
   });
 };

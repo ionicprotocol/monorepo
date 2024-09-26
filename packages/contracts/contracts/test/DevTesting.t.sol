@@ -781,6 +781,18 @@ contract DevTesting is BaseTest {
     emit log_named_uint("usdc received", IERC20Upgradeable(usdc).balanceOf(address(liquidator)));
   }
 
+  function testKimLiquidator() public debuggingOnly forkAtBlock(MODE_MAINNET, 13579406) {
+    address weth = 0x4200000000000000000000000000000000000006;
+    address usdc = 0xd988097fb8612cc24eeC14542bC03424c656005f;
+    address kimRouter = 0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8;
+    address wethWhale = 0xe9b14a1Be94E70900EDdF1E22A4cB8c56aC9e10a;
+    AlgebraSwapLiquidator liquidator = AlgebraSwapLiquidator(0x5cA3fd2c285C4138185Ef1BdA7573D415020F3C8);
+    vm.startPrank(wethWhale);
+    IERC20Upgradeable(weth).transfer(address(liquidator), 2018770577362160);
+    liquidator.redeem(IERC20Upgradeable(weth), 2018770577362160, abi.encode(usdc, kimRouter));
+    emit log_named_uint("usdc received", IERC20Upgradeable(usdc).balanceOf(address(liquidator)));
+  }
+
   function _functionCall(
     address target,
     bytes memory data,

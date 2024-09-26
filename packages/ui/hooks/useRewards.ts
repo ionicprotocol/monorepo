@@ -62,9 +62,7 @@ export function useFlywheelRewards(comptroller?: Address, chainId?: number) {
       return null;
     },
 
-    gcTime: Infinity,
-    enabled: !!comptroller && !!chainId,
-    staleTime: Infinity
+    enabled: !!comptroller && !!chainId
   });
 }
 
@@ -172,7 +170,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
       return {};
     },
 
-    gcTime: Infinity,
     enabled: !!poolData && !!flywheelRewards,
     staleTime: Infinity
   });
@@ -205,7 +202,6 @@ export function useRewardsForMarket({
       return {};
     },
 
-    gcTime: Infinity,
     enabled: !!asset && !!poolAddress,
     staleTime: Infinity
   });

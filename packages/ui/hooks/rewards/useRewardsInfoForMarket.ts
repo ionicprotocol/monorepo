@@ -36,7 +36,6 @@ export const useRewardsInfoForMarket = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!flywheelAddress && !!marketAddress && !!sdk,
     staleTime: Infinity
   });

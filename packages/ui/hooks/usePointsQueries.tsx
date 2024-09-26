@@ -339,7 +339,6 @@ const usePointsForSupplyModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0'])
@@ -383,7 +382,6 @@ const usePointsForBorrowModeMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['0'])
@@ -428,7 +426,6 @@ const usePointsForSupplyModeNative = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1'])
@@ -472,7 +469,6 @@ const usePointsForBorrowModeNative = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[mode.id]['1'])
@@ -517,7 +513,6 @@ const usePointsForIonLpMode = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await fetchData<QueryResponse, QueryData>(
         'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -555,7 +550,6 @@ const usePointsForIonLpBase = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await fetchData<QueryResponse, QueryData>(
         'https://api.unmarshal.com/v1/parser/a640fbce-88bd-49ee-94f7-3239c6118099/execute?auth_key=IOletSNhbw4BWvzhlu7dy6YrQyFCnad8Lv8lnyEe',
@@ -593,7 +587,6 @@ const usePointsForSteerLp = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(steerLPMultipliers).map((asset) => {
@@ -636,7 +629,6 @@ const usePointsForSupplyBaseMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0'])
@@ -680,7 +672,6 @@ const usePointsForBorrowBaseMain = () => {
   const { address } = useMultiIonic();
 
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       const response = await Promise.all(
         Object.values(multipliers[base.id]['0'])
@@ -730,7 +721,6 @@ const useLeaderboard = (page: number) => {
   const pageSize = 50;
 
   return useQuery({
-    gcTime: Infinity,
     placeholderData: keepPreviousData,
     queryFn: async () => {
       const response = await supabase
@@ -770,7 +760,6 @@ const useLeaderboard = (page: number) => {
 const useGlobalRank = () => {
   const { address } = useMultiIonic();
   return useQuery({
-    gcTime: Infinity,
     queryFn: async () => {
       if (!address) {
         return null;

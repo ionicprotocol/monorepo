@@ -34,7 +34,6 @@ export function useCurrentLeverageRatio(position: Address, chainId?: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!position,
     staleTime: Infinity
   });

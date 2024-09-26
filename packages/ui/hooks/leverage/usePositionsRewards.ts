@@ -88,7 +88,6 @@ export function useRewardsForPositions(
       return {};
     },
 
-    gcTime: Infinity,
     enabled: !!assets && !!pools && !!chainIds,
     staleTime: Infinity
   });

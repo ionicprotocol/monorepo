@@ -53,7 +53,6 @@ export const useSupplyCapsDataForPool = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });
@@ -94,7 +93,6 @@ export const useSupplyCapsDataForAsset = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!supplyCapsDataForPool && !!cTokenAddress,
     staleTime: Infinity
   });

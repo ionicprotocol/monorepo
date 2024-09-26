@@ -75,7 +75,6 @@ export const usePoolDetails = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!assets && assets.length > 0 && !!sdk && !!blocksPerMinute,
     staleTime: Infinity
   });

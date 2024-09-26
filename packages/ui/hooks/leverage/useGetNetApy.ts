@@ -56,7 +56,6 @@ export function useGetNetApy(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
     staleTime: Infinity
   });

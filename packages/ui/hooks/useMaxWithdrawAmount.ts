@@ -35,8 +35,6 @@ export function useMaxWithdrawAmount(
       }
     },
 
-    gcTime: Infinity,
-    enabled: !!address && !!asset && !!sdk,
-    staleTime: Infinity
+    enabled: !!address && !!asset && !!sdk
   });
 }

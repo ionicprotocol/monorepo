@@ -59,7 +59,6 @@ export function useAllUsdPrices() {
       return prices;
     },
 
-    gcTime: Infinity,
     enabled: !!chainIds && chainIds.length > 0,
     staleTime: Infinity
   });
@@ -79,7 +78,6 @@ export function useUsdPrice(chainId: string) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!chainId && !!usdPrices,
     staleTime: Infinity
   });

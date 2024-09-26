@@ -29,7 +29,6 @@ export function useEquityAmount(position: Address, chainId?: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk,
     staleTime: Infinity
   });

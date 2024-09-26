@@ -68,7 +68,6 @@ export const useBorrowLimitMarket = (
         : _maxBorrow;
     },
 
-    gcTime: Infinity,
     enabled: !!usdPrice,
     staleTime: Infinity
   });

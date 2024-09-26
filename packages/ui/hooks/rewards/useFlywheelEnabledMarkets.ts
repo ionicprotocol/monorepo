@@ -31,7 +31,6 @@ export const useFlywheelEnabledMarkets = (flywheelAddress: Address) => {
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!flywheelAddress && !!currentSdk,
     staleTime: Infinity
   });

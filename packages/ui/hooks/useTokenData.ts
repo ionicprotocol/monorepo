@@ -88,7 +88,6 @@ export const useTokenData = (address: string, chainId?: number) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!chainId,
     staleTime: Infinity
   });

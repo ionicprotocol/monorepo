@@ -76,7 +76,6 @@ export const useFlywheel = (flywheelAddress?: Address) => {
       } as Flywheel;
     },
 
-    gcTime: Infinity,
     enabled: !!flywheelAddress && !!currentSdk,
     initialData: undefined,
     staleTime: Infinity

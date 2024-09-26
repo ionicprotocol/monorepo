@@ -2,6 +2,7 @@ import { task } from "hardhat/config";
 import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
+import { parseEther } from "viem";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
   const assetsToDeploy: string[] = [assetSymbols.wUSDM];
@@ -43,18 +44,18 @@ task("base:set-caps-new", "one time setup").setAction(async (_, { viem, run }) =
 
   await run("market:set-supply-cap", {
     market: cToken,
-    maxSupply: wUSDM.initialSupplyCap
+    maxSupply: parseEther("240000").toString()
   });
 
-  await run("market:set-borrow-cap", {
-    market: cToken,
-    maxBorrow: wUSDM.initialBorrowCap
-  });
+  // await run("market:set-borrow-cap", {
+  //   market: cToken,
+  //   maxBorrow: wUSDM.initialBorrowCap
+  // });
 
-  await run("market:set:ltv", {
-    marketAddress: cToken,
-    ltv: wUSDM.initialCf
-  });
+  // await run("market:set:ltv", {
+  //   marketAddress: cToken,
+  //   ltv: wUSDM.initialCf
+  // });
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {

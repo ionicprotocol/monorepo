@@ -53,7 +53,6 @@ export const useBorrowLimitTotal = (
       return _maxBorrow;
     },
 
-    gcTime: Infinity,
     enabled: !!usdPrice,
     staleTime: Infinity
   });
