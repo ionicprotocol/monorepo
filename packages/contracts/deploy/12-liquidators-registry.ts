@@ -25,8 +25,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
     from: deployer,
     log: true,
-    args: [addressesProvider.address],
-    skipIfAlreadyDeployed: true
+    args: [addressesProvider.address]
   });
   if (liquidatorsRegistryDep.transactionHash)
     await publicClient.waitForTransactionReceipt({ hash: liquidatorsRegistryDep.transactionHash as Hash });

@@ -31,8 +31,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     from: deployer,
     log: true,
     args: [fuseFeeDistributor.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-    waitConfirmations: 1,
-    skipIfAlreadyDeployed: true
+    waitConfirmations: 1
   });
 
   if (lpfDep.transactionHash) await publicClient.waitForTransactionReceipt({ hash: lpfDep.transactionHash as Hash });
