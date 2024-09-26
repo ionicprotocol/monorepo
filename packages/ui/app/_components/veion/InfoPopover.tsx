@@ -18,7 +18,6 @@ export default function InfoPopover({ content }: PopoverHintProps) {
       {visible && (
         <div className="absolute w-60 z-30 p-2 bg-graylite text-white rounded-lg text-sm  bottom-full left-1/2 transform border-white/10  border mb-2">
           {content}
-          {/* <div className="absolute left-1/2 transform -translate-x-1/2 top-full border-4 border-transparent border-t-gray-800"></div> */}
         </div>
       )}
     </div>

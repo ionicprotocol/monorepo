@@ -38,7 +38,9 @@ export default function DateSlider({ setLockDuration }: Iprops) {
   return (
     <div className="w-full mx-auto mt-3 mb-5 ">
       <div className="text-xs text-white/50 mb-2">
-        LOCK UNTIL <InfoPopover content='A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power'/>.{' '}
+        LOCK UNTIL{' '}
+        <InfoPopover content="A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power" />
+        .{' '}
       </div>
       <p className="text-lg text-white/50 mb-4">
         {format(currentDate, 'dd/MM/yyyy')}
