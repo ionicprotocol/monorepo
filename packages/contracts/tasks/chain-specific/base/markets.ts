@@ -34,7 +34,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
   }
 });
 
-task("base:set-caps-new", "one time setup").setAction(async (_, { viem, run }) => {
+task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run }) => {
   const asset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
   if (!asset) {
     throw new Error("OGN not found in base assets");
@@ -44,7 +44,7 @@ task("base:set-caps-new", "one time setup").setAction(async (_, { viem, run }) =
 
   await run("market:set-borrow-cap", {
     market: cToken,
-    maxBorrow: "1"
+    maxBorrow: asset.initialBorrowCap
   });
 
   await run("market:set-supply-cap", {
