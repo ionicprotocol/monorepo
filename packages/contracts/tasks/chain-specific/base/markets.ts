@@ -5,7 +5,7 @@ import { COMPTROLLER } from ".";
 import { parseEther } from "viem";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.wUSDM];
+  const assetsToDeploy: string[] = [assetSymbols.EURC];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.underlying || !asset.symbol) {
       throw new Error("Invalid asset");
@@ -35,27 +35,27 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 });
 
 task("base:set-caps-new", "one time setup").setAction(async (_, { viem, run }) => {
-  const wUSDM = base.assets.find((asset) => asset.symbol === assetSymbols.wUSDM);
-  if (!wUSDM) {
-    throw new Error("wUSDM not found in base assets");
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
+  if (!asset) {
+    throw new Error("OGN not found in base assets");
   }
   const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
-  const cToken = await pool.read.cTokensByUnderlying([wUSDM.underlying]);
+  const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+
+  await run("market:set-borrow-cap", {
+    market: cToken,
+    maxBorrow: "1"
+  });
 
   await run("market:set-supply-cap", {
     market: cToken,
-    maxSupply: parseEther("240000").toString()
+    maxSupply: asset.initialSupplyCap
   });
 
-  // await run("market:set-borrow-cap", {
-  //   market: cToken,
-  //   maxBorrow: wUSDM.initialBorrowCap
-  // });
-
-  // await run("market:set:ltv", {
-  //   marketAddress: cToken,
-  //   ltv: wUSDM.initialCf
-  // });
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: asset.initialCf
+  });
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {

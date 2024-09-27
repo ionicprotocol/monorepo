@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { resetLiquidationStrategies } from "../../liquidation";
+import { resetLiquidationStrategies, setOptimalSwapPath } from "../../liquidation";
 import { Address, zeroAddress } from "viem";
 import { assetSymbols } from "@ionicprotocol/types";
 import { base } from "@ionicprotocol/chains";
@@ -82,6 +82,7 @@ task("base:liquidation:get-redemption-strategies", "Get redemption strategies").
 task("base:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
     const publicClient = await viem.getPublicClient();
+    const { deployer } = await getNamedAccounts();
     const uniLiquidator = await deployments.get("UniswapV3LiquidatorFunder");
 
     const liquidatorRegistry = await viem.getContractAt(
@@ -116,6 +117,11 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const usdm = "0x59d9356e565ab3a36dd77763fc0d87feaf85508c";
     const weethContract = await viem.getContractAt("ICErc20", weETH_MARKET);
     const weethUnderlying = await weethContract.read.underlying();
+    const ognAsset = base.assets.find((asset) => asset.symbol === assetSymbols.OGN);
+    const eurcAsset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
+    if (!ognAsset || !eurcAsset) {
+      throw new Error("OGN or EURC asset not found in base assets");
+    }
 
     const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
     console.log("🚀 ~ readTick:", readTick);
@@ -159,16 +165,6 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       console.log("Stable pairs already set for read2");
     }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
-      {
-        inputToken: wethUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
       {
         inputToken: aeroUnderlying,
         outputToken: usdcUnderlying,
@@ -268,6 +264,36 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: wethUnderlying,
         outputToken: weethUnderlying,
         strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: ognAsset.underlying,
+        outputToken: wsuperOETHUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wsuperOETHUnderlying,
+        outputToken: ognAsset.underlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: eurcAsset.underlying,
+        outputToken: wethUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: eurcAsset.underlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
       }
     ];
     const liqTx = await liquidatorRegistry.write._resetRedemptionStrategies([
@@ -277,6 +303,18 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     ]);
     await publicClient.waitForTransactionReceipt({ hash: liqTx });
     console.log("Transaction sent to reset redemption strategies:", liqTx);
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: ognAsset.underlying,
+      outputToken: wethUnderlying,
+      optimalPath: [wsuperOETHUnderlying, weethUnderlying]
+    });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: wsuperOETHUnderlying,
+      outputToken: ognAsset.underlying,
+      optimalPath: [wethUnderlying, ognAsset.underlying]
+    });
   }
 );
 
