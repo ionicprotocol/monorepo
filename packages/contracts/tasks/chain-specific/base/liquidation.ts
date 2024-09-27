@@ -118,8 +118,9 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const weethContract = await viem.getContractAt("ICErc20", weETH_MARKET);
     const weethUnderlying = await weethContract.read.underlying();
     const ognAsset = base.assets.find((asset) => asset.symbol === assetSymbols.OGN);
-    if (!ognAsset) {
-      throw new Error("OGN asset not found in base assets");
+    const eurcAsset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
+    if (!ognAsset || !eurcAsset) {
+      throw new Error("OGN or EURC asset not found in base assets");
     }
 
     const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
@@ -164,16 +165,6 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       console.log("Stable pairs already set for read2");
     }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
-      {
-        inputToken: wethUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
       {
         inputToken: aeroUnderlying,
         outputToken: usdcUnderlying,
@@ -283,6 +274,26 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: wsuperOETHUnderlying,
         outputToken: ognAsset.underlying,
         strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: eurcAsset.underlying,
+        outputToken: wethUnderlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: eurcAsset.underlying,
+        strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: usdcUnderlying,
+        strategy: uniLiquidator.address as Address
+      },
+      {
+        inputToken: usdcUnderlying,
+        outputToken: wethUnderlying,
+        strategy: uniLiquidator.address as Address
       }
     ];
     const liqTx = await liquidatorRegistry.write._resetRedemptionStrategies([
