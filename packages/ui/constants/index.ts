@@ -199,6 +199,7 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'wsuperOETHb',
           'wUSDM',
+          'OGN',
           'cbBTC',
           'eUSD',
           'bsdETH',

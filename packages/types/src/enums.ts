@@ -196,6 +196,7 @@ export enum assetSymbols {
   superOETHb = "superOETHb",
   wsuperOETHb = "wsuperOETHb",
   wUSDM = "wUSDM",
+  OGN = "OGN",
 
   // optimism
   OP = "OP",

@@ -28,6 +28,7 @@ export const cbBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 export const superOETHb = "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3";
 export const wsuperOETHb = "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6";
 export const wUSDM = "0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812";
+export const OGN = "0x7002458B1DF59EccB57387bC79fFc7C29E22e6f7";
 
 export const assets: SupportedAsset[] = [
   {
@@ -243,6 +244,21 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(110_000)).toString(),
     initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
+  },
+  {
+    symbol: assetSymbols.OGN,
+    underlying: OGN,
+    name: "OGN",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x91D7AEd72bF772A0DA30199B925aCB866ACD3D9e",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", OGN),
+    initialCf: "0.77",
+    initialSupplyCap: parseEther(String(25_000_000)).toString(),
+    initialBorrowCap: parseEther(String(20_000_000)).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

@@ -101,16 +101,16 @@ export const deploy = async ({
     pricesContract: PRICES_CONTRACT
   });
 
-  //// ChainLinkV2 Oracle
-  // await deployChainlinkOracle({
-  //   run,
-  //   viem,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   assets,
-  //   chainlinkAssets
-  // });
+  // ChainLinkV2 Oracle
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets,
+    chainlinkAssets
+  });
 
   // //// Uniswap V3 Liquidator Funder
   // const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
