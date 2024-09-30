@@ -68,14 +68,14 @@ export default function DateSlider({ setLockDuration }: Iprops) {
         />
         <div className={`w-full  absolute bg-graylite h-1 top-0 z-10`} />
         <div
-          className={`h-4 w-4 bg-accent rounded-full z-20 absolute -top-1.5 -translate-x-1/2`}
+          className={`h-4 w-4 bg-accent rounded-full z-20 absolute -top-1.5 -translate-x-1/4`}
           style={{
             left: `${((currentValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`
           }}
         />
 
         <input
-          className="absolute top-0 z-30 opacity-0 w-full h-full cursor-pointer"
+          className="absolute top-0 left-0 z-30 opacity-0 w-full h-full cursor-pointer"
           max={sliderMax}
           min={sliderMin}
           onChange={handleSliderChange}
