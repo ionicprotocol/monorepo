@@ -178,9 +178,9 @@ export default function EligibilityPopup({
                 {Math.floor(
                   Number(user?.ion_amount ?? '0') * AIRDROP_FIRST_TRANCHE
                 ).toLocaleString()}{' '}
-                $ION) will be distributed on Nov 8th directly to your wallet
-                address. The rest of the tokens are vested for 3 months. Details
-                on vesting and instant claim will follow soon.
+                $ION) will be distributed on Nov 15th directly to your wallet
+                address. The rest of the tokens are vested for 3 months. Instant
+                claim will be available once the first tranche is sent out.
               </span>
               <span className="text-center pb-5">
                 Press the button below to sign a message and prove ownership of
