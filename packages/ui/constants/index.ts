@@ -39,6 +39,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': ''
+    },
+    [lisk.id]: {
+      '0': ''
     }
   },
   featuredSupply2: {
@@ -57,6 +60,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': 'wfrxeth'
+    },
+    [lisk.id]: {
+      '0': 'weth'
     }
   }
 };
@@ -281,7 +287,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['FRAX', 'wfrxETH', 'FXS']
+        assets: ['WETH']
       }
     ]
   }

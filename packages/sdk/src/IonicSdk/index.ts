@@ -19,7 +19,7 @@ import {
   PublicClient,
   WalletClient
 } from "viem";
-import { base, bob, mode } from "viem/chains";
+import { bob, lisk, mode } from "viem/chains";
 
 import {
   addressesProviderAbi,
@@ -126,7 +126,7 @@ export class IonicBase {
         client: this.publicClient
       }),
       IonicLiquidator:
-        this.chainId === bob.id
+        this.chainId === bob.id || this.chainId === lisk.id
           ? ({} as any)
           : this.chainId === mode.id
             ? getContract({
