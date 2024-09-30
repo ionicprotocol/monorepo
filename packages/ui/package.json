@@ -13,7 +13,7 @@
     "@ionicprotocol/sdk": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@layerzerolabs/lz-v2-utilities": "^2.3.40",
-    "@lifi/widget": "^3.4.4",
+    "@lifi/widget": "^3.6.2",
     "@netlify/plugin-nextjs": "5",
     "@sentry/nextjs": "^8.13.0",
     "@supabase/supabase-js": "^2.44.2",
