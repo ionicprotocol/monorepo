@@ -1,6 +1,6 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
-import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -262,6 +262,21 @@ export const pools: Record<number, PoolParams> = {
     text: 'text-white',
     border: 'border-fraxtal',
     logo: '/img/logo/FRAXTAL.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['FRAX', 'wfrxETH', 'FXS']
+      }
+    ]
+  },
+  [lisk.id]: {
+    name: 'Lisk',
+    arrow: 'ffffff',
+    bg: 'bg-lisk',
+    text: 'text-white',
+    border: 'border-lisk',
+    logo: '/img/logo/Lisk.png',
     pools: [
       {
         id: '0',

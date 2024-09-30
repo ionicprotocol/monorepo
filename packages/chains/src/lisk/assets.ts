@@ -1,4 +1,5 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@ionicprotocol/types";
+import { parseEther } from "viem";
 
 import { wrappedAssetDocs } from "../common";
 
@@ -11,7 +12,10 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.base)
+    extraDocs: wrappedAssetDocs(SupportedChains.base),
+    initialBorrowCap: parseEther("1").toString(),
+    initialSupplyCap: parseEther("1").toString(),
+    initialCf: "0.5"
   }
 ];
 

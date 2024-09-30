@@ -4,7 +4,8 @@ import {
   mode,
   optimism,
   bob,
-  fraxtal
+  fraxtal,
+  lisk
 } from '@ionicprotocol/chains';
 import type {
   ChainConfig,
@@ -17,7 +18,8 @@ import {
   base as vBase,
   optimism as vOptimism,
   bob as vBob,
-  fraxtal as vFraxtal
+  fraxtal as vFraxtal,
+  lisk as vLisk
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -88,6 +90,10 @@ export function getEnabledChains() {
     enabledChains.push(vFraxtal);
   }
 
+  if (config.isLiskEnabled) {
+    enabledChains.push(vLisk);
+  }
+
   return enabledChains;
 }
 
@@ -96,7 +102,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.base]: base.assets,
   [SupportedChains.optimism]: optimism.assets,
   [SupportedChains.bob]: bob.assets,
-  [SupportedChains.fraxtal]: fraxtal.assets
+  [SupportedChains.fraxtal]: fraxtal.assets,
+  [SupportedChains.lisk]: lisk.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -104,5 +111,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.base]: base.deployedPlugins,
   [SupportedChains.optimism]: optimism.deployedPlugins,
   [SupportedChains.bob]: bob.deployedPlugins,
-  [SupportedChains.fraxtal]: fraxtal.deployedPlugins
+  [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
+  [SupportedChains.lisk]: lisk.deployedPlugins
 };
