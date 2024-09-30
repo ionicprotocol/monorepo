@@ -144,6 +144,31 @@ task("liquidation:set-strategies", "Set redemption strategies for liquidators").
   }
 );
 
+task("liquidations:get", "Get completed liquidations").setAction(async (_, { viem, getNamedAccounts, deployments }) => {
+  const publicClient = await viem.getPublicClient();
+  const currentBlock = await publicClient.getBlockNumber();
+  const oneWeekAgo = currentBlock - BigInt((60 * 60 * 24 * 7) / 2);
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const pools = await poolDirectory.read.getAllPools();
+  for (const pool of pools) {
+    const comptroller = await viem.getContractAt("IComptroller", pool.comptroller);
+    const ctokens = await comptroller.read.getAllMarkets();
+    for (const ctoken of ctokens) {
+      const _ctoken = await viem.getContractAt("CErc20DelegatorBase", ctoken);
+      const events = await publicClient.getContractEvents({
+        abi: _ctoken.abi,
+        address: ctoken,
+        eventName: "LiquidateBorrow",
+        fromBlock: oneWeekAgo
+      });
+      console.log("Liquidation events for", await _ctoken.read.symbol(), ":", events);
+    }
+  }
+});
+
 // import { CErc20Delegate } from "../typechain/CErc20Delegate";
 // import { ERC20 } from "../typechain/ERC20";
 // import { ILiquidator } from "../typechain/ILiquidator";
