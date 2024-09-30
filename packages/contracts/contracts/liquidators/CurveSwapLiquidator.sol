@@ -53,7 +53,7 @@ contract CurveSwapLiquidator is IRedemptionStrategy {
 
     if (_unwrappedInput != address(0)) {
       inputToken.approve(address(inputToken), inputAmount);
-      IERC4626(address(inputToken)).redeem(inputAmount, address(this), address(this));
+      inputAmount = IERC4626(address(inputToken)).redeem(inputAmount, address(this), address(this));
       inputToken = IERC20Upgradeable(_unwrappedInput);
     }
 
@@ -73,7 +73,6 @@ contract CurveSwapLiquidator is IRedemptionStrategy {
     if (_unwrappedOutput != address(0)) {
       IERC20Upgradeable(_unwrappedOutput).approve(address(outputTokenAddress), outputAmount);
       IERC4626(outputTokenAddress).deposit(outputAmount, address(this));
-      outputAmount = IERC4626(_unwrappedOutput).balanceOf(address(this));
       outputToken = IERC20Upgradeable(outputTokenAddress);
     }
 
