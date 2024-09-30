@@ -806,6 +806,7 @@ export default function Stake() {
             </h1>
             <h1 className={` mt-1`}>
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
+              {+chain === mode.id ? '$VELO' : +chain === base.id ? '$AERO' : ''}
             </h1>
             {/* this will get repeated */}
             {+chain === mode.id && (
