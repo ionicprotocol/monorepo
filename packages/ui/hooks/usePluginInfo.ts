@@ -25,7 +25,6 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: Address) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!pluginAddress && !!sdk,
     staleTime: Infinity
   });

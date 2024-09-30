@@ -92,7 +92,7 @@
     "GlobalPauser": {
       "address": "0x5d498338C6e38555020fb24b977f5e2817A50E3F"
     },
-    "IonicFlywheelBorrowBooster": {
+    "IonicFlywheelBorrowBooster_ION": {
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
     "IonicFlywheelBorrow_ION": {
@@ -162,10 +162,10 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x3FA4BC2FCAc5515d5b758D4D580bbD626c93D621"
+      "address": "0x95e4cD4786EDe1C0aA42F7dC9aECF32af4Ae8294"
     },
     "LiquidatorsRegistrySecondExtension": {
-      "address": "0x45A4a3eBb986083597Ac3B34ee2d7dcC3Be8c5C1"
+      "address": "0x139bD5cf15A1312BfD165F36C0b88987A9d03900"
     },
     "LooplessFlywheelBooster": {
       "address": "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4"

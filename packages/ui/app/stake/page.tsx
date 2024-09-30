@@ -134,7 +134,6 @@ export default function Stake() {
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
       placeholderData: [0n, 0n]
       // refetchInterval: 5000
@@ -184,7 +183,6 @@ export default function Stake() {
     chainId: +chain,
     query: {
       enabled: true,
-      gcTime: Infinity,
       notifyOnChangeProps: ['data', 'error'],
       placeholderData: 0n
       // refetchInterval: 4000
@@ -756,7 +754,7 @@ export default function Stake() {
             </button>
           </div>
           <div
-            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2`}
+            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2 flex flex-col`}
           >
             <h1 className={` md:text-lg text-md`}>Step 3. Stake Your LP</h1>
             <div className={`my-3`}>
@@ -817,7 +815,7 @@ export default function Stake() {
               />
             )}
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
-            <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
+            <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto " />
             <button
               disabled={
                 (step3Toggle === 'Stake' && (maxLp === '' || maxLp === '0')) ||

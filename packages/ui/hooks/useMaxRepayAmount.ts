@@ -36,7 +36,6 @@ export function useMaxRepayAmount(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!address && !!asset && !!sdk && !!balanceData,
     staleTime: Infinity
   });

@@ -52,7 +52,6 @@ export const useAllClaimableRewards = (chainIds: SupportedChains[]) => {
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!address || chainIds.length > 0,
     staleTime: Infinity
   });

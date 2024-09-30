@@ -426,6 +426,8 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
       uint256 assumedSlippage = factory.liquidatorsRegistry().getSlippage(collateralAsset, stableAsset);
       uint256 amountToRedeemValueScaled = (borrowsToRepayValueScaled * (10000 + assumedSlippage)) / 10000;
       amountToRedeem = amountToRedeemValueScaled / collateralAssetPrice;
+      // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
+      if (amountToRedeemValueScaled % collateralAssetPrice > 0) amountToRedeem += 1;
     } else {
       // else derive the debt to be repaid from the amount to redeem
       (amountToRedeem, borrowsToRepay) = _getSupplyAmountDelta(

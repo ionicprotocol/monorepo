@@ -12,6 +12,8 @@ import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol"
 import { SolidlyLpTokenLiquidator, SolidlyLpTokenWrapper } from "../liquidators/SolidlyLpTokenLiquidator.sol";
 import { SolidlySwapLiquidator } from "../liquidators/SolidlySwapLiquidator.sol";
 import { UniswapV3LiquidatorFunder } from "../liquidators/UniswapV3LiquidatorFunder.sol";
+import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
+import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
 
 import { CurveLpTokenLiquidatorNoRegistry } from "../liquidators/CurveLpTokenLiquidatorNoRegistry.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
@@ -197,24 +199,24 @@ abstract contract LeveredPositionTest is MarketsTest {
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
     registry = factory.liquidatorsRegistry();
-    //    {
-    //      // upgrade the factory
-    //      LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
-    //      LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
-    //
-    //      vm.startPrank(factory.owner());
-    //      DiamondBase asBase = DiamondBase(address(factory));
-    //      address[] memory oldExts = asBase._listExtensions();
-    //
-    //      if (oldExts.length == 1) {
-    //        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-    //        asBase._registerExtension(newExt2, DiamondExtension(address(0)));
-    //      } else if (oldExts.length == 2) {
-    //        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-    //        asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
-    //      }
-    //      vm.stopPrank();
-    //    }
+    {
+      // upgrade the registry
+      LiquidatorsRegistryExtension newExt1 = new LiquidatorsRegistryExtension();
+      LiquidatorsRegistrySecondExtension newExt2 = new LiquidatorsRegistrySecondExtension();
+
+      vm.startPrank(registry.owner());
+      DiamondBase asBase = DiamondBase(address(registry));
+      address[] memory oldExts = asBase._listExtensions();
+
+      if (oldExts.length == 1) {
+        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+        asBase._registerExtension(newExt2, DiamondExtension(address(0)));
+      } else if (oldExts.length == 2) {
+        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+        asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+      }
+      vm.stopPrank();
+    }
 
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
@@ -1130,6 +1132,114 @@ contract ModeWbtcUSDTLeveredPositionTest is LeveredPositionTest {
     _fundMarketAndSelf(ICErc20(wbtcMarket), wbtcWhale);
     _fundMarketAndSelf(ICErc20(USDTMarket), USDTWhale);
 
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
+
+contract HyUSDUSDCLeveredPositionTest is LeveredPositionTest {
+  function setUp() public fork(BASE_MAINNET) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    upgradeRegistry();
+
+    uint256 depositAmount = 20e18;
+
+    address hyUsdMarket = 0x751911bDa88eFcF412326ABE649B7A3b28c4dEDe;
+    address usdcMarket = 0xa900A17a49Bc4D442bA7F72c39FA2108865671f0;
+    address hyUsdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address usdcWhale = 0x70FF197c32E922700d3ff2483D250c645979855d;
+
+    {
+      IERC20Upgradeable x = IERC20Upgradeable(ICErc20(hyUsdMarket).underlying());
+      IERC20Upgradeable y = IERC20Upgradeable(ICErc20(usdcMarket).underlying());
+      IERC20Upgradeable[] memory xToYPath = new IERC20Upgradeable[](2);
+      IERC20Upgradeable[] memory yToXPath = new IERC20Upgradeable[](2);
+
+      IERC20Upgradeable eUSD = IERC20Upgradeable(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4);
+      xToYPath[0] = eUSD;
+      yToXPath[0] = eUSD;
+      xToYPath[1] = y;
+      yToXPath[1] = x;
+
+      vm.startPrank(registry.owner());
+      registry._setOptimalSwapPath(IERC20Upgradeable(x), IERC20Upgradeable(y), xToYPath);
+      registry._setOptimalSwapPath(IERC20Upgradeable(y), IERC20Upgradeable(x), yToXPath);
+      vm.stopPrank();
+    }
+
+    //    IRedemptionStrategy liquidator = new IRedemptionStrategy();
+    _configurePair(hyUsdMarket, usdcMarket);
+    _fundMarketAndSelf(ICErc20(hyUsdMarket), hyUsdWhale);
+    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
+
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
+
+contract HyUSDeUSDLeveredPositionTest is LeveredPositionTest {
+  function setUp() public fork(BASE_MAINNET) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    upgradeRegistry();
+
+    uint256 depositAmount = 20e18;
+
+    address hyUsdMarket = 0x751911bDa88eFcF412326ABE649B7A3b28c4dEDe;
+    address eUsdMarket = 0x9c2A4f9c5471fd36bE3BBd8437A33935107215A1;
+    address hyUsdWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address eUsdWhale = 0xa9E0588E82E9Ee1440f7e5375970a429D09646c1;
+    AerodromeV2Liquidator aerodomeV2Liquidator = AerodromeV2Liquidator(0xD46b85409C43571145206B11D370A62AaeB22475);
+
+    //    IRedemptionStrategy liquidator = new IRedemptionStrategy();
+    _configurePairAndLiquidator(hyUsdMarket, eUsdMarket, IRedemptionStrategy(address(aerodomeV2Liquidator)));
+    _fundMarketAndSelf(ICErc20(hyUsdMarket), hyUsdWhale);
+    _fundMarketAndSelf(ICErc20(eUsdMarket), eUsdWhale);
+
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+  }
+}
+
+contract WSuperOETHWETHLeveredPositionTest is LeveredPositionTest {
+  function setUp() public forkAtBlock(BASE_MAINNET, 20145648) {}
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    address wsuperOeth = 0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6;
+    address weth = 0x4200000000000000000000000000000000000006;
+
+    uint256 depositAmount = 1e18;
+
+    address wsuperOethMarket = 0xC462eb5587062e2f2391990b8609D2428d8Cf598;
+    address wethMarket = 0x49420311B518f3d0c94e897592014de53831cfA3;
+    address wsuperOethWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+    address wethWhale = 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb;
+
+    IonicComptroller comptroller = IonicComptroller(ICErc20(wethMarket).comptroller());
+    ICErc20[] memory cTokens = new ICErc20[](1);
+    cTokens[0] = ICErc20(wethMarket);
+
+    uint256[] memory newSupplyCaps = new uint256[](1);
+    newSupplyCaps[0] = 1e36;
+    vm.prank(comptroller.admin());
+    comptroller._setMarketSupplyCaps(cTokens, newSupplyCaps);
+
+    AerodromeCLLiquidator aerodomeClLiquidator = new AerodromeCLLiquidator();
+    vm.prank(registry.owner());
+    registry._setWrappedToUnwrapped4626(address(wsuperOeth), address(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3));
+    // vm.prank(aerodomeClLiquidator.owner());
+    // emit log_named_address("wsuperOeth", address(wsuperOeth));
+    // aerodomeClLiquidator.setWrappedToUnwrapped(
+    //   address(wsuperOeth),
+    //   0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3
+    // );
+    _configurePairAndLiquidator(wsuperOethMarket, wethMarket, IRedemptionStrategy(address(aerodomeClLiquidator)));
+    _fundMarketAndSelf(ICErc20(wsuperOethMarket), wsuperOethWhale);
+    _fundMarketAndSelf(ICErc20(wethMarket), wethWhale);
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
 }

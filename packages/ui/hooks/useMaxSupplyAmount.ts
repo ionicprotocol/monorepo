@@ -84,13 +84,9 @@ export function useMaxSupplyAmount(
       }
     },
 
-    gcTime: Infinity,
-
     enabled:
       !!address && !!asset && !!sdk && !!comptrollerAddress && !!balanceData,
 
-    refetchInterval: 10000,
-
-    staleTime: Infinity
+    refetchInterval: 5000
   });
 }

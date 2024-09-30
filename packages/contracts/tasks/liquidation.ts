@@ -3,36 +3,27 @@ import { Address } from "viem";
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 import { task } from "hardhat/config";
 
-export const setLiquidationStrategies = async (
+export const resetLiquidationStrategies = async (
   viem: HardhatRuntimeEnvironment["viem"],
   deployments: HardhatRuntimeEnvironment["deployments"],
   deployer: Address,
   pairs: { inputToken: Address; outputToken: Address; strategy: Address }[]
 ) => {
+  const publicClient = await viem.getPublicClient();
   const liquidatorRegistry = await viem.getContractAt(
     "ILiquidatorsRegistry",
     (await deployments.get("LiquidatorsRegistry")).address as Address
   );
   const owner = await liquidatorRegistry.read.owner();
-  const filteredPairs = [];
-  for (const pair of pairs) {
-    const strategy = await liquidatorRegistry.read.redemptionStrategiesByTokens([pair.inputToken, pair.outputToken]);
-    console.log(`Strategy for ${pair.inputToken} and ${pair.outputToken} is ${strategy}`);
-    if (strategy.toLowerCase() !== pair.strategy.toLowerCase()) {
-      filteredPairs.push(pair);
-    } else {
-      console.log("Redemption strategy already set for pair", pair);
-    }
-  }
-  if (filteredPairs.length > 0) {
+  if (pairs.length > 0) {
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
         contractInstance: liquidatorRegistry,
-        functionName: "_setRedemptionStrategies",
+        functionName: "_resetRedemptionStrategies",
         args: [
-          filteredPairs.map((pair) => pair.strategy),
-          filteredPairs.map((pair) => pair.inputToken),
-          filteredPairs.map((pair) => pair.outputToken)
+          pairs.map((pair) => pair.strategy),
+          pairs.map((pair) => pair.inputToken),
+          pairs.map((pair) => pair.outputToken)
         ],
         description: "Set redemption strategies",
         inputs: [
@@ -42,16 +33,61 @@ export const setLiquidationStrategies = async (
         ]
       });
     } else {
-      console.log(`Setting redemption strategies for ${filteredPairs.length} pairs`);
-      const tx = await liquidatorRegistry.write._setRedemptionStrategies([
-        filteredPairs.map((pair) => pair.strategy),
-        filteredPairs.map((pair) => pair.inputToken),
-        filteredPairs.map((pair) => pair.outputToken)
+      console.log(`Setting redemption strategies for ${pairs.length} pairs`);
+      const tx = await liquidatorRegistry.write._resetRedemptionStrategies([
+        pairs.map((pair) => pair.strategy),
+        pairs.map((pair) => pair.inputToken),
+        pairs.map((pair) => pair.outputToken)
+      ]);
+      console.log("Transaction sent:", tx);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+    }
+  } else {
+    console.log("Redemption strategy already set");
+  }
+};
+
+export const setOptimalSwapPath = async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"],
+  deployer: Address,
+  pair: { inputToken: Address; outputToken: Address; optimalPath: Address[] }
+) => {
+  const liquidatorRegistry = await viem.getContractAt(
+    "ILiquidatorsRegistry",
+    (await deployments.get("LiquidatorsRegistry")).address as Address
+  );
+  const path = await liquidatorRegistry.read.optimalSwapPath([pair.inputToken, pair.outputToken]);
+  console.log("🚀 ~ path:", path);
+  if (
+    !path.reduce((acc, curr, i) => {
+      return acc && curr.toLowerCase() === pair.optimalPath[i].toLowerCase();
+    }, true) ||
+    path.length === 0
+  ) {
+    const owner = await liquidatorRegistry.read.owner();
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: liquidatorRegistry,
+        functionName: "_setOptimalSwapPath",
+        args: [pair.inputToken, pair.outputToken, pair.optimalPath],
+        description: "Set optimal swap path",
+        inputs: [
+          { internalType: "address", name: "inputToken", type: "address" },
+          { internalType: "address", name: "outputToken", type: "address" },
+          { internalType: "address[]", name: "optimalPath", type: "address[]" }
+        ]
+      });
+    } else {
+      const tx = await liquidatorRegistry.write._setOptimalSwapPath([
+        pair.inputToken,
+        pair.outputToken,
+        pair.optimalPath
       ]);
       console.log("Transaction sent:", tx);
     }
   } else {
-    console.log("Redemption strategy already set");
+    console.log("Optimal swap path already set");
   }
 };
 

@@ -27,7 +27,7 @@ function NetworkSelector({
   const setDropChain = useStore((state) => state.setDropChain);
   return (
     <div
-      className={`  left-0    md:min-w-max w-full  text-lime origin-top z-40 shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
+      className={`  left-0    md:min-w-max w-full  text-lime origin-top   shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
     >
       <Link
         className={`flex justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
@@ -47,6 +47,16 @@ function NetworkSelector({
               +chainId !== dropdownSelectedChain
             : +chainId !== dropdownSelectedChain
         )
+        .sort((a, b) => {
+          const sortingOrder = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Bob'];
+          const indexA = sortingOrder.indexOf(a[1].name);
+          const indexB = sortingOrder.indexOf(b[1].name);
+
+          if (indexA === -1 || indexB === -1) {
+            return 0; // if the network name is not found, don't change the order
+          }
+          return indexA - indexB;
+        })
         .map(([chainId, network], idx: number) => (
           <Link
             className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md   bg-graySelected border border-gray-800 `}

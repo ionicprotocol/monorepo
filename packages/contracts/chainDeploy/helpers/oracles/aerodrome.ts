@@ -22,7 +22,8 @@ export const deployAerodromeOracle = async ({
     from: deployer,
     args: [pricesContract],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
   if (apo.transactionHash) await publicClient.waitForTransactionReceipt({ hash: apo.transactionHash as Address });
 

@@ -34,7 +34,6 @@ export function useChartData(market: Address, poolChainId: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!market,
     staleTime: Infinity
   });

@@ -31,7 +31,6 @@ export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: numbe
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });

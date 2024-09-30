@@ -10,6 +10,9 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, OracleTypes, ChainlinkSpecificParams, PythSpecificParams } from "@ionicprotocol/types";
 import { ChainlinkAsset, PythAsset, UmbrellaAsset } from "../types";
 import { deployVelodromeOracle } from "../helpers/oracles/velodrome";
+import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
+
+const KIM_ROUTER = "0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: 30 * 60 * 24 * 365, // 30 blocks per minute = 2 sec block time
@@ -94,6 +97,13 @@ export const deploy = async ({
   const balance = await publicClient.getBalance({ address: deployer as Address });
   console.log("balance: ", formatEther(balance));
 
+  const ap = await viem.getContractAt(
+    "AddressesProvider",
+    (await deployments.get("AddressesProvider")).address as Address
+  );
+
+  await configureAddress(ap, publicClient, deployer, "ALGEBRA_SWAP_ROUTER", KIM_ROUTER);
+
   // await deployVelodromeOracle({
   //   viem,
   //   assets: velodromeAssets,
@@ -117,15 +127,15 @@ export const deploy = async ({
   //   dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
   // });
 
-  await deployChainlinkOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    assets: mode.assets,
-    chainlinkAssets
-  });
+  // await deployChainlinkOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   assets: mode.assets,
+  //   chainlinkAssets
+  // });
 
   // await addRedstoneFallbacks({
   //   viem,

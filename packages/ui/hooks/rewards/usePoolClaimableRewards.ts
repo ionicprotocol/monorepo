@@ -41,7 +41,6 @@ export const usePoolClaimableRewards = (
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!address && !!sdk,
     staleTime: Infinity
   });

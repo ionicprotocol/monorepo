@@ -48,7 +48,6 @@ export const useAssetClaimableRewards = (
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
     staleTime: Infinity
   });
@@ -122,7 +121,6 @@ export const useAssetsClaimableRewards = ({
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!address && !!sdk,
     staleTime: Infinity
   });

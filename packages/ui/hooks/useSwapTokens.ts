@@ -40,7 +40,6 @@ export function useSwapTokens(outputToken: Address, chainId: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!outputToken && !!sdk,
     staleTime: Infinity
   });

@@ -38,7 +38,6 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!currentSdk,
     staleTime: Infinity
   });

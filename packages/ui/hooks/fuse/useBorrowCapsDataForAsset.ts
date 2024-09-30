@@ -46,7 +46,6 @@ export const useBorrowCapsDataForAsset = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!cTokenAddress && !!sdk,
     staleTime: Infinity
   });

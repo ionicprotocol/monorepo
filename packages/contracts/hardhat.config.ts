@@ -76,7 +76,7 @@ const config: HardhatUserConfig = {
       }
     },
     optimism: {
-      url: process.env.OVERRIDE_RPC_URL ?? "https://mainnet.optimism.io",
+      url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",
       accounts,
       verify: {
         etherscan: {
@@ -102,7 +102,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      base: process.env.ETHERSCAN_API_KEY_BASE!
+      base: process.env.ETHERSCAN_API_KEY_BASE!,
+      optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!
     }
   },
   sourcify: {

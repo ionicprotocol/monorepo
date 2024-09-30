@@ -74,7 +74,6 @@ export const usePositionsTotalSupplyApy = (
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!assets && !!chainIds,
     staleTime: Infinity
   });

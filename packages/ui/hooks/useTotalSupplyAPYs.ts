@@ -60,7 +60,6 @@ export const useTotalSupplyAPYs = (
       return result;
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!assets && !!chainId,
     staleTime: Infinity
   });

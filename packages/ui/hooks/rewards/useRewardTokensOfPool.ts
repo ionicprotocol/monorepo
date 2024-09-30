@@ -35,7 +35,6 @@ export const useRewardTokensOfPool = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!sdk,
     placeholderData: [],
     staleTime: Infinity

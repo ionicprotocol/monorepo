@@ -33,7 +33,6 @@ export const useOracle = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!underlyingAddress && !!sdk,
     staleTime: Infinity
   });

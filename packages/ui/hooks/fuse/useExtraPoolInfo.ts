@@ -74,7 +74,6 @@ export const useExtraPoolInfo = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
     staleTime: Infinity
   });

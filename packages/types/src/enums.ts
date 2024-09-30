@@ -11,37 +11,16 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
   .filter((value) => typeof value === "number");
 
 export enum RedemptionStrategyContract {
-  CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
-  XBombLiquidatorFunder = "XBombLiquidatorFunder",
-  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
-  UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
+  AerodromeV2Liquidator = "AerodromeV2Liquidator",
+  AerodromeCLLiquidator = "AerodromeCLLiquidator",
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
   UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
-  GelatoGUniLiquidator = "GelatoGUniLiquidator",
-  GammaAlgebraLpTokenLiquidator = "GammaAlgebraLpTokenLiquidator",
-  GammaUniswapV3LpTokenLiquidator = "GammaUniswapV3LpTokenLiquidator",
-  GammaAlgebraLpTokenWrapper = "GammaAlgebraLpTokenWrapper",
-  GammaUniswapV3LpTokenWrapper = "GammaUniswapV3LpTokenWrapper",
-  CurveSwapLiquidator = "CurveSwapLiquidator",
-  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
-  CurveLpTokenWrapper = "CurveLpTokenWrapper",
-  SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
-  BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
-  BalancerSwapLiquidator = "BalancerSwapLiquidator",
-  ERC4626Liquidator = "ERC4626Liquidator",
   AlgebraSwapLiquidator = "AlgebraSwapLiquidator",
-  SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
-  SolidlyLpTokenWrapper = "SolidlyLpTokenWrapper",
-  SolidlySwapLiquidator = "SolidlySwapLiquidator",
-  AaveTokenLiquidator = "AaveTokenLiquidator",
   KimUniV2Liquidator = "KimUniV2Liquidator"
 }
 
 export enum FundingStrategyContract {
-  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
-  XBombLiquidatorFunder = "XBombLiquidatorFunder",
-  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
-  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder"
+  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder"
 }
 
 export enum DelegateContractName {
@@ -216,6 +195,9 @@ export enum assetSymbols {
   cbBTC = "cbBTC",
   superOETHb = "superOETHb",
   wsuperOETHb = "wsuperOETHb",
+  wUSDM = "wUSDM",
+  OGN = "OGN",
+  EURC = "EURC",
 
   // optimism
   OP = "OP",

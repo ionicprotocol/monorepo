@@ -37,7 +37,6 @@ export const useIsUpgradeable = (comptrollerAddress: Address) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
     staleTime: Infinity
   });

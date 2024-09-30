@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { LiFiWidget } from '@lifi/widget';
-import type { WidgetConfig } from '@lifi/widget';
+import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
+import type { Route, WidgetConfig } from '@lifi/widget';
 import { useEffect, useRef } from 'react';
 import { type Address, zeroAddress } from 'viem';
 import { mode } from 'viem/chains';
@@ -17,6 +17,7 @@ interface IProps {
   fromChain?: number;
   toToken?: Address;
   fromToken?: Address;
+  onRouteExecutionCompleted?: (route: Route) => void;
 }
 
 export default function Widget({
@@ -25,8 +26,19 @@ export default function Widget({
   toChain,
   fromChain,
   toToken,
-  fromToken
+  fromToken,
+  onRouteExecutionCompleted
 }: IProps) {
+  const widgetEvents = useWidgetEvents();
+
+  useEffect(() => {
+    widgetEvents.on(
+      WidgetEvent.RouteExecutionCompleted,
+      onRouteExecutionCompleted
+    );
+
+    return () => widgetEvents.all.clear();
+  }, [onRouteExecutionCompleted, widgetEvents]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const widgetConfig: WidgetConfig = {
     toChain,
@@ -84,7 +96,7 @@ export default function Widget({
         ref={newRef}
       >
         <LiFiWidget
-          integrator="Ionic Money"
+          integrator="ionic"
           config={widgetConfig}
         />
       </div>

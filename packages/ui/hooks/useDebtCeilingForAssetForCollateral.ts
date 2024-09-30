@@ -100,7 +100,6 @@ export const useDebtCeilingForAssetForCollateral = ({
       return debtCeilingPerCollateral;
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && collaterals.length > 0 && !!address,
     staleTime: Infinity
   });

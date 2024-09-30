@@ -48,7 +48,7 @@ export default function Navbar() {
 
   // },[pathname])
   return (
-    <nav className="fixed z-50 flex items-center justify-between w-full py-2 sm:py-4 px-[3%]  xl:px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
+    <nav className="fixed z-40 flex items-center justify-between w-full py-2 sm:py-4 px-[3%]  xl:px-[4%] text-lg text-white/50 transition-all duration-300 ease-linear -translate-x-1/2 font-inter top-0 left-1/2 rounded-xl bg-black ">
       <DynamicSubNav />
       <Link
         className={`flex items-center  lg:pr-1 xl:pr-10 pr-4 `}
@@ -67,7 +67,7 @@ export default function Navbar() {
         `}
       >
         <div
-          className={`absolute z-50 lg:static top-full left-0 py-4 lg:py-0 w-full  flex flex-col lg:flex-row lg:items-center lg:justify-center my-auto    gap-y-3  text-sm bg-black lg:bg-transparent transition-transform nav overflow-x-hidden ${
+          className={`absolute z-30 lg:static top-full left-0 py-4 lg:py-0 w-full  flex flex-col lg:flex-row lg:items-center lg:justify-center my-auto    gap-y-3  text-sm bg-black lg:bg-transparent transition-transform nav overflow-x-hidden ${
             isActive && 'nav-opened'
           }`}
         >
