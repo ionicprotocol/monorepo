@@ -1,5 +1,6 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { Address, formatEther, getContract, GetContractReturnType, Hex, PublicClient, zeroAddress } from "viem";
+import { mode } from "viem/chains";
 
 import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../generated";
 import { IonicSdk } from "../../IonicSdk";
@@ -148,10 +149,9 @@ export default async function getPotentialLiquidation(
   let flashSwapPair: Address;
   let tokenA: Address;
   let tokenB: Address;
-  if (sdk.chainId == 34443) {
+  if (sdk.chainId == mode.id) {
     const algebraFactory = getContract({
-      address:
-        (sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY as Address) || "0xC33Ce0058004d44E7e1F366E5797A578fDF38584",
+      address: sdk.chainSpecificAddresses.UNISWAP_V3?.FACTORY as Address,
       abi: iAlgebraFactoryAbi,
       client: sdk.publicClient
     });

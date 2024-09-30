@@ -274,7 +274,7 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://basescan.org", EURC),
     initialCf: "0.85",
     initialSupplyCap: parseUnits(String(13_000_000), 6).toString(),
-    initialBorrowCap: "1"
+    initialBorrowCap: parseUnits(String(10_000_000), 6).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
