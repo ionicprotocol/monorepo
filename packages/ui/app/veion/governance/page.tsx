@@ -6,11 +6,12 @@ import { useChainId } from 'wagmi';
 
 import InfoPopover from '../../_components/veion/InfoPopover';
 
+import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 import NetworkSelector from 'ui/app/_components/markets/NetworkSelector';
 import FlatMap from 'ui/app/_components/points_comp/FlatMap';
 import Toggle from 'ui/app/_components/Toggle';
+import DelegateVeionRows from 'ui/app/_components/veion/DelegateVeionRows';
 import MyveionRows from 'ui/app/_components/veion/MyveionRows';
-import { lockedData } from '@ui/constants/mock';
 
 export default function Governance() {
   const searchParams = useSearchParams();
@@ -126,6 +127,14 @@ export default function Governance() {
             <h3 className={` col-span-1`}>NETWORK</h3>
           </div>
         )}
+
+        {view === 'Delegate veION' &&
+          lockedDataWithDelegate.map((data, idx) => (
+            <DelegateVeionRows
+              key={idx}
+              {...data}
+            />
+          ))}
       </div>
     </div>
   );
