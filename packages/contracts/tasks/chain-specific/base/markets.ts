@@ -5,7 +5,7 @@ import { COMPTROLLER } from ".";
 import { parseEther } from "viem";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.EURC];
+  const assetsToDeploy: string[] = [assetSymbols.USDplus];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.underlying || !asset.symbol) {
       throw new Error("Invalid asset");
