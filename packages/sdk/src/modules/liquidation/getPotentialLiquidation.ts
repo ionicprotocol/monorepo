@@ -6,11 +6,10 @@ import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../gene
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
-import encodeLiquidateTx from "./encodeLiquidateTx";
 import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
 import {
-  EncodedLiquidationTx,
+  FlashSwapLiquidationTxParams,
   PoolUserWithAssets,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS
@@ -33,7 +32,7 @@ export default async function getPotentialLiquidation(
   closeFactor: bigint,
   liquidationIncentive: bigint,
   chainLiquidationConfig: ChainLiquidationConfig
-): Promise<EncodedLiquidationTx | null> {
+): Promise<FlashSwapLiquidationTxParams | null> {
   // Get debt and collateral
   borrower = { ...borrower };
 
@@ -244,15 +243,19 @@ export default async function getPotentialLiquidation(
     );
     return null;
   }
-  return await encodeLiquidateTx(
-    sdk,
-    chainLiquidationConfig.LIQUIDATION_STRATEGY,
-    borrower,
-    exchangeToTokenAddress,
-    strategyAndData,
+
+  return {
+    borrower: borrower.account,
     repayAmount,
-    flashSwapPair,
+    cErc20: borrower.debt[0].cToken,
+    cTokenCollateral: borrower.collateral[0].cToken,
+    minProfitAmount: 0n,
+    flashSwapContract: flashSwapPair,
+    exchangeProfitTo: exchangeToTokenAddress,
+    redemptionStrategies: strategyAndData.strategies,
+    strategyData: strategyAndData.datas,
+    ethToCoinbase: 0n,
     debtFundingStrategies,
     debtFundingStrategiesData
-  );
+  };
 }

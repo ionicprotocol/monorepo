@@ -1,5 +1,5 @@
 import { IonicAsset, LiquidationStrategy } from "@ionicprotocol/types";
-import { Address, formatEther, TransactionRequest } from "viem";
+import { Address, formatEther, Hex, TransactionRequest } from "viem";
 
 import { IonicBase } from "../../IonicSdk";
 
@@ -41,6 +41,21 @@ export type EncodedLiquidationTx = {
   value: bigint;
 };
 
+export type FlashSwapLiquidationTxParams = {
+  borrower: Address;
+  repayAmount: bigint;
+  cErc20: Address;
+  cTokenCollateral: Address;
+  minProfitAmount: bigint;
+  flashSwapContract: Address;
+  exchangeProfitTo: Address;
+  redemptionStrategies: Address[];
+  strategyData: Hex[];
+  ethToCoinbase: bigint;
+  debtFundingStrategies: Address[];
+  debtFundingStrategiesData: Hex[];
+};
+
 export enum BotType {
   Standard,
   Pyth
@@ -66,7 +81,7 @@ export type PoolUserWithAssets = {
 
 export type LiquidatablePool = {
   comptroller: string;
-  liquidations: EncodedLiquidationTx[];
+  liquidations: FlashSwapLiquidationTxParams[];
 };
 
 export type PythLiquidatablePool = {
