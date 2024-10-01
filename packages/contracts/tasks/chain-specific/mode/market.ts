@@ -44,9 +44,18 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
+  const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.dMBTC);
+  if (!asset) {
+    throw new Error("dMBTC not found in mode assets");
+  }
   await run("market:set-supply-cap", {
     market: dmBTC_MARKET,
     maxSupply: parseEther(String(2400 * 100000)).toString()
+  });
+
+  await run("market:set:ltv", {
+    marketAddress: dmBTC_MARKET,
+    ltv: asset.initialCf
   });
 });
 
