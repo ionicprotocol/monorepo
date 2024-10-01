@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import { DiamondExtension } from "../ionic/DiamondExtension.sol";
 import { IFlashLoanReceiver } from "../ionic/IFlashLoanReceiver.sol";
 import { CErc20FirstExtensionBase, CTokenFirstExtensionInterface, ICErc20 } from "./CTokenInterfaces.sol";
+import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 import { SFSRegister } from "./ComptrollerInterface.sol";
 import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
@@ -16,6 +17,7 @@ import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/Saf
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 
 contract CTokenFirstExtension is
+  CTokenOracleProtected,
   CErc20FirstExtensionBase,
   TokenErrorReporter,
   Exponential,
@@ -31,7 +33,7 @@ contract CTokenFirstExtension is
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 25;
+    uint8 fnsCount = 30;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.transfer.selector;
     functionSelectors[--fnsCount] = this.transferFrom.selector;
@@ -58,6 +60,11 @@ contract CTokenFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountSnapshot.selector;
     functionSelectors[--fnsCount] = this.borrowBalanceCurrent.selector;
     functionSelectors[--fnsCount] = this.registerInSFS.selector;
+    functionSelectors[--fnsCount] = this.setOracle.selector;
+    functionSelectors[--fnsCount] = this.setIsStrictMode.selector;
+    functionSelectors[--fnsCount] = this.changeOracleAdmin.selector;
+    functionSelectors[--fnsCount] = this.hypernativeOracleAdmin.selector;
+    functionSelectors[--fnsCount] = this.hypernativeOracleIsStrictMode.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -78,12 +85,7 @@ contract CTokenFirstExtension is
    * @param tokens The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transferTokens(
-    address spender,
-    address src,
-    address dst,
-    uint256 tokens
-  ) internal returns (uint256) {
+  function transferTokens(address spender, address src, address dst, uint256 tokens) internal returns (uint256) {
     /* Fail if transfer not allowed */
     uint256 allowed = comptroller.transferAllowed(address(this), src, dst, tokens);
     if (allowed != 0) {
@@ -316,12 +318,9 @@ contract CTokenFirstExtension is
    * @param newInterestRateModel the new interest rate model to use
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setInterestRateModel(InterestRateModel newInterestRateModel)
-    public
-    override
-    nonReentrant(false)
-    returns (uint256)
-  {
+  function _setInterestRateModel(
+    InterestRateModel newInterestRateModel
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);
@@ -483,11 +482,10 @@ contract CTokenFirstExtension is
     uint256 interestAccumulated;
   }
 
-  function _accrueInterestHypothetical(uint256 blockNumber, uint256 cashPrior)
-    internal
-    view
-    returns (InterestAccrual memory accrual)
-  {
+  function _accrueInterestHypothetical(
+    uint256 blockNumber,
+    uint256 cashPrior
+  ) internal view returns (InterestAccrual memory accrual) {
     uint256 totalFees = totalAdminFees + totalIonicFees;
     uint256 borrowRateMantissa = interestRateModel.getBorrowRate(cashPrior, totalBorrows, totalReserves + totalFees);
     if (borrowRateMantissa > borrowRateMaxMantissa) {
@@ -581,17 +579,7 @@ contract CTokenFirstExtension is
    * @param account Address of the account to snapshot
    * @return (possible error, token balance, borrow balance, exchange rate mantissa)
    */
-  function getAccountSnapshot(address account)
-    external
-    view
-    override
-    returns (
-      uint256,
-      uint256,
-      uint256,
-      uint256
-    )
-  {
+  function getAccountSnapshot(address account) external view override returns (uint256, uint256, uint256, uint256) {
     uint256 cTokenBalance = accountTokens[account];
     uint256 borrowBalance;
     uint256 exchangeRateMantissa;
@@ -707,12 +695,9 @@ contract CTokenFirstExtension is
     return ICErc20(address(this));
   }
 
-  function multicall(bytes[] calldata data)
-    public
-    payable
-    override(CTokenFirstExtensionInterface, Multicall)
-    returns (bytes[] memory results)
-  {
+  function multicall(
+    bytes[] calldata data
+  ) public payable override(CTokenFirstExtensionInterface, Multicall) returns (bytes[] memory results) {
     return Multicall.multicall(data);
   }
 
@@ -720,5 +705,28 @@ contract CTokenFirstExtension is
     require(hasAdminRights() || msg.sender == address(comptroller), "!admin");
     SFSRegister sfsContract = SFSRegister(0x8680CEaBcb9b56913c519c069Add6Bc3494B7020);
     return sfsContract.register(0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2);
+  }
+
+  function setOracle(address _oracle) external {
+    require(hasAdminRights(), "!admin");
+    _setOracle(_oracle);
+  }
+
+  function setIsStrictMode(bool _mode) external {
+    require(hasAdminRights(), "!admin");
+    _setIsStrictMode(_mode);
+  }
+
+  function changeOracleAdmin(address _newAdmin) external {
+    require(hasAdminRights(), "!admin");
+    _changeOracleAdmin(_newAdmin);
+  }
+
+  function hypernativeOracleAdmin() external view returns (address) {
+    return _hypernativeOracleAdmin();
+  }
+
+  function hypernativeOracleIsStrictMode() external view returns (bool) {
+    return _hypernativeOracleIsStrictMode();
   }
 }
