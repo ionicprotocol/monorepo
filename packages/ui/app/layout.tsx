@@ -17,7 +17,6 @@ import { WagmiProvider } from 'wagmi';
 import Navbar from './_components/Navbar';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
-import { mod } from 'mathjs';
 
 const metadata = {
   description: 'Ionic Web3Modal Sign In',
