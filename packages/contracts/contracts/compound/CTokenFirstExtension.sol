@@ -154,7 +154,7 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized returns (bool) {
+  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized onlyOracleApproved returns (bool) {
     return transferTokens(msg.sender, msg.sender, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -169,7 +169,7 @@ contract CTokenFirstExtension is
     address src,
     address dst,
     uint256 amount
-  ) public override nonReentrant(false) isAuthorized returns (bool) {
+  ) public override nonReentrant(false) isAuthorized onlyOracleApproved returns (bool) {
     return transferTokens(msg.sender, src, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -181,7 +181,7 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens that are approved (-1 means infinite)
    * @return Whether or not the approval succeeded
    */
-  function approve(address spender, uint256 amount) public override isAuthorized returns (bool) {
+  function approve(address spender, uint256 amount) public override isAuthorized onlyOracleApproved returns (bool) {
     address src = msg.sender;
     transferAllowances[src][spender] = amount;
     emit Approval(src, spender, amount);
@@ -236,7 +236,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new reserve factor
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) returns (uint256) {
+  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -266,7 +266,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new admin fee
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) returns (uint256) {
+  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {
@@ -320,7 +320,7 @@ contract CTokenFirstExtension is
    */
   function _setInterestRateModel(
     InterestRateModel newInterestRateModel
-  ) public override nonReentrant(false) returns (uint256) {
+  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);
@@ -645,7 +645,7 @@ contract CTokenFirstExtension is
     return balance;
   }
 
-  function flash(uint256 amount, bytes calldata data) public override isAuthorized {
+  function flash(uint256 amount, bytes calldata data) public override isAuthorized onlyOracleApproved {
     accrueInterest();
 
     totalBorrows += amount;
