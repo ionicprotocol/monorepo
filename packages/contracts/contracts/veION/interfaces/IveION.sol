@@ -173,7 +173,6 @@ interface IveION {
   /**
    * @notice Gets the balance of a specific NFT.
    * @param _tokenId Token ID to check.
-   * @return uint256 Balance of the NFT.
    */
-  function balanceOfNFT(uint256 _tokenId) external view returns (uint256);
+  function balanceOfNFT(uint256 _tokenId) external view returns (address[] memory _assets, uint256[] memory _balances);
 }

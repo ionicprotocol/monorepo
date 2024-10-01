@@ -31,9 +31,9 @@ interface IVoter {
   error ZeroAddress();
 
   enum MarketSide {
-     Supply,
-     Borrow,
-     Utilization
+    Supply,
+    Borrow,
+    Utilization
   }
 
   event Voted(
@@ -57,15 +57,20 @@ interface IVoter {
   event WhitelistNFT(address indexed whitelister, uint256 indexed tokenId, bool indexed _bool);
 
   // mappings
-  function weights(address pool, MarketSide marketSide) external view returns (uint256);
+  function weights(address market, MarketSide marketSide, address lpToken) external view returns (uint256);
 
-  function votes(uint256 tokenId, address pool, MarketSide marketSide) external view returns (uint256);
+  function votes(
+    uint256 tokenId,
+    address market,
+    MarketSide marketSide,
+    address lpToken
+  ) external view returns (uint256);
 
-  function usedWeights(uint256 tokenId) external view returns (uint256);
+  function usedWeights(uint256 tokenId, address lpToken) external view returns (uint256);
 
   function lastVoted(uint256 tokenId) external view returns (uint256);
 
-  function isGauge(address) external view returns (bool);
+  function isGauge(address gauge) external view returns (bool);
 
   function isWhitelistedToken(address token) external view returns (bool);
 
@@ -100,7 +105,12 @@ interface IVoter {
   /// @param _poolVote          Array of pools you are voting for.
   /// @param _marketVoteSide    Array of market vote sides you are voting for.
   /// @param _weights           Weights of pools.
-  function vote(uint256 _tokenId, address[] calldata _poolVote, MarketSide[] calldata _marketVoteSide, uint256[] calldata _weights) external;
+  function vote(
+    uint256 _tokenId,
+    address[] calldata _poolVote,
+    MarketSide[] calldata _marketVoteSide,
+    uint256[] calldata _weights
+  ) external;
 
   /// @notice Called by users to reset voting state. Required if you wish to make changes to
   ///         veNFT state (e.g. merge, split, deposit into managed etc).

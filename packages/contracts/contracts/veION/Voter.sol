@@ -13,7 +13,9 @@ import { IBribeRewards } from "./interfaces/IBribeRewards.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 
 interface IPoolLens {
-  function getPoolSummary(IonicComptroller comptroller) external returns (uint256, uint256, address[] memory, string[] memory, bool);
+  function getPoolSummary(
+    IonicComptroller comptroller
+  ) external returns (uint256, uint256, address[] memory, string[] memory, bool);
 }
 
 contract Voter is IVoter {
@@ -38,7 +40,7 @@ contract Voter is IVoter {
   address public emergencyCouncil;
 
   /// @dev Total Voting Weights
-  uint256 public totalWeight;
+  mapping(address => uint256) public totalWeight;
   /// @dev Most number of markets one voter can vote for at once
   uint256 public maxVotingNum;
   uint256 internal constant MIN_MAXVOTINGNUM = 10;
@@ -47,16 +49,16 @@ contract Voter is IVoter {
   address[] public markets;
   /// @dev Reward Accumulator => Bribes Voting Reward
   mapping(address => address) public rewardAccumulatorToBribe;
-  /// @dev Market => Market Side => weights
-  mapping(address => mapping (MarketSide => uint256)) public weights;
-  /// @dev NFT => Pool => Votes
-  mapping(uint256 => mapping(address => mapping(MarketSide => uint256))) public votes;
+  /// @dev Market => Market Side => LP Asset => weights
+  mapping(address => mapping(MarketSide => mapping(address => uint256))) public weights;
+  /// @dev NFT => Pool => LP Asset => Votes
+  mapping(uint256 => mapping(address => mapping(MarketSide => mapping(address => uint256)))) public votes;
   /// @dev NFT => List of markets voted for by NFT
   mapping(uint256 => address[]) public marketVote;
   /// @dev NFT => List of market vote sides voted for by NFT
   mapping(uint256 => MarketSide[]) public marketVoteSide;
   /// @dev NFT => Total voting weight of NFT
-  mapping(uint256 => uint256) public usedWeights;
+  mapping(uint256 => mapping(address => uint256)) public usedWeights;
   /// @dev Nft => Timestamp of last vote (ensures single vote per epoch)
   mapping(uint256 => uint256) public lastVoted;
   /// @dev Address => Gauge
@@ -143,10 +145,7 @@ contract Voter is IVoter {
     }
   }
 
-  function setBribes(
-    address[] calldata _rewardAccumulators,
-    address[] calldata _bribes
-  ) external {
+  function setBribes(address[] calldata _rewardAccumulators, address[] calldata _bribes) external {
     if (msg.sender != governor) revert NotGovernor();
     uint256 _length = _bribes.length;
     if (_rewardAccumulators.length != _length) revert MismatchedArrayLengths();
@@ -166,19 +165,38 @@ contract Voter is IVoter {
     if (msg.sender != governor) revert NotGovernor();
     if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
+    uint256 _totalLPValueETH = _calculateTotalLPValue();
     for (uint256 i = 0; i < markets.length; i++) {
       for (uint256 j = 0; j < 3; j++) {
-        uint256 _weight = weights[markets[i]][MarketSide(j)];
-        if (MarketSide(j) == MarketSide.Utilization && _weight > 0) {
-          // TODO: receive borrow and supply for specific market
-          (uint256 totalSupply, uint256 totalBorrow, , , ) = IPoolLens(poolLens).getPoolSummary(IonicComptroller(_comptroller));
-          uint256 _utilization = totalSupply * 100 / totalBorrow;
-          uint256 _marketReward = _reward * _weight  / totalWeight;
-          IERC20(rewardToken).safeTransfer(marketToRewardAccumulators[markets[i]][MarketSide.Supply], _marketReward * _utilization / 100); 
-          IERC20(rewardToken).safeTransfer(marketToRewardAccumulators[markets[i]][MarketSide.Borrow], _marketReward * (100 - _utilization) / 100); 
+        address[] memory lpRewardTokens = _getAllLpRewardTokens();
+        uint256 _marketWeightETH = 0;
+        for (uint256 k = 0; k < lpRewardTokens.length; k++) {
+          uint256 _lpAmount = weights[markets[i]][MarketSide(j)][lpRewardTokens[k]];
+          uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpRewardTokens[k]);
+          _marketWeightETH += tokenEthValue;
         }
-        if (_weight > 0) {
-            IERC20(rewardToken).safeTransfer(marketToRewardAccumulators[markets[i]][MarketSide(j)], _reward * _weight  / totalWeight); 
+
+        if (MarketSide(j) == MarketSide.Utilization && _marketWeightETH > 0) {
+          // TODO: receive borrow and supply for specific market
+          (uint256 totalSupply, uint256 totalBorrow, , , ) = IPoolLens(poolLens).getPoolSummary(
+            IonicComptroller(_comptroller)
+          );
+          uint256 _utilization = (totalSupply * 100) / totalBorrow;
+          uint256 _marketReward = (_reward * _marketWeightETH) / _totalLPValueETH;
+          IERC20(rewardToken).safeTransfer(
+            marketToRewardAccumulators[markets[i]][MarketSide.Supply],
+            (_marketReward * _utilization) / 100
+          );
+          IERC20(rewardToken).safeTransfer(
+            marketToRewardAccumulators[markets[i]][MarketSide.Borrow],
+            (_marketReward * (100 - _utilization)) / 100
+          );
+        }
+        if (_marketWeightETH > 0) {
+          IERC20(rewardToken).safeTransfer(
+            marketToRewardAccumulators[markets[i]][MarketSide(j)],
+            (_reward * _marketWeightETH) / _totalLPValueETH
+          );
         }
       }
     }
@@ -198,48 +216,65 @@ contract Voter is IVoter {
     for (uint256 i = 0; i < _marketVoteCnt; i++) {
       address _market = _marketVote[i];
       for (uint256 j = 0; j < 3; j++) {
-        uint256 _votes = votes[_tokenId][_market][MarketSide(j)];
-
-        if (_votes != 0) {
-          weights[_market][MarketSide(j)] -= _votes;
-          delete votes[_tokenId][_market][MarketSide(j)];
-          IBribeRewards(rewardAccumulatorToBribe[marketToRewardAccumulators[_market][MarketSide(j)]])._withdraw(uint256(_votes), _tokenId);
-          _totalWeight += _votes;
-          emit Abstained(msg.sender, _market, _tokenId, _votes, weights[_market][MarketSide(j)], block.timestamp);
+        address[] memory lpRewardTokens = _getAllLpRewardTokens();
+        uint256 _marketWeightETH = 0;
+        for (uint256 k = 0; k < lpRewardTokens.length; k++) {
+          uint256 _votes = votes[_tokenId][_market][MarketSide(j)][lpRewardTokens[k]];
+          if (_votes != 0) {
+            weights[_market][MarketSide(j)][lpRewardTokens[k]] -= _votes;
+            delete votes[_tokenId][_market][MarketSide(j)][lpRewardTokens[k]];
+            IBribeRewards(rewardAccumulatorToBribe[marketToRewardAccumulators[_market][MarketSide(j)]])._withdraw(
+              uint256(_votes),
+              _tokenId
+            );
+            _totalWeight += _votes;
+            emit Abstained(
+              msg.sender,
+              _market,
+              _tokenId,
+              _votes,
+              weights[_market][MarketSide(j)][lpRewardTokens[k]],
+              block.timestamp
+            );
+          }
+          IveION(ve).voting(_tokenId, false);
+          totalWeight[lpRewardTokens[k]] -= _totalWeight;
+          usedWeights[_tokenId][lpRewardTokens[k]] = 0;
+          delete marketVote[_tokenId];
         }
       }
     }
-    IveION(ve).voting(_tokenId, false);
-    totalWeight -= _totalWeight;
-    usedWeights[_tokenId] = 0;
-    delete marketVote[_tokenId];
   }
 
   /// @inheritdoc IVoter
   function poke(uint256 _tokenId) external {
     if (block.timestamp <= IonicTimeLibrary.epochVoteStart(block.timestamp)) revert DistributeWindow();
-    uint256 _weight = IveION(ve).balanceOfNFT(_tokenId);
-    _poke(_tokenId, _weight);
+    (address[] memory _votingLPs, uint256[] memory _votingLPBalances) = IveION(ve).balanceOfNFT(_tokenId);
+
+    for (uint256 i = 0; i < _votingLPs.length; i++) {
+      _poke(_tokenId, _votingLPs[i], _votingLPBalances[i]);
+    }
   }
 
-  function _poke(uint256 _tokenId, uint256 _weight) internal {
+  //can you only vote for one particular side or any amount of sides for a market
+  function _poke(uint256 _tokenId, address _votingAsset, uint256 _votingAssetBalance) internal {
     address[] memory _marketVote = marketVote[_tokenId];
     MarketSide[] memory _marketVoteSide = marketVoteSide[_tokenId];
     uint256 _marketCnt = _marketVote.length;
     uint256[] memory _weights = new uint256[](_marketCnt);
+    address[] memory lpRewardTokens = _getAllLpRewardTokens();
 
     for (uint256 i = 0; i < _marketCnt; i++) {
-      for (uint256 j = 0; j < 3; j++) {
-        _weights[i] = votes[_tokenId][_marketVote[i]][MarketSide(j)];
-      }
+      _weights[i] = votes[_tokenId][_marketVote[i]][_marketVoteSide[i]][_votingAsset];
     }
-    _vote(_tokenId, _weight, _marketVote, _marketVoteSide, _weights);
+    _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights);
   }
 
   function _vote(
-    uint256 _tokenId, 
-    uint256 _weight, 
-    address[] memory _marketVote, 
+    uint256 _tokenId,
+    address _votingAsset,
+    uint256 _votingAssetBalance,
+    address[] memory _marketVote,
     MarketSide[] memory _marketVoteSide,
     uint256[] memory _weights
   ) internal {
@@ -254,28 +289,37 @@ contract Voter is IVoter {
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
       address _market = _marketVote[i];
-      address _rewardAccumulator = rewardAccumulatorToBribe[marketToRewardAccumulators[_marketVote[i]][_marketVoteSide[i]]];
+      address _rewardAccumulator = rewardAccumulatorToBribe[
+        marketToRewardAccumulators[_marketVote[i]][_marketVoteSide[i]]
+      ];
       if (_rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(_market);
       if (!isAlive[_rewardAccumulator]) revert RewardAccumulatorNotAlive(_rewardAccumulator);
 
       if (isGauge[_rewardAccumulator]) {
-        uint256 _marketWeight = (_weights[i] * _weight) / _totalVoteWeight;
-        if (votes[_tokenId][_market][_marketVoteSide[i]] != 0) revert NonZeroVotes();
+        uint256 _marketWeight = (_weights[i] * _votingAssetBalance) / _totalVoteWeight;
+        if (votes[_tokenId][_market][_marketVoteSide[i]][_votingAsset] != 0) revert NonZeroVotes();
         if (_marketWeight == 0) revert ZeroBalance();
 
         marketVote[_tokenId].push(_market);
 
-        weights[_market][_marketVoteSide[i]] += _marketWeight;
-        votes[_tokenId][_market][_marketVoteSide[i]] += _marketWeight;
+        weights[_market][_marketVoteSide[i]][_votingAsset] += _marketWeight;
+        votes[_tokenId][_market][_marketVoteSide[i]][_votingAsset] += _marketWeight;
         IBribeRewards(_rewardAccumulator)._deposit(uint256(_marketWeight), _tokenId);
         _usedWeight += _marketWeight;
         _totalWeight += _marketWeight;
-        emit Voted(msg.sender, _market, _tokenId, _marketWeight, weights[_market][_marketVoteSide[i]], block.timestamp);
+        emit Voted(
+          msg.sender,
+          _market,
+          _tokenId,
+          _marketWeight,
+          weights[_market][_marketVoteSide[i]][_votingAsset],
+          block.timestamp
+        );
       }
     }
     if (_usedWeight > 0) IveION(ve).voting(_tokenId, true);
-    totalWeight += uint256(_totalWeight);
-    usedWeights[_tokenId] = uint256(_usedWeight);
+    totalWeight[_votingAsset] += uint256(_totalWeight);
+    usedWeights[_tokenId][_votingAsset] = uint256(_usedWeight);
   }
 
   /// @inheritdoc IVoter
@@ -294,8 +338,10 @@ contract Voter is IVoter {
     if ((_timestamp > IonicTimeLibrary.epochVoteEnd(_timestamp)) && !isWhitelistedNFT[_tokenId])
       revert NotWhitelistedNFT();
     lastVoted[_tokenId] = _timestamp;
-    uint256 _weight = IveION(ve).balanceOfNFT(_tokenId);
-    _vote(_tokenId, _weight, _marketVote, _marketVoteSide, _weights);
+    (address[] memory _votingLPs, uint256[] memory _votingLPBalances) = IveION(ve).balanceOfNFT(_tokenId);
+    for (uint256 i = 0; i < _votingLPs.length; i++) {
+      _vote(_tokenId, _votingLPs[i], _votingLPBalances[i], _marketVote, _marketVoteSide, _weights);
+    }
   }
 
   /// @inheritdoc IVoter
@@ -324,9 +370,10 @@ contract Voter is IVoter {
   /// @inheritdoc IVoter
   function notifyRewardAmount(uint256 _amount) external {
     address sender = msg.sender;
+    uint256 _totalLPValueETH = _calculateTotalLPValue();
     if (sender != minter) revert NotMinter();
     IERC20(rewardToken).safeTransferFrom(sender, address(this), _amount); // transfer the distribution in
-    uint256 _ratio = (_amount * 1e18) / Math.max(totalWeight, 1); // 1e18 adjustment is removed during claim
+    uint256 _ratio = (_amount * 1e18) / Math.max(_totalLPValueETH, 1); // 1e18 adjustment is removed during claim
     if (_ratio > 0) {
       index += _ratio;
     }
@@ -334,4 +381,33 @@ contract Voter is IVoter {
   }
   /// @inheritdoc IVoter
   function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {}
+
+  // Internal function to get all LP reward tokens
+  function _getAllLpRewardTokens() internal view returns (address[] memory) {
+    // This function should return an array of all possible LP reward token addresses
+    // Placeholder implementation, replace with actual logic
+    return new address[](0);
+  }
+
+  // Internal function to get the ETH value of a token
+  function _getTokenEthValue(uint256 amount, address lpToken) internal view returns (uint256) {
+    // This function should return the ETH value of the given token amount
+    // Placeholder implementation, replace with actual logic
+    return amount;
+  }
+
+  function _calculateTotalLPValue() internal view returns (uint256) {
+    uint256 totalLPValueETH = 0;
+    for (uint256 i = 0; i < markets.length; i++) {
+      for (uint256 j = 0; j < 3; j++) {
+        address[] memory lpRewardTokens = _getAllLpRewardTokens();
+        for (uint256 k = 0; k < lpRewardTokens.length; k++) {
+          uint256 _lpAmount = weights[markets[i]][MarketSide(j)][lpRewardTokens[k]];
+          uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpRewardTokens[k]);
+          totalLPValueETH += tokenEthValue;
+        }
+      }
+    }
+    return totalLPValueETH;
+  }
 }

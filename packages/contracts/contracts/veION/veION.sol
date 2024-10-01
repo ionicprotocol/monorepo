@@ -9,6 +9,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { console } from "forge-std/console.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
+import { BalanceLogicLibrary } from "./libraries/BalanceLogicLibrary.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
@@ -21,7 +22,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(uint256 => mapping(LpTokenType => int128)) public s_slopeChanges; // timestamp => lpType => slopeChange
   mapping(uint256 => mapping(LpTokenType => GlobalPoint)) public s_pointHistory; // epoch => lpType => GlobalPoint
   mapping(uint256 => mapping(LpTokenType => uint256)) public s_userPointEpoch; // tokenid => lpType => user epoch
-  mapping(uint256 => mapping(uint256 => mapping(LpTokenType => UserPoint))) public s_userPointHistory; // tokenid => user epoch => lptype => UserPoint
+  mapping(uint256 => mapping(LpTokenType => UserPoint[1000000000])) public s_userPointHistory; // tokenid => lptype => user epoch => UserPoint
+  mapping(uint256 => address[]) public s_assetsLocked; // tokenid => array of assets locked
   mapping(uint256 => bool) public s_voted;
   mapping(uint256 => EscrowType) public s_escrowType;
   mapping(address => LpTokenType) public s_lpType;
@@ -160,6 +162,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     _burn(_tokenId);
     s_locked[_tokenId][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
+    address[] storage assetsLocked = s_assetsLocked[_tokenId];
+    removeTokenFromAssets(assetsLocked, _tokenAddress);
     uint256 supplyBefore = s_supply[_lpType];
     s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
     _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
@@ -565,11 +569,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       vars.uNew.ts = block.timestamp;
       vars.uNew.blk = block.number;
       uint256 userEpoch = s_userPointEpoch[_tokenId][_lpType];
-      if (userEpoch != 0 && s_userPointHistory[_tokenId][userEpoch][_lpType].ts == block.timestamp) {
-        s_userPointHistory[_tokenId][userEpoch][_lpType] = vars.uNew;
+      if (userEpoch != 0 && s_userPointHistory[_tokenId][_lpType][userEpoch].ts == block.timestamp) {
+        s_userPointHistory[_tokenId][_lpType][userEpoch] = vars.uNew;
       } else {
         s_userPointEpoch[_tokenId][_lpType] = ++userEpoch;
-        s_userPointHistory[_tokenId][userEpoch][_lpType] = vars.uNew;
+        s_userPointHistory[_tokenId][_lpType][userEpoch] = vars.uNew;
       }
     }
   }
@@ -586,6 +590,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
+      s_assetsLocked[_tokenId].push(_tokenAddress[i]);
 
       uint256 unlockTime = ((block.timestamp + _duration[i]) / WEEK) * WEEK;
 
@@ -679,6 +684,16 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
+  function removeTokenFromAssets(address[] storage assetsLocked, address _tokenAddress) internal {
+    for (uint256 i = 0; i < assetsLocked.length; i++) {
+      if (assetsLocked[i] == _tokenAddress) {
+        assetsLocked[i] = assetsLocked[assetsLocked.length - 1];
+        assetsLocked.pop();
+        break;
+      }
+    }
+  }
+
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                           View Functions                                  ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -696,5 +711,24 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function voting(uint256 _tokenId, bool _voting) external {}
 
   /// @inheritdoc IveION
-  function balanceOfNFT(uint256 _tokenId) external view returns (uint256) {}
+  function balanceOfNFT(uint256 _tokenId) public view returns (address[] memory _assets, uint256[] memory _balances) {
+    uint256 lengthOfAssets = s_assetsLocked[_tokenId].length;
+    _assets = new address[](lengthOfAssets);
+    _balances = new uint256[](lengthOfAssets);
+
+    for (uint256 i = 0; i < lengthOfAssets; i++) {
+      address asset = s_assetsLocked[_tokenId][i];
+      LpTokenType lpType = s_lpType[asset];
+      _assets[i] = asset;
+      _balances[i] = BalanceLogicLibrary.balanceOfNFTAt(
+        s_userPointEpoch,
+        s_userPointHistory,
+        lpType,
+        _tokenId,
+        block.timestamp
+      );
+    }
+
+    return (_assets, _balances);
+  }
 }
