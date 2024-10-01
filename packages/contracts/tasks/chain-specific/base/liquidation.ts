@@ -130,6 +130,13 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       await publicClient.waitForTransactionReceipt({ hash: tickTx });
       console.log("Transaction sent to set tick spacing:", tickTx);
     }
+    const readTick1 = await liquidatorRegistry.read.aeroCLTickSpacings([aeroUnderlying, wethUnderlying]);
+    console.log("🚀 ~ readTick1:", readTick1);
+    if (readTick1 !== 200) {
+      const tickTx1 = await liquidatorRegistry.write._setAeroCLTickSpacings([aeroUnderlying, wethUnderlying, 200]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx1 });
+      console.log("Transaction sent to set tick spacing:", tickTx1);
+    }
     const readWrapped = await liquidatorRegistry.read.wrappedToUnwrapped4626([wsuperOETHUnderlying]);
     console.log("🚀 ~ readWrapped:", readWrapped);
     if (readWrapped.toLowerCase() !== superOETH.toLowerCase()) {
@@ -166,24 +173,14 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
-        inputToken: aeroUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
         inputToken: wethUnderlying,
         outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: aeroCLLiquidator.address as Address
       },
       {
         inputToken: aeroUnderlying,
         outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: aeroCLLiquidator.address as Address
       },
       {
         inputToken: ezETHUnderlying,
