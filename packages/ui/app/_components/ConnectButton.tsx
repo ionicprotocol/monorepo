@@ -1,8 +1,6 @@
 import React from 'react';
 
-type ConnectButtonProps = JSX.IntrinsicElements['w3m-button'];
-
-export default function ConnectButton(props: ConnectButtonProps) {
+export default function ConnectButton(props: any) {
   // TODO
   // const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +51,7 @@ export default function ConnectButton(props: ConnectButtonProps) {
       className="connect-button"
       // ref={containerRef}
     >
+      {/* @ts-ignore */}
       <w3m-button {...props} />
     </div>
   );

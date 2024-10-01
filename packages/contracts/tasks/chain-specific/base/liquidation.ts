@@ -19,6 +19,46 @@ import {
   wusdm_MARKET
 } from ".";
 
+task("base:liquidation:whitelist-redemption-strategies", "Whitelist redemption strategies").setAction(
+  async (_, { viem, getNamedAccounts, deployments }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+    const aeroV2Liquidator = await deployments.get("AerodromeV2Liquidator");
+    const aeroCLLiquidator = await deployments.get("AerodromeCLLiquidator");
+    const curveSwapLiquidator = await deployments.get("CurveSwapLiquidator");
+    const univ2Liquidator = await deployments.get("UniswapV2LiquidatorFunder");
+    const univ3Liquidator = await deployments.get("UniswapV3LiquidatorFunder");
+    const ionicLiquidator = await viem.getContractAt(
+      "IonicLiquidator",
+      (await deployments.get("IonicLiquidator")).address as Address
+    );
+    const ionicV3Liquidator = await viem.getContractAt(
+      "IonicUniV3Liquidator",
+      (await deployments.get("IonicUniV3Liquidator")).address as Address
+    );
+    const ionicLiquidators = [ionicLiquidator, ionicV3Liquidator];
+    const liquidators = [
+      aeroV2Liquidator.address as Address,
+      aeroCLLiquidator.address as Address,
+      curveSwapLiquidator.address as Address,
+      univ2Liquidator.address as Address,
+      univ3Liquidator.address as Address
+    ];
+    for (const iLiquidator of ionicLiquidators) {
+      for (const liquidator of liquidators) {
+        const isWhitelisted = await iLiquidator.read.redemptionStrategiesWhitelist([liquidator]);
+        if (!isWhitelisted) {
+          const tx = await (iLiquidator as any).write._whitelistRedemptionStrategies([[liquidator], [true]]);
+          await publicClient.waitForTransactionReceipt({ hash: tx });
+          console.log(`Whitelisted on ${iLiquidator.address}: ${liquidator} at ${tx}`);
+        } else {
+          console.log(`${liquidator} already whitelisted on ${iLiquidator.address}`);
+        }
+      }
+    }
+  }
+);
+
 task("base:liquidation:set-redemption-strategies:loop", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
@@ -130,6 +170,19 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       await publicClient.waitForTransactionReceipt({ hash: tickTx });
       console.log("Transaction sent to set tick spacing:", tickTx);
     }
+    const readTick1 = await liquidatorRegistry.read.aeroCLTickSpacings([aeroUnderlying, wethUnderlying]);
+    const readTick2 = await liquidatorRegistry.read.aeroCLTickSpacings([wethUnderlying, aeroUnderlying]);
+    console.log("🚀 ~ readTick1:", readTick1, readTick2);
+    if (readTick1 !== 200) {
+      const tickTx1 = await liquidatorRegistry.write._setAeroCLTickSpacings([aeroUnderlying, wethUnderlying, 200]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx1 });
+      console.log("Transaction sent to set tick spacing:", tickTx1);
+    }
+    if (readTick2 !== 200) {
+      const tickTx2 = await liquidatorRegistry.write._setAeroCLTickSpacings([wethUnderlying, aeroUnderlying, 200]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx2 });
+      console.log("Transaction sent to set tick spacing:", tickTx2);
+    }
     const readWrapped = await liquidatorRegistry.read.wrappedToUnwrapped4626([wsuperOETHUnderlying]);
     console.log("🚀 ~ readWrapped:", readWrapped);
     if (readWrapped.toLowerCase() !== superOETH.toLowerCase()) {
@@ -166,24 +219,14 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     }
     const pairs: { inputToken: Address; outputToken: Address; strategy: Address }[] = [
       {
-        inputToken: aeroUnderlying,
-        outputToken: usdcUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
-        inputToken: usdcUnderlying,
-        outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
-      },
-      {
         inputToken: wethUnderlying,
         outputToken: aeroUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: aeroCLLiquidator.address as Address
       },
       {
         inputToken: aeroUnderlying,
         outputToken: wethUnderlying,
-        strategy: uniLiquidator.address as Address
+        strategy: aeroCLLiquidator.address as Address
       },
       {
         inputToken: ezETHUnderlying,

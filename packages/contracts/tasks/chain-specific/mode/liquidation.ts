@@ -4,6 +4,30 @@ import { mode } from "@ionicprotocol/chains";
 import { resetLiquidationStrategies, setOptimalSwapPath } from "../../liquidation";
 import { assetSymbols } from "@ionicprotocol/types";
 
+task("mode:liquidation:whitelist-redemption-strategies", "Whitelist redemption strategies").setAction(
+  async (_, { viem, getNamedAccounts, deployments }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+    const aerodromeV2Liquidator = await deployments.get("AerodromeV2Liquidator");
+    const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
+    const ionicLiquidator = await viem.getContractAt(
+      "IonicUniV3Liquidator",
+      (await deployments.get("IonicUniV3Liquidator")).address as Address
+    );
+    const liquidators = [aerodromeV2Liquidator.address as Address, kimLiquidator.address as Address];
+    for (const liquidator of liquidators) {
+      const isWhitelisted = await ionicLiquidator.read.redemptionStrategiesWhitelist([liquidator]);
+      if (!isWhitelisted) {
+        const tx = await ionicLiquidator.write._whitelistRedemptionStrategies([[liquidator], [true]]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log(`Whitelisted ${liquidator} at ${tx}`);
+      } else {
+        console.log(`${liquidator} already whitelisted`);
+      }
+    }
+  }
+);
+
 task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
@@ -31,6 +55,7 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       throw new Error("Tokens not found");
     }
     const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
+    const aerodromeV2Liquidator = await deployments.get("AerodromeV2Liquidator");
     await resetLiquidationStrategies(viem, deployments, deployer as Address, [
       {
         inputToken: modeToken.underlying,
@@ -55,12 +80,12 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: usdcToken.underlying,
         outputToken: wethToken.underlying,
-        strategy: kimLiquidator.address as Address
+        strategy: aerodromeV2Liquidator.address as Address
       },
       {
         inputToken: wethToken.underlying,
         outputToken: usdcToken.underlying,
-        strategy: kimLiquidator.address as Address
+        strategy: aerodromeV2Liquidator.address as Address
       },
       {
         inputToken: stoneToken.underlying,

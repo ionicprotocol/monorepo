@@ -30,6 +30,7 @@ export const wsuperOETHb = "0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6";
 export const wUSDM = "0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812";
 export const OGN = "0x7002458B1DF59EccB57387bC79fFc7C29E22e6f7";
 export const EURC = "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42";
+export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
 
 export const assets: SupportedAsset[] = [
   {
@@ -275,6 +276,21 @@ export const assets: SupportedAsset[] = [
     initialCf: "0.85",
     initialSupplyCap: parseUnits(String(13_000_000), 6).toString(),
     initialBorrowCap: parseUnits(String(10_000_000), 6).toString()
+  },
+  {
+    symbol: assetSymbols.USDplus,
+    underlying: USDplus,
+    name: "USD+",
+    decimals: 6,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xd5Ec94430eF4170D819E0996BC53ed40d31638d8",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", USDplus),
+    initialCf: "0.85",
+    initialSupplyCap: parseUnits(String(40_000_000), 6).toString(),
+    initialBorrowCap: parseUnits(String(30_000_000), 6).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
