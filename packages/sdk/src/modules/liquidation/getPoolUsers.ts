@@ -61,14 +61,14 @@ async function processAssetsInBatches(
 ) {
   const mutableUsers: `0x${string}`[] = [...users];
   // console.log("BotTypefromGetPOOlUsers", botType)
-  const healthFactorThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold();
+  const healthFactorThreshold = await sdk.contracts.IonicLiquidator.read.healthFactorThreshold({blockNumber:13764552n});
   // console.log("healthFactorThreshold", healthFactorThreshold)
   for (let i = 0; i < mutableUsers.length; i += BATCH_SIZE) {
     const batchUsers = mutableUsers.slice(i, i + BATCH_SIZE);
     await Promise.all(
       batchUsers.map(async (assets, index) => {
         try {
-          const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller]);
+          const health = await sdk.contracts.PoolLens.read.getHealthFactor([batchUsers[index], comptroller], {blockNumber:13764552n});
           if (health < maxHealth && health > HF_MIN && botType === BotType.Pyth) {
             // console.log("I am in pyth loop")
             poolUsers.push({ account: batchUsers[index], health });
@@ -122,6 +122,7 @@ export default async function getAllFusePoolUsers(
   botType: BotType
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
   const [, allPools] = await sdk.contracts.PoolDirectory.read.getActivePools();
+  // const filteredPools = allPools.filter(pool => pool.name === "Mode Native Market");
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   const startTime = performance.now();
