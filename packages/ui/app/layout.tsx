@@ -17,6 +17,7 @@ import { WagmiProvider } from 'wagmi';
 import Navbar from './_components/Navbar';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
+import { mod } from 'mathjs';
 
 const metadata = {
   description: 'Ionic Web3Modal Sign In',
@@ -75,7 +76,12 @@ createAppKit({
   },
   adapters: [wagmiAdapter],
   networks,
-  metadata
+  metadata,
+  chainImages: {
+    [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
+    [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
+    [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg'
+  }
 });
 
 (BigInt.prototype as any).toJSON = function () {
