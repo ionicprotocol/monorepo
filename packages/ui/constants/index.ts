@@ -4,14 +4,6 @@ import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
-export const explorerLinks: Record<number, string> = {
-  [mode.id]: 'https://explorer.mode.network',
-  [base.id]: 'https://basescan.org',
-  [optimism.id]: 'https://optimistic.etherscan.io',
-  [bob.id]: 'https://explorer.gobob.xyz',
-  [fraxtal.id]: 'https://fraxscan.com'
-};
-
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
 );
