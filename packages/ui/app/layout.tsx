@@ -66,7 +66,7 @@ export const wagmiAdapter = new WagmiAdapter({
 });
 
 // Create the new web3 modal
-const modal = createAppKit({
+createAppKit({
   projectId,
   themeMode: 'dark',
   themeVariables: {
@@ -129,7 +129,7 @@ export default function RootLayout({
                 />
 
                 <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[280px] min-h-screen w-[100vw]">
-                  <Navbar modal={modal} />
+                  <Navbar />
                   <main>{children}</main>
                   <footer
                     className={`sm:absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-4 sm:py-10`}

@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 // import { Gasbot } from '@gasbot/widget';
-import { type AppKit } from '@reown/appkit';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -36,7 +35,7 @@ export const config = createConfig({
   }
 });
 
-export default function Navbar({ modal }: { modal: AppKit }) {
+export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const pathname = usePathname();
@@ -245,7 +244,7 @@ export default function Navbar({ modal }: { modal: AppKit }) {
 
         <div className="flex items-center lg:justify-center gap-1.5 my-auto uppercase connect-button">
           {/*  */}
-          <ConnectButton modal={modal} />
+          <ConnectButton />
 
           <div
             className={`nav-btn lg:hidden ${

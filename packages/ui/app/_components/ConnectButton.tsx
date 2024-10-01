@@ -1,8 +1,6 @@
-import { type AppKit } from '@reown/appkit';
-import { useAppKit } from '@reown/appkit/react';
 import React from 'react';
 
-export default function ConnectButton({ modal }: { modal: AppKit }) {
+export default function ConnectButton(props: any) {
   // TODO
   // const containerRef = useRef<HTMLDivElement>(null);
 
@@ -48,15 +46,13 @@ export default function ConnectButton({ modal }: { modal: AppKit }) {
   //   }
   // });
 
-  // const { open } = useAppKit();
-
   return (
-    <button
+    <div
       className="connect-button"
       // ref={containerRef}
-      onClick={() => modal.open()}
     >
-      OPEN
-    </button>
+      {/* @ts-ignore */}
+      <w3m-button {...props} />
+    </div>
   );
 }

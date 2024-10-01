@@ -1,6 +1,6 @@
-import { createAppKit } from '@reown/appkit';
-import { base, optimism } from '@reown/appkit/networks';
-import { mode as vMode, bob as vBob, fraxtal as vFraxtal } from 'viem/chains';
+// import { createAppKit } from '@reown/appkit';
+// import { base, optimism } from '@reown/appkit/networks';
+// import { mode as vMode, bob as vBob, fraxtal as vFraxtal } from 'viem/chains';
 
 // const metadata = {
 //   description: 'Ionic Web3Modal Sign In',
