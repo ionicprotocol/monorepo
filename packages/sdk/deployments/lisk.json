@@ -65,6 +65,15 @@
     "IonicFlywheelLensRouter": {
       "address": "0x1E2812B4dEcA77B5dD7Af9f2D6ec40102bcffD02"
     },
+    "IonicUniV3Liquidator": {
+      "address": "0x50766FD9C93e65124f0160C8f301caC6f399B572"
+    },
+    "IonicUniV3Liquidator_Implementation": {
+      "address": "0xF130fBbb86C6794CdE808f97C02e87861f4cf9fE"
+    },
+    "IonicUniV3Liquidator_Proxy": {
+      "address": "0x50766FD9C93e65124f0160C8f301caC6f399B572"
+    },
     "JumpRateModel": {
       "address": "0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4"
     },
