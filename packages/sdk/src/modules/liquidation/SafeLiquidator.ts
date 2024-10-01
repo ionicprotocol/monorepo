@@ -5,7 +5,7 @@ import { CreateContractsModule } from "../CreateContracts";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
-import { BotType, EncodedLiquidationTx, ErroredPool, LiquidatablePool, PythLiquidatablePool } from "./utils";
+import { BotType, ErroredPool, FlashSwapLiquidationTxParams, LiquidatablePool, PythLiquidatablePool } from "./utils";
 
 // import { gatherLiquidations, getAllPoolUsers } from "./index";
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
@@ -19,7 +19,7 @@ export interface ISafeLiquidator {
   ): Promise<[Array<T>, Array<ErroredPool>]>;
   liquidatePositions(
     liquidatablePool: LiquidatablePool
-  ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]>;
+  ): Promise<[Array<{ tx: FlashSwapLiquidationTxParams; error: string }>, Array<TransactionReceipt>]>;
   chainLiquidationConfig: ChainLiquidationConfig;
 }
 
@@ -66,7 +66,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
-    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionReceipt>]> {
+    ): Promise<[Array<{ tx: FlashSwapLiquidationTxParams; error: string }>, Array<TransactionReceipt>]> {
       const [erroredLiquidations, succeededLiquidations] = await liquidateUnhealthyBorrows(this, liquidatablePool);
       return [erroredLiquidations, succeededLiquidations];
     }
