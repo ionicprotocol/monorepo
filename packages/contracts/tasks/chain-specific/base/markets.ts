@@ -35,7 +35,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 });
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run }) => {
-  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.USDplus);
   if (!asset) {
     throw new Error("OGN not found in base assets");
   }
