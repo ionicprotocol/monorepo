@@ -31,6 +31,7 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       throw new Error("Tokens not found");
     }
     const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
+    const aerodromeV2Liquidator = await deployments.get("AerodromeV2Liquidator");
     await resetLiquidationStrategies(viem, deployments, deployer as Address, [
       {
         inputToken: modeToken.underlying,
@@ -55,12 +56,12 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       {
         inputToken: usdcToken.underlying,
         outputToken: wethToken.underlying,
-        strategy: kimLiquidator.address as Address
+        strategy: aerodromeV2Liquidator.address as Address
       },
       {
         inputToken: wethToken.underlying,
         outputToken: usdcToken.underlying,
-        strategy: kimLiquidator.address as Address
+        strategy: aerodromeV2Liquidator.address as Address
       },
       {
         inputToken: stoneToken.underlying,
