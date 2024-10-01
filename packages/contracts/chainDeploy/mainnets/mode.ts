@@ -13,6 +13,8 @@ import { deployVelodromeOracle } from "../helpers/oracles/velodrome";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 
 const KIM_ROUTER = "0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8";
+const VELODROME_V2_ROUTER = "0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45";
+const VELODROME_V2_FACTORY = "0x31832f2a97Fd20664D76Cc421207669b55CE4BC0";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: 30 * 60 * 24 * 365, // 30 blocks per minute = 2 sec block time
@@ -103,6 +105,16 @@ export const deploy = async ({
   );
 
   await configureAddress(ap, publicClient, deployer, "ALGEBRA_SWAP_ROUTER", KIM_ROUTER);
+
+  const aerodromeV2LiquidatorFunder = await deployments.deploy("AerodromeV2Liquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("AerodromeV2Liquidator: ", aerodromeV2LiquidatorFunder.address);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_ROUTER", VELODROME_V2_ROUTER);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_FACTORY", VELODROME_V2_FACTORY);
 
   // await deployVelodromeOracle({
   //   viem,

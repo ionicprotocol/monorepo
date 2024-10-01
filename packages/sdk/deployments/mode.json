@@ -11,6 +11,9 @@
     "AddressesProvider_Proxy": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
     },
+    "AerodromeV2Liquidator": {
+      "address": "0x0111f383e756F57037a939c49c9e69Ca06846d8a"
+    },
     "AlgebraSwapLiquidator": {
       "address": "0x5cA3fd2c285C4138185Ef1BdA7573D415020F3C8"
     },
