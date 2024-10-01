@@ -1,8 +1,8 @@
+import { type AppKit } from '@reown/appkit';
+import { useAppKit } from '@reown/appkit/react';
 import React from 'react';
 
-type ConnectButtonProps = JSX.IntrinsicElements['w3m-button'];
-
-export default function ConnectButton(props: ConnectButtonProps) {
+export default function ConnectButton({ modal }: { modal: AppKit }) {
   // TODO
   // const containerRef = useRef<HTMLDivElement>(null);
 
@@ -48,12 +48,15 @@ export default function ConnectButton(props: ConnectButtonProps) {
   //   }
   // });
 
+  // const { open } = useAppKit();
+
   return (
-    <div
+    <button
       className="connect-button"
       // ref={containerRef}
+      onClick={() => modal.open()}
     >
-      <w3m-button {...props} />
-    </div>
+      OPEN
+    </button>
   );
 }

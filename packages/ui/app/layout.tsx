@@ -1,35 +1,86 @@
 'use client';
 import './globals.css';
 // import NextNProgress from "nextjs-progressbar";
+import { createAppKit } from '@reown/appkit';
+import { base, optimism } from '@reown/appkit/networks';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createWeb3Modal } from '@web3modal/wagmi/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Script from 'next/script';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { mode as vMode, bob as vBob, fraxtal as vFraxtal } from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 
 import Navbar from './_components/Navbar';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
-import { projectId, wagmiConfig } from '@ui/utils/connectors';
 
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
+const metadata = {
+  description: 'Ionic Web3Modal Sign In',
+  icons: ['https://avatars.githubusercontent.com/u/37784886'],
+  name: 'Ionic Web3Modal',
+  url: 'https://app.ionic.money'
 };
 
+export const mode = {
+  id: `eip155:${vMode.id}` as const,
+  chainId: vMode.id,
+  chainNamespace: 'eip155' as const,
+  name: vMode.name,
+  currency: vMode.nativeCurrency.name,
+  explorerUrl: vMode.blockExplorers.default.url,
+  rpcUrl: vMode.rpcUrls.default.http[0]
+};
+
+export const bob = {
+  id: `eip155:${vBob.id}` as const,
+  chainId: vBob.id,
+  chainNamespace: 'eip155' as const,
+  name: vBob.name,
+  currency: vBob.nativeCurrency.name,
+  explorerUrl: vBob.blockExplorers.default.url,
+  rpcUrl: vBob.rpcUrls.default.http[0]
+};
+
+export const fraxtal = {
+  id: `eip155:${vFraxtal.id}` as const,
+  chainId: vFraxtal.id,
+  chainNamespace: 'eip155' as const,
+  name: vFraxtal.name,
+  currency: vFraxtal.nativeCurrency.name,
+  explorerUrl: vFraxtal.blockExplorers.default.url,
+  rpcUrl: vFraxtal.rpcUrls.default.http[0]
+};
+
+export const networks = [base, mode, optimism, bob, fraxtal];
+
+export const projectId = '923645e96d6f05f650d266a32ea7295f';
+
+export const wagmiAdapter = new WagmiAdapter({
+  networks,
+  projectId,
+  ssr: true
+});
+
 // Create the new web3 modal
-createWeb3Modal({
+const modal = createAppKit({
   projectId,
   themeMode: 'dark',
   themeVariables: {
     '--w3m-accent': '#3bff89ff',
     '--w3m-color-mix': '#0a0a0aff'
   },
-  wagmiConfig
+  adapters: [wagmiAdapter],
+  networks,
+  metadata
 });
+
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
 
 const queryClient = new QueryClient();
 
@@ -66,7 +117,7 @@ export default function RootLayout({
       `}
       </Script>
       <body className={'scrollbar-hide font-inter '}>
-        <WagmiProvider config={wagmiConfig}>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
               <Suspense fallback={<></>}>
@@ -78,7 +129,7 @@ export default function RootLayout({
                 />
 
                 <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[280px] min-h-screen w-[100vw]">
-                  <Navbar />
+                  <Navbar modal={modal} />
                   <main>{children}</main>
                   <footer
                     className={`sm:absolute bottom-4 right-4 left-4 bg-grayone px-[3%] mt-3 rounded-xl py-4 sm:py-10`}
