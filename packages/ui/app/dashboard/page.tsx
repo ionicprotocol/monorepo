@@ -12,6 +12,7 @@ import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
@@ -48,7 +49,6 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -375,7 +375,12 @@ export default function Dashboard() {
   } = useOutsideClick();
   return (
     <>
-      {swapOpen && <CollateralSwapPopup  toggler={() => swapToggle()} swapRef={swapRef}/>}
+      {swapOpen && (
+        <CollateralSwapPopup
+          toggler={() => swapToggle()}
+          swapRef={swapRef}
+        />
+      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}

@@ -183,7 +183,7 @@ const InfoRows = ({
           onClick={() => {
             setSelectedSymbol(asset);
             setPopupMode(
-              mode === InfoMode.SUPPLY ? PopupMode.WITHDRAW : PopupMode.REPAY
+              mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.REPAY
             );
           }}
         >
