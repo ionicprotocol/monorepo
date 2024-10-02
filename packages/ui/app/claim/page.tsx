@@ -260,13 +260,21 @@ export default function Claim() {
     claimableMapping[dropdownSelectedCampaign] || BigInt(0);
 
   const isDisabled =
-    Number(formatEther(claimableTokens)) === 0 ||
-    (dropdownSelectedCampaign in claimableMapping && haveClaimed);
+    Number(formatEther(claimableTokens)) == 0 ||
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && haveClaimed == true) ||
+    dropdownSelectedCampaign == DROPDOWN.AirdropSZN2
+      ? true
+      : false;
 
-  const isDisabledClaim =
-    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! ||
-      dropdownSelectedCampaign == DROPDOWN.AirdropSZN2!) &&
-    !agreement;
+  // ||
+  // (dropdownSelectedCampaign in claimableCampaigns && haveClaimed)
+
+  // const isDisabledClaim =
+  //   (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! ||
+  //     dropdownSelectedCampaign == DROPDOWN.AirdropSZN2!) &&
+  //   agreement;
+
+  // const isDisabledClaim = publicClaimable > BigInt(0) ? false : true;
 
   return (
     <div
@@ -491,7 +499,13 @@ export default function Claim() {
                 )}
                 <button
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                  disabled={isDisabledClaim}
+                  disabled={
+                    isDisabled ||
+                    (dropdownSelectedCampaign != DROPDOWN.PublicSale &&
+                      agreement == true)
+                      ? true
+                      : false
+                  }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
                       claimAirdrop();
