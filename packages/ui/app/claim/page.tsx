@@ -254,7 +254,7 @@ export default function Claim() {
     [DROPDOWN.PublicSale]: publicClaimable
   };
 
-  const claimableCampaigns = [DROPDOWN.AirdropSZN1, DROPDOWN.AirdropSZN2];
+  // const claimableCampaigns = [DROPDOWN.AirdropSZN1, DROPDOWN.AirdropSZN2];
   const totalTokens = tokenMapping[dropdownSelectedCampaign] || BigInt(0);
   const claimableTokens =
     claimableMapping[dropdownSelectedCampaign] || BigInt(0);
@@ -264,7 +264,10 @@ export default function Claim() {
     (dropdownSelectedCampaign in claimableMapping && haveClaimed);
 
   const isDisabledClaim =
-    claimableCampaigns.includes(dropdownSelectedCampaign) && !agreement;
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! ||
+      dropdownSelectedCampaign == DROPDOWN.AirdropSZN2!) &&
+    !agreement;
+
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
