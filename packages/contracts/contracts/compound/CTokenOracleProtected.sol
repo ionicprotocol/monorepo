@@ -105,7 +105,7 @@ abstract contract CTokenOracleProtected {
     }
   }
 
-  function _hypernativeOracle() private view returns (address) {
+  function _hypernativeOracle() internal view returns (address) {
     return _getAddressBySlot(HYPERNATIVE_ORACLE_STORAGE_SLOT);
   }
 }

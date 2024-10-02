@@ -33,7 +33,7 @@ contract CTokenFirstExtension is
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 30;
+    uint8 fnsCount = 31;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.transfer.selector;
     functionSelectors[--fnsCount] = this.transferFrom.selector;
@@ -63,6 +63,7 @@ contract CTokenFirstExtension is
     functionSelectors[--fnsCount] = this.setOracle.selector;
     functionSelectors[--fnsCount] = this.setIsStrictMode.selector;
     functionSelectors[--fnsCount] = this.changeOracleAdmin.selector;
+    functionSelectors[--fnsCount] = this.hypernativeOracle.selector;
     functionSelectors[--fnsCount] = this.hypernativeOracleAdmin.selector;
     functionSelectors[--fnsCount] = this.hypernativeOracleIsStrictMode.selector;
 
@@ -720,6 +721,10 @@ contract CTokenFirstExtension is
   function changeOracleAdmin(address _newAdmin) external {
     require(hasAdminRights(), "!admin");
     _changeOracleAdmin(_newAdmin);
+  }
+
+  function hypernativeOracle() external view returns (address) {
+    return _hypernativeOracle();
   }
 
   function hypernativeOracleAdmin() external view returns (address) {
