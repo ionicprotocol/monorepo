@@ -18,11 +18,14 @@ export class Liquidator {
     this.email = new EmailService(ionicSdk.chainId);
   }
 
-  async fetchLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(botType: BotType): Promise<T[]> {
+  async fetchLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(botType: BotType,options?: { blockNumber?: bigint }): Promise<T[]> {
     try {
+      const blockNumber = options?.blockNumber; // T
+      console.log("blockakdkalda",blockNumber)
       const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations<T>(
         config.excludedComptrollers as Address[],
-        botType
+        botType,
+        blockNumber // Pass blockNumber if present, otherwise pass undefined
       );
       console.log("botTypefromliquidator.ts", botType);
       const filteredErroredPools = erroredPools.filter(
@@ -48,14 +51,15 @@ export class Liquidator {
   }
 
   async liquidate(liquidations: LiquidatablePool): Promise<void> {
+    console.log("liquidatuoins",liquidations)
     const [erroredLiquidations, succeededLiquidations] = await this.sdk.liquidatePositions(liquidations);
     if (erroredLiquidations.length > 0) {
       logger.warn(`${erroredLiquidations.length} Liquidations failed`);
       const logMsg = erroredLiquidations
         .map((liquidation, index) => {
-          return `# Liquidation ${index}:\n - Method: ${liquidation.tx.method}\n - Value: ${
-            liquidation.tx.value
-          }\n - Args: ${JSON.stringify(liquidation.tx.args)}\n - Error: ${liquidation.error}\n`;
+          return `# Liquidation ${index}:\n - Method: safeLiquidateToTokensWithFlashloan \n - Value: ${
+            liquidation 
+          }\n - Args: ${JSON.stringify(liquidation.tx)}\n - Error: ${liquidation.error}\n`;
         })
         .join("\n");
       const errorMsg = erroredLiquidations.map((liquidation) => liquidation.error).join("\n");

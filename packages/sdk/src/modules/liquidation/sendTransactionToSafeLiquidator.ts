@@ -11,7 +11,6 @@ export default async function sendTransactionToSafeLiquidator(
   let sentTx: SendTransactionReturnType;
   // Sign transaction
   // Send transaction
-  try {
     sentTx = await sdk.contracts.IonicLiquidator.write.safeLiquidateToTokensWithFlashLoan(
       [
         {
@@ -35,7 +34,4 @@ export default async function sendTransactionToSafeLiquidator(
     }
     sdk.logger.info("Successfully sent safeLiquidateToTokensWithFlashLoan transaction hash:", sentTx);
     return receipt;
-  } catch (error) {
-    throw `Error sending safeLiquidateToTokensWithFlashLoan transaction: ${error}`;
   }
-}
