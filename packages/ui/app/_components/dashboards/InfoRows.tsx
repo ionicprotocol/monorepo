@@ -38,6 +38,7 @@ export type InfoRowsProps = {
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
+  toggler?: () => void;
 };
 
 const InfoRows = ({
@@ -53,7 +54,8 @@ const InfoRows = ({
   cToken,
   comptrollerAddress,
   pool,
-  rewards
+  rewards,
+  toggler
 }: InfoRowsProps) => {
   const supplyRewards = useMemo(
     () =>
@@ -185,19 +187,27 @@ const InfoRows = ({
             );
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Withdraw' : 'Repay'}
+          {mode === InfoMode.SUPPLY ? 'Withdraw / Add Collateral' : 'Repay'}
         </button>
 
         <button
           className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3`}
           onClick={() => {
-            setSelectedSymbol(asset);
-            setPopupMode(
-              mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.BORROW
-            );
+            if (mode === InfoMode.SUPPLY) {
+              // Router.push()
+              //toggle the mode
+              setSelectedSymbol(asset);
+              toggler?.();
+            }
+            if (mode === InfoMode.BORROW) {
+              // Router.push()
+              // toggle the mode
+              setSelectedSymbol(asset);
+              setPopupMode(PopupMode.BORROW);
+            }
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Add Collateral' : 'Borrow More'}
+          {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
         </button>
       </div>
     </div>

@@ -48,6 +48,7 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -367,8 +368,14 @@ export default function Dashboard() {
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
   return (
     <>
+      {swapOpen && <CollateralSwapPopup  toggler={() => swapToggle()} swapRef={swapRef}/>}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -677,6 +684,7 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
+                      toggler={() => swapToggle()}
                       utilization="0.00%"
                     />
                   ))}

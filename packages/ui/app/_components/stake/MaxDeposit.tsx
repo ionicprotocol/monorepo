@@ -170,7 +170,7 @@ function MaxDeposit({
                   currentTarget.src = '/img/logo/ION.png';
                 }}
               />
-              <button className={` mx-2`}>{tokenName.toUpperCase()}</button>{' '}
+              <button className={` ml-2`}>{tokenName.toUpperCase()}</button>{' '}
             </>
           )}
         </div>
