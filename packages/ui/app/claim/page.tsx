@@ -400,7 +400,9 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {haveClaimed && dropdownSelectedCampaign in claimableMapping
+                  {dropdownSelectedCampaign != DROPDOWN.PublicSale &&
+                  haveClaimed &&
+                  dropdownSelectedCampaign in claimableMapping
                     ? 0
                     : Number(formatEther(claimableTokens)).toLocaleString(
                         undefined,
