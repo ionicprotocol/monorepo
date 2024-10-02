@@ -211,27 +211,28 @@ export default async function getPotentialLiquidation(
     return null;
   }
 
-  let expectedGasAmount: bigint;
-  try {
-    expectedGasAmount = await estimateGas(
-      sdk,
-      borrower,
-      repayAmount,
-      strategyAndData,
-      flashSwapPair,
-      chainLiquidationConfig.LIQUIDATION_STRATEGY,
-      debtFundingStrategies,
-      debtFundingStrategiesData
-    );
-  } catch {
-    expectedGasAmount = 750000n;
-  }
+  // let expectedGasAmount: bigint;
+  // try {
+  //   expectedGasAmount = await estimateGas(
+  //     sdk,
+  //     borrower,
+  //     repayAmount,
+  //     strategyAndData,
+  //     flashSwapPair,
+  //     chainLiquidationConfig.LIQUIDATION_STRATEGY,
+  //     debtFundingStrategies,
+  //     debtFundingStrategiesData
+  //   );
+  // } catch {
+  //   expectedGasAmount = 750000n;
+  // }
   // Get gas fee
-  const gasPrice = await sdk.publicClient.getGasPrice();
-  const expectedGasFee = gasPrice * expectedGasAmount;
+  // const gasPrice = await sdk.publicClient.getGasPrice();
+  // const expectedGasFee = gasPrice * expectedGasAmount;
 
   // calculate min profits
-  const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
+  // const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
+  const minProfitAmountEth = 0n;
 
   // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth)*(SCALE_FACTOR_ONE_18_WEI)/(outputPrice);
 
