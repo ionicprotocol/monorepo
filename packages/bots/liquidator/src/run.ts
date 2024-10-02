@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, fallback, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { mode } from "viem/chains";
+import { base } from "viem/chains";
 
 import config from "./config";
 import liquidatePositions from "./liquidatePositions";
@@ -11,17 +11,17 @@ const run = async () => {
   const account = privateKeyToAccount(config.adminPrivateKey as Hex);
 
   const client = createPublicClient({
-    chain: mode,
+    chain: base,
     transport: fallback(config.rpcUrls.map((url) => http(url))),
   });
 
   const walletClient = createWalletClient({
     account,
-    chain: mode,
+    chain: base,
     transport: fallback(config.rpcUrls.map((url) => http(url))),
   });
 
-  const sdk = setUpSdk(config.chainId, client, walletClient);
+  const sdk = setUpSdk(config.chainId, client as any, walletClient);
 
   const liquidator = new Liquidator(sdk);
 
