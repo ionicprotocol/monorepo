@@ -252,10 +252,8 @@ export default async function getPotentialLiquidation(
     cTokenCollateral: borrower.collateral[0].cToken,
     minProfitAmount: 0n,
     flashSwapContract: flashSwapPair,
-    exchangeProfitTo: exchangeToTokenAddress,
     redemptionStrategies: strategyAndData.strategies,
     strategyData: strategyAndData.datas,
-    ethToCoinbase: 0n,
     debtFundingStrategies,
     debtFundingStrategiesData
   };

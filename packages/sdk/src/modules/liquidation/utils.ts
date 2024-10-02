@@ -46,12 +46,10 @@ export type FlashSwapLiquidationTxParams = {
   repayAmount: bigint;
   cErc20: Address;
   cTokenCollateral: Address;
-  minProfitAmount: bigint;
   flashSwapContract: Address;
-  exchangeProfitTo: Address;
+  minProfitAmount: bigint;
   redemptionStrategies: Address[];
   strategyData: Hex[];
-  ethToCoinbase: bigint;
   debtFundingStrategies: Address[];
   debtFundingStrategiesData: Hex[];
 };
