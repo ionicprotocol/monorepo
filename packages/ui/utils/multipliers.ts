@@ -566,6 +566,22 @@ export const multipliers: Record<
         },
         supply: {
           ionic: 0,
+          underlyingAPR: 5,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      'USD+': {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          rewards: false,
+          ionAPR: false
+        },
+        supply: {
+          ionic: 0,
           turtle: false,
           rewards: true,
           ionAPR: true,
@@ -703,6 +719,7 @@ export const multipliers: Record<
       wUSDM: {
         supply: {
           ionic: 0,
+          underlyingAPR: 5,
           turtle: false,
           rewards: true,
           ionAPR: true,

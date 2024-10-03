@@ -207,6 +207,7 @@ export default function Navbar() {
             // target="_blank"
           >
             {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+            {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
             </span> */}
             <p
