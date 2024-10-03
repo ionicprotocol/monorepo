@@ -17,7 +17,12 @@ variable "ethereum_admin_account" {
 variable "ethereum_admin_private_key" {
   type = string
 }
-
+variable "pyth_updater_ethereum_admin_account" {
+  type = string
+}
+variable "pyth_updater_ethereum_admin_private_key" {
+  type = string
+}
 variable "infura_api_key" {
   type = string
 }
