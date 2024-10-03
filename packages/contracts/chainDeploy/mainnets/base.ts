@@ -1,11 +1,9 @@
-import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle } from "../helpers";
 import { base } from "@ionicprotocol/chains";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
-import { prepareAndLogTransaction } from "../helpers/logging";
-import { assetSymbols } from "@ionicprotocol/types";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 
 const assets = base.assets;
@@ -44,6 +42,19 @@ export const deploy = async ({
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
+
+  //// ERC4626 Oracle
+  await deployErc4626PriceOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    erc4626Assets: base.assets
+      .filter((asset) => asset.oracle === OracleTypes.ERC4626Oracle)
+      .map((asset) => ({
+        assetAddress: asset.underlying
+      }))
+  });
 
   // //// Aerodrome Oracle
   const aerodromeAssets = base.assets.filter((asset) => asset.oracle === OracleTypes.AerodromePriceOracle);

@@ -29,6 +29,8 @@ import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol"
 import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
 import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
 import { IRouter } from "../external/aerodrome/IRouter.sol";
+import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
+import { IRouter as IVelodromeV2Router } from "../external/velodrome/IRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -791,6 +793,49 @@ contract DevTesting is BaseTest {
     IERC20Upgradeable(weth).transfer(address(liquidator), 2018770577362160);
     liquidator.redeem(IERC20Upgradeable(weth), 2018770577362160, abi.encode(usdc, kimRouter));
     emit log_named_uint("usdc received", IERC20Upgradeable(usdc).balanceOf(address(liquidator)));
+  }
+
+  function testVelodromeV2Liquidator_mode_usdcToWeth() public debuggingOnly forkAtBlock(MODE_MAINNET, 13881743) {
+    VelodromeV2Liquidator liquidator = new VelodromeV2Liquidator();
+    IERC20Upgradeable usdc = IERC20Upgradeable(0xd988097fb8612cc24eeC14542bC03424c656005f);
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
+    address usdcWhale = 0xFd1D36995d76c0F75bbe4637C84C06E4A68bBB3a;
+
+    address veloRouter = 0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45;
+
+    vm.startPrank(usdcWhale);
+    usdc.transfer(address(liquidator), 1000 * 10e6);
+    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
+    path[0] = IVelodromeV2Router.Route({
+      from: address(usdc),
+      to: address(weth),
+      stable: false
+    });
+    liquidator.redeem(usdc, 1000 * 10e6, abi.encode(veloRouter, path));
+    emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function testVelodromeV2Liquidator_mode_wethToUSDC() public debuggingOnly forkAtBlock(MODE_MAINNET, 13881743) {
+    VelodromeV2Liquidator liquidator = new VelodromeV2Liquidator();
+    IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
+    IERC20Upgradeable usdc = IERC20Upgradeable(0xd988097fb8612cc24eeC14542bC03424c656005f);
+    address wethWhale = 0xe9b14a1Be94E70900EDdF1E22A4cB8c56aC9e10a;
+
+    address veloRouter = 0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45;
+
+    vm.startPrank(wethWhale);
+    weth.transfer(address(liquidator), 1 ether);
+    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
+    path[0] = IVelodromeV2Router.Route({
+      from: address(weth),
+      to: address(usdc),
+      stable: false
+    });
+
+    liquidator.redeem(weth, 1 ether, abi.encode(veloRouter, path));
+    emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
+    vm.stopPrank();
   }
 
   function _functionCall(

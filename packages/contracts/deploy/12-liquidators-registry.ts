@@ -25,7 +25,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const liquidatorsRegistryDep = await deployments.deploy("LiquidatorsRegistry", {
     from: deployer,
     log: true,
-    args: [addressesProvider.address]
+    args: [addressesProvider.address],
+    skipIfAlreadyDeployed: true
   });
   if (liquidatorsRegistryDep.transactionHash)
     await publicClient.waitForTransactionReceipt({ hash: liquidatorsRegistryDep.transactionHash as Hash });
@@ -153,7 +154,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
             await prepareAndLogTransaction({
               contractInstance: liquidatorsRegistry,
               functionName: "_registerExtension",
-              args: [liquidatorsRegistryExtensionDep.address as Address, currentLRExtensions[0]],
+              args: [liquidatorsRegistrySecondExtensionDep.address as Address, currentLRExtensions[0]],
               description: "Replace Liquidators Registry First Extension",
               inputs: [
                 { internalType: "address", name: "extensionToAdd", type: "address" },
@@ -174,7 +175,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
             await prepareAndLogTransaction({
               contractInstance: liquidatorsRegistry,
               functionName: "_registerExtension",
-              args: [liquidatorsRegistrySecondExtensionDep.address as Address, currentLRExtensions[1]],
+              args: [liquidatorsRegistryExtensionDep.address as Address, currentLRExtensions[1]],
               description: "Replace Liquidators Registry Second Extension",
               inputs: [
                 { internalType: "address", name: "extensionToAdd", type: "address" },
