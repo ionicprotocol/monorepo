@@ -10,11 +10,16 @@ task("mode:liquidation:whitelist-redemption-strategies", "Whitelist redemption s
     const publicClient = await viem.getPublicClient();
     const aerodromeV2Liquidator = await deployments.get("AerodromeV2Liquidator");
     const kimLiquidator = await deployments.get("AlgebraSwapLiquidator");
+    const velodromeV2Liquidator = await deployments.get("VelodromeV2Liquidator");
     const ionicLiquidator = await viem.getContractAt(
       "IonicUniV3Liquidator",
       (await deployments.get("IonicUniV3Liquidator")).address as Address
     );
-    const liquidators = [aerodromeV2Liquidator.address as Address, kimLiquidator.address as Address];
+    const liquidators = [
+      aerodromeV2Liquidator.address as Address,
+      kimLiquidator.address as Address,
+      velodromeV2Liquidator.address as Address
+    ];
     for (const liquidator of liquidators) {
       const isWhitelisted = await ionicLiquidator.read.redemptionStrategiesWhitelist([liquidator]);
       if (!isWhitelisted) {
