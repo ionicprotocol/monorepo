@@ -16,7 +16,7 @@ interface Iprop {
 export default function ExtendVeion({ extendRef, extendOpen, toggle }: Iprop) {
   const [veIonAmount, setVeIonAmount] = useState<string>('');
   const [utilization, setUtilization] = useState<number>(0);
-  //@ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lockDuration, setLockDuration] = useState<string>('');
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const maxtoken = 100;
