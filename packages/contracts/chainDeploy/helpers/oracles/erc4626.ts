@@ -9,7 +9,7 @@ export const deployErc4626PriceOracle = async ({
   deployments,
   erc4626Assets
 }: Erc4626OracleFnParams): Promise<void> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
 
   const mpo = await viem.getContractAt(
@@ -28,9 +28,10 @@ export const deployErc4626PriceOracle = async ({
           args: []
         }
       },
-      owner: deployer,
+      owner: multisig,
       proxyContract: "OpenZeppelinTransparentProxy"
-    }
+    },
+    skipIfAlreadyDeployed: true
   });
   if (e4626o.transactionHash) await publicClient.waitForTransactionReceipt({ hash: e4626o.transactionHash as Address });
   console.log("ERC4626Oracle: ", e4626o.address);
