@@ -106,13 +106,13 @@ export const deploy = async ({
 
   await configureAddress(ap, publicClient, deployer, "ALGEBRA_SWAP_ROUTER", KIM_ROUTER);
 
-  const aerodromeV2LiquidatorFunder = await deployments.deploy("AerodromeV2Liquidator", {
+  const velodromeV2Liquidator = await deployments.deploy("VelodromeV2Liquidator", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1
   });
-  console.log("AerodromeV2Liquidator: ", aerodromeV2LiquidatorFunder.address);
+  console.log("VelodromeV2Liquidator: ", velodromeV2Liquidator.address);
   await configureAddress(ap, publicClient, deployer, "AERODROME_V2_ROUTER", VELODROME_V2_ROUTER);
   await configureAddress(ap, publicClient, deployer, "AERODROME_V2_FACTORY", VELODROME_V2_FACTORY);
 

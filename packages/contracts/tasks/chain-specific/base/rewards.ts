@@ -10,7 +10,8 @@ import {
   RSR_MARKET,
   usdPlus_MARKET,
   weETH_MARKET,
-  wusdm_MARKET
+  wusdm_MARKET,
+  wusdPlus_MARKET
 } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
@@ -276,12 +277,12 @@ task("base:add-rewards:epoch2:supply:wusdm", "add rewards to a market").setActio
   }
 );
 
-task("base:add-rewards:epoch2:supply:usdplus", "add rewards to a market").setAction(
+task("base:add-rewards:epoch2:supply:wusdplus", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = usdPlus_MARKET;
+    const market = wusdPlus_MARKET;
     const rewardAmount = (50_000).toString();
 
     // Sending tokens
