@@ -17,7 +17,8 @@ export default function AutoLock({ autoLock, setAutoLock }: IProp) {
         />
       </div>
       <div className="text-white/50 text-sm ">
-        AutoLock <InfoPopover content="The auto-prolong option extends the lock indefinitely, which keeps your voting power at the same peak level. You can disable this option any time later." />
+        AutoLock{' '}
+        <InfoPopover content="The auto-prolong option extends the lock indefinitely, which keeps your voting power at the same peak level. You can disable this option any time later." />
       </div>
     </div>
   );
