@@ -8,8 +8,8 @@ const config = {
   rpcUrls: process.env.BASE_MAINNET_RPCS
     ? process.env.BASE_MAINNET_RPCS.split(',')
     : ['https://mainnet.mode.network/'], // Updated to handle multiple RPC URLs
-  adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? '',
-  adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? '',
+  adminPrivateKey: process.env.PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY ?? '',
+  adminAccount: process.env.PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT ?? '',
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? '',
   priceServiceEndpoint: 'https://hermes.pyth.network/',
 };
