@@ -109,7 +109,7 @@ contract LeveredPositionFactoryFirstExtension is
   }
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address) {
-    // TODO
+    // TODO return the address of some freshly created levered position
     return address(0);
   }
 }
