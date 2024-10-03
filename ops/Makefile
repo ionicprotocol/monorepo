@@ -122,8 +122,8 @@ liquidator-smoke-test:
 
 pyth-smoke-test:
 	@docker run -t --entrypoint node \
-				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
-				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT=${PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT} \         
+    			-e PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY=${PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY} \     
 				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
