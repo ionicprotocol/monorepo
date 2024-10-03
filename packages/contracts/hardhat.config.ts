@@ -22,7 +22,8 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: { default: 0 },
     multisig: {
-      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2"
+      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
+      8453: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB"
     }
   },
   solidity: {
