@@ -30,6 +30,11 @@ interface IVoter {
   error ZeroBalance();
   error ZeroAddress();
 
+  struct Market {
+    address marketAddress;
+    MarketSide side;
+  }
+
   enum MarketSide {
     Supply,
     Borrow,
