@@ -63,6 +63,8 @@ prod-plan:
 	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
+	export TF_VAR_pyth_updater_ethereum_admin_account=${PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT} && \
+	export TF_VAR_pyth_updater_ethereum_admin_private_key=${PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
@@ -84,6 +86,8 @@ prod-deploy:
 	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
+	export TF_VAR_pyth_updater_ethereum_admin_account=${PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT} && \
+	export TF_VAR_pyth_updater_ethereum_admin_private_key=${PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
@@ -118,8 +122,8 @@ liquidator-smoke-test:
 
 pyth-smoke-test:
 	@docker run -t --entrypoint node \
-				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
-				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT=${PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT} \
+				-e PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY=${PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY} \
 				-e WEB3_HTTP_PROVIDER_URLS="https://mainnet.mode.network" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=34443 \
