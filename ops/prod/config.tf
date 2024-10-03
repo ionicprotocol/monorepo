@@ -57,10 +57,12 @@ locals {
     { DISCORD_WEBHOOK_URL = var.oracles_discord_webhook_url }
   )
   pyth_updater_lambda_variables = merge(
-    local.shared_env_vars_lambda,
-    { DISCORD_WEBHOOK_URL = var.pyth_updater_discord_webhook_url, 
-     UPTIME_PYTH_UPDATER_API = var.uptime_pyth_updater_api,
-   },
-    
+  local.shared_env_vars_lambda,
+  {
+    DISCORD_WEBHOOK_URL                           = var.pyth_updater_discord_webhook_url,
+    UPTIME_PYTH_UPDATER_API                       = var.uptime_pyth_updater_api,
+    PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT           = var.pyth_updater_ethereum_admin_account, # Use PYTH_UPDATER specific variable
+    PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY       = var.pyth_updater_ethereum_admin_private_key, # Use PYTH_UPDATER specific variable
+  }
   )
 }
