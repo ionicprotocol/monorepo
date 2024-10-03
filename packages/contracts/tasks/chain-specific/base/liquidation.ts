@@ -171,11 +171,17 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       console.log("Transaction sent to set tick spacing:", tickTx);
     }
     const readTick1 = await liquidatorRegistry.read.aeroCLTickSpacings([aeroUnderlying, wethUnderlying]);
-    console.log("🚀 ~ readTick1:", readTick1);
+    const readTick2 = await liquidatorRegistry.read.aeroCLTickSpacings([wethUnderlying, aeroUnderlying]);
+    console.log("🚀 ~ readTick1:", readTick1, readTick2);
     if (readTick1 !== 200) {
       const tickTx1 = await liquidatorRegistry.write._setAeroCLTickSpacings([aeroUnderlying, wethUnderlying, 200]);
       await publicClient.waitForTransactionReceipt({ hash: tickTx1 });
       console.log("Transaction sent to set tick spacing:", tickTx1);
+    }
+    if (readTick2 !== 200) {
+      const tickTx2 = await liquidatorRegistry.write._setAeroCLTickSpacings([wethUnderlying, aeroUnderlying, 200]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx2 });
+      console.log("Transaction sent to set tick spacing:", tickTx2);
     }
     const readWrapped = await liquidatorRegistry.read.wrappedToUnwrapped4626([wsuperOETHUnderlying]);
     console.log("🚀 ~ readWrapped:", readWrapped);
