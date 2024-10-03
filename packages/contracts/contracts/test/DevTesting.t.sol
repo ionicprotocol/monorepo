@@ -21,6 +21,8 @@ import { PoolLens } from "../PoolLens.sol";
 import { PoolLensSecondary } from "../PoolLensSecondary.sol";
 import { JumpRateModel } from "../compound/JumpRateModel.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
+import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegistry.sol";
+import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
@@ -82,6 +84,8 @@ contract DevTesting is BaseTest {
   address AAVE = 0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2;
   address weETH = 0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A;
   address merlinBTC = 0x59889b7021243dB5B1e065385F918316cD90D46c;
+  IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
+  IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -696,7 +700,6 @@ contract DevTesting is BaseTest {
 
   function testAerodromeCLLiquidator() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
     AerodromeCLLiquidator liquidator = new AerodromeCLLiquidator();
-    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
     IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     address superOETHWhale = 0xF1010eE787Ee588766b441d7cC397b40DdFB17a3;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
@@ -710,8 +713,6 @@ contract DevTesting is BaseTest {
 
   function testAerodromeCLLiquidatorWrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 20203998) {
     IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
-    IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
-    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
     address wethWhale = 0x751b77C43643a63362Ab024d466fcC1d75354295;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
 
@@ -729,8 +730,6 @@ contract DevTesting is BaseTest {
   }
 
   function testAerodromeCLLiquidatorUnwrap() public debuggingOnly forkAtBlock(BASE_MAINNET, 19968360) {
-    IERC20Upgradeable wsuperOETH = IERC20Upgradeable(0x7FcD174E80f264448ebeE8c88a7C4476AAF58Ea6);
-    IERC20Upgradeable superOETH = IERC20Upgradeable(0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3);
     IERC20Upgradeable weth = IERC20Upgradeable(0x4200000000000000000000000000000000000006);
     address wsuperOethWhale = 0x0EEaCD4c475040463389d15EAd034d1291b008b1;
     address aerodromeCLRouter = 0xBE6D8f0d05cC4be24d5167a3eF062215bE6D18a5;
@@ -842,15 +841,27 @@ contract DevTesting is BaseTest {
     return returndata;
   }
 
-  function testRawCall() public debuggingOnly forkAtBlock(MODE_MAINNET, 7337902) {
-    address caller = 0x2b81E6C41636BaEa95a1Da5c688cCcd938f9Af33;
-    address target = 0x9B506A03bBFf2a842866b10BC6732da72640cd45;
+  function testRawCall() public debuggingOnly forkAtBlock(BASE_MAINNET, 20569373) {
+    address caller = 0xC13110d04f22ed464Cb72A620fF8163585358Ff9;
+    address target = 0x180272dDf5767C771b3a8d37A2DC6cA507aaa1d9;
 
-    ERC20(WETH).allowance(caller, target);
+    ILeveredPositionFactory factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
+    ILiquidatorsRegistry registry = factory.liquidatorsRegistry();
 
-    bytes
-      memory data = hex"534da46000000000000000000000000059e710215d45f584f44c0fee83da6d43d762d8570000000000000000000000002be717340023c9e14c1bb12cb3ecbcfd3c3fb0380000000000000000000000002416092f143378750bb29b79ed961ab195cceea500000000000000000000000000000000000000000000000015faebcf6161ab5d00000000000000000000000000000000000000000000000029a2241af62c0000";
+    AerodromeCLLiquidator aerodomeClLiquidator = new AerodromeCLLiquidator();
+
+    IERC20Upgradeable inputToken = IERC20Upgradeable(WETH);
+    IERC20Upgradeable outputToken = wsuperOETH;
+    vm.startPrank(registry.owner());
+    registry._setRedemptionStrategy(aerodomeClLiquidator, inputToken, outputToken);
+    registry._setRedemptionStrategy(aerodomeClLiquidator, outputToken, inputToken);
+    vm.stopPrank();
+
+    bytes memory data = hex"c393d0e3";
     vm.prank(caller);
     _functionCall(target, data, "raw call failed");
+
+    uint256 superOETHBalance = superOETH.balanceOf(target);
+    emit log_named_uint("balance of levered position", superOETHBalance);
   }
 }
