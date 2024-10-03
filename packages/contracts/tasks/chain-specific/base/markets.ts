@@ -2,10 +2,9 @@ import { task } from "hardhat/config";
 import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
-import { parseEther } from "viem";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.USDplus];
+  const assetsToDeploy: string[] = [assetSymbols.wUSDplus];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.underlying || !asset.symbol) {
       throw new Error("Invalid asset");
