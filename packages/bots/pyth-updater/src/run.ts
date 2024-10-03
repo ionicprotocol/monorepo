@@ -21,7 +21,7 @@ export const run = async (): Promise<void> => {
     transport: fallback(config.rpcUrls.map((url) => http(url))),
   });
 
-  const sdk = setUpSdk(config.chainId, client, walletClient);
+  const sdk = setUpSdk(config.chainId, client as any, walletClient);
   const assetConfig = chainIdToConfig[config.chainId];
   const updater = await new Updater(sdk).init(assetConfig);
 
