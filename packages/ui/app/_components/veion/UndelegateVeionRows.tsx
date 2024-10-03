@@ -2,7 +2,7 @@
 
 import type { LockedDataWithDelegate } from '@ui/constants/mock';
 
-export default function DelegateVeionRows({
+export default function UndelegateVeionRows({
   id,
   tokensLocked,
   lockedBLP,
@@ -76,7 +76,7 @@ export default function DelegateVeionRows({
 
       {readyToDelegate ? (
         <button className="bg-accent py-2 px-4 text-black rounded-md mr-2 ">
-          Delegate
+          Undelegate
         </button>
       ) : (
         <button

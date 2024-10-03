@@ -10,8 +10,8 @@ import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 import NetworkSelector from 'ui/app/_components/markets/NetworkSelector';
 import FlatMap from 'ui/app/_components/points_comp/FlatMap';
 import Toggle from 'ui/app/_components/Toggle';
-import DelegateVeionRows from 'ui/app/_components/veion/DelegateVeionRows';
 import MyveionRows from 'ui/app/_components/veion/MyveionRows';
+import UndelegateVeionRows from 'ui/app/_components/veion/UndelegateVeionRows';
 
 export default function Governance() {
   const searchParams = useSearchParams();
@@ -130,7 +130,7 @@ export default function Governance() {
 
         {view === 'Delegate veION' &&
           lockedDataWithDelegate.map((data, idx) => (
-            <DelegateVeionRows
+            <UndelegateVeionRows
               key={idx}
               {...data}
             />

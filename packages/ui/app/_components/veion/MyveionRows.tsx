@@ -2,13 +2,12 @@
 
 // import { useState } from 'react';
 
+import ExtendVeion from './ExtendVeion';
+import VeionClaim from './VeionClaim';
+
 import type { LockedData } from '@ui/constants/mock';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 // import { useState } from 'react';
-
-
-import ExtendVeion from './ExtendVeion';
-import VeionClaim from './veIONClaim';
 
 export default function MyveionRows({
   id,
