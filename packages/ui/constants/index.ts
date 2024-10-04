@@ -1,16 +1,8 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
-import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
-
-export const explorerLinks: Record<number, string> = {
-  [mode.id]: 'https://explorer.mode.network',
-  [base.id]: 'https://basescan.org',
-  [optimism.id]: 'https://optimistic.etherscan.io',
-  [bob.id]: 'https://explorer.gobob.xyz',
-  [fraxtal.id]: 'https://fraxscan.com'
-};
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
@@ -39,6 +31,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': ''
+    },
+    [lisk.id]: {
+      '0': ''
     }
   },
   featuredSupply2: {
@@ -57,6 +52,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': 'wfrxeth'
+    },
+    [lisk.id]: {
+      '0': 'weth'
     }
   }
 };
@@ -270,6 +268,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: ['FRAX', 'wfrxETH', 'FXS']
+      }
+    ]
+  },
+  [lisk.id]: {
+    name: 'Lisk',
+    arrow: 'ffffff',
+    bg: 'bg-lisk',
+    text: 'text-white',
+    border: 'border-lisk',
+    logo: '/img/logo/Lisk.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['WETH']
       }
     ]
   }

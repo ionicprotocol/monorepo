@@ -24,7 +24,7 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 
-import { explorerLinks, INFO_MESSAGES } from '@ui/constants/index';
+import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { useGetNetApy } from '@ui/hooks/leverage/useGetNetApy';
@@ -36,6 +36,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
   ssr: false
@@ -1002,7 +1003,7 @@ export default function Loop({
                 : 'No Loop Position Found, Create a New One'}
               {currentPosition && (
                 <a
-                  href={`${explorerLinks[chainId]}/address/${currentPosition.address}`}
+                  href={`${getScanUrlByChainId(chainId)}/address/${currentPosition.address}`}
                   target="_blank"
                   className="text-cyan-400 pl-2"
                 >

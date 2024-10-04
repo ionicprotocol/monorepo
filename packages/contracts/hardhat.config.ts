@@ -29,15 +29,6 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: "0.8.10",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200
-          }
-        }
-      },
-      {
         version: "0.8.22",
         settings: {
           optimizer: {
@@ -99,6 +90,10 @@ const config: HardhatUserConfig = {
           apiKey: process.env.ETHERSCAN_API_KEY_FRAXTAL
         }
       }
+    },
+    lisk: {
+      url: process.env.OVERRIDE_RPC_URL_LISK ?? "https://rpc.api.lisk.com",
+      accounts
     }
   },
   etherscan: {

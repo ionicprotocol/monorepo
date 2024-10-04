@@ -99,10 +99,6 @@ task("pool:create", "Create pool if does not exist")
     }
     const feeDistributorAddress = (await deployments.get("FeeDistributor")).address as Address;
 
-    throw new Error("FIX POOL EVENTS");
-
-    const events = await poolDirectory.createEventFilter.PoolRegistered();
-
     const deployTx = await poolDirectory.write.deployPool([
       taskArgs.name as string,
       (await deployments.get("Comptroller")).address as Address,
@@ -112,21 +108,18 @@ task("pool:create", "Create pool if does not exist")
       parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
       taskArgs.priceOracle as Address
     ]);
-    await publicClient.waitForTransactionReceipt({ hash: deployTx });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
+    const [event] = await poolDirectory.getEvents.PoolRegistered({ blockHash: receipt.blockHash });
+    console.log(`Pool registered: ${event}`);
+    if (!event) {
+      throw "Pool not found";
+    }
 
-    const [, existingPools] = await poolDirectory.read.getActivePools();
     // Compute Unitroller address
-    const poolAddress = getContractAddress({
-      bytecode: keccak256(
-        (unitrollerBytecode +
-          encodeAbiParameters(parseAbiParameters("address"), [feeDistributorAddress]).slice(2)) as Hex
-      ),
-      from: deployer as Address,
-      opcode: "CREATE2",
-      salt: keccak256(
-        encodePacked(["address", "string", "uint"], [deployer as Address, taskArgs.name, BigInt(existingPools.length)])
-      )
-    });
+    const poolAddress = event.args.pool?.comptroller;
+    if (!poolAddress) {
+      throw "Pool address not found";
+    }
 
     const unitroller = await viem.getContractAt("Unitroller", poolAddress);
     const acceptTx = await unitroller.write._acceptAdmin();
