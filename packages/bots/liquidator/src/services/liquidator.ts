@@ -1,8 +1,9 @@
-
 import { BotType, ionicLiquidatorAbi, IonicSdk, LiquidatablePool, PythLiquidatablePool } from "@ionicprotocol/sdk";
 import { Address, TransactionReceipt } from "viem";
+
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
+
 import { DiscordService } from "./discordnew";
 import { EmailService } from "./email";
 export type SimplifiedTransactionReceipt = Pick<
@@ -108,7 +109,7 @@ export class Liquidator {
         const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
 
         // Check if the transaction was successful
-        if (receipt.status === 'success') {
+        if (receipt.status === "success") {
           // Create the transaction receipt
           const transactionReceipt: SimplifiedTransactionReceipt = {
             transactionHash: sentTx, // Assuming sentTx is the transaction hash
@@ -140,7 +141,7 @@ export class Liquidator {
       const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
 
       // Check if the receipt status is 'success'
-      if (receipt.status === 'success') {
+      if (receipt.status === "success") {
         // Construct the message for each successful transaction directly
         const msg =
           `Transaction Hash: ${tx.transactionHash}\n` +
@@ -157,6 +158,5 @@ export class Liquidator {
         logger.error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
       }
     }
-
   }
-}  
+}
