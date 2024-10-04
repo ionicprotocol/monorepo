@@ -58,8 +58,10 @@ export class Liquidator {
       logger.warn("No liquidations available in the pool.");
       return; // Exit early if there are no liquidations
     }
+
     // Array to collect successful transaction receipts
     const successfulTxs: SimplifiedTransactionReceipt[] = [];
+
     // Iterate through the liquidations property, which is an array of FlashSwapLiquidationTxParams
     for (const liquidation of pool.liquidations) {
       const params = {
@@ -74,6 +76,7 @@ export class Liquidator {
         strategyData: liquidation.strategyData,
         repayAmount: liquidation.repayAmount,
       };
+
       try {
         // Call the smart contract function to execute the liquidation
         const sentTx = await this.sdk.walletClient!.writeContract({
@@ -95,53 +98,64 @@ export class Liquidator {
             },
           ],
         } as any);
+
         // Ensure the account is defined
         const senderAddress = this.sdk.walletClient!.account;
         if (!senderAddress) {
           throw new Error("Sender address is undefined");
         }
-        // Create the transaction receipt
-        const transactionReceipt: SimplifiedTransactionReceipt = {
-          transactionHash: sentTx, // Assuming sentTx is the transaction hash
-          contractAddress: this.sdk.contracts.IonicLiquidator.address, // Set as per your logic
-          from: senderAddress as unknown as `0x${string}`, // Cast to the specific format
-          to: this.sdk.contracts.IonicLiquidator.address, // Set as needed
-          status: "success", // Set according to your logic
-        };
-        // Add successful transaction receipt to the array
-        successfulTxs.push(transactionReceipt);
+
+        // Wait for the transaction receipt
+        const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
+
+        // Check if the transaction was successful
+        if (receipt.status === "success") {
+          // Create the transaction receipt
+          const transactionReceipt: SimplifiedTransactionReceipt = {
+            transactionHash: sentTx, // Assuming sentTx is the transaction hash
+            contractAddress: this.sdk.contracts.IonicLiquidator.address, // Set as per your logic
+            from: senderAddress as unknown as `0x${string}`, // Cast to the specific format
+            to: this.sdk.contracts.IonicLiquidator.address, // Set as needed
+            status: receipt.status, // Reflect the actual status
+          };
+          // Add successful transaction receipt to the array
+          successfulTxs.push(transactionReceipt);
+        } else {
+          throw new Error(`Transaction ${sentTx} failed with status: ${receipt.status}`);
+        }
       } catch (error: any) {
         logger.error(`Liquidation failed for borrower ${params.borrower}: ${error.message}`);
         // Create a LiquidatablePool instance for the alert
         const liquidationPool: LiquidatablePool = {
           liquidations: [params],
-          comptroller: "",
+          comptroller: pool.comptroller, // Use the actual comptroller from the pool
         };
         // Send alert for the failed liquidation
         await this.alert.sendLiquidationFailure(liquidationPool, error.message);
       }
-      // logger.info(`Liquidation Succeeded for borrower ${successfulTxs}`);
-      // Inside the liquidate method after success
-      // Inside the liquidate method after success
-      // console.log("Successful Transaction", successfulTxs);
-      // Inside the liquidate method after success
-      if (successfulTxs.length > 0) {
-        // Convert the successfulTxs array to a string format
-        const msg = successfulTxs
-          .map((tx) => {
-            return (
-              `Transaction Hash: ${tx.transactionHash}\n` +
-              `Contract Address: ${tx.contractAddress}\n` +
-              `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
-              `To Address: ${tx.to}\n` +
-              `Status: ${tx.status}\n` +
-              `**----------------------------------**`
-            );
-          })
-          .join("\n");
-        logger.info(`Sending success alert for successful transactions: ${JSON.stringify(successfulTxs)}`);
-        // You can include the entire successfulTxs object in the alert
-        await this.alert.sendLiquidationSuccess(successfulTxs, msg);
+    }
+
+    // Process each successful transaction and send alert
+    for (const tx of successfulTxs) {
+      // Wait for the transaction receipt for each successful transaction
+      const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
+
+      // Check if the receipt status is 'success'
+      if (receipt.status === "success") {
+        // Construct the message for each successful transaction directly
+        const msg =
+          `Transaction Hash: ${tx.transactionHash}\n` +
+          `Contract Address: ${tx.contractAddress}\n` +
+          `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
+          `To Address: ${tx.to}\n` +
+          `Status: ${tx.status}\n` +
+          `**----------------------------------**`;
+
+        logger.info(`Sending success alert for transaction: ${tx.transactionHash}`);
+        // Send the success alert for the individual transaction
+        await this.alert.sendLiquidationSuccess([tx], msg);
+      } else {
+        throw new Error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
       }
     }
   }
