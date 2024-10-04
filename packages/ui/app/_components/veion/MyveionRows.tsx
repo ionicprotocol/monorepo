@@ -3,6 +3,7 @@
 // import { useState } from 'react';
 
 import ExtendVeion from './ExtendVeion';
+import ManagePopup from './ManagePopup';
 import VeionClaim from './VeionClaim';
 
 import type { LockedData } from '@ui/constants/mock';
@@ -30,6 +31,11 @@ export default function MyveionRows({
     isopen: extendOpen,
     toggle: extendToggle
   } = useOutsideClick();
+  const {
+    componentRef: manageRef,
+    isopen: isManageOpen,
+    toggle: manageToggle
+  } = useOutsideClick();
 
   return (
     <>
@@ -42,6 +48,11 @@ export default function MyveionRows({
         extendRef={extendRef}
         extendOpen={extendOpen}
         toggle={() => extendToggle()}
+      />
+      <ManagePopup
+        manageRef={manageRef}
+        isManageOpen={isManageOpen}
+        toggleManage={() => manageToggle()}
       />
       <div
         className={`w-full h-full md:grid grid-cols-10 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative *:text-center py-4 *:text-sm *:content-center `}
@@ -129,7 +140,10 @@ export default function MyveionRows({
             <button className="bg-white/10 py-2 px-4 text-white rounded-md mr-2 ">
               Vote
             </button>
-            <button className="bg-white/10 py-2 px-4 text-white rounded-md mr-2 ">
+            <button
+              onClick={() => manageToggle()}
+              className="bg-white/10 py-2 px-4 text-white rounded-md mr-2 "
+            >
               Manage
             </button>
           </div>
