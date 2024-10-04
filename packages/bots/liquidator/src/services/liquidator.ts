@@ -57,10 +57,10 @@ export class Liquidator {
       logger.warn("No liquidations available in the pool.");
       return; // Exit early if there are no liquidations
     }
-  
+
     // Array to collect successful transaction receipts
     const successfulTxs: SimplifiedTransactionReceipt[] = [];
-  
+
     // Iterate through the liquidations property, which is an array of FlashSwapLiquidationTxParams
     for (const liquidation of pool.liquidations) {
       const params = {
@@ -75,7 +75,7 @@ export class Liquidator {
         strategyData: liquidation.strategyData,
         repayAmount: liquidation.repayAmount,
       };
-  
+
       try {
         // Call the smart contract function to execute the liquidation
         const sentTx = await this.sdk.walletClient!.writeContract({
@@ -97,16 +97,16 @@ export class Liquidator {
             },
           ],
         } as any);
-  
+
         // Ensure the account is defined
         const senderAddress = this.sdk.walletClient!.account;
         if (!senderAddress) {
           throw new Error("Sender address is undefined");
         }
-  
+
         // Wait for the transaction receipt
         const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
-  
+
         // Check if the transaction was successful
         if (receipt.status === 'success') {
           // Create the transaction receipt
@@ -133,23 +133,23 @@ export class Liquidator {
         await this.alert.sendLiquidationFailure(liquidationPool, error.message);
       }
     }
-  
+
     // Process each successful transaction and send alert
     for (const tx of successfulTxs) {
       // Wait for the transaction receipt for each successful transaction
       const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
-    
+
       // Check if the receipt status is 'success'
       if (receipt.status === 'success') {
         // Construct the message for each successful transaction directly
-        const msg = 
+        const msg =
           `Transaction Hash: ${tx.transactionHash}\n` +
           `Contract Address: ${tx.contractAddress}\n` +
           `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
           `To Address: ${tx.to}\n` +
           `Status: ${tx.status}\n` +
           `**----------------------------------**`;
-    
+
         logger.info(`Sending success alert for transaction: ${tx.transactionHash}`);
         // Send the success alert for the individual transaction
         await this.alert.sendLiquidationSuccess([tx], msg);
@@ -157,6 +157,6 @@ export class Liquidator {
         logger.error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
       }
     }
-    
+
   }
 }  
