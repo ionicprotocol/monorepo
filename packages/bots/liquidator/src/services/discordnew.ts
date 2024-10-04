@@ -2,6 +2,7 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicproto
 import { SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 import { TransactionReceipt } from "viem";
+
 import config from "../config";
 export type SimplifiedTransactionReceipt = Pick<
   TransactionReceipt,
