@@ -4,20 +4,20 @@ pragma solidity >=0.8.0;
 import { DiamondExtension } from "../ionic/DiamondExtension.sol";
 import { IFlashLoanReceiver } from "../ionic/IFlashLoanReceiver.sol";
 import { CErc20FirstExtensionBase, CTokenFirstExtensionInterface, ICErc20 } from "./CTokenInterfaces.sol";
-import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 import { SFSRegister } from "./ComptrollerInterface.sol";
 import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { Multicall } from "../utils/Multicall.sol";
+import { OracleProtected } from "../security/OracleProtected.sol";
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 
 contract CTokenFirstExtension is
-  CTokenOracleProtected,
+  OracleProtected,
   CErc20FirstExtensionBase,
   TokenErrorReporter,
   Exponential,
@@ -33,7 +33,7 @@ contract CTokenFirstExtension is
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 31;
+    uint8 fnsCount = 27;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.transfer.selector;
     functionSelectors[--fnsCount] = this.transferFrom.selector;
@@ -61,11 +61,7 @@ contract CTokenFirstExtension is
     functionSelectors[--fnsCount] = this.borrowBalanceCurrent.selector;
     functionSelectors[--fnsCount] = this.registerInSFS.selector;
     functionSelectors[--fnsCount] = this.setOracle.selector;
-    functionSelectors[--fnsCount] = this.setIsStrictMode.selector;
-    functionSelectors[--fnsCount] = this.changeOracleAdmin.selector;
     functionSelectors[--fnsCount] = this.hypernativeOracle.selector;
-    functionSelectors[--fnsCount] = this.hypernativeOracleAdmin.selector;
-    functionSelectors[--fnsCount] = this.hypernativeOracleIsStrictMode.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -713,25 +709,7 @@ contract CTokenFirstExtension is
     _setOracle(_oracle);
   }
 
-  function setIsStrictMode(bool _mode) external {
-    require(hasAdminRights(), "!admin");
-    _setIsStrictMode(_mode);
-  }
-
-  function changeOracleAdmin(address _newAdmin) external {
-    require(hasAdminRights(), "!admin");
-    _changeOracleAdmin(_newAdmin);
-  }
-
   function hypernativeOracle() external view returns (address) {
     return _hypernativeOracle();
-  }
-
-  function hypernativeOracleAdmin() external view returns (address) {
-    return _hypernativeOracleAdmin();
-  }
-
-  function hypernativeOracleIsStrictMode() external view returns (bool) {
-    return _hypernativeOracleIsStrictMode();
   }
 }

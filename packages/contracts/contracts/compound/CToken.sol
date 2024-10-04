@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 import { IonicComptroller } from "./ComptrollerInterface.sol";
 import { CTokenSecondExtensionBase, ICErc20 } from "./CTokenInterfaces.sol";
-import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { EIP20Interface } from "./EIP20Interface.sol";
@@ -13,6 +12,7 @@ import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { DiamondExtension, LibDiamond } from "../ionic/DiamondExtension.sol";
 import { PoolLens } from "../PoolLens.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
+import { OracleProtected } from "../security/OracleProtected.sol";
 
 /**
  * @title Compound's CErc20 Contract
@@ -20,7 +20,7 @@ import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
  * @dev This contract should not to be deployed on its own; instead, deploy `CErc20Delegator` (proxy contract) and `CErc20Delegate` (logic/implementation contract).
  * @author Compound
  */
-abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
+abstract contract CErc20 is OracleProtected, CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
   modifier isAuthorized() {
     require(
       IFeeDistributor(ionicAdmin).canCall(address(comptroller), msg.sender, address(this), msg.sig),

@@ -14,7 +14,7 @@ import { FeeDistributor } from "../FeeDistributor.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { CErc20Delegate } from "../compound/CErc20Delegate.sol";
 import { InterestRateModel } from "../compound/InterestRateModel.sol";
-import { IHypernativeOracle } from "../compound/CTokenOracleProtected.sol";
+import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
 contract MockOraclePasses is IHypernativeOracle {
   function isBlacklistedContext(address _account, address _origin) external pure returns (bool) {
@@ -72,13 +72,6 @@ contract OracleProtectedTest is UpgradesBaseTest {
     vm.prank(admin);
     asExt.setOracle(address(oraclePasses));
     assertEq(asExt.hypernativeOracle(), address(oraclePasses));
-  }
-
-  function test_setIsStrictMode_worksForAdmin() public debuggingOnly forkAtBlock(BASE_MAINNET, 20538729) {
-    CTokenFirstExtension asExt = CTokenFirstExtension(address(market));
-    vm.prank(admin);
-    asExt.setIsStrictMode(true);
-    assertTrue(asExt.hypernativeOracleIsStrictMode());
   }
 
   function test_mint_failsForBlacklisted() public debuggingOnly forkAtBlock(BASE_MAINNET, 20538729) {

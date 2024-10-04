@@ -3,8 +3,15 @@ pragma solidity ^0.8.22;
 
 import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
-
-abstract contract CTokenOracleProtected {
+/**
+ * @title OracleProtected
+ * @author Ionic Protocol
+ * @notice This contract provides modifiers to protect functions against malicious calls.
+ * @dev The setOracle function is internal and must be called from a diamond proxy, after
+ * this contract is inherited by an extension,which can then use the modifiers to protect 
+ * its functions.
+ */
+abstract contract OracleProtected {
   bytes32 private constant HYPERNATIVE_ORACLE_STORAGE_SLOT =
     bytes32(uint256(keccak256("eip1967.hypernative.oracle")) - 1);
   bytes32 private constant HYPERNATIVE_ADMIN_STORAGE_SLOT =
@@ -44,33 +51,14 @@ abstract contract CTokenOracleProtected {
     _;
   }
 
-  function oracleRegister(address _account) public virtual {
-    address oracleAddress = _getAddressBySlot(HYPERNATIVE_ORACLE_STORAGE_SLOT);
-    IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (_hypernativeOracleIsStrictMode()) {
-      oracle.registerStrict(_account);
-    } else {
-      oracle.register(_account);
-    }
-  }
-
   /**
    * @dev Admin only function, sets new oracle admin. set to address(0) to revoke oracle
+   * Needs to be called from a diamond proxy 
    */
   function _setOracle(address _oracle) internal {
     address oldOracle = _hypernativeOracle();
     _setAddressBySlot(HYPERNATIVE_ORACLE_STORAGE_SLOT, _oracle);
     emit OracleAddressChanged(oldOracle, _oracle);
-  }
-
-  function _setIsStrictMode(bool _mode) internal {
-    _setValueBySlot(HYPERNATIVE_MODE_STORAGE_SLOT, _mode ? 1 : 0);
-  }
-
-  function _changeOracleAdmin(address _newAdmin) internal {
-    address oldAdmin = _hypernativeOracleAdmin();
-    _setAddressBySlot(HYPERNATIVE_ADMIN_STORAGE_SLOT, _newAdmin);
-    emit OracleAdminChanged(oldAdmin, _newAdmin);
   }
 
   function _setAddressBySlot(bytes32 slot, address newAddress) internal {
@@ -79,29 +67,9 @@ abstract contract CTokenOracleProtected {
     }
   }
 
-  function _setValueBySlot(bytes32 _slot, uint256 _value) internal {
-    assembly {
-      sstore(_slot, _value)
-    }
-  }
-
-  function _hypernativeOracleAdmin() internal view returns (address) {
-    return _getAddressBySlot(HYPERNATIVE_ADMIN_STORAGE_SLOT);
-  }
-
-  function _hypernativeOracleIsStrictMode() internal view returns (bool) {
-    return _getValueBySlot(HYPERNATIVE_MODE_STORAGE_SLOT) == 1;
-  }
-
   function _getAddressBySlot(bytes32 slot) internal view returns (address addr) {
     assembly {
       addr := sload(slot)
-    }
-  }
-
-  function _getValueBySlot(bytes32 _slot) internal view returns (uint256 _value) {
-    assembly {
-      _value := sload(_slot)
     }
   }
 
