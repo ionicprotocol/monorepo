@@ -1,8 +1,9 @@
-
 import { BotType, ionicLiquidatorAbi, IonicSdk, LiquidatablePool, PythLiquidatablePool } from "@ionicprotocol/sdk";
 import { Address, TransactionReceipt } from "viem";
+
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
+
 import { DiscordService } from "./discordnew";
 import { EmailService } from "./email";
 export type SimplifiedTransactionReceipt = Pick<
@@ -105,7 +106,7 @@ export class Liquidator {
           contractAddress: this.sdk.contracts.IonicLiquidator.address, // Set as per your logic
           from: senderAddress as unknown as `0x${string}`, // Cast to the specific format
           to: this.sdk.contracts.IonicLiquidator.address, // Set as needed
-          status: 'success', // Set according to your logic
+          status: "success", // Set according to your logic
         };
         // Add successful transaction receipt to the array
         successfulTxs.push(transactionReceipt);
@@ -114,7 +115,7 @@ export class Liquidator {
         // Create a LiquidatablePool instance for the alert
         const liquidationPool: LiquidatablePool = {
           liquidations: [params],
-          comptroller: ""
+          comptroller: "",
         };
         // Send alert for the failed liquidation
         await this.alert.sendLiquidationFailure(liquidationPool, error.message);
@@ -126,14 +127,18 @@ export class Liquidator {
       // Inside the liquidate method after success
       if (successfulTxs.length > 0) {
         // Convert the successfulTxs array to a string format
-        const msg = successfulTxs.map(tx => {
-          return `Transaction Hash: ${tx.transactionHash}\n` +
-            `Contract Address: ${tx.contractAddress}\n` +
-            `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
-            `To Address: ${tx.to}\n` +
-            `Status: ${tx.status}\n` +
-            `**----------------------------------**`;
-        }).join("\n");
+        const msg = successfulTxs
+          .map((tx) => {
+            return (
+              `Transaction Hash: ${tx.transactionHash}\n` +
+              `Contract Address: ${tx.contractAddress}\n` +
+              `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
+              `To Address: ${tx.to}\n` +
+              `Status: ${tx.status}\n` +
+              `**----------------------------------**`
+            );
+          })
+          .join("\n");
         logger.info(`Sending success alert for successful transactions: ${JSON.stringify(successfulTxs)}`);
         // You can include the entire successfulTxs object in the alert
         await this.alert.sendLiquidationSuccess(successfulTxs, msg);
