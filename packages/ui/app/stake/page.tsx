@@ -816,6 +816,7 @@ export default function Stake() {
               />
             )}
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
+            {/* spacer */}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto " />
             <button
               disabled={
