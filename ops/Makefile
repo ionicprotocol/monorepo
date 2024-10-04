@@ -71,6 +71,8 @@ prod-plan:
 	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \
 	export TF_VAR_liquidation_sendgrid_email_to=${SENDGRID_EMAIL_TO} && \
 	export TF_VAR_per_discord_webhook_url=${PER_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_discord_failure_webhook_url=${DISCORD_FAILURE_WEBHOOK_URL} && \
+	export TF_VAR_discord_success_webhook_url=${DISCORD_SUCCESS_WEBHOOK_URL} && \
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_infura_api_key=${INFURA_API_KEY} && \
 	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
@@ -92,6 +94,8 @@ prod-deploy:
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_per_discord_webhook_url=${PER_DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_discord_failure_webhook_url=${DISCORD_FAILURE_WEBHOOK_URL} && \
+	export TF_VAR_discord_success_webhook_url=${DISCORD_SUCCESS_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_sendgrid_api_key=${SENDGRID_API_KEY} && \
 	export TF_VAR_liquidation_sendgrid_email_to=${SENDGRID_EMAIL_TO} && \
 	export TF_VAR_pyth_updater_discord_webhook_url=${PYTH_UPDATER_DISCORD_WEBHOOK_URL} && \
