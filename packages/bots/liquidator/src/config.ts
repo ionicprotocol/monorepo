@@ -7,7 +7,7 @@ const config = {
   chainId: parseInt(process.env.TARGET_CHAIN_ID ?? "34443", 10),
   rpcUrls: process.env.WEB3_HTTP_PROVIDER_URLS
     ? process.env.WEB3_HTTP_PROVIDER_URLS.split(",")
-    : ["https://mainnet.mode.network/"], // Updated to handle multiple RPC URLs
+    : ["https://mode.drpc.org"],
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   excludedComptrollers: process.env.EXCLUDED_COMPTROLLERS ? process.env.EXCLUDED_COMPTROLLERS.split(",") : [],

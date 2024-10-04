@@ -132,12 +132,12 @@ export class IonicBase {
             ? getContract({
                 abi: ionicUniV3LiquidatorAbi,
                 address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
-                client: this.publicClient
+                client: this.walletClient!
               })
             : getContract({
                 abi: ionicLiquidatorAbi,
                 address: this.chainDeployment.IonicLiquidator.address as Address,
-                client: this.publicClient
+                client: this.walletClient!
               }),
       FeeDistributor: getContract({
         abi: feeDistributorAbi,
