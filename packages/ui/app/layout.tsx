@@ -11,7 +11,12 @@ import Script from 'next/script';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { mode as vMode, bob as vBob, fraxtal as vFraxtal } from 'viem/chains';
+import {
+  mode as vMode,
+  bob as vBob,
+  fraxtal as vFraxtal,
+  lisk as vLisk
+} from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 
 import Navbar from './_components/Navbar';
@@ -55,7 +60,16 @@ export const fraxtal = {
   rpcUrl: vFraxtal.rpcUrls.default.http[0]
 };
 
-export const networks = [base, mode, optimism, bob, fraxtal];
+export const lisk = {
+  id: `eip155:${vLisk.id}` as const,
+  chainId: vLisk.id,
+  chainNamespace: 'eip155' as const,
+  name: vLisk.name,
+  currency: vLisk.nativeCurrency.name,
+  explorerUrl: vLisk.blockExplorers.default.url,
+  rpcUrl: vLisk.rpcUrls.default.http[0]
+};
+export const networks = [base, mode, optimism, bob, fraxtal, lisk];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
 

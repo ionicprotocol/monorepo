@@ -224,34 +224,6 @@ export const configureAddressesProviderAddresses = async ({
       "SOLIDLY_SWAP_ROUTER",
       chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER
     );
-    await configureAddress(
-      ap,
-      publicClient,
-      deployer,
-      "GAMMA_ALGEBRA_SWAP_ROUTER",
-      chainConfig.chainAddresses.GAMMA_ALGEBRA_SWAP_ROUTER
-    );
-    await configureAddress(
-      ap,
-      publicClient,
-      deployer,
-      "GAMMA_ALGEBRA_UNI_PROXY",
-      chainConfig.chainAddresses.GAMMA_ALGEBRA_UNI_PROXY
-    );
-    await configureAddress(
-      ap,
-      publicClient,
-      deployer,
-      "GAMMA_UNISWAP_V3_SWAP_ROUTER",
-      chainConfig.chainAddresses.GAMMA_UNISWAP_V3_SWAP_ROUTER
-    );
-    await configureAddress(
-      ap,
-      publicClient,
-      deployer,
-      "GAMMA_UNISWAP_V3_UNI_PROXY",
-      chainConfig.chainAddresses.GAMMA_UNISWAP_V3_UNI_PROXY
-    );
 
     const uv2l = await deployments.getOrNull("UniswapV2Liquidator");
     await configureAddress(ap, publicClient, deployer, "UniswapV2Liquidator", uv2l?.address);
@@ -289,16 +261,14 @@ export const configureAddressesProviderAddresses = async ({
     const poolLens = await deployments.getOrNull("PoolLens");
     await configureAddress(ap, publicClient, deployer, "PoolLens", poolLens?.address);
 
-    if (chainId !== 1) {
-      const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
-      await configureAddress(ap, publicClient, deployer, "OptimizedVaultsRegistry", ovr?.address);
+    const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
+    await configureAddress(ap, publicClient, deployer, "OptimizedVaultsRegistry", ovr?.address);
 
-      const lpf = await deployments.getOrNull("LeveredPositionFactory");
-      await configureAddress(ap, publicClient, deployer, "LeveredPositionFactory", lpf?.address);
+    const lpf = await deployments.getOrNull("LeveredPositionFactory");
+    await configureAddress(ap, publicClient, deployer, "LeveredPositionFactory", lpf?.address);
 
-      const lpl = await deployments.getOrNull("LeveredPositionsLens");
-      await configureAddress(ap, publicClient, deployer, "LeveredPositionsLens", lpl?.address);
-    }
+    const lpl = await deployments.getOrNull("LeveredPositionsLens");
+    await configureAddress(ap, publicClient, deployer, "LeveredPositionsLens", lpl?.address);
 
     const mflr = await deployments.getOrNull("IonicFlywheelLensRouter");
     await configureAddress(ap, publicClient, deployer, "IonicFlywheelLensRouter", mflr?.address);
@@ -315,7 +285,7 @@ export async function configureAddress(
   key: string,
   value?: string
 ) {
-  if (!value) {
+  if (!value || value === "") {
     console.log(`empty value for key ${key}`);
     return;
   }
@@ -336,6 +306,7 @@ export async function configureAddress(
         ]
       });
     } else {
+      console.log(`setting address ${key}: ${value}`);
       const hash = await ap.write.setAddress([key, value]);
 
       await publicClient.waitForTransactionReceipt({ hash });
