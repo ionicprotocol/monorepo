@@ -2,6 +2,8 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@ionicproto
 import { SupportedChains } from "@ionicprotocol/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 import { TransactionReceipt } from "viem";
+
+import config from "../config";
 export type SimplifiedTransactionReceipt = Pick<
   TransactionReceipt,
   "transactionHash" | "contractAddress" | "from" | "to" | "status"
@@ -16,12 +18,8 @@ export class DiscordService {
   private errorColor = 0xff0000;
   private warningColor = 0xfcdb03;
   private infoColor = 0x00ff00;
-  private failureHook = new Webhook(
-    "https://discord.com/api/webhooks/1037996046623723541/PBt_TCSJUFowrgupBvH0djFUv5XH3OB_q_4LLZFcV86vFuWnDzYWHOXanwtwS1yu2tpC"
-  );
-  private successHook = new Webhook(
-    "https://discord.com/api/webhooks/1291393275621801984/KnxzuJy1yrJeX6GzJO94Zsr7j9Uolsu2FYNj5K4JZLADzn9Wq-Kg7kIpw4P4b2ICWTKL"
-  );
+  private failureHook = new Webhook(config.DISCORD_FAILURE_WEBHOOK_URL);
+  private successHook = new Webhook(config.DISCORD_SUCCESS_WEBHOOK_URL);
 
   constructor(chainId: SupportedChains) {
     this.chainId = chainId;

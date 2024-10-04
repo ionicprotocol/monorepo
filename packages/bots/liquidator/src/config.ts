@@ -12,6 +12,8 @@ const config = {
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   excludedComptrollers: process.env.EXCLUDED_COMPTROLLERS ? process.env.EXCLUDED_COMPTROLLERS.split(",") : [],
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
+  DISCORD_FAILURE_WEBHOOK_URL: process.env.DISCORD_FAILURE_WEBHOOK_URL || "",
+  DISCORD_SUCCESS_WEBHOOK_URL: process.env.DISCORD_SUCCESS_WEBHOOK_URL || "",
   PER_discordWebhookUrl: process.env.PER_DISCORD_WEBHOOK_URL ?? "",
   sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
   sendgridEmailTo: process.env.SENDGRID_EMAIL_TO ?? "dev@ionic.money",

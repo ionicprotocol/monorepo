@@ -52,7 +52,15 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
         {
           name  = "DISCORD_WEBHOOK_URL"
           value = "${var.liquidation_discord_webhook_url}"
-        } 
+        },
+        {
+          name  = "DISCORD_FAILURE_WEBHOOK_URL"
+          value = "${var.discord_failure_webhook_url}"
+        },
+        {
+          name  = "DISCORD_SUCCESS_WEBHOOK_URL"
+          value = "${var.discord_success_webhook_url}"
+        }  
       ] 
     }
   ])
