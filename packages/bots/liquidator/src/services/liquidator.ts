@@ -11,11 +11,13 @@ export class Liquidator {
   sdk: IonicSdk;
   alert: DiscordService;
   email: EmailService;
+
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
     this.email = new EmailService(ionicSdk.chainId);
   }
+
   async fetchLiquidations<T extends LiquidatablePool | PythLiquidatablePool>(
     botType: BotType,
     options?: { blockNumber?: bigint }
@@ -47,6 +49,7 @@ export class Liquidator {
       return [];
     }
   }
+
   async liquidate(pool: LiquidatablePool): Promise<void> {
     // Check if the pool has any liquidations
     if (pool.liquidations.length === 0) {

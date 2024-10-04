@@ -64,6 +64,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(
       );
       return [liquidatablePools as T[], errored];
     }
+
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
     ): Promise<[Array<{ tx: FlashSwapLiquidationTxParams; error: string }>, Array<TransactionReceipt>]> {
