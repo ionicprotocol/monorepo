@@ -40,7 +40,7 @@ export const deploy = async ({
   getNamedAccounts,
   deployments
 }: HardhatRuntimeEnvironment): Promise<void> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
 
   //// ERC4626 Oracle
@@ -103,7 +103,8 @@ export const deploy = async ({
           methodName: "initialize",
           args: [[], []]
         }
-      }
+      },
+      owner: multisig ?? deployer
     }
   });
   console.log("CurveV2LpTokenPriceOracleNoRegistry: ", curveV2OracleNoRegistry.address);

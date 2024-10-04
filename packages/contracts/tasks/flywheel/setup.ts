@@ -13,7 +13,8 @@ export const setupRewards = async (
   epochDuration: number,
   deployer: Address,
   viem: HardhatRuntimeEnvironment["viem"],
-  deployments: HardhatRuntimeEnvironment["deployments"]
+  deployments: HardhatRuntimeEnvironment["deployments"],
+  multisig?: Address
 ) => {
   const publicClient = await viem.getPublicClient();
   const needsMultisig = await upgradeMarketToSupportFlywheel(market, viem, deployer, deployments);
@@ -50,7 +51,8 @@ export const setupRewards = async (
           methodName: "initialize",
           args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
-      }
+      },
+      owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
