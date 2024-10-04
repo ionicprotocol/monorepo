@@ -23,8 +23,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   /// @dev Address which has permission to externally call _deposit() & _withdraw()
   address public authorized;
 
-  uint256 public totalSupply;
-  mapping(uint256 => uint256) public balanceOf;
+  mapping(address => uint256) public totalSupply;
+  mapping(uint256 => mapping(address => uint256)) public balanceOf;
   mapping(address => mapping(uint256 => uint256)) public tokenRewardsPerEpoch;
   mapping(address => mapping(uint256 => uint256)) public lastEarn;
 
@@ -44,9 +44,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @notice A record of balance checkpoints for each account, by index
-  mapping(uint256 => mapping(uint256 => Checkpoint)) public checkpoints;
+  mapping(uint256 => mapping(address => mapping(uint256 => Checkpoint))) public checkpoints;
   /// @notice The number of checkpoints for each account
-  mapping(uint256 => uint256) public numCheckpoints;
+  mapping(uint256 => mapping(address => uint256)) public numCheckpoints;
   /// @notice A record of balance checkpoints for each token, by index
   mapping(uint256 => SupplyCheckpoint) public supplyCheckpoints;
   /// @notice The number of checkpoints
@@ -59,19 +59,19 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function getPriorBalanceIndex(uint256 tokenId, uint256 timestamp) public view returns (uint256) {
-    uint256 nCheckpoints = numCheckpoints[tokenId];
+  function getPriorBalanceIndex(uint256 tokenId, address lpToken, uint256 timestamp) public view returns (uint256) {
+    uint256 nCheckpoints = numCheckpoints[tokenId][lpToken];
     if (nCheckpoints == 0) {
       return 0;
     }
 
     // First check most recent balance
-    if (checkpoints[tokenId][nCheckpoints - 1].timestamp <= timestamp) {
+    if (checkpoints[tokenId][lpToken][nCheckpoints - 1].timestamp <= timestamp) {
       return (nCheckpoints - 1);
     }
 
     // Next check implicit zero balance
-    if (checkpoints[tokenId][0].timestamp > timestamp) {
+    if (checkpoints[tokenId][lpToken][0].timestamp > timestamp) {
       return 0;
     }
 
@@ -79,7 +79,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     uint256 upper = nCheckpoints - 1;
     while (upper > lower) {
       uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-      Checkpoint memory cp = checkpoints[tokenId][center];
+      Checkpoint memory cp = checkpoints[tokenId][lpToken][center];
       if (cp.timestamp == timestamp) {
         return center;
       } else if (cp.timestamp < timestamp) {
@@ -124,23 +124,23 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     return lower;
   }
 
-  function _writeCheckpoint(uint256 tokenId, uint256 balance) internal {
-    uint256 _nCheckPoints = numCheckpoints[tokenId];
+  function _writeCheckpoint(uint256 tokenId, address lpToken, uint256 balance) internal {
+    uint256 _nCheckPoints = numCheckpoints[tokenId][lpToken];
     uint256 _timestamp = block.timestamp;
 
     if (
       _nCheckPoints > 0 &&
-      IonicTimeLibrary.epochStart(checkpoints[tokenId][_nCheckPoints - 1].timestamp) ==
+      IonicTimeLibrary.epochStart(checkpoints[tokenId][lpToken][_nCheckPoints - 1].timestamp) ==
       IonicTimeLibrary.epochStart(_timestamp)
     ) {
-      checkpoints[tokenId][_nCheckPoints - 1] = Checkpoint(_timestamp, balance);
+      checkpoints[tokenId][lpToken][_nCheckPoints - 1] = Checkpoint(_timestamp, balance);
     } else {
-      checkpoints[tokenId][_nCheckPoints] = Checkpoint(_timestamp, balance);
-      numCheckpoints[tokenId] = _nCheckPoints + 1;
+      checkpoints[tokenId][lpToken][_nCheckPoints] = Checkpoint(_timestamp, balance);
+      numCheckpoints[tokenId][lpToken] = _nCheckPoints + 1;
     }
   }
 
-  function _writeSupplyCheckpoint() internal {
+  function _writeSupplyCheckpoint(address lpToken) internal {
     uint256 _nCheckPoints = supplyNumCheckpoints;
     uint256 _timestamp = block.timestamp;
 
@@ -149,9 +149,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
       IonicTimeLibrary.epochStart(supplyCheckpoints[_nCheckPoints - 1].timestamp) ==
       IonicTimeLibrary.epochStart(_timestamp)
     ) {
-      supplyCheckpoints[_nCheckPoints - 1] = SupplyCheckpoint(_timestamp, totalSupply);
+      supplyCheckpoints[_nCheckPoints - 1] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
     } else {
-      supplyCheckpoints[_nCheckPoints] = SupplyCheckpoint(_timestamp, totalSupply);
+      supplyCheckpoints[_nCheckPoints] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
       supplyNumCheckpoints = _nCheckPoints + 1;
     }
   }
@@ -161,16 +161,16 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function earned(address token, uint256 tokenId) public view returns (uint256) {
-    if (numCheckpoints[tokenId] == 0) {
+  function earned(address token, uint256 tokenId, address lpToken) public view returns (uint256) {
+    if (numCheckpoints[tokenId][lpToken] == 0) {
       return 0;
     }
 
     uint256 reward = 0;
     uint256 _supply = 1;
     uint256 _currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]); // take epoch last claimed in as starting point
-    uint256 _index = getPriorBalanceIndex(tokenId, _currTs);
-    Checkpoint memory cp0 = checkpoints[tokenId][_index];
+    uint256 _index = getPriorBalanceIndex(tokenId, lpToken, _currTs);
+    Checkpoint memory cp0 = checkpoints[tokenId][lpToken][_index];
 
     // accounts for case where lastEarn is before first checkpoint
     _currTs = Math.max(_currTs, IonicTimeLibrary.epochStart(cp0.timestamp));
@@ -181,9 +181,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     if (numEpochs > 0) {
       for (uint256 i = 0; i < numEpochs; i++) {
         // get index of last checkpoint in this epoch
-        _index = getPriorBalanceIndex(tokenId, _currTs + DURATION - 1);
+        _index = getPriorBalanceIndex(tokenId, lpToken, _currTs + DURATION - 1);
         // get checkpoint in this epoch
-        cp0 = checkpoints[tokenId][_index];
+        cp0 = checkpoints[tokenId][lpToken][_index];
         // get supply of last checkpoint in this epoch
         _supply = Math.max(supplyCheckpoints[getPriorSupplyIndex(_currTs + DURATION - 1)].supply, 1);
         reward += (cp0.balanceOf * tokenRewardsPerEpoch[token][_currTs]) / _supply;
@@ -195,47 +195,47 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function _deposit(uint256 amount, uint256 tokenId) external {
+  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external {
     address sender = msg.sender;
     if (sender != authorized) revert Unauthorized();
 
-    totalSupply += amount;
-    balanceOf[tokenId] += amount;
+    totalSupply[lpToken] += amount;
+    balanceOf[tokenId][lpToken] += amount;
 
-    _writeCheckpoint(tokenId, balanceOf[tokenId]);
-    _writeSupplyCheckpoint();
+    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
+    _writeSupplyCheckpoint(lpToken);
 
     emit Deposit(sender, tokenId, amount);
   }
 
   /// @inheritdoc IBribeRewards
-  function _withdraw(uint256 amount, uint256 tokenId) external {
+  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external {
     address sender = msg.sender;
     if (sender != authorized) revert Unauthorized();
 
-    totalSupply -= amount;
-    balanceOf[tokenId] -= amount;
+    totalSupply[lpToken] -= amount;
+    balanceOf[tokenId][lpToken] -= amount;
 
-    _writeCheckpoint(tokenId, balanceOf[tokenId]);
-    _writeSupplyCheckpoint();
+    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
+    _writeSupplyCheckpoint(lpToken);
 
     emit Withdraw(sender, tokenId, amount);
   }
 
   /// @inheritdoc IBribeRewards
-  function getReward(uint256 tokenId, address[] memory tokens) external override nonReentrant {
+  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external override nonReentrant {
     address sender = msg.sender;
     if (!IveION(ve).isApprovedOrOwner(sender, tokenId) && sender != voter) revert Unauthorized();
 
     address _owner = ERC721Upgradeable(ve).ownerOf(tokenId);
-    _getReward(_owner, tokenId, tokens);
+    _getReward(_owner, tokenId, lpToken, tokens);
   }
 
   /// @dev used with all getReward implementations
-  function _getReward(address recipient, uint256 tokenId, address[] memory tokens) internal {
+  function _getReward(address recipient, uint256 tokenId, address lpToken, address[] memory tokens) internal {
     uint256 _length = tokens.length;
     for (uint256 i = 0; i < _length; i++) {
-      uint256 _reward = earned(tokens[i], tokenId);
+      uint256 _reward = earned(tokens[i], tokenId, lpToken);
       lastEarn[tokens[i]][tokenId] = block.timestamp;
       if (_reward > 0) IERC20(tokens[i]).safeTransfer(recipient, _reward);
 
