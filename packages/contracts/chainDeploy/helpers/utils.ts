@@ -1,5 +1,5 @@
+import { SupportedAsset } from "@ionicprotocol/types";
 import { Address } from "viem";
-import { SupportedAsset } from "../../../monorepo/packages/types";
 
 export const underlying = (assets: SupportedAsset[], symbol: string): Address => {
   return assetFilter(assets, symbol).underlying;

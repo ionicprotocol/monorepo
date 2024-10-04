@@ -3,7 +3,8 @@ export enum SupportedChains {
   base = 8453,
   optimism = 10,
   bob = 60808,
-  fraxtal = 252
+  fraxtal = 252,
+  lisk = 1135
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)

@@ -2,8 +2,13 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Address, Hash } from "viem";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
+import { base, mode, optimism } from "viem/chains";
 
-const HYPERNATIVE = "0xd9677b0eeafdce6bf322d9774bb65b1f42cf0404";
+const HYPERNATIVE: Record<number, Address> = {
+  [mode.id]: "0xd9677b0eeafdce6bf322d9774bb65b1f42cf0404",
+  [base.id]: "0xd9677b0eeafdce6bf322d9774bb65b1f42cf0404",
+  [optimism.id]: "0xd9677b0eeafdce6bf322d9774bb65b1f42cf0404"
+};
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -42,12 +47,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     await publicClient.waitForTransactionReceipt({ hash: tx });
     console.log(`added ${deployer} as pause guardian`);
   }
-  isGuardian = await pauser.read.pauseGuardian([HYPERNATIVE]);
-  console.log(`isGuardian: ${isGuardian} for ${HYPERNATIVE}`);
+  const guardian = HYPERNATIVE[chainId] ?? deployer;
+  isGuardian = await pauser.read.pauseGuardian([guardian]);
+  console.log(`isGuardian: ${isGuardian} for ${guardian}`);
   if (!isGuardian) {
-    tx = await pauser.write.setPauseGuardian([HYPERNATIVE, true]);
+    tx = await pauser.write.setPauseGuardian([guardian, true]);
     await publicClient.waitForTransactionReceipt({ hash: tx });
-    console.log(`added ${HYPERNATIVE} as pause guardian`);
+    console.log(`added ${guardian} as pause guardian`);
   }
 
   const owner = await pauser.read.owner();

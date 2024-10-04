@@ -52,15 +52,14 @@ export class DiscordService {
       if (Date.now() - lastSentMessages > 1000 * 60 * 15 || lastSentMessages === 0) {
         const embed = this.create()
           .setTitle(`${currentLiquidations.length} liquidation(s) failed for comptroller: ${comptroller}`)
-          .addField("Method", currentLiquidations[0].method, true)
-          .addField("Value", currentLiquidations[0].value.toString(), true)
-          .addField("Args", JSON.stringify(currentLiquidations[0].args), false)
+          //.addField("Method", currentLiquidations[0]?,true)
+          .addField("Value", currentLiquidations[0]?.toString(), true)
+          .addField("Args", JSON.stringify(currentLiquidations[0]), false)
           // Max limit of embed size
           .setDescription(`${msg.slice(0, 2000)}... (truncated, check AWS Logs) @everyone`)
           .setTimestamp()
           .setColor(this.errorColor);
         await this.send(embed);
-        this.lastSentMessages.liquidations = { tx: liquidations.liquidations, timestamp: Date.now() };
       }
     }
   }

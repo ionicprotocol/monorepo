@@ -2,7 +2,6 @@
 src = 'contracts'
 bytecode_hash = 'none'
 solc_version = "0.8.22"
-evm_version = 'shanghai'
 libs = ["lib"]
 optimizer = true
 optimizer_runs = 200

@@ -10,11 +10,12 @@
     "forge:build": "forge build",
     "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol' --config .prettierrc",
     "lint": "prettier --list-different 'contracts/**/*.sol'",
-    "export:all": "yarn export:mode && yarn export:base && yarn export:optimism && yarn export:fraxtal",
+    "export:all": "yarn export:mode && yarn export:base && yarn export:optimism && yarn export:fraxtal && yarn export:lisk",
     "export:mode": "hardhat export --network mode --export ../sdk/deployments/mode.json && node ./scripts/prune.js ../sdk/deployments/mode.json",
     "export:base": "hardhat export --network base --export ../sdk/deployments/base.json && node ./scripts/prune.js ../sdk/deployments/base.json",
     "export:optimism": "hardhat export --network optimism --export ../sdk/deployments/optimism.json && node ./scripts/prune.js ../sdk/deployments/optimism.json",
     "export:fraxtal": "hardhat export --network fraxtal --export ../sdk/deployments/fraxtal.json && node ./scripts/prune.js ../sdk/deployments/fraxtal.json",
+    "export:lisk": "hardhat export --network lisk --export ../sdk/deployments/lisk.json && node ./scripts/prune.js ../sdk/deployments/lisk.json",
     "prune": "node ./scripts/prune.js ../sdk/deployments/*.json",
     "generate": "yarn forge:build && wagmi generate"
   },
