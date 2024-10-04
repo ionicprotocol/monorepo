@@ -68,7 +68,8 @@ const config: HardhatUserConfig = {
     },
     virtual_base: {
       url: process.env.OVERRIDE_RPC_URL_VIRTUAL_BASE,
-      chainId: 8453
+      chainId: 8453,
+      accounts
     },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",

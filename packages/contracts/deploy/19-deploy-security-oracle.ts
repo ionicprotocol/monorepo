@@ -1,4 +1,3 @@
-import { tenderly } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
