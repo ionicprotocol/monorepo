@@ -155,7 +155,7 @@ export class Liquidator {
         // Send the success alert for the individual transaction
         await this.alert.sendLiquidationSuccess([tx], msg);
       } else {
-        logger.error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
+        throw new Error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
       }
     }
   }
