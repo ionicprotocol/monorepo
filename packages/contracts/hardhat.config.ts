@@ -13,7 +13,6 @@ const accounts = [
   process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
 ];
 
-
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -67,6 +66,10 @@ const config: HardhatUserConfig = {
         }
       }
     },
+    virtual_base: {
+      url: process.env.OVERRIDE_RPC_URL_VIRTUAL_BASE,
+      chainId: 8453
+    },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",
       accounts,
@@ -105,6 +108,10 @@ const config: HardhatUserConfig = {
   sourcify: {
     enabled: true
   }
+  // tenderly: {
+  //   project: "ionic",
+  //   username: "ionicdev"
+  // }
 };
 
 export default config;
