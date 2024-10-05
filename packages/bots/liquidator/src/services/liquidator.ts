@@ -1,8 +1,9 @@
-
 import { BotType, ionicLiquidatorAbi, IonicSdk, LiquidatablePool, PythLiquidatablePool } from "@ionicprotocol/sdk";
 import { Address, TransactionReceipt } from "viem";
+
 import config, { EXCLUDED_ERROR_CODES } from "../config";
 import { logger } from "../logger";
+
 import { DiscordService } from "./discordnew";
 import { EmailService } from "./email";
 export type SimplifiedTransactionReceipt = Pick<
@@ -57,10 +58,10 @@ export class Liquidator {
       logger.warn("No liquidations available in the pool.");
       return; // Exit early if there are no liquidations
     }
-  
+
     // Array to collect successful transaction receipts
     const successfulTxs: SimplifiedTransactionReceipt[] = [];
-  
+
     // Iterate through the liquidations property, which is an array of FlashSwapLiquidationTxParams
     for (const liquidation of pool.liquidations) {
       const params = {
@@ -75,7 +76,7 @@ export class Liquidator {
         strategyData: liquidation.strategyData,
         repayAmount: liquidation.repayAmount,
       };
-  
+
       try {
         // Call the smart contract function to execute the liquidation
         const sentTx = await this.sdk.walletClient!.writeContract({
@@ -97,16 +98,16 @@ export class Liquidator {
             },
           ],
         } as any);
-  
+
         // Ensure the account is defined
         const senderAddress = this.sdk.walletClient!.account;
         if (!senderAddress) {
           throw new Error("Sender address is undefined");
         }
-  
+
         // Wait for the transaction receipt
         const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: sentTx });
-  
+
         // Check if the transaction was successful
         if (receipt.status === "success") {
           // Create the transaction receipt
@@ -137,13 +138,13 @@ export class Liquidator {
         }
       }
     }
-  
+
     // Process each successful transaction and send alert
     for (const tx of successfulTxs) {
       try {
         // Wait for the transaction receipt for each successful transaction
         const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
-  
+
         // Check if the receipt status is 'success'
         if (receipt.status === "success") {
           // Construct the message for each successful transaction directly
@@ -154,13 +155,15 @@ export class Liquidator {
             `To Address: ${tx.to}\n` +
             `Status: ${tx.status}\n` +
             `**----------------------------------**`;
-  
+
           logger.info(`Sending success alert for transaction: ${tx.transactionHash}`);
           // Send the success alert for the individual transaction
           try {
             await this.alert.sendLiquidationSuccess([tx], msg);
           } catch (notificationError: any) {
-            logger.error(`Failed to send Discord notification for transaction ${tx.transactionHash}: ${notificationError.message}`);
+            logger.error(
+              `Failed to send Discord notification for transaction ${tx.transactionHash}: ${notificationError.message}`
+            );
           }
         } else {
           throw new Error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
@@ -172,5 +175,4 @@ export class Liquidator {
       }
     }
   }
-  
 }
