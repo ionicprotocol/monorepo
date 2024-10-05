@@ -131,31 +131,47 @@ export class Liquidator {
           comptroller: pool.comptroller, // Use the actual comptroller from the pool
         };
         // Send alert for the failed liquidation
-        await this.alert.sendLiquidationFailure(liquidationPool, error.message);
+        try {
+          await this.alert.sendLiquidationFailure(liquidationPool, error.message);
+        } catch (notificationError: any) {
+          logger.error(`Failed to send liquidation failure notification: ${notificationError.message}`);
+        }
       }
     }
 
     // Process each successful transaction and send alert
     for (const tx of successfulTxs) {
-      // Wait for the transaction receipt for each successful transaction
-      const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
+      try {
+        // Wait for the transaction receipt for each successful transaction
+        const receipt = await this.sdk.publicClient.waitForTransactionReceipt({ hash: tx.transactionHash });
 
-      // Check if the receipt status is 'success'
-      if (receipt.status === "success") {
-        // Construct the message for each successful transaction directly
-        const msg =
-          `Transaction Hash: ${tx.transactionHash}\n` +
-          `Contract Address: ${tx.contractAddress}\n` +
-          `From Address: ${JSON.stringify(tx.from)}\n` + // Include the whole 'from' object
-          `To Address: ${tx.to}\n` +
-          `Status: ${tx.status}\n` +
-          `**----------------------------------**`;
+        // Check if the receipt status is 'success'
+        if (receipt.status === "success") {
+          // Construct the message for each successful transaction directly
+          const msg =
+            `Transaction Hash: ${tx.transactionHash}\n` +
+            `Contract Address: ${tx.contractAddress}\n` +
+            `From Address: ${JSON.stringify(tx.from)}\n` +
+            `To Address: ${tx.to}\n` +
+            `Status: ${tx.status}\n` +
+            `**----------------------------------**`;
 
-        logger.info(`Sending success alert for transaction: ${tx.transactionHash}`);
-        // Send the success alert for the individual transaction
-        await this.alert.sendLiquidationSuccess([tx], msg);
-      } else {
-        throw new Error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
+          logger.info(`Sending success alert for transaction: ${tx.transactionHash}`);
+          // Send the success alert for the individual transaction
+          try {
+            await this.alert.sendLiquidationSuccess([tx], msg);
+          } catch (notificationError: any) {
+            logger.error(
+              `Failed to send Discord notification for transaction ${tx.transactionHash}: ${notificationError.message}`
+            );
+          }
+        } else {
+          throw new Error(`Transaction ${tx.transactionHash} failed after receipt with status: ${receipt.status}`);
+        }
+      } catch (txError: any) {
+        logger.error(`Error processing transaction ${tx.transactionHash}: ${txError.message}`);
+        // Depending on your requirements, you might want to handle this differently
+        // For example, retry the transaction or notify via another channel
       }
     }
   }
