@@ -1,9 +1,10 @@
-
 import { LiquidationStrategy } from "@ionicprotocol/types";
 import { Address, formatEther, getContract, GetContractReturnType, Hex, PublicClient, zeroAddress } from "viem";
 import { mode } from "viem/chains";
+
 import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../generated";
 import { IonicSdk } from "../../IonicSdk";
+
 import { ChainLiquidationConfig } from "./config";
 import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
@@ -13,6 +14,7 @@ import {
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./utils";
+
 import { estimateGas } from "./index";
 async function getLiquidationPenalty(
   collateralCToken: GetContractReturnType<typeof icErc20Abi, PublicClient>,
@@ -203,7 +205,7 @@ export default async function getPotentialLiquidation(
   const gasPrice = await sdk.publicClient.getGasPrice();
   const expectedGasFee = gasPrice * expectedGasAmount;
   // calculate min profits
-  const minProfitAmountEth = expectedGasFee ;
+  const minProfitAmountEth = expectedGasFee;
   // const minProfitAmountEth = 1000000000000000n;
   // console.log("minimum", minProfitAmountEth)
   // console.log("expectedGasAmount", expectedGasAmount)
