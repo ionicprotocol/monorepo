@@ -10,6 +10,7 @@ import { Unitroller } from "../compound/Unitroller.sol";
 import { CErc20Delegate } from "../compound/CErc20Delegate.sol";
 import { CErc20PluginDelegate } from "../compound/CErc20PluginDelegate.sol";
 import { CErc20PluginRewardsDelegate } from "../compound/CErc20PluginRewardsDelegate.sol";
+import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 
 import { BaseTest } from "./config/BaseTest.t.sol";
@@ -62,6 +63,9 @@ abstract contract UpgradesBaseTest is BaseTest {
       newImpl = new CErc20Delegate();
     } else if (compareStrings("CErc20PluginDelegate", market.contractType())) {
       newImpl = new CErc20PluginDelegate();
+      becomeImplData = abi.encode(address(0));
+    } else if (compareStrings("CErc20RewardsDelegate", market.contractType())) {
+      newImpl = new CErc20RewardsDelegate();
       becomeImplData = abi.encode(address(0));
     } else {
       newImpl = new CErc20PluginRewardsDelegate();

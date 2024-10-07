@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.22;
+
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { Ownable2Step } from "@openzeppelin/contracts/access/Ownable2Step.sol";
+
 import { IFlashLoanReceiver } from "./IFlashLoanReceiver.sol";
 import { Exponential } from "../compound/Exponential.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
-import { console } from "forge-std/console.sol";
-contract CollateralSwap is Exponential, IFlashLoanReceiver {
+// import { console } from "forge-std/console.sol";
+
+contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
   error SwapCollateralFailed();
   error TransferFailed(address market, address user, address target);
+
+  constructor() Ownable2Step() {}
 
   function swapCollateral(
     uint256 amountCTokensToSwap,
@@ -49,7 +55,6 @@ contract CollateralSwap is Exponential, IFlashLoanReceiver {
     // swap the collateral
     {
       IERC20(borrowedAsset).approve(swapTarget, borrowedAmount);
-      console.log("borrowedAmount: ", borrowedAmount);
       (bool success, ) = swapTarget.call(swapData);
       if (!success) {
         revert SwapCollateralFailed();
@@ -71,20 +76,18 @@ contract CollateralSwap is Exponential, IFlashLoanReceiver {
 
     // withdraw the old collateral
     {
-      console.log("borrower balance: ", oldCollateralMarket.balanceOf(borrower));
-      oldCollateralMarket.accrueInterest();
+      // console.log("allowance: ", oldCollateralMarket.allowance(borrower, address(this)));
       bool transferStatus = oldCollateralMarket.transferFrom(borrower, address(this), amountCTokensToSwap);
-      console.log("allowance: ", oldCollateralMarket.allowance(borrower, address(this)));
-      console.log("amountCTokensToSwap: ", amountCTokensToSwap);
-      console.log("transferStatus: ", transferStatus);
       if (!transferStatus) {
         revert TransferFailed(address(oldCollateralMarket), borrower, address(this));
       }
-      console.log("oldCollateralMarket balance: ", oldCollateralMarket.balanceOf(address(this)));
       oldCollateralMarket.redeemUnderlying(borrowedAmount);
-      console.log("after redeeming underlying: ", IERC20(borrowedAsset).balanceOf(address(this)));
       IERC20(borrowedAsset).approve(address(oldCollateralMarket), borrowedAmount);
     }
     // flashloan gets paid back from redeemed collateral
+  }
+
+  function sweep(address token) public onlyOwner {
+    IERC20(token).transfer(owner(), IERC20(token).balanceOf(address(this)));
   }
 }
