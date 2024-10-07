@@ -161,3 +161,85 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
     readyToDelegate: false
   }
 ];
+
+export type VotingData = {
+  id: string;
+  network: string;
+  supplyAsset: string;
+  totalVotes: {
+    percentage: string;
+    limit: string;
+  };
+  myVotes: {
+    percentage: string;
+    value: string;
+  };
+};
+
+export const votingData: VotingData[] = [
+  {
+    id: '0012',
+    network: 'Mode',
+    supplyAsset: 'ETH',
+    totalVotes: {
+      percentage: '12.34%',
+      limit: '25% limit'
+    },
+    myVotes: {
+      percentage: '10%',
+      value: '$2.45'
+    }
+  },
+  {
+    id: '0013',
+    network: 'Arbitrum',
+    supplyAsset: 'ETH',
+    totalVotes: {
+      percentage: '12.34%',
+      limit: '25% limit'
+    },
+    myVotes: {
+      percentage: '10%',
+      value: '$2.45'
+    }
+  },
+  {
+    id: '0014',
+    network: 'Optimism',
+    supplyAsset: 'USDC',
+    totalVotes: {
+      percentage: '12.34%',
+      limit: '25% limit'
+    },
+    myVotes: {
+      percentage: '10%',
+      value: '$2.45'
+    }
+  },
+  {
+    id: '0015',
+    network: 'Base',
+    supplyAsset: 'BNB',
+    totalVotes: {
+      percentage: '12.34%',
+      limit: '25% limit'
+    },
+    myVotes: {
+      percentage: '10%',
+      value: '$2.45'
+    }
+  },
+  {
+    id: '0016',
+    network: 'Eth',
+    supplyAsset: 'USDT',
+    totalVotes: {
+      percentage: '12.34%',
+      limit: '25% limit'
+    },
+    myVotes: {
+      percentage: '10%',
+      value: '$2.45'
+    }
+  }
+];
