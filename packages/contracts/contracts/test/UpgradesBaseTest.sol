@@ -69,14 +69,15 @@ abstract contract UpgradesBaseTest is BaseTest {
     }
 
     // set the new delegate as the latest
+    vm.startPrank(ffd.owner());
     ffd._setLatestCErc20Delegate(newImpl.delegateType(), address(newImpl), abi.encode(address(0)));
 
     // add the extension to the auto upgrade config
     DiamondExtension[] memory cErc20DelegateExtensions = new DiamondExtension[](2);
     cErc20DelegateExtensions[0] = marketExt;
     cErc20DelegateExtensions[1] = newImpl;
-    vm.prank(ffd.owner());
     ffd._setCErc20DelegateExtensions(address(newImpl), cErc20DelegateExtensions);
+    vm.stopPrank();
 
     // upgrade to the new delegate
     vm.prank(address(ffd));
