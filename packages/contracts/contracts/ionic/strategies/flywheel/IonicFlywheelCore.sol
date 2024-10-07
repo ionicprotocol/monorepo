@@ -7,7 +7,7 @@ import { SafeCastLib } from "solmate/utils/SafeCastLib.sol";
 
 import { IFlywheelRewards } from "./rewards/IFlywheelRewards.sol";
 import { IFlywheelBooster } from "./IFlywheelBooster.sol";
-
+import { IEmissionsManager } from "../../../IEmissionsManager.sol";
 import { SafeOwnableUpgradeable } from "../../../ionic/SafeOwnableUpgradeable.sol";
 
 contract IonicFlywheelCore is SafeOwnableUpgradeable {
@@ -31,6 +31,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
 
   /// @notice optional booster module for calculating virtual balances on strategies
   IFlywheelBooster public flywheelBooster;
+  
+  IEmissionsManager public emissionsManager;
 
   /// @notice The accrued but not yet transferred rewards for each user
   mapping(address => uint256) internal _rewardsAccrued;
@@ -84,6 +86,10 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     */
   event ClaimRewards(address indexed user, uint256 amount);
 
+  function setEmissionsManager(IEmissionsManager _emissionsManager) external onlyOwner {
+    emissionsManager = _emissionsManager;
+  }
+
   /** 
       @notice accrue rewards for a single user on a strategy
       @param strategy the strategy to accrue a user's rewards on
@@ -128,6 +134,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       @dev this function is public, and all rewards transfer to the user
     */
   function claimRewards(address user) external {
+    require(!emissionsManager.isUserBlacklisted(user), "blacklisted");
+
     uint256 accrued = rewardsAccrued(user);
 
     if (accrued != 0) {
@@ -139,6 +147,23 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     }
   }
 
+  /** 
+      @notice take rewards for a given user
+      @param user the user claiming rewards
+      @param receiver the address that receives the rewards
+      @dev this function is public, and all rewards transfer to the user
+    */
+  function takeRewardsFromUser(address user, address receiver) external {
+    uint256 accrued = rewardsAccrued(user);
+
+    if (accrued != 0) {
+      _rewardsAccrued[user] = 0;
+
+      rewardToken.safeTransferFrom(address(flywheelRewards), receiver, accrued);
+
+      emit ClaimRewards(user, accrued);
+    }
+  }
   /*----------------------------------------------------------------
                           ADMIN LOGIC
     ----------------------------------------------------------------*/
