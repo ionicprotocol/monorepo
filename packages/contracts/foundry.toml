@@ -1,12 +1,13 @@
 [profile.default]
 src = 'contracts'
 bytecode_hash = 'none'
-solc_version = "0.8.22"
+solc_version = "0.8.20"
 evm_version = 'shanghai'
 libs = ["lib"]
 optimizer = true
 optimizer_runs = 200
 out = "out"
+auto_detect_solc = true
 
 [rpc_endpoints]
 mode = "${MODE_MAINNET_RPC_URL}"

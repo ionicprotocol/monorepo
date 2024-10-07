@@ -43,12 +43,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   uint256 internal constant MULTIPLIER = 1 ether;
   uint256 public constant PRECISION = 1e18;
 
-  mapping(IStakeStrategy => uint256) public s_lastUpdateTime;
-  mapping(IStakeStrategy => uint256) public s_rewardPerTokenStored;
-  mapping(IStakeStrategy => mapping(address => uint256)) public s_userRewardPerTokenPaid;
   mapping(IStakeStrategy => mapping(address => uint256)) public s_rewards;
-  mapping(address => mapping(IStakeStrategy => uint256)) public s_userBalanceStrategy;
-  mapping(IStakeStrategy => uint256) public s_totalSupplyStrategy;
 
   mapping(LpTokenType => uint256) public s_protocolFees;
   mapping(LpTokenType => uint256) public s_distributedFees;
@@ -89,17 +84,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function claimEmissions(address _tokenAddress) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
-
-    _functionDelegateCall(address(_stakeStrategy), abi.encodeWithSelector(_stakeStrategy.claim.selector));
-
-    address _account = _msgSender();
-    address _rewardToken = _stakeStrategy.rewardToken();
-    _updateRewards(_account, _stakeStrategy);
-    uint256 reward = s_rewards[_stakeStrategy][_account];
-    if (reward > 0) {
-      s_rewards[_stakeStrategy][_account] = 0;
-      IERC20(_rewardToken).transfer(_account, reward);
-    }
+    _stakeStrategy.claim(msg.sender);
   }
 
   function increaseAmount(address _tokenAddress, uint256 _tokenId, uint256 _tokenAmount) external {
@@ -372,7 +357,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0)) {
-        _handleTokenStake(_from, _tokenAmount, _stakeStrategy, _stakeData);
+        _handleTokenStake(_from, _tokenAddress, _tokenAmount, _stakeStrategy, _stakeData);
       }
     }
 
@@ -382,50 +367,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function _handleTokenStake(
     address _from,
+    address _tokenAddress,
     uint256 _tokenAmount,
     IStakeStrategy _stakeStrategy,
     bytes memory _stakeData
   ) internal {
-    s_userBalanceStrategy[_from][_stakeStrategy] += _tokenAmount;
-    s_totalSupplyStrategy[_stakeStrategy] += _tokenAmount;
-    _updateRewards(_from, _stakeStrategy);
-    _functionDelegateCall(
-      address(_stakeStrategy),
-      abi.encodeWithSelector(_stakeStrategy.stake.selector, _from, _tokenAmount, _stakeData)
-    );
-  }
-
-  function _updateRewards(address _account, IStakeStrategy _stakeStrategy) internal {
-    s_rewardPerTokenStored[_stakeStrategy] = rewardPerToken(_stakeStrategy);
-    s_lastUpdateTime[_stakeStrategy] = lastTimeRewardApplicable(_stakeStrategy);
-    s_rewards[_stakeStrategy][_account] = earned(_account, _stakeStrategy);
-    s_userRewardPerTokenPaid[_stakeStrategy][_account] = s_rewardPerTokenStored[_stakeStrategy];
-  }
-
-  function rewardPerToken(IStakeStrategy _stakeStrategy) public view returns (uint256) {
-    if (s_totalSupplyStrategy[_stakeStrategy] == 0) {
-      return s_rewardPerTokenStored[_stakeStrategy];
-    }
-    uint256 rewardRate = _stakeStrategy.rewardRate();
-    uint256 totalSupply = _stakeStrategy.totalSupply();
-    uint256 balance = _stakeStrategy.balanceOf(address(this));
-    return
-      s_rewardPerTokenStored[_stakeStrategy] +
-      ((lastTimeRewardApplicable(_stakeStrategy) - s_lastUpdateTime[_stakeStrategy]) * rewardRate * balance * 1e18) /
-      (s_totalSupplyStrategy[_stakeStrategy] * totalSupply);
-  }
-
-  function lastTimeRewardApplicable(IStakeStrategy _stakeStrategy) public view returns (uint256) {
-    uint256 periodFinish = _stakeStrategy.periodFinish();
-    return Math.min(block.timestamp, periodFinish);
-  }
-
-  function earned(address _account, IStakeStrategy _stakeStrategy) public view returns (uint256) {
-    return
-      (s_userBalanceStrategy[_account][_stakeStrategy] *
-        (rewardPerToken(_stakeStrategy) - s_userRewardPerTokenPaid[_stakeStrategy][_account])) /
-      1e18 +
-      s_rewards[_stakeStrategy][_account];
+    IERC20(_tokenAddress).approve(address(_stakeStrategy), _tokenAmount);
+    _stakeStrategy.stake(_from, _tokenAmount, _stakeData);
   }
 
   struct CheckpointVars {
