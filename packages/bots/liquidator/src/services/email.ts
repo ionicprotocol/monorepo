@@ -52,13 +52,13 @@ export class EmailService {
         const message = this.create();
         message.subject = `${currentLiquidations.length} liquidation(s) failed for comptroller: ${comptroller}`;
         message.text = `
-          Method: ${currentLiquidations[0].method}
-          Value: ${currentLiquidations[0].value}
-          Args: ${JSON.stringify(currentLiquidations[0].args)}
+          Method: ${currentLiquidations[0]}
+          Value: ${currentLiquidations[0]}
+          Args: ${JSON.stringify(currentLiquidations[0])}
           ${msg}
         `;
         await this.send(message);
-        this.lastSentMessages.liquidations = { tx: liquidations.liquidations, timestamp: Date.now() };
+        //this.lastSentMessages.liquidations = { tx: liquidations.liquidations, timestamp: Date.now() };
       }
     }
   }

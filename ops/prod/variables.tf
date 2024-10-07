@@ -43,6 +43,12 @@ variable "pyth_updater_discord_webhook_url" {
 variable "liquidation_discord_webhook_url" {
   type = string
 }
+variable "discord_success_webhook_url" {
+  type = string
+}
+variable "discord_failure_webhook_url" {
+  type = string
+}
 variable "per_discord_webhook_url" {
   type = string
 }

@@ -10,6 +10,8 @@ locals {
     NODE_ENV                   = "production",
     UPTIME_LIQUIDATOR_API      = var.uptime_liquidator_api,
     UPTIME_PYTH_UPDATER_API    = var.uptime_pyth_updater_api,
+    DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
+    DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
   }
 }
 
@@ -21,6 +23,9 @@ locals {
       SENDGRID_API_KEY    = var.liquidation_sendgrid_api_key,
       SENDGRID_EMAIL_TO   = var.liquidation_sendgrid_email_to,
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
+      DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
+      DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
+      
     }
   )
   liquidation_base_variables = merge(
@@ -30,6 +35,8 @@ locals {
       SENDGRID_API_KEY    = var.liquidation_sendgrid_api_key,
       SENDGRID_EMAIL_TO   = var.liquidation_sendgrid_email_to,
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
+      DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
+      DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
     }
   )
   liquidation_optimism_variables = merge(
@@ -39,6 +46,8 @@ locals {
       SENDGRID_API_KEY    = var.liquidation_sendgrid_api_key,
       SENDGRID_EMAIL_TO   = var.liquidation_sendgrid_email_to,
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
+      DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
+      DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
     }
   )
   oracle_price_change_verifier_lambda_variables = merge(
