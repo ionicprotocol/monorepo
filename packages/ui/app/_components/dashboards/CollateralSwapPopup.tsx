@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { getQuote, type QuoteRequest } from '@lifi/sdk';
 import {
   ArcElement,
   CategoryScale,
@@ -15,7 +16,7 @@ import {
 } from 'chart.js';
 // import { usePathname, useRouter} from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { formatEther } from 'viem';

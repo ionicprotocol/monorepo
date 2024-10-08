@@ -19,6 +19,7 @@ import { PopupMode } from '../popup/page';
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
 
+import { disableBorrowRepay } from '@ui/constants/BorrowCapDisable';
 import {
   FLYWHEEL_TYPE_MAP,
   pools,
@@ -187,8 +188,7 @@ const PoolRows = ({
     supplyAPRTotal,
     supplyRewards
   ]);
-
-  // console.log( , dropdownSelectedChain , pool );
+  // console.log(borrowCapAsNumber, asset);
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -380,7 +380,12 @@ const PoolRows = ({
                 setPopupMode(PopupMode.BORROW);
               }
             }}
-            disabled={!address}
+            disabled={
+              !address ||
+              disableBorrowRepay[+dropdownSelectedChain]?.[
+                selectedPoolId
+              ]?.includes(asset)
+            }
           >
             Borrow / Repay {loopPossible && '/ Loop'}
           </button>
