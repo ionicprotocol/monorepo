@@ -107,7 +107,7 @@ function MaxDeposit({
         <span>{headerText}</span>
         <div>
           {' '}
-          {tokenName.toUpperCase()} Balance :{' '}
+          {tokenName?.toUpperCase() ?? ''} Balance :{' '}
           {bal
             ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
                 'en-US',

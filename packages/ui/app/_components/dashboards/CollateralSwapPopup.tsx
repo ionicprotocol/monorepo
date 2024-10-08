@@ -14,8 +14,10 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
+// import { usePathname, useRouter} from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+// import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { formatEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
@@ -29,7 +31,9 @@ interface IProp {
   params?: { tokenaddress: string };
   swapRef: any;
   toggler: () => void;
-  collateralSwapAsset?: MarketData;
+  swapedFromAsset: MarketData;
+  swapedToAsset: MarketData[];
+  swapOpen: boolean;
 }
 
 //------misc---------
@@ -48,7 +52,8 @@ ChartJS.register(
 export default function CollateralSwapPopup({
   swapRef,
   toggler,
-  collateralSwapAsset
+  swapedFromAsset,
+  swapedToAsset
 }: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
   const [swapFromToken, setSwapFromToken] = useState<string>('');
@@ -58,20 +63,65 @@ export default function CollateralSwapPopup({
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const chain = querychain ? querychain : String(chainId);
-  // const router = useRouter();
-  const { isConnected } = useAccount();
+  const queryToken = searchParams.get('token');
+  // const pathname = usePathname();
+  // const swapedToTokenQuery = queryToken
+  //   ? queryToken !== swapedToAsset.map((asset) => asset.underlyingSymbol)[0]
+  //   : '';
 
-  const tokenOut = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+  const swapedToTokenQuery =
+    queryToken ??
+    swapedToAsset
+      .filter(
+        (asset) => asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
+      )
+      .map((asset) => asset.underlyingSymbol)[0];
+  const swapedToTokenAddress = swapedToAsset.filter(
+    (asset) => asset.underlyingSymbol === swapedToTokenQuery
+  )[0]?.underlyingToken;
+
+  // const router = useRouter();
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString());
+  //     params.set(name, value);
+
+  //     return params.toString();
+  //   },
+  //   [searchParams]
+  // );
+  // const router = useRouter();
+  // useEffect(() => {
+  //   const otherToken = swapedToAsset
+  //     .filter(
+  //       (asset) =>
+  //         asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol &&
+  //         swapedToTokenQuery !== swapedFromAsset.underlyingSymbol
+  //     )
+  //     .map((asset) => asset.underlyingSymbol)[0];
+  //     console.log(otherToken)
+  //   if (swapedToTokenQuery === swapedFromAsset.underlyingSymbol && otherToken)
+  //     router.push(pathname + '?' + createQueryString('token', otherToken));
+  // }, [
+  //   createQueryString,
+  //   pathname,
+  //   router,
+  //   swapOpen,
+  //   swapedFromAsset.underlyingSymbol,
+  //   swapedToAsset,
+  //   swapedToTokenQuery
+  // ]);
+  // console.log(swapedToTokenAddress);
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     const fetchQuote = async () => {
-      if (!collateralSwapAsset?.underlyingToken || BigInt(swapFromToken) === 0n)
-        return;
+      if (!swapedFromAsset || BigInt(swapFromToken) === 0n) return;
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
-        fromToken: collateralSwapAsset?.underlyingToken,
-        toToken: tokenOut,
+        fromToken: swapedFromAsset?.underlyingToken,
+        toToken: swapedToAsset[0]?.underlyingToken,
         fromAmount: swapFromToken, // 10 USDC
         // The address from which the tokens are being transferred.
         fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
@@ -81,7 +131,7 @@ export default function CollateralSwapPopup({
       console.log(quote);
     };
     fetchQuote();
-  }, [chain, collateralSwapAsset?.underlyingToken, swapFromToken]);
+  }, [chain, swapFromToken, swapedFromAsset, swapedToAsset]);
 
   return (
     <div
@@ -113,8 +163,8 @@ export default function CollateralSwapPopup({
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapFromToken}
-            tokenName={collateralSwapAsset?.underlyingSymbol}
-            token={collateralSwapAsset?.cToken}
+            tokenName={swapedFromAsset.underlyingSymbol.toLowerCase()}
+            token={swapedFromAsset.underlyingToken}
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}
@@ -122,10 +172,17 @@ export default function CollateralSwapPopup({
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapToToken}
-            tokenName={`usdc`}
-            token={tokenOut}
+            tokenName={swapedToTokenQuery}
+            token={swapedToTokenAddress}
             handleInput={(val?: string) => setSwapToToken(val as string)}
             chain={+chain}
+            tokenSelector={true}
+            tokenArr={swapedToAsset
+              .filter(
+                (asset) =>
+                  asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
+              )
+              .map((asset) => asset.underlyingSymbol)}
           />
           <div className={`my-6 w-full`}>
             <SliderComponent

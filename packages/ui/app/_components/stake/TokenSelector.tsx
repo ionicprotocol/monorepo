@@ -3,7 +3,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface ITokenSelector {
   newRef: any;
@@ -24,7 +24,7 @@ export default function TokenSelector({
 
   //URL passed Data ----------------------------
   const queryToken = searchParams.get('token');
-  const selectedtoken = queryToken ?? tokenArr[0];
+  const selectedtokenQuery = queryToken ?? tokenArr[0];
 
   const createQueryString = useCallback(
     (value: string) => {
@@ -34,6 +34,12 @@ export default function TokenSelector({
     },
     [searchParams]
   );
+
+  const [selectedtoken, setSelectedtoken] = useState<string>('');
+
+  useEffect(() => {
+    setSelectedtoken(selectedtokenQuery);
+  }, [selectedtokenQuery]);
   return (
     <div
       className="w-full capitalize text-md  relative font-bold"
@@ -44,14 +50,14 @@ export default function TokenSelector({
         onClick={() => setOpen((prevState: any) => !prevState)}
       >
         <div
-          className={`py-1.5 pl-3.5 pr-7 w-full gap-1.5 flex relative items-center justify-start border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
+          className={`py-1.5 pl-3.5 pr-9 text-sm w-full gap-1.5 flex relative items-center justify-start border-2 border-stone-700 ${open ? 'rounded-t-md' : 'rounded-xl '} `}
         >
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/symbols/32/color/${selectedtoken.toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${selectedtoken?.toLowerCase()}.png`}
           />
-          {selectedtoken.toUpperCase() ?? 'Select Token'}
+          {selectedtoken?.toUpperCase() ?? 'Select Token'}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -67,7 +73,7 @@ export default function TokenSelector({
         >
           {tokenArr.map((token: string, idx: number) => (
             <Link
-              className={`flex justify-between items-center p-2 mb-1  rounded-md`}
+              className={`flex justify-between items-center p-2 mb-1 text-xs  rounded-md`}
               href={pathname + '?' + createQueryString(token)}
               key={idx}
             >
