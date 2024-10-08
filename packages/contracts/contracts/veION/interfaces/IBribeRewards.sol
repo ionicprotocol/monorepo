@@ -18,20 +18,23 @@ interface IBribeRewards {
 
   /// @notice Deposit an amount into the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.
+  /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be deposited for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _deposit(uint256 amount, uint256 tokenId) external;
+  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Withdraw an amount from the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.
+  /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be withdrawn for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _withdraw(uint256 amount, uint256 tokenId) external;
+  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Claim the rewards earned by a veNFT holder
   /// @param tokenId  Unique identifier of the veNFT
   /// @param tokens   Array of tokens to claim rewards for
-  function getReward(uint256 tokenId, address[] memory tokens) external;
+  /// @param lpToken  Address of the liquidity pool token
+  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external;
 
   /// @notice Notify the contract about new rewards for stakers
   /// @param token    Address of the reward token
@@ -41,15 +44,16 @@ interface IBribeRewards {
   /// @notice Get the prior balance index for a veNFT at a specific timestamp
   /// @dev Timestamp must be in the past or present.
   /// @param tokenId      The veNFT token ID to check
+  /// @param lpToken      Address of the liquidity pool token
   /// @param timestamp    The timestamp to get the balance at
   /// @return The balance index at the given timestamp
-  function getPriorBalanceIndex(uint256 tokenId, uint256 timestamp) external view returns (uint256);
+  function getPriorBalanceIndex(uint256 tokenId, address lpToken, uint256 timestamp) external view returns (uint256);
 
   /// @notice Get the prior supply index at a specific timestamp
   /// @dev Timestamp must be in the past or present.
   /// @param timestamp The timestamp to get the supply index at
   /// @return The supply index at the given timestamp
-  function getPriorSupplyIndex(uint256 timestamp) external view returns (uint256);
+  function getPriorSupplyIndex(uint256 timestamp, address lpToken) external view returns (uint256);
 
   /// @notice Calculate the rewards earned for a specific token and veNFT
   /// @param token Address of the reward token

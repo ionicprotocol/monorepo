@@ -48,9 +48,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   /// @notice The number of checkpoints for each account
   mapping(uint256 => mapping(address => uint256)) public numCheckpoints;
   /// @notice A record of balance checkpoints for each token, by index
-  mapping(uint256 => SupplyCheckpoint) public supplyCheckpoints;
+  mapping(uint256 => mapping(address => SupplyCheckpoint)) public supplyCheckpoints;
   /// @notice The number of checkpoints
-  uint256 public supplyNumCheckpoints;
+  mapping(address => uint256) public supplyNumCheckpoints;
 
   function initialize(address _voter) public initializer {
     __ReentrancyGuard_init();
@@ -92,19 +92,19 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function getPriorSupplyIndex(uint256 timestamp) public view returns (uint256) {
-    uint256 nCheckpoints = supplyNumCheckpoints;
+  function getPriorSupplyIndex(uint256 timestamp, address lpToken) public view returns (uint256) {
+    uint256 nCheckpoints = supplyNumCheckpoints[lpToken];
     if (nCheckpoints == 0) {
       return 0;
     }
 
     // First check most recent balance
-    if (supplyCheckpoints[nCheckpoints - 1].timestamp <= timestamp) {
+    if (supplyCheckpoints[nCheckpoints - 1][lpToken].timestamp <= timestamp) {
       return (nCheckpoints - 1);
     }
 
     // Next check implicit zero balance
-    if (supplyCheckpoints[0].timestamp > timestamp) {
+    if (supplyCheckpoints[0][lpToken].timestamp > timestamp) {
       return 0;
     }
 
@@ -112,7 +112,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     uint256 upper = nCheckpoints - 1;
     while (upper > lower) {
       uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-      SupplyCheckpoint memory cp = supplyCheckpoints[center];
+      SupplyCheckpoint memory cp = supplyCheckpoints[center][lpToken];
       if (cp.timestamp == timestamp) {
         return center;
       } else if (cp.timestamp < timestamp) {
@@ -141,18 +141,18 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   function _writeSupplyCheckpoint(address lpToken) internal {
-    uint256 _nCheckPoints = supplyNumCheckpoints;
+    uint256 _nCheckPoints = supplyNumCheckpoints[lpToken];
     uint256 _timestamp = block.timestamp;
 
     if (
       _nCheckPoints > 0 &&
-      IonicTimeLibrary.epochStart(supplyCheckpoints[_nCheckPoints - 1].timestamp) ==
+      IonicTimeLibrary.epochStart(supplyCheckpoints[_nCheckPoints - 1][lpToken].timestamp) ==
       IonicTimeLibrary.epochStart(_timestamp)
     ) {
-      supplyCheckpoints[_nCheckPoints - 1] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
+      supplyCheckpoints[_nCheckPoints - 1][lpToken] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
     } else {
-      supplyCheckpoints[_nCheckPoints] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
-      supplyNumCheckpoints = _nCheckPoints + 1;
+      supplyCheckpoints[_nCheckPoints][lpToken] = SupplyCheckpoint(_timestamp, totalSupply[lpToken]);
+      supplyNumCheckpoints[lpToken] = _nCheckPoints + 1;
     }
   }
 
@@ -160,38 +160,60 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     return rewards.length;
   }
 
+  struct EarnedVars {
+    uint256 totalReward;
+    uint256 reward;
+    uint256 supply;
+    uint256 currTs;
+    uint256 index;
+    uint256 numEpochs;
+  }
+
   /// @inheritdoc IBribeRewards
-  function earned(address token, uint256 tokenId, address lpToken) public view returns (uint256) {
-    if (numCheckpoints[tokenId][lpToken] == 0) {
-      return 0;
-    }
+  function earned(address token, uint256 tokenId) public view returns (uint256) {
+    EarnedVars memory vars;
+    vars.totalReward = 0;
+    address[] memory lpTokens = getAllLpRewardTokens();
 
-    uint256 reward = 0;
-    uint256 _supply = 1;
-    uint256 _currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]); // take epoch last claimed in as starting point
-    uint256 _index = getPriorBalanceIndex(tokenId, lpToken, _currTs);
-    Checkpoint memory cp0 = checkpoints[tokenId][lpToken][_index];
+    for (uint256 j = 0; j < lpTokens.length; j++) {
+      address lpToken = lpTokens[j];
 
-    // accounts for case where lastEarn is before first checkpoint
-    _currTs = Math.max(_currTs, IonicTimeLibrary.epochStart(cp0.timestamp));
-
-    // get epochs between current epoch and first checkpoint in same epoch as last claim
-    uint256 numEpochs = (IonicTimeLibrary.epochStart(block.timestamp) - _currTs) / DURATION;
-
-    if (numEpochs > 0) {
-      for (uint256 i = 0; i < numEpochs; i++) {
-        // get index of last checkpoint in this epoch
-        _index = getPriorBalanceIndex(tokenId, lpToken, _currTs + DURATION - 1);
-        // get checkpoint in this epoch
-        cp0 = checkpoints[tokenId][lpToken][_index];
-        // get supply of last checkpoint in this epoch
-        _supply = Math.max(supplyCheckpoints[getPriorSupplyIndex(_currTs + DURATION - 1)].supply, 1);
-        reward += (cp0.balanceOf * tokenRewardsPerEpoch[token][_currTs]) / _supply;
-        _currTs += DURATION;
+      if (numCheckpoints[tokenId][lpToken] == 0) {
+        continue;
       }
+
+      vars.reward = 0;
+      vars.supply = 1;
+      vars.currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]); // take epoch last claimed in as starting point
+      vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs);
+      Checkpoint memory cp0 = checkpoints[tokenId][lpToken][vars.index];
+
+      // accounts for case where lastEarn is before first checkpoint
+      vars.currTs = Math.max(vars.currTs, IonicTimeLibrary.epochStart(cp0.timestamp));
+
+      // get epochs between current epoch and first checkpoint in same epoch as last claim
+      vars.numEpochs = (IonicTimeLibrary.epochStart(block.timestamp) - vars.currTs) / DURATION;
+
+      if (vars.numEpochs > 0) {
+        for (uint256 i = 0; i < vars.numEpochs; i++) {
+          // get index of last checkpoint in this epoch
+          vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs + DURATION - 1);
+          // get checkpoint in this epoch
+          cp0 = checkpoints[tokenId][lpToken][vars.index];
+          // get supply of last checkpoint in this epoch
+          vars.supply = Math.max(
+            supplyCheckpoints[getPriorSupplyIndex(vars.currTs + DURATION - 1, lpToken)][lpToken].supply,
+            1
+          );
+          vars.reward += (cp0.balanceOf * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supply;
+          vars.currTs += DURATION;
+        }
+      }
+
+      vars.totalReward += vars.reward;
     }
 
-    return reward;
+    return vars.totalReward;
   }
 
   /// @inheritdoc IBribeRewards
@@ -223,7 +245,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external override nonReentrant {
+  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external nonReentrant {
     address sender = msg.sender;
     if (!IveION(ve).isApprovedOrOwner(sender, tokenId) && sender != voter) revert Unauthorized();
 
@@ -235,7 +257,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   function _getReward(address recipient, uint256 tokenId, address lpToken, address[] memory tokens) internal {
     uint256 _length = tokens.length;
     for (uint256 i = 0; i < _length; i++) {
-      uint256 _reward = earned(tokens[i], tokenId, lpToken);
+      uint256 _reward = earned(tokens[i], tokenId);
       lastEarn[tokens[i]][tokenId] = block.timestamp;
       if (_reward > 0) IERC20(tokens[i]).safeTransfer(recipient, _reward);
 
@@ -265,5 +287,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
     tokenRewardsPerEpoch[token][epochStart] += amount;
 
     emit RewardNotification(sender, token, epochStart, amount);
+  }
+
+  function getAllLpRewardTokens() public view returns (address[] memory) {
+    return IVoter(voter).getAllLpRewardTokens();
   }
 }

@@ -158,4 +158,6 @@ interface IVoter {
   /// @param _tokenId .
   /// @param _bool .
   function whitelistNFT(uint256 _tokenId, bool _bool) external;
+
+  function getAllLpRewardTokens() external view returns (address[] memory);
 }

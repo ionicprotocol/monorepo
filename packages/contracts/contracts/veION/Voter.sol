@@ -215,6 +215,7 @@ contract Voter is IVoter {
           weights[_market][_marketSide][lpRewardTokens[k]] -= _votes;
           delete votes[_tokenId][_market][_marketSide][lpRewardTokens[k]];
           IBribeRewards(rewardAccumulatorToBribe[marketToRewardAccumulators[_market][_marketSide]])._withdraw(
+            lpRewardTokens[k],
             uint256(_votes),
             _tokenId
           );
@@ -259,6 +260,16 @@ contract Voter is IVoter {
     _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights);
   }
 
+  struct VoteVars {
+    uint256 totalVoteWeight;
+    uint256 totalWeight;
+    uint256 usedWeight;
+    address market;
+    MarketSide marketSide;
+    address rewardAccumulator;
+    uint256 marketWeight;
+  }
+
   function _vote(
     uint256 _tokenId,
     address _votingAsset,
@@ -268,47 +279,45 @@ contract Voter is IVoter {
     uint256[] memory _weights
   ) internal {
     _reset(_tokenId);
-    uint256 _totalVoteWeight = 0;
-    uint256 _totalWeight = 0;
-    uint256 _usedWeight = 0;
+    VoteVars memory vars;
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
-      _totalVoteWeight += _weights[i];
+      vars.totalVoteWeight += _weights[i];
     }
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
-      address _market = _marketVote[i];
-      MarketSide _marketSide = _marketVoteSide[i];
-      address _rewardAccumulator = rewardAccumulatorToBribe[marketToRewardAccumulators[_market][_marketSide]];
-      if (_rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(_market);
-      if (!isAlive[_rewardAccumulator]) revert RewardAccumulatorNotAlive(_rewardAccumulator);
+      vars.market = _marketVote[i];
+      vars.marketSide = _marketVoteSide[i];
+      vars.rewardAccumulator = rewardAccumulatorToBribe[marketToRewardAccumulators[vars.market][vars.marketSide]];
+      if (vars.rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(vars.market);
+      if (!isAlive[vars.rewardAccumulator]) revert RewardAccumulatorNotAlive(vars.rewardAccumulator);
 
-      if (isGauge[_rewardAccumulator]) {
-        uint256 _marketWeight = (_weights[i] * _votingAssetBalance) / _totalVoteWeight;
-        if (votes[_tokenId][_market][_marketSide][_votingAsset] != 0) revert NonZeroVotes();
-        if (_marketWeight == 0) revert ZeroBalance();
+      if (isGauge[vars.rewardAccumulator]) {
+        vars.marketWeight = (_weights[i] * _votingAssetBalance) / vars.totalVoteWeight;
+        if (votes[_tokenId][vars.market][vars.marketSide][_votingAsset] != 0) revert NonZeroVotes();
+        if (vars.marketWeight == 0) revert ZeroBalance();
 
-        marketVote[_tokenId].push(_market);
-        marketVoteSide[_tokenId].push(_marketSide);
+        marketVote[_tokenId].push(vars.market);
+        marketVoteSide[_tokenId].push(vars.marketSide);
 
-        weights[_market][_marketSide][_votingAsset] += _marketWeight;
-        votes[_tokenId][_market][_marketSide][_votingAsset] += _marketWeight;
-        IBribeRewards(_rewardAccumulator)._deposit(uint256(_marketWeight), _tokenId);
-        _usedWeight += _marketWeight;
-        _totalWeight += _marketWeight;
+        weights[vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
+        votes[_tokenId][vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
+        IBribeRewards(vars.rewardAccumulator)._deposit(_votingAsset, uint256(vars.marketWeight), _tokenId);
+        vars.usedWeight += vars.marketWeight;
+        vars.totalWeight += vars.marketWeight;
         emit Voted(
           msg.sender,
-          _market,
+          vars.market,
           _tokenId,
-          _marketWeight,
-          weights[_market][_marketSide][_votingAsset],
+          vars.marketWeight,
+          weights[vars.market][vars.marketSide][_votingAsset],
           block.timestamp
         );
       }
     }
-    if (_usedWeight > 0) IveION(ve).voting(_tokenId, true);
-    totalWeight[_votingAsset] += uint256(_totalWeight);
-    usedWeights[_tokenId][_votingAsset] = uint256(_usedWeight);
+    if (vars.usedWeight > 0) IveION(ve).voting(_tokenId, true);
+    totalWeight[_votingAsset] += uint256(vars.totalWeight);
+    usedWeights[_tokenId][_votingAsset] = uint256(vars.usedWeight);
   }
 
   /// @inheritdoc IVoter
@@ -404,6 +413,11 @@ contract Voter is IVoter {
 
   /// @inheritdoc IVoter
   function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {}
+
+  // Internal function to get all LP reward tokens
+  function getAllLpRewardTokens() external view returns (address[] memory) {
+    return _getAllLpRewardTokens();
+  }
 
   // Internal function to get all LP reward tokens
   function _getAllLpRewardTokens() internal view returns (address[] memory) {

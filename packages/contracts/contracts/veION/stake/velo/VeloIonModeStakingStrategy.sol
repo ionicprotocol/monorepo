@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import "../IStakeStrategy.sol";
 import "./VelodromeStakingWallet.sol";
+import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
@@ -13,7 +14,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract VeloIonModeStakingStrategy is IStakeStrategy {
   address public escrow;
   address public stakingToken;
-  IVeloIonModeStaking public stakingContract;
+  address public stakingContract;
   mapping(address => address) public userStakingWallet;
 
   modifier onlyEscrow() {
@@ -21,7 +22,7 @@ contract VeloIonModeStakingStrategy is IStakeStrategy {
     _;
   }
 
-  constructor(address _escrow, address _stakingToken, IVeloIonModeStaking _stakingContract) {
+  constructor(address _escrow, address _stakingToken, address _stakingContract) {
     escrow = _escrow;
     stakingToken = _stakingToken;
     stakingContract = _stakingContract;
@@ -32,7 +33,7 @@ contract VeloIonModeStakingStrategy is IStakeStrategy {
    */
   function stake(address _from, uint256 _amount, bytes memory _data) external override onlyEscrow {
     IERC20(stakingToken).transferFrom(msg.sender, address(this), _amount);
-    VelodromeStakingWallet veloWallet = new VelodromeStakingWallet(address(this));
+    VelodromeStakingWallet veloWallet = new VelodromeStakingWallet(IStakeStrategy(address(this)));
     IERC20(stakingToken).approve(address(veloWallet), _amount);
     veloWallet.stake(_from, _amount, _data);
     userStakingWallet[_from] = address(veloWallet);
@@ -50,34 +51,34 @@ contract VeloIonModeStakingStrategy is IStakeStrategy {
    * @inheritdoc IStakeStrategy
    */
   function rewardRate() external view override returns (uint256) {
-    return stakingContract.rewardRate();
+    return IVeloIonModeStaking(stakingContract).rewardRate();
   }
 
   /**
    * @inheritdoc IStakeStrategy
    */
   function periodFinish() external view override returns (uint256) {
-    return stakingContract.periodFinish();
+    return IVeloIonModeStaking(stakingContract).periodFinish();
   }
 
   /**
    * @inheritdoc IStakeStrategy
    */
   function balanceOf(address account) external view override returns (uint256) {
-    return stakingContract.balanceOf(account);
+    return IVeloIonModeStaking(stakingContract).balanceOf(account);
   }
 
   /**
    * @inheritdoc IStakeStrategy
    */
   function totalSupply() external view override returns (uint256) {
-    return stakingContract.totalSupply();
+    return IVeloIonModeStaking(stakingContract).totalSupply();
   }
 
   /**
    * @inheritdoc IStakeStrategy
    */
   function rewardToken() public view returns (address) {
-    return stakingContract.rewardToken();
+    return IVeloIonModeStaking(stakingContract).rewardToken();
   }
 }
