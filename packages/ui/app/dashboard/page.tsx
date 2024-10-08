@@ -383,8 +383,8 @@ export default function Dashboard() {
         <CollateralSwapPopup
           toggler={() => swapToggle()}
           swapRef={swapRef}
-          swapedFromAsset={collateralSwapFromAsset!}
-          swapedToAsset={suppliedAssets.filter(
+          swappedFromAsset={collateralSwapFromAsset!}
+          swappedToAsset={suppliedAssets.filter(
             (asset) =>
               asset?.underlyingToken != collateralSwapFromAsset?.underlyingToken
           )}

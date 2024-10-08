@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { getQuote, type QuoteRequest } from '@lifi/sdk';
+import { getQuote, type LiFiStep, type QuoteRequest } from '@lifi/sdk';
 import {
   ArcElement,
   CategoryScale,
@@ -19,7 +19,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { formatEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -31,8 +30,8 @@ interface IProp {
   params?: { tokenaddress: string };
   swapRef: any;
   toggler: () => void;
-  swapedFromAsset: MarketData;
-  swapedToAsset: MarketData[];
+  swappedFromAsset: MarketData;
+  swappedToAsset: MarketData[];
   swapOpen: boolean;
 }
 
@@ -52,12 +51,13 @@ ChartJS.register(
 export default function CollateralSwapPopup({
   swapRef,
   toggler,
-  swapedFromAsset,
-  swapedToAsset
+  swappedFromAsset,
+  swappedToAsset
 }: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
   const [swapFromToken, setSwapFromToken] = useState<string>('');
   const [swapToToken, setSwapToToken] = useState<string>('');
+  const [lifiQuote, setLifiQuote] = useState<LiFiStep>();
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -65,20 +65,22 @@ export default function CollateralSwapPopup({
   const chain = querychain ? querychain : String(chainId);
   const queryToken = searchParams.get('token');
   // const pathname = usePathname();
-  // const swapedToTokenQuery = queryToken
-  //   ? queryToken !== swapedToAsset.map((asset) => asset.underlyingSymbol)[0]
+  // const swappedToTokenQuery = queryToken
+  //   ? queryToken !== swappedToAsset.map((asset) => asset.underlyingSymbol)[0]
   //   : '';
 
-  const swapedToTokenQuery =
+  const swappedToTokenQuery =
     queryToken ??
-    swapedToAsset
+    swappedToAsset
       .filter(
-        (asset) => asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
+        (asset) => asset.underlyingSymbol !== swappedFromAsset.underlyingSymbol
       )
       .map((asset) => asset.underlyingSymbol)[0];
-  const swapedToTokenAddress = swapedToAsset.filter(
-    (asset) => asset.underlyingSymbol === swapedToTokenQuery
-  )[0]?.underlyingToken;
+  const swappedToToken =
+    swappedToAsset &&
+    swappedToAsset.find(
+      (asset) => asset.underlyingSymbol === swappedToTokenQuery
+    );
 
   // const router = useRouter();
   // const createQueryString = useCallback(
@@ -92,46 +94,49 @@ export default function CollateralSwapPopup({
   // );
   // const router = useRouter();
   // useEffect(() => {
-  //   const otherToken = swapedToAsset
+  //   const otherToken = swappedToAsset
   //     .filter(
   //       (asset) =>
-  //         asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol &&
-  //         swapedToTokenQuery !== swapedFromAsset.underlyingSymbol
+  //         asset.underlyingSymbol !== swappedFromAsset.underlyingSymbol &&
+  //         swappedToTokenQuery !== swappedFromAsset.underlyingSymbol
   //     )
   //     .map((asset) => asset.underlyingSymbol)[0];
   //     console.log(otherToken)
-  //   if (swapedToTokenQuery === swapedFromAsset.underlyingSymbol && otherToken)
+  //   if (swappedToTokenQuery === swappedFromAsset.underlyingSymbol && otherToken)
   //     router.push(pathname + '?' + createQueryString('token', otherToken));
   // }, [
   //   createQueryString,
   //   pathname,
   //   router,
   //   swapOpen,
-  //   swapedFromAsset.underlyingSymbol,
-  //   swapedToAsset,
-  //   swapedToTokenQuery
+  //   swappedFromAsset.underlyingSymbol,
+  //   swappedToAsset,
+  //   swappedToTokenQuery
   // ]);
-  // console.log(swapedToTokenAddress);
+  // console.log(swappedToTokenAddress);
   const { isConnected } = useAccount();
 
   useEffect(() => {
     const fetchQuote = async () => {
-      if (!swapedFromAsset || BigInt(swapFromToken) === 0n) return;
+      if (!swappedFromAsset || !swappedToToken || BigInt(swapFromToken) === 0n)
+        return;
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
-        fromToken: swapedFromAsset?.underlyingToken,
-        toToken: swapedToAsset[0]?.underlyingToken,
+        fromToken: swappedFromAsset?.underlyingToken,
+        toToken: swappedToToken?.underlyingToken,
         fromAmount: swapFromToken, // 10 USDC
         // The address from which the tokens are being transferred.
         fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
         skipSimulation: true
       };
       const quote = await getQuote(quoteRequest);
-      console.log(quote);
+      console.log('🚀 ~ fetchQuote ~ quote:', quote);
+      setLifiQuote(quote);
+      setSwapToToken(quote?.estimate?.toAmount);
     };
     fetchQuote();
-  }, [chain, swapFromToken, swapedFromAsset, swapedToAsset]);
+  }, [chain, swapFromToken, swappedFromAsset, swappedToAsset, swappedToToken]);
 
   return (
     <div
@@ -163,41 +168,38 @@ export default function CollateralSwapPopup({
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapFromToken}
-            tokenName={swapedFromAsset.underlyingSymbol.toLowerCase()}
-            token={swapedFromAsset.underlyingToken}
+            tokenName={swappedFromAsset?.underlyingSymbol.toLowerCase()}
+            token={swappedFromAsset?.cToken}
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}
           />
           <MaxDeposit
-            headerText={'Wallet Balance'}
+            headerText={'Swap To'}
             amount={swapToToken}
-            tokenName={swapedToTokenQuery}
-            token={swapedToTokenAddress}
+            tokenName={swappedToTokenQuery}
+            token={swappedToToken?.cToken}
             handleInput={(val?: string) => setSwapToToken(val as string)}
             chain={+chain}
             tokenSelector={true}
-            tokenArr={swapedToAsset
-              .filter(
-                (asset) =>
-                  asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
-              )
-              .map((asset) => asset.underlyingSymbol)}
+            tokenArr={
+              swappedToAsset &&
+              swappedToAsset
+                .filter(
+                  (asset) =>
+                    asset.underlyingSymbol !==
+                    swappedFromAsset?.underlyingSymbol
+                )
+                .map((asset) => asset.underlyingSymbol)
+            }
           />
           <div className={`my-6 w-full`}>
             <SliderComponent
               currentUtilizationPercentage={Number(utilization.toFixed(0))}
               handleUtilization={(val?: number) => {
                 if (!val && !isConnected) return;
-                const percentval =
-                  (Number(val) / 100) *
-                  Number(
-                    formatEther(
-                      BigInt(swapToToken)
-                      // withdrawalMaxToken?.decimals as number
-                    )
-                  );
-                setSwapToToken(percentval.toString());
+                const percentval = (Number(val) / 100) * Number(swapFromToken);
+                setSwapFromToken(percentval.toString());
                 setUtilization(val ?? 0);
               }}
             />
@@ -250,7 +252,8 @@ export default function CollateralSwapPopup({
         <button
           className={`bg-accent py-1 px-3 w-full text-sm rounded-md text-black`}
         >
-          SWITCH TO USDC{' '}
+          SWITCH {swappedFromAsset?.underlyingSymbol} TO{' '}
+          {swappedToToken?.underlyingSymbol}{' '}
         </button>
       </div>
     </div>
