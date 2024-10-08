@@ -379,7 +379,7 @@ export default function Dashboard() {
   // console.log(suppliedAssets);
   return (
     <>
-      {swapOpen && (
+      {swapOpen && marketData?.comptroller && (
         <CollateralSwapPopup
           toggler={() => swapToggle()}
           swapRef={swapRef}
@@ -389,6 +389,7 @@ export default function Dashboard() {
               asset?.underlyingToken != collateralSwapFromAsset?.underlyingToken
           )}
           swapOpen={swapOpen}
+          comptroller={marketData?.comptroller}
         />
       )}
       <ClaimRewardPopover

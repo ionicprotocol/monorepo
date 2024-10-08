@@ -19,8 +19,10 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import { formatUnits, type Address } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
+import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import SliderComponent from 'ui/app/_components/popup/Slider';
 import MaxDeposit from 'ui/app/_components/stake/MaxDeposit';
@@ -33,6 +35,7 @@ interface IProp {
   swappedFromAsset: MarketData;
   swappedToAsset: MarketData[];
   swapOpen: boolean;
+  comptroller: Address;
 }
 
 //------misc---------
@@ -52,12 +55,14 @@ export default function CollateralSwapPopup({
   swapRef,
   toggler,
   swappedFromAsset,
-  swappedToAsset
+  swappedToAsset,
+  comptroller
 }: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
   const [swapFromToken, setSwapFromToken] = useState<string>('');
   const [swapToToken, setSwapToToken] = useState<string>('');
   const [lifiQuote, setLifiQuote] = useState<LiFiStep>();
+  const [conversionRate, setConversionRate] = useState<string>('100');
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -76,11 +81,18 @@ export default function CollateralSwapPopup({
         (asset) => asset.underlyingSymbol !== swappedFromAsset.underlyingSymbol
       )
       .map((asset) => asset.underlyingSymbol)[0];
+
   const swappedToToken =
     swappedToAsset &&
     swappedToAsset.find(
       (asset) => asset.underlyingSymbol === swappedToTokenQuery
     );
+
+  const { data: supplyCap } = useSupplyCap({
+    chainId: +chain,
+    market: swappedToToken,
+    comptroller
+  });
 
   // const router = useRouter();
   // const createQueryString = useCallback(
@@ -134,6 +146,13 @@ export default function CollateralSwapPopup({
       console.log('🚀 ~ fetchQuote ~ quote:', quote);
       setLifiQuote(quote);
       setSwapToToken(quote?.estimate?.toAmount);
+      setConversionRate(
+        (
+          (Number(quote?.estimate?.fromAmountUSD) /
+            Number(quote?.estimate?.toAmountUSD)) *
+          100
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+      );
     };
     fetchQuote();
   }, [chain, swapFromToken, swappedFromAsset, swappedToAsset, swappedToToken]);
@@ -157,7 +176,7 @@ export default function CollateralSwapPopup({
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">CONVERSION RATE</span>
-          <span className=" ">0.00%</span>
+          <span className=" ">{conversionRate}%</span>
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">FEES</span>
@@ -223,7 +242,10 @@ export default function CollateralSwapPopup({
         <div className={`w-full flex items-center justify-center gap-5`}>
           <div className={` w-14 h-14`}>
             <Doughnut
-              data={getDonutData(12343, 123458)}
+              data={getDonutData(
+                swappedToToken?.totalSupplyFiat ?? 0,
+                supplyCap?.usdCap ?? 100
+              )}
               options={donutoptions}
               updateMode="resize"
             />
@@ -233,12 +255,35 @@ export default function CollateralSwapPopup({
             <div className={`flex flex-col items-start justify-center gap-y-1`}>
               <p className={`text-white/60 text-[10px]`}>TOTAL SUPLIED</p>
               <p className={`font-semibold`}>
-                ${1234} of ${123458}
-                {'USDC'}
-                {/* above symbol will be changed */}
+                {(swappedToToken
+                  ? Number(
+                      formatUnits(
+                        swappedToToken?.totalSupply,
+                        swappedToToken?.underlyingDecimals
+                      )
+                    )
+                  : 0
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}{' '}
+                of{' '}
+                {(supplyCap?.tokenCap ?? 0).toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}{' '}
+                {swappedToToken?.underlyingSymbol}
               </p>
               <p className={`font-semibold text-[8px] text-white/30`}>
-                ${1234} of ${123678}
+                $
+                {(swappedToToken?.totalSupplyFiat ?? 0).toLocaleString(
+                  'en-US',
+                  {
+                    maximumFractionDigits: 0
+                  }
+                )}{' '}
+                of $
+                {(supplyCap?.usdCap ?? 0).toLocaleString('en-US', {
+                  maximumFractionDigits: 0
+                })}
               </p>
             </div>
           </div>
