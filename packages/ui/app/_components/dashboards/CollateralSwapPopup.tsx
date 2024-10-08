@@ -20,6 +20,7 @@ import { Doughnut } from 'react-chartjs-2';
 import { formatEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
+import type { MarketData } from '@ui/types/TokensDataMap';
 import SliderComponent from 'ui/app/_components/popup/Slider';
 import MaxDeposit from 'ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from 'ui/app/_constants/mock';
@@ -28,6 +29,7 @@ interface IProp {
   params?: { tokenaddress: string };
   swapRef: any;
   toggler: () => void;
+  collateralSwapAsset?: MarketData;
 }
 
 //------misc---------
@@ -43,7 +45,11 @@ ChartJS.register(
   Legend
 );
 
-export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
+export default function CollateralSwapPopup({
+  swapRef,
+  toggler,
+  collateralSwapAsset
+}: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
   const [swapFromToken, setSwapFromToken] = useState<string>('');
   const [swapToToken, setSwapToToken] = useState<string>('');
@@ -55,25 +61,27 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
   // const router = useRouter();
   const { isConnected } = useAccount();
 
-  const tokenIn = '0x4200000000000000000000000000000000000006';
-  const tokenOut = '0xd988097fb8612cc24eeC14542bC03424c656005f';
+  const tokenOut = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
 
   useEffect(() => {
     const fetchQuote = async () => {
+      if (!collateralSwapAsset?.underlyingToken || BigInt(swapFromToken) === 0n)
+        return;
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
-        fromToken: tokenIn,
+        fromToken: collateralSwapAsset?.underlyingToken,
         toToken: tokenOut,
         fromAmount: swapFromToken, // 10 USDC
         // The address from which the tokens are being transferred.
-        fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0'
+        fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
+        skipSimulation: true
       };
       const quote = await getQuote(quoteRequest);
       console.log(quote);
     };
     fetchQuote();
-  }, [chain, swapFromToken]);
+  }, [chain, collateralSwapAsset?.underlyingToken, swapFromToken]);
 
   return (
     <div
@@ -105,8 +113,8 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapFromToken}
-            tokenName={'weth'}
-            token={tokenIn}
+            tokenName={collateralSwapAsset?.underlyingSymbol}
+            token={collateralSwapAsset?.cToken}
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}

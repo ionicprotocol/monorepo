@@ -56,17 +56,18 @@ function MaxDeposit({
   useMemo(() => {
     if (max) {
       setBal({
-        value: parseUnits(max, 18),
-        decimals: 18
+        value: parseUnits(max, data?.decimals ?? 18),
+        decimals: data?.decimals ?? 18
       });
     } else if (max == '0') {
-      setBal({ value: BigInt(0), decimals: 0 });
+      setBal({ value: BigInt(0), decimals: data?.decimals ?? 18 });
     } else {
       data && setBal({ value: data?.value, decimals: data?.decimals });
     }
   }, [data, max]);
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log('🚀 ~ handlInpData ~ e.target.value:', e.target.value);
     if (
       bal &&
       Number(e.target.value) > Number(formatUnits(bal?.value, bal?.decimals))
@@ -164,7 +165,7 @@ function MaxDeposit({
               <img
                 alt="ion logo"
                 className={`w-5 h-5 inline-block ml-2`}
-                src={`/img/logo/${tokenName.toUpperCase()}.png`}
+                src={`/img/symbols/32/color/${tokenName.toLowerCase()}.png`}
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null; // prevents looping
                   currentTarget.src = '/img/logo/ION.png';

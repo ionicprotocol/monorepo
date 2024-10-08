@@ -59,6 +59,7 @@ export default function Dashboard() {
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [collateralSwapAsset, setCollateralSwapAsset] = useState<MarketData>();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -379,6 +380,7 @@ export default function Dashboard() {
         <CollateralSwapPopup
           toggler={() => swapToggle()}
           swapRef={swapRef}
+          collateralSwapAsset={collateralSwapAsset}
         />
       )}
       <ClaimRewardPopover
@@ -689,7 +691,10 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
-                      toggler={() => swapToggle()}
+                      toggler={() => {
+                        setCollateralSwapAsset(asset);
+                        swapToggle();
+                      }}
                       utilization="0.00%"
                     />
                   ))}
