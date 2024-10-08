@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
-import { IRouter } from "../external/aerodrome/IRouter.sol";
+import { IAerodromeRouter } from "../external/aerodrome/IAerodromeRouter.sol";
 
 /**
  * @title UniswapV2Liquidator
@@ -10,7 +10,7 @@ import { IRouter } from "../external/aerodrome/IRouter.sol";
  * @author David Lucid <david@rari.capital> (https://github.com/davidlucid)
  */
 contract AerodromeV2Liquidator {
-  function _swap(IRouter router, uint256 inputAmount, IRouter.Route[] memory swapPath) internal {
+  function _swap(IAerodromeRouter router, uint256 inputAmount, IAerodromeRouter.Route[] memory swapPath) internal {
     router.swapExactTokensForTokens(inputAmount, 0, swapPath, address(this), block.timestamp);
   }
 
@@ -40,7 +40,7 @@ contract AerodromeV2Liquidator {
     bytes memory strategyData
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
     // Get Uniswap router and path
-    (IRouter router, IRouter.Route[] memory swapPath) = abi.decode(strategyData, (IRouter, IRouter.Route[]));
+    (IAerodromeRouter router, IAerodromeRouter.Route[] memory swapPath) = abi.decode(strategyData, (IAerodromeRouter, IAerodromeRouter.Route[]));
     require(swapPath.length >= 1 && swapPath[0].from == address(inputToken), "Invalid AerodromeV2Liquidator swap path.");
 
     // Swap underlying tokens
