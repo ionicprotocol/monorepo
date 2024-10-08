@@ -81,7 +81,7 @@ interface IWETH is IERC20 {
   function withdraw(uint256) external;
 }
 
-interface IRouter {
+interface IAerodromeRouter {
   struct Route {
     address from;
     address to;

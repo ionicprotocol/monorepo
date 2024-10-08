@@ -30,9 +30,9 @@ import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol"
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
 import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
-import { IRouter } from "../external/aerodrome/IRouter.sol";
+import { IAerodromeRouter } from "../external/aerodrome/IAerodromeRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
-import { IRouter as IVelodromeV2Router } from "../external/velodrome/IRouter.sol";
+import { IVelodromeRouter } from "../external/velodrome/IVelodromeRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -688,8 +688,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(eusdWhale);
     eUSD.transfer(address(liquidator), 1000 ether);
-    IRouter.Route[] memory path = new IRouter.Route[](1);
-    path[0] = IRouter.Route({
+    IAerodromeRouter.Route[] memory path = new IAerodromeRouter.Route[](1);
+    path[0] = IAerodromeRouter.Route({
       from: address(eUSD),
       to: address(usdc),
       stable: true,
@@ -804,8 +804,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(usdcWhale);
     usdc.transfer(address(liquidator), 1000 * 10e6);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
+    IVelodromeRouter.Route[] memory path = new IVelodromeRouter.Route[](1);
+    path[0] = IVelodromeRouter.Route({
       from: address(usdc),
       to: address(weth),
       stable: false
@@ -825,8 +825,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
+    IVelodromeRouter.Route[] memory path = new IVelodromeRouter.Route[](1);
+    path[0] = IVelodromeRouter.Route({
       from: address(weth),
       to: address(usdc),
       stable: false
