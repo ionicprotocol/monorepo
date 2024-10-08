@@ -106,7 +106,7 @@ function MaxDeposit({
         <span>{headerText}</span>
         <div>
           {' '}
-          {tokenName.toUpperCase()} Balance :{' '}
+          {tokenName?.toUpperCase() ?? ''} Balance :{' '}
           {bal
             ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
                 'en-US',
@@ -164,7 +164,7 @@ function MaxDeposit({
               <img
                 alt="ion logo"
                 className={`w-5 h-5 inline-block ml-2`}
-                src={`/img/logo/${tokenName.toUpperCase()}.png`}
+                src={`/img/symbols/32/color/${tokenName.toLowerCase()}.png`}
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null; // prevents looping
                   currentTarget.src = '/img/logo/ION.png';

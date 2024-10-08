@@ -13,12 +13,15 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
+// import { usePathname, useRouter} from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+// import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { formatEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
+import type { MarketData } from '@ui/types/TokensDataMap';
 import SliderComponent from 'ui/app/_components/popup/Slider';
 import MaxDeposit from 'ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from 'ui/app/_constants/mock';
@@ -27,6 +30,9 @@ interface IProp {
   params?: { tokenaddress: string };
   swapRef: any;
   toggler: () => void;
+  swapedFromAsset: MarketData;
+  swapedToAsset: MarketData[];
+  swapOpen: boolean;
 }
 
 //------misc---------
@@ -42,7 +48,12 @@ ChartJS.register(
   Legend
 );
 
-export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
+export default function CollateralSwapPopup({
+  swapRef,
+  toggler,
+  swapedFromAsset,
+  swapedToAsset
+}: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
   const [swapFromToken, setSwapFromToken] = useState<string>('');
   const [swapToToken, setSwapToToken] = useState<string>('');
@@ -51,9 +62,56 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const chain = querychain ? querychain : String(chainId);
-  // const router = useRouter();
-  const { isConnected } = useAccount();
+  const queryToken = searchParams.get('token');
+  // const pathname = usePathname();
+  // const swapedToTokenQuery = queryToken
+  //   ? queryToken !== swapedToAsset.map((asset) => asset.underlyingSymbol)[0]
+  //   : '';
 
+  const swapedToTokenQuery =
+    queryToken ??
+    swapedToAsset
+      .filter(
+        (asset) => asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
+      )
+      .map((asset) => asset.underlyingSymbol)[0];
+  const swapedToTokenAddress = swapedToAsset.filter(
+    (asset) => asset.underlyingSymbol === swapedToTokenQuery
+  )[0]?.underlyingToken;
+
+  // const router = useRouter();
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString());
+  //     params.set(name, value);
+
+  //     return params.toString();
+  //   },
+  //   [searchParams]
+  // );
+  // const router = useRouter();
+  // useEffect(() => {
+  //   const otherToken = swapedToAsset
+  //     .filter(
+  //       (asset) =>
+  //         asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol &&
+  //         swapedToTokenQuery !== swapedFromAsset.underlyingSymbol
+  //     )
+  //     .map((asset) => asset.underlyingSymbol)[0];
+  //     console.log(otherToken)
+  //   if (swapedToTokenQuery === swapedFromAsset.underlyingSymbol && otherToken)
+  //     router.push(pathname + '?' + createQueryString('token', otherToken));
+  // }, [
+  //   createQueryString,
+  //   pathname,
+  //   router,
+  //   swapOpen,
+  //   swapedFromAsset.underlyingSymbol,
+  //   swapedToAsset,
+  //   swapedToTokenQuery
+  // ]);
+  // console.log(swapedToTokenAddress);
+  const { isConnected } = useAccount();
   return (
     <div
       className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
@@ -84,8 +142,8 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapFromToken}
-            tokenName={'weth'}
-            token={'0x4200000000000000000000000000000000000006'}
+            tokenName={swapedFromAsset.underlyingSymbol.toLowerCase()}
+            token={swapedFromAsset.underlyingToken}
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}
@@ -93,10 +151,17 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapToToken}
-            tokenName={`usdc`}
-            token={'0xd988097fb8612cc24eeC14542bC03424c656005f'}
+            tokenName={swapedToTokenQuery}
+            token={swapedToTokenAddress}
             handleInput={(val?: string) => setSwapToToken(val as string)}
             chain={+chain}
+            tokenSelector={true}
+            tokenArr={swapedToAsset
+              .filter(
+                (asset) =>
+                  asset.underlyingSymbol !== swapedFromAsset.underlyingSymbol
+              )
+              .map((asset) => asset.underlyingSymbol)}
           />
           <div className={`my-6 w-full`}>
             <SliderComponent

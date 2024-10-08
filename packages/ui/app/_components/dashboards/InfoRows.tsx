@@ -39,6 +39,7 @@ export type InfoRowsProps = {
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
   toggler?: () => void;
+  setCollateralSwapFromAsset?: () => void;
 };
 
 const InfoRows = ({
@@ -55,7 +56,8 @@ const InfoRows = ({
   comptrollerAddress,
   pool,
   rewards,
-  toggler
+  toggler,
+  setCollateralSwapFromAsset
 }: InfoRowsProps) => {
   const supplyRewards = useMemo(
     () =>
@@ -197,6 +199,7 @@ const InfoRows = ({
               // Router.push()
               //toggle the mode
               setSelectedSymbol(asset);
+              setCollateralSwapFromAsset?.();
               toggler?.();
             }
             if (mode === InfoMode.BORROW) {
