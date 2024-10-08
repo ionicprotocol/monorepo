@@ -23,7 +23,7 @@ contract CollateralSwapTest is UpgradesBaseTest {
     emit log_named_address("swap address: ", address(swap));
   }
 
-  function test_collateralSwap_works_noBorrows() forkAtBlock(BASE_MAINNET, 20754244) public {
+  function test_collateralSwap_works_noBorrows() debuggingOnly forkAtBlock(BASE_MAINNET, 20754244) public {
     address ionwethWhale = 0x753E909D68921388b8fB4E471D155ff73c735ebC;
     address swapTarget = 0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE;
     uint256 healthFactor = lens.getHealthFactor(0x753E909D68921388b8fB4E471D155ff73c735ebC, wethMarket.comptroller());
@@ -37,10 +37,23 @@ contract CollateralSwapTest is UpgradesBaseTest {
     emit log_named_uint("health factor after: ", healthFactor);
   }
 
-  function test_collateralSwap_worksWithBorrows() forkAtBlock(BASE_MAINNET, 20764360) public {
+  function test_collateralSwap_worksWithBorrows() debuggingOnly forkAtBlock(BASE_MAINNET, 20764360) public {
     address ionezEthWhale = 0x1155b614971f16758C92c4890eD338C9e3ede6b7;
     address swapTarget = 0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE;
     bytes memory swapData = abi.encodePacked(hex"5fd9ae2eece86bd4bf0fc5a89cdae5eae358b91948390effff3fe8e7ad936188d9b681e500000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000d6bbde9174b1cdaa358d2cf4d57d1a9f7178fbff0000000000000000000000000000000000000000000000000035efc666cc560700000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000005696f6e6963000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a307830303030303030303030303030303030303030303030303030303030303030303030303030303030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000a6d96e7f4d7b96cfe42185df61e64d255c12dff0000000000000000000000000a6d96e7f4d7b96cfe42185df61e64d255c12dff0000000000000000000000002416092f143378750bb29b79ed961ab195cceea50000000000000000000000002416092f143378750bb29b79ed961ab195cceea50000000000000000000000000000000000000000000000000039afc19de8c3ba00000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000084eedd56e10000000000000000000000002416092f143378750bb29b79ed961ab195cceea500000000000000000000000000000000000000000000000000000ec48bad8b74000000000000000000000000000000000000000000000000000024eb5d31dca6000000000000000000000000d5ee82d18f63f0b82df91a6ae73b74cfda57144e0000000000000000000000000000000000000000000000000000000000000000000000000000000019ceead7105607cd444f5ad10dd51356436095a100000000000000000000000019ceead7105607cd444f5ad10dd51356436095a10000000000000000000000002416092f143378750bb29b79ed961ab195cceea50000000000000000000000002ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec2200000000000000000000000000000000000000000000000000397c11b5095b9f00000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e283bd37f900012416092f143378750bb29b79ed961ab195cceea5000c07397c11b5095b9f073635292ada3a280147ae0001fdf03f9b84babb7d8bf2fd583a85ba3858abd4c4000000011231deb6f5749ef6ce6943a275a1d3e7486f4eae59725ade04010205000a0100010201020d0001030400080d5825f6ea340e00ff00000000004c98e9c2439c0d4621c62fee2fed6d042fa8c5702416092f143378750bb29b79ed961ab195cceea55f061c4e8fe73925e2a91e49368e804baad513fc420000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+
+    (uint256 error, uint256 balance, uint256 borrowBalance, uint256 exchangeRateMantissa) = ezETHMarket.getAccountSnapshot(ionezEthWhale);
+    emit log_named_uint("ezETH error: ", error);
+    emit log_named_uint("ezETH balance: ", balance);
+    emit log_named_uint("ezETH borrowBalance: ", borrowBalance);
+    emit log_named_uint("ezETH exchangeRateMantissa: ", exchangeRateMantissa);
+
+    (error, balance, borrowBalance, exchangeRateMantissa) = cbETHMarket.getAccountSnapshot(ionezEthWhale);
+    emit log_named_uint("cbETH error: ", error);
+    emit log_named_uint("cbETH balance: ", balance);
+    emit log_named_uint("cbETH borrowBalance: ", borrowBalance);
+    emit log_named_uint("cbETH exchangeRateMantissa: ", exchangeRateMantissa);
+
     vm.startPrank(ionezEthWhale);
     ezETHMarket.approve(address(swap), type(uint256).max);
     uint256 healthFactor = lens.getHealthFactor(ionezEthWhale, ezETHMarket.comptroller());
@@ -49,5 +62,17 @@ contract CollateralSwapTest is UpgradesBaseTest {
     healthFactor = lens.getHealthFactor(ionezEthWhale, ezETHMarket.comptroller());
     emit log_named_uint("health factor after: ", healthFactor);
     vm.stopPrank();
+
+    (error, balance, borrowBalance, exchangeRateMantissa) = ezETHMarket.getAccountSnapshot(ionezEthWhale);
+    emit log_named_uint("ezETH error: ", error);
+    emit log_named_uint("ezETH balance: ", balance);
+    emit log_named_uint("ezETH borrowBalance: ", borrowBalance);
+    emit log_named_uint("ezETH exchangeRateMantissa: ", exchangeRateMantissa);
+
+    (error, balance, borrowBalance, exchangeRateMantissa) = cbETHMarket.getAccountSnapshot(ionezEthWhale);
+    emit log_named_uint("cbETH error: ", error);
+    emit log_named_uint("cbETH balance: ", balance);
+    emit log_named_uint("cbETH borrowBalance: ", borrowBalance);
+    emit log_named_uint("cbETH exchangeRateMantissa: ", exchangeRateMantissa);
   }
 }
