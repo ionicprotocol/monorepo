@@ -6,7 +6,7 @@ import {
   deployIonicLiquidator,
   deployIonicUniV3Liquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
-import { base, bob, mode } from "viem/chains";
+import { base, bob, lisk, mode } from "viem/chains";
 
 const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
@@ -20,6 +20,23 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
   let liquidatorContractName: string | undefined;
   if (chainId === bob.id) {
     // TODO
+  } else if (chainId === lisk.id) {
+    liquidatorContractName = await deployIonicUniV3Liquidator({
+      run,
+      viem,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams,
+      chainId
+    });
+
+    await configureIonicLiquidator({
+      contractName: liquidatorContractName,
+      viem,
+      getNamedAccounts,
+      chainId,
+      deployments
+    });
   } else {
     liquidatorContractName = await deployIonicUniV3Liquidator({
       run,

@@ -21,6 +21,7 @@ export async function addUnderlyingsToMpo(
   }
 
   if (underlyings.length) {
+    console.log("adding underlyings to mpo", underlyings, oracles);
     if ((await mpo.read.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.write.add([underlyings, oracles]);
       console.log("tx: ", tx);

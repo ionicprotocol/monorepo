@@ -165,7 +165,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x95e4cD4786EDe1C0aA42F7dC9aECF32af4Ae8294"
+      "address": "0x6aa80aa164910A31B2309ea4c00da78C1A03c103"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x139bD5cf15A1312BfD165F36C0b88987A9d03900"
@@ -253,6 +253,9 @@
     },
     "VelodromePriceOracle": {
       "address": "0x9Bb6eFb9c1C16f4561591Fe13ea06AF8d1Fce2a9"
+    },
+    "VelodromeV2Liquidator": {
+      "address": "0xA1aBF92ef468464962aF1CEFFB44631a6fFb33ec"
     },
     "xERC20LayerZero": {
       "address": "0xb750c43F9338313c7A8af6922dcA1910Ee3583c8"

@@ -31,6 +31,8 @@ export const wUSDM = "0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812";
 export const OGN = "0x7002458B1DF59EccB57387bC79fFc7C29E22e6f7";
 export const EURC = "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42";
 export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
+export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
+export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 
 export const assets: SupportedAsset[] = [
   {
@@ -291,6 +293,30 @@ export const assets: SupportedAsset[] = [
     initialCf: "0.85",
     initialSupplyCap: parseUnits(String(40_000_000), 6).toString(),
     initialBorrowCap: parseUnits(String(30_000_000), 6).toString()
+  },
+  {
+    symbol: assetSymbols.wUSDplus,
+    underlying: wUSDplus,
+    name: "Wrapped USD+",
+    decimals: 6,
+    oracle: OracleTypes.ERC4626Oracle,
+    initialCf: "0.85",
+    initialSupplyCap: parseUnits(String(40_000_000), 6).toString(),
+    initialBorrowCap: "1"
+  },
+  {
+    symbol: assetSymbols.USDz,
+    underlying: USDz,
+    name: "USDz",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xe25969e2Fa633a0C027fAB8F30Fc9C6A90D60B48",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialCf: "0.80",
+    initialSupplyCap: parseEther(String(13_000_000)).toString(),
+    initialBorrowCap: parseEther(String(10_000_000)).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
@@ -299,7 +325,7 @@ export const assets: SupportedAsset[] = [
   //   name: "Ionic",
   //   decimals: 18,
   //   oracle: OracleTypes.AerodromePriceOracle
-  // },
+  // }
   //////////////////////////////////////////
 ];
 

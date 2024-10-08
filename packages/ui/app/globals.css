@@ -124,6 +124,10 @@
   background: #504F57;
 }
 
+.bg-lisk {
+  background: #4071f4;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -150,6 +154,10 @@
 
 .border-fraxtal {
   border-color: #504F57;
+}
+
+.border-lisk {
+  border-color: #4071f4;
 }
 
 .text-xxs {

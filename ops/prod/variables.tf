@@ -17,7 +17,12 @@ variable "ethereum_admin_account" {
 variable "ethereum_admin_private_key" {
   type = string
 }
-
+variable "pyth_updater_ethereum_admin_account" {
+  type = string
+}
+variable "pyth_updater_ethereum_admin_private_key" {
+  type = string
+}
 variable "infura_api_key" {
   type = string
 }
@@ -36,6 +41,12 @@ variable "pyth_updater_discord_webhook_url" {
 }
 
 variable "liquidation_discord_webhook_url" {
+  type = string
+}
+variable "discord_success_webhook_url" {
+  type = string
+}
+variable "discord_failure_webhook_url" {
   type = string
 }
 variable "per_discord_webhook_url" {

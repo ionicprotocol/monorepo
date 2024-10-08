@@ -254,17 +254,28 @@ export default function Claim() {
     [DROPDOWN.PublicSale]: publicClaimable
   };
 
-  const claimableCampaigns = [DROPDOWN.AirdropSZN1, DROPDOWN.AirdropSZN2];
+  // const claimableCampaigns = [DROPDOWN.AirdropSZN1, DROPDOWN.AirdropSZN2];
   const totalTokens = tokenMapping[dropdownSelectedCampaign] || BigInt(0);
   const claimableTokens =
     claimableMapping[dropdownSelectedCampaign] || BigInt(0);
 
   const isDisabled =
-    Number(formatEther(claimableTokens)) === 0 ||
-    (dropdownSelectedCampaign in claimableMapping && haveClaimed);
+    Number(formatEther(claimableTokens)) == 0 ||
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && haveClaimed == true) ||
+    dropdownSelectedCampaign == DROPDOWN.AirdropSZN2
+      ? true
+      : false;
 
-  const isDisabledClaim =
-    claimableCampaigns.includes(dropdownSelectedCampaign) && !agreement;
+  // ||
+  // (dropdownSelectedCampaign in claimableCampaigns && haveClaimed)
+
+  // const isDisabledClaim =
+  //   (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1! ||
+  //     dropdownSelectedCampaign == DROPDOWN.AirdropSZN2!) &&
+  //   agreement;
+
+  // const isDisabledClaim = publicClaimable > BigInt(0) ? false : true;
+
   return (
     <div
       className={`w-full bg-graylite dark:bg-grayone  flex   flex-col  gap-y-2  rounded-xl relative `}
@@ -389,7 +400,9 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {haveClaimed && dropdownSelectedCampaign in claimableMapping
+                  {dropdownSelectedCampaign != DROPDOWN.PublicSale &&
+                  haveClaimed &&
+                  dropdownSelectedCampaign in claimableMapping
                     ? 0
                     : Number(formatEther(claimableTokens)).toLocaleString(
                         undefined,
@@ -488,7 +501,13 @@ export default function Claim() {
                 )}
                 <button
                   className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                  disabled={isDisabledClaim}
+                  disabled={
+                    isDisabled ||
+                    (dropdownSelectedCampaign != DROPDOWN.PublicSale &&
+                      agreement == true)
+                      ? true
+                      : false
+                  }
                   onClick={() => {
                     if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
                       claimAirdrop();

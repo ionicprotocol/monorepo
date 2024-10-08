@@ -1204,7 +1204,7 @@ contract HyUSDeUSDLeveredPositionTest is LeveredPositionTest {
 }
 
 contract WSuperOETHWETHLeveredPositionTest is LeveredPositionTest {
-  function setUp() public forkAtBlock(BASE_MAINNET, 20145648) {}
+  function setUp() public fork(BASE_MAINNET) {}
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();

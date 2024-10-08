@@ -6,11 +6,10 @@ import { iAlgebraFactoryAbi, icErc20Abi, iUniswapV2FactoryAbi } from "../../gene
 import { IonicSdk } from "../../IonicSdk";
 
 import { ChainLiquidationConfig } from "./config";
-import encodeLiquidateTx from "./encodeLiquidateTx";
 import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
 import {
-  EncodedLiquidationTx,
+  FlashSwapLiquidationTxParams,
   PoolUserWithAssets,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS
@@ -33,7 +32,7 @@ export default async function getPotentialLiquidation(
   closeFactor: bigint,
   liquidationIncentive: bigint,
   chainLiquidationConfig: ChainLiquidationConfig
-): Promise<EncodedLiquidationTx | null> {
+): Promise<FlashSwapLiquidationTxParams | null> {
   // Get debt and collateral
   borrower = { ...borrower };
 
@@ -212,27 +211,28 @@ export default async function getPotentialLiquidation(
     return null;
   }
 
-  let expectedGasAmount: bigint;
-  try {
-    expectedGasAmount = await estimateGas(
-      sdk,
-      borrower,
-      repayAmount,
-      strategyAndData,
-      flashSwapPair,
-      chainLiquidationConfig.LIQUIDATION_STRATEGY,
-      debtFundingStrategies,
-      debtFundingStrategiesData
-    );
-  } catch {
-    expectedGasAmount = 750000n;
-  }
+  // let expectedGasAmount: bigint;
+  // try {
+  //   expectedGasAmount = await estimateGas(
+  //     sdk,
+  //     borrower,
+  //     repayAmount,
+  //     strategyAndData,
+  //     flashSwapPair,
+  //     chainLiquidationConfig.LIQUIDATION_STRATEGY,
+  //     debtFundingStrategies,
+  //     debtFundingStrategiesData
+  //   );
+  // } catch {
+  //   expectedGasAmount = 750000n;
+  // }
   // Get gas fee
-  const gasPrice = await sdk.publicClient.getGasPrice();
-  const expectedGasFee = gasPrice * expectedGasAmount;
+  // const gasPrice = await sdk.publicClient.getGasPrice();
+  // const expectedGasFee = gasPrice * expectedGasAmount;
 
   // calculate min profits
-  const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
+  // const minProfitAmountEth = expectedGasFee + chainLiquidationConfig.MINIMUM_PROFIT_NATIVE;
+  const minProfitAmountEth = 0n;
 
   // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth)*(SCALE_FACTOR_ONE_18_WEI)/(outputPrice);
 
@@ -244,15 +244,17 @@ export default async function getPotentialLiquidation(
     );
     return null;
   }
-  return await encodeLiquidateTx(
-    sdk,
-    chainLiquidationConfig.LIQUIDATION_STRATEGY,
-    borrower,
-    exchangeToTokenAddress,
-    strategyAndData,
+
+  return {
+    borrower: borrower.account,
     repayAmount,
-    flashSwapPair,
+    cErc20: borrower.debt[0].cToken,
+    cTokenCollateral: borrower.collateral[0].cToken,
+    minProfitAmount: 0n,
+    flashSwapContract: flashSwapPair,
+    redemptionStrategies: strategyAndData.strategies,
+    strategyData: strategyAndData.datas,
     debtFundingStrategies,
     debtFundingStrategiesData
-  );
+  };
 }

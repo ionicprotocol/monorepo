@@ -8,8 +8,11 @@ import {
   hyUSD_MARKET,
   ION,
   RSR_MARKET,
+  usdPlus_MARKET,
+  USDz_MARKET,
   weETH_MARKET,
-  wusdm_MARKET
+  wusdm_MARKET,
+  wusdPlus_MARKET
 } from ".";
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
@@ -271,6 +274,71 @@ task("base:add-rewards:epoch2:supply:wusdm", "add rewards to a market").setActio
       deployer as Address,
       viem,
       deployments
+    );
+  }
+);
+
+task("base:add-rewards:epoch2:supply:wusdplus", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const rewardToken = ION;
+    const rewardTokenName = "ION";
+    const market = wusdPlus_MARKET;
+    const rewardAmount = (50_000).toString();
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments
+    );
+  }
+);
+
+task("base:add-rewards:epoch2:supply:usdz", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = ION;
+    const rewardTokenName = "ION";
+    const market = USDz_MARKET;
+    const rewardAmount = (50_000).toString();
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address
     );
   }
 );
