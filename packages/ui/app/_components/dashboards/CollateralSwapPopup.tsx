@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { getQuote, type QuoteRequest } from '@lifi/sdk';
 import {
   ArcElement,
   CategoryScale,
@@ -14,7 +15,7 @@ import {
   Tooltip
 } from 'chart.js';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { formatEther } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
@@ -54,6 +55,26 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
   // const router = useRouter();
   const { isConnected } = useAccount();
 
+  const tokenIn = '0x4200000000000000000000000000000000000006';
+  const tokenOut = '0xd988097fb8612cc24eeC14542bC03424c656005f';
+
+  useEffect(() => {
+    const fetchQuote = async () => {
+      const quoteRequest: QuoteRequest = {
+        fromChain: chain,
+        toChain: chain,
+        fromToken: tokenIn,
+        toToken: tokenOut,
+        fromAmount: swapFromToken, // 10 USDC
+        // The address from which the tokens are being transferred.
+        fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0'
+      };
+      const quote = await getQuote(quoteRequest);
+      console.log(quote);
+    };
+    fetchQuote();
+  }, [chain, swapFromToken]);
+
   return (
     <div
       className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
@@ -85,7 +106,7 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
             headerText={'Wallet Balance'}
             amount={swapFromToken}
             tokenName={'weth'}
-            token={'0x4200000000000000000000000000000000000006'}
+            token={tokenIn}
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}
@@ -94,7 +115,7 @@ export default function CollateralSwapPopup({ swapRef, toggler }: IProp) {
             headerText={'Wallet Balance'}
             amount={swapToToken}
             tokenName={`usdc`}
-            token={'0xd988097fb8612cc24eeC14542bC03424c656005f'}
+            token={tokenOut}
             handleInput={(val?: string) => setSwapToToken(val as string)}
             chain={+chain}
           />
