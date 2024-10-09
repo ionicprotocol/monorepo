@@ -28,3 +28,6 @@ url = https://github.com/adrastia-oracle/adrastia-periphery
 [submodule "packages/contracts/lib/layerzero-v2"]
 	path = packages/contracts/lib/layerzero-v2
 	url = https://github.com/LayerZero-Labs/layerzero-v2
+[submodule "packages/contracts/lib/fuse-flywheel"]
+	path = packages/contracts/lib/fuse-flywheel
+	url = https://github.com/fei-protocol/fuse-flywheel
