@@ -16,15 +16,17 @@ import {
 } from 'chart.js';
 // import { usePathname, useRouter} from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { formatUnits, type Address } from 'viem';
+import { formatEther, formatUnits, parseEther, type Address } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
+// import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import SliderComponent from 'ui/app/_components/popup/Slider';
+import type { IBal } from 'ui/app/_components/stake/MaxDeposit';
 import MaxDeposit from 'ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from 'ui/app/_constants/mock';
 
@@ -63,7 +65,10 @@ export default function CollateralSwapPopup({
   const [swapToToken, setSwapToToken] = useState<string>('');
   const [lifiQuote, setLifiQuote] = useState<LiFiStep>();
   const [conversionRate, setConversionRate] = useState<string>('100');
-
+  const [maxTokens, setMaxTokens] = useState<IBal>({
+    value: BigInt(0),
+    decimals: 18
+  });
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
@@ -127,22 +132,39 @@ export default function CollateralSwapPopup({
   // ]);
   // console.log(swappedToTokenAddress);
   const { isConnected } = useAccount();
+  // const abc = lifiQuote;
+  useMemo(() => {
+    if (!swapFromToken) return;
+    const percent =
+      (+swapFromToken /
+        Number(formatUnits(maxTokens.value, maxTokens.decimals))) *
+      100;
+    setUtilization(Number(percent.toFixed(0)));
+  }, [maxTokens, swapFromToken]);
 
+  // const delayedswapFromToken = useDebounce(swapFromToken, 2000) ?? BigInt(0);  this needs to get fixed
   useEffect(() => {
     const fetchQuote = async () => {
-      if (!swappedFromAsset || !swappedToToken || BigInt(swapFromToken) === 0n)
+      if (
+        !swappedFromAsset ||
+        !swappedToToken ||
+        parseEther(swapFromToken) === BigInt(0)
+      )
         return;
+
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
         fromToken: swappedFromAsset?.underlyingToken,
         toToken: swappedToToken?.underlyingToken,
-        fromAmount: swapFromToken, // 10 USDC
+        //@ts-ignore
+        fromAmount: parseEther(swapFromToken), // 10 USDC needs to get delayed
         // The address from which the tokens are being transferred.
         fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
         skipSimulation: true
       };
       const quote = await getQuote(quoteRequest);
+      // eslint-disable-next-line no-console
       console.log('🚀 ~ fetchQuote ~ quote:', quote);
       setLifiQuote(quote);
       setSwapToToken(quote?.estimate?.toAmount);
@@ -155,7 +177,13 @@ export default function CollateralSwapPopup({
       );
     };
     fetchQuote();
-  }, [chain, swapFromToken, swappedFromAsset, swappedToAsset, swappedToToken]);
+  }, [
+    chain,
+    swapFromToken, // this should be delayed
+    swappedFromAsset,
+    swappedToAsset,
+    swappedToToken
+  ]);
 
   return (
     <div
@@ -180,7 +208,9 @@ export default function CollateralSwapPopup({
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">FEES</span>
-          <span className=" ">84</span>
+          <span className=" ">
+            {lifiQuote ? lifiQuote?.estimate?.feeCosts?.[0]?.amountUSD : ''} USD
+          </span>
         </div>
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
         <div className="w-full">
@@ -192,13 +222,14 @@ export default function CollateralSwapPopup({
             handleInput={(val?: string) => setSwapFromToken(val as string)}
             // max="0"
             chain={+chain}
+            setMaxTokenForUtilization={setMaxTokens}
           />
           <MaxDeposit
             headerText={'Swap To'}
-            amount={swapToToken}
+            amount={formatEther(BigInt(swapToToken))}
             tokenName={swappedToTokenQuery}
             token={swappedToToken?.cToken}
-            handleInput={(val?: string) => setSwapToToken(val as string)}
+            // handleInput={(val?: string) => setSwapToToken(val as string)}
             chain={+chain}
             tokenSelector={true}
             tokenArr={
@@ -217,7 +248,9 @@ export default function CollateralSwapPopup({
               currentUtilizationPercentage={Number(utilization.toFixed(0))}
               handleUtilization={(val?: number) => {
                 if (!val && !isConnected) return;
-                const percentval = (Number(val) / 100) * Number(swapFromToken);
+                const percentval =
+                  (Number(val) / 100) *
+                  Number(formatEther(BigInt(maxTokens.value)));
                 setSwapFromToken(percentval.toString());
                 setUtilization(val ?? 0);
               }}

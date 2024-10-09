@@ -2,6 +2,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import type { Dispatch, SetStateAction } from 'react';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { formatUnits, parseUnits } from 'viem';
 // import { mode } from 'viem/chains';
@@ -20,9 +21,10 @@ interface IMaxDeposit {
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
+  setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
 }
 
-interface IBal {
+export interface IBal {
   decimals: number;
   value: bigint;
 }
@@ -37,9 +39,11 @@ function MaxDeposit({
   max = '',
   chain,
   tokenSelector = false,
-  tokenArr
+  tokenArr,
+  setMaxTokenForUtilization
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
+
   const { address } = useAccount();
   const hooktoken =
     token === '0x0000000000000000000000000000000000000000' ? undefined : token;
@@ -59,14 +63,25 @@ function MaxDeposit({
         value: parseUnits(max, data?.decimals ?? 18),
         decimals: data?.decimals ?? 18
       });
+      // setMaxTokenForUtilization &&
+      //   setMaxTokenForUtilization({
+      //     value: parseUnits(max, data?.decimals ?? 18),
+      //     decimals: data?.decimals ?? 18
+      //   });
     } else if (max == '0') {
       setBal({ value: BigInt(0), decimals: data?.decimals ?? 18 });
+      // setMaxTokenForUtilization &&
+      //   setMaxTokenForUtilization({
+      //     value: BigInt(0),
+      //     decimals: data?.decimals ?? 18
+      //   });
     } else {
       data && setBal({ value: data?.value, decimals: data?.decimals });
     }
   }, [data, max]);
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
+    // eslint-disable-next-line no-console
     console.log('🚀 ~ handlInpData ~ e.target.value:', e.target.value);
     if (
       bal &&
@@ -119,9 +134,14 @@ function MaxDeposit({
           {handleInput && (
             <button
               className={`text-accent ml-2`}
-              onClick={() =>
-                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max)
-              }
+              onClick={() => {
+                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max);
+                setMaxTokenForUtilization &&
+                  setMaxTokenForUtilization({
+                    value: bal?.value ?? BigInt(0),
+                    decimals: bal?.decimals ?? 18
+                  });
+              }}
             >
               MAX
             </button>
