@@ -150,7 +150,7 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
       if (!transferStatus) {
         revert TransferFailed(address(oldCollateralMarket), borrower, address(this));
       }
-      uint256 redeemResult = oldCollateralMarket.redeem(amountCTokensToSwap);
+      uint256 redeemResult = oldCollateralMarket.redeemUnderlying(borrowedAmount);
       if (redeemResult != 0) {
         revert RedeemFailed(address(oldCollateralMarket), redeemResult);
       }
