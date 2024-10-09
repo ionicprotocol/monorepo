@@ -174,13 +174,13 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
       inputToken: modeToken.underlying,
       outputToken: usdtToken.underlying,
-      optimalPath: [wethToken.underlying, usdtToken.underlying]
+      optimalPath: [wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
     });
 
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
       inputToken: ezethToken.underlying,
       outputToken: usdtToken.underlying,
-      optimalPath: [wethToken.underlying, usdtToken.underlying]
+      optimalPath: [wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
     });
 
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
