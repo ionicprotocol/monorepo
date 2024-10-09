@@ -250,7 +250,7 @@ export default function CollateralSwapPopup({
                 if (!val && !isConnected) return;
                 const percentval =
                   (Number(val) / 100) *
-                  Number(formatEther(BigInt(maxTokens.value)));
+                  Number(formatEther(BigInt(maxTokens.value ?? swapFromToken)));
                 setSwapFromToken(percentval.toString());
                 setUtilization(val ?? 0);
               }}
