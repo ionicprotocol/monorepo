@@ -597,7 +597,7 @@ export const multipliers: Record<
         },
         supply: {
           ionic: 0,
-          underlyingAPR: 5,
+          underlyingAPR: 10,
           turtle: false,
           rewards: true,
           ionAPR: true,
