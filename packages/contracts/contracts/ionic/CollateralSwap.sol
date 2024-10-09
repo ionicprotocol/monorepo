@@ -11,10 +11,31 @@ import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 // import { console } from "forge-std/console.sol";
 
 contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
+  uint256 public feeBps;
+  address public feeRecipient;
   error SwapCollateralFailed();
   error TransferFailed(address market, address user, address target);
 
-  constructor() Ownable2Step() {}
+  constructor(uint256 _feeBps, address _feeRecipient) Ownable2Step() {
+    feeBps = _feeBps;
+    feeRecipient = _feeRecipient;
+  }
+
+  // ADMIN FUNCTIONS
+
+  function setFeeBps(uint256 _feeBps) public onlyOwner {
+    feeBps = _feeBps;
+  }
+
+  function setFeeRecipient(address _feeRecipient) public onlyOwner {
+    feeRecipient = _feeRecipient;
+  }
+
+  function sweep(address token) public onlyOwner {
+    IERC20(token).transfer(owner(), IERC20(token).balanceOf(address(this)));
+  }
+
+  // PUBLIC FUNCTIONS
 
   function swapCollateral(
     uint256 amountCTokensToSwap,
@@ -64,6 +85,11 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     // mint the new collateral
     {
       uint256 outputAmount = IERC20(newCollateralMarket.underlying()).balanceOf(address(this));
+      uint256 fee = (outputAmount * feeBps) / 10_000;
+      outputAmount -= fee;
+      if (fee > 0) {
+        IERC20(newCollateralMarket.underlying()).transfer(feeRecipient, fee);
+      }
       IERC20(newCollateralMarket.underlying()).approve(address(newCollateralMarket), outputAmount);
       newCollateralMarket.mint(outputAmount);
     }
@@ -85,9 +111,5 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
       IERC20(borrowedAsset).approve(address(oldCollateralMarket), borrowedAmount);
     }
     // flashloan gets paid back from redeemed collateral
-  }
-
-  function sweep(address token) public onlyOwner {
-    IERC20(token).transfer(owner(), IERC20(token).balanceOf(address(this)));
   }
 }
