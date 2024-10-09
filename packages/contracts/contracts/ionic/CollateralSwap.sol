@@ -76,8 +76,8 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
       abi.encode(
         msg.sender,
         amountCTokensToSwap,
-        address(oldCollateralMarket),
-        address(newCollateralMarket),
+        oldCollateralMarket,
+        newCollateralMarket,
         swapTarget,
         swapData
       )
@@ -103,13 +103,11 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     (
       address borrower,
       uint256 amountCTokensToSwap,
-      address _oldCollateralMarket,
-      address _newCollateralMarket,
+      ICErc20 oldCollateralMarket,
+      ICErc20 newCollateralMarket,
       address swapTarget,
       bytes memory swapData
-    ) = abi.decode(data, (address, uint256, address, address, address, bytes));
-    ICErc20 oldCollateralMarket = ICErc20(_oldCollateralMarket);
-    ICErc20 newCollateralMarket = ICErc20(_newCollateralMarket);
+    ) = abi.decode(data, (address, uint256, ICErc20, ICErc20, address, bytes));
 
     // swap the collateral
     {
@@ -125,13 +123,14 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
 
     // mint the new collateral
     {
-      uint256 outputAmount = IERC20(newCollateralMarket.underlying()).balanceOf(address(this));
+      IERC20 newCollateralAsset = IERC20(newCollateralMarket.underlying());
+      uint256 outputAmount = newCollateralAsset.balanceOf(address(this));
       uint256 fee = (outputAmount * feeBps) / 10_000;
       outputAmount -= fee;
       if (fee > 0) {
-        IERC20(newCollateralMarket.underlying()).safeTransfer(feeRecipient, fee);
+        newCollateralAsset.safeTransfer(feeRecipient, fee);
       }
-      IERC20(newCollateralMarket.underlying()).approve(address(newCollateralMarket), outputAmount);
+      newCollateralAsset.approve(address(newCollateralMarket), outputAmount);
       uint256 mintResult = newCollateralMarket.mint(outputAmount);
       if (mintResult != 0) {
         revert MintFailed(address(newCollateralMarket), mintResult);
