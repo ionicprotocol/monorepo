@@ -20,6 +20,8 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
   error OnlyWhenClosed();
   error NotPositionOwner();
+  error OnlyFactoryOwner();
+  error AssetNotRescuable();
   error RepayFlashLoanFailed(address asset, uint256 currentBalance, uint256 repayAmount);
 
   error ConvertFundsFailed();
@@ -161,6 +163,13 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
         rewardToken.transfer(withdrawTo, rewardsAccrued);
       }
     }
+  }
+
+  function rescueTokens(IERC20Upgradeable asset) external {
+    if (msg.sender != factory.owner()) revert OnlyFactoryOwner();
+    if (asset == stableAsset || asset == collateralAsset) revert AssetNotRescuable();
+
+    asset.transfer(positionOwner, asset.balanceOf(address(this)));
   }
 
   fallback() external {
