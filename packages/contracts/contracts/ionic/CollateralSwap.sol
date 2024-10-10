@@ -9,8 +9,6 @@ import { Exponential } from "../compound/Exponential.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 
-import { console } from "forge-std/console.sol";
-
 contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
   using SafeERC20 for IERC20;
 
@@ -67,8 +65,6 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     address swapTarget,
     bytes calldata swapData
   ) public {
-    console.log("amountUnderlying: ", amountUnderlying);
-
     oldCollateralMarket.flash(
       amountUnderlying,
       abi.encode(msg.sender, oldCollateralMarket, newCollateralMarket, swapTarget, swapData)
@@ -115,16 +111,13 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     {
       IERC20 newCollateralAsset = IERC20(newCollateralMarket.underlying());
       uint256 outputAmount = newCollateralAsset.balanceOf(address(this));
-      console.log("outputAmount: ", outputAmount);
       uint256 fee = (outputAmount * feeBps) / 10_000;
       outputAmount -= fee;
-      console.log("outputAmount after fee: ", outputAmount);
       if (fee > 0) {
         newCollateralAsset.safeTransfer(feeRecipient, fee);
       }
       newCollateralAsset.approve(address(newCollateralMarket), outputAmount);
       uint256 mintResult = newCollateralMarket.mint(outputAmount);
-      console.log("mintResult: ", mintResult);
       if (mintResult != 0) {
         revert MintFailed(address(newCollateralMarket), mintResult);
       }
@@ -133,7 +126,6 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     // transfer the new collateral to the borrower
     {
       uint256 cTokenBalance = IERC20(address(newCollateralMarket)).balanceOf(address(this));
-      console.log("cTokenBalance: ", cTokenBalance);
       IERC20(address(newCollateralMarket)).safeTransfer(borrower, cTokenBalance);
     }
 
@@ -144,19 +136,14 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
         Exp({ mantissa: oldCollateralMarket.exchangeRateCurrent() })
       );
       require(mErr == MathError.NO_ERROR, "exchange rate error");
-      // console.log("allowance: ", oldCollateralMarket.allowance(borrower, address(this)));
       bool transferStatus = oldCollateralMarket.transferFrom(borrower, address(this), amountCTokensToSwap + 1);
-      console.log("transferStatus: ", transferStatus);
       if (!transferStatus) {
         revert TransferFailed(address(oldCollateralMarket), borrower, address(this));
       }
       uint256 redeemResult = oldCollateralMarket.redeemUnderlying(type(uint256).max);
-      console.log("redeemResult: ", redeemResult);
       if (redeemResult != 0) {
         revert RedeemFailed(address(oldCollateralMarket), redeemResult);
       }
-      console.log("borrowed amount: ", borrowedAmount);
-      console.log("amount redeemed to repay: ", IERC20(borrowedAsset).balanceOf(address(this)));
       IERC20(borrowedAsset).approve(address(oldCollateralMarket), borrowedAmount);
     }
     // flashloan gets paid back from redeemed collateral

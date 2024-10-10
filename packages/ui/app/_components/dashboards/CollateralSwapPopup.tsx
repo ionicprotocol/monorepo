@@ -26,12 +26,12 @@ import { useEffect, useMemo, useState } from 'react';
 // import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import {
+  type Address,
   formatEther,
   formatUnits,
   type Hex,
   parseEther,
-  parseUnits,
-  type Address
+  parseUnits
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
@@ -39,6 +39,7 @@ import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
 
 // import { useDebounce } from '@ui/hooks/useDebounce';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -96,6 +97,11 @@ export default function CollateralSwapPopup({
   const querychain = searchParams.get('chain');
   const chain = querychain ? querychain : String(chainId);
   const queryToken = searchParams.get('token');
+
+  const { getSdk } = useMultiIonic();
+  const sdk = getSdk(+chain);
+  const collateralSwapContract =
+    sdk?.chainDeployment[`CollateralSwap-${comptroller}`];
   // const pathname = usePathname();
   // const swappedToTokenQuery = queryToken
   //   ? queryToken !== swappedToAsset.map((asset) => asset.underlyingSymbol)[0]
@@ -185,6 +191,7 @@ export default function CollateralSwapPopup({
       if (
         !swappedFromAsset ||
         !swappedToAsset ||
+        !collateralSwapContract?.address ||
         parseEther(debouncedSwapFromAmountUnderlying) === BigInt(0)
       )
         return;
@@ -200,7 +207,7 @@ export default function CollateralSwapPopup({
           swappedFromAsset?.underlyingDecimals ?? 18
         ), // 10 USDC needs to get delayed
         // The address from which the tokens are being transferred.
-        fromAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
+        fromAddress: collateralSwapContract?.address,
         skipSimulation: true,
         integrator: 'ionic'
       };
@@ -224,25 +231,25 @@ export default function CollateralSwapPopup({
     swappedFromAsset,
     swappedToAssets,
     swappedToAsset,
-    debouncedSwapFromAmountUnderlying
+    debouncedSwapFromAmountUnderlying,
+    collateralSwapContract?.address
   ]);
 
-  const { writeContractAsync, isPending, isError, isSuccess } =
-    useWriteContract();
-  console.log('🚀 ~ isSuccess:', isSuccess);
-  console.log('🚀 ~ isError:', isError);
-  console.log('🚀 ~ isPending:', isPending);
+  const { writeContractAsync, isPending } = useWriteContract();
   const handleSwitch = async () => {
     console.log('Switching');
     await writeContractAsync({
-      address: '0x028227c4dd1e5419d11Bb6fa6e661920c519D4F5',
+      address: collateralSwapContract!.address as Address,
       abi: collateralSwapAbi,
       functionName: 'swapCollateral',
       args: [
-        BigInt(swapFromAmountUnderlying),
-        swappedFromAsset?.cToken,
+        parseUnits(
+          swapFromAmountUnderlying,
+          swappedFromAsset.underlyingDecimals
+        ),
+        swappedFromAsset!.cToken,
         swappedToAsset!.cToken,
-        lifiQuote?.transactionRequest?.to as Address,
+        lifiQuote!.transactionRequest!.to as Address,
         lifiQuote!.transactionRequest!.data as Hex
       ]
     });
@@ -398,7 +405,7 @@ export default function CollateralSwapPopup({
         <button
           className={`bg-accent py-1 px-3 w-full text-sm rounded-md text-black`}
           onClick={handleSwitch}
-          disabled={switchInProgress}
+          disabled={isPending}
         >
           SWITCH {swappedFromAsset?.underlyingSymbol} TO{' '}
           {swappedToAsset?.underlyingSymbol}{' '}
