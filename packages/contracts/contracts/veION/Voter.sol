@@ -357,7 +357,13 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {}
+  function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {
+    if (!IveION(ve).isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    uint256 _length = _bribes.length;
+    for (uint256 i = 0; i < _length; i++) {
+      IBribeRewards(_bribes[i]).getReward(_tokenId, _tokens[i]);
+    }
+  }
 
   // Internal function to get all LP reward tokens
   function getAllLpRewardTokens() external view returns (address[] memory) {

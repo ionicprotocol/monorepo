@@ -7,13 +7,15 @@ import { IVoter } from "./interfaces/IVoter.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ReentrancyGuardUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import { IonicTimeLibrary } from "./libraries/IonicTimeLibrary.sol";
 import { IveION } from "./interfaces/IveION.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
+import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 
 /// @title BribeRewards
 /// @notice Base reward contract for distribution of rewards
-contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
+contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgradeable {
   using SafeERC20 for IERC20;
 
   uint256 public constant DURATION = 7 days;
@@ -30,6 +32,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
 
   address[] public rewards;
   mapping(address => bool) public isReward;
+
+  MasterPriceOracle public mpo;
 
   /// @notice A checkpoint for marking balance
   struct Checkpoint {
@@ -52,10 +56,14 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   /// @notice The number of checkpoints
   mapping(address => uint256) public supplyNumCheckpoints;
 
-  function initialize(address _voter) public initializer {
+  mapping(address => mapping(uint256 => uint256)) public historicalPrices;
+
+  function initialize(address _voter, address _mpo) public initializer {
     __ReentrancyGuard_init();
+    __Ownable_init();
     voter = _voter;
     ve = IVoter(_voter).ve();
+    mpo = MasterPriceOracle(_mpo);
   }
 
   /// @inheritdoc IBribeRewards
@@ -163,10 +171,13 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   struct EarnedVars {
     uint256 totalReward;
     uint256 reward;
-    uint256 supply;
+    uint256 supplyValue;
+    uint256 epochBalanceValue;
     uint256 currTs;
     uint256 index;
     uint256 numEpochs;
+    uint256 overallBalance;
+    uint256 overallSupply;
   }
 
   /// @inheritdoc IBribeRewards
@@ -183,7 +194,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
       }
 
       vars.reward = 0;
-      vars.supply = 1;
+      vars.supplyValue = 1;
       vars.currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]); // take epoch last claimed in as starting point
       vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs);
       Checkpoint memory cp0 = checkpoints[tokenId][lpToken][vars.index];
@@ -201,16 +212,20 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
           // get checkpoint in this epoch
           cp0 = checkpoints[tokenId][lpToken][vars.index];
           // get supply of last checkpoint in this epoch
-          vars.supply = Math.max(
-            supplyCheckpoints[getPriorSupplyIndex(vars.currTs + DURATION - 1, lpToken)][lpToken].supply,
-            1
-          );
-          vars.reward += (cp0.balanceOf * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supply;
+          vars.supplyValue = 0;
+          for (uint256 k = 0; k < lpTokens.length; k++) {
+            address currentLpToken = lpTokens[k];
+            uint256 supplyValue = Math.max(
+              supplyCheckpoints[getPriorSupplyIndex(vars.currTs + DURATION - 1, currentLpToken)][currentLpToken].supply,
+              1
+            );
+            vars.supplyValue += _getTokenEthValueAt(supplyValue, currentLpToken, vars.currTs);
+          }
+          vars.epochBalanceValue = _getTokenEthValueAt(cp0.balanceOf, lpToken, vars.currTs);
+          vars.totalReward += (vars.epochBalanceValue * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supplyValue;
           vars.currTs += DURATION;
         }
       }
-
-      vars.totalReward += vars.reward;
     }
 
     return vars.totalReward;
@@ -245,16 +260,16 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IBribeRewards
-  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external nonReentrant {
+  function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant {
     address sender = msg.sender;
     if (!IveION(ve).isApprovedOrOwner(sender, tokenId) && sender != voter) revert Unauthorized();
 
     address _owner = ERC721Upgradeable(ve).ownerOf(tokenId);
-    _getReward(_owner, tokenId, lpToken, tokens);
+    _getReward(_owner, tokenId, tokens);
   }
 
   /// @dev used with all getReward implementations
-  function _getReward(address recipient, uint256 tokenId, address lpToken, address[] memory tokens) internal {
+  function _getReward(address recipient, uint256 tokenId, address[] memory tokens) internal {
     uint256 _length = tokens.length;
     for (uint256 i = 0; i < _length; i++) {
       uint256 _reward = earned(tokens[i], tokenId);
@@ -291,5 +306,26 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable {
 
   function getAllLpRewardTokens() public view returns (address[] memory) {
     return IVoter(voter).getAllLpRewardTokens();
+  }
+
+  function _getTokenEthValueAt(
+    uint256 amount,
+    address lpToken,
+    uint256 epochTimestamp
+  ) internal view returns (uint256) {
+    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochTimestamp];
+    uint256 ethValue = amount * _priceAtTimestamp;
+    return ethValue;
+  }
+
+  function setHistoricalPrices(uint256 epochTimestamp, uint256 price) external onlyOwner {
+    address[] memory lpTokens = getAllLpRewardTokens();
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      historicalPrices[lpTokens[i]][epochTimestamp] = price;
+    }
+  }
+
+  function setMpo(address _mpo) external onlyOwner {
+    mpo = MasterPriceOracle(_mpo);
   }
 }

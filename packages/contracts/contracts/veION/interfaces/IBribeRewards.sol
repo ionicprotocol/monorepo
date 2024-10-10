@@ -33,8 +33,7 @@ interface IBribeRewards {
   /// @notice Claim the rewards earned by a veNFT holder
   /// @param tokenId  Unique identifier of the veNFT
   /// @param tokens   Array of tokens to claim rewards for
-  /// @param lpToken  Address of the liquidity pool token
-  function getReward(uint256 tokenId, address[] memory tokens, address lpToken) external;
+  function getReward(uint256 tokenId, address[] memory tokens) external;
 
   /// @notice Notify the contract about new rewards for stakers
   /// @param token    Address of the reward token
