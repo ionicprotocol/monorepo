@@ -155,7 +155,8 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
       if (redeemResult != 0) {
         revert RedeemFailed(address(oldCollateralMarket), redeemResult);
       }
-      console.log("balance underlying: ", IERC20(borrowedAsset).balanceOf(address(this)));
+      console.log("borrowed amount: ", borrowedAmount);
+      console.log("amount redeemed to repay: ", IERC20(borrowedAsset).balanceOf(address(this)));
       IERC20(borrowedAsset).approve(address(oldCollateralMarket), borrowedAmount);
     }
     // flashloan gets paid back from redeemed collateral
