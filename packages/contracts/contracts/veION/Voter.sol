@@ -175,26 +175,10 @@ contract Voter is IVoter, OwnableUpgradeable {
     for (uint256 i = 0; i < markets.length; i++) {
       uint256 _marketWeightETH = _calculateMarketLPValue(markets[i].marketAddress, markets[i].side);
       if (_marketWeightETH > 0) {
-        if (markets[i].side == MarketSide.Utilization) {
-          // TODO: receive borrow and supply for specific market
-          uint256 totalSupply = ICErc20(markets[i].marketAddress).totalSupply();
-          uint256 totalBorrow = ICErc20(markets[i].marketAddress).totalBorrows();
-          uint256 _utilization = (totalBorrow * 100) / totalSupply;
-          uint256 _marketReward = (_reward * _marketWeightETH) / _totalLPValueETH;
-          IERC20(rewardToken).safeTransfer(
-            marketToRewardAccumulators[markets[i].marketAddress][MarketSide.Supply],
-            (_marketReward * _utilization) / 100
-          );
-          IERC20(rewardToken).safeTransfer(
-            marketToRewardAccumulators[markets[i].marketAddress][MarketSide.Borrow],
-            (_marketReward * (100 - _utilization)) / 100
-          );
-        } else {
-          IERC20(rewardToken).safeTransfer(
-            marketToRewardAccumulators[markets[i].marketAddress][markets[i].side],
-            (_reward * _marketWeightETH) / _totalLPValueETH
-          );
-        }
+        IERC20(rewardToken).safeTransfer(
+          marketToRewardAccumulators[markets[i].marketAddress][markets[i].side],
+          (_reward * _marketWeightETH) / _totalLPValueETH
+        );
       }
     }
   }
@@ -370,52 +354,6 @@ contract Voter is IVoter, OwnableUpgradeable {
 
   function length() external view returns (uint256) {
     return markets.length;
-  }
-
-  /// @inheritdoc IVoter
-  function notifyRewardAmount(uint256 _amount) external {
-    address sender = msg.sender;
-    uint256 _totalLPValueETH = _calculateTotalLPValue();
-    if (sender != minter) revert NotMinter();
-    IERC20(rewardToken).safeTransferFrom(sender, address(this), _amount);
-    uint256 _ratio = (_amount * 1e18) / Math.max(_totalLPValueETH, 1);
-    if (_ratio > 0) {
-      index += _ratio;
-    }
-    for (uint256 i = 0; i < markets.length; i++) {
-      Market memory market = markets[i];
-      _updateFor(market.marketAddress, market.side);
-    }
-
-    emit NotifyReward(sender, rewardToken, _amount);
-  }
-
-  function _updateFor(address _marketVote, MarketSide _marketVoteSide) internal {
-    address[] memory lpRewardTokens = _getAllLpRewardTokens();
-    uint256 _marketWeightETH = 0;
-    for (uint256 k = 0; k < lpRewardTokens.length; k++) {
-      uint256 _lpAmount = weights[_marketVote][_marketVoteSide][lpRewardTokens[k]];
-      uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpRewardTokens[k]);
-      _marketWeightETH += tokenEthValue;
-    }
-    address _accumulator = marketToRewardAccumulators[_marketVote][_marketVoteSide];
-
-    if (_marketWeightETH > 0) {
-      uint256 _supplyIndex = supplyIndex[_accumulator];
-      uint256 _index = index;
-      supplyIndex[_accumulator] = _index;
-      uint256 _delta = _index - _supplyIndex;
-      if (_delta > 0) {
-        uint256 _share = (uint256(_marketWeightETH) * _delta) / 1e18;
-        if (isAlive[_accumulator]) {
-          claimable[_accumulator] += _share;
-        } else {
-          IERC20(rewardToken).safeTransfer(minter, _share);
-        }
-      }
-    } else {
-      supplyIndex[_accumulator] = index;
-    }
   }
 
   /// @inheritdoc IVoter

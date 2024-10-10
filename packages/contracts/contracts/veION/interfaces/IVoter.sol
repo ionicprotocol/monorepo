@@ -37,8 +37,7 @@ interface IVoter {
 
   enum MarketSide {
     Supply,
-    Borrow,
-    Utilization
+    Borrow
   }
 
   event Voted(
@@ -90,12 +89,6 @@ interface IVoter {
   function emergencyCouncil() external view returns (address);
 
   function length() external view returns (uint256);
-
-  /// @notice Called by Minter to distribute weekly emissions rewards for disbursement amongst gauges.
-  /// @dev Assumes totalWeight != 0 (Will never be zero as long as users are voting).
-  ///      Throws if not called by minter.
-  /// @param _amount Amount of rewards to distribute.
-  function notifyRewardAmount(uint256 _amount) external;
 
   /// @notice Called by users to update voting balances in voting rewards contracts.
   /// @param _tokenId Id of veNFT whose balance you wish to update.
