@@ -48,6 +48,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_protocolFees;
   mapping(LpTokenType => uint256) public s_distributedFees;
 
+  uint256 s_limitedBoost;
+  bool s_limitedBoostActive;
+  address veAERO;
+  address aeroVoting;
+  address ionicPool;
+  uint256 aeroVoterBoost;
+
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
       revert NotMinter();
@@ -160,6 +167,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function merge(address _tokenAddress, uint256 _from, uint256 _to) external {
     address sender = _msgSender();
     if (_from == _to) revert SameNFT();
+    if (s_voted[_from]) revert AlreadyVoted();
     if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
     if (!_isApprovedOrOwner(sender, _to)) revert NotApprovedOrOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
@@ -174,6 +182,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
     _checkpoint(_from, oldLockedFrom, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
 
+    // TODO new locked should inherit boost, lp token, start
     LockedBalance memory newLockedTo;
     newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
     newLockedTo.isPermanent = oldLockedTo.isPermanent;
@@ -193,6 +202,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
     address sender = _msgSender();
     address owner = _ownerOf(_from);
+    if (s_voted[_from]) revert AlreadyVoted();
     if (owner == address(0)) revert SplitNoOwner();
     if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
     if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
@@ -659,7 +669,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function voting(uint256 _tokenId, bool _voting) external {}
 
   /// @inheritdoc IveION
-  function balanceOfNFT(uint256 _tokenId) public view returns (address[] memory _assets, uint256[] memory _balances) {
+  function balanceOfNFT(
+    uint256 _tokenId
+  ) public view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts) {
     uint256 lengthOfAssets = s_assetsLocked[_tokenId].length;
     _assets = new address[](lengthOfAssets);
     _balances = new uint256[](lengthOfAssets);
@@ -667,6 +679,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     for (uint256 i = 0; i < lengthOfAssets; i++) {
       address asset = s_assetsLocked[_tokenId][i];
       LpTokenType lpType = s_lpType[asset];
+      _boosts[i] = _getTotalBoost(_tokenId, lpType);
       _assets[i] = asset;
       _balances[i] = BalanceLogicLibrary.balanceOfNFTAt(
         s_userPointEpoch,
@@ -677,6 +690,45 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       );
     }
 
-    return (_assets, _balances);
+    return (_assets, _balances, _boosts);
   }
+
+  function _getTotalBoost(uint256 _tokenId, LpTokenType _lpType) internal view returns (uint256) {
+    uint256 totalBoost = s_locked[_tokenId][_lpType].boost;
+    if (s_limitedBoostActive) {
+      totalBoost += s_limitedBoost;
+    }
+    address _owner = ownerOf(_tokenId);
+    uint256 _balance = IAeroVotingEscrow(veAERO).balanceOf(_owner);
+    for (uint256 i = 0; i < _balance; i++) {
+      uint256 tokenId = IAeroVotingEscrow(veAERO).ownerToNFTokenIdList(_owner, i);
+      address[] memory poolVotes = IAeroVoter(aeroVoting).poolVote(tokenId);
+      for (uint256 j = 0; j < poolVotes.length; j++) {
+        if (poolVotes[j] == ionicPool) {
+          totalBoost += aeroVoterBoost; // Apply special boost if ionic pool is present
+          break;
+        }
+      }
+    }
+
+    return totalBoost;
+  }
+
+  function toggleLimitedBoost(bool _isBoosted) external onlyOwner {
+    s_limitedBoostActive = _isBoosted;
+  }
+
+  function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
+    s_limitedBoost = _boostAmount;
+  }
+}
+
+interface IAeroVotingEscrow {
+  function balanceOf(address _owner) external view returns (uint256);
+
+  function ownerToNFTokenIdList(address _owner, uint256 _index) external view returns (uint256);
+}
+
+interface IAeroVoter {
+  function poolVote(uint256 tokenId) external view returns (address[] memory);
 }

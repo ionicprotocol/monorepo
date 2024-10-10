@@ -231,10 +231,11 @@ contract Voter is IVoter, OwnableUpgradeable {
   /// @inheritdoc IVoter
   function poke(uint256 _tokenId) external {
     if (block.timestamp <= IonicTimeLibrary.epochVoteStart(block.timestamp)) revert DistributeWindow();
-    (address[] memory _votingLPs, uint256[] memory _votingLPBalances) = IveION(ve).balanceOfNFT(_tokenId);
+    (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
+      .balanceOfNFT(_tokenId);
 
     for (uint256 i = 0; i < _votingLPs.length; i++) {
-      _poke(_tokenId, _votingLPs[i], _votingLPBalances[i]);
+      _poke(_tokenId, _votingLPs[i], (_votingLPBalances[i] * _boosts[i]) / 1e18);
     }
   }
 
@@ -327,9 +328,17 @@ contract Voter is IVoter, OwnableUpgradeable {
     if ((_timestamp > IonicTimeLibrary.epochVoteEnd(_timestamp)) && !isWhitelistedNFT[_tokenId])
       revert NotWhitelistedNFT();
     lastVoted[_tokenId] = _timestamp;
-    (address[] memory _votingLPs, uint256[] memory _votingLPBalances) = IveION(ve).balanceOfNFT(_tokenId);
+    (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
+      .balanceOfNFT(_tokenId);
     for (uint256 i = 0; i < _votingLPs.length; i++) {
-      _vote(_tokenId, _votingLPs[i], _votingLPBalances[i], _marketVote, _marketVoteSide, _weights);
+      _vote(
+        _tokenId,
+        _votingLPs[i],
+        (_votingLPBalances[i] * _boosts[i]) / 1e18,
+        _marketVote,
+        _marketVoteSide,
+        _weights
+      );
     }
   }
 
