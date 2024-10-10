@@ -61,28 +61,17 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
   // PUBLIC FUNCTIONS
 
   function swapCollateral(
-    uint256 amountCTokensToSwap,
+    uint256 amountUnderlying,
     ICErc20 oldCollateralMarket,
     ICErc20 newCollateralMarket,
     address swapTarget,
     bytes calldata swapData
   ) public {
-    Exp memory exchangeRate = Exp({ mantissa: oldCollateralMarket.exchangeRateCurrent() });
-    (MathError mErr, uint256 amountUnderlying) = mulScalarTruncate(exchangeRate, amountCTokensToSwap);
-    require(mErr == MathError.NO_ERROR, "exchange rate error");
     console.log("amountUnderlying: ", amountUnderlying);
-    console.log("amountCTokensToSwap: ", amountCTokensToSwap);
 
     oldCollateralMarket.flash(
       amountUnderlying,
-      abi.encode(
-        msg.sender,
-        amountCTokensToSwap,
-        oldCollateralMarket,
-        newCollateralMarket,
-        swapTarget,
-        swapData
-      )
+      abi.encode(msg.sender, oldCollateralMarket, newCollateralMarket, swapTarget, swapData)
     );
   }
 
@@ -104,12 +93,11 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
 
     (
       address borrower,
-      uint256 amountCTokensToSwap,
       ICErc20 oldCollateralMarket,
       ICErc20 newCollateralMarket,
       address swapTarget,
       bytes memory swapData
-    ) = abi.decode(data, (address, uint256, ICErc20, ICErc20, address, bytes));
+    ) = abi.decode(data, (address, ICErc20, ICErc20, address, bytes));
 
     // swap the collateral
     {
@@ -151,15 +139,23 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
 
     // withdraw the old collateral
     {
+      (MathError mErr, uint256 amountCTokensToSwap) = divScalarByExpTruncate(
+        borrowedAmount,
+        Exp({ mantissa: oldCollateralMarket.exchangeRateCurrent() })
+      );
+      require(mErr == MathError.NO_ERROR, "exchange rate error");
       // console.log("allowance: ", oldCollateralMarket.allowance(borrower, address(this)));
       bool transferStatus = oldCollateralMarket.transferFrom(borrower, address(this), amountCTokensToSwap);
+      console.log("transferStatus: ", transferStatus);
       if (!transferStatus) {
         revert TransferFailed(address(oldCollateralMarket), borrower, address(this));
       }
-      uint256 redeemResult = oldCollateralMarket.redeemUnderlying(borrowedAmount);
+      uint256 redeemResult = oldCollateralMarket.redeemUnderlying(type(uint256).max);
+      console.log("redeemResult: ", redeemResult);
       if (redeemResult != 0) {
         revert RedeemFailed(address(oldCollateralMarket), redeemResult);
       }
+      console.log("balance underlying: ", IERC20(borrowedAsset).balanceOf(address(this)));
       IERC20(borrowedAsset).approve(address(oldCollateralMarket), borrowedAmount);
     }
     // flashloan gets paid back from redeemed collateral
