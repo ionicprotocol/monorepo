@@ -12,6 +12,7 @@ import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
@@ -58,6 +59,8 @@ export default function Dashboard() {
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
+    useState<MarketData>();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -367,8 +370,29 @@ export default function Dashboard() {
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
+
+  // console.log(suppliedAssets);
   return (
     <>
+      {swapOpen && marketData?.comptroller && (
+        <CollateralSwapPopup
+          toggler={() => swapToggle()}
+          swapRef={swapRef}
+          swappedFromAsset={collateralSwapFromAsset!}
+          swappedToAssets={marketData?.assets.filter(
+            (asset) =>
+              asset?.underlyingToken !==
+              collateralSwapFromAsset?.underlyingToken
+          )}
+          swapOpen={swapOpen}
+          comptroller={marketData?.comptroller}
+        />
+      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -677,6 +701,10 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
+                      toggler={() => swapToggle()}
+                      setCollateralSwapFromAsset={() =>
+                        setCollateralSwapFromAsset(asset)
+                      }
                       utilization="0.00%"
                     />
                   ))}

@@ -1,19 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { Address, formatUnits } from 'viem';
+import { type Address, formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import type { Cap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 interface UseSupplyCapParams {
   chainId: number;
   comptroller: Address;
-  market: Pick<
+  market?: Pick<
     MarketData,
     'cToken' | 'totalSupply' | 'underlyingDecimals' | 'underlyingPrice'
   >;
@@ -35,7 +34,7 @@ export const useSupplyCap = ({
   const sdk = useSdk(chainId);
   const { data: supplyCapsDataForAsset } = useSupplyCapsDataForAsset(
     comptrollerAddress,
-    market.cToken,
+    market?.cToken,
     chainId
   );
 
@@ -44,10 +43,10 @@ export const useSupplyCap = ({
       'useSupplyCap',
       comptrollerAddress,
       sdk?.chainId,
-      market.cToken,
-      market.totalSupply,
-      market.underlyingPrice,
-      market.underlyingDecimals,
+      market?.cToken,
+      market?.totalSupply,
+      market?.underlyingPrice,
+      market?.underlyingDecimals,
       usdPrice,
       address,
       supplyCapsDataForAsset

@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 /// @title Router token swapping functionality
 /// @notice Functions for swapping tokens via CL
-interface ISwapRouter {
+interface IAerodromeSwapRouter {
     struct ExactInputSingleParams {
         address tokenIn;
         address tokenOut;

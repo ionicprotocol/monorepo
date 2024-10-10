@@ -1371,7 +1371,9 @@ const Popup = ({
                   </div>
                   {/* <Approved /> */}
                 </div>
-                <div className={`min-w-full py-5 px-[6%] h-min`}>
+                <div
+                  className={`min-w-full flex flex-col min-h-full py-5 px-[6%] gap-y-1.5 `}
+                >
                   {/* ---------------------------------------------------------------------------- */}
                   {/* SUPPLY-Withdraw section */}
                   {/* ---------------------------------------------------------------------------- */}
@@ -1410,7 +1412,7 @@ const Popup = ({
                   />
 
                   <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                   >
                     <span className={``}>Market Supply Balance</span>
                     <span className={`flex font-bold pl-2`}>
@@ -1461,7 +1463,7 @@ const Popup = ({
                     </span>
                   </div>
                   <div
-                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1  mt-auto self-end text-darkone`}
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
