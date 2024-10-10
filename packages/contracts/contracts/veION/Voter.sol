@@ -10,6 +10,8 @@ import { IveION } from "./interfaces/IveION.sol";
 import { IBribeRewards } from "./interfaces/IBribeRewards.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
+import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
+import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 interface IPoolLens {
   function getPoolSummary(
@@ -17,7 +19,7 @@ interface IPoolLens {
   ) external returns (uint256, uint256, address[] memory, string[] memory, bool);
 }
 
-contract Voter is IVoter {
+contract Voter is IVoter, OwnableUpgradeable {
   using SafeERC20 for IERC20;
   /// @notice Store trusted forwarder address to pass into factories
   address public immutable forwarder;
@@ -76,6 +78,10 @@ contract Voter is IVoter {
   /// @dev Market => Market Side => Supply Index
   mapping(address => uint256) public supplyIndex;
 
+  MasterPriceOracle public mpo;
+
+  address[] public lpTokens;
+
   modifier onlyNewEpoch(uint256 _tokenId) {
     // ensure new epoch since last vote
     if (IonicTimeLibrary.epochStart(block.timestamp) <= lastVoted[_tokenId]) revert AlreadyVotedOrDeposited();
@@ -100,13 +106,14 @@ contract Voter is IVoter {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, address _minter) external {
-    if (msg.sender != minter) revert NotMinter();
+  function initialize(address[] calldata _tokens, address _minter, MasterPriceOracle _mpo) external initializer {
+    __Ownable_init();
     uint256 _length = _tokens.length;
     for (uint256 i = 0; i < _length; i++) {
       _whitelistToken(_tokens[i], true);
     }
     minter = _minter;
+    mpo = _mpo;
   }
 
   /// @inheritdoc IVoter
@@ -421,16 +428,17 @@ contract Voter is IVoter {
 
   // Internal function to get all LP reward tokens
   function _getAllLpRewardTokens() internal view returns (address[] memory) {
-    // This function should return an array of all possible LP reward token addresses
-    // Placeholder implementation, replace with actual logic
-    return new address[](0);
+    return lpTokens;
   }
 
-  // Internal function to get the ETH value of a token
+  function setLpTokens(address[] memory _lpTokens) external onlyOwner {
+    lpTokens = _lpTokens;
+  }
+
   function _getTokenEthValue(uint256 amount, address lpToken) internal view returns (uint256) {
-    // This function should return the ETH value of the given token amount
-    // Placeholder implementation, replace with actual logic
-    return amount;
+    uint256 tokenPriceInEth = mpo.price(lpToken); // Fetch price of 1 lpToken in ETH
+    uint256 ethValue = amount * tokenPriceInEth;
+    return ethValue;
   }
 
   function _calculateTotalLPValue() internal view returns (uint256 _totalLPValueETH) {
@@ -448,5 +456,9 @@ contract Voter is IVoter {
       uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpRewardTokens[i]);
       _marketLPValueETH += tokenEthValue;
     }
+  }
+
+  function setMpo(address _mpo) external onlyOwner {
+    mpo = MasterPriceOracle(_mpo);
   }
 }
