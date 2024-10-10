@@ -9,7 +9,7 @@ import { Exponential } from "../compound/Exponential.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 
-// import { console } from "forge-std/console.sol";
+import { console } from "forge-std/console.sol";
 
 contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
   using SafeERC20 for IERC20;
@@ -70,6 +70,8 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     Exp memory exchangeRate = Exp({ mantissa: oldCollateralMarket.exchangeRateCurrent() });
     (MathError mErr, uint256 amountUnderlying) = mulScalarTruncate(exchangeRate, amountCTokensToSwap);
     require(mErr == MathError.NO_ERROR, "exchange rate error");
+    console.log("amountUnderlying: ", amountUnderlying);
+    console.log("amountCTokensToSwap: ", amountCTokensToSwap);
 
     oldCollateralMarket.flash(
       amountUnderlying,
@@ -125,13 +127,16 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     {
       IERC20 newCollateralAsset = IERC20(newCollateralMarket.underlying());
       uint256 outputAmount = newCollateralAsset.balanceOf(address(this));
+      console.log("outputAmount: ", outputAmount);
       uint256 fee = (outputAmount * feeBps) / 10_000;
       outputAmount -= fee;
+      console.log("outputAmount after fee: ", outputAmount);
       if (fee > 0) {
         newCollateralAsset.safeTransfer(feeRecipient, fee);
       }
       newCollateralAsset.approve(address(newCollateralMarket), outputAmount);
       uint256 mintResult = newCollateralMarket.mint(outputAmount);
+      console.log("mintResult: ", mintResult);
       if (mintResult != 0) {
         revert MintFailed(address(newCollateralMarket), mintResult);
       }
@@ -140,6 +145,7 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
     // transfer the new collateral to the borrower
     {
       uint256 cTokenBalance = IERC20(address(newCollateralMarket)).balanceOf(address(this));
+      console.log("cTokenBalance: ", cTokenBalance);
       IERC20(address(newCollateralMarket)).safeTransfer(borrower, cTokenBalance);
     }
 
