@@ -8,7 +8,7 @@ import { formatUnits, parseUnits } from 'viem';
 // import { mode } from 'viem/chains';
 import { useAccount, useBalance } from 'wagmi';
 
-import TokenSelector from './TokenSelector';
+import TokenSelector from '../stake/TokenSelector';
 
 interface IMaxDeposit {
   amount?: string;
@@ -22,6 +22,7 @@ interface IMaxDeposit {
   tokenSelector?: boolean;
   tokenArr?: string[];
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
+  exchangeRate?: bigint;
 }
 
 export interface IBal {
@@ -40,7 +41,8 @@ function MaxDeposit({
   chain,
   tokenSelector = false,
   tokenArr,
-  setMaxTokenForUtilization
+  setMaxTokenForUtilization,
+  exchangeRate
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
 
@@ -122,12 +124,16 @@ function MaxDeposit({
           {' '}
           {tokenName?.toUpperCase() ?? ''} Balance :{' '}
           {bal
-            ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
-                'en-US',
-                {
-                  maximumFractionDigits: 3
-                }
-              )
+            ? parseFloat(
+                formatUnits(
+                  exchangeRate
+                    ? (bal?.value * exchangeRate) / 10n ** BigInt(bal?.decimals)
+                    : bal?.value,
+                  bal?.decimals
+                )
+              ).toLocaleString('en-US', {
+                maximumFractionDigits: 3
+              })
             : max}
           {handleInput && (
             <button
@@ -157,7 +163,13 @@ function MaxDeposit({
             fetchOwn
               ? bal &&
                 parseFloat(
-                  formatUnits(bal?.value, bal?.decimals)
+                  formatUnits(
+                    exchangeRate
+                      ? (bal?.value * exchangeRate) /
+                          10n ** BigInt(bal?.decimals)
+                      : bal?.value,
+                    bal?.decimals
+                  )
                 ).toLocaleString('en-US', {
                   maximumFractionDigits: 3
                 })

@@ -10616,13 +10616,50 @@ export const chainlinkPriceOracleV2Abi = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const collateralSwapAbi = [
-  { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_feeBps', internalType: 'uint256', type: 'uint256' },
+      { name: '_feeRecipient', internalType: 'address', type: 'address' },
+      { name: '_comptroller', internalType: 'address', type: 'address' },
+      { name: '_allowedSwapTargets', internalType: 'address[]', type: 'address[]' },
+    ],
+    stateMutability: 'nonpayable',
+  },
   {
     type: 'function',
     inputs: [],
     name: 'acceptOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'allowedSwapTargets',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'comptroller',
+    outputs: [{ name: '', internalType: 'contract IonicComptroller', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeBps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -10659,7 +10696,31 @@ export const collateralSwapAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'amountCTokensToSwap', internalType: 'uint256', type: 'uint256' },
+      { name: '_target', internalType: 'address', type: 'address' },
+      { name: '_allowed', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'setAllowedSwapTarget',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_feeBps', internalType: 'uint256', type: 'uint256' }],
+    name: 'setFeeBps',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_feeRecipient', internalType: 'address', type: 'address' }],
+    name: 'setFeeRecipient',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'amountUnderlying', internalType: 'uint256', type: 'uint256' },
       { name: 'oldCollateralMarket', internalType: 'contract ICErc20', type: 'address' },
       { name: 'newCollateralMarket', internalType: 'contract ICErc20', type: 'address' },
       { name: 'swapTarget', internalType: 'address', type: 'address' },
@@ -10700,6 +10761,32 @@ export const collateralSwapAbi = [
       { name: 'newOwner', internalType: 'address', type: 'address', indexed: true },
     ],
     name: 'OwnershipTransferred',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'caller', internalType: 'address', type: 'address' }],
+    name: 'InvalidFlashloanCaller',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'target', internalType: 'address', type: 'address' }],
+    name: 'InvalidSwapTarget',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'market', internalType: 'address', type: 'address' },
+      { name: 'errorCode', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'MintFailed',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'market', internalType: 'address', type: 'address' },
+      { name: 'errorCode', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'RedeemFailed',
   },
   { type: 'error', inputs: [], name: 'SwapCollateralFailed' },
   {

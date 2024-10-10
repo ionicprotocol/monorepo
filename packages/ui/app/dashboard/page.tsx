@@ -384,9 +384,10 @@ export default function Dashboard() {
           toggler={() => swapToggle()}
           swapRef={swapRef}
           swappedFromAsset={collateralSwapFromAsset!}
-          swappedToAsset={suppliedAssets.filter(
+          swappedToAssets={marketData?.assets.filter(
             (asset) =>
-              asset?.underlyingToken != collateralSwapFromAsset?.underlyingToken
+              asset?.underlyingToken !==
+              collateralSwapFromAsset?.underlyingToken
           )}
           swapOpen={swapOpen}
           comptroller={marketData?.comptroller}
