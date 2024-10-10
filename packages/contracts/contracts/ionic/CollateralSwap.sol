@@ -145,7 +145,7 @@ contract CollateralSwap is Ownable2Step, Exponential, IFlashLoanReceiver {
       );
       require(mErr == MathError.NO_ERROR, "exchange rate error");
       // console.log("allowance: ", oldCollateralMarket.allowance(borrower, address(this)));
-      bool transferStatus = oldCollateralMarket.transferFrom(borrower, address(this), amountCTokensToSwap);
+      bool transferStatus = oldCollateralMarket.transferFrom(borrower, address(this), amountCTokensToSwap + 1);
       console.log("transferStatus: ", transferStatus);
       if (!transferStatus) {
         revert TransferFailed(address(oldCollateralMarket), borrower, address(this));
