@@ -8,6 +8,7 @@ import VeionClaim from './VeionClaim';
 
 import type { LockedData } from '@ui/constants/mock';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+
 // import { useState } from 'react';
 
 export default function MyveionRows({
@@ -36,6 +37,11 @@ export default function MyveionRows({
     isopen: isManageOpen,
     toggle: manageToggle
   } = useOutsideClick();
+
+  // Contract interactions
+
+  // const { isConnected } = useAccount();
+  // const { writeContractAsync } = useWriteContract();
 
   return (
     <>

@@ -3,7 +3,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState, type MutableRefObject } from 'react';
-import { useChainId } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
+// import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
 import SliderComponent from '../popup/Slider';
 import MaxDeposit from '../stake/MaxDeposit';
@@ -13,6 +14,7 @@ import InfoPopover from './InfoPopover';
 import LockDuration from './LockDuration';
 
 import { getToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface IProp {
   isGetIonOpen: boolean;
@@ -43,6 +45,40 @@ export default function GetveIon({
     );
   }, [veIonAmount]);
   // console.log(lockDuration);
+
+  ////////////////////////////////////////////////////////////////////////
+
+  const { isConnected } = useAccount();
+  // const { writeContractAsync } = useWriteContract();
+
+  async function lockAndGetVeion() {
+    try {
+      const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      if (!isSwitched) return;
+      if (!isConnected) {
+        console.warn('Wallet not connected');
+        return;
+      }
+      const args = {
+        tokenAddress: '0xabced',
+        tokenAmount: veIonAmount,
+        duration: lockDuration
+      };
+
+      // const createLockfn = await writeContractAsync({
+      //   abi: VeionAbi,
+      //   address: veionContractAddress,
+      //   args: [args.tokenAddress, args.tokenAmount, args.duration],
+      //   functionName: 'createLock'
+      // });
+
+      // eslint-disable-next-line no-console
+      console.log(args);
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   return (
     <div
       className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
@@ -108,7 +144,7 @@ export default function GetveIon({
               <p>0.00 veIon</p>
             </div>
             <button
-              onClick={() => setSuccess(true)}
+              onClick={() => lockAndGetVeion()}
               className="bg-accent py-1 text-sm text-black rounded-md  mt-4 "
             >
               Lock LP and get veION

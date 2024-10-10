@@ -1,6 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
+import { useState } from 'react';
+import { useAccount } from 'wagmi';
+
 import ProgressSteps from '../xION/ProgressSteps';
+
+// import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 interface Iprop {
   claimVeionRef: any;
@@ -12,6 +18,64 @@ export default function VeionClaim({
   claimVeionOpen,
   toggle
 }: Iprop) {
+  const { isConnected } = useAccount();
+  const [progress, setProgress] = useState<number>(0);
+
+  //need to read from the contract of what amount is need to be claimed than put that amount in the approval funtion
+
+  async function approval(amount: bigint) {
+    try {
+      // const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      // if (!isSwitched) return;
+      if (!isConnected) {
+        console.warn('Wallet not connected');
+        return;
+      }
+      if (amount <= BigInt(0)) return;
+      // setLoading((p) => ({ ...p, approvalStatus: true }));
+      setProgress(1);
+      // const approval = await writeContractAsync({
+      //   abi: erc20Abi,
+      //   account: address,
+      //   address: veiontokenaddress,
+      //   args: [BridgingContractAddress[+chain], amount],
+      //   functionName: 'approve'
+      // });
+
+      console.warn('Approval hash --> ' + approval);
+
+      setProgress(2);
+    } catch (err) {
+      console.warn(err);
+      setProgress(0);
+    }
+  }
+
+  async function claimLp() {
+    try {
+      // const isSwitched = await handleSwitchOriginChain(+chain, chainId);
+      // if (!isSwitched) return;
+      if (!isConnected) {
+        console.warn('Wallet not connected');
+        return;
+      }
+      const args = {
+        tokenAddress: '0xabced'
+      };
+
+      // const createLockfn = await writeContractAsync({
+      //   abi: VeionAbi,
+      //   address: veionContractAddress,
+      //   args: [args.tokenAddress],
+      //   functionName: 'createLock'
+      // });
+
+      // eslint-disable-next-line no-console
+      console.log(args);
+    } catch (err) {
+      console.warn(err);
+    }
+  }
   return (
     <div
       className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
@@ -64,7 +128,7 @@ export default function VeionClaim({
           </button>
         </div>
         <div className="w-[70%] mx-auto mt-4">
-          <ProgressSteps progress={2} />
+          <ProgressSteps progress={progress} />
         </div>
       </div>
     </div>
