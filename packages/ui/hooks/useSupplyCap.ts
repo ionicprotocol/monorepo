@@ -53,41 +53,28 @@ export const useSupplyCap = ({
     ],
 
     queryFn: async () => {
-      if (sdk && usdPrice && market && address && supplyCapsDataForAsset) {
-        try {
-          const comptroller = sdk.createComptroller(comptrollerAddress);
-          const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
-            comptroller.read.supplyCaps([market.cToken]),
-            comptroller.read.isSupplyCapWhitelisted([market.cToken, address])
-          ]);
+      const comptroller = sdk!.createComptroller(comptrollerAddress);
+      const [supplyCap, isSupplyCapWhitelist] = await Promise.all([
+        comptroller.read.supplyCaps([market!.cToken]),
+        comptroller.read.isSupplyCapWhitelisted([market!.cToken, address!])
+      ]);
 
-          if (isSupplyCapWhitelist || supplyCap === 0n) {
-            return null;
-          } else {
-            const whitelistedTotalSupply =
-              market.totalSupply -
-              supplyCapsDataForAsset.nonWhitelistedTotalSupply;
-            const underlyingCap = supplyCap + whitelistedTotalSupply;
-            const tokenCap = Number(
-              formatUnits(underlyingCap, market.underlyingDecimals)
-            );
-            const usdCap =
-              tokenCap *
-              Number(formatUnits(market.underlyingPrice, DEFAULT_DECIMALS)) *
-              usdPrice;
-
-            return { tokenCap, type: 'supply', underlyingCap, usdCap };
-          }
-        } catch (e) {
-          console.warn(
-            `Could not fetch supply caps of market ${market.cToken} of comptroller ${comptrollerAddress} `,
-            e
-          );
-          // TODO: Add Sentry
-          return null;
-        }
-      } else {
+      if (isSupplyCapWhitelist || supplyCap === 0n) {
         return null;
+      } else {
+        const whitelistedTotalSupply =
+          market!.totalSupply -
+          supplyCapsDataForAsset!.nonWhitelistedTotalSupply;
+        const underlyingCap = supplyCap + whitelistedTotalSupply;
+        const tokenCap = Number(
+          formatUnits(underlyingCap, market!.underlyingDecimals)
+        );
+        const usdCap =
+          tokenCap *
+          Number(formatUnits(market!.underlyingPrice, DEFAULT_DECIMALS)) *
+          usdPrice!;
+
+        return { tokenCap, type: 'supply', underlyingCap, usdCap };
       }
     },
 
