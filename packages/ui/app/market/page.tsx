@@ -104,6 +104,44 @@ export default function Market() {
 
   // const { data: alltvl } = useAllTvlAcrossChain();
   // console.log(alltvl);
+
+  //sorting
+  const [sortOrder, setSortOrder] = useState<
+    'ascending' | 'descending' | 'original'
+  >('original');
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const sortedAssets = useMemo(() => {
+    const assetsToSort = assets || [];
+    if (sortOrder === 'ascending') {
+      const ascend = [...assetsToSort].sort((a, b) =>
+        a.supplyBalance < b.supplyBalance ? -1 : 1
+      );
+      // setSortedAssetArray(ascend);
+      return ascend;
+    }
+
+    if (sortOrder === 'descending') {
+      const descend = [...assetsToSort].sort((a, b) =>
+        a.supplyBalance > b.supplyBalance ? -1 : 1
+      );
+      return descend;
+      // setSortedAssetArray(descend);
+    }
+    if (sortOrder === 'original') {
+      // setSortedAssetArray(assetsToSort);
+      return assetsToSort; // original order
+    } // original order
+  }, [assets, sortOrder]);
+
+  function toggleSort() {
+    setSortOrder((prevOrder) => {
+      if (prevOrder === 'original') return 'ascending';
+      if (prevOrder === 'ascending') return 'descending';
+      return 'original';
+    });
+  }
+
   return (
     <>
       <div className="w-full  flex flex-col items-center justify-start transition-all duration-200 ease-linear">
@@ -152,7 +190,34 @@ export default function Market() {
             className={`w-full gap-x-1 hidden md:grid  grid-cols-20 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
           >
             <h3 className={` col-span-2`}>ASSETS</h3>
-            <h3 className={` col-span-2`}>SUPPLY BALANCE</h3>
+            <h3 className={` col-span-2`}>
+              SUPPLY BALANCE{' '}
+              <button
+                onClick={toggleSort}
+                className={`mt-4 px-4 py-2 rounded flex items-center justify-center space-x-2 ${
+                  sortOrder === 'original'
+                    ? ' '
+                    : sortOrder === 'ascending'
+                      ? ' text-accent'
+                      : ' text-accent'
+                } transition-all duration-300`}
+              >
+                <span>
+                  {sortOrder === 'original'
+                    ? '=' // Equal sign
+                    : sortOrder === 'ascending'
+                      ? '↑' // Down arrow (for ascending sort)
+                      : '↓'}
+                </span>
+                {/* <span>
+                  {sortOrder === SortOrder.ORIGINAL
+                    ? 'No Sorting'
+                    : sortOrder === SortOrder.ASCENDING
+                      ? 'Sort Ascending'
+                      : 'Sort Descending'}
+                </span> */}
+              </button>
+            </h3>
             <h3 className={` col-span-2`}>TOTAL SUPPLIED</h3>
             <h3 className={` col-span-2`}>BORROW BALANCE</h3>
             <h3 className={` col-span-2`}>TOTAL BORROWED</h3>
@@ -172,6 +237,7 @@ export default function Market() {
                     const val = assets.find(
                       (asset) => asset.underlyingSymbol === symbol
                     );
+
                     if (!val) return <></>;
                     return (
                       <PoolRows
