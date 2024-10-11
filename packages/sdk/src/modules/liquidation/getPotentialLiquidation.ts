@@ -199,14 +199,14 @@ export default async function getPotentialLiquidation(
       debtFundingStrategiesData
     );
   } catch {
-    expectedGasAmount = 200000000n;
+    expectedGasAmount = 100000000000000n;
   }
   // Get gas fee
-  const gasPrice = await sdk.publicClient.getGasPrice();
-  const expectedGasFee = gasPrice * expectedGasAmount;
+  // const gasPrice = await sdk.publicClient.getGasPrice();
+  // const expectedGasFee = gasPrice * expectedGasAmount;
   // calculate min profits
-  const minProfitAmountEth = expectedGasFee;
-  // const minProfitAmountEth = 1000000000000000n;
+  // const minProfitAmountEth = expectedGasFee;
+  const minProfitAmountEth = 100000000000000n + expectedGasAmount;
   // console.log("minimum", minProfitAmountEth)
   // console.log("expectedGasAmount", expectedGasAmount)
   // console.log("gasprice", gasPrice)
