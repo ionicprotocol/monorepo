@@ -14,6 +14,7 @@ interface ISwapTo {
   tokenSelector?: boolean;
   tokenArr?: string[];
   isLoading: boolean;
+  footerText?: string;
 }
 
 export interface IBal {
@@ -27,7 +28,8 @@ function SwapTo({
   tokenName = 'eth',
   tokenSelector = false,
   tokenArr,
-  isLoading
+  isLoading,
+  footerText
 }: ISwapTo) {
   const newRef = useRef(null!);
   const [open, setOpen] = useState<boolean>(false);
@@ -53,7 +55,7 @@ function SwapTo({
         <span>{headerText}</span>
       </div>
       <div
-        className={`flex max-w-full mt-2 items-center justify-between text-md gap-x-1 `}
+        className={`flex max-w-full mt-0 items-center justify-between text-md gap-x-1 `}
       >
         <input
           className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
@@ -89,6 +91,11 @@ function SwapTo({
             </>
           )}
         </div>
+      </div>
+      <div
+        className={`flex w-full items-center justify-between text-[11px] text-white/40`}
+      >
+        <span>{footerText}</span>
       </div>
     </>
   );

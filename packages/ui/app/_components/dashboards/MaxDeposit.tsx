@@ -23,6 +23,7 @@ interface IMaxDeposit {
   tokenArr?: string[];
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
   exchangeRate?: bigint;
+  footerText?: string;
 }
 
 export interface IBal {
@@ -42,7 +43,8 @@ function MaxDeposit({
   tokenSelector = false,
   tokenArr,
   setMaxTokenForUtilization,
-  exchangeRate
+  exchangeRate,
+  footerText
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
 
@@ -127,7 +129,7 @@ function MaxDeposit({
             ? parseFloat(
                 formatUnits(
                   exchangeRate
-                    ? (bal?.value * exchangeRate) / 10n ** BigInt(bal?.decimals)
+                    ? (bal?.value * exchangeRate) / 10n ** BigInt(18)
                     : bal?.value,
                   bal?.decimals
                 )
@@ -165,8 +167,7 @@ function MaxDeposit({
                 parseFloat(
                   formatUnits(
                     exchangeRate
-                      ? (bal?.value * exchangeRate) /
-                          10n ** BigInt(bal?.decimals)
+                      ? (bal?.value * exchangeRate) / 10n ** BigInt(18)
                       : bal?.value,
                     bal?.decimals
                   )
@@ -205,6 +206,11 @@ function MaxDeposit({
             </>
           )}
         </div>
+      </div>
+      <div
+        className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
+      >
+        <span>{footerText}</span>
       </div>
     </>
   );

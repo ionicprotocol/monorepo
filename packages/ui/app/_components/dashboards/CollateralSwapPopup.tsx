@@ -45,6 +45,7 @@ import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -78,6 +79,8 @@ ChartJS.register(
   Legend
 );
 
+const DEFAULT_SLIPPAGE_TOL = 0.005;
+
 export default function CollateralSwapPopup({
   swapRef,
   toggler,
@@ -93,13 +96,14 @@ export default function CollateralSwapPopup({
   const [conversionRate, setConversionRate] = useState<string>('100');
   const [maxTokens, setMaxTokens] = useState<IBal>({
     value: BigInt(0),
-    decimals: 18
+    decimals: swappedFromAsset.underlyingDecimals
   });
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const chain = querychain ? querychain : String(chainId);
   const queryToken = searchParams.get('token');
+  const { data: healthFactor } = useHealthFactor(comptroller, +chain);
 
   const { getSdk, currentSdk, address } = useMultiIonic();
   const sdk = getSdk(+chain);
@@ -113,11 +117,15 @@ export default function CollateralSwapPopup({
   const swapFromAmountUnderlying = useMemo(() => {
     if (!swapFromAmount) return '0';
     const decimals = swappedFromAsset?.underlyingDecimals ?? 18;
-    return formatUnits(
-      (parseUnits(swapFromAmount, decimals) * swappedFromAsset.exchangeRate) /
-        10n ** BigInt(decimals),
-      decimals
-    );
+    return Number(
+      formatUnits(
+        (parseUnits(swapFromAmount, decimals) * swappedFromAsset.exchangeRate) /
+          10n ** BigInt(18),
+        decimals
+      )
+    ).toLocaleString('en-US', {
+      maximumFractionDigits: 3
+    });
   }, [swapFromAmount, swappedFromAsset]);
 
   const debouncedSwapFromAmountUnderlying = useDebounce(
@@ -219,7 +227,8 @@ export default function CollateralSwapPopup({
         fromAddress: collateralSwapContract.address,
         skipSimulation: true,
         integrator: 'ionic',
-        fee: '0.005'
+        fee: '0.005',
+        slippage: DEFAULT_SLIPPAGE_TOL
       };
       try {
         setIsLoadingLifiQuote(true);
@@ -415,13 +424,14 @@ export default function CollateralSwapPopup({
           <MaxDeposit
             headerText={'Wallet Balance'}
             amount={swapFromAmountUnderlying}
-            tokenName={swappedFromAsset?.underlyingSymbol.toLowerCase()}
-            token={swappedFromAsset?.cToken}
+            tokenName={swappedFromAsset.underlyingSymbol.toLowerCase()}
+            token={swappedFromAsset.cToken}
             handleInput={(val?: string) => setSwapFromAmount(val as string)}
             // max="0"
             chain={+chain}
             setMaxTokenForUtilization={setMaxTokens}
-            exchangeRate={swappedFromAsset?.exchangeRate}
+            exchangeRate={swappedFromAsset.exchangeRate}
+            footerText={'$' + lifiQuote?.estimate?.fromAmountUSD}
           />
           <SwapTo
             headerText={'Swap To'}
@@ -444,6 +454,7 @@ export default function CollateralSwapPopup({
                 )
                 .map((asset) => asset.underlyingSymbol)
             }
+            footerText={'$' + lifiQuote?.estimate?.toAmountUSD}
           />
           <div className={`my-6 w-full`}>
             <SliderComponent
@@ -464,17 +475,75 @@ export default function CollateralSwapPopup({
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">HEALTH FACTOR</span>
-          <span className=" ">69</span>
+          <span className=" ">{healthFactor ?? '-'}</span>
         </div>
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
         <div className={` text-xs  flex items-center justify-between w-full`}>
-          <span className=" text-white/50 ">MARKET SUPPLY BALANCE</span>
-          <span className=" ">234 {'->'} 648</span>
+          <span className=" text-white/50 ">
+            MARKET SUPPLY BALANCE {swappedFromAsset.underlyingSymbol}
+          </span>
+          <span className=" ">
+            {Number(
+              formatUnits(
+                swappedFromAsset.supplyBalance,
+                swappedFromAsset.underlyingDecimals
+              )
+            ).toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            })}{' '}
+            {'->'}{' '}
+            {Number(
+              formatUnits(
+                swappedFromAsset.supplyBalance -
+                  parseUnits(
+                    swapFromAmountUnderlying ?? '0',
+                    swappedFromAsset.underlyingDecimals
+                  ),
+                swappedFromAsset.underlyingDecimals
+              )
+            ).toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            })}
+          </span>
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
-          <span className=" text-white/50 ">COLLATERAL FACTOR</span>
-          <span className=" ">545 {'->'} 34</span>
+          {swappedToAsset && (
+            <>
+              <span className=" text-white/50 ">
+                MARKET SUPPLY BALANCE {swappedToAsset.underlyingSymbol}
+              </span>
+              <span className=" ">
+                {Number(
+                  formatUnits(
+                    swappedToAsset.supplyBalance,
+                    swappedToAsset.underlyingDecimals
+                  )
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 2
+                })}{' '}
+                {'->'}{' '}
+                {Number(
+                  formatUnits(
+                    swappedToAsset.supplyBalance + BigInt(swapToAmount ?? '0'),
+                    swappedToAsset.underlyingDecimals
+                  )
+                ).toLocaleString('en-US', {
+                  maximumFractionDigits: 2
+                })}
+              </span>
+            </>
+          )}
         </div>
+        {swappedToAsset && (
+          <div className={` text-xs  flex items-center justify-between w-full`}>
+            <span className=" text-white/50 ">COLLATERAL FACTOR</span>
+            <span className=" ">
+              {Number(formatEther(swappedFromAsset.collateralFactor)) * 100}%{' '}
+              {'->'}{' '}
+              {Number(formatEther(swappedToAsset.collateralFactor)) * 100}%
+            </span>
+          </div>
+        )}
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
         <div className={`w-full flex items-center justify-center gap-5`}>
           <div className={` w-14 h-14`}>
@@ -530,7 +599,9 @@ export default function CollateralSwapPopup({
         <span className=" text-white/50 ">Slippage</span>
         <span className=" ">0.2%</span>
       </div> */}
-        <p className={`text-xs mb-3`}>0.01% Slippage Tolerance</p>
+        <p className={`text-xs mb-3`}>
+          {DEFAULT_SLIPPAGE_TOL * 100}% Slippage Tolerance
+        </p>
         {transactionSteps.length > 0 ? (
           <TransactionStepsHandler
             chainId={chainId}
