@@ -492,14 +492,16 @@ export default function CollateralSwapPopup({
               maximumFractionDigits: 2
             })}{' '}
             {'->'}{' '}
-            {Number(
-              formatUnits(
-                swappedFromAsset.supplyBalance -
-                  parseUnits(
-                    swapFromAmountUnderlying ?? '0',
-                    swappedFromAsset.underlyingDecimals
-                  ),
-                swappedFromAsset.underlyingDecimals
+            {Math.abs(
+              Number(
+                formatUnits(
+                  swappedFromAsset.supplyBalance -
+                    parseUnits(
+                      swapFromAmountUnderlying ?? '0',
+                      swappedFromAsset.underlyingDecimals
+                    ),
+                  swappedFromAsset.underlyingDecimals
+                )
               )
             ).toLocaleString('en-US', {
               maximumFractionDigits: 2
