@@ -268,7 +268,6 @@ export default function CollateralSwapPopup({
       swapFromAmount,
       swappedFromAsset.underlyingDecimals
     );
-    console.log('🚀 ~ handleSwitch ~ _amount:', _amount);
 
     addStepsForAction([
       {
