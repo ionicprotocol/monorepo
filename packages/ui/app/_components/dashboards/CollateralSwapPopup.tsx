@@ -2,12 +2,8 @@
 'use client';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk';
-import {
-  createConfig,
-  getQuote,
-  type LiFiStep,
-  type QuoteRequest
-} from '@lifi/sdk';
+import { createConfig, getQuote, type QuoteRequest } from '@lifi/sdk';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArcElement,
   CategoryScale,
@@ -29,7 +25,6 @@ import {
   formatEther,
   formatUnits,
   type Hex,
-  parseEther,
   parseUnits
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
@@ -89,11 +84,8 @@ export default function CollateralSwapPopup({
   comptroller
 }: IProp) {
   const [utilization, setUtilization] = useState<number>(0);
+  const [conversionRate, setConversionRate] = useState<string>('-');
   const [swapFromAmount, setSwapFromAmount] = useState<string>('');
-  const [swapToAmount, setSwapToAmount] = useState<string>('');
-  const [lifiQuote, setLifiQuote] = useState<LiFiStep>();
-  const [isLoadingLifiQuote, setIsLoadingLifiQuote] = useState<boolean>(false);
-  const [conversionRate, setConversionRate] = useState<string>('100');
   const [maxTokens, setMaxTokens] = useState<IBal>({
     value: BigInt(0),
     decimals: swappedFromAsset.underlyingDecimals
@@ -158,112 +150,57 @@ export default function CollateralSwapPopup({
     upsertTransactionStep(undefined);
     // initiateCloseAnimation();
   };
-
-  // const router = useRouter();
-  // const createQueryString = useCallback(
-  //   (name: string, value: string) => {
-  //     const params = new URLSearchParams(searchParams.toString());
-  //     params.set(name, value);
-
-  //     return params.toString();
-  //   },
-  //   [searchParams]
-  // );
-  // const router = useRouter();
-  // useEffect(() => {
-  //   const otherToken = swappedToAsset
-  //     .filter(
-  //       (asset) =>
-  //         asset.underlyingSymbol !== swappedFromAsset.underlyingSymbol &&
-  //         swappedToTokenQuery !== swappedFromAsset.underlyingSymbol
-  //     )
-  //     .map((asset) => asset.underlyingSymbol)[0];
-  //     console.log(otherToken)
-  //   if (swappedToTokenQuery === swappedFromAsset.underlyingSymbol && otherToken)
-  //     router.push(pathname + '?' + createQueryString('token', otherToken));
-  // }, [
-  //   createQueryString,
-  //   pathname,
-  //   router,
-  //   swapOpen,
-  //   swappedFromAsset.underlyingSymbol,
-  //   swappedToAsset,
-  //   swappedToTokenQuery
-  // ]);
-  // console.log(swappedToTokenAddress);
   const { isConnected } = useAccount();
-  // const abc = lifiQuote;
-  useEffect(() => {
-    if (!swapFromAmount) return;
-    const percent =
-      (+swapFromAmount /
-        Number(formatUnits(maxTokens.value, maxTokens.decimals))) *
-      100;
-    setUtilization(Number(percent.toFixed(0)));
-  }, [maxTokens, swapFromAmount]);
 
-  // const delayedswapFromToken = useDebounce(swapFromToken, 2000) ?? BigInt(0);  this needs to get fixed
-  useEffect(() => {
-    const fetchQuote = async () => {
-      if (
-        !swappedFromAsset ||
-        !swappedToAsset ||
-        !collateralSwapContract?.address ||
-        parseEther(debouncedSwapFromAmountUnderlying) === BigInt(0)
-      )
-        return;
-
+  const { isLoading: isLoadingLifiQuote, data: lifiQuote } = useQuery({
+    queryKey: ['lifiQuote'],
+    queryFn: async () => {
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
-        fromToken: swappedFromAsset?.underlyingToken,
-        toToken: swappedToAsset?.underlyingToken,
-        //@ts-ignore
+        fromToken: swappedFromAsset!.underlyingToken,
+        toToken: swappedToAsset!.underlyingToken,
         fromAmount: parseUnits(
           debouncedSwapFromAmountUnderlying,
           swappedFromAsset?.underlyingDecimals ?? 18
-        ), // 10 USDC needs to get delayed
-        // The address from which the tokens are being transferred.
-        fromAddress: collateralSwapContract.address,
+        ).toString(),
+        fromAddress: collateralSwapContract!.address,
         skipSimulation: true,
         integrator: 'ionic',
         fee: '0.005',
         slippage: DEFAULT_SLIPPAGE_TOL
       };
-      try {
-        setIsLoadingLifiQuote(true);
-        const quote = await getQuote(quoteRequest);
-        setLifiQuote(quote);
-        setSwapToAmount(quote?.estimate?.toAmount);
-        setConversionRate(
-          (
-            ((Number(quote?.estimate?.toAmountUSD) -
-              Number(quote?.estimate?.fromAmountUSD)) /
-              Number(quote?.estimate?.fromAmountUSD)) *
-            100
-          ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-        );
-      } catch (error) {
-        console.error('Quote Error: ', error);
-        if ((error as Error).message.includes('429')) {
-          toast.error('Rate limit exceeded, try again later');
-        } else {
-          toast.error('Error while fetching quote!');
-        }
-      } finally {
-        setIsLoadingLifiQuote(false);
-      }
-    };
-    fetchQuote();
-  }, [
-    chain,
-    swapFromAmount,
-    swappedFromAsset,
-    swappedToAssets,
-    swappedToAsset,
-    debouncedSwapFromAmountUnderlying,
-    collateralSwapContract?.address
-  ]);
+      const quote = await getQuote(quoteRequest);
+      return quote;
+    },
+    enabled: !!collateralSwapContract && !!swappedToAsset
+  });
+
+  useEffect(() => {
+    if (lifiQuote?.estimate) {
+      setConversionRate(
+        (
+          ((Number(lifiQuote?.estimate?.toAmountUSD) -
+            Number(lifiQuote?.estimate?.fromAmountUSD)) /
+            Number(lifiQuote?.estimate?.fromAmountUSD)) *
+          100
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+      );
+    }
+  }, [lifiQuote]);
+  console.log('🚀 ~ useEffect ~ lifiQuote:', !lifiQuote?.estimate);
+
+  useEffect(() => {
+    if (swapFromAmount) {
+      const percent =
+        (+swapFromAmount /
+          Number(formatUnits(maxTokens.value, maxTokens.decimals))) *
+        100;
+      setUtilization(Number(percent.toFixed(0)));
+    }
+  }, [maxTokens, swapFromAmount]);
+
+  console.log('conversion rate: ', conversionRate);
 
   const { writeContractAsync, isPending } = useWriteContract();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
@@ -406,7 +343,7 @@ export default function CollateralSwapPopup({
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">PRICE IMPACT</span>
-          <span className=" ">{conversionRate}%</span>
+          <span className=" ">{conversionRate + '%'}</span>
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">FEES</span>
@@ -431,12 +368,12 @@ export default function CollateralSwapPopup({
             chain={+chain}
             setMaxTokenForUtilization={setMaxTokens}
             exchangeRate={swappedFromAsset.exchangeRate}
-            footerText={'$' + lifiQuote?.estimate?.fromAmountUSD}
+            footerText={'$' + (lifiQuote?.estimate?.fromAmountUSD ?? '0')}
           />
           <SwapTo
             headerText={'Swap To'}
             amount={formatUnits(
-              BigInt(swapToAmount),
+              BigInt(lifiQuote?.estimate?.toAmount ?? '0'),
               swappedToAsset?.underlyingDecimals ?? 18
             )}
             isLoading={isLoadingLifiQuote}
@@ -454,7 +391,7 @@ export default function CollateralSwapPopup({
                 )
                 .map((asset) => asset.underlyingSymbol)
             }
-            footerText={'$' + lifiQuote?.estimate?.toAmountUSD}
+            footerText={'$' + (lifiQuote?.estimate?.toAmountUSD ?? '0')}
           />
           <div className={`my-6 w-full`}>
             <SliderComponent
@@ -526,7 +463,8 @@ export default function CollateralSwapPopup({
                 {'->'}{' '}
                 {Number(
                   formatUnits(
-                    swappedToAsset.supplyBalance + BigInt(swapToAmount ?? '0'),
+                    swappedToAsset.supplyBalance +
+                      BigInt(lifiQuote?.estimate?.toAmount ?? '0'),
                     swappedToAsset.underlyingDecimals
                   )
                 ).toLocaleString('en-US', {
@@ -614,7 +552,7 @@ export default function CollateralSwapPopup({
           <button
             className={`bg-accent py-1 px-3 w-full text-sm rounded-md text-black disabled:opacity-50`}
             onClick={handleSwitch}
-            disabled={isPending || !lifiQuote || !swapToAmount}
+            disabled={isPending || !lifiQuote}
           >
             SWITCH {swappedFromAsset?.underlyingSymbol} TO{' '}
             {swappedToAsset?.underlyingSymbol}{' '}
