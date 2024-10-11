@@ -188,7 +188,6 @@ export default function CollateralSwapPopup({
       );
     }
   }, [lifiQuote]);
-  console.log('🚀 ~ useEffect ~ lifiQuote:', !lifiQuote?.estimate);
 
   useEffect(() => {
     if (swapFromAmount) {
@@ -199,8 +198,6 @@ export default function CollateralSwapPopup({
       setUtilization(Number(percent.toFixed(0)));
     }
   }, [maxTokens, swapFromAmount]);
-
-  console.log('conversion rate: ', conversionRate);
 
   const { writeContractAsync, isPending } = useWriteContract();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
