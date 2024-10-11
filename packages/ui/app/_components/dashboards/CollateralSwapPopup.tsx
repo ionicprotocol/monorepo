@@ -39,13 +39,13 @@ import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
 
 // import { useDebounce } from '@ui/hooks/useDebounce';
+import SliderComponent from '@ui/app/_components/popup/Slider';
+import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
+import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import SliderComponent from 'ui/app/_components/popup/Slider';
-import type { IBal } from 'ui/app/_components/stake/MaxDeposit';
-import { donutoptions, getDonutData } from 'ui/app/_constants/mock';
 
 createConfig({
   integrator: 'ionic',
