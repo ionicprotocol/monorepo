@@ -1191,6 +1191,7 @@ const Popup = ({
             }
             mode={mode}
             setActive={setActive}
+            borrowPossible={borrowCap ? borrowCap?.totalBorrowCap > 1n : true}
           />
           {/* all the respective slides */}
 

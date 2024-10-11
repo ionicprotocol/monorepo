@@ -2,10 +2,17 @@ import { PopupMode } from './page';
 interface IMode {
   active: PopupMode;
   loopPossible: boolean;
+  borrowPossible: boolean;
   mode: PopupMode;
   setActive: (val: PopupMode) => void;
 }
-const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
+const Tab = ({
+  loopPossible,
+  mode,
+  setActive,
+  active,
+  borrowPossible
+}: IMode) => {
   return (
     <div
       className={`w-[94%] mx-auto rounded-lg bg-grayone py-1 flex text-center gap-x-1 text-xs items-center justify-center`}
@@ -38,26 +45,30 @@ const Tab = ({ loopPossible, mode, setActive, active }: IMode) => {
         mode === PopupMode.REPAY ||
         mode === PopupMode.LOOP) && (
         <>
-          <p
-            className={` rounded-md py-1 px-3  w-full ${
-              active === PopupMode.BORROW
-                ? 'bg-darkone text-accent '
-                : 'text-white/40'
-            } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive(PopupMode.BORROW)}
-          >
-            BORROW
-          </p>
-          <p
-            className={` rounded-md py-1 px-3 w-full  ${
-              active === PopupMode.REPAY
-                ? 'bg-darkone text-accent '
-                : 'text-white/40'
-            } cursor-pointer transition-all duration-200 ease-linear`}
-            onClick={() => setActive(PopupMode.REPAY)}
-          >
-            REPAY
-          </p>
+          {borrowPossible && (
+            <>
+              <p
+                className={` rounded-md py-1 px-3  w-full ${
+                  active === PopupMode.BORROW
+                    ? 'bg-darkone text-accent '
+                    : 'text-white/40'
+                } cursor-pointer transition-all duration-200 ease-linear`}
+                onClick={() => setActive(PopupMode.BORROW)}
+              >
+                BORROW
+              </p>
+              <p
+                className={` rounded-md py-1 px-3 w-full  ${
+                  active === PopupMode.REPAY
+                    ? 'bg-darkone text-accent '
+                    : 'text-white/40'
+                } cursor-pointer transition-all duration-200 ease-linear`}
+                onClick={() => setActive(PopupMode.REPAY)}
+              >
+                REPAY
+              </p>
+            </>
+          )}
 
           {loopPossible && (
             <p
