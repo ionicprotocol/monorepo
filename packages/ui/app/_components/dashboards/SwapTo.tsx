@@ -4,6 +4,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect, useRef } from 'react';
 
+import ResultHandler from '../ResultHandler';
 import TokenSelector from '../stake/TokenSelector';
 
 interface ISwapTo {
@@ -57,13 +58,15 @@ function SwapTo({
       <div
         className={`flex max-w-full mt-0 items-center justify-between text-md gap-x-1 `}
       >
-        <input
-          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
-          placeholder={`0.0`}
-          type={isLoading ? 'text' : 'number'}
-          value={isLoading ? '...' : amount}
-          disabled={true}
-        />
+        <ResultHandler isLoading={isLoading}>
+          <input
+            className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
+            placeholder={`0.0`}
+            type={isLoading ? 'text' : 'number'}
+            value={isLoading ? '...' : amount}
+            disabled={true}
+          />
+        </ResultHandler>
         <div
           className={`ml-auto min-w-max px-0.5 flex items-center justify-end`}
         >

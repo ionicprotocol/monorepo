@@ -140,13 +140,21 @@ export default function CollateralSwapPopup({
   };
   const { isConnected } = useAccount();
 
-  const { isLoading: isLoadingLifiQuote, data: lifiQuote } = useQuery({
+  const {
+    isLoading: isLoadingLifiQuote,
+    data: lifiQuote,
+    isFetching,
+    isPending: isPendingLiFi,
+    isRefetching,
+    isError,
+    error
+  } = useQuery({
     queryKey: ['lifiQuote'],
     queryFn: async () => {
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
         toChain: chain,
-        fromToken: swappedFromAsset!.underlyingToken,
+        fromToken: swappedFromAsset.underlyingToken,
         toToken: swappedToAsset!.underlyingToken,
         fromAmount: parseUnits(
           debouncedSwapFromAmount,
@@ -161,8 +169,25 @@ export default function CollateralSwapPopup({
       const quote = await getQuote(quoteRequest);
       return quote;
     },
-    enabled: !!collateralSwapContract && !!swappedToAsset
+    enabled:
+      !!collateralSwapContract &&
+      !!swappedToAsset &&
+      parseUnits(
+        debouncedSwapFromAmount,
+        swappedFromAsset.underlyingDecimals ?? 18
+      ) > 0n
   });
+
+  useEffect(() => {
+    if (isError) {
+      console.error('Error fetching quote', error);
+      if (error && (error as Error).message.includes('429')) {
+        toast.error('Rate limit exceeded, please try again later');
+      } else {
+        toast.error('Error fetching quote');
+      }
+    }
+  }, [isError, error]);
 
   useEffect(() => {
     if (lifiQuote?.estimate) {
@@ -348,6 +373,7 @@ export default function CollateralSwapPopup({
             footerText={'$' + (lifiQuote?.estimate?.fromAmountUSD ?? '0')}
             decimals={swappedFromAsset.underlyingDecimals}
           />
+
           <SwapTo
             headerText={'Swap To'}
             amount={formatUnits(
