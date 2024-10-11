@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import { Address, encodeFunctionData } from "viem";
-import { addTransaction } from "../../chainDeploy/helpers/logging";
+import { addTransaction, prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 import { chainIdToConfig } from "@ionicprotocol/chains";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { LeveragePair } from "../../chainDeploy";
@@ -27,12 +27,14 @@ export const configureLeveredPairs = async ({
   viem,
   deployments,
   deployer,
-  leveredPairs
+  leveredPairs,
+  whitelisted = true
 }: {
   viem: HardhatRuntimeEnvironment["viem"];
   deployments: HardhatRuntimeEnvironment["deployments"];
   deployer: Address;
   leveredPairs: LeveragePair[];
+  whitelisted?: boolean;
 }) => {
   const publicClient = await viem.getPublicClient();
   const factory = await viem.getContractAt(
@@ -73,19 +75,19 @@ export const configureLeveredPairs = async ({
         console.log(
           `adding transaction to set pair as whitelisted: BORROW (market: ${borrow}, underlying: ${borrowToken}) - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken})`
         );
-        addTransaction({
-          to: factory.address,
-          value: "0",
-          data: encodeFunctionData({
-            abi: factory.abi,
-            functionName: "_setPairWhitelisted",
-            args: [collateral, borrow, true]
-          }),
-          contractMethod: null,
-          contractInputsValues: null
+        await prepareAndLogTransaction({
+          contractInstance: factory,
+          functionName: "_setPairWhitelisted",
+          args: [collateral, borrow, whitelisted],
+          description: `Configuring pair: BORROW (market: ${borrow}, underlying: ${borrowToken}) - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken})`,
+          inputs: [
+            { internalType: "address", name: "_collateralMarket", type: "address" },
+            { internalType: "address", name: "_stableMarket", type: "address" },
+            { internalType: "bool", name: "whitelisted", type: "bool" }
+          ]
         });
       } else {
-        const tx = await factory.write._setPairWhitelisted([collateral, borrow, true]);
+        const tx = await factory.write._setPairWhitelisted([collateral, borrow, whitelisted]);
         await publicClient.waitForTransactionReceipt({ hash: tx, confirmations: 2 });
         console.log(
           `configured the markets pair:\n - BORROW (market: ${borrow}, underlying: ${borrowToken})\n - COLLATERAL: (market: ${collateral}, underlying: ${collateralToken}) as whitelisted for levered positions: ${tx}`
