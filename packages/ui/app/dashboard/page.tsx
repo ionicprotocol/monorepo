@@ -49,6 +49,8 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import { useChainId } from 'wagmi';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -61,6 +63,7 @@ export default function Dashboard() {
   const [popupMode, setPopupMode] = useState<PopupMode>();
   const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
     useState<MarketData>();
+  const walletChain = useChainId();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -701,7 +704,15 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
-                      toggler={() => swapToggle()}
+                      toggler={async () => {
+                        const result = await handleSwitchOriginChain(
+                          +chain,
+                          walletChain
+                        );
+                        if (result) {
+                          swapToggle();
+                        }
+                      }}
                       setCollateralSwapFromAsset={() =>
                         setCollateralSwapFromAsset(asset)
                       }

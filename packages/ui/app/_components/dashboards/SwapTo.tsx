@@ -13,6 +13,7 @@ interface ISwapTo {
   headerText?: string;
   tokenSelector?: boolean;
   tokenArr?: string[];
+  isLoading: boolean;
 }
 
 export interface IBal {
@@ -25,7 +26,8 @@ function SwapTo({
   amount,
   tokenName = 'eth',
   tokenSelector = false,
-  tokenArr
+  tokenArr,
+  isLoading
 }: ISwapTo) {
   const newRef = useRef(null!);
   const [open, setOpen] = useState<boolean>(false);
@@ -56,8 +58,8 @@ function SwapTo({
         <input
           className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
           placeholder={`0.0`}
-          type="number"
-          value={amount}
+          type={isLoading ? 'text' : 'number'}
+          value={isLoading ? '...' : amount}
           disabled={true}
         />
         <div

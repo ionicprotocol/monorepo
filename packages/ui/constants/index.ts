@@ -685,5 +685,9 @@ export const INFO_MESSAGES = {
   },
   WITHDRAW: {
     WITHDRAWING: 'Withdrawing funds'
+  },
+  SWAP: {
+    APPROVE: 'Approve amount for spending',
+    SWAPPING: 'Swapping'
   }
 };

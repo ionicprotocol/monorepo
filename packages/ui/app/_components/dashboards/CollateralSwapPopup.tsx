@@ -20,11 +20,10 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
-// import { usePathname, useRouter} from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-// import { useCallback, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import toast from 'react-hot-toast';
 import {
   type Address,
   formatEther,
@@ -38,10 +37,13 @@ import { useAccount, useChainId, useWriteContract } from 'wagmi';
 import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
 
-// import { useDebounce } from '@ui/hooks/useDebounce';
 import SliderComponent from '@ui/app/_components/popup/Slider';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from '@ui/app/_components/popup/TransactionStepsHandler';
 import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
+import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
@@ -87,6 +89,7 @@ export default function CollateralSwapPopup({
   const [swapFromAmount, setSwapFromAmount] = useState<string>('');
   const [swapToAmount, setSwapToAmount] = useState<string>('');
   const [lifiQuote, setLifiQuote] = useState<LiFiStep>();
+  const [isLoadingLifiQuote, setIsLoadingLifiQuote] = useState<boolean>(false);
   const [conversionRate, setConversionRate] = useState<string>('100');
   const [maxTokens, setMaxTokens] = useState<IBal>({
     value: BigInt(0),
@@ -98,7 +101,7 @@ export default function CollateralSwapPopup({
   const chain = querychain ? querychain : String(chainId);
   const queryToken = searchParams.get('token');
 
-  const { getSdk } = useMultiIonic();
+  const { getSdk, currentSdk, address } = useMultiIonic();
   const sdk = getSdk(+chain);
   const collateralSwapContract =
     sdk?.chainDeployment[`CollateralSwap-${comptroller}`];
@@ -141,6 +144,12 @@ export default function CollateralSwapPopup({
     market: swappedToAsset,
     comptroller
   });
+
+  const resetTransactionSteps = () => {
+    // refetchUsedQueries();
+    upsertTransactionStep(undefined);
+    // initiateCloseAnimation();
+  };
 
   // const router = useRouter();
   // const createQueryString = useCallback(
@@ -207,22 +216,34 @@ export default function CollateralSwapPopup({
           swappedFromAsset?.underlyingDecimals ?? 18
         ), // 10 USDC needs to get delayed
         // The address from which the tokens are being transferred.
-        fromAddress: collateralSwapContract?.address,
+        fromAddress: collateralSwapContract.address,
         skipSimulation: true,
-        integrator: 'ionic'
+        integrator: 'ionic',
+        fee: '0.005'
       };
-      const quote = await getQuote(quoteRequest);
-      // eslint-disable-next-line no-console
-      console.log('🚀 ~ fetchQuote ~ quote:', quote);
-      setLifiQuote(quote);
-      setSwapToAmount(quote?.estimate?.toAmount);
-      setConversionRate(
-        (
-          (Number(quote?.estimate?.fromAmountUSD) /
-            Number(quote?.estimate?.toAmountUSD)) *
-          100
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-      );
+      try {
+        setIsLoadingLifiQuote(true);
+        const quote = await getQuote(quoteRequest);
+        setLifiQuote(quote);
+        setSwapToAmount(quote?.estimate?.toAmount);
+        setConversionRate(
+          (
+            ((Number(quote?.estimate?.toAmountUSD) -
+              Number(quote?.estimate?.fromAmountUSD)) /
+              Number(quote?.estimate?.fromAmountUSD)) *
+            100
+          ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+        );
+      } catch (error) {
+        console.error('Quote Error: ', error);
+        if ((error as Error).message.includes('429')) {
+          toast.error('Rate limit exceeded, try again later');
+        } else {
+          toast.error('Error while fetching quote!');
+        }
+      } finally {
+        setIsLoadingLifiQuote(false);
+      }
     };
     fetchQuote();
   }, [
@@ -236,23 +257,126 @@ export default function CollateralSwapPopup({
   ]);
 
   const { writeContractAsync, isPending } = useWriteContract();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
+
   const handleSwitch = async () => {
-    console.log('Switching');
-    await writeContractAsync({
-      address: collateralSwapContract!.address as Address,
-      abi: collateralSwapAbi,
-      functionName: 'swapCollateral',
-      args: [
-        parseUnits(
-          swapFromAmountUnderlying,
-          swappedFromAsset.underlyingDecimals
-        ),
-        swappedFromAsset!.cToken,
-        swappedToAsset!.cToken,
-        lifiQuote!.transactionRequest!.to as Address,
-        lifiQuote!.transactionRequest!.data as Hex
-      ]
-    });
+    if (!currentSdk || !collateralSwapContract?.address || !address) return;
+    let currentTransactionStep = 0;
+
+    const _amount = parseUnits(
+      swapFromAmount,
+      swappedFromAsset.underlyingDecimals
+    );
+    console.log('🚀 ~ handleSwitch ~ _amount:', _amount);
+
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.SWAP.APPROVE,
+        success: false
+      },
+      {
+        error: false,
+        message: INFO_MESSAGES.SWAP.SWAPPING,
+        success: false
+      }
+    ]);
+
+    try {
+      const token = currentSdk.getEIP20TokenInstance(
+        swappedFromAsset.cToken,
+        currentSdk.publicClient as any
+      );
+      const hasApprovedEnough =
+        (await token.read.allowance([
+          address,
+          collateralSwapContract.address as Address
+        ])) >= _amount;
+
+      if (!hasApprovedEnough) {
+        const tx = await currentSdk.approve(
+          collateralSwapContract.address as Address,
+          swappedFromAsset.cToken,
+          (_amount * 105n) / 100n
+        );
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: tx
+          }
+        });
+
+        await currentSdk.publicClient.waitForTransactionReceipt({
+          hash: tx,
+          confirmations: 2
+        });
+
+        // wait for 5 seconds to resolve timing issue
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+      currentTransactionStep++;
+
+      const tx = await writeContractAsync({
+        address: collateralSwapContract!.address as Address,
+        abi: collateralSwapAbi,
+        functionName: 'swapCollateral',
+        args: [
+          parseUnits(
+            swapFromAmountUnderlying,
+            swappedFromAsset.underlyingDecimals
+          ),
+          swappedFromAsset!.cToken,
+          swappedToAsset!.cToken,
+          lifiQuote!.transactionRequest!.to as Address,
+          lifiQuote!.transactionRequest!.data as Hex
+        ]
+      });
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx
+        }
+      });
+
+      await currentSdk.publicClient.waitForTransactionReceipt({
+        hash: tx
+      });
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      toast.success(
+        `Swapped ${swappedFromAsset.underlyingSymbol} to ${swappedToAsset?.underlyingSymbol}`
+      );
+    } catch (error) {
+      console.error('handleSwitch ~ error:', error);
+      toast.error('Error while supplying!');
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+    }
   };
 
   return (
@@ -273,13 +397,18 @@ export default function CollateralSwapPopup({
           />
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
-          <span className=" text-white/50 ">CONVERSION RATE</span>
+          <span className=" text-white/50 ">PRICE IMPACT</span>
           <span className=" ">{conversionRate}%</span>
         </div>
         <div className={` text-xs  flex items-center justify-between w-full`}>
           <span className=" text-white/50 ">FEES</span>
           <span className=" ">
-            {lifiQuote ? lifiQuote?.estimate?.feeCosts?.[0]?.amountUSD : ''} USD
+            {lifiQuote
+              ? lifiQuote?.estimate?.feeCosts?.reduce(
+                  (acc, curr) => acc + Number(curr.amountUSD),
+                  0
+                ) + ' USD'
+              : '-'}
           </span>
         </div>
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
@@ -301,6 +430,7 @@ export default function CollateralSwapPopup({
               BigInt(swapToAmount),
               swappedToAsset?.underlyingDecimals ?? 18
             )}
+            isLoading={isLoadingLifiQuote}
             tokenName={swappedToTokenQuery}
             token={swappedToAsset?.cToken}
             // handleInput={(val?: string) => setSwapToToken(val as string)}
@@ -402,14 +532,22 @@ export default function CollateralSwapPopup({
         <span className=" ">0.2%</span>
       </div> */}
         <p className={`text-xs mb-3`}>0.01% Slippage Tolerance</p>
-        <button
-          className={`bg-accent py-1 px-3 w-full text-sm rounded-md text-black`}
-          onClick={handleSwitch}
-          disabled={isPending}
-        >
-          SWITCH {swappedFromAsset?.underlyingSymbol} TO{' '}
-          {swappedToAsset?.underlyingSymbol}{' '}
-        </button>
+        {transactionSteps.length > 0 ? (
+          <TransactionStepsHandler
+            chainId={chainId}
+            resetTransactionSteps={resetTransactionSteps}
+            transactionSteps={transactionSteps}
+          />
+        ) : (
+          <button
+            className={`bg-accent py-1 px-3 w-full text-sm rounded-md text-black disabled:opacity-50`}
+            onClick={handleSwitch}
+            disabled={isPending || !lifiQuote || !swapToAmount}
+          >
+            SWITCH {swappedFromAsset?.underlyingSymbol} TO{' '}
+            {swappedToAsset?.underlyingSymbol}{' '}
+          </button>
+        )}
       </div>
     </div>
   );
