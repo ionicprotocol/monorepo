@@ -638,35 +638,6 @@ contract CTokenFirstExtension is
     return balance;
   }
 
-  function swapCollateral() public {
-    uint256 underlyingBalance = asCToken().balanceOfUnderlying(msg.sender);
-    asCToken().flash(underlyingBalance, new bytes(0));
-  }
-
-  function receiveFlashLoan(uint256 amount, bytes calldata data) public {
-    (address borrower, address outputToken, address newCollateralMarket, address target, bytes memory swapData) = abi
-      .decode(data, (address, address, address, address, bytes));
-
-    // swap the collateral
-    (bool success, bytes memory returnData) = target.call(swapData);
-    require(success, "failed to swap collateral");
-
-    // mint the new collateral
-    uint256 outputAmount = IERC20(outputToken).balanceOf(address(this));
-    IERC20(outputToken).approve(newCollateralMarket, outputAmount);
-    ICErc20(newCollateralMarket).mint(outputAmount);
-
-    // transfer the new collateral to the borrower
-    uint256 cTokenBalance = IERC20(newCollateralMarket).balanceOf(address(this));
-    ICErc20(newCollateralMarket).transfer(borrower, cTokenBalance);
-
-    // withdraw the old collateral
-    uint256 oldCollateralBalance = asCToken().balanceOf(borrower);
-    asCToken().transferFrom(borrower, address(this), oldCollateralBalance);
-    asCToken().redeem(oldCollateralBalance);
-    // flashloan gets paid back from redeemed collateral
-  }
-
   function flash(uint256 amount, bytes calldata data) public override isAuthorized {
     accrueInterest();
 
