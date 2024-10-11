@@ -199,7 +199,7 @@ export default async function getPotentialLiquidation(
       debtFundingStrategiesData
     );
   } catch {
-    expectedGasAmount = 750000n;
+    expectedGasAmount = 200000000n;
   }
   // Get gas fee
   const gasPrice = await sdk.publicClient.getGasPrice();
