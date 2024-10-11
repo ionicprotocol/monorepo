@@ -4,8 +4,8 @@
 import { icErc20Abi } from '@ionicprotocol/sdk';
 import dynamic from 'next/dynamic';
 import type { Dispatch, SetStateAction } from 'react';
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { type Address, formatUnits, parseUnits } from 'viem';
+import { useState, useEffect, useRef } from 'react';
+import { type Address, formatUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
 import TokenSelector from '../stake/TokenSelector';
@@ -17,7 +17,6 @@ interface IMaxDeposit {
   handleInput?: (val?: string) => void;
   fetchOwn?: boolean;
   headerText?: string;
-  max?: string;
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
@@ -39,11 +38,9 @@ function MaxDeposit({
   token,
   handleInput,
   fetchOwn = false,
-  max,
   tokenSelector = false,
   tokenArr,
   setMaxTokenForUtilization,
-  exchangeRate,
   footerText,
   decimals
 }: IMaxDeposit) {
@@ -125,12 +122,12 @@ function MaxDeposit({
                   maximumFractionDigits: 3
                 }
               )
-            : max}
+            : '0'}
           {handleInput && (
             <button
               className={`text-accent ml-2`}
               onClick={() => {
-                handleMax(bal ? formatUnits(bal.value, bal.decimals) : max);
+                handleMax(bal ? formatUnits(bal.value, bal.decimals) : '0');
                 setMaxTokenForUtilization &&
                   setMaxTokenForUtilization({
                     value: bal?.value ?? BigInt(0),

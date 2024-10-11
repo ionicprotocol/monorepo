@@ -139,7 +139,6 @@ export default function CollateralSwapPopup({
     // initiateCloseAnimation();
   };
   const { isConnected } = useAccount();
-  console.log('🚀 ~ supplyCap:', supplyCap);
 
   const { isLoading: isLoadingLifiQuote, data: lifiQuote } = useQuery({
     queryKey: ['lifiQuote'],
