@@ -1,19 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { icErc20Abi } from '@ionicprotocol/sdk';
 import dynamic from 'next/dynamic';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { formatUnits, parseUnits } from 'viem';
-// import { mode } from 'viem/chains';
-import { useAccount, useBalance } from 'wagmi';
+import { type Address, formatUnits, parseUnits } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 
 import TokenSelector from '../stake/TokenSelector';
 
 interface IMaxDeposit {
-  amount?: string;
-  tokenName?: string;
-  token?: `0x${string}`;
+  amount: string;
+  tokenName: string;
+  token: Address;
   handleInput?: (val?: string) => void;
   fetchOwn?: boolean;
   headerText?: string;
@@ -24,6 +24,7 @@ interface IMaxDeposit {
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
   exchangeRate?: bigint;
   footerText?: string;
+  decimals: number;
 }
 
 export interface IBal {
@@ -32,69 +33,61 @@ export interface IBal {
 }
 
 function MaxDeposit({
-  headerText = 'Deposit',
+  headerText,
   amount,
-  tokenName = 'eth',
+  tokenName,
   token,
   handleInput,
   fetchOwn = false,
-  max = '',
-  chain,
+  max,
   tokenSelector = false,
   tokenArr,
   setMaxTokenForUtilization,
   exchangeRate,
-  footerText
+  footerText,
+  decimals
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
 
   const { address } = useAccount();
-  const hooktoken =
-    token === '0x0000000000000000000000000000000000000000' ? undefined : token;
 
-  const { data } = useBalance({
-    address,
-    token: hooktoken,
-    chainId: chain,
-    query: {
-      refetchInterval: 5000
-    }
+  const { data } = useReadContract({
+    abi: icErc20Abi,
+    address: token,
+    functionName: 'balanceOfUnderlying',
+    args: [address!]
   });
+  const balance = data ?? 0n;
 
-  useMemo(() => {
-    if (max) {
-      setBal({
-        value: parseUnits(max, data?.decimals ?? 18),
-        decimals: data?.decimals ?? 18
+  // const { data } = useBalance({
+  //   address,
+  //   token,
+  //   chainId: chain,
+  //   query: {
+  //     refetchInterval: 5000
+  //   }
+  // });
+
+  useEffect(() => {
+    setMaxTokenForUtilization &&
+      setMaxTokenForUtilization({
+        value: balance,
+        decimals: decimals ?? 18
       });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: parseUnits(max, data?.decimals ?? 18),
-      //     decimals: data?.decimals ?? 18
-      //   });
-    } else if (max == '0') {
-      setBal({ value: BigInt(0), decimals: data?.decimals ?? 18 });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: BigInt(0),
-      //     decimals: data?.decimals ?? 18
-      //   });
-    } else {
-      data && setBal({ value: data?.value, decimals: data?.decimals });
-    }
-  }, [data, max]);
+    data && setBal({ value: balance, decimals: decimals });
+  }, [balance, data, decimals, setMaxTokenForUtilization]);
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
       bal &&
-      Number(e.target.value) > Number(formatUnits(bal?.value, bal?.decimals))
+      Number(e.target.value) > Number(formatUnits(bal.value, bal.decimals))
     )
       return;
     if (!handleInput) return;
     handleInput(e.target.value);
   }
-  function handleMax(val: string) {
-    if (!handleInput) return;
+  function handleMax(val?: string) {
+    if (!handleInput || !val) return;
     handleInput(val);
   }
 
@@ -126,22 +119,18 @@ function MaxDeposit({
           {' '}
           {tokenName?.toUpperCase() ?? ''} Balance :{' '}
           {bal
-            ? parseFloat(
-                formatUnits(
-                  exchangeRate
-                    ? (bal?.value * exchangeRate) / 10n ** BigInt(18)
-                    : bal?.value,
-                  bal?.decimals
-                )
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 3
-              })
+            ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
+                'en-US',
+                {
+                  maximumFractionDigits: 3
+                }
+              )
             : max}
           {handleInput && (
             <button
               className={`text-accent ml-2`}
               onClick={() => {
-                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max);
+                handleMax(bal ? formatUnits(bal.value, bal.decimals) : max);
                 setMaxTokenForUtilization &&
                   setMaxTokenForUtilization({
                     value: bal?.value ?? BigInt(0),
@@ -165,12 +154,7 @@ function MaxDeposit({
             fetchOwn
               ? bal &&
                 parseFloat(
-                  formatUnits(
-                    exchangeRate
-                      ? (bal?.value * exchangeRate) / 10n ** BigInt(18)
-                      : bal?.value,
-                    bal?.decimals
-                  )
+                  formatUnits(bal?.value, bal?.decimals)
                 ).toLocaleString('en-US', {
                   maximumFractionDigits: 3
                 })

@@ -101,29 +101,17 @@ export default function CollateralSwapPopup({
   const sdk = getSdk(+chain);
   const collateralSwapContract =
     sdk?.chainDeployment[`CollateralSwap-${comptroller}`];
-  // const pathname = usePathname();
-  // const swappedToTokenQuery = queryToken
-  //   ? queryToken !== swappedToAsset.map((asset) => asset.underlyingSymbol)[0]
-  //   : '';
 
-  const swapFromAmountUnderlying = useMemo(() => {
-    if (!swapFromAmount) return '0';
+  const swapFromAmountCTokens = useMemo(() => {
+    if (!swapFromAmount) return 0n;
     const decimals = swappedFromAsset?.underlyingDecimals ?? 18;
-    return Number(
-      formatUnits(
-        (parseUnits(swapFromAmount, decimals) * swappedFromAsset.exchangeRate) /
-          10n ** BigInt(18),
-        decimals
-      )
-    ).toLocaleString('en-US', {
-      maximumFractionDigits: 3
-    });
+    return (
+      (parseUnits(swapFromAmount, decimals) * 10n ** BigInt(18)) /
+      swappedFromAsset.exchangeRate
+    );
   }, [swapFromAmount, swappedFromAsset]);
 
-  const debouncedSwapFromAmountUnderlying = useDebounce(
-    swapFromAmountUnderlying,
-    2000
-  );
+  const debouncedSwapFromAmount = useDebounce(swapFromAmount, 2000);
 
   const swappedToTokenQuery =
     queryToken ??
@@ -151,6 +139,7 @@ export default function CollateralSwapPopup({
     // initiateCloseAnimation();
   };
   const { isConnected } = useAccount();
+  console.log('🚀 ~ supplyCap:', supplyCap);
 
   const { isLoading: isLoadingLifiQuote, data: lifiQuote } = useQuery({
     queryKey: ['lifiQuote'],
@@ -161,7 +150,7 @@ export default function CollateralSwapPopup({
         fromToken: swappedFromAsset!.underlyingToken,
         toToken: swappedToAsset!.underlyingToken,
         fromAmount: parseUnits(
-          debouncedSwapFromAmountUnderlying,
+          debouncedSwapFromAmount,
           swappedFromAsset?.underlyingDecimals ?? 18
         ).toString(),
         fromAddress: collateralSwapContract!.address,
@@ -207,11 +196,6 @@ export default function CollateralSwapPopup({
     if (!currentSdk || !collateralSwapContract?.address || !address) return;
     let currentTransactionStep = 0;
 
-    const _amount = parseUnits(
-      swapFromAmount,
-      swappedFromAsset.underlyingDecimals
-    );
-
     addStepsForAction([
       {
         error: false,
@@ -234,13 +218,13 @@ export default function CollateralSwapPopup({
         (await token.read.allowance([
           address,
           collateralSwapContract.address as Address
-        ])) >= _amount;
+        ])) >= swapFromAmountCTokens;
 
       if (!hasApprovedEnough) {
         const tx = await currentSdk.approve(
           collateralSwapContract.address as Address,
           swappedFromAsset.cToken,
-          (_amount * 105n) / 100n
+          (swapFromAmountCTokens * 105n) / 100n
         );
 
         upsertTransactionStep({
@@ -274,10 +258,7 @@ export default function CollateralSwapPopup({
         abi: collateralSwapAbi,
         functionName: 'swapCollateral',
         args: [
-          parseUnits(
-            swapFromAmountUnderlying,
-            swappedFromAsset.underlyingDecimals
-          ),
+          parseUnits(swapFromAmount, swappedFromAsset.underlyingDecimals),
           swappedFromAsset!.cToken,
           swappedToAsset!.cToken,
           lifiQuote!.transactionRequest!.to as Address,
@@ -356,8 +337,8 @@ export default function CollateralSwapPopup({
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
         <div className="w-full">
           <MaxDeposit
-            headerText={'Wallet Balance'}
-            amount={swapFromAmountUnderlying}
+            headerText={'Supply Balance'}
+            amount={swapFromAmount}
             tokenName={swappedFromAsset.underlyingSymbol.toLowerCase()}
             token={swappedFromAsset.cToken}
             handleInput={(val?: string) => setSwapFromAmount(val as string)}
@@ -366,6 +347,7 @@ export default function CollateralSwapPopup({
             setMaxTokenForUtilization={setMaxTokens}
             exchangeRate={swappedFromAsset.exchangeRate}
             footerText={'$' + (lifiQuote?.estimate?.fromAmountUSD ?? '0')}
+            decimals={swappedFromAsset.underlyingDecimals}
           />
           <SwapTo
             headerText={'Swap To'}
@@ -398,9 +380,15 @@ export default function CollateralSwapPopup({
                 const percentval =
                   (Number(val) / 100) *
                   Number(
-                    formatEther(BigInt(maxTokens.value ?? swapFromAmount))
+                    maxTokens.value
+                      ? formatUnits(BigInt(maxTokens.value), maxTokens.decimals)
+                      : swapFromAmount
                   );
-                setSwapFromAmount(percentval.toString());
+                setSwapFromAmount(
+                  percentval.toLocaleString('en-US', {
+                    maximumFractionDigits: 3
+                  })
+                );
                 setUtilization(val ?? 0);
               }}
             />
@@ -431,7 +419,7 @@ export default function CollateralSwapPopup({
                 formatUnits(
                   swappedFromAsset.supplyBalance -
                     parseUnits(
-                      swapFromAmountUnderlying ?? '0',
+                      swapFromAmount ?? '0',
                       swappedFromAsset.underlyingDecimals
                     ),
                   swappedFromAsset.underlyingDecimals
