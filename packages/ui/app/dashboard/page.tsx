@@ -2,14 +2,12 @@
 'use client';
 
 import millify from 'millify';
-// import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import type { FlywheelReward } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-// import { base } from 'viem/chains';
-// import { useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
@@ -25,7 +23,6 @@ const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-// import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
@@ -48,9 +45,8 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useChainId } from 'wagmi';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
