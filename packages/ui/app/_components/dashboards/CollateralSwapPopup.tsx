@@ -143,9 +143,6 @@ export default function CollateralSwapPopup({
   const {
     isLoading: isLoadingLifiQuote,
     data: lifiQuote,
-    isFetching,
-    isPending: isPendingLiFi,
-    isRefetching,
     isError,
     error
   } = useQuery({
