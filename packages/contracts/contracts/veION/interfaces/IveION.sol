@@ -13,6 +13,11 @@ interface IveION {
     uint256 boost;
   }
 
+  struct Delegation {
+    uint256 amount;
+    uint256 delegatee;
+  }
+
   struct UserPoint {
     int128 bias;
     int128 slope; // # -dweight / dt

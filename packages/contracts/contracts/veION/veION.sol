@@ -55,6 +55,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address ionicPool;
   uint256 aeroVoterBoost;
 
+  mapping(uint256 => mapping(uint256 => uint256)) public s_delegations;
+  mapping(uint256 => uint256[]) public s_delegatees;
+
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
       revert NotMinter();
@@ -259,6 +262,100 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _newLocked.isPermanent = false;
     _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
     s_locked[_tokenId][_lpType] = _newLocked;
+  }
+
+  function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {
+    // Ensure the caller is the owner or approved for the fromTokenId
+    if (!_isApprovedOrOwner(msg.sender, fromTokenId)) revert NotApprovedOrOwner();
+
+    // Retrieve the locked balance for the fromTokenId
+    LpTokenType lpType = s_lpType[lpToken];
+    LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
+
+    // Ensure the lock is permanent
+    if (!fromLocked.isPermanent) revert NotPermanentLock();
+
+    // Ensure the amount to delegate is not greater than the available amount
+    if (amount > uint256(int256(fromLocked.amount))) revert AmountTooBig();
+
+    // Retrieve the locked balance for the toTokenId
+    LockedBalance memory toLocked = s_locked[toTokenId][lpType];
+
+    if (!toLocked.isPermanent) revert NotPermanentLock();
+
+    // Transfer the voting power
+    toLocked.amount += int128(int256(amount));
+    fromLocked.amount -= int128(int256(amount));
+
+    // Update the locked balances
+    s_locked[fromTokenId][lpType] = fromLocked;
+    s_locked[toTokenId][lpType] = toLocked;
+
+    s_delegations[fromTokenId][toTokenId] = amount;
+    s_delegatees[fromTokenId].push(toTokenId);
+
+    // Update checkpoints for both token IDs
+    _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
+    _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
+  }
+
+  function deDelegate(
+    uint256 fromTokenId,
+    uint256[] calldata toTokenIds,
+    address lpToken,
+    uint256[] calldata amounts
+  ) external {
+    // Ensure the caller is the owner or approved for the fromTokenId
+    if (!_isApprovedOrOwner(msg.sender, fromTokenId)) revert NotApprovedOrOwner();
+    require(toTokenIds.length == amounts.length, "Mismatched arrays");
+
+    // Retrieve the locked balance for the fromTokenId
+    LpTokenType lpType = s_lpType[lpToken];
+    LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
+
+    // Ensure the lock is permanent
+    if (!fromLocked.isPermanent) revert NotPermanentLock();
+
+    for (uint256 i = 0; i < toTokenIds.length; i++) {
+      uint256 toTokenId = toTokenIds[i];
+      uint256 amount = amounts[i];
+
+      // Retrieve the locked balance for the toTokenId
+      LockedBalance memory toLocked = s_locked[toTokenId][lpType];
+
+      // Ensure the amount to de-delegate is not greater than the delegated amount
+      if (amount > s_delegations[fromTokenId][toTokenId]) revert AmountTooBig();
+
+      // Transfer the voting power back
+      toLocked.amount -= int128(int256(amount));
+      fromLocked.amount += int128(int256(amount));
+
+      // Update the locked balances
+      s_locked[toTokenId][lpType] = toLocked;
+
+      // Update the delegation record
+      s_delegations[fromTokenId][toTokenId] -= amount;
+      if (s_delegations[fromTokenId][toTokenId] == 0) {
+        // Remove the toTokenId from the delegatees list if no more delegation exists
+        uint256[] storage delegatees = s_delegatees[fromTokenId];
+        for (uint256 j = 0; j < delegatees.length; j++) {
+          if (delegatees[j] == toTokenId) {
+            delegatees[j] = delegatees[delegatees.length - 1];
+            delegatees.pop();
+            break;
+          }
+        }
+      }
+
+      // Update checkpoint for the toTokenId
+      _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
+    }
+
+    // Update the locked balance for the fromTokenId
+    s_locked[fromTokenId][lpType] = fromLocked;
+
+    // Update checkpoint for the fromTokenId
+    _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
   }
 
   /**
