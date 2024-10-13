@@ -118,6 +118,29 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _depositFor(_tokenAddress, _tokenId, 0, unlockTime, oldLocked, DepositType.INCREASE_UNLOCK_TIME, _lpType);
   }
 
+  function lockAdditionalAsset(
+    address _tokenAddress,
+    uint256 _tokenAmount,
+    uint256 _tokenId,
+    uint256 _duration
+  ) external {
+    if (_tokenAmount == 0) revert ZeroAmount();
+    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
+
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
+
+    if (lockedBalance.end <= block.timestamp && !lockedBalance.isPermanent) revert LockExpired();
+
+    if (lockedBalance.isPermanent) {
+      s_permanentLockBalance[lpType] += _tokenAmount;
+    }
+
+    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
+    _depositFor(_tokenAddress, _tokenId, _tokenAmount, unlockTime, lockedBalance, DepositType.DEPOSIT_FOR_TYPE, lpType);
+  }
+
   /**
    * @notice Withdraws underlying assets from the veNFT.
    * If unlock time has not passed, uses a formula to unlock early with penalty.
@@ -167,6 +190,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
   }
 
+  // TODO should merge all lp types
   function merge(address _tokenAddress, uint256 _from, uint256 _to) external {
     address sender = _msgSender();
     if (_from == _to) revert SameNFT();
@@ -198,6 +222,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_to][_lpType] = newLockedTo;
   }
 
+  // TODO should take into account other lp types
   function split(
     address _tokenAddress,
     uint256 _from,
