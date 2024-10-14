@@ -21,6 +21,13 @@ interface IStakeStrategy {
   function claim(address _from) external;
 
   /**
+   * @notice Withdraws a specified amount of tokens for a given address.
+   * @param _from The address from which tokens will be withdrawn.
+   * @param _amount The amount of tokens to withdraw.
+   */
+  function withdraw(address _from, uint256 _amount) external;
+
+  /**
    * @notice Returns the current reward rate for the staking strategy.
    * @return The reward rate as a uint256.
    */

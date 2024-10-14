@@ -23,6 +23,7 @@ contract VelodromeStakingWallet is IStakeWallet, Ownable {
     _;
   }
 
+  // TODO include underlying owner of this wallet
   constructor(IStakeStrategy _stakeStrategy) Ownable() {
     stakeStrategy = _stakeStrategy;
   }
@@ -49,5 +50,18 @@ contract VelodromeStakingWallet is IStakeWallet, Ownable {
     stakingContract.getReward(address(this));
     uint256 rewardAmount = rewardToken.balanceOf(address(this));
     IERC20(rewardToken).transfer(_from, rewardAmount);
+  }
+
+  /**
+   * @notice Withdraws a specified amount of staked tokens.
+   * @param _from The address of the user withdrawing the tokens.
+   * @param _amount The amount of tokens to withdraw.
+   */
+  function withdraw(address _from, uint256 _amount) external onlyStakeStrategy {
+    IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
+    IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
+
+    stakingContract.withdraw(_amount);
+    stakingToken.transfer(_from, _amount);
   }
 }

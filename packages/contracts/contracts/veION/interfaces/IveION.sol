@@ -106,6 +106,7 @@ interface IveION {
     address[] memory _tokenAddress,
     uint256[] memory _tokenAmount,
     uint256[] memory _duration,
+    bool[] memory _stakeUnderlying,
     address _to
   ) external returns (uint256 _tokenId);
 
@@ -119,7 +120,8 @@ interface IveION {
   function createLock(
     address[] memory _tokenAddress,
     uint256[] memory _tokenAmount,
-    uint256[] memory _duration
+    uint256[] memory _duration,
+    bool[] memory _stakeUnderlying
   ) external returns (uint256 _tokenId);
 
   /**

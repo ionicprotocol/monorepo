@@ -13,4 +13,11 @@ interface IStakeWallet {
    * @notice Claims rewards for the caller.
    */
   function claim(address from) external;
+
+  /**
+   * @notice Withdraws a specified amount of staked tokens.
+   * @param from The address of the user withdrawing the tokens.
+   * @param amount The amount of tokens to withdraw.
+   */
+  function withdraw(address from, uint256 amount) external;
 }
