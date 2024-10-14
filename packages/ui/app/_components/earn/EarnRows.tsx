@@ -194,11 +194,17 @@ export const EarnPopup = ({
 }) => {
   const veloApy = useVeloApy(rewards[poolChain]?.velo ?? '');
   const aeroApy = useAeroApy();
+
+  const shouldShow =
+    rewards[poolChain]?.velo ||
+    rewards[poolChain]?.aero ||
+    rewards[poolChain]?.peaks ||
+    Number(apr) > 0;
   return (
     <div
-      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap ${shouldShow ? '' : 'hidden'}`}
     >
-      Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
+      {apr && Number(apr) > 0 ? 'Base APR: ' + apr + '%' : ''}
       {/* <div className="flex pt-4">
         <img
           alt=""
@@ -214,7 +220,7 @@ export const EarnPopup = ({
             className="size-4 rounded mr-1"
             src="/img/symbols/32/color/velo.png"
           />{' '}
-          {veloApy?.apy ?? 0} Velodrome APY
+          {veloApy?.apy ?? '0'} Velodrome APY
         </div>
       )}
       {rewards[poolChain]?.aero && (
@@ -224,7 +230,7 @@ export const EarnPopup = ({
             className="size-4 rounded mr-1"
             src="/img/symbols/32/color/aero.png"
           />{' '}
-          {aeroApy?.apy ?? 0} Aerodrome APY
+          {aeroApy?.apy ?? '0'} Aerodrome APY
         </div>
       )}
       {/* <div className="flex">
