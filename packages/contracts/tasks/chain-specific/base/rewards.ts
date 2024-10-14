@@ -349,10 +349,10 @@ task("base:add-rewards:epoch2:supply:usdz", "add rewards to a market").setAction
 task("base:add-rewards:epoch3:borrow", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer, multisig } = await getNamedAccounts();
-    const rewardToken = ION;
-    const rewardTokenName = "ION";
-    const market = USDC_MARKET;
-    const rewardAmount = (200_000).toString();
+    const rewardToken = hyUSD;
+    const rewardTokenName = "hyUSD";
+    const market = eUSD_MARKET;
+    const rewardAmount = (1_000).toString();
 
     // Sending tokens
     const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);

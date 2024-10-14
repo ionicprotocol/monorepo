@@ -48,9 +48,14 @@ task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run
   // if (!asset) {
   //   throw new Error("dMBTC not found in mode assets");
   // }
-  await run("market:set-borrow-cap", {
+  // await run("market:set-borrow-cap", {
+  //   market: MODE_NATIVE_MARKET,
+  //   maxBorrow: parseEther(String(11_000_000)).toString()
+  // });
+
+  await run("market:set-supply-cap", {
     market: MODE_NATIVE_MARKET,
-    maxBorrow: parseEther(String(11_000_000)).toString()
+    maxSupply: parseEther(String(25_000_000)).toString()
   });
 
   // await run("market:set:ltv", {
