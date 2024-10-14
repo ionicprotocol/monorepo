@@ -61,7 +61,7 @@ export default function ModeBreakdown({
   );
 }
 
-type VelodromeAPYProps = {
+export type VelodromeAPYProps = {
   step3Toggle: string;
   selectedtoken: 'eth' | 'mode' | 'weth';
 };

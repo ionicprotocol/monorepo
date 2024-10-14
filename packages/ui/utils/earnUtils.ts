@@ -20,6 +20,8 @@ export type EarnRow = {
 export interface IRewards {
   peaks: boolean;
   turtle: boolean;
+  velo?: string;
+  aero?: boolean;
   points: Record<string, number>;
 }
 
@@ -37,6 +39,7 @@ export const earnOpps: EarnRow[] = [
           turtle: 1
         },
         peaks: false,
+        velo: 'eth',
         turtle: true
       }
     },
@@ -62,6 +65,7 @@ export const earnOpps: EarnRow[] = [
           turtle: 1
         },
         peaks: false,
+        aero: true,
         turtle: true
       }
     },
@@ -87,6 +91,7 @@ export const earnOpps: EarnRow[] = [
           turtle: 1
         },
         peaks: false,
+        velo: 'mode',
         turtle: true
       }
     },
