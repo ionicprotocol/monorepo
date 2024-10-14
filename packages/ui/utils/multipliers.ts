@@ -293,7 +293,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
@@ -302,8 +303,8 @@ export const multipliers: Record<
           mode: 3,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDC: {

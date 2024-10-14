@@ -51,8 +51,8 @@ export const setupRewards = async (
           methodName: "initialize",
           args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
-      },
-      owner: multisig ?? deployer
+      }
+      // owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
@@ -114,7 +114,8 @@ export const setupRewards = async (
   const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
   const fwRewards = await flywheel.read.flywheelRewards();
   if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheel.address.toLowerCase())) {
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    // if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    if (false) {
       await prepareAndLogTransaction({
         contractInstance: comptroller,
         functionName: "_addRewardsDistributor",
@@ -132,7 +133,8 @@ export const setupRewards = async (
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
   }
 
-  if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  // if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  if (false) {
     await prepareAndLogTransaction({
       contractInstance: _market,
       functionName: "approve",

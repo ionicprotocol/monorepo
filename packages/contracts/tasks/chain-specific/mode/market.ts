@@ -4,7 +4,7 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
-import { COMPTROLLER_MAIN, dmBTC_MARKET, MS_DAI_MARKET } from ".";
+import { COMPTROLLER_MAIN, dmBTC_MARKET, MODE_NATIVE_MARKET, MS_DAI_MARKET } from ".";
 
 const modeAssets = mode.assets;
 
@@ -44,19 +44,19 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
-  const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.dMBTC);
-  if (!asset) {
-    throw new Error("dMBTC not found in mode assets");
-  }
-  await run("market:set-supply-cap", {
-    market: dmBTC_MARKET,
-    maxSupply: parseEther(String(2400 * 100000)).toString()
+  // const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.dMBTC);
+  // if (!asset) {
+  //   throw new Error("dMBTC not found in mode assets");
+  // }
+  await run("market:set-borrow-cap", {
+    market: MODE_NATIVE_MARKET,
+    maxBorrow: parseEther(String(11_000_000)).toString()
   });
 
-  await run("market:set:ltv", {
-    marketAddress: dmBTC_MARKET,
-    ltv: asset.initialCf
-  });
+  // await run("market:set:ltv", {
+  //   marketAddress: dmBTC_MARKET,
+  //   ltv: asset.initialCf
+  // });
 });
 
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
