@@ -99,16 +99,16 @@
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
     "IonicFlywheelBorrow_ION": {
-      "address": "0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec"
+      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
     },
     "IonicFlywheelBorrow_ION_Implementation": {
-      "address": "0xE259d6910e8a0250Cbf2de2781af67F7fAf57D13"
+      "address": "0x47632638053139307342C086D60B510EB0025996"
     },
     "IonicFlywheelBorrow_ION_Proxy": {
-      "address": "0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec"
+      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
     },
     "IonicFlywheelDynamicRewards_ION": {
-      "address": "0x3D662de3f1780A4a76406EBB80275A4653eD3dD4"
+      "address": "0xdb93567451Cc2D785fAB5744a07dbF0C7a90415f"
     },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x4a003b110162C86fE10cD39822c782eb08C2549C"

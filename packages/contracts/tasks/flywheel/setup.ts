@@ -71,8 +71,7 @@ export const setupRewards = async (
       _flywheel.address, // flywheel
       epochDuration // epoch duration
     ],
-    waitConfirmations: 1,
-    skipIfAlreadyDeployed: true
+    waitConfirmations: 1
   });
   console.log(
     `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
@@ -83,9 +82,9 @@ export const setupRewards = async (
     (await deployments.get(flywheelName)).address as Address
   );
 
-  const setFlywheelRewards = await flywheel.read.flywheelRewards();
-  console.log("setFlywheelRewards: ", setFlywheelRewards);
-  if ((setFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
+  const currentFlywheelRewards = await flywheel.read.flywheelRewards();
+  console.log("currentFlywheelRewards: ", currentFlywheelRewards);
+  if ((currentFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
     const txFlywheel = await flywheel.write.setFlywheelRewards([flywheelRewards.address as Address]);
     await publicClient.waitForTransactionReceipt({ hash: txFlywheel });
     console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address}): ${txFlywheel}`);
@@ -115,7 +114,8 @@ export const setupRewards = async (
   const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
   const fwRewards = await flywheel.read.flywheelRewards();
   if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheel.address.toLowerCase())) {
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    // if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    if (false) {
       await prepareAndLogTransaction({
         contractInstance: comptroller,
         functionName: "_addRewardsDistributor",
@@ -133,7 +133,8 @@ export const setupRewards = async (
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
   }
 
-  if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  // if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  if (false) {
     await prepareAndLogTransaction({
       contractInstance: _market,
       functionName: "approve",

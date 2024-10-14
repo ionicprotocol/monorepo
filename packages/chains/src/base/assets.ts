@@ -244,8 +244,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(140_000)).toString(),
-    initialBorrowCap: parseEther(String(110_000)).toString(),
+    initialSupplyCap: parseEther(String(250_000)).toString(),
+    initialBorrowCap: parseEther(String(120_000)).toString(),
     initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
