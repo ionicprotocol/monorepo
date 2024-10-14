@@ -2,7 +2,6 @@ import "./markets";
 import "./single";
 import "./rewards";
 import "./tokens";
-import "./disableFlywheel";
 import "./removeFlywheel";
 import "./liquidation";
 import "./leverage";

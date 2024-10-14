@@ -4,18 +4,18 @@ import { COMPTROLLER } from ".";
 
 task("market:base:remove-flywheel", "Deploys flywheel and adds rewards").setAction(
   async (_, { viem, run, deployments, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
 
-    const flywheel = await viem.getContractAt(
-      "IonicFlywheel",
-      (await deployments.get("IonicFlywheel_ION_v2")).address as Address
-    );
+    const flywheels = ["0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54"];
 
     const comptroller = await viem.getContractAt("IonicComptroller", COMPTROLLER);
-    const addTx = await comptroller.write._removeFlywheel([flywheel.address]);
-    await publicClient.waitForTransactionReceipt({ hash: addTx });
-    console.log({ addTx });
-    console.log(`Remove IonicFlywheel_ION_v2 ${flywheel.address} from comptroller`);
+    for (const flywheel of flywheels) {
+      const removeTx = await comptroller.write._removeFlywheel([flywheel as Address]);
+      await publicClient.waitForTransactionReceipt({ hash: removeTx });
+      console.log({ removeTx });
+      console.log("Removed flywheel from comptroller");
+    }
+    let accruingFlywheels = await comptroller.read.getAccruingFlywheels();
+    console.log("Accruing flywheels: ", accruingFlywheels);
   }
 );

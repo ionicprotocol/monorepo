@@ -71,8 +71,7 @@ export const setupRewards = async (
       _flywheel.address, // flywheel
       epochDuration // epoch duration
     ],
-    waitConfirmations: 1,
-    skipIfAlreadyDeployed: true
+    waitConfirmations: 1
   });
   console.log(
     `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
@@ -83,9 +82,9 @@ export const setupRewards = async (
     (await deployments.get(flywheelName)).address as Address
   );
 
-  const setFlywheelRewards = await flywheel.read.flywheelRewards();
-  console.log("setFlywheelRewards: ", setFlywheelRewards);
-  if ((setFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
+  const currentFlywheelRewards = await flywheel.read.flywheelRewards();
+  console.log("currentFlywheelRewards: ", currentFlywheelRewards);
+  if ((currentFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
     const txFlywheel = await flywheel.write.setFlywheelRewards([flywheelRewards.address as Address]);
     await publicClient.waitForTransactionReceipt({ hash: txFlywheel });
     console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address}): ${txFlywheel}`);
