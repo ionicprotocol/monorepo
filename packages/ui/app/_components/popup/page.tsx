@@ -197,13 +197,13 @@ const Popup = ({
     address ?? ('' as Address),
     selectedMarketData.cToken,
     active === PopupMode.WITHDRAW
-      ? amountAsBInt
+      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals),
     active === PopupMode.BORROW
       ? amountAsBInt
       : parseUnits('0', selectedMarketData.underlyingDecimals),
     active === PopupMode.REPAY
-      ? amountAsBInt
+      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals)
   );
 
@@ -1191,6 +1191,7 @@ const Popup = ({
             }
             mode={mode}
             setActive={setActive}
+            borrowPossible={borrowCap ? borrowCap?.totalBorrowCap > 1n : true}
           />
           {/* all the respective slides */}
 

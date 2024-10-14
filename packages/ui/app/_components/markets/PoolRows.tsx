@@ -19,13 +19,13 @@ import { PopupMode } from '../popup/page';
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
 
-import { disableBorrowRepay } from '@ui/constants/BorrowCapDisable';
 import {
   FLYWHEEL_TYPE_MAP,
   pools,
   shouldGetFeatured
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 // import { multipliers } from '@ui/utils/multipliers';
@@ -114,6 +114,11 @@ const PoolRows = ({
     () =>
       borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
     [borrowRewards]
+  );
+
+  const { data: borrowCapsData } = useBorrowCapsDataForAsset(
+    cTokenAddress,
+    dropdownSelectedChain
   );
 
   const borrowAPRTotal =
@@ -381,13 +386,17 @@ const PoolRows = ({
               }
             }}
             disabled={
-              !address ||
-              disableBorrowRepay[+dropdownSelectedChain]?.[
-                selectedPoolId
-              ]?.includes(asset)
+              (!address ||
+                (borrowCapsData
+                  ? borrowCapsData?.totalBorrowCap <= 1
+                  : false)) &&
+              !loopPossible
             }
           >
-            Borrow / Repay {loopPossible && '/ Loop'}
+            {(borrowCapsData ? borrowCapsData?.totalBorrowCap <= 1 : false) &&
+            loopPossible
+              ? 'Loop'
+              : `Borrow / Repay${loopPossible ? ' / Loop' : ''}`}
           </button>
         </div>
         {/* {!address && (
