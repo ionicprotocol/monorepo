@@ -9,7 +9,9 @@ import { mode } from 'viem/chains';
 
 // import { BaseContractABI } from '@ui/constants/baselp';
 import { pools } from '@ui/constants/index';
+import useAeroApy from '@ui/hooks/useAeroApy';
 import { useTvl } from '@ui/hooks/useTvl';
+import useVeloApy from '@ui/hooks/useVeloApy';
 import type { EarnRow, IRewards } from '@ui/utils/earnUtils';
 
 // type EarnRowsParams = {
@@ -130,7 +132,7 @@ export default function EarnRows({
           >
             + POINTS <i className="popover-hint">i</i>
           </span>
-          {rewards[poolChain]?.turtle && (
+          {/* {rewards[poolChain]?.turtle && (
             <a
               className={`${pools[+chain].text} bg-accent rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center  md:px-2.5 px-1`}
               href="https://turtle.club/dashboard/?ref=IONIC"
@@ -143,7 +145,7 @@ export default function EarnRows({
                 src="https://img.icons8.com/material-outlined/24/external-link.png"
               />
             </a>
-          )}
+          )} */}
           <EarnPopup
             apr={apr}
             rewards={rewards}
@@ -190,27 +192,55 @@ export const EarnPopup = ({
   rewards: Record<number, IRewards>;
   poolChain: number;
 }) => {
+  const veloApy = useVeloApy(rewards[poolChain]?.velo ?? '');
+  const aeroApy = useAeroApy();
+
+  const shouldShow =
+    rewards[poolChain]?.velo ||
+    rewards[poolChain]?.aero ||
+    rewards[poolChain]?.peaks ||
+    Number(apr) > 0;
   return (
     <div
-      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
+      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap ${shouldShow ? '' : 'hidden'}`}
     >
-      Base APR: {apr && Number(apr) > 0 ? apr : '-'}%
-      <div className="flex pt-4">
+      {apr && Number(apr) > 0 ? 'Base APR: ' + apr + '%' : ''}
+      {/* <div className="flex pt-4">
         <img
           alt=""
           className="size-4 rounded mr-1"
           src="/img/ionic-sq.png"
         />{' '}
         + {rewards[poolChain]?.points?.ionic}x Ionic Points
-      </div>
-      <div className="flex">
+      </div> */}
+      {rewards[poolChain]?.velo && (
+        <div className="flex pt-4">
+          <img
+            alt=""
+            className="size-4 rounded mr-1"
+            src="/img/symbols/32/color/velo.png"
+          />{' '}
+          {veloApy?.apy ?? '0'} Velodrome APY
+        </div>
+      )}
+      {rewards[poolChain]?.aero && (
+        <div className="flex pt-4">
+          <img
+            alt=""
+            className="size-4 rounded mr-1"
+            src="/img/symbols/32/color/aero.png"
+          />{' '}
+          {aeroApy?.apy ?? '0'} Aerodrome APY
+        </div>
+      )}
+      {/* <div className="flex">
         <img
           alt=""
           className="size-4 rounded mr-1"
           src="/images/turtle-ionic.png"
         />{' '}
         + {rewards[poolChain]?.points?.turtle}x Turtle Ionic Points
-      </div>
+      </div> */}
       {rewards[poolChain]?.peaks && (
         <div className="flex">
           <img
