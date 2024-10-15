@@ -184,4 +184,10 @@ interface IveION {
   function balanceOfNFT(
     uint256 _tokenId
   ) external view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts);
+  
+  /**
+   * @notice Gets value of all lp tokens in ETH for a specific owner.
+   * @param _owner Owner to check.
+   */
+  function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue);
 }
