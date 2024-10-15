@@ -293,7 +293,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
@@ -302,8 +303,8 @@ export const multipliers: Record<
           mode: 3,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDC: {
@@ -395,7 +396,7 @@ export const multipliers: Record<
           underlyingAPR: 2.6,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       hyUSD: {
@@ -408,11 +409,11 @@ export const multipliers: Record<
           ionAPR: true
         },
         borrow: {
-          flywheel: false,
+          flywheel: true,
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       AERO: {
@@ -516,7 +517,13 @@ export const multipliers: Record<
         }
       },
       RSR: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          ionic: 0,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -561,8 +568,9 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
-          ionAPR: false
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
           ionic: 0,
@@ -608,8 +616,9 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
-          ionAPR: false
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
           ionic: 0,

@@ -1,5 +1,13 @@
 import { task } from "hardhat/config";
-import { dmBTC_MARKET, ION, MODE_NATIVE_MARKET, WEETH_MARKET } from ".";
+import {
+  dmBTC_MARKET,
+  ION,
+  MODE_NATIVE_MARKET,
+  USDC_NATIVE_MARKET,
+  USDT_NATIVE_MARKET,
+  WEETH_MARKET,
+  WETH_NATIVE_MARKET
+} from ".";
 import { Address, formatEther, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 
@@ -86,5 +94,71 @@ task("mode:add-rewards:borrow:epoch2", "add rewards to a market").setAction(
     }
 
     await setupRewards("borrow", market, rewardTokenName, ION, BORROW_DURATION, deployer as Address, viem, deployments);
+  }
+);
+
+task("mode:add-rewards:epoch3:borrow", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = ION;
+    const rewardTokenName = "ION";
+    const market = MODE_NATIVE_MARKET;
+    const rewardAmount = (50_000).toString();
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "borrow",
+      market,
+      rewardTokenName,
+      rewardToken,
+      BORROW_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address
+    );
+  }
+);
+
+task("mode:add-rewards:epoch3:supply", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = ION;
+    const rewardTokenName = "ION";
+    const market = USDT_NATIVE_MARKET;
+    const rewardAmount = (0).toString();
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address
+    );
   }
 );
