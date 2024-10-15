@@ -312,6 +312,14 @@ contract Voter is IVoter, OwnableUpgradeable {
     usedWeights[_tokenId][_votingAsset] = uint256(vars.usedWeight);
   }
 
+  struct VoteLocalVars {
+    address sender;
+    uint256 timestamp;
+    address[] votingLPs;
+    uint256[] votingLPBalances;
+    uint256[] boosts;
+  }
+
   /// @inheritdoc IVoter
   function vote(
     uint256 _tokenId,
@@ -319,22 +327,22 @@ contract Voter is IVoter, OwnableUpgradeable {
     MarketSide[] calldata _marketVoteSide,
     uint256[] calldata _weights
   ) external onlyNewEpoch(_tokenId) {
-    address _sender = msg.sender;
-    if (!IveION(ve).isApprovedOrOwner(_sender, _tokenId)) revert NotApprovedOrOwner();
+    VoteLocalVars memory vars;
+    vars.sender = msg.sender;
+    if (!IveION(ve).isApprovedOrOwner(vars.sender, _tokenId)) revert NotApprovedOrOwner();
     if (_marketVote.length != _weights.length) revert UnequalLengths();
     if (_marketVote.length > maxVotingNum) revert TooManyPools();
     if (IveION(ve).deactivated(_tokenId)) revert InactiveManagedNFT();
-    uint256 _timestamp = block.timestamp;
-    if ((_timestamp > IonicTimeLibrary.epochVoteEnd(_timestamp)) && !isWhitelistedNFT[_tokenId])
+    vars.timestamp = block.timestamp;
+    if ((vars.timestamp > IonicTimeLibrary.epochVoteEnd(vars.timestamp)) && !isWhitelistedNFT[_tokenId])
       revert NotWhitelistedNFT();
-    lastVoted[_tokenId] = _timestamp;
-    (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
-      .balanceOfNFT(_tokenId);
-    for (uint256 i = 0; i < _votingLPs.length; i++) {
+    lastVoted[_tokenId] = vars.timestamp;
+    (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
+    for (uint256 i = 0; i < vars.votingLPs.length; i++) {
       _vote(
         _tokenId,
-        _votingLPs[i],
-        (_votingLPBalances[i] * _boosts[i]) / 1e18,
+        vars.votingLPs[i],
+        (vars.votingLPBalances[i] * vars.boosts[i]) / 1e18,
         _marketVote,
         _marketVoteSide,
         _weights

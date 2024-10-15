@@ -10,6 +10,8 @@ import { console } from "forge-std/console.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import { BalanceLogicLibrary } from "./libraries/BalanceLogicLibrary.sol";
+import { AddressesProvider } from "../ionic/AddressesProvider.sol";
+import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
@@ -32,6 +34,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address public s_aeroVoting;
   address public s_ionicPool;
   uint256 public s_aeroVoterBoost;
+  AddressesProvider public ap;
 
   // Mappings
   mapping(address => bool) public s_bridges;
@@ -56,6 +59,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_distributedFees;
   mapping(uint256 => mapping(uint256 => uint256)) public s_delegations;
   mapping(uint256 => uint256[]) public s_delegatees;
+  mapping(address => uint256[]) public s_ownerToTokenIds; // owner => list of token IDs
 
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
@@ -64,9 +68,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _;
   }
 
-  function initialize() public initializer {
+  function initialize(AddressesProvider _ap) public initializer {
     __Ownable2Step_init();
     __ERC721_init("veION", "veION");
+    ap = _ap;
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -429,25 +434,54 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
+   * @notice Reserved for bridging. Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
    * @param tokenId Token ID to mint.
    * @param to Address to mint to.
    * @param unlockTime Timestamp of unlock (needs to be preserved across chains).
    */
   function mint(uint256 tokenId, address to, uint256 unlockTime) external override onlyBridge {
-    // TODO: Implement function logic
+    // Reserved for bridging logic
   }
 
   /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Burns a token and returns relevant metadata.
+   * @notice Reserved for bridging. Burns a token and returns relevant metadata.
    * @param tokenId Token ID to burn.
    * @return to Address which owned the token.
    * @return unlockTime Timestamp of unlock (needs to be preserved across chains).
    */
   function burn(uint256 tokenId) external override onlyBridge returns (address to, uint256 unlockTime) {
-    // TODO: Implement function logic
+    // Reserved for bridging logic
+  }
+
+  /**
+   * @dev Overrides the _mint function from ERC721 to include additional logic for bridging.
+   * @param to Address to mint to.
+   * @param tokenId Token ID to mint.
+   */
+  function _mint(address to, uint256 tokenId) internal override {
+    super._mint(to, tokenId);
+    s_ownerToTokenIds[to].push(tokenId);
+  }
+
+  /**
+   * @dev Overrides the _burn function from ERC721 to include additional logic for bridging.
+   * @param tokenId Token ID to burn.
+   */
+  function _burn(uint256 tokenId) internal override {
+    address owner = ownerOf(tokenId);
+    super._burn(tokenId);
+    removeTokenFromOwnerList(owner, tokenId);
+  }
+
+  function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
+    super._beforeTokenTransfer(from, to, tokenId);
+
+    if (from != address(0)) {
+      removeTokenFromOwnerList(from, tokenId);
+    }
+    if (to != address(0)) {
+      s_ownerToTokenIds[to].push(tokenId);
+    }
   }
 
   function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
@@ -727,6 +761,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenId = ++s_tokenId;
     uint256 _length = _tokenAddress.length;
     _mint(_to, _tokenId);
+    s_ownerToTokenIds[_to].push(_tokenId);
 
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
@@ -792,6 +827,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_tokenId][_lpType] = _newLocked;
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, false, 0), _newLocked, _lpType);
     _mint(_to, _tokenId);
+    s_ownerToTokenIds[_to].push(_tokenId);
   }
 
   function _getStakeStrategy(
@@ -831,6 +867,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (assetsLocked[i] == _tokenAddress) {
         assetsLocked[i] = assetsLocked[assetsLocked.length - 1];
         assetsLocked.pop();
+        break;
+      }
+    }
+  }
+
+  function removeTokenFromOwnerList(address owner, uint256 tokenId) internal {
+    uint256[] storage tokenIds = s_ownerToTokenIds[owner];
+    for (uint256 i = 0; i < tokenIds.length; i++) {
+      if (tokenIds[i] == tokenId) {
+        tokenIds[i] = tokenIds[tokenIds.length - 1];
+        tokenIds.pop();
         break;
       }
     }
@@ -883,9 +930,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       totalBoost += s_limitedBoost;
     }
     address _owner = ownerOf(_tokenId);
-    uint256 _balance = Is_aeroVotingEscrow(s_veAERO).balanceOf(_owner);
+    uint256 _balance = IAeroVotingEscrow(s_veAERO).balanceOf(_owner);
     for (uint256 i = 0; i < _balance; i++) {
-      uint256 tokenId = Is_aeroVotingEscrow(s_veAERO).ownerToNFTokenIdList(_owner, i);
+      uint256 tokenId = IAeroVotingEscrow(s_veAERO).ownerToNFTokenIdList(_owner, i);
       address[] memory poolVotes = IAeroVoter(s_aeroVoting).poolVote(tokenId);
       for (uint256 j = 0; j < poolVotes.length; j++) {
         if (poolVotes[j] == s_ionicPool) {
@@ -905,9 +952,32 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
     s_limitedBoost = _boostAmount;
   }
+
+  function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
+    return s_ownerToTokenIds[_owner];
+  }
+
+  function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue) {
+    uint256[] memory tokenIds = s_ownerToTokenIds[_owner];
+    for (uint256 i = 0; i < tokenIds.length; i++) {
+      uint256 tokenId = tokenIds[i];
+      address[] memory assets;
+      uint256[] memory balances;
+      (assets, balances, ) = balanceOfNFT(tokenId);
+      for (uint256 j = 0; j < assets.length; j++) {
+        uint256 assetValue = (balances[j] * getEthPrice(assets[j])) / PRECISION;
+        totalValue += assetValue;
+      }
+    }
+  }
+
+  function getEthPrice(address _token) internal view returns (uint256) {
+    MasterPriceOracle mpo = MasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    return mpo.price(_token);
+  }
 }
 
-interface Is_aeroVotingEscrow {
+interface IAeroVotingEscrow {
   function balanceOf(address _owner) external view returns (uint256);
 
   function ownerToNFTokenIdList(address _owner, uint256 _index) external view returns (uint256);
