@@ -51,8 +51,8 @@ export const setupRewards = async (
           methodName: "initialize",
           args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
-      },
-      owner: multisig ?? deployer
+      }
+      // owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
@@ -71,7 +71,8 @@ export const setupRewards = async (
       _flywheel.address, // flywheel
       epochDuration // epoch duration
     ],
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
   console.log(
     `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
