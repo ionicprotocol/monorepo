@@ -15,6 +15,10 @@ import { LeveredPositionStorage } from "./LeveredPositionStorage.sol";
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
+interface IFlywheelLensRouter_LP {
+  function claimAllRewardTokens(address user) external returns (address[] memory, uint256[] memory);
+}
+
 contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -161,6 +165,16 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
         rewardToken.transfer(withdrawTo, rewardsAccrued);
       }
     }
+  }
+
+  function claimRewards(address _flr, address _position) external returns (address[] memory, uint256[] memory) {
+    IFlywheelLensRouter_LP flr = IFlywheelLensRouter_LP(_flr);
+    LeveredPosition position = LeveredPosition(_position);
+    (address[] memory rewardTokens, uint256[] memory rewards) = flr.claimAllRewardTokens(_position);
+    for (uint256 i = 0; i < rewardTokens.length; i++) {
+      IERC20Upgradeable(rewardTokens[i]).safeTransfer(position.positionOwner(), rewards[i]);
+    }
+    return (rewardTokens, rewards);
   }
 
   fallback() external {

@@ -23,6 +23,11 @@ import { JumpRateModel } from "../compound/JumpRateModel.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
 import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
+import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
+import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
+import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
+import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
+import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
@@ -805,11 +810,7 @@ contract DevTesting is BaseTest {
     vm.startPrank(usdcWhale);
     usdc.transfer(address(liquidator), 1000 * 10e6);
     IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
-      from: address(usdc),
-      to: address(weth),
-      stable: false
-    });
+    path[0] = IVelodromeV2Router.Route({ from: address(usdc), to: address(weth), stable: false });
     liquidator.redeem(usdc, 1000 * 10e6, abi.encode(veloRouter, path));
     emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
@@ -826,14 +827,43 @@ contract DevTesting is BaseTest {
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
     IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
-      from: address(weth),
-      to: address(usdc),
-      stable: false
-    });
+    path[0] = IVelodromeV2Router.Route({ from: address(weth), to: address(usdc), stable: false });
 
     liquidator.redeem(weth, 1 ether, abi.encode(veloRouter, path));
     emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function test_claimRewardFromLeveredPosition() public debuggingOnly forkAtBlock(BASE_MAINNET, 21148989) {
+    LeveredPositionFactoryFirstExtension position = LeveredPositionFactoryFirstExtension(
+      0x3a0eA2C577b0e0f2CAaEcC2b8fF8fF1850267ba2
+    );
+    LeveredPositionFactory factory = LeveredPositionFactory(
+      address(LeveredPositionStorage(address(position)).factory())
+    );
+
+    vm.prank(address(factory));
+    LeveredPosition dummy = new LeveredPosition(
+      msg.sender,
+      ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3),
+      ICErc20(0xa900A17a49Bc4D442bA7F72c39FA2108865671f0)
+    );
+    emit log_named_address("dummy", address(dummy));
+
+    LeveredPositionFactoryFirstExtension extension = new LeveredPositionFactoryFirstExtension();
+    vm.prank(factory.owner());
+    factory._registerExtension(
+      extension,
+      LeveredPositionFactoryFirstExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
+    );
+
+    vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
+    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewards(
+      0xB1402333b12fc066C3D7F55d37944D5e281a3e8B,
+      address(position)
+    );
+    emit log_named_uint("reward tokens", rewardTokens.length);
+    emit log_named_uint("rewards", rewards.length);
     vm.stopPrank();
   }
 
