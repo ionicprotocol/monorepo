@@ -2,16 +2,15 @@
 'use client';
 
 import millify from 'millify';
-// import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import type { FlywheelReward } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-// import { base } from 'viem/chains';
-// import { useChainId } from 'wagmi';
+import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
@@ -24,7 +23,6 @@ const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-// import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
@@ -47,6 +45,7 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData } from '@ui/types/TokensDataMap';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
@@ -58,6 +57,9 @@ export default function Dashboard() {
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
+    useState<MarketData>();
+  const walletChain = useChainId();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -367,8 +369,29 @@ export default function Dashboard() {
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
+
+  // console.log(suppliedAssets);
   return (
     <>
+      {swapOpen && marketData?.comptroller && (
+        <CollateralSwapPopup
+          toggler={() => swapToggle()}
+          swapRef={swapRef}
+          swappedFromAsset={collateralSwapFromAsset!}
+          swappedToAssets={marketData?.assets.filter(
+            (asset) =>
+              asset?.underlyingToken !==
+              collateralSwapFromAsset?.underlyingToken
+          )}
+          swapOpen={swapOpen}
+          comptroller={marketData?.comptroller}
+        />
+      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -677,6 +700,18 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
+                      toggler={async () => {
+                        const result = await handleSwitchOriginChain(
+                          +chain,
+                          walletChain
+                        );
+                        if (result) {
+                          swapToggle();
+                        }
+                      }}
+                      setCollateralSwapFromAsset={() =>
+                        setCollateralSwapFromAsset(asset)
+                      }
                       utilization="0.00%"
                     />
                   ))}

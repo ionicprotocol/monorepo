@@ -2,14 +2,14 @@
 pragma solidity >=0.8.0;
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
-import { IRouter } from "../external/velodrome/IRouter.sol";
+import { IVelodromeRouter } from "../external/velodrome/IVelodromeRouter.sol";
 
 /**
  * @title VelodromeV2Liquidator
  * @notice Exchanges seized token collateral for underlying tokens via a Velodrome V2 router for use as a step in a liquidation.
  */
 contract VelodromeV2Liquidator {
-  function _swap(IRouter router, uint256 inputAmount, IRouter.Route[] memory swapPath) internal {
+  function _swap(IVelodromeRouter router, uint256 inputAmount, IVelodromeRouter.Route[] memory swapPath) internal {
     router.swapExactTokensForTokens(inputAmount, 0, swapPath, address(this), block.timestamp);
   }
 
@@ -39,7 +39,7 @@ contract VelodromeV2Liquidator {
     bytes memory strategyData
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
     // Get Uniswap router and path
-    (IRouter router, IRouter.Route[] memory swapPath) = abi.decode(strategyData, (IRouter, IRouter.Route[]));
+    (IVelodromeRouter router, IVelodromeRouter.Route[] memory swapPath) = abi.decode(strategyData, (IVelodromeRouter, IVelodromeRouter.Route[]));
     require(swapPath.length >= 1 && swapPath[0].from == address(inputToken), "Invalid VelodromeV2Liquidator swap path.");
 
     // Swap underlying tokens

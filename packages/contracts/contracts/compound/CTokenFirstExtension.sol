@@ -78,12 +78,7 @@ contract CTokenFirstExtension is
    * @param tokens The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transferTokens(
-    address spender,
-    address src,
-    address dst,
-    uint256 tokens
-  ) internal returns (uint256) {
+  function transferTokens(address spender, address src, address dst, uint256 tokens) internal returns (uint256) {
     /* Fail if transfer not allowed */
     uint256 allowed = comptroller.transferAllowed(address(this), src, dst, tokens);
     if (allowed != 0) {
@@ -316,12 +311,9 @@ contract CTokenFirstExtension is
    * @param newInterestRateModel the new interest rate model to use
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setInterestRateModel(InterestRateModel newInterestRateModel)
-    public
-    override
-    nonReentrant(false)
-    returns (uint256)
-  {
+  function _setInterestRateModel(
+    InterestRateModel newInterestRateModel
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);
@@ -483,11 +475,10 @@ contract CTokenFirstExtension is
     uint256 interestAccumulated;
   }
 
-  function _accrueInterestHypothetical(uint256 blockNumber, uint256 cashPrior)
-    internal
-    view
-    returns (InterestAccrual memory accrual)
-  {
+  function _accrueInterestHypothetical(
+    uint256 blockNumber,
+    uint256 cashPrior
+  ) internal view returns (InterestAccrual memory accrual) {
     uint256 totalFees = totalAdminFees + totalIonicFees;
     uint256 borrowRateMantissa = interestRateModel.getBorrowRate(cashPrior, totalBorrows, totalReserves + totalFees);
     if (borrowRateMantissa > borrowRateMaxMantissa) {
@@ -581,17 +572,7 @@ contract CTokenFirstExtension is
    * @param account Address of the account to snapshot
    * @return (possible error, token balance, borrow balance, exchange rate mantissa)
    */
-  function getAccountSnapshot(address account)
-    external
-    view
-    override
-    returns (
-      uint256,
-      uint256,
-      uint256,
-      uint256
-    )
-  {
+  function getAccountSnapshot(address account) external view override returns (uint256, uint256, uint256, uint256) {
     uint256 cTokenBalance = accountTokens[account];
     uint256 borrowBalance;
     uint256 exchangeRateMantissa;
@@ -707,12 +688,9 @@ contract CTokenFirstExtension is
     return ICErc20(address(this));
   }
 
-  function multicall(bytes[] calldata data)
-    public
-    payable
-    override(CTokenFirstExtensionInterface, Multicall)
-    returns (bytes[] memory results)
-  {
+  function multicall(
+    bytes[] calldata data
+  ) public payable override(CTokenFirstExtensionInterface, Multicall) returns (bytes[] memory results) {
     return Multicall.multicall(data);
   }
 
