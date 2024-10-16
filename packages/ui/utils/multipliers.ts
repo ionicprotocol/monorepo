@@ -482,7 +482,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       ezETH: {
@@ -519,24 +520,24 @@ export const multipliers: Record<
       RSR: {
         borrow: {
           turtle: false,
-          rewards: true,
-          ionAPR: true,
+          rewards: false,
+          ionAPR: false,
           ionic: 0,
-          flywheel: true
+          flywheel: false
         },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
-          ionAPR: true,
-          flywheel: true
+          rewards: false,
+          ionAPR: false,
+          flywheel: false
         }
       },
       wstETH: {
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         market: 'ionwsteth_base',
@@ -546,7 +547,8 @@ export const multipliers: Record<
           underlyingAPR: 2.9,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       wsuperOETHb: {
@@ -629,6 +631,15 @@ export const multipliers: Record<
         }
       },
       EURC: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      cbBTC: {
         supply: {
           ionic: 0,
           turtle: false,
