@@ -406,7 +406,7 @@ export const multipliers: Record<
           underlyingAPR: 3.5,
           turtle: false,
           rewards: true,
-          ionAPR: true
+          ionAPR: false
         },
         borrow: {
           flywheel: true,
@@ -620,6 +620,15 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      EURC: {
         supply: {
           ionic: 0,
           turtle: false,
