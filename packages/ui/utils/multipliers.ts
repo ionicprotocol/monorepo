@@ -623,15 +623,15 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       EURC: {
