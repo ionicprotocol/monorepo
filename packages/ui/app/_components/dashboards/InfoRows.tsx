@@ -92,8 +92,6 @@ const InfoRows = ({
       : typeof apr !== 'undefined'
         ? Number(apr) + totalSupplyRewardsAPR
         : undefined;
-  console.log('🚀 ~ totalApr:', totalApr);
-  console.log('🚀 ~ apr:', apr);
 
   return (
     <div
