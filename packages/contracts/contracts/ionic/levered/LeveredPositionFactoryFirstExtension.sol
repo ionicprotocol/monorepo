@@ -40,6 +40,7 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountsWithOpenPositions.selector;
     functionSelectors[--fnsCount] = this.getPositionsByAccount.selector;
     functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
+
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
   }
@@ -76,19 +77,16 @@ contract LeveredPositionFactoryFirstExtension is
     return feeDistributor.minBorrowEth();
   }
 
-  function getRedemptionStrategies(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData)
-  {
+  function getRedemptionStrategies(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData) {
     return liquidatorsRegistry.getRedemptionStrategies(inputToken, outputToken);
   }
 
-  function getPositionsByAccount(address account)
-    external
-    view
-    returns (address[] memory positions, bool[] memory closed)
-  {
+  function getPositionsByAccount(
+    address account
+  ) external view returns (address[] memory positions, bool[] memory closed) {
     positions = positionsByAccount[account].values();
     closed = new bool[](positions.length);
     for (uint256 i = 0; i < positions.length; i++) {
@@ -109,7 +107,7 @@ contract LeveredPositionFactoryFirstExtension is
   }
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address) {
-    // TODO
-    return address(0);
+    // the position below should implement claimRewards
+    return 0xf2e4aa37EAe6E946AA907861690F5078B8f37dCF; // no such contract on base
   }
 }
