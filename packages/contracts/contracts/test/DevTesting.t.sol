@@ -10,7 +10,7 @@ import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ComptrollerFirstExtension } from "../compound/ComptrollerFirstExtension.sol";
 import { CErc20PluginRewardsDelegate } from "../compound/CErc20PluginRewardsDelegate.sol";
 import { Unitroller } from "../compound/Unitroller.sol";
-import { DiamondExtension } from "../ionic/DiamondExtension.sol";
+import { DiamondExtension, DiamondBase } from "../ionic/DiamondExtension.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { ISwapRouter } from "../external/uniswap/ISwapRouter.sol";
 import { RedstoneAdapterPriceOracle } from "../oracles/default/RedstoneAdapterPriceOracle.sol";
@@ -834,13 +834,11 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function test_claimRewardFromLeveredPosition() public debuggingOnly forkAtBlock(BASE_MAINNET, 21148989) {
-    LeveredPositionFactoryFirstExtension position = LeveredPositionFactoryFirstExtension(
-      0x3a0eA2C577b0e0f2CAaEcC2b8fF8fF1850267ba2
+  function test_claimRewardFromLeveredPosition() public debuggingOnly fork(BASE_MAINNET) {
+    LeveredPosition position = LeveredPosition(
+      0x3a0eA2C577b0e0f2CAaEcC2b8fF8fF1850267ba2 // 20 days old
     );
-    LeveredPositionFactory factory = LeveredPositionFactory(
-      address(LeveredPositionStorage(address(position)).factory())
-    );
+    ILeveredPositionFactory factory = position.factory();
 
     vm.prank(address(factory));
     LeveredPosition dummy = new LeveredPosition(
@@ -850,18 +848,24 @@ contract DevTesting is BaseTest {
     );
     emit log_named_address("dummy", address(dummy));
 
-    LeveredPositionFactoryFirstExtension extension = new LeveredPositionFactoryFirstExtension();
-    vm.prank(factory.owner());
-    factory._registerExtension(
-      extension,
-      LeveredPositionFactoryFirstExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
+    vm.startPrank(factory.owner());
+    DiamondBase(address(factory))._registerExtension(
+      new LeveredPositionFactoryFirstExtension(),
+      DiamondExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
     );
+    vm.stopPrank();
+
+    {
+      // mock the usdz call
+      vm.mockCall(
+        0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938,
+        abi.encodeWithSelector(IERC20Upgradeable.balanceOf.selector),
+        abi.encode(53307671999615298341926)
+      );
+    }
 
     vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
-    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewards(
-      0xB1402333b12fc066C3D7F55d37944D5e281a3e8B,
-      address(position)
-    );
+    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
     emit log_named_uint("reward tokens", rewardTokens.length);
     emit log_named_uint("rewards", rewards.length);
     vm.stopPrank();
