@@ -613,7 +613,7 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 10,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           flywheel: false
         }
