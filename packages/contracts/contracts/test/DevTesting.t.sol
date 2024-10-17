@@ -855,6 +855,15 @@ contract DevTesting is BaseTest {
     );
     vm.stopPrank();
 
+    {
+      // mock the usdz call
+      vm.mockCall(
+        0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938,
+        abi.encodeWithSelector(IERC20Upgradeable.balanceOf.selector),
+        abi.encode(53307671999615298341926)
+      );
+    }
+
     vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
     (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
     emit log_named_uint("reward tokens", rewardTokens.length);
