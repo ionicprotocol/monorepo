@@ -629,7 +629,7 @@ export default function Dashboard() {
                             getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
-                      }%`}
+                      }`}
                       asset={asset.underlyingSymbol}
                       collateralApr={`${
                         assetsSupplyAprData

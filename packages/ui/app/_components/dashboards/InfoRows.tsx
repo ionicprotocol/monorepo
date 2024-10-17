@@ -86,12 +86,8 @@ const InfoRows = ({
   );
   const totalApr =
     mode === InfoMode.BORROW
-      ? typeof apr !== 'undefined'
-        ? 0 - Number(apr) + totalBorrowRewardsAPR
-        : undefined
-      : typeof apr !== 'undefined'
-        ? Number(apr) + totalSupplyRewardsAPR
-        : undefined;
+      ? 0 - Number(apr) + totalBorrowRewardsAPR
+      : Number(apr) + totalSupplyRewardsAPR;
 
   return (
     <div
@@ -137,18 +133,14 @@ const InfoRows = ({
           className={` mb-2 popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer`}
         >
           {mode === InfoMode.SUPPLY
-            ? totalApr?.toLocaleString('en-US', {
+            ? totalApr.toLocaleString('en-US', {
                 maximumFractionDigits: 2
-              }) ?? '-'
-            : totalApr
-              ? totalApr > 0
-                ? '+'
-                : ''
-              : '' +
-                  totalApr?.toLocaleString('en-US', {
-                    maximumFractionDigits: 1
-                  }) ?? '-'}
-          %
+              })
+            : (totalApr > 0 ? '+' : '') +
+              totalApr.toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              }) +
+              '%'}
           {mode === InfoMode.SUPPLY ? (
             <>
               <SupplyPopover
