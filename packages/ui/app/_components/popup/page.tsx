@@ -196,7 +196,7 @@ const Popup = ({
 
   const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
   const {
-    data: predictedHealthFactor,
+    data: _predictedHealthFactor,
     isLoading: isLoadingPredictedHealthFactor
   } = useHealthFactorPrediction(
     comptrollerAddress,
@@ -314,15 +314,30 @@ const Popup = ({
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
+  const predictedHealthFactor = useMemo<bigint | undefined>(() => {
+    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
+      return maxUint256;
+    }
+
+    return _predictedHealthFactor;
+  }, [_predictedHealthFactor, updatedAsset]);
+
   const hfpStatus = useMemo<HFPStatus>(() => {
     if (!predictedHealthFactor) {
       return HFPStatus.UNKNOWN;
     }
 
-    const predictedHealthFactorNumber =
-      predictedHealthFactor === maxUint256
-        ? 1000
-        : Number(formatEther(predictedHealthFactor));
+    if (predictedHealthFactor === maxUint256) {
+      return HFPStatus.NORMAL;
+    }
+
+    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
+      return HFPStatus.NORMAL;
+    }
+
+    const predictedHealthFactorNumber = Number(
+      formatEther(predictedHealthFactor)
+    );
 
     if (predictedHealthFactorNumber <= 1.1) {
       return HFPStatus.CRITICAL;
@@ -333,7 +348,7 @@ const Popup = ({
     }
 
     return HFPStatus.NORMAL;
-  }, [predictedHealthFactor]);
+  }, [predictedHealthFactor, updatedAsset]);
   const queryClient = useQueryClient();
 
   /**
