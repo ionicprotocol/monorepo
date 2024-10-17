@@ -293,7 +293,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
@@ -302,8 +303,8 @@ export const multipliers: Record<
           mode: 3,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDC: {
@@ -321,7 +322,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       USDT: {
@@ -330,7 +332,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: false,
+          flywheel: false
         },
         decimals: 6,
         market: 'ionusdt_modenative',
@@ -339,7 +342,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WETH: {
@@ -357,7 +361,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       }
     }
@@ -395,7 +400,7 @@ export const multipliers: Record<
           underlyingAPR: 2.6,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       hyUSD: {
@@ -405,14 +410,14 @@ export const multipliers: Record<
           underlyingAPR: 3.5,
           turtle: false,
           rewards: true,
-          ionAPR: true
+          ionAPR: false
         },
         borrow: {
-          flywheel: false,
+          flywheel: true,
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       AERO: {
@@ -481,7 +486,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       ezETH: {
@@ -516,20 +522,26 @@ export const multipliers: Record<
         }
       },
       RSR: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          turtle: false,
+          rewards: false,
+          ionAPR: false,
+          ionic: 0,
+          flywheel: false
+        },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
-          ionAPR: true,
-          flywheel: true
+          rewards: false,
+          ionAPR: false,
+          flywheel: false
         }
       },
       wstETH: {
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         market: 'ionwsteth_base',
@@ -539,7 +551,8 @@ export const multipliers: Record<
           underlyingAPR: 2.9,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       wsuperOETHb: {
@@ -561,8 +574,9 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
-          ionAPR: false
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
           ionic: 0,
@@ -608,9 +622,28 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
-          ionAPR: false
+          rewards: true,
+          ionAPR: false,
+          flywheel: false
         },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: false,
+          flywheel: false
+        }
+      },
+      EURC: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      cbBTC: {
         supply: {
           ionic: 0,
           turtle: false,
