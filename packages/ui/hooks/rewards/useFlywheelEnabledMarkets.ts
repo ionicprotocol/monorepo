@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import type { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
