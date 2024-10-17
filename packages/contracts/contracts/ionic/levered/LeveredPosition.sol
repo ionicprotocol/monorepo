@@ -167,12 +167,11 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function claimRewards(address _flr, address _position) external returns (address[] memory, uint256[] memory) {
+  function claimRewardsFromRouter(address _flr) external returns (address[] memory, uint256[] memory) {
     IFlywheelLensRouter_LP flr = IFlywheelLensRouter_LP(_flr);
-    LeveredPosition position = LeveredPosition(_position);
-    (address[] memory rewardTokens, uint256[] memory rewards) = flr.claimAllRewardTokens(_position);
+    (address[] memory rewardTokens, uint256[] memory rewards) = flr.claimAllRewardTokens(address(this));
     for (uint256 i = 0; i < rewardTokens.length; i++) {
-      IERC20Upgradeable(rewardTokens[i]).safeTransfer(position.positionOwner(), rewards[i]);
+      IERC20Upgradeable(rewardTokens[i]).safeTransfer(positionOwner, rewards[i]);
     }
     return (rewardTokens, rewards);
   }
