@@ -100,8 +100,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         decimals: 6,
         market: 'usdc_market',
