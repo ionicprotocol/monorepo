@@ -53,7 +53,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       dMBTC: {
@@ -71,8 +72,8 @@ export const multipliers: Record<
           underlyingAPR: 10,
           rewards: true,
           turtle: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       STONE: {
@@ -410,7 +411,7 @@ export const multipliers: Record<
           underlyingAPR: 3.5,
           turtle: false,
           rewards: true,
-          ionAPR: false
+          ionAPR: true
         },
         borrow: {
           flywheel: true,
@@ -533,8 +534,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       wstETH: {
@@ -614,8 +615,8 @@ export const multipliers: Record<
           underlyingAPR: 10,
           turtle: false,
           rewards: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       USDz: {
@@ -630,8 +631,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       EURC: {
