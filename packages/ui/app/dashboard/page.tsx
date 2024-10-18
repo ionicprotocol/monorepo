@@ -2,13 +2,11 @@
 'use client';
 
 import millify from 'millify';
-// import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import type { FlywheelReward } from 'types/dist';
+import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-// import { base } from 'viem/chains';
 // import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
@@ -24,7 +22,6 @@ const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-// import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
@@ -35,18 +32,10 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
-import {
-  usePointsForBorrowModeNative,
-  usePointsForSupplyModeNative,
-  usePointsForBorrowBaseMain,
-  usePointsForBorrowModeMain,
-  usePointsForSupplyBaseMain,
-  usePointsForSupplyModeMain
-} from '@ui/hooks/usePointsQueries';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
-import type { MarketData } from '@ui/types/TokensDataMap';
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export default function Dashboard() {
@@ -65,6 +54,7 @@ export default function Dashboard() {
   );
   const { data: positions, isLoading: isLoadingPositions } =
     usePositionsQuery(+chain);
+
   const collateralsAPR = usePositionsSupplyApy(
     positions?.openPositions.map((position) => position.collateral) ?? [],
     positions?.openPositions.map((position) => position.chainId) ?? []
@@ -186,18 +176,6 @@ export default function Dashboard() {
 
     return healthData ?? '∞';
   }, [healthData, marketData]);
-  const { data: supplyPointsNative, isLoading: isLoadingSupplyPointsNative } =
-    usePointsForSupplyModeNative();
-  const { data: borrowPointsNative, isLoading: isLoadingBorrowPointsNative } =
-    usePointsForBorrowModeNative();
-  const { data: borrowPointsBase, isLoading: isLoadingBorrowPointsBase } =
-    usePointsForBorrowBaseMain();
-  const { data: borrowPointsMain, isLoading: isLoadingBorrowPointsMain } =
-    usePointsForBorrowModeMain();
-  const { data: supplyPointsBase, isLoading: isLoadingSupplyPointsBase } =
-    usePointsForSupplyBaseMain();
-  const { data: supplyPointsMain, isLoading: isLoadingSupplyPointsMain } =
-    usePointsForSupplyModeMain();
   // for utilization:
   // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
   //   useMaxBorrowAmounts(
@@ -206,89 +184,6 @@ export default function Dashboard() {
   //     +chain
   //   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const totalPoints = useMemo<number>(() => {
-    if (
-      supplyPointsNative &&
-      borrowPointsNative &&
-      borrowPointsBase &&
-      borrowPointsMain &&
-      supplyPointsBase &&
-      supplyPointsMain
-    ) {
-      return (
-        supplyPointsNative.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        borrowPointsNative.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        borrowPointsBase.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        borrowPointsMain.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        supplyPointsBase.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        ) +
-        supplyPointsMain.rows.reduce(
-          (accumulator, current) =>
-            accumulator +
-            current.reduce(
-              (innerAccumulator, innerCurrent) =>
-                innerAccumulator + innerCurrent,
-              0
-            ),
-          0
-        )
-      );
-    }
-
-    return 0;
-  }, [
-    supplyPointsNative,
-    borrowPointsNative,
-    borrowPointsBase,
-    borrowPointsMain,
-    supplyPointsBase,
-    supplyPointsMain
-  ]);
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
     const healthDataAsNumber = parseFloat(healthData ?? '0');
@@ -353,14 +248,15 @@ export default function Dashboard() {
   });
 
   const allChains: number[] = Object.keys(pools).map(Number);
-  const { data: claimableRewardsAcrossAllChains } =
-    useAllClaimableRewards(allChains);
+  const {
+    data: claimableRewardsAcrossAllChains,
+    isLoading: isLoadingClaimableRewardsAcrossAllChains
+  } = useAllClaimableRewards(allChains);
   const totalRewardsAcrossAllChains =
     claimableRewardsAcrossAllChains?.reduce(
       (acc, reward) => acc + reward.amount,
       0n
     ) ?? 0n;
-  // console.log(claimableRewardsAcrossAllChains , totalRewardsAcrossAllChains)
 
   const {
     componentRef: rewardRef,
@@ -511,14 +407,7 @@ export default function Dashboard() {
               <span>Claimable Rewards</span>
               <ResultHandler
                 height="24"
-                isLoading={
-                  isLoadingSupplyPointsNative ||
-                  isLoadingBorrowPointsNative ||
-                  isLoadingBorrowPointsBase ||
-                  isLoadingBorrowPointsMain ||
-                  isLoadingSupplyPointsBase ||
-                  isLoadingSupplyPointsMain
-                }
+                isLoading={isLoadingClaimableRewardsAcrossAllChains}
                 width="24"
               >
                 <span className={`flex items-center justify-center gap-1`}>
@@ -527,7 +416,9 @@ export default function Dashboard() {
                   ).toLocaleString('en-us', {
                     maximumFractionDigits: 0
                   })}{' '}
-                  <span className={`text-[8px] text-white/50`}>(ION+RSR)</span>
+                  <span className={`text-[8px] text-white/50 hidden`}>
+                    (ION+hyUSD+eUSD)
+                  </span>
                 </span>
               </ResultHandler>
             </div>
@@ -648,7 +539,7 @@ export default function Dashboard() {
                             getBlockTimePerMinuteByChainId(+chain)
                           )
                           .toFixed(2) ?? '0.00'
-                      }%`}
+                      }`}
                       asset={asset.underlyingSymbol}
                       collateralApr={`${
                         assetsSupplyAprData
@@ -816,125 +707,17 @@ export default function Dashboard() {
                     }
 
                     return (
-                      <div
-                        className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
+                      <LoopRow
                         key={`position-${position.address}`}
-                      >
-                        <div
-                          className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}
-                        >
-                          <img
-                            alt={position.address}
-                            className="h-7"
-                            src={`/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`}
-                          />
-                          <h3 className={` `}>{position.collateral.symbol}</h3>
-                          /
-                          <img
-                            alt={position.address}
-                            className="h-7"
-                            src={`/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`}
-                          />
-                          <h3 className={` `}>{position.borrowable.symbol}</h3>
-                        </div>
-
-                        <h3 className={`mb-2 lg:mb-0`}>
-                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                            POSITION VALUE:
-                          </span>
-                          {Number(
-                            formatUnits(
-                              currentPositionInfo.positionSupplyAmount,
-                              Number(position.collateral.underlyingDecimals)
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })}{' '}
-                          / $
-                          {millify(
-                            Number(
-                              formatUnits(
-                                currentPositionInfo.positionSupplyAmount,
-                                Number(position.collateral.underlyingDecimals)
-                              )
-                            ) *
-                              ((usdPrice ?? 0) *
-                                Number(
-                                  formatEther(
-                                    marketData?.assets.find(
-                                      (asset) =>
-                                        asset.underlyingSymbol ===
-                                        position.collateral.symbol
-                                    )?.underlyingPrice ?? 0n
-                                  )
-                                ))
-                          )}
-                        </h3>
-
-                        <h3 className={`mb-2 lg:mb-0`}>
-                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                            BORROW:
-                          </span>
-                          {Number(
-                            formatUnits(
-                              currentPositionInfo.debtAmount,
-                              position.borrowable.underlyingDecimals
-                            )
-                          ).toLocaleString('en-US', {
-                            maximumFractionDigits: 2
-                          })}{' '}
-                          / $
-                          {millify(
-                            Number(
-                              formatUnits(
-                                currentPositionInfo.debtAmount,
-                                position.borrowable.underlyingDecimals
-                              )
-                            ) *
-                              ((usdPrice ?? 0) *
-                                Number(
-                                  formatEther(
-                                    marketData?.assets.find(
-                                      (asset) =>
-                                        asset.underlyingSymbol ===
-                                        position.borrowable.symbol
-                                    )?.underlyingPrice ?? 0n
-                                  )
-                                ))
-                          )}
-                        </h3>
-
-                        <h3 className={`mb-2 lg:mb-0`}>
-                          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-                            LOOPS:
-                          </span>
-
-                          {(
-                            Math.ceil(
-                              positionLeverages ? positionLeverages[i] : 0
-                            ) - 1
-                          ).toFixed(1)}
-                        </h3>
-
-                        <h3 className={`mb-2 lg:mb-0`}>
-                          <button
-                            className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
-                            onClick={() => {
-                              setSelectedLoopBorrowData(
-                                marketData?.assets.find(
-                                  (asset) =>
-                                    asset.underlyingSymbol ===
-                                    position.borrowable.symbol
-                                )
-                              );
-                              setSelectedSymbol(position.collateral.symbol);
-                              setLoopOpen(true);
-                            }}
-                          >
-                            Adjust / Close
-                          </button>
-                        </h3>
-                      </div>
+                        currentPositionInfo={currentPositionInfo}
+                        marketData={marketData ?? undefined}
+                        position={position}
+                        positionLeverage={positionLeverages?.[i] ?? undefined}
+                        usdPrice={usdPrice ?? undefined}
+                        setSelectedLoopBorrowData={setSelectedLoopBorrowData}
+                        setSelectedSymbol={setSelectedSymbol}
+                        setLoopOpen={setLoopOpen}
+                      />
                     );
                   })}
                 </>
@@ -972,3 +755,145 @@ export default function Dashboard() {
     </>
   );
 }
+type LoopRowProps = {
+  position: OpenPosition;
+  currentPositionInfo: PositionInfo;
+  usdPrice?: number;
+  positionLeverage?: number;
+  marketData?: PoolData;
+  setSelectedLoopBorrowData: (asset?: MarketData) => void;
+  setSelectedSymbol: (symbol: string) => void;
+  setLoopOpen: (open: boolean) => void;
+};
+const LoopRow = ({
+  position,
+  currentPositionInfo,
+  usdPrice,
+  positionLeverage,
+  marketData,
+  setSelectedLoopBorrowData,
+  setSelectedSymbol,
+  setLoopOpen
+}: LoopRowProps) => {
+  // const walletChain = useChainId();
+  // const { data: allClaimableRewards } = useAllClaimableRewards(
+  //   [walletChain],
+  //   position.address
+  // );
+  // console.log(
+  //   '🚀 ~ allClaimableRewards:',
+  //   position.address,
+  //   allClaimableRewards
+  // );
+  return (
+    <div
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
+      key={`position-${position.address}`}
+    >
+      <div className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}>
+        <img
+          alt={position.address}
+          className="h-7"
+          src={`/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`}
+        />
+        <h3 className={` `}>{position.collateral.symbol}</h3>
+        /
+        <img
+          alt={position.address}
+          className="h-7"
+          src={`/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`}
+        />
+        <h3 className={` `}>{position.borrowable.symbol}</h3>
+      </div>
+
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          POSITION VALUE:
+        </span>
+        {Number(
+          formatUnits(
+            currentPositionInfo.positionSupplyAmount,
+            Number(position.collateral.underlyingDecimals)
+          )
+        ).toLocaleString('en-US', {
+          maximumFractionDigits: 2
+        })}{' '}
+        / $
+        {millify(
+          Number(
+            formatUnits(
+              currentPositionInfo.positionSupplyAmount,
+              Number(position.collateral.underlyingDecimals)
+            )
+          ) *
+            ((usdPrice ?? 0) *
+              Number(
+                formatEther(
+                  marketData?.assets.find(
+                    (asset) =>
+                      asset.underlyingSymbol === position.collateral.symbol
+                  )?.underlyingPrice ?? 0n
+                )
+              ))
+        )}
+      </h3>
+
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          BORROW:
+        </span>
+        {Number(
+          formatUnits(
+            currentPositionInfo.debtAmount,
+            position.borrowable.underlyingDecimals
+          )
+        ).toLocaleString('en-US', {
+          maximumFractionDigits: 2
+        })}{' '}
+        / $
+        {millify(
+          Number(
+            formatUnits(
+              currentPositionInfo.debtAmount,
+              position.borrowable.underlyingDecimals
+            )
+          ) *
+            ((usdPrice ?? 0) *
+              Number(
+                formatEther(
+                  marketData?.assets.find(
+                    (asset) =>
+                      asset.underlyingSymbol === position.borrowable.symbol
+                  )?.underlyingPrice ?? 0n
+                )
+              ))
+        )}
+      </h3>
+
+      <h3 className={`mb-2 lg:mb-0`}>
+        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+          LOOPS:
+        </span>
+
+        {(Math.ceil(positionLeverage ? positionLeverage : 0) - 1).toFixed(1)}
+      </h3>
+
+      <h3 className={`mb-2 lg:mb-0`}>
+        <button
+          className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
+          onClick={() => {
+            setSelectedLoopBorrowData(
+              marketData?.assets.find(
+                (asset) => asset.underlyingSymbol === position.borrowable.symbol
+              )
+            );
+            setSelectedSymbol(position.collateral.symbol);
+            setLoopOpen(true);
+          }}
+        >
+          Adjust / Close
+        </button>
+      </h3>
+    </div>
+  );
+};

@@ -71,8 +71,8 @@ export const multipliers: Record<
           underlyingAPR: 10,
           rewards: true,
           turtle: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       STONE: {
@@ -156,8 +156,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'weth_market',
         multiplier: 3000,
@@ -245,8 +245,8 @@ export const multipliers: Record<
           mode: 1,
           turtle: true,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'weeth_market_new',
         multiplier: 3000,
@@ -597,9 +597,9 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
-          ionAPR: true,
-          flywheel: true
+          rewards: false,
+          ionAPR: false,
+          flywheel: false
         }
       },
       'wUSD+': {
@@ -613,9 +613,9 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 10,
           turtle: false,
-          rewards: true,
-          ionAPR: true,
-          flywheel: true
+          rewards: false,
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDz: {
