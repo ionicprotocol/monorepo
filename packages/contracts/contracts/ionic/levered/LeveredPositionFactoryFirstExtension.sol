@@ -107,7 +107,7 @@ contract LeveredPositionFactoryFirstExtension is
   }
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address) {
-    // the position below should implement claimRewards
-    return 0xf2e4aa37EAe6E946AA907861690F5078B8f37dCF; // no such contract on base
+    // the position at the address below should implement claimRewards
+    return address(0);
   }
 }
