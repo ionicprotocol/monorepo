@@ -63,8 +63,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
   {
     // CErc20Delegate
     const erc20DelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([erc20Del.address as Address]);
+    const owner = await fuseFeeDistributor.read.owner();
     if (erc20DelExtensions.length == 0 || erc20DelExtensions[0] != erc20Del.address) {
-      if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+      if (owner.toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: fuseFeeDistributor,
           functionName: "_setCErc20DelegateExtensions",

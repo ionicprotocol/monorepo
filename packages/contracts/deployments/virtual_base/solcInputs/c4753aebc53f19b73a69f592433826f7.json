@@ -1,0 +1,39 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/ionic/DiamondExtension.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity >=0.8.0;\n\n/**\n * @notice a base contract for logic extensions that use the diamond pattern storage\n * to map the functions when looking up the extension contract to delegate to.\n */\nabstract contract DiamondExtension {\n  /**\n   * @return a list of all the function selectors that this logic extension exposes\n   */\n  function _getExtensionFunctions() external pure virtual returns (bytes4[] memory);\n}\n\n// When no function exists for function called\nerror FunctionNotFound(bytes4 _functionSelector);\n\n// When no extension exists for function called\nerror ExtensionNotFound(bytes4 _functionSelector);\n\n// When the function is already added\nerror FunctionAlreadyAdded(bytes4 _functionSelector, address _currentImpl);\n\nabstract contract DiamondBase {\n  /**\n   * @dev register a logic extension\n   * @param extensionToAdd the extension whose functions are to be added\n   * @param extensionToReplace the extension whose functions are to be removed/replaced\n   */\n  function _registerExtension(DiamondExtension extensionToAdd, DiamondExtension extensionToReplace) external virtual;\n\n  function _listExtensions() public view returns (address[] memory) {\n    return LibDiamond.listExtensions();\n  }\n\n  fallback() external {\n    address extension = LibDiamond.getExtensionForFunction(msg.sig);\n    if (extension == address(0)) revert FunctionNotFound(msg.sig);\n    // Execute external function from extension using delegatecall and return any value.\n    assembly {\n      // copy function selector and any arguments\n      calldatacopy(0, 0, calldatasize())\n      // execute function call using the extension\n      let result := delegatecall(gas(), extension, 0, calldatasize(), 0, 0)\n      // get any return value\n      returndatacopy(0, 0, returndatasize())\n      // return any return value or error back to the caller\n      switch result\n      case 0 {\n        revert(0, returndatasize())\n      }\n      default {\n        return(0, returndatasize())\n      }\n    }\n  }\n}\n\n/**\n * @notice a library to use in a contract, whose logic is extended with diamond extension\n */\nlibrary LibDiamond {\n  bytes32 constant DIAMOND_STORAGE_POSITION = keccak256(\"diamond.extensions.diamond.storage\");\n\n  struct Function {\n    address extension;\n    bytes4 selector;\n  }\n\n  struct LogicStorage {\n    Function[] functions;\n    address[] extensions;\n  }\n\n  function getExtensionForFunction(bytes4 msgSig) internal view returns (address) {\n    return getExtensionForSelector(msgSig, diamondStorage());\n  }\n\n  function diamondStorage() internal pure returns (LogicStorage storage ds) {\n    bytes32 position = DIAMOND_STORAGE_POSITION;\n    assembly {\n      ds.slot := position\n    }\n  }\n\n  function listExtensions() internal view returns (address[] memory) {\n    return diamondStorage().extensions;\n  }\n\n  function registerExtension(DiamondExtension extensionToAdd, DiamondExtension extensionToReplace) internal {\n    if (address(extensionToReplace) != address(0)) {\n      removeExtension(extensionToReplace);\n    }\n    addExtension(extensionToAdd);\n  }\n\n  function removeExtension(DiamondExtension extension) internal {\n    LogicStorage storage ds = diamondStorage();\n    // remove all functions of the extension to replace\n    removeExtensionFunctions(extension);\n    for (uint8 i = 0; i < ds.extensions.length; i++) {\n      if (ds.extensions[i] == address(extension)) {\n        ds.extensions[i] = ds.extensions[ds.extensions.length - 1];\n        ds.extensions.pop();\n      }\n    }\n  }\n\n  function addExtension(DiamondExtension extension) internal {\n    LogicStorage storage ds = diamondStorage();\n    for (uint8 i = 0; i < ds.extensions.length; i++) {\n      require(ds.extensions[i] != address(extension), \"extension already added\");\n    }\n    addExtensionFunctions(extension);\n    ds.extensions.push(address(extension));\n  }\n\n  function removeExtensionFunctions(DiamondExtension extension) internal {\n    bytes4[] memory fnsToRemove = extension._getExtensionFunctions();\n    LogicStorage storage ds = diamondStorage();\n    for (uint16 i = 0; i < fnsToRemove.length; i++) {\n      bytes4 selectorToRemove = fnsToRemove[i];\n      // must never fail\n      assert(address(extension) == getExtensionForSelector(selectorToRemove, ds));\n      // swap with the last element in the selectorAtIndex array and remove the last element\n      uint16 indexToKeep = getIndexForSelector(selectorToRemove, ds);\n      ds.functions[indexToKeep] = ds.functions[ds.functions.length - 1];\n      ds.functions.pop();\n    }\n  }\n\n  function addExtensionFunctions(DiamondExtension extension) internal {\n    bytes4[] memory fnsToAdd = extension._getExtensionFunctions();\n    LogicStorage storage ds = diamondStorage();\n    uint16 functionsCount = uint16(ds.functions.length);\n    for (uint256 functionsIndex = 0; functionsIndex < fnsToAdd.length; functionsIndex++) {\n      bytes4 selector = fnsToAdd[functionsIndex];\n      address oldImplementation = getExtensionForSelector(selector, ds);\n      if (oldImplementation != address(0)) revert FunctionAlreadyAdded(selector, oldImplementation);\n      ds.functions.push(Function(address(extension), selector));\n      functionsCount++;\n    }\n  }\n\n  function getExtensionForSelector(bytes4 selector, LogicStorage storage ds) internal view returns (address) {\n    uint256 fnsLen = ds.functions.length;\n    for (uint256 i = 0; i < fnsLen; i++) {\n      if (ds.functions[i].selector == selector) return ds.functions[i].extension;\n    }\n\n    return address(0);\n  }\n\n  function getIndexForSelector(bytes4 selector, LogicStorage storage ds) internal view returns (uint16) {\n    uint16 fnsLen = uint16(ds.functions.length);\n    for (uint16 i = 0; i < fnsLen; i++) {\n      if (ds.functions[i].selector == selector) return i;\n    }\n\n    return type(uint16).max;\n  }\n}\n"
+    },
+    "contracts/liquidators/registry/ExtensionBlank.sol": {
+      "content": "// SPDX-License-Identifier: GPL-3.0\npragma solidity ^0.8.10;\n\nimport \"../../ionic/DiamondExtension.sol\";\n\ncontract ExtensionBlank is DiamondExtension {\n  function _getExtensionFunctions() external pure override returns (bytes4[] memory) {\n    return new bytes4[](0);\n  }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
