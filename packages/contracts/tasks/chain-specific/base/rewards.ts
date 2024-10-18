@@ -383,16 +383,16 @@ task("base:add-rewards:epoch3:borrow", "add rewards to a market").setAction(
   }
 );
 
-task("base:add-rewards:epoch3:supply", "add rewards to a market").setAction(
+task("base:add-rewards:epoch4:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = wstETH_MARKET;
+    const market = weETH_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
-    const rewardAmount = (50_000).toString();
+    const rewardAmount = (25_000).toString();
 
     console.log("setting rewards for token: ", name, rewardAmount);
     await new Promise((resolve) => setTimeout(resolve, 4000));
@@ -417,7 +417,9 @@ task("base:add-rewards:epoch3:supply", "add rewards to a market").setAction(
       deployer as Address,
       viem,
       deployments,
-      multisig as Address
+      multisig as Address,
+      "IonicFlywheel_ION_epoch4",
+      "IonicFlywheelDynamicRewards_ION_epoch4"
     );
   }
 );
