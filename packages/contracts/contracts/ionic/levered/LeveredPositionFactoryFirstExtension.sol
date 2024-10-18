@@ -40,9 +40,7 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountsWithOpenPositions.selector;
     functionSelectors[--fnsCount] = this.getPositionsByAccount.selector;
     functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
-
-    functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
-    functionSelectors[--fnsCount] = this.setPositionsExtension.selector;
+    functionSelectors[--fnsCount] = this._setPositionsExtension.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -72,7 +70,7 @@ contract LeveredPositionFactoryFirstExtension is
     if (userPositions.length() == 0) accountsWithOpenPositions.remove(positionOwner);
   }
 
-  function setPositionsExtension(bytes4 msgSig, address extension) external onlyOwner {
+  function _setPositionsExtension(bytes4 msgSig, address extension) external onlyOwner {
     _positionsExtensions[msgSig] = extension;
   }
 
