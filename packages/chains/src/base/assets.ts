@@ -3,6 +3,7 @@ import {
   ChainlinkFeedBaseCurrency,
   ChainlinkSpecificParams,
   OracleTypes,
+  PythSpecificParams,
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
@@ -33,6 +34,7 @@ export const EURC = "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42";
 export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
 export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
 export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
+export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
 
 export const assets: SupportedAsset[] = [
   {
@@ -108,7 +110,7 @@ export const assets: SupportedAsset[] = [
     underlying: SNX,
     name: "Synthetix Network Token",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
       aggregator: "0xe3971Ed6F1A5903321479Ef3148B5950c0612075",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
@@ -317,6 +319,20 @@ export const assets: SupportedAsset[] = [
     initialCf: "0.80",
     initialSupplyCap: parseEther(String(13_000_000)).toString(),
     initialBorrowCap: parseEther(String(10_000_000)).toString()
+  },
+  {
+    symbol: assetSymbols.uSOL,
+    underlying: uSOL,
+    name: "Wrapped Solana",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uSOL),
+    initialBorrowCap: parseEther(String(1000)).toString(),
+    initialSupplyCap: parseEther(String(2000)).toString(),
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
