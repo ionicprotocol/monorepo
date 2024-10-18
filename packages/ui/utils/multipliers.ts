@@ -258,8 +258,8 @@ export const multipliers: Record<
           underlyingAPR: 2.99,
           turtle: true,
           rewards: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       wrsETH: {

@@ -130,13 +130,13 @@ task("mode:add-rewards:epoch3:borrow", "add rewards to a market").setAction(
   }
 );
 
-task("mode:add-rewards:epoch3:supply", "add rewards to a market").setAction(
+task("mode:add-rewards:epoch4:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
     const market = WEETH_MARKET;
-    const rewardAmount = (0).toString();
+    const rewardAmount = (50_000).toString();
 
     // Sending tokens
     const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
@@ -158,7 +158,9 @@ task("mode:add-rewards:epoch3:supply", "add rewards to a market").setAction(
       deployer as Address,
       viem,
       deployments,
-      multisig as Address
+      multisig as Address,
+      "IonicFlywheel_ION_epoch4",
+      "IonicFlywheelDynamicRewards_ION_epoch4"
     );
   }
 );

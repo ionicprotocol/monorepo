@@ -88,6 +88,7 @@ const InfoRows = ({
     mode === InfoMode.BORROW
       ? 0 - Number(apr) + totalBorrowRewardsAPR
       : Number(apr) + totalSupplyRewardsAPR;
+  console.log('🚀 ~ totalApr:', totalApr);
 
   return (
     <div
