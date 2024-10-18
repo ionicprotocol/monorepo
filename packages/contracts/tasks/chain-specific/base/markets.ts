@@ -34,7 +34,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 });
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run }) => {
-  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.wUSDM);
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.uSOL);
   if (!asset) {
     throw new Error("asset not found in base assets");
   }
