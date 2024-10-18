@@ -139,8 +139,8 @@ const InfoRows = ({
             : (totalApr > 0 ? '+' : '') +
               totalApr.toLocaleString('en-US', {
                 maximumFractionDigits: 1
-              }) +
-              '%'}
+              })}
+          %
           {mode === InfoMode.SUPPLY ? (
             <>
               <SupplyPopover
