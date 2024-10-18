@@ -1,10 +1,10 @@
 import { Address, encodeFunctionData, GetContractReturnType, WalletClient } from "viem";
 
 import { addTransaction, prepareAndLogTransaction } from "../logging";
-import { pythPriceOracleAbi } from "../../../generated";
 
 import { addUnderlyingsToMpo } from "./utils";
 import { PythAsset, PythDeployFnParams } from "../../types";
+import { pythPriceOracleAbi } from "../../../../sdk/src/generated";
 
 export const deployPythPriceOracle = async ({
   viem,
@@ -15,7 +15,7 @@ export const deployPythPriceOracle = async ({
   pythAssets,
   nativeTokenUsdFeed
 }: PythDeployFnParams): Promise<{ pythOracle: GetContractReturnType<typeof pythPriceOracleAbi, WalletClient> }> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
   const walletClient = await viem.getWalletClient(deployer as Address);
 
@@ -24,30 +24,30 @@ export const deployPythPriceOracle = async ({
     (await deployments.get("MasterPriceOracle")).address as Address
   );
 
-  // //// Pyth Oracle
-  // const pyth = await deployments.deploy("PythPriceOracle", {
-  //   from: deployer,
-  //   args: [],
-  //   log: true,
-  //   proxy: {
-  //     execute: {
-  //       init: {
-  //         methodName: "initialize",
-  //         args: [pythAddress, nativeTokenUsdFeed, usdToken]
-  //       },
-  //       onUpgrade: {
-  //         methodName: "reinitialize",
-  //         args: [pythAddress, nativeTokenUsdFeed, usdToken]
-  //       }
-  //     },
-  //     owner: deployer,
-  //     proxyContract: "OpenZeppelinTransparentProxy"
-  //   },
-  //   waitConfirmations: 1
-  // });
+  //// Pyth Oracle
+  const pyth = await deployments.deploy("PythPriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [pythAddress, nativeTokenUsdFeed, usdToken]
+        },
+        onUpgrade: {
+          methodName: "reinitialize",
+          args: [pythAddress, nativeTokenUsdFeed, usdToken]
+        }
+      },
+      owner: multisig ?? deployer,
+      proxyContract: "OpenZeppelinTransparentProxy"
+    },
+    waitConfirmations: 1
+  });
 
-  // if (pyth.transactionHash) publicClient.waitForTransactionReceipt({ hash: pyth.transactionHash as Address });
-  // console.log("PythPriceOracle: ", pyth.address);
+  if (pyth.transactionHash) publicClient.waitForTransactionReceipt({ hash: pyth.transactionHash as Address });
+  console.log("PythPriceOracle: ", pyth.address);
 
   const pythOracle = await viem.getContractAt(
     "PythPriceOracle",
@@ -55,12 +55,15 @@ export const deployPythPriceOracle = async ({
   );
 
   const pythAssetsToChange: PythAsset[] = [];
+  console.log("🚀 ~ pythAssets:", pythAssets);
   for (const pythAsset of pythAssets) {
     const currentPriceFeed = await pythOracle.read.priceFeedIds([pythAsset.underlying]);
+    console.log("🚀 ~ currentPriceFeed:", currentPriceFeed);
     if (currentPriceFeed !== pythAsset.feed) {
       pythAssetsToChange.push(pythAsset);
     }
   }
+  console.log("🚀 ~ pythAssetsToChange:", pythAssetsToChange);
   if (pythAssetsToChange.length > 0) {
     if (((await pythOracle.read.owner()) as Address).toLowerCase() === deployer.toLowerCase()) {
       const tx = await pythOracle.write.setPriceFeeds([
