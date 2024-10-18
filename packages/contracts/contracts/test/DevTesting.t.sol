@@ -853,7 +853,7 @@ contract DevTesting is BaseTest {
       new LeveredPositionFactoryFirstExtension(),
       DiamondExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
     );
-    factory._setPositionsExtension(LeveredPosition.claimRewardsFromRouter.selector, 0xf2e4aa37EAe6E946AA907861690F5078B8f37dCF);
+    factory._setPositionsExtension(LeveredPosition.claimRewardsFromRouter.selector, address(dummy));
     vm.stopPrank();
 
     {
