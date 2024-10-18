@@ -203,6 +203,7 @@ export const pools: Record<number, PoolParams> = {
           'wUSD+',
           'wUSDM',
           'USD+',
+          'uSOL',
           'EURC',
           'cbBTC',
           'eUSD',
