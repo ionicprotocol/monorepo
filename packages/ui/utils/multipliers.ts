@@ -53,7 +53,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       dMBTC: {
@@ -71,8 +72,8 @@ export const multipliers: Record<
           underlyingAPR: 10,
           rewards: true,
           turtle: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       STONE: {
