@@ -135,7 +135,7 @@ task("mode:add-rewards:epoch3:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = USDT_NATIVE_MARKET;
+    const market = WEETH_MARKET;
     const rewardAmount = (0).toString();
 
     // Sending tokens

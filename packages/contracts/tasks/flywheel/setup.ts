@@ -14,7 +14,8 @@ export const setupRewards = async (
   deployer: Address,
   viem: HardhatRuntimeEnvironment["viem"],
   deployments: HardhatRuntimeEnvironment["deployments"],
-  multisig?: Address
+  multisig?: Address,
+  _flywheelName?: string
 ) => {
   const publicClient = await viem.getPublicClient();
   const needsMultisig = await upgradeMarketToSupportFlywheel(market, viem, deployer, deployments);
@@ -39,7 +40,9 @@ export const setupRewards = async (
     );
   }
 
-  const flywheelName = `${contractName}${publicClient.chain.id === base.id && type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
+  const flywheelName =
+    _flywheelName ??
+    `${contractName}${publicClient.chain.id === base.id && type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
   const _flywheel = await deployments.deploy(flywheelName, {
     contract: contractName,
     from: deployer,
