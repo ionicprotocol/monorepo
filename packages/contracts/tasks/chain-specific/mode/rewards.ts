@@ -2,6 +2,7 @@ import { task } from "hardhat/config";
 import {
   dmBTC_MARKET,
   ION,
+  MBTC_MARKET,
   MODE_NATIVE_MARKET,
   USDC_NATIVE_MARKET,
   USDT_NATIVE_MARKET,
@@ -135,7 +136,7 @@ task("mode:add-rewards:epoch4:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = WEETH_MARKET;
+    const market = dmBTC_MARKET;
     const rewardAmount = (50_000).toString();
 
     // Sending tokens

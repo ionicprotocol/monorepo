@@ -206,7 +206,6 @@ export const pools: Record<number, PoolParams> = {
           'USDz',
           'wUSD+',
           'wUSDM',
-          'USD+',
           'uSOL',
           'EURC',
           'cbBTC',
@@ -218,7 +217,8 @@ export const pools: Record<number, PoolParams> = {
           'AERO',
           'RSR',
           'wstETH',
-          'cbETH'
+          'cbETH',
+          'USD+'
         ]
       }
     ]
