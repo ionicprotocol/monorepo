@@ -624,8 +624,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
           ionic: 0,
@@ -757,6 +757,15 @@ export const multipliers: Record<
   },
   [optimism.id]: {
     '0': {
+      WETH: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
       USDC: {
         supply: {
           ionic: 0,
@@ -787,8 +796,8 @@ export const multipliers: Record<
           underlyingAPR: 5,
           turtle: false,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       }
     }
