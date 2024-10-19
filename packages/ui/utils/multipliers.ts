@@ -787,8 +787,8 @@ export const multipliers: Record<
           underlyingAPR: 5,
           turtle: false,
           rewards: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       }
     }

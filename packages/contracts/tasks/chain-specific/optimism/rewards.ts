@@ -5,23 +5,43 @@ import { ION, USDC_MARKET, wUSDM_MARKET } from ".";
 import { setupRewards } from "../../flywheel/setup";
 import { SUPPLY_DURATION } from "..";
 
-task("optimism:add-rewards:supply:epoch2", "add rewards to a market").setAction(
+task("optimism:add-rewards:supply:epoch4", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const rewardAmount = "49872";
-    const market = wUSDM_MARKET;
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = ION;
     const rewardTokenName = "ION";
+    const market = USDC_MARKET;
+    const _market = await viem.getContractAt("EIP20Interface", market);
+    const name = await _market.read.name();
+
+    const rewardAmount = (50_000).toString();
+
+    console.log("setting rewards for token: ", name, rewardAmount);
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     // Sending tokens
-    const ionToken = await viem.getContractAt("EIP20Interface", ION);
-    let balance = await ionToken.read.balanceOf([market]);
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
     if (balance < parseEther(rewardAmount)) {
-      const tx = await ionToken.write.transfer([market, parseEther(rewardAmount) - balance]);
-      console.log("Sent rewards: ", tx);
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
     } else {
-      console.log("No rewards sent, already enough");
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
     }
 
-    await setupRewards("supply", market, rewardTokenName, ION, SUPPLY_DURATION, deployer as Address, viem, deployments);
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address,
+      "IonicFlywheel_ION_epoch4",
+      "IonicFlywheelDynamicRewards_ION_epoch4"
+    );
   }
 );
