@@ -624,8 +624,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           rewards: true,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
           ionic: 0,
