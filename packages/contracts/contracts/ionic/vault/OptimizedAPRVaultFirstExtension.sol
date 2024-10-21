@@ -9,8 +9,8 @@ import { VaultFees } from "./IVault.sol";
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { FuseFlywheelDynamicRewards } from "fuse-flywheel/rewards/FuseFlywheelDynamicRewards.sol";
-import { IFlywheelBooster } from "flywheel/interfaces/IFlywheelBooster.sol";
-import { IFlywheelRewards } from "flywheel/interfaces/IFlywheelRewards.sol";
+import { IFlywheelRewards } from "../strategies/flywheel/rewards/IFlywheelRewards.sol";
+import { IFlywheelBooster } from "../strategies/flywheel/IFlywheelBooster.sol";
 import { FlywheelCore } from "flywheel/FlywheelCore.sol";
 
 import { SafeERC20Upgradeable as SafeERC20 } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -174,28 +174,28 @@ contract OptimizedAPRVaultFirstExtension is OptimizedAPRVaultExtension {
     require(msg.sender == owner() || msg.sender == address(this), "!owner or self");
     require(address(flywheelForRewardToken[token_]) == address(0), "already added");
 
-//    TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(flywheelLogic, owner(), "");
-//    IonicFlywheel newFlywheel = IonicFlywheel(address(proxy));
-//
-//    newFlywheel.initialize(
-//      ERC20(address(token_)),
-//      IFlywheelRewards(address(0)),
-//      IFlywheelBooster(address(0)),
-//      address(this)
-//    );
-//    FuseFlywheelDynamicRewards rewardsContract = new FuseFlywheelDynamicRewards(
-//      FlywheelCore(address(newFlywheel)),
-//      1 days
-//    );
-//    newFlywheel.setFlywheelRewards(rewardsContract);
-//    token_.approve(address(rewardsContract), type(uint256).max);
-//    newFlywheel.updateFeeSettings(0, address(this));
-//    // TODO accept owner
-//    newFlywheel._setPendingOwner(owner());
-//
-//    // lets the vault shareholders accrue
-//    newFlywheel.addStrategyForRewards(ERC20(address(this)));
-//    flywheelForRewardToken[token_] = newFlywheel;
-//    rewardTokens.push(token_);
+    TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(flywheelLogic, owner(), "");
+    IonicFlywheel newFlywheel = IonicFlywheel(address(proxy));
+
+    newFlywheel.initialize(
+      ERC20(address(token_)),
+      IFlywheelRewards(address(0)),
+      IFlywheelBooster(address(0)),
+      address(this)
+    );
+    FuseFlywheelDynamicRewards rewardsContract = new FuseFlywheelDynamicRewards(
+      FlywheelCore(address(newFlywheel)),
+      1 days
+    );
+    newFlywheel.setFlywheelRewards(IFlywheelRewards(address(rewardsContract)));
+    token_.approve(address(rewardsContract), type(uint256).max);
+    newFlywheel.updateFeeSettings(0, address(this));
+    // TODO accept owner
+    newFlywheel._setPendingOwner(owner());
+
+    // lets the vault shareholders accrue
+    newFlywheel.addStrategyForRewards(ERC20(address(this)));
+    flywheelForRewardToken[token_] = newFlywheel;
+    rewardTokens.push(token_);
   }
 }
