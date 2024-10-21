@@ -5,7 +5,7 @@ import { mode } from 'wagmi/chains';
 import { useAllUsdPrices } from './useAllUsdPrices';
 import { useIonPrice, useModePrice } from './useDexScreenerPrices';
 
-import { lpSugarAbi } from 'ui/app/stake/abi/lpSugar';
+import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
 
 // interface IProps {
 //   selectedtoken: string;

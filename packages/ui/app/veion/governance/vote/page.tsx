@@ -2,9 +2,9 @@
 'use client';
 
 import { votingData } from '@ui/constants/mock';
-import FlatMap from 'ui/app/_components/points_comp/FlatMap';
-import InfoPopover from 'ui/app/_components/veion/InfoPopover';
-import VotingRows from 'ui/app/_components/veion/VotingRows';
+import FlatMap from '@ui/app/_components/points_comp/FlatMap';
+import InfoPopover from '@ui/app/_components/veion/InfoPopover';
+import VotingRows from '@ui/app/_components/veion/VotingRows';
 
 export default function Vote() {
   return (

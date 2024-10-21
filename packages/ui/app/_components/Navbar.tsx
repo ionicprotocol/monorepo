@@ -14,7 +14,7 @@ import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
 import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {

@@ -12,7 +12,7 @@ import ResultHandler from '../ResultHandler';
 import WrapEthSwaps from './WrapEthSwaps';
 
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 
 interface Iprop {
   selectedChain: number;

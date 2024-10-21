@@ -7,11 +7,11 @@ import { useChainId } from 'wagmi';
 import InfoPopover from '../../_components/veion/InfoPopover';
 
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
-import NetworkSelector from 'ui/app/_components/markets/NetworkSelector';
-import FlatMap from 'ui/app/_components/points_comp/FlatMap';
-import Toggle from 'ui/app/_components/Toggle';
-import MyveionRows from 'ui/app/_components/veion/MyveionRows';
-import UndelegateVeionRows from 'ui/app/_components/veion/UndelegateVeionRows';
+import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
+import FlatMap from '@ui/app/_components/points_comp/FlatMap';
+import Toggle from '@ui/app/_components/Toggle';
+import MyveionRows from '@ui/app/_components/veion/MyveionRows';
+import UndelegateVeionRows from '@ui/app/_components/veion/UndelegateVeionRows';
 
 export default function Governance() {
   const searchParams = useSearchParams();

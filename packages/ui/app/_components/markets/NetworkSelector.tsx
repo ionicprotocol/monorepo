@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import { pools } from '@ui/constants/index';
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 interface INetworkSelector {
   chain?: string;
   dropdownSelectedChain: number;
