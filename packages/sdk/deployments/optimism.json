@@ -83,6 +83,9 @@
     "GlobalPauser": {
       "address": "0xAD310a60005EAB54137f7EFBf0Acc521f0A8eBbb"
     },
+    "IonicFlywheelDynamicRewards_ION_epoch4": {
+      "address": "0xAE8D590B31c3De396B8B97a27A2039Bbd1fc2B35"
+    },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0xe5bB1c9C58CF3C9F505f63A843779c6E614F8102"
     },
@@ -97,6 +100,15 @@
     },
     "IonicFlywheel_ION_Proxy": {
       "address": "0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162"
+    },
+    "IonicFlywheel_ION_epoch4": {
+      "address": "0x6671AfE7c3aBd9Db195b3e58D348166c21405B88"
+    },
+    "IonicFlywheel_ION_epoch4_Implementation": {
+      "address": "0xa1B7c312499E2FBE663B4A1BC8c38fCED27eAde9"
+    },
+    "IonicFlywheel_ION_epoch4_Proxy": {
+      "address": "0x6671AfE7c3aBd9Db195b3e58D348166c21405B88"
     },
     "IonicLiquidator": {
       "address": "0x6545D2030D95ad0c8eFFF95c47eD55c0f6F5ee73"
