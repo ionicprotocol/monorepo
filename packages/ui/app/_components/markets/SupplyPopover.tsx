@@ -57,7 +57,7 @@ export default function SupplyPopover({
             <>
               +{' '}
               <img
-                src="/images/op-logo.svg"
+                src="/images/op-logo-red.svg"
                 alt="OP"
                 className="inline-block w-3 h-3 mx-[2px]"
               />{' '}
@@ -100,15 +100,23 @@ export default function SupplyPopover({
               : '-'}
             %
           </span>
-          {isModeMarket && (
+        </div>
+        {isModeMarket && (
+          <div className="flex items-center mt-1">
+            <img
+              src="/images/op-logo-red.svg"
+              alt="OP"
+              className="w-4 h-4 mr-1"
+            />
             <Link
+              target="_blank"
               href="https://app.merkl.xyz/?chain=34443"
-              className="ml-1 text-blue-400 hover:underline"
+              className="text-white underline"
             >
               + OP rewards (Mode)
             </Link>
-          )}
-        </div>
+          </div>
+        )}
         <p>
           {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
             ?.underlyingAPR &&

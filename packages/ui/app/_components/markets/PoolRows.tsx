@@ -276,7 +276,7 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
-          <span className={`mr-1 md:mr-0`}>
+          <span className="mr-1 md:mr-0 md:mb-1">
             +
             {supplyAPRTotal?.toLocaleString('en-US', {
               maximumFractionDigits: 2
