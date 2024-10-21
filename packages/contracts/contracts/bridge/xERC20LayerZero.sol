@@ -4,7 +4,7 @@ pragma solidity ^0.8.22;
 import { OApp, Origin, MessagingFee, MessagingReceipt } from "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
 import { OptionsBuilder } from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IXERC20 } from "./interface/IXERC20.sol";
 
 contract xERC20LayerZero is Ownable, OApp {

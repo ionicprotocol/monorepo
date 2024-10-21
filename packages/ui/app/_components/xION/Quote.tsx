@@ -73,7 +73,7 @@ export default function Quote({
           {args?.amount
             ? (
                 Number(formatEther(args.amount)) -
-                Number(formatEther(args.amount)) * 0.01
+                Number(formatEther(args.amount)) * 0.001
               ).toLocaleString('en-US', {
                 maximumFractionDigits: 3
               })
@@ -106,7 +106,7 @@ export default function Quote({
             </span>
           </div>
           <div className={`flex items-center justify-between w-full  `}>
-            <span className="text-white/50">Gas</span>
+            <span className="text-white/50">Bridge Gas</span>
             <span className={`flex items-center justify-center gap-2`}>
               {quotation
                 ? Number(formatEther(quotation[0])).toLocaleString('en-US', {

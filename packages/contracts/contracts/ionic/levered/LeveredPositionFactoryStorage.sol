@@ -22,4 +22,6 @@ abstract contract LeveredPositionFactoryStorage is SafeOwnable {
   IFeeDistributor public feeDistributor;
   ILiquidatorsRegistry public liquidatorsRegistry;
   uint256 public blocksPerYear;
+
+  mapping(bytes4 => address) internal _positionsExtensions;
 }

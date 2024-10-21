@@ -99,16 +99,19 @@
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
     "IonicFlywheelBorrow_ION": {
-      "address": "0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec"
+      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
     },
     "IonicFlywheelBorrow_ION_Implementation": {
-      "address": "0xE259d6910e8a0250Cbf2de2781af67F7fAf57D13"
+      "address": "0x47632638053139307342C086D60B510EB0025996"
     },
     "IonicFlywheelBorrow_ION_Proxy": {
-      "address": "0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec"
+      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
     },
     "IonicFlywheelDynamicRewards_ION": {
-      "address": "0x3D662de3f1780A4a76406EBB80275A4653eD3dD4"
+      "address": "0xdb93567451Cc2D785fAB5744a07dbF0C7a90415f"
+    },
+    "IonicFlywheelDynamicRewards_ION_epoch4": {
+      "address": "0xBFAE7571C47A1D42BcEAd3D57d116Ca69495d989"
     },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x4a003b110162C86fE10cD39822c782eb08C2549C"
@@ -124,6 +127,15 @@
     },
     "IonicFlywheel_ION_Proxy": {
       "address": "0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062"
+    },
+    "IonicFlywheel_ION_epoch4": {
+      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
+    },
+    "IonicFlywheel_ION_epoch4_Implementation": {
+      "address": "0x92ce3434F254161178A4b4a786C7Be559b752497"
+    },
+    "IonicFlywheel_ION_epoch4_Proxy": {
+      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -147,10 +159,10 @@
       "address": "0x9B506A03bBFf2a842866b10BC6732da72640cd45"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x4e20eB2AF6bE30660323cB25204e071116737FEA"
+      "address": "0x4f824616C8b6BC81eD8743710CB69A0929c29b98"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x14bB1c7293c4e3E28Ef4A74c3d73baDd5dE6d000"
+      "address": "0x5DC08E96372fe1eE3130B05c6a1eDCB875562212"
     },
     "LeveredPositionsLens": {
       "address": "0x1DD45c9fB4C8CcB678781982774F006F24b8EaC1"
@@ -165,7 +177,7 @@
       "address": "0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34"
     },
     "LiquidatorsRegistryExtension": {
-      "address": "0x95e4cD4786EDe1C0aA42F7dC9aECF32af4Ae8294"
+      "address": "0x6aa80aa164910A31B2309ea4c00da78C1A03c103"
     },
     "LiquidatorsRegistrySecondExtension": {
       "address": "0x139bD5cf15A1312BfD165F36C0b88987A9d03900"
@@ -253,6 +265,9 @@
     },
     "VelodromePriceOracle": {
       "address": "0x9Bb6eFb9c1C16f4561591Fe13ea06AF8d1Fce2a9"
+    },
+    "VelodromeV2Liquidator": {
+      "address": "0xA1aBF92ef468464962aF1CEFFB44631a6fFb33ec"
     },
     "xERC20LayerZero": {
       "address": "0xb750c43F9338313c7A8af6922dcA1910Ee3583c8"

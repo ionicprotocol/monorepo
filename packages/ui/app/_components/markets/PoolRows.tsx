@@ -25,6 +25,7 @@ import {
   shouldGetFeatured
 } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 // import { multipliers } from '@ui/utils/multipliers';
@@ -115,6 +116,11 @@ const PoolRows = ({
     [borrowRewards]
   );
 
+  const { data: borrowCapsData } = useBorrowCapsDataForAsset(
+    cTokenAddress,
+    dropdownSelectedChain
+  );
+
   const borrowAPRTotal =
     typeof borrowAPR !== 'undefined'
       ? 0 - borrowAPR + totalBorrowRewardsAPR
@@ -187,8 +193,7 @@ const PoolRows = ({
     supplyAPRTotal,
     supplyRewards
   ]);
-
-  // console.log( , dropdownSelectedChain , pool );
+  // console.log(borrowCapAsNumber, asset);
   return (
     <div
       className={`w-full h-full md:grid grid-cols-20 hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 relative  ${
@@ -380,9 +385,18 @@ const PoolRows = ({
                 setPopupMode(PopupMode.BORROW);
               }
             }}
-            disabled={!address}
+            disabled={
+              (!address ||
+                (borrowCapsData
+                  ? borrowCapsData?.totalBorrowCap <= 1
+                  : false)) &&
+              !loopPossible
+            }
           >
-            Borrow / Repay {loopPossible && '/ Loop'}
+            {(borrowCapsData ? borrowCapsData?.totalBorrowCap <= 1 : false) &&
+            loopPossible
+              ? 'Loop'
+              : `Borrow / Repay${loopPossible ? ' / Loop' : ''}`}
           </button>
         </div>
         {/* {!address && (

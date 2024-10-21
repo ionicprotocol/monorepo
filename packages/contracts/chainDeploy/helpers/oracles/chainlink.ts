@@ -15,7 +15,7 @@ export const deployChainlinkOracle = async ({
   chainlinkAssets,
   namePostfix
 }: ChainlinkDeployFnParams): Promise<{ cpo: any; chainLinkv2: any }> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
   let tx: Hex;
 
@@ -42,7 +42,8 @@ export const deployChainlinkOracle = async ({
           args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
         }
       },
-      proxyContract: "OpenZeppelinTransparentProxy"
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true

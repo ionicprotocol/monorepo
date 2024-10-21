@@ -29,7 +29,7 @@ Export the relevant environment variables:
 export ETHEREUM_ADMIN_ACCOUNT="0x321..."
 export ETHEREUM_ADMIN_PRIVATE_KEY="0x123..."
 export WEB3_HTTP_PROVIDER_URL="https://bsc-mainnet.gateway.pokt.network/v1/lb/xxxxxxxxxx"
-export TARGET_CHAIN_ID=56
+export TARGET_CHAIN_ID=34443
 ```
 
 And run outside docker:

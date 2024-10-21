@@ -1,5 +1,5 @@
 import { LiquidationStrategy } from "@ionicprotocol/types";
-import { Address, formatEther } from "viem";
+import { Address } from "viem";
 
 import { IonicSdk } from "../../IonicSdk";
 

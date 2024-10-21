@@ -8,7 +8,8 @@ import "../IRedemptionStrategy.sol";
 import "../../ionic/DiamondExtension.sol";
 import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 
-import { IRouter as IAerodromeV2Router } from "../../external/aerodrome/IRouter.sol";
+import { IRouter_Aerodrome as IAerodromeV2Router } from "../../external/aerodrome/IRouter.sol";
+import { IRouter_Velodrome as IVelodromeV2Router } from "../../external/velodrome/IRouter.sol";
 import { IRouter } from "../../external/solidly/IRouter.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
@@ -262,6 +263,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       strategyData = aerodromeCLLiquidatorData(inputToken, outputToken);
     } else if (isStrategy(strategy, "CurveSwapLiquidator")) {
       strategyData = curveSwapLiquidatorData(inputToken, outputToken);
+    } else if (isStrategy(strategy, "VelodromeV2Liquidator")) {
+      strategyData = velodromeV2LiquidatorData(inputToken, outputToken);
     } else {
       revert("no strategy data");
     }
@@ -408,5 +411,18 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
       getWrappedToUnwrapped4626(inputToken),
       getWrappedToUnwrapped4626(outputToken)
     );
+  }
+
+  function velodromeV2LiquidatorData(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) internal view returns (bytes memory strategyData) {
+    IVelodromeV2Router.Route[] memory swapPath = new IVelodromeV2Router.Route[](1);
+    swapPath[0] = IVelodromeV2Router.Route({
+      from: address(inputToken),
+      to: address(outputToken),
+      stable: aeroV2IsStable(inputToken, outputToken)
+    });
+    strategyData = abi.encode(getAerodromeV2Router(inputToken), swapPath);
   }
 }

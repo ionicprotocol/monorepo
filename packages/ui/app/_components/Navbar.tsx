@@ -220,8 +220,8 @@ export default function Navbar() {
           </Link>
           <Link
             className="relative mb-2 lg:mb-0"
-            href="/veion"
-            // target="_blank"
+            href={`https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion`}
+            target="_blank"
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
