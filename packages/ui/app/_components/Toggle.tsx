@@ -18,7 +18,7 @@ export default function Toggle({
   }, [active, setActiveToggle]);
   return (
     <div
-      className={`mx-auto rounded-lg bg-grayone p-1 flex text-center gap-x-1 text-xs items-center justify-center`}
+      className={`mx-auto rounded-lg bg-inherit p-1 flex text-center gap-x-1 text-xs items-center justify-center`}
     >
       {arrText.map((text, idx) => (
         <p
@@ -27,7 +27,7 @@ export default function Toggle({
             active.toLowerCase() === text.toLowerCase()
               ? 'bg-darkone text-accent '
               : 'text-white/40 '
-          } transition-all duration-200 ease-linear `}
+          } transition-all duration-200 ease-linear  whitespace-nowrap`}
           onClick={() => setActive(text)}
         >
           {text}
