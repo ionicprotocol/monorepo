@@ -689,13 +689,13 @@ export default function Dashboard() {
               {positions && positions.openPositions.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>LOOPED ASSETS</h3>
                     <h3 className={` `}>LOOP VALUE</h3>
                     <h3 className={` `}>BORROW</h3>
-                    <h3 className={` `}>REWARDS</h3>
                     <h3 className={` `}>LOOPS</h3>
+                    <h3 className={` `}>REWARDS</h3>
                   </div>
 
                   {positions?.openPositions.map((position, i) => {
