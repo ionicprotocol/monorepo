@@ -1,14 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import { type FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
+
+import { pools } from '@ui/constants/index';
+import { multipliers } from '@ui/utils/multipliers';
+
 import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 const Rewards = dynamic(() => import('./Rewards'), {
   ssr: false
 });
-
-import { pools } from '@ui/constants/index';
-import { multipliers } from '@ui/utils/multipliers';
 
 export type BorrowPopoverProps = {
   dropdownSelectedChain: number;
@@ -57,6 +59,7 @@ export default function BorrowPopover({
             className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
             href="https://turtle.club/dashboard/?ref=IONIC"
             target="_blank"
+            rel="noreferrer"
           >
             + TURTLE{' '}
             <img

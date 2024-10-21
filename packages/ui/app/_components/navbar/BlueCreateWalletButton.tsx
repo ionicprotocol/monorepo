@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+
 import { useConnect } from 'wagmi';
 
 import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';

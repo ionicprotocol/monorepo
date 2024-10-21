@@ -1,21 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import millify from 'millify';
+import { useMemo, useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
+
+import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 // import { useChainId } from 'wagmi';
 
-import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
-import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import NetworkSelector from '../_components/markets/NetworkSelector';
-import Loop from '../_components/popup/Loop';
-import type { PopupMode } from '../_components/popup/page';
-import Popup from '../_components/popup/page';
-import ResultHandler from '../_components/ResultHandler';
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
 });
@@ -37,6 +31,16 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import NetworkSelector from '../_components/markets/NetworkSelector';
+import Loop from '../_components/popup/Loop';
+import Popup from '../_components/popup/page';
+import ResultHandler from '../_components/ResultHandler';
+
+import type { PopupMode } from '../_components/popup/page';
+import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();

@@ -1,15 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import { useRouter } from 'next/navigation';
+
 import { formatEther } from 'viem';
 import { useChainId } from 'wagmi';
-
-import ResultHandler from '../ResultHandler';
 
 import { REWARDS_TO_SYMBOL, chainsArr } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
 
 interface IClaim {
   chain: number;

@@ -1,8 +1,9 @@
+import { type Address } from 'viem';
+
 import type {
   NativePricedIonicAsset,
   IonicPoolData as SDKFusePoolData
 } from '@ionicprotocol/types';
-import { type Address } from 'viem';
 
 export type IonicApiTokenData = {
   address: Address;

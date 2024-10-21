@@ -1,5 +1,3 @@
-import type { Address } from 'viem';
-
 import {
   BaseContractABI,
   BaseLiquidityContractAdd,
@@ -11,6 +9,8 @@ import {
 } from '@ui/constants/lp';
 import { TradingContractAddress } from '@ui/constants/modetradingfees';
 import { StakingContractAddress } from '@ui/constants/staking';
+
+import type { Address } from 'viem';
 
 export function getPoolToken(token?: 'eth' | 'mode' | 'weth'): `0x${string}` {
   if (token === 'weth') return '0x4200000000000000000000000000000000000006';

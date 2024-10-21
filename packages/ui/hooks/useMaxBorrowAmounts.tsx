@@ -1,11 +1,14 @@
-import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { Address, formatUnits } from 'viem';
-
-import { useBorrowCapsForAssets } from './ionic/useBorrowCapsDataForAsset';
+import { formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import { useBorrowCapsForAssets } from './ionic/useBorrowCapsDataForAsset';
+
+import type { Address } from 'viem';
+
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 export function useMaxBorrowAmounts(
   assets: NativePricedIonicAsset[],

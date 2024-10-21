@@ -1,14 +1,16 @@
-import type { FlywheelReward } from '@ionicprotocol/types';
 import dynamic from 'next/dynamic';
-import type { Address } from 'viem';
 import Link from 'next/link';
+
+import { pools } from '@ui/constants/index';
+import { multipliers } from '@ui/utils/multipliers';
+
+import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 const Rewards = dynamic(() => import('./Rewards'), {
   ssr: false
 });
-
-import { pools } from '@ui/constants/index';
-import { multipliers } from '@ui/utils/multipliers';
 
 export type SupplyPopoverProps = {
   asset: string;
