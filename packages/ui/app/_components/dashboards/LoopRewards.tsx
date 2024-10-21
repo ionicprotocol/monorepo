@@ -36,7 +36,6 @@ const LoopRewards = ({
     positionAddress
   );
 
-  console.log('🚀 ~ rewardsData:', rewardsData);
   const claimRewards = async () => {
     const result = await handleSwitchOriginChain(poolChainId, chainId);
     if (result) {
