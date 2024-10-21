@@ -44,3 +44,55 @@ task("hypernative:set-consumer-role", "Set the consumer role").setAction(
     console.log("🚀 ~ addTx:", addTx);
   }
 );
+
+task("hypernative:set-oracle", "Set the oracle address").setAction(
+  async (_, { viem, getNamedAccounts, deployments }) => {
+    const oracleProtected = await viem.getContractAt(
+      "OracleRegistry",
+      (await deployments.get("OracleRegistry")).address as Address
+    );
+    const setOracleTx = await oracleProtected.write.setOracle([oracle]);
+
+    console.log("🚀 ~ setOracleTx:", setOracleTx);
+  }
+);
+
+task("hypernative:set-strict-mode", "Set the strict mode").setAction(async (_, { viem, deployments }) => {
+  const oracleProtected = await viem.getContractAt(
+    "OracleRegistry",
+    (await deployments.get("OracleRegistry")).address as Address
+  );
+  const setStrictModeTx = await oracleProtected.write.setIsStrictMode([true]);
+  console.log("🚀 ~ setStrictModeTx:", setStrictModeTx);
+});
+
+task("hypernative:register-strict", "Register a strict account").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const oracleProtected = await viem.getContractAt(
+      "OracleRegistry",
+      (await deployments.get("OracleRegistry")).address as Address
+    );
+    const registerStrictTx = await oracleProtected.write.oracleRegister([deployer as Address]);
+    console.log("🚀 ~ registerStrictTx:", registerStrictTx);
+  }
+);
+const ionUSDC = "0xa900a17a49bc4d442ba7f72c39fa2108865671f0";
+
+task("hypernative:set-oracle:usdc", "Set the oracle address for USDC").setAction(async (_, { viem }) => {
+  const cToken = await viem.getContractAt("CTokenFirstExtension", ionUSDC as Address);
+  const setOracleTx = await cToken.write.setOracle([oracle]);
+  console.log("🚀 ~ setOracleTx:", setOracleTx);
+});
+
+task("hypernative:set-reserve-factor", "Set the reserve factor").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    console.log("🚀 ~ deployer:", deployer);
+    const cToken = await viem.getContractAt("ICErc20", ionUSDC as Address);
+    const reserveFactor = await cToken.read.reserveFactorMantissa();
+    console.log("🚀 ~ reserveFactor:", reserveFactor);
+    const setReserveFactorTx = await cToken.write._setReserveFactor([48000000000000000n]);
+    console.log("🚀 ~ setReserveFactorTx:", setReserveFactorTx);
+  }
+);
