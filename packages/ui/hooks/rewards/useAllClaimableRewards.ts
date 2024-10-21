@@ -17,7 +17,7 @@ export const useAllClaimableRewards = (
   const { address, getSdk } = useMultiIonic();
   const addressToUse = account || address;
   return useQuery({
-    queryKey: ['useAllClaimableRewards', chainIds, address],
+    queryKey: ['useAllClaimableRewards', chainIds, addressToUse],
 
     queryFn: async () => {
       const allRewards: AllRewardsType[] = [];
