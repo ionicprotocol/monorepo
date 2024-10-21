@@ -110,6 +110,9 @@
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0xdb93567451Cc2D785fAB5744a07dbF0C7a90415f"
     },
+    "IonicFlywheelDynamicRewards_ION_epoch4": {
+      "address": "0xBFAE7571C47A1D42BcEAd3D57d116Ca69495d989"
+    },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x4a003b110162C86fE10cD39822c782eb08C2549C"
     },
@@ -124,6 +127,15 @@
     },
     "IonicFlywheel_ION_Proxy": {
       "address": "0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062"
+    },
+    "IonicFlywheel_ION_epoch4": {
+      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
+    },
+    "IonicFlywheel_ION_epoch4_Implementation": {
+      "address": "0x92ce3434F254161178A4b4a786C7Be559b752497"
+    },
+    "IonicFlywheel_ION_epoch4_Proxy": {
+      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
