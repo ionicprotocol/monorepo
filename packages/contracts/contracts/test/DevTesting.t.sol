@@ -35,9 +35,9 @@ import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol"
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
 import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
-import { IRouter } from "../external/aerodrome/IRouter.sol";
+import { IRouter_Aerodrome } from "../external/aerodrome/IRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
-import { IRouter as IVelodromeV2Router } from "../external/velodrome/IRouter.sol";
+import { IRouter_Velodrome } from "../external/velodrome/IRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -693,8 +693,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(eusdWhale);
     eUSD.transfer(address(liquidator), 1000 ether);
-    IRouter.Route[] memory path = new IRouter.Route[](1);
-    path[0] = IRouter.Route({
+    IRouter_Aerodrome.Route[] memory path = new IRouter_Aerodrome.Route[](1);
+    path[0] = IRouter_Aerodrome.Route({
       from: address(eUSD),
       to: address(usdc),
       stable: true,
@@ -809,8 +809,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(usdcWhale);
     usdc.transfer(address(liquidator), 1000 * 10e6);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({ from: address(usdc), to: address(weth), stable: false });
+    IRouter_Velodrome.Route[] memory path = new IRouter_Velodrome.Route[](1);
+    path[0] = IRouter_Velodrome.Route({ from: address(usdc), to: address(weth), stable: false });
     liquidator.redeem(usdc, 1000 * 10e6, abi.encode(veloRouter, path));
     emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
@@ -826,8 +826,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({ from: address(weth), to: address(usdc), stable: false });
+    IRouter_Velodrome.Route[] memory path = new IRouter_Velodrome.Route[](1);
+    path[0] = IRouter_Velodrome.Route({ from: address(weth), to: address(usdc), stable: false });
 
     liquidator.redeem(weth, 1 ether, abi.encode(veloRouter, path));
     emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
