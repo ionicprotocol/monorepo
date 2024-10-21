@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+
+import type { Address } from 'viem';
 
 export const useIRM = (cTokenAddress?: Address, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);

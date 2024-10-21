@@ -1,6 +1,7 @@
-import type { AssetReward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+
+import type { AssetReward } from '@ionicprotocol/types';
 
 export interface UseAssetsData {
   [asset: string]: AssetReward[];

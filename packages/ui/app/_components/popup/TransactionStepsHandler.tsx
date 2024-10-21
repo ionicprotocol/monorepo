@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'react';
 import { useReducer } from 'react';
+
 import { ThreeCircles } from 'react-loader-spinner';
 
 import { getScanUrlByChainId } from '@ui/utils/networkData';

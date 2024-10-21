@@ -1,7 +1,8 @@
-import type { StrategyScore } from '@ionicprotocol/types';
 import { useMemo } from 'react';
 
 import { useSecurity } from '@ui/hooks/ionic/useSecurity';
+
+import type { StrategyScore } from '@ionicprotocol/types';
 
 export const useStrategyRating = (
   chainId: number,

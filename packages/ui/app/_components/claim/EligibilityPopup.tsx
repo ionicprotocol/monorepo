@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { createClient } from '@supabase/supabase-js';
 import { useState } from 'react';
+
+import { createClient } from '@supabase/supabase-js';
 import Confetti from 'react-confetti';
 import { useAccount, useSignMessage } from 'wagmi';
 

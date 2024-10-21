@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+
+import type { Address } from 'viem';
 
 export const useCTokenData = (
   comptrollerAddress?: Address,
@@ -11,7 +12,12 @@ export const useCTokenData = (
   const sdk = useSdk(poolChainId);
 
   return useQuery({
-    queryKey: ['useCTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
+    queryKey: [
+      'useCTokenData',
+      cTokenAddress,
+      comptrollerAddress,
+      sdk?.chainId
+    ],
 
     queryFn: async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {

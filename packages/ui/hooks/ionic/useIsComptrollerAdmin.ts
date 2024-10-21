@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+
+import type { Address } from 'viem';
 
 export const useIsComptrollerAdmin = (
   comptrollerAddress?: Address,

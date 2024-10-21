@@ -1,9 +1,10 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { InterestRateModel } from '@ionicprotocol/types';
 import { parseEther } from 'viem';
 
 import type { UtilizationChartData } from '@ui/types/ComponentPropsType';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { InterestRateModel } from '@ionicprotocol/types';
 
 export const convertIRMtoCurve = (
   ionicSdk: IonicSdk,

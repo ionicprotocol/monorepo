@@ -1,9 +1,11 @@
-import type { NativePricedIonicAsset } from '@ionicprotocol/types';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 export const usePoolDetails = (
   assets?: NativePricedIonicAsset[],

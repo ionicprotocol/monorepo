@@ -1,19 +1,4 @@
 import {
-  base,
-  chainIdToConfig,
-  mode,
-  optimism,
-  bob,
-  fraxtal,
-  lisk
-} from '@ionicprotocol/chains';
-import type {
-  ChainConfig,
-  ChainSupportedAssets as ChainSupportedAssetsType,
-  DeployedPlugins as DeployedPluginsType
-} from '@ionicprotocol/types';
-import { SupportedChains } from '@ionicprotocol/types';
-import {
   mode as vMode,
   base as vBase,
   optimism as vOptimism,
@@ -25,6 +10,22 @@ import {
 import { config } from '@ui/config/index';
 import { MINUTES_PER_YEAR } from '@ui/constants/index';
 import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
+
+import {
+  base,
+  chainIdToConfig,
+  mode,
+  optimism,
+  bob,
+  fraxtal,
+  lisk
+} from '@ionicprotocol/chains';
+import { SupportedChains } from '@ionicprotocol/types';
+import type {
+  ChainConfig,
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  DeployedPlugins as DeployedPluginsType
+} from '@ionicprotocol/types';
 
 export const isSupportedChainId = (chainId: number) => {
   return getSupportedChainIds().includes(chainId);

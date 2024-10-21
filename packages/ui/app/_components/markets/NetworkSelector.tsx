@@ -1,13 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import React from 'react';
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+
+import { useStore } from 'ui/store/Store';
 
 import { pools } from '@ui/constants/index';
-import { useStore } from 'ui/store/Store';
 interface INetworkSelector {
   chain?: string;
   dropdownSelectedChain: number;

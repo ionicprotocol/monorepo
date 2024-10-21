@@ -1,11 +1,14 @@
-import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
+import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
-import { Address, formatUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
+
+import type { Address } from 'viem';
+
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 export function useMaxSupplyAmount(
   asset: Pick<

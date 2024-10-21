@@ -1,23 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { type FlywheelReward } from '@ionicprotocol/types';
-// import dynamic from 'next/dynamic';
-import Link from 'next/link';
-// import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
-import { type Address } from 'viem';
 
-import { getAssetName } from '../../util/utils';
-// import ConnectButton from '../ConnectButton';
-import { PopupMode } from '../popup/page';
+import Link from 'next/link';
 
-// import { Rewards } from './Rewards';
-// const Rewards = dynamic(() => import('./Rewards'), {
-//   ssr: false
-// });
-
-import BorrowPopover from './BorrowPopover';
-import SupplyPopover from './SupplyPopover';
+import { useStore } from 'ui/store/Store';
 
 import {
   FLYWHEEL_TYPE_MAP,
@@ -28,10 +15,16 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
-// import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useStore } from 'ui/store/Store';
-// import { useAccount } from 'wagmi';
+
+import BorrowPopover from './BorrowPopover';
+import SupplyPopover from './SupplyPopover';
+import { getAssetName } from '../../util/utils';
+import { PopupMode } from '../popup/page';
+
+import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 interface IRows {
   asset: string;
@@ -218,7 +211,7 @@ const PoolRows = ({
             comptrollerAddress,
             cTokenAddress,
             dropdownSelectedChain,
-            lendingSupply: parseInt(supplyBalance),
+            lendingSupply: Number.parseInt(supplyBalance),
             // loopMarkets: loopMarketsPassing,
             pool: pool,
             borrowAPR: borrowAPR ?? '-',
@@ -283,7 +276,7 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
-          <span className={`mr-1 md:mr-0`}>
+          <span className="mr-1 md:mr-0 md:mb-1">
             +
             {supplyAPRTotal?.toLocaleString('en-US', {
               maximumFractionDigits: 2

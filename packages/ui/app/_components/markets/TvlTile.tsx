@@ -8,10 +8,11 @@
 // const SwapWidget = dynamic(() => import('./SwapWidget'), {
 //   ssr: false
 // });
-import ResultHandler from '../ResultHandler';
 
 import { pools } from '@ui/constants/index';
 import type { PoolData } from '@ui/types/TokensDataMap';
+
+import ResultHandler from '../ResultHandler';
 
 interface IProp {
   dropdownSelectedChain: string;

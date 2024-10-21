@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useExtraPoolInfo } from '@ui/hooks/ionic/useExtraPoolInfo';
-import { Address } from 'viem';
+
+import type { Address } from 'viem';
 
 export const useIsEditableAdmin = (
   comptrollerAddress?: Address,

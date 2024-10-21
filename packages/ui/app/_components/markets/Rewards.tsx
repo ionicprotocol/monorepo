@@ -1,19 +1,22 @@
 'use client';
 
-import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
-import { type FlywheelReward } from '@ionicprotocol/types';
-import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { formatEther, type Address } from 'viem';
 // import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
-
-import ResultHandler from '../ResultHandler';
 
 import { FLYWHEEL_TYPE_MAP, REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
+
+import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
+import { type FlywheelReward } from '@ionicprotocol/types';
 
 type RewardsProps = {
   cToken: Address;

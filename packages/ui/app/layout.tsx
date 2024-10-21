@@ -1,15 +1,17 @@
 'use client';
-import './globals.css';
+
 // import NextNProgress from "nextjs-progressbar";
+import { Suspense } from 'react';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import Script from 'next/script';
+
 import { createAppKit } from '@reown/appkit';
 import { base, optimism } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Image from 'next/image';
-import Link from 'next/link';
-import Script from 'next/script';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
-import { Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import {
   mode as vMode,
@@ -19,9 +21,10 @@ import {
 } from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 
-import Navbar from './_components/Navbar';
-
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
+
+import Navbar from './_components/Navbar';
+import './globals.css';
 
 const metadata = {
   description: 'Ionic Web3Modal Sign In',
@@ -238,6 +241,7 @@ export default function RootLayout({
                             <a
                               href="https://doc.ionic.money/ionic-documentation/audit"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Audit
                             </a>
@@ -246,6 +250,7 @@ export default function RootLayout({
                             <a
                               href="https://doc.ionic.money/"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Documentation
                             </a>
@@ -254,6 +259,7 @@ export default function RootLayout({
                             <a
                               href="https://github.com/orgs/ionicprotocol/repositories"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               GitHub
                             </a>
@@ -262,6 +268,7 @@ export default function RootLayout({
                             <a
                               href="https://status.ionic.money/"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Status
                             </a>
@@ -277,6 +284,7 @@ export default function RootLayout({
                             <a
                               href="https://app.anthias.xyz/protocols/ionic/ionic_v1_mode/positions"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Analytics
                             </a>
@@ -285,6 +293,7 @@ export default function RootLayout({
                             <a
                               href="https://defillama.com/protocol/ionic-protocol"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               DeFi Llama
                             </a>
@@ -293,6 +302,7 @@ export default function RootLayout({
                             <a
                               href="https://dune.com/mrwildcat/ionic-protocol"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Dune
                             </a>
@@ -301,6 +311,7 @@ export default function RootLayout({
                             <a
                               href="https://linktr.ee/ionicmoney"
                               target="_blank"
+                              rel="noreferrer"
                             >
                               Linktree
                             </a>

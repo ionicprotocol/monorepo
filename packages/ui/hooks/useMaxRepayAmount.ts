@@ -1,9 +1,10 @@
-import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import { useBalance } from 'wagmi';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 export function useMaxRepayAmount(
   asset: NativePricedIonicAsset,

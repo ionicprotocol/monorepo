@@ -1,3 +1,5 @@
+import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+
 import type {
   IonicPoolData,
   NewPosition,
@@ -5,8 +7,6 @@ import type {
   SupportedAsset,
   VaultData
 } from '@ionicprotocol/types';
-
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const sortAssets = <T extends MarketData>(assets: T[]) => {
   return assets.sort((a, b) => {

@@ -1,10 +1,12 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 
 export const useAssetClaimableRewards = (
   marketAddress: Address,

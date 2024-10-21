@@ -32,21 +32,59 @@
   },
   "rules": {
     "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
-    "import/order": [
+   "import/order": [
       "error",
       {
-        "alphabetize": { "order": "asc", "caseInsensitive": true },
-        "newlines-between": "always"
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "sibling"],
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "next/**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@ui/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "{@ionicprotocol/**,@ui/types/**}",
+            "group": "type",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react", "next"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "warnOnUnassignedImports": true
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
       }
     ],
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/sort-type-constituents": "error",
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      { "prefer": "type-imports" }
-    ],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/self-closing-comp": ["error", { "component": true, "html": true }],
     "react-hooks/exhaustive-deps": "error",

@@ -1,3 +1,5 @@
+import { config } from '@ui/config/index';
+
 import {
   base,
   bob,
@@ -7,8 +9,6 @@ import {
   lisk
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
-
-import { config } from '@ui/config/index';
 
 export const supportedChainIdToConfig: {
   [chainId: number]: { enabled: boolean; supported: boolean };

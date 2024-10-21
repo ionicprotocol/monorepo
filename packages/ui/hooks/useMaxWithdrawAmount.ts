@@ -1,8 +1,9 @@
-import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 export function useMaxWithdrawAmount(
   asset: NativePricedIonicAsset,

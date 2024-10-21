@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useEffect, useRef, useState } from 'react';
+
 import { type Address, formatEther, type Hex } from 'viem';
 import { base } from 'viem/chains';
 import {
@@ -12,8 +13,6 @@ import {
   useWriteContract
 } from 'wagmi';
 
-import ResultHandler from '../ResultHandler';
-
 import { TradingAbi } from '@ui/constants/modetradingfees';
 import { StakingContractAbi } from '@ui/constants/staking';
 import {
@@ -21,6 +20,8 @@ import {
   getTradingContractAddress
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
 
 interface IProps {
   close: () => void;

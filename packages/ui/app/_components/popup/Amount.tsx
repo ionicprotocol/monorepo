@@ -1,13 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import dynamic from 'next/dynamic';
-// import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
+
+import dynamic from 'next/dynamic';
+
+// import { useSearchParams } from 'next/navigation';
 import { parseUnits } from 'viem';
 
-import ResultHandler from '../ResultHandler';
-
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import ResultHandler from '../ResultHandler';
 
 interface IAmount {
   amount?: string;

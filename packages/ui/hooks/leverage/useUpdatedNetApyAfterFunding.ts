@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { formatEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { Address, formatEther } from 'viem';
+
+import type { Address } from 'viem';
 
 export function useUpdatedNetApyAfterFunding(
   positionAddress: Address,

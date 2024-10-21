@@ -1,9 +1,10 @@
 'use client';
 
-import { wethAbi } from '@ionicprotocol/sdk';
-import { useQueryClient } from '@tanstack/react-query';
-import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
+
+import Image from 'next/image';
+
+import { useQueryClient } from '@tanstack/react-query';
 import {
   type Address,
   formatEther,
@@ -14,17 +15,19 @@ import {
 } from 'viem';
 import { fraxtal, mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
-import type { GetBalanceData } from 'wagmi/query';
 
-import ConnectButton from '../ConnectButton';
-import ResultHandler from '../ResultHandler';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
+import ConnectButton from '../ConnectButton';
+import ResultHandler from '../ResultHandler';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import type { GetBalanceData } from 'wagmi/query';
+
+import { wethAbi } from '@ionicprotocol/sdk';
 
 export type SwapProps = {
   close: () => void;

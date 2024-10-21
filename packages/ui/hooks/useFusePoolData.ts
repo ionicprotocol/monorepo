@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';

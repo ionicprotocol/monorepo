@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useState, useMemo, useEffect, useRef } from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { formatUnits, parseUnits } from 'viem';
 // import { mode } from 'viem/chains';
 import { useAccount, useBalance } from 'wagmi';

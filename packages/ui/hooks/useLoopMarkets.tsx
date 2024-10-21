@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import type { Address } from 'viem';
 
 export type LoopMarketData = {
   [key: Address]: Address[];

@@ -1,10 +1,12 @@
-import type { IonicAsset } from '@ionicprotocol/types';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import { formatUnits, parseUnits } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { formatUnits, parseUnits } from 'viem';
+
+import type { IonicAsset } from '@ionicprotocol/types';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
   const { currentSdk } = useMultiIonic();

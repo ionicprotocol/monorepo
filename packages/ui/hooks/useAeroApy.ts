@@ -2,10 +2,10 @@ import { formatEther } from 'viem';
 import { base } from 'viem/chains';
 import { useReadContract } from 'wagmi';
 
+import { lpSugarAbi } from 'ui/app/stake/abi/lpSugar';
+
 import { useAllUsdPrices } from './useAllUsdPrices';
 import { useIonPrice, useAeroPrice } from './useDexScreenerPrices';
-
-import { lpSugarAbi } from 'ui/app/stake/abi/lpSugar';
 
 export default function useAeroAPY() {
   const LP_SUGAR_ADDRESS = '0x68c19e13618C41158fE4bAba1B8fb3A9c74bDb0A';

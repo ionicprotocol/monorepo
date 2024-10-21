@@ -1,24 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import millify from 'millify';
+import { useMemo, useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
-import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 
-import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
-import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import LoopRewards from '../_components/dashboards/LoopRewards';
-import NetworkSelector from '../_components/markets/NetworkSelector';
-import Loop from '../_components/popup/Loop';
-import type { PopupMode } from '../_components/popup/page';
-import Popup from '../_components/popup/page';
-import ResultHandler from '../_components/ResultHandler';
-const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
-  ssr: false
-});
+import millify from 'millify';
+import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -37,6 +26,21 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import LoopRewards from '../_components/dashboards/LoopRewards';
+import NetworkSelector from '../_components/markets/NetworkSelector';
+import Loop from '../_components/popup/Loop';
+import Popup from '../_components/popup/page';
+import ResultHandler from '../_components/ResultHandler';
+
+import type { PopupMode } from '../_components/popup/page';
+import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
+
+const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
+  ssr: false
+});
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -169,7 +173,7 @@ export default function Dashboard() {
   const handledHealthData = useMemo<string>(() => {
     if (
       marketData?.totalBorrowBalanceNative === 0 ||
-      parseFloat(healthData ?? '0') < 0
+      Number.parseFloat(healthData ?? '0') < 0
     ) {
       return '∞';
     }
@@ -186,9 +190,9 @@ export default function Dashboard() {
 
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
-    const healthDataAsNumber = parseFloat(healthData ?? '0');
+    const healthDataAsNumber = Number.parseFloat(healthData ?? '0');
 
-    if (isNaN(parseFloat(handledHealthData))) {
+    if (isNaN(Number.parseFloat(handledHealthData))) {
       return '';
     }
 
@@ -518,7 +522,7 @@ export default function Dashboard() {
                     <InfoRows
                       amount={`${
                         asset.supplyBalanceNative
-                          ? parseFloat(
+                          ? Number.parseFloat(
                               formatUnits(
                                 asset.supplyBalance,
                                 asset.underlyingDecimals
@@ -608,7 +612,7 @@ export default function Dashboard() {
                     <InfoRows
                       amount={`${
                         asset.borrowBalanceFiat
-                          ? parseFloat(
+                          ? Number.parseFloat(
                               formatUnits(
                                 asset.borrowBalance,
                                 asset.underlyingDecimals

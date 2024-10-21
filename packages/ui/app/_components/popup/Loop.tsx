@@ -1,10 +1,11 @@
-import type { OpenPosition } from '@ionicprotocol/types';
-import { useQueryClient } from '@tanstack/react-query';
-import millify from 'millify';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import type { Dispatch, SetStateAction } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+import { useQueryClient } from '@tanstack/react-query';
+import millify from 'millify';
 import {
   type Address,
   formatEther,
@@ -13,16 +14,6 @@ import {
   parseUnits
 } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
-
-import Modal from '../Modal';
-import Range from '../Range';
-import ResultHandler from '../ResultHandler';
-
-import Amount from './Amount';
-import SliderComponent from './Slider';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -37,6 +28,17 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
+
+import Amount from './Amount';
+import SliderComponent from './Slider';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
+import Modal from '../Modal';
+import Range from '../Range';
+import ResultHandler from '../ResultHandler';
+
+import type { OpenPosition } from '@ionicprotocol/types';
 
 const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
   ssr: false
