@@ -22,10 +22,9 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
       return;
     }
 
-    const feeDistributor = await viem.getContractAt("FeeDistributor", await pool.read.ionicAdmin());
-    const owner = await feeDistributor.read.owner();
+    const owner = await pool.read.admin();
 
-    if (false) {
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
         contractInstance: pool,
         functionName: "_setMarketBorrowCaps",

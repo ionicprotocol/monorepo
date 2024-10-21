@@ -159,10 +159,10 @@
       "address": "0x9B506A03bBFf2a842866b10BC6732da72640cd45"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x4e20eB2AF6bE30660323cB25204e071116737FEA"
+      "address": "0x4f824616C8b6BC81eD8743710CB69A0929c29b98"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x14bB1c7293c4e3E28Ef4A74c3d73baDd5dE6d000"
+      "address": "0x5DC08E96372fe1eE3130B05c6a1eDCB875562212"
     },
     "LeveredPositionsLens": {
       "address": "0x1DD45c9fB4C8CcB678781982774F006F24b8EaC1"

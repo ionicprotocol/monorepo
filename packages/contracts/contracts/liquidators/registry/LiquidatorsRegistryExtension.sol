@@ -8,8 +8,8 @@ import "../IRedemptionStrategy.sol";
 import "../../ionic/DiamondExtension.sol";
 import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 
-import { IRouter as IAerodromeV2Router } from "../../external/aerodrome/IRouter.sol";
-import { IRouter as IVelodromeV2Router } from "../../external/velodrome/IRouter.sol";
+import { IRouter_Aerodrome as IAerodromeV2Router } from "../../external/aerodrome/IRouter.sol";
+import { IRouter_Velodrome as IVelodromeV2Router } from "../../external/velodrome/IRouter.sol";
 import { IRouter } from "../../external/solidly/IRouter.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";

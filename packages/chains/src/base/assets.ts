@@ -212,9 +212,9 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x64c911996D3c6aC71f9b455B1E8E7266BcbD848F",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseUnits(String(1), 8).toString(),
-    initialBorrowCap: parseUnits(String(1), 8).toString(),
-    initialCf: "0.30",
+    initialSupplyCap: parseUnits(String(1200), 8).toString(),
+    initialBorrowCap: parseUnits(String(900), 8).toString(),
+    initialCf: "0.80",
     extraDocs: defaultDocs("https://basescan.org", cbBTC)
   },
   {
