@@ -126,10 +126,10 @@
       "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x91B3001124ac5A5C0Bc3329c3523A8dcD9ce44E3"
+      "address": "0x7a92a0599A450323e6456b0D9d4225B13C31A108"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x1A2a71f124E1691bb48147949168126aE7387275"
+      "address": "0x60519EABCC66A628a94764956eB02C059d405092"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
