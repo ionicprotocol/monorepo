@@ -48,3 +48,19 @@ task("base:levered-positions:configure-pairs:new").setAction(async (_, { viem, d
     leveredPairs
   });
 });
+
+task("base:levered-position-factory:set-positions-extension", "Set the positions extension").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const position = "0xf2e4aa37EAe6E946AA907861690F5078B8f37dCF";
+    const { deployer } = await getNamedAccounts();
+    const leveredPositionFactory = await viem.getContractAt(
+      "ILeveredPositionFactory",
+      (await deployments.get("LeveredPositionFactory")).address as Address
+    );
+    const tx = await leveredPositionFactory.write._setPositionsExtension([
+      "0x93ff897b", // LeveredPosition.claimRewardsFromRouter.selector",
+      position
+    ]);
+    console.log(`Set positions extension for ${position} to ${leveredPositionFactory.address}: ${tx}`);
+  }
+);
