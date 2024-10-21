@@ -137,6 +137,9 @@
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
     },
+    "IonicFlywheelDynamicRewards_ION_epoch4": {
+      "address": "0xFf77cC49Ed565B79162a27e9C991Fc2CeFA39d57"
+    },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x57913CfF75Acd553923E58D3EAFbCDDCCf7816d7"
     },
@@ -157,6 +160,15 @@
     },
     "IonicFlywheel_ION_Proxy": {
       "address": "0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54"
+    },
+    "IonicFlywheel_ION_epoch4": {
+      "address": "0xDcF10D5193910e2A76B565C13942bF4EABc9498E"
+    },
+    "IonicFlywheel_ION_epoch4_Implementation": {
+      "address": "0xd6c14644Dd5EBde9Ef4931F64940100Ab55DEeA0"
+    },
+    "IonicFlywheel_ION_epoch4_Proxy": {
+      "address": "0xDcF10D5193910e2A76B565C13942bF4EABc9498E"
     },
     "IonicFlywheel_ION_v2": {
       "address": "0x8D3879dAd76CaFF4b79F45Ca56bb90713182058a"
@@ -277,6 +289,15 @@
     },
     "PoolLensSecondary": {
       "address": "0x431C87E08e2636733a945D742d25Ba77577ED480"
+    },
+    "PythPriceOracle": {
+      "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62"
+    },
+    "PythPriceOracle_Implementation": {
+      "address": "0x17a4dF7081F1cd1370C70eFeCaFfa11b5bf217b2"
+    },
+    "PythPriceOracle_Proxy": {
+      "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62"
     },
     "SimplePriceOracle": {
       "address": "0xBbDcA7858ac2417b06636F7BA35e7d9EA39402ea"
