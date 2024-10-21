@@ -8,11 +8,6 @@ import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-// import { useChainId } from 'wagmi';
-
-const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
-  ssr: false
-});
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -34,6 +29,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
+import LoopRewards from '../_components/dashboards/LoopRewards';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
 import Popup from '../_components/popup/page';
@@ -41,6 +37,10 @@ import ResultHandler from '../_components/ResultHandler';
 
 import type { PopupMode } from '../_components/popup/page';
 import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
+
+const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
+  ssr: false
+});
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -173,7 +173,7 @@ export default function Dashboard() {
   const handledHealthData = useMemo<string>(() => {
     if (
       marketData?.totalBorrowBalanceNative === 0 ||
-      parseFloat(healthData ?? '0') < 0
+      Number.parseFloat(healthData ?? '0') < 0
     ) {
       return '∞';
     }
@@ -190,9 +190,9 @@ export default function Dashboard() {
 
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
-    const healthDataAsNumber = parseFloat(healthData ?? '0');
+    const healthDataAsNumber = Number.parseFloat(healthData ?? '0');
 
-    if (isNaN(parseFloat(handledHealthData))) {
+    if (isNaN(Number.parseFloat(handledHealthData))) {
       return '';
     }
 
@@ -522,7 +522,7 @@ export default function Dashboard() {
                     <InfoRows
                       amount={`${
                         asset.supplyBalanceNative
-                          ? parseFloat(
+                          ? Number.parseFloat(
                               formatUnits(
                                 asset.supplyBalance,
                                 asset.underlyingDecimals
@@ -612,7 +612,7 @@ export default function Dashboard() {
                     <InfoRows
                       amount={`${
                         asset.borrowBalanceFiat
-                          ? parseFloat(
+                          ? Number.parseFloat(
                               formatUnits(
                                 asset.borrowBalance,
                                 asset.underlyingDecimals
@@ -693,12 +693,13 @@ export default function Dashboard() {
               {positions && positions.openPositions.length > 0 ? (
                 <>
                   <div
-                    className={`w-full gap-x-1 grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
+                    className={`w-full gap-x-1 grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
                   >
                     <h3 className={` `}>LOOPED ASSETS</h3>
                     <h3 className={` `}>LOOP VALUE</h3>
                     <h3 className={` `}>BORROW</h3>
                     <h3 className={` `}>LOOPS</h3>
+                    <h3 className={` `}>REWARDS</h3>
                   </div>
 
                   {positions?.openPositions.map((position, i) => {
@@ -721,6 +722,7 @@ export default function Dashboard() {
                         setSelectedLoopBorrowData={setSelectedLoopBorrowData}
                         setSelectedSymbol={setSelectedSymbol}
                         setLoopOpen={setLoopOpen}
+                        chain={+chain}
                       />
                     );
                   })}
@@ -768,6 +770,7 @@ type LoopRowProps = {
   setSelectedLoopBorrowData: (asset?: MarketData) => void;
   setSelectedSymbol: (symbol: string) => void;
   setLoopOpen: (open: boolean) => void;
+  chain: number;
 };
 const LoopRow = ({
   position,
@@ -777,21 +780,12 @@ const LoopRow = ({
   marketData,
   setSelectedLoopBorrowData,
   setSelectedSymbol,
-  setLoopOpen
+  setLoopOpen,
+  chain
 }: LoopRowProps) => {
-  // const walletChain = useChainId();
-  // const { data: allClaimableRewards } = useAllClaimableRewards(
-  //   [walletChain],
-  //   position.address
-  // );
-  // console.log(
-  //   '🚀 ~ allClaimableRewards:',
-  //   position.address,
-  //   allClaimableRewards
-  // );
   return (
     <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2  gap-x-1 lg:grid  grid-cols-5  py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
+      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2 gap-x-1 lg:grid grid-cols-6 py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
       key={`position-${position.address}`}
     >
       <div className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}>
@@ -881,6 +875,12 @@ const LoopRow = ({
 
         {(Math.ceil(positionLeverage ? positionLeverage : 0) - 1).toFixed(1)}
       </h3>
+
+      <LoopRewards
+        positionAddress={position.address}
+        poolChainId={chain}
+        className="items-center justify-center"
+      />
 
       <h3 className={`mb-2 lg:mb-0`}>
         <button

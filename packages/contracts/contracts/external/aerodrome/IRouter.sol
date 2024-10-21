@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
-interface IERC20 {
+interface IERC20_Router {
   /**
    * @dev Emitted when `value` tokens are moved from one account (`from`) to
    * another (`to`).
@@ -75,13 +75,13 @@ interface IERC20 {
   function transferFrom(address from, address to, uint256 amount) external returns (bool);
 }
 
-interface IWETH is IERC20 {
+interface IWETH is IERC20_Router {
   function deposit() external payable;
 
   function withdraw(uint256) external;
 }
 
-interface IRouter {
+interface IRouter_Aerodrome {
   struct Route {
     address from;
     address to;
