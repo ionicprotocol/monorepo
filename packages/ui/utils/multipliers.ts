@@ -129,7 +129,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WBTC: {
@@ -148,7 +149,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WETH: {

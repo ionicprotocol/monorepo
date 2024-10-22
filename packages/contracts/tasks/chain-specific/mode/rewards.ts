@@ -6,7 +6,9 @@ import {
   MBTC_MARKET,
   MODE_NATIVE_MARKET,
   USDC_NATIVE_MARKET,
+  USDT_MARKET,
   USDT_NATIVE_MARKET,
+  wBTC_MARKET,
   WEETH_MARKET,
   WETH_NATIVE_MARKET,
   wrsETH_MARKET
@@ -138,7 +140,7 @@ task("mode:add-rewards:epoch4:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = ezETH_MARKET;
+    const market = USDT_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
