@@ -2,8 +2,14 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
+
 import { useChainId } from 'wagmi';
 
+import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
+import FlatMap from '@ui/app/_components/points_comp/FlatMap';
+import Toggle from '@ui/app/_components/Toggle';
+import InfoPopover from '@ui/app/_components/veion/InfoPopover';
+import VeionRow from '@ui/app/_components/veion/VeionRow';
 import {
   Card,
   CardHeader,
@@ -17,13 +23,7 @@ import {
   TableRow,
   TableCell
 } from '@ui/components/ui/table';
-
-import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
-import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import Toggle from '@ui/app/_components/Toggle';
-import VeionRow from '@ui/app/_components/veion/VeionRow';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
-import InfoPopover from '@ui/app/_components/veion/InfoPopover';
 
 export default function Governance() {
   const searchParams = useSearchParams();

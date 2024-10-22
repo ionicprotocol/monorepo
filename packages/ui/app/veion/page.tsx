@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 
+import { ExternalLink } from 'lucide-react';
+
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 import { Dialog, DialogTrigger } from '@ui/components/ui/dialog';
@@ -19,14 +21,21 @@ export default function VeIon() {
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
       />
-      <CardHeader className="xl:text-xl text-2xl font-semibold space-y-2 p-0">
+      <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
         <img
-          className="size-10"
+          className="size-16"
           src="/img/assets/db.png"
           alt="down-right--v1"
         />
-        <div className="flex items-center gap-1">
-          Participate in <span className="text-accent">Emission</span>
+        <div className="flex items-center gap-1 text-2xl">
+          Participate in{' '}
+          <span className="text-accent flex items-center">
+            Emissions{' '}
+            <ExternalLink
+              className="ml-1"
+              size={24}
+            />
+          </span>
         </div>
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">

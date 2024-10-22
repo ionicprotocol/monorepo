@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
+import Link from 'next/link';
+
 import { Button } from '@ui/components/ui/button';
 import { TableRow, TableCell } from '@ui/components/ui/table';
+
 import ExtendVeion from './ExtendVeion';
 import ManagePopup from './ManagePopup';
 import VeionClaim from './VeionClaim';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 type VeionRowData = {
   id: string;
@@ -29,7 +31,7 @@ type VeionRowData = {
 
 interface VeionRowProps {
   data: VeionRowData;
-  viewType: 'MyVeion' | 'Delegate veION';
+  viewType: 'Delegate veION' | 'MyVeion';
 }
 
 export default function VeionRow({ data, viewType }: VeionRowProps) {
