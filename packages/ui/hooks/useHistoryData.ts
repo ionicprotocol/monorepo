@@ -1,16 +1,19 @@
+import { useMemo } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+import { APY, PRICE, TVL } from '@ui/constants/index';
+import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+
+import type { Address } from 'viem';
+
 import type {
   AssetPrice,
   AssetTotalApy,
   AssetTvl,
   ChartData
 } from '@ionicprotocol/types';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { useMemo } from 'react';
-import { Address } from 'viem';
-
-import { APY, PRICE, TVL } from '@ui/constants/index';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 
 export function useHistoryData(
   mode: string,

@@ -1,10 +1,12 @@
-import type { Roles } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import { useSdk } from '../ionic/useSdk';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { Address } from 'viem';
+
+import type { Roles } from '@ionicprotocol/types';
 
 export const useIsAuth = (
   pool?: Address,

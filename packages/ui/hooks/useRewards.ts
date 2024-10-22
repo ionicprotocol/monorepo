@@ -1,17 +1,17 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
-import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type Address, formatUnits } from 'viem';
 
-// import type { RewardsResponse } from '../pages/api/rewards';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RewardsResponse = any;
-
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
+import type { FlywheelReward, Reward } from '@ionicprotocol/types';
+// import type { RewardsResponse } from '../pages/api/rewards';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RewardsResponse = any;
 
 interface UseRewardsProps {
   chainId: number;
@@ -124,7 +124,7 @@ export const fetchRewards = async (
             ) {
               allRewards.push({
                 apy: info.formattedAPR
-                  ? parseFloat(formatUnits(info.formattedAPR, 18))
+                  ? Number.parseFloat(formatUnits(info.formattedAPR, 18))
                   : undefined,
                 flywheel: info.flywheel,
                 token: info.rewardToken,
@@ -174,7 +174,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     },
 
     enabled: !!poolData && !!flywheelRewards,
-    staleTime: Infinity
+    staleTime: Number.POSITIVE_INFINITY
   });
 }
 
@@ -206,6 +206,6 @@ export function useRewardsForMarket({
     },
 
     enabled: !!asset && !!poolAddress,
-    staleTime: Infinity
+    staleTime: Number.POSITIVE_INFINITY
   });
 }

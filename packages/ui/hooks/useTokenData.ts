@@ -1,12 +1,16 @@
-import type { SupportedChains } from '@ionicprotocol/types';
+import { useMemo } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useMemo } from 'react';
-import { Address, getAddress } from 'viem';
+import { getAddress } from 'viem';
 
 import { config } from '@ui/config/index';
 import type { TokenData } from '@ui/types/ComponentPropsType';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
+
+import type { Address } from 'viem';
+
+import type { SupportedChains } from '@ionicprotocol/types';
 
 export const fetchTokenData = async (
   addresses: Address[],

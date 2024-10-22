@@ -1,8 +1,8 @@
-import type { LeveredCollateral } from '@ionicprotocol/types';
-
 import { useRewardsForPositions } from '@ui/hooks/leverage/usePositionsRewards';
 import { usePositionsTotalSupplyApy } from '@ui/hooks/leverage/usePositionsTotalSupplyApy';
 import { useAssets } from '@ui/hooks/useAssets';
+
+import type { LeveredCollateral } from '@ionicprotocol/types';
 
 export function usePositionsSupplyApy(
   collaterals: LeveredCollateral[],
