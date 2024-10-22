@@ -182,7 +182,8 @@ export const multipliers: Record<
           underlyingAPR: 3.25,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       sUSDe: {
@@ -283,7 +284,8 @@ export const multipliers: Record<
           underlyingAPR: 3.63,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       }
     },
