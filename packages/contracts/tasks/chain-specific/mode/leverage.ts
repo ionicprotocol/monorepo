@@ -46,3 +46,23 @@ task("mode:leverage:configure-pairs", "Configure leverage pairs").setAction(
     await configureLeveredPairs({ viem, deployments, deployer: deployer as Address, leveredPairs });
   }
 );
+
+task("mode:leverage:set-positions-extension", "Set positions extension").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const position = "0x050b390d4970dF426D252614374B2D8A756b6Cc5";
+    const factory = await viem.getContractAt(
+      "ILeveredPositionFactory",
+      (await deployments.get("LeveredPositionFactory")).address as Address
+    );
+    await prepareAndLogTransaction({
+      contractInstance: factory,
+      functionName: "_setPositionsExtension",
+      args: ["0x93ff897b", position],
+      description: `Set positions extension for ${position} to ${factory.address}`,
+      inputs: [
+        { internalType: "bytes4", name: "selector", type: "bytes4" },
+        { internalType: "address", name: "extension", type: "address" }
+      ]
+    });
+  }
+);

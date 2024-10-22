@@ -31,7 +31,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     from: deployer,
     log: true,
     args: [fuseFeeDistributor.address, liquidatorsRegistry.address, chainDeployParams.blocksPerYear],
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
 
   if (lpfDep.transactionHash) await publicClient.waitForTransactionReceipt({ hash: lpfDep.transactionHash as Hash });
@@ -220,8 +221,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
           }
         },
         proxyContract: "OpenZeppelinTransparentProxy",
-        owner: multisig
-      }
+        owner: multisig ?? deployer
+      },
+      skipIfAlreadyDeployed: true
     });
     if (lpLens.transactionHash) await publicClient.waitForTransactionReceipt({ hash: lpLens.transactionHash as Hash });
     console.log("LeveredPositionsLens: ", lpLens.address);

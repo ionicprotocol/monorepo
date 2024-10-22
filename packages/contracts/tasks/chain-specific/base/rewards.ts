@@ -388,11 +388,11 @@ task("base:add-rewards:epoch4:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = weETH_MARKET;
+    const market = USDz_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
-    const rewardAmount = (25_000).toString();
+    const rewardAmount = (35_000).toString();
 
     console.log("setting rewards for token: ", name, rewardAmount);
     await new Promise((resolve) => setTimeout(resolve, 4000));
@@ -421,5 +421,23 @@ task("base:add-rewards:epoch4:supply", "add rewards to a market").setAction(
       "IonicFlywheel_ION_epoch4",
       "IonicFlywheelDynamicRewards_ION_epoch4"
     );
+  }
+);
+
+task("base:approve-flywheel", "approve flywheel for market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const markets: Address[] = [hyUSD_MARKET, RSR_MARKET, wusdm_MARKET, wusdPlus_MARKET, USDz_MARKET];
+    const rewardToken = ION;
+
+    const fwRewards = await deployments.get("IonicFlywheelDynamicRewards_ION_epoch4");
+
+    for (const market of markets) {
+      const _market = await viem.getContractAt("CErc20RewardsDelegate", market);
+      const tx = await _market.write.approve([rewardToken as Address, fwRewards.address as Address]);
+      console.log(
+        `Approved flywheel ${fwRewards.address} to pull reward token ${rewardToken} from market ${market}: ${tx}`
+      );
+    }
   }
 );
