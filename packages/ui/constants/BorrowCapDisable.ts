@@ -4,9 +4,9 @@ import { base, mode } from 'viem/chains';
 
 export const disableBorrowRepay: Record<number, Record<string, string[]>> = {
   [mode.id]: {
-    '0': ['weETH', 'ezETH', 'dMBTC']
+    '0': []
   },
   [base.id]: {
-    '0': ['OGN', 'wsuperOETHb', 'wUSD+', 'ezETH']
+    '0': []
   }
 };

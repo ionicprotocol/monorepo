@@ -41,6 +41,9 @@ export default function XION() {
   const chain = querychain ?? String(chainId);
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const [destinationAddress, setDestinationAddress] = useState<
+    Address | undefined
+  >(address);
   const { data: sourceLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+chain),
@@ -269,6 +272,16 @@ export default function XION() {
             />
           </div>
         </div>
+        <div className="mb-4">
+          <p className="text-xs text-white/50 mb-1">TO ADDRESS</p>
+          <input
+            type="text"
+            value={destinationAddress}
+            onChange={(e) => setDestinationAddress(e.target.value as Address)}
+            placeholder="Enter address"
+            className="text-sm w-full bg-gray-800 text-white border border-gray-700 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" />
         <Quote
           chain={+chain}
@@ -276,7 +289,7 @@ export default function XION() {
           args={{
             amount: parseUnits(deposit, 18),
             destinationChain: Number(toChain),
-            toAddress: address!,
+            toAddress: destinationAddress!,
             token: getToken(+chain)
           }}
         />
@@ -303,7 +316,7 @@ export default function XION() {
               bridging({
                 token: getToken(+chain),
                 amount: parseUnits(deposit, 18),
-                toAddress: address!,
+                toAddress: destinationAddress!,
                 destinationChain: Number(toChain),
                 nativeEth: nativeEth
               })

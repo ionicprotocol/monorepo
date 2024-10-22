@@ -306,7 +306,7 @@ export class IonicBase {
       }
     }
     if (irmModel === null) {
-      throw Error("InterestRateModel not found");
+      return new JumpRateModel();
     }
     return irmModel;
   }

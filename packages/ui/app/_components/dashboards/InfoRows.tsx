@@ -64,6 +64,11 @@ const InfoRows = ({
       ),
     [selectedChain, rewards]
   );
+  const totalSupplyRewardsAPR = useMemo(
+    () =>
+      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
+    [supplyRewards]
+  );
 
   const borrowRewards = useMemo(
     () =>
@@ -79,6 +84,10 @@ const InfoRows = ({
       borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
     [borrowRewards]
   );
+  const totalApr =
+    mode === InfoMode.BORROW
+      ? 0 - Number(apr) + totalBorrowRewardsAPR
+      : Number(apr) + totalSupplyRewardsAPR;
 
   return (
     <div
@@ -123,7 +132,15 @@ const InfoRows = ({
         <div
           className={` mb-2 popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer`}
         >
-          {apr}
+          {mode === InfoMode.SUPPLY
+            ? totalApr.toLocaleString('en-US', {
+                maximumFractionDigits: 2
+              })
+            : (totalApr > 0 ? '+' : '') +
+              totalApr.toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}
+          %
           {mode === InfoMode.SUPPLY ? (
             <>
               <SupplyPopover
