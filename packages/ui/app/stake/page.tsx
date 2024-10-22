@@ -13,7 +13,7 @@ import {
   parseEther,
   parseUnits
 } from 'viem';
-import { base, mode } from 'viem/chains';
+import { base, mode, optimism } from 'viem/chains';
 import {
   useAccount,
   useBalance,
@@ -24,12 +24,6 @@ import {
 } from 'wagmi';
 
 // import NetworkSelector from '../_components/markets/NetworkSelector';
-const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
-  {
-    ssr: false
-  }
-);
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
@@ -59,6 +53,13 @@ import Toggle from '../_components/Toggle';
 //   useIonPrice,
 //   useModePrice
 // } from '@ui/hooks/useDexScreenerPrices';
+
+const NetworkSelector = dynamic(
+  () => import('../_components/markets/NetworkSelector'),
+  {
+    ssr: false
+  }
+);
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false
@@ -139,15 +140,13 @@ export default function Stake() {
       enabled: true,
       notifyOnChangeProps: ['data', 'error'],
       placeholderData: [0n, 0n]
-      // refetchInterval: 5000
     }
   });
-  // console.log(reserves);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function calculateReserves(ion: string, data: [bigint, bigint]) {
     if (ion && data) {
-      const ethVal = (parseUnits(maxDeposit?.ion, 18) * data[1]) / data[0];
+      const ethVal = (parseUnits(ion, 18) * data[1]) / data[0];
       return formatEther(ethVal);
     } else {
       return '0';
@@ -155,25 +154,31 @@ export default function Stake() {
   }
 
   useMemo(() => {
-    const data = (reserves?.data as [bigint, bigint]) ?? [0n, 0n];
-    // console.log(data, reserves.data);
+    let data: [bigint, bigint] = [0n, 0n];
 
-    if (
-      reserves.status === 'success' &&
-      data[0] > 0n &&
-      (maxDeposit.ion ?? '0')
-    ) {
-      const deposits = calculateReserves(
-        maxDeposit.ion,
-        data as [bigint, bigint]
-      );
+    if (reserves.status === 'success' && reserves.data) {
+      const resData = reserves.data as
+        | [bigint, bigint, bigint]
+        | [bigint, bigint];
+
+      if (chain === '10') {
+        // For Optimism, reserves are [WETH, ION], so we swap them
+        data = [resData[1], resData[0]] as [bigint, bigint];
+      } else {
+        // For other chains, reserves are already in [ION, ETH] order
+        data = resData as [bigint, bigint];
+      }
+    }
+
+    if (data[0] > 0n && (maxDeposit.ion ?? '0')) {
+      const deposits = calculateReserves(maxDeposit.ion, data);
       setMaxDeposit((p) => ({ ...p, eth: deposits }));
     } else {
       setMaxDeposit((p) => ({ ...p, eth: '' }));
       console.warn('Error while fetching Reserves or insert ionAmount');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maxDeposit.ion, reserves.status, reserves?.data]);
+  }, [reserves.status, reserves.data, maxDeposit.ion, chain]);
 
   const allStakedAmount = useReadContract({
     abi: StakingContractAbi,
@@ -563,12 +568,12 @@ export default function Stake() {
 
   const tokenArrOfChain: Record<number, string[]> = {
     34443: ['eth', 'weth', 'mode'],
-    8453: ['eth', 'weth']
+    8453: ['eth', 'weth'],
+    10: ['eth']
   };
 
-  // console.log(tokenArrOfChain[+chain]);
   return (
-    <main className={``}>
+    <main>
       <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
         <Widget
           close={() => setWidgetPopup(false)}
@@ -583,44 +588,39 @@ export default function Stake() {
           selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
         />
 
-        <div
-          className={`md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4`}
-        >
-          <div
-            className={`bg-grayone md:col-span-2 flex flex-col items-center justify-center py-4 md:px-8 px-4 rounded-xl gap-y-3  md:col-start-1 md:row-start-1 `}
-          >
-            <div className={`flex w-full items-center   justify-between`}>
-              <h1 className={` md:text-lg text-md `}>
+        <div className="md:w-[65%] w-[90%] lg:w-[50%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-grayone md:col-span-2 flex flex-col items-center justify-center py-4 md:px-8 px-4 rounded-xl gap-y-3 md:col-start-1 md:row-start-1">
+            <div className="flex w-full items-center justify-between">
+              <h1 className="md:text-lg text-md">
                 Step 1. Buy
                 <img
                   alt="ion logo"
-                  className={`w-6 h-6 inline-block mx-1`}
+                  className="w-6 h-6 inline-block mx-1"
                   src="/img/symbols/32/color/ion.png"
                 />
                 ION Tokens
               </h1>
-              <div className={` xl:w-[30%] w-[40%]`}>
+              <div>
                 <NetworkSelector
                   dropdownSelectedChain={+chain}
                   nopool={true}
-                  enabledChains={[mode.id, base.id]}
+                  enabledChains={[mode.id, base.id, optimism.id]}
                 />
               </div>
             </div>
             <button
-              className={` py-1.5 text-sm ${chain && pools[+chain].text} w-full ${(chain && pools[+chain].accentbg) ?? pools[mode.id].accentbg} rounded-md`}
+              type="button"
+              className={`py-1.5 text-sm ${chain && pools[+chain].text} w-full ${
+                (chain && pools[+chain].accentbg) ?? pools[mode.id].accentbg
+              } rounded-md`}
               onClick={() => setWidgetPopup(true)}
             >
               Buy ION Tokens
             </button>
           </div>
-          <div
-            className={`w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2 `}
-          >
-            <h1 className={` md:text-lg text-md`}>
-              Step 2. LP Your ION Tokens
-            </h1>
-            <div className={`my-3`}>
+          <div className="w-full min-h-max bg-grayone px-4 rounded-xl py-2 md:col-start-1 md:col-span-1 md:row-start-2">
+            <h1 className="md:text-lg text-md">Step 2. LP Your ION Tokens</h1>
+            <div className="my-3">
               <Toggle setActiveToggle={setstep2Toggle} />
             </div>
             {step2Toggle === 'Deposit' && (
@@ -665,14 +665,7 @@ export default function Stake() {
                   }
                   chain={+chain}
                 />
-                {/* <MaxDeposit
-                  headerText={step2Toggle}
-                  amount={maxWithdrawl.eth}
-                  tokenName={'eth'}
-                  token={'0x0000000000000000000000000000000000000000'}
-                  // max="0"
-                /> */}
-                <div className={`my-6 w-[95%] mx-auto  `}>
+                <div className="my-6 w-[95%] mx-auto">
                   <SliderComponent
                     currentUtilizationPercentage={Number(
                       utilization.toFixed(0)
@@ -682,10 +675,7 @@ export default function Stake() {
                       const ionval =
                         (Number(val) / 100) *
                         Number(
-                          formatEther(
-                            withdrawalMaxToken?.value as bigint
-                            // withdrawalMaxToken?.decimals as number
-                          )
+                          formatEther(withdrawalMaxToken?.value as bigint)
                         );
                       setMaxWithdrawl((p) => {
                         return { ...p, ion: ionval.toString() || '' };
@@ -696,8 +686,6 @@ export default function Stake() {
               </>
             )}
 
-            {/* liner */}
-
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
 
             <button
@@ -706,11 +694,9 @@ export default function Stake() {
                   (maxDeposit.ion === '' || maxDeposit.ion === '0')) ||
                 (step2Toggle === 'Withdraw' &&
                   (maxWithdrawl.ion === '' || maxWithdrawl.ion === '0'))
-                  ? true
-                  : false
               }
-              className={`flex items-center justify-center  py-1.5 mt-8 mb-2 text-sm disabled:opacity-80 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
-                step2Toggle === 'Withdraw' && 'bg-red-500  text-white'
+              className={`flex items-center justify-center py-1.5 mt-8 mb-2 text-sm disabled:opacity-80 ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+                step2Toggle === 'Withdraw' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
                 step2Toggle === 'Deposit' && addLiquidity();
@@ -729,7 +715,7 @@ export default function Stake() {
                   <>
                     <img
                       alt="lock--v1"
-                      className={`w-4 h-4 inline-block mx-2`}
+                      className="w-4 h-4 inline-block mx-2"
                       src={`https://img.icons8.com/${+chain === mode.id ? '000000' : 'ffffff'}/ios/50/lock--v1.png`}
                     />
                     Provide Liquidity
@@ -739,16 +725,8 @@ export default function Stake() {
             </button>
           </div>
 
-          <div
-            className={`w-full h-min bg-grayone px-4 rounded-xl py-2 md:row-start-3 row-start-4 md:col-start-1 md:col-span-1`}
-          >
-            <h1 className={` md:text-lg text-md `}>Claim Your Rewards </h1>
-            {/* 
-            <MaxDeposit
-              tokenName={'ion/eth'}
-              token={'0xC6A394952c097004F83d2dfB61715d245A38735a'}
-              fetchOwn={true}
-            /> */}
+          <div className="w-full h-min bg-grayone px-4 rounded-xl py-2 md:row-start-3 row-start-4 md:col-start-1 md:col-span-1">
+            <h1 className="md:text-lg text-md">Claim Your Rewards</h1>
             <button
               className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
               onClick={() => setRewardPopup(true)}
@@ -756,17 +734,14 @@ export default function Stake() {
               Claim Rewards
             </button>
           </div>
-          <div
-            className={`w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2 flex flex-col`}
-          >
-            <h1 className={` md:text-lg text-md`}>Step 3. Stake Your LP</h1>
-            <div className={`my-3`}>
+          <div className="w-full h-full bg-grayone px-4 rounded-xl py-2 md:col-start-2 md:row-start-2 md:row-span-2 flex flex-col">
+            <h1 className="md:text-lg text-md">Step 3. Stake Your LP</h1>
+            <div className="my-3">
               <Toggle
                 setActiveToggle={setstep3Toggle}
                 arrText={['Stake', 'Unstake']}
               />
             </div>
-            {/* <h1 className={`text-[12px] text-white/40 mt-2`}> Stake </h1> */}
             {step3Toggle === 'Stake' && (
               <MaxDeposit
                 headerText={step3Toggle}
@@ -796,7 +771,7 @@ export default function Stake() {
             )}
 
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 my-5" />
-            <h1 className={`text-end text-[11px] text-white/40 mt-2`}>
+            <h1 className="text-end text-[11px] text-white/40 mt-2">
               Total Staked :{' '}
               {Number(
                 allStakedAmount.status === 'success'
@@ -807,11 +782,10 @@ export default function Stake() {
               })}{' '}
               ION/{selectedtoken.toUpperCase()}
             </h1>
-            <h1 className={` mt-1`}>
+            <h1 className="mt-1">
               You will {step3Toggle === 'Unstake' && 'not'} get{' '}
               {+chain === mode.id ? '$VELO' : +chain === base.id ? '$AERO' : ''}
             </h1>
-            {/* this will get repeated */}
             {+chain === mode.id && (
               <ModeBreakdown
                 step3Toggle={step3Toggle}
@@ -819,16 +793,14 @@ export default function Stake() {
               />
             )}
             {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
-            <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto " />
+            <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto" />
             <button
               disabled={
                 (step3Toggle === 'Stake' && (maxLp === '' || maxLp === '0')) ||
                 (step3Toggle === 'Unstake' &&
                   (maxUnstake === '' || maxUnstake === '0'))
-                  ? true
-                  : false
               }
-              className={`flex disabled:opacity-80   items-center justify-center  py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
+              className={`flex disabled:opacity-80 items-center justify-center py-1.5 mt-7 mb-3 text-sm ${pools[+chain].text} w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} ${
                 step3Toggle === 'Unstake' && 'bg-red-500 text-white'
               } rounded-md`}
               onClick={() => {
@@ -846,7 +818,6 @@ export default function Stake() {
               </ResultHandler>
             </button>
           </div>
-          {/* this will get repeated */}
         </div>
       </div>
     </main>
