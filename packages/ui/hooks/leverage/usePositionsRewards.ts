@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import { type Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { UseRewardsData } from '@ui/hooks/useRewards';
@@ -37,16 +37,12 @@ export function useFlywheelRewardsForPositions(
       return null;
     },
 
-    gcTime: Infinity,
-
     enabled:
       !!pools &&
       !!chainIds &&
       pools.length > 0 &&
       chainIds.length > 0 &&
-      pools.length === chainIds.length,
-
-    staleTime: Infinity
+      pools.length === chainIds.length
   });
 }
 
@@ -88,7 +84,6 @@ export function useRewardsForPositions(
       return {};
     },
 
-    enabled: !!assets && !!pools && !!chainIds,
-    staleTime: Infinity
+    enabled: !!assets && !!pools && !!chainIds
   });
 }

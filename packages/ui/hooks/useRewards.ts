@@ -3,7 +3,7 @@ import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/F
 import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Address, formatUnits } from 'viem';
+import { type Address, formatUnits } from 'viem';
 
 // import type { RewardsResponse } from '../pages/api/rewards';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +22,10 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: Address, sdk: IonicSdk) => {
+export const fetchFlywheelRewards = async (
+  comptroller: Address,
+  sdk: IonicSdk
+) => {
   let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
   let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
 

@@ -7,7 +7,13 @@ import millify from 'millify';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { type Address, formatEther, formatUnits, parseUnits } from 'viem';
+import {
+  type Address,
+  formatEther,
+  formatUnits,
+  maxUint256,
+  parseUnits
+} from 'viem';
 import { useChainId } from 'wagmi';
 
 import ResultHandler from '../ResultHandler';
@@ -190,20 +196,20 @@ const Popup = ({
 
   const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
   const {
-    data: predictedHealthFactor,
+    data: _predictedHealthFactor,
     isLoading: isLoadingPredictedHealthFactor
   } = useHealthFactorPrediction(
     comptrollerAddress,
     address ?? ('' as Address),
     selectedMarketData.cToken,
     active === PopupMode.WITHDRAW
-      ? amountAsBInt
+      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals),
     active === PopupMode.BORROW
       ? amountAsBInt
       : parseUnits('0', selectedMarketData.underlyingDecimals),
     active === PopupMode.REPAY
-      ? amountAsBInt
+      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals)
   );
 
@@ -269,10 +275,12 @@ const Popup = ({
           )
         ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
         supplyBalanceTo: updatedAsset
-          ? Number(
-              formatUnits(
-                updatedAsset.supplyBalance,
-                updatedAsset.underlyingDecimals
+          ? Math.abs(
+              Number(
+                formatUnits(
+                  updatedAsset.supplyBalance,
+                  updatedAsset.underlyingDecimals
+                )
               )
             ).toLocaleString('en-US', { maximumFractionDigits: 2 })
           : undefined,
@@ -306,9 +314,25 @@ const Popup = ({
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [loopOpen, setLoopOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
+  const predictedHealthFactor = useMemo<bigint | undefined>(() => {
+    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
+      return maxUint256;
+    }
+
+    return _predictedHealthFactor;
+  }, [_predictedHealthFactor, updatedAsset]);
+
   const hfpStatus = useMemo<HFPStatus>(() => {
     if (!predictedHealthFactor) {
       return HFPStatus.UNKNOWN;
+    }
+
+    if (predictedHealthFactor === maxUint256) {
+      return HFPStatus.NORMAL;
+    }
+
+    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
+      return HFPStatus.NORMAL;
     }
 
     const predictedHealthFactorNumber = Number(
@@ -324,7 +348,7 @@ const Popup = ({
     }
 
     return HFPStatus.NORMAL;
-  }, [predictedHealthFactor]);
+  }, [predictedHealthFactor, updatedAsset]);
   const queryClient = useQueryClient();
 
   /**
@@ -1147,6 +1171,22 @@ const Popup = ({
     }
   };
 
+  const normalizeHealthFactor = (
+    healthFactor: string | null | undefined
+  ): string | undefined =>
+    healthFactor
+      ? healthFactor === '-1'
+        ? '∞'
+        : Number(healthFactor).toFixed(2)
+      : undefined;
+
+  const normalizePredictedHealthFactor = (
+    predictedHealthFactor: bigint | null | undefined
+  ): string | undefined =>
+    predictedHealthFactor === maxUint256
+      ? '∞'
+      : Number(formatEther(predictedHealthFactor ?? 0n)).toFixed(2);
+
   return (
     <>
       <div
@@ -1191,6 +1231,7 @@ const Popup = ({
             }
             mode={mode}
             setActive={setActive}
+            borrowPossible={borrowCap ? borrowCap?.totalBorrowCap > 1n : true}
           />
           {/* all the respective slides */}
 
@@ -1447,16 +1488,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${Number(healthFactor).toFixed(2)}`}
+                      {`${normalizeHealthFactor(healthFactor)}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {Number(
-                          formatEther(predictedHealthFactor ?? 0n)
-                        ).toFixed(2)}
+                        {normalizePredictedHealthFactor(predictedHealthFactor)}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1596,16 +1635,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${Number(healthFactor).toFixed(2)}`}
+                      {`${normalizeHealthFactor(healthFactor)}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {Number(
-                          formatEther(predictedHealthFactor ?? 0n)
-                        ).toFixed(2)}
+                        {normalizePredictedHealthFactor(predictedHealthFactor)}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1750,16 +1787,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${Number(healthFactor).toFixed(2)}`}
+                      {`${normalizeHealthFactor(healthFactor)}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {Number(
-                          formatEther(predictedHealthFactor ?? 0n)
-                        ).toFixed(2)}
+                        {normalizePredictedHealthFactor(predictedHealthFactor)}
                       </ResultHandler>
                     </span>
                   </div>

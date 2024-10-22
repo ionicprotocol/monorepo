@@ -1,5 +1,5 @@
 {
-  "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+  "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
   "abi": [
     {
       "anonymous": false,
@@ -128,95 +128,6 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardsDelta",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rewardsIndex",
-          "type": "uint256"
-        }
-      ],
-      "name": "AccrueRewards",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newStrategy",
-          "type": "address"
-        }
-      ],
-      "name": "AddStrategy",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "ClaimRewards",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newBooster",
-          "type": "address"
-        }
-      ],
-      "name": "FlywheelBoosterUpdate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newFlywheelRewards",
-          "type": "address"
-        }
-      ],
-      "name": "FlywheelRewardsUpdate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": false,
           "internalType": "uint8",
           "name": "version",
@@ -284,35 +195,43 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
+      "inputs": [],
+      "name": "NATIVE_TOKEN_USD_FEED",
+      "outputs": [
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "oldPerformanceFee",
-          "type": "uint256"
-        },
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "PYTH",
+      "outputs": [
         {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "newPerformanceFee",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "oldFeeRecipient",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "newFeeRecipient",
+          "internalType": "contract IPyth",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "UpdatedFeeSettings",
-      "type": "event"
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "USD_TOKEN",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [],
@@ -337,128 +256,12 @@
     {
       "inputs": [
         {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
+          "internalType": "contract ICErc20",
+          "name": "cToken",
           "type": "address"
         }
       ],
-      "name": "accrue",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "secondUser",
-          "type": "address"
-        }
-      ],
-      "name": "accrue",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "addMarketForRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "addStrategyForRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "allStrategies",
-      "outputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "claimRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "compAccrued",
+      "name": "getUnderlyingPrice",
       "outputs": [
         {
           "internalType": "uint256",
@@ -470,192 +273,26 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "feeRecipient",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "flywheelBooster",
-      "outputs": [
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
-          "name": "market",
+          "name": "pythAddress",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "borrower",
-          "type": "address"
-        }
-      ],
-      "name": "flywheelPreBorrowerAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "market",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "nativeTokenUsdFeed",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
-          "name": "supplier",
-          "type": "address"
-        }
-      ],
-      "name": "flywheelPreSupplierAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "market",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "src",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "dst",
-          "type": "address"
-        }
-      ],
-      "name": "flywheelPreTransferAction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "flywheelRewards",
-      "outputs": [
-        {
-          "internalType": "contract IFlywheelRewards",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getAllStrategies",
-      "outputs": [
-        {
-          "internalType": "contract ERC20[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "_rewardToken",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IFlywheelRewards",
-          "name": "_flywheelRewards",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "_flywheelBooster",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_owner",
+          "name": "usdToken",
           "type": "address"
         }
       ],
       "name": "initialize",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "isFlywheel",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "isRewardsDistributor",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "marketState",
-      "outputs": [
-        {
-          "internalType": "uint224",
-          "name": "",
-          "type": "uint224"
-        },
-        {
-          "internalType": "uint32",
-          "name": "",
-          "type": "uint32"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -685,8 +322,14 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "performanceFee",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "underlying",
+          "type": "address"
+        }
+      ],
+      "name": "price",
       "outputs": [
         {
           "internalType": "uint256",
@@ -695,6 +338,48 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "priceFeedIds",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pythAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "nativeTokenUsdFeed",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "usdToken",
+          "type": "address"
+        }
+      ],
+      "name": "reinitialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -705,84 +390,20 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "rewardToken",
-      "outputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "rewardsAccrued",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IFlywheelBooster",
-          "name": "newBooster",
-          "type": "address"
-        }
-      ],
-      "name": "setBooster",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IFlywheelRewards",
-          "name": "newFlywheelRewards",
-          "type": "address"
-        }
-      ],
-      "name": "setFlywheelRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        }
-      ],
-      "name": "strategyState",
-      "outputs": [
-        {
-          "internalType": "uint224",
-          "name": "index",
-          "type": "uint224"
+          "internalType": "address[]",
+          "name": "underlyings",
+          "type": "address[]"
         },
         {
-          "internalType": "uint32",
-          "name": "lastUpdatedTimestamp",
-          "type": "uint32"
+          "internalType": "bytes32[]",
+          "name": "feedIds",
+          "type": "bytes32[]"
         }
       ],
+      "name": "setPriceFeeds",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -796,48 +417,6 @@
       ],
       "name": "transferOwnership",
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_performanceFee",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_feeRecipient",
-          "type": "address"
-        }
-      ],
-      "name": "updateFeeSettings",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract ERC20",
-          "name": "strategy",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "userIndex",
-      "outputs": [
-        {
-          "internalType": "uint224",
-          "name": "",
-          "type": "uint224"
-        }
-      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -863,106 +442,92 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
+  "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
   "receipt": {
     "to": null,
     "from": "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-    "contractAddress": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
-    "transactionIndex": 101,
-    "gasUsed": "866912",
-    "logsBloom": "0x00000000000000000000000000000000400000000002000000800000000200000000000000000000000000100000000000000000100000000000000000000000000000000000000000000000020002000081000000000000000000000000000000000000020000000000000000000800000000800000000000000000000000400000000000000000000000000000000400000000000080000000000000c00000000000000000000000000000000400000000000000000000000000000000000000000020000000000000000000040000000000000400000000000000000420000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda",
-    "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
+    "contractAddress": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
+    "transactionIndex": 113,
+    "gasUsed": "840424",
+    "logsBloom": "0x00000000000000008000000000000000400000000000000000800000000200000000000000000000000000000000000000020000100000000020000000000000000000000000000000000000000002000001000000000000000000000000000000000000020000000100000000000800000000800000100000000000000000400000000000000000000000000000000000000000000080000000000000c00000000000000000000000000000000400000000000000000000000000000000000000000020000000000000008000040000000000000400000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90",
+    "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
     "logs": [
       {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+        "transactionIndex": 113,
+        "blockNumber": 21219863,
+        "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
+        "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x00000000000000000000000056a33fac656e88d9f364727eecc831a4b1e795f5"
+          "0x00000000000000000000000017a4df7081f1cd1370c70efecaffa11b5bf217b2"
         ],
         "data": "0x",
-        "logIndex": 410,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
+        "logIndex": 393,
+        "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90"
       },
       {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+        "transactionIndex": 113,
+        "blockNumber": 21219863,
+        "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
+        "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           "0x0000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7"
         ],
         "data": "0x",
-        "logIndex": 411,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
+        "logIndex": 394,
+        "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90"
       },
       {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+        "transactionIndex": 113,
+        "blockNumber": 21219863,
+        "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
+        "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7",
           "0x0000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7"
         ],
         "data": "0x",
-        "logIndex": 412,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
+        "logIndex": 395,
+        "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90"
       },
       {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
-        "topics": [
-          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-          "0x0000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7",
-          "0x0000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7"
-        ],
-        "data": "0x",
-        "logIndex": 413,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
-      },
-      {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+        "transactionIndex": 113,
+        "blockNumber": 21219863,
+        "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
+        "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
         "topics": [
           "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 414,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
+        "logIndex": 396,
+        "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90"
       },
       {
-        "transactionIndex": 101,
-        "blockNumber": 17853854,
-        "transactionHash": "0xa8a9e33e1e1c3ae943caab25e75ad1c3b09be9e1e6cdfb7cb62b259c436feaa2",
-        "address": "0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d",
+        "transactionIndex": 113,
+        "blockNumber": 21219863,
+        "transactionHash": "0x61c72cd9a117244e13f5881c3aa0c1a2f04f4cf31345bf154338e60a5eefcfb4",
+        "address": "0x32A5DA657D8DAae1F6B5df1CD400E058e80C1f62",
         "topics": [
           "0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f"
         ],
         "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004c21db52cca974df3dc019c92e52e522ce57156",
-        "logIndex": 415,
-        "blockHash": "0xab380f4a4c148c7ec52d4e7fb85973132a155f27f15d420c0a97244fca891dda"
+        "logIndex": 397,
+        "blockHash": "0xf663c1583cacc105b8b23ff7e5316121e1cdbdc5d593a0068917ba803d272f90"
       }
     ],
-    "blockNumber": 17853854,
-    "cumulativeGasUsed": "21254936",
+    "blockNumber": 21219863,
+    "cumulativeGasUsed": "28257351",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x56a33fac656E88d9F364727eEcc831A4b1E795F5",
+    "0x17a4dF7081F1cd1370C70eFeCaFfa11b5bf217b2",
     "0x04C21Db52CcA974dF3Dc019C92E52e522ce57156",
-    "0xf8c8765e000000000000000000000000ab36452dbac151be02b16ca17d8919826072f64a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e47b0ff7b5571047bb1a8b18c9444d25516e7f90000000000000000000000001155b614971f16758c92c4890ed338c9e3ede6b7"
+    "0xd26b3e6e0000000000000000000000008250f4af4b972684f7b336503e2d6dfedeb1487aff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913"
   ],
   "numDeployments": 1,
   "solcInputHash": "0e89febeebc7444140de8e67c9067d2c",
@@ -972,13 +537,12 @@
   "execute": {
     "methodName": "initialize",
     "args": [
-      "0xab36452dbac151be02b16ca17d8919826072f64a",
-      "0x0000000000000000000000000000000000000000",
-      "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9",
-      "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      "0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a",
+      "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
     ]
   },
-  "implementation": "0x56a33fac656E88d9F364727eEcc831A4b1E795F5",
+  "implementation": "0x17a4dF7081F1cd1370C70eFeCaFfa11b5bf217b2",
   "devdoc": {
     "details": "This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \"admin cannot fallback to proxy target\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.",
     "kind": "dev",
