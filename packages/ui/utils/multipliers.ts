@@ -803,6 +803,15 @@ export const multipliers: Record<
           ionAPR: false,
           flywheel: false
         }
+      },
+      SNX: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
