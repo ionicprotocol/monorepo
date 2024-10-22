@@ -3,9 +3,9 @@
 
 import Link from 'next/link';
 
-import GetveIon from '../_components/veion/GetveIonPopup';
-
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+
+import GetveIon from '../_components/veion/GetveIonPopup';
 
 export default function VeIon() {
   const {

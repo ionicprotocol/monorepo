@@ -2,10 +2,9 @@
 
 import { useState, useMemo } from 'react';
 
-import SliderComponent from '../popup/Slider';
-
 import AutoLock from './AutoLock';
 import LockDuration from './LockDuration';
+import SliderComponent from '../popup/Slider';
 
 interface Iprop {
   extendRef: any;

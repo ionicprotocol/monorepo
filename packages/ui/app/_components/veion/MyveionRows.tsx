@@ -2,12 +2,12 @@
 
 // import { useState } from 'react';
 
+import type { LockedData } from '@ui/constants/mock';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+
 import ExtendVeion from './ExtendVeion';
 import ManagePopup from './ManagePopup';
 import VeionClaim from './VeionClaim';
-
-import type { LockedData } from '@ui/constants/mock';
-import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 
 // import { useState } from 'react';
 

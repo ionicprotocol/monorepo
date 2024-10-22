@@ -4,27 +4,18 @@
 // import { Listbox, Transition } from '@headlessui/react';
 // import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-import { type FlywheelReward } from '@ionicprotocol/types';
-import dynamic from 'next/dynamic';
 // import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+
 import { type Address, formatEther, formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 // import Dropdown from '../_components/Dropdown';
 // import NetworkSelector from '../_components/markets/NetworkSelector';
-import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
-import PoolRows from '../_components/markets/PoolRows';
-import StakingTile from '../_components/markets/StakingTile';
-import TotalTvlTile from '../_components/markets/TotalTvlTile';
-import TvlTile from '../_components/markets/TvlTile';
-import type { PopupMode } from '../_components/popup/page';
-import Popup from '../_components/popup/page';
-import Swap from '../_components/popup/Swap';
-import ResultHandler from '../_components/ResultHandler';
-import { getAssetName } from '../util/utils';
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
 });
@@ -37,6 +28,20 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
+import PoolRows from '../_components/markets/PoolRows';
+import StakingTile from '../_components/markets/StakingTile';
+import TotalTvlTile from '../_components/markets/TotalTvlTile';
+import TvlTile from '../_components/markets/TvlTile';
+import Popup from '../_components/popup/page';
+import Swap from '../_components/popup/Swap';
+import ResultHandler from '../_components/ResultHandler';
+import { getAssetName } from '../util/utils';
+
+import type { PopupMode } from '../_components/popup/page';
+
+import { type FlywheelReward } from '@ionicprotocol/types';
 // import SwapWidget from '../_components/markets/SwapWidget';
 
 const NetworkSelector = dynamic(

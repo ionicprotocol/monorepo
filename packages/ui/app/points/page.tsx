@@ -1,16 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import millify from 'millify';
+import { useMemo, useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import { base, mode } from 'viem/chains';
 
-import FlatMap from '../_components/points_comp/FlatMap';
-import PercentMeter from '../_components/points_comp/PercentMeter';
-import ResultHandler from '../_components/ResultHandler';
+import millify from 'millify';
+import { base, mode } from 'viem/chains';
 
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import {
@@ -26,6 +24,10 @@ import {
   usePointsForSteerLp,
   usePointsForIonLpBase
 } from '@ui/hooks/usePointsQueries';
+
+import FlatMap from '../_components/points_comp/FlatMap';
+import PercentMeter from '../_components/points_comp/PercentMeter';
+import ResultHandler from '../_components/ResultHandler';
 
 const pools: { [key: number]: { [key: number]: string } } = {
   [mode.id]: {

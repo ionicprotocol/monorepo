@@ -1,12 +1,14 @@
 'use client';
 
-import { Options } from '@layerzerolabs/lz-v2-utilities';
 import { useEffect } from 'react';
-import { xErc20LayerZeroAbi } from 'sdk/src';
+
+import { Options } from '@layerzerolabs/lz-v2-utilities';
 import { formatEther, type Hex, type Address } from 'viem';
 import { useReadContract } from 'wagmi';
 
 import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+
+import { xErc20LayerZeroAbi } from '@ionicprotocol/sdk';
 
 export const lzOptions = Options.newOptions()
   .addExecutorLzReceiveOption(100_000, 0)

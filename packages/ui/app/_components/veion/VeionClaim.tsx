@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useAccount } from 'wagmi';
 
 import ProgressSteps from '../xION/ProgressSteps';

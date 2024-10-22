@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { votingData } from '@ui/constants/mock';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import InfoPopover from '@ui/app/_components/veion/InfoPopover';
 import VotingRows from '@ui/app/_components/veion/VotingRows';
+import { votingData } from '@ui/constants/mock';
 
 export default function Vote() {
   return (

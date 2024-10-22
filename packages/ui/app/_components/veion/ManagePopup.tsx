@@ -1,20 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import type { MutableRefObject } from 'react';
 import { useMemo, useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
 import { useChainId } from 'wagmi';
 
-import SliderComponent from '../popup/Slider';
-import MaxDeposit from '../stake/MaxDeposit';
-import Toggle from '../Toggle';
+import { getToken } from '@ui/utils/getStakingTokens';
 
 import AutoLock from './AutoLock';
 import InfoPopover from './InfoPopover';
 import LockDuration from './LockDuration';
-
-import { getToken } from '@ui/utils/getStakingTokens';
+import SliderComponent from '../popup/Slider';
+import MaxDeposit from '../stake/MaxDeposit';
+import Toggle from '../Toggle';
 
 interface IProp {
   isManageOpen: boolean;

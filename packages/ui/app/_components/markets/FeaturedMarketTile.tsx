@@ -2,17 +2,12 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
 
+import { useStore } from '@ui/store/Store';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import WrapEthSwaps from './WrapEthSwaps';
 import { PopupMode } from '../popup/page';
 import ResultHandler from '../ResultHandler';
-
-// import BorrowPopover from './BorrowPopover';
-// import SupplyPopover from './SupplyPopover';
-
-// import { pools } from '@ui/constants/index';
-import WrapEthSwaps from './WrapEthSwaps';
-
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { useStore } from '@ui/store/Store';
 
 interface Iprop {
   selectedChain: number;

@@ -2,9 +2,9 @@ import { formatEther } from 'viem';
 import { base } from 'viem/chains';
 import { useReadContract } from 'wagmi';
 
+import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useIonPrice, useAeroPrice } from '@ui/hooks/useDexScreenerPrices';
-import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
 
 type BaseBreakdownProps = {
   step3Toggle: string;

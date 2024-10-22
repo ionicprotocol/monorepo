@@ -2,10 +2,10 @@ import { formatEther } from 'viem';
 import { useReadContract } from 'wagmi';
 import { mode } from 'wagmi/chains';
 
+import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
+
 import { useAllUsdPrices } from './useAllUsdPrices';
 import { useIonPrice, useModePrice } from './useDexScreenerPrices';
-
-import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
 
 // interface IProps {
 //   selectedtoken: string;
