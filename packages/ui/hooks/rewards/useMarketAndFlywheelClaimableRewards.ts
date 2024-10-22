@@ -1,8 +1,10 @@
-import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import type { Address } from 'viem';
+
+import type { SupportedChains } from '@ionicprotocol/types';
 
 interface RewardsType {
   amount: bigint;

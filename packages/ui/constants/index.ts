@@ -1,8 +1,9 @@
-import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
 import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
+
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')

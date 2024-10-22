@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, formatEther, formatUnits } from 'viem';
+import { formatEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export function useRangeOfLeverageRatio(address?: Address, chainId?: number) {
   const sdk = useSdk(chainId);

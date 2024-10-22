@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-import EarnRows from '../_components/earn/EarnRows';
-
 import type { EarnRow } from '@ui/utils/earnUtils';
 import { earnOpps } from '@ui/utils/earnUtils';
+
+import EarnRows from '../_components/earn/EarnRows';
 
 export default function Earn() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);

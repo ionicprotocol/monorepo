@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useMemo, useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+
 import {
   erc20Abi,
   formatEther,
@@ -28,23 +30,9 @@ const NetworkSelector = dynamic(
     ssr: false
   }
 );
-import SliderComponent from '../_components/popup/Slider';
-import ResultHandler from '../_components/ResultHandler';
-import BaseBreakdown from '../_components/stake/BaseBreakdown';
-import ClaimRewards from '../_components/stake/ClaimRewards';
-import MaxDeposit from '../_components/stake/MaxDeposit';
-import ModeBreakdown from '../_components/stake/ModeBreakdown';
-import Toggle from '../_components/Toggle';
-
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
-// import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-// import {
-//   useAeroPrice,
-//   useIonPrice,
-//   useModePrice
-// } from '@ui/hooks/useDexScreenerPrices';
 import {
   getAvailableStakingToken,
   getPoolToken,
@@ -56,6 +44,21 @@ import {
   getToken
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import SliderComponent from '../_components/popup/Slider';
+import ResultHandler from '../_components/ResultHandler';
+import BaseBreakdown from '../_components/stake/BaseBreakdown';
+import ClaimRewards from '../_components/stake/ClaimRewards';
+import MaxDeposit from '../_components/stake/MaxDeposit';
+import ModeBreakdown from '../_components/stake/ModeBreakdown';
+import Toggle from '../_components/Toggle';
+
+// import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+// import {
+//   useAeroPrice,
+//   useIonPrice,
+//   useModePrice
+// } from '@ui/hooks/useDexScreenerPrices';
 
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false

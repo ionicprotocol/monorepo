@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, formatEther, maxUint256 } from 'viem';
+import { formatEther, maxUint256 } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+
+import type { Address } from 'viem';
 
 export const useHealthFactor = (pool?: Address, chainId?: number) => {
   const { address } = useMultiIonic();

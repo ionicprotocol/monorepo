@@ -1,20 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 // import { Gasbot } from '@gasbot/widget';
+import React, { useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+
 import { zeroAddress } from 'viem';
 import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
+import { useStore } from 'ui/store/Store';
+
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
 import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
 
-import { useStore } from 'ui/store/Store';
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
 const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
