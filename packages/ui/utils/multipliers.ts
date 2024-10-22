@@ -656,6 +656,15 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         }
+      },
+      uSOL: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
