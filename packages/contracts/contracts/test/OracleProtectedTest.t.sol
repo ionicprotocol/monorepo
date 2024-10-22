@@ -15,7 +15,7 @@ import { PoolDirectory } from "../PoolDirectory.sol";
 import { CErc20Delegate } from "../compound/CErc20Delegate.sol";
 import { InterestRateModel } from "../compound/InterestRateModel.sol";
 import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
-
+import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 contract MockOraclePasses is IHypernativeOracle {
   function isBlacklistedContext(address _account, address _origin) external pure returns (bool) {
     return false;
@@ -58,27 +58,12 @@ contract OracleProtectedTest is UpgradesBaseTest {
     oraclePasses = new MockOraclePasses();
     oracleFails = new MockOracleFails();
   }
-  // fork before the accrue interest refactoring
-  function test_setOracle_failsForNonAdmin(address user) public debuggingOnly forkAtBlock(BASE_MAINNET, 20538729) {
-    vm.assume(user != admin);
-    CTokenFirstExtension asExt = CTokenFirstExtension(address(market));
-    vm.prank(user);
-    vm.expectRevert(bytes("!admin"));
-    asExt.setOracle(address(oraclePasses));
-  }
-
-  function test_setOracle_worksForAdmin() public debuggingOnly forkAtBlock(BASE_MAINNET, 20538729) {
-    CTokenFirstExtension asExt = CTokenFirstExtension(address(market));
-    vm.prank(admin);
-    asExt.setOracle(address(oraclePasses));
-    assertEq(asExt.hypernativeOracle(), address(oraclePasses));
-  }
 
   function test_mint_failsForBlacklisted() public debuggingOnly forkAtBlock(BASE_MAINNET, 20538729) {
     CTokenFirstExtension asExt = CTokenFirstExtension(address(market));    
     // Set up the oracle
     vm.startPrank(admin);
-    asExt.setOracle(address(oracleFails));
+    ap.setAddress("HYPERNATIVE_ORACLE", address(oracleFails));
     vm.stopPrank();
     
     // Try to mint
@@ -95,7 +80,7 @@ contract OracleProtectedTest is UpgradesBaseTest {
 
     // Set up the oracle to pass
     vm.prank(admin);
-    asExt.setOracle(address(oraclePasses));
+    ap.setAddress("HYPERNATIVE_ORACLE", address(oraclePasses));
 
     vm.startPrank(user);
     market.mint(mintAmount);

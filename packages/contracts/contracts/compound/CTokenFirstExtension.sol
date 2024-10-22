@@ -10,20 +10,21 @@ import { Exponential } from "./Exponential.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { Multicall } from "../utils/Multicall.sol";
-import { OracleProtected } from "../security/OracleProtected.sol";
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
+import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
 contract CTokenFirstExtension is
-  OracleProtected,
   CErc20FirstExtensionBase,
   TokenErrorReporter,
   Exponential,
   DiamondExtension,
   Multicall
 {
+  error InteractionNotAllowed();
+
   modifier isAuthorized() {
     require(
       IFeeDistributor(ionicAdmin).canCall(address(comptroller), msg.sender, address(this), msg.sig),
@@ -32,8 +33,22 @@ contract CTokenFirstExtension is
     _;
   }
 
+  modifier onlyOracleApprovedAllowEOA() {
+    address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
+    if (oracleAddress == address(0)) {
+      _;
+      return;
+    }
+
+    IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
+    if (oracle.isBlacklistedAccount(msg.sender) || msg.sender != tx.origin) {
+      revert InteractionNotAllowed();
+    }
+    _;
+  }
+
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 27;
+    uint8 fnsCount = 25;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.transfer.selector;
     functionSelectors[--fnsCount] = this.transferFrom.selector;
@@ -60,8 +75,6 @@ contract CTokenFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountSnapshot.selector;
     functionSelectors[--fnsCount] = this.borrowBalanceCurrent.selector;
     functionSelectors[--fnsCount] = this.registerInSFS.selector;
-    functionSelectors[--fnsCount] = this.setOracle.selector;
-    functionSelectors[--fnsCount] = this.hypernativeOracle.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -151,7 +164,7 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized onlyOracleApproved returns (bool) {
+  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     return transferTokens(msg.sender, msg.sender, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -166,7 +179,7 @@ contract CTokenFirstExtension is
     address src,
     address dst,
     uint256 amount
-  ) public override nonReentrant(false) isAuthorized onlyOracleApproved returns (bool) {
+  ) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     return transferTokens(msg.sender, src, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -178,7 +191,7 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens that are approved (-1 means infinite)
    * @return Whether or not the approval succeeded
    */
-  function approve(address spender, uint256 amount) public override isAuthorized onlyOracleApproved returns (bool) {
+  function approve(address spender, uint256 amount) public override isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     address src = msg.sender;
     transferAllowances[src][spender] = amount;
     emit Approval(src, spender, amount);
@@ -233,7 +246,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new reserve factor
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -263,7 +276,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new admin fee
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {
@@ -317,7 +330,7 @@ contract CTokenFirstExtension is
    */
   function _setInterestRateModel(
     InterestRateModel newInterestRateModel
-  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  ) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);
@@ -642,7 +655,7 @@ contract CTokenFirstExtension is
     return balance;
   }
 
-  function flash(uint256 amount, bytes calldata data) public override isAuthorized onlyOracleApproved {
+  function flash(uint256 amount, bytes calldata data) public override isAuthorized onlyOracleApprovedAllowEOA {
     accrueInterest();
 
     totalBorrows += amount;
@@ -702,14 +715,5 @@ contract CTokenFirstExtension is
     require(hasAdminRights() || msg.sender == address(comptroller), "!admin");
     SFSRegister sfsContract = SFSRegister(0x8680CEaBcb9b56913c519c069Add6Bc3494B7020);
     return sfsContract.register(0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2);
-  }
-
-  function setOracle(address _oracle) external {
-    require(hasAdminRights(), "!admin");
-    _setOracle(_oracle);
-  }
-
-  function hypernativeOracle() external view returns (address) {
-    return _hypernativeOracle();
   }
 }
