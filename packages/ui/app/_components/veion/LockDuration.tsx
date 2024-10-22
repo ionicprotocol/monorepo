@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { format } from 'date-fns'; // to format dates
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
@@ -22,7 +22,7 @@ export default function DateSlider({ setLockDuration }: Iprops) {
   };
 
   const handleSliderChange = (event: { target: { value: string } }) => {
-    const value = parseInt(event.target.value, 10);
+    const value = Number.parseInt(event.target.value, 10);
     setCurrentValue(value);
     setLockDuration(format(currentDate, 'dd/mm/yyyy'));
   };
@@ -46,30 +46,26 @@ export default function DateSlider({ setLockDuration }: Iprops) {
       <p className="text-lg text-white/50 mb-4">
         {format(currentDate, 'dd/MM/yyyy')}
       </p>
-      <div className={`w-full  relative mb-2 text-xs text-white/25`}>
+      <div className="w-full relative mb-2 text-xs text-white/25">
         <span>180 Days</span>
-        <span className={`absolute left-[33%] -translate-x-full`}>
+        <span className="absolute left-[33%] -translate-x-full">
           {formatDistanceToNowStrict(dateIn365Days)}
         </span>
-        <span className={`absolute left-[66%] -translate-x-full`}>
-          1.5 Years
-        </span>
-        <span
-          className={`absolute left-[100%] inline-block w-max -translate-x-full`}
-        >
+        <span className="absolute left-[66%] -translate-x-full">1.5 Years</span>
+        <span className="absolute left-[100%] inline-block w-max -translate-x-full">
           {formatDistanceToNowStrict(dateIn2Years)}
         </span>
       </div>
-      <div className={`h-1 w-full rounded-full relative`}>
+      <div className="h-1 w-full rounded-full relative">
         <div
-          className={`h-full flex z-20 bg-accent relative rounded-l-full`}
+          className="h-full flex z-20 bg-accent relative rounded-l-full"
           style={{
             width: `${((currentValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`
           }}
         />
-        <div className={`w-full  absolute bg-graylite h-1 top-0 z-10`} />
+        <div className="w-full absolute bg-graylite h-1 top-0 z-10" />
         <div
-          className={`h-4 w-4 bg-accent rounded-full z-20 absolute -top-1.5 -translate-x-1/4`}
+          className="h-4 w-4 bg-accent rounded-full z-20 absolute -top-1.5 -translate-x-1/4"
           style={{
             left: `${((currentValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`
           }}

@@ -1,88 +1,133 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { Info } from 'lucide-react';
+
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import InfoPopover from '@ui/app/_components/veion/InfoPopover';
 import VotingRows from '@ui/app/_components/veion/VotingRows';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from '@ui/components/ui/card';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell
+} from '@ui/components/ui/table';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+} from '@ui/components/ui/tooltip';
 import { votingData } from '@ui/constants/mock';
 
-export default function Vote() {
+function InfoTooltip({ content }: { content: string }) {
   return (
-    <div className="w-full flex flex-col items-start py-4 gap-y-2 justify-start h-min bg-darkone ">
-      <div className="flex flex-col items-start justify-start w-full h-min rounded-md bg-grayone px-6 py-4 ">
-        <div className={`flex flex-col w-full`}>
-          <span className={`w-full font-semibold text-lg`}>Vote</span>
-          <div className={`flex items-c gap-4`}>
-            <div className="flex flex-col gap-1 mt-3">
-              <div className="text-white/60 text-xs">
-                Locked Value{' '}
-                <InfoPopover content="This is the amount of ION you have in your wallet." />
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Info className="w-4 h-4 ml-1 cursor-pointer" />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{content}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+export default function Vote() {
+  const infoBlocks = [
+    {
+      label: 'Locked Value',
+      value: '$7894',
+      infoContent: 'This is the amount of ION you have locked.',
+      icon: null
+    },
+    {
+      label: 'Locked Until',
+      value: '11 Jan 2026',
+      infoContent: 'This is the date until your ION is locked.',
+      icon: null
+    },
+    {
+      label: 'My Voting Power',
+      value: '5674 veION',
+      infoContent: 'This is your current voting power.',
+      icon: '/img/symbols/32/color/ion.png'
+    }
+  ];
+
+  return (
+    <div className="w-full flex flex-col items-start py-4 gap-y-2 bg-darkone">
+      {/* First Card */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Vote</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            {infoBlocks.map((block) => (
+              <div
+                key={block.label}
+                className="flex flex-col gap-1 mt-3"
+              >
+                <div className="text-white/60 text-xs flex items-center">
+                  {block.label}
+                  <InfoTooltip content={block.infoContent} />
+                </div>
+                <div className="text-white/60 text-xs flex items-center">
+                  {block.icon && (
+                    <img
+                      alt="icon"
+                      className="w-6 h-6 inline-block"
+                      src={block.icon}
+                    />
+                  )}
+                  <span className="text-white text-sm ml-1">{block.value}</span>
+                </div>
               </div>
-              <div className="text-white/60 text-xs flex items-center">
-                {/* <img
-                  alt="ion logo"
-                  className={`w-6 h-6 inline-block`}
-                  src="/img/symbols/32/color/ion.png"
-                /> */}
-                <span className="text-white text-sm ">$7894</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-1 mt-3">
-              <div className="text-white/60 text-xs">
-                Locked Until{' '}
-                <InfoPopover content="This is the amount of veION you have in your wallet." />
-              </div>
-              <div className="text-white/60 text-xs flex items-center">
-                {/* <img
-                  alt="ion logo"
-                  className={`w-6 h-6 inline-block`}
-                  src="/img/symbols/32/color/ion.png"
-                /> */}
-                <span className="text-white text-sm ">11Jan26</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-1 mt-3">
-              <div className="text-white/60 text-xs">
-                My Voting Power{' '}
-                <InfoPopover content="This is the amount of veION you have in your wallet." />
-              </div>
-              <div className="text-white/60 text-xs flex items-center">
-                <img
-                  alt="ion logo"
-                  className={`w-6 h-6 inline-block`}
-                  src="/img/symbols/32/color/ion.png"
-                />
-                <span className="text-white text-sm ">5674 veION</span>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="flex flex-col items-start justify-start w-full h-min rounded-md bg-grayone px-6 py-4 ">
-        <div className="flex">
-          <span className="text-xl"> Emissions Management</span>
-        </div>
-        <div className="my-3 w-full">
-          <FlatMap />
-        </div>
-        <div
-          className={`w-full gap-x-1 hidden md:grid  grid-cols-7 items-start py-4 text-[10px] text-white/40 font-semibold text-center px-2 `}
-        >
-          <h3 className={` col-span-1`}>ID</h3>
-          <h3 className={` col-span-1`}>NETWORK</h3>
-          <h3 className={` col-span-1`}>SUPPLY ASSET</h3>
-          <h3 className={` col-span-1`}>TOTAL VOOTES</h3>
-          <h3 className={` col-span-1`}>MY VOTES</h3>
-        </div>
-
-        {votingData.map((data, idx) => (
-          <VotingRows
-            key={idx}
-            {...data}
-          />
-        ))}
-      </div>
+      {/* Second Card */}
+      <Card className="w-full mt-4">
+        <CardHeader>
+          <CardTitle>Emissions Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="my-3 w-full">
+            <FlatMap />
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>NETWORK</TableCell>
+                <TableCell>SUPPLY ASSET</TableCell>
+                <TableCell>TOTAL VOTES</TableCell>
+                <TableCell>MY VOTES</TableCell>
+                <TableCell>VOTE</TableCell> {/* Added VOTE column */}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {votingData.map((data) => (
+                <VotingRows
+                  key={data.id}
+                  {...data}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

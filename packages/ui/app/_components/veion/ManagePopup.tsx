@@ -1,13 +1,20 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
-import type { MutableRefObject } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
 import { useChainId } from 'wagmi';
 
+import { Button } from '@ui/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@ui/components/ui/dialog';
+import { Input } from '@ui/components/ui/input';
+import { Separator } from '@ui/components/ui/separator';
 import { getToken } from '@ui/utils/getStakingTokens';
 
 import AutoLock from './AutoLock';
@@ -17,17 +24,15 @@ import SliderComponent from '../popup/Slider';
 import MaxDeposit from '../stake/MaxDeposit';
 import Toggle from '../Toggle';
 
-interface IProp {
-  isManageOpen: boolean;
-  toggleManage: () => void;
-  manageRef: MutableRefObject<never>;
+interface ManagePopupProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export default function ManagePopup({
-  isManageOpen,
-  toggleManage,
-  manageRef
-}: IProp) {
+  isOpen,
+  onOpenChange
+}: ManagePopupProps) {
   const toggleArr = [
     'Increase',
     'Extend',
@@ -36,9 +41,7 @@ export default function ManagePopup({
     'Split',
     'Transfer'
   ];
-
-  //temp
-  const maxtoken = '100'; //this will be change
+  const maxtoken = '100'; // This will change in future
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -62,68 +65,58 @@ export default function ManagePopup({
   );
 
   // eslint-disable-next-line no-console
-  console.log({ extendDuration, delegateAddress, transferAddress });
-  // const handleSliderChange = (index, value) => {
-  //   const updatedSplitValues = [...splitValues];
-  //   updatedSplitValues[index] = value;
-  //   setSplitValuesArr(updatedSplitValues);
-  // };
+  console.log(extendDuration, delegateAddress, transferAddress);
+
+  useEffect(() => {
+    setUtilization(
+      Number(((+increaseVeionAmount / Number(maxtoken)) * 100).toFixed(0)) || 0
+    );
+  }, [increaseVeionAmount]);
 
   const handleSubmit = () => {
     const result = splitValuesArr.map((value, index) => ({
-      veionTokenNumber: index + 1, // Token number, starting from 1
+      veionTokenNumber: index + 1,
       splitAmount: value
     }));
+
     // eslint-disable-next-line no-console
-    console.log(result); // You can replace this with your desired function
+    console.log(result);
   };
 
-  useMemo(() => {
-    setUtilization(
-      Number(((+increaseVeionAmount / Number(maxtoken)) * 100).toFixed(0)) ?? 0
-    );
-  }, [increaseVeionAmount]);
   return (
-    <div
-      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
-        isManageOpen ? 'flex' : 'hidden'
-      } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm `}
+    <Dialog
+      open={isOpen}
+      onOpenChange={onOpenChange}
     >
-      <div
-        ref={manageRef}
-        className="bg-grayone border border-graylite/60 py-4 px-6 rounded-md  md:w-[35%] w-[80%]  flex flex-col "
-      >
-        <div
-          className={`  mb-2 text-xl  flex items-center justify-between h-max relative`}
-        >
-          <span>Manage veIon #12</span>
-          <img
-            alt="close"
-            className={` h-5 cursor-pointer `}
-            onClick={() => toggleManage()}
-            src="/img/assets/close.png"
-          />
+      <DialogContent className="bg-grayone border border-grayUnselect sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Manage veION #12</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex gap-2 text-xs mb-3">
+          <span className="text-white/50">Voting Power: 20.00 veION</span>
+          <span className="text-white/50">Locked Until: 28 Aug 2023</span>
         </div>
-        <div className="flex gap-2 text-xs ">
-          <span className="text-white/50 ">Voting Power: 20.00 veION</span>
-          <span className="text-white/50 ">Locked Until: 28 Aug 2023I</span>
-        </div>
+
         <div className="bg-graylite rounded-md my-3">
           <Toggle
             setActiveToggle={(val) => setActiveManageToggle(val)}
             arrText={toggleArr}
           />
         </div>
-        {activeManageToggle == 'Increase' && (
+
+        {activeManageToggle === 'Increase' && (
           <div className="flex flex-col gap-y-2 py-2 px-3">
             <MaxDeposit
               headerText={'Lock Amount'}
-              max={maxtoken} //this will get changed in futur
+              max={maxtoken}
               amount={increaseVeionAmount}
               tokenName={'ion/eth LP'}
               token={getToken(+chain)}
               handleInput={(val?: string) => {
-                setIncreaseVeionAmount(val!);
+                if (val !== undefined) {
+                  setIncreaseVeionAmount(val);
+                }
               }}
               chain={+chain}
             />
@@ -131,139 +124,114 @@ export default function ManagePopup({
               currentUtilizationPercentage={utilization}
               handleUtilization={(val?: number) => {
                 if (!val) return;
-                const veionval =
-                  (Number(val) / 100) *
-                  Number(
-                    // formatEther(
-                    maxtoken
-                    // withdrawalMaxToken?.decimals as number
-                    // )
-                  );
+                const veionval = (Number(val) / 100) * Number(maxtoken);
                 setIncreaseVeionAmount(veionval.toString());
               }}
             />
-            <div
-              className={` flex w-full items-center justify-between text-xs text-white/50`}
-            >
-              <div className="">
+            <div className="flex w-full items-center justify-between text-xs text-white/50">
+              <div>
                 VOTING POWER{' '}
                 <InfoPopover content="Your voting power diminishes each day closer to the end of the token lock period." />
               </div>
               <p>0.00 veIon</p>
             </div>
-            <div
-              className={` flex w-full items-center justify-between text-xs text-white/50`}
-            >
-              <div className="">
+            <div className="flex w-full items-center justify-between text-xs text-white/50">
+              <div>
                 LOCKED BLP{' '}
-                <InfoPopover content="Info reguarding the locked BLP." />
+                <InfoPopover content="Info regarding the locked BLP." />
               </div>
               <p>67.90 veIon</p>
             </div>
-            <button
-              onClick={() => toggleManage()}
-              className="bg-accent py-1 text-sm text-black rounded-md  mt-4 "
-            >
+            <Button className="w-full bg-accent text-black mt-4">
               Increase Locked Amount
-            </button>
+            </Button>
           </div>
         )}
 
-        {activeManageToggle == 'Extend' && (
+        {activeManageToggle === 'Extend' && (
           <div className="flex flex-col gap-y-2 py-2 px-3">
             <LockDuration setLockDuration={setExtendDuration} />
             <AutoLock
               autoLock={autoLock}
               setAutoLock={setAutoLock}
             />
-            <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-5 mb-3" />
-            <div
-              className={` flex w-full items-center justify-between text-xs text-white/50`}
-            >
-              <div className="">
+            <Separator className="bg-white/10 my-5" />
+            <div className="flex w-full items-center justify-between text-xs text-white/50">
+              <div>
                 VOTING POWER{' '}
                 <InfoPopover content="Your voting power diminishes each day closer to the end of the token lock period." />
               </div>
               <p>0.00 veIon</p>
             </div>
-            <div
-              className={` flex w-full items-center justify-between text-xs text-white/50`}
-            >
-              <div className="">
+            <div className="flex w-full items-center justify-between text-xs text-white/50">
+              <div>
                 LOCKED Until{' '}
-                <InfoPopover content="Info reguarding the locked BLP." />
+                <InfoPopover content="Info regarding the locked BLP." />
               </div>
-              <p>28 Aug 2023{'->'} 28 Aug 2024</p>
+              <p>28 Aug 2023 &rarr; 28 Aug 2024</p>
             </div>
-            <button
-              onClick={() => toggleManage()}
-              className="bg-accent py-1 text-sm text-black rounded-md  mt-4 "
-            >
+            <Button className="w-full bg-accent text-black mt-4">
               Extend Lock
-            </button>
+            </Button>
           </div>
         )}
-        {activeManageToggle == 'Delegate' && (
+
+        {activeManageToggle === 'Delegate' && (
           <div className="flex flex-col gap-y-2 py-2 px-3">
             <p>Delegate Address</p>
-            <input
-              className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
-              placeholder={`0x...`}
-              type="string"
+            <Input
+              placeholder="0x..."
               onChange={(e) => setDelegateAddress(e.target.value)}
-              // disabled={handleInput ? false : true}
             />
-            <div className="border text-yellow-300 text-xs  items-center justify-center border-yellow-300 flex gap-3 rounded-md py-2 px-4 mt-2">
+            <div className="border text-yellow-300 text-xs flex gap-3 rounded-md py-2 px-4 mt-2 border-yellow-300">
               <img
                 alt="warn"
-                className={` h-5  `}
+                className="h-5"
                 src="/img/assets/warn.png"
               />
               <span>
                 You may delegate your voting power to any user, without
                 transferring the tokens. You may revoke it, but the user will
                 still be able to vote until the end of the current voting
-                period.{' '}
+                period.
               </span>
             </div>
-            <button className="bg-accent py-1 text-sm text-black rounded-md  mt-4 ">
+            <Button className="w-full bg-accent text-black mt-4">
               Delegate veION
-            </button>
+            </Button>
           </div>
         )}
-        {activeManageToggle == 'Merge' && (
-          <div>
+
+        {activeManageToggle === 'Merge' && (
+          <div className="flex flex-col gap-y-2 py-2 px-3">
             <p className="text-[10px] text-white/50">veION</p>
             <p>#10990</p>
             <p className="text-[10px] text-white/50 mt-3">Merge To</p>
           </div>
         )}
-        {activeManageToggle == 'Split' && (
-          <>
+
+        {activeManageToggle === 'Split' && (
+          <div className="flex flex-col gap-y-2 py-2 px-3">
             <p className="text-[10px] mb-2 text-white/50">SPLIT TO</p>
-            <div className="flex gap-2 text-sm ">
+            <div className="flex gap-2 text-sm">
               {[2, 3, 4].map((value) => (
-                <button
+                <Button
                   key={value}
+                  variant={splitTokenInto === value ? 'default' : 'secondary'}
                   onClick={() => setSplitTokenInto(value)}
-                  className={`px-4 py-1 rounded  
-                ${splitTokenInto === value ? 'bg-accent text-black' : 'bg-graylite'}
-                hover:bg-gray-600 focus:outline-none`}
                 >
                   {value} tokens
-                </button>
+                </Button>
               ))}
             </div>
             {Array.from({ length: splitTokenInto }).map((_, index) => (
               <div
-                className={`flex flex-col gap-y-2 py-2 px-3`}
                 key={index}
+                className="flex flex-col gap-y-2 py-2 px-3"
               >
                 <p className="text-[10px] text-white/50">{index + 1} veION</p>
                 <SliderComponent
-                  currentUtilizationPercentage={
-                    splitValuesArr[index] ? splitValuesArr[index] : 0
-                  }
+                  currentUtilizationPercentage={splitValuesArr[index] || 0}
                   handleUtilization={(val?: number) => {
                     if (!val) return;
                     const updatedSplitValues = [...splitValuesArr];
@@ -273,28 +241,26 @@ export default function ManagePopup({
                 />
               </div>
             ))}
-            <button
+            <Button
               onClick={handleSubmit}
-              className="mt-4 px-4 py-2 bg-accent text-black rounded-md hover:bg-accent/80"
+              className="w-full bg-accent text-black mt-4"
             >
               Split
-            </button>
-          </>
+            </Button>
+          </div>
         )}
-        {activeManageToggle == 'Transfer' && (
+
+        {activeManageToggle === 'Transfer' && (
           <div className="flex flex-col gap-y-2 py-2 px-3">
             <p className="text-[10px] mb-2 text-white/50">TRANSFER ADDRESS</p>
-            <input
-              className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
-              placeholder={`0x...`}
-              type="string"
+            <Input
+              placeholder="0x..."
               onChange={(e) => setTransferAddress(e.target.value)}
-              // disabled={handleInput ? false : true}
             />
-            <div className="border text-yellow-300 text-xs  items-center justify-center border-yellow-300 flex gap-3 rounded-md py-2 px-4 mt-2">
+            <div className="border text-yellow-300 text-xs flex gap-3 rounded-md py-2 px-4 mt-2 border-yellow-300">
               <img
                 alt="warn"
-                className={` h-5  `}
+                className="h-5"
                 src="/img/assets/warn.png"
               />
               <span>
@@ -302,12 +268,12 @@ export default function ManagePopup({
                 irrevocably.
               </span>
             </div>
-            <button className="bg-accent py-1 text-sm text-black rounded-md  mt-4 ">
+            <Button className="w-full bg-accent text-black mt-4">
               Transfer veION
-            </button>
+            </Button>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
