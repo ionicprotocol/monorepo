@@ -88,7 +88,7 @@ export default function ManagePopup({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayone border border-grayUnselect sm:max-w-[425px]">
+      <DialogContent className="bg-grayone border border-grayUnselect sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Manage veION #12</DialogTitle>
         </DialogHeader>
