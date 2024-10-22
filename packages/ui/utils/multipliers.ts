@@ -129,7 +129,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WBTC: {
@@ -148,7 +149,8 @@ export const multipliers: Record<
           mode: 2,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       WETH: {
@@ -182,7 +184,8 @@ export const multipliers: Record<
           underlyingAPR: 3.25,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       sUSDe: {
@@ -283,7 +286,8 @@ export const multipliers: Record<
           underlyingAPR: 3.63,
           turtle: true,
           rewards: true,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       }
     },
@@ -652,6 +656,15 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         }
+      },
+      uSOL: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
@@ -798,6 +811,15 @@ export const multipliers: Record<
           rewards: true,
           ionAPR: false,
           flywheel: false
+        }
+      },
+      SNX: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          rewards: true,
+          ionAPR: true,
+          flywheel: true
         }
       }
     }
