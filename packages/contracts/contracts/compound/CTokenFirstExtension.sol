@@ -9,41 +9,27 @@ import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
-import { Multicall } from "../utils/Multicall.sol";
+import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import { Multicall } from "../utils/Multicall.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
 contract CTokenFirstExtension is
+  CTokenOracleProtected,
   CErc20FirstExtensionBase,
   TokenErrorReporter,
   Exponential,
   DiamondExtension,
   Multicall
 {
-  error InteractionNotAllowed();
-
   modifier isAuthorized() {
     require(
       IFeeDistributor(ionicAdmin).canCall(address(comptroller), msg.sender, address(this), msg.sig),
       "not authorized"
     );
-    _;
-  }
-
-  modifier onlyOracleApprovedAllowEOA() {
-    address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
-    if (oracleAddress == address(0)) {
-      _;
-      return;
-    }
-
-    IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (oracle.isBlacklistedAccount(msg.sender) || msg.sender != tx.origin) {
-      revert InteractionNotAllowed();
-    }
     _;
   }
 
@@ -225,7 +211,7 @@ contract CTokenFirstExtension is
    * @param _name the new ERC20 token name to use
    * @param _symbol the new ERC20 token symbol to use
    */
-  function _setNameAndSymbol(string calldata _name, string calldata _symbol) external {
+  function _setNameAndSymbol(string calldata _name, string calldata _symbol) external onlyOracleApproved {
     // Check caller is admin
     require(hasAdminRights(), "!admin");
 
@@ -234,7 +220,7 @@ contract CTokenFirstExtension is
     symbol = _symbol;
   }
 
-  function _setAddressesProvider(address _ap) external {
+  function _setAddressesProvider(address _ap) external onlyOracleApproved {
     // Check caller is admin
     require(hasAdminRights(), "!admin");
 
@@ -246,7 +232,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new reserve factor
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
+  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -276,7 +262,7 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new admin fee
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
+  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {
@@ -330,7 +316,7 @@ contract CTokenFirstExtension is
    */
   function _setInterestRateModel(
     InterestRateModel newInterestRateModel
-  ) public override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
+  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);

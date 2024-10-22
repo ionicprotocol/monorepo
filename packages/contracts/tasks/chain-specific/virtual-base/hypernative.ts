@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 import { Address } from "viem";
 import { oracleAbi } from "./oracleAbi";
 
-const oracle = "0x489B3a5cE40E574D403ed9b0d2be4354A897C687";
+const oracle = "0x09585BD75De5Ec03529fbf9cf747ab43fE8D7537";
 
 task("hypernative:set-operator-role", "Set the operator role").setAction(
   async (taskArgs, { viem, getNamedAccounts }) => {
@@ -79,11 +79,16 @@ task("hypernative:register-strict", "Register a strict account").setAction(
 );
 const ionUSDC = "0xa900a17a49bc4d442ba7f72c39fa2108865671f0";
 
-task("hypernative:set-oracle:usdc", "Set the oracle address for USDC").setAction(async (_, { viem }) => {
-  const cToken = await viem.getContractAt("CTokenFirstExtension", ionUSDC as Address);
-  const setOracleTx = await cToken.write.setOracle([oracle]);
-  console.log("🚀 ~ setOracleTx:", setOracleTx);
-});
+task("hypernative:set-oracle:address-provider", "Set the oracle address for USDC").setAction(
+  async (_, { viem, deployments }) => {
+    const ap = await viem.getContractAt(
+      "AddressesProvider",
+      (await deployments.get("AddressesProvider")).address as Address
+    );
+    const setOracleTx = await ap.write.setAddress(["HYPERNATIVE_ORACLE", oracle]);
+    console.log("🚀 ~ setOracleTx:", setOracleTx);
+  }
+);
 
 task("hypernative:set-reserve-factor", "Set the reserve factor").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {

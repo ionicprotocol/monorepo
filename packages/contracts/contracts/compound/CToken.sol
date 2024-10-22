@@ -9,6 +9,8 @@ import { EIP20Interface } from "./EIP20Interface.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { ComptrollerV3Storage } from "./ComptrollerStorage.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
+import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
+
 import { DiamondExtension, LibDiamond } from "../ionic/DiamondExtension.sol";
 import { PoolLens } from "../PoolLens.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
@@ -20,22 +22,7 @@ import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernat
  * @dev This contract should not to be deployed on its own; instead, deploy `CErc20Delegator` (proxy contract) and `CErc20Delegate` (logic/implementation contract).
  * @author Compound
  */
-abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
-  error InteractionNotAllowed();
-  modifier onlyOracleApprovedAllowEOA() {
-    address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
-    if (oracleAddress == address(0)) {
-      _;
-      return;
-    }
-
-    IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (oracle.isBlacklistedAccount(msg.sender) || msg.sender != tx.origin) {
-      revert InteractionNotAllowed();
-    }
-    _;
-  }
-
+abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
   modifier isAuthorized() {
     require(
       IFeeDistributor(ionicAdmin).canCall(address(comptroller), msg.sender, address(this), msg.sig),
@@ -197,7 +184,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param withdrawAmount Amount of fees to withdraw
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
+  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
     asCTokenExtension().accrueInterest();
 
     if (accrualBlockNumber != block.number) {
@@ -230,7 +217,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param withdrawAmount Amount of fees to withdraw
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApprovedAllowEOA returns (uint256) {
+  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
     asCTokenExtension().accrueInterest();
 
     if (accrualBlockNumber != block.number) {
