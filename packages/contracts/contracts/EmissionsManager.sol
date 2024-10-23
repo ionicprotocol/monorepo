@@ -29,7 +29,12 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   uint256 collateralBp;
   uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
 
-  function initialize(PoolDirectory _fpd, address _protocalAddress, ERC20 _rewardToken, uint256 _collateralBp) public initializer {
+  function initialize(
+    PoolDirectory _fpd,
+    address _protocalAddress,
+    ERC20 _rewardToken,
+    uint256 _collateralBp
+  ) public initializer {
     __Ownable2Step_init();
     protocalAddress = _protocalAddress;
     fpd = _fpd;
@@ -41,7 +46,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     veION = _veIon;
   }
 
-  function _getUserTotalCollateral(address _user) internal view returns(uint256) {
+  function _getUserTotalCollateral(address _user) internal view returns (uint256) {
     uint256 totalColateralInETH = 0;
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
     for (uint256 i = 0; i < pools.length; i++) {
@@ -50,36 +55,34 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
       ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
       for (uint256 j = 0; j < cTokens.length; j++) {
         uint256 supplyBalance = cTokens[j].balanceOfUnderlying(_user);
-        uint256 collateralInETH = supplyBalance * oracle.getUnderlyingPrice(cTokens[j]) / 1e18;
+        uint256 collateralInETH = (supplyBalance * oracle.getUnderlyingPrice(cTokens[j])) / 1e18;
         totalColateralInETH += collateralInETH;
       }
     }
     return totalColateralInETH;
   }
 
-  function getUserTotalCollateral(address _user) external view returns(uint256) {
+  function getUserTotalCollateral(address _user) external view returns (uint256) {
     return _getUserTotalCollateral(_user);
   }
 
-  function checkCollateralRatio(address _user) internal view returns(bool) {
+  function checkCollateralRatio(address _user) internal view returns (bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
     uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
-    if (userLPValue * MAXIMUM_BASIS_POINTS / userCollateralValue >= collateralBp) {
+    if ((userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp) {
       return true;
-    }
-    else return false;
+    } else return false;
   }
 
-  function reportUser(address _user) external returns(bool) {
+  function reportUser(address _user) external returns (bool) {
     if (!checkCollateralRatio(_user)) {
       isBlacklisted[_user] = true;
       blacklistUserAndClaimEmissions(_user);
       return true;
-    }
-    else return false;
+    } else return false;
   }
 
-  function whitelistUser(address _user) external returns(bool) {
+  function whitelistUser(address _user) external returns (bool) {
     if (checkCollateralRatio(_user)) {
       isBlacklisted[_user] = false;
       (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
@@ -98,15 +101,14 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
         }
       }
       return true;
-    }
-    else return false;
+    } else return false;
   }
-  
+
   function isUserBlacklisted(address _user) external view returns (bool) {
     return isBlacklisted[_user];
   }
 
-  function blacklistUserAndClaimEmissions(address user) internal returns {
+  function blacklistUserAndClaimEmissions(address user) internal {
     uint256 balanceBefore = ERC20(rewardToken).balanceOf(address(this));
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
     for (uint256 i = 0; i < pools.length; i++) {
@@ -136,8 +138,8 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 balanceAfter = ERC20(rewardToken).balanceOf(address(this));
     uint256 totalClaimed = balanceAfter - balanceBefore;
     if (totalClaimed > 0) {
-      rewardToken.safeTransferFrom(address(this), msg.sender, totalClaimed * 80 / 100);
-      rewardToken.safeTransferFrom(address(this), protocalAddress, totalClaimed * 20 / 100);
+      rewardToken.safeTransferFrom(address(this), msg.sender, (totalClaimed * 80) / 100);
+      rewardToken.safeTransferFrom(address(this), protocalAddress, (totalClaimed * 20) / 100);
     }
   }
-} 
+}

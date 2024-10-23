@@ -143,8 +143,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
 
-    if (lockedBalance.end <= block.timestamp && !lockedBalance.isPermanent) revert LockExpired();
-
     if (lockedBalance.isPermanent) {
       s_permanentLockBalance[lpType] += _tokenAmount;
     }
@@ -232,7 +230,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       address asset = s_assetsLocked[_from][i];
       LpTokenType _lpType = s_lpType[asset];
       LockedBalance memory oldLockedTo = s_locked[_to][_lpType];
-      if (oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
+      if (oldLockedTo.end != 0 && oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
 
       LockedBalance memory oldLockedFrom = s_locked[_from][_lpType];
       if (oldLockedFrom.isPermanent) revert PermanentLock();
@@ -283,7 +281,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
     int128 _splitAmount = int128(int256(_amount));
     if (_splitAmount == 0) revert ZeroAmount();
-    if (newLocked.amount <= _splitAmount) revert AmountTooBig();
+    if (newLocked.amount < _splitAmount) revert AmountTooBig();
 
     LockedBalance memory originalLocked = newLocked;
     newLocked.amount -= _splitAmount;
@@ -460,7 +458,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    */
   function _mint(address to, uint256 tokenId) internal override {
     super._mint(to, tokenId);
-    s_ownerToTokenIds[to].push(tokenId);
   }
 
   /**
@@ -761,7 +758,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenId = ++s_tokenId;
     uint256 _length = _tokenAddress.length;
     _mint(_to, _tokenId);
-    s_ownerToTokenIds[_to].push(_tokenId);
 
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
@@ -974,6 +970,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function getEthPrice(address _token) internal view returns (uint256) {
     MasterPriceOracle mpo = MasterPriceOracle(ap.getAddress("MasterPriceOracle"));
     return mpo.price(_token);
+  }
+
+  function getAssetsLocked(uint256 _tokenId) external view returns (address[] memory) {
+    return s_assetsLocked[_tokenId];
+  }
+
+  function getDelegatees(uint256 _tokenId) external view returns (uint256[] memory) {
+    return s_delegatees[_tokenId];
   }
 }
 
