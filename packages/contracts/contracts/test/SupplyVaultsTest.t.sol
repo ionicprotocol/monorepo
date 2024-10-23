@@ -46,9 +46,9 @@ contract SupplyVaultsTest is BaseTest {
 
   function addLiquidity() internal {
     //    vm.startPrank(wethWhale);
-    //    wbnb.approve(wethNativeMarketAddress, depositAmount * 10);
+    //    weth.approve(wethNativeMarketAddress, depositAmount * 10);
     //    wethNativeMarket.mint(depositAmount * 10);
-    //    wbnb.approve(wethMainMarketAddress, depositAmount * 10);
+    //    weth.approve(wethMainMarketAddress, depositAmount * 10);
     //    wethMainMarket.mint(depositAmount * 10);
     //    vm.stopPrank();
   }
@@ -223,4 +223,350 @@ contract SupplyVaultsTest is BaseTest {
     if (assets > 100) assertEq(sameAssets, assets, "!same");
   }
 
+  function testOptVaultMint(uint256 mintAmount_) public fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    asSecondExtension.harvest(lenderSharesHint);
+
+    // advance time with a year
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
+
+    // test the shares before and after calling mint
+    {
+      uint256 vaultSharesBefore = asSecondExtension.balanceOf(wethWhale);
+      uint256 whaleAssets = weth.balanceOf(wethWhale);
+      // preview deposit should return the max shares possible for the supplied amount of assets
+      uint256 maxShares = asSecondExtension.previewDeposit(whaleAssets);
+
+      // call mint
+      bool shouldRevert = true;
+      vm.startPrank(wethWhale);
+      {
+        weth.approve(address(asSecondExtension), whaleAssets);
+        if (asSecondExtension.previewMint(mintAmount_) == 0) vm.expectRevert("too little shares");
+        else if (mintAmount_ > maxShares) vm.expectRevert("!insufficient balance");
+        else shouldRevert = false;
+
+        asSecondExtension.mint(mintAmount_);
+      }
+      vm.stopPrank();
+
+      if (!shouldRevert) {
+        uint256 vaultSharesAfter = asSecondExtension.balanceOf(wethWhale);
+        assertEq(vaultSharesAfter - vaultSharesBefore, mintAmount_, "!depositor did not mint the correct shares");
+      }
+    }
+  }
+
+  function testOptVaultDeposit(uint256 depositAmount_) public fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    vm.assume(depositAmount_ >= 10 * asSecondExtension.adaptersCount() && depositAmount_ < type(uint128).max);
+
+    asSecondExtension.harvest(lenderSharesHint);
+
+    // advance time with a year
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
+
+    // test the shares before and after calling deposit
+    {
+      uint256 vaultSharesBefore = asSecondExtension.balanceOf(wethWhale);
+      uint256 whaleAssets = weth.balanceOf(wethWhale);
+      uint256 expectedVaultSharesMinted = asSecondExtension.previewDeposit(depositAmount_);
+
+      // call deposit
+      bool shouldRevert = true;
+      vm.startPrank(wethWhale);
+      {
+        weth.approve(address(asSecondExtension), whaleAssets);
+        if (depositAmount_ > whaleAssets) vm.expectRevert("!insufficient balance");
+        else if (expectedVaultSharesMinted == 0) vm.expectRevert("too little assets");
+        else shouldRevert = false;
+
+        asSecondExtension.deposit(depositAmount_);
+      }
+      vm.stopPrank();
+
+      if (!shouldRevert) {
+        uint256 vaultSharesAfter = asSecondExtension.balanceOf(wethWhale);
+        assertEq(
+          vaultSharesAfter - vaultSharesBefore,
+          expectedVaultSharesMinted,
+          "!depositor did not receive the expected minted shares"
+        );
+      }
+    }
+  }
+
+  function testOptVaultWithdraw(uint256 withdrawAmount_) public fork(MODE_MAINNET) {
+    vm.assume(withdrawAmount_ < type(uint128).max);
+
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    asSecondExtension.harvest(lenderSharesHint);
+
+    // deposit some assets to test a wider range of withdrawable amounts
+    vm.startPrank(wethWhale);
+    uint256 whaleAssets = weth.balanceOf(wethWhale);
+    weth.approve(address(asSecondExtension), whaleAssets);
+    asSecondExtension.deposit(whaleAssets / 2);
+    vm.stopPrank();
+
+    // advance time with a year
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
+
+    // test the balance before and after calling withdraw
+    {
+      uint256 wethBalanceBefore = weth.balanceOf(wethWhale);
+
+      uint256 maxWithdrawWhale = asSecondExtension.maxWithdraw(wethWhale);
+
+      // call withdraw
+      bool shouldRevert = true;
+      vm.startPrank(wethWhale);
+      {
+        if (withdrawAmount_ > maxWithdrawWhale) vm.expectRevert("ERC20: burn amount exceeds balance");
+        else if (withdrawAmount_ == 0) vm.expectRevert("too little assets");
+        else shouldRevert = false;
+
+        asSecondExtension.withdraw(withdrawAmount_);
+      }
+      vm.stopPrank();
+
+      if (!shouldRevert) {
+        uint256 wethBalanceAfter = weth.balanceOf(wethWhale);
+        assertEq(
+          wethBalanceAfter - wethBalanceBefore,
+          withdrawAmount_,
+          "!depositor did not receive the requested withdraw amount"
+        );
+      }
+    }
+  }
+
+  function testOptVaultRedeem(uint256 redeemAmount_) public fork(MODE_MAINNET) {
+    vm.assume(redeemAmount_ < type(uint128).max);
+
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    asSecondExtension.harvest(lenderSharesHint);
+
+    // deposit some assets to test a wider range of redeemable amounts
+    vm.startPrank(wethWhale);
+    uint256 whaleAssets = weth.balanceOf(wethWhale);
+    weth.approve(address(asSecondExtension), whaleAssets);
+    asSecondExtension.deposit(whaleAssets / 2);
+    vm.stopPrank();
+
+    // advance time with a year
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
+
+    // test the balance before and after calling redeem
+    {
+      uint256 vaultSharesBefore = asSecondExtension.balanceOf(wethWhale);
+
+      uint256 maxRedeemWhale = asSecondExtension.maxRedeem(wethWhale);
+
+      uint256 assetsToReceive = asSecondExtension.previewRedeem(redeemAmount_);
+
+      // call redeem
+      bool shouldRevert = true;
+      vm.startPrank(wethWhale);
+      {
+        if (assetsToReceive == 0) vm.expectRevert("too little shares");
+        else if (redeemAmount_ > maxRedeemWhale) vm.expectRevert("ERC20: burn amount exceeds balance");
+        else shouldRevert = false;
+
+        asSecondExtension.redeem(redeemAmount_);
+      }
+      vm.stopPrank();
+
+      if (!shouldRevert) {
+        uint256 vaultSharesAfter = asSecondExtension.balanceOf(wethWhale);
+        assertEq(vaultSharesBefore - vaultSharesAfter, redeemAmount_, "!depositor did not redeem the requested shares");
+      }
+    }
+  }
+
+  function testDirectAdaptersDeposit() public fork(MODE_MAINNET) {
+    vm.startPrank(wethWhale);
+    weth.approve(address(adapters[0].adapter), 10);
+    vm.expectRevert("!caller not a vault");
+    adapters[0].adapter.deposit(10, wethWhale);
+  }
+
+  error NotPassedQuitPeriod();
+
+  function testChangeAdapters() public fork(MODE_MAINNET) {
+    CompoundMarketERC4626 wethNativeAdapter = new CompoundMarketERC4626();
+    {
+      TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(wethNativeAdapter), address(dpa), "");
+      wethNativeAdapter = CompoundMarketERC4626(address(proxy));
+      vm.label(address(wethNativeAdapter), "wethNativeAdapter");
+    }
+    wethNativeAdapter.initialize(wethNativeMarket, blocksPerYear, registry);
+    adapters[2].adapter = wethNativeAdapter;
+
+    adapters[0].allocation = 8e17;
+    adapters[1].allocation = 1e17;
+    adapters[2].allocation = 1e17;
+
+    OptimizedAPRVaultFirstExtension firstExt = vault.asFirstExtension();
+    OptimizedAPRVaultSecondExtension secondExt = vault.asSecondExtension();
+    firstExt.proposeAdapters(adapters, 3);
+    vm.expectRevert(NotPassedQuitPeriod.selector);
+    secondExt.changeAdapters();
+
+    vm.warp(block.timestamp + 3.01 days);
+    secondExt.changeAdapters();
+  }
+
+//  function testVaultAccrueRewards() public fork(MODE_MAINNET) {
+//    IERC20Metadata ddd = IERC20Metadata(dddAddress);
+//    IERC20Metadata epx = IERC20Metadata(epxAddress);
+//    address someDeployer = address(321);
+//
+//    // set up the registry, the vault and the adapter
+//    {
+//      // upgrade to enable the aprAfterDeposit fn for the vault
+//      _upgradeMarket(CErc20Delegate(twoBrlMarketAddress));
+//
+//      vm.startPrank(someDeployer);
+//      deployVaultRegistry();
+//
+//      // deploy the adapter
+//      CompoundMarketERC4626 twoBrlMarketAdapter = new CompoundMarketERC4626();
+//      {
+//        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
+//          address(twoBrlMarketAdapter),
+//          address(dpa),
+//          ""
+//        );
+//        twoBrlMarketAdapter = CompoundMarketERC4626(address(proxy));
+//        vm.label(address(twoBrlMarketAdapter), "twoBrlMarketAdapter");
+//      }
+//      twoBrlMarketAdapter.initialize(ICErc20(twoBrlMarketAddress), blocksPerYear, registry);
+//
+//      AdapterConfig[10] memory _adapters;
+//      _adapters[0].adapter = twoBrlMarketAdapter;
+//      _adapters[0].allocation = 1e18;
+//
+//      MidasFlywheel flywheelLogic = new MidasFlywheel();
+//
+//      bytes memory params = abi.encode(
+//        twoBrl,
+//        _adapters,
+//        1,
+//        VaultFees(0, 0, 0, 0),
+//        address(this),
+//        type(uint256).max,
+//        address(registry),
+//        address(flywheelLogic)
+//      );
+//
+//      OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
+//      exts[0] = new OptimizedAPRVaultFirstExtension();
+//      exts[1] = new OptimizedAPRVaultSecondExtension();
+//      vault = new OptimizedAPRVaultBase();
+//      vm.label(address(vault), "vault");
+//      vault.initialize(exts, params);
+//
+//      vault.asFirstExtension().addRewardToken(ddd);
+//      vault.asFirstExtension().addRewardToken(epx);
+//
+//      registry.addVault(address(vault));
+//    }
+//    vm.stopPrank();
+//
+//    // deposit some funds
+//    vm.startPrank(twoBrlWhale);
+//    twoBrl.approve(address(vault), type(uint256).max);
+//    // accruing for the first time internally with _afterTokenTransfer
+//    vault.asSecondExtension().deposit(depositAmount);
+//    vm.stopPrank();
+//
+//    {
+//      // advance time to move away from the first cycle,
+//      // because the first cycle is initialized with 0 rewards
+//      vm.warp(block.timestamp + 25 hours);
+//      vm.roll(block.number + 1000);
+//    }
+//
+//    // pull from the adapters the rewards for the new cycle
+//    vault.asSecondExtension().pullAccruedVaultRewards();
+//
+//    OptimizedAPRVaultFirstExtension vaultFirstExt = vault.asFirstExtension();
+//    {
+//      // TODO figure out why these accrue calls are necessary
+//      MidasFlywheel flywheelDDD = vaultFirstExt.flywheelForRewardToken(ddd);
+//      MidasFlywheel flywheelEPX = vaultFirstExt.flywheelForRewardToken(epx);
+//      flywheelDDD.accrue(ERC20(address(vault)), twoBrlWhale);
+//      flywheelEPX.accrue(ERC20(address(vault)), twoBrlWhale);
+//
+//      // advance time in the same cycle in order to accrue some rewards for it
+//      vm.warp(block.timestamp + 10 hours);
+//      vm.roll(block.number + 1000);
+//    }
+//
+//    // harvest does nothing when the APR remains the same
+//    //uint64[] memory array = new uint64[](1);
+//    //array[0] = 1e18;
+//    //vault.harvest(array);
+//
+//    // accrue and claim
+//    vm.prank(twoBrlWhale);
+//    vaultFirstExt.claimRewards();
+//
+//    // check if any rewards were claimed
+//    assertGt(ddd.balanceOf(twoBrlWhale), 0, "!received DDD");
+//    assertGt(epx.balanceOf(twoBrlWhale), 0, "!received EPX");
+//  }
+
+  function testUpgradeOptVault() public fork(MODE_MAINNET) {
+    OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
+    exts[0] = new TestingFirstExtension();
+    exts[1] = new TestingSecondExtension();
+    registry.setLatestVaultExtensions(address(vault), exts);
+
+    vault.upgradeVault();
+
+    address[] memory currentExtensions = vault._listExtensions();
+
+    for (uint256 i; i < exts.length; i++) {
+      assertEq(address(exts[i]), currentExtensions[i], "!matching");
+    }
+  }
+
+  function testLensFn() public debuggingOnly fork(BSC_CHAPEL) {
+    registry = OptimizedVaultsRegistry(0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5);
+    registry.getVaultsData();
+  }
+
+  // TODO test claiming the rewards for multiple vaults
+}
+
+contract TestingFirstExtension is OptimizedAPRVaultExtension {
+  function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
+    uint8 fnsCount = 1;
+    bytes4[] memory functionSelectors = new bytes4[](fnsCount);
+    functionSelectors[--fnsCount] = this.dummy1.selector;
+
+    require(fnsCount == 0, "use the correct array length");
+    return functionSelectors;
+  }
+
+  function dummy1() public {}
+}
+
+contract TestingSecondExtension is OptimizedAPRVaultExtension {
+  function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
+    uint8 fnsCount = 1;
+    bytes4[] memory functionSelectors = new bytes4[](fnsCount);
+    functionSelectors[--fnsCount] = this.dummy2.selector;
+
+    require(fnsCount == 0, "use the correct array length");
+    return functionSelectors;
+  }
+
+  function dummy2() public {}
 }
