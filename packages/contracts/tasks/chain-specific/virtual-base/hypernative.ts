@@ -1,49 +1,66 @@
 import { task } from "hardhat/config";
 import { Address } from "viem";
 import { oracleAbi } from "./oracleAbi";
+import { COMPTROLLER } from "../base";
 
-const oracle = "0x09585BD75De5Ec03529fbf9cf747ab43fE8D7537";
+const oracle = "0xd30CB636E561C6dAC6ee136767BAe0933eC9Aeb8";
+const basePool = COMPTROLLER;
+const ionUSDC = "0xa900a17a49bc4d442ba7f72c39fa2108865671f0";
+const multisig = "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB";
 
-task("hypernative:set-operator-role", "Set the operator role").setAction(
-  async (taskArgs, { viem, getNamedAccounts }) => {
+// yarn workspace @ionicprotocol/contracts hardhat deploy --tags security-oracle --network virtual_base
+
+task("hypernative:change-admin", "Change the admin to deployer for testing").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
-    const walletClient = await viem.getWalletClient(deployer as Address);
+    const unitroller = await viem.getContractAt("Unitroller", basePool);
+    const admin = await unitroller.read.admin();
+    console.log("🚀 ~ admin:", admin);
+    if (admin.toLowerCase() !== deployer.toLowerCase()) {
+      const pendingAdmin = await unitroller.read.pendingAdmin();
+      console.log("🚀 ~ pendingAdmin:", pendingAdmin);
+      if (pendingAdmin.toLowerCase() !== deployer.toLowerCase()) {
+        const changeAdminTx = await unitroller.write._setPendingAdmin([deployer as Address]);
+        console.log("🚀 ~ changeAdminTx:", changeAdminTx);
+        await publicClient.waitForTransactionReceipt({ hash: changeAdminTx });
+      }
+      const acceptAdminTx = await unitroller.write._acceptAdmin();
+      console.log("🚀 ~ acceptAdminTx:", acceptAdminTx);
+    }
 
-    const addTx = await walletClient.writeContract({
-      address: oracle,
-      abi: oracleAbi,
-      functionName: "addOperator",
-      args: ["0xea1D2636A782a963309dE919f62100ea8bea5C42"]
-    });
-
-    console.log("🚀 ~ addTx:", addTx);
+    const ffd = await viem.getContractAt(
+      "FeeDistributor",
+      (await deployments.get("FeeDistributor")).address as Address
+    );
+    const owner = await ffd.read.owner();
+    console.log("🚀 ~ owner:", owner);
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      // const setOwnerTx = await ffd.write.transferOwnership([deployer as Address]);
+      // console.log("🚀 ~ setOwnerTx:", setOwnerTx);
+      // await publicClient.waitForTransactionReceipt({ hash: setOwnerTx });
+      const acceptOwnerTx = await ffd.write._acceptOwner();
+      console.log("🚀 ~ acceptOwnerTx:", acceptOwnerTx);
+      await publicClient.waitForTransactionReceipt({ hash: acceptOwnerTx });
+    }
   }
 );
 
-task("hypernative:set-consumer-role", "Set the consumer role").setAction(
-  async (taskArgs, { viem, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const walletClient = await viem.getWalletClient(deployer as Address);
+// yarn workspace @ionicprotocol/contracts hardhat deploy --tags market-setup --network virtual_base
 
-    let addTx = await walletClient.writeContract({
-      address: oracle,
-      abi: oracleAbi,
-      functionName: "addConsumer",
-      args: ["0x302b30d61B4A78469EADc631E66433A965F5a288"]
-    });
-    console.log("🚀 ~ addTx:", addTx);
+task("hypernative:upgrade-cToken", "Upgrade the cToken").setAction(async (_, { viem, deployments, run }) => {
+  const cToken = await viem.getContractAt("ICErc20", ionUSDC as Address);
+  const feeDistributor = await viem.getContractAt(
+    "FeeDistributor",
+    (await deployments.get("FeeDistributor")).address as Address
+  );
 
-    addTx = await walletClient.writeContract({
-      address: oracle,
-      abi: oracleAbi,
-      functionName: "addConsumer",
-      args: ["0xa900A17a49Bc4D442bA7F72c39FA2108865671f0"] // ionUSDC
-    });
-    console.log("🚀 ~ addTx:", addTx);
-  }
-);
+  const [latestImpl] = await feeDistributor.read.latestCErc20Delegate([await cToken.read.delegateType()]);
+  await run("market:upgrade:safe", {
+    marketAddress: cToken.address,
+    implementationAddress: latestImpl
+  });
+});
 
 task("hypernative:set-oracle", "Set the oracle address").setAction(
   async (_, { viem, getNamedAccounts, deployments }) => {
@@ -54,39 +71,13 @@ task("hypernative:set-oracle", "Set the oracle address").setAction(
     const setOracleTx = await oracleProtected.write.setOracle([oracle]);
 
     console.log("🚀 ~ setOracleTx:", setOracleTx);
-  }
-);
 
-task("hypernative:set-strict-mode", "Set the strict mode").setAction(async (_, { viem, deployments }) => {
-  const oracleProtected = await viem.getContractAt(
-    "OracleRegistry",
-    (await deployments.get("OracleRegistry")).address as Address
-  );
-  const setStrictModeTx = await oracleProtected.write.setIsStrictMode([true]);
-  console.log("🚀 ~ setStrictModeTx:", setStrictModeTx);
-});
-
-task("hypernative:register-strict", "Register a strict account").setAction(
-  async (_, { viem, deployments, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
-    const oracleProtected = await viem.getContractAt(
-      "OracleRegistry",
-      (await deployments.get("OracleRegistry")).address as Address
-    );
-    const registerStrictTx = await oracleProtected.write.oracleRegister([deployer as Address]);
-    console.log("🚀 ~ registerStrictTx:", registerStrictTx);
-  }
-);
-const ionUSDC = "0xa900a17a49bc4d442ba7f72c39fa2108865671f0";
-
-task("hypernative:set-oracle:address-provider", "Set the oracle address for USDC").setAction(
-  async (_, { viem, deployments }) => {
     const ap = await viem.getContractAt(
       "AddressesProvider",
       (await deployments.get("AddressesProvider")).address as Address
     );
-    const setOracleTx = await ap.write.setAddress(["HYPERNATIVE_ORACLE", oracle]);
-    console.log("🚀 ~ setOracleTx:", setOracleTx);
+    const setOracleApTx = await ap.write.setAddress(["HYPERNATIVE_ORACLE", oracle]);
+    console.log("🚀 ~ setOracleApTx:", setOracleApTx);
   }
 );
 
