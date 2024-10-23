@@ -10,7 +10,7 @@ import { IonicComptroller } from "./compound/ComptrollerInterface.sol";
 import { BasePriceOracle } from "./oracles/BasePriceOracle.sol";
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
 import { PoolDirectory } from "./PoolDirectory.sol";
-import {IEmissionsManager} from "./IEmissionsManager.sol";
+import { IEmissionsManager } from "./IEmissionsManager.sol";
 import { IveION } from "./veION/interfaces/IveION.sol";
 
 interface Oracle {
@@ -26,12 +26,15 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   ERC20 rewardToken;
   IveION veION;
   mapping(address => bool) isBlacklisted;
+  uint256 collateralBp;
+  uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
 
-  function initialize(PoolDirectory _fpd, address _protocalAddress, ERC20 _rewardToken) public initializer {
+  function initialize(PoolDirectory _fpd, address _protocalAddress, ERC20 _rewardToken, uint256 _collateralBp) public initializer {
     __Ownable2Step_init();
     protocalAddress = _protocalAddress;
     fpd = _fpd;
     rewardToken = _rewardToken;
+    collateralBp = _collateralBp;
   }
 
   function setVeIon(IveION _veIon) external onlyOwner {
@@ -61,7 +64,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   function checkCollateralRatio(address _user) internal view returns(bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
     uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
-    if (userLPValue * 1000 / userCollateralValue >= 25) {
+    if (userLPValue * MAXIMUM_BASIS_POINTS / userCollateralValue >= collateralBp) {
       return true;
     }
     else return false;
@@ -103,7 +106,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     return isBlacklisted[_user];
   }
 
-  function blacklistUserAndClaimEmissions(address user) public returns (uint256 rewardsClaimed) {
+  function blacklistUserAndClaimEmissions(address user) internal returns {
     uint256 balanceBefore = ERC20(rewardToken).balanceOf(address(this));
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
     for (uint256 i = 0; i < pools.length; i++) {
@@ -136,6 +139,5 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
       rewardToken.safeTransferFrom(address(this), msg.sender, totalClaimed * 80 / 100);
       rewardToken.safeTransferFrom(address(this), protocalAddress, totalClaimed * 20 / 100);
     }
-    return totalClaimed;
   }
 } 
