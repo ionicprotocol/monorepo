@@ -60,7 +60,6 @@ const Widget = dynamic(() => import('../_components/stake/Widget'), {
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const [rewardPopup, setRewardPopup] = useState<boolean>(false);
-  // const [step1Loading, setStep1Loading] = useState<boolean>(false);
   const [step2Loading, setStep2Loading] = useState<boolean>(false);
   const [step3Loading, setStep3Loading] = useState<boolean>(false);
   const [step2Toggle, setstep2Toggle] = useState<string>('');
@@ -97,16 +96,13 @@ export default function Stake() {
   });
   const [maxLp, setMaxLp] = useState<string>('');
   //---- unstaking states
-  // const [allStakedAmount, setAllStakedAmount] = useState<string>('');
   const [maxUnstake, setMaxUnstake] = useState<string>('');
   const [utilization, setUtilization] = useState<number>(0);
-  // const router = useRouter();
   const { data: withdrawalMaxToken } = useBalance({
     address,
     token: stakingTokenAddress,
     chainId: +chain,
     query: {
-      // refetchInterval: 6000
       notifyOnChangeProps: ['data', 'error']
     }
   });

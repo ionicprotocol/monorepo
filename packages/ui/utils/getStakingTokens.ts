@@ -44,7 +44,7 @@ export function getAvailableStakingToken(
     return '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
   if (chain === 8453 && (token === 'eth' || token === 'weth'))
     return BaseReservesContractAddr;
-  if (chain === 10 && token === 'eth') return OPReservesContractAddr;
+  if (chain === 10 && (token === 'eth' || token ==='weth')) return OPReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
