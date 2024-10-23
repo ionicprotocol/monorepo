@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { Address } from "viem";
+import { Address, parseUnits } from "viem";
 import { oracleAbi } from "./oracleAbi";
 import { COMPTROLLER } from "../base";
 
@@ -81,6 +81,7 @@ task("hypernative:set-oracle", "Set the oracle address").setAction(
   }
 );
 
+// will fail if not authorized by oracle
 task("hypernative:set-reserve-factor", "Set the reserve factor").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
@@ -92,3 +93,16 @@ task("hypernative:set-reserve-factor", "Set the reserve factor").setAction(
     console.log("🚀 ~ setReserveFactorTx:", setReserveFactorTx);
   }
 );
+
+// works with EOA
+task("hypernative:mint", "Mint the cToken").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const cToken = await viem.getContractAt("ICErc20", ionUSDC as Address);
+  const amount = parseUnits("1", await cToken.read.decimals());
+  const underlying = await cToken.read.underlying();
+  const underlyingContract = await viem.getContractAt("IERC20", underlying as Address);
+  const approveTx = await underlyingContract.write.approve([ionUSDC, amount]);
+  console.log("🚀 ~ approveTx:", approveTx);
+  const mintTx = await cToken.write.mint([amount]);
+  console.log("🚀 ~ mintTx:", mintTx);
+});
