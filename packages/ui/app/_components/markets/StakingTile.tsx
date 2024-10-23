@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import { base, mode } from 'viem/chains';
 
 import BaseBreakdown from '../stake/BaseBreakdown';

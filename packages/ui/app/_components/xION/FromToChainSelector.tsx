@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import React, { useCallback, useEffect } from 'react';
+
 import Link from 'next/link';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import React, { useCallback, useEffect } from 'react';
 
 import { chainsArr } from '@ui/constants/index';
 

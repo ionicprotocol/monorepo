@@ -1,11 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { Address, formatUnits } from 'viem';
+
+import { useQuery } from '@tanstack/react-query';
+import { formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import type { Address } from 'viem';
 
 export const useBorrowLimitMarket = (
   asset: MarketData,

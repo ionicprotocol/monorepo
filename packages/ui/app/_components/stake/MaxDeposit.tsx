@@ -1,9 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  type SetStateAction,
+  type Dispatch
+} from 'react';
+
 import dynamic from 'next/dynamic';
-import type { Dispatch, SetStateAction } from 'react';
-import { useState, useMemo, useEffect, useRef } from 'react';
+
 import { formatUnits, parseUnits } from 'viem';
 // import { mode } from 'viem/chains';
 import { useAccount, useBalance } from 'wagmi';

@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import dynamic from 'next/dynamic';
 import { useMemo, type Dispatch, type SetStateAction } from 'react';
-import type { FlywheelReward } from 'types/dist';
-import type { Address } from 'viem';
+
+import dynamic from 'next/dynamic';
+
+import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import { multipliers } from '@ui/utils/multipliers';
 
 import { getAssetName } from '../../util/utils';
 // import { Rewards } from '../markets/Rewards';
@@ -14,12 +16,12 @@ import BorrowPopover from '../markets/BorrowPopover';
 import SupplyPopover from '../markets/SupplyPopover';
 import { PopupMode } from '../popup/page';
 
-import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
-import { multipliers } from '@ui/utils/multipliers';
+import type { FlywheelReward } from 'types/dist';
+import type { Address } from 'viem';
 
 export enum InfoMode {
-  SUPPLY,
-  BORROW
+  SUPPLY = 0,
+  BORROW = 1
 }
 
 export type InfoRowsProps = {
@@ -68,6 +70,11 @@ const InfoRows = ({
       ),
     [selectedChain, rewards]
   );
+  const totalSupplyRewardsAPR = useMemo(
+    () =>
+      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
+    [supplyRewards]
+  );
 
   const borrowRewards = useMemo(
     () =>
@@ -83,6 +90,10 @@ const InfoRows = ({
       borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
     [borrowRewards]
   );
+  const totalApr =
+    mode === InfoMode.BORROW
+      ? 0 - Number(apr) + totalBorrowRewardsAPR
+      : Number(apr) + totalSupplyRewardsAPR;
 
   return (
     <div
@@ -127,12 +138,20 @@ const InfoRows = ({
         <div
           className={` mb-2 popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer`}
         >
-          {apr}
+          {mode === InfoMode.SUPPLY
+            ? totalApr.toLocaleString('en-US', {
+                maximumFractionDigits: 2
+              })
+            : (totalApr > 0 ? '+' : '') +
+              totalApr.toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}
+          %
           {mode === InfoMode.SUPPLY ? (
             <>
               <SupplyPopover
                 asset={asset}
-                supplyAPR={parseFloat(apr.replace('%', ''))}
+                supplyAPR={Number.parseFloat(apr.replace('%', ''))}
                 rewards={supplyRewards}
                 dropdownSelectedChain={+selectedChain}
                 selectedPoolId={pool}
@@ -144,7 +163,7 @@ const InfoRows = ({
             <>
               <BorrowPopover
                 asset={asset}
-                borrowAPR={parseFloat(apr.replace('%', ''))}
+                borrowAPR={Number.parseFloat(apr.replace('%', ''))}
                 rewardsAPR={totalBorrowRewardsAPR}
                 dropdownSelectedChain={+selectedChain}
                 selectedPoolId={pool}

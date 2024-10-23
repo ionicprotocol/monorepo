@@ -202,6 +202,7 @@ export enum assetSymbols {
   USDplus = "USD+",
   wUSDplus = "wUSD+",
   USDz = "USDz",
+  uSOL = "uSOL",
 
   // optimism
   OP = "OP",

@@ -1,9 +1,10 @@
-import { chainIdToConfig } from '@ionicprotocol/chains';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
 import { getSupportedChainIds } from '@ui/utils/networkData';
+
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 interface Price {
   symbol: string;

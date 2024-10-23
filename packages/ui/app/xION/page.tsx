@@ -1,11 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+
 import { xErc20LayerZeroAbi } from 'sdk/src';
-import type { Address, Hex } from 'viem';
 import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
 import { mode } from 'viem/chains';
 import {
@@ -16,6 +17,11 @@ import {
   // useBlock
 } from 'wagmi';
 
+import { ixErc20 } from '@ui/constants/bridge';
+import { pools } from '@ui/constants/index';
+import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
@@ -23,15 +29,14 @@ import FromTOChainSelector from '../_components/xION/FromToChainSelector';
 import ProgressSteps from '../_components/xION/ProgressSteps';
 import Quote, { lzOptions } from '../_components/xION/Quote';
 // import TxPopup from '../_components/xION/TxPopup';
+
+import type { Address, Hex } from 'viem';
+
 const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
   ssr: false
 });
 
-import { ixErc20 } from '@ui/constants/bridge';
-import { pools } from '@ui/constants/index';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
-import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export default function XION() {
   const chainId = useChainId();
@@ -41,6 +46,9 @@ export default function XION() {
   const chain = querychain ?? String(chainId);
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const [destinationAddress, setDestinationAddress] = useState<
+    Address | undefined
+  >(address);
   const { data: sourceLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+chain),
@@ -269,6 +277,16 @@ export default function XION() {
             />
           </div>
         </div>
+        <div className="mb-4">
+          <p className="text-xs text-white/50 mb-1">TO ADDRESS</p>
+          <input
+            type="text"
+            value={destinationAddress}
+            onChange={(e) => setDestinationAddress(e.target.value as Address)}
+            placeholder="Enter address"
+            className="text-sm w-full bg-gray-800 text-white border border-gray-700 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" />
         <Quote
           chain={+chain}
@@ -276,7 +294,7 @@ export default function XION() {
           args={{
             amount: parseUnits(deposit, 18),
             destinationChain: Number(toChain),
-            toAddress: address!,
+            toAddress: destinationAddress!,
             token: getToken(+chain)
           }}
         />
@@ -303,7 +321,7 @@ export default function XION() {
               bridging({
                 token: getToken(+chain),
                 amount: parseUnits(deposit, 18),
-                toAddress: address!,
+                toAddress: destinationAddress!,
                 destinationChain: Number(toChain),
                 nativeEth: nativeEth
               })

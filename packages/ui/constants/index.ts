@@ -1,8 +1,9 @@
-import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
 import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
+
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
@@ -95,7 +96,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: ['0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062'],
+    supply: [
+      '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
+      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5'
+    ],
     borrow: [
       '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
       '0x4E854cde138495a3eB9CFe48e50F12dC352cD834'
@@ -107,7 +111,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
       '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
       '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
-      '0xc39441b305705AfD07de97237bC835a4501AbbEC'
+      '0xc39441b305705AfD07de97237bC835a4501AbbEC',
+      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
@@ -116,7 +121,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
     ]
   },
   [optimism.id]: {
-    supply: ['0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'],
+    supply: [
+      '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
+      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'
+    ],
     borrow: []
   }
 };
@@ -202,7 +210,7 @@ export const pools: Record<number, PoolParams> = {
           'USDz',
           'wUSD+',
           'wUSDM',
-          'USD+',
+          'uSOL',
           'EURC',
           'cbBTC',
           'eUSD',
@@ -213,7 +221,8 @@ export const pools: Record<number, PoolParams> = {
           'AERO',
           'RSR',
           'wstETH',
-          'cbETH'
+          'cbETH',
+          'USD+'
         ]
       }
     ]

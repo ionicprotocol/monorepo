@@ -1,7 +1,8 @@
 'use client';
 
-import { Options } from '@layerzerolabs/lz-v2-utilities';
 import { useEffect } from 'react';
+
+import { Options } from '@layerzerolabs/lz-v2-utilities';
 import { xErc20LayerZeroAbi } from 'sdk/src';
 import { formatEther, type Hex, type Address } from 'viem';
 import { useReadContract } from 'wagmi';
@@ -73,7 +74,7 @@ export default function Quote({
           {args?.amount
             ? (
                 Number(formatEther(args.amount)) -
-                Number(formatEther(args.amount)) * 0.01
+                Number(formatEther(args.amount)) * 0.001
               ).toLocaleString('en-US', {
                 maximumFractionDigits: 3
               })
@@ -106,7 +107,7 @@ export default function Quote({
             </span>
           </div>
           <div className={`flex items-center justify-between w-full  `}>
-            <span className="text-white/50">Gas</span>
+            <span className="text-white/50">Bridge Gas</span>
             <span className={`flex items-center justify-center gap-2`}>
               {quotation
                 ? Number(formatEther(quotation[0])).toLocaleString('en-US', {

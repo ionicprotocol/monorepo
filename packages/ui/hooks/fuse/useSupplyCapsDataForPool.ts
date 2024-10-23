@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export interface SupplyCapsDataForPoolType {
   cTokenAddress: string;

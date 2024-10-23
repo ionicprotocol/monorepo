@@ -8,8 +8,9 @@ import "../IRedemptionStrategy.sol";
 import "../../ionic/DiamondExtension.sol";
 import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 
-import { IAerodromeRouter } from "../../external/aerodrome/IAerodromeRouter.sol";
-import { IVelodromeRouter } from "../../external/velodrome/IVelodromeRouter.sol";
+import { IRouter_Aerodrome as IAerodromeV2Router } from "../../external/aerodrome/IAerodromeRouter.sol";
+import { IRouter_Velodrome as IVelodromeV2Router } from "../../external/velodrome/IVelodromeRouter.sol";
+import { IRouter } from "../../external/solidly/IRouter.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
 
@@ -369,8 +370,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
-    IAerodromeRouter.Route[] memory swapPath = new IAerodromeRouter.Route[](1);
-    swapPath[0] = IAerodromeRouter.Route({
+    IAerodromeV2Router.Route[] memory swapPath = new IAerodromeV2Router.Route[](1);
+    swapPath[0] = IAerodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
       stable: aeroV2IsStable(inputToken, outputToken),
@@ -416,8 +417,8 @@ contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExte
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken
   ) internal view returns (bytes memory strategyData) {
-    IVelodromeRouter.Route[] memory swapPath = new IVelodromeRouter.Route[](1);
-    swapPath[0] = IVelodromeRouter.Route({
+    IVelodromeV2Router.Route[] memory swapPath = new IVelodromeV2Router.Route[](1);
+    swapPath[0] = IVelodromeV2Router.Route({
       from: address(inputToken),
       to: address(outputToken),
       stable: aeroV2IsStable(inputToken, outputToken)

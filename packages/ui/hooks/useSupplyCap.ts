@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { type Address, formatUnits } from 'viem';
+
+import { useQuery } from '@tanstack/react-query';
+import { formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -8,6 +9,8 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import type { Address } from 'viem';
 
 interface UseSupplyCapParams {
   chainId: number;

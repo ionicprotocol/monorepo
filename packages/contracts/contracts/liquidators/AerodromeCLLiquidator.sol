@@ -2,13 +2,12 @@
 pragma solidity >=0.8.0;
 
 import { IRedemptionStrategy } from "./IRedemptionStrategy.sol";
-import { IAerodromeSwapRouter } from "../external/aerodrome/IAerodromeSwapRouter.sol";
+import { ISwapRouter_Aerodrome } from "../external/aerodrome/IAerodromeSwapRouter.sol";
 
 import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { IERC4626 } from "../compound/IERC4626.sol";
 
 contract AerodromeCLLiquidator is IRedemptionStrategy {
-
   /**
    * @dev Redeems `inputToken` for `outputToken` where `inputAmount` < `outputAmount`
    * @param inputToken Address of the token
@@ -31,11 +30,11 @@ contract AerodromeCLLiquidator is IRedemptionStrategy {
     (
       ,
       address _outputToken,
-      IAerodromeSwapRouter swapRouter,
+      ISwapRouter_Aerodrome swapRouter,
       address _unwrappedInput,
       address _unwrappedOutput,
       int24 _tickSpacing
-    ) = abi.decode(strategyData, (address, address, IAerodromeSwapRouter, address, address, int24));
+    ) = abi.decode(strategyData, (address, address, ISwapRouter_Aerodrome, address, address, int24));
     if (_unwrappedOutput != address(0)) {
       outputToken = IERC20Upgradeable(_unwrappedOutput);
     } else {
@@ -51,7 +50,7 @@ contract AerodromeCLLiquidator is IRedemptionStrategy {
     inputToken.approve(address(swapRouter), inputAmount);
 
     outputAmount = swapRouter.exactInputSingle(
-      IAerodromeSwapRouter.ExactInputSingleParams(
+      ISwapRouter_Aerodrome.ExactInputSingleParams(
         address(inputToken),
         address(outputToken),
         _tickSpacing,

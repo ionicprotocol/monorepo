@@ -1,6 +1,6 @@
-import type { IonicPoolData, SupportedChains } from '@ionicprotocol/types';
-import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { useQueries } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
@@ -8,6 +8,8 @@ import type { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort } from '@ui/utils/sorts';
+
+import type { IonicPoolData, SupportedChains } from '@ionicprotocol/types';
 
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();

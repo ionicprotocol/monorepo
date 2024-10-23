@@ -1,8 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { createConfig, getEnsName, http } from '@wagmi/core';
-import type { Address } from 'viem';
 import { base, mainnet, mode } from 'viem/chains';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { fetchData } from '@ui/utils/functions';
 
 import {
   steerLPMultipliers,
@@ -13,8 +15,7 @@ import {
   ionLPMultipliersMode
 } from '../../ui/utils/multipliers';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { fetchData } from '@ui/utils/functions';
+import type { Address } from 'viem';
 
 const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co';
 const supabaseKey =

@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
+
+import { createClient } from '@supabase/supabase-js';
 import { formatEther, parseEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
@@ -19,20 +20,21 @@ const supabase = createClient(
 
 // Create a single supabase client for interacting with your database
 // import { simulateContract } from 'viem/contract'
+import { DROPDOWN } from '@ui/constants/index';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import { claimAbi, claimContractAddress } from '../../constants/claim';
 import {
   PublicSaleAbi,
   PublicSaleContractAddress
 } from '../../constants/publicsale';
 import CountdownTimer from '../_components/claim/CountdownTimer';
-import type { User } from '../_components/claim/EligibilityPopup';
 import EligibilityPopup from '../_components/claim/EligibilityPopup';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import ResultHandler from '../_components/ResultHandler';
 
-import { DROPDOWN } from '@ui/constants/index';
-import { useOutsideClick } from '@ui/hooks/useOutsideClick';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+import type { User } from '../_components/claim/EligibilityPopup';
 
 export default function Claim() {
   const [season1Claimable, setseason1Claimable] = useState(BigInt(0));
