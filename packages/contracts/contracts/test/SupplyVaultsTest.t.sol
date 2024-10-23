@@ -45,7 +45,7 @@ contract SupplyVaultsTest is BaseTest {
   }
 
   function addLiquidity() internal {
-    //    vm.startPrank(wbnbWhale);
+    //    vm.startPrank(wethWhale);
     //    wbnb.approve(wethNativeMarketAddress, depositAmount * 10);
     //    wethNativeMarket.mint(depositAmount * 10);
     //    wbnb.approve(wethMainMarketAddress, depositAmount * 10);
@@ -134,6 +134,76 @@ contract SupplyVaultsTest is BaseTest {
     deployVault();
 
     depositAssets();
+  }
+
+  function testVaultEmergencyShutdown() public fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    registry.setEmergencyExit();
+
+    assertTrue(vault.emergencyExit(), "!emergency set");
+    assertEq(asSecondExtension.lentTotalAssets(), 0, "!still lending");
+    assertGt(asSecondExtension.estimatedTotalAssets(), 0, "!emergency withdrawn");
+
+    asSecondExtension.harvest(lenderSharesHint);
+  }
+
+  function testVaultOptimization() public fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    uint256 estimatedAprHint;
+    {
+      int256[] memory lenderAdjustedAmounts;
+      if (lenderSharesHint.length != 0)
+        (estimatedAprHint, lenderAdjustedAmounts) = asSecondExtension.estimatedAPR(lenderSharesHint);
+
+      emit log_named_int("lenderAdjustedAmounts0", lenderAdjustedAmounts[0]);
+      emit log_named_int("lenderAdjustedAmounts1", lenderAdjustedAmounts[1]);
+      emit log_named_uint("hint", estimatedAprHint);
+    }
+
+    // log before
+    uint256 aprBefore = asSecondExtension.estimatedAPR();
+    {
+      emit log_named_uint("aprBefore", aprBefore);
+
+      if (estimatedAprHint > aprBefore) {
+        emit log("harvest will rebalance");
+      } else {
+        emit log("harvest will NOT rebalance");
+      }
+    }
+
+    // harvest
+    {
+      uint256 maxRedeemBefore = asSecondExtension.maxRedeem(wethWhale);
+      emit log_named_uint("maxRedeemBefore", maxRedeemBefore);
+
+      asSecondExtension.harvest(lenderSharesHint);
+
+      uint256 maxRedeemAfter = asSecondExtension.maxRedeem(wethWhale);
+      emit log_named_uint("maxRedeemAfter", maxRedeemAfter);
+    }
+
+    // check if the APR improved as a result of the hinted better allocations
+    {
+      uint256 aprAfter = asSecondExtension.estimatedAPR();
+      emit log_named_uint("aprAfter", aprAfter);
+
+      if (estimatedAprHint > aprBefore) {
+        assertGt(aprAfter, aprBefore, "!harvest didn't optimize the allocations");
+      }
+    }
+  }
+
+  function testVaultPreviewMint(uint256 assets) public fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    vm.assume(assets >= 10 * asSecondExtension.adaptersCount() && assets < type(uint128).max);
+
+    // previewDeposit should return the maximum shares that are minted for the assets input
+    uint256 maxShares = asSecondExtension.previewDeposit(assets);
+    // previewMint should return the minimum assets required for the shares input
+    uint256 shouldBeMoreThanAvailableAssets = asSecondExtension.previewMint(maxShares + 1);
+    // minting a share more should require more assets than the available
+    assertGt(shouldBeMoreThanAvailableAssets, assets, "!not gt than available assets");
   }
 
   function testVaultPreviewRedeem() public fork(MODE_MAINNET) {
