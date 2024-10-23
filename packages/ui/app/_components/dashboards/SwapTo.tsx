@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useState, useEffect, useRef } from 'react';
+
+import dynamic from 'next/dynamic';
 
 import ResultHandler from '../ResultHandler';
 import TokenSelector from '../stake/TokenSelector';

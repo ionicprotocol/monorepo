@@ -1,7 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { collateralSwapAbi } from '@ionicprotocol/sdk';
+import { useEffect, useMemo, useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
 import { createConfig, getQuote, type QuoteRequest } from '@lifi/sdk';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -16,8 +19,6 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import toast from 'react-hot-toast';
 import {
@@ -28,9 +29,6 @@ import {
   parseUnits
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
-
-import MaxDeposit from './MaxDeposit';
-import SwapTo from './SwapTo';
 
 import SliderComponent from '@ui/app/_components/popup/Slider';
 import TransactionStepsHandler, {
@@ -44,6 +42,11 @@ import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import MaxDeposit from './MaxDeposit';
+import SwapTo from './SwapTo';
+
+import { collateralSwapAbi } from '@ionicprotocol/sdk';
 
 createConfig({
   integrator: 'ionic',

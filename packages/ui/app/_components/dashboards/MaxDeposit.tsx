@@ -1,14 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { icErc20Abi } from '@ionicprotocol/sdk';
-import dynamic from 'next/dynamic';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState, useEffect, useRef } from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { type Address, formatUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
 import TokenSelector from '../stake/TokenSelector';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface IMaxDeposit {
   amount: string;
