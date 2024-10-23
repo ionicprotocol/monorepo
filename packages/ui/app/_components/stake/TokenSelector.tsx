@@ -68,9 +68,9 @@ export default function TokenSelector({
           />
         </div>
         <ul
-          className={`  left-0   ${
-            open ? 'block' : 'hidden transition-all  delay-1000'
-          } top-full w-full  origin-top z-40 shadow-xl shadow-black/10 rounded-b-md py-2 border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-1.5 gap-2 `}
+          className={`left-0 ${
+            open ? 'block' : 'hidden transition-all delay-1000'
+          } top-full w-full origin-top z-40 shadow-xl shadow-black/10 rounded-b-md border border-stone-700 absolute bg-grayone/50 backdrop-blur-sm p-1.5 gap-2 max-h-60 overflow-y-auto`}
         >
           {tokenArr.map((token: string, idx: number) => (
             <Link

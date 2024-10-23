@@ -45,6 +45,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
+import { SlippageDropdown } from '../SlippageDropdown';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk';
 
@@ -77,8 +78,6 @@ ChartJS.register(
   Legend
 );
 
-const DEFAULT_SLIPPAGE_TOL = 0.005;
-
 export default function CollateralSwapPopup({
   swapRef,
   toggler,
@@ -89,6 +88,7 @@ export default function CollateralSwapPopup({
   const [utilization, setUtilization] = useState<number>(0);
   const [conversionRate, setConversionRate] = useState<string>('-');
   const [swapFromAmount, setSwapFromAmount] = useState<string>('');
+  const [effectiveSlippage, setEffectiveSlippage] = useState<number>(0.01); // Default to 1%
   const [maxTokens, setMaxTokens] = useState<IBal>({
     value: BigInt(0),
     decimals: swappedFromAsset.underlyingDecimals
@@ -136,6 +136,10 @@ export default function CollateralSwapPopup({
     comptroller
   });
 
+  const handleSlippageChange = (newSlippage: number) => {
+    setEffectiveSlippage(newSlippage);
+  };
+
   const resetTransactionSteps = () => {
     // refetchUsedQueries();
     upsertTransactionStep(undefined);
@@ -164,7 +168,7 @@ export default function CollateralSwapPopup({
         skipSimulation: true,
         integrator: 'ionic',
         fee: '0.005',
-        slippage: DEFAULT_SLIPPAGE_TOL
+        slippage: effectiveSlippage
       };
       const quote = await getQuote(quoteRequest);
       return quote;
@@ -545,13 +549,7 @@ export default function CollateralSwapPopup({
           </div>
         </div>
         <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5 " />
-        {/* <div className={` text-xs  flex items-center justify-between w-full`}>
-        <span className=" text-white/50 ">Slippage</span>
-        <span className=" ">0.2%</span>
-      </div> */}
-        <p className={`text-xs mb-3`}>
-          {DEFAULT_SLIPPAGE_TOL * 100}% Slippage Tolerance
-        </p>
+        <SlippageDropdown onSlippageChange={handleSlippageChange} />
         {transactionSteps.length > 0 ? (
           <TransactionStepsHandler
             chainId={chainId}
