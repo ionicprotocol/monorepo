@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
+
+import type { Address } from 'viem';
 
 export const useFlywheelsForPool = (
   comptrollerAddress?: Address,

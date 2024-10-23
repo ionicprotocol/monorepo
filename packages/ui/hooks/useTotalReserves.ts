@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { Address } from 'viem';
+
+import type { Address } from 'viem';
 
 export const useTotalReserves = (cTokenAddress?: Address, chainId?: number) => {
   const sdk = useSdk(chainId);

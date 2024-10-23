@@ -3,13 +3,15 @@
 
 // import type { Route } from '@lifi/sdk';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports
-import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
-import type { WidgetConfig } from '@lifi/widget';
 import { useEffect, useRef, useState } from 'react';
+
+import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import { mode } from 'viem/chains';
 
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
+
+import type { WidgetConfig } from '@lifi/widget';
 
 interface IProps {
   close: () => void;

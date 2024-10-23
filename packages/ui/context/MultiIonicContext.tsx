@@ -1,9 +1,4 @@
 'use client';
-import { chainIdToConfig } from '@ionicprotocol/chains';
-import { IonicSdk } from '@ionicprotocol/sdk';
-import type Security from '@ionicprotocol/security';
-import type { SupportedChains } from '@ionicprotocol/types';
-import * as Sentry from '@sentry/browser';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -13,6 +8,8 @@ import {
   useMemo,
   useState
 } from 'react';
+
+import * as Sentry from '@sentry/browser';
 import {
   createPublicClient,
   fallback,
@@ -24,6 +21,11 @@ import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+
+import { chainIdToConfig } from '@ionicprotocol/chains';
+import { IonicSdk } from '@ionicprotocol/sdk';
+import type Security from '@ionicprotocol/security';
+import type { SupportedChains } from '@ionicprotocol/types';
 
 export interface MultiIonicContextData {
   address?: `0x${string}`;
