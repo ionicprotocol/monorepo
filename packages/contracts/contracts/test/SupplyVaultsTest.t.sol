@@ -421,106 +421,111 @@ contract SupplyVaultsTest is BaseTest {
     secondExt.changeAdapters();
   }
 
-//  function testVaultAccrueRewards() public fork(MODE_MAINNET) {
-//    IERC20Metadata ddd = IERC20Metadata(dddAddress);
-//    IERC20Metadata epx = IERC20Metadata(epxAddress);
-//    address someDeployer = address(321);
-//
-//    // set up the registry, the vault and the adapter
-//    {
-//      // upgrade to enable the aprAfterDeposit fn for the vault
-//      _upgradeMarket(CErc20Delegate(twoBrlMarketAddress));
-//
-//      vm.startPrank(someDeployer);
-//      deployVaultRegistry();
-//
-//      // deploy the adapter
-//      CompoundMarketERC4626 twoBrlMarketAdapter = new CompoundMarketERC4626();
-//      {
-//        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
-//          address(twoBrlMarketAdapter),
-//          address(dpa),
-//          ""
-//        );
-//        twoBrlMarketAdapter = CompoundMarketERC4626(address(proxy));
-//        vm.label(address(twoBrlMarketAdapter), "twoBrlMarketAdapter");
-//      }
-//      twoBrlMarketAdapter.initialize(ICErc20(twoBrlMarketAddress), blocksPerYear, registry);
-//
-//      AdapterConfig[10] memory _adapters;
-//      _adapters[0].adapter = twoBrlMarketAdapter;
-//      _adapters[0].allocation = 1e18;
-//
-//      MidasFlywheel flywheelLogic = new MidasFlywheel();
-//
-//      bytes memory params = abi.encode(
-//        twoBrl,
-//        _adapters,
-//        1,
-//        VaultFees(0, 0, 0, 0),
-//        address(this),
-//        type(uint256).max,
-//        address(registry),
-//        address(flywheelLogic)
-//      );
-//
-//      OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
-//      exts[0] = new OptimizedAPRVaultFirstExtension();
-//      exts[1] = new OptimizedAPRVaultSecondExtension();
-//      vault = new OptimizedAPRVaultBase();
-//      vm.label(address(vault), "vault");
-//      vault.initialize(exts, params);
-//
-//      vault.asFirstExtension().addRewardToken(ddd);
-//      vault.asFirstExtension().addRewardToken(epx);
-//
-//      registry.addVault(address(vault));
-//    }
-//    vm.stopPrank();
-//
-//    // deposit some funds
-//    vm.startPrank(twoBrlWhale);
-//    twoBrl.approve(address(vault), type(uint256).max);
-//    // accruing for the first time internally with _afterTokenTransfer
-//    vault.asSecondExtension().deposit(depositAmount);
-//    vm.stopPrank();
-//
-//    {
-//      // advance time to move away from the first cycle,
-//      // because the first cycle is initialized with 0 rewards
-//      vm.warp(block.timestamp + 25 hours);
-//      vm.roll(block.number + 1000);
-//    }
-//
-//    // pull from the adapters the rewards for the new cycle
-//    vault.asSecondExtension().pullAccruedVaultRewards();
-//
-//    OptimizedAPRVaultFirstExtension vaultFirstExt = vault.asFirstExtension();
-//    {
-//      // TODO figure out why these accrue calls are necessary
-//      MidasFlywheel flywheelDDD = vaultFirstExt.flywheelForRewardToken(ddd);
-//      MidasFlywheel flywheelEPX = vaultFirstExt.flywheelForRewardToken(epx);
-//      flywheelDDD.accrue(ERC20(address(vault)), twoBrlWhale);
-//      flywheelEPX.accrue(ERC20(address(vault)), twoBrlWhale);
-//
-//      // advance time in the same cycle in order to accrue some rewards for it
-//      vm.warp(block.timestamp + 10 hours);
-//      vm.roll(block.number + 1000);
-//    }
-//
-//    // harvest does nothing when the APR remains the same
-//    //uint64[] memory array = new uint64[](1);
-//    //array[0] = 1e18;
-//    //vault.harvest(array);
-//
-//    // accrue and claim
-//    vm.prank(twoBrlWhale);
-//    vaultFirstExt.claimRewards();
-//
-//    // check if any rewards were claimed
-//    assertGt(ddd.balanceOf(twoBrlWhale), 0, "!received DDD");
-//    assertGt(epx.balanceOf(twoBrlWhale), 0, "!received EPX");
-//  }
+  // TODO remove debuggingOnly when passing
+  function testVaultAccrueRewards() public debuggingOnly fork(MODE_MAINNET) {
+    IERC20Metadata ionToken = IERC20Metadata(0x18470019bf0e94611f15852f7e93cf5d65bc34ca);
+    address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    address someDeployer = address(321);
+
+    {
+      // TODO change the WETH market delegate to a rewards delegate
+      // with ION as the reward token
+      // then add some rewards at a static/dynamic rate
+    }
+
+    // set up the registry, the vault and the adapter
+    {
+      //      // upgrade to enable the aprAfterDeposit fn for the vault
+      //      _upgradeMarket(wethNativeMarket);
+
+      vm.startPrank(someDeployer);
+      deployVaultRegistry();
+
+      // deploy the adapter
+      CompoundMarketERC4626 wethNativeMarketAdapter = new CompoundMarketERC4626();
+      {
+        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
+          address(wethNativeMarketAdapter),
+          address(dpa),
+          ""
+        );
+        wethNativeMarketAdapter = CompoundMarketERC4626(address(proxy));
+        vm.label(address(wethNativeMarketAdapter), "wethNativeMarketAdapter");
+      }
+      wethNativeMarketAdapter.initialize(wethNativeMarket, blocksPerYear, registry);
+
+      AdapterConfig[10] memory _adapters;
+      _adapters[0].adapter = wethNativeMarketAdapter;
+      _adapters[0].allocation = 1e18;
+
+      IonicFlywheel flywheelLogic = new IonicFlywheel();
+
+      bytes memory params = abi.encode(
+        weth,
+        _adapters,
+        1,
+        VaultFees(0, 0, 0, 0),
+        address(this),
+        type(uint256).max,
+        address(registry),
+        address(flywheelLogic)
+      );
+
+      OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
+      exts[0] = new OptimizedAPRVaultFirstExtension();
+      exts[1] = new OptimizedAPRVaultSecondExtension();
+      vault = new OptimizedAPRVaultBase();
+      vm.label(address(vault), "vault");
+      vault.initialize(exts, params);
+
+      vault.asFirstExtension().addRewardToken(ionToken);
+
+      registry.addVault(address(vault));
+    }
+    vm.stopPrank();
+
+    uint256 whaleStartingOpBalance = ionToken.balanceOf(wethWhale);
+
+    // deposit some funds
+    vm.startPrank(wethWhale);
+    weth.approve(address(vault), type(uint256).max);
+    // accruing for the first time internally with _afterTokenTransfer
+    vault.asSecondExtension().deposit(depositAmount);
+    vm.stopPrank();
+
+    {
+      // advance time to move away from the first cycle,
+      // because the first cycle is initialized with 0 rewards
+      vm.warp(block.timestamp + 25 hours);
+      vm.roll(block.number + 1000);
+    }
+
+    // pull from the adapters the rewards for the new cycle
+    vault.asSecondExtension().pullAccruedVaultRewards();
+
+    OptimizedAPRVaultFirstExtension vaultFirstExt = vault.asFirstExtension();
+    {
+      // TODO figure out why these accrue calls are necessary
+      IonicFlywheel flywheelION = vaultFirstExt.flywheelForRewardToken(ionToken);
+      flywheelION.accrue(ERC20(address(vault)), wethWhale);
+
+      // advance time in the same cycle in order to accrue some rewards for it
+      vm.warp(block.timestamp + 10 hours);
+      vm.roll(block.number + 1000);
+    }
+
+    // harvest does nothing when the APR remains the same
+    //uint64[] memory array = new uint64[](1);
+    //array[0] = 1e18;
+    //vault.harvest(array);
+
+    // accrue and claim
+    vm.prank(wethWhale);
+    vaultFirstExt.claimRewards();
+
+    // check if any rewards were claimed
+    assertGt(ionToken.balanceOf(wethWhale), whaleStartingOpBalance, "!received ION");
+  }
 
   function testUpgradeOptVault() public fork(MODE_MAINNET) {
     OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
