@@ -5,9 +5,9 @@ import {
 } from '@ui/constants/baselp';
 import {
   LiquidityContractAbi,
-  LiquidityContractAddress
+  ModeLiquidityContractAddress
 } from '@ui/constants/lp';
-import { TradingContractAddress } from '@ui/constants/modetradingfees';
+import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
 import {
   OPReservesContractAddr,
   OPRouterContractAddr,
@@ -44,18 +44,19 @@ export function getAvailableStakingToken(
     return '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
   if (chain === 8453 && (token === 'eth' || token === 'weth'))
     return BaseReservesContractAddr;
-  if (chain === 10 && (token === 'eth' || token ==='weth')) return OPReservesContractAddr;
+  if (chain === 10 && (token === 'eth' || token === 'weth'))
+    return OPReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getTradingContractAddress(chain: number): `0x${string}` {
-  if (chain === 34443) return TradingContractAddress;
+  if (chain === 34443) return ModeTradingContractAddress;
   if (chain === 8453) return BaseReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getSpenderContract(chain: number): `0x${string}` {
-  if (chain === 34443) return LiquidityContractAddress;
+  if (chain === 34443) return ModeLiquidityContractAddress;
   if (chain === 8453) return BaseLiquidityContractAdd;
   if (chain === 10) return OPRouterContractAddr;
   return '0x0000000000000000000000000000000000000000';
@@ -76,7 +77,7 @@ export function getStakingToContract(
 
 //for reserves=========================================================
 export function getReservesContract(chain: number): `0x${string}` {
-  if (chain === 34443) return LiquidityContractAddress;
+  if (chain === 34443) return ModeLiquidityContractAddress;
   if (chain === 8453) return BaseReservesContractAddr;
   if (chain === 10) return OPReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
