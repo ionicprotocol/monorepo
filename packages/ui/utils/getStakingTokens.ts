@@ -70,7 +70,7 @@ export function getStakingToContract(
   if (chain === 34443 && token === 'mode')
     return '0x8EE410cC13948e7e684ebACb36b552e2c2A125fC';
   if (chain === 8453) return '0x9b42e5F8c45222b2715F804968251c747c588fd7';
-  if (chain === 10 && token === 'op') return OPStakingContractAddr;
+  if (chain === 10 && token === 'eth') return OPStakingContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 

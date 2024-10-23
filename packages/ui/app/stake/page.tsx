@@ -23,7 +23,6 @@ import {
   useWalletClient
 } from 'wagmi';
 
-// import NetworkSelector from '../_components/markets/NetworkSelector';
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
@@ -47,13 +46,6 @@ import MaxDeposit from '../_components/stake/MaxDeposit';
 import ModeBreakdown from '../_components/stake/ModeBreakdown';
 import Toggle from '../_components/Toggle';
 
-// import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-// import {
-//   useAeroPrice,
-//   useIonPrice,
-//   useModePrice
-// } from '@ui/hooks/useDexScreenerPrices';
-
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   {
@@ -64,8 +56,6 @@ const NetworkSelector = dynamic(
 const Widget = dynamic(() => import('../_components/stake/Widget'), {
   ssr: false
 });
-
-// import { Widget } from '../_components/stake/Widget';
 
 export default function Stake() {
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
@@ -82,6 +72,14 @@ export default function Stake() {
   const queryToken = searchParams.get('token');
   const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
+  const stakingContractAddress = getStakingToContract(
+    +chain,
+    selectedtoken as 'eth' | 'mode' | 'weth'
+  );
+  const stakingTokenAddress = getAvailableStakingToken(
+    +chain,
+    selectedtoken as 'eth' | 'mode' | 'weth'
+  );
 
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -105,14 +103,24 @@ export default function Stake() {
   // const router = useRouter();
   const { data: withdrawalMaxToken } = useBalance({
     address,
-    token: getAvailableStakingToken(
-      +chain,
-      selectedtoken as 'eth' | 'mode' | 'weth'
-    ),
+    token: stakingTokenAddress,
     chainId: +chain,
     query: {
       // refetchInterval: 6000
       notifyOnChangeProps: ['data', 'error']
+    }
+  });
+
+  const reserves = useReadContract({
+    abi: getReservesABI(+chain),
+    address: getReservesContract(+chain),
+    args: getReservesArgs(+chain, selectedtoken as 'eth' | 'mode' | 'weth'),
+    functionName: 'getReserves',
+    chainId: +chain,
+    query: {
+      enabled: true,
+      notifyOnChangeProps: ['data', 'error'],
+      placeholderData: [0n, 0n]
     }
   });
 
@@ -129,19 +137,6 @@ export default function Stake() {
       100;
     setUtilization(Number(percent.toFixed(0)));
   }, [maxWithdrawl.ion, withdrawalMaxToken]);
-
-  const reserves = useReadContract({
-    abi: getReservesABI(+chain),
-    address: getReservesContract(+chain),
-    args: getReservesArgs(+chain, selectedtoken as 'eth' | 'mode' | 'weth'),
-    functionName: 'getReserves',
-    chainId: +chain,
-    query: {
-      enabled: true,
-      notifyOnChangeProps: ['data', 'error'],
-      placeholderData: [0n, 0n]
-    }
-  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function calculateReserves(ion: string, data: [bigint, bigint]) {
@@ -182,10 +177,7 @@ export default function Stake() {
 
   const allStakedAmount = useReadContract({
     abi: StakingContractAbi,
-    address: getStakingToContract(
-      +chain,
-      selectedtoken as 'eth' | 'mode' | 'weth'
-    ),
+    address: stakingContractAddress,
     args: [address as `0x${string}`],
     functionName: 'balanceOf',
     chainId: +chain,
@@ -355,10 +347,7 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(
-          +chain,
-          selectedtoken as 'eth' | 'mode' | 'weth'
-        ),
+        address: stakingTokenAddress,
         args: [getSpenderContract(+chain), args.liquidity],
         functionName: 'approve'
       });
@@ -443,6 +432,7 @@ export default function Stake() {
       });
     }
   }
+
   async function stakingAsset() {
     try {
       const args = {
@@ -460,17 +450,8 @@ export default function Stake() {
       const approval = await walletClient!.writeContract({
         abi: erc20Abi,
         account: walletClient?.account,
-        address: getAvailableStakingToken(
-          +chain,
-          selectedtoken as 'eth' | 'mode' | 'weth'
-        ),
-        args: [
-          getStakingToContract(
-            +chain,
-            selectedtoken as 'eth' | 'mode' | 'weth'
-          ),
-          args.lpToken
-        ],
+        address: stakingTokenAddress,
+        args: [stakingContractAddress, args.lpToken],
         functionName: 'approve'
       });
 
@@ -480,14 +461,10 @@ export default function Stake() {
       });
       // eslint-disable-next-line no-console
       console.log({ appr });
-      // console.log(args.lpToken, getStakingToContract(+chain));
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(
-          +chain,
-          selectedtoken as 'eth' | 'mode' | 'weth'
-        ),
+        address: stakingContractAddress,
         args: [args.lpToken, address],
         functionName: 'deposit'
       });
@@ -513,6 +490,7 @@ export default function Stake() {
       setMaxLp('');
     }
   }
+
   async function unstakingAsset() {
     try {
       const args = {
@@ -533,10 +511,7 @@ export default function Stake() {
       const tx = await walletClient!.writeContract({
         abi: StakingContractAbi,
         account: walletClient?.account,
-        address: getStakingToContract(
-          +chain,
-          selectedtoken as 'eth' | 'mode' | 'weth'
-        ),
+        address: stakingContractAddress,
         args: [args.lpToken],
         functionName: 'withdraw'
       });
@@ -569,7 +544,7 @@ export default function Stake() {
   const tokenArrOfChain: Record<number, string[]> = {
     34443: ['eth', 'weth', 'mode'],
     8453: ['eth', 'weth'],
-    10: ['eth']
+    10: ['eth', 'weth']
   };
 
   return (
@@ -654,10 +629,7 @@ export default function Stake() {
                   headerText={step2Toggle}
                   amount={maxWithdrawl.ion}
                   tokenName={`ion/${selectedtoken}`}
-                  token={getAvailableStakingToken(
-                    +chain,
-                    selectedtoken as 'eth' | 'mode' | 'weth'
-                  )}
+                  token={stakingTokenAddress}
                   handleInput={(val?: string) =>
                     setMaxWithdrawl((p) => {
                       return { ...p, ion: val || '' };
@@ -747,10 +719,7 @@ export default function Stake() {
                 headerText={step3Toggle}
                 amount={maxLp}
                 tokenName={`ion/${selectedtoken}`}
-                token={getAvailableStakingToken(
-                  +chain,
-                  selectedtoken as 'eth' | 'mode' | 'weth'
-                )}
+                token={stakingTokenAddress}
                 handleInput={(val?: string) => setMaxLp(val as string)}
                 chain={+chain}
               />
