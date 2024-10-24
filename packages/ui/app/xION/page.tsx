@@ -127,6 +127,8 @@ export default function XION() {
   useEffect(() => {
     if (address && allowance && allowance >= parseEther(deposit)) {
       setProgress(2);
+    } else {
+      setProgress(0);
     }
   }, [allowance, deposit, address]);
 
@@ -141,6 +143,7 @@ export default function XION() {
       if (amount <= BigInt(0)) return;
       setLoading((p) => ({ ...p, approvalStatus: true }));
       setProgress(1);
+
       const approval = await writeContractAsync({
         abi: erc20Abi,
         account: address,
