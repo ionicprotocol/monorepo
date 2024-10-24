@@ -1,33 +1,33 @@
 import Image from 'next/image';
 
-import { base } from 'viem/chains';
+import { optimism } from 'viem/chains';
 
-import { BaseSugarAddress } from '@ui/constants/baselp';
+import { OPSugarAddress } from '@ui/constants/oplp';
 import useSugarAPR from '@ui/hooks/useSugarAPR';
 
-type BaseBreakdownProps = {
+type OPBreakdownProps = {
   step3Toggle: string;
 };
 
-const ION_POOL_INDEX = 1489n;
+const POOL_INDEX = 910n;
 
-export default function BaseBreakdown({ step3Toggle }: BaseBreakdownProps) {
+export default function OPBreakdown({ step3Toggle }: OPBreakdownProps) {
   const { apr } = useSugarAPR({
-    sugarAddress: BaseSugarAddress,
-    poolIndex: ION_POOL_INDEX,
-    chainId: base.id
+    sugarAddress: OPSugarAddress,
+    poolIndex: POOL_INDEX,
+    chainId: optimism.id
   });
 
   return (
     <div className="flex items-center w-full mt-3 text-xs gap-2">
       <Image
-        alt="AERO logo"
+        alt="VELO logo"
         className="mx-1"
-        src="/img/logo/AERO.png"
+        src="/img/symbols/32/color/velo.png"
         width={24}
         height={24}
       />
-      <span>Aerodrome APR</span>
+      <span>Velodrome APR</span>
       <span
         className={`text-accent ${
           step3Toggle === 'Unstake' && 'text-red-500'
