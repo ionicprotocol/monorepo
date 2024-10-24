@@ -21,8 +21,8 @@ export default function BaseBreakdown({ step3Toggle }: BaseBreakdownProps) {
   return (
     <div className="flex items-center w-full mt-3 text-xs gap-2">
       <Image
-        alt="ion logo"
-        className="w-6 h-6 inline-block mx-1 bg-blend-screen"
+        alt="AERO logo"
+        className="mx-1"
         src="/img/logo/AERO.png"
         width={24}
         height={24}

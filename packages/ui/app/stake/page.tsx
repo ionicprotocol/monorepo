@@ -762,7 +762,7 @@ export default function Stake() {
             {+chain === mode.id && (
               <ModeBreakdown
                 step3Toggle={step3Toggle}
-                selectedtoken={selectedtoken as 'eth' | 'mode' | 'weth'}
+                selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
               />
             )}
             {+chain === optimism.id && (
