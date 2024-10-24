@@ -36,7 +36,12 @@ import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
 import type { PopupMode } from '../_components/popup/page';
-import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
+
+import type {
+  FlywheelReward,
+  OpenPosition,
+  PositionInfo
+} from '@ionicprotocol/types';
 
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false

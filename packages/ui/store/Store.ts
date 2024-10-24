@@ -1,9 +1,9 @@
 // import type { Dispatch, SetStateAction } from 'react';
 import { create } from 'zustand';
 
-import type { BorrowPopoverProps } from 'ui/app/_components/markets/BorrowPopover';
-import type { SupplyPopoverProps } from 'ui/app/_components/markets/SupplyPopover';
-// import type { PopupMode } from 'ui/app/_components/popup/page';
+import type { BorrowPopoverProps } from '@ui/app/_components/markets/BorrowPopover';
+import type { SupplyPopoverProps } from '@ui/app/_components/markets/SupplyPopover';
+// import type { PopupMode } from '@ui/app/_components/popup/page';
 
 interface IFeaturedBorrow extends BorrowPopoverProps {
   // asset: string;

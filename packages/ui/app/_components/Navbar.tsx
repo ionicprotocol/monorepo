@@ -12,7 +12,7 @@ import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
@@ -210,6 +210,7 @@ export default function Navbar() {
             // target="_blank"
           >
             {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
+            {/* <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
               NEW!
             </span> */}
             <p
@@ -222,15 +223,14 @@ export default function Navbar() {
           </Link>
           <Link
             className="relative mb-2 lg:mb-0"
-            href={`https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion`}
-            target="_blank"
+            href="/veion"
           >
             <span className="absolute px-[5px] top-[90%] right-[50%] translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap	">
-              SOON!
+              NEW!
             </span>
             <p
               className={`${
-                pathname == '/xION' ? 'text-accent' : null
+                pathname == '/veion' ? 'text-accent' : null
               } hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               veION

@@ -4,6 +4,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import { formatUnits, parseUnits } from 'viem';
 // import { mode } from 'viem/chains';
@@ -22,6 +23,7 @@ interface IMaxDeposit {
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
+  size?: number;
 }
 
 interface IBal {
@@ -39,7 +41,8 @@ function MaxDeposit({
   max = '',
   chain,
   tokenSelector = false,
-  tokenArr
+  tokenArr,
+  size = 20
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
@@ -163,14 +166,17 @@ function MaxDeposit({
           ) : (
             <>
               {' '}
-              <img
+              <Image
                 alt="ion logo"
-                className={`w-5 h-5 inline-block ml-2`}
-                src={`/img/logo/${tokenName.toUpperCase()}.png`}
+                className="inline-block ml-2"
+                src={`/img/logo/${tokenName.toLocaleLowerCase()}.svg`}
                 onError={({ currentTarget }) => {
-                  currentTarget.onerror = null; // prevents looping
-                  currentTarget.src = '/img/logo/ION.png';
+                  currentTarget.onerror = null;
+                  currentTarget.src = '/img/logo/ion.svg';
                 }}
+                width={size}
+                height={size}
+                unoptimized
               />
               <button className={` mx-2`}>{tokenName.toUpperCase()}</button>{' '}
             </>

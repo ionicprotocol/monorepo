@@ -4,8 +4,6 @@ import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
 import Link from 'next/link';
 
-import { useStore } from 'ui/store/Store';
-
 import {
   FLYWHEEL_TYPE_MAP,
   pools,
@@ -14,6 +12,7 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
+import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -276,7 +275,7 @@ const PoolRows = ({
           SUPPLY APR:
         </span>
         <div className="popover-container relative flex md:flex-col items-center justify-between md:justify-center cursor-pointer">
-          <span className="mr-1 md:mr-0 md:mb-1">
+          <span className={`mr-1 md:mr-0`}>
             +
             {supplyAPRTotal?.toLocaleString('en-US', {
               maximumFractionDigits: 2
