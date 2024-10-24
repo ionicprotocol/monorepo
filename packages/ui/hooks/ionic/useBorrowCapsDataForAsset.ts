@@ -1,8 +1,10 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/ionic/useSdk';
+
+import type { Address } from 'viem';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
 
 export const fetchBorrowCaps = async (sdk: IonicSdk, cTokens: Address[]) => {
   const cTokenToBorrowCaps: {
@@ -71,7 +73,10 @@ export const useBorrowCapsDataForAsset = (
   });
 };
 
-export const useBorrowCapsForAssets = (cTokens?: Address[], poolChainId?: number) => {
+export const useBorrowCapsForAssets = (
+  cTokens?: Address[],
+  poolChainId?: number
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery({

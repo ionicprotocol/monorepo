@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+
 import { base, mode } from 'viem/chains';
 
 import BaseBreakdown from '../stake/BaseBreakdown';
@@ -27,8 +28,8 @@ export default function StakingTile({ chain }: Iprop) {
         </div> */}
         {+chain === mode.id && (
           <ModeBreakdown
-            step3Toggle={'Stake'}
-            selectedtoken={'eth'}
+            step3Toggle="Stake"
+            selectedToken="eth"
           />
         )}
         {+chain === base.id && <BaseBreakdown step3Toggle={'Stake'} />}

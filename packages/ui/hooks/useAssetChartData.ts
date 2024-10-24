@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, parseEther } from 'viem';
+import { parseEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
+
+import type { Address } from 'viem';
 
 export function useAssetChartData(
   interestRateModelAddress: Address,

@@ -1,8 +1,8 @@
 'use client';
 
-import ResultHandler from '../ResultHandler';
-
 import { useAllTvlAcrossChain } from '@ui/hooks/useAllTvlAcrossChain';
+
+import ResultHandler from '../ResultHandler';
 
 export default function TotalTvlTile() {
   const { data, isLoading } = useAllTvlAcrossChain();

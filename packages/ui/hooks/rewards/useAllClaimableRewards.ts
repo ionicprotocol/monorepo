@@ -1,8 +1,10 @@
-import type { SupportedChains } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import type { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import type { Address } from 'viem';
+
+import type { SupportedChains } from '@ionicprotocol/types';
 
 interface AllRewardsType {
   amount: bigint;
@@ -17,7 +19,7 @@ export const useAllClaimableRewards = (
   const { address, getSdk } = useMultiIonic();
   const addressToUse = account || address;
   return useQuery({
-    queryKey: ['useAllClaimableRewards', chainIds, address],
+    queryKey: ['useAllClaimableRewards', chainIds, addressToUse],
 
     queryFn: async () => {
       const allRewards: AllRewardsType[] = [];

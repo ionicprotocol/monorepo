@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { Address } from 'viem';
+
+import type { Address } from 'viem';
 
 export interface SwapTokenType {
   underlyingDecimals: bigint;

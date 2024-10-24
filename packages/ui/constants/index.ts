@@ -1,8 +1,10 @@
-import { SupportedChainsArray } from '@ionicprotocol/types';
-import { type Address } from 'viem';
 import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
+
+import type { Address } from 'viem';
+
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
@@ -120,7 +122,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
     ]
   },
   [optimism.id]: {
-    supply: ['0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'],
+    supply: [
+      '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
+      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'
+    ],
     borrow: []
   }
 };
@@ -206,7 +211,6 @@ export const pools: Record<number, PoolParams> = {
           'USDz',
           'wUSD+',
           'wUSDM',
-          'USD+',
           'uSOL',
           'EURC',
           'cbBTC',
@@ -218,15 +222,18 @@ export const pools: Record<number, PoolParams> = {
           'AERO',
           'RSR',
           'wstETH',
-          'cbETH'
+          'cbETH',
+          'USD+'
         ]
       }
     ]
   },
   [optimism.id]: {
     name: 'Optimism',
+    hexcode: '#ff0420',
     arrow: 'ffffff',
     bg: 'bg-optimism',
+    accentbg: 'bg-optimism',
     text: 'text-white',
     border: 'border-optimism',
     logo: '/img/logo/OPTIMISM.png',
@@ -381,17 +388,6 @@ export const POOLS_PER_PAGE = 6;
 export const DEFAULT_DECIMALS = 18;
 
 // enums
-
-export enum FusePoolMetric {
-  totalLiquidityNative,
-  totalSuppliedNative,
-  totalBorrowedNative
-}
-
-export enum UserAction {
-  NO_ACTION,
-  WAITING_FOR_TRANSACTIONS
-}
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 

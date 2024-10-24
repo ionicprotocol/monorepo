@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
+
 import { mode } from 'viem/chains';
 
 import { pools } from '@ui/constants/index';

@@ -171,9 +171,22 @@ task("market:mint-pause", "Pauses minting on a market")
       const isPaused: boolean = await pool.read.mintGuardianPaused([market.address]);
       console.log(`The market at ${market.address} minting pause is currently set to ${isPaused}`);
 
+      const admin = await pool.read.admin();
       if (isPaused != taskArgs.paused) {
-        tx = await pool.write._setMintPaused([market.address, taskArgs.paused]);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
+        if (admin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: pool,
+            functionName: "_setMintPaused",
+            args: [market.address, taskArgs.paused],
+            description: "Set Mint Pause",
+            inputs: [
+              { internalType: "address", name: "cToken", type: "address" },
+              { internalType: "bool", name: "state", type: "bool" }
+            ]
+          });
+        } else {
+          tx = await pool.write._setMintPaused([market.address, taskArgs.paused]);
+        }
 
         console.log(`Market mint pause tx ${tx}`);
       } else {
@@ -210,11 +223,22 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
       }
 
       const isPaused: boolean = await pool.read.borrowGuardianPaused([market.address]);
+      const admin = await pool.read.admin();
       if (isPaused != taskArgs.paused) {
-        console.log(`setting market ${market.address} pause to ${taskArgs.paused}`);
-        tx = await pool.write._setBorrowPaused([market.address, taskArgs.paused]);
-        console.log(`waiting for tx ${tx}`);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
+        if (admin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: pool,
+            functionName: "_setBorrowPaused",
+            args: [market.address, taskArgs.paused],
+            description: "Set Borrow Pause",
+            inputs: [
+              { internalType: "address", name: "cToken", type: "address" },
+              { internalType: "bool", name: "state", type: "bool" }
+            ]
+          });
+        } else {
+          tx = await pool.write._setBorrowPaused([market.address, taskArgs.paused]);
+        }
 
         console.log(`Market borrow pause tx ${tx}`);
       } else {

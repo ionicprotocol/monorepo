@@ -1,19 +1,22 @@
 'use client';
 
-import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
-import { type FlywheelReward } from '@ionicprotocol/types';
-import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { formatEther, type Address } from 'viem';
 // import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
-
-import ResultHandler from '../ResultHandler';
 
 import { FLYWHEEL_TYPE_MAP, REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
+
+import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
+import { type FlywheelReward } from '@ionicprotocol/types';
 
 type RewardsProps = {
   cToken: Address;
@@ -95,42 +98,44 @@ const Rewards = ({
           %
         </div>
       ))}
-      <div className="py-4">
-        {combinedRewards.map((rewards, index) => (
-          <div
-            className={`flex ${className ?? 'none'}`}
-            key={index}
-          >
-            <img
-              alt=""
-              className="size-4 rounded mr-1"
-              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.rewardToken]?.toLowerCase()}.png`}
-            />{' '}
-            +{' '}
-            {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
-              maximumFractionDigits: 1
-            })}{' '}
-            {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
-          </div>
-        ))}
-        {totalRewards > 0n && (
-          <div className="flex justify-center pt-1">
-            <button
-              className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
-              onClick={claimRewards}
+      {(totalRewards > 0 || combinedRewards.length > 0) && (
+        <div className="py-4">
+          {combinedRewards.map((rewards, index) => (
+            <div
+              className={`flex ${className ?? 'none'}`}
+              key={index}
             >
-              <ResultHandler
-                isLoading={isLoading}
-                height="20"
-                width="20"
-                color={'#000000'}
+              <img
+                alt=""
+                className="size-4 rounded mr-1"
+                src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.rewardToken]?.toLowerCase()}.png`}
+              />{' '}
+              +{' '}
+              {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
+                maximumFractionDigits: 1
+              })}{' '}
+              {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
+            </div>
+          ))}
+          {totalRewards > 0n && (
+            <div className="flex justify-center pt-1">
+              <button
+                className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+                onClick={claimRewards}
               >
-                Claim Rewards
-              </ResultHandler>
-            </button>
-          </div>
-        )}
-      </div>
+                <ResultHandler
+                  isLoading={isLoading}
+                  height="20"
+                  width="20"
+                  color={'#000000'}
+                >
+                  Claim Rewards
+                </ResultHandler>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };

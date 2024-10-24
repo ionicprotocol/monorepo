@@ -10,7 +10,7 @@ import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ComptrollerFirstExtension } from "../compound/ComptrollerFirstExtension.sol";
 import { CErc20PluginRewardsDelegate } from "../compound/CErc20PluginRewardsDelegate.sol";
 import { Unitroller } from "../compound/Unitroller.sol";
-import { DiamondExtension } from "../ionic/DiamondExtension.sol";
+import { DiamondExtension, DiamondBase } from "../ionic/DiamondExtension.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { ISwapRouter } from "../external/uniswap/ISwapRouter.sol";
 import { RedstoneAdapterPriceOracle } from "../oracles/default/RedstoneAdapterPriceOracle.sol";
@@ -23,6 +23,11 @@ import { JumpRateModel } from "../compound/JumpRateModel.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
 import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
+import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
+import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
+import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
+import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
+import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
@@ -30,9 +35,9 @@ import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol"
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
 import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
-import { IRouter } from "../external/aerodrome/IRouter.sol";
+import { IRouter_Aerodrome } from "../external/aerodrome/IRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
-import { IRouter as IVelodromeV2Router } from "../external/velodrome/IRouter.sol";
+import { IRouter_Velodrome } from "../external/velodrome/IRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -688,8 +693,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(eusdWhale);
     eUSD.transfer(address(liquidator), 1000 ether);
-    IRouter.Route[] memory path = new IRouter.Route[](1);
-    path[0] = IRouter.Route({
+    IRouter_Aerodrome.Route[] memory path = new IRouter_Aerodrome.Route[](1);
+    path[0] = IRouter_Aerodrome.Route({
       from: address(eUSD),
       to: address(usdc),
       stable: true,
@@ -804,12 +809,8 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(usdcWhale);
     usdc.transfer(address(liquidator), 1000 * 10e6);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
-      from: address(usdc),
-      to: address(weth),
-      stable: false
-    });
+    IRouter_Velodrome.Route[] memory path = new IRouter_Velodrome.Route[](1);
+    path[0] = IRouter_Velodrome.Route({ from: address(usdc), to: address(weth), stable: false });
     liquidator.redeem(usdc, 1000 * 10e6, abi.encode(veloRouter, path));
     emit log_named_uint("weth received", weth.balanceOf(address(liquidator)));
     vm.stopPrank();
@@ -825,15 +826,49 @@ contract DevTesting is BaseTest {
 
     vm.startPrank(wethWhale);
     weth.transfer(address(liquidator), 1 ether);
-    IVelodromeV2Router.Route[] memory path = new IVelodromeV2Router.Route[](1);
-    path[0] = IVelodromeV2Router.Route({
-      from: address(weth),
-      to: address(usdc),
-      stable: false
-    });
+    IRouter_Velodrome.Route[] memory path = new IRouter_Velodrome.Route[](1);
+    path[0] = IRouter_Velodrome.Route({ from: address(weth), to: address(usdc), stable: false });
 
     liquidator.redeem(weth, 1 ether, abi.encode(veloRouter, path));
     emit log_named_uint("usdc received", usdc.balanceOf(address(liquidator)));
+    vm.stopPrank();
+  }
+
+  function test_claimRewardFromLeveredPosition() public debuggingOnly fork(BASE_MAINNET) {
+    LeveredPosition position = LeveredPosition(
+      0x3a0eA2C577b0e0f2CAaEcC2b8fF8fF1850267ba2 // 20 days old
+    );
+    ILeveredPositionFactory factory = position.factory();
+
+    vm.prank(address(factory));
+    LeveredPosition dummy = new LeveredPosition(
+      msg.sender,
+      ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3),
+      ICErc20(0xa900A17a49Bc4D442bA7F72c39FA2108865671f0)
+    );
+    emit log_named_address("dummy", address(dummy));
+
+    vm.startPrank(factory.owner());
+    DiamondBase(address(factory))._registerExtension(
+      new LeveredPositionFactoryFirstExtension(),
+      DiamondExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
+    );
+    factory._setPositionsExtension(LeveredPosition.claimRewardsFromRouter.selector, address(dummy));
+    vm.stopPrank();
+
+    {
+      // mock the usdz call
+      vm.mockCall(
+        0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938,
+        abi.encodeWithSelector(IERC20Upgradeable.balanceOf.selector),
+        abi.encode(53307671999615298341926)
+      );
+    }
+
+    vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
+    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
+    emit log_named_uint("reward tokens", rewardTokens.length);
+    emit log_named_uint("rewards", rewards.length);
     vm.stopPrank();
   }
 

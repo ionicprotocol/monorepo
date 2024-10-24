@@ -1,12 +1,17 @@
 import { task } from "hardhat/config";
 import {
   dmBTC_MARKET,
+  ezETH_MARKET,
   ION,
+  MBTC_MARKET,
   MODE_NATIVE_MARKET,
   USDC_NATIVE_MARKET,
+  USDT_MARKET,
   USDT_NATIVE_MARKET,
+  wBTC_MARKET,
   WEETH_MARKET,
-  WETH_NATIVE_MARKET
+  WETH_NATIVE_MARKET,
+  wrsETH_MARKET
 } from ".";
 import { Address, formatEther, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
@@ -135,8 +140,14 @@ task("mode:add-rewards:epoch4:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = WEETH_MARKET;
-    const rewardAmount = (50_000).toString();
+    const market = USDT_MARKET;
+    const _market = await viem.getContractAt("EIP20Interface", market);
+    const name = await _market.read.name();
+
+    const rewardAmount = (25_000).toString();
+
+    console.log("setting rewards for token: ", name, rewardAmount);
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     // Sending tokens
     const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);

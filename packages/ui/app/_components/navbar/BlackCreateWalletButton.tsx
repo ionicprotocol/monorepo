@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
+
 import { useConnect } from 'wagmi';
 
 import { CoinbaseWalletLogo } from './CoinbaseWalletLogo';
