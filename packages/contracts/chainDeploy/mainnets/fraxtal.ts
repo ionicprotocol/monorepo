@@ -1,8 +1,9 @@
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { fraxtal } from "@ionicprotocol/chains";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address } from "viem";
+import { Address, zeroAddress, zeroHash } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
+import { deployApi3Oracle } from "../helpers/oracles/api3";
 
 const assets = fraxtal.assets;
 
@@ -42,6 +43,7 @@ export const deploy = async ({
       feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
       symbol: asset.symbol
     }));
+  console.log("🚀 ~ chainlinkAssets:", chainlinkAssets);
   await deployChainlinkOracle({
     run,
     viem,
@@ -52,7 +54,6 @@ export const deploy = async ({
     chainlinkAssets
   });
 
-  //// Uniswap V3 Liquidator Funder
   const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
     from: deployer,
     args: [],

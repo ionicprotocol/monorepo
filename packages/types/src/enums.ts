@@ -217,6 +217,7 @@ export enum assetSymbols {
   sFRXETH = "sFRXETH",
   sFRAX = "sFRAX",
   frxBTC = "frxBTC",
+  insfrxETH = "insfrxETH",
 
   // legacy
   DAI = "DAI",
