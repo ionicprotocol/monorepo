@@ -5,7 +5,21 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
 
-const LPRow = ({ summary, detail }: { summary: any; detail: any }) => (
+type Summary = {
+  title: string;
+  amount: string;
+  Icon?: JSX.Element;
+};
+
+type Detail = {
+  title: string;
+  buttonText: string;
+  buttonClass?: string;
+  onClick: () => void;
+  get: string;
+};
+
+const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
   <div className="grid grid-cols-6 gap-3">
     <Card className="md:col-span-2 col-span-3 bg-graylite">
       <CardContent className="space-y-3 p-5">
@@ -29,8 +43,7 @@ const LPRow = ({ summary, detail }: { summary: any; detail: any }) => (
             <TokenPair />
             <p className="text-white font-medium text-md ml-2">ION/WETH</p>
             <Button
-              variant={detail.buttonVariant || 'default'}
-              className={`${detail.buttonClass} text-grayUnselect text-xs font-bold ml-2`}
+              className={`${detail.buttonClass} bg-accent text-grayUnselect text-xs font-bold ml-2`}
               onClick={detail.onClick}
             >
               {detail.buttonText} <ArrowRight />

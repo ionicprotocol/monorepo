@@ -8,16 +8,25 @@ import { ExternalLink, LockIcon } from 'lucide-react';
 
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 
-import { VeIonDialog, LPRow, InfoCard } from '../_components/veion';
+import {
+  VeIonDialog,
+  LPRow,
+  InfoCard,
+  AddLiquidityDialog
+} from '../_components/veion';
 
 export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   return (
     <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-grayone mx-auto my-6">
       <VeIonDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
+      />
+      <AddLiquidityDialog
+        isOpen={isAddLiquidityOpen}
+        onOpenChange={setIsAddLiquidityOpen}
       />
       <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
         <Image
@@ -40,7 +49,10 @@ export default function VeIon() {
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
         {/* Info Cards */}
-        <InfoCard text="Incentivize Markets on your favorite Chain with Liquidity Gauges" />
+        <InfoCard
+          text="Incentivize Markets on your favorite Chain with Liquidity Gauges"
+          href="/veion/incentives"
+        />
         <InfoCard text="Significantly boost your collateral pool depth with bribes" />
         <InfoCard text="Increase Emissions and earn POL for your Treasury" />
 
@@ -54,8 +66,7 @@ export default function VeIon() {
             detail={{
               title: 'PROVIDE LP ON DEX',
               buttonText: 'Add Liquidity',
-              buttonVariant: 'secondary',
-              buttonClass: 'bg-green-400',
+              onClick: () => setIsAddLiquidityOpen(true),
               get: 'vAMM'
             }}
           />
@@ -69,7 +80,6 @@ export default function VeIon() {
             detail={{
               title: 'MIGRATE YOUR STAKED LP',
               buttonText: 'Migrate LP',
-              buttonClass: 'bg-accent',
               onClick: () => setIsDialogOpen(true),
               get: 'vAMM'
             }}
@@ -83,7 +93,6 @@ export default function VeIon() {
             detail={{
               title: 'LOCK YOUR ION LP',
               buttonText: 'Lock and Get',
-              buttonClass: 'bg-accent',
               onClick: () => setIsDialogOpen(true),
               get: 'veION'
             }}

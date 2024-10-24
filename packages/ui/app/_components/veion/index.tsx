@@ -9,3 +9,6 @@ export { default as VeionClaim } from './VeionClaim';
 export { default as VeIonDialog } from './VeIonDialog';
 export { default as VeionRow } from './VeionRow';
 export { default as VotingRows } from './VotingRows';
+export { default as AddLiquidityDialog } from './AddLiquidityDialog';
+export { default as EpochInfo } from './EpochInfo';
+export { default as MarketSelector } from './MarketSelector';
