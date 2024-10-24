@@ -55,7 +55,7 @@ task("markets:fraxtal:set-cf", "deploy base market").setAction(async (_, { viem,
 });
 
 task("markets:fraxtal:set-caps", "Set supply and borrow caps for markets").setAction(async (_, { viem, run }) => {
-  const asset = assets.find((asset) => asset.symbol === assetSymbols.WETH);
+  const asset = assets.find((asset) => asset.symbol === assetSymbols.insfrxETH);
   if (!asset) {
     throw new Error("Asset not found");
   }
@@ -72,6 +72,13 @@ task("markets:fraxtal:set-caps", "Set supply and borrow caps for markets").setAc
     await run("market:set-borrow-cap", {
       market: cToken,
       maxBorrow: asset.initialBorrowCap
+    });
+  }
+
+  if (asset.initialCf) {
+    await run("market:set:ltv", {
+      marketAddress: cToken,
+      ltv: asset.initialCf
     });
   }
 });
