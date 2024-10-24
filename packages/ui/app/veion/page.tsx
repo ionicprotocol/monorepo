@@ -2,15 +2,13 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
+import Image from 'next/image';
 
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, LockIcon } from 'lucide-react';
 
-import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
-import { Dialog, DialogTrigger } from '@ui/components/ui/dialog';
 
-import VeIonDialog from '../_components/veion/VeIonDialog';
+import { VeIonDialog, LPRow, InfoCard } from '../_components/veion';
 
 export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -22,10 +20,12 @@ export default function VeIon() {
         onOpenChange={setIsDialogOpen}
       />
       <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
-        <img
+        <Image
           className="size-16"
-          src="/img/assets/db.png"
-          alt="down-right--v1"
+          src="/img/assets/db.svg"
+          alt="ion logo"
+          width={32}
+          height={32}
         />
         <div className="flex items-center gap-1 text-2xl">
           Participate in{' '}
@@ -40,142 +40,57 @@ export default function VeIon() {
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
         {/* Info Cards */}
-        {[
-          'Incentive Market on your favourite chain with Liquidity Guages',
-          'Significantly boost your collateral pool depth with bribes',
-          'Increase Emissions and earn POL for your Treasury'
-        ].map((text) => (
-          <Card
-            key={text}
-            className="col-span-2 bg-graylite p-2 xl:p-5"
-          >
-            <CardContent className="p-0 space-y-3">
-              <img
-                className="w-4 h-4"
-                src="https://img.icons8.com/ios/50/ffffff/down-right--v1.png"
-                alt="down-right--v1"
-              />
-              <p className="text-left text-xs">{text}</p>
-            </CardContent>
-          </Card>
-        ))}
+        <InfoCard text="Incentivize Markets on your favorite Chain with Liquidity Gauges" />
+        <InfoCard text="Significantly boost your collateral pool depth with bribes" />
+        <InfoCard text="Increase Emissions and earn POL for your Treasury" />
 
-        {/* Total LP Card */}
-        <Card className="md:col-span-2 col-span-3 bg-graylite">
-          <CardContent className="space-y-3 p-5">
-            <p className="text-xs">TOTAL LP</p>
-            <div className="flex flex-wrap md:gap-3">
-              <span className="flex">
-                <img
-                  src="/img/logo/ION.png"
-                  alt="logo"
-                  className="size-6 rounded-full"
-                />
-                <img
-                  src="/img/logo/ETH.png"
-                  alt="logo"
-                  className="size-6 rounded-full -ml-2"
-                />
-              </span>
-              <p className="text-white font-semibold text-md">$1,234,432.21</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* LP Rows */}
+        <div className="col-span-6 space-y-4">
+          <LPRow
+            summary={{
+              title: 'TOTAL LP',
+              amount: '$1,234,432.21'
+            }}
+            detail={{
+              title: 'PROVIDE LP ON DEX',
+              buttonText: 'Add Liquidity',
+              buttonVariant: 'secondary',
+              buttonClass: 'bg-green-400',
+              get: 'vAMM'
+            }}
+          />
 
-        {/* Provide LP Card */}
-        <Card className="md:col-span-4 col-span-6 bg-graylite">
-          <CardContent className="space-y-3 p-5">
-            <p className="text-xs font-light">PROVIDE LP ON DEX</p>
-            <div className="flex items-center justify-between gap-2 xl:gap-6">
-              <span className="flex">
-                <img
-                  src="/img/logo/ION.png"
-                  alt="logo"
-                  className="size-6 rounded-full"
-                />
-                <img
-                  src="/img/logo/ETH.png"
-                  alt="logo"
-                  className="size-6 rounded-full -ml-2"
-                />
-              </span>
-              <p className="text-white font-medium text-md">ION/WETH</p>
-              <Button
-                variant="secondary"
-                className="bg-green-400 text-grayUnselect text-xs font-bold"
-              >
-                Add Liquidity
-              </Button>
-              <p className="text-white font-medium text-md">ION/WETH LP</p>
-            </div>
-          </CardContent>
-        </Card>
+          <LPRow
+            summary={{
+              title: 'STAKED LP',
+              amount: '$1,234,432.21',
+              Icon: <LockIcon className="size-4 inline-block" />
+            }}
+            detail={{
+              title: 'MIGRATE YOUR STAKED LP',
+              buttonText: 'Migrate LP',
+              buttonClass: 'bg-accent',
+              onClick: () => setIsDialogOpen(true),
+              get: 'vAMM'
+            }}
+          />
 
-        {/* Total LP Locked Card */}
-        <Card className="md:col-span-2 col-span-3 row-start-2 md:row-start-3 bg-graylite">
-          <CardContent className="space-y-3 p-5">
-            <p className="text-xs font-light">TOTAL LP LOCKED</p>
-            <div className="flex items-center flex-wrap gap-3">
-              <span className="flex">
-                <img
-                  src="/img/logo/ION.png"
-                  alt="logo"
-                  className="h-4 w-4 rounded-full"
-                />
-                <img
-                  src="/img/logo/ETH.png"
-                  alt="logo"
-                  className="h-4 w-4 rounded-full -ml-2"
-                />
-              </span>
-              <p className="text-white font-semibold text-md">$1,234,432.21</p>
-              <img
-                className="size-4 inline-block"
-                src="https://img.icons8.com/forma-thin/24/ffffff/lock.png"
-                alt="lock"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <LPRow
+            summary={{
+              title: 'LOCKED LP',
+              amount: '$113,029.98'
+            }}
+            detail={{
+              title: 'LOCK YOUR ION LP',
+              buttonText: 'Lock and Get',
+              buttonClass: 'bg-accent',
+              onClick: () => setIsDialogOpen(true),
+              get: 'veION'
+            }}
+          />
+        </div>
 
-        {/* Lock Your ION LP Card */}
-        <Card className="md:col-span-4 col-span-6 bg-graylite">
-          <CardContent className="space-y-3 p-5">
-            <p className="text-xs font-light">LOCK YOUR ION LP</p>
-            <div className="flex items-center justify-between gap-2 xl:gap-6">
-              <span className="flex">
-                <img
-                  src="/img/logo/ION.png"
-                  alt="logo"
-                  className="size-6 rounded-full"
-                />
-                <img
-                  src="/img/logo/ETH.png"
-                  alt="logo"
-                  className="size-6 rounded-full -ml-2"
-                />
-              </span>
-              <p className="text-white font-medium text-md">ION/WETH</p>
-              <Dialog
-                open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    variant="default"
-                    className="bg-accent text-grayUnselect text-xs font-bold"
-                  >
-                    Lock and get
-                  </Button>
-                </DialogTrigger>
-              </Dialog>
-              <p className="text-white font-medium text-md">ION/WETH LP</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Navigation Links */}
-        <Button
+        {/* <Button
           asChild
           className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
         >
@@ -186,7 +101,7 @@ export default function VeIon() {
           className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
         >
           <Link href="/veion/governance?watch=overview">veIon Overview</Link>
-        </Button>
+        </Button> */}
       </CardContent>
     </Card>
   );
