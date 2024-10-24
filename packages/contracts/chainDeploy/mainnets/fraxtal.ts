@@ -43,6 +43,7 @@ export const deploy = async ({
       feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
       symbol: asset.symbol
     }));
+  console.log("🚀 ~ chainlinkAssets:", chainlinkAssets);
   await deployChainlinkOracle({
     run,
     viem,

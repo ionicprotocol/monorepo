@@ -1,6 +1,7 @@
 import {
   assetSymbols,
   ChainlinkFeedBaseCurrency,
+  ChainlinkSpecificParams,
   OracleTypes,
   SupportedAsset,
   SupportedChains
@@ -95,11 +96,14 @@ export const assets: SupportedAsset[] = [
     underlying: insfrxETH,
     name: "Inception Restaked sfrxETH",
     decimals: 18,
-    oracle: OracleTypes.API3PriceOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     oracleSpecificParams: {
-      aggregator: "0x89e60b56efD70a1D4FBBaE947bC33cae41e37A72",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
-    }
+      aggregator: "0x4E0Fce6FF8384241c686C26cA3bcE3A16CDcDB55",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(1000)).toString(),
+    initialBorrowCap: parseEther(String(800)).toString(),
+    initialCf: "0.70"
   }
 ];
 
