@@ -1,16 +1,8 @@
 import { SupportedChainsArray } from '@ionicprotocol/types';
 import { type Address } from 'viem';
-import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
-
-export const explorerLinks: Record<number, string> = {
-  [mode.id]: 'https://explorer.mode.network',
-  [base.id]: 'https://basescan.org',
-  [optimism.id]: 'https://optimistic.etherscan.io',
-  [bob.id]: 'https://explorer.gobob.xyz',
-  [fraxtal.id]: 'https://fraxscan.com'
-};
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
@@ -39,6 +31,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': ''
+    },
+    [lisk.id]: {
+      '0': ''
     }
   },
   featuredSupply2: {
@@ -57,6 +52,9 @@ export const shouldGetFeatured: Record<
     },
     [fraxtal.id]: {
       '0': 'wfrxeth'
+    },
+    [lisk.id]: {
+      '0': 'weth'
     }
   }
 };
@@ -97,8 +95,14 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: ['0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062'],
-    borrow: ['0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec']
+    supply: [
+      '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
+      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5'
+    ],
+    borrow: [
+      '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
+      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834'
+    ]
   },
   [base.id]: {
     supply: [
@@ -106,13 +110,13 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
       '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
       '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
-      '0xc39441b305705AfD07de97237bC835a4501AbbEC'
+      '0xc39441b305705AfD07de97237bC835a4501AbbEC',
+      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
-      '0x327410E4D3A32EF37712e77fCB005e5327F082De',
-      '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d',
-      '0xf9cef193bAC6103405228e4B29Ba8abab5A1001D'
+      '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
+      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9'
     ]
   },
   [optimism.id]: {
@@ -199,9 +203,11 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'wsuperOETHb',
           'OGN',
-          'wUSDM',
+          'USDz',
           'wUSD+',
+          'wUSDM',
           'USD+',
+          'uSOL',
           'EURC',
           'cbBTC',
           'eUSD',
@@ -269,6 +275,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: ['FRAX', 'wfrxETH', 'FXS']
+      }
+    ]
+  },
+  [lisk.id]: {
+    name: 'Lisk',
+    arrow: 'ffffff',
+    bg: 'bg-lisk',
+    text: 'text-white',
+    border: 'border-lisk',
+    logo: '/img/logo/Lisk.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Market',
+        assets: ['WETH']
       }
     ]
   }

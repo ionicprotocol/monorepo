@@ -43,6 +43,11 @@ export interface IFlywheel {
   ): Promise<FlywheelClaimableRewards[]>;
   getFlywheelClaimableRewardsForPool(poolAddress: Address, account: Address): Promise<FlywheelClaimableRewards[]>;
   getAllFlywheelClaimableRewards(account: Address): Promise<FlywheelClaimableRewards[]>;
+  getRewardsForMarketsAndFlywheels(
+    account: Address,
+    markets: Address[],
+    flywheels: Address[]
+  ): Promise<FlywheelClaimableRewards[]>;
   getFlywheelEnabledMarkets(flywheelAddress: Address): Promise<Address[]>;
   setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any): Promise<Address>;
   setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address): Promise<Address>;
@@ -255,6 +260,30 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
 
       return rewardTokens.map((rewardToken, i) => {
         return {
+          rewardToken,
+          amount: rewards[i]
+        };
+      });
+    }
+
+    async getRewardsForMarketsAndFlywheels(
+      account: Address,
+      markets: Address[],
+      flywheels: Address[]
+    ): Promise<FlywheelClaimableRewards[]> {
+      const fwLensRouter = this.createIonicFlywheelLensRouter();
+
+      const result = await fwLensRouter.simulate.claimRewardsForMarkets([
+        account,
+        markets,
+        flywheels,
+        Array.from(flywheels, () => true)
+      ]);
+      const [_flywheels, rewardTokens, rewards] = result.result;
+
+      return rewardTokens.map((rewardToken, i) => {
+        return {
+          flywheel: _flywheels[i],
           rewardToken,
           amount: rewards[i]
         };

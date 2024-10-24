@@ -159,8 +159,9 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
     const weethUnderlying = await weethContract.read.underlying();
     const ognAsset = base.assets.find((asset) => asset.symbol === assetSymbols.OGN);
     const eurcAsset = base.assets.find((asset) => asset.symbol === assetSymbols.EURC);
-    if (!ognAsset || !eurcAsset) {
-      throw new Error("OGN or EURC asset not found in base assets");
+    const uSOLAsset = base.assets.find((asset) => asset.symbol === assetSymbols.uSOL);
+    if (!ognAsset || !eurcAsset || !uSOLAsset) {
+      throw new Error("OGN or EURC or uSOL asset not found in base assets");
     }
 
     const readTick = await liquidatorRegistry.read.aeroCLTickSpacings([wsuperOETHUnderlying, wethUnderlying]);
@@ -182,6 +183,23 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
       const tickTx2 = await liquidatorRegistry.write._setAeroCLTickSpacings([wethUnderlying, aeroUnderlying, 200]);
       await publicClient.waitForTransactionReceipt({ hash: tickTx2 });
       console.log("Transaction sent to set tick spacing:", tickTx2);
+    }
+    const readTickuSOLWETH = await liquidatorRegistry.read.aeroCLTickSpacings([uSOLAsset.underlying, wethUnderlying]);
+    const readTickWETHuSOL = await liquidatorRegistry.read.aeroCLTickSpacings([wethUnderlying, uSOLAsset.underlying]);
+    console.log("🚀 ~ readTick usol weth:", readTickuSOLWETH, readTickWETHuSOL);
+    if (readTickuSOLWETH !== 200) {
+      const tickTx3 = await liquidatorRegistry.write._setAeroCLTickSpacings([uSOLAsset.underlying, wethUnderlying, 1]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx3 });
+      console.log("Transaction sent to set tick spacing:", tickTx3);
+    }
+    if (readTickWETHuSOL !== 200) {
+      const tickTx4 = await liquidatorRegistry.write._setAeroCLTickSpacings([
+        wethUnderlying,
+        uSOLAsset.underlying,
+        200
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: tickTx4 });
+      console.log("Transaction sent to set tick spacing:", tickTx4);
     }
     const readWrapped = await liquidatorRegistry.read.wrappedToUnwrapped4626([wsuperOETHUnderlying]);
     console.log("🚀 ~ readWrapped:", readWrapped);
@@ -327,6 +345,16 @@ task("base:liquidation:set-redemption-strategies", "Set redemption strategy").se
         inputToken: wethUnderlying,
         outputToken: eurcAsset.underlying,
         strategy: aeroV2Liquidator.address as Address
+      },
+      {
+        inputToken: uSOLAsset.underlying,
+        outputToken: wethUnderlying,
+        strategy: aeroCLLiquidator.address as Address
+      },
+      {
+        inputToken: wethUnderlying,
+        outputToken: uSOLAsset.underlying,
+        strategy: aeroCLLiquidator.address as Address
       },
       {
         inputToken: wethUnderlying,

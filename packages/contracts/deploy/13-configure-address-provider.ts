@@ -11,15 +11,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, getChainId, deploy
   }
   const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
-  if (chainId !== 1) {
-    await configureAddressesProviderAddresses({
-      viem,
-      getNamedAccounts,
-      chainId,
-      deployConfig: chainDeployParams,
-      deployments
-    });
-  }
+  await configureAddressesProviderAddresses({
+    viem,
+    getNamedAccounts,
+    chainId,
+    deployConfig: chainDeployParams,
+    deployments
+  });
 };
 
 func.tags = ["prod", "configure-ap"];

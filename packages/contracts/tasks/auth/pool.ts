@@ -10,7 +10,7 @@ import {
   WalletRpcSchema,
   zeroAddress
 } from "viem";
-import { poolRolesAuthorityAbi } from "../../generated";
+import { poolRolesAuthorityAbi } from "../../../sdk/src/generated";
 
 task("auth:pool:create-authority", "Deploys a pool authority for a pool")
   .addParam("signer", "The address of the current deployer", "deployer", types.string)

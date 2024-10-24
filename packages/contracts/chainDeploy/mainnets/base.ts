@@ -1,9 +1,9 @@
-import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle, deployPythPriceOracle } from "../helpers";
 import { base } from "@ionicprotocol/chains";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
-import { ChainlinkSpecificParams, OracleTypes } from "../types";
+import { ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "../types";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 
 const assets = base.assets;
@@ -40,8 +40,26 @@ export const deploy = async ({
   getNamedAccounts,
   deployments
 }: HardhatRuntimeEnvironment): Promise<void> => {
-  const { deployer } = await getNamedAccounts();
+  const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
+
+  //// Pyth Oracle
+  await deployPythPriceOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    pythAssets: base.assets
+      .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
+      .map((asset) => ({
+        feed: (asset.oracleSpecificParams as PythSpecificParams).feed,
+        underlying: asset.underlying
+      })),
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+    pythAddress: "0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a",
+    usdToken: base.chainAddresses.STABLE_TOKEN as Address
+  });
 
   //// ERC4626 Oracle
   await deployErc4626PriceOracle({
@@ -103,7 +121,8 @@ export const deploy = async ({
           methodName: "initialize",
           args: [[], []]
         }
-      }
+      },
+      owner: multisig ?? deployer
     }
   });
   console.log("CurveV2LpTokenPriceOracleNoRegistry: ", curveV2OracleNoRegistry.address);

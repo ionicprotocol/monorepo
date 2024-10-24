@@ -4,7 +4,7 @@ import type { Dispatch } from 'react';
 import { useReducer } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
 
-import { explorerLinks } from '@ui/constants/index';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export type TransactionStep = {
   error: boolean;
@@ -114,7 +114,7 @@ function TransactionStepsHandler({
           {transactionStep.txHash && (
             <div className="pl-6 text-cyan-400">
               <a
-                href={`${explorerLinks[chainId]}/tx/${transactionStep.txHash}`}
+                href={`${getScanUrlByChainId(chainId)}/tx/${transactionStep.txHash}`}
                 target="_blank"
               >
                 0x{transactionStep.txHash.slice(2, 4)}...
