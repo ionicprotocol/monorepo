@@ -2,12 +2,11 @@
 pragma solidity >=0.8.0;
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
-import { IRouter_Aerodrome } from "../external/aerodrome/IRouter.sol";
+import { IRouter_Aerodrome } from "../external/aerodrome/IAerodromeRouter.sol";
 
 /**
- * @title UniswapV2Liquidator
- * @notice Exchanges seized token collateral for underlying tokens via a Uniswap V2 router for use as a step in a liquidation.
- * @author David Lucid <david@rari.capital> (https://github.com/davidlucid)
+ * @title AerodromeV2Liquidator
+ * @notice Exchanges seized token collateral for underlying tokens via a Aerodrome V2 router for use as a step in a liquidation.
  */
 contract AerodromeV2Liquidator {
   function _swap(IRouter_Aerodrome router, uint256 inputAmount, IRouter_Aerodrome.Route[] memory swapPath) internal {

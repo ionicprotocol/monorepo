@@ -1,35 +1,32 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import {
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-  type SetStateAction,
-  type Dispatch
-} from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { formatUnits, parseUnits } from 'viem';
-// import { mode } from 'viem/chains';
-import { useAccount, useBalance } from 'wagmi';
+import { type Address, formatUnits } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 
-import TokenSelector from './TokenSelector';
+import TokenSelector from '../stake/TokenSelector';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface IMaxDeposit {
-  amount?: string;
-  tokenName?: string;
-  token?: `0x${string}`;
+  amount: string;
+  tokenName: string;
+  token: Address;
   handleInput?: (val?: string) => void;
   fetchOwn?: boolean;
   headerText?: string;
-  max?: string;
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
+  exchangeRate?: bigint;
+  footerText?: string;
+  decimals: number;
 }
 
 export interface IBal {
@@ -38,67 +35,59 @@ export interface IBal {
 }
 
 function MaxDeposit({
-  headerText = 'Deposit',
+  headerText,
   amount,
-  tokenName = 'eth',
+  tokenName,
   token,
   handleInput,
   fetchOwn = false,
-  max = '',
-  chain,
   tokenSelector = false,
   tokenArr,
-  setMaxTokenForUtilization
+  setMaxTokenForUtilization,
+  footerText,
+  decimals
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
 
   const { address } = useAccount();
-  const hooktoken =
-    token === '0x0000000000000000000000000000000000000000' ? undefined : token;
 
-  const { data } = useBalance({
-    address,
-    token: hooktoken,
-    chainId: chain,
-    query: {
-      refetchInterval: 5000
-    }
+  const { data } = useReadContract({
+    abi: icErc20Abi,
+    address: token,
+    functionName: 'balanceOfUnderlying',
+    args: [address!]
   });
+  const balance = data ?? 0n;
 
-  useMemo(() => {
-    if (max) {
-      setBal({
-        value: parseUnits(max, data?.decimals ?? 18),
-        decimals: data?.decimals ?? 18
+  // const { data } = useBalance({
+  //   address,
+  //   token,
+  //   chainId: chain,
+  //   query: {
+  //     refetchInterval: 5000
+  //   }
+  // });
+
+  useEffect(() => {
+    setMaxTokenForUtilization &&
+      setMaxTokenForUtilization({
+        value: balance,
+        decimals: decimals ?? 18
       });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: parseUnits(max, data?.decimals ?? 18),
-      //     decimals: data?.decimals ?? 18
-      //   });
-    } else if (max == '0') {
-      setBal({ value: BigInt(0), decimals: data?.decimals ?? 18 });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: BigInt(0),
-      //     decimals: data?.decimals ?? 18
-      //   });
-    } else {
-      data && setBal({ value: data?.value, decimals: data?.decimals });
-    }
-  }, [data, max]);
+    data && setBal({ value: balance, decimals: decimals });
+  }, [balance, data, decimals, setMaxTokenForUtilization]);
   // console.log(data);
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
       bal &&
-      Number(e.target.value) > Number(formatUnits(bal?.value, bal?.decimals))
+      Number(e.target.value) > Number(formatUnits(bal.value, bal.decimals))
     )
       return;
     if (!handleInput) return;
     handleInput(e.target.value);
   }
-  function handleMax(val: string) {
-    if (!handleInput) return;
+  function handleMax(val?: string) {
+    if (!handleInput || !val) return;
     handleInput(val);
   }
 
@@ -136,12 +125,12 @@ function MaxDeposit({
                   maximumFractionDigits: 3
                 }
               )
-            : max}
+            : '0'}
           {handleInput && (
             <button
               className={`text-accent ml-2`}
               onClick={() => {
-                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max);
+                handleMax(bal ? formatUnits(bal.value, bal.decimals) : '0');
                 setMaxTokenForUtilization &&
                   setMaxTokenForUtilization({
                     value: bal?.value ?? BigInt(0),
@@ -201,6 +190,11 @@ function MaxDeposit({
             </>
           )}
         </div>
+      </div>
+      <div
+        className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40`}
+      >
+        <span>{footerText}</span>
       </div>
     </>
   );

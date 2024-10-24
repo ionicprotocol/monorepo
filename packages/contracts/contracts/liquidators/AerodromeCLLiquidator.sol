@@ -2,13 +2,12 @@
 pragma solidity >=0.8.0;
 
 import { IRedemptionStrategy } from "./IRedemptionStrategy.sol";
-import { ISwapRouter_Aerodrome } from "../external/aerodrome/ISwapRouter.sol";
+import { ISwapRouter_Aerodrome } from "../external/aerodrome/IAerodromeSwapRouter.sol";
 
 import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { IERC4626 } from "../compound/IERC4626.sol";
 
 contract AerodromeCLLiquidator is IRedemptionStrategy {
-
   /**
    * @dev Redeems `inputToken` for `outputToken` where `inputAmount` < `outputAmount`
    * @param inputToken Address of the token
