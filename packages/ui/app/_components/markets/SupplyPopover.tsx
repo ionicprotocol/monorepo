@@ -101,7 +101,7 @@ export default function SupplyPopover({
             %
           </span>
         </div>
-        {isModeMarket && (
+        {isModeMarket && selectedPoolId !== '1' && (
           <div className="flex items-center mt-1">
             <img
               src="/images/op-logo-red.svg"

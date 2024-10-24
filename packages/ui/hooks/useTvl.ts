@@ -1,12 +1,13 @@
 /* eslint-disable unused-imports/no-unused-imports */
 import { useQuery } from '@tanstack/react-query';
 import { formatEther } from 'viem';
+import { base, mode } from 'viem/chains';
 import { useReadContracts } from 'wagmi';
 // import { type UseReadContractsParameters } from 'wagmi';
 
 import { TradingAbi } from '@ui/constants/modetradingfees';
 import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
+import { useIonPrice, useTokenPrice } from '@ui/hooks/useDexScreenerPrices';
 
 interface IuseTvl {
   poolAddress: `0x${string}`;
@@ -38,9 +39,11 @@ export const useTvl = ({
       }
     ]
   }) as any;
-  const { data: ionData } = useIonPrice();
+  const { data: ionData } = useIonPrice({
+    chainId: base.id
+  });
   const { data: ethPriceData } = useAllUsdPrices();
-  const { data: modePriceData } = useModePrice();
+  const { data: modePriceData } = useTokenPrice(mode.id);
 
   return useQuery({
     queryKey: ['useTvl', ionData, ethPriceData, reserves, isPending],

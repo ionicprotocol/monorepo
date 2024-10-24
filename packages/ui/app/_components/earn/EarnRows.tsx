@@ -5,14 +5,15 @@ import { useSearchParams } from 'next/navigation';
 
 // import { useEffect, useState } from 'react';
 // import { formatEther, formatUnits } from 'viem';
-import { mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 // import { useReadContract } from 'wagmi';
 
 // import { BaseContractABI } from '@ui/constants/baselp';
+import { BaseSugarAddress } from '@ui/constants/baselp';
 import { pools } from '@ui/constants/index';
-import useAeroApy from '@ui/hooks/useAeroApy';
+import { ModeSugarAddress } from '@ui/constants/lp';
+import useSugarAPR from '@ui/hooks/useSugarAPR';
 import { useTvl } from '@ui/hooks/useTvl';
-import useVeloApy from '@ui/hooks/useVeloApy';
 import type { EarnRow, IRewards } from '@ui/utils/earnUtils';
 
 // type EarnRowsParams = {
@@ -193,8 +194,25 @@ export const EarnPopup = ({
   rewards: Record<number, IRewards>;
   poolChain: number;
 }) => {
-  const veloApy = useVeloApy(rewards[poolChain]?.velo ?? '');
-  const aeroApy = useAeroApy();
+  const ION_POOL_INDEX = 1489n;
+  const ION_WETH_POOL_INDEX = 6n;
+  const ION_MODE_POOL_INDEX = 26n;
+  const selectedToken = rewards[poolChain]?.velo as 'eth' | 'mode' | 'weth';
+
+  const veloApr = useSugarAPR({
+    sugarAddress: ModeSugarAddress,
+    poolIndex:
+      selectedToken === 'mode' ? ION_MODE_POOL_INDEX : ION_WETH_POOL_INDEX,
+    chainId: mode.id,
+    selectedToken,
+    isMode: true
+  });
+
+  const aeroApr = useSugarAPR({
+    sugarAddress: BaseSugarAddress,
+    poolIndex: ION_POOL_INDEX,
+    chainId: base.id
+  });
 
   const shouldShow =
     rewards[poolChain]?.velo ||
@@ -203,45 +221,45 @@ export const EarnPopup = ({
     Number(apr) > 0;
   return (
     <div
-      className={`font-bold popover absolute w-[180px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap ${shouldShow ? '' : 'hidden'}`}
+      className={`font-bold popover absolute w-[190px] top-full p-2 mt-1 border border-mode rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap flex flex-col gap-4 ${shouldShow ? '' : 'hidden'}`}
     >
       {apr && Number(apr) > 0 ? 'Base APR: ' + apr + '%' : ''}
-      {/* <div className="flex pt-4">
-        <img
-          alt=""
-          className="size-4 rounded mr-1"
-          src="/img/ionic-sq.png"
-        />{' '}
-        + {rewards[poolChain]?.points?.ionic}x Ionic Points
-      </div> */}
+      {/* <div className="flex">
+          <img
+            alt=""
+            className="size-4 rounded mr-1"
+            src="/img/ionic-sq.png"
+          />{' '}
+          + {rewards[poolChain]?.points?.ionic}x Ionic Points
+        </div> */}
       {rewards[poolChain]?.velo && (
-        <div className="flex pt-4">
+        <div className="flex">
           <img
             alt=""
             className="size-4 rounded mr-1"
             src="/img/symbols/32/color/velo.png"
           />{' '}
-          {veloApy?.apy ?? '0'} Velodrome APY
+          {veloApr?.apr ?? '0'} Velodrome APR
         </div>
       )}
       {rewards[poolChain]?.aero && (
-        <div className="flex pt-4">
+        <div className="flex">
           <img
             alt=""
             className="size-4 rounded mr-1"
             src="/img/symbols/32/color/aero.png"
           />{' '}
-          {aeroApy?.apy ?? '0'} Aerodrome APY
+          {aeroApr?.apr ?? '0'} Aerodrome APR
         </div>
       )}
       {/* <div className="flex">
-        <img
-          alt=""
-          className="size-4 rounded mr-1"
-          src="/images/turtle-ionic.png"
-        />{' '}
-        + {rewards[poolChain]?.points?.turtle}x Turtle Ionic Points
-      </div> */}
+          <img
+            alt=""
+            className="size-4 rounded mr-1"
+            src="/images/turtle-ionic.png"
+          />{' '}
+          + {rewards[poolChain]?.points?.turtle}x Turtle Ionic Points
+        </div> */}
       {rewards[poolChain]?.peaks && (
         <div className="flex">
           <img

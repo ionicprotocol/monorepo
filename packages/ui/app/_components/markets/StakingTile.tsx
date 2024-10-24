@@ -28,8 +28,8 @@ export default function StakingTile({ chain }: Iprop) {
         </div> */}
         {+chain === mode.id && (
           <ModeBreakdown
-            step3Toggle={'Stake'}
-            selectedtoken={'eth'}
+            step3Toggle="Stake"
+            selectedToken="eth"
           />
         )}
         {+chain === base.id && <BaseBreakdown step3Toggle={'Stake'} />}
