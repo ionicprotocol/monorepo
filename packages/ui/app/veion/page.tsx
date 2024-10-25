@@ -1,16 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useChainId } from 'wagmi';
+
 import { ExternalLink, LockIcon } from 'lucide-react';
 import { base, mode, optimism } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
+
 import {
-  VeIonDialog,
+  GetVeIonDialog,
   LPRow,
   InfoCard,
   AddLiquidityDialog
@@ -36,7 +39,7 @@ export default function VeIon() {
 
   return (
     <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-grayone mx-auto my-6">
-      <VeIonDialog
+      <GetVeIonDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         chain={+chain}
