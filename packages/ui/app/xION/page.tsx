@@ -1,12 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+
 import { xErc20LayerZeroAbi } from 'sdk/src';
-import type { Address, Hex } from 'viem';
-import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
+import {
+  erc20Abi,
+  formatEther,
+  parseEther,
+  parseUnits,
+  zeroAddress
+} from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -16,6 +23,11 @@ import {
   // useBlock
 } from 'wagmi';
 
+import { ixErc20 } from '@ui/constants/bridge';
+import { pools } from '@ui/constants/index';
+import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import ResultHandler from '../_components/ResultHandler';
 import MaxDeposit from '../_components/stake/MaxDeposit';
@@ -23,15 +35,14 @@ import FromTOChainSelector from '../_components/xION/FromToChainSelector';
 import ProgressSteps from '../_components/xION/ProgressSteps';
 import Quote, { lzOptions } from '../_components/xION/Quote';
 // import TxPopup from '../_components/xION/TxPopup';
+
+import type { Address, Hex } from 'viem';
+
 const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
   ssr: false
 });
 
-import { ixErc20 } from '@ui/constants/bridge';
-import { pools } from '@ui/constants/index';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
-import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export default function XION() {
   const chainId = useChainId();
@@ -44,6 +55,12 @@ export default function XION() {
   const [destinationAddress, setDestinationAddress] = useState<
     Address | undefined
   >(address);
+  const { data: allowance } = useReadContract({
+    abi: erc20Abi,
+    address: getToken(+chain),
+    functionName: 'allowance',
+    args: [address ?? zeroAddress, BridgingContractAddress[+chain]]
+  });
   const { data: sourceLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+chain),
@@ -107,8 +124,13 @@ export default function XION() {
     bridgeStatus: 'unknown'
   });
 
-  // console.log(bridgeArgs);
-  // const [, setInit] = useLocalStorage('bridgeTx', '');
+  useEffect(() => {
+    if (address && allowance && allowance >= parseEther(deposit)) {
+      setProgress(2);
+    } else {
+      setProgress(0);
+    }
+  }, [allowance, deposit, address]);
 
   async function approval(amount: bigint) {
     try {
@@ -121,6 +143,7 @@ export default function XION() {
       if (amount <= BigInt(0)) return;
       setLoading((p) => ({ ...p, approvalStatus: true }));
       setProgress(1);
+
       const approval = await writeContractAsync({
         abi: erc20Abi,
         account: address,

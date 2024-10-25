@@ -1,3 +1,10 @@
+import type { ReactNode } from 'react';
+
+import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
+
+import type { QueryObserverResult } from '@tanstack/react-query';
+import type { Address } from 'viem';
+
 import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import type {
   NativePricedIonicAsset,
@@ -5,11 +12,6 @@ import type {
   OpenPosition,
   VaultData
 } from '@ionicprotocol/types';
-import type { QueryObserverResult } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
-import { Address } from 'viem';
-
-import type { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
   children?: ReactNode;

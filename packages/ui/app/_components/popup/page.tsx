@@ -1,31 +1,22 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
-import { FundOperationMode } from '@ionicprotocol/types';
+// import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
+import dynamic from 'next/dynamic';
+
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
-// import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
   type Address,
   formatEther,
   formatUnits,
   maxUint256,
+  parseEther,
   parseUnits
 } from 'viem';
 import { useChainId } from 'wagmi';
-
-import ResultHandler from '../ResultHandler';
-
-import Amount from './Amount';
-import MemoizedDonutChart from './DonutChart';
-import Loop from './Loop';
-import SliderComponent from './Slider';
-import Tab from './Tab';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './TransactionStepsHandler';
 
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -47,6 +38,18 @@ import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import Amount from './Amount';
+import MemoizedDonutChart from './DonutChart';
+import Loop from './Loop';
+import SliderComponent from './Slider';
+import Tab from './Tab';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from './TransactionStepsHandler';
+import ResultHandler from '../ResultHandler';
+
+import { FundOperationMode } from '@ionicprotocol/types';
 
 const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
   ssr: false
@@ -319,8 +322,12 @@ const Popup = ({
       return maxUint256;
     }
 
+    if (amountAsBInt === 0n) {
+      return parseEther(healthFactor ?? '0');
+    }
+
     return _predictedHealthFactor;
-  }, [_predictedHealthFactor, updatedAsset]);
+  }, [_predictedHealthFactor, updatedAsset, amountAsBInt, healthFactor]);
 
   const hfpStatus = useMemo<HFPStatus>(() => {
     if (!predictedHealthFactor) {
@@ -343,7 +350,7 @@ const Popup = ({
       return HFPStatus.CRITICAL;
     }
 
-    if (predictedHealthFactorNumber <= 1.3) {
+    if (predictedHealthFactorNumber <= 1.2) {
       return HFPStatus.WARNING;
     }
 
@@ -1171,22 +1178,19 @@ const Popup = ({
     }
   };
 
-  const normalizeHealthFactor = (
-    healthFactor: string | null | undefined
-  ): string | undefined =>
-    healthFactor
+  const normalizedHealthFactor = useMemo(() => {
+    return healthFactor
       ? healthFactor === '-1'
         ? '∞'
         : Number(healthFactor).toFixed(2)
       : undefined;
+  }, [healthFactor]);
 
-  const normalizePredictedHealthFactor = (
-    predictedHealthFactor: bigint | null | undefined
-  ): string | undefined =>
-    predictedHealthFactor === maxUint256
+  const normalizedPredictedHealthFactor = useMemo(() => {
+    return predictedHealthFactor === maxUint256
       ? '∞'
       : Number(formatEther(predictedHealthFactor ?? 0n)).toFixed(2);
-
+  }, [predictedHealthFactor]);
   return (
     <>
       <div
@@ -1488,14 +1492,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1635,14 +1639,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1787,14 +1791,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>

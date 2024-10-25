@@ -1,20 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
+import toast from 'react-hot-toast';
+import { formatEther, type Address } from 'viem';
+import { useChainId, useWriteContract } from 'wagmi';
+
+import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
+
 import {
   leveredPositionAbi,
   type FlywheelClaimableRewards
 } from '@ionicprotocol/sdk';
 import { type FlywheelReward } from '@ionicprotocol/types';
-import dynamic from 'next/dynamic';
-import toast from 'react-hot-toast';
-import { formatEther, type Address } from 'viem';
-import { useChainId, useWriteContract } from 'wagmi';
-
-import ResultHandler from '../ResultHandler';
-
-import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
-import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 type LoopRewardsProps = {
   positionAddress: Address;

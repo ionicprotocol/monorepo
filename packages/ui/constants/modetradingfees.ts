@@ -1,4 +1,4 @@
-export const TradingContractAddress =
+export const ModeTradingContractAddress =
   '0xC6A394952c097004F83d2dfB61715d245A38735a';
 export const TradingAbi = [
   {

@@ -1,5 +1,8 @@
-export const LiquidityContractAddress =
+export const ModeLiquidityContractAddress =
   '0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45';
+export const ModeReservesContractAddr =
+  '0x0f73de1DdBE848853f27cbf6E2B4f9E95BF48685';
+export const ModeSugarAddress = '0x207DfB36A449fd10d9c3bA7d75e76290a0c06731';
 export const LiquidityContractAbi = [
   {
     inputs: [
