@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { format } from 'date-fns';
 import { Calendar } from 'lucide-react';
+import { base, optimism, mode } from 'viem/chains';
 import { useChainId, useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
@@ -24,6 +25,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
+import NetworkDropdown from '../NetworkDropdown';
 import MaxDeposit from '../stake/MaxDeposit';
 
 interface VeIonDialogProps {
@@ -39,6 +41,8 @@ export default function VeIonDialog({
   chain,
   selectedToken
 }: VeIonDialogProps) {
+  // eslint-disable-next-line no-console
+  console.log('selectedToken', selectedToken);
   const chainId = useChainId();
   const [veIonAmount, setVeIonAmount] = useState<string>('');
   const [utilization, setUtilization] = useState<number>(0);
@@ -87,11 +91,18 @@ export default function VeIonDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect sm:max-w-[425px]">
+      <DialogContent className="bg-grayUnselect sm:max-w-[625px]">
         {!success ? (
           <>
-            <DialogHeader>
-              <DialogTitle>Get veION</DialogTitle>
+            <DialogHeader className="flex flex-row items-center justify-between">
+              <DialogTitle className="flex items-center gap-4">
+                Get veION
+                <NetworkDropdown
+                  dropdownSelectedChain={+chain}
+                  nopool
+                  enabledChains={[mode.id, base.id, optimism.id]}
+                />
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <MaxDeposit
@@ -133,8 +144,9 @@ export default function VeIonDialog({
               <Separator className="bg-white/10" />
 
               <div className="space-y-2">
-                <div className="text-xs text-white/60 uppercase tracking-wider mb-2">
-                  LOCK UNTIL
+                <div className="flex items-center gap-2 text-xs text-white/60 uppercase tracking-wider mb-2">
+                  <p>LOCK UNTIL</p>
+                  <CustomTooltip content="A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power." />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-white/60">
@@ -191,7 +203,7 @@ export default function VeIonDialog({
               />
               <Separator className="bg-white/10" />
               <div className="flex w-full items-center justify-between text-xs text-white/50">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   VOTING POWER
                   <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
                 </div>
