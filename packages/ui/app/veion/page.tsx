@@ -4,12 +4,14 @@ import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { ExternalLink, LockIcon } from 'lucide-react';
 import { base, mode, optimism } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
+import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 
 import {
@@ -19,8 +21,6 @@ import {
   AddLiquidityDialog,
   MigrateIonDialog
 } from '../_components/veion';
-import { Button } from '@ui/components/ui/button';
-import Link from 'next/link';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -54,12 +54,14 @@ export default function VeIon() {
           />
 
           <div className="flex gap-2">
-            <Button
-              asChild
-              className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
-            >
-              <Link href="/veion/governance?watch=myveion">Governance</Link>
-            </Button>
+            <Link href="/veion/governance?watch=myveion">
+              <Button
+                className="bg-accent text-black"
+                style={{ height: '36px' }}
+              >
+                Governance
+              </Button>
+            </Link>
             <NetworkSelector
               dropdownSelectedChain={+chain}
               nopool={true}

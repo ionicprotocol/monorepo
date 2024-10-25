@@ -137,8 +137,7 @@ export default function ManagePopup({
             </div>
             <div className="flex w-full items-center justify-between text-xs text-white/50">
               <div>
-                LOCKED BLP{' '}
-                <InfoPopover content="Info regarding the locked BLP." />
+                LP <InfoPopover content="Info regarding the locked BLP." />
               </div>
               <p>67.90 veIon</p>
             </div>

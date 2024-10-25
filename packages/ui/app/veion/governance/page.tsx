@@ -1,63 +1,54 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useSearchParams } from 'next/navigation';
 
 import { useChainId } from 'wagmi';
 
+import CustomTooltip from '@ui/app/_components/CustomTooltip';
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import ToggleLinks from '@ui/app/_components/ToggleLink';
-import InfoPopover from '@ui/app/_components/veion/InfoPopover';
-import VeionRow from '@ui/app/_components/veion/VeionRow';
+import { MyVeionTable } from '@ui/app/_components/veion';
+import DelegateVeionTable from '@ui/app/_components/veion/DelegateVeIonTable';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell
-} from '@ui/components/ui/table';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 
 export default function Governance() {
   const searchParams = useSearchParams();
   const chainId = useChainId();
 
-  const querywatch = searchParams.get('watch');
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);
-  const watch = querywatch ?? 'overview';
   const view = queryview ?? 'MyVeion';
 
   const infoBlocks = [
     {
       label: 'Ion Wallet Balance',
-      value: watch === 'overview' ? '78942387 ION' : '6376 ION',
+      value: view === 'MyVeion' ? '78942387 ION' : '6376 ION',
       infoContent: 'This is the amount of ION you have in your wallet.',
       icon: '/img/symbols/32/color/ion.png'
     },
     {
       label: 'Total veION',
-      value: watch === 'overview' ? '5674 veION' : '63754 veION',
+      value: view === 'MyVeion' ? '5674 veION' : '63754 veION',
       infoContent: 'This is the amount of veION you have in your wallet.',
       icon: '/img/symbols/32/color/ion.png'
     }
   ];
 
   return (
-    <div className="w-full flex flex-col items-start py-4 gap-y-2 bg-darkone">
+    <div className="w-full flex flex-col items-start gap-y-4 bg-darkone">
       {/* First Card */}
       <Card className="w-full">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>
-            {watch === 'overview' ? 'veION Overview' : 'My VeION'}
+            {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -67,9 +58,9 @@ export default function Governance() {
                 key={block.label}
                 className="flex flex-col gap-1 mt-3"
               >
-                <div className="text-white/60 text-xs flex items-center">
+                <div className="text-white/60 text-xs flex items-center gap-2">
                   {block.label}
-                  <InfoPopover content={block.infoContent} />
+                  <CustomTooltip content={block.infoContent} />
                 </div>
                 <div className="text-white/60 text-xs flex items-center">
                   <img
@@ -95,7 +86,7 @@ export default function Governance() {
         <CardHeader>
           <div className="flex w-full items-center justify-between mb-4">
             <span className="text-lg font-semibold">5 veION</span>
-            <span className="text-xs flex flex-col">
+            <span className="text-xs flex flex-col text-right">
               My Voting Power : 1134
               <span className="text-white/50 text-xs">10% of all veION</span>
             </span>
@@ -110,45 +101,16 @@ export default function Governance() {
               <ToggleLinks
                 arrText={['MyVeion', 'Delegate veION']}
                 baseUrl="/veion/governance"
+                currentChain={chain}
               />
             </div>
           </div>
 
-          {/* Table */}
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>TOKENS LOCKED</TableCell>
-                <TableCell>LOCKED BLP</TableCell>
-                <TableCell>LOCK EXPIRES</TableCell>
-                <TableCell>VOTING POWER</TableCell>
-                {view === 'Delegate veION' && (
-                  <TableCell>DELEGATED TO</TableCell>
-                )}
-                <TableCell>NETWORK</TableCell>
-                <TableCell>ACTION</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {view === 'MyVeion' &&
-                lockedData.map((data, idx) => (
-                  <VeionRow
-                    key={`${data.id}-${idx}`}
-                    data={data}
-                    viewType="MyVeion"
-                  />
-                ))}
-              {view === 'Delegate veION' &&
-                lockedDataWithDelegate.map((data, idx) => (
-                  <VeionRow
-                    key={`${data.id}-${idx}`}
-                    data={data}
-                    viewType="Delegate veION"
-                  />
-                ))}
-            </TableBody>
-          </Table>
+          {view === 'MyVeion' ? (
+            <MyVeionTable data={lockedData} />
+          ) : (
+            <DelegateVeionTable data={lockedDataWithDelegate} />
+          )}
         </CardContent>
       </Card>
     </div>
