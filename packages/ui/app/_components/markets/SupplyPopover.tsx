@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { pools } from '@ui/constants/index';
+import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
@@ -33,6 +34,12 @@ export default function SupplyPopover({
 }: SupplyPopoverProps) {
   const isModeMarket =
     dropdownSelectedChain === 34443 && (asset === 'USDC' || asset === 'WETH');
+
+  const { data: merklApr } = useMerklApr();
+
+  const merklAprForToken = merklApr?.find(
+    (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
+  )?.[cToken];
 
   return (
     <>
@@ -113,7 +120,11 @@ export default function SupplyPopover({
               href="https://app.merkl.xyz/?chain=34443"
               className="text-white underline"
             >
-              + OP rewards (Mode)
+              + OP Rewards:{' '}
+              {merklAprForToken?.toLocaleString('en-US', {
+                maximumFractionDigits: 2
+              })}
+              %
             </Link>
           </div>
         )}
