@@ -9,6 +9,9 @@ import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
 import "../../veION/stake/IStakeStrategy.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { AddressesProvider } from "../../ionic/AddressesProvider.sol";
+import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
+import "../../veION/stake/velo/VelodromeStakingWallet.sol";
+import "../../veION/stake/velo/IVeloIonModeStaking.sol";
 
 contract VotingEscrowNFTTest is BaseTest {
   veION ve;
@@ -134,6 +137,7 @@ contract VotingEscrowNFTTest is BaseTest {
     address[] tokenAddresses;
     uint256[] tokenAmounts;
     uint256[] durations;
+    bool[] stakeUnderlying;
     uint256 tokenId;
     uint256 secondTokenId;
     uint256 expectedSupply;
@@ -308,6 +312,151 @@ contract VotingEscrowNFTTest is BaseTest {
     for (uint256 i = 0; i < vars.assetsLocked.length; i++) {
       assertEq(vars.assetsLocked[i], vars.tokenAddresses[i], "Assets locked address mismatch");
     }
+  }
+
+  function testCreateLockAndStakeUnderlying() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+
+    address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
+    address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
+
+    VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+      address(ve),
+      ionMode5050,
+      veloGauge
+    );
+
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy), bytes(""));
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = ionMode5050;
+    isWhitelistedTokens[0] = true;
+
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    // Mint ModeVelodrome tokens to the user
+    vars.user = address(0x5678);
+    vars.amount = 5 ether;
+
+    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
+    IERC20(ionMode5050).transfer(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    IERC20(ionMode5050).approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(ionMode5050);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks;
+
+    vars.stakeUnderlying = new bool[](1);
+    vars.stakeUnderlying[0] = true;
+
+    // Create lock
+    vm.prank(vars.user);
+    uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+
+    address stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(vars.user);
+    uint256 stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
+
+    // Advance the blockchain by 1 week
+    vm.warp(block.timestamp + 1 weeks);
+    uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
+
+    emit log_named_address("Staking Wallet Instance", stakingWalletInstance);
+    emit log_named_uint("Staking Wallet Instance Balance", stakingWalletInstanceBalance);
+    emit log_named_uint("Reward", reward);
+
+    assertTrue(stakingWalletInstance != address(0), "Staking Wallet Instance should not be zero address");
+    assertEq(stakingWalletInstanceBalance, vars.amount, "Staking Wallet Instance Balance should match locked amount");
+    assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
+  }
+
+  function testCreateLockStakeUnderlyingAndClaim() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+
+    address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
+    address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
+
+    VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+      address(ve),
+      ionMode5050,
+      veloGauge
+    );
+
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy), bytes(""));
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = ionMode5050;
+    isWhitelistedTokens[0] = true;
+
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    // Mint ModeVelodrome tokens to the user
+    vars.user = address(0x5678);
+    vars.amount = 5 ether;
+
+    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
+    IERC20(ionMode5050).transfer(vars.user, vars.amount);
+
+    // Approve veION contract to spend user's tokens
+    vm.prank(vars.user);
+    IERC20(ionMode5050).approve(address(ve), vars.amount);
+
+    // Prepare parameters for createLock
+    vars.tokenAddresses = new address[](1);
+    vars.tokenAddresses[0] = address(ionMode5050);
+
+    vars.tokenAmounts = new uint256[](1);
+    vars.tokenAmounts[0] = vars.amount;
+
+    vars.durations = new uint256[](1);
+    vars.durations[0] = 52 weeks;
+
+    vars.stakeUnderlying = new bool[](1);
+    vars.stakeUnderlying[0] = true;
+
+    // Create lock
+    vm.prank(vars.user);
+    ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+
+    vm.warp(block.timestamp + 1 weeks);
+
+    address stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(vars.user);
+    uint256 stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
+    uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
+
+    emit log_named_address("Staking Wallet Instance", stakingWalletInstance);
+    emit log_named_uint("Staking Wallet Instance Balance", stakingWalletInstanceBalance);
+    emit log_named_uint("Earned ", reward);
+
+    vm.prank(vars.user);
+    ve.claimEmissions(vars.tokenAddresses[0]);
+
+    stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
+    reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
+
+    emit log_named_uint("Staking Wallet Instance Balance After Claim", stakingWalletInstanceBalance);
+    emit log_named_uint("Earned After Claim", reward);
+
+    uint256 userRewardBalance = IERC20(IVeloIonModeStaking(veloGauge).rewardToken()).balanceOf(vars.user);
+    emit log_named_uint("User Reward Balance", userRewardBalance);
+
+    assertEq(
+      stakingWalletInstanceBalance,
+      vars.amount,
+      "Staking Wallet Instance Balance After Claim should be the same"
+    );
+    assertEq(reward, 0, "Earned After Claim should be 0");
+    assertGt(userRewardBalance, reward, "User Reward Balance should be the earned amount");
   }
 
   function testIncreaseLockAmount() public fork(MODE_MAINNET) {
@@ -508,7 +657,41 @@ contract VotingEscrowNFTTest is BaseTest {
     emit log_named_uint("Lock End Time After Withdraw", locked.end);
   }
 
-  function testWithdrawVEEarly() public fork(MODE_MAINNET) {}
+  function testWithdrawVEEarly() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    vars.user = address(0x1234);
+    vars.amount = 1000 * 10 ** 18; // 1000 tokens
+
+    // Create lock and check the lock
+    vars.tokenId = _createLockInternal(vars.user);
+    IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
+    // Fast forward time to after the lock duration
+    vm.warp(block.timestamp + 10 weeks);
+
+    IveION.LockedBalance memory oldLocked = ve.getUserLock(vars.tokenId, lpType);
+    emit log_named_uint("Lock Start Time", oldLocked.start);
+    emit log_named_uint("Lock End Time", oldLocked.end);
+
+    // Withdraw the tokens
+    vm.prank(vars.user);
+    ve.withdraw(address(modeVelodrome5050IonMode), vars.tokenId);
+
+    // Verify the lock has been withdrawn
+    IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
+    assertEq(locked.amount, 0, "Lock amount should be zero after withdrawal");
+    assertEq(locked.end, 0, "Lock end time should be zero after withdrawal");
+
+    // Verify the user's token balance has increased
+    uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(vars.user);
+    assertEq(userBalanceAfterWithdraw, vars.amount, "User should receive the locked tokens back");
+
+    // Display results
+    emit log_named_uint("Token ID", vars.tokenId);
+    emit log_named_uint("User Balance After Withdraw", userBalanceAfterWithdraw);
+    emit log_named_uint("Lock Amount After Withdraw", uint256(int256(locked.amount)));
+    emit log_named_uint("Lock End Time After Withdraw", locked.end);
+  }
 
   function testMergeLocks() public fork(MODE_MAINNET) {
     TestVars memory vars;
