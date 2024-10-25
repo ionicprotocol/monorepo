@@ -5,29 +5,38 @@ import {
 } from '@ui/constants/baselp';
 import {
   LiquidityContractAbi,
-  LiquidityContractAddress
+  ModeLiquidityContractAddress
 } from '@ui/constants/lp';
-import { TradingContractAddress } from '@ui/constants/modetradingfees';
+import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
+import {
+  OPReservesContractAddr,
+  OPRouterContractAddr,
+  OPStakingContractAddr
+} from '@ui/constants/oplp';
 import { StakingContractAddress } from '@ui/constants/staking';
 
 import type { Address } from 'viem';
 
-export function getPoolToken(token?: 'eth' | 'mode' | 'weth'): `0x${string}` {
+export function getPoolToken(
+  token?: 'eth' | 'mode' | 'op' | 'weth'
+): `0x${string}` {
   if (token === 'weth') return '0x4200000000000000000000000000000000000006';
   if (token === 'mode') return '0xDfc7C877a950e49D2610114102175A06C2e3167a';
   return '0x0000000000000000000000000000000000000000';
 }
+
 export function getToken(chain: number): `0x${string}` {
+  if (chain === 60808) return '0xb90f229f27851e205d77fd46487989ad6e44c17c'; //bob
   if (chain === 34443) return '0x18470019bf0e94611f15852f7e93cf5d65bc34ca'; //mode
   if (chain === 8453) return '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5'; //base
   if (chain === 252) return '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'; //frax
   if (chain === 10) return '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'; //op
-  if (chain === 60808) return '0xb90f229f27851e205d77fd46487989ad6e44c17c'; //bob
   return '0x0000000000000000000000000000000000000000';
 }
+
 export function getAvailableStakingToken(
   chain: number,
-  token: 'eth' | 'mode' | 'weth'
+  token: 'eth' | 'mode' | 'op' | 'weth'
 ): `0x${string}` {
   if (chain === 34443 && (token === 'eth' || token === 'weth'))
     return '0xC6A394952c097004F83d2dfB61715d245A38735a';
@@ -35,54 +44,83 @@ export function getAvailableStakingToken(
     return '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
   if (chain === 8453 && (token === 'eth' || token === 'weth'))
     return BaseReservesContractAddr;
+  if (chain === 10 && (token === 'eth' || token === 'weth'))
+    return OPReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
+
 export function getTradingContractAddress(chain: number): `0x${string}` {
-  if (chain === 34443) return TradingContractAddress;
+  if (chain === 34443) return ModeTradingContractAddress;
   if (chain === 8453) return BaseReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getSpenderContract(chain: number): `0x${string}` {
-  if (chain === 34443) return LiquidityContractAddress;
+  if (chain === 34443) return ModeLiquidityContractAddress;
   if (chain === 8453) return BaseLiquidityContractAdd;
+  if (chain === 10) return OPRouterContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 export function getStakingToContract(
   chain: number,
-  token: 'eth' | 'mode' | 'weth'
+  token: 'eth' | 'mode' | 'op' | 'weth'
 ): `0x${string}` {
   if (chain === 34443 && (token === 'eth' || token === 'weth'))
     return StakingContractAddress;
   if (chain === 34443 && token === 'mode')
     return '0x8EE410cC13948e7e684ebACb36b552e2c2A125fC';
   if (chain === 8453) return '0x9b42e5F8c45222b2715F804968251c747c588fd7';
+  if (chain === 10 && token === 'eth') return OPStakingContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
 //for reserves=========================================================
 export function getReservesContract(chain: number): `0x${string}` {
-  if (chain === 34443) return LiquidityContractAddress;
+  if (chain === 34443) return ModeLiquidityContractAddress;
   if (chain === 8453) return BaseReservesContractAddr;
+  if (chain === 10) return OPReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
+
 export function getReservesABI(chain: number) {
+  if (chain === 10) {
+    return [
+      {
+        inputs: [],
+        name: 'getReserves',
+        outputs: [
+          { internalType: 'uint256', name: '_reserve0', type: 'uint256' },
+          { internalType: 'uint256', name: '_reserve1', type: 'uint256' },
+          {
+            internalType: 'uint256',
+            name: '_blockTimestampLast',
+            type: 'uint256'
+          }
+        ],
+        stateMutability: 'view',
+        type: 'function'
+      }
+    ];
+  }
   if (chain === 34443) return LiquidityContractAbi;
   if (chain === 8453) return BaseContractABI;
   return LiquidityContractAbi;
 }
 
-export function getReservesArgs(chain: number, token: 'eth' | 'mode' | 'weth') {
-  if (chain === 34443 && token === 'eth') {
+export function getReservesArgs(
+  chain: number,
+  token: 'eth' | 'mode' | 'op' | 'weth'
+) {
+  if (chain === 10 || chain === 8453) {
+    return [];
+  }
+  if (chain === 34443 && (token === 'weth' || token === 'eth')) {
     return [getToken(+chain), getPoolToken('weth'), false];
   }
-  if (chain === 34443 && token === 'weth') {
-    return [getToken(+chain), getPoolToken('weth'), false];
-  }
-  if (chain === 8453) return [];
   return [];
 }
+
 //=========================================================
 // Bridging Contract address
 

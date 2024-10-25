@@ -1,7 +1,8 @@
-import { type Address } from 'viem';
 import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
+
+import type { Address } from 'viem';
 
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
@@ -229,8 +230,10 @@ export const pools: Record<number, PoolParams> = {
   },
   [optimism.id]: {
     name: 'Optimism',
+    hexcode: '#ff0420',
     arrow: 'ffffff',
     bg: 'bg-optimism',
+    accentbg: 'bg-optimism',
     text: 'text-white',
     border: 'border-optimism',
     logo: '/img/logo/OPTIMISM.png',
@@ -278,7 +281,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['FRAX', 'wfrxETH', 'FXS']
+        assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'FXS']
       }
     ]
   },
@@ -385,17 +388,6 @@ export const POOLS_PER_PAGE = 6;
 export const DEFAULT_DECIMALS = 18;
 
 // enums
-
-export enum FusePoolMetric {
-  totalLiquidityNative,
-  totalSuppliedNative,
-  totalBorrowedNative
-}
-
-export enum UserAction {
-  NO_ACTION,
-  WAITING_FOR_TRANSACTIONS
-}
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 
