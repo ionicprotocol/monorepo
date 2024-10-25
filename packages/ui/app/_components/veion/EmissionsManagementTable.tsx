@@ -7,11 +7,11 @@ import Image from 'next/image';
 import { VotingContext } from '@ui/app/contexts/VotingContext';
 import type { VotingData } from '@ui/constants/mock';
 
+import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import EmissionsManagementFooter from './EmissionsManagementFooter';
 
 function EmissionsManagementTable({ data }: { data: VotingData[] }) {
   const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});

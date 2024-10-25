@@ -21,7 +21,6 @@ import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 export default function Governance() {
   const searchParams = useSearchParams();
   const chainId = useChainId();
-
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);

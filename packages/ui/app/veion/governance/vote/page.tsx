@@ -1,4 +1,13 @@
+'use client';
+
+import { useState } from 'react';
+
+import { useSearchParams } from 'next/navigation';
+
+import { useChainId } from 'wagmi';
+
 import CustomTooltip from '@ui/app/_components/CustomTooltip';
+import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import EmissionsManagementTable from '@ui/app/_components/veion/EmissionsManagementTable';
 import {
@@ -7,9 +16,16 @@ import {
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
+import { Switch } from '@ui/components/ui/switch';
 import { votingData } from '@ui/constants/mock';
 
 export default function Vote() {
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
+  const searchParams = useSearchParams();
+  const chainId = useChainId();
+  const querychain = searchParams.get('chain');
+  const chain = querychain ?? String(chainId);
+
   const infoBlocks = [
     {
       label: 'Locked Value',
@@ -33,7 +49,6 @@ export default function Vote() {
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
-      {/* First Card */}
       <Card className="w-full bg-grayone">
         <CardHeader>
           <CardTitle>Vote</CardTitle>
@@ -65,13 +80,31 @@ export default function Vote() {
         </CardContent>
       </Card>
 
-      {/* Second Card */}
+      <NetworkSelector
+        nopool={true}
+        dropdownSelectedChain={+chain}
+      />
+
       <Card
         className="w-full"
         style={{ backgroundColor: '#212126ff' }}
       >
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Emissions Management</CardTitle>
+          <div className="flex items-center space-x-2">
+            <label
+              htmlFor="pending-votes"
+              className="text-sm text-white/80"
+            >
+              Pending votes only
+            </label>
+            <Switch
+              id="pending-votes"
+              checked={showPendingOnly}
+              onCheckedChange={setShowPendingOnly}
+              className="data-[state=checked]:bg-green-500"
+            />
+          </div>
         </CardHeader>
         <CardContent className="border-none">
           <div className="my-3 w-full">
