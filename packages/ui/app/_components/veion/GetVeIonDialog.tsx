@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { Calendar } from 'lucide-react';
 import { base, optimism, mode } from 'viem/chains';
 import { useChainId, useAccount } from 'wagmi';
@@ -86,6 +86,15 @@ export default function VeIonDialog({
 
   const isButtonDisabled = !lockDate || Number(veIonAmount) === 0;
 
+  const handleDurationChange = (val: number[]) => {
+    const duration = val[0];
+    setSelectedDuration(duration);
+
+    // Calculate the new date based on duration
+    const newDate = addDays(new Date(), duration);
+    setLockDate(newDate);
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -116,7 +125,7 @@ export default function VeIonDialog({
                 }}
                 chain={+chain}
               />
-              <div className="w-full max-w-md mx-auto mt-3 mb-5">
+              <div className="w-full mx-auto mt-3 mb-5">
                 <div className="w-full mb-2 text-xs flex justify-between text-white/25">
                   {utilizationMarks.map((mark) => (
                     <span
@@ -144,7 +153,7 @@ export default function VeIonDialog({
               <Separator className="bg-white/10" />
 
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-white/60 uppercase tracking-wider mb-2">
+                <div className="flex items-center gap-2 text-xs text-white/60 tracking-wider mb-2">
                   <p>LOCK UNTIL</p>
                   <CustomTooltip content="A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power." />
                 </div>
@@ -172,7 +181,15 @@ export default function VeIonDialog({
                         mode="single"
                         selected={lockDate}
                         onSelect={(date) => {
-                          setLockDate(date);
+                          if (date) {
+                            setLockDate(date);
+                            // Calculate duration in days when date is selected
+                            const durationInDays = Math.round(
+                              (date.getTime() - new Date().getTime()) /
+                                (1000 * 60 * 60 * 24)
+                            );
+                            setSelectedDuration(durationInDays);
+                          }
                           setIsCalendarOpen(false);
                         }}
                         disabled={{ before: new Date() }}
@@ -183,7 +200,7 @@ export default function VeIonDialog({
                 </div>
                 <Slider
                   value={[selectedDuration]}
-                  onValueChange={(val) => setSelectedDuration(val[0])}
+                  onValueChange={handleDurationChange}
                   max={730}
                   min={180}
                   step={1}

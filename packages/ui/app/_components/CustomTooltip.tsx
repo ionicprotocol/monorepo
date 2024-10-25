@@ -24,7 +24,7 @@ const CustomTooltip = ({
         </div>
       </TooltipTrigger>
       <TooltipContent
-        className="bg-grayUnselect text-white border-white/10"
+        className="bg-grayUnselect text-white border-white/10 max-w-sm"
         sideOffset={5}
       >
         <p>{content}</p>
