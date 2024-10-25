@@ -49,12 +49,12 @@ contract VeloIonModeStakingStrategy is IStakeStrategy {
 
   /**
    * @notice Withdraws staked tokens for the caller.
-   * @param _from The address of the user withdrawing the tokens.
+   * @param _owner The address of the user withdrawing the tokens.
    * @param _amount The amount of tokens to withdraw.
    */
-  function withdraw(address _from, uint256 _amount) external onlyEscrow {
-    VelodromeStakingWallet veloWallet = VelodromeStakingWallet(userStakingWallet[_from]);
-    veloWallet.withdraw(_from, _amount);
+  function withdraw(address _owner, address _withdrawTo, uint256 _amount) external onlyEscrow {
+    VelodromeStakingWallet veloWallet = VelodromeStakingWallet(userStakingWallet[_owner]);
+    veloWallet.withdraw(_withdrawTo, _amount);
   }
 
   /**

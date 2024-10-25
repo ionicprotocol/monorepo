@@ -54,14 +54,14 @@ contract VelodromeStakingWallet is IStakeWallet, Ownable {
 
   /**
    * @notice Withdraws a specified amount of staked tokens.
-   * @param _from The address of the user withdrawing the tokens.
+   * @param _withdrawTo The address of the user withdrawing the tokens.
    * @param _amount The amount of tokens to withdraw.
    */
-  function withdraw(address _from, uint256 _amount) external onlyStakeStrategy {
+  function withdraw(address _withdrawTo, uint256 _amount) external onlyStakeStrategy {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
 
     stakingContract.withdraw(_amount);
-    stakingToken.transfer(_from, _amount);
+    stakingToken.transfer(_withdrawTo, _amount);
   }
 }

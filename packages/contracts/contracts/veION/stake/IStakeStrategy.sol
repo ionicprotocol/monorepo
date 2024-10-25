@@ -22,10 +22,10 @@ interface IStakeStrategy {
 
   /**
    * @notice Withdraws a specified amount of tokens for a given address.
-   * @param _from The address from which tokens will be withdrawn.
+   * @param _owner The address from which tokens will be withdrawn.
    * @param _amount The amount of tokens to withdraw.
    */
-  function withdraw(address _from, uint256 _amount) external;
+  function withdraw(address _owner, address _withdrawTo, uint256 _amount) external;
 
   /**
    * @notice Returns the current reward rate for the staking strategy.

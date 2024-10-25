@@ -206,7 +206,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (amountStaked != 0) {
       (IStakeStrategy _stakeStrategy, ) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0)) {
-        _handleTokenWithdrawStake(sender, _tokenId, _tokenAddress, amountStaked, _stakeStrategy);
+        _handleTokenWithdrawStake(sender, address(this), _tokenId, _tokenAddress, amountStaked, _stakeStrategy);
       }
     }
 
@@ -588,13 +588,15 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function _handleTokenWithdrawStake(
-    address _from,
+    address _owner,
+    address _withdrawTo,
     uint256 _tokenId,
     address _tokenAddress,
     uint256 _tokenAmount,
     IStakeStrategy _stakeStrategy
   ) internal {
-    _stakeStrategy.withdraw(_from, _tokenAmount);
+    _stakeStrategy.claim(_owner);
+    _stakeStrategy.withdraw(_owner, _withdrawTo, _tokenAmount);
     s_underlyingStake[_tokenId][_tokenAddress] -= _tokenAmount;
   }
 

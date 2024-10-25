@@ -16,8 +16,8 @@ interface IStakeWallet {
 
   /**
    * @notice Withdraws a specified amount of staked tokens.
-   * @param from The address of the user withdrawing the tokens.
+   * @param withdrawTo The address to withdraw tokens to.
    * @param amount The amount of tokens to withdraw.
    */
-  function withdraw(address from, uint256 amount) external;
+  function withdraw(address withdrawTo, uint256 amount) external;
 }
