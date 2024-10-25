@@ -20,12 +20,12 @@ import {
 
 import ExtendVeion from './ExtendVeion';
 import ManagePopup from './ManagePopup';
+import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 import { TableActionButton } from '../TableActionButton';
+import TokenPair from '../TokenPair';
 
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
-
-// Types
 type BaseVeionData = {
   id: string;
   tokensLocked: string;
@@ -44,20 +44,38 @@ type MyVeionData = BaseVeionData & {
   enableClaim?: boolean;
 };
 
-// MyVeionTable Component
 function MyVeionTable({ data }: { data: MyVeionData[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
 
+  const getRandomColor = () => {
+    const colors = [
+      '#FF6B6B',
+      '#4ECDC4',
+      '#45B7D1',
+      '#96CEB4',
+      '#FFEEAD',
+      '#D4A5A5',
+      '#9B59B6'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
   const columns: ColumnDef<MyVeionData>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('id')}
+        <div className="flex items-center gap-2">
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: getRandomColor() }}
+          />
+          <div className="text-xs font-semibold text-white/80">
+            {row.getValue('id')}
+          </div>
         </div>
       )
     },
@@ -65,8 +83,20 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
       accessorKey: 'tokensLocked',
       header: 'TOKENS LOCKED',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('tokensLocked')}
+        <div className="flex items-center gap-3">
+          <TokenPair
+            token1="ion"
+            token2="eth"
+            size={24}
+          />
+          <div className="flex flex-col">
+            <div className="text-xs font-semibold text-white/80">
+              {row.getValue('tokensLocked')}
+            </div>
+            <div className="text-xs font-semibold text-white/40">
+              Balancer LP
+            </div>
+          </div>
         </div>
       )
     },
@@ -74,8 +104,11 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
       accessorKey: 'lockedBLP.amount',
       header: 'LP',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.original.lockedBLP.amount}
+        <div className="flex flex-col">
+          <div className="text-xs font-semibold text-white/80">
+            {row.original.lockedBLP.amount}
+          </div>
+          <div className="text-xs font-semibold text-white/40">$400.32</div>
         </div>
       )
     },
@@ -83,17 +116,20 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
       accessorKey: 'lockExpires.date',
       header: 'LOCK EXPIRES',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.original.lockExpires.date}
-        </div>
+        <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
       )
     },
     {
       accessorKey: 'votingPower',
       header: 'VOTING POWER',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('votingPower')}
+        <div className="flex flex-col">
+          <div className="text-xs font-semibold text-white/80">
+            {row.getValue('votingPower')}
+          </div>
+          <div className="text-xs font-semibold text-white/40">
+            1.67% of all
+          </div>
         </div>
       )
     },

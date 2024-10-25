@@ -9,7 +9,7 @@ import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import ToggleLinks from '@ui/app/_components/ToggleLink';
 import { MyVeionTable } from '@ui/app/_components/veion';
-import DelegateVeionTable from '@ui/app/_components/veion/DelegateVeIonTable';
+import DelegateVeIonTable from '@ui/app/_components/veion/DelegateVeIonTable';
 import {
   Card,
   CardHeader,
@@ -45,7 +45,7 @@ export default function Governance() {
   return (
     <div className="w-full flex flex-col items-start gap-y-4 bg-darkone">
       {/* First Card */}
-      <Card className="w-full">
+      <Card className="w-full bg-grayone">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>
             {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
@@ -82,7 +82,7 @@ export default function Governance() {
       />
 
       {/* Second Card */}
-      <Card className="w-full">
+      <Card className="w-full bg-grayone">
         <CardHeader>
           <div className="flex w-full items-center justify-between mb-4">
             <span className="text-lg font-semibold">5 veION</span>
@@ -109,7 +109,7 @@ export default function Governance() {
           {view === 'MyVeion' ? (
             <MyVeionTable data={lockedData} />
           ) : (
-            <DelegateVeionTable data={lockedDataWithDelegate} />
+            <DelegateVeIonTable data={lockedDataWithDelegate} />
           )}
         </CardContent>
       </Card>

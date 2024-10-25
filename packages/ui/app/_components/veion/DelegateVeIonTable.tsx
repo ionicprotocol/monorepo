@@ -39,17 +39,38 @@ type DelegateVeionData = BaseVeionData & {
   delegatedTo: string;
   readyToDelegate: boolean;
 };
+import TimeRemaining from './TimeRemaining';
+import TokenPair from '../TokenPair';
 
 function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  const getRandomColor = () => {
+    const colors = [
+      '#FF6B6B',
+      '#4ECDC4',
+      '#45B7D1',
+      '#96CEB4',
+      '#FFEEAD',
+      '#D4A5A5',
+      '#9B59B6'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   const columns: ColumnDef<DelegateVeionData>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('id')}
+        <div className="flex items-center gap-2">
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: getRandomColor() }}
+          />
+          <div className="text-xs font-semibold text-white/80">
+            {row.getValue('id')}
+          </div>
         </div>
       )
     },
@@ -57,8 +78,20 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       accessorKey: 'tokensLocked',
       header: 'TOKENS LOCKED',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('tokensLocked')}
+        <div className="flex items-center gap-3">
+          <TokenPair
+            token1="ion"
+            token2="eth"
+            size={24}
+          />
+          <div className="flex flex-col">
+            <div className="text-xs font-semibold text-white/80">
+              {row.getValue('tokensLocked')}
+            </div>
+            <div className="text-xs font-semibold text-white/40">
+              Balancer LP
+            </div>
+          </div>
         </div>
       )
     },
@@ -66,8 +99,11 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       accessorKey: 'lockedBLP.amount',
       header: 'LP',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.original.lockedBLP.amount}
+        <div className="flex flex-col">
+          <div className="text-xs font-semibold text-white/80">
+            {row.original.lockedBLP.amount}
+          </div>
+          <div className="text-xs font-semibold text-white/40">$400.32</div>
         </div>
       )
     },
@@ -75,17 +111,20 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       accessorKey: 'lockExpires.date',
       header: 'LOCK EXPIRES',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.original.lockExpires.date}
-        </div>
+        <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
       )
     },
     {
       accessorKey: 'votingPower',
       header: 'VOTING POWER',
       cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('votingPower')}
+        <div className="flex flex-col">
+          <div className="text-xs font-semibold text-white/80">
+            {row.getValue('votingPower')}
+          </div>
+          <div className="text-xs font-semibold text-white/40">
+            1.67% of all
+          </div>
         </div>
       )
     },
@@ -102,16 +141,20 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       id: 'actions',
       cell: ({ row }) => {
         const data = row.original;
-        return data.readyToDelegate ? (
-          <TableActionButton>Undelegate</TableActionButton>
-        ) : (
-          <TableActionButton
-            variant="secondary"
-            width="100px"
-            disabled
-          >
-            {data.lockExpires.timeLeft}
-          </TableActionButton>
+        return (
+          <div className="flex justify-end">
+            {data.readyToDelegate ? (
+              <TableActionButton width="100px">Undelegate</TableActionButton>
+            ) : (
+              <TableActionButton
+                variant="secondary"
+                width="100px"
+                disabled
+              >
+                {data.lockExpires.timeLeft}
+              </TableActionButton>
+            )}
+          </div>
         );
       }
     }
@@ -127,7 +170,6 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       sorting
     }
   });
-
   return (
     <div>
       <Table className="w-full border-separate border-spacing-y-3">

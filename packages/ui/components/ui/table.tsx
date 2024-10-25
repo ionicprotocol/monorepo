@@ -9,7 +9,7 @@ const Table = React.forwardRef<
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm table-fixed', className)}
+      className={cn('w-full caption-bottom text-sm', className)} // Removed table-fixed
       {...props}
     />
   </div>
@@ -74,7 +74,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-8 px-4 text-left align-middle text-xs font-semibold text-white/60',
+      'h-8 px-4 text-left align-middle text-xs font-semibold text-white/60 whitespace-nowrap',
       className
     )}
     {...props}
@@ -89,7 +89,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      'p-4 align-middle text-xs font-semibold text-white/80 first:rounded-l-xl last:rounded-r-xl',
+      'p-4 align-middle text-xs font-semibold text-white/80 first:rounded-l-xl last:rounded-r-xl min-w-[100px]',
       className
     )}
     {...props}
