@@ -1,45 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
-
-import { Info } from 'lucide-react';
-
+import CustomTooltip from '@ui/app/_components/CustomTooltip';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import VotingRows from '@ui/app/_components/veion/VotingRows';
+import EmissionsManagementTable from '@ui/app/_components/veion/EmissionsManagementTable';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell
-} from '@ui/components/ui/table';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider
-} from '@ui/components/ui/tooltip';
 import { votingData } from '@ui/constants/mock';
-
-function InfoTooltip({ content }: { content: string }) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Info className="w-4 h-4 ml-1 cursor-pointer" />
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{content}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 export default function Vote() {
   const infoBlocks = [
@@ -64,9 +32,9 @@ export default function Vote() {
   ];
 
   return (
-    <div className="w-full flex flex-col items-start py-4 gap-y-2 bg-darkone">
+    <div className="w-full flex flex-col items-start gap-y-4">
       {/* First Card */}
-      <Card className="w-full">
+      <Card className="w-full bg-grayone">
         <CardHeader>
           <CardTitle>Vote</CardTitle>
         </CardHeader>
@@ -79,7 +47,7 @@ export default function Vote() {
               >
                 <div className="text-white/60 text-xs flex items-center">
                   {block.label}
-                  <InfoTooltip content={block.infoContent} />
+                  <CustomTooltip content={block.infoContent} />
                 </div>
                 <div className="text-white/60 text-xs flex items-center">
                   {block.icon && (
@@ -98,34 +66,18 @@ export default function Vote() {
       </Card>
 
       {/* Second Card */}
-      <Card className="w-full mt-4">
+      <Card
+        className="w-full"
+        style={{ backgroundColor: '#212126ff' }}
+      >
         <CardHeader>
           <CardTitle>Emissions Management</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="border-none">
           <div className="my-3 w-full">
             <FlatMap />
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>NETWORK</TableCell>
-                <TableCell>SUPPLY ASSET</TableCell>
-                <TableCell>TOTAL VOTES</TableCell>
-                <TableCell>MY VOTES</TableCell>
-                <TableCell>VOTE</TableCell> {/* Added VOTE column */}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {votingData.map((data) => (
-                <VotingRows
-                  key={data.id}
-                  {...data}
-                />
-              ))}
-            </TableBody>
-          </Table>
+          <EmissionsManagementTable data={votingData} />
         </CardContent>
       </Card>
     </div>

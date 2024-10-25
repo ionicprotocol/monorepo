@@ -15,3 +15,4 @@ export { default as EpochInfo } from './EpochInfo';
 export { default as MarketSelector } from './MarketSelector';
 export { default as MigrateIonDialog } from './MigrateIonDialog';
 export { default as TimeRemaining } from './TimeRemaining';
+export { default as VoteInput } from './VoteInput';

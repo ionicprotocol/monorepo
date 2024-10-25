@@ -186,21 +186,8 @@ export const votingData: VotingData[] = [
       limit: '25% limit'
     },
     myVotes: {
-      percentage: '10%',
-      value: '$2.45'
-    }
-  },
-  {
-    id: '0013',
-    network: 'Arbitrum',
-    supplyAsset: 'ETH',
-    totalVotes: {
-      percentage: '12.34%',
-      limit: '25% limit'
-    },
-    myVotes: {
-      percentage: '10%',
-      value: '$2.45'
+      percentage: '0',
+      value: '$0'
     }
   },
   {
@@ -208,11 +195,11 @@ export const votingData: VotingData[] = [
     network: 'Optimism',
     supplyAsset: 'USDC',
     totalVotes: {
-      percentage: '12.34%',
+      percentage: '18.5%',
       limit: '25% limit'
     },
     myVotes: {
-      percentage: '10%',
+      percentage: '10',
       value: '$2.45'
     }
   },
@@ -221,12 +208,12 @@ export const votingData: VotingData[] = [
     network: 'Base',
     supplyAsset: 'BNB',
     totalVotes: {
-      percentage: '12.34%',
+      percentage: '5.7%',
       limit: '25% limit'
     },
     myVotes: {
-      percentage: '10%',
-      value: '$2.45'
+      percentage: '0',
+      value: '$0'
     }
   },
   {
@@ -234,12 +221,12 @@ export const votingData: VotingData[] = [
     network: 'Eth',
     supplyAsset: 'USDT',
     totalVotes: {
-      percentage: '12.34%',
+      percentage: '22.1%',
       limit: '25% limit'
     },
     myVotes: {
-      percentage: '10%',
-      value: '$2.45'
+      percentage: '0',
+      value: '$0'
     }
   }
 ];

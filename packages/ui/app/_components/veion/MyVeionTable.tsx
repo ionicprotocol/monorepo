@@ -2,30 +2,16 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@ui/components/ui/table';
-
 import ExtendVeion from './ExtendVeion';
 import ManagePopup from './ManagePopup';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
+import CommonTable from '../CommonTable';
 import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
-import type { ColumnDef, SortingState } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
+
 type BaseVeionData = {
   id: string;
   tokensLocked: string;
@@ -45,7 +31,6 @@ type MyVeionData = BaseVeionData & {
 };
 
 function MyVeionTable({ data }: { data: MyVeionData[] }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
@@ -148,7 +133,7 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
           </div>
         ) : (
           <div className="flex gap-2 justify-end">
-            <Link href="/veion/vote">
+            <Link href="/veion/governance/vote">
               <TableActionButton variant="secondary">Vote</TableActionButton>
             </Link>
             <TableActionButton
@@ -162,17 +147,6 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
       }
     }
   ];
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting
-    }
-  });
 
   return (
     <div>
@@ -190,55 +164,10 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
         onOpenChange={setIsManageOpen}
       />
 
-      <Table className="w-full border-separate border-spacing-y-3">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-none hover:bg-transparent"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="text-white/60 text-xs font-semibold h-8"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                className="hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl border-none"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <CommonTable
+        data={data}
+        columns={columns}
+      />
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default function Governance() {
   ];
 
   return (
-    <div className="w-full flex flex-col items-start gap-y-4 bg-darkone">
+    <div className="w-full flex flex-col items-start gap-y-4">
       {/* First Card */}
       <Card className="w-full bg-grayone">
         <CardHeader>
@@ -108,7 +108,7 @@ export default function Governance() {
             <FlatMap />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="border-none">
           <div className="flex justify-start">
             <div className="bg-grayUnselect rounded-md mb-3 inline-block">
               <ToggleLinks

@@ -1,26 +1,9 @@
-import { useState } from 'react';
-
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender
-} from '@tanstack/react-table';
-
-import {
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Table
-} from '@ui/components/ui/table';
-
 import TimeRemaining from './TimeRemaining';
+import CommonTable from '../CommonTable';
 import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
-import type { SortingState, ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 // Types
 type BaseVeionData = {
@@ -43,8 +26,6 @@ type DelegateVeionData = BaseVeionData & {
 };
 
 function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-
   const getRandomColor = () => {
     const colors = [
       '#FF6B6B',
@@ -160,67 +141,12 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
     }
   ];
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting
-    }
-  });
   return (
     <div>
-      <Table className="w-full border-separate border-spacing-y-3">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-none hover:bg-transparent"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="text-white/60 text-xs font-semibold h-8"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                className="hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl border-none"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <CommonTable
+        data={data}
+        columns={columns}
+      />
     </div>
   );
 }
