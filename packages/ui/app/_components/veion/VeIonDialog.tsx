@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
-
 import { useChainId, useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
@@ -24,16 +22,19 @@ import MaxDeposit from '../stake/MaxDeposit';
 interface VeIonDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  chain: number;
+  selectedToken: 'eth' | 'mode' | 'weth';
 }
 
 export default function VeIonDialog({
   isOpen,
-  onOpenChange
+  onOpenChange,
+  chain,
+  selectedToken
 }: VeIonDialogProps) {
+  // eslint-disable-next-line no-console
+  console.log('selectedToken', selectedToken);
   const chainId = useChainId();
-  const searchParams = useSearchParams();
-  const querychain = searchParams.get('chain');
-  const chain = querychain ? querychain : String(chainId);
   const [veIonAmount, setVeIonAmount] = useState<string>('');
   const [utilization, setUtilization] = useState<number>(0);
   const [lockDuration, setLockDuration] = useState<string>('');

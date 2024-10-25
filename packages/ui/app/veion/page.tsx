@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-
 import Image from 'next/image';
-
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+import { useChainId } from 'wagmi';
 import { ExternalLink, LockIcon } from 'lucide-react';
+import { base, mode, optimism } from 'viem/chains';
 
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
-
 import {
   VeIonDialog,
   LPRow,
@@ -15,27 +16,56 @@ import {
   AddLiquidityDialog
 } from '../_components/veion';
 
+const NetworkSelector = dynamic(
+  () => import('../_components/markets/NetworkSelector'),
+  {
+    ssr: false
+  }
+);
+
 export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
+
+  const chainId = useChainId();
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const queryToken = searchParams.get('token');
+  const selectedtoken = queryToken ?? 'eth';
+  const chain = querychain ? querychain : String(chainId);
+
   return (
     <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-grayone mx-auto my-6">
       <VeIonDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
+        chain={+chain}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
       <AddLiquidityDialog
         isOpen={isAddLiquidityOpen}
         onOpenChange={setIsAddLiquidityOpen}
+        chain={+chain}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
       <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
-        <Image
-          className="size-16"
-          src="/img/assets/db.svg"
-          alt="ion logo"
-          width={32}
-          height={32}
-        />
+        <div className="flex items-center justify-between w-full">
+          <Image
+            className="size-16"
+            src="/img/assets/db.svg"
+            alt="ion logo"
+            width={32}
+            height={32}
+          />
+          <div>
+            <NetworkSelector
+              dropdownSelectedChain={+chain}
+              nopool={true}
+              enabledChains={[mode.id, base.id, optimism.id]}
+            />
+          </div>
+        </div>
+
         <div className="flex items-center gap-1 text-2xl">
           Participate in{' '}
           <span className="text-accent flex items-center">
@@ -51,7 +81,7 @@ export default function VeIon() {
         {/* Info Cards */}
         <InfoCard
           text="Incentivize Markets on your favorite Chain with Liquidity Gauges"
-          href="/veion/incentives"
+          href={`/veion/incentives?chain=${chain}&token=${selectedtoken}`}
         />
         <InfoCard text="Significantly boost your collateral pool depth with bribes" />
         <InfoCard text="Increase Emissions and earn POL for your Treasury" />
@@ -98,19 +128,6 @@ export default function VeIon() {
             }}
           />
         </div>
-
-        {/* <Button
-          asChild
-          className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
-        >
-          <Link href="/veion/governance?watch=myveion">My veIon</Link>
-        </Button>
-        <Button
-          asChild
-          className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
-        >
-          <Link href="/veion/governance?watch=overview">veIon Overview</Link>
-        </Button> */}
       </CardContent>
     </Card>
   );
