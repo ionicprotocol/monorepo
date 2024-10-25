@@ -16,7 +16,8 @@ import {
   GetVeIonDialog,
   LPRow,
   InfoCard,
-  AddLiquidityDialog
+  AddLiquidityDialog,
+  MigrateIonDialog
 } from '../_components/veion';
 
 const NetworkSelector = dynamic(
@@ -29,6 +30,7 @@ const NetworkSelector = dynamic(
 export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
+  const [isMigrateOpen, setIsMigrateOpen] = useState(false);
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -50,6 +52,12 @@ export default function VeIon() {
         onOpenChange={setIsAddLiquidityOpen}
         chain={+chain}
         selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+      />
+
+      <MigrateIonDialog
+        isOpen={isMigrateOpen}
+        onOpenChange={setIsMigrateOpen}
+        chain={chain}
       />
       <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
         <div className="flex items-center justify-between w-full">
@@ -113,7 +121,7 @@ export default function VeIon() {
             detail={{
               title: 'MIGRATE YOUR STAKED LP',
               buttonText: 'Migrate LP',
-              onClick: () => setIsDialogOpen(true),
+              onClick: () => setIsMigrateOpen(true),
               get: 'vAMM'
             }}
           />

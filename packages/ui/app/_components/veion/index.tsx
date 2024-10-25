@@ -12,3 +12,4 @@ export { default as VotingRows } from './VotingRows';
 export { default as AddLiquidityDialog } from './AddLiquidityDialog';
 export { default as EpochInfo } from './EpochInfo';
 export { default as MarketSelector } from './MarketSelector';
+export { default as MigrateIonDialog } from './MigrateIonDialog';
