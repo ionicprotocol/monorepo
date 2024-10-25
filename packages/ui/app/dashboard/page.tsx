@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
+import { useChainId } from 'wagmi';
 
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -25,9 +26,11 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
 import NetworkSelector from '../_components/markets/NetworkSelector';
@@ -56,6 +59,9 @@ export default function Dashboard() {
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
+    useState<MarketData>();
+  const walletChain = useChainId();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -272,8 +278,29 @@ export default function Dashboard() {
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
+
+  // console.log(suppliedAssets);
   return (
     <>
+      {swapOpen && marketData?.comptroller && (
+        <CollateralSwapPopup
+          toggler={() => swapToggle()}
+          swapRef={swapRef}
+          swappedFromAsset={collateralSwapFromAsset!}
+          swappedToAssets={marketData?.assets.filter(
+            (asset) =>
+              asset?.underlyingToken !==
+              collateralSwapFromAsset?.underlyingToken
+          )}
+          swapOpen={swapOpen}
+          comptroller={marketData?.comptroller}
+        />
+      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -577,6 +604,18 @@ export default function Dashboard() {
                       setPopupMode={setPopupMode}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
+                      toggler={async () => {
+                        const result = await handleSwitchOriginChain(
+                          +chain,
+                          walletChain
+                        );
+                        if (result) {
+                          swapToggle();
+                        }
+                      }}
+                      setCollateralSwapFromAsset={() =>
+                        setCollateralSwapFromAsset(asset)
+                      }
                       utilization="0.00%"
                     />
                   ))}

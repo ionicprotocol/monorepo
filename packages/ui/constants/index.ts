@@ -281,7 +281,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['FRAX', 'wfrxETH', 'FXS']
+        assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'FXS']
       }
     ]
   },
@@ -688,5 +688,9 @@ export const INFO_MESSAGES = {
   },
   WITHDRAW: {
     WITHDRAWING: 'Withdrawing funds'
+  },
+  SWAP: {
+    APPROVE: 'Approve amount for spending',
+    SWAPPING: 'Swapping'
   }
 };

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
-import { IRouter_Velodrome } from "../external/velodrome/IRouter.sol";
+import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
 
 /**
  * @title VelodromeV2Liquidator
@@ -43,7 +43,10 @@ contract VelodromeV2Liquidator {
       strategyData,
       (IRouter_Velodrome, IRouter_Velodrome.Route[])
     );
-    require(swapPath.length >= 1 && swapPath[0].from == address(inputToken), "Invalid VelodromeV2Liquidator swap path.");
+    require(
+      swapPath.length >= 1 && swapPath[0].from == address(inputToken),
+      "Invalid VelodromeV2Liquidator swap path."
+    );
 
     // Swap underlying tokens
     inputToken.approve(address(router), inputAmount);
