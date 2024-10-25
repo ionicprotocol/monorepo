@@ -33,7 +33,7 @@ contract SupplyVaultsTest is BaseTest {
   // - MODE n/a
   // - WETH 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2
 
-  function afterForkSetUp() internal override {
+  function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
 
     weth = ERC20(wethMainMarket.underlying());
@@ -421,44 +421,49 @@ contract SupplyVaultsTest is BaseTest {
     secondExt.changeAdapters();
   }
 
-  // TODO remove debuggingOnly when passing
-  function testVaultAccrueRewards() public debuggingOnly fork(MODE_MAINNET) {
-    IERC20Metadata ionToken = IERC20Metadata(0x18470019bf0e94611f15852f7e93cf5d65bc34ca);
+  function testUpgradeOptVault() public fork(MODE_MAINNET) {
+    OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
+    exts[0] = new TestingFirstExtension();
+    exts[1] = new TestingSecondExtension();
+    registry.setLatestVaultExtensions(address(vault), exts);
+
+    vault.upgradeVault();
+
+    address[] memory currentExtensions = vault._listExtensions();
+
+    for (uint256 i; i < exts.length; i++) {
+      assertEq(address(exts[i]), currentExtensions[i], "!matching");
+    }
+  }
+
+  // TODO test claiming the rewards for multiple vaults
+  function testVaultAccrueRewards() public fork(MODE_MAINNET) {
+    IERC20Metadata ionToken = IERC20Metadata(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
     address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
     address someDeployer = address(321);
-
-    {
-      // TODO change the WETH market delegate to a rewards delegate
-      // with ION as the reward token
-      // then add some rewards at a static/dynamic rate
-    }
+    IonicFlywheel flywheelLogic = new IonicFlywheel();
 
     // set up the registry, the vault and the adapter
+    vm.startPrank(someDeployer);
+    deployVaultRegistry();
+
     {
-      //      // upgrade to enable the aprAfterDeposit fn for the vault
-      //      _upgradeMarket(wethNativeMarket);
-
-      vm.startPrank(someDeployer);
-      deployVaultRegistry();
-
       // deploy the adapter
-      CompoundMarketERC4626 wethNativeMarketAdapter = new CompoundMarketERC4626();
+      CompoundMarketERC4626 marketAdapter = new CompoundMarketERC4626();
       {
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
-          address(wethNativeMarketAdapter),
+          address(marketAdapter),
           address(dpa),
           ""
         );
-        wethNativeMarketAdapter = CompoundMarketERC4626(address(proxy));
-        vm.label(address(wethNativeMarketAdapter), "wethNativeMarketAdapter");
+        marketAdapter = CompoundMarketERC4626(address(proxy));
+        vm.label(address(marketAdapter), "marketAdapter");
       }
-      wethNativeMarketAdapter.initialize(wethNativeMarket, blocksPerYear, registry);
+      marketAdapter.initialize(wethNativeMarket, blocksPerYear, registry);
 
       AdapterConfig[10] memory _adapters;
-      _adapters[0].adapter = wethNativeMarketAdapter;
+      _adapters[0].adapter = marketAdapter;
       _adapters[0].allocation = 1e18;
-
-      IonicFlywheel flywheelLogic = new IonicFlywheel();
 
       bytes memory params = abi.encode(
         weth,
@@ -526,28 +531,6 @@ contract SupplyVaultsTest is BaseTest {
     // check if any rewards were claimed
     assertGt(ionToken.balanceOf(wethWhale), whaleStartingOpBalance, "!received ION");
   }
-
-  function testUpgradeOptVault() public fork(MODE_MAINNET) {
-    OptimizedAPRVaultExtension[] memory exts = new OptimizedAPRVaultExtension[](2);
-    exts[0] = new TestingFirstExtension();
-    exts[1] = new TestingSecondExtension();
-    registry.setLatestVaultExtensions(address(vault), exts);
-
-    vault.upgradeVault();
-
-    address[] memory currentExtensions = vault._listExtensions();
-
-    for (uint256 i; i < exts.length; i++) {
-      assertEq(address(exts[i]), currentExtensions[i], "!matching");
-    }
-  }
-
-  function testLensFn() public debuggingOnly fork(BSC_CHAPEL) {
-    registry = OptimizedVaultsRegistry(0x353195Bdd4917e1Bdabc9809Dc3E8528b3421FF5);
-    registry.getVaultsData();
-  }
-
-  // TODO test claiming the rewards for multiple vaults
 }
 
 contract TestingFirstExtension is OptimizedAPRVaultExtension {
