@@ -12,6 +12,7 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
+import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -76,7 +77,11 @@ const PoolRows = ({
   rewards
 }: IRows) => {
   const { address } = useMultiIonic();
-  // const { isConnected } = useAccount();
+  const { data: merklApr } = useMerklApr();
+
+  const merklAprForToken = merklApr?.find(
+    (a) => Object.keys(a)[0].toLowerCase() === cTokenAddress.toLowerCase()
+  )?.[cTokenAddress];
 
   const supplyRewards = useMemo(
     () =>
@@ -89,8 +94,9 @@ const PoolRows = ({
   );
   const totalSupplyRewardsAPR = useMemo(
     () =>
-      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
-    [supplyRewards]
+      (supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ??
+        0) + (merklAprForToken ?? 0),
+    [supplyRewards, merklAprForToken]
   );
 
   const borrowRewards = useMemo(

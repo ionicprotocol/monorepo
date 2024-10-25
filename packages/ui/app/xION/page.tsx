@@ -247,7 +247,7 @@ export default function XION() {
       />
       <div className="bg-grayone  p-6 rounded-xl xl:max-w-[45%] sm:w-[75%] md:w-[60%]  w-[95%] mx-auto my-20">
         <div className={`mb-2 flex items-center justify-between`}>
-          <h2 className="text-lg ">Bridge</h2>
+          <h2 className="text-lg ">$ION Cross-Chain Bridge</h2>
           <h2 className="text-xs text-white/50 ">
             Track Bridge{' '}
             <img

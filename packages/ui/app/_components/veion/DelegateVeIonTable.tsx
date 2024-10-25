@@ -7,7 +7,6 @@ import {
   flexRender
 } from '@tanstack/react-table';
 
-import { Button } from '@ui/components/ui/button';
 import {
   TableHeader,
   TableRow,
@@ -17,8 +16,9 @@ import {
   Table
 } from '@ui/components/ui/table';
 
-import type { SortingState, ColumnDef } from '@tanstack/react-table';
 import { TableActionButton } from '../TableActionButton';
+
+import type { SortingState, ColumnDef } from '@tanstack/react-table';
 
 // Types
 type BaseVeionData = {

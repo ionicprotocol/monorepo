@@ -7,11 +7,11 @@ import dynamic from 'next/dynamic';
 import { useChainId } from 'wagmi';
 
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { getAssetName } from '../../util/utils';
-// import { Rewards } from '../markets/Rewards';
 const Rewards = dynamic(() => import('../markets/Rewards'), {
   ssr: false
 });
@@ -66,6 +66,12 @@ const InfoRows = ({
   setCollateralSwapFromAsset
 }: InfoRowsProps) => {
   const walletChain = useChainId();
+  const { data: merklApr } = useMerklApr();
+
+  const merklAprForToken = merklApr?.find(
+    (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
+  )?.[cToken];
+
   const supplyRewards = useMemo(
     () =>
       rewards?.filter((reward) =>
@@ -77,8 +83,9 @@ const InfoRows = ({
   );
   const totalSupplyRewardsAPR = useMemo(
     () =>
-      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
-    [supplyRewards]
+      (supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ??
+        0) + (merklAprForToken ?? 0),
+    [supplyRewards, merklAprForToken]
   );
 
   const borrowRewards = useMemo(
