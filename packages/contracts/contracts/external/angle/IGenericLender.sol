@@ -10,11 +10,11 @@ interface IGenericLender {
   function lenderName() external view returns (string memory);
 
   /// @notice Returns an estimation of the current Annual Percentage Rate on the lender
-  function apr() external view returns (uint256);
+  function apr() external returns (uint256);
 
   /// @notice Returns an estimation of the current Annual Percentage Rate weighted by the assets under
   /// management of the lender
-  function weightedApr() external view returns (uint256);
+  function weightedApr() external returns (uint256);
 
   /// @notice Withdraws a given amount from lender
   /// @param amount The amount the caller wants to withdraw
@@ -29,9 +29,9 @@ interface IGenericLender {
   /// of `amount`
   /// @param amount Amount to add to the lending platform, and that we want to take into account
   /// in the apr computation
-  function aprAfterDeposit(uint256 amount) external view returns (uint256);
+  function aprAfterDeposit(uint256 amount) external returns (uint256);
 
-  function aprAfterWithdraw(uint256 amount) external view returns (uint256);
+  function aprAfterWithdraw(uint256 amount) external returns (uint256);
 
   /// @notice Removes tokens from this Strategy that are not the type of tokens
   /// managed by this Strategy. This may be used in case of accidentally

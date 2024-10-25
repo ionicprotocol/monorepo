@@ -133,7 +133,7 @@ contract OptimizedVaultsRegistry is SafeOwnableUpgradeable {
     AdapterInfo[] adaptersData;
   }
 
-  function getVaultsData() public view returns (VaultInfo[] memory vaultsData) {
+  function getVaultsData() public returns (VaultInfo[] memory vaultsData) {
     vaultsData = new VaultInfo[](vaults.length);
     for (uint256 i; i < vaults.length; ++i) {
       OptimizedAPRVaultSecondExtension vault = vaults[i].asSecondExtension();

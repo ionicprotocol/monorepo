@@ -73,11 +73,11 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
     require(market.redeemUnderlying(amount) == 0, "redeem from market failed");
   }
 
-  function aprAfterDeposit(uint256 amount) public view returns (uint256) {
+  function aprAfterDeposit(uint256 amount) public returns (uint256) {
     return _rewardsApr() + market.supplyRatePerBlockAfterDeposit(amount) * blocksPerYear;
   }
 
-  function aprAfterWithdraw(uint256 amount) public view override returns (uint256) {
+  function aprAfterWithdraw(uint256 amount) public override returns (uint256) {
     return _rewardsApr() + market.supplyRatePerBlockAfterWithdraw(amount) * blocksPerYear;
   }
 
@@ -96,7 +96,7 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
     ------------------------------------------------------------*/
 
   /// @notice Returns an estimation of the current Annual Percentage Rate on the lender
-  function apr() public view override returns (uint256) {
+  function apr() public override returns (uint256) {
 
     return _rewardsApr() + market.supplyRatePerBlock() * blocksPerYear;
   }
@@ -114,13 +114,13 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
 
   /// @notice Returns an estimation of the current Annual Percentage Rate weighted by the assets under
   /// management of the lender
-  function weightedApr() external view returns (uint256) {
+  function weightedApr() external returns (uint256) {
     return (apr() * totalAssets()) / 1e18;
   }
 
   /// @notice Returns an estimation of the hypothetical Annual Percentage Rate weighted by the assets under
   /// management of the lender plus the amount, if deposited
-  function weightedAprAfterDeposit(uint256 amount) public view returns (uint256) {
+  function weightedAprAfterDeposit(uint256 amount) public returns (uint256) {
     return (aprAfterDeposit(amount) * (totalAssets() + amount)) / 1e18;
   }
 
