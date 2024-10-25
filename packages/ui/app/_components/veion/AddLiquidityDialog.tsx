@@ -40,7 +40,7 @@ export default function AddLiquidityDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* ION Input */}
           <MaxDeposit
             headerText="DEPOSIT"
@@ -67,9 +67,9 @@ export default function AddLiquidityDialog({
 
           {/* Expected LP */}
           <div>
-            <p className="text-xs text-white/50">EXPECTED LP</p>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-2xl font-medium">0.0</p>
+            <p className="text-[11px] text-white/50 mb-2">EXPECTED LP</p>
+            <div className="flex items-center justify-between">
+              <p>0.0</p>
               <div className="flex items-center gap-2">
                 <div className="flex">
                   <Image
@@ -87,7 +87,7 @@ export default function AddLiquidityDialog({
                     className="rounded-full -ml-2"
                   />
                 </div>
-                <span className="text-sm">ION/WETH</span>
+                <span>ION/WETH</span>
               </div>
             </div>
           </div>

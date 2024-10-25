@@ -23,10 +23,10 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
   <div className="grid grid-cols-6 gap-3">
     <Card className="md:col-span-2 col-span-3 bg-graylite">
       <CardContent className="space-y-3 p-5">
-        <p className="text-xxs font-light">{summary.title}</p>
+        <p className="text-gray-400 text-xxs font-light">{summary.title}</p>
         <div className="flex flex-wrap md:gap-3 items-center">
           <TokenPair />
-          <p className="text-white font-semibold text-md">{summary.amount}</p>
+          <p className="text-white font-semibold text-lg">{summary.amount}</p>
           {summary.Icon}
         </div>
       </CardContent>
@@ -34,22 +34,24 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
 
     <Card className="md:col-span-4 col-span-6 bg-graylite">
       <CardContent className="space-y-3 p-5">
-        <div className="flex justify-between items-center text-xxs">
+        <div className="text-gray-400  flex justify-between items-center text-xxs">
           <p className="font-light">{detail.title}</p>
           <p className="">GET</p>
         </div>
         <div className="flex items-center justify-between gap-2 xl:gap-6">
           <div className="flex items-center">
             <TokenPair />
-            <p className="text-white font-medium text-md ml-2">ION/WETH</p>
+            <p className="text-white font-medium text-md ml-2 text-lg">
+              ION/WETH
+            </p>
             <Button
-              className={`${detail.buttonClass} bg-accent text-grayUnselect text-xs font-bold ml-2`}
+              className={`${detail.buttonClass} bg-accent text-grayUnselect text-xs font-bold ml-6 rounded-xl`}
               onClick={detail.onClick}
             >
               {detail.buttonText} <ArrowRight />
             </Button>
           </div>
-          <p className="text-white font-medium text-md">{detail.get}</p>
+          <p className="text-white font-medium text-md text-lg">{detail.get}</p>
         </div>
       </CardContent>
     </Card>

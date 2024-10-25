@@ -102,7 +102,7 @@ function MaxDeposit({
     }
   };
   return (
-    <>
+    <div>
       <div
         className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40 ${
           !fetchOwn ? 'flex' : 'hidden'
@@ -178,12 +178,12 @@ function MaxDeposit({
                 height={size}
                 unoptimized
               />
-              <button className={` mx-2`}>{tokenName.toUpperCase()}</button>{' '}
+              <button className={`ml-2`}>{tokenName.toUpperCase()}</button>{' '}
             </>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

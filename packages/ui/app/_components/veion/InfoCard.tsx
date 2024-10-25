@@ -14,7 +14,10 @@ const InfoCard = ({ text, href }: InfoCardProps) => {
   const Content = (
     <Card className="col-span-2 bg-graylite p-2 xl:p-5 hover:bg-graylite/80 transition-colors">
       <CardContent className="p-0 space-y-3">
-        <CornerDownRight className="text-white/60" />
+        <CornerDownRight
+          className="text-white/60"
+          size={16}
+        />
         <p className="text-left text-xs text-white/60">{text}</p>
       </CardContent>
     </Card>
