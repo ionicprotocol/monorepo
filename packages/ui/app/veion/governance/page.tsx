@@ -30,13 +30,15 @@ export default function Governance() {
   const infoBlocks = [
     {
       label: 'Ion Wallet Balance',
-      value: view === 'MyVeion' ? '78942387 ION' : '6376 ION',
+      value: view === 'MyVeion' ? 78942387 : 6376,
+      token: 'ION',
       infoContent: 'This is the amount of ION you have in your wallet.',
       icon: '/img/symbols/32/color/ion.png'
     },
     {
       label: 'Total veION',
-      value: view === 'MyVeion' ? '5674 veION' : '63754 veION',
+      value: view === 'MyVeion' ? 5674 : 63754,
+      token: 'veION',
       infoContent: 'This is the amount of veION you have in your wallet.',
       icon: '/img/symbols/32/color/ion.png'
     }
@@ -46,13 +48,13 @@ export default function Governance() {
     <div className="w-full flex flex-col items-start gap-y-4 bg-darkone">
       {/* First Card */}
       <Card className="w-full bg-grayone">
-        <CardHeader className="flex items-center justify-between">
+        <CardHeader>
           <CardTitle>
             {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-x-3">
+          <div className="flex gap-6">
             {infoBlocks.map((block) => (
               <div
                 key={block.label}
@@ -62,13 +64,24 @@ export default function Governance() {
                   {block.label}
                   <CustomTooltip content={block.infoContent} />
                 </div>
-                <div className="text-white/60 text-xs flex items-center">
-                  <img
-                    alt="ion logo"
-                    className="w-6 h-6 inline-block"
-                    src={block.icon}
-                  />
-                  <span className="text-white text-sm ml-1">{block.value}</span>
+                <div className="text-white/60 text-xs flex flex-col">
+                  <div className="flex items-center">
+                    <img
+                      alt="ion logo"
+                      className="w-6 h-6 inline-block"
+                      src={block.icon}
+                    />
+                    <span className="text-white text-sm ml-1">
+                      {typeof block.value === 'string'
+                        ? block.value
+                        : block.value.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}{' '}
+                      {block.token}
+                    </span>
+                  </div>
+                  <span className="text-white/40 text-xs ml-7">$1,010.01</span>
                 </div>
               </div>
             ))}
