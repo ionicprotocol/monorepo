@@ -1,7 +1,7 @@
 'use client';
 import { Switch } from '@ui/components/ui/switch';
 
-import InfoPopover from './InfoPopover';
+import CustomTooltip from '../CustomTooltip';
 
 interface AutoLockProps {
   autoLock: boolean;
@@ -16,10 +16,8 @@ export default function AutoLock({ autoLock, setAutoLock }: AutoLockProps) {
         onCheckedChange={setAutoLock}
         className="bg-accent data-[state=checked]:bg-accent"
       />
-      <div className="text-white/50 text-sm">
-        AutoLock
-        <InfoPopover content="The auto-prolong option extends the lock indefinitely, which keeps your voting power at the same peak level. You can disable this option any time later." />
-      </div>
+      <div className="text-white text-sm">Autolock</div>
+      <CustomTooltip content="The auto-prolong option extends the lock indefinitely, which keeps your voting power at the same peak level. You can disable this option any time later." />
     </div>
   );
 }
