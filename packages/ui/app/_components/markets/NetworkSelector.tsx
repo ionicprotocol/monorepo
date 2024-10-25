@@ -1,14 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import React from 'react';
-
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import { Button } from '@ui/components/ui/button';
 import { pools } from '@ui/constants/index';
 import { useStore } from '@ui/store/Store';
+
 interface INetworkSelector {
   chain?: string;
   dropdownSelectedChain: number;
@@ -16,6 +14,8 @@ interface INetworkSelector {
   enabledChains?: number[];
   upcomingChains?: string[];
 }
+
+const NETWORK_ORDER = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Lisk', 'Bob'];
 
 function NetworkSelector({
   dropdownSelectedChain,
@@ -26,71 +26,63 @@ function NetworkSelector({
 }: INetworkSelector) {
   const pathname = usePathname();
   const setDropChain = useStore((state) => state.setDropChain);
-  return (
-    <div
-      className={`  left-0    md:min-w-max w-full  text-lime origin-top   shadow-xl shadow-black/10 rounded-b-md flex flex-wrap gap-x-1  items-center `}
-    >
-      <Link
-        className={`flex justify-start gap-2 items-center p-2 mb-1 text-xs md:text-base w-max text-white rounded-md  ${+chain! === +dropdownSelectedChain ? ' bg-graySelecte bg-grayone' : 'bg-grayon bg-graylite'} border border-gray-800 `}
-        href={`${pathname}?chain=${dropdownSelectedChain}${nopool ? '' : '&pool=0'}`}
-      >
-        <img
-          alt="checkmark--v1"
-          className={`w-4 h-4 stroke-lime`}
-          src={`/img/logo/${pools[dropdownSelectedChain].name.toUpperCase()}.png`}
-        />{' '}
-        {pools[dropdownSelectedChain].name}
-      </Link>
-      {Object.entries(pools)
-        .filter(([chainId]) =>
-          enabledChains
-            ? enabledChains?.includes(+chainId) &&
-              +chainId !== dropdownSelectedChain
-            : +chainId !== dropdownSelectedChain
-        )
-        .sort((a, b) => {
-          const sortingOrder = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Bob'];
-          const indexA = sortingOrder.indexOf(a[1].name);
-          const indexB = sortingOrder.indexOf(b[1].name);
 
-          if (indexA === -1 || indexB === -1) {
-            return 0; // if the network name is not found, don't change the order
-          }
-          return indexA - indexB;
-        })
-        .map(([chainId, network], idx: number) => (
-          <Link
-            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md   bg-graySelected border border-gray-800 `}
-            href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
+  const orderedNetworks = NETWORK_ORDER.map((networkName) =>
+    Object.entries(pools).find(([_, pool]) => pool.name === networkName)
+  ).filter(
+    (entry): entry is [string, any] =>
+      entry !== undefined &&
+      (!enabledChains || enabledChains.includes(+entry[0]))
+  );
+
+  return (
+    <div className="p-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex flex-wrap gap-2">
+        {orderedNetworks.map(([chainId, network], idx) => (
+          <Button
             key={idx}
-            onClick={() => setDropChain(chainId)}
+            variant={
+              +chainId === +dropdownSelectedChain ? 'secondary' : 'outline'
+            }
+            size="sm"
+            asChild
+            className="text-xs md:text-sm"
           >
-            <img
-              alt="checkmark--v1"
-              className={`w-4 h-4 stroke-lime`}
-              src={`/img/logo/${network.name.toUpperCase()}.png`}
-            />{' '}
-            {network.name}
-          </Link>
+            <Link
+              href={`${pathname}?chain=${chainId}${nopool ? '' : '&pool=0'}`}
+              onClick={() => setDropChain(chainId)}
+            >
+              <Image
+                alt={network.name}
+                className="w-4 h-4 mr-2"
+                src={`/img/logo/${network.name.toUpperCase()}.png`}
+                width={16}
+                height={16}
+              />
+              {network.name}
+            </Link>
+          </Button>
         ))}
-      {!!upcomingChains &&
-        upcomingChains.map((upcomingChain, idx) => (
-          <div
-            className={`flex flex-wrap justify-start gap-2 items-center p-2 mb-1 text-xs md:text-sm w-max text-white rounded-md  relative border border-gray-800 `}
-            // href={`${pathname}?chain=${dropdownSelectedChain}${nopool ? '' : '&pool=0'}`}
+
+        {upcomingChains?.map((upcomingChain, idx) => (
+          <Button
             key={idx}
+            variant="outline"
+            size="sm"
+            className="text-xs md:text-sm relative opacity-50 cursor-not-allowed"
+            disabled
           >
-            <img
-              alt="checkmark--v1"
-              className={`w-4 h-4 stroke-lime `}
+            <Image
+              alt={upcomingChain}
+              className="w-4 h-4 mr-2"
               src={`/img/logo/${upcomingChain.toUpperCase()}.png`}
-            />{' '}
-            {upcomingChain}
-            <div
-              className={`absolute   right-0 w-full h-full bg-gray-700/50  `}
+              width={16}
+              height={16}
             />
-          </div>
+            {upcomingChain}
+          </Button>
         ))}
+      </div>
     </div>
   );
 }

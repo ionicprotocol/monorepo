@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { useChainId } from 'wagmi';
 
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import Toggle from '@ui/app/_components/Toggle';
+import ToggleLinks from '@ui/app/_components/ToggleLink';
 import InfoPopover from '@ui/app/_components/veion/InfoPopover';
 import VeionRow from '@ui/app/_components/veion/VeionRow';
 import {
@@ -27,7 +27,6 @@ import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 
 export default function Governance() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const chainId = useChainId();
 
   const querywatch = searchParams.get('watch');
@@ -60,10 +59,6 @@ export default function Governance() {
           <CardTitle>
             {watch === 'overview' ? 'veION Overview' : 'My VeION'}
           </CardTitle>
-          <NetworkSelector
-            nopool={true}
-            dropdownSelectedChain={+chain}
-          />
         </CardHeader>
         <CardContent>
           <div className="flex gap-x-3">
@@ -90,8 +85,13 @@ export default function Governance() {
         </CardContent>
       </Card>
 
+      <NetworkSelector
+        nopool={true}
+        dropdownSelectedChain={+chain}
+      />
+
       {/* Second Card */}
-      <Card className="w-full mt-4">
+      <Card className="w-full">
         <CardHeader>
           <div className="flex w-full items-center justify-between mb-4">
             <span className="text-lg font-semibold">5 veION</span>
@@ -107,11 +107,9 @@ export default function Governance() {
         <CardContent>
           <div className="flex justify-start">
             <div className="bg-grayUnselect rounded-md mb-3 inline-block">
-              <Toggle
-                setActiveToggle={(val) =>
-                  router.push(`/veion/governance?watch=${watch}&view=${val}`)
-                }
+              <ToggleLinks
                 arrText={['MyVeion', 'Delegate veION']}
+                baseUrl="/veion/governance"
               />
             </div>
           </div>

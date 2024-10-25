@@ -19,6 +19,8 @@ import {
   AddLiquidityDialog,
   MigrateIonDialog
 } from '../_components/veion';
+import { Button } from '@ui/components/ui/button';
+import Link from 'next/link';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -41,24 +43,6 @@ export default function VeIon() {
 
   return (
     <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-grayone mx-auto my-6">
-      <GetVeIonDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        chain={+chain}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
-      <AddLiquidityDialog
-        isOpen={isAddLiquidityOpen}
-        onOpenChange={setIsAddLiquidityOpen}
-        chain={+chain}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
-
-      <MigrateIonDialog
-        isOpen={isMigrateOpen}
-        onOpenChange={setIsMigrateOpen}
-        chain={chain}
-      />
       <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
         <div className="flex items-center justify-between w-full">
           <Image
@@ -68,7 +52,14 @@ export default function VeIon() {
             width={32}
             height={32}
           />
-          <div>
+
+          <div className="flex gap-2">
+            <Button
+              asChild
+              className="col-span-3 bg-accent text-black hover:-translate-y-1 hover:bg-accent/90"
+            >
+              <Link href="/veion/governance?watch=myveion">Governance</Link>
+            </Button>
             <NetworkSelector
               dropdownSelectedChain={+chain}
               nopool={true}
@@ -140,6 +131,25 @@ export default function VeIon() {
           />
         </div>
       </CardContent>
+
+      <GetVeIonDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        chain={+chain}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+      />
+      <AddLiquidityDialog
+        isOpen={isAddLiquidityOpen}
+        onOpenChange={setIsAddLiquidityOpen}
+        chain={+chain}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+      />
+
+      <MigrateIonDialog
+        isOpen={isMigrateOpen}
+        onOpenChange={setIsMigrateOpen}
+        chain={chain}
+      />
     </Card>
   );
 }
