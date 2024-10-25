@@ -8,6 +8,7 @@ import { IGenericLender } from "../../external/angle/IGenericLender.sol";
 import { OptimizedVaultsRegistry } from "../vault/OptimizedVaultsRegistry.sol";
 import { OptimizedAPRVaultBase } from "../vault/OptimizedAPRVaultBase.sol";
 import { IonicFlywheel } from "./flywheel/IonicFlywheel.sol";
+import { IonicFlywheelLensRouter } from "./flywheel/IonicFlywheelLensRouter.sol";
 
 import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
@@ -72,13 +73,12 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
     require(market.redeemUnderlying(amount) == 0, "redeem from market failed");
   }
 
-  // TODO rewards APY?
   function aprAfterDeposit(uint256 amount) public view returns (uint256) {
-    return market.supplyRatePerBlockAfterDeposit(amount) * blocksPerYear;
+    return _rewardsApr() + market.supplyRatePerBlockAfterDeposit(amount) * blocksPerYear;
   }
 
   function aprAfterWithdraw(uint256 amount) public view override returns (uint256) {
-    return market.supplyRatePerBlockAfterWithdraw(amount) * blocksPerYear;
+    return _rewardsApr() + market.supplyRatePerBlockAfterWithdraw(amount) * blocksPerYear;
   }
 
   function emergencyWithdrawAndPause() external override {
@@ -97,7 +97,19 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
 
   /// @notice Returns an estimation of the current Annual Percentage Rate on the lender
   function apr() public view override returns (uint256) {
-    return market.supplyRatePerBlock() * blocksPerYear;
+
+    return _rewardsApr() + market.supplyRatePerBlock() * blocksPerYear;
+  }
+
+  function _rewardsApr() internal returns (uint256 rewardsApr) {
+    ICErc20[] memory marketAsArray = new ICErc20[](1);
+    marketAsArray[0] = market;
+    IonicFlywheelLensRouter.MarketRewardsInfo[] memory marketsRewardData = registry.flr().getMarketRewardsInfo(marketAsArray);
+
+    IonicFlywheelLensRouter.RewardsInfo[] memory rewardData = marketsRewardData[0].rewardsInfo;
+    for (uint256 i = 0; i < rewardData.length; i++) {
+      rewardsApr += rewardData[i].formattedAPR;
+    }
   }
 
   /// @notice Returns an estimation of the current Annual Percentage Rate weighted by the assets under

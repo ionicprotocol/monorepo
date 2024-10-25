@@ -6,17 +6,19 @@ import "./OptimizedAPRVaultBase.sol";
 import "./OptimizedAPRVaultExtension.sol";
 import "../strategies/CompoundMarketERC4626.sol";
 import "../strategies/flywheel/IonicFlywheel.sol";
+import "../strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 
 import { IERC20MetadataUpgradeable as IERC20Metadata } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 contract OptimizedVaultsRegistry is SafeOwnableUpgradeable {
   OptimizedAPRVaultBase[] public vaults;
+  mapping(address => OptimizedAPRVaultExtension[]) internal latestVaultExtensions;
+  IonicFlywheelLensRouter public flr;
 
-  mapping(address => OptimizedAPRVaultExtension[]) latestVaultExtensions;
-
-  function initialize() public initializer {
+  function initialize(IonicFlywheelLensRouter _flr) public initializer {
     __SafeOwnable_init(msg.sender);
+    flr = _flr;
   }
 
   function getLatestVaultExtensions(address vault) public view returns (OptimizedAPRVaultExtension[] memory) {

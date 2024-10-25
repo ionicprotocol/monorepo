@@ -48,7 +48,7 @@ contract FlywheelStaticRewards is Auth, BaseFlywheelRewards {
         external
         view
         override
-        onlyFlywheel
+        /*onlyFlywheel*/
         returns (uint256 amount)
     {
         RewardsInfo memory rewards = rewardsInfo[strategy];

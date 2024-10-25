@@ -59,7 +59,7 @@ contract SupplyVaultsTest is BaseTest {
       TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(registry), address(dpa), "");
       registry = OptimizedVaultsRegistry(address(proxy));
     }
-    registry.initialize();
+    registry.initialize(IonicFlywheelLensRouter(ap.getAddress("IonicFlywheelLensRouter")));
   }
 
   function deployAdapters() internal {
