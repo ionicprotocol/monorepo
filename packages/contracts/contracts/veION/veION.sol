@@ -179,11 +179,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 fee = 0;
 
     if (block.timestamp < oldLocked.end) {
-      // 365
       uint256 daysLocked = (oldLocked.end - oldLocked.start) / 1 days;
-      // 294
       uint256 daysLeft = (oldLocked.end - block.timestamp) / 1 days;
-      // 0.805 * 1e18
       uint256 timeFactor = (daysLeft * 1e18) / daysLocked;
       uint256 veIONInCirculation = s_supply[_lpType];
       uint256 IONInCirculation = IERC20(_tokenAddress).totalSupply();
