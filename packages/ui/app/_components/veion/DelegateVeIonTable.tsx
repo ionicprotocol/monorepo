@@ -16,7 +16,9 @@ import {
   Table
 } from '@ui/components/ui/table';
 
+import TimeRemaining from './TimeRemaining';
 import { TableActionButton } from '../TableActionButton';
+import TokenPair from '../TokenPair';
 
 import type { SortingState, ColumnDef } from '@tanstack/react-table';
 
@@ -39,8 +41,6 @@ type DelegateVeionData = BaseVeionData & {
   delegatedTo: string;
   readyToDelegate: boolean;
 };
-import TimeRemaining from './TimeRemaining';
-import TokenPair from '../TokenPair';
 
 function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
