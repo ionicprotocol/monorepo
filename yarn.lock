@@ -2208,6 +2208,7 @@ __metadata:
     "@ionicprotocol/sdk": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
     "@layerzerolabs/lz-v2-utilities": "npm:^2.3.40"
+    "@lifi/sdk": "npm:^3.3.1"
     "@lifi/widget": "npm:^3.8.2"
     "@netlify/plugin-nextjs": "npm:^5.8.1"
     "@reown/appkit": "npm:^1.1.7"

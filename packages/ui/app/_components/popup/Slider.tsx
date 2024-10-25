@@ -30,7 +30,7 @@ const SliderComponent = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto mt-3 mb-5 ">
+    <div className="w-[99%] max-w-md mx-auto mt-3 mb-5 ">
       <div className={`w-full relative mb-2 text-xs text-white/25`}>
         <span className={`${gettextColor()}  `}>
           {currentUtilizationPercentage}%

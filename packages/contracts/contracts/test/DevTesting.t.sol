@@ -35,9 +35,9 @@ import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol"
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { CurveSwapLiquidator } from "../liquidators/CurveSwapLiquidator.sol";
 import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2LpTokenPriceOracleNoRegistry.sol";
-import { IRouter_Aerodrome } from "../external/aerodrome/IRouter.sol";
+import { IRouter_Aerodrome } from "../external/aerodrome/IAerodromeRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
-import { IRouter_Velodrome } from "../external/velodrome/IRouter.sol";
+import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -866,7 +866,9 @@ contract DevTesting is BaseTest {
     }
 
     vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
-    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
+    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(
+      0xB1402333b12fc066C3D7F55d37944D5e281a3e8B
+    );
     emit log_named_uint("reward tokens", rewardTokens.length);
     emit log_named_uint("rewards", rewards.length);
     vm.stopPrank();
