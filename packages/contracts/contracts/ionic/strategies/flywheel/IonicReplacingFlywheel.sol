@@ -14,41 +14,41 @@ contract IonicReplacingFlywheel is IonicFlywheel {
     flywheelToReplace = _flywheelToReplace;
   }
 
-  function rewardsAccrued(address user) public override returns (uint256) {
-    if (address(flywheelToReplace) != address(0)) {
-      if (_rewardsAccrued[user] == 0 && !rewardsTransferred[user]) {
-        uint256 oldStateRewardsAccrued = flywheelToReplace.rewardsAccrued(user);
-        if (oldStateRewardsAccrued != 0) {
-          rewardsTransferred[user] = true;
-          _rewardsAccrued[user] = oldStateRewardsAccrued;
-        }
-      }
-    }
+  function rewardsAccrued(address user) public view override returns (uint256) {
+    //    if (address(flywheelToReplace) != address(0)) {
+    //      if (_rewardsAccrued[user] == 0 && !rewardsTransferred[user]) {
+    //        uint256 oldStateRewardsAccrued = flywheelToReplace.rewardsAccrued(user);
+    //        if (oldStateRewardsAccrued != 0) {
+    //          rewardsTransferred[user] = true;
+    //          _rewardsAccrued[user] = oldStateRewardsAccrued;
+    //        }
+    //      }
+    //    }
     return _rewardsAccrued[user];
   }
 
-  function strategyState(ERC20 strategy) public override returns (uint224, uint32) {
-    if (address(flywheelToReplace) != address(0)) {
-      RewardsState memory newStateStrategyState = _strategyState[strategy];
-      if (newStateStrategyState.index == 0) {
-        (uint224 index, uint32 ts) = flywheelToReplace.strategyState(strategy);
-        if (index != 0) {
-          _strategyState[strategy] = RewardsState(index, ts);
-        }
-      }
-    }
+  function strategyState(ERC20 strategy) public view override returns (uint224, uint32) {
+    //    if (address(flywheelToReplace) != address(0)) {
+    //      RewardsState memory newStateStrategyState = _strategyState[strategy];
+    //      if (newStateStrategyState.index == 0) {
+    //        (uint224 index, uint32 ts) = flywheelToReplace.strategyState(strategy);
+    //        if (index != 0) {
+    //          _strategyState[strategy] = RewardsState(index, ts);
+    //        }
+    //      }
+    //    }
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
   }
 
-  function userIndex(ERC20 strategy, address user) public override returns (uint224) {
-    if (address(flywheelToReplace) != address(0)) {
-      if (_userIndex[strategy][user] == 0) {
-        uint224 oldStateUserIndex = flywheelToReplace.userIndex(strategy, user);
-        if (oldStateUserIndex != 0) {
-          _userIndex[strategy][user] = oldStateUserIndex;
-        }
-      }
-    }
+  function userIndex(ERC20 strategy, address user) public view override returns (uint224) {
+    //    if (address(flywheelToReplace) != address(0)) {
+    //      if (_userIndex[strategy][user] == 0) {
+    //        uint224 oldStateUserIndex = flywheelToReplace.userIndex(strategy, user);
+    //        if (oldStateUserIndex != 0) {
+    //          _userIndex[strategy][user] = oldStateUserIndex;
+    //        }
+    //      }
+    //    }
     return _userIndex[strategy][user];
   }
 

@@ -486,7 +486,7 @@ contract OptimizedAPRVaultSecondExtension is OptimizedAPRVaultExtension {
   }
 
   /// @notice view function to check the hypothetical APY after the deposit of some amount
-  function supplyAPY(uint256 amount) public returns (uint256) {
+  function supplyAPY(uint256 amount) public view returns (uint256) {
     uint256 bal = estimatedTotalAssets();
     if (bal == 0 && amount == 0) {
       return 0;
@@ -503,7 +503,7 @@ contract OptimizedAPRVaultSecondExtension is OptimizedAPRVaultExtension {
 
   /// @notice Returns the weighted apr of all adapters
   /// @dev It's computed by doing: `sum(nav * apr) / totalNav`
-  function estimatedAPR() public returns (uint256) {
+  function estimatedAPR() public view returns (uint256) {
     uint256 bal = estimatedTotalAssets();
     if (bal == 0) {
       return 0;
@@ -521,7 +521,7 @@ contract OptimizedAPRVaultSecondExtension is OptimizedAPRVaultExtension {
   /// @notice Returns the weighted apr in an hypothetical world where the strategy splits its nav
   /// in respect to allocations
   /// @param allocations List of allocations (in bps of the nav) that should be allocated to each adapter
-  function estimatedAPR(uint64[] calldata allocations) public returns (uint256, int256[] memory) {
+  function estimatedAPR(uint64[] calldata allocations) public view returns (uint256, int256[] memory) {
     if (adaptersCount != allocations.length) revert IncorrectListLength();
     uint256 weightedAPRScaled = 0;
     int256[] memory adapterAdjustedAmounts = new int256[](adaptersCount);

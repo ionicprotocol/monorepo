@@ -40,12 +40,12 @@ contract IonicFlywheelLensRouter {
     address rewardToken;
   }
 
-  function getPoolMarketRewardsInfo(IonicComptroller comptroller) external returns (MarketRewardsInfo[] memory) {
+  function getPoolMarketRewardsInfo(IonicComptroller comptroller) external view returns (MarketRewardsInfo[] memory) {
     ICErc20[] memory markets = comptroller.getAllMarkets();
     return _getMarketRewardsInfo(markets, comptroller);
   }
 
-  function getMarketRewardsInfo(ICErc20[] memory markets) external returns (MarketRewardsInfo[] memory) {
+  function getMarketRewardsInfo(ICErc20[] memory markets) external view returns (MarketRewardsInfo[] memory) {
     IonicComptroller pool;
     for (uint256 i = 0; i < markets.length; i++) {
       ICErc20 asMarket = ICErc20(address(markets[i]));
@@ -57,6 +57,7 @@ contract IonicFlywheelLensRouter {
 
   function _getMarketRewardsInfo(ICErc20[] memory markets, IonicComptroller comptroller)
     internal
+    view
     returns (MarketRewardsInfo[] memory)
   {
     if (address(comptroller) == address(0) || markets.length == 0) return new MarketRewardsInfo[](0);
@@ -122,16 +123,9 @@ contract IonicFlywheelLensRouter {
     IonicFlywheelCore flywheel,
     ICErc20 market,
     uint256 decimals
-  ) internal returns (uint256 rewardSpeedPerSecondPerToken) {
+  ) internal view returns (uint256) {
     ERC20 strategy = ERC20(address(market));
-    (uint224 indexBefore, uint32 lastUpdatedTimestampBefore) = flywheel.strategyState(strategy);
-    flywheel.accrue(strategy, address(0));
-    (uint224 indexAfter, uint32 lastUpdatedTimestampAfter) = flywheel.strategyState(strategy);
-    if (lastUpdatedTimestampAfter > lastUpdatedTimestampBefore) {
-      rewardSpeedPerSecondPerToken =
-        scaleIndexDiff((indexAfter - indexBefore), decimals) /
-        (lastUpdatedTimestampAfter - lastUpdatedTimestampBefore);
-    }
+    return flywheel.getRewardsPerSecondPerToken(strategy);
   }
 
   function getApr(

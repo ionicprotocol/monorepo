@@ -312,15 +312,19 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     return supplierAccrued;
   }
 
-  function rewardsAccrued(address user) public virtual returns (uint256) {
+  function rewardsAccrued(address user) public view virtual returns (uint256) {
     return _rewardsAccrued[user];
   }
 
-  function userIndex(ERC20 strategy, address user) public virtual returns (uint224) {
+  function userIndex(ERC20 strategy, address user) public view virtual returns (uint224) {
     return _userIndex[strategy][user];
   }
 
-  function strategyState(ERC20 strategy) public virtual returns (uint224 index, uint32 lastUpdatedTimestamp) {
+  function strategyState(ERC20 strategy) public view virtual returns (uint224 index, uint32 lastUpdatedTimestamp) {
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
+  }
+
+  function getRewardsPerSecondPerToken(ERC20 strategy) external view returns (uint256) {
+    return flywheelRewards.getRewardsPerSecondPerToken(strategy);
   }
 }
