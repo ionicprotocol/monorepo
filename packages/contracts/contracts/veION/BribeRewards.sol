@@ -58,6 +58,11 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
 
   mapping(address => mapping(uint256 => uint256)) public historicalPrices;
 
+  modifier onlyVoter() {
+    require(msg.sender == voter, "Caller is not the voter");
+    _;
+  }
+
   function initialize(address _voter, address _mpo) public initializer {
     __ReentrancyGuard_init();
     __Ownable_init();
@@ -232,9 +237,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   }
 
   /// @inheritdoc IBribeRewards
-  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external {
+  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
     address sender = msg.sender;
-    if (sender != authorized) revert Unauthorized();
 
     totalSupply[lpToken] += amount;
     balanceOf[tokenId][lpToken] += amount;
@@ -246,9 +250,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   }
 
   /// @inheritdoc IBribeRewards
-  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external {
+  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
     address sender = msg.sender;
-    if (sender != authorized) revert Unauthorized();
 
     totalSupply[lpToken] -= amount;
     balanceOf[tokenId][lpToken] -= amount;
@@ -260,7 +263,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   }
 
   /// @inheritdoc IBribeRewards
-  function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant {
+  function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant onlyVoter {
     address sender = msg.sender;
     if (!IveION(ve).isApprovedOrOwner(sender, tokenId) && sender != voter) revert Unauthorized();
 
