@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-import { format } from 'date-fns'; // to format dates
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
+import { format, formatDistanceToNowStrict } from 'date-fns';
 
 interface Iprops {
   setLockDuration: React.Dispatch<React.SetStateAction<string>>;

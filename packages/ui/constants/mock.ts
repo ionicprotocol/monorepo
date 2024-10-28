@@ -230,3 +230,31 @@ export const votingData: VotingData[] = [
     }
   }
 ];
+
+export interface InfoBlock {
+  label: string;
+  value: string;
+  infoContent: string;
+  icon: string | null;
+}
+
+export const infoBlocks: InfoBlock[] = [
+  {
+    label: 'Locked Value',
+    value: '$7894',
+    infoContent: 'This is the amount of ION you have locked.',
+    icon: null
+  },
+  {
+    label: 'Locked Until',
+    value: '11 Jan 2026',
+    infoContent: 'This is the date until your ION is locked.',
+    icon: null
+  },
+  {
+    label: 'My Voting Power',
+    value: '5674 veION',
+    infoContent: 'This is your current voting power.',
+    icon: '/img/symbols/32/color/ion.png'
+  }
+];

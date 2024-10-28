@@ -1,15 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
 import { useChainId } from 'wagmi';
 
-import CustomTooltip from '@ui/app/_components/CustomTooltip';
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import EmissionsManagementTable from '@ui/app/_components/veion/EmissionsManagementTable';
+import { InfoBlock, EmissionsManagementTable } from '@ui/app/_components/veion';
 import {
   Card,
   CardHeader,
@@ -17,35 +16,14 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Switch } from '@ui/components/ui/switch';
-import { votingData } from '@ui/constants/mock';
+import { infoBlocks, votingData } from '@ui/constants/mock';
 
-export default function Vote() {
-  const [showPendingOnly, setShowPendingOnly] = useState(false);
+const Vote: React.FC = () => {
+  const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const chainId = useChainId();
   const querychain = searchParams.get('chain');
   const chain = querychain ?? String(chainId);
-
-  const infoBlocks = [
-    {
-      label: 'Locked Value',
-      value: '$7894',
-      infoContent: 'This is the amount of ION you have locked.',
-      icon: null
-    },
-    {
-      label: 'Locked Until',
-      value: '11 Jan 2026',
-      infoContent: 'This is the date until your ION is locked.',
-      icon: null
-    },
-    {
-      label: 'My Voting Power',
-      value: '5674 veION',
-      infoContent: 'This is your current voting power.',
-      icon: '/img/symbols/32/color/ion.png'
-    }
-  ];
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
@@ -54,27 +32,12 @@ export default function Vote() {
           <CardTitle>Vote</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             {infoBlocks.map((block) => (
-              <div
+              <InfoBlock
                 key={block.label}
-                className="flex flex-col gap-1 mt-3"
-              >
-                <div className="text-white/60 text-xs flex items-center">
-                  {block.label}
-                  <CustomTooltip content={block.infoContent} />
-                </div>
-                <div className="text-white/60 text-xs flex items-center">
-                  {block.icon && (
-                    <img
-                      alt="icon"
-                      className="w-6 h-6 inline-block"
-                      src={block.icon}
-                    />
-                  )}
-                  <span className="text-white text-sm ml-1">{block.value}</span>
-                </div>
-              </div>
+                block={block}
+              />
             ))}
           </div>
         </CardContent>
@@ -89,9 +52,9 @@ export default function Vote() {
         className="w-full"
         style={{ backgroundColor: '#212126ff' }}
       >
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between">
           <CardTitle>Emissions Management</CardTitle>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mt-2 md:mt-0">
             <label
               htmlFor="pending-votes"
               className="text-sm text-white/80"
@@ -103,6 +66,7 @@ export default function Vote() {
               checked={showPendingOnly}
               onCheckedChange={setShowPendingOnly}
               className="data-[state=checked]:bg-green-500"
+              aria-label="Toggle pending votes only"
             />
           </div>
         </CardHeader>
@@ -115,4 +79,6 @@ export default function Vote() {
       </Card>
     </div>
   );
-}
+};
+
+export default Vote;

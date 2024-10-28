@@ -8,8 +8,7 @@ import CustomTooltip from '@ui/app/_components/CustomTooltip';
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import ToggleLinks from '@ui/app/_components/ToggleLink';
-import { MyVeionTable } from '@ui/app/_components/veion';
-import DelegateVeIonTable from '@ui/app/_components/veion/DelegateVeIonTable';
+import { MyVeionTable, DelegateVeIonTable } from '@ui/app/_components/veion';
 import {
   Card,
   CardHeader,

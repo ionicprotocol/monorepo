@@ -8,21 +8,14 @@ import Link from 'next/link';
 import Script from 'next/script';
 
 import { createAppKit } from '@reown/appkit';
-import {
-  base,
-  optimism,
-  mode,
-  bob,
-  fraxtal,
-  lisk
-} from '@reown/appkit/networks';
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import { mode, bob, fraxtal } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
+import { networks, projectId, wagmiAdapter } from '@ui/utils/NetworkChecker';
 
 import Navbar from './_components/Navbar';
 import './globals.css';
@@ -33,16 +26,6 @@ const metadata = {
   name: 'Ionic Web3Modal',
   url: 'https://app.ionic.money'
 };
-
-export const networks = [base, mode, optimism, bob, fraxtal, lisk];
-
-export const projectId = '923645e96d6f05f650d266a32ea7295f';
-
-export const wagmiAdapter = new WagmiAdapter({
-  networks,
-  projectId,
-  ssr: true
-});
 
 // Create the new web3 modal
 createAppKit({

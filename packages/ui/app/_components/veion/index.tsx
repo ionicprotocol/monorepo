@@ -16,3 +16,5 @@ export { default as MarketSelector } from './MarketSelector';
 export { default as MigrateIonDialog } from './MigrateIonDialog';
 export { default as TimeRemaining } from './TimeRemaining';
 export { default as VoteInput } from './VoteInput';
+export { default as InfoBlock } from './InfoBlock';
+export { default as EmissionsManagementTable } from './EmissionsManagementTable';
