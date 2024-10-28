@@ -8,17 +8,18 @@ import Link from 'next/link';
 import Script from 'next/script';
 
 import { createAppKit } from '@reown/appkit';
-import { base, optimism } from '@reown/appkit/networks';
+import {
+  base,
+  optimism,
+  mode,
+  bob,
+  fraxtal,
+  lisk
+} from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
-import {
-  mode as vMode,
-  bob as vBob,
-  fraxtal as vFraxtal,
-  lisk as vLisk
-} from 'viem/chains';
 import { WagmiProvider } from 'wagmi';
 
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
@@ -33,45 +34,6 @@ const metadata = {
   url: 'https://app.ionic.money'
 };
 
-export const mode = {
-  id: `eip155:${vMode.id}` as const,
-  chainId: vMode.id,
-  chainNamespace: 'eip155' as const,
-  name: vMode.name,
-  currency: vMode.nativeCurrency.name,
-  explorerUrl: vMode.blockExplorers.default.url,
-  rpcUrl: vMode.rpcUrls.default.http[0]
-};
-
-export const bob = {
-  id: `eip155:${vBob.id}` as const,
-  chainId: vBob.id,
-  chainNamespace: 'eip155' as const,
-  name: vBob.name,
-  currency: vBob.nativeCurrency.name,
-  explorerUrl: vBob.blockExplorers.default.url,
-  rpcUrl: vBob.rpcUrls.default.http[0]
-};
-
-export const fraxtal = {
-  id: `eip155:${vFraxtal.id}` as const,
-  chainId: vFraxtal.id,
-  chainNamespace: 'eip155' as const,
-  name: vFraxtal.name,
-  currency: vFraxtal.nativeCurrency.name,
-  explorerUrl: vFraxtal.blockExplorers.default.url,
-  rpcUrl: vFraxtal.rpcUrls.default.http[0]
-};
-
-export const lisk = {
-  id: `eip155:${vLisk.id}` as const,
-  chainId: vLisk.id,
-  chainNamespace: 'eip155' as const,
-  name: vLisk.name,
-  currency: vLisk.nativeCurrency.name,
-  explorerUrl: vLisk.blockExplorers.default.url,
-  rpcUrl: vLisk.rpcUrls.default.http[0]
-};
 export const networks = [base, mode, optimism, bob, fraxtal, lisk];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
@@ -91,7 +53,7 @@ createAppKit({
     '--w3m-color-mix': '#0a0a0aff'
   },
   adapters: [wagmiAdapter],
-  networks,
+  networks: networks as any,
   metadata,
   chainImages: {
     [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',

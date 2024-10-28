@@ -13,6 +13,7 @@ import {
   formatEther,
   formatUnits,
   maxUint256,
+  parseEther,
   parseUnits
 } from 'viem';
 import { useChainId } from 'wagmi';
@@ -321,8 +322,12 @@ const Popup = ({
       return maxUint256;
     }
 
+    if (amountAsBInt === 0n) {
+      return parseEther(healthFactor ?? '0');
+    }
+
     return _predictedHealthFactor;
-  }, [_predictedHealthFactor, updatedAsset]);
+  }, [_predictedHealthFactor, updatedAsset, amountAsBInt, healthFactor]);
 
   const hfpStatus = useMemo<HFPStatus>(() => {
     if (!predictedHealthFactor) {
@@ -345,7 +350,7 @@ const Popup = ({
       return HFPStatus.CRITICAL;
     }
 
-    if (predictedHealthFactorNumber <= 1.3) {
+    if (predictedHealthFactorNumber <= 1.2) {
       return HFPStatus.WARNING;
     }
 
@@ -1173,22 +1178,19 @@ const Popup = ({
     }
   };
 
-  const normalizeHealthFactor = (
-    healthFactor: string | null | undefined
-  ): string | undefined =>
-    healthFactor
+  const normalizedHealthFactor = useMemo(() => {
+    return healthFactor
       ? healthFactor === '-1'
         ? '∞'
         : Number(healthFactor).toFixed(2)
       : undefined;
+  }, [healthFactor]);
 
-  const normalizePredictedHealthFactor = (
-    predictedHealthFactor: bigint | null | undefined
-  ): string | undefined =>
-    predictedHealthFactor === maxUint256
+  const normalizedPredictedHealthFactor = useMemo(() => {
+    return predictedHealthFactor === maxUint256
       ? '∞'
       : Number(formatEther(predictedHealthFactor ?? 0n)).toFixed(2);
-
+  }, [predictedHealthFactor]);
   return (
     <>
       <div
@@ -1414,7 +1416,9 @@ const Popup = ({
                   </div>
                   {/* <Approved /> */}
                 </div>
-                <div className={`min-w-full py-5 px-[6%] h-min`}>
+                <div
+                  className={`min-w-full flex flex-col min-h-full py-5 px-[6%] gap-y-1.5 `}
+                >
                   {/* ---------------------------------------------------------------------------- */}
                   {/* SUPPLY-Withdraw section */}
                   {/* ---------------------------------------------------------------------------- */}
@@ -1453,7 +1457,7 @@ const Popup = ({
                   />
 
                   <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
+                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
                   >
                     <span className={``}>Market Supply Balance</span>
                     <span className={`flex font-bold pl-2`}>
@@ -1490,19 +1494,19 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>
                   <div
-                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
+                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1  mt-auto self-end text-darkone`}
                   >
                     {transactionSteps.length > 0 ? (
                       <TransactionStepsHandler
@@ -1637,14 +1641,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>
@@ -1789,14 +1793,14 @@ const Popup = ({
                   >
                     <span className={``}>Health Factor</span>
                     <span className={`flex font-bold pl-2`}>
-                      {`${normalizeHealthFactor(healthFactor)}`}
+                      {`${normalizedHealthFactor}`}
                       <span className="mx-1">{`->`}</span>
                       <ResultHandler
                         height="16"
                         isLoading={isLoadingPredictedHealthFactor}
                         width="16"
                       >
-                        {normalizePredictedHealthFactor(predictedHealthFactor)}
+                        {normalizedPredictedHealthFactor}
                       </ResultHandler>
                     </span>
                   </div>
