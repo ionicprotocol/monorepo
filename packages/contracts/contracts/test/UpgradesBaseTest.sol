@@ -80,6 +80,7 @@ abstract contract UpgradesBaseTest is BaseTest {
     cErc20DelegateExtensions[0] = marketExt;
     cErc20DelegateExtensions[1] = newImpl;
     ffd._setCErc20DelegateExtensions(address(newImpl), cErc20DelegateExtensions);
+    vm.stopPrank();
 
     vm.stopPrank();
     // upgrade to the new delegate

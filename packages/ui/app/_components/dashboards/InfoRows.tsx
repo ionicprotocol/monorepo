@@ -4,11 +4,14 @@ import { useMemo, type Dispatch, type SetStateAction } from 'react';
 
 import dynamic from 'next/dynamic';
 
+import { useChainId } from 'wagmi';
+
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { getAssetName } from '../../util/utils';
-// import { Rewards } from '../markets/Rewards';
 const Rewards = dynamic(() => import('../markets/Rewards'), {
   ssr: false
 });
@@ -40,6 +43,8 @@ export type InfoRowsProps = {
   setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
+  toggler?: () => void;
+  setCollateralSwapFromAsset?: () => void;
 };
 
 const InfoRows = ({
@@ -55,8 +60,17 @@ const InfoRows = ({
   cToken,
   comptrollerAddress,
   pool,
-  rewards
+  rewards,
+  toggler,
+  setCollateralSwapFromAsset
 }: InfoRowsProps) => {
+  const walletChain = useChainId();
+  const { data: merklApr } = useMerklApr();
+
+  const merklAprForToken = merklApr?.find(
+    (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
+  )?.[cToken];
+
   const supplyRewards = useMemo(
     () =>
       rewards?.filter((reward) =>
@@ -68,8 +82,9 @@ const InfoRows = ({
   );
   const totalSupplyRewardsAPR = useMemo(
     () =>
-      supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ?? 0,
-    [supplyRewards]
+      (supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ??
+        0) + (merklAprForToken ?? 0),
+    [supplyRewards, merklAprForToken]
   );
 
   const borrowRewards = useMemo(
@@ -197,26 +212,47 @@ const InfoRows = ({
       >
         <button
           className={`w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3`}
-          onClick={() => {
-            setSelectedSymbol(asset);
-            setPopupMode(
-              mode === InfoMode.SUPPLY ? PopupMode.WITHDRAW : PopupMode.REPAY
+          onClick={async () => {
+            const result = await handleSwitchOriginChain(
+              selectedChain,
+              walletChain
             );
+            if (result) {
+              setSelectedSymbol(asset);
+              setPopupMode(
+                mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.REPAY
+              );
+            }
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Withdraw' : 'Repay'}
+          {mode === InfoMode.SUPPLY ? 'Withdraw / Add Collateral' : 'Repay'}
         </button>
 
         <button
           className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3`}
-          onClick={() => {
-            setSelectedSymbol(asset);
-            setPopupMode(
-              mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.BORROW
+          onClick={async () => {
+            const result = await handleSwitchOriginChain(
+              selectedChain,
+              walletChain
             );
+            if (result) {
+              if (mode === InfoMode.SUPPLY) {
+                // Router.push()
+                //toggle the mode
+                setSelectedSymbol(asset);
+                setCollateralSwapFromAsset?.();
+                toggler?.();
+              }
+              if (mode === InfoMode.BORROW) {
+                // Router.push()
+                // toggle the mode
+                setSelectedSymbol(asset);
+                setPopupMode(PopupMode.BORROW);
+              }
+            }
           }}
         >
-          {mode === InfoMode.SUPPLY ? 'Add Collateral' : 'Borrow More'}
+          {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
         </button>
       </div>
     </div>

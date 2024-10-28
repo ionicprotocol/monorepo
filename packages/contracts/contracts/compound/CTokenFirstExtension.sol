@@ -150,7 +150,10 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
+  function transfer(
+    address dst,
+    uint256 amount
+  ) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     return transferTokens(msg.sender, msg.sender, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -177,7 +180,10 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens that are approved (-1 means infinite)
    * @return Whether or not the approval succeeded
    */
-  function approve(address spender, uint256 amount) public override isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
+  function approve(
+    address spender,
+    uint256 amount
+  ) public override isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     address src = msg.sender;
     transferAllowances[src][spender] = amount;
     emit Approval(src, spender, amount);
@@ -232,7 +238,9 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new reserve factor
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  function _setReserveFactor(
+    uint256 newReserveFactorMantissa
+  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -262,7 +270,9 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new admin fee
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  function _setAdminFee(
+    uint256 newAdminFeeMantissa
+  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {

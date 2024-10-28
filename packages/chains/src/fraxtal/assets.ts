@@ -1,6 +1,7 @@
 import {
   assetSymbols,
   ChainlinkFeedBaseCurrency,
+  ChainlinkSpecificParams,
   OracleTypes,
   SupportedAsset,
   SupportedChains
@@ -16,6 +17,7 @@ export const FXS = "0xfc00000000000000000000000000000000000002";
 export const FRAX = "0xfc00000000000000000000000000000000000001";
 export const sFRAX = "0xfc00000000000000000000000000000000000008";
 export const frxBTC = "0xfc00000000000000000000000000000000000007";
+export const insfrxETH = "0xE162075a1C0Ac7e985253972bEcA5e83Da3BBaa4";
 
 export const assets: SupportedAsset[] = [
   {
@@ -88,6 +90,20 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(10)).toString(),
     initialBorrowCap: parseEther(String(8)).toString(),
     initialCf: "0.1"
+  },
+  {
+    symbol: assetSymbols.insfrxETH,
+    underlying: insfrxETH,
+    name: "Inception Restaked sfrxETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x4E0Fce6FF8384241c686C26cA3bcE3A16CDcDB55",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(1000)).toString(),
+    initialBorrowCap: parseEther(String(800)).toString(),
+    initialCf: "0.70"
   }
 ];
 
