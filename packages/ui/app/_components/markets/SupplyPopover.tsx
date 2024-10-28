@@ -32,8 +32,10 @@ export default function SupplyPopover({
   supplyAPR,
   rewards
 }: SupplyPopoverProps) {
-  const isModeMarket =
+  const isModePool =
     dropdownSelectedChain === 34443 && (asset === 'USDC' || asset === 'WETH');
+
+  const isModeMainPool = isModePool && selectedPoolId === '1';
 
   const { data: merklApr } = useMerklApr();
 
@@ -54,32 +56,32 @@ export default function SupplyPopover({
         + ION APR <i className="popover-hint">i</i>
       </span>
 
-      {(multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-        ?.rewards ||
-        isModeMarket) && (
-        <span
-          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
-        >
-          {isModeMarket ? (
-            <>
-              +{' '}
-              <img
-                src="/images/op-logo-red.svg"
-                alt="OP"
-                className="inline-block w-3 h-3 mx-[2px]"
-              />{' '}
-              REWARDS{' '}
-            </>
-          ) : (
-            '+ REWARDS '
-          )}
-          <i className="popover-hint mb-[-2px] ml-[2px]">i</i>
-        </span>
-      )}
+      {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+        ?.rewards &&
+        !isModeMainPool && (
+          <span
+            className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
+          >
+            {isModeMainPool ? (
+              <>
+                +{' '}
+                <img
+                  src="/images/op-logo-red.svg"
+                  alt="OP"
+                  className="inline-block w-3 h-3 mx-[2px]"
+                />{' '}
+                REWARDS{' '}
+              </>
+            ) : (
+              '+ REWARDS '
+            )}
+            <i className="popover-hint mb-[-2px] ml-[2px]">i</i>
+          </span>
+        )}
 
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.turtle &&
-        !isModeMarket && (
+        !isModePool && (
           <span className="text-darkone rounded-md w-max md:ml-0 text-center">
             <a
               className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -108,7 +110,7 @@ export default function SupplyPopover({
             %
           </span>
         </div>
-        {isModeMarket && selectedPoolId !== '1' && (
+        {isModePool && selectedPoolId !== '1' && (
           <div className="flex items-center mt-1">
             <img
               src="/images/op-logo-red.svg"
