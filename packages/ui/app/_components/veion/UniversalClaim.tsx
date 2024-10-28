@@ -1,6 +1,18 @@
 'use client';
 
 import React, { createContext, useContext, useState } from 'react';
+
+import Image from 'next/image';
+
+import { Button } from '@ui/components/ui/button';
+import { Checkbox } from '@ui/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@ui/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -9,17 +21,8 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
-import { Checkbox } from '@ui/components/ui/checkbox';
-import Image from 'next/image';
-import { Button } from '@ui/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@ui/components/ui/dialog';
 import { claimRewards } from '@ui/constants/mock';
+
 import { TableActionButton } from '../TableActionButton';
 
 // Types
@@ -86,8 +89,8 @@ interface RewardItem {
   token: string;
   tokenSymbol: string;
   amount: number;
-  network: 'Mode' | 'Base';
-  section: 'Market Emissions' | 'Protocol Bribes' | 'Locked LP Emissions';
+  network: 'Base' | 'Mode';
+  section: 'Locked LP Emissions' | 'Market Emissions' | 'Protocol Bribes';
 }
 
 const RewardsTable = ({
@@ -219,6 +222,7 @@ const ClaimFooter = ({ onClose }: { onClose: () => void }) => {
 
   const handleClaim = async () => {
     // Handle claim logic
+    // eslint-disable-next-line no-console
     console.log('Claiming rewards...');
     clearSelections();
     onClose();

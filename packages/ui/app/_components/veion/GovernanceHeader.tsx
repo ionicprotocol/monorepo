@@ -1,17 +1,20 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { ExternalLink, HelpCircle } from 'lucide-react';
+
+import { Button } from '@ui/components/ui/button';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
-import { ExternalLink, HelpCircle } from 'lucide-react';
-import Image from 'next/image';
-import CustomTooltip from '../CustomTooltip';
-import { Button } from '@ui/components/ui/button';
-import Link from 'next/link';
 import { Progress } from '@ui/components/ui/progress';
+
+import CustomTooltip from '../CustomTooltip';
 
 const InfoBlock = ({
   label,

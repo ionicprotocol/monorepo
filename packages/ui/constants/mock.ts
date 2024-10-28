@@ -259,13 +259,12 @@ export const infoBlocks: InfoBlock[] = [
   }
 ];
 
-
 // Types for our rewards data
-type Network = 'Mode' | 'Base';
+type Network = 'Base' | 'Mode';
 type RewardSection =
+  | 'Locked LP Emissions'
   | 'Market Emissions'
-  | 'Protocol Bribes'
-  | 'Locked LP Emissions';
+  | 'Protocol Bribes';
 
 interface RewardItem {
   token: string;
@@ -352,4 +351,4 @@ export const claimRewards: RewardItem[] = [
     selected: false,
     section: 'Locked LP Emissions'
   }
-]
+];

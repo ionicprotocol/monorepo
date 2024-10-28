@@ -1,8 +1,9 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+
 import { useChainId } from 'wagmi';
-import CustomTooltip from '@ui/app/_components/CustomTooltip';
+
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import ToggleLinks from '@ui/app/_components/ToggleLink';
@@ -12,12 +13,7 @@ import {
   GovernanceHeader,
   UniversalClaim
 } from '@ui/app/_components/veion';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@ui/components/ui/card';
+import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 
 export default function Governance() {
@@ -27,23 +23,6 @@ export default function Governance() {
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);
   const view = queryview ?? 'MyVeion';
-
-  const infoBlocks = [
-    {
-      label: 'Ion Wallet Balance',
-      value: view === 'MyVeion' ? 78942387 : 6376,
-      token: 'ION',
-      infoContent: 'This is the amount of ION you have in your wallet.',
-      icon: '/img/symbols/32/color/ion.png'
-    },
-    {
-      label: 'Total veION',
-      value: view === 'MyVeion' ? 5674 : 63754,
-      token: 'veION',
-      infoContent: 'This is the amount of veION you have in your wallet.',
-      icon: '/img/symbols/32/color/ion.png'
-    }
-  ];
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
