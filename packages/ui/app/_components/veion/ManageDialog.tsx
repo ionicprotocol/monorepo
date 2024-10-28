@@ -22,15 +22,15 @@ import { MergeView } from './MergeView';
 import { SplitView } from './SplitView';
 import { TransferView } from './TransferView';
 
-interface ManagePopupProps {
+interface ManageDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export default function ManagePopup({
+export default function ManageDialog({
   isOpen,
   onOpenChange
-}: ManagePopupProps) {
+}: ManageDialogProps) {
   const toggleArr = [
     'Increase',
     'Extend',

@@ -6,10 +6,10 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm', className)} // Removed table-fixed
+      className={cn('w-full caption-bottom text-sm', className)}
       {...props}
     />
   </div>
@@ -54,18 +54,24 @@ TableFooter.displayName = 'TableFooter';
 
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLTableRowElement> & {
+    transparent?: boolean;
+    compact?: boolean;
+  }
+>(({ className, transparent = false, compact = false, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      '[&:not(:has(th))]:hover:bg-graylite [&:not(:has(th))]:bg-grayUnselect transition-all duration-200 ease-linear rounded-xl',
+      transparent
+        ? '[&:not(:has(th))]:hover:bg-transparent [&:not(:has(th))]:bg-transparent'
+        : '[&:not(:has(th))]:hover:bg-graylite [&:not(:has(th))]:bg-grayUnselect',
+      compact ? 'h-8' : 'h-12',
+      'transition-all duration-200 ease-linear rounded-xl',
       className
     )}
     {...props}
   />
 ));
-TableRow.displayName = 'TableRow';
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
@@ -84,18 +90,20 @@ TableHead.displayName = 'TableHead';
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
+  React.TdHTMLAttributes<HTMLTableCellElement> & {
+    compact?: boolean;
+  }
+>(({ className, compact = false, ...props }, ref) => (
   <td
     ref={ref}
     className={cn(
-      'p-4 align-middle text-xs font-semibold text-white/80 first:rounded-l-xl last:rounded-r-xl min-w-[100px]',
+      'align-middle text-xs font-semibold text-white/80 first:rounded-l-xl last:rounded-r-xl min-w-[100px]',
+      compact ? 'py-1 px-4' : 'p-4',
       className
     )}
     {...props}
   />
 ));
-TableCell.displayName = 'TableCell';
 
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,

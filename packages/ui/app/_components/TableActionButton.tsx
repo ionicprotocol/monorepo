@@ -11,6 +11,7 @@ interface TableActionButtonProps extends Omit<ButtonProps, 'variant'> {
   bgColor?: string;
   hoverBgColor?: string;
   textColor?: string;
+  adaptive?: boolean;
 }
 
 const TableActionButton = React.forwardRef<
@@ -25,6 +26,7 @@ const TableActionButton = React.forwardRef<
       bgColor,
       hoverBgColor,
       textColor,
+      adaptive = false,
       ...props
     },
     ref
@@ -34,7 +36,7 @@ const TableActionButton = React.forwardRef<
         return {
           bg: bgColor,
           hover: hoverBgColor || `${bgColor}/90`,
-          text: textColor || 'black'
+          text: textColor || 'text-black'
         };
       }
 
@@ -49,7 +51,8 @@ const TableActionButton = React.forwardRef<
       <Button
         ref={ref}
         className={cn(
-          `w-[${width}] py-1.5 px-3 text-xs font-semibold rounded-xl`,
+          'py-1.5 px-3 text-xs font-semibold rounded-xl',
+          !adaptive && `w-[${width}]`,
           styles.bg,
           styles.hover,
           styles.text,

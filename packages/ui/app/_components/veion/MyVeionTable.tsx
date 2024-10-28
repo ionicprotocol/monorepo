@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import ExtendVeion from './ExtendVeion';
-import ManagePopup from './ManagePopup';
+import ManageDialog from './ManageDialog';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 import CommonTable from '../CommonTable';
@@ -159,7 +159,7 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
         isOpen={isExtendOpen}
         onOpenChange={setIsExtendOpen}
       />
-      <ManagePopup
+      <ManageDialog
         isOpen={isManageOpen}
         onOpenChange={setIsManageOpen}
       />

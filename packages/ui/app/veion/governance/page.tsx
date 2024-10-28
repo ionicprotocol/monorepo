@@ -9,7 +9,8 @@ import ToggleLinks from '@ui/app/_components/ToggleLink';
 import {
   MyVeionTable,
   DelegateVeIonTable,
-  GovernanceHeader
+  GovernanceHeader,
+  UniversalClaim
 } from '@ui/app/_components/veion';
 import {
   Card,
@@ -69,7 +70,7 @@ export default function Governance() {
           </div>
         </CardHeader>
         <CardContent className="border-none">
-          <div className="flex justify-start">
+          <div className="w-full flex justify-between items-center">
             <div className="bg-grayUnselect rounded-md mb-3 inline-block">
               <ToggleLinks
                 arrText={['MyVeion', 'Delegate veION']}
@@ -77,6 +78,7 @@ export default function Governance() {
                 currentChain={chain}
               />
             </div>
+            <UniversalClaim />
           </div>
 
           {view === 'MyVeion' ? (
