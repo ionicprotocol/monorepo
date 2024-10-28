@@ -35,7 +35,7 @@ export default function SupplyPopover({
   const isModePool =
     dropdownSelectedChain === 34443 && (asset === 'USDC' || asset === 'WETH');
 
-  const isModeMainPool = isModePool && selectedPoolId === '1';
+  const isModeMainPool = isModePool && selectedPoolId === '0';
 
   const { data: merklApr } = useMerklApr();
 
@@ -58,7 +58,7 @@ export default function SupplyPopover({
 
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.rewards &&
-        !isModeMainPool && (
+        isModeMainPool && (
           <span
             className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
           >
