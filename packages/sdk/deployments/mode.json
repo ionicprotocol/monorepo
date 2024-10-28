@@ -263,6 +263,12 @@
     "SimplePriceOracle_Proxy": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
     },
+    "UniswapV2Liquidator": {
+      "address": "0x586671b05A8Ab0E9F288207761808c15a24813ba"
+    },
+    "UniswapV2LiquidatorFunder": {
+      "address": "0x678645c6F57F030aE98a0B33834292120aa3882e"
+    },
     "VelodromePriceOracle": {
       "address": "0x9Bb6eFb9c1C16f4561591Fe13ea06AF8d1Fce2a9"
     },
