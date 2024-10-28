@@ -18,3 +18,4 @@ export { default as TimeRemaining } from './TimeRemaining';
 export { default as VoteInput } from './VoteInput';
 export { default as InfoBlock } from './InfoBlock';
 export { default as EmissionsManagementTable } from './EmissionsManagementTable';
+export { default as GovernanceHeader } from './GovernanceHeader';
