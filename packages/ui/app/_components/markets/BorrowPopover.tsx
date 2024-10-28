@@ -128,8 +128,10 @@ export default function BorrowPopover({
               </>
             )}
 
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.mode &&
+            {Boolean(
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.borrow?.mode
+            ) &&
               asset !== 'USDC' &&
               asset !== 'WETH' && (
                 <>

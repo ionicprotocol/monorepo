@@ -32,8 +32,10 @@ export default function SupplyPopover({
   supplyAPR,
   rewards
 }: SupplyPopoverProps) {
-  const isModeMarket =
-    dropdownSelectedChain === 34443 && (asset === 'USDC' || asset === 'WETH');
+  const isMainModeMarket =
+    dropdownSelectedChain === 34443 &&
+    (asset === 'USDC' || asset === 'WETH') &&
+    selectedPoolId === '0';
 
   const { data: merklApr } = useMerklApr();
 
@@ -56,11 +58,11 @@ export default function SupplyPopover({
 
       {(multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.rewards ||
-        isModeMarket) && (
+        isMainModeMarket) && (
         <span
           className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
         >
-          {isModeMarket ? (
+          {isMainModeMarket ? (
             <>
               +{' '}
               <img
@@ -79,7 +81,7 @@ export default function SupplyPopover({
 
       {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
         ?.turtle &&
-        !isModeMarket && (
+        !isMainModeMarket && (
           <span className="text-darkone rounded-md w-max md:ml-0 text-center">
             <a
               className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -108,7 +110,7 @@ export default function SupplyPopover({
             %
           </span>
         </div>
-        {isModeMarket && selectedPoolId !== '1' && (
+        {isMainModeMarket && (
           <div className="flex items-center mt-1">
             <img
               src="/images/op-logo-red.svg"
@@ -173,8 +175,10 @@ export default function SupplyPopover({
             </div>
           </>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.mode &&
+        {Boolean(
+          multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
+            ?.mode
+        ) &&
           asset !== 'USDC' &&
           asset !== 'WETH' && (
             <>
