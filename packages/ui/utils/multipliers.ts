@@ -36,14 +36,13 @@ export const multipliers: Record<
   >
 > = {
   [mode.id]: {
-    // main market
     '0': {
       'M-BTC': {
         borrow: {
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         market: 'm_btc_market',
@@ -52,14 +51,14 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
       },
       dMBTC: {
         borrow: {
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           turtle: false,
           ionic: 0,
@@ -81,7 +80,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         market: 'ststone_market',
@@ -91,7 +90,7 @@ export const multipliers: Record<
           underlyingAPR: 2.94,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
@@ -100,7 +99,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           flywheel: false
         },
@@ -110,7 +109,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
@@ -119,7 +118,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         decimals: 6,
@@ -138,7 +137,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         decimals: 8,
@@ -158,7 +157,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           flywheel: false
         },
@@ -168,12 +167,17 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
       ezETH: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          turtle: false,
+          rewards: false,
+          ionAPR: false,
+          ionic: 0
+        },
         market: 'ezeth_market',
         multiplier: 3000,
         supply: {
@@ -192,7 +196,7 @@ export const multipliers: Record<
         borrow: {
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           ionic: 0
         },
@@ -202,7 +206,7 @@ export const multipliers: Record<
           mode: 0,
           underlyingAPR: 4.5,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
@@ -210,7 +214,7 @@ export const multipliers: Record<
         borrow: {
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           ionic: 0
         },
@@ -219,7 +223,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
@@ -227,7 +231,7 @@ export const multipliers: Record<
         borrow: {
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           ionic: 0
         },
@@ -237,7 +241,7 @@ export const multipliers: Record<
           mode: 0,
           underlyingAPR: 6,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         }
       },
@@ -291,8 +295,7 @@ export const multipliers: Record<
         }
       }
     },
-    //native
-    '1': {
+    1: {
       MODE: {
         borrow: {
           ionic: 0,
@@ -308,7 +311,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           flywheel: false
         }
@@ -318,7 +321,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         decimals: 6,
@@ -337,7 +340,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false,
           flywheel: false
         },
@@ -357,7 +360,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: false
         },
         market: 'ionweth_modenative',
