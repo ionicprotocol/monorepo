@@ -72,13 +72,17 @@ export default function VeIon() {
 
         <div className="flex items-center gap-1 text-2xl">
           Participate in{' '}
-          <span className="text-accent flex items-center">
+          <Link
+            href="/veion/governance/vote"
+            className="text-accent flex items-center hover:underline"
+            target="_blank"
+          >
             Emissions{' '}
             <ExternalLink
               className="ml-1"
               size={24}
             />
-          </span>
+          </Link>
         </div>
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
