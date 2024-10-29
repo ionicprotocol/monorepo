@@ -102,8 +102,8 @@ export const assets: SupportedAsset[] = [
     oracleSpecificParams: { feed: "0x39d020f60982ed892abbcd4a06a276a9f9b7bfbce003204c110b6e488f502da3" },
     extraDocs: defaultDocs("https://optimistic.etherscan.io", SNX),
     initialCf: "70",
-    initialSupplyCap: parseEther(String(40_000)).toString(),
-    initialBorrowCap: parseEther(String(32_000)).toString()
+    initialSupplyCap: parseEther(String(350_000)).toString(),
+    initialBorrowCap: parseEther(String(280_000)).toString()
   },
   {
     symbol: assetSymbols.WBTC,
