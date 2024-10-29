@@ -1,28 +1,18 @@
-'use client';
-
-import { useState, useEffect, useMemo } from 'react';
-
-import { format, addDays } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
-
+import { format } from 'date-fns';
 import { Button } from '@ui/components/ui/button';
-import { Calendar } from '@ui/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@ui/components/ui/popover';
 import { Separator } from '@ui/components/ui/separator';
-import { Slider } from '@ui/components/ui/slider';
 
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
+import { LockDurationPicker } from '../LockDurationPicker';
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
+import { useState } from 'react';
 
 interface ExtendVeionProps {
   isOpen: boolean;
@@ -40,66 +30,17 @@ const ExtendVeion = ({
   maxToken = 100
 }: ExtendVeionProps) => {
   const [autoLock, setAutoLock] = useState(false);
-  const [lockDuration, setLockDuration] = useState<string>('180');
-  // eslint-disable-next-line no-console
-  console.log('lockDuration', lockDuration);
-  const [lockDate, setLockDate] = useState<Date>(() =>
-    addDays(new Date(), 180)
-  );
+  const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [veIonAmount, setVeIonAmount] = useState('0');
-  const [utilization, setUtilization] = useState(0);
 
-  const dateRange = useMemo(() => {
-    const today = new Date();
-    return {
-      minDate: addDays(today, 180),
-      maxDate: addDays(today, 730)
-    };
-  }, []);
-
-  const durationLabels = {
-    180: '180d',
-    365: '1y',
-    547: '1.5y',
-    730: '2y'
-  };
-
-  useEffect(() => {
-    const newDate = addDays(new Date(), selectedDuration);
-    setLockDate(newDate);
-    setLockDuration(selectedDuration.toString());
-  }, [selectedDuration]);
-
-  useEffect(() => {
-    setUtilization(Number(((+veIonAmount / maxToken) * 100).toFixed(0)) ?? 0);
-  }, [veIonAmount, maxToken]);
-
-  const handleDurationChange = (val: number[]) => {
-    const duration = val[0];
-    setSelectedDuration(duration);
-  };
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      setLockDate(date);
-      const durationInDays = Math.round(
-        (date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const clampedDuration = Math.max(180, Math.min(730, durationInDays));
-      setSelectedDuration(clampedDuration);
-      setLockDuration(clampedDuration.toString());
-      setIsCalendarOpen(false);
-    }
-  };
-
-  const handleUtilizationChange = (val: number[]) => {
-    const utilizationValue = val[0];
-    setUtilization(utilizationValue);
-    const veionval = (utilizationValue / 100) * maxToken;
-    setVeIonAmount(veionval.toString());
-  };
+  const {
+    amount: veIonAmount,
+    percentage: utilization,
+    handlePercentageChange: handleUtilizationChange
+  } = usePrecisionSlider({
+    maxValue: maxToken,
+    initialValue: 0
+  });
 
   return (
     <Dialog
@@ -125,79 +66,24 @@ const ExtendVeion = ({
               <p>AMOUNT</p>
               <CustomTooltip content="Select the amount of tokens to lock" />
             </div>
-            <Slider
-              value={[utilization]}
-              onValueChange={handleUtilizationChange}
+            <PrecisionSlider
+              value={utilization}
+              onChange={handleUtilizationChange}
               max={100}
               min={0}
               step={1}
-              className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
             />
             <div className="text-xs text-white/60">
-              {veIonAmount} / {maxToken} ION
+              {Number(veIonAmount).toFixed(2)} / {maxToken} ION
             </div>
           </div>
 
-          {/* Lock Duration */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs text-white/60 tracking-wider">
-              <p>LOCK UNTIL</p>
-              <CustomTooltip content="A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power." />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-white/60">
-                {format(lockDate, 'dd. MM. yyyy')}
-              </div>
-              <Popover
-                open={isCalendarOpen}
-                onOpenChange={setIsCalendarOpen}
-              >
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="p-0 hover:bg-transparent"
-                  >
-                    <CalendarIcon className="h-4 w-4 text-white/60" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0 bg-grayUnselect border-white/10"
-                  sideOffset={5}
-                >
-                  <Calendar
-                    mode="single"
-                    selected={lockDate}
-                    onSelect={handleDateSelect}
-                    disabled={{
-                      before: dateRange.minDate,
-                      after: dateRange.maxDate
-                    }}
-                    defaultMonth={dateRange.minDate}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <Slider
-              value={[selectedDuration]}
-              onValueChange={handleDurationChange}
-              max={730}
-              min={180}
-              step={1}
-              className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
-            />
-            <div className="w-full flex justify-between text-xs text-white/60">
-              {Object.entries(durationLabels).map(([days, label]) => (
-                <span
-                  key={days}
-                  className={
-                    selectedDuration >= Number(days) ? 'text-accent' : ''
-                  }
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
+          <LockDurationPicker
+            selectedDuration={selectedDuration}
+            lockDate={lockDate}
+            onDurationChange={setSelectedDuration}
+            onDateChange={setLockDate}
+          />
 
           <AutoLock
             autoLock={autoLock}
@@ -213,7 +99,7 @@ const ExtendVeion = ({
                 <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
               </div>
               <span>
-                {currentVotingPower} → {veIonAmount} veION
+                {currentVotingPower} → {Number(veIonAmount).toFixed(2)} veION
               </span>
             </div>
             <div className="flex justify-between text-xs text-white/50">
