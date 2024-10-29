@@ -12,6 +12,7 @@ import { IonicTimeLibrary } from "./libraries/IonicTimeLibrary.sol";
 import { IveION } from "./interfaces/IveION.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
+import { console } from "forge-std/console.sol";
 
 /// @title BribeRewards
 /// @notice Base reward contract for distribution of rewards
@@ -183,6 +184,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     uint256 numEpochs;
     uint256 overallBalance;
     uint256 overallSupply;
+    uint256 historicalPrice;
   }
 
   /// @inheritdoc IBribeRewards
@@ -192,6 +194,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     address[] memory lpTokens = getAllLpRewardTokens();
 
     for (uint256 j = 0; j < lpTokens.length; j++) {
+      console.log(
+        "========================================================LP TOKEN========================================================"
+      );
       address lpToken = lpTokens[j];
 
       if (numCheckpoints[tokenId][lpToken] == 0) {
@@ -212,22 +217,38 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
 
       if (vars.numEpochs > 0) {
         for (uint256 i = 0; i < vars.numEpochs; i++) {
+          console.log("==================================EPOCH==================================", i);
           // get index of last checkpoint in this epoch
           vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs + DURATION - 1);
           // get checkpoint in this epoch
           cp0 = checkpoints[tokenId][lpToken][vars.index];
           // get supply of last checkpoint in this epoch
           vars.supplyValue = 0;
+          console.log("------------------LOOP------------------");
           for (uint256 k = 0; k < lpTokens.length; k++) {
             address currentLpToken = lpTokens[k];
-            uint256 supplyValue = Math.max(
+            uint256 supplyAmount = Math.max(
               supplyCheckpoints[getPriorSupplyIndex(vars.currTs + DURATION - 1, currentLpToken)][currentLpToken].supply,
               1
             );
-            vars.supplyValue += _getTokenEthValueAt(supplyValue, currentLpToken, vars.currTs);
+            vars.supplyValue += _getTokenEthValueAt(supplyAmount, currentLpToken, vars.currTs);
+            console.log("For LP Token:", currentLpToken);
+            console.log("with supply amount:", supplyAmount);
+            console.log("the supply value is:", _getTokenEthValueAt(supplyAmount, currentLpToken, vars.currTs));
           }
+          console.log("------------------END LOOP------------------");
           vars.epochBalanceValue = _getTokenEthValueAt(cp0.balanceOf, lpToken, vars.currTs);
-          vars.totalReward += (vars.epochBalanceValue * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supplyValue;
+          console.log("balanceOf", cp0.balanceOf);
+          console.log("balanceOfValue", vars.epochBalanceValue);
+          console.log("supplyValue", vars.supplyValue);
+          console.log("tokenRewardsPerEpoch", tokenRewardsPerEpoch[token][vars.currTs]);
+          if (vars.supplyValue > 0) {
+            vars.totalReward += (vars.epochBalanceValue * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supplyValue;
+          }
+          console.log(
+            "Amount earned this lp token and this epoch",
+            (vars.epochBalanceValue * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supplyValue
+          );
           vars.currTs += DURATION;
         }
       }
@@ -311,21 +332,21 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return IVoter(voter).getAllLpRewardTokens();
   }
 
+  //TODO account for non 18 decimal assets, optimize looping for earned
   function _getTokenEthValueAt(
     uint256 amount,
     address lpToken,
     uint256 epochTimestamp
   ) internal view returns (uint256) {
-    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochTimestamp];
-    uint256 ethValue = amount * _priceAtTimestamp;
+    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
+    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochStart];
+    uint256 ethValue = (amount * _priceAtTimestamp) / 1e18;
     return ethValue;
   }
 
-  function setHistoricalPrices(uint256 epochTimestamp, uint256 price) external onlyOwner {
-    address[] memory lpTokens = getAllLpRewardTokens();
-    for (uint256 i = 0; i < lpTokens.length; i++) {
-      historicalPrices[lpTokens[i]][epochTimestamp] = price;
-    }
+  function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
+    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
+    historicalPrices[lpToken][epochStart] = price;
   }
 
   function setMpo(address _mpo) external onlyOwner {

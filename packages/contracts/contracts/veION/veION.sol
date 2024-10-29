@@ -6,22 +6,21 @@ import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/cont
 import { IveION } from "./interfaces/IveION.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { console } from "forge-std/console.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
-import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import { BalanceLogicLibrary } from "./libraries/BalanceLogicLibrary.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
+import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
-  using AddressUpgradeable for address;
   using SafeERC20 for IERC20;
+  using SafeCast for uint256;
+  using SafeCast for int256;
 
   // Constants
   uint256 internal constant WEEK = 1 weeks;
-  uint256 internal constant MAXTIME = 4 * 365 * 86400;
-  int128 internal constant iMAXTIME = 4 * 365 * 86400;
+  uint256 internal constant MAXTIME = 2 * 365 * 86400;
+  int128 internal constant iMAXTIME = 2 * 365 * 86400;
   uint256 internal constant MULTIPLIER = 1 ether;
   uint256 public constant PRECISION = 1e18;
 
@@ -33,6 +32,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address public s_veAERO;
   address public s_aeroVoting;
   address public s_ionicPool;
+  address public s_voter;
   uint256 public s_aeroVoterBoost;
   AddressesProvider public ap;
 
@@ -48,7 +48,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(uint256 => mapping(LpTokenType => UserPoint[1000000000])) public s_userPointHistory; // tokenid => lptype => user epoch => UserPoint
   mapping(uint256 => address[]) public s_assetsLocked; // tokenid => array of assets locked
   mapping(uint256 => bool) public s_voted;
-  mapping(uint256 => EscrowType) public s_escrowType;
   mapping(LpTokenType => uint256) public s_epoch;
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
@@ -57,8 +56,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(IStakeStrategy => mapping(address => uint256)) public s_rewards;
   mapping(LpTokenType => uint256) public s_protocolFees;
   mapping(LpTokenType => uint256) public s_distributedFees;
-  mapping(uint256 => mapping(uint256 => uint256)) public s_delegations;
-  mapping(uint256 => uint256[]) public s_delegatees;
+  mapping(uint256 => mapping(uint256 => mapping(LpTokenType => uint256))) public s_delegations;
+  mapping(uint256 => mapping(LpTokenType => uint256[])) public s_delegatees;
+  mapping(uint256 => mapping(LpTokenType => uint256[])) public s_delegators;
   mapping(address => uint256[]) public s_ownerToTokenIds; // owner => list of token IDs
 
   modifier onlyBridge() {
@@ -170,7 +170,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     address sender = _msgSender();
     if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
     if (s_voted[_tokenId]) revert AlreadyVoted();
-    if (s_escrowType[_tokenId] != EscrowType.NORMAL) revert NotNormalNFT();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
     if (oldLocked.isPermanent) revert PermanentLock();
@@ -179,13 +178,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 fee = 0;
 
     if (block.timestamp < oldLocked.end) {
-      uint256 daysLocked = (oldLocked.end - oldLocked.start) / 1 days;
-      uint256 daysLeft = (oldLocked.end - block.timestamp) / 1 days;
+      uint256 daysLocked = ((oldLocked.end - oldLocked.start) * 1e18) / 1 days;
+      uint256 daysLeft = ((oldLocked.end - block.timestamp) * 1e18) / 1 days;
       uint256 timeFactor = (daysLeft * 1e18) / daysLocked;
-      uint256 veIONInCirculation = s_supply[_lpType];
-      uint256 IONInCirculation = IERC20(_tokenAddress).totalSupply();
-      uint256 ratioFactor = 1e18 - (veIONInCirculation * 1e18) / IONInCirculation;
-      fee = (daysLocked * timeFactor * ratioFactor) / 1e18;
+      uint256 veLPLocked = s_supply[_lpType];
+      uint256 LPInCirculation = IERC20(_tokenAddress).totalSupply();
+      uint256 ratioFactor = 1e18 - (veLPLocked * 1e18) / LPInCirculation;
+      fee = (timeFactor * ratioFactor * oldLocked.boost) / 1e36;
       if (fee > 0.8e18) fee = 0.8e18;
       fee = (value * fee) / 1e18;
       value -= fee;
@@ -279,7 +278,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory newLocked = s_locked[_from][_lpType];
     if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
-    int128 _splitAmount = int128(int256(_amount));
+    int128 _splitAmount = _amount.toInt256().toInt128();
     if (_splitAmount == 0) revert ZeroAmount();
     if (newLocked.amount < _splitAmount) revert AmountTooBig();
 
@@ -318,6 +317,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_permanentLockBalance[_lpType] += _amount;
     _newLocked.end = 0;
     _newLocked.isPermanent = true;
+    _newLocked.boost = _calculateBoost(MAXTIME);
     _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
     s_locked[_tokenId][_lpType] = _newLocked;
   }
@@ -328,6 +328,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (!_newLocked.isPermanent) revert NotPermanentLock();
+    if (s_delegatees[_tokenId][_lpType].length != 0) revert TokenHasDelegatees();
+    if (s_delegators[_tokenId][_lpType].length != 0) revert TokenHasDelegators();
 
     uint256 _amount = uint256(int256(_newLocked.amount));
     s_permanentLockBalance[_lpType] -= _amount;
@@ -364,91 +366,103 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[fromTokenId][lpType] = fromLocked;
     s_locked[toTokenId][lpType] = toLocked;
 
-    s_delegations[fromTokenId][toTokenId] = amount;
-    s_delegatees[fromTokenId].push(toTokenId);
+    if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
+      s_delegatees[fromTokenId][lpType].push(toTokenId);
+      s_delegators[toTokenId][lpType].push(fromTokenId);
+    }
+
+    s_delegations[fromTokenId][toTokenId][lpType] += amount;
 
     // Update checkpoints for both token IDs
     _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
     _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
   }
 
-  function deDelegate(
+  function _removeDelegation(
     uint256 fromTokenId,
-    uint256[] calldata toTokenIds,
+    uint256 toTokenId,
     address lpToken,
-    uint256[] calldata amounts
-  ) external {
+    uint256 amount,
+    bool clearDelegation
+  ) internal {
     // Ensure the caller is the owner or approved for the fromTokenId
-    if (!_isApprovedOrOwner(msg.sender, fromTokenId)) revert NotApprovedOrOwner();
-    require(toTokenIds.length == amounts.length, "Mismatched arrays");
+    if (!_isApprovedOrOwner(msg.sender, fromTokenId) && !_isApprovedOrOwner(msg.sender, toTokenId))
+      revert NotApprovedOrOwner();
 
-    // Retrieve the locked balance for the fromTokenId
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
+    LockedBalance memory toLocked = s_locked[toTokenId][lpType];
 
-    // Ensure the lock is permanent
-    if (!fromLocked.isPermanent) revert NotPermanentLock();
+    // Ensure the amount to de-delegate is not greater than the delegated amount
+    if (amount > s_delegations[fromTokenId][toTokenId][lpType]) revert AmountTooBig();
 
-    for (uint256 i = 0; i < toTokenIds.length; i++) {
-      uint256 toTokenId = toTokenIds[i];
-      uint256 amount = amounts[i];
+    amount = clearDelegation ? s_delegations[fromTokenId][toTokenId][lpType] : amount;
+    // Transfer the voting power back
+    toLocked.amount -= int128(int256(amount));
+    fromLocked.amount += int128(int256(amount));
 
-      // Retrieve the locked balance for the toTokenId
-      LockedBalance memory toLocked = s_locked[toTokenId][lpType];
+    // Update the locked balances
+    s_locked[toTokenId][lpType] = toLocked;
 
-      // Ensure the amount to de-delegate is not greater than the delegated amount
-      if (amount > s_delegations[fromTokenId][toTokenId]) revert AmountTooBig();
-
-      // Transfer the voting power back
-      toLocked.amount -= int128(int256(amount));
-      fromLocked.amount += int128(int256(amount));
-
-      // Update the locked balances
-      s_locked[toTokenId][lpType] = toLocked;
-
-      // Update the delegation record
-      s_delegations[fromTokenId][toTokenId] -= amount;
-      if (s_delegations[fromTokenId][toTokenId] == 0) {
-        // Remove the toTokenId from the delegatees list if no more delegation exists
-        uint256[] storage delegatees = s_delegatees[fromTokenId];
-        for (uint256 j = 0; j < delegatees.length; j++) {
-          if (delegatees[j] == toTokenId) {
-            delegatees[j] = delegatees[delegatees.length - 1];
-            delegatees.pop();
-            break;
-          }
+    // Update the delegation record
+    s_delegations[fromTokenId][toTokenId][lpType] -= amount;
+    if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
+      // Remove the toTokenId from the delegatees list if no more delegation exists
+      uint256[] storage delegatees = s_delegatees[fromTokenId][lpType];
+      for (uint256 j = 0; j < delegatees.length; j++) {
+        if (delegatees[j] == toTokenId) {
+          delegatees[j] = delegatees[delegatees.length - 1];
+          delegatees.pop();
+          break;
         }
       }
-
-      // Update checkpoint for the toTokenId
-      _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
+      // Remove fromTokenId from toTokenId's delegators list
+      uint256[] storage delegators = s_delegators[toTokenId][lpType];
+      for (uint256 k = 0; k < delegators.length; k++) {
+        if (delegators[k] == fromTokenId) {
+          delegators[k] = delegators[delegators.length - 1];
+          delegators.pop();
+          break;
+        }
+      }
     }
+
+    // TODO check this checkpoint
+    // Update checkpoint for the toTokenId
+    _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
 
     // Update the locked balance for the fromTokenId
     s_locked[fromTokenId][lpType] = fromLocked;
 
+    // TODO check this checkpoint
     // Update checkpoint for the fromTokenId
     _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
   }
 
-  /**
-   * @notice Reserved for bridging. Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
-   * @param tokenId Token ID to mint.
-   * @param to Address to mint to.
-   * @param unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function mint(uint256 tokenId, address to, uint256 unlockTime) external override onlyBridge {
-    // Reserved for bridging logic
+  function removeDelegatees(
+    uint256 fromTokenId,
+    uint256[] memory toTokenIds,
+    address lpToken,
+    uint256[] memory amounts,
+    bool clearDelegation
+  ) public {
+    require(toTokenIds.length == amounts.length, "Mismatched array lengths");
+    for (uint256 i = 0; i < toTokenIds.length; i++) {
+      _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i], clearDelegation);
+    }
   }
 
-  /**
-   * @notice Reserved for bridging. Burns a token and returns relevant metadata.
-   * @param tokenId Token ID to burn.
-   * @return to Address which owned the token.
-   * @return unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function burn(uint256 tokenId) external override onlyBridge returns (address to, uint256 unlockTime) {
-    // Reserved for bridging logic
+  function removeDelegators(
+    uint256[] memory fromTokenIds,
+    uint256 toTokenId,
+    address lpToken,
+    uint256[] memory amounts,
+    bool clearDelegation
+  ) public {
+    require(fromTokenIds.length == amounts.length, "Mismatched array lengths");
+    for (uint256 i = 0; i < fromTokenIds.length; i++) {
+      _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i], clearDelegation);
+    }
   }
 
   /**
@@ -478,6 +492,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
     if (to != address(0)) {
       s_ownerToTokenIds[to].push(tokenId);
+      uint256 lengthOfAssets = s_assetsLocked[tokenId].length;
+
+      for (uint256 i = 0; i < lengthOfAssets; i++) {
+        address asset = s_assetsLocked[tokenId][i];
+        LpTokenType lpType = s_lpType[asset];
+        removeDelegatees(tokenId, s_delegatees[tokenId][lpType], asset, new uint256[](0), true);
+        removeDelegators(s_delegators[tokenId][lpType], tokenId, asset, new uint256[](0), true);
+      }
     }
   }
 
@@ -500,13 +522,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @notice Sets the strategy for a given LP token type
    * @param _lpType LP token type to set the strategy for
    * @param _strategy Address of the strategy contract
-   * @param _strategyData Additional data for the strategy
    */
-  function setStakeStrategy(
-    LpTokenType _lpType,
-    IStakeStrategy _strategy,
-    bytes memory _strategyData
-  ) external onlyOwner {
+  function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
     require(address(_strategy) != address(0), "Invalid strategy address");
     s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
   }
@@ -530,6 +547,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     DepositType _depositType,
     LpTokenType _lpType
   ) internal {
+    if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
+
     uint256 supplyBefore = s_supply[_lpType];
     s_supply[_lpType] = supplyBefore + _tokenAmount;
 
@@ -770,7 +789,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (_tokenAmount[i] == 0) revert ZeroAmount();
       if (unlockTime <= block.timestamp) revert LockDurationNotInFuture();
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
-      if (!s_whitelistedToken[_tokenAddress[i]]) revert TokenNotWhitelisted();
 
       _depositFor(
         _tokenAddress[i],
@@ -825,7 +843,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[_tokenId][_lpType] = _newLocked;
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, false, 0), _newLocked, _lpType);
     _mint(_to, _tokenId);
-    s_ownerToTokenIds[_to].push(_tokenId);
   }
 
   function _getStakeStrategy(
@@ -833,31 +850,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   ) internal view returns (IStakeStrategy _stakeStrategy, bytes memory _stakeData) {
     IStakeStrategy strategy = s_stakeStrategy[_lpType];
     return (strategy, "");
-  }
-
-  function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {
-    require(AddressUpgradeable.isContract(target), "Address: delegate call to non-contract");
-    (bool success, bytes memory returndata) = target.delegatecall(data);
-    return _verifyCallResult(success, returndata, "Address: low-level delegate call failed");
-  }
-
-  function _verifyCallResult(
-    bool success,
-    bytes memory returndata,
-    string memory errorMessage
-  ) private pure returns (bytes memory) {
-    if (success) {
-      return returndata;
-    } else {
-      if (returndata.length > 0) {
-        assembly {
-          let returndata_size := mload(returndata)
-          revert(add(32, returndata), returndata_size)
-        }
-      } else {
-        revert(errorMessage);
-      }
-    }
   }
 
   function removeTokenFromAssets(address[] storage assetsLocked, address _tokenAddress) internal {
@@ -888,14 +880,16 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
     return s_locked[_tokenId][_lpType];
   }
-  /// @inheritdoc IveION
-  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool) {}
+
+  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool) {
+    return _isApprovedOrOwner(_spender, _tokenId);
+  }
 
   /// @inheritdoc IveION
-  function deactivated(uint256 _tokenId) external view returns (bool) {}
-
-  /// @inheritdoc IveION
-  function voting(uint256 _tokenId, bool _voting) external {}
+  function voting(uint256 _tokenId, bool _voting) external {
+    if (_msgSender() != s_voter) revert NotVoter();
+    s_voted[_tokenId] = _voting;
+  }
 
   /// @inheritdoc IveION
   function balanceOfNFT(
@@ -950,7 +944,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
     s_limitedBoost = _boostAmount;
   }
-
+  function setVoter(address _voter) external onlyOwner {
+    s_voter = _voter;
+  }
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
     return s_ownerToTokenIds[_owner];
   }
@@ -978,8 +974,24 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return s_assetsLocked[_tokenId];
   }
 
-  function getDelegatees(uint256 _tokenId) external view returns (uint256[] memory) {
-    return s_delegatees[_tokenId];
+  function getDelegatees(uint256 _tokenId, LpTokenType _lpType) external view returns (uint256[] memory) {
+    return s_delegatees[_tokenId][_lpType];
+  }
+
+  function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    uint256 protocolFees = s_protocolFees[lpType];
+    require(protocolFees > 0, "No protocol fees available");
+    s_protocolFees[lpType] = 0;
+    IERC20(_tokenAddress).safeTransfer(_recipient, protocolFees);
+  }
+
+  function withdrawDistributedFees(address _tokenAddress, address _recipient) external onlyOwner {
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    uint256 distributedFees = s_distributedFees[lpType];
+    require(distributedFees > 0, "No distributed fees available");
+    s_distributedFees[lpType] = 0;
+    IERC20(_tokenAddress).safeTransfer(_recipient, distributedFees);
   }
 }
 

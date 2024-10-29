@@ -82,6 +82,9 @@ interface IveION {
   error NotTeam();
   error NotPermanentLock();
   error ZeroAddress();
+  error TokenHasDelegatees();
+  error TokenHasDelegators();
+  error NotVoter();
 
   event Deposit(
     address indexed provider,
@@ -132,45 +135,6 @@ interface IveION {
   function withdraw(address _tokenAddress, uint256 _tokenId) external;
 
   /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Mints a token cross-chain, initializing it with a set of params that are preserved cross-chain.
-   * @param _tokenId Token ID to mint.
-   * @param _to Address to mint to.
-   * @param _unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function mint(uint256 _tokenId, address _to, uint256 _unlockTime) external;
-
-  /**
-   * @notice Part of xERC20 standard. Intended to be called by a bridge adapter contract.
-   * Burns a token and returns relevant metadata.
-   * @param _tokenId Token ID to burn.
-   * @return _to Address which owned the token.
-   * @return _unlockTime Timestamp of unlock (needs to be preserved across chains).
-   */
-  function burn(uint256 _tokenId) external returns (address _to, uint256 _unlockTime);
-
-  // TODO: Implement functions for the following operations
-  // function addToLock() external;
-  // function merge() external;
-  // function split() external;
-  // function stake() external;
-
-  /**
-   * @notice Checks if the given address is approved or the owner of the token.
-   * @param _spender Address to check.
-   * @param _tokenId Token ID to check.
-   * @return bool True if the address is approved or the owner, false otherwise.
-   */
-  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool);
-
-  /**
-   * @notice Checks if the given token ID is deactivated.
-   * @param _tokenId Token ID to check.
-   * @return bool True if the token is deactivated, false otherwise.
-   */
-  function deactivated(uint256 _tokenId) external view returns (bool);
-
-  /**
    * @notice Updates the voting status of a token.
    * @param _tokenId Token ID to update.
    * @param _voting Boolean indicating if the token is voting or not.
@@ -184,10 +148,18 @@ interface IveION {
   function balanceOfNFT(
     uint256 _tokenId
   ) external view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts);
-  
+
   /**
    * @notice Gets value of all lp tokens in ETH for a specific owner.
    * @param _owner Owner to check.
    */
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue);
+
+  /**
+   * @notice Checks if a given address is either the owner or an approved operator of a specific token.
+   * @param _spender The address to check for approval or ownership.
+   * @param _tokenId The token ID to check against.
+   * @return A boolean indicating if the address is approved or the owner of the token.
+   */
+  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool);
 }

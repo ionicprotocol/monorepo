@@ -114,6 +114,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
     minter = _minter;
     mpo = _mpo;
+    governor = msg.sender;
   }
 
   /// @inheritdoc IVoter
@@ -332,7 +333,6 @@ contract Voter is IVoter, OwnableUpgradeable {
     if (!IveION(ve).isApprovedOrOwner(vars.sender, _tokenId)) revert NotApprovedOrOwner();
     if (_marketVote.length != _weights.length) revert UnequalLengths();
     if (_marketVote.length > maxVotingNum) revert TooManyPools();
-    if (IveION(ve).deactivated(_tokenId)) revert InactiveManagedNFT();
     vars.timestamp = block.timestamp;
     if ((vars.timestamp > IonicTimeLibrary.epochVoteEnd(vars.timestamp)) && !isWhitelistedNFT[_tokenId])
       revert NotWhitelistedNFT();
