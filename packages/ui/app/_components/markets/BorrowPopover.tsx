@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 
 import { pools } from '@ui/constants/index';
-import { multipliers } from '@ui/utils/multipliers';
+import { hasAdditionalRewards, multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
 
@@ -34,12 +34,21 @@ export default function BorrowPopover({
   const isModeMarket =
     dropdownSelectedChain === 34443 && (asset === 'USDC' || asset === 'WETH');
 
+  const borrowConfig =
+    multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow;
+
+  const showRewardsBadge = hasAdditionalRewards(
+    dropdownSelectedChain,
+    selectedPoolId,
+    asset,
+    'borrow'
+  );
+
   return (
     <>
       <span
         className={`rounded-md w-max md:text-[10px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 ${
-          multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-            ?.ionAPR
+          borrowConfig?.ionAPR
             ? 'bg-accent text-green-900 '
             : 'bg-accent/50 text-green-900 '
         }`}
@@ -47,35 +56,31 @@ export default function BorrowPopover({
         + ION APR <i className="popover-hint">i</i>
       </span>
 
-      {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-        ?.rewards &&
-        !isModeMarket && (
-          <span
-            className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 py-[1px] md:px-1 lg:px-2.5 px-1 ml-1 md:ml-0 text-center`}
-          >
-            + REWARDS <i className="popover-hint">i</i>
-          </span>
-        )}
+      {showRewardsBadge && !isModeMarket && (
+        <span
+          className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 py-[1px] md:px-1 lg:px-2.5 px-1 ml-1 md:ml-0 text-center`}
+        >
+          + REWARDS <i className="popover-hint">i</i>
+        </span>
+      )}
 
-      {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow
-        ?.turtle &&
-        !isModeMarket && (
-          <span className="text-darkone rounded-md w-max md:ml-0 text-center ">
-            <a
-              className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
-              href="https://turtle.club/dashboard/?ref=IONIC"
-              target="_blank"
-              rel="noreferrer"
-            >
-              + TURTLE{' '}
-              <img
-                alt="external-link"
-                className="w-3 h-3"
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
-            </a>
-          </span>
-        )}
+      {borrowConfig?.turtle && !isModeMarket && (
+        <span className="text-darkone rounded-md w-max md:ml-0 text-center ">
+          <a
+            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+            rel="noreferrer"
+          >
+            + TURTLE{' '}
+            <img
+              alt="external-link"
+              className="w-3 h-3"
+              src="https://img.icons8.com/material-outlined/24/external-link.png"
+            />
+          </a>
+        </span>
+      )}
       <div
         className={`popover absolute min-w-[190px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all`}
       >
@@ -87,11 +92,9 @@ export default function BorrowPopover({
             : '-'}
           %
         </div>
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-          ?.borrow && (
+        {borrowConfig && (
           <>
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.flywheel && (
+            {borrowConfig?.flywheel && (
               <Rewards
                 cToken={cToken}
                 pool={pool}
@@ -100,8 +103,7 @@ export default function BorrowPopover({
                 rewards={rewards}
               />
             )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.ionic > 0 && (
+            {borrowConfig?.ionic > 0 && (
               <>
                 <div className="flex ">
                   <img
@@ -159,8 +161,7 @@ export default function BorrowPopover({
                   </div>
                 </>
               )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.etherfi && (
+            {borrowConfig?.etherfi && (
               <>
                 <div className="flex">
                   <img
@@ -186,8 +187,7 @@ export default function BorrowPopover({
                 </div>
               </>
             )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.kelp && (
+            {borrowConfig?.kelp && (
               <>
                 <div className="flex">
                   <img
@@ -213,8 +213,7 @@ export default function BorrowPopover({
                 </div>
               </>
             )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.eigenlayer && (
+            {borrowConfig?.eigenlayer && (
               <div className="flex">
                 <img
                   alt=""
@@ -224,8 +223,7 @@ export default function BorrowPopover({
                 + EigenLayer Points
               </div>
             )}
-            {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
-              ?.borrow?.spice && (
+            {borrowConfig?.spice && (
               <div className="flex">
                 <img
                   alt=""

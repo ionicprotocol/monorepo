@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { pools } from '@ui/constants/index';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
-import { multipliers } from '@ui/utils/multipliers';
+import { hasAdditionalRewards, multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
 
@@ -43,6 +43,16 @@ export default function SupplyPopover({
     (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
   )?.[cToken];
 
+  const supplyConfig =
+    multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply;
+
+  const showRewardsBadge = hasAdditionalRewards(
+    dropdownSelectedChain,
+    selectedPoolId,
+    asset,
+    'supply'
+  );
+
   return (
     <>
       <span
@@ -56,9 +66,8 @@ export default function SupplyPopover({
         + ION APR <i className="popover-hint">i</i>
       </span>
 
-      {(multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-        ?.rewards ||
-        isMainModeMarket) && (
+      {/* Rewards Badge */}
+      {showRewardsBadge && (
         <span
           className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
         >
@@ -79,25 +88,23 @@ export default function SupplyPopover({
         </span>
       )}
 
-      {multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-        ?.turtle &&
-        !isMainModeMarket && (
-          <span className="text-darkone rounded-md w-max md:ml-0 text-center">
-            <a
-              className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
-              href="https://turtle.club/dashboard/?ref=IONIC"
-              target="_blank"
-              rel="noreferrer"
-            >
-              + TURTLE{' '}
-              <img
-                alt="external-link"
-                className="w-3 h-3"
-                src="https://img.icons8.com/material-outlined/24/external-link.png"
-              />
-            </a>
-          </span>
-        )}
+      {supplyConfig?.turtle && !isMainModeMarket && (
+        <span className="text-darkone rounded-md w-max md:ml-0 text-center">
+          <a
+            className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+            href="https://turtle.club/dashboard/?ref=IONIC"
+            target="_blank"
+            rel="noreferrer"
+          >
+            + TURTLE{' '}
+            <img
+              alt="external-link"
+              className="w-3 h-3"
+              src="https://img.icons8.com/material-outlined/24/external-link.png"
+            />
+          </a>
+        </span>
+      )}
       <div
         className={`popover absolute min-w-[190px] top-full p-2 px-2 mt-1 border ${pools[dropdownSelectedChain].border} rounded-md text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all whitespace-nowrap`}
       >
@@ -131,16 +138,14 @@ export default function SupplyPopover({
           </div>
         )}
         <p>
-          {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.underlyingAPR &&
+          {supplyConfig?.underlyingAPR &&
             `Native Asset Yield: +${multipliers[dropdownSelectedChain]?.[
               selectedPoolId
             ]?.[asset]?.supply?.underlyingAPR?.toLocaleString('en-US', {
               maximumFractionDigits: 2
             })}%`}
         </p>
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.flywheel && (
+        {supplyConfig?.flywheel && (
           <Rewards
             cToken={cToken}
             pool={pool}
@@ -149,8 +154,7 @@ export default function SupplyPopover({
             rewards={rewards}
           />
         )}
-        {(multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.ionic ?? 0) > 0 && (
+        {(supplyConfig?.ionic ?? 0) > 0 && (
           <>
             <div className="flex mt-1">
               <img
@@ -175,10 +179,7 @@ export default function SupplyPopover({
             </div>
           </>
         )}
-        {Boolean(
-          multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-            ?.mode
-        ) &&
+        {Boolean(supplyConfig?.mode) &&
           asset !== 'USDC' &&
           asset !== 'WETH' && (
             <>
@@ -210,8 +211,7 @@ export default function SupplyPopover({
               </div>
             </>
           )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.etherfi && (
+        {supplyConfig?.etherfi && (
           <>
             <div className="flex">
               <img
@@ -236,8 +236,7 @@ export default function SupplyPopover({
             </div>
           </>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.renzo && (
+        {supplyConfig?.renzo && (
           <>
             <div className="flex">
               <img
@@ -262,8 +261,7 @@ export default function SupplyPopover({
             </div>
           </>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.kelp && (
+        {supplyConfig?.kelp && (
           <>
             <div className="flex">
               <img
@@ -288,8 +286,7 @@ export default function SupplyPopover({
             </div>
           </>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.eigenlayer && (
+        {supplyConfig?.eigenlayer && (
           <div className="flex">
             <img
               alt=""
@@ -299,8 +296,7 @@ export default function SupplyPopover({
             + EigenLayer Points
           </div>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.spice && (
+        {supplyConfig?.spice && (
           <div className="flex">
             <img
               alt=""
@@ -310,8 +306,7 @@ export default function SupplyPopover({
             + Spice Points
           </div>
         )}
-        {multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply
-          ?.nektar && (
+        {supplyConfig?.nektar && (
           <div className="flex mt-1">
             <img
               alt=""

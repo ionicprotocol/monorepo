@@ -17,6 +17,7 @@ export type Multipliers = {
   spice?: boolean;
   underlyingAPR?: number;
   nektar?: number;
+  op?: boolean;
 };
 
 export const multipliers: Record<
@@ -110,7 +111,8 @@ export const multipliers: Record<
           mode: 0,
           turtle: false,
           rewards: false,
-          ionAPR: false
+          ionAPR: false,
+          op: true
         }
       },
       USDT: {
@@ -168,7 +170,8 @@ export const multipliers: Record<
           mode: 0,
           turtle: false,
           rewards: false,
-          ionAPR: false
+          ionAPR: false,
+          op: true
         }
       },
       ezETH: {
@@ -881,4 +884,20 @@ export const steerLPMultipliers: Record<string, LpMultipliers> = {
     priceMultiplier: 10,
     decimals: 6
   }
+};
+
+export const hasAdditionalRewards = (
+  chainId: number,
+  poolId: string,
+  asset: string,
+  type: 'borrow' | 'supply'
+): boolean => {
+  const supplyConfig = multipliers[chainId]?.[poolId]?.[asset]?.[type];
+  if (!supplyConfig) return false;
+
+  const excludedKeys = ['ionAPR', 'rewards', 'turtle', 'flywheel'];
+
+  return Object.entries(supplyConfig).some(
+    ([key, value]) => !excludedKeys.includes(key) && Boolean(value)
+  );
 };
