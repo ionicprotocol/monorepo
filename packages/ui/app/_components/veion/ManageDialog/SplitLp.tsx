@@ -5,9 +5,9 @@ import { InfoIcon } from 'lucide-react';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 
-import { PrecisionSlider } from '../PrecisionSlider';
+import { PrecisionSlider } from '../../PrecisionSlider';
 
-export function SplitView() {
+export function SplitLp() {
   const maxAmount = 1000;
   const utilizationMarks = [0, 25, 50, 75, 100];
 

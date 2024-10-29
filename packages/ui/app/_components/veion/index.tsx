@@ -4,7 +4,7 @@ export { default as InfoCard } from './InfoCard';
 export { default as InfoPopover } from './InfoPopover';
 export { default as LockDuration } from './LockDuration';
 export { default as LPRow } from './LPRow';
-export { default as ManageDialog } from './ManageDialog';
+export { default as ManageDialog } from './ManageDialog/index';
 export { default as VeionClaim } from './VeionClaim';
 export { default as LockAndGetDialog } from './LockAndGetDialog';
 export { default as MyVeionTable } from './MyVeionTable';

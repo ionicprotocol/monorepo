@@ -7,9 +7,9 @@ import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
 import { Separator } from '@ui/components/ui/separator';
 
-import CustomTooltip from '../CustomTooltip';
+import CustomTooltip from '../../CustomTooltip';
 
-export function MergeView({ lockedUntil }: { lockedUntil: Date }) {
+export function MergeLps({ lockedUntil }: { lockedUntil: Date }) {
   const [delegateAddress, setDelegateAddress] = useState('');
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
 

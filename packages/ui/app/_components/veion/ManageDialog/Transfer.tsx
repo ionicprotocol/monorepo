@@ -6,8 +6,8 @@ import { isAddress } from 'viem';
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
 
-// TransferView.tsx
-export function TransferView() {
+// Transfer.tsx
+export function Transfer() {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
 

@@ -2,15 +2,15 @@ import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { getToken } from '@ui/utils/getStakingTokens';
 
-import CustomTooltip from '../CustomTooltip';
-import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
-import MaxDeposit from '../stake/MaxDeposit';
+import CustomTooltip from '../../CustomTooltip';
+import { usePrecisionSlider, PrecisionSlider } from '../../PrecisionSlider';
+import MaxDeposit from '../../stake/MaxDeposit';
 
-type IncreaseViewProps = {
+type IncreaseLockedAmountProps = {
   chain: string;
 };
 
-export function IncreaseView({ chain }: IncreaseViewProps) {
+export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
   const utilizationMarks = [0, 25, 50, 75, 100];
   const maxtoken = 1000;
 

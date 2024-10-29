@@ -22,7 +22,7 @@ export default function Governance() {
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);
-  const view = queryview ?? 'MyVeion';
+  const view = queryview ?? 'My veION';
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
@@ -52,15 +52,15 @@ export default function Governance() {
           <div className="w-full flex justify-between items-center">
             <div className="bg-grayUnselect rounded-md mb-3 inline-block">
               <ToggleLinks
-                arrText={['MyVeion', 'Delegate veION']}
+                arrText={['My veION', 'Delegate veION']}
                 baseUrl="/veion/governance"
                 currentChain={chain}
               />
             </div>
-            <UniversalClaim />
+            {view === 'My veION' && <UniversalClaim />}
           </div>
 
-          {view === 'MyVeion' ? (
+          {view === 'My veION' ? (
             <MyVeionTable data={lockedData} />
           ) : (
             <DelegateVeIonTable data={lockedDataWithDelegate} />

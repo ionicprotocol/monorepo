@@ -6,7 +6,7 @@ import { isAddress } from 'viem';
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
 
-export function DelegateView() {
+export function Delegate() {
   const [delegateAddress, setDelegateAddress] = useState('');
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
 

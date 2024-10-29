@@ -5,11 +5,11 @@ import { format } from 'date-fns';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 
-import AutoLock from './AutoLock';
-import CustomTooltip from '../CustomTooltip';
-import { LockDurationPicker } from '../LockDurationPicker';
+import CustomTooltip from '../../CustomTooltip';
+import { LockDurationPicker } from '../../LockDurationPicker';
+import AutoLock from '../AutoLock';
 
-export function ExtendView() {
+export function Extend() {
   const [autoLock, setAutoLock] = useState(false);
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [selectedDuration, setSelectedDuration] = useState<number>(180);

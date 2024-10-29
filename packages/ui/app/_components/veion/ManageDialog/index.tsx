@@ -14,13 +14,13 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 
-import { DelegateView } from './DelegateView';
-import { ExtendView } from './ExtendView';
-import { IncreaseView } from './IncreaseView';
+import { Delegate } from './Delegate';
+import { Extend } from './Extend';
+import { IncreaseLockedAmount } from './IncreaseLockedAmount';
 import { ManageTabs } from './ManageTabs';
-import { MergeView } from './MergeView';
-import { SplitView } from './SplitView';
-import { TransferView } from './TransferView';
+import { MergeLps } from './MergeLps';
+import { SplitLp } from './SplitLp';
+import { Transfer } from './Transfer';
 
 interface ManageDialogProps {
   isOpen: boolean;
@@ -73,14 +73,16 @@ export default function ManageDialog({
           defaultValue={toggleArr[0]}
         />
 
-        {activeManageToggle === 'Increase' && <IncreaseView chain={chain} />}
-        {activeManageToggle === 'Extend' && <ExtendView />}
-        {activeManageToggle === 'Delegate' && <DelegateView />}
-        {activeManageToggle === 'Merge' && (
-          <MergeView lockedUntil={lockedUntil} />
+        {activeManageToggle === 'Increase' && (
+          <IncreaseLockedAmount chain={chain} />
         )}
-        {activeManageToggle === 'Split' && <SplitView />}
-        {activeManageToggle === 'Transfer' && <TransferView />}
+        {activeManageToggle === 'Extend' && <Extend />}
+        {activeManageToggle === 'Delegate' && <Delegate />}
+        {activeManageToggle === 'Merge' && (
+          <MergeLps lockedUntil={lockedUntil} />
+        )}
+        {activeManageToggle === 'Split' && <SplitLp />}
+        {activeManageToggle === 'Transfer' && <Transfer />}
       </DialogContent>
     </Dialog>
   );
