@@ -181,6 +181,21 @@ export default function SupplyPopover({
             </div>
           </>
         )}
+        {(supplyConfig?.anzen ?? 0) > 0 && (
+          <div className="flex mt-1">
+            <img
+              alt=""
+              className="size-4 rounded mr-1"
+              src="/img/symbols/32/color/usdz.png"
+            />{' '}
+            +{' '}
+            {
+              multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]
+                ?.supply?.anzen
+            }
+            x Anzen Points
+          </div>
+        )}
         {Boolean(supplyConfig?.mode) &&
           asset !== 'USDC' &&
           asset !== 'WETH' && (

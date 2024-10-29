@@ -18,6 +18,7 @@ export type Multipliers = {
   underlyingAPR?: number;
   nektar?: number;
   op?: boolean;
+  anzen?: number;
 };
 
 export const multipliers: Record<
@@ -643,7 +644,8 @@ export const multipliers: Record<
           turtle: false,
           rewards: true,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          anzen: 20
         }
       },
       EURC: {
