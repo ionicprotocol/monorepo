@@ -44,4 +44,8 @@ contract ReplacingFlywheelDynamicRewards is FlywheelDynamicRewards {
       return uint192(rewardAmount);
     }
   }
+
+  function getRewardsPerSecondPerToken(ERC20 strategy) external view override returns (uint256) {
+    return replacedFlywheel.getRewardsPerSecondPerToken(strategy);
+  }
 }
