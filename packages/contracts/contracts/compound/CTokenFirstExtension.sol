@@ -217,7 +217,7 @@ contract CTokenFirstExtension is
    * @param _name the new ERC20 token name to use
    * @param _symbol the new ERC20 token symbol to use
    */
-  function _setNameAndSymbol(string calldata _name, string calldata _symbol) external onlyOracleApproved {
+  function _setNameAndSymbol(string calldata _name, string calldata _symbol) external {
     // Check caller is admin
     require(hasAdminRights(), "!admin");
 
@@ -226,7 +226,7 @@ contract CTokenFirstExtension is
     symbol = _symbol;
   }
 
-  function _setAddressesProvider(address _ap) external onlyOracleApproved {
+  function _setAddressesProvider(address _ap) external {
     // Check caller is admin
     require(hasAdminRights(), "!admin");
 
@@ -240,7 +240,7 @@ contract CTokenFirstExtension is
    */
   function _setReserveFactor(
     uint256 newReserveFactorMantissa
-  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -272,7 +272,7 @@ contract CTokenFirstExtension is
    */
   function _setAdminFee(
     uint256 newAdminFeeMantissa
-  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {
@@ -326,7 +326,7 @@ contract CTokenFirstExtension is
    */
   function _setInterestRateModel(
     InterestRateModel newInterestRateModel
-  ) public override nonReentrant(false) onlyOracleApproved returns (uint256) {
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     if (!hasAdminRights()) {
       return fail(Error.UNAUTHORIZED, FailureInfo.SET_INTEREST_RATE_MODEL_OWNER_CHECK);

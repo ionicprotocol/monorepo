@@ -64,7 +64,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
     // CErc20Delegate
     const erc20DelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([erc20Del.address as Address]);
     const owner = await fuseFeeDistributor.read.owner();
-    if (erc20DelExtensions.length == 0 || erc20DelExtensions[0] != erc20Del.address) {
+    if (
+      erc20DelExtensions.length == 0 ||
+      erc20DelExtensions[0] != erc20Del.address ||
+      erc20DelExtensions[1] != cTokenFirstExtension.address
+    ) {
       if (owner.toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: fuseFeeDistributor,
@@ -120,7 +124,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
     const erc20PluginDelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([
       erc20PluginDel.address as Address
     ]);
-    if (erc20PluginDelExtensions.length == 0 || erc20PluginDelExtensions[0] != erc20PluginDel.address) {
+    if (
+      erc20PluginDelExtensions.length == 0 ||
+      erc20PluginDelExtensions[0] != erc20PluginDel.address ||
+      erc20PluginDelExtensions[1] != cTokenFirstExtension.address
+    ) {
       if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: fuseFeeDistributor,
@@ -182,7 +190,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
     const erc20RewardsDelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([
       erc20RewardsDel.address as Address
     ]);
-    if (erc20RewardsDelExtensions.length == 0 || erc20RewardsDelExtensions[0] != erc20RewardsDel.address) {
+    if (
+      erc20RewardsDelExtensions.length == 0 ||
+      erc20RewardsDelExtensions[0] != erc20RewardsDel.address ||
+      erc20RewardsDelExtensions[1] != cTokenFirstExtension.address
+    ) {
       if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: fuseFeeDistributor,
@@ -245,7 +257,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
     ]);
     if (
       erc20PluginRewardsDelExtensions.length == 0 ||
-      erc20PluginRewardsDelExtensions[0] != erc20PluginRewardsDel.address
+      erc20PluginRewardsDelExtensions[0] != erc20PluginRewardsDel.address ||
+      erc20PluginRewardsDelExtensions[1] != cTokenFirstExtension.address
     ) {
       if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
