@@ -20,6 +20,7 @@ import { MasterPriceOracle, BasePriceOracle } from "../oracles/MasterPriceOracle
 import { PoolLens } from "../PoolLens.sol";
 import { PoolLensSecondary } from "../PoolLensSecondary.sol";
 import { JumpRateModel } from "../compound/JumpRateModel.sol";
+import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
 import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
