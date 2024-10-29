@@ -34,8 +34,6 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   address[] public rewards;
   mapping(address => bool) public isReward;
 
-  MasterPriceOracle public mpo;
-
   /// @notice A checkpoint for marking balance
   struct Checkpoint {
     uint256 timestamp;
@@ -64,12 +62,11 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     _;
   }
 
-  function initialize(address _voter, address _mpo) public initializer {
+  function initialize(address _voter) public initializer {
     __ReentrancyGuard_init();
     __Ownable_init();
     voter = _voter;
     ve = IVoter(_voter).ve();
-    mpo = MasterPriceOracle(_mpo);
   }
 
   /// @inheritdoc IBribeRewards
@@ -349,7 +346,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     historicalPrices[lpToken][epochStart] = price;
   }
 
-  function setMpo(address _mpo) external onlyOwner {
-    mpo = MasterPriceOracle(_mpo);
+  function setAuthorized(address _authorized) external onlyOwner {
+    authorized = _authorized;
   }
 }
