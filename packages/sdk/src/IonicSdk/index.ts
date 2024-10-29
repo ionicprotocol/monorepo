@@ -50,6 +50,7 @@ import { withVaults } from "../modules/Vaults";
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
+import PrudentiaInterestRateModel from "./irm/PrudentiaInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 export type StaticContracts = {
@@ -289,9 +290,11 @@ export class IonicBase {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
-      AdjustableJumpRateModel: AdjustableJumpRateModel
+      AdjustableJumpRateModel: AdjustableJumpRateModel,
+      PrudentiaInterestRateModel: PrudentiaInterestRateModel
     };
     const bytecode = await this.publicClient.getCode({ address: interestRateModelAddress });
+    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ bytecode:", bytecode);
     if (!bytecode) {
       throw Error("Bytecode not found");
     }
@@ -299,7 +302,9 @@ export class IonicBase {
 
     let irmModel = null;
 
+    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ runtimeBytecodeHash:", runtimeBytecodeHash);
     for (const irm of Object.values(interestRateModels)) {
+      console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ irm.RUNTIME_BYTECODE_HASH:", irm.RUNTIME_BYTECODE_HASH);
       if (runtimeBytecodeHash === irm.RUNTIME_BYTECODE_HASH) {
         irmModel = new irm();
         break;

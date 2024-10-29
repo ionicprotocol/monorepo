@@ -17,6 +17,11 @@
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false
   },
-  "include": ["./src/**/*"], // Include all files in the src directory
-  "exclude": ["./typechain", "./dist", "./node_modules"] // Exclude generated, output, and dependency files
+  "include": ["./src/**/*", "./artifacts/**/*.json"], // Include all files in the src directory
+  "exclude": [
+    "./typechain",
+    "./dist",
+    "./node_modules",
+    "./artifacts/**/*" // Exclude artifacts if needed
+  ] // Exclude generated, output, and dependency files
 }
