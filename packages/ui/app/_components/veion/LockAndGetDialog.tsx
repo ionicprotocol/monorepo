@@ -1,5 +1,6 @@
 // VeIonDialog.tsx
 import { useState } from 'react';
+
 import { base, optimism, mode } from 'viem/chains';
 import { useChainId, useAccount } from 'wagmi';
 
@@ -14,11 +15,11 @@ import { Separator } from '@ui/components/ui/separator';
 import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
-import { LockDurationPicker } from '../LockDurationPicker';
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
+import { LockDurationPicker } from '../LockDurationPicker';
 import NetworkDropdown from '../NetworkDropdown';
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
 import MaxDeposit from '../stake/MaxDeposit';
 
 interface VeIonDialogProps {
@@ -34,6 +35,8 @@ export default function VeIonDialog({
   chain,
   selectedToken
 }: VeIonDialogProps) {
+  // eslint-disable-next-line no-console
+  console.log('selectedToken', selectedToken);
   const chainId = useChainId();
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [autoLock, setAutoLock] = useState<boolean>(false);
@@ -65,6 +68,7 @@ export default function VeIonDialog({
         console.warn('Wallet not connected');
         return;
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const args = {
         tokenAddress: '0xabced',
         tokenAmount: veIonAmount.toString(),

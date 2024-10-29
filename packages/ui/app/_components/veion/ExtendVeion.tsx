@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import { format } from 'date-fns';
+
 import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
@@ -8,11 +11,10 @@ import {
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
 
-import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
-import { LockDurationPicker } from '../LockDurationPicker';
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
-import { useState } from 'react';
+import { LockDurationPicker } from '../LockDurationPicker';
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
 
 interface ExtendVeionProps {
   isOpen: boolean;

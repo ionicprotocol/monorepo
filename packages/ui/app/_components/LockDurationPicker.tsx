@@ -1,7 +1,9 @@
 // LockDurationPicker.tsx
 import { useState, useMemo } from 'react';
+
 import { format, addDays } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
+
 import { Button } from '@ui/components/ui/button';
 import { Calendar } from '@ui/components/ui/calendar';
 import {
@@ -9,8 +11,9 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@ui/components/ui/popover';
-import { PrecisionSlider } from './PrecisionSlider';
+
 import CustomTooltip from './CustomTooltip';
+import { PrecisionSlider } from './PrecisionSlider';
 
 interface LockDurationPickerProps {
   selectedDuration: number;

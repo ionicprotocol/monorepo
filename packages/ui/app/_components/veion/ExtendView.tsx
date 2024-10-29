@@ -1,10 +1,13 @@
 import { useState } from 'react';
+
 import { format } from 'date-fns';
+
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { LockDurationPicker } from '../LockDurationPicker';
+
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
+import { LockDurationPicker } from '../LockDurationPicker';
 
 export function ExtendView() {
   const [autoLock, setAutoLock] = useState(false);

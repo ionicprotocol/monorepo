@@ -1,8 +1,9 @@
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { getToken } from '@ui/utils/getStakingTokens';
-import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
+
 import CustomTooltip from '../CustomTooltip';
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
 import MaxDeposit from '../stake/MaxDeposit';
 
 type IncreaseViewProps = {

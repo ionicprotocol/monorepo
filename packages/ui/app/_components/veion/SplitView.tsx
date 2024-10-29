@@ -1,7 +1,10 @@
 import { useState } from 'react';
+
 import { InfoIcon } from 'lucide-react';
+
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
+
 import { PrecisionSlider } from '../PrecisionSlider';
 
 export function SplitView() {

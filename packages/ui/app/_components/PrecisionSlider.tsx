@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import { Slider } from '@ui/components/ui/slider';
 
 interface PrecisionSliderProps {
@@ -44,9 +46,6 @@ export function PrecisionSlider({
     </div>
   );
 }
-
-// Hook for handling precision calculations
-import { useState, useEffect } from 'react';
 
 interface UsePrecisionSliderProps {
   maxValue: number;
