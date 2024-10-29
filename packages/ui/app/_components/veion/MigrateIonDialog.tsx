@@ -135,7 +135,7 @@ export default function MigrateIonDialog({
             className="w-full bg-[#90EDB3] text-black hover:bg-[#90EDB3]/90"
             disabled={!migrateAmount || Number(migrateAmount) === 0}
           >
-            Provide Liquidity
+            Withdraw Liquidity
           </Button>
         </div>
       </DialogContent>
