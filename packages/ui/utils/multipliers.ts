@@ -127,7 +127,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -147,7 +147,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -301,7 +301,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         },
@@ -330,7 +330,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -350,7 +350,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -369,7 +369,7 @@ export const multipliers: Record<
           ionic: 0,
           mode: 0,
           turtle: false,
-          rewards: true,
+          rewards: false,
           ionAPR: true,
           flywheel: true
         }
