@@ -1,28 +1,26 @@
 import { useState } from 'react';
-
 import { InfoIcon } from 'lucide-react';
-
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { Slider } from '@ui/components/ui/slider';
+import { PrecisionSlider } from '../PrecisionSlider';
 
 export function SplitView() {
-  const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
-  const maxAmount = 1000; // Default max amount
+  const maxAmount = 1000;
   const utilizationMarks = [0, 25, 50, 75, 100];
 
-  // Update both values from either slider
+  const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
+
   const handleFirstSliderChange = (newValue: number) => {
-    setSplitValues([newValue, 100 - newValue]);
+    setSplitValues([newValue, Math.round(100 - newValue)]);
   };
 
   const handleSecondSliderChange = (newValue: number) => {
-    setSplitValues([100 - newValue, newValue]);
+    setSplitValues([Math.round(100 - newValue), newValue]);
   };
 
   // Calculate actual token amounts based on percentages
-  const firstAmount = (splitValues[0] / 100) * maxAmount;
-  const secondAmount = (splitValues[1] / 100) * maxAmount;
+  const firstAmount = Number(((splitValues[0] / 100) * maxAmount).toFixed(2));
+  const secondAmount = Number(((splitValues[1] / 100) * maxAmount).toFixed(2));
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
@@ -33,22 +31,10 @@ export function SplitView() {
           <p className="text-xs text-white/50 mb-2">
             First Split: {splitValues[0]}%
           </p>
-          <div className="w-full mb-2 text-xs flex justify-between text-white/25">
-            {utilizationMarks.map((mark) => (
-              <span
-                key={mark}
-                className={splitValues[0] >= mark ? 'text-accent' : ''}
-              >
-                {mark}%
-              </span>
-            ))}
-          </div>
-          <Slider
-            value={[splitValues[0]]}
-            onValueChange={(val) => handleFirstSliderChange(val[0])}
-            max={100}
-            step={1}
-            className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
+          <PrecisionSlider
+            value={splitValues[0]}
+            onChange={handleFirstSliderChange}
+            marks={utilizationMarks}
           />
           <p className="text-xs text-white/50 mt-2">
             Amount: {firstAmount.toLocaleString()} veION
@@ -61,22 +47,10 @@ export function SplitView() {
           <p className="text-xs text-white/50 mb-2">
             Second Split: {splitValues[1]}%
           </p>
-          <div className="w-full mb-2 text-xs flex justify-between text-white/25">
-            {utilizationMarks.map((mark) => (
-              <span
-                key={mark}
-                className={splitValues[1] >= mark ? 'text-accent' : ''}
-              >
-                {mark}%
-              </span>
-            ))}
-          </div>
-          <Slider
-            value={[splitValues[1]]}
-            onValueChange={(val) => handleSecondSliderChange(val[0])}
-            max={100}
-            step={1}
-            className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
+          <PrecisionSlider
+            value={splitValues[1]}
+            onChange={handleSecondSliderChange}
+            marks={utilizationMarks}
           />
           <p className="text-xs text-white/50 mt-2">
             Amount: {secondAmount.toLocaleString()} veION

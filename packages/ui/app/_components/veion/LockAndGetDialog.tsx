@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import { format, addDays } from 'date-fns';
 import { Calendar } from 'lucide-react';
 import { base, optimism, mode } from 'viem/chains';
@@ -19,10 +18,10 @@ import {
   PopoverTrigger
 } from '@ui/components/ui/popoverDialog';
 import { Separator } from '@ui/components/ui/separator';
-import { Slider } from '@ui/components/ui/slider';
 import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import NetworkDropdown from '../NetworkDropdown';
@@ -44,23 +43,30 @@ export default function VeIonDialog({
   // eslint-disable-next-line no-console
   console.log('selectedToken', selectedToken);
   const chainId = useChainId();
-  const [veIonAmount, setVeIonAmount] = useState<string>('');
-  const [utilization, setUtilization] = useState<number>(0);
   const [lockDate, setLockDate] = useState<Date>();
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const maxtoken = '100';
+  const maxtoken = 100;
   const { isConnected } = useAccount();
-  const [selectedDuration, setSelectedDuration] = useState<number>(180);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  useEffect(() => {
-    setUtilization(
-      Number(((+veIonAmount / Number(maxtoken)) * 100).toFixed(0))
-    );
-  }, [veIonAmount]);
+  // Use the precision slider hook for veION amount
+  const {
+    amount: veIonAmount,
+    percentage: utilization,
+    handleAmountChange: handleVeIonChange,
+    handlePercentageChange: handleUtilizationChange
+  } = usePrecisionSlider({
+    maxValue: maxtoken,
+    initialValue: 0
+  });
 
-  const utilizationMarks = [0, 25, 50, 75, 100];
+  // Use another instance for duration
+  const { amount: selectedDuration, handleAmountChange: handleDurationChange } =
+    usePrecisionSlider({
+      maxValue: 730,
+      initialValue: 180
+    });
 
   async function lockAndGetVeion() {
     try {
@@ -72,28 +78,24 @@ export default function VeIonDialog({
       }
       const args = {
         tokenAddress: '0xabced',
-        tokenAmount: veIonAmount,
+        tokenAmount: veIonAmount.toString(),
         duration: selectedDuration.toString()
       };
-
-      // eslint-disable-next-line no-console
-      console.log(args);
       setSuccess(true);
     } catch (err) {
       console.warn(err);
     }
   }
 
-  const isButtonDisabled = !lockDate || Number(veIonAmount) === 0;
+  const isButtonDisabled = !lockDate || veIonAmount === 0;
 
-  const handleDurationChange = (val: number[]) => {
-    const duration = val[0];
-    setSelectedDuration(duration);
-
-    // Calculate the new date based on duration
+  const handleDurationSliderChange = (duration: number) => {
+    handleDurationChange(duration);
     const newDate = addDays(new Date(), duration);
     setLockDate(newDate);
   };
+
+  const utilizationMarks = [0, 25, 50, 75, 100];
 
   return (
     <Dialog
@@ -116,37 +118,20 @@ export default function VeIonDialog({
             <div className="space-y-4">
               <MaxDeposit
                 headerText="LOCK AMOUNT"
-                max={maxtoken}
-                amount={veIonAmount}
+                max={maxtoken.toString()}
+                amount={veIonAmount.toString()}
                 tokenName="ion/eth LP"
                 token={getToken(+chain)}
                 handleInput={(val?: string) => {
-                  setVeIonAmount(val || '');
+                  handleVeIonChange(Number(val || 0));
                 }}
                 chain={+chain}
               />
               <div className="w-full mx-auto mt-3 mb-5">
-                <div className="w-full mb-2 text-xs flex justify-between text-white/25">
-                  {utilizationMarks.map((mark) => (
-                    <span
-                      key={mark}
-                      className={utilization >= mark ? 'text-accent' : ''}
-                    >
-                      {mark}%
-                    </span>
-                  ))}
-                </div>
-                <Slider
-                  value={[utilization]}
-                  onValueChange={(val) => {
-                    const newVal = val[0];
-                    setUtilization(newVal);
-                    const veionval = (Number(newVal) / 100) * Number(maxtoken);
-                    setVeIonAmount(veionval.toString());
-                  }}
-                  max={100}
-                  step={1}
-                  className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
+                <PrecisionSlider
+                  value={utilization}
+                  onChange={handleUtilizationChange}
+                  marks={utilizationMarks}
                 />
               </div>
 
@@ -183,12 +168,11 @@ export default function VeIonDialog({
                         onSelect={(date) => {
                           if (date) {
                             setLockDate(date);
-                            // Calculate duration in days when date is selected
                             const durationInDays = Math.round(
                               (date.getTime() - new Date().getTime()) /
                                 (1000 * 60 * 60 * 24)
                             );
-                            setSelectedDuration(durationInDays);
+                            handleDurationChange(durationInDays);
                           }
                           setIsCalendarOpen(false);
                         }}
@@ -198,13 +182,12 @@ export default function VeIonDialog({
                     </PopoverContent>
                   </Popover>
                 </div>
-                <Slider
-                  value={[selectedDuration]}
-                  onValueChange={handleDurationChange}
+                <PrecisionSlider
+                  value={selectedDuration}
+                  onChange={handleDurationSliderChange}
                   max={730}
                   min={180}
                   step={1}
-                  className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
                 />
                 <div className="w-full flex justify-between text-xs text-white/60">
                   <span>180d</span>

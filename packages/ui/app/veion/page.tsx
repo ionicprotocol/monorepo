@@ -15,7 +15,7 @@ import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 
 import {
-  GetVeIonDialog,
+  LockAndGetDialog,
   LPRow,
   InfoCard,
   AddLiquidityDialog,
@@ -134,7 +134,7 @@ export default function VeIon() {
         </div>
       </CardContent>
 
-      <GetVeIonDialog
+      <LockAndGetDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         chain={+chain}

@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
-
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { Slider } from '@ui/components/ui/slider';
 import { getToken } from '@ui/utils/getStakingTokens';
-
+import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
 import CustomTooltip from '../CustomTooltip';
 import MaxDeposit from '../stake/MaxDeposit';
 
@@ -14,56 +11,31 @@ type IncreaseViewProps = {
 
 export function IncreaseView({ chain }: IncreaseViewProps) {
   const utilizationMarks = [0, 25, 50, 75, 100];
-  const [veionAmount, setVeIonAmount] = useState(0);
-  const [sliderValue, setSliderValue] = useState(0);
-  const maxtoken = '1000';
+  const maxtoken = 1000;
 
-  useEffect(() => {
-    const newSliderValue = (veionAmount / Number(maxtoken)) * 100;
-    setSliderValue(newSliderValue);
-  }, [veionAmount, maxtoken]);
-
-  const handleInputChange = (val?: string) => {
-    if (val !== undefined) {
-      setVeIonAmount(Number(val));
-    }
-  };
-
-  const handleSliderChange = (val: number[]) => {
-    const newVal = val[0];
-    setSliderValue(newVal);
-    const veionval = (newVal / 100) * Number(maxtoken);
-    setVeIonAmount(veionval);
-  };
+  const {
+    amount: veionAmount,
+    percentage: sliderValue,
+    handleAmountChange: handleInputChange,
+    handlePercentageChange: handleSliderChange
+  } = usePrecisionSlider({ maxValue: maxtoken });
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
       <MaxDeposit
         headerText={'Lock Amount'}
-        max={maxtoken}
+        max={String(maxtoken)}
         amount={String(veionAmount)}
         tokenName={'ion/eth LP'}
         token={getToken(+chain)}
-        handleInput={handleInputChange}
+        handleInput={(val?: string) => handleInputChange(Number(val || 0))}
         chain={+chain}
       />
       <div className="w-full mx-auto mt-3 mb-5">
-        <div className="w-full mb-2 text-xs flex justify-between text-white/25">
-          {utilizationMarks.map((mark) => (
-            <span
-              key={mark}
-              className={sliderValue >= mark ? 'text-accent' : ''}
-            >
-              {mark}%
-            </span>
-          ))}
-        </div>
-        <Slider
-          value={[sliderValue]}
-          onValueChange={handleSliderChange}
-          max={100}
-          step={1}
-          className="[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0"
+        <PrecisionSlider
+          value={sliderValue}
+          onChange={handleSliderChange}
+          marks={utilizationMarks}
         />
       </div>
       <Separator className="bg-white/10 my-4" />

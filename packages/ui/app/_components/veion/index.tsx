@@ -6,7 +6,7 @@ export { default as LockDuration } from './LockDuration';
 export { default as LPRow } from './LPRow';
 export { default as ManageDialog } from './ManageDialog';
 export { default as VeionClaim } from './VeionClaim';
-export { default as GetVeIonDialog } from './GetVeIonDialog';
+export { default as LockAndGetDialog } from './LockAndGetDialog';
 export { default as MyVeionTable } from './MyVeionTable';
 export { default as DelegateVeIonTable } from './DelegateVeIonTable';
 export { default as VotingRows } from './VotingRows';
