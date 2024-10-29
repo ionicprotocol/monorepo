@@ -90,7 +90,7 @@ export const multipliers: Record<
           underlyingAPR: 2.94,
           mode: 0,
           turtle: false,
-          rewards: false,
+          rewards: true,
           ionAPR: false
         }
       },
@@ -206,7 +206,7 @@ export const multipliers: Record<
           mode: 0,
           underlyingAPR: 4.5,
           turtle: false,
-          rewards: false,
+          rewards: true,
           ionAPR: false
         }
       },
@@ -241,7 +241,7 @@ export const multipliers: Record<
           mode: 0,
           underlyingAPR: 6,
           turtle: false,
-          rewards: false,
+          rewards: true,
           ionAPR: false
         }
       },
