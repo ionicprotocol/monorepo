@@ -2,13 +2,14 @@
 import dynamic from 'next/dynamic';
 
 import { pools } from '@ui/constants/index';
-import { hasAdditionalRewards, multipliers } from '@ui/utils/multipliers';
+import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
+import { multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-const Rewards = dynamic(() => import('./Rewards'), {
+const Rewards = dynamic(() => import('./FlyWheelRewards'), {
   ssr: false
 });
 
@@ -37,11 +38,12 @@ export default function BorrowPopover({
   const borrowConfig =
     multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.borrow;
 
-  const showRewardsBadge = hasAdditionalRewards(
+  const showRewardsBadge = useRewardsBadge(
     dropdownSelectedChain,
     selectedPoolId,
     asset,
-    'borrow'
+    'borrow',
+    rewards
   );
 
   return (
@@ -176,14 +178,6 @@ export default function BorrowPopover({
                     ]?.borrow?.etherfi
                   }
                   x ether.fi Points
-                </div>
-                <div className="flex">
-                  <img
-                    alt=""
-                    className="size-4 mr-1"
-                    src="/images/turtle-etherfi.png"
-                  />{' '}
-                  + Turtle ether.fi Points
                 </div>
               </>
             )}

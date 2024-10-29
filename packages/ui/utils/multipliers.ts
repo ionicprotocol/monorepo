@@ -885,19 +885,3 @@ export const steerLPMultipliers: Record<string, LpMultipliers> = {
     decimals: 6
   }
 };
-
-export const hasAdditionalRewards = (
-  chainId: number,
-  poolId: string,
-  asset: string,
-  type: 'borrow' | 'supply'
-): boolean => {
-  const supplyConfig = multipliers[chainId]?.[poolId]?.[asset]?.[type];
-  if (!supplyConfig) return false;
-
-  const excludedKeys = ['ionAPR', 'rewards', 'turtle', 'flywheel'];
-
-  return Object.entries(supplyConfig).some(
-    ([key, value]) => !excludedKeys.includes(key) && Boolean(value)
-  );
-};

@@ -3,13 +3,14 @@ import Link from 'next/link';
 
 import { pools } from '@ui/constants/index';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
-import { hasAdditionalRewards, multipliers } from '@ui/utils/multipliers';
+import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
+import { multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-const Rewards = dynamic(() => import('./Rewards'), {
+const Rewards = dynamic(() => import('./FlyWheelRewards'), {
   ssr: false
 });
 
@@ -46,11 +47,12 @@ export default function SupplyPopover({
   const supplyConfig =
     multipliers[+dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.supply;
 
-  const showRewardsBadge = hasAdditionalRewards(
+  const showRewardsBadge = useRewardsBadge(
     dropdownSelectedChain,
     selectedPoolId,
     asset,
-    'supply'
+    'supply',
+    rewards
   );
 
   return (
@@ -225,14 +227,6 @@ export default function SupplyPopover({
                   ?.supply?.etherfi
               }
               x ether.fi Points
-            </div>
-            <div className="flex">
-              <img
-                alt=""
-                className="size-4 mr-1"
-                src="/images/turtle-etherfi.png"
-              />{' '}
-              + Turtle ether.fi Points
             </div>
           </>
         )}
