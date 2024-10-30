@@ -141,7 +141,17 @@ export default function Market() {
         <div className={`w-full my-3 flex flex-wrap  `}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
-            upcomingChains={['MetalL2', 'Ozean', 'Soneium']}
+            upcomingChains={[
+              'MetalL2',
+              'Ozean',
+              'Soneium',
+              'Camp',
+              'FX',
+              'Ink',
+              'Kroma',
+              'Unichain',
+              'World'
+            ]}
           />
         </div>
         <div
