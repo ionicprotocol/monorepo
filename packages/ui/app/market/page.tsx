@@ -55,6 +55,7 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
+  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
     mode.id
   );
@@ -134,6 +135,8 @@ export default function Market() {
             setSwapWidgetOpen={setSwapWidgetOpen}
             swapWidgetOpen={swapWidgetOpen}
             dropdownSelectedChain={dropdownSelectedChain.toString()}
+            setWrapWidgetOpen={setWrapWidgetOpen}
+            wrapWidgetOpen={wrapWidgetOpen}
           />
           <StakingTile chain={+chain} />
         </div>

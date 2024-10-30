@@ -15,8 +15,10 @@ interface Iprop {
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   isLoadingPoolData: boolean;
   dropdownSelectedChain: string;
-  setSwapWidgetOpen: any;
+  setSwapWidgetOpen: Dispatch<SetStateAction<boolean>>;
   swapWidgetOpen: boolean;
+  setWrapWidgetOpen: Dispatch<SetStateAction<boolean>>;
+  wrapWidgetOpen: boolean;
 }
 
 export default function FeaturedMarketTile({
@@ -26,7 +28,9 @@ export default function FeaturedMarketTile({
   isLoadingPoolData = true,
   dropdownSelectedChain,
   setSwapWidgetOpen,
-  swapWidgetOpen
+  swapWidgetOpen,
+  setWrapWidgetOpen,
+  wrapWidgetOpen
 }: Iprop) {
   // const {
   //   asset,
@@ -188,6 +192,8 @@ export default function FeaturedMarketTile({
         setSwapWidgetOpen={setSwapWidgetOpen}
         swapWidgetOpen={swapWidgetOpen}
         dropdownSelectedChain={+dropdownSelectedChain}
+        setWrapWidgetOpen={setWrapWidgetOpen}
+        wrapWidgetOpen={wrapWidgetOpen}
       />
     </div>
   );
