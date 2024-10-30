@@ -4,13 +4,12 @@ import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { toast } from '@ui/hooks/use-toast';
-
+import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
 import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
 import { usePrecisionSlider, PrecisionSlider } from '../../PrecisionSlider';
 import MaxDeposit from '../../stake/MaxDeposit';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
 
 type IncreaseLockedAmountProps = {
   chain: string;

@@ -1,18 +1,57 @@
 import { useState } from 'react';
 
 import { format } from 'date-fns';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
+import { useToast } from '@ui/hooks/use-toast';
+import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
 import { LockDurationPicker } from '../../LockDurationPicker';
 import AutoLock from '../AutoLock';
 
-export function Extend() {
+type ExtendProps = {
+  chain: string;
+  currentLockDate?: Date;
+  votingPower?: string;
+};
+
+export function Extend({
+  chain,
+  currentLockDate,
+  votingPower = '0.00'
+}: ExtendProps) {
   const [autoLock, setAutoLock] = useState(false);
-  const [lockDate, setLockDate] = useState<Date>(() => new Date());
+  const [lockDate, setLockDate] = useState<Date>(
+    () => currentLockDate || new Date()
+  );
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
+
+  const { address } = useAccount();
+  const { toast } = useToast();
+  const { extendLock, isPending } = useManageMyVeION(Number(chain));
+
+  const tokenAddress = getAvailableStakingToken(+chain, 'eth');
+
+  const handleExtend = () => {
+    if (!address) {
+      toast({
+        title: 'Error',
+        description: 'Please connect your wallet',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    extendLock({
+      tokenAddress: tokenAddress as `0x${string}`,
+      tokenId: tokenAddress,
+      lockDuration: selectedDuration * 86400 // Convert days to seconds
+    });
+  };
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
@@ -35,15 +74,26 @@ export function Extend() {
           VOTING POWER
           <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
         </div>
-        <p>0.00 veIon</p>
+        <p>{votingPower} veIon</p>
       </div>
 
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         LOCKED Until
-        <p>28 Aug 2023 → {format(lockDate, 'dd MMM yyyy')}</p>
+        <p>
+          {currentLockDate
+            ? format(currentLockDate, 'dd MMM yyyy')
+            : 'Not locked'}
+          → {format(lockDate, 'dd MMM yyyy')}
+        </p>
       </div>
 
-      <Button className="w-full bg-accent text-black mt-4">Extend Lock</Button>
+      <Button
+        className="w-full bg-accent text-black mt-4"
+        onClick={handleExtend}
+        disabled={isPending || !address}
+      >
+        {isPending ? 'Extending...' : 'Extend Lock'}
+      </Button>
     </div>
   );
 }

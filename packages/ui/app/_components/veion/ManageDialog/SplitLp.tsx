@@ -1,17 +1,28 @@
 import { useState } from 'react';
 
 import { InfoIcon } from 'lucide-react';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
+import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
 
-export function SplitLp() {
-  const maxAmount = 1000;
-  const utilizationMarks = [0, 25, 50, 75, 100];
+type SplitLpProps = {
+  chain: string;
+  tokenId?: string;
+  maxAmount?: number;
+};
 
+export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
+  const utilizationMarks = [0, 25, 50, 75, 100];
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
+
+  const { address } = useAccount();
+  const { split, isPending } = useManageMyVeION(Number(chain));
+  const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const handleFirstSliderChange = (newValue: number) => {
     setSplitValues([newValue, Math.round(100 - newValue)]);
@@ -21,9 +32,18 @@ export function SplitLp() {
     setSplitValues([Math.round(100 - newValue), newValue]);
   };
 
-  // Calculate actual token amounts based on percentages
   const firstAmount = Number(((splitValues[0] / 100) * maxAmount).toFixed(2));
   const secondAmount = Number(((splitValues[1] / 100) * maxAmount).toFixed(2));
+
+  const handleSplit = async () => {
+    if (!address || !tokenId || !firstAmount) return;
+
+    await split({
+      tokenAddress: lpToken as `0x${string}`,
+      from: tokenId as `0x${string}`,
+      amount: firstAmount
+    });
+  };
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
@@ -69,7 +89,13 @@ export function SplitLp() {
         </span>
       </div>
 
-      <Button className="w-full bg-accent text-black mt-4">Split veION</Button>
+      <Button
+        className="w-full bg-accent text-black mt-4"
+        disabled={isPending || !address}
+        onClick={handleSplit}
+      >
+        {isPending ? 'Splitting...' : 'Split veION'}
+      </Button>
     </div>
   );
 }

@@ -2,14 +2,35 @@ import { useState } from 'react';
 
 import { InfoIcon } from 'lucide-react';
 import { isAddress } from 'viem';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
+import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
 
-// Transfer.tsx
-export function Transfer() {
+import type { Hex } from 'viem';
+
+type TransferProps = {
+  chain: string;
+  tokenId?: string;
+};
+
+export function Transfer({ chain, tokenId }: TransferProps) {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
+
+  const { address } = useAccount();
+  const { safeTransfer, isPending } = useManageMyVeION(Number(chain));
+
+  const handleTransfer = async () => {
+    if (!isValidAddress || !address || !tokenId) return;
+
+    await safeTransfer({
+      from: address,
+      to: transferAddress as `0x${string}`,
+      tokenId: tokenId as Hex
+    });
+  };
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
@@ -27,9 +48,10 @@ export function Transfer() {
       </div>
       <Button
         className="w-full bg-accent text-black mt-4"
-        disabled={!isValidAddress}
+        disabled={!isValidAddress || isPending || !address}
+        onClick={handleTransfer}
       >
-        Transfer veION
+        {isPending ? 'Transferring...' : 'Transfer veION'}
       </Button>
     </div>
   );
