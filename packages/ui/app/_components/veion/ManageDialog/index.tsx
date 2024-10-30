@@ -85,7 +85,7 @@ export default function ManageDialog({
           />
         )}
         {activeManageToggle === 'Split' && <SplitLp chain={chain} />}
-        {activeManageToggle === 'Transfer' && <Transfer />}
+        {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
       </DialogContent>
     </Dialog>
   );
