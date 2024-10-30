@@ -6,12 +6,7 @@ import { multipliers } from '@ui/utils/multipliers';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-const EXCLUDED_REWARD_KEYS = [
-  'ionAPR',
-  'rewards',
-  'turtle',
-  'flywheel'
-] as const;
+const EXCLUDED_REWARD_KEYS = ['ionAPR', 'turtle', 'flywheel'] as const;
 
 const hasNonIonRewards = (
   rewards: FlywheelReward[] | undefined,
