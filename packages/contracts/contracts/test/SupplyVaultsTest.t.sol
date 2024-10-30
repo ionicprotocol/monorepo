@@ -3,6 +3,9 @@ pragma solidity >=0.8.0;
 
 import "../ionic/vault/OptimizedVaultsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
+import { FlywheelStaticRewards } from "../ionic/strategies/flywheel/rewards/FlywheelStaticRewards.sol";
+import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
+import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
 
 import "./config/BaseTest.t.sol";
 
@@ -123,9 +126,66 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
   }
 
+  function upgradeIflr() internal {
+    IonicFlywheelLensRouter upgradedIflr = new IonicFlywheelLensRouter(PoolDirectory(ap.getAddress("PoolDirectory")));
+    vm.prank(ap.owner());
+    ap.setAddress("IonicFlywheelLensRouter", address(upgradedIflr));
+
+    IonicFlywheel newFwImpl = new IonicFlywheel();
+
+    ProxyAdmin proxyAdmin;
+
+    // replace all flywheels
+    PoolDirectory.Pool[] memory pools = upgradedIflr.fpd().getAllPools();
+    for (uint8 i = 0; i < pools.length; i++) {
+      IonicComptroller pool = IonicComptroller(pools[i].comptroller);
+      address[] memory flywheels = pool.getAccruingFlywheels();
+      for (uint8 j = 0; j < flywheels.length; j++) {
+        // TODO figure out why
+        if (flywheels[j] == 0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec) {
+          proxyAdmin = ProxyAdmin(0xd122669FeF7e62Aa5Df85e945b68dd0B02A42343);
+        }
+        else if (flywheels[j] == 0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062) {
+          proxyAdmin = ProxyAdmin(0x4De2d8ef97D19def01f236b7a12e5Fb39c087b56);
+        }
+        else if (flywheels[j] == 0x6AfCca37CC93DB6bed729d20ADF203290d465df5 || flywheels[j] == 0x4E854cde138495a3eB9CFe48e50F12dC352cD834) {
+          proxyAdmin = ProxyAdmin(0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83);
+        }
+        else {
+          proxyAdmin = dpa;
+        }
+
+        TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
+        vm.prank(proxyAdmin.owner());
+        proxyAdmin.upgrade(proxy, address(newFwImpl));
+
+        IonicFlywheel upgradedFlywheel = IonicFlywheel(flywheels[j]);
+        //ERC20[] memory fwStrategies = upgradedFlywheel.getAllStrategies();
+        FlywheelStaticRewards flywheelRewards = FlywheelStaticRewards(address(upgradedFlywheel.flywheelRewards()));
+
+        IFlywheelRewards newRewards;
+        try flywheelRewards.owner() returns (address owner) {
+          newRewards = new FlywheelStaticRewards(
+            flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
+          );
+        } catch {
+          // if failing, the rewards contract is for dynamic rewards
+          IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(upgradedFlywheel.flywheelRewards()));
+          newRewards = new IonicFlywheelDynamicRewards(
+            flywheelRewards.flywheel(), flywheelRewards.rewardsCycleLength()
+          );
+        }
+        vm.prank(upgradedFlywheel.owner());
+        upgradedFlywheel.setFlywheelRewards(newRewards);
+      }
+    }
+  }
+
   function setUpVault() internal {
     // make sure there is enough liquidity in the testing markets
     addLiquidity();
+
+    upgradeIflr();
 
     deployVaultRegistry();
 
@@ -440,12 +500,13 @@ contract SupplyVaultsTest is BaseTest {
   function testVaultAccrueRewards() public fork(MODE_MAINNET) {
     IERC20Metadata ionToken = IERC20Metadata(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
     address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
-    address someDeployer = address(321);
+    address someDeployer = ap.owner();
     IonicFlywheel flywheelLogic = new IonicFlywheel();
 
+    IonicFlywheelLensRouter upgradedIflr = new IonicFlywheelLensRouter(PoolDirectory(ap.getAddress("PoolDirectory")));
     // set up the registry, the vault and the adapter
     vm.startPrank(someDeployer);
-    deployVaultRegistry();
+    ap.setAddress("IonicFlywheelLensRouter", address(upgradedIflr));
 
     {
       // deploy the adapter
@@ -484,10 +545,11 @@ contract SupplyVaultsTest is BaseTest {
       vault.initialize(exts, params);
 
       vault.asFirstExtension().addRewardToken(ionToken);
-
-      registry.addVault(address(vault));
     }
     vm.stopPrank();
+
+    vm.prank(registry.owner());
+    registry.addVault(address(vault));
 
     uint256 whaleStartingOpBalance = ionToken.balanceOf(wethWhale);
 
