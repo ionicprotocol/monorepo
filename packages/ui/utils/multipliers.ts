@@ -147,7 +147,7 @@ export const multipliers: Record<
       },
       ezETH: {
         borrow: {
-          turtle: true,
+          turtle: false,
           ionAPR: false,
           ionic: 0
         },
