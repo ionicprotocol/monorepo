@@ -81,7 +81,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           mode: 0,
-          turtle: false,
+          turtle: true,
           rewards: false,
           ionAPR: false
         },
@@ -91,7 +91,7 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 2.94,
           mode: 0,
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: false
         }
@@ -177,7 +177,7 @@ export const multipliers: Record<
       },
       ezETH: {
         borrow: {
-          turtle: false,
+          turtle: true,
           rewards: false,
           ionAPR: false,
           ionic: 0
@@ -190,7 +190,7 @@ export const multipliers: Record<
           mode: 0,
           renzo: 2,
           underlyingAPR: 3.25,
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: true,
           flywheel: true
@@ -280,7 +280,7 @@ export const multipliers: Record<
           ionic: 0,
           kelp: 1,
           mode: 0,
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: false
         },
@@ -292,7 +292,7 @@ export const multipliers: Record<
           kelp: 2,
           mode: 0,
           underlyingAPR: 3.63,
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: true,
           flywheel: true
@@ -511,12 +511,12 @@ export const multipliers: Record<
           ionic: 0,
           renzo: 2,
           underlyingAPR: 3.25,
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: false
         },
         borrow: {
-          turtle: false,
+          turtle: true,
           rewards: true,
           ionAPR: false,
           ionic: 0
