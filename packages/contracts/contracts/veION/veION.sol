@@ -20,7 +20,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   // Constants
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
-  int128 internal constant iMAXTIME = 2 * 365 * 86400;
   uint256 internal constant MULTIPLIER = 1 ether;
   uint256 public constant PRECISION = 1e18;
 
@@ -210,7 +209,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
 
     s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
-    _checkpoint(_tokenId, oldLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+    _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
     IERC20(_tokenAddress).safeTransfer(sender, value);
     emit Withdraw(sender, _tokenId, value, block.timestamp);
     emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
@@ -245,7 +244,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
 
       s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
-      _checkpoint(_from, oldLockedFrom, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
 
       LockedBalance memory newLockedTo;
       newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
@@ -258,7 +257,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         newLockedTo.start = start;
         newLockedTo.boost = oldLockedTo.boost;
       }
-      _checkpoint(_to, oldLockedTo, newLockedTo, _lpType);
+      _checkpoint(_to, newLockedTo, _lpType);
       s_locked[_to][_lpType] = newLockedTo;
     }
     _burn(_from);
@@ -267,7 +266,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function split(
     address _tokenAddress,
     uint256 _from,
-    uint256 _amount
+    uint256 _splitAmount
   ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
     address sender = _msgSender();
     address owner = _ownerOf(_from);
@@ -278,7 +277,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory newLocked = s_locked[_from][_lpType];
     if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
-    int128 _splitAmount = _amount.toInt256().toInt128();
     if (_splitAmount == 0) revert ZeroAmount();
     if (newLocked.amount < _splitAmount) revert AmountTooBig();
 
@@ -287,10 +285,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     if (newLocked.amount == 0) {
       s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, false, 0);
-      _checkpoint(_from, newLocked, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
+      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, false, 0), _lpType);
     } else {
       s_locked[_from][_lpType] = newLocked;
-      _checkpoint(_from, originalLocked, newLocked, _lpType);
+      _checkpoint(_from, newLocked, _lpType);
     }
 
     LockedBalance memory splitLocked = originalLocked;
@@ -313,12 +311,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (_newLocked.end <= block.timestamp) revert LockExpired();
     if (_newLocked.amount <= 0) revert NoLockFound();
 
-    uint256 _amount = uint256(int256(_newLocked.amount));
-    s_permanentLockBalance[_lpType] += _amount;
+    s_permanentLockBalance[_lpType] += _newLocked.amount;
     _newLocked.end = 0;
     _newLocked.isPermanent = true;
     _newLocked.boost = _calculateBoost(MAXTIME);
-    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    _checkpoint(_tokenId, _newLocked, _lpType);
     s_locked[_tokenId][_lpType] = _newLocked;
   }
 
@@ -331,11 +328,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (s_delegatees[_tokenId][_lpType].length != 0) revert TokenHasDelegatees();
     if (s_delegators[_tokenId][_lpType].length != 0) revert TokenHasDelegators();
 
-    uint256 _amount = uint256(int256(_newLocked.amount));
-    s_permanentLockBalance[_lpType] -= _amount;
+    s_permanentLockBalance[_lpType] -= _newLocked.amount;
     _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
     _newLocked.isPermanent = false;
-    _checkpoint(_tokenId, s_locked[_tokenId][_lpType], _newLocked, _lpType);
+    _checkpoint(_tokenId, _newLocked, _lpType);
     s_locked[_tokenId][_lpType] = _newLocked;
   }
 
@@ -359,8 +355,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (!toLocked.isPermanent) revert NotPermanentLock();
 
     // Transfer the voting power
-    toLocked.amount += int128(int256(amount));
-    fromLocked.amount -= int128(int256(amount));
+    toLocked.amount += amount;
+    fromLocked.amount -= amount;
 
     // Update the locked balances
     s_locked[fromTokenId][lpType] = fromLocked;
@@ -374,8 +370,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_delegations[fromTokenId][toTokenId][lpType] += amount;
 
     // Update checkpoints for both token IDs
-    _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
-    _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
+    _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
+    _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
   }
 
   function _removeDelegation(
@@ -398,8 +394,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     amount = clearDelegation ? s_delegations[fromTokenId][toTokenId][lpType] : amount;
     // Transfer the voting power back
-    toLocked.amount -= int128(int256(amount));
-    fromLocked.amount += int128(int256(amount));
+    toLocked.amount -= amount;
+    fromLocked.amount += amount;
 
     // Update the locked balances
     s_locked[toTokenId][lpType] = toLocked;
@@ -429,14 +425,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     // TODO check this checkpoint
     // Update checkpoint for the toTokenId
-    _checkpoint(toTokenId, toLocked, s_locked[toTokenId][lpType], lpType);
+    _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
 
     // Update the locked balance for the fromTokenId
     s_locked[fromTokenId][lpType] = fromLocked;
 
     // TODO check this checkpoint
     // Update checkpoint for the fromTokenId
-    _checkpoint(fromTokenId, fromLocked, s_locked[fromTokenId][lpType], lpType);
+    _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
   }
 
   function removeDelegatees(
@@ -569,7 +565,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       _oldLocked.boost
     );
     newLocked.tokenAddress = _tokenAddress;
-    newLocked.amount += int128(uint128(_tokenAmount));
+    newLocked.amount += _tokenAmount;
     if (_unlockTime != 0) {
       if (newLocked.start == 0) newLocked.start = block.timestamp;
       newLocked.end = _unlockTime;
@@ -578,7 +574,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
     s_locked[_tokenId][_lpType] = newLocked;
 
-    _checkpoint(_tokenId, _oldLocked, newLocked, _lpType);
+    _checkpoint(_tokenId, newLocked, _lpType);
 
     address _from = _msgSender();
     if (_tokenAmount != 0) {
@@ -619,153 +615,23 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_underlyingStake[_tokenId][_tokenAddress] -= _tokenAmount;
   }
 
-  struct CheckpointVars {
-    UserPoint uOld;
-    UserPoint uNew;
-    int128 oldDslope;
-    int128 newDslope;
-    uint256 _epoch;
-  }
+  function _checkpoint(uint256 _tokenId, LockedBalance memory _newLocked, LpTokenType _lpType) internal {
+    UserPoint memory uNew;
+    uNew.permanent = _newLocked.isPermanent ? _newLocked.amount : 0;
 
-  function _checkpoint(
-    uint256 _tokenId,
-    LockedBalance memory _oldLocked,
-    LockedBalance memory _newLocked,
-    LpTokenType _lpType
-  ) internal {
-    CheckpointVars memory vars;
-    vars._epoch = s_epoch[_lpType];
-
-    if (_tokenId != 0) {
-      vars.uNew.permanent = _newLocked.isPermanent ? uint256(int256(_newLocked.amount)) : 0;
-
-      if (_oldLocked.end > block.timestamp && _oldLocked.amount > 0) {
-        vars.uOld.slope = _oldLocked.amount / iMAXTIME;
-        vars.uOld.bias = vars.uOld.slope * int128(int256(_oldLocked.end - block.timestamp));
-      }
-      if (_newLocked.end > block.timestamp && _newLocked.amount > 0) {
-        vars.uNew.slope = _newLocked.amount / iMAXTIME;
-        vars.uNew.bias = vars.uNew.slope * int128(int256(_newLocked.end - block.timestamp));
-      }
-
-      vars.oldDslope = s_slopeChanges[_oldLocked.end][_lpType];
-      if (_newLocked.end != 0) {
-        if (_newLocked.end == _oldLocked.end) {
-          vars.newDslope = vars.oldDslope;
-        } else {
-          vars.newDslope = s_slopeChanges[_newLocked.end][_lpType];
-        }
-      }
+    if (_newLocked.end > block.timestamp && _newLocked.amount > 0) {
+      uNew.slope = _newLocked.amount / MAXTIME;
+      uNew.bias = uNew.slope * (_newLocked.end - block.timestamp);
     }
 
-    GlobalPoint memory lastPoint = GlobalPoint({
-      bias: 0,
-      slope: 0,
-      ts: block.timestamp,
-      blk: block.number,
-      permanentLockBalance: 0
-    });
-    if (vars._epoch > 0) {
-      lastPoint = s_pointHistory[vars._epoch][_lpType];
-    }
-
-    uint256 lastCheckPoint = lastPoint.ts;
-
-    GlobalPoint memory initialLastPoint = GlobalPoint({
-      bias: lastPoint.bias,
-      slope: lastPoint.slope,
-      ts: lastPoint.ts,
-      blk: lastPoint.blk,
-      permanentLockBalance: lastPoint.permanentLockBalance
-    });
-    uint256 blockSlope = 0;
-
-    if (block.timestamp > lastPoint.ts) {
-      blockSlope = (MULTIPLIER * (block.number - lastPoint.blk)) / (block.timestamp - lastPoint.ts);
-    }
-
-    {
-      uint256 t_i = (lastCheckPoint / WEEK) * WEEK;
-      for (uint256 i = 0; i < 255; ++i) {
-        t_i += WEEK;
-        int128 d_slope = 0;
-        if (t_i > block.timestamp) {
-          t_i = block.timestamp;
-        } else {
-          d_slope = s_slopeChanges[t_i][_lpType];
-        }
-        lastPoint.bias -= lastPoint.slope * int128(int256(t_i - lastCheckPoint));
-        lastPoint.slope += d_slope;
-        if (lastPoint.bias < 0) {
-          lastPoint.bias = 0;
-        }
-        if (lastPoint.slope < 0) {
-          lastPoint.slope = 0;
-        }
-        lastCheckPoint = t_i;
-        lastPoint.ts = t_i;
-        lastPoint.blk = initialLastPoint.blk + (blockSlope * (t_i - initialLastPoint.ts)) / MULTIPLIER;
-        vars._epoch += 1;
-        if (t_i == block.timestamp) {
-          lastPoint.blk = block.number;
-          break;
-        } else {
-          s_pointHistory[vars._epoch][_lpType] = lastPoint;
-        }
-      }
-    }
-
-    if (_tokenId != 0) {
-      lastPoint.slope += (vars.uNew.slope - vars.uOld.slope);
-      lastPoint.bias += (vars.uNew.bias - vars.uOld.bias);
-      if (lastPoint.slope < 0) {
-        lastPoint.slope = 0;
-      }
-      if (lastPoint.bias < 0) {
-        lastPoint.bias = 0;
-      }
-      lastPoint.permanentLockBalance = s_permanentLockBalance[_lpType];
-    }
-
-    if (vars._epoch != 1 && s_pointHistory[vars._epoch - 1][_lpType].ts == block.timestamp) {
-      // vars._epoch = s_epoch + 1, so we do not increment s_epoch
-      s_pointHistory[vars._epoch - 1][_lpType] = lastPoint;
+    uNew.ts = block.timestamp;
+    uNew.blk = block.number;
+    uint256 userEpoch = s_userPointEpoch[_tokenId][_lpType];
+    if (userEpoch != 0 && s_userPointHistory[_tokenId][_lpType][userEpoch].ts == block.timestamp) {
+      s_userPointHistory[_tokenId][_lpType][userEpoch] = uNew;
     } else {
-      // more than one global point may have been written, so we update s_epoch
-      s_epoch[_lpType] = vars._epoch;
-      s_pointHistory[vars._epoch][_lpType] = lastPoint;
-    }
-
-    if (_tokenId != 0) {
-      if (_oldLocked.end > block.timestamp) {
-        vars.oldDslope += vars.uOld.slope;
-        if (_newLocked.end == _oldLocked.end) {
-          vars.oldDslope -= vars.uNew.slope;
-        }
-        s_slopeChanges[_oldLocked.end][_lpType] = vars.oldDslope;
-      }
-
-      if (_newLocked.end > block.timestamp) {
-        // update slope if new lock is greater than old lock and is not permanent or if old lock is permanent
-        if (_newLocked.end > _oldLocked.end) {
-          vars.newDslope -= vars.uNew.slope; // old slope disappeared at this point
-          s_slopeChanges[_newLocked.end][_lpType] = vars.newDslope;
-        }
-        // else: we recorded it already in oldDslope
-      }
-
-      // If timestamp of last user point is the same, overwrite the last user point
-      // Else record the new user point into history
-      // Exclude epoch 0
-      vars.uNew.ts = block.timestamp;
-      vars.uNew.blk = block.number;
-      uint256 userEpoch = s_userPointEpoch[_tokenId][_lpType];
-      if (userEpoch != 0 && s_userPointHistory[_tokenId][_lpType][userEpoch].ts == block.timestamp) {
-        s_userPointHistory[_tokenId][_lpType][userEpoch] = vars.uNew;
-      } else {
-        s_userPointEpoch[_tokenId][_lpType] = ++userEpoch;
-        s_userPointHistory[_tokenId][_lpType][userEpoch] = vars.uNew;
-      }
+      s_userPointEpoch[_tokenId][_lpType] = ++userEpoch;
+      s_userPointHistory[_tokenId][_lpType][userEpoch] = uNew;
     }
   }
 
@@ -841,7 +707,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   ) private returns (uint256 _tokenId) {
     _tokenId = ++s_tokenId;
     s_locked[_tokenId][_lpType] = _newLocked;
-    _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, false, 0), _newLocked, _lpType);
+    _checkpoint(_tokenId, _newLocked, _lpType);
     _mint(_to, _tokenId);
   }
 

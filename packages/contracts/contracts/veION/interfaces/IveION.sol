@@ -6,7 +6,7 @@ import "../stake/IStakeStrategy.sol";
 interface IveION {
   struct LockedBalance {
     address tokenAddress;
-    int128 amount;
+    uint256 amount;
     uint256 start;
     uint256 end;
     bool isPermanent;
@@ -19,8 +19,8 @@ interface IveION {
   }
 
   struct UserPoint {
-    int128 bias;
-    int128 slope; // # -dweight / dt
+    uint256 bias;
+    uint256 slope; // # -dweight / dt
     uint256 ts;
     uint256 blk; // block
     uint256 permanent;
