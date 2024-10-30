@@ -33,6 +33,7 @@ function NetworkSelector({
   const setDropChain = useStore((state) => state.setDropChain);
 
   const orderedNetworks = NETWORK_ORDER.map((networkName) =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
   ).filter(
     (entry): entry is [string, any] =>
@@ -64,9 +65,8 @@ function NetworkSelector({
                 <div>
                   <Button
                     variant={isSelected ? 'secondary' : 'ghost'}
-                    size="sm"
                     asChild
-                    className={`p-1 h-8 ${isSelected ? 'min-w-[80px]' : 'min-w-[32px]'}`}
+                    className={`h-9 rounded-md ${isSelected ? 'min-w-[80px] p-2' : 'min-w-[32px] p-1 '}`}
                   >
                     <Link
                       href={getUrlWithParams(chainId)}
