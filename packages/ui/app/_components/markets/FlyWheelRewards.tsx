@@ -1,24 +1,22 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
 import { formatEther, type Address } from 'viem';
-// import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import { FLYWHEEL_TYPE_MAP, REWARDS_TO_SYMBOL } from '@ui/constants/index';
+import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useFlywheelRewards } from '@ui/hooks/useFlyWheelRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import ResultHandler from '../ResultHandler';
 
-import { type FlywheelClaimableRewards } from '@ionicprotocol/sdk';
 import { type FlywheelReward } from '@ionicprotocol/types';
 
-type RewardsProps = {
+type FlyWheelRewardsProps = {
   cToken: Address;
   pool: Address;
   poolChainId: number;
@@ -26,31 +24,24 @@ type RewardsProps = {
   rewards?: FlywheelReward[];
   className?: string;
 };
-const Rewards = ({
+
+const FlyWheelRewards = ({
   cToken,
   pool,
   poolChainId,
   type,
   rewards,
   className
-}: RewardsProps) => {
+}: FlyWheelRewardsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { data: rewardsData } = useAssetClaimableRewards(
-    cToken,
-    pool,
-    poolChainId
-  );
   const chainId = useChainId();
   const sdk = useSdk(poolChainId);
 
-  const filteredRewards = useMemo(
-    () =>
-      rewardsData?.filter((reward) =>
-        FLYWHEEL_TYPE_MAP[poolChainId][type]
-          .map((f) => f.toLowerCase())
-          .includes(reward.flywheel?.toLowerCase() ?? '')
-      ) ?? [],
-    [poolChainId, rewardsData, type]
+  const { filteredRewards, totalRewards, combinedRewards } = useFlywheelRewards(
+    poolChainId,
+    cToken,
+    pool,
+    type
   );
 
   const claimRewards = async () => {
@@ -72,20 +63,6 @@ const Rewards = ({
       setIsLoading(false);
     }
   };
-
-  const totalRewards =
-    filteredRewards.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
-
-  // combine rewards for asset
-  const combinedRewards = filteredRewards.reduce((acc, reward) => {
-    const el = acc.find((a) => a.rewardToken === reward.rewardToken);
-    if (el) {
-      el.amount += reward.amount;
-    } else {
-      acc.push({ rewardToken: reward.rewardToken, amount: reward.amount });
-    }
-    return acc;
-  }, [] as FlywheelClaimableRewards[]);
 
   return (
     <>
@@ -109,7 +86,7 @@ const Rewards = ({
                 alt=""
                 className="size-4 rounded mr-1"
                 src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.rewardToken]?.toLowerCase()}.png`}
-              />{' '}
+              />
               +{' '}
               {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
                 maximumFractionDigits: 1
@@ -120,14 +97,14 @@ const Rewards = ({
           {totalRewards > 0n && (
             <div className="flex justify-center pt-1">
               <button
-                className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+                className="rounded-md bg-accent text-black py-1 px-3 uppercase truncate"
                 onClick={claimRewards}
               >
                 <ResultHandler
                   isLoading={isLoading}
                   height="20"
                   width="20"
-                  color={'#000000'}
+                  color="#000000"
                 >
                   Claim Rewards
                 </ResultHandler>
@@ -140,4 +117,4 @@ const Rewards = ({
   );
 };
 
-export default dynamic(() => Promise.resolve(Rewards), { ssr: false });
+export default dynamic(() => Promise.resolve(FlyWheelRewards), { ssr: false });
