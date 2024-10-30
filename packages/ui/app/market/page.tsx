@@ -150,7 +150,7 @@ export default function Market() {
               'Ink',
               'Kroma',
               'Unichain',
-              'World'
+              'Worldchain'
             ]}
           />
         </div>
