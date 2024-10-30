@@ -76,7 +76,7 @@ export interface Logger {
 interface VeIonContracts {
   veION: {
     address: Address;
-    abi: any; // Replace 'any' with the specific type if known
+    abi: any;
   };
 }
 
@@ -169,7 +169,7 @@ export class IonicBase {
   public get veIONContracts(): VeIonContracts {
     return {
       veION: {
-        address: '0x0',
+        address: "0x0",
         abi: iveIonAbi
       }
     };
