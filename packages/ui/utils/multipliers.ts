@@ -530,9 +530,9 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           rewards: false,
-          ionAPR: false,
+          ionAPR: true,
           ionic: 0,
-          flywheel: false
+          flywheel: true
         },
         supply: {
           ionic: 0,
