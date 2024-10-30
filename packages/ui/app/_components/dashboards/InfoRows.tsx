@@ -12,7 +12,7 @@ import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { getAssetName } from '../../util/utils';
-const Rewards = dynamic(() => import('../markets/Rewards'), {
+const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
 import BorrowPopover from '../markets/BorrowPopover';

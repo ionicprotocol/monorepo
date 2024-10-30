@@ -2,10 +2,15 @@ import { task } from "hardhat/config";
 import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
+import { Address } from "viem";
+import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.uSOL];
+  const assetsToDeploy: string[] = [assetSymbols.uSUI];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+    console.log("Deploying market for ", asset.symbol, asset.name);
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
+
     if (!asset.underlying || !asset.symbol) {
       throw new Error("Invalid asset");
     }
@@ -33,13 +38,34 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
   }
 });
 
-task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run }) => {
-  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.cbBTC);
+task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
+  const { deployer } = await getNamedAccounts();
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.uSUI);
   if (!asset) {
     throw new Error("asset not found in base assets");
   }
   const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
   const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+  const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
+  const admin = await pool.read.admin();
+  const ap = await deployments.get("AddressesProvider");
+  // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+  //   await prepareAndLogTransaction({
+  //     contractInstance: asExt,
+  //     functionName: "_setAddressesProvider",
+  //     args: [ap.address as Address],
+  //     description: "Set Addresses Provider",
+  //     inputs: [
+  //       {
+  //         internalType: "address",
+  //         name: "_ap",
+  //         type: "address"
+  //       }
+  //     ]
+  //   });
+  // } else {
+  //   await asExt.write._setAddressesProvider([ap.address as Address]);
+  // }
 
   await run("market:set-borrow-cap", {
     market: cToken,

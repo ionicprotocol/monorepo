@@ -39,8 +39,8 @@ task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_
   }
 });
 
-task("market:set-cf:optimism:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.wUSDM)) {
+task("market:set-caps:optimism:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
+  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.SNX)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
@@ -51,5 +51,15 @@ task("market:set-cf:optimism:new", "Sets CF on a market").setAction(async (_, { 
         ltv: asset.initialCf
       });
     }
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
   }
 });
