@@ -57,12 +57,6 @@ interface IveION {
     Optimism_Balancer_8020_ION_ETH // 80/20 ION/ETH on Balancer
   }
 
-  enum EscrowType {
-    NORMAL,
-    LOCKED,
-    MANAGED
-  }
-
   error NotMinter();
   error LockDurationNotInFuture();
   error ZeroAmount();
