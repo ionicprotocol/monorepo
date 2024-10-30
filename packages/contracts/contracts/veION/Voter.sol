@@ -206,7 +206,7 @@ contract Voter is IVoter, OwnableUpgradeable {
         if (_votes != 0) {
           weights[_market][_marketSide][lpRewardTokens[k]] -= _votes;
           delete votes[_tokenId][_market][_marketSide][lpRewardTokens[k]];
-          IBribeRewards(rewardAccumulatorToBribe[marketToRewardAccumulators[_market][_marketSide]])._withdraw(
+          IBribeRewards(rewardAccumulatorToBribe[marketToRewardAccumulators[_market][_marketSide]]).withdraw(
             lpRewardTokens[k],
             uint256(_votes),
             _tokenId
@@ -295,7 +295,7 @@ contract Voter is IVoter, OwnableUpgradeable {
 
         weights[vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
         votes[_tokenId][vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
-        IBribeRewards(vars.rewardAccumulator)._deposit(_votingAsset, uint256(vars.marketWeight), _tokenId);
+        IBribeRewards(vars.rewardAccumulator).deposit(_votingAsset, uint256(vars.marketWeight), _tokenId);
         vars.usedWeight += vars.marketWeight;
         vars.totalWeight += vars.marketWeight;
         emit Voted(

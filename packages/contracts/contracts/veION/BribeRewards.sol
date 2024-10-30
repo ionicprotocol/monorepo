@@ -255,7 +255,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   }
 
   /// @inheritdoc IBribeRewards
-  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
+  function deposit(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
     address sender = msg.sender;
 
     totalSupply[lpToken] += amount;
@@ -268,7 +268,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   }
 
   /// @inheritdoc IBribeRewards
-  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
+  function withdraw(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
     address sender = msg.sender;
 
     totalSupply[lpToken] -= amount;

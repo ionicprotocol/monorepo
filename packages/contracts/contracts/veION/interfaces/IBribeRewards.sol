@@ -21,14 +21,14 @@ interface IBribeRewards {
   /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be deposited for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external;
+  function deposit(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Withdraw an amount from the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.
   /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be withdrawn for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external;
+  function withdraw(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Claim the rewards earned by a veNFT holder
   /// @param tokenId  Unique identifier of the veNFT
