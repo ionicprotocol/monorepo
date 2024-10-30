@@ -38,11 +38,16 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
    */
   function stake(address _from, uint256 _amount, bytes memory _data) external override onlyEscrow {
     IERC20(stakingToken).transferFrom(msg.sender, address(this), _amount);
-    address veloWallet = stakingWalletImplementation.clone();
-    VelodromeStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
+
+    address veloWallet = userStakingWallet[_from];
+    if (veloWallet == address(0)) {
+      veloWallet = stakingWalletImplementation.clone();
+      VelodromeStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
+      userStakingWallet[_from] = veloWallet;
+    }
+
     IERC20(stakingToken).approve(veloWallet, _amount);
     VelodromeStakingWallet(veloWallet).stake(_from, _amount, _data);
-    userStakingWallet[_from] = veloWallet;
   }
 
   /**
