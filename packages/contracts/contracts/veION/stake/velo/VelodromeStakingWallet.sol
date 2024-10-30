@@ -5,6 +5,7 @@ import "../IStakeWallet.sol";
 import "../IStakeStrategy.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title VeloIonModeStakingModeReward
@@ -15,6 +16,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @dev The contract is authored by Jourdan Dunkley <jourdan@ionic.money>.
  */
 contract VelodromeStakingWallet is IStakeWallet {
+  using SafeERC20 for IERC20;
   IStakeStrategy public stakeStrategy;
 
   modifier onlyStakeStrategy() {
@@ -33,7 +35,7 @@ contract VelodromeStakingWallet is IStakeWallet {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
 
-    stakingToken.transferFrom(msg.sender, address(this), _amount);
+    stakingToken.safeTransferFrom(msg.sender, address(this), _amount);
     stakingToken.approve(address(stakingContract), _amount);
     stakingContract.deposit(_amount);
   }
@@ -47,7 +49,7 @@ contract VelodromeStakingWallet is IStakeWallet {
 
     stakingContract.getReward(address(this));
     uint256 rewardAmount = rewardToken.balanceOf(address(this));
-    IERC20(rewardToken).transfer(_from, rewardAmount);
+    IERC20(rewardToken).safeTransfer(_from, rewardAmount);
   }
 
   /**
@@ -60,6 +62,6 @@ contract VelodromeStakingWallet is IStakeWallet {
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
 
     stakingContract.withdraw(_amount);
-    stakingToken.transfer(_withdrawTo, _amount);
+    stakingToken.safeTransfer(_withdrawTo, _amount);
   }
 }
