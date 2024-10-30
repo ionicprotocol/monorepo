@@ -25,6 +25,14 @@ task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a mar
     const ltvMantissa = parseUnits(ltv, 18);
     console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`);
 
+    const _market = await pool.read.markets([marketAddress]);
+    const currentLtv = _market[1];
+    console.log("currentLtv: ", currentLtv);
+    if (currentLtv === ltvMantissa) {
+      console.log(`LTV is already set to ${ltvMantissa}`);
+      return;
+    }
+
     if ((await pool.read.admin()).toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
         contractInstance: pool,

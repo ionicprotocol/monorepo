@@ -35,6 +35,7 @@ export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
 export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
 export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
+export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
 
 export const assets: SupportedAsset[] = [
   {
@@ -333,6 +334,20 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(1000)).toString(),
     initialSupplyCap: parseEther(String(2000)).toString(),
     initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.uSUI,
+    underlying: uSUI,
+    name: "Sui (Universal)",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uSUI),
+    initialBorrowCap: parseEther(String(150_000)).toString(),
+    initialSupplyCap: parseEther(String(250_000)).toString(),
+    initialCf: "0.70"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
