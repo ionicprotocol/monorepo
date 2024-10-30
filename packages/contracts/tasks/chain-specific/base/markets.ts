@@ -49,23 +49,23 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
   const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
   const admin = await pool.read.admin();
   const ap = await deployments.get("AddressesProvider");
-  if (admin.toLowerCase() !== deployer.toLowerCase()) {
-    await prepareAndLogTransaction({
-      contractInstance: asExt,
-      functionName: "_setAddressesProvider",
-      args: [ap.address as Address],
-      description: "Set Addresses Provider",
-      inputs: [
-        {
-          internalType: "address",
-          name: "_ap",
-          type: "address"
-        }
-      ]
-    });
-  } else {
-    await asExt.write._setAddressesProvider([ap.address as Address]);
-  }
+  // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+  //   await prepareAndLogTransaction({
+  //     contractInstance: asExt,
+  //     functionName: "_setAddressesProvider",
+  //     args: [ap.address as Address],
+  //     description: "Set Addresses Provider",
+  //     inputs: [
+  //       {
+  //         internalType: "address",
+  //         name: "_ap",
+  //         type: "address"
+  //       }
+  //     ]
+  //   });
+  // } else {
+  //   await asExt.write._setAddressesProvider([ap.address as Address]);
+  // }
 
   await run("market:set-borrow-cap", {
     market: cToken,
@@ -77,10 +77,10 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
     maxSupply: asset.initialSupplyCap
   });
 
-  // await run("market:set:ltv", {
-  //   marketAddress: cToken,
-  //   ltv: asset.initialCf
-  // });
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: asset.initialCf
+  });
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
