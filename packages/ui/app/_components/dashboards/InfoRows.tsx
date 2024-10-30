@@ -19,8 +19,9 @@ import BorrowPopover from '../markets/BorrowPopover';
 import SupplyPopover from '../markets/SupplyPopover';
 import { PopupMode } from '../popup/page';
 
-import type { FlywheelReward } from 'types/dist';
 import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export enum InfoMode {
   SUPPLY = 0,

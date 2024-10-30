@@ -47,7 +47,7 @@ import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
 import { SlippageDropdown } from '../SlippageDropdown';
 
-import { collateralSwapAbi } from '@ionicprotocol/sdk';
+import { collateralSwapAbi } from '@ionicprotocol/sdk/src';
 
 createConfig({
   integrator: 'ionic',
