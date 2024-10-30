@@ -516,7 +516,7 @@ export const multipliers: Record<
           ionAPR: false
         },
         borrow: {
-          turtle: true,
+          turtle: false,
           rewards: true,
           ionAPR: false,
           ionic: 0
