@@ -6,6 +6,7 @@ import "./VelodromeStakingWallet.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 
 /**
  * @title VeloIonModeStakingStrategy
@@ -13,9 +14,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
 contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
+  using Clones for address;
+
   address public escrow;
   address public stakingToken;
   address public stakingContract;
+  address public stakingWalletImplementation;
   mapping(address => address) public userStakingWallet;
 
   modifier onlyEscrow() {
@@ -34,10 +38,11 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
    */
   function stake(address _from, uint256 _amount, bytes memory _data) external override onlyEscrow {
     IERC20(stakingToken).transferFrom(msg.sender, address(this), _amount);
-    VelodromeStakingWallet veloWallet = new VelodromeStakingWallet(IStakeStrategy(address(this)));
-    IERC20(stakingToken).approve(address(veloWallet), _amount);
-    veloWallet.stake(_from, _amount, _data);
-    userStakingWallet[_from] = address(veloWallet);
+    address veloWallet = stakingWalletImplementation.clone();
+    VelodromeStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
+    IERC20(stakingToken).approve(veloWallet, _amount);
+    VelodromeStakingWallet(veloWallet).stake(_from, _amount, _data);
+    userStakingWallet[_from] = veloWallet;
   }
 
   /**
@@ -106,5 +111,10 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
   function setStakingContract(address _stakingContract) external onlyOwner {
     require(_stakingContract != address(0), "Invalid address");
     stakingContract = _stakingContract;
+  }
+
+  function setStakingWalletImplementation(address _stakingWalletImplementation) external onlyOwner {
+    require(_stakingWalletImplementation != address(0), "Invalid address");
+    stakingWalletImplementation = _stakingWalletImplementation;
   }
 }

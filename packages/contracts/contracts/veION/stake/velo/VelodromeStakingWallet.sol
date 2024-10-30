@@ -6,6 +6,7 @@ import "../IStakeStrategy.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
  * @title VeloIonModeStakingModeReward
@@ -15,7 +16,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
  * @dev The contract is designed to be used with the Velodrome ION-MODE-5050 LP token.
  * @dev The contract is authored by Jourdan Dunkley <jourdan@ionic.money>.
  */
-contract VelodromeStakingWallet is IStakeWallet {
+contract VelodromeStakingWallet is IStakeWallet, Initializable {
   using SafeERC20 for IERC20;
   IStakeStrategy public stakeStrategy;
 
@@ -24,7 +25,7 @@ contract VelodromeStakingWallet is IStakeWallet {
     _;
   }
 
-  constructor(IStakeStrategy _stakeStrategy) {
+  function initialize(IStakeStrategy _stakeStrategy) external initializer {
     stakeStrategy = _stakeStrategy;
   }
 
