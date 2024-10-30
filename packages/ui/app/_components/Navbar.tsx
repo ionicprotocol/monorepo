@@ -12,7 +12,7 @@ import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
