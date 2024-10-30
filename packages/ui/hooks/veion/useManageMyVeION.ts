@@ -1,17 +1,26 @@
 import { parseUnits } from 'viem';
-import { useWriteContract } from 'wagmi';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useToast } from '@ui/hooks/use-toast';
+
+import { useContractWrite } from '../useContractWrite';
 
 import type { Hex } from 'viem';
 
 export function useManageMyVeION(chain: number) {
-  const { toast } = useToast();
   const { getSdk } = useMultiIonic();
   const ionicSdk = getSdk(chain);
   const veIonContract = ionicSdk?.veIONContracts?.veION;
-  const { writeContract, isPending } = useWriteContract();
+  const { write, isPending } = useContractWrite();
+
+  const getContractConfig = (functionName: string, args: any[]) => {
+    if (!veIonContract) throw new Error('Contract not initialized');
+    return {
+      address: veIonContract.address,
+      abi: veIonContract.abi,
+      functionName,
+      args
+    };
+  };
 
   const increaseAmount = async ({
     tokenAddress,
@@ -24,35 +33,14 @@ export function useManageMyVeION(chain: number) {
     amount: number;
     tokenDecimals: number;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'increaseAmount',
-        args: [
-          [tokenAddress],
-          tokenId,
-          [parseUnits(String(amount), tokenDecimals)],
-          [true] // stakeUnderlying
-        ]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully increased locked amount'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
+    return write(
+      getContractConfig('increaseAmount', [
+        [tokenAddress],
+        tokenId,
+        [parseUnits(String(amount), tokenDecimals)],
+        [true]
+      ]),
+      { successMessage: 'Successfully increased locked amount' }
     );
   };
 
@@ -65,30 +53,13 @@ export function useManageMyVeION(chain: number) {
     tokenId: Hex;
     lockDuration: number;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'increaseUnlockTime',
-        args: [tokenAddress, tokenId, lockDuration]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully extended lock duration'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
+    return write(
+      getContractConfig('increaseUnlockTime', [
+        tokenAddress,
+        tokenId,
+        lockDuration
+      ]),
+      { successMessage: 'Successfully extended lock duration' }
     );
   };
 
@@ -103,30 +74,9 @@ export function useManageMyVeION(chain: number) {
     lpToken: `0x${string}`;
     amount: number;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'delegate',
-        args: [fromTokenId, toTokenId, lpToken, amount]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully delegated voting power'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
+    return write(
+      getContractConfig('delegate', [fromTokenId, toTokenId, lpToken, amount]),
+      { successMessage: 'Successfully delegated voting power' }
     );
   };
 
@@ -137,31 +87,9 @@ export function useManageMyVeION(chain: number) {
     fromTokenId: Hex;
     toTokenId: Hex;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'merge',
-        args: [fromTokenId, toTokenId]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully merged positions'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
-    );
+    return write(getContractConfig('merge', [fromTokenId, toTokenId]), {
+      successMessage: 'Successfully merged positions'
+    });
   };
 
   const split = async ({
@@ -173,31 +101,9 @@ export function useManageMyVeION(chain: number) {
     from: Hex;
     amount: number;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'split',
-        args: [tokenAddress, from, amount]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully split veION position'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
-    );
+    return write(getContractConfig('split', [tokenAddress, from, amount]), {
+      successMessage: 'Successfully split veION position'
+    });
   };
 
   const safeTransfer = async ({
@@ -209,31 +115,9 @@ export function useManageMyVeION(chain: number) {
     to: `0x${string}`;
     tokenId: Hex;
   }) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
-
-    return writeContract(
-      {
-        address: veIonContract.address,
-        abi: veIonContract.abi,
-        functionName: 'safeTransferFrom',
-        args: [from, to, tokenId]
-      },
-      {
-        onSuccess: () => {
-          toast({
-            title: 'Success',
-            description: 'Successfully transferred veION'
-          });
-        },
-        onError: (error) => {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        }
-      }
-    );
+    return write(getContractConfig('safeTransferFrom', [from, to, tokenId]), {
+      successMessage: 'Successfully transferred veION'
+    });
   };
 
   return {
