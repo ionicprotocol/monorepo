@@ -5,13 +5,14 @@ import "../IStakeStrategy.sol";
 import "./VelodromeStakingWallet.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title VeloIonModeStakingStrategy
  * @notice Staking interface for usage in veION when staking Velodrome ION-MODE-5050 LP.
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
-contract VeloIonModeStakingStrategy is IStakeStrategy {
+contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
   address public escrow;
   address public stakingToken;
   address public stakingContract;
@@ -90,5 +91,20 @@ contract VeloIonModeStakingStrategy is IStakeStrategy {
    */
   function rewardToken() public view returns (address) {
     return IVeloIonModeStaking(stakingContract).rewardToken();
+  }
+
+  function setEscrow(address _escrow) external onlyOwner {
+    require(_escrow != address(0), "Invalid address");
+    escrow = _escrow;
+  }
+
+  function setStakingToken(address _stakingToken) external onlyOwner {
+    require(_stakingToken != address(0), "Invalid address");
+    stakingToken = _stakingToken;
+  }
+
+  function setStakingContract(address _stakingContract) external onlyOwner {
+    require(_stakingContract != address(0), "Invalid address");
+    stakingContract = _stakingContract;
   }
 }
