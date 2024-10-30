@@ -5,10 +5,6 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { zeroAddress } from 'viem';
-
-import type { Address } from 'viem';
-
 const SwapWidget = dynamic(() => import('./SwapWidget'), {
   ssr: false
 });
