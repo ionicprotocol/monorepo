@@ -4,8 +4,8 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER_MAIN } from ".";
 import { optimism } from "@ionicprotocol/chains";
 
-task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.wUSDM];
+task("markets:deploy:optimism:new", "deploy new optimism assets").setAction(async (_, { viem, run }) => {
+  const assetsToDeploy: string[] = [assetSymbols.weETH];
   for (const asset of optimism.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -13,6 +13,8 @@ task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
     console.log(`Deploying ctoken ${name} with symbol ${symbol}`);
+    // wait 10 seconds
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     await run("market:deploy", {
       signer: "deployer",
       cf: "0",
