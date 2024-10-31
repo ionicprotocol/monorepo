@@ -571,6 +571,14 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         }
+      },
+      uSUI: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
@@ -703,6 +711,14 @@ export const multipliers: Record<
         }
       },
       SNX: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      weETH: {
         supply: {
           ionic: 0,
           turtle: false,

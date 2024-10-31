@@ -169,7 +169,8 @@ export enum assetSymbols {
   // mode
   WETH = "WETH",
   ezETH = "ezETH",
-  weETH = "weETH.mode",
+  weETH = "weETH",
+  "weETH.mode" = "weETH.mode",
   wrsETH = "wrsETH",
   ETH = "ETH",
   USDC = "USDC",
