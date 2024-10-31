@@ -173,6 +173,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
     if (oldLocked.isPermanent) revert PermanentLock();
+    if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
 
     uint256 value = uint256(int256(oldLocked.amount));
     uint256 fee = 0;
