@@ -294,8 +294,6 @@ export class IonicBase {
       PrudentiaInterestRateModel: PrudentiaInterestRateModel
     };
     const bytecode = await this.publicClient.getCode({ address: interestRateModelAddress });
-    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ interestRateModelAddress:", interestRateModelAddress);
-    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ bytecode:", bytecode);
     if (!bytecode) {
       throw Error("Bytecode not found");
     }
@@ -303,9 +301,7 @@ export class IonicBase {
 
     let irmModel = null;
 
-    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ runtimeBytecodeHash:", runtimeBytecodeHash);
     for (const irm of Object.values(interestRateModels)) {
-      console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ irm.RUNTIME_BYTECODE_HASH:", irm.RUNTIME_BYTECODE_HASH);
       if (runtimeBytecodeHash === irm.RUNTIME_BYTECODE_HASH) {
         irmModel = new irm();
         break;

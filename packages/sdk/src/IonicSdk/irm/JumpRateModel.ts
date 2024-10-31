@@ -91,6 +91,10 @@ export default class JumpRateModel {
     const oneMinusReserveFactor = parseEther("1") - this.reserveFactorMantissa;
     const borrowRate = this.getBorrowRate(utilizationRate);
     const rateToPool = (borrowRate * oneMinusReserveFactor) / parseEther("1");
+    console.log(
+      "🚀 ~ JumpRateModel ~ getSupplyRate ~ (utilizationRate * rateToPool) / parseEther:",
+      (utilizationRate * rateToPool) / parseEther("1")
+    );
     return (utilizationRate * rateToPool) / parseEther("1");
   }
 }

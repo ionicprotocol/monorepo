@@ -232,6 +232,8 @@ const Popup = ({
       mode: currentFundOperation,
       poolChainId: chainId
     });
+  console.log('🚀 ~ selectedMarketData:', selectedMarketData);
+  console.log('🚀 ~ updatedAssets:', updatedAssets);
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
     useMaxWithdrawAmount(selectedMarketData, chainId);
@@ -246,6 +248,7 @@ const Popup = ({
     borrowBalanceTo
   } = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+    console.log('🚀 ~ blocksPerMinute:', blocksPerMinute);
 
     if (currentSdk) {
       return {
@@ -311,6 +314,8 @@ const Popup = ({
 
     return {};
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+  console.log('🚀 ~ updatedAsset:', updatedAsset);
+  console.log('🚀 ~ updatedSupplyAPY:', updatedSupplyAPY);
   const [enableCollateral, setEnableCollateral] = useState<boolean>(
     selectedMarketData.membership && selectedMarketData.supplyBalance > 0n
   );

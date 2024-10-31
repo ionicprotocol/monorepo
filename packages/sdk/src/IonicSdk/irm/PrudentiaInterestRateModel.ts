@@ -1,4 +1,5 @@
-import { Address, formatUnits, Hex, keccak256, parseUnits, PublicClient } from "viem";
+import { chainIdToConfig } from "@ionicprotocol/chains";
+import { Address, formatUnits, Hex, keccak256, parseEther, parseUnits, PublicClient } from "viem";
 
 import PrudentiaInterestRateModelArtifact from "../../artifacts/PrudentiaInterestRateModel.json";
 import { cTokenFirstExtensionAbi } from "../../generated";
@@ -12,6 +13,15 @@ import {
   RATE_DECIMALS,
   CONTRACT_ADDRESS_SLOPED_IR_COMPUTER
 } from "./prudentia";
+import { mode } from "viem/chains";
+
+export const MINUTES_PER_YEAR = 24 * 365 * 60;
+
+function getBlockTimePerMinuteByChainId(chainId: number): number {
+  const chain = chainIdToConfig[chainId];
+
+  return chain ? Number(BigInt(chain.specificParams.blocksPerYear) / BigInt(MINUTES_PER_YEAR)) : 0;
+}
 
 export default class PrudentiaInterestRateModel {
   static RUNTIME_BYTECODE_HASH = keccak256(PrudentiaInterestRateModelArtifact.deployedBytecode as Hex);
@@ -44,9 +54,10 @@ export default class PrudentiaInterestRateModel {
       client
     });
 
-    this.pidRate = await contractPid.read.computeRate([assetAddress]);
-    this.slopeConfig = await contract.read.getSlopeConfig([assetAddress]);
-    this.generalConfig = await contract.read.getConfig([assetAddress]);
+    const underlying = await cTokenContract.read.underlying();
+    this.pidRate = await contractPid.read.computeRate([underlying]);
+    this.slopeConfig = await contract.read.getSlopeConfig([underlying]);
+    this.generalConfig = await contract.read.getConfig([underlying]);
     this.defaultOneXScalar = await contract.read.defaultOneXScalar();
 
     this.reserveFactorMantissa = await cTokenContract.read.reserveFactorMantissa();
@@ -133,6 +144,16 @@ export default class PrudentiaInterestRateModel {
     const predictedSupplyRate = (predictedRate * PREDICTIVE_UTILIZATION_RATE) / parseUnits("1", RATE_DECIMALS);
 
     console.log(`Predicted rate (supply): ${formatUnits(predictedSupplyRate, RATE_DECIMALS - 2)}%`);
-    return predictedSupplyRate;
+
+    const blocksPerMinute = getBlockTimePerMinuteByChainId(mode.id);
+    const blocksPerDay = blocksPerMinute * 60 * 24;
+    const dailyRate = Math.pow(Number(formatUnits(predictedSupplyRate, RATE_DECIMALS - 2)) / 100 + 1, 1 / 365) - 1;
+    const ratePerBlock = dailyRate / blocksPerDay;
+    console.log("🚀 ~ PrudentiaInterestRateModel ~ getSupplyRate ~ ratePerBlock:", ratePerBlock);
+    console.log(
+      "🚀 ~ PrudentiaInterestRateModel ~ getSupplyRate ~ parseEther(ratePerBlock.toString()):",
+      parseEther(ratePerBlock.toString())
+    );
+    return parseEther(ratePerBlock.toString());
   }
 }
