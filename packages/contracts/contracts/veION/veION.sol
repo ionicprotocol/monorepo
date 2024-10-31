@@ -658,14 +658,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function _calculateBoost(uint256 _duration) internal pure returns (uint256) {
-    if (_duration >= 2 * 365 days) {
-      return 2e18;
-    } else if (_duration >= 1.5 * 365 days) {
-      return 1.5e18;
-    } else if (_duration >= 365 days) {
-      return 1.25e18;
+    uint256 minDuration = 0;
+    uint256 maxDuration = 2 * 365 days;
+    uint256 minBoost = 1e18;
+    uint256 maxBoost = 2e18;
+
+    if (_duration <= minDuration) {
+      return minBoost;
+    } else if (_duration >= maxDuration) {
+      return maxBoost;
     } else {
-      return 1e18;
+      return minBoost + ((_duration - minDuration) * (maxBoost - minBoost)) / (maxDuration - minDuration);
     }
   }
 
