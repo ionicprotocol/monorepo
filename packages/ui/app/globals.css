@@ -29,9 +29,11 @@
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
+
   100% {
     transform: scale(1);
   }
@@ -41,55 +43,68 @@
   .grid-cols-21 {
     grid-template-columns: repeat(21, minmax(0, 1fr));
   }
+
   .grid-cols-19 {
     grid-template-columns: repeat(19, minmax(0, 1fr));
   }
+
   .grid-cols-20 {
     grid-template-columns: repeat(20, minmax(0, 1fr));
   }
+
   .grid-cols-18 {
     grid-template-columns: repeat(18, minmax(0, 1fr));
   }
+
   .grid-cols-15 {
     grid-template-columns: repeat(15, minmax(0, 1fr));
   }
+
   .grid-cols-13 {
     grid-template-columns: repeat(13, minmax(0, 1fr));
   }
+
   .col-span-15 {
     grid-column: span 15 / span 15;
   }
+
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
   }
-  
+
   .amount-field {
     color: #fff;
   }
+
   .amount-field::-webkit-input-placeholder {
     /* WebKit, Blink, Edge */
     color: rgb(255 255 255 / 0.5);
   }
+
   .amount-field:-moz-placeholder {
     /* Mozilla Firefox 4 to 18 */
     color: rgb(255 255 255 / 0.5);
     opacity: 1;
   }
+
   .amount-field::-moz-placeholder {
     /* Mozilla Firefox 19+ */
     color: rgb(255 255 255 / 0.5);
     opacity: 1;
   }
+
   .amount-field:-ms-input-placeholder {
     /* Internet Explorer 10-11 */
     color: rgb(255 255 255 / 0.5);
   }
+
   .amount-field::-ms-input-placeholder {
     /* Microsoft Edge */
     color: rgb(255 255 255 / 0.5);
   }
+
   .amount-field::placeholder {
     /* Most modern browsers support this now. */
     color: rgb(255 255 255 / 0.5);
@@ -98,16 +113,19 @@
   .expand {
     animation: expand 2s linear infinite;
   }
+
   .pause {
     animation-play-state: paused;
     /* animation-duration: 40s; */
   }
 
   .react-calendar__tile--now:enabled:hover,
-.react-calendar__tile--now:enabled:focus {
-  @apply bg-[#ffffa9];
+  .react-calendar__tile--now:enabled:focus {
+    @apply bg-[#ffffa9];
+  }
 }
-}
+
+
 
 
 
@@ -175,16 +193,19 @@
 .btn-green {
   @apply font-bold rounded-md px-3 py-1 text-center transition-colors bg-accent text-darkone;
 }
+
 .btn-green[disabled] {
   @apply bg-stone-500;
 }
 
 .popover-container {
-  @apply relative; 
+  @apply relative;
 }
+
 .popover-container .popover {
   transform-origin: 50% 0;
 }
+
 .popover-container:hover .popover {
   @apply opacity-100 visible;
 }
@@ -216,11 +237,13 @@
 .nav-btn.nav-opened {
   background: transparent;
 }
+
 .nav-btn.nav-opened:before {
   bottom: 0;
   margin: 0;
   transform: rotate(45deg);
 }
+
 .nav-btn.nav-opened:after {
   top: 0;
   margin: 0;
@@ -231,6 +254,7 @@
   bottom: 100%;
   margin-bottom: 3px;
 }
+
 .nav-btn:after {
   top: 100%;
   margin-top: 3px;
@@ -277,6 +301,7 @@
   vertical-align: middle;
   background: #3bff89ff;
 }
+
 .success-icon:before {
   width: 6px;
   height: 2px;
@@ -285,6 +310,7 @@
   transform-origin: 0 0;
   transform: rotate(45deg);
 }
+
 .success-icon:after {
   width: 12px;
   height: 2px;
@@ -311,9 +337,11 @@
   vertical-align: middle;
   background: #df1515;
 }
+
 .error-icon:before {
   transform: rotate(45deg);
 }
+
 .error-icon:after {
   transform: rotate(-45deg);
 }
@@ -343,12 +371,15 @@
   transition: background 0.15s;
   cursor: pointer;
 }
+
 .toggle.is-on {
   background: #3bff89ff;
 }
+
 .toggle.is-on:before {
   transform: translateX(20px);
 }
+
 .toggle:before {
   content: '';
   display: block;
@@ -371,6 +402,7 @@
 .animate-fade-in {
   opacity: 0;
 }
+
 .animate-fade-in.animated {
   opacity: 1;
 }
@@ -379,18 +411,17 @@
   transform: scale(0.8);
   opacity: 0;
 }
+
 .animate-pop-in.animated {
   transform: scale(1);
   opacity: 1;
 }
 
 .bg-health-ratio-gradient {
-  background: linear-gradient(
-    90deg,
-    #ff3864 8.12%,
-    #f1f996 60.25%,
-    #39ff88 98.45%
-  );
+  background: linear-gradient(90deg,
+      #ff3864 8.12%,
+      #f1f996 60.25%,
+      #39ff88 98.45%);
 }
 
 .shadow-health-ratio-handle {
@@ -441,6 +472,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -473,6 +505,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -2250,7 +2250,7 @@ __metadata:
     eslint-plugin-sort-keys: "npm:^2.3.5"
     eslint-plugin-typescript-sort-keys: "npm:^3.0.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
-    lucide-react: "npm:^0.453.0"
+    lucide-react: "npm:^0.454.0"
     mathjs: "npm:^13.2.0"
     millify: "npm:^6.1.0"
     next: "npm:^14.2.5"
@@ -18616,12 +18616,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.453.0":
-  version: 0.453.0
-  resolution: "lucide-react@npm:0.453.0"
+"lucide-react@npm:^0.454.0":
+  version: 0.454.0
+  resolution: "lucide-react@npm:0.454.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
-  checksum: 10/b49c486ce04ebe3650d756aab0584eb96d4b3c2381ab1185ebedbd00333cfafcfe71766f918bc5ea7538bab0339804363afa5503acb416ee2208af9d31a9fac1
+  checksum: 10/90b40271182e15fefc9cbc6aca4645a49691f73b1887daffb0c9d048f61c89a1c1d7eac1096a37ba627bdce91e8aa49fcf43a5cf0ebd255117ce848d71a56dd1
   languageName: node
   linkType: hard
 
