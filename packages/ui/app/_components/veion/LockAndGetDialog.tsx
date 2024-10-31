@@ -12,6 +12,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeION } from '@ui/hooks/veion/useVeION';
 import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -43,6 +44,7 @@ export default function VeIonDialog({
   const [success, setSuccess] = useState<boolean>(false);
   const maxtoken = 100;
   const { isConnected } = useAccount();
+  const { createLock } = useVeION(+chain);
 
   const {
     amount: veIonAmount,
@@ -68,12 +70,13 @@ export default function VeIonDialog({
         console.warn('Wallet not connected');
         return;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const args = {
+
+      await createLock({
         tokenAddress: '0xabced',
         tokenAmount: veIonAmount.toString(),
-        duration: selectedDuration.toString()
-      };
+        duration: selectedDuration,
+        stakeUnderlying: true
+      });
       setSuccess(true);
     } catch (err) {
       console.warn(err);

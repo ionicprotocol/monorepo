@@ -150,7 +150,6 @@ export default function VeIon() {
         chain={+chain}
         selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
-
       <MigrateIonDialog
         isOpen={isMigrateOpen}
         onOpenChange={setIsMigrateOpen}

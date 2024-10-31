@@ -14,6 +14,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeION } from '@ui/hooks/veion/useVeION';
 import { getToken } from '@ui/utils/getStakingTokens';
 
 import MaxDeposit from '../stake/MaxDeposit';
@@ -41,11 +42,20 @@ export default function AddLiquidityDialog({
   const [ionAmount, setIonAmount] = useState<string>('');
   const [wethAmount, setWethAmount] = useState<string>('');
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
+  const { addLiquidity } = useVeION(chainId);
 
   // Only allow dialog to close if widget is not open
   const handleOpenChange = (open: boolean) => {
     if (widgetPopup) return; // Prevent dialog from closing if widget is open
     onOpenChange(open);
+  };
+
+  const handleAddLiquidity = async () => {
+    await addLiquidity({
+      tokenAmount: '1.0',
+      tokenBAmount: '0.5',
+      selectedToken: 'eth'
+    });
   };
 
   return (
@@ -147,6 +157,7 @@ export default function AddLiquidityDialog({
             <Button
               variant="default"
               className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold h-10"
+              onClick={handleAddLiquidity}
             >
               Provide Liquidity
             </Button>

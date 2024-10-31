@@ -13,6 +13,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeION } from '@ui/hooks/veion/useVeION';
 import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -36,6 +37,8 @@ export default function MigrateIonDialog({
   const [migratedLp] = useState<string>('0.0');
   const maxtoken = '0.00';
 
+  const { removeLiquidity } = useVeION(+chain);
+
   async function handleMigrate() {
     try {
       const isSwitched = await handleSwitchOriginChain(+chain, chainId);
@@ -44,6 +47,11 @@ export default function MigrateIonDialog({
         console.warn('Wallet not connected');
         return;
       }
+
+      await removeLiquidity({
+        liquidity: '0.5',
+        selectedToken: 'eth'
+      });
 
       // eslint-disable-next-line no-console
       console.log('Migrating:', migrateAmount);
