@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 type DelegateProps = {
@@ -25,7 +25,7 @@ export function Delegate({
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
 
   const { address } = useAccount();
-  const { delegate, isPending } = useManageMyVeION(Number(chain));
+  const { delegate, isPending } = useVeIONManage(Number(chain));
   const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const handleDelegate = async () => {

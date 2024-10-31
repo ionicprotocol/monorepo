@@ -19,7 +19,7 @@ export interface CategoryReward {
   rewardToken: string;
 }
 
-export function useUniversalClaim(chainIds: number[]) {
+export function useVeionUniversalClaim(chainIds: number[]) {
   const { data: rawRewards, isLoading } = useAllClaimableRewards(chainIds);
   const { getSdk } = useMultiIonic();
 

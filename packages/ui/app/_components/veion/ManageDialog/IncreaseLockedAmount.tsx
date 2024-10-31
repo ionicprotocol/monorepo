@@ -4,7 +4,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { toast } from '@ui/hooks/use-toast';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
@@ -16,7 +16,7 @@ type IncreaseLockedAmountProps = {
 };
 
 export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
-  const { increaseAmount, isPending } = useManageMyVeION(Number(chain));
+  const { increaseAmount, isPending } = useVeIONManage(Number(chain));
 
   const utilizationMarks = [0, 25, 50, 75, 100];
   const token = getToken(+chain);

@@ -22,8 +22,8 @@ import {
   TableRow
 } from '@ui/components/ui/table';
 import { useToast } from '@ui/hooks/use-toast';
-import type { CategoryReward } from '@ui/hooks/veion/useUniversalClaim';
-import { useUniversalClaim } from '@ui/hooks/veion/useUniversalClaim';
+import type { CategoryReward } from '@ui/hooks/veion/useVeionUniversalClaim';
+import { useVeionUniversalClaim } from '@ui/hooks/veion/useVeionUniversalClaim';
 
 import { TableActionButton } from '../TableActionButton';
 
@@ -164,7 +164,7 @@ const RewardsTable = ({
 // Main Component
 const UniversalClaim = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { rewards, isLoading } = useUniversalClaim([8453, 34443, 10]);
+  const { rewards, isLoading } = useVeionUniversalClaim([8453, 34443, 10]);
 
   return (
     <ClaimProvider>
@@ -216,7 +216,7 @@ const UniversalClaim = () => {
 const ClaimFooter = ({ onClose }: { onClose: () => void }) => {
   const { selectedRewards, getSelectedCount, clearSelections } =
     useClaimContext();
-  const { claimSelectedRewards } = useUniversalClaim([8453, 34443, 10]); // Base, Mode, Optimism
+  const { claimSelectedRewards } = useVeionUniversalClaim([8453, 34443, 10]); // Base, Mode, Optimism
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 

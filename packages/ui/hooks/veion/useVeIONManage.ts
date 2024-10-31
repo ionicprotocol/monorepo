@@ -6,7 +6,7 @@ import { useContractWrite } from '../useContractWrite';
 
 import type { Hex } from 'viem';
 
-export function useManageMyVeION(chain: number) {
+export function useVeIONManage(chain: number) {
   const { getSdk } = useMultiIonic();
   const ionicSdk = getSdk(chain);
   const veIonContract = ionicSdk?.veIONContracts?.veION;

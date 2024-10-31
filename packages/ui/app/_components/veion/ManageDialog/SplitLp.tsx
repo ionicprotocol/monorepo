@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
@@ -21,7 +21,7 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
 
   const { address } = useAccount();
-  const { split, isPending } = useManageMyVeION(Number(chain));
+  const { split, isPending } = useVeIONManage(Number(chain));
   const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const handleFirstSliderChange = (newValue: number) => {

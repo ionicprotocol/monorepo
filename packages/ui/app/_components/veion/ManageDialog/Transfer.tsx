@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import type { Hex } from 'viem';
 
@@ -20,7 +20,7 @@ export function Transfer({ chain, tokenId }: TransferProps) {
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
 
   const { address } = useAccount();
-  const { safeTransfer, isPending } = useManageMyVeION(Number(chain));
+  const { safeTransfer, isPending } = useVeIONManage(Number(chain));
 
   const handleTransfer = async () => {
     if (!isValidAddress || !address || !tokenId) return;

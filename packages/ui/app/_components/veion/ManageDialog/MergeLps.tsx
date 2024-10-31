@@ -14,7 +14,7 @@ import {
   SelectValue
 } from '@ui/components/ui/select';
 import { Separator } from '@ui/components/ui/separator';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import CustomTooltip from '../../CustomTooltip';
 
@@ -40,7 +40,7 @@ export function MergeLps({
   const isValidAddress = toAddress ? isAddress(toAddress) : false;
 
   const { address } = useAccount();
-  const { merge, isPending } = useManageMyVeION(Number(chain));
+  const { merge, isPending } = useVeIONManage(Number(chain));
 
   // Mock data for demonstration - replace with actual LP data
   const mockLPs: LP[] =

@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { useToast } from '@ui/hooks/use-toast';
-import { useManageMyVeION } from '@ui/hooks/veion/useManageMyVeION';
+import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
@@ -32,7 +32,7 @@ export function Extend({
 
   const { address } = useAccount();
   const { toast } = useToast();
-  const { extendLock, isPending } = useManageMyVeION(Number(chain));
+  const { extendLock, isPending } = useVeIONManage(Number(chain));
 
   const tokenAddress = getAvailableStakingToken(+chain, 'eth');
 

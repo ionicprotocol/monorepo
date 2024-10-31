@@ -13,7 +13,7 @@ import {
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
 import { useToast } from '@ui/hooks/use-toast';
-import { useVeIONExtend } from '@ui/hooks/veion/useVeIONxtend';
+import { useVeIONExtend } from '@ui/hooks/veion/useVeIONExtend';
 
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';

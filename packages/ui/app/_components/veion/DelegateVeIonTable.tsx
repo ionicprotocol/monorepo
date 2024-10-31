@@ -1,3 +1,8 @@
+import { useState } from 'react';
+
+import { useToast } from '@ui/hooks/use-toast';
+import { useVeIONDelegate } from '@ui/hooks/veion/useVeIONDelegate';
+
 import TimeRemaining from './TimeRemaining';
 import CommonTable from '../CommonTable';
 import { TableActionButton } from '../TableActionButton';
@@ -23,9 +28,56 @@ type BaseVeionData = {
 type DelegateVeionData = BaseVeionData & {
   delegatedTo: string;
   readyToDelegate: boolean;
+  chainId: number;
+  lpTokenAddress: string;
+  delegatedTokenIds: number[];
+  delegatedAmounts: string[];
 };
 
-function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
+interface DelegateVeionTableProps {
+  data: DelegateVeionData[];
+  onUndelegateSuccess?: () => void;
+}
+
+function DelegateVeionTable({
+  data,
+  onUndelegateSuccess
+}: DelegateVeionTableProps) {
+  const { toast } = useToast();
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
+  const defaultChain = data[0]?.chainId ?? 1;
+  const { undelegate, isUndelegating } = useVeIONDelegate(defaultChain);
+
+  const handleUndelegate = async (row: DelegateVeionData) => {
+    try {
+      setProcessingId(row.id);
+
+      const success = await undelegate({
+        fromTokenId: parseInt(row.id),
+        toTokenIds: row.delegatedTokenIds,
+        lpToken: row.lpTokenAddress as `0x${string}`,
+        amounts: row.delegatedAmounts
+      });
+
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Successfully undelegated tokens'
+        });
+        onUndelegateSuccess?.();
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message || 'Failed to undelegate tokens',
+        variant: 'destructive'
+      });
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const getRandomColor = () => {
     const colors = [
       '#FF6B6B',
@@ -122,10 +174,18 @@ function DelegateVeionTable({ data }: { data: DelegateVeionData[] }) {
       id: 'actions',
       cell: ({ row }) => {
         const data = row.original;
+        const isProcessing = processingId === data.id;
+
         return (
           <div className="flex justify-end">
             {data.readyToDelegate ? (
-              <TableActionButton width="100px">Undelegate</TableActionButton>
+              <TableActionButton
+                width="100px"
+                onClick={() => handleUndelegate(data)}
+                disabled={isProcessing || isUndelegating}
+              >
+                {isProcessing ? 'Undelegating...' : 'Undelegate'}
+              </TableActionButton>
             ) : (
               <TableActionButton
                 variant="secondary"
