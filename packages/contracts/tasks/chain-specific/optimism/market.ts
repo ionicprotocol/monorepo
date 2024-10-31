@@ -42,7 +42,7 @@ task("markets:deploy:optimism:new", "deploy new optimism assets").setAction(asyn
 });
 
 task("market:set-caps:optimism:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.SNX)) {
+  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.weETH)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);

@@ -15,6 +15,7 @@ import {
   usdPlus_MARKET,
   USDz_MARKET,
   uSOL_MARKET,
+  uSUI_MARKET,
   weETH_MARKET,
   WETH_MARKET,
   wstETH_MARKET,
@@ -389,7 +390,7 @@ task("base:add-rewards:epoch4:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = uSOL_MARKET;
+    const market = uSUI_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
