@@ -40,6 +40,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   // Mappings
   mapping(address => bool) public s_bridges;
+  mapping(LpTokenType => uint256) public s_minimumLockAmount;
   mapping(address => bool) public s_whitelistedToken;
   mapping(address => LpTokenType) public s_lpType;
   mapping(address => bool) public s_canSplit;
@@ -146,6 +147,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
     s_assetsLocked[_tokenId].add(_tokenAddress);
     uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
+
+    if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
     if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
 
     if (lockedBalance.isPermanent) {
@@ -638,6 +641,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (_tokenAmount[i] == 0) revert ZeroAmount();
       if (unlockTime <= block.timestamp) revert LockDurationNotInFuture();
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+      if (_tokenAmount[i] < s_minimumLockAmount[_lpType]) revert MinimumNotMet();
 
       _depositFor(
         _tokenAddress[i],
@@ -776,9 +780,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
     s_limitedBoost = _boostAmount;
   }
+
   function setVoter(address _voter) external onlyOwner {
     s_voter = _voter;
   }
+
+  function setMinimumLockAmount(address _tokenAddress, uint256 _minimumAmount) external onlyOwner {
+    require(_minimumAmount > 0, "Minimum amount must be greater than zero");
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    s_minimumLockAmount[lpType] = _minimumAmount;
+  }
+
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
     return s_ownerToTokenIds[_owner].values();
   }
