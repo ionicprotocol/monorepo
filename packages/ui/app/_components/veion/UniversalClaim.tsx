@@ -21,7 +21,9 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
-import { claimRewards } from '@ui/constants/mock';
+import { useToast } from '@ui/hooks/use-toast';
+import type { CategoryReward } from '@ui/hooks/veion/useUniversalClaim';
+import { useUniversalClaim } from '@ui/hooks/veion/useUniversalClaim';
 
 import { TableActionButton } from '../TableActionButton';
 
@@ -83,21 +85,11 @@ export const ClaimProvider = ({ children }: ClaimProviderProps) => {
   );
 };
 
-// Table Components
-interface RewardItem {
-  id: string;
-  token: string;
-  tokenSymbol: string;
-  amount: number;
-  network: 'Base' | 'Mode';
-  section: 'Locked LP Emissions' | 'Market Emissions' | 'Protocol Bribes';
-}
-
 const RewardsTable = ({
   rewards,
   section
 }: {
-  rewards: RewardItem[];
+  rewards: CategoryReward[];
   section: string;
 }) => {
   const { selectedRewards, toggleReward } = useClaimContext();
@@ -172,6 +164,7 @@ const RewardsTable = ({
 // Main Component
 const UniversalClaim = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { rewards, isLoading } = useUniversalClaim([8453, 34443, 10]);
 
   return (
     <ClaimProvider>
@@ -192,25 +185,28 @@ const UniversalClaim = () => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-8">
-            {(
-              [
-                'Market Emissions',
-                'Protocol Bribes',
-                'Locked LP Emissions'
-              ] as const
-            ).map((section) => (
-              <RewardsTable
-                key={section}
-                rewards={claimRewards.filter(
-                  (reward) => reward.section === section
-                )}
-                section={section}
-              />
-            ))}
-
-            <ClaimFooter onClose={() => setIsOpen(false)} />
-          </div>
+          {isLoading ? (
+            <div>Loading rewards...</div>
+          ) : (
+            <div className="space-y-8">
+              {(
+                [
+                  'Market Emissions',
+                  'Protocol Bribes',
+                  'Locked LP Emissions'
+                ] as const
+              ).map((section) => (
+                <RewardsTable
+                  key={section}
+                  rewards={rewards.filter(
+                    (reward) => reward.section === section
+                  )}
+                  section={section}
+                />
+              ))}
+              <ClaimFooter onClose={() => setIsOpen(false)} />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </ClaimProvider>
@@ -218,14 +214,45 @@ const UniversalClaim = () => {
 };
 
 const ClaimFooter = ({ onClose }: { onClose: () => void }) => {
-  const { getSelectedCount, clearSelections } = useClaimContext();
+  const { selectedRewards, getSelectedCount, clearSelections } =
+    useClaimContext();
+  const { claimSelectedRewards } = useUniversalClaim([8453, 34443, 10]); // Base, Mode, Optimism
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClaim = async () => {
-    // Handle claim logic
-    // eslint-disable-next-line no-console
-    console.log('Claiming rewards...');
-    clearSelections();
-    onClose();
+    try {
+      setIsLoading(true);
+      const selectedIds = Object.entries(selectedRewards)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([id]) => id);
+
+      await claimSelectedRewards(selectedIds);
+
+      toast({
+        title: 'Success',
+        description: 'Successfully claimed rewards'
+      });
+
+      clearSelections();
+      onClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive'
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: 'An unknown error occurred',
+          variant: 'destructive'
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
