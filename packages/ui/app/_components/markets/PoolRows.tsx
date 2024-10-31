@@ -4,8 +4,6 @@ import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
 import Link from 'next/link';
 
-import { useStore } from 'ui/store/Store';
-
 import {
   FLYWHEEL_TYPE_MAP,
   pools,
@@ -15,6 +13,7 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
+import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 

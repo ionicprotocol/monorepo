@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
-import type { NewPosition, OpenPosition } from 'types/dist';
+import type { NewPosition, OpenPosition } from '@ionicprotocol/types';
 
 export const usePositionsQuery = (chain: number) => {
   const { address, getSdk } = useMultiIonic();

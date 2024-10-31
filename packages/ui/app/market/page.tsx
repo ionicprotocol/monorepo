@@ -55,6 +55,7 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
+  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
     mode.id
   );
@@ -134,14 +135,26 @@ export default function Market() {
             setSwapWidgetOpen={setSwapWidgetOpen}
             swapWidgetOpen={swapWidgetOpen}
             dropdownSelectedChain={dropdownSelectedChain.toString()}
+            setWrapWidgetOpen={setWrapWidgetOpen}
+            wrapWidgetOpen={wrapWidgetOpen}
           />
           <StakingTile chain={+chain} />
         </div>
         {/* //............................................ */}
-        <div className={`w-full my-3 flex flex-wrap  `}>
+        <div className={`w-full my-4 flex flex-wrap`}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
-            upcomingChains={['MetalL2', 'Ozean', 'Soneium']}
+            upcomingChains={[
+              'MetalL2',
+              'Ozean',
+              'Soneium',
+              'Camp',
+              'FX',
+              'Ink',
+              'Kroma',
+              'Unichain',
+              'Worldchain'
+            ]}
           />
         </div>
         <div

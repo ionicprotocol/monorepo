@@ -20,7 +20,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { mode } from 'viem/chains';
 import { useBalance, useAccount } from 'wagmi';
-// import { useGetMaxBorrow } from 'ui/app/util/utils';
+// import { useGetMaxBorrow } from '@ui/app/util/utils';
 //-------------------Interfaces------------
 interface IProp {
   params: { asset: string };
@@ -59,10 +59,10 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
-import Popup, { PopupMode } from 'ui/app/_components/popup/page';
+import Popup, { PopupMode } from '@ui/app/_components/popup/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import Swap from 'ui/app/_components/popup/Swap';
+import Swap from '@ui/app/_components/popup/Swap';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -71,7 +71,7 @@ import { Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
-import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
+import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
