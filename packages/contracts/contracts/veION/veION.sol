@@ -268,6 +268,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
       _checkpoint(_to, newLockedTo, _lpType);
       s_locked[_to][_lpType] = newLockedTo;
+
+      if (!s_assetsLocked[_to].contains(asset)) {
+        s_assetsLocked[_to].add(asset);
+      }
     }
     _burn(_from);
   }
