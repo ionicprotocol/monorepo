@@ -154,10 +154,20 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
       <VeionClaim
         isOpen={isClaimOpen}
         onOpenChange={setIsClaimOpen}
+        // placeholder values
+        lpAmount="100"
+        tokenId={1}
+        tokenAddress="0x123"
+        chain={1}
       />
       <ExtendVeion
         isOpen={isExtendOpen}
         onOpenChange={setIsExtendOpen}
+        // placeholder values
+        maxToken={1000}
+        tokenId={1}
+        tokenAddress="0x123"
+        chain={1}
       />
       <ManageDialog
         isOpen={isManageOpen}

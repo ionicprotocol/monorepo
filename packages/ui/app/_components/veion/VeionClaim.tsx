@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
+import { parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
@@ -11,56 +10,100 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
+import { useToast } from '@ui/hooks/use-toast';
+import { useVeIONClaim } from '@ui/hooks/veion/useVeIONClaim';
 
 import ProgressSteps from '../xION/ProgressSteps';
 
 interface VeionClaimProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  tokenId: number;
+  lpAmount: string;
+  tokenAddress: string;
+  chain: number;
 }
 
-export default function VeionClaim({ isOpen, onOpenChange }: VeionClaimProps) {
+export default function VeionClaim({
+  isOpen,
+  onOpenChange,
+  tokenId,
+  lpAmount,
+  tokenAddress,
+  chain
+}: VeionClaimProps) {
   const { isConnected } = useAccount();
-  const [progress, setProgress] = useState<number>(0);
+  const { toast } = useToast();
+  const {
+    approve,
+    claim,
+    resetState,
+    progress,
+    isApproving,
+    isClaiming,
+    error
+  } = useVeIONClaim(chain);
 
-  async function approval(amount: bigint) {
-    try {
-      if (!isConnected) {
-        console.warn('Wallet not connected');
-        return;
-      }
-      if (amount <= BigInt(0)) return;
-      setProgress(1);
-
-      // Approval logic goes here
-      console.warn(`Approval hash --> ${amount}`);
-      setProgress(2);
-    } catch (err) {
-      console.warn(err);
-      setProgress(0);
+  // Reset state when dialog closes
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      resetState();
     }
-  }
+    onOpenChange(open);
+  };
 
-  async function claimLp() {
-    try {
-      if (!isConnected) {
-        console.warn('Wallet not connected');
-        return;
-      }
-      const args = {
-        tokenAddress: '0xabced'
-      };
-      // eslint-disable-next-line no-console
-      console.log(args);
-    } catch (err) {
-      console.warn(err);
+  const handleApproval = async () => {
+    if (!isConnected) {
+      toast({
+        title: 'Error',
+        description: 'Please connect your wallet',
+        variant: 'destructive'
+      });
+      return;
     }
-  }
+
+    try {
+      const amount = parseUnits(lpAmount, 18);
+      await approve(tokenAddress, amount);
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleClaim = async () => {
+    if (!isConnected) {
+      toast({
+        title: 'Error',
+        description: 'Please connect your wallet',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      await claim(tokenAddress, tokenId);
+
+      // Close dialog on successful claim
+      setTimeout(() => {
+        handleOpenChange(false);
+      }, 2000);
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive'
+      });
+    }
+  };
 
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
     >
       <DialogContent className="bg-grayUnselect py-4 px-6 rounded-md sm:max-w-[425px] flex flex-col items-center justify-center">
         <DialogHeader>
@@ -81,21 +124,26 @@ export default function VeionClaim({ isOpen, onOpenChange }: VeionClaimProps) {
         </DialogHeader>
         <p>Claim ION/ETH Balancer LP</p>
         <p className="text-white/50 text-[10px]">
-          Return veION #0012 and receive 15.003 LP
+          Return veION #{String(tokenId).padStart(4, '0')} and receive{' '}
+          {lpAmount} LP
         </p>
+
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
         <div className="w-full flex justify-between items-center mb-2 mt-4 gap-2">
           <Button
-            onClick={() => approval(BigInt(100))} // Replace with actual amount
+            onClick={handleApproval}
             className="w-full bg-accent text-black"
+            disabled={isApproving || isClaiming || progress >= 2}
           >
-            Approve
+            {isApproving ? 'Approving...' : 'Approve'}
           </Button>
           <Button
-            onClick={claimLp}
+            onClick={handleClaim}
             className="w-full bg-accent text-black"
+            disabled={isApproving || isClaiming || progress < 2}
           >
-            Claim
+            {isClaiming ? 'Claiming...' : 'Claim'}
           </Button>
         </div>
         <div className="w-[70%] mx-auto mt-4">

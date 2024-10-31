@@ -1,5 +1,5 @@
 import { formatUnits, parseEther, parseUnits } from 'viem';
-import { useAccount, useChainId, useReadContract } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
