@@ -294,6 +294,7 @@ export class IonicBase {
       PrudentiaInterestRateModel: PrudentiaInterestRateModel
     };
     const bytecode = await this.publicClient.getCode({ address: interestRateModelAddress });
+    console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ interestRateModelAddress:", interestRateModelAddress);
     console.log("🚀 ~ IonicBase ~ identifyInterestRateModel ~ bytecode:", bytecode);
     if (!bytecode) {
       throw Error("Bytecode not found");

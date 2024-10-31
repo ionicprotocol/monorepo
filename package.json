@@ -15,7 +15,7 @@
     "packages/contracts"
   ],
   "resolutions": {
-    "viem": "^2.21.12",
+    "viem": "^2.21.37",
     "typescript": "^5.5.3"
   },
   "devDependencies": {
