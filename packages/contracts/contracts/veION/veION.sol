@@ -11,8 +11,10 @@ import { BalanceLogicLibrary } from "./libraries/BalanceLogicLibrary.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
+  using EnumerableSet for EnumerableSet.UintSet;
   using SafeERC20 for IERC20;
   using SafeCast for uint256;
   using SafeCast for int256;
@@ -56,9 +58,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(LpTokenType => uint256) public s_protocolFees;
   mapping(LpTokenType => uint256) public s_distributedFees;
   mapping(uint256 => mapping(uint256 => mapping(LpTokenType => uint256))) public s_delegations;
-  mapping(uint256 => mapping(LpTokenType => uint256[])) public s_delegatees;
-  mapping(uint256 => mapping(LpTokenType => uint256[])) public s_delegators;
-  mapping(address => uint256[]) public s_ownerToTokenIds; // owner => list of token IDs
+  mapping(uint256 => mapping(LpTokenType => EnumerableSet.UintSet)) internal s_delegatees;
+  mapping(uint256 => mapping(LpTokenType => EnumerableSet.UintSet)) internal s_delegators;
+  mapping(address => EnumerableSet.UintSet) internal s_ownerToTokenIds; // owner => list of token IDs
 
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
@@ -327,8 +329,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (!_newLocked.isPermanent) revert NotPermanentLock();
-    if (s_delegatees[_tokenId][_lpType].length != 0) revert TokenHasDelegatees();
-    if (s_delegators[_tokenId][_lpType].length != 0) revert TokenHasDelegators();
+    if (s_delegatees[_tokenId][_lpType].length() != 0) revert TokenHasDelegatees();
+    if (s_delegators[_tokenId][_lpType].length() != 0) revert TokenHasDelegators();
 
     s_permanentLockBalance[_lpType] -= _newLocked.amount;
     _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
@@ -365,8 +367,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[toTokenId][lpType] = toLocked;
 
     if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
-      s_delegatees[fromTokenId][lpType].push(toTokenId);
-      s_delegators[toTokenId][lpType].push(fromTokenId);
+      s_delegatees[fromTokenId][lpType].add(toTokenId);
+      s_delegators[toTokenId][lpType].add(fromTokenId);
     }
 
     s_delegations[fromTokenId][toTokenId][lpType] += amount;
@@ -402,24 +404,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     // Update the delegation record
     s_delegations[fromTokenId][toTokenId][lpType] -= amount;
     if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
-      // Remove the toTokenId from the delegatees list if no more delegation exists
-      uint256[] storage delegatees = s_delegatees[fromTokenId][lpType];
-      for (uint256 j = 0; j < delegatees.length; j++) {
-        if (delegatees[j] == toTokenId) {
-          delegatees[j] = delegatees[delegatees.length - 1];
-          delegatees.pop();
-          break;
-        }
-      }
-      // Remove fromTokenId from toTokenId's delegators list
-      uint256[] storage delegators = s_delegators[toTokenId][lpType];
-      for (uint256 k = 0; k < delegators.length; k++) {
-        if (delegators[k] == fromTokenId) {
-          delegators[k] = delegators[delegators.length - 1];
-          delegators.pop();
-          break;
-        }
-      }
+      s_delegatees[fromTokenId][lpType].remove(toTokenId);
+      s_delegators[toTokenId][lpType].remove(fromTokenId);
     }
 
     s_locked[toTokenId][lpType] = toLocked;
@@ -470,24 +456,24 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function _burn(uint256 tokenId) internal override {
     address owner = ownerOf(tokenId);
     super._burn(tokenId);
-    removeTokenFromOwnerList(owner, tokenId);
+    s_ownerToTokenIds[owner].remove(tokenId);
   }
 
   function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
     super._beforeTokenTransfer(from, to, tokenId);
 
     if (from != address(0)) {
-      removeTokenFromOwnerList(from, tokenId);
+      s_ownerToTokenIds[from].remove(tokenId);
     }
     if (to != address(0)) {
-      s_ownerToTokenIds[to].push(tokenId);
+      s_ownerToTokenIds[to].add(tokenId);
       uint256 lengthOfAssets = s_assetsLocked[tokenId].length;
 
       for (uint256 i = 0; i < lengthOfAssets; i++) {
         address asset = s_assetsLocked[tokenId][i];
         LpTokenType lpType = s_lpType[asset];
-        removeDelegatees(tokenId, s_delegatees[tokenId][lpType], asset, new uint256[](0), true);
-        removeDelegators(s_delegators[tokenId][lpType], tokenId, asset, new uint256[](0), true);
+        removeDelegatees(tokenId, s_delegatees[tokenId][lpType].values(), asset, new uint256[](0), true);
+        removeDelegators(s_delegators[tokenId][lpType].values(), tokenId, asset, new uint256[](0), true);
       }
     }
   }
@@ -722,17 +708,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
-  function removeTokenFromOwnerList(address owner, uint256 tokenId) internal {
-    uint256[] storage tokenIds = s_ownerToTokenIds[owner];
-    for (uint256 i = 0; i < tokenIds.length; i++) {
-      if (tokenIds[i] == tokenId) {
-        tokenIds[i] = tokenIds[tokenIds.length - 1];
-        tokenIds.pop();
-        break;
-      }
-    }
-  }
-
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                           View Functions                                  ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -810,11 +785,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_voter = _voter;
   }
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
-    return s_ownerToTokenIds[_owner];
+    return s_ownerToTokenIds[_owner].values();
   }
 
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue) {
-    uint256[] memory tokenIds = s_ownerToTokenIds[_owner];
+    uint256[] memory tokenIds = s_ownerToTokenIds[_owner].values();
     for (uint256 i = 0; i < tokenIds.length; i++) {
       uint256 tokenId = tokenIds[i];
       address[] memory assets;
@@ -837,7 +812,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function getDelegatees(uint256 _tokenId, LpTokenType _lpType) external view returns (uint256[] memory) {
-    return s_delegatees[_tokenId][_lpType];
+    return s_delegatees[_tokenId][_lpType].values();
+  }
+
+  function getDelegators(uint256 _tokenId, LpTokenType _lpType) external view returns (uint256[] memory) {
+    return s_delegators[_tokenId][_lpType].values();
   }
 
   function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
