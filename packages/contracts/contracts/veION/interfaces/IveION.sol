@@ -7,6 +7,7 @@ interface IveION {
   struct LockedBalance {
     address tokenAddress;
     uint256 amount;
+    uint256 delegateAmount;
     uint256 start;
     uint256 end;
     bool isPermanent;
@@ -24,6 +25,7 @@ interface IveION {
     uint256 ts;
     uint256 blk; // block
     uint256 permanent;
+    uint256 permanentDelegate;
   }
 
   struct GlobalPoint {
