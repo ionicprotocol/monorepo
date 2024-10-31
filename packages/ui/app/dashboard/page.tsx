@@ -513,10 +513,7 @@ export default function Dashboard() {
             pool={pool || '0'}
             setOpen={setOpen}
           /> */}
-              <NetworkSelector
-                chain={chain as string}
-                dropdownSelectedChain={+chain}
-              />
+              <NetworkSelector dropdownSelectedChain={+chain} />
             </div>
           </div>
           {/* <div className={`w-full mt-2  col-span-5`}>

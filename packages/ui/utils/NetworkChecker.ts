@@ -1,6 +1,6 @@
 import { switchChain } from '@wagmi/core';
 
-import { wagmiAdapter } from 'ui/app/layout';
+import { wagmiAdapter } from '@ui/app/layout';
 
 export const handleSwitchOriginChain = async (
   selectedDropdownChain: number,
