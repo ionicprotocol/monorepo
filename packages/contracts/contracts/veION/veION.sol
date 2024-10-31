@@ -141,12 +141,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
+    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
+    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
 
     if (lockedBalance.isPermanent) {
       s_permanentLockBalance[lpType] += _tokenAmount;
     }
 
-    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
     _depositFor(
       _tokenAddress,
       _tokenId,
