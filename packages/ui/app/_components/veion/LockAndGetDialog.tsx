@@ -1,8 +1,8 @@
-// VeIonDialog.tsx
 import { useState } from 'react';
 
+import { formatEther } from 'viem';
 import { base, optimism, mode } from 'viem/chains';
-import { useChainId, useAccount } from 'wagmi';
+import { useChainId, useAccount, useBalance } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeION } from '@ui/hooks/veion/useVeION';
-import { getToken } from '@ui/utils/getStakingTokens';
+import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import AutoLock from './AutoLock';
@@ -36,15 +36,25 @@ export default function VeIonDialog({
   chain,
   selectedToken
 }: VeIonDialogProps) {
-  // eslint-disable-next-line no-console
-  console.log('selectedToken', selectedToken);
   const chainId = useChainId();
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const maxtoken = 100;
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { createLock } = useVeION(+chain);
+
+  const tokenAddress = getAvailableStakingToken(+chain, selectedToken);
+
+  const { data: tokenBalance } = useBalance({
+    address,
+    token: tokenAddress,
+    chainId: +chain,
+    query: {
+      notifyOnChangeProps: ['data', 'error']
+    }
+  });
+
+  const maxtoken = Number(formatEther((tokenBalance?.value || 0n) as bigint));
 
   const {
     amount: veIonAmount,
@@ -53,7 +63,8 @@ export default function VeIonDialog({
     handlePercentageChange: handleUtilizationChange
   } = usePrecisionSlider({
     maxValue: maxtoken,
-    initialValue: 0
+    initialValue: 0,
+    precision: 4
   });
 
   const { amount: selectedDuration, handleAmountChange: handleDurationChange } =
@@ -72,7 +83,7 @@ export default function VeIonDialog({
       }
 
       await createLock({
-        tokenAddress: '0xabced',
+        tokenAddress: tokenAddress as `0x${string}`,
         tokenAmount: veIonAmount.toString(),
         duration: selectedDuration,
         stakeUnderlying: true
@@ -144,7 +155,7 @@ export default function VeIonDialog({
                   VOTING POWER
                   <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
                 </div>
-                <p className="text-white">0.00 veIon</p>
+                <p className="text-white">{veIonAmount.toFixed(2)} veIon</p>
               </div>
               <Button
                 onClick={lockAndGetVeion}
@@ -161,8 +172,8 @@ export default function VeIonDialog({
               <DialogTitle>Congratulations!</DialogTitle>
             </DialogHeader>
             <p className="text-sm text-white/60">
-              Successfully locked {maxtoken} LP tokens for 12 veION, resulting
-              in x amount of voting power.
+              Successfully locked {veIonAmount.toFixed(2)} LP tokens for{' '}
+              {veIonAmount.toFixed(2)} veION.
               <br /> <br />
               Proceed to your veION Overview to vote on your favorite Market.
             </p>

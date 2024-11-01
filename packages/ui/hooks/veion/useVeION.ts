@@ -1,9 +1,10 @@
-import { formatUnits, parseEther, parseUnits } from 'viem';
+import { erc20Abi, formatUnits, parseEther, parseUnits } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import {
+  getAvailableStakingToken,
   getPoolToken,
   getReservesABI,
   getReservesArgs,
@@ -45,7 +46,7 @@ interface ExtendedWriteContractOptions {
 export function useVeION(chain: number) {
   const { getSdk } = useMultiIonic();
   const ionicSdk = getSdk(chain);
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { write, isPending } = useContractWrite();
 
   // Get veION contract
@@ -141,48 +142,88 @@ export function useVeION(chain: number) {
 
   const removeLiquidity = async ({
     liquidity,
-    selectedToken,
-    slippage = 5
+    selectedToken
   }: RemoveLiquidityParams) => {
-    if (!address) throw new Error('Wallet not connected');
+    if (!address || !isConnected) throw new Error('Wallet not connected');
 
-    const tokenA = getToken(chain);
-    const tokenB = getPoolToken(selectedToken);
-    const deadline = Math.floor((Date.now() + 3600000) / 1000);
+    const args = {
+      token: getToken(chain),
+      tokenB: getPoolToken(selectedToken),
+      stable: false,
+      liquidity: parseUnits(liquidity, 18),
+      amounTokenMin: parseEther('0'),
+      amountETHMin: parseEther('0'),
+      to: address,
+      deadline: Math.floor((Date.now() + 3636000) / 1000)
+    };
 
-    const functionName =
-      selectedToken === 'eth' ? 'removeLiquidityETH' : 'removeLiquidity';
-    const args =
-      selectedToken === 'eth'
-        ? [
-            tokenA,
-            false, // stable
-            parseUnits(liquidity, 18),
-            0n, // amountAMin
-            0n, // amountBMin
-            address,
-            deadline
+    const stakingTokenAddress = getAvailableStakingToken(chain, selectedToken);
+    const spenderContract = getSpenderContract(chain);
+
+    try {
+      // First approve the LP tokens
+      await write(
+        {
+          address: stakingTokenAddress,
+          abi: erc20Abi,
+          functionName: 'approve',
+          args: [spenderContract, args.liquidity]
+        },
+        {
+          successMessage: 'Approval successful',
+          errorMessage: 'Failed to approve tokens'
+        }
+      );
+
+      // Remove liquidity based on token type
+      if (selectedToken === 'eth') {
+        return write(
+          {
+            address: spenderContract,
+            abi: LiquidityContractAbi,
+            functionName: 'removeLiquidityETH',
+            args: [
+              args.token,
+              args.stable,
+              args.liquidity,
+              args.amounTokenMin,
+              args.amountETHMin,
+              args.to,
+              args.deadline
+            ]
+          },
+          {
+            successMessage: 'Successfully removed liquidity',
+            errorMessage: 'Failed to remove liquidity'
+          }
+        );
+      }
+
+      return write(
+        {
+          address: spenderContract,
+          abi: LiquidityContractAbi,
+          functionName: 'removeLiquidity',
+          args: [
+            args.token,
+            args.tokenB,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
           ]
-        : [
-            tokenA,
-            tokenB,
-            false, // stable
-            parseUnits(liquidity, 18),
-            0n, // amountAMin
-            0n, // amountBMin
-            address,
-            deadline
-          ];
-
-    return write(
-      {
-        address: getSpenderContract(chain),
-        abi: LiquidityContractAbi,
-        functionName,
-        args
-      } as const,
-      { successMessage: 'Successfully removed liquidity' }
-    );
+        },
+        {
+          successMessage: 'Successfully removed liquidity',
+          errorMessage: 'Failed to remove liquidity'
+        }
+      );
+    } catch (error) {
+      console.error('Remove liquidity error:', error);
+      throw error;
+    }
   };
 
   const createLock = async ({

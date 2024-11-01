@@ -50,11 +50,13 @@ export function PrecisionSlider({
 interface UsePrecisionSliderProps {
   maxValue: number;
   initialValue?: number;
+  precision?: number;
 }
 
 export function usePrecisionSlider({
   maxValue,
-  initialValue = 0
+  initialValue = 0,
+  precision = 2
 }: UsePrecisionSliderProps) {
   const [amount, setAmount] = useState<number>(initialValue);
   const [percentage, setPercentage] = useState<number>(0);
@@ -67,14 +69,14 @@ export function usePrecisionSlider({
 
   // Handle amount change (from input)
   const handleAmountChange = (newAmount: number) => {
-    setAmount(Number(newAmount.toFixed(2)));
+    setAmount(Number(newAmount.toFixed(precision)));
   };
 
   // Handle percentage change (from slider)
   const handlePercentageChange = (newPercentage: number) => {
     const rounded = Math.round(newPercentage);
     setPercentage(rounded);
-    const newAmount = Number(((rounded / 100) * maxValue).toFixed(2));
+    const newAmount = Number(((rounded / 100) * maxValue).toFixed(4));
     setAmount(newAmount);
   };
 
