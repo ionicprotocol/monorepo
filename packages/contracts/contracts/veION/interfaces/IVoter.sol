@@ -135,11 +135,6 @@ interface IVoter {
   /// @param _epochGovernor .
   function setEpochGovernor(address _epochGovernor) external;
 
-  /// @notice Set new emergency council.
-  /// @dev Throws if not called by emergency council.
-  /// @param _emergencyCouncil .
-  function setEmergencyCouncil(address _emergencyCouncil) external;
-
   /// @notice Whitelist (or unwhitelist) token for use in bribes.
   /// @dev Throws if not called by governor.
   /// @param _token .

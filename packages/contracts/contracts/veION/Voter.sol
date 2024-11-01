@@ -29,8 +29,6 @@ contract Voter is IVoter, OwnableUpgradeable {
   address public governor;
   /// @notice Custom Epoch Governor using ve for vote weights.
   address public epochGovernor;
-  /// @notice credibly neutral party similar to Curve's Emergency DAO
-  address public emergencyCouncil;
 
   /// @dev Total Voting Weights
   mapping(address => uint256) public totalWeight;
@@ -124,13 +122,6 @@ contract Voter is IVoter, OwnableUpgradeable {
     if (msg.sender != governor) revert NotGovernor();
     if (_epochGovernor == address(0)) revert ZeroAddress();
     epochGovernor = _epochGovernor;
-  }
-
-  /// @inheritdoc IVoter
-  function setEmergencyCouncil(address _council) public {
-    if (msg.sender != emergencyCouncil) revert NotEmergencyCouncil();
-    if (_council == address(0)) revert ZeroAddress();
-    emergencyCouncil = _council;
   }
 
   function setMarketRewardAccumulators(
