@@ -105,7 +105,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo) external initializer {
+  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo, address _rewardToken) external initializer {
     __Ownable_init();
     uint256 _length = _tokens.length;
     if (_length == 0) revert TokensArrayEmpty();
@@ -113,6 +113,7 @@ contract Voter is IVoter, OwnableUpgradeable {
       _whitelistToken(_tokens[i], true);
     }
     mpo = _mpo;
+    rewardToken = _rewardToken;
     governor = msg.sender;
   }
 
