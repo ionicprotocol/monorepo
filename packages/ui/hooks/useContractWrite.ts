@@ -1,5 +1,7 @@
 import { useWriteContract } from 'wagmi';
+
 import { useToast } from '@ui/hooks/use-toast';
+
 import type { Address } from 'viem';
 
 interface ContractConfig {

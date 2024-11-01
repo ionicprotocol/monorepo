@@ -85,6 +85,7 @@ export function useVeionUniversalClaim(chainIds: number[]) {
       const sdk = getSdk(Number(chainId));
       if (sdk) {
         try {
+          // eslint-disable-next-line no-console
           console.log('rewards', rewards);
           //   await sdk.claimRewards(rewards);
         } catch (error) {

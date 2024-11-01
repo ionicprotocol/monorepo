@@ -34,7 +34,7 @@ import {
   poolLensAbi,
   poolLensSecondaryAbi,
   unitrollerAbi,
-  iveIonAbi,
+  veIonAbi,
   voterAbi
 } from "../generated";
 import { withAsset } from "../modules/Asset";
@@ -175,7 +175,7 @@ export class IonicBase {
     return {
       veION: {
         address: "0x0",
-        abi: iveIonAbi
+        abi: veIonAbi
       },
       voter: {
         address: "0x0",
