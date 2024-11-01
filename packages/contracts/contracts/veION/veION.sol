@@ -637,6 +637,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _length = _tokenAddress.length;
     _mint(_to, _tokenId);
 
+    if (
+      _tokenAddress.length != _tokenAmount.length ||
+      _tokenAmount.length != _duration.length ||
+      _duration.length != _stakeUnderlying.length
+    ) {
+      revert ArrayMismatch();
+    }
+
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
       s_assetsLocked[_tokenId].add(_tokenAddress[i]);

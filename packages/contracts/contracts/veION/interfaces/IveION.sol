@@ -82,6 +82,7 @@ interface IveION {
   error TokenHasDelegators();
   error NotVoter();
   error MinimumNotMet();
+  error ArrayMismatch();
 
   event Deposit(
     address indexed provider,
