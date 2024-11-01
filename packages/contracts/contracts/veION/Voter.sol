@@ -332,6 +332,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     vars.sender = msg.sender;
     if (!IveION(ve).isApprovedOrOwner(vars.sender, _tokenId)) revert NotApprovedOrOwner();
     if (_marketVote.length != _weights.length) revert UnequalLengths();
+    if (_marketVote.length != _marketVoteSide.length) revert UnequalLengths();
     if (_marketVote.length > maxVotingNum) revert TooManyPools();
     vars.timestamp = block.timestamp;
     if ((vars.timestamp > IonicTimeLibrary.epochVoteEnd(vars.timestamp)) && !isWhitelistedNFT[_tokenId])
