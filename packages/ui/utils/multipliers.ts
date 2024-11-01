@@ -437,7 +437,7 @@ export const multipliers: Record<
           ionic: 0
         }
       },
-      'weETH.mode': {
+      weETH: {
         borrow: { turtle: false, ionAPR: false, ionic: 0 },
         supply: {
           ionic: 0,
