@@ -27,8 +27,6 @@ contract Voter is IVoter, OwnableUpgradeable {
   address public immutable ve;
   /// @notice Factory registry for valid pool / gauge / rewards factories
   address public immutable factoryRegistry;
-  /// @notice V1 factory
-  address public immutable v1Factory;
   /// @notice Base token of ve contract
   address internal immutable rewardToken;
   /// @notice Standard OZ IGovernor using ve for vote weights.
