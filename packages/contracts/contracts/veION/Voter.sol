@@ -24,9 +24,9 @@ contract Voter is IVoter, OwnableUpgradeable {
   /// @notice Store trusted forwarder address to pass into factories
   address public immutable forwarder;
   /// @notice The ve token that governs these contracts
-  address public immutable ve;
+  address public ve;
   /// @notice Base token of ve contract
-  address internal immutable rewardToken;
+  address internal rewardToken;
   /// @notice Standard OZ IGovernor using ve for vote weights.
   address public governor;
   /// @notice Custom Epoch Governor using ve for vote weights.
@@ -101,7 +101,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo, address _rewardToken) external initializer {
+  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo, address _rewardToken, address _ve) external initializer {
     __Ownable_init();
     uint256 _length = _tokens.length;
     if (_length == 0) revert TokensArrayEmpty();
@@ -110,6 +110,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
     mpo = _mpo;
     rewardToken = _rewardToken;
+    ve = _ve;
     governor = msg.sender;
   }
 
