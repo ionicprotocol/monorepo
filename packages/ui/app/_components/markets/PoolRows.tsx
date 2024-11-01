@@ -19,7 +19,6 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
-import { getAssetName } from '../../util/utils';
 import { PopupMode } from '../popup/page';
 
 import type { Address } from 'viem';
@@ -236,9 +235,7 @@ const PoolRows = ({
             className={`w-10 md:w-7`}
             src={logo}
           />
-          <h3 className={` text-lg md:text-sm `}>
-            {getAssetName(asset, dropdownSelectedChain)}
-          </h3>
+          <h3 className={` text-lg md:text-sm `}>{asset}</h3>
         </div>
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}

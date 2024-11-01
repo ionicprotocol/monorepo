@@ -11,7 +11,6 @@ import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import { getAssetName } from '../../util/utils';
 const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
@@ -129,9 +128,7 @@ const InfoRows = ({
           className="w-10 md:w-7"
           src={logo}
         />
-        <h3 className={`  text-lg md:text-sm  `}>
-          {getAssetName(asset, selectedChain)}
-        </h3>
+        <h3 className={`  text-lg md:text-sm  `}>{asset}</h3>
       </div>
       <h3
         className={` flex justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
