@@ -21,8 +21,6 @@ interface IPoolLens {
 
 contract Voter is IVoter, OwnableUpgradeable {
   using SafeERC20 for IERC20;
-  /// @notice Store trusted forwarder address to pass into factories
-  address public immutable forwarder;
   /// @notice The ve token that governs these contracts
   address public ve;
   /// @notice Base token of ve contract
