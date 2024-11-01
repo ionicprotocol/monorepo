@@ -207,12 +207,12 @@ contract Voter is IVoter, OwnableUpgradeable {
             block.timestamp
           );
         }
-        IveION(ve).voting(_tokenId, false);
         totalWeight[lpRewardTokens[k]] -= _totalWeight;
         usedWeights[_tokenId][lpRewardTokens[k]] = 0;
         delete marketVote[_tokenId];
       }
     }
+    IveION(ve).voting(_tokenId, false);
   }
 
   /// @inheritdoc IVoter
