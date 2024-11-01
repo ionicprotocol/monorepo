@@ -382,7 +382,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
   }
 
-  // Internal function to get all LP reward tokens
+  // External function to get all LP reward tokens
   function getAllLpRewardTokens() external view returns (address[] memory) {
     return _getAllLpRewardTokens();
   }
