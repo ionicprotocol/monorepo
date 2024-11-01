@@ -31,7 +31,6 @@ contract Voter is IVoter, OwnableUpgradeable {
   address public immutable v1Factory;
   /// @notice Base token of ve contract
   address internal immutable rewardToken;
-  address public minter;
   /// @notice Standard OZ IGovernor using ve for vote weights.
   address public governor;
   /// @notice Custom Epoch Governor using ve for vote weights.
@@ -106,13 +105,12 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, address _minter, MasterPriceOracle _mpo) external initializer {
+  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo) external initializer {
     __Ownable_init();
     uint256 _length = _tokens.length;
     for (uint256 i = 0; i < _length; i++) {
       _whitelistToken(_tokens[i], true);
     }
-    minter = _minter;
     mpo = _mpo;
     governor = msg.sender;
   }
