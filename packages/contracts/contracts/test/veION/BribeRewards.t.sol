@@ -19,6 +19,7 @@ contract BribeRewardsTest is BaseTest {
   Voter voter;
   SimplePriceOracle simpleOracle;
   MasterPriceOracle mpo = MasterPriceOracle(0x2BAF3A2B667A5027a83101d218A9e8B73577F117);
+  address rewardToken = 0x18470019bF0E94611f15852F7e93cf5D65BC34CA;
   address token = address(0x4);
   address lpTokenA = address(0x5);
   address lpTokenB = address(0x6);
@@ -28,9 +29,9 @@ contract BribeRewardsTest is BaseTest {
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
     voter = new Voter();
-    voter.initialize(new address[](0), address(0), MasterPriceOracle(mpo));
+    voter.initialize(new address[](0), MasterPriceOracle(mpo), rewardToken, address(0));
     bribeRewards = new BribeRewards();
-    bribeRewards.initialize(address(voter), address(mpo));
+    bribeRewards.initialize(address(voter));
 
     simpleOracle = new SimplePriceOracle();
     simpleOracle.initialize();
@@ -71,7 +72,7 @@ contract BribeRewardsTest is BaseTest {
 
   function testBribeDeposit() public fork(MODE_MAINNET) {
     vm.prank(address(voter));
-    bribeRewards._deposit(lpTokenA, amount, tokenId);
+    bribeRewards.deposit(lpTokenA, amount, tokenId);
 
     uint256 balance = bribeRewards.balanceOf(tokenId, lpTokenA);
     assertEq(balance, amount, "Balance should be equal to deposited amount");
@@ -79,10 +80,10 @@ contract BribeRewardsTest is BaseTest {
 
   function testBribeWithdraw() public fork(MODE_MAINNET) {
     vm.prank(address(voter));
-    bribeRewards._deposit(lpTokenA, amount, tokenId);
+    bribeRewards.deposit(lpTokenA, amount, tokenId);
 
     vm.prank(address(voter));
-    bribeRewards._withdraw(lpTokenA, amount, tokenId);
+    bribeRewards.withdraw(lpTokenA, amount, tokenId);
 
     uint256 balance = bribeRewards.balanceOf(tokenId, lpTokenA);
     assertEq(balance, 0, "Balance should be zero after withdrawal");
@@ -107,8 +108,8 @@ contract BribeRewardsTest is BaseTest {
     bribeTokenA.approve(address(bribeRewards), 1_000_000 ether);
 
     vm.startPrank(address(voter));
-    bribeRewards._deposit(lpTokenA, amount, tokenId);
-    bribeRewards._deposit(lpTokenB, amount, tokenId);
+    bribeRewards.deposit(lpTokenA, amount, tokenId);
+    bribeRewards.deposit(lpTokenB, amount, tokenId);
     vm.stopPrank();
 
     emit log_named_uint("Current Timestamp", block.timestamp);

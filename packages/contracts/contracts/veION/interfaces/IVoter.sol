@@ -19,7 +19,6 @@ interface IVoter {
   error NotApprovedOrOwner();
   error NotDistributeWindow();
   error NotGovernor();
-  error NotEmergencyCouncil();
   error NotMinter();
   error NotWhitelistedNFT();
   error NotWhitelistedToken();
@@ -86,8 +85,6 @@ interface IVoter {
   function governor() external view returns (address);
 
   function epochGovernor() external view returns (address);
-
-  function emergencyCouncil() external view returns (address);
 
   function length() external view returns (uint256);
 

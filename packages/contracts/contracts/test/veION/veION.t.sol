@@ -274,7 +274,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Assert the locked balance state for each token
     for (uint256 i = 0; i < vars.tokenAddresses.length; i++) {
-      (address lb_tokenAddress, int128 lb_amount, , uint256 lb_end, , ) = ve.s_locked(
+      (address lb_tokenAddress, int128 lb_amount, , uint256 lb_end, , , ) = ve.s_locked(
         vars.tokenId,
         ve.s_lpType(vars.tokenAddresses[i])
       );
@@ -326,7 +326,7 @@ contract VotingEscrowNFTTest is BaseTest {
       veloGauge
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy), bytes(""));
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
@@ -391,7 +391,7 @@ contract VotingEscrowNFTTest is BaseTest {
       veloGauge
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy), bytes(""));
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
@@ -705,7 +705,7 @@ contract VotingEscrowNFTTest is BaseTest {
       veloGauge
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy), bytes(""));
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
