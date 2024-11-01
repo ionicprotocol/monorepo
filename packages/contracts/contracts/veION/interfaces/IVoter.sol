@@ -29,6 +29,7 @@ interface IVoter {
   error UnequalLengths();
   error ZeroBalance();
   error ZeroAddress();
+  error TokensArrayEmpty();
 
   struct Market {
     address marketAddress;

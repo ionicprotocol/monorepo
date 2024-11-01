@@ -108,6 +108,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   function initialize(address[] calldata _tokens, MasterPriceOracle _mpo) external initializer {
     __Ownable_init();
     uint256 _length = _tokens.length;
+    if (_length == 0) revert TokensArrayEmpty();
     for (uint256 i = 0; i < _length; i++) {
       _whitelistToken(_tokens[i], true);
     }
