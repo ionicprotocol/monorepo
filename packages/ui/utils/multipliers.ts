@@ -204,7 +204,7 @@ export const multipliers: Record<
           ionAPR: false
         }
       },
-      'weETH.mode': {
+      weETH: {
         borrow: {
           eigenlayer: true,
           etherfi: 1,
@@ -437,12 +437,19 @@ export const multipliers: Record<
           ionic: 0
         }
       },
-      'weETH.mode': {
-        borrow: { turtle: false, ionAPR: false, ionic: 0 },
+      weETH: {
+        borrow: {
+          etherfi: 1,
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          eigenlayer: true
+        },
         supply: {
           ionic: 0,
           etherfi: 3,
           underlyingAPR: 2.99,
+          eigenlayer: true,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -719,8 +726,18 @@ export const multipliers: Record<
         }
       },
       weETH: {
+        borrow: {
+          etherfi: 1,
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          eigenlayer: true
+        },
         supply: {
           ionic: 0,
+          etherfi: 3,
+          underlyingAPR: 2.99,
+          eigenlayer: true,
           turtle: false,
           ionAPR: true,
           flywheel: true
