@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 import "../ionic/vault/OptimizedVaultsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { FlywheelStaticRewards } from "../ionic/strategies/flywheel/rewards/FlywheelStaticRewards.sol";
 import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
 import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
+import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
 
 import "./config/BaseTest.t.sol";
 
@@ -18,9 +21,11 @@ contract SupplyVaultsTest is BaseTest {
 
   uint256 blocksPerYear;
   address wethWhale = 0x7380511493DD4c2f1dD75E9CCe5bD52C787D4B51;
+  address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
 
   ICErc20 wethNativeMarket = ICErc20(0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2);
   ICErc20 wethMainMarket = ICErc20(0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2);
+  IERC20Metadata ionToken = IERC20Metadata(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
 
   ERC20 weth;
 
@@ -38,6 +43,9 @@ contract SupplyVaultsTest is BaseTest {
 
   function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
+
+    lenderSharesHint[0] = 0.5e17;
+    lenderSharesHint[1] = 9.5e17;
 
     weth = ERC20(wethMainMarket.underlying());
 
@@ -133,6 +141,8 @@ contract SupplyVaultsTest is BaseTest {
 
     IonicFlywheel newFwImpl = new IonicFlywheel();
 
+    uint256 ionWhaleStartingBalance = ionToken.balanceOf(ionWhale);
+
     ProxyAdmin proxyAdmin;
 
     // replace all flywheels
@@ -155,28 +165,73 @@ contract SupplyVaultsTest is BaseTest {
           proxyAdmin = dpa;
         }
 
-        TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
-        vm.prank(proxyAdmin.owner());
-        proxyAdmin.upgrade(proxy, address(newFwImpl));
+        {
+          TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
+          vm.prank(proxyAdmin.owner());
+          proxyAdmin.upgrade(proxy, address(newFwImpl));
+        }
 
         IonicFlywheel upgradedFlywheel = IonicFlywheel(flywheels[j]);
-        //ERC20[] memory fwStrategies = upgradedFlywheel.getAllStrategies();
+        ERC20[] memory fwStrategies = upgradedFlywheel.getAllStrategies();
+        for (uint8 k = 0; k < fwStrategies.length; k++) {
+          vm.prank(ionWhale);
+          ionToken.transfer(address(fwStrategies[k]), ionWhaleStartingBalance / 200);
+        }
+
         FlywheelStaticRewards flywheelRewards = FlywheelStaticRewards(address(upgradedFlywheel.flywheelRewards()));
 
         IFlywheelRewards newRewards;
         try flywheelRewards.owner() returns (address owner) {
-          newRewards = new FlywheelStaticRewards(
-            flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
-          );
+          (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ERC20(address(ionToken)));
+          if (rewardsPerSecond != 0) {
+            newRewards = new FlywheelStaticRewards(
+              flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
+            );
+
+            emit log_named_uint("rewardsEndTimestamp", rewardsEndTimestamp);
+            require(rewardsEndTimestamp > block.timestamp, "rewards ended");
+          }
         } catch {
           // if failing, the rewards contract is for dynamic rewards
           IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(upgradedFlywheel.flywheelRewards()));
-          newRewards = new IonicFlywheelDynamicRewards(
-            flywheelRewards.flywheel(), flywheelRewards.rewardsCycleLength()
-          );
+          (, uint32 end, ) = flywheelRewards.rewardsCycle(ERC20(address(ionToken)));
+//          if (end != 0) {
+            newRewards = new IonicFlywheelDynamicRewards(
+              flywheelRewards.flywheel(), flywheelRewards.rewardsCycleLength()
+            );
+
+            //vm.label(address(newRewards), string.concat("NewRewards", Strings.toString(i * flywheels.length + j)));
+
+            for (uint8 k = 0; k < fwStrategies.length; k++) {
+              IonicComptroller marketPool = ICErc20(address(fwStrategies[k])).comptroller();
+              if (address(marketPool) != address(pool)) {
+                emit log("");
+                emit log_named_address("INCTVZD MARKET", address(fwStrategies[k]));
+                emit log_named_address("MARKET    POOL", address(marketPool));
+                emit log_named_address("CURRENT   POOL", address(pool));
+                emit log("");
+              } else {
+                vm.prank(marketPool.admin());
+                CErc20RewardsDelegate(address(fwStrategies[k])).approve(address(ionToken), address(newRewards));
+
+                (, uint32 lastUpdated) = upgradedFlywheel.strategyState(fwStrategies[k]);
+
+                vm.prank(flywheels[j]);
+                newRewards.getAccruedRewards(fwStrategies[k], lastUpdated);
+              }
+            }
+
+          if (end == 0) emit log_named_address("INACTIVE FLYWHEEL", flywheels[j]);
+          emit log_named_uint("dyn rewards end", end);
+          emit log("");
+            //require(end != 0 && end > block.timestamp, "dyn rewards ended");
+//          }
         }
-        vm.prank(upgradedFlywheel.owner());
-        upgradedFlywheel.setFlywheelRewards(newRewards);
+
+        if (address(newRewards) != address(0)) {
+          vm.prank(upgradedFlywheel.owner());
+          upgradedFlywheel.setFlywheelRewards(newRewards);
+        }
       }
     }
   }
@@ -498,16 +553,11 @@ contract SupplyVaultsTest is BaseTest {
 
   // TODO test claiming the rewards for multiple vaults
   function testVaultAccrueRewards() public fork(MODE_MAINNET) {
-    IERC20Metadata ionToken = IERC20Metadata(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
-    address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
     address someDeployer = ap.owner();
     IonicFlywheel flywheelLogic = new IonicFlywheel();
 
-    IonicFlywheelLensRouter upgradedIflr = new IonicFlywheelLensRouter(PoolDirectory(ap.getAddress("PoolDirectory")));
     // set up the registry, the vault and the adapter
     vm.startPrank(someDeployer);
-    ap.setAddress("IonicFlywheelLensRouter", address(upgradedIflr));
-
     {
       // deploy the adapter
       CompoundMarketERC4626 marketAdapter = new CompoundMarketERC4626();
@@ -591,7 +641,10 @@ contract SupplyVaultsTest is BaseTest {
     vaultFirstExt.claimRewards();
 
     // check if any rewards were claimed
-    assertGt(ionToken.balanceOf(wethWhale), whaleStartingOpBalance, "!received ION");
+    uint256 finalWhaleBalance = ionToken.balanceOf(wethWhale);
+    assertGt(finalWhaleBalance, whaleStartingOpBalance, "!received ION");
+
+    emit log_named_uint("rewards claimed", finalWhaleBalance - whaleStartingOpBalance);
   }
 }
 
