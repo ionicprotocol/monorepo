@@ -1,3 +1,5 @@
+import type { Hex } from 'viem';
+
 export type LockedData = {
   id: string;
   tokensLocked: string;
@@ -174,6 +176,7 @@ export type VotingData = {
     percentage: string;
     value: string;
   };
+  marketAddress: Hex;
 };
 
 export const votingData: VotingData[] = [
@@ -188,7 +191,8 @@ export const votingData: VotingData[] = [
     myVotes: {
       percentage: '0',
       value: '$0'
-    }
+    },
+    marketAddress: '0x1234567890123456789012345678901234567890'
   },
   {
     id: '0014',
@@ -201,7 +205,8 @@ export const votingData: VotingData[] = [
     myVotes: {
       percentage: '10',
       value: '$2.45'
-    }
+    },
+    marketAddress: '0x2345678901234567890123456789012345678901'
   },
   {
     id: '0015',
@@ -214,7 +219,8 @@ export const votingData: VotingData[] = [
     myVotes: {
       percentage: '0',
       value: '$0'
-    }
+    },
+    marketAddress: '0x3456789012345678901234567890123456789012'
   },
   {
     id: '0016',
@@ -227,7 +233,8 @@ export const votingData: VotingData[] = [
     myVotes: {
       percentage: '0',
       value: '$0'
-    }
+    },
+    marketAddress: '0x4567890123456789012345678901234567890123'
   }
 ];
 

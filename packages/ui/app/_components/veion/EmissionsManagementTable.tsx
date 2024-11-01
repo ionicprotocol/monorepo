@@ -6,6 +6,8 @@ import Image from 'next/image';
 
 import { VotingContext } from '@ui/app/contexts/VotingContext';
 import type { VotingData } from '@ui/constants/mock';
+import { useToast } from '@ui/hooks/use-toast';
+import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
@@ -13,9 +15,30 @@ import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
 
-function EmissionsManagementTable({ data }: { data: VotingData[] }) {
+const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
+  '0012': '0x1234567890123456789012345678901234567890',
+  '0014': '0x2345678901234567890123456789012345678901',
+  '0015': '0x3456789012345678901234567890123456789012',
+  '0016': '0x4567890123456789012345678901234567890123'
+};
+
+interface EmissionsManagementTableProps {
+  data: VotingData[];
+  chainId: number;
+  tokenId: number;
+}
+
+function EmissionsManagementTable({
+  data,
+  chainId,
+  tokenId
+}: EmissionsManagementTableProps) {
+  const { toast } = useToast();
   const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});
   const [autoRepeat, setAutoRepeat] = useState(false);
+  const [votingSide, setVotingSide] = useState<Record<string, MarketSide>>({});
+
+  const { addVote, removeVote, submitVote, isVoting } = useVeIONVote(chainId);
 
   const rowColors = useMemo(() => {
     const colors = [
@@ -38,12 +61,77 @@ function EmissionsManagementTable({ data }: { data: VotingData[] }) {
   }, [data]);
 
   const handleVoteChange = (id: string, value: string) => {
-    setSelectedRows((prev) => ({ ...prev, [id]: value }));
+    setSelectedRows((prev) => {
+      const newRows = { ...prev, [id]: value };
+      // Update the votes in the hook
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        const marketAddress = MARKET_ADDRESSES[id];
+        if (marketAddress) {
+          addVote(
+            marketAddress,
+            votingSide[id] || MarketSide.Supply,
+            numericValue
+          );
+        }
+      } else {
+        removeVote(id);
+      }
+      return newRows;
+    });
+  };
+
+  const handleSideChange = (id: string, side: MarketSide) => {
+    setVotingSide((prev) => {
+      const newSides = { ...prev, [id]: side };
+      const value = selectedRows[id];
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        const market = data.find((row) => row.id === id);
+        if (market) {
+          addVote(market.marketAddress, side, numericValue);
+        }
+      }
+      return newSides;
+    });
   };
 
   const handleReset = () => {
     setSelectedRows({});
+    setVotingSide({});
     setAutoRepeat(false);
+  };
+
+  const handleSubmitVotes = async () => {
+    try {
+      const totalWeight = Object.values(selectedRows).reduce(
+        (sum, value) => sum + (parseFloat(value) || 0),
+        0
+      );
+
+      if (Math.abs(totalWeight - 100) > 0.01) {
+        throw new Error('Total vote weight must equal 100');
+      }
+
+      const success = await submitVote(tokenId);
+
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Votes submitted successfully'
+        });
+
+        if (!autoRepeat) {
+          handleReset();
+        }
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive'
+      });
+    }
   };
 
   const columns = useMemo<ColumnDef<VotingData>[]>(
@@ -131,16 +219,46 @@ function EmissionsManagementTable({ data }: { data: VotingData[] }) {
         id: 'actions',
         header: '',
         cell: ({ row }) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end items-center gap-2">
+            <div className="flex items-center gap-1">
+              <button
+                className={`px-2 py-1 rounded ${
+                  votingSide[row.original.id] === MarketSide.Supply
+                    ? 'bg-green-500'
+                    : 'bg-gray-700'
+                }`}
+                onClick={() =>
+                  handleSideChange(row.original.id, MarketSide.Supply)
+                }
+                disabled={isVoting}
+              >
+                Supply
+              </button>
+              <button
+                className={`px-2 py-1 rounded ${
+                  votingSide[row.original.id] === MarketSide.Borrow
+                    ? 'bg-red-500'
+                    : 'bg-gray-700'
+                }`}
+                onClick={() =>
+                  handleSideChange(row.original.id, MarketSide.Borrow)
+                }
+                disabled={isVoting}
+              >
+                Borrow
+              </button>
+            </div>
             <VoteInput
               key={row.original.id}
               row={row}
+              disabled={isVoting}
             />
           </div>
         )
       }
     ],
-    [rowColors] // only depending on rowColors now
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rowColors, votingSide, isVoting]
   );
 
   const votingContextValue = useMemo(
@@ -148,6 +266,7 @@ function EmissionsManagementTable({ data }: { data: VotingData[] }) {
       selectedRows,
       onVoteChange: handleVoteChange
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedRows]
   );
 
@@ -164,6 +283,8 @@ function EmissionsManagementTable({ data }: { data: VotingData[] }) {
           setAutoRepeat={setAutoRepeat}
           selectedRows={selectedRows}
           handleReset={handleReset}
+          onSubmitVotes={handleSubmitVotes}
+          isVoting={isVoting}
         />
       </div>
     </VotingContext.Provider>

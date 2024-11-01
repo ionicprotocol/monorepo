@@ -74,7 +74,11 @@ const Vote: React.FC = () => {
           <div className="my-3 w-full">
             <FlatMap />
           </div>
-          <EmissionsManagementTable data={votingData} />
+          <EmissionsManagementTable
+            data={votingData}
+            chainId={+chain}
+            tokenId={0}
+          />
         </CardContent>
       </Card>
     </div>

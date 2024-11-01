@@ -5,9 +5,10 @@ import { Input } from '@ui/components/ui/input';
 
 interface VoteInputProps {
   row: any;
+  disabled?: boolean;
 }
 
-const VoteInput = memo(({ row }: VoteInputProps) => {
+const VoteInput = memo(({ row, disabled }: VoteInputProps) => {
   const { selectedRows, onVoteChange } = useVoting();
   const [value, setValue] = useState(selectedRows[row.original.id] || '');
   const id = row.original.id;
@@ -44,6 +45,7 @@ const VoteInput = memo(({ row }: VoteInputProps) => {
         max={100}
         min={0}
         step="0.01"
+        disabled={disabled}
       />
       <span className="absolute right-2 top-1/2 -translate-y-1/2 text-green-500 text-xs">
         MAX
