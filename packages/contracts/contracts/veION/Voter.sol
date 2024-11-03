@@ -241,15 +241,20 @@ contract Voter is IVoter, OwnableUpgradeable {
     MarketSide[] memory _marketVoteSide = marketVoteSide[_tokenId];
     uint256 _marketCnt = _marketVote.length;
     uint256[] memory _weights = new uint256[](_marketCnt);
-
+    uint256 totalVoteWeight = 0;
+  
     for (uint256 i = 0; i < _marketCnt; i++) {
       _weights[i] = votes[_tokenId][_marketVote[i]][_marketVoteSide[i]][_votingAsset];
     }
-    _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights);
+
+    for (uint256 i = 0; i < _marketVote.length; i++) {
+      totalVoteWeight += _weights[i];
+    }
+
+    _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights, totalVoteWeight);
   }
 
   struct VoteVars {
-    uint256 totalVoteWeight;
     uint256 totalWeight;
     uint256 usedWeight;
     address market;
@@ -264,14 +269,11 @@ contract Voter is IVoter, OwnableUpgradeable {
     uint256 _votingAssetBalance,
     address[] memory _marketVote,
     MarketSide[] memory _marketVoteSide,
-    uint256[] memory _weights
+    uint256[] memory _weights,
+    uint256 totalVoteWeight
   ) internal {
     _reset(_tokenId);
     VoteVars memory vars;
-
-    for (uint256 i = 0; i < _marketVote.length; i++) {
-      vars.totalVoteWeight += _weights[i];
-    }
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
       vars.market = _marketVote[i];
@@ -281,7 +283,7 @@ contract Voter is IVoter, OwnableUpgradeable {
       if (!isAlive[vars.rewardAccumulator]) revert RewardAccumulatorNotAlive(vars.rewardAccumulator);
 
       if (isGauge[vars.rewardAccumulator]) {
-        vars.marketWeight = (_weights[i] * _votingAssetBalance) / vars.totalVoteWeight;
+        vars.marketWeight = (_weights[i] * _votingAssetBalance) / totalVoteWeight;
         if (votes[_tokenId][vars.market][vars.marketSide][_votingAsset] != 0) revert NonZeroVotes();
         if (vars.marketWeight == 0) revert ZeroBalance();
 
@@ -332,17 +334,24 @@ contract Voter is IVoter, OwnableUpgradeable {
     vars.timestamp = block.timestamp;
     if ((vars.timestamp > IonicTimeLibrary.epochVoteEnd(vars.timestamp)) && !isWhitelistedNFT[_tokenId])
       revert NotWhitelistedNFT();
+    uint256 totalVoteWeight = 0;
+
+    for (uint256 i = 0; i < _marketVote.length; i++) {
+      totalVoteWeight += _weights[i];
+    }
+
     lastVoted[_tokenId] = vars.timestamp;
     (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
-    for (uint256 i = 0; i < vars.votingLPs.length; i++) {
-      if (vars.votingLPBalances[i] > 0) {
+    for (uint256 j = 0; j < vars.votingLPs.length; j++) {
+      if (vars.votingLPBalances[j] > 0) {
         _vote(
           _tokenId,
-          vars.votingLPs[i],
-          (vars.votingLPBalances[i] * vars.boosts[i]) / 1e18,
+          vars.votingLPs[j],
+          (vars.votingLPBalances[j] * vars.boosts[j]) / 1e18,
           _marketVote,
           _marketVoteSide,
-          _weights
+          _weights,
+          totalVoteWeight
         );
       }
     }
