@@ -11,6 +11,7 @@ interface IVoter {
   error RewardAccumulatorDoesNotExist(address _pool);
   error RewardAccumulatorNotAlive(address _rewardAccumulator);
   error InactiveManagedNFT();
+  error MarketAlreadyExists();
   error MaximumVotingNumberTooLow();
   error MismatchedArrayLengths();
   error NonZeroVotes();

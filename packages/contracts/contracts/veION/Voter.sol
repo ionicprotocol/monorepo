@@ -138,6 +138,15 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
   }
 
+  function addMarkets(Market[] calldata _markets) external {
+    if (msg.sender != governor) revert NotGovernor();
+    for (uint256 i = 0; i < _markets.length; i++) {
+      Market memory newMarket = _markets[i];
+      if (marketExists(newMarket.marketAddress, newMarket.side)) revert MarketAlreadyExists();
+      markets.push(newMarket);
+    }
+  }
+
   function setBribes(address[] calldata _rewardAccumulators, address[] calldata _bribes) external {
     if (msg.sender != governor) revert NotGovernor();
     uint256 _length = _bribes.length;
@@ -404,6 +413,15 @@ contract Voter is IVoter, OwnableUpgradeable {
       uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpRewardTokens[i]);
       _marketLPValueETH += tokenEthValue;
     }
+  }
+
+  function marketExists(address _marketAddress, MarketSide _marketSide) internal view returns (bool) {
+    for (uint256 j = 0; j < markets.length; j++) {
+      if (markets[j].marketAddress == _marketAddress && markets[j].side == _marketSide) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function setMpo(address _mpo) external onlyOwner {
