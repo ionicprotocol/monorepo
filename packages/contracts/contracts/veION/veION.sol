@@ -26,6 +26,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
   uint256 internal constant MULTIPLIER = 1 ether;
   uint256 public constant PRECISION = 1e18;
+  uint256 internal constant MIN_LOCK_DURATION = 180 * 86400;
 
   // State Variables
   uint256 public s_tokenId;
@@ -153,6 +154,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
     if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+    if (_duration < MIN_LOCK_DURATION) revert LockDurationTooShort();
 
     if (lockedBalance.isPermanent) {
       s_permanentLockBalance[lpType] += _tokenAmount;
@@ -670,6 +672,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       uint256 unlockTime = ((block.timestamp + _duration[i]) / WEEK) * WEEK;
 
       if (_tokenAmount[i] == 0) revert ZeroAmount();
+      if (_duration[i] < MIN_LOCK_DURATION) revert LockDurationTooShort();
       if (unlockTime <= block.timestamp) revert LockDurationNotInFuture();
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
       if (_tokenAmount[i] < s_minimumLockAmount[_lpType]) revert MinimumNotMet();
