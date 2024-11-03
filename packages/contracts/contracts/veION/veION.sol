@@ -12,6 +12,7 @@ import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import { IVoter } from "./interfaces/IVoter.sol";
 
 contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   using EnumerableSet for EnumerableSet.UintSet;
@@ -63,6 +64,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(uint256 => mapping(LpTokenType => EnumerableSet.UintSet)) internal s_delegatees;
   mapping(uint256 => mapping(LpTokenType => EnumerableSet.UintSet)) internal s_delegators;
   mapping(address => EnumerableSet.UintSet) internal s_ownerToTokenIds; // owner => list of token IDs
+  mapping(address => mapping(address => uint256)) public s_userCumulativeAssetValues;
 
   modifier onlyBridge() {
     if (!s_bridges[msg.sender]) {
@@ -183,6 +185,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
 
     uint256 value = uint256(int256(oldLocked.amount));
+    s_userCumulativeAssetValues[sender][_tokenAddress] -= value;
     uint256 fee = 0;
 
     if (block.timestamp < oldLocked.end) {
@@ -568,6 +571,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     address _from = _msgSender();
     if (_tokenAmount != 0) {
+      s_userCumulativeAssetValues[ownerOf(_tokenId)][_tokenAddress] += _tokenAmount;
       IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0) && _stakeUnderlying) {
@@ -811,16 +815,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue) {
-    uint256[] memory tokenIds = s_ownerToTokenIds[_owner].values();
-    for (uint256 i = 0; i < tokenIds.length; i++) {
-      uint256 tokenId = tokenIds[i];
-      address[] memory assets;
-      uint256[] memory balances;
-      (assets, balances, ) = balanceOfNFT(tokenId);
-      for (uint256 j = 0; j < assets.length; j++) {
-        uint256 assetValue = (balances[j] * getEthPrice(assets[j])) / PRECISION;
-        totalValue += assetValue;
-      }
+    IVoter voter = IVoter(s_voter);
+    address[] memory lpTokens = voter.getAllLpRewardTokens();
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      uint256 ethValue = (s_userCumulativeAssetValues[_owner][lpTokens[i]] * getEthPrice(lpTokens[i])) / PRECISION;
+      totalValue += ethValue;
     }
   }
 
