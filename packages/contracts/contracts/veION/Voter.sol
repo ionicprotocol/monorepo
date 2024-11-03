@@ -335,14 +335,16 @@ contract Voter is IVoter, OwnableUpgradeable {
     lastVoted[_tokenId] = vars.timestamp;
     (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
     for (uint256 i = 0; i < vars.votingLPs.length; i++) {
-      _vote(
-        _tokenId,
-        vars.votingLPs[i],
-        (vars.votingLPBalances[i] * vars.boosts[i]) / 1e18,
-        _marketVote,
-        _marketVoteSide,
-        _weights
-      );
+      if (vars.votingLPBalances[i] > 0) {
+        _vote(
+          _tokenId,
+          vars.votingLPs[i],
+          (vars.votingLPBalances[i] * vars.boosts[i]) / 1e18,
+          _marketVote,
+          _marketVoteSide,
+          _weights
+        );
+      }
     }
   }
 
