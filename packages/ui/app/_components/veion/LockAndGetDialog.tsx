@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import Image from 'next/image';
 
 import { base, optimism, mode } from 'viem/chains';
 import { useAccount } from 'wagmi';
@@ -19,7 +21,7 @@ import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
 import NetworkDropdown from '../NetworkDropdown';
-import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
+import { usePrecisionSlider } from '../PrecisionSlider';
 import MaxDeposit from '../stake/MaxDeposit';
 
 interface VeIonDialogProps {
@@ -36,28 +38,20 @@ export default function VeIonDialog({
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const [amount, setAmount] = useState<string>('0');
   const { isConnected } = useAccount();
-  const { currentChain, getTokenBalance } = useVeION();
+  const { currentChain, veIonBalance } = useVeION();
   const { createLock, isPending } = useVeIONActions();
-
-  const maxtoken = Number(getTokenBalance(selectedToken));
-
-  const {
-    amount: veIonAmount,
-    percentage: utilization,
-    handleAmountChange: handleVeIonChange,
-    handlePercentageChange: handleUtilizationChange
-  } = usePrecisionSlider({
-    maxValue: maxtoken,
-    initialValue: 0,
-    precision: 4
-  });
 
   const { amount: selectedDuration, handleAmountChange: handleDurationChange } =
     usePrecisionSlider({
       maxValue: 730,
       initialValue: 180
     });
+
+  useEffect(() => {
+    setAmount('0');
+  }, [currentChain]);
 
   async function lockAndGetVeion() {
     try {
@@ -72,7 +66,7 @@ export default function VeIonDialog({
       );
       await createLock({
         tokenAddress: tokenAddress as `0x${string}`,
-        tokenAmount: veIonAmount.toString(),
+        tokenAmount: amount,
         duration: selectedDuration,
         stakeUnderlying: true
       });
@@ -82,16 +76,14 @@ export default function VeIonDialog({
     }
   }
 
-  const isButtonDisabled = !lockDate || veIonAmount === 0 || isPending;
-
-  const utilizationMarks = [0, 25, 50, 75, 100];
+  const isButtonDisabled = !lockDate || Number(amount) === 0 || isPending;
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect sm:max-w-[625px]">
+      <DialogContent className="bg-grayUnselect max-w-[580px]">
         {!success ? (
           <>
             <DialogHeader className="flex flex-row items-center justify-between">
@@ -104,25 +96,18 @@ export default function VeIonDialog({
                 />
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <MaxDeposit
                 headerText="LOCK AMOUNT"
-                max={maxtoken.toString()}
-                amount={veIonAmount.toString()}
-                tokenName="ion/eth LP"
+                max={veIonBalance}
+                amount={amount}
+                tokenName="ion"
+                pairedToken="weth"
                 token={getToken(currentChain)}
-                handleInput={(val?: string) => {
-                  handleVeIonChange(Number(val || 0));
-                }}
+                handleInput={(val?: string) => setAmount(val || '0')}
                 chain={currentChain}
+                useSlider
               />
-              <div className="w-full mx-auto mt-3 mb-5">
-                <PrecisionSlider
-                  value={utilization}
-                  onChange={handleUtilizationChange}
-                  marks={utilizationMarks}
-                />
-              </div>
 
               <Separator className="bg-white/10" />
 
@@ -140,7 +125,7 @@ export default function VeIonDialog({
 
               <Separator className="bg-white/10" />
 
-              <VotingPowerInfo amount={veIonAmount} />
+              <VotingPowerInfo amount={Number(amount)} />
 
               <Button
                 onClick={lockAndGetVeion}
@@ -153,7 +138,7 @@ export default function VeIonDialog({
           </>
         ) : (
           <SuccessView
-            amount={veIonAmount}
+            amount={Number(amount)}
             onClose={() => setSuccess(false)}
           />
         )}
@@ -192,9 +177,11 @@ function SuccessView({
         <br /> <br />
         Proceed to your veION Overview to vote on your favorite Market.
       </p>
-      <img
+      <Image
         src="/api/placeholder/48/48"
         alt="success"
+        width={48}
+        height={48}
         className="w-12 mx-auto h-12"
       />
       <Button

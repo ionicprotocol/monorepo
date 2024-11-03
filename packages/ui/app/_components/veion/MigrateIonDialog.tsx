@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { base, optimism, mode } from 'viem/chains';
 import { useAccount } from 'wagmi';
@@ -29,10 +29,14 @@ export default function MigrateIonDialog({
   const [amount, setAmount] = useState<string>('0');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChain, getTokenBalance } = useVeION();
+  const { currentChain, veIonBalance } = useVeION();
   const { removeLiquidity, isPending } = useVeIONActions();
 
-  const stakingTokenBalance = getTokenBalance('eth');
+  // const stakingTokenBalance = getTokenBalance('eth');
+
+  useEffect(() => {
+    setAmount('0');
+  }, [currentChain]);
 
   const handleWithdraw = async () => {
     try {
@@ -59,10 +63,10 @@ export default function MigrateIonDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect sm:max-w-[425px]">
+      <DialogContent className="bg-grayUnselect max-w-[580px]">
         <DialogHeader className="flex flex-row items-center">
           <DialogTitle className="flex items-center gap-4">
-            <p>Withdraw ION Liquidity</p>
+            <p>Migrate ION Liquidity</p>
             <NetworkDropdown
               dropdownSelectedChain={currentChain}
               nopool
@@ -76,9 +80,9 @@ export default function MigrateIonDialog({
             amount={amount}
             handleInput={(val?: string) => setAmount(val || '0')}
             tokenName="ion"
-            pairedToken="eth"
+            pairedToken="weth"
             chain={currentChain}
-            max={stakingTokenBalance}
+            max={veIonBalance}
             headerText="Available LP"
             useSlider
           />

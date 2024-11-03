@@ -91,12 +91,12 @@ export default function AddLiquidityDialog({
         open={isOpen}
         onOpenChange={(open) => !widgetPopup && onOpenChange(open)}
       >
-        <DialogContent className="bg-[#1C1D1F] sm:max-w-[425px] p-6">
+        <DialogContent className="bg-grayUnselect max-w-[580px]">
           <BuyIonSection onBuy={() => setWidgetPopup(true)} />
 
-          <Separator className="my-6 bg-gray-800" />
+          <Separator className="bg-white/10" />
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold">
                 Add ION Liquidity
@@ -108,7 +108,6 @@ export default function AddLiquidityDialog({
               max={ionBalance}
               amount={maxDeposit.ion}
               tokenName="ion"
-              pairedToken={selectedToken}
               handleInput={handleIonInput}
               chain={currentChain}
               useSlider
@@ -119,8 +118,7 @@ export default function AddLiquidityDialog({
               headerText={`DEPOSIT ${selectedToken.toUpperCase()}`}
               max={selectedTokenBalance}
               amount={maxDeposit.eth}
-              tokenName={selectedToken}
-              pairedToken="ion"
+              tokenName="eth"
               chain={currentChain}
               useSlider
               size={16}

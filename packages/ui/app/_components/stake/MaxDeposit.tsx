@@ -15,6 +15,7 @@ import { useAccount, useBalance } from 'wagmi';
 
 import TokenSelector from './TokenSelector';
 import { PrecisionSlider } from '../PrecisionSlider';
+import TokenPair from '../TokenPair';
 
 interface IMaxDeposit {
   amount?: string;
@@ -39,35 +40,6 @@ export interface IBal {
   decimals: number;
   value: bigint;
 }
-
-const TokenPair = ({
-  token1,
-  token2,
-  size = 32
-}: {
-  token1: string;
-  token2: string;
-  size?: number;
-}) => (
-  <span className="flex">
-    <Image
-      src={`/img/logo/${token1.toLowerCase()}.svg`}
-      alt={`${token1} logo`}
-      width={size}
-      height={size}
-      className="rounded-full"
-      unoptimized
-    />
-    <Image
-      src={`/img/logo/${token2.toLowerCase()}.svg`}
-      alt={`${token2} logo`}
-      width={size}
-      height={size}
-      className="rounded-full -ml-2"
-      unoptimized
-    />
-  </span>
-);
 
 function MaxDeposit({
   headerText = 'Deposit',
@@ -165,11 +137,16 @@ function MaxDeposit({
   const renderTokenDisplay = () => {
     if (pairedToken) {
       return (
-        <TokenPair
-          token1={tokenName}
-          token2={pairedToken}
-          size={size}
-        />
+        <>
+          <TokenPair
+            token1={tokenName}
+            token2={pairedToken}
+            size={size}
+          />
+          <button className={`ml-2`}>
+            {tokenName.toUpperCase()}/{pairedToken.toUpperCase()}
+          </button>
+        </>
       );
     }
     return (
@@ -200,7 +177,8 @@ function MaxDeposit({
       >
         <span>{headerText}</span>
         <div>
-          {tokenName?.toUpperCase() ?? ''} Balance:{' '}
+          {tokenName?.toUpperCase() ?? ''}
+          {pairedToken ? `/${pairedToken.toUpperCase()}` : ''} Balance:{' '}
           {bal
             ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
                 'en-US',

@@ -185,6 +185,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     veIonBalance: veIonBalance ? formatEther(veIonBalance.value) : '0',
     ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0',
     getTokenBalance,
+    // todo
     totalLiquidity: '$1,234,432.21',
     stakedLiquidity: '$1,234,432.21',
     lockedLiquidity: '$113,029.98',

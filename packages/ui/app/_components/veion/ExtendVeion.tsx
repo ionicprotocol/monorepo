@@ -144,7 +144,7 @@ const ExtendVeion = ({
             setAutoLock={setAutoLock}
           />
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-white/10 my-4" />
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-white/50">
