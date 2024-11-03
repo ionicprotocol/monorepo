@@ -37,6 +37,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address public s_ionicPool;
   address public s_voter;
   uint256 public s_aeroVoterBoost;
+  uint256 public s_minimumAeroContribution;
   AddressesProvider public ap;
 
   // Mappings
@@ -783,7 +784,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       address[] memory poolVotes = IAeroVoter(s_aeroVoting).poolVote(tokenId);
       for (uint256 j = 0; j < poolVotes.length; j++) {
         if (poolVotes[j] == s_ionicPool) {
-          totalBoost += s_aeroVoterBoost; // Apply special boost if ionic pool is present
+          IAeroVoter aeroVoter = IAeroVoter(s_aeroVoting);
+          uint256 weightToVoteRatio = (aeroVoter.votes(_tokenId, s_ionicPool) * 1e18) / aeroVoter.weights(s_ionicPool);
+          if (weightToVoteRatio > s_minimumAeroContribution) {
+            totalBoost += s_aeroVoterBoost;
+          }
           break;
         }
       }
@@ -808,6 +813,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     require(_minimumAmount > 0, "Minimum amount must be greater than zero");
     LpTokenType lpType = s_lpType[_tokenAddress];
     s_minimumLockAmount[lpType] = _minimumAmount;
+  }
+
+  function setMinimumAeroContribution(uint256 _minimumAeroContribution) external onlyOwner {
+    s_minimumAeroContribution = _minimumAeroContribution;
+  }
+
+  function setIonicPool(address _ionicPool) external onlyOwner {
+    s_ionicPool = _ionicPool;
   }
 
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
@@ -865,4 +878,8 @@ interface IAeroVotingEscrow {
 
 interface IAeroVoter {
   function poolVote(uint256 tokenId) external view returns (address[] memory);
+
+  function weights(address pool) external view returns (uint256);
+
+  function votes(uint256 tokenId, address pool) external view returns (uint256);
 }
