@@ -223,6 +223,20 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, 0, false, 0), _lpType);
     IERC20(_tokenAddress).safeTransfer(sender, value);
+
+    // Check if all LP types for this token have zero balance
+    bool shouldBurn = true;
+    address[] memory lockedAssets = s_assetsLocked[_tokenId].values();
+    for (uint256 i = 0; i < lockedAssets.length; i++) {
+      LpTokenType assetLpType = s_lpType[lockedAssets[i]];
+      if (s_locked[_tokenId][assetLpType].amount > 0) {
+        shouldBurn = false;
+        break;
+      }
+    }
+
+    if (shouldBurn) _burn(_tokenId);
+
     emit Withdraw(sender, _tokenId, value, block.timestamp);
     emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
   }
@@ -778,6 +792,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       totalBoost += s_limitedBoost;
     }
     address _owner = ownerOf(_tokenId);
+    if (s_veAERO == address(0)) return totalBoost;
+
     uint256 _balance = IAeroVotingEscrow(s_veAERO).balanceOf(_owner);
     for (uint256 i = 0; i < _balance; i++) {
       uint256 tokenId = IAeroVotingEscrow(s_veAERO).ownerToNFTokenIdList(_owner, i);
