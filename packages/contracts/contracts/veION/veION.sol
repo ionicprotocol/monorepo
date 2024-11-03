@@ -167,7 +167,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       unlockTime,
       _stakeUnderlying,
       lockedBalance,
-      DepositType.DEPOSIT_FOR_TYPE,
+      DepositType.LOCK_ADDITIONAL,
       lpType
     );
   }
