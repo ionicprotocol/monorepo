@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useChainId } from 'wagmi';
 
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -66,6 +67,8 @@ const InfoRows = ({
 }: InfoRowsProps) => {
   const walletChain = useChainId();
   const { data: merklApr } = useMerklApr();
+  const { getSdk } = useMultiIonic();
+  const sdk = getSdk(+selectedChain);
 
   const merklAprForToken = merklApr?.find(
     (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
@@ -227,7 +230,7 @@ const InfoRows = ({
         </button>
 
         <button
-          className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3`}
+          className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3 disabled:opacity-50`}
           onClick={async () => {
             const result = await handleSwitchOriginChain(
               selectedChain,
@@ -249,6 +252,9 @@ const InfoRows = ({
               }
             }
           }}
+          disabled={
+            !sdk?.chainDeployment[`CollateralSwap-${comptrollerAddress}`]
+          }
         >
           {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
         </button>
