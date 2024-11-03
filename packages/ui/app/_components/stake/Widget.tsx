@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { mode } from 'viem/chains';
 
-import { Dialog, DialogContent } from '@ui/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@ui/components/ui/dialog';
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
 
@@ -74,6 +75,9 @@ export default function Widget({ close, open, chain }: IProps) {
         className="bg-transparent max-w-fit p-0 border-none"
         hideCloseButton
       >
+        <VisuallyHidden.Root asChild>
+          <DialogTitle>Buy Token Widget</DialogTitle>
+        </VisuallyHidden.Root>
         <div className="p-4">
           <LiFiWidget
             integrator="ionic"

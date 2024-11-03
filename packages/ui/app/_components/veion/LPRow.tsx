@@ -1,9 +1,9 @@
-import Image from 'next/image';
-
 import { ArrowRight } from 'lucide-react';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
+
+import TokenPair from '../TokenPair';
 
 type Summary = {
   title: string;
@@ -25,7 +25,10 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
       <CardContent className="space-y-3 p-5">
         <p className="text-gray-400 text-xxs font-light">{summary.title}</p>
         <div className="flex flex-wrap md:gap-3 items-center">
-          <TokenPair />
+          <TokenPair
+            token1="ion"
+            token2="eth"
+          />
           <p className="text-white font-semibold text-lg">{summary.amount}</p>
           {summary.Icon}
         </div>
@@ -40,7 +43,10 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
         </div>
         <div className="flex items-center justify-between gap-2 xl:gap-6">
           <div className="flex items-center">
-            <TokenPair />
+            <TokenPair
+              token1="ion"
+              token2="eth"
+            />
             <p className="text-white font-medium text-md ml-2 text-lg">
               ION/WETH
             </p>
@@ -56,25 +62,6 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
       </CardContent>
     </Card>
   </div>
-);
-
-const TokenPair = ({ size = 32 }) => (
-  <span className="flex">
-    <Image
-      src="/img/logo/ion.svg"
-      alt="logo"
-      width={size}
-      height={size}
-      className="rounded-full"
-    />
-    <Image
-      src="/img/logo/eth.svg"
-      alt="logo"
-      width={size}
-      height={size}
-      className="rounded-full -ml-2"
-    />
-  </span>
 );
 
 export default LPRow;

@@ -2102,6 +2102,7 @@ __metadata:
   dependencies:
     "@ionicprotocol/chains": "workspace:*"
     "@ionicprotocol/types": "workspace:*"
+    "@radix-ui/react-visually-hidden": "npm:^1.1.0"
     "@supabase/supabase-js": "npm:^2.44.1"
     "@types/bad-words": "npm:^3.0.1"
     "@types/chai": "npm:^4.3.6"
@@ -6146,7 +6147,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-visually-hidden@npm:1.1.0":
+"@radix-ui/react-visually-hidden@npm:1.1.0, @radix-ui/react-visually-hidden@npm:^1.1.0":
   version: 1.1.0
   resolution: "@radix-ui/react-visually-hidden@npm:1.1.0"
   dependencies:

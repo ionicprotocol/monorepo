@@ -377,7 +377,6 @@ export default function CollateralSwapPopup({
               tokenName={swappedFromAsset.underlyingSymbol.toLowerCase()}
               token={swappedFromAsset.cToken}
               handleInput={(val?: string) => setSwapFromAmount(val as string)}
-              // max="0"
               chain={+chain}
               setMaxTokenForUtilization={setMaxTokens}
               exchangeRate={swappedFromAsset.exchangeRate}

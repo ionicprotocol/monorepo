@@ -54,7 +54,7 @@ export default function VeIon() {
           />
 
           <div className="flex gap-2">
-            <Link href="/veion/governance?watch=myveion">
+            <Link href="/veion/governance">
               <Button
                 className="bg-accent text-black"
                 style={{ height: '36px' }}
@@ -141,19 +141,16 @@ export default function VeIon() {
       <LockAndGetDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        chain={+chain}
         selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
       <AddLiquidityDialog
         isOpen={isAddLiquidityOpen}
         onOpenChange={setIsAddLiquidityOpen}
-        chain={+chain}
         selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
       <MigrateIonDialog
         isOpen={isMigrateOpen}
         onOpenChange={setIsMigrateOpen}
-        chain={chain}
       />
     </Card>
   );

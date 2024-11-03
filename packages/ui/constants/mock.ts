@@ -125,6 +125,11 @@ export type LockedDataWithDelegate = {
   delegatedTo: string;
   network: string;
   readyToDelegate: boolean;
+  // Add the missing properties
+  chainId: number;
+  lpTokenAddress: string;
+  delegatedTokenIds: number[];
+  delegatedAmounts: string[];
 };
 
 export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
@@ -143,7 +148,12 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
     votingPercentage: '1.67% of all',
     delegatedTo: '0x9T45...vt96h6',
     network: 'Polygon',
-    readyToDelegate: true
+    readyToDelegate: true,
+    // Add the required properties
+    chainId: 137, // Polygon chain ID
+    lpTokenAddress: '0x1234567890123456789012345678901234567890',
+    delegatedTokenIds: [1, 2, 3],
+    delegatedAmounts: ['100', '200', '300']
   },
   {
     id: '0012',
@@ -160,7 +170,12 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
     votingPercentage: '1.67% of all',
     delegatedTo: '0x9T45...vt96h6',
     network: 'Polygon',
-    readyToDelegate: false
+    readyToDelegate: false,
+    // Add the required properties
+    chainId: 137, // Polygon chain ID
+    lpTokenAddress: '0x1234567890123456789012345678901234567890',
+    delegatedTokenIds: [4, 5, 6],
+    delegatedAmounts: ['150', '250', '350']
   }
 ];
 

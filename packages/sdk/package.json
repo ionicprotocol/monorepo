@@ -60,6 +60,7 @@
   "dependencies": {
     "@ionicprotocol/chains": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
+    "@radix-ui/react-visually-hidden": "^1.1.0",
     "@supabase/supabase-js": "^2.44.1",
     "bad-words": "^3.0.4",
     "bufferutil": "^4.0.8",
