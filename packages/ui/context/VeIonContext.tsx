@@ -84,7 +84,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   // Get token addresses
   const ionTokenAddress = getToken(currentChain);
-  const stakingTokenAddress = getAvailableStakingToken(currentChain, 'eth');
+  // will need to update this to get the correct token address
+  const veIonTokenAddress = getAvailableStakingToken(currentChain, 'eth');
 
   // Fetch balances
   const { data: ionBalance } = useBalance({
@@ -98,7 +99,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const { data: veIonBalance } = useBalance({
     address,
-    token: stakingTokenAddress,
+    token: veIonTokenAddress,
     chainId: currentChain,
     query: {
       notifyOnChangeProps: ['data', 'error']

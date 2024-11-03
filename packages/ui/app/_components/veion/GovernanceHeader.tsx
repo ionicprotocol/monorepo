@@ -3,9 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ExternalLink, HelpCircle } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
-import { Button } from '@ui/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -61,15 +60,29 @@ const InfoBlock = ({
 
 const EmissionsStatus = () => {
   const { lockedLiquidity, totalLiquidity } = useVeION();
-  const progressValue = 35;
-  const secondaryProgress = 25;
+
+  // Remove the $ and convert to numbers
+  const lockedAmount = Number(lockedLiquidity.replace(/[^0-9.]/g, ''));
+  const totalAmount = Number(totalLiquidity.replace(/[^0-9.]/g, ''));
+
+  // Calculate percentages
+  const lockedPercentage = (lockedAmount / totalAmount) * 100;
+  const thresholdPercentage = 2.5;
+  const isActive = lockedPercentage >= thresholdPercentage;
+
+  // Calculate progress values for both bars
+  const firstBarProgress = Math.min(lockedPercentage, thresholdPercentage);
+  const secondBarProgress = Math.max(0, lockedPercentage - thresholdPercentage);
+  const secondBarMax = 100 - thresholdPercentage;
 
   return (
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 text-2xl font-semibold">
           <h3>Emissions Status:</h3>
-          <span className="text-green-400">Active</span>
+          <span className={isActive ? 'text-green-400' : 'text-red-400'}>
+            {isActive ? 'Active' : 'Inactive'}
+          </span>
         </div>
         <Link
           href="https://placeholder.com"
@@ -82,25 +95,47 @@ const EmissionsStatus = () => {
         </Link>
       </div>
 
-      <div className="relative">
-        <Progress
-          value={progressValue + secondaryProgress}
-          className="bg-gray-200 [&>*]:bg-green-400 [&>*]:rounded-md h-3"
-        />
+      <div className="flex gap-2">
+        {/* First 2.5% bar */}
+        <div className="w-[22.5%] relative group">
+          <CustomTooltip
+            content={`${firstBarProgress.toFixed(2)}% / ${thresholdPercentage}% (Activation Threshold)`}
+          >
+            <div className="w-full">
+              <Progress
+                value={(firstBarProgress / thresholdPercentage) * 100}
+                className="[&>div]:rounded-l-md [&>div]:rounded-r-none"
+              />
+            </div>
+          </CustomTooltip>
+        </div>
+
+        {/* Remaining 97.5% bar */}
+        <div className="w-[77.5%] relative group">
+          <CustomTooltip
+            content={`${secondBarProgress.toFixed(2)}% / ${secondBarMax}% (Additional Voting Power)`}
+          >
+            <div className="w-full">
+              <Progress
+                value={(secondBarProgress / secondBarMax) * 100}
+                className="[&>div]:rounded-l-none [&>div]:rounded-r-md"
+              />
+            </div>
+          </CustomTooltip>
+        </div>
       </div>
 
       <div className="flex justify-between items-center text-gray-400">
         <div className="flex items-center gap-2">
-          <span className="text-xs">LOCKED VEION: {lockedLiquidity}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-5 w-5 text-gray-400 hover:text-gray-300"
-          >
-            <HelpCircle className="h-5 w-5" />
-          </Button>
+          <span className="text-xs">
+            LOCKED VEION: ${lockedAmount.toLocaleString()} (
+            {lockedPercentage.toFixed(1)}%)
+          </span>
+          <CustomTooltip content="Amount of veION locked in the protocol" />
         </div>
-        <div className="text-xs">TOTAL DEPOSITS: {totalLiquidity}</div>
+        <div className="text-xs">
+          TOTAL DEPOSITS: ${totalAmount.toLocaleString()}
+        </div>
       </div>
     </div>
   );
