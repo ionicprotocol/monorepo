@@ -180,11 +180,11 @@ contract Voter is IVoter, OwnableUpgradeable {
     address[] storage _marketVote = marketVote[_tokenId];
     MarketSide[] storage _marketVoteSide = marketVoteSide[_tokenId];
     uint256 _marketVoteCnt = _marketVote.length;
-    uint256 _totalWeight = 0;
 
     for (uint256 i = 0; i < _marketVoteCnt; i++) {
       address _market = _marketVote[i];
       MarketSide _marketSide = _marketVoteSide[i];
+      uint256 _totalWeight = 0;
 
       address[] memory lpRewardTokens = _getAllLpRewardTokens();
       for (uint256 k = 0; k < lpRewardTokens.length; k++) {
