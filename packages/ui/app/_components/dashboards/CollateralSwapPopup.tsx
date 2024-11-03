@@ -149,6 +149,7 @@ export default function CollateralSwapPopup({
 
   const {
     isLoading: isLoadingLifiQuote,
+    isFetching: isFetchingLifiQuote,
     data: lifiQuote,
     isError,
     error
@@ -384,7 +385,7 @@ export default function CollateralSwapPopup({
               BigInt(lifiQuote?.estimate?.toAmount ?? '0'),
               swappedToAsset?.underlyingDecimals ?? 18
             )}
-            isLoading={isLoadingLifiQuote}
+            isLoading={isLoadingLifiQuote || isFetchingLifiQuote}
             tokenName={swappedToTokenQuery}
             token={swappedToAsset?.cToken}
             // handleInput={(val?: string) => setSwapToToken(val as string)}
