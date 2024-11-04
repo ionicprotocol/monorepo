@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
+import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import { pools } from '@ui/constants/index';
@@ -49,6 +50,12 @@ import type {
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
 });
+
+export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
+  [mode.id]: {
+    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe']
+  }
+};
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
@@ -191,13 +198,6 @@ export default function Dashboard() {
 
     return healthData ?? '∞';
   }, [healthData, marketData]);
-  // for utilization:
-  // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
-  //   useMaxBorrowAmounts(
-  //     marketData?.assets ?? [],
-  //     marketData?.comptroller ?? '',
-  //     +chain
-  //   );
 
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
@@ -217,45 +217,6 @@ export default function Dashboard() {
 
     return 'text-error';
   }, [handledHealthData, healthData]);
-
-  // CURRENTLY UNUSED, NEED TO CHECK THIS
-  // const utilizations = useMemo<string[]>(() => {
-  //   if (borrowCaps && marketData) {
-  //     return borrowCaps.map((borrowCap, i) => {
-  //       const totalBorrow = marketData.assets[i].borrowBalance.add(
-  //         borrowCap?.bigNumber ?? '0'
-  //       );
-
-  //       return `${
-  //         totalBorrow.lte('0') ||
-  //         marketData.assets[i].borrowBalance.lte(0) ||
-  //         Number(
-  //           formatUnits(
-  //             marketData.assets[i].borrowBalance,
-  //             marketData.assets[i].underlyingDecimals
-  //           )
-  //         ) <= 0
-  //           ? '0.00'
-  //           : (
-  //               100 /
-  //               (Number(
-  //                 formatUnits(
-  //                   totalBorrow,
-  //                   marketData.assets[i].underlyingDecimals
-  //                 )
-  //               ) /
-  //                 Number(
-  //                   formatUnits(
-  //                     marketData.assets[i].borrowBalance,
-  //                     marketData.assets[i].underlyingDecimals
-  //                   )
-  //                 ))
-  //             ).toFixed(2)
-  //       }%`;
-  //     });
-  //   }
-  //   return marketData?.assets.map(() => '0.00%') ?? [];
-  // }, [borrowCaps, marketData]);
 
   const { data: rewards } = useRewards({
     chainId: +chain,
@@ -295,7 +256,10 @@ export default function Dashboard() {
           swappedToAssets={marketData?.assets.filter(
             (asset) =>
               asset?.underlyingToken !==
-              collateralSwapFromAsset?.underlyingToken
+                collateralSwapFromAsset?.underlyingToken &&
+              !NO_COLLATERAL_SWAP[+chain]?.[pool]?.includes(
+                asset?.underlyingSymbol ?? ''
+              )
           )}
           swapOpen={swapOpen}
           comptroller={marketData?.comptroller}

@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 
 import { useChainId } from 'wagmi';
 
+import { NO_COLLATERAL_SWAP } from '@ui/app/dashboard/page';
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
@@ -229,35 +230,37 @@ const InfoRows = ({
           {mode === InfoMode.SUPPLY ? 'Withdraw / Add Collateral' : 'Repay'}
         </button>
 
-        <button
-          className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3 disabled:opacity-50`}
-          onClick={async () => {
-            const result = await handleSwitchOriginChain(
-              selectedChain,
-              walletChain
-            );
-            if (result) {
-              if (mode === InfoMode.SUPPLY) {
-                // Router.push()
-                //toggle the mode
-                setSelectedSymbol(asset);
-                setCollateralSwapFromAsset?.();
-                toggler?.();
+        {!NO_COLLATERAL_SWAP[selectedChain]?.[pool]?.includes(asset) && (
+          <button
+            className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3 disabled:opacity-50`}
+            onClick={async () => {
+              const result = await handleSwitchOriginChain(
+                selectedChain,
+                walletChain
+              );
+              if (result) {
+                if (mode === InfoMode.SUPPLY) {
+                  // Router.push()
+                  //toggle the mode
+                  setSelectedSymbol(asset);
+                  setCollateralSwapFromAsset?.();
+                  toggler?.();
+                }
+                if (mode === InfoMode.BORROW) {
+                  // Router.push()
+                  // toggle the mode
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.BORROW);
+                }
               }
-              if (mode === InfoMode.BORROW) {
-                // Router.push()
-                // toggle the mode
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
-              }
+            }}
+            disabled={
+              !sdk?.chainDeployment[`CollateralSwap-${comptrollerAddress}`]
             }
-          }}
-          disabled={
-            !sdk?.chainDeployment[`CollateralSwap-${comptrollerAddress}`]
-          }
-        >
-          {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
-        </button>
+          >
+            {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
+          </button>
+        )}
       </div>
     </div>
   );
