@@ -55,7 +55,10 @@ function MaxDeposit({
     abi: icErc20Abi,
     address: token,
     functionName: 'balanceOfUnderlying',
-    args: [address!]
+    args: [address!],
+    query: {
+      refetchInterval: 5000
+    }
   });
   const balance = data ?? 0n;
 

@@ -154,7 +154,12 @@ export default function CollateralSwapPopup({
     isError,
     error
   } = useQuery({
-    queryKey: ['lifiQuote', debouncedSwapFromAmount],
+    queryKey: [
+      'lifiQuote',
+      debouncedSwapFromAmount,
+      swappedFromAsset.underlyingToken,
+      swappedToAsset?.underlyingToken
+    ],
     queryFn: async () => {
       const quoteRequest: QuoteRequest = {
         fromChain: chain,
