@@ -92,15 +92,16 @@ export default function AddLiquidityDialog({
         onOpenChange={(open) => !widgetPopup && onOpenChange(open)}
       >
         <DialogContent className="bg-grayUnselect max-w-[580px]">
-          <BuyIonSection onBuy={() => setWidgetPopup(true)} />
+          <BuyIonSection
+            onBuy={() => setWidgetPopup(true)}
+            currentChain={currentChain}
+          />
 
           <Separator className="bg-white/10" />
 
           <div className="space-y-6">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold">
-                Add ION Liquidity
-              </DialogTitle>
+            <DialogHeader className="flex flex-row items-center pr-0">
+              <DialogTitle>Add ION Liquidity</DialogTitle>
             </DialogHeader>
 
             <MaxDeposit

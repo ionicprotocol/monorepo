@@ -24,17 +24,17 @@ import NetworkDropdown from '../NetworkDropdown';
 import { usePrecisionSlider } from '../PrecisionSlider';
 import MaxDeposit from '../stake/MaxDeposit';
 
-interface VeIonDialogProps {
+interface GetVeIONDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedToken: 'eth' | 'mode' | 'weth';
 }
 
-export default function VeIonDialog({
+export default function GetVeIONDialog({
   isOpen,
   onOpenChange,
   selectedToken
-}: VeIonDialogProps) {
+}: GetVeIONDialogProps) {
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -86,15 +86,15 @@ export default function VeIonDialog({
       <DialogContent className="bg-grayUnselect max-w-[580px]">
         {!success ? (
           <>
-            <DialogHeader className="flex flex-row items-center justify-between">
-              <DialogTitle className="flex items-center gap-4">
-                Get veION
+            <DialogHeader>
+              <div className="flex items-center justify-between w-full">
+                <DialogTitle>Get veION</DialogTitle>
                 <NetworkDropdown
                   dropdownSelectedChain={currentChain}
                   nopool
                   enabledChains={[mode.id, base.id, optimism.id]}
                 />
-              </DialogTitle>
+              </div>
             </DialogHeader>
             <div className="space-y-6">
               <MaxDeposit

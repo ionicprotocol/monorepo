@@ -28,7 +28,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '00d : 00h : 00m'
     },
-    votingPower: '0 velION',
+    votingPower: '0 veION',
     network: 'Polygon',
     enableClaim: true
   },
@@ -43,7 +43,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     network: 'Polygon',
     enableClaim: false
   },
@@ -58,7 +58,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     network: 'Polygon',
     enableClaim: false
   },
@@ -73,7 +73,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     network: 'Polygon',
     enableClaim: false
   },
@@ -88,7 +88,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     network: 'Polygon',
     enableClaim: false
   },
@@ -103,7 +103,7 @@ export const lockedData: LockedData[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     network: 'Polygon',
     enableClaim: false
   }
@@ -144,7 +144,7 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     votingPercentage: '1.67% of all',
     delegatedTo: '0x9T45...vt96h6',
     network: 'Polygon',
@@ -166,7 +166,7 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
       date: '20 Mar 2025',
       timeLeft: '700d : 23h : 34m'
     },
-    votingPower: '12.03 velION',
+    votingPower: '12.03 veION',
     votingPercentage: '1.67% of all',
     delegatedTo: '0x9T45...vt96h6',
     network: 'Polygon',

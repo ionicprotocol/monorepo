@@ -15,7 +15,7 @@ import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 
 import {
-  LockAndGetDialog,
+  GetVeIONDialog,
   LPRow,
   InfoCard,
   AddLiquidityDialog,
@@ -112,8 +112,7 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'STAKED LP',
-              amount: '$1,234,432.21',
-              Icon: <LockIcon className="size-4 inline-block" />
+              amount: '$1,234,432.21'
             }}
             detail={{
               title: 'MIGRATE YOUR STAKED LP',
@@ -126,7 +125,8 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'LOCKED LP',
-              amount: '$113,029.98'
+              amount: '$113,029.98',
+              Icon: <LockIcon className="size-4 inline-block" />
             }}
             detail={{
               title: 'LOCK YOUR ION LP',
@@ -138,7 +138,7 @@ export default function VeIon() {
         </div>
       </CardContent>
 
-      <LockAndGetDialog
+      <GetVeIONDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}

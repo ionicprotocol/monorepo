@@ -158,10 +158,10 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
       usdValue: prices.ionBalanceUsd
     },
     {
-      label: 'Total veION',
+      label: 'Total locked ION',
       value: veIonBalance,
       token: 'veION',
-      infoContent: 'This is the amount of veION you have in your wallet.',
+      infoContent: 'This is the amount of ION you have locked in the protocol.',
       icon: '/img/logo/ion.svg',
       usdValue: prices.veIonBalanceUsd
     }

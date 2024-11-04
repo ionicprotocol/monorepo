@@ -24,7 +24,7 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
     <Card className="md:col-span-2 col-span-3 bg-graylite">
       <CardContent className="space-y-3 p-5">
         <p className="text-gray-400 text-xxs font-light">{summary.title}</p>
-        <div className="flex flex-wrap md:gap-3 items-center">
+        <div className="flex md:gap-3 items-center">
           <TokenPair
             token1="ion"
             token2="eth"

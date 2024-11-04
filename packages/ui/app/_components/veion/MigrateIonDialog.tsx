@@ -65,14 +65,14 @@ export default function MigrateIonDialog({
     >
       <DialogContent className="bg-grayUnselect max-w-[580px]">
         <DialogHeader className="flex flex-row items-center">
-          <DialogTitle className="flex items-center gap-4">
-            <p>Migrate ION Liquidity</p>
+          <div className="flex items-center justify-between w-full">
+            <DialogTitle>Migrate ION Liquidity</DialogTitle>
             <NetworkDropdown
               dropdownSelectedChain={currentChain}
               nopool
               enabledChains={[mode.id, base.id, optimism.id]}
             />
-          </DialogTitle>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
