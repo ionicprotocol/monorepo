@@ -207,6 +207,7 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'wsuperOETHb',
           'OGN',
+          'sUSDz',
           'USDz',
           'wUSD+',
           'wUSDM',

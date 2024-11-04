@@ -36,6 +36,7 @@ export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
 export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
 export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
+export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
 
 export const assets: SupportedAsset[] = [
   {
@@ -347,6 +348,20 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://basescan.org", uSUI),
     initialBorrowCap: parseEther(String(150_000)).toString(),
     initialSupplyCap: parseEther(String(250_000)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sUSDz,
+    underlying: sUSDz,
+    name: "Staked USDz",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xD89c7fFB39C44b17EAecd8717a75A36c19C07582",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialBorrowCap: parseEther(String(80_000)).toString(),
+    initialSupplyCap: parseEther(String(100_000)).toString(),
     initialCf: "0.70"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
