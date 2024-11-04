@@ -1,19 +1,20 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-
 import Image from 'next/image';
 
 import { VotingContext } from '@ui/app/contexts/VotingContext';
 import type { VotingData } from '@ui/constants/mock';
 import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
+import { votingData } from '@ui/constants/mock';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
+import { useVeION } from '@ui/context/VeIonContext';
 
 const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
   '0012': '0x1234567890123456789012345678901234567890',
@@ -23,22 +24,22 @@ const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
 };
 
 interface EmissionsManagementTableProps {
-  data: VotingData[];
-  chainId: number;
   tokenId: number;
 }
 
-function EmissionsManagementTable({
-  data,
-  chainId,
-  tokenId
-}: EmissionsManagementTableProps) {
+function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
+  const { currentChain } = useVeION();
   const { toast } = useToast();
   const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});
   const [autoRepeat, setAutoRepeat] = useState(false);
   const [votingSide, setVotingSide] = useState<Record<string, MarketSide>>({});
 
-  const { addVote, removeVote, submitVote, isVoting } = useVeIONVote(chainId);
+  const { addVote, removeVote, submitVote, isVoting } =
+    useVeIONVote(currentChain);
+
+  const filteredVotingData = useMemo(() => {
+    return votingData.filter((data) => data.networkId === +currentChain);
+  }, [currentChain]);
 
   const rowColors = useMemo(() => {
     const colors = [
@@ -51,14 +52,14 @@ function EmissionsManagementTable({
       '#9B59B6'
     ];
 
-    return data.reduce(
+    return filteredVotingData.reduce(
       (acc, row) => {
         acc[row.id] = colors[Math.floor(Math.random() * colors.length)];
         return acc;
       },
       {} as Record<string, string>
     );
-  }, [data]);
+  }, [filteredVotingData]);
 
   const handleVoteChange = (id: string, value: string) => {
     setSelectedRows((prev) => {
@@ -87,7 +88,7 @@ function EmissionsManagementTable({
       const value = selectedRows[id];
       const numericValue = parseFloat(value);
       if (!isNaN(numericValue)) {
-        const market = data.find((row) => row.id === id);
+        const market = filteredVotingData.find((row) => row.id === id);
         if (market) {
           addVote(market.marketAddress, side, numericValue);
         }
@@ -153,30 +154,23 @@ function EmissionsManagementTable({
         }
       },
       {
-        accessorKey: 'network',
-        header: 'NETWORK',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Image
-              src={`/img/logo/${row.getValue<string>('network').toUpperCase()}.png`}
-              alt={row.getValue('network')}
-              width={24}
-              height={24}
-              className="w-6 h-6"
-            />
-            <span className="text-xs font-semibold text-white/80">
-              {row.getValue('network')}
-            </span>
-          </div>
-        )
-      },
-      {
         accessorKey: 'supplyAsset',
         header: 'SUPPLY ASSET',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-white/80">
               {row.getValue('supplyAsset')}
+            </span>
+          </div>
+        )
+      },
+      {
+        accessorKey: 'type',
+        header: 'TYPE',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-white/80">
+              {row.getValue('type')}
             </span>
           </div>
         )
@@ -257,7 +251,6 @@ function EmissionsManagementTable({
         )
       }
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [rowColors, votingSide, isVoting]
   );
 
@@ -266,7 +259,6 @@ function EmissionsManagementTable({
       selectedRows,
       onVoteChange: handleVoteChange
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedRows]
   );
 
@@ -275,7 +267,7 @@ function EmissionsManagementTable({
       <div className="relative pb-12">
         <CommonTable
           columns={columns}
-          data={data}
+          data={filteredVotingData}
         />
 
         <EmissionsManagementFooter

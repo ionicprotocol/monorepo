@@ -19,6 +19,7 @@ import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
 import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
+import { useVeION } from '@ui/context/VeIonContext';
 
 interface ExtendVeionProps {
   isOpen: boolean;
@@ -28,7 +29,6 @@ interface ExtendVeionProps {
   maxToken?: number;
   tokenId: number;
   tokenAddress: string;
-  chain: number;
 }
 
 const ExtendVeion = ({
@@ -38,13 +38,13 @@ const ExtendVeion = ({
   currentLockDate = '28 Aug 2023',
   maxToken = 100,
   tokenId,
-  tokenAddress,
-  chain
+  tokenAddress
 }: ExtendVeionProps) => {
   const { toast } = useToast();
   const [autoLock, setAutoLock] = useState(false);
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
+  const { currentChain } = useVeION();
 
   const {
     amount: veIonAmount,
@@ -56,7 +56,7 @@ const ExtendVeion = ({
   });
 
   const { extendLock, resetState, isExtending, isApproving, error } =
-    useVeIONExtend(chain);
+    useVeIONExtend(currentChain);
 
   // Reset state when dialog closes
   const handleOpenChange = (open: boolean) => {

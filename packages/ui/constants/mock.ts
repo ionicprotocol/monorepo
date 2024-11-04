@@ -182,6 +182,7 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
 export type VotingData = {
   id: string;
   network: string;
+  networkId: number;
   supplyAsset: string;
   totalVotes: {
     percentage: string;
@@ -192,12 +193,14 @@ export type VotingData = {
     value: string;
   };
   marketAddress: Hex;
+  type: 'supply' | 'borrow';
 };
 
 export const votingData: VotingData[] = [
   {
     id: '0012',
     network: 'Mode',
+    networkId: 34443,
     supplyAsset: 'ETH',
     totalVotes: {
       percentage: '12.34%',
@@ -207,11 +210,13 @@ export const votingData: VotingData[] = [
       percentage: '0',
       value: '$0'
     },
-    marketAddress: '0x1234567890123456789012345678901234567890'
+    marketAddress: '0x1234567890123456789012345678901234567890',
+    type: 'supply'
   },
   {
     id: '0014',
     network: 'Optimism',
+    networkId: 10,
     supplyAsset: 'USDC',
     totalVotes: {
       percentage: '18.5%',
@@ -221,11 +226,29 @@ export const votingData: VotingData[] = [
       percentage: '10',
       value: '$2.45'
     },
-    marketAddress: '0x2345678901234567890123456789012345678901'
+    marketAddress: '0x2345678901234567890123456789012345678901',
+    type: 'supply'
+  },
+  {
+    id: '0014',
+    network: 'Optimism',
+    networkId: 10,
+    supplyAsset: 'OP',
+    totalVotes: {
+      percentage: '8.5%',
+      limit: '23% limit'
+    },
+    myVotes: {
+      percentage: '0',
+      value: '$0'
+    },
+    marketAddress: '0x2345678901234567890123456789012345678901',
+    type: 'borrow'
   },
   {
     id: '0015',
     network: 'Base',
+    networkId: 8453,
     supplyAsset: 'BNB',
     totalVotes: {
       percentage: '5.7%',
@@ -235,11 +258,13 @@ export const votingData: VotingData[] = [
       percentage: '0',
       value: '$0'
     },
-    marketAddress: '0x3456789012345678901234567890123456789012'
+    marketAddress: '0x3456789012345678901234567890123456789012',
+    type: 'supply'
   },
   {
     id: '0016',
     network: 'Eth',
+    networkId: 1,
     supplyAsset: 'USDT',
     totalVotes: {
       percentage: '22.1%',
@@ -249,7 +274,8 @@ export const votingData: VotingData[] = [
       percentage: '0',
       value: '$0'
     },
-    marketAddress: '0x4567890123456789012345678901234567890123'
+    marketAddress: '0x4567890123456789012345678901234567890123',
+    type: 'borrow'
   }
 ];
 
@@ -277,7 +303,7 @@ export const infoBlocks: InfoBlock[] = [
     label: 'My Voting Power',
     value: '5674 veION',
     infoContent: 'This is your current voting power.',
-    icon: '/img/symbols/32/color/ion.png'
+    icon: '/img/logo/ion.svg'
   }
 ];
 

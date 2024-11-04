@@ -1,7 +1,7 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useChainId } from 'wagmi';
 
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
@@ -15,14 +15,30 @@ import {
 } from '@ui/app/_components/veion';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
+import { base, optimism, mode } from 'viem/chains';
 
 export default function Governance() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const chainId = useChainId();
+
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);
   const view = queryview ?? 'My veION';
+
+  useEffect(() => {
+    if (!querychain) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set('chain', String(chainId));
+
+      if (queryview) {
+        newSearchParams.set('view', queryview);
+      }
+
+      router.replace(`/veion/governance?${newSearchParams.toString()}`);
+    }
+  }, [chainId, querychain, queryview, router, searchParams]);
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
@@ -32,6 +48,7 @@ export default function Governance() {
       <NetworkSelector
         nopool={true}
         dropdownSelectedChain={+chain}
+        enabledChains={[mode.id, base.id, optimism.id]}
       />
 
       {/* Second Card */}

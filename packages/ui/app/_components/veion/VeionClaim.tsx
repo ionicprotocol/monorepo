@@ -14,6 +14,7 @@ import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONClaim } from '@ui/hooks/veion/useVeIONClaim';
 
 import ProgressSteps from '../xION/ProgressSteps';
+import { useVeION } from '@ui/context/VeIonContext';
 
 interface VeionClaimProps {
   isOpen: boolean;
@@ -21,7 +22,6 @@ interface VeionClaimProps {
   tokenId: number;
   lpAmount: string;
   tokenAddress: string;
-  chain: number;
 }
 
 export default function VeionClaim({
@@ -29,11 +29,11 @@ export default function VeionClaim({
   onOpenChange,
   tokenId,
   lpAmount,
-  tokenAddress,
-  chain
+  tokenAddress
 }: VeionClaimProps) {
   const { isConnected } = useAccount();
   const { toast } = useToast();
+  const { currentChain } = useVeION();
   const {
     approve,
     claim,
@@ -42,7 +42,7 @@ export default function VeionClaim({
     isApproving,
     isClaiming,
     error
-  } = useVeIONClaim(chain);
+  } = useVeIONClaim(currentChain);
 
   // Reset state when dialog closes
   const handleOpenChange = (open: boolean) => {

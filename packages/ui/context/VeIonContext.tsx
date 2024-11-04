@@ -17,7 +17,6 @@ interface VeIONContextType {
   getTokenBalance: (token: 'eth' | 'mode' | 'weth') => string;
   totalLiquidity: string;
   stakedLiquidity: string;
-  lockedLiquidity: string;
   isLoading: boolean;
   currentChain: number;
   prices: {
@@ -49,7 +48,6 @@ const VeIONContext = createContext<VeIONContextType>({
   getTokenBalance: () => '0',
   totalLiquidity: '0',
   stakedLiquidity: '0',
-  lockedLiquidity: '0',
   isLoading: true,
   currentChain: 0,
   prices: {
@@ -187,9 +185,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0',
     getTokenBalance,
     // todo
-    totalLiquidity: '$1,234,432.21',
+    totalLiquidity: '$1',
     stakedLiquidity: '$1,234,432.21',
-    lockedLiquidity: '$113,029.98',
     currentChain,
     prices: {
       ionUsd: ionPrice,

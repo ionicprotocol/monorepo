@@ -2,11 +2,6 @@
 
 import React, { useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
-
-import { useChainId } from 'wagmi';
-
-import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import { InfoBlock, EmissionsManagementTable } from '@ui/app/_components/veion';
 import {
@@ -16,20 +11,68 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Switch } from '@ui/components/ui/switch';
-import { infoBlocks, votingData } from '@ui/constants/mock';
+import { infoBlocks } from '@ui/constants/mock';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger
+} from '@ui/components/ui/select';
+import { useVeION } from '@ui/context/VeIonContext';
+import { base, optimism, mode, mainnet } from 'viem/chains';
+import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
+
+const PLACEHOLDER_OPTIONS = [
+  { id: 1, label: 'veION #21', value: '21' },
+  { id: 2, label: 'veION #22', value: '22' },
+  { id: 3, label: 'veION #23', value: '23' }
+];
 
 const Vote: React.FC = () => {
   const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
-  const searchParams = useSearchParams();
-  const chainId = useChainId();
-  const querychain = searchParams.get('chain');
-  const chain = querychain ?? String(chainId);
+  const [selectedProposal, setSelectedProposal] = useState(
+    PLACEHOLDER_OPTIONS[0].value
+  );
+  const { currentChain } = useVeION();
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
       <Card className="w-full bg-grayone">
         <CardHeader>
-          <CardTitle>Vote</CardTitle>
+          <div className="w-fit">
+            <Select
+              value={selectedProposal}
+              onValueChange={(value) => setSelectedProposal(value)}
+            >
+              <SelectTrigger className="border-0 outline-none p-0 bg-transparent hover:bg-transparent">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-semibold">
+                    {
+                      PLACEHOLDER_OPTIONS.find(
+                        (opt) => opt.value === selectedProposal
+                      )?.label
+                    }
+                  </h2>
+                </div>
+              </SelectTrigger>
+              <SelectContent
+                className="bg-grayUnselect border-white/10 min-w-[200px] w-fit"
+                align="start"
+              >
+                {PLACEHOLDER_OPTIONS.map((option) => (
+                  <SelectItem
+                    key={option.id}
+                    value={option.value}
+                    className="focus:bg-accent/20 focus:text-white"
+                  >
+                    <span className="text-xl font-semibold">
+                      {option.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap items-center gap-4">
@@ -45,7 +88,8 @@ const Vote: React.FC = () => {
 
       <NetworkSelector
         nopool={true}
-        dropdownSelectedChain={+chain}
+        dropdownSelectedChain={+currentChain}
+        enabledChains={[mode.id, base.id, optimism.id]}
       />
 
       <Card
@@ -74,11 +118,7 @@ const Vote: React.FC = () => {
           <div className="my-3 w-full">
             <FlatMap />
           </div>
-          <EmissionsManagementTable
-            data={votingData}
-            chainId={+chain}
-            tokenId={0}
-          />
+          <EmissionsManagementTable tokenId={0} />
         </CardContent>
       </Card>
     </div>

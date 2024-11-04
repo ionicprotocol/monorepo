@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 import Link from 'next/link';
 
 import ExtendVeion from './ExtendVeion';
@@ -11,6 +10,7 @@ import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
 import type { ColumnDef } from '@tanstack/react-table';
+import { useVeION } from '@ui/context/VeIonContext';
 
 type BaseVeionData = {
   id: string;
@@ -30,10 +30,15 @@ type MyVeionData = BaseVeionData & {
   enableClaim?: boolean;
 };
 
-function MyVeionTable({ data }: { data: MyVeionData[] }) {
+interface MyVeionTableProps {
+  data: MyVeionData[];
+}
+
+function MyVeionTable({ data }: MyVeionTableProps) {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
+  const { currentChain } = useVeION();
 
   const getRandomColor = () => {
     const colors = [
@@ -133,7 +138,7 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
           </div>
         ) : (
           <div className="flex gap-2 justify-end">
-            <Link href="/veion/governance/vote">
+            <Link href={`/veion/governance/vote?chain=${currentChain}`}>
               <TableActionButton variant="secondary">Vote</TableActionButton>
             </Link>
             <TableActionButton
@@ -158,7 +163,6 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
         lpAmount="100"
         tokenId={1}
         tokenAddress="0x123"
-        chain={1}
       />
       <ExtendVeion
         isOpen={isExtendOpen}
@@ -167,7 +171,6 @@ function MyVeionTable({ data }: { data: MyVeionData[] }) {
         maxToken={1000}
         tokenId={1}
         tokenAddress="0x123"
-        chain={1}
       />
       <ManageDialog
         isOpen={isManageOpen}

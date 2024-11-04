@@ -59,10 +59,10 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { lockedLiquidity, totalLiquidity } = useVeION();
+  const { veIonBalance, totalLiquidity } = useVeION();
 
   // Remove the $ and convert to numbers
-  const lockedAmount = Number(lockedLiquidity.replace(/[^0-9.]/g, ''));
+  const lockedAmount = Number(veIonBalance.replace(/[^0-9.]/g, ''));
   const totalAmount = Number(totalLiquidity.replace(/[^0-9.]/g, ''));
 
   // Calculate percentages
@@ -85,7 +85,7 @@ const EmissionsStatus = () => {
           </span>
         </div>
         <Link
-          href="https://placeholder.com"
+          href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/tokenomics"
           className="text-green-400 hover:text-green-500 p-0 h-auto flex items-center"
           target="_blank"
           rel="noopener noreferrer"
@@ -158,7 +158,7 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
       usdValue: prices.ionBalanceUsd
     },
     {
-      label: 'Total locked ION',
+      label: 'Your locked veION',
       value: veIonBalance,
       token: 'veION',
       infoContent: 'This is the amount of ION you have locked in the protocol.',
