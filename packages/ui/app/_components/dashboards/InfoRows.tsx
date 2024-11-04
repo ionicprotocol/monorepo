@@ -6,8 +6,11 @@ import dynamic from 'next/dynamic';
 
 import { useChainId } from 'wagmi';
 
-import { NO_COLLATERAL_SWAP } from '@ui/app/dashboard/page';
-import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import {
+  FLYWHEEL_TYPE_MAP,
+  NO_COLLATERAL_SWAP,
+  pools
+} from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';

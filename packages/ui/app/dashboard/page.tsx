@@ -8,10 +8,9 @@ import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import { pools } from '@ui/constants/index';
+import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
@@ -50,12 +49,6 @@ import type {
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
 });
-
-export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
-  [mode.id]: {
-    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe']
-  }
-};
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();

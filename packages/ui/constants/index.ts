@@ -152,6 +152,12 @@ type PoolParams = {
   }[];
 };
 
+export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
+  [mode.id]: {
+    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe']
+  }
+};
+
 export const pools: Record<number, PoolParams> = {
   [mode.id]: {
     hexcode: '#3bff89',
