@@ -6,7 +6,7 @@ import { Address } from "viem";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.uSUI];
+  const assetsToDeploy: string[] = [assetSymbols.sUSDz];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     console.log("Deploying market for ", asset.symbol, asset.name);
     await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
@@ -40,7 +40,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.uSUI);
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.sUSDz);
   if (!asset) {
     throw new Error("asset not found in base assets");
   }

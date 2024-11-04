@@ -586,6 +586,14 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         }
+      },
+      sUSDz: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
