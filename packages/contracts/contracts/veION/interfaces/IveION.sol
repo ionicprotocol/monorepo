@@ -99,14 +99,14 @@ interface IveION {
 
   /**
    * @notice Mints a veNFT in exchange for tokens provided.
-   * @param _tokenAddress Address of the token to use for creating lock. Must be part of whitelisted tokens (i.e. ION/WETH on Velodrome, 80/20 ION/WETH on Balancer).
+   * @param _lpType Type of the LP token to use for creating lock.
    * @param _tokenAmount Amount of tokens to lock (must be approved to contract).
    * @param _duration Duration to create lock for (6-24 months).
    * @param _to Optional address who owns the NFT.
    * @return _tokenId Token ID that was minted.
    */
   function createLockFor(
-    address[] memory _tokenAddress,
+    LpTokenType[] memory _lpType,
     uint256[] memory _tokenAmount,
     uint256[] memory _duration,
     bool[] memory _stakeUnderlying,
@@ -115,13 +115,13 @@ interface IveION {
 
   /**
    * @notice Mints a veNFT in exchange for tokens provided.
-   * @param _tokenAddress Address of the token to use for creating lock. Must be part of whitelisted tokens (i.e. ION/WETH on Velodrome, 80/20 ION/WETH on Balancer).
+   * @param _lpType Type of the LP token to use for creating lock.
    * @param _tokenAmount Amount of tokens to lock (must be approved to contract).
    * @param _duration Duration to create lock for (6-24 months).
    * @return _tokenId Token ID that was minted.
    */
   function createLock(
-    address[] memory _tokenAddress,
+    LpTokenType[] memory _lpType,
     uint256[] memory _tokenAmount,
     uint256[] memory _duration,
     bool[] memory _stakeUnderlying
@@ -132,7 +132,7 @@ interface IveION {
    * If unlock time has not passed, uses a formula to unlock early with penalty.
    * @param _tokenId Token ID.
    */
-  function withdraw(address _tokenAddress, uint256 _tokenId) external;
+  function withdraw(LpTokenType _lpType, uint256 _tokenId) external;
 
   /**
    * @notice Updates the voting status of a token.
