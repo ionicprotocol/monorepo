@@ -98,7 +98,7 @@ const RewardsTable = ({
     <div className="space-y-3">
       <h3 className="text-lg font-semibold pl-4">{section}</h3>
       <div className="w-full">
-        <Table>
+        <Table compact>
           <TableHeader>
             <TableRow>
               <TableHead>Token</TableHead>
@@ -112,9 +112,8 @@ const RewardsTable = ({
               <TableRow
                 key={reward.id}
                 transparent
-                compact
               >
-                <TableCell compact>
+                <TableCell>
                   <div className="flex items-center gap-2">
                     <Image
                       alt={`${reward.token.toLowerCase()} logo`}
@@ -131,8 +130,8 @@ const RewardsTable = ({
                     <span>{reward.tokenSymbol}</span>
                   </div>
                 </TableCell>
-                <TableCell compact>{reward.amount}</TableCell>
-                <TableCell compact>
+                <TableCell>{reward.amount}</TableCell>
+                <TableCell>
                   <div className="flex items-center gap-1.5">
                     <Image
                       alt={`${reward.network.toLowerCase()} network`}
@@ -145,7 +144,7 @@ const RewardsTable = ({
                     <span>{reward.network}</span>
                   </div>
                 </TableCell>
-                <TableCell compact>
+                <TableCell>
                   <Checkbox
                     checked={selectedRewards[reward.id]}
                     onCheckedChange={() => toggleReward(reward.id)}

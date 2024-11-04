@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
-import Image from 'next/image';
-
 import { ChevronDown } from 'lucide-react';
+import { base, optimism, mode } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -17,15 +16,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@ui/components/ui/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@ui/components/ui/table';
+import { useVeION } from '@ui/context/VeIonContext';
+import { getToken } from '@ui/utils/getStakingTokens';
 
+import NetworkDropdown from '../NetworkDropdown';
 import MaxDeposit from '../stake/MaxDeposit';
-
-// Define networks data
-const networks = [
-  { id: 'mode', name: 'Mode', logo: '/img/logo/MODE.png' },
-  { id: 'base', name: 'Base', logo: '/img/logo/BASE.png' },
-  { id: 'op', name: 'Optimism', logo: '/img/logo/OP.png' }
-];
 
 const sides = [
   { id: 'lend', name: 'Lend' },
@@ -33,56 +36,27 @@ const sides = [
 ];
 
 const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
-  const [selectedNetwork, setSelectedNetwork] = useState(networks[0]);
+  const { currentChain, veIonBalance } = useVeION(); // Add veIonBalance
   const [selectedSide, setSelectedSide] = useState(sides[0]);
+  const [amount, setAmount] = useState<string>('0');
 
   return (
     <Card className="bg-grayone">
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="space-y-8 p-6">
         <CardHeader className="p-0">
           <CardTitle>Choose Market & Side</CardTitle>
         </CardHeader>
 
         <div className="flex items-center gap-4">
-          {/* Network Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 bg-graylite p-2 rounded-lg cursor-pointer hover:bg-graylite/80">
-                <Image
-                  src={selectedNetwork.logo}
-                  alt={selectedNetwork.name}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />
-                <span>{selectedNetwork.name}</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-grayone border-graylite">
-              {networks.map((network) => (
-                <DropdownMenuItem
-                  key={network.id}
-                  onClick={() => setSelectedNetwork(network)}
-                  className="flex items-center gap-2 hover:bg-graylite cursor-pointer"
-                >
-                  <Image
-                    src={network.logo}
-                    alt={network.name}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                  {network.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <NetworkDropdown
+            dropdownSelectedChain={currentChain}
+            nopool
+            enabledChains={[mode.id, base.id, optimism.id]}
+          />
 
-          {/* Side Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 bg-graylite p-2 rounded-lg cursor-pointer hover:bg-graylite/80">
+              <div className="flex items-center gap-2 bg-grayUnselect px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-700">
                 <span>{selectedSide.name}</span>
                 <ChevronDown className="w-4 h-4" />
               </div>
@@ -101,51 +75,89 @@ const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
           </DropdownMenu>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-white/60">
-          <div>
-            <div className="flex justify-between">
-              <span>Supply</span>
-              <span>16,009,106</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Borrow</span>
-              <span>10,007,070</span>
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between">
-              <span>YOUR BALANCE</span>
-              <span>00.00</span>
-            </div>
-          </div>
-        </div>
+        {/* First Table - Balances */}
+        <Table
+          compact
+          className="text-gray-400"
+        >
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-32" />
+              <TableHead>TOTAL BALANCES</TableHead>
+              <TableHead>YOUR BALANCE</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Supply</TableCell>
+              <TableCell>16,009,106</TableCell>
+              <TableCell>00.00</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Borrow</TableCell>
+              <TableCell>10,007,070</TableCell>
+              <TableCell>00.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
-        <div className="grid grid-cols-3 gap-4 text-white/60">
-          <div>
-            <div>APRS</div>
-            <div>Supply 5%</div>
-            <div>Borrow 11.9%</div>
-          </div>
-          <div>
-            <div>VOTES</div>
-            <div>7,712,972.73</div>
-            <div>7,712,972.73</div>
-          </div>
-          <div>
-            <div>INCENTIVES</div>
-            <div>$11.57</div>
-            <div>$11.57</div>
-          </div>
-        </div>
+        {/* Second Table - Market Metrics */}
+        <Table
+          compact
+          className="text-gray-400"
+        >
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-32" />
+              <TableHead>APRS</TableHead>
+              <TableHead>VOTES</TableHead>
+              <TableHead>INCENTIVES</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Supply</TableCell>
+              <TableCell>5%</TableCell>
+              <TableCell>7,712,972.73</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-[#C3FF56] rounded-full flex items-center justify-center text-black font-bold">
+                    M
+                  </div>
+                  <span>$11.57</span>
+                </div>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Borrow</TableCell>
+              <TableCell>11.9%</TableCell>
+              <TableCell>7,712,972.73</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-[#C3FF56] rounded-full flex items-center justify-center text-black font-bold">
+                    M
+                  </div>
+                  <span>$11.57</span>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
         <MaxDeposit
-          headerText={`${selectedNetwork.name} Balance: 00.00`}
-          chain={1}
-          tokenName={selectedNetwork.name.toUpperCase()}
+          headerText="LOCK AMOUNT"
+          max={veIonBalance}
+          amount={amount}
+          tokenName="ion"
+          pairedToken="weth"
+          token={getToken(currentChain)}
+          handleInput={(val?: string) => setAmount(val || '0')}
+          chain={currentChain}
+          useSlider
         />
 
         <Button
-          className="w-full bg-green-400 text-black transition-opacity"
+          className="w-full bg-green-400 hover:bg-[#B3EF46] text-black transition-opacity rounded-2xl h-14 text-lg font-medium"
           disabled={!isAcknowledged}
           style={{ opacity: isAcknowledged ? 1 : 0.7 }}
         >

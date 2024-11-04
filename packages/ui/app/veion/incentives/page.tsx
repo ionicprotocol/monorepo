@@ -17,7 +17,7 @@ export default function IncentivesPage() {
         <CardContent className="flex flex-col items-center p-6 space-y-2">
           <h1 className="text-2xl font-semibold flex items-center justify-center gap-2">
             <Image
-              src="/img/logo/ION.png"
+              src="/img/logo/ion.svg"
               alt="ION"
               width={32}
               height={32}

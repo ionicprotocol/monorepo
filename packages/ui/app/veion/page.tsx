@@ -87,10 +87,7 @@ export default function VeIon() {
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
         {/* Info Cards */}
-        <InfoCard
-          text="Incentivize Markets on your favorite Chain with Liquidity Gauges"
-          href={`/veion/incentives?chain=${chain}&token=${selectedtoken}`}
-        />
+        <InfoCard text="Incentivize Markets on your favorite Chain with Liquidity Gauges" />
         <InfoCard text="Significantly boost your collateral pool depth with bribes" />
         <InfoCard text="Increase Emissions and earn POL for your Treasury" />
 
