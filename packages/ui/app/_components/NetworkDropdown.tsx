@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 import {
   Select,
@@ -44,10 +45,12 @@ export default function NetworkDropdown({
       <SelectTrigger className="w-[140px] bg-grayUnselect border-white/10 focus:ring-accent">
         <SelectValue>
           <div className="flex items-center gap-2">
-            <img
+            <Image
               alt={pools[dropdownSelectedChain].name}
               className="w-4 h-4"
               src={`/img/logo/${pools[dropdownSelectedChain].name.toUpperCase()}.png`}
+              width={16}
+              height={16}
             />
             <span className="text-sm">{pools[dropdownSelectedChain].name}</span>
           </div>
@@ -65,10 +68,12 @@ export default function NetworkDropdown({
               className="focus:bg-accent/20 focus:text-white"
             >
               <div className="flex items-center gap-2">
-                <img
+                <Image
                   alt={network.name}
                   className="w-4 h-4"
                   src={`/img/logo/${network.name.toUpperCase()}.png`}
+                  width={16}
+                  height={16}
                 />
                 <span className="text-sm">{network.name}</span>
               </div>
@@ -82,10 +87,12 @@ export default function NetworkDropdown({
             className="opacity-50 cursor-not-allowed"
           >
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 alt={chain}
                 className="w-4 h-4"
                 src={`/img/logo/${chain.toUpperCase()}.png`}
+                width={16}
+                height={16}
               />
               <span className="text-sm">{chain}</span>
             </div>
