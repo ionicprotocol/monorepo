@@ -36,6 +36,8 @@
   "dependencies": {
     "@next/react-dev-overlay": "^14.1.4",
     "@resolver-engine/core": "^0.3.3",
+    "@tanstack/react-table": "^8.20.5",
+    "lucide-react": "^0.454.0",
     "next": "^14.2.4"
   },
   "scripts": {
