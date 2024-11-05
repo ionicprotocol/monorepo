@@ -1,7 +1,10 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { useSearchParams, useRouter } from 'next/navigation';
+
+import { base, optimism, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
@@ -15,7 +18,6 @@ import {
 } from '@ui/app/_components/veion';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
-import { base, optimism, mode } from 'viem/chains';
 
 export default function Governance() {
   const searchParams = useSearchParams();

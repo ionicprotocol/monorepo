@@ -3,44 +3,50 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { formatEther, parseUnits } from 'viem';
+import { formatEther } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { useIonPrice } from '@ui/hooks/useDexScreenerPrices';
-import { useEthPrice } from '@ui/hooks/useEthPrice';
-import {
-  useTotalLiquidity,
-  useStakedLiquidity,
-  useLockedLiquidity
-} from '@ui/hooks/useLiquidity';
 import { useReserves } from '@ui/hooks/useReserves';
+import { useTokenCalculations } from '@ui/hooks/useTokenCalculations';
+import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
 import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
-interface VeIONContextType {
-  ionBalance: string;
-  veIonBalance: string;
-  ethBalance: string;
-  getTokenBalance: (token: 'eth' | 'mode' | 'weth') => string;
+interface PriceData {
+  ionUsd: number;
+  veIonUsd: number;
+  ionBalanceUsd: string;
+  veIonBalanceUsd: string;
+}
+
+interface LiquidityData {
+  total: number;
+  staked: number;
+  locked: number;
   isLoading: boolean;
-  currentChain: number;
-  prices: {
-    ionUsd: number;
-    veIonUsd: number;
-    // Calculated USD values
-    ionBalanceUsd: string;
-    veIonBalanceUsd: string;
+}
+
+interface EmissionsData {
+  lockedValue: {
+    amount: number;
+    usdValue: string;
+    percentage: number;
   };
-  liquidity: {
-    totalLiquidity: number;
-    stakedLiquidity: number;
-    lockedLiquidity: number;
-    isLoading: boolean;
+  totalDeposits: {
+    amount: number;
+    usdValue: string;
   };
-  reserves: {
-    eth?: { ion: bigint; token: bigint };
-    mode?: { ion: bigint; token: bigint };
-    weth?: { ion: bigint; token: bigint };
-  };
+  isLoading: boolean;
+}
+
+interface ReservesData {
+  eth?: { ion: bigint; token: bigint };
+  mode?: { ion: bigint; token: bigint };
+  weth?: { ion: bigint; token: bigint };
+}
+
+interface TokenCalculations {
+  getTokenBalance: (token: 'eth' | 'mode' | 'weth') => string;
   calculateTokenAmount: (
     ionAmount: string,
     selectedToken: 'eth' | 'mode' | 'weth'
@@ -51,12 +57,32 @@ interface VeIONContextType {
   ) => string;
 }
 
-const VeIONContext = createContext<VeIONContextType>({
+interface VeIONContextType {
+  // Balances
+  ionBalance: string;
+  veIonBalance: string;
+  ethBalance: string;
+
+  // Chain info
+  currentChain: number;
+
+  // Data structures
+  prices: PriceData;
+  liquidity: LiquidityData;
+  emissions: EmissionsData;
+  reserves: ReservesData;
+
+  // Token calculations
+  tokenCalculations: TokenCalculations;
+
+  // Loading state
+  isLoading: boolean;
+}
+
+const defaultContext: VeIONContextType = {
   ionBalance: '0',
   veIonBalance: '0',
   ethBalance: '0',
-  getTokenBalance: () => '0',
-  isLoading: true,
   currentChain: 0,
   prices: {
     ionUsd: 0,
@@ -65,27 +91,43 @@ const VeIONContext = createContext<VeIONContextType>({
     veIonBalanceUsd: '0'
   },
   liquidity: {
-    totalLiquidity: 0,
-    stakedLiquidity: 0,
-    lockedLiquidity: 0,
+    total: 0,
+    staked: 0,
+    locked: 0,
+    isLoading: true
+  },
+  emissions: {
+    lockedValue: {
+      amount: 0,
+      usdValue: '0',
+      percentage: 0
+    },
+    totalDeposits: {
+      amount: 0,
+      usdValue: '0'
+    },
     isLoading: true
   },
   reserves: {},
-  calculateTokenAmount: () => '0',
-  calculateIonAmount: () => '0'
-});
+  tokenCalculations: {
+    getTokenBalance: () => '0',
+    calculateTokenAmount: () => '0',
+    calculateIonAmount: () => '0'
+  },
+  isLoading: true
+};
+
+const VeIONContext = createContext<VeIONContextType>(defaultContext);
 
 export function VeIONProvider({ children }: { children: ReactNode }) {
   const { address } = useAccount();
   const defaultChainId = useChainId();
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
   const [currentChain, setCurrentChain] = useState<number>(defaultChainId);
 
-  const { data: ethPrice = 0 } = useEthPrice();
   const { data: ionPriceData } = useIonPrice({ chainId: currentChain });
   const ionPrice = Number(ionPriceData?.pair?.priceUsd || 0);
-  const veIonPrice = ionPrice; // Assuming 1:1 ratio, adjust if different
+  const veIonPrice = ionPrice;
 
   // Update chain whenever URL params change
   useEffect(() => {
@@ -96,43 +138,41 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   // Get token addresses
   const ionTokenAddress = getToken(currentChain);
-  // will need to update this to get the correct token address
+
+  // !!!!!! needs to be fixed !!!!!!!
   const veIonTokenAddress = getAvailableStakingToken(currentChain, 'eth');
 
   // Fetch balances
   const { data: ionBalance } = useBalance({
     address,
     token: ionTokenAddress,
-    chainId: currentChain,
-    query: {
-      notifyOnChangeProps: ['data', 'error']
-    }
+    chainId: currentChain
   });
 
   const { data: veIonBalance } = useBalance({
     address,
     token: veIonTokenAddress,
-    chainId: currentChain,
-    query: {
-      notifyOnChangeProps: ['data', 'error']
-    }
+    chainId: currentChain
   });
 
   const { data: ethBalanceData } = useBalance({
     address,
-    chainId: currentChain,
-    query: {
-      notifyOnChangeProps: ['data', 'error']
-    }
+    chainId: currentChain
   });
 
-  const getTokenBalance = (token: 'eth' | 'mode' | 'weth') => {
-    if (token === 'eth') {
-      return ethBalanceData ? formatEther(ethBalanceData.value) : '0';
-    }
-    // Add other token balance fetching logic here if needed
-    return '0';
-  };
+  const { reserves, isLoading: reservesLoading } = useReserves(currentChain);
+
+  const tokenCalculations = useTokenCalculations({
+    address,
+    chainId: currentChain
+  });
+
+  // Use our new consolidated hook
+  const { liquidity, emissions } = useVeIonData({
+    address,
+    veIonContract: veIonTokenAddress,
+    emissionsManagerContract: '0x' // todo
+  });
 
   // Calculate USD values
   const ionBalanceAmount = ionBalance
@@ -141,87 +181,25 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const veIonBalanceAmount = veIonBalance
     ? Number(formatEther(veIonBalance.value))
     : 0;
-  const ionBalanceUsd = (ionBalanceAmount * ionPrice).toFixed(3);
-  const veIonBalanceUsd = (veIonBalanceAmount * veIonPrice).toFixed(3);
-
-  const { reserves, isLoading: reservesLoading } = useReserves(currentChain);
-
-  const calculateTokenAmount = (
-    ionAmount: string,
-    selectedToken: 'eth' | 'mode' | 'weth'
-  ): string => {
-    const reservePair = reserves[selectedToken];
-    if (!reservePair || !ionAmount) return '0';
-
-    try {
-      const tokenVal =
-        (parseUnits(ionAmount, 18) * reservePair.token) / reservePair.ion;
-      return formatEther(tokenVal);
-    } catch (error) {
-      console.warn('Error calculating token amount:', error);
-      return '0';
-    }
-  };
-
-  const calculateIonAmount = (
-    tokenAmount: string,
-    selectedToken: 'eth' | 'mode' | 'weth'
-  ): string => {
-    const reservePair = reserves[selectedToken];
-    if (!reservePair || !tokenAmount) return '0';
-
-    try {
-      const ionVal =
-        (parseUnits(tokenAmount, 18) * reservePair.ion) / reservePair.token;
-      return formatEther(ionVal);
-    } catch (error) {
-      console.warn('Error calculating ION amount:', error);
-      return '0';
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        // Add any additional data fetching here
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [currentChain, address]);
-
-  const totalLiquidity = useTotalLiquidity(ethPrice, ionPrice);
-  const stakedLiquidity = useStakedLiquidity({
-    address,
-    veIonContract: veIonTokenAddress
-  });
-  const lockedLiquidity = useLockedLiquidity(veIonTokenAddress);
+  const ionBalanceUsd = (ionBalanceAmount * ionPrice).toFixed(2);
+  const veIonBalanceUsd = (veIonBalanceAmount * veIonPrice).toFixed(2);
 
   const value = {
     ionBalance: ionBalance ? formatEther(ionBalance.value) : '0',
     veIonBalance: veIonBalance ? formatEther(veIonBalance.value) : '0',
     ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0',
-    getTokenBalance,
     currentChain,
-    liquidity: {
-      totalLiquidity,
-      stakedLiquidity,
-      lockedLiquidity,
-      isLoading: isLoading || reservesLoading
-    },
     prices: {
       ionUsd: ionPrice,
       veIonUsd: veIonPrice,
       ionBalanceUsd,
       veIonBalanceUsd
     },
+    liquidity,
+    emissions,
     reserves,
-    calculateTokenAmount,
-    calculateIonAmount,
-    isLoading: isLoading || reservesLoading
+    tokenCalculations,
+    isLoading: reservesLoading
   };
 
   return (

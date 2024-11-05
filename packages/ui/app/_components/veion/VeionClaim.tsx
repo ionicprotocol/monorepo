@@ -10,11 +10,11 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONClaim } from '@ui/hooks/veion/useVeIONClaim';
 
 import ProgressSteps from '../xION/ProgressSteps';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface VeionClaimProps {
   isOpen: boolean;

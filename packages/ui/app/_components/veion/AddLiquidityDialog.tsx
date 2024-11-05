@@ -42,8 +42,8 @@ export default function AddLiquidityDialog({
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChain, ionBalance, getTokenBalance, calculateTokenAmount } =
-    useVeIONContext();
+  const { currentChain, ionBalance, tokenCalculations } = useVeIONContext();
+  const { getTokenBalance, calculateTokenAmount } = tokenCalculations;
   const { addLiquidity, isPending } = useVeIONActions();
   const selectedTokenBalance = getTokenBalance(selectedToken);
 

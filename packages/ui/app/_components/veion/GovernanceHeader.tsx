@@ -16,6 +16,54 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import CustomTooltip from '../CustomTooltip';
 
+const GovernanceHeader = ({ view = 'MyVeion' }) => {
+  const { ionBalance, isLoading, prices, emissions } = useVeIONContext();
+
+  const infoBlocks = [
+    {
+      label: 'Ion Wallet Balance',
+      value: ionBalance,
+      token: 'ION',
+      infoContent: 'This is the amount of ION you have in your wallet.',
+      icon: '/img/logo/ion.svg',
+      usdValue: prices.ionBalanceUsd
+    },
+    {
+      label: 'Your locked veION',
+      value: emissions.lockedValue.amount.toString(),
+      token: 'veION',
+      infoContent: 'This is the amount of ION you have locked in the protocol.',
+      icon: '/img/logo/ion.svg',
+      usdValue: emissions.lockedValue.usdValue
+    }
+  ];
+
+  return (
+    <Card className="w-full bg-grayone">
+      <CardHeader>
+        <CardTitle>
+          {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between gap-8">
+          <div className="flex gap-6">
+            {infoBlocks.map((block) => (
+              <InfoBlock
+                key={block.label}
+                {...block}
+              />
+            ))}
+          </div>
+          <div className="flex-1 max-w-[500px]">
+            <EmissionsStatus />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const InfoBlock = ({
   label,
   value,
@@ -59,20 +107,17 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { veIonBalance, liquidity } = useVeIONContext();
+  const { emissions } = useVeIONContext();
 
-  const lockedAmount = Number(veIonBalance.replace(/[^0-9.]/g, ''));
-  const totalAmount = liquidity.totalLiquidity;
-
-  // Calculate percentages
-  const lockedPercentage = (lockedAmount / totalAmount) * 100;
-  const thresholdPercentage = 2.5;
-  const isActive = lockedPercentage >= thresholdPercentage;
+  const { lockedValue, totalDeposits } = emissions;
+  const isActive = lockedValue.percentage >= 2.5;
 
   // Calculate progress values for both bars
-  const firstBarProgress = Math.min(lockedPercentage, thresholdPercentage);
-  const secondBarProgress = Math.max(0, lockedPercentage - thresholdPercentage);
-  const secondBarMax = 100 - thresholdPercentage;
+  const firstBarProgress = Math.min(lockedValue.percentage, 2.5);
+  const secondBarProgress = Math.max(0, lockedValue.percentage - 2.5);
+  const secondBarMax = 97.5;
+
+  const thresholdPercentage = 2.5;
 
   return (
     <div className="w-full space-y-4">
@@ -127,68 +172,14 @@ const EmissionsStatus = () => {
       <div className="flex justify-between items-center text-gray-400">
         <div className="flex items-center gap-2">
           <span className="text-xs">
-            LOCKED VEION: ${lockedAmount.toLocaleString()} (
-            {lockedPercentage.toFixed(1)}%)
+            LOCKED VEION: ${lockedValue.usdValue} (
+            {lockedValue.percentage.toFixed(1)}%)
           </span>
           <CustomTooltip content="Amount of veION locked in the protocol" />
         </div>
-        <div className="text-xs">
-          TOTAL DEPOSITS: ${totalAmount.toLocaleString()}
-        </div>
+        <div className="text-xs">TOTAL DEPOSITS: ${totalDeposits.usdValue}</div>
       </div>
     </div>
-  );
-};
-
-const GovernanceHeader = ({ view = 'MyVeion' }) => {
-  const { ionBalance, veIonBalance, isLoading, prices } = useVeIONContext();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  const infoBlocks = [
-    {
-      label: 'Ion Wallet Balance',
-      value: ionBalance,
-      token: 'ION',
-      infoContent: 'This is the amount of ION you have in your wallet.',
-      icon: '/img/logo/ion.svg',
-      usdValue: prices.ionBalanceUsd
-    },
-    {
-      label: 'Your locked veION',
-      value: veIonBalance,
-      token: 'veION',
-      infoContent: 'This is the amount of ION you have locked in the protocol.',
-      icon: '/img/logo/ion.svg',
-      usdValue: prices.veIonBalanceUsd
-    }
-  ];
-
-  return (
-    <Card className="w-full bg-grayone">
-      <CardHeader>
-        <CardTitle>
-          {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex justify-between gap-8">
-          <div className="flex gap-6">
-            {infoBlocks.map((block) => (
-              <InfoBlock
-                key={block.label}
-                {...block}
-              />
-            ))}
-          </div>
-          <div className="flex-1 max-w-[500px]">
-            <EmissionsStatus />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 

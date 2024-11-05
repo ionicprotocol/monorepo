@@ -98,7 +98,7 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'TOTAL LP',
-              amount: liquidity.totalLiquidity.toLocaleString('en-US', {
+              amount: liquidity.total.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD'
               })
@@ -114,7 +114,7 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'STAKED LP',
-              amount: liquidity.stakedLiquidity.toLocaleString('en-US', {
+              amount: liquidity.staked.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD'
               })
@@ -130,7 +130,7 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'LOCKED LP',
-              amount: liquidity.lockedLiquidity.toLocaleString('en-US', {
+              amount: liquidity.locked.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD'
               }),

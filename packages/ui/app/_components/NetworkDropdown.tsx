@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 
 import {
   Select,

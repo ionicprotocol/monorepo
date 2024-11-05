@@ -74,3 +74,38 @@ export function useIonPrice({ chainId }: { chainId: number }) {
     staleTime: Infinity
   });
 }
+
+export function useIonPrices() {
+  const chains = [8453, 34443, 10] as const;
+
+  return useQuery({
+    queryKey: ['ionPrices'],
+    queryFn: async () => {
+      const pricePromises = chains.map(async (chainId) => {
+        const config = REWARD_TOKEN_CONFIGS[chainId];
+        try {
+          const res = await axios.get(
+            `https://api.dexscreener.com/latest/dex/pairs/${config.name}/${config.ionAddress}`
+          );
+
+          return {
+            chainId,
+            price: Number(res.data.pairs[0]?.priceUsd || '0')
+          };
+        } catch (error) {
+          console.warn(
+            `Failed to fetch ION price for chain ${chainId}:`,
+            error
+          );
+          return { chainId, price: 0 };
+        }
+      });
+
+      const prices = await Promise.all(pricePromises);
+      return Object.fromEntries(
+        prices.map(({ chainId, price }) => [chainId, price])
+      ) as Record<number, number>;
+    },
+    staleTime: 60000 // Refresh every minute
+  });
+}

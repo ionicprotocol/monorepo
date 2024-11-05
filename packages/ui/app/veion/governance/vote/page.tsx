@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 
+import { base, optimism, mode } from 'viem/chains';
+
+import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import { InfoBlock, EmissionsManagementTable } from '@ui/app/_components/veion';
 import {
@@ -10,17 +13,15 @@ import {
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
-import { Switch } from '@ui/components/ui/switch';
-import { infoBlocks } from '@ui/constants/mock';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger
 } from '@ui/components/ui/select';
+import { Switch } from '@ui/components/ui/switch';
+import { infoBlocks } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { base, optimism, mode, mainnet } from 'viem/chains';
-import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 
 const PLACEHOLDER_OPTIONS = [
   { id: 1, label: 'veION #21', value: '21' },

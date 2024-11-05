@@ -1,5 +1,8 @@
 import { useState } from 'react';
+
 import Link from 'next/link';
+
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import ExtendVeion from './ExtendVeion';
 import ManageDialog from './ManageDialog';
@@ -10,7 +13,6 @@ import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 
 type BaseVeionData = {
   id: string;

@@ -1,20 +1,19 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Image from 'next/image';
 
 import { VotingContext } from '@ui/app/contexts/VotingContext';
 import type { VotingData } from '@ui/constants/mock';
+import { votingData } from '@ui/constants/mock';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
-import { votingData } from '@ui/constants/mock';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
   '0012': '0x1234567890123456789012345678901234567890',
@@ -251,6 +250,7 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         )
       }
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [rowColors, votingSide, isVoting]
   );
 
@@ -259,6 +259,7 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
       selectedRows,
       onVoteChange: handleVoteChange
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedRows]
   );
 

@@ -12,6 +12,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONExtend } from '@ui/hooks/veion/useVeIONExtend';
 
@@ -19,7 +20,6 @@ import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
 import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface ExtendVeionProps {
   isOpen: boolean;

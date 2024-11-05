@@ -193,7 +193,7 @@ export type VotingData = {
     value: string;
   };
   marketAddress: Hex;
-  type: 'supply' | 'borrow';
+  type: 'borrow' | 'supply';
 };
 
 export const votingData: VotingData[] = [
