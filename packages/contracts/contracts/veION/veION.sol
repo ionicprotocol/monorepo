@@ -37,7 +37,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address public s_ionicPool;
   address public s_voter;
   uint256 public s_aeroVoterBoost;
-  uint256 public s_minimumAeroContribution;
   uint256 public s_minimumLockDuration;
   AddressesProvider public ap;
 
@@ -805,9 +804,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         if (poolVotes[j] == s_ionicPool) {
           IAeroVoter aeroVoter = IAeroVoter(s_aeroVoting);
           uint256 weightToVoteRatio = (aeroVoter.votes(_tokenId, s_ionicPool) * 1e18) / aeroVoter.weights(s_ionicPool);
-          if (weightToVoteRatio > s_minimumAeroContribution) {
-            totalBoost += s_aeroVoterBoost;
-          }
+          totalBoost += (s_aeroVoterBoost * weightToVoteRatio) / 1e18;
           break;
         }
       }
@@ -832,10 +829,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     require(_minimumAmount > 0, "Minimum amount must be greater than zero");
     LpTokenType lpType = s_lpType[_tokenAddress];
     s_minimumLockAmount[lpType] = _minimumAmount;
-  }
-
-  function setMinimumAeroContribution(uint256 _minimumAeroContribution) external onlyOwner {
-    s_minimumAeroContribution = _minimumAeroContribution;
   }
 
   function setMinimumLockDuration(uint256 _minimumLockDuration) external onlyOwner {
