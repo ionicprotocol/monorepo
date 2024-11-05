@@ -44,10 +44,8 @@ function MyVeionTable({ data }: MyVeionTableProps) {
     currentChain,
     locks: { myLocks }
   } = useVeIONContext();
-
-  const tableData = myLocks.map((lock) => lock.toTableFormat());
   // eslint-disable-next-line no-console
-  console.log('tableData', tableData);
+  console.log('myLocks', myLocks);
 
   const getRandomColor = () => {
     const colors = [

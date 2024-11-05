@@ -49,9 +49,8 @@ function DelegateVeionTable({
   const {
     locks: { delegatedLocks }
   } = useVeIONContext();
-  const tableData = delegatedLocks.map((lock) => lock.toDelegateTableFormat());
   // eslint-disable-next-line no-console
-  console.log('tableData', tableData);
+  console.log('delegatedLocks', delegatedLocks);
 
   const defaultChain = data[0]?.chainId ?? 1;
   const { undelegate, isUndelegating } = useVeIONDelegate(defaultChain);
