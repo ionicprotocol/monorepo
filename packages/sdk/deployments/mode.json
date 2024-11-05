@@ -59,6 +59,12 @@
     "ChainlinkPriceOracleV2_Redstone_Proxy": {
       "address": "0xa1917C72E86E8e6Db08943e2E6d45CdB87653E0f"
     },
+    "CollateralSwap-0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a": {
+      "address": "0xeE02b738D3285756b9c45FE21aF4A2d76ECB56F6"
+    },
+    "CollateralSwap-0xFB3323E24743Caf4ADD0fDCCFB268565c0685556": {
+      "address": "0xc10fd848a764e878b36Ef9ACb7936dC7FA27EbeB"
+    },
     "Comptroller": {
       "address": "0xa855F8697D82F840c511433A36f7c60efF6c6BE7"
     },

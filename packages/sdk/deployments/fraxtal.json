@@ -50,6 +50,9 @@
     "ComptrollerFirstExtension": {
       "address": "0x151af46d007Cb7E60759318Ec1553c3Bdd8b93dB"
     },
+    "CurveSwapLiquidator": {
+      "address": "0xe186AffB36a66a450c01e88EC8a6a299463dc535"
+    },
     "DefaultProxyAdmin": {
       "address": "0x04C21Db52CcA974dF3Dc019C92E52e522ce57156"
     },

@@ -152,6 +152,12 @@ type PoolParams = {
   }[];
 };
 
+export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
+  [mode.id]: {
+    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe']
+  }
+};
+
 export const pools: Record<number, PoolParams> = {
   [mode.id]: {
     hexcode: '#3bff89',
@@ -170,7 +176,7 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'USDC',
           'msDAI',
-          'weETH.mode',
+          'weETH',
           'dMBTC',
           'M-BTC',
           'sUSDe',
@@ -179,8 +185,7 @@ export const pools: Record<number, PoolParams> = {
           'STONE',
           'WBTC',
           'USDe',
-          'USDT',
-          'weETH'
+          'USDT'
         ]
       },
       {
@@ -208,17 +213,19 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'wsuperOETHb',
           'OGN',
+          'sUSDz',
           'USDz',
           'wUSD+',
           'wUSDM',
           'uSOL',
+          'uSUI',
           'EURC',
           'cbBTC',
           'eUSD',
           'bsdETH',
           'hyUSD',
           'ezETH',
-          'weETH.mode',
+          'weETH',
           'AERO',
           'RSR',
           'wstETH',
@@ -246,6 +253,7 @@ export const pools: Record<number, PoolParams> = {
           'USDT',
           'WETH',
           'wUSDM',
+          'weETH',
           'OP',
           'wstETH',
           'SNX',
@@ -281,7 +289,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'FXS']
+        assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'sfrxETH', 'sFRAX', 'FXS']
       }
     ]
   },

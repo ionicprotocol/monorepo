@@ -37,7 +37,6 @@ import TvlTile from '../_components/markets/TvlTile';
 import Popup from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 import ResultHandler from '../_components/ResultHandler';
-import { getAssetName } from '../util/utils';
 
 import type { PopupMode } from '../_components/popup/page';
 
@@ -55,6 +54,7 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
+  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [dropdownSelectedChain, setDropdownSelectedChain] = useState<number>(
     mode.id
   );
@@ -134,14 +134,26 @@ export default function Market() {
             setSwapWidgetOpen={setSwapWidgetOpen}
             swapWidgetOpen={swapWidgetOpen}
             dropdownSelectedChain={dropdownSelectedChain.toString()}
+            setWrapWidgetOpen={setWrapWidgetOpen}
+            wrapWidgetOpen={wrapWidgetOpen}
           />
           <StakingTile chain={+chain} />
         </div>
         {/* //............................................ */}
-        <div className={`w-full my-3 flex flex-wrap  `}>
+        <div className={`w-full my-4 flex flex-wrap`}>
           <NetworkSelector
             dropdownSelectedChain={+chain}
-            upcomingChains={['MetalL2', 'Ozean', 'Soneium']}
+            upcomingChains={[
+              'MetalL2',
+              'Ozean',
+              'Soneium',
+              'Camp',
+              'FX',
+              'Ink',
+              'Kroma',
+              'Unichain',
+              'Worldchain'
+            ]}
           />
         </div>
         <div
@@ -197,12 +209,12 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${getAssetName(
-                          val.underlyingSymbol,
-                          dropdownSelectedChain
-                        )} / $${val.borrowBalanceFiat.toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })}`}
+                        } ${val.underlyingSymbol} / $${val.borrowBalanceFiat.toLocaleString(
+                          'en-US',
+                          {
+                            maximumFractionDigits: 2
+                          }
+                        )}`}
                         chain={chain.toString()}
                         collateralFactor={
                           (val
@@ -254,12 +266,12 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '-'
-                        } ${getAssetName(
-                          val.underlyingSymbol,
-                          dropdownSelectedChain
-                        )} / $${val.supplyBalanceFiat.toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })}`}
+                        } ${val.underlyingSymbol} / $${val.supplyBalanceFiat.toLocaleString(
+                          'en-US',
+                          {
+                            maximumFractionDigits: 2
+                          }
+                        )}`}
                         totalBorrowing={`${
                           val.totalBorrowNative
                             ? parseFloat(
@@ -271,12 +283,12 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${getAssetName(
-                          val.underlyingSymbol,
-                          dropdownSelectedChain
-                        )} / $${val.totalBorrowFiat.toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })}`}
+                        } ${val.underlyingSymbol} / $${val.totalBorrowFiat.toLocaleString(
+                          'en-US',
+                          {
+                            maximumFractionDigits: 2
+                          }
+                        )}`}
                         totalSupplied={`${
                           val.totalSupplyNative
                             ? parseFloat(
@@ -288,12 +300,12 @@ export default function Market() {
                                 maximumFractionDigits: 2
                               })
                             : '0'
-                        } ${getAssetName(
-                          val.underlyingSymbol,
-                          dropdownSelectedChain
-                        )} / $${val.totalSupplyFiat.toLocaleString('en-US', {
-                          maximumFractionDigits: 2
-                        })}`}
+                        } ${val.underlyingSymbol} / $${val.totalSupplyFiat.toLocaleString(
+                          'en-US',
+                          {
+                            maximumFractionDigits: 2
+                          }
+                        )}`}
                       />
                     );
                   }

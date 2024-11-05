@@ -8,15 +8,15 @@ export type Multipliers = {
   etherfi?: number;
   ionic: number;
   kelp?: number;
-  mode?: number;
   renzo?: number;
   flywheel?: boolean;
   ionAPR?: boolean;
   turtle?: boolean;
-  rewards?: boolean;
   spice?: boolean;
   underlyingAPR?: number;
   nektar?: number;
+  op?: boolean;
+  anzen?: number;
 };
 
 export const multipliers: Record<
@@ -36,42 +36,33 @@ export const multipliers: Record<
   >
 > = {
   [mode.id]: {
-    // main market
     '0': {
       'M-BTC': {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         },
         market: 'm_btc_market',
         multiplier: 66000,
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
       },
       dMBTC: {
         borrow: {
-          rewards: true,
           ionAPR: false,
-          turtle: true,
-          ionic: 0,
-          mode: 1
+          turtle: false,
+          ionic: 0
         },
         market: 'dmBTC_market',
         supply: {
           ionic: 0,
-          mode: 2,
           underlyingAPR: 10,
-          rewards: true,
-          turtle: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -79,9 +70,7 @@ export const multipliers: Record<
       STONE: {
         borrow: {
           ionic: 0,
-          mode: 1,
           turtle: true,
-          rewards: true,
           ionAPR: false
         },
         market: 'ststone_market',
@@ -89,18 +78,14 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           underlyingAPR: 2.94,
-          mode: 2,
           turtle: true,
-          rewards: true,
           ionAPR: false
         }
       },
       USDC: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           flywheel: false
         },
@@ -108,27 +93,22 @@ export const multipliers: Record<
         market: 'usdc_market',
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
-          ionAPR: false
+          turtle: false,
+          ionAPR: false,
+          op: true
         }
       },
       USDT: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         },
         decimals: 6,
         market: 'usdt_market',
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -136,9 +116,7 @@ export const multipliers: Record<
       WBTC: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         },
         decimals: 8,
@@ -146,9 +124,7 @@ export const multipliers: Record<
         multiplier: 66000,
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -156,9 +132,7 @@ export const multipliers: Record<
       WETH: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           flywheel: false
         },
@@ -166,89 +140,76 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
-          ionAPR: false
+          turtle: false,
+          ionAPR: false,
+          op: true
         }
       },
       ezETH: {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+        borrow: {
+          turtle: false,
+          ionAPR: false,
+          ionic: 0
+        },
         market: 'ezeth_market',
         multiplier: 3000,
         supply: {
           eigenlayer: true,
           ionic: 0,
-          mode: 2,
           renzo: 2,
           underlyingAPR: 3.25,
           turtle: true,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
       },
       sUSDe: {
         borrow: {
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           ionic: 0
         },
         multiplier: 0,
         supply: {
           ionic: 0,
-          mode: 2,
           underlyingAPR: 4.5,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         }
       },
       USDe: {
         borrow: {
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           ionic: 0
         },
         multiplier: 0,
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         }
       },
       msDAI: {
         borrow: {
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           ionic: 0
         },
         multiplier: 0,
         supply: {
           ionic: 0,
-          mode: 2,
           underlyingAPR: 6,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         }
       },
-      'weETH.mode': {
+      weETH: {
         borrow: {
           eigenlayer: true,
           etherfi: 1,
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           flywheel: false
         },
@@ -258,10 +219,8 @@ export const multipliers: Record<
           eigenlayer: true,
           etherfi: 3,
           ionic: 0,
-          mode: 2,
           underlyingAPR: 2.99,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -271,9 +230,7 @@ export const multipliers: Record<
           eigenlayer: true,
           ionic: 0,
           kelp: 1,
-          mode: 1,
           turtle: true,
-          rewards: true,
           ionAPR: false
         },
         market: 'wrsteth_market',
@@ -282,22 +239,18 @@ export const multipliers: Record<
           eigenlayer: true,
           ionic: 0,
           kelp: 2,
-          mode: 2,
           underlyingAPR: 3.63,
           turtle: true,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
       }
     },
-    '1': {
+    1: {
       MODE: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         },
@@ -305,9 +258,7 @@ export const multipliers: Record<
         multiplier: 0.035,
         supply: {
           ionic: 0,
-          mode: 3,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           flywheel: false
         }
@@ -315,18 +266,14 @@ export const multipliers: Record<
       USDC: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         },
         decimals: 6,
         market: 'ionusdc_modenative',
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -334,9 +281,7 @@ export const multipliers: Record<
       USDT: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false,
           flywheel: false
         },
@@ -344,9 +289,7 @@ export const multipliers: Record<
         market: 'ionusdt_modenative',
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -354,18 +297,14 @@ export const multipliers: Record<
       WETH: {
         borrow: {
           ionic: 0,
-          mode: 1,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: false
         },
         market: 'ionweth_modenative',
         multiplier: 3000,
         supply: {
           ionic: 0,
-          mode: 2,
-          turtle: true,
-          rewards: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -379,14 +318,12 @@ export const multipliers: Record<
           flywheel: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true
         },
         supply: {
           flywheel: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
@@ -395,7 +332,6 @@ export const multipliers: Record<
           flywheel: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true
         },
         supply: {
@@ -404,7 +340,6 @@ export const multipliers: Record<
           nektar: 1,
           underlyingAPR: 2.6,
           turtle: false,
-          rewards: true,
           ionAPR: true
         }
       },
@@ -414,14 +349,12 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 3.5,
           turtle: false,
-          rewards: true,
           ionAPR: true
         },
         borrow: {
           flywheel: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true
         }
       },
@@ -429,7 +362,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         },
         market: 'ionaero_base',
@@ -437,7 +369,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -446,7 +377,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         },
@@ -454,7 +384,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         },
@@ -464,7 +393,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         },
@@ -473,7 +401,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -482,7 +409,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         },
         market: 'ioncbeth_base',
@@ -490,7 +416,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -503,25 +428,29 @@ export const multipliers: Record<
           ionic: 0,
           renzo: 2,
           underlyingAPR: 3.25,
-          turtle: false,
-          rewards: true,
+          turtle: true,
           ionAPR: false
         },
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           ionic: 0
         }
       },
-      'weETH.mode': {
-        borrow: { turtle: false, rewards: true, ionAPR: false, ionic: 0 },
+      weETH: {
+        borrow: {
+          etherfi: 1,
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          eigenlayer: true
+        },
         supply: {
           ionic: 0,
           etherfi: 3,
           underlyingAPR: 2.99,
+          eigenlayer: true,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -529,15 +458,13 @@ export const multipliers: Record<
       RSR: {
         borrow: {
           turtle: false,
-          rewards: false,
-          ionAPR: false,
+          ionAPR: true,
           ionic: 0,
-          flywheel: false
+          flywheel: true
         },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -546,7 +473,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         market: 'ionwsteth_base',
@@ -555,7 +481,6 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 2.9,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -564,14 +489,12 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         supply: {
           ionic: 0,
           underlyingAPR: 15,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
@@ -579,7 +502,6 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         },
@@ -587,7 +509,6 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 5,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -596,13 +517,11 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false,
           flywheel: false
         }
@@ -611,14 +530,12 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         supply: {
           ionic: 0,
           underlyingAPR: 10,
           turtle: false,
-          rewards: false,
           ionAPR: true,
           flywheel: true
         }
@@ -627,23 +544,21 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         },
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          anzen: 20
         }
       },
       EURC: {
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -652,7 +567,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -661,7 +575,22 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      uSUI: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      sUSDz: {
+        supply: {
+          ionic: 0,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -673,7 +602,6 @@ export const multipliers: Record<
       USDC: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -682,14 +610,12 @@ export const multipliers: Record<
           spice: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
       USDT: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -698,14 +624,12 @@ export const multipliers: Record<
           spice: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
       WETH: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -714,14 +638,12 @@ export const multipliers: Record<
           spice: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
       WBTC: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -730,14 +652,12 @@ export const multipliers: Record<
           spice: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
       tBTC: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -746,14 +666,12 @@ export const multipliers: Record<
           spice: true,
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
       SOV: {
         borrow: {
           turtle: false,
-          rewards: true,
           ionAPR: false,
           spice: true,
           ionic: 0
@@ -761,7 +679,6 @@ export const multipliers: Record<
         supply: {
           spice: true,
           ionic: 0,
-          rewards: true,
           turtle: false,
           ionAPR: false
         }
@@ -774,7 +691,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -783,7 +699,6 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
           ionAPR: true,
           flywheel: true
         }
@@ -792,14 +707,12 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         supply: {
           ionic: 0,
           underlyingAPR: 2.9,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       },
@@ -808,7 +721,6 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 5,
           turtle: false,
-          rewards: true,
           ionAPR: false,
           flywheel: false
         }
@@ -817,7 +729,24 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          rewards: true,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      weETH: {
+        borrow: {
+          etherfi: 1,
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          eigenlayer: true
+        },
+        supply: {
+          ionic: 0,
+          etherfi: 3,
+          underlyingAPR: 2.99,
+          eigenlayer: true,
+          turtle: false,
           ionAPR: true,
           flywheel: true
         }
@@ -830,14 +759,12 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          rewards: false,
           ionAPR: false
         },
         supply: {
           ionic: 0,
           underlyingAPR: 3.46,
           turtle: false,
-          rewards: true,
           ionAPR: false
         }
       }

@@ -104,6 +104,34 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(1000)).toString(),
     initialBorrowCap: parseEther(String(800)).toString(),
     initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sfrxETH,
+    underlying: sFRXETH,
+    name: "Staked Frax Ether",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x0c99C1a06C41F6D95aa698e7C458Bb0266a99021",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(3000)).toString(),
+    initialBorrowCap: parseEther(String(1800)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sFRAX,
+    underlying: sFRAX,
+    name: "Staked Frax",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x3fCD6d6a7641dB49D2F8A607eE186Ed90a9852ae",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(1_500_000)).toString(),
+    initialBorrowCap: parseEther(String(1_200_000)).toString(),
+    initialCf: "0.85"
   }
 ];
 

@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
-import { xErc20LayerZeroAbi } from 'sdk/src';
 import {
   erc20Abi,
   formatEther,
@@ -37,6 +36,8 @@ import Quote, { lzOptions } from '../_components/xION/Quote';
 // import TxPopup from '../_components/xION/TxPopup';
 
 import type { Address, Hex } from 'viem';
+
+import { xErc20LayerZeroAbi } from '@ionicprotocol/sdk';
 
 const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
   ssr: false
