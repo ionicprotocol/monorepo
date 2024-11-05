@@ -193,7 +193,6 @@ contract Voter is IVoter, OwnableUpgradeable {
     for (uint256 i = 0; i < _marketVoteCnt; i++) {
       address _market = _marketVote[i];
       MarketSide _marketSide = _marketVoteSide[i];
-      uint256 _totalWeight = 0;
 
       address[] memory lpRewardTokens = _getAllLpRewardTokens();
       for (uint256 k = 0; k < lpRewardTokens.length; k++) {
@@ -206,7 +205,7 @@ contract Voter is IVoter, OwnableUpgradeable {
             uint256(_votes),
             _tokenId
           );
-          _totalWeight += _votes;
+          totalWeight[lpRewardTokens[k]] -= _votes;
           emit Abstained(
             msg.sender,
             _market,
@@ -216,7 +215,6 @@ contract Voter is IVoter, OwnableUpgradeable {
             block.timestamp
           );
         }
-        totalWeight[lpRewardTokens[k]] -= _totalWeight;
         usedWeights[_tokenId][lpRewardTokens[k]] = 0;
         delete marketVote[_tokenId];
       }
