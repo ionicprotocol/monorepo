@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
 import NetworkDropdown from '../NetworkDropdown';
@@ -29,7 +29,7 @@ export default function MigrateIonDialog({
   const [amount, setAmount] = useState<string>('0');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChain, veIonBalance } = useVeION();
+  const { currentChain, veIonBalance } = useVeIONContext();
   const { removeLiquidity, isPending } = useVeIONActions();
 
   // const stakingTokenBalance = getTokenBalance('eth');

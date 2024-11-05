@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger
 } from '@ui/components/ui/select';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { base, optimism, mode, mainnet } from 'viem/chains';
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 
@@ -33,7 +33,7 @@ const Vote: React.FC = () => {
   const [selectedProposal, setSelectedProposal] = useState(
     PLACEHOLDER_OPTIONS[0].value
   );
-  const { currentChain } = useVeION();
+  const { currentChain } = useVeIONContext();
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">

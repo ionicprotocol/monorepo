@@ -14,7 +14,7 @@ import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONClaim } from '@ui/hooks/veion/useVeIONClaim';
 
 import ProgressSteps from '../xION/ProgressSteps';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface VeionClaimProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ export default function VeionClaim({
 }: VeionClaimProps) {
   const { isConnected } = useAccount();
   const { toast } = useToast();
-  const { currentChain } = useVeION();
+  const { currentChain } = useVeIONContext();
   const {
     approve,
     claim,

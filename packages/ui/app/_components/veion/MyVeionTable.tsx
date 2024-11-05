@@ -10,7 +10,7 @@ import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 type BaseVeionData = {
   id: string;
@@ -38,7 +38,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
-  const { currentChain } = useVeION();
+  const { currentChain } = useVeIONContext();
 
   const getRandomColor = () => {
     const colors = [

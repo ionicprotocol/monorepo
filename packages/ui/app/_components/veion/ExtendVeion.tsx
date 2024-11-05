@@ -19,7 +19,7 @@ import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
 import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface ExtendVeionProps {
   isOpen: boolean;
@@ -44,7 +44,7 @@ const ExtendVeion = ({
   const [autoLock, setAutoLock] = useState(false);
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
-  const { currentChain } = useVeION();
+  const { currentChain } = useVeIONContext();
 
   const {
     amount: veIonAmount,

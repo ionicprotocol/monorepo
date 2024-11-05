@@ -5,7 +5,8 @@ import {
 } from '@ui/constants/baselp';
 import {
   LiquidityContractAbi,
-  ModeLiquidityContractAddress
+  ModeLiquidityContractAddress,
+  ModeLpAddressPool
 } from '@ui/constants/lp';
 import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
 import {
@@ -40,8 +41,7 @@ export function getAvailableStakingToken(
 ): `0x${string}` {
   if (chain === 34443 && (token === 'eth' || token === 'weth'))
     return '0xC6A394952c097004F83d2dfB61715d245A38735a';
-  if (chain === 34443 && token === 'mode')
-    return '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
+  if (chain === 34443 && token === 'mode') return ModeLpAddressPool;
   if (chain === 8453 && (token === 'eth' || token === 'weth'))
     return BaseReservesContractAddr;
   if (chain === 10 && (token === 'eth' || token === 'weth'))

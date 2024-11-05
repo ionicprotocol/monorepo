@@ -14,7 +14,7 @@ import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
   '0012': '0x1234567890123456789012345678901234567890',
@@ -28,7 +28,7 @@ interface EmissionsManagementTableProps {
 }
 
 function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
-  const { currentChain } = useVeION();
+  const { currentChain } = useVeIONContext();
   const { toast } = useToast();
   const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});
   const [autoRepeat, setAutoRepeat] = useState(false);

@@ -13,6 +13,7 @@ import { useChainId } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import {
   GetVeIONDialog,
@@ -33,6 +34,7 @@ export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
+  const { liquidity } = useVeIONContext();
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -96,7 +98,10 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'TOTAL LP',
-              amount: '$1,234,432.21'
+              amount: liquidity.totalLiquidity.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              })
             }}
             detail={{
               title: 'PROVIDE LP ON DEX',
@@ -109,7 +114,10 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'STAKED LP',
-              amount: '$1,234,432.21'
+              amount: liquidity.stakedLiquidity.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              })
             }}
             detail={{
               title: 'MIGRATE YOUR STAKED LP',
@@ -122,7 +130,10 @@ export default function VeIon() {
           <LPRow
             summary={{
               title: 'LOCKED LP',
-              amount: '$113,029.98',
+              amount: liquidity.lockedLiquidity.toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }),
               Icon: <LockIcon className="size-4 inline-block" />
             }}
             detail={{

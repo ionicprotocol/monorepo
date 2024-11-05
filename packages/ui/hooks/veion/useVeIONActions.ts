@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import {
   getPoolToken,
   getSpenderContract,
@@ -35,7 +35,7 @@ export function useVeIONActions() {
   const { getSdk } = useMultiIonic();
   const { address, isConnected } = useAccount();
   const { write, isPending } = useContractWrite();
-  const { currentChain, prices } = useVeION();
+  const { currentChain, prices } = useVeIONContext();
 
   // Get veION contract
   const ionicSdk = getSdk(currentChain);

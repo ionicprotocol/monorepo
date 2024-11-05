@@ -13,7 +13,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
 import BuyIonSection from './BuyIonSection';
@@ -43,7 +43,7 @@ export default function AddLiquidityDialog({
   const [isLoading, setIsLoading] = useState(false);
 
   const { currentChain, ionBalance, getTokenBalance, calculateTokenAmount } =
-    useVeION();
+    useVeIONContext();
   const { addLiquidity, isPending } = useVeIONActions();
   const selectedTokenBalance = getTokenBalance(selectedToken);
 

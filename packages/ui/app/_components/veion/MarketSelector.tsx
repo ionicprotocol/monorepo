@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { getToken } from '@ui/utils/getStakingTokens';
 
 import NetworkDropdown from '../NetworkDropdown';
@@ -36,7 +36,7 @@ const sides = [
 ];
 
 const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
-  const { currentChain, veIonBalance } = useVeION(); // Add veIonBalance
+  const { currentChain, veIonBalance } = useVeIONContext(); // Add veIonBalance
   const [selectedSide, setSelectedSide] = useState(sides[0]);
   const [amount, setAmount] = useState<string>('0');
 

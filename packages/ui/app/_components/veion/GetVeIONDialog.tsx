@@ -13,7 +13,7 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
@@ -40,7 +40,7 @@ export default function GetVeIONDialog({
   const [success, setSuccess] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>('0');
   const { isConnected } = useAccount();
-  const { currentChain, veIonBalance } = useVeION();
+  const { currentChain, veIonBalance } = useVeIONContext();
   const { createLock, isPending } = useVeIONActions();
 
   const { amount: selectedDuration, handleAmountChange: handleDurationChange } =

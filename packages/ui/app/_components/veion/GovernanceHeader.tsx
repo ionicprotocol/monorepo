@@ -12,7 +12,7 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Progress } from '@ui/components/ui/progress';
-import { useVeION } from '@ui/context/VeIonContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import CustomTooltip from '../CustomTooltip';
 
@@ -59,11 +59,10 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { veIonBalance, totalLiquidity } = useVeION();
+  const { veIonBalance, liquidity } = useVeIONContext();
 
-  // Remove the $ and convert to numbers
   const lockedAmount = Number(veIonBalance.replace(/[^0-9.]/g, ''));
-  const totalAmount = Number(totalLiquidity.replace(/[^0-9.]/g, ''));
+  const totalAmount = liquidity.totalLiquidity;
 
   // Calculate percentages
   const lockedPercentage = (lockedAmount / totalAmount) * 100;
@@ -142,7 +141,7 @@ const EmissionsStatus = () => {
 };
 
 const GovernanceHeader = ({ view = 'MyVeion' }) => {
-  const { ionBalance, veIonBalance, isLoading, prices } = useVeION();
+  const { ionBalance, veIonBalance, isLoading, prices } = useVeIONContext();
 
   if (isLoading) {
     return <div>Loading...</div>;
