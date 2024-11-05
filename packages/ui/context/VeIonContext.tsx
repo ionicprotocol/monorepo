@@ -6,56 +6,22 @@ import { useSearchParams } from 'next/navigation';
 import { formatEther } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
+import { getVeIonContract, isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrice } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
 import { useTokenCalculations } from '@ui/hooks/useTokenCalculations';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
-import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
-
-interface PriceData {
-  ionUsd: number;
-  veIonUsd: number;
-  ionBalanceUsd: string;
-  veIonBalanceUsd: string;
-}
-
-interface LiquidityData {
-  total: number;
-  staked: number;
-  locked: number;
-  isLoading: boolean;
-}
-
-interface EmissionsData {
-  lockedValue: {
-    amount: number;
-    usdValue: string;
-    percentage: number;
-  };
-  totalDeposits: {
-    amount: number;
-    usdValue: string;
-  };
-  isLoading: boolean;
-}
-
-interface ReservesData {
-  eth?: { ion: bigint; token: bigint };
-  mode?: { ion: bigint; token: bigint };
-  weth?: { ion: bigint; token: bigint };
-}
-
-interface TokenCalculations {
-  getTokenBalance: (token: 'eth' | 'mode' | 'weth') => string;
-  calculateTokenAmount: (
-    ionAmount: string,
-    selectedToken: 'eth' | 'mode' | 'weth'
-  ) => string;
-  calculateIonAmount: (
-    tokenAmount: string,
-    selectedToken: 'eth' | 'mode' | 'weth'
-  ) => string;
-}
+import { useVeIONLocks } from '@ui/hooks/veion/useVeIONLocks';
+import type {
+  PriceData,
+  LiquidityData,
+  EmissionsData,
+  ReservesData,
+  TokenCalculations,
+  VeIONLockData,
+  ChainId
+} from '@ui/types/VeIION';
+import { getToken } from '@ui/utils/getStakingTokens';
 
 interface VeIONContextType {
   // Balances
@@ -71,6 +37,7 @@ interface VeIONContextType {
   liquidity: LiquidityData;
   emissions: EmissionsData;
   reserves: ReservesData;
+  locks: VeIONLockData;
 
   // Token calculations
   tokenCalculations: TokenCalculations;
@@ -109,6 +76,11 @@ const defaultContext: VeIONContextType = {
     isLoading: true
   },
   reserves: {},
+  locks: {
+    myLocks: [],
+    delegatedLocks: [],
+    isLoading: true
+  },
   tokenCalculations: {
     getTokenBalance: () => '0',
     calculateTokenAmount: () => '0',
@@ -125,6 +97,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const [currentChain, setCurrentChain] = useState<number>(defaultChainId);
 
+  const veIonContract = getVeIonContract(currentChain);
+  const isSupported = isVeIonSupported(currentChain);
+
   const { data: ionPriceData } = useIonPrice({ chainId: currentChain });
   const ionPrice = Number(ionPriceData?.pair?.priceUsd || 0);
   const veIonPrice = ionPrice;
@@ -139,9 +114,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   // Get token addresses
   const ionTokenAddress = getToken(currentChain);
 
-  // !!!!!! needs to be fixed !!!!!!!
-  const veIonTokenAddress = getAvailableStakingToken(currentChain, 'eth');
-
   // Fetch balances
   const { data: ionBalance } = useBalance({
     address,
@@ -151,7 +123,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const { data: veIonBalance } = useBalance({
     address,
-    token: veIonTokenAddress,
+    token: veIonContract,
     chainId: currentChain
   });
 
@@ -167,11 +139,17 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     chainId: currentChain
   });
 
-  // Use our new consolidated hook
+  // Use consolidated hooks only if veIon is supported on this chain
   const { liquidity, emissions } = useVeIonData({
     address,
-    veIonContract: veIonTokenAddress,
-    emissionsManagerContract: '0x' // todo
+    veIonContract,
+    emissionsManagerContract: '0x'
+  });
+
+  const locks = useVeIONLocks({
+    address,
+    veIonContract,
+    chainId: currentChain as ChainId
   });
 
   // Calculate USD values
@@ -195,11 +173,12 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       ionBalanceUsd,
       veIonBalanceUsd
     },
-    liquidity,
-    emissions,
+    liquidity: isSupported ? liquidity : defaultContext.liquidity,
+    emissions: isSupported ? emissions : defaultContext.emissions,
     reserves,
+    locks: isSupported ? locks : defaultContext.locks,
     tokenCalculations,
-    isLoading: reservesLoading
+    isLoading: reservesLoading || (isSupported && locks.isLoading)
   };
 
   return (

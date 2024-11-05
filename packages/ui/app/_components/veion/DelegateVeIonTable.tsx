@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONDelegate } from '@ui/hooks/veion/useVeIONDelegate';
 
@@ -45,6 +46,12 @@ function DelegateVeionTable({
 }: DelegateVeionTableProps) {
   const { toast } = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const {
+    locks: { delegatedLocks }
+  } = useVeIONContext();
+  const tableData = delegatedLocks.map((lock) => lock.toDelegateTableFormat());
+  // eslint-disable-next-line no-console
+  console.log('tableData', tableData);
 
   const defaultChain = data[0]?.chainId ?? 1;
   const { undelegate, isUndelegating } = useVeIONDelegate(defaultChain);

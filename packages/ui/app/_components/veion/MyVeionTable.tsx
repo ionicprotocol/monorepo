@@ -40,7 +40,14 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
-  const { currentChain } = useVeIONContext();
+  const {
+    currentChain,
+    locks: { myLocks }
+  } = useVeIONContext();
+
+  const tableData = myLocks.map((lock) => lock.toTableFormat());
+  // eslint-disable-next-line no-console
+  console.log('tableData', tableData);
 
   const getRandomColor = () => {
     const colors = [
