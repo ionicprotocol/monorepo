@@ -29,7 +29,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   // State Variables
   uint256 public s_tokenId;
-  address public s_team;
   uint256 public s_limitedBoost;
   bool public s_limitedBoostActive;
   address public s_veAERO;
@@ -329,8 +328,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _tokenId1 = _from;
   }
 
-  function toggleSplit(address _account, bool _bool) external {
-    if (_msgSender() != s_team) revert NotTeam();
+  function toggleSplit(address _account, bool _bool) external onlyOwner {
     s_canSplit[_account] = _bool;
   }
 
@@ -531,11 +529,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
     require(address(_strategy) != address(0), "Invalid strategy address");
     s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
-  }
-
-  function setTeam(address _team) external onlyOwner {
-    if (_team == address(0)) revert ZeroAddress();
-    s_team = _team;
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -838,6 +831,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function setIonicPool(address _ionicPool) external onlyOwner {
     s_ionicPool = _ionicPool;
+  }
+
+  function setAeroVoting(address _aeroVoting) external onlyOwner {
+    s_aeroVoting = _aeroVoting;
+  }
+
+  function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
+    s_aeroVoterBoost = _aeroVoterBoost;
   }
 
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
