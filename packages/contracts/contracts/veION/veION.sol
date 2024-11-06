@@ -37,6 +37,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   address public s_voter;
   uint256 public s_aeroVoterBoost;
   uint256 public s_minimumLockDuration;
+  uint256 public s_maxEarlyWithdrawFee;
   AddressesProvider public ap;
 
   // Mappings
@@ -199,7 +200,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       uint256 LPInCirculation = IERC20(_tokenAddress).totalSupply();
       uint256 ratioFactor = 1e18 - (veLPLocked * 1e18) / LPInCirculation;
       fee = (timeFactor * ratioFactor * oldLocked.boost) / 1e36;
-      if (fee > 0.8e18) fee = 0.8e18;
+      if (fee > s_maxEarlyWithdrawFee) fee = s_maxEarlyWithdrawFee;
       fee = (value * fee) / 1e18;
       value -= fee;
 
@@ -859,6 +860,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
     s_aeroVoterBoost = _aeroVoterBoost;
     emit AeroVoterBoostSet(_aeroVoterBoost);
+  }
+
+  function setMaxEarlyWithdrawFee(uint256 _maxEarlyWithdrawFee) external onlyOwner {
+    require(_maxEarlyWithdrawFee > 0, "Max early withdraw fee must be greater than zero");
+    s_maxEarlyWithdrawFee = _maxEarlyWithdrawFee;
+    emit MaxEarlyWithdrawFeeSet(_maxEarlyWithdrawFee);
   }
 
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {

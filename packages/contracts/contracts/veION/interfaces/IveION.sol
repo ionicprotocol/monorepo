@@ -132,6 +132,7 @@ interface IveION {
     uint256 lengthOfAssets
   );
   event EmissionsClaimed(address indexed claimant, address indexed tokenAddress);
+  event MaxEarlyWithdrawFeeSet(uint256 maxEarlyWithdrawFee);
 
   /**
    * @notice Mints a veNFT in exchange for tokens provided.
