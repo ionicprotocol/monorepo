@@ -24,11 +24,11 @@ contract xERC20Hyperlane is Ownable {
 
   uint256 public feeBps;
   mapping(address => mapping(uint32 => address)) public mappedTokens;
-  mapping(uint32 => address) public allowedSenders;
+  mapping(uint32 => address) public mappedBridges;
   IMailbox immutable mailbox;
 
   event TokenMapped(address indexed _token, uint32 indexed _chainId, address indexed _dstToken);
-  event AllowedSenderSet(uint32 indexed _chainId, address indexed _sender);
+  event BridgeMapped(uint32 indexed _chainId, address indexed _bridge);
   event FeeBpsSet(uint256 indexed _feeBps);
   event TokenSent(
     address indexed _token,
@@ -47,7 +47,7 @@ contract xERC20Hyperlane is Ownable {
 
   error TokenNotSet();
   error ChainIdNotSet();
-  error OriginNotMirrorAdapter();
+  error DestinationBridgeNotSet(uint32 _chainId);
   error OriginNotAllowed(uint32 _chainId, address _sender);
 
   /**
@@ -74,9 +74,9 @@ contract xERC20Hyperlane is Ownable {
     emit TokenMapped(_srcToken, _chainId, _dstToken);
   }
 
-  function setAllowedSender(uint32 _chainId, address _sender) public onlyOwner {
-    allowedSenders[_chainId] = _sender;
-    emit AllowedSenderSet(_chainId, _sender);
+  function setMappedBridge(uint32 _chainId, address _bridge) public onlyOwner {
+    mappedBridges[_chainId] = _bridge;
+    emit BridgeMapped(_chainId, _bridge);
   }
 
   function withdrawFee(address _token) public onlyOwner {
@@ -113,13 +113,21 @@ contract xERC20Hyperlane is Ownable {
     uint256 _amount,
     address _to
   ) internal view returns (uint256 fee) {
+    address _bridge = mappedBridges[_dstChainId];
+    if (_bridge == address(0)) {
+      revert DestinationBridgeNotSet(_dstChainId);
+    }
     uint256 _amountAfterFee = (_amount * (10000 - feeBps)) / 10000;
     bytes memory _payload = abi.encode(_to, _token, _amountAfterFee);
-    fee = mailbox.quoteDispatch(_dstChainId, _to.addressToBytes32(), _payload);
+    fee = mailbox.quoteDispatch(_dstChainId, _bridge.addressToBytes32(), _payload);
     return fee;
   }
 
   function _send(uint32 _dstChainId, address _token, uint256 _amount, address _to) internal {
+    address _bridge = mappedBridges[_dstChainId];
+    if (_bridge == address(0)) {
+      revert DestinationBridgeNotSet(_dstChainId);
+    }
     // transfer tokens to this contract
     IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
@@ -128,12 +136,12 @@ contract xERC20Hyperlane is Ownable {
     IXERC20(_token).burn(address(this), _amountAfterFee);
 
     bytes memory _payload = abi.encode(_to, _token, _amountAfterFee);
-    bytes32 _guid = mailbox.dispatch{ value: msg.value }(_dstChainId, _to.addressToBytes32(), _payload);
+    bytes32 _guid = mailbox.dispatch{ value: msg.value }(_dstChainId, _bridge.addressToBytes32(), _payload);
     emit TokenSent(_token, _amountAfterFee, _to, _dstChainId, _guid);
   }
 
   function handle(uint32 _origin, bytes32 _sender, bytes calldata _data) external payable virtual onlyMailbox {
-    if (allowedSenders[_origin] != _sender.bytes32ToAddress()) {
+    if (mappedBridges[_origin] != _sender.bytes32ToAddress()) {
       revert OriginNotAllowed(_origin, _sender.bytes32ToAddress());
     }
     // Decode the payload to get the message
