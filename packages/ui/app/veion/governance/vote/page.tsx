@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { base, optimism, mode } from 'viem/chains';
 
@@ -20,21 +22,61 @@ import {
   SelectTrigger
 } from '@ui/components/ui/select';
 import { Switch } from '@ui/components/ui/switch';
-import { infoBlocks } from '@ui/constants/mock';
+import { lockedData } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
-const PLACEHOLDER_OPTIONS = [
-  { id: 1, label: 'veION #21', value: '21' },
-  { id: 2, label: 'veION #22', value: '22' },
-  { id: 3, label: 'veION #23', value: '23' }
-];
-
 const Vote: React.FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initialId = searchParams.get('id') || lockedData[0].id;
+
   const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
-  const [selectedProposal, setSelectedProposal] = useState(
-    PLACEHOLDER_OPTIONS[0].value
-  );
+  const [showAutoOnly, setShowAutoOnly] = useState<boolean>(false);
+  const [selectedProposal, setSelectedProposal] = useState(initialId);
   const { currentChain } = useVeIONContext();
+
+  const selectedData = useMemo(
+    () => lockedData.find((item) => item.id === selectedProposal),
+    [selectedProposal]
+  );
+
+  const handleProposalChange = (value: string) => {
+    setSelectedProposal(value);
+
+    // Create new URLSearchParams object with current params
+    const params = new URLSearchParams(searchParams);
+    // Update the id parameter
+    params.set('id', value);
+
+    // Update the URL without refreshing the page
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const infoBlocksData = useMemo(
+    () => [
+      {
+        label: 'Tokens Locked',
+        value: selectedData?.tokensLocked || '',
+        icon: null,
+        infoContent: `This is the amount of ${selectedProposal} veION you have locked.`
+      },
+      {
+        label: 'Locked Until',
+        value: selectedData?.lockExpires.date || '',
+        secondaryValue: selectedData?.lockExpires.timeLeft || '',
+        icon: null,
+        infoContent: `This is the date until your ${selectedProposal} veION is locked.`
+      },
+      {
+        label: 'Voting Power',
+        value: selectedData?.votingPower || '',
+        icon: '/img/logo/ion.svg',
+        infoContent: 'This is your current voting power.'
+      }
+    ],
+    [selectedData, selectedProposal]
+  );
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
@@ -43,32 +85,24 @@ const Vote: React.FC = () => {
           <div className="w-fit">
             <Select
               value={selectedProposal}
-              onValueChange={(value) => setSelectedProposal(value)}
+              onValueChange={handleProposalChange}
             >
               <SelectTrigger className="border-0 outline-none p-0 bg-transparent hover:bg-transparent">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-2xl font-semibold">
-                    {
-                      PLACEHOLDER_OPTIONS.find(
-                        (opt) => opt.value === selectedProposal
-                      )?.label
-                    }
-                  </h2>
+                  <h2 className="text-2xl font-semibold">{selectedData?.id}</h2>
                 </div>
               </SelectTrigger>
               <SelectContent
                 className="bg-grayUnselect border-white/10 min-w-[200px] w-fit"
                 align="start"
               >
-                {PLACEHOLDER_OPTIONS.map((option) => (
+                {lockedData.map((option) => (
                   <SelectItem
                     key={option.id}
-                    value={option.value}
+                    value={option.id}
                     className="focus:bg-accent/20 focus:text-white"
                   >
-                    <span className="text-xl font-semibold">
-                      {option.label}
-                    </span>
+                    <span className="text-xl font-semibold">{option.id}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -77,7 +111,7 @@ const Vote: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap items-center gap-4">
-            {infoBlocks.map((block) => (
+            {infoBlocksData.map((block) => (
               <InfoBlock
                 key={block.label}
                 block={block}
@@ -103,6 +137,19 @@ const Vote: React.FC = () => {
             <label
               htmlFor="pending-votes"
               className="text-sm text-white/80"
+            >
+              Auto vote only
+            </label>
+            <Switch
+              id="pending-votes"
+              checked={showAutoOnly}
+              onCheckedChange={setShowAutoOnly}
+              className="data-[state=checked]:bg-green-500 "
+              aria-label="Toggle pending votes only"
+            />
+            <label
+              htmlFor="pending-votes"
+              className="text-sm text-white/80 pl-4"
             >
               Pending votes only
             </label>

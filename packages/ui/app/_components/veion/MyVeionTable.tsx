@@ -145,7 +145,9 @@ function MyVeionTable({ data }: MyVeionTableProps) {
           </div>
         ) : (
           <div className="flex gap-2 justify-end">
-            <Link href={`/veion/governance/vote?chain=${currentChain}`}>
+            <Link
+              href={`/veion/governance/vote?chain=${currentChain}&id=${data.id}`}
+            >
               <TableActionButton variant="secondary">Vote</TableActionButton>
             </Link>
             <TableActionButton

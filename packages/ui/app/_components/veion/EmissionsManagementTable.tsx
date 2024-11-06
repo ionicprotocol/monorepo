@@ -2,25 +2,27 @@
 
 import React, { useState, useMemo } from 'react';
 
+import Image from 'next/image';
+
 import { VotingContext } from '@ui/app/contexts/VotingContext';
-import type { VotingData } from '@ui/constants/mock';
-import { votingData } from '@ui/constants/mock';
+import { Checkbox } from '@ui/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@ui/components/ui/select';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
+import type { VoteMarket } from '@ui/utils/voteMarkets';
+import { voteMarkets } from '@ui/utils/voteMarkets';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
-import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
-
-const MARKET_ADDRESSES: Record<string, `0x${string}`> = {
-  '0012': '0x1234567890123456789012345678901234567890',
-  '0014': '0x2345678901234567890123456789012345678901',
-  '0015': '0x3456789012345678901234567890123456789012',
-  '0016': '0x4567890123456789012345678901234567890123'
-};
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -31,86 +33,54 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   const { toast } = useToast();
   const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});
   const [autoRepeat, setAutoRepeat] = useState(false);
-  const [votingSide, setVotingSide] = useState<Record<string, MarketSide>>({});
+  const [poolType, setPoolType] = useState<'0' | '1'>('0');
 
   const { addVote, removeVote, submitVote, isVoting } =
     useVeIONVote(currentChain);
 
   const filteredVotingData = useMemo(() => {
-    return votingData.filter((data) => data.networkId === +currentChain);
-  }, [currentChain]);
+    return voteMarkets[+currentChain]?.[poolType] ?? [];
+  }, [currentChain, poolType]);
 
-  const rowColors = useMemo(() => {
-    const colors = [
-      '#FF6B6B',
-      '#4ECDC4',
-      '#45B7D1',
-      '#96CEB4',
-      '#FFEEAD',
-      '#D4A5A5',
-      '#9B59B6'
-    ];
-
-    return filteredVotingData.reduce(
-      (acc, row) => {
-        acc[row.id] = colors[Math.floor(Math.random() * colors.length)];
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-  }, [filteredVotingData]);
-
-  const handleVoteChange = (id: string, value: string) => {
+  const handleVoteChange = (id: string, side: MarketSide, value: string) => {
     setSelectedRows((prev) => {
-      const newRows = { ...prev, [id]: value };
-      // Update the votes in the hook
-      const numericValue = parseFloat(value);
-      if (!isNaN(numericValue)) {
-        const marketAddress = MARKET_ADDRESSES[id];
-        if (marketAddress) {
-          addVote(
-            marketAddress,
-            votingSide[id] || MarketSide.Supply,
-            numericValue
-          );
+      const newRows = { ...prev };
+      const market = filteredVotingData.find((m) => m.marketAddress === id);
+
+      if (market) {
+        const numericValue = parseFloat(value);
+        if (!isNaN(numericValue)) {
+          addVote(id, side, numericValue);
+          newRows[`${id}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`] =
+            value;
+        } else {
+          removeVote(id);
+          delete newRows[
+            `${id}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`
+          ];
         }
-      } else {
-        removeVote(id);
       }
       return newRows;
     });
   };
 
-  const handleSideChange = (id: string, side: MarketSide) => {
-    setVotingSide((prev) => {
-      const newSides = { ...prev, [id]: side };
-      const value = selectedRows[id];
-      const numericValue = parseFloat(value);
-      if (!isNaN(numericValue)) {
-        const market = filteredVotingData.find((row) => row.id === id);
-        if (market) {
-          addVote(market.marketAddress, side, numericValue);
-        }
-      }
-      return newSides;
-    });
-  };
-
-  const handleReset = () => {
-    setSelectedRows({});
-    setVotingSide({});
-    setAutoRepeat(false);
-  };
-
   const handleSubmitVotes = async () => {
     try {
-      const totalWeight = Object.values(selectedRows).reduce(
-        (sum, value) => sum + (parseFloat(value) || 0),
-        0
-      );
+      const totalSupplyWeight = Object.entries(selectedRows)
+        .filter(([key]) => key.endsWith('-supply'))
+        .reduce((sum, [, value]) => sum + (parseFloat(value) || 0), 0);
 
-      if (Math.abs(totalWeight - 100) > 0.01) {
-        throw new Error('Total vote weight must equal 100');
+      const totalBorrowWeight = Object.entries(selectedRows)
+        .filter(([key]) => key.endsWith('-borrow'))
+        .reduce((sum, [, value]) => sum + (parseFloat(value) || 0), 0);
+
+      if (
+        Math.abs(totalSupplyWeight - 100) > 0.01 ||
+        Math.abs(totalBorrowWeight - 100) > 0.01
+      ) {
+        throw new Error(
+          'Total vote weight for both supply and borrow must equal 100'
+        );
       }
 
       const success = await submitVote(tokenId);
@@ -134,42 +104,27 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
     }
   };
 
-  const columns = useMemo<ColumnDef<VotingData>[]>(
+  const handleReset = () => {
+    setSelectedRows({});
+    setAutoRepeat(false);
+  };
+
+  const columns = useMemo<ColumnDef<VoteMarket>[]>(
     () => [
       {
-        accessorKey: 'id',
-        header: 'ID',
-        cell: ({ row }) => {
-          const id = row.getValue<string>('id');
-          return (
-            <div className="flex items-center gap-2">
-              <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: rowColors[id] }}
-              />
-              <div className="text-xs font-semibold text-white/80">{id}</div>
-            </div>
-          );
-        }
-      },
-      {
-        accessorKey: 'supplyAsset',
-        header: 'SUPPLY ASSET',
+        accessorKey: 'asset',
+        header: 'ASSET',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
+            <Image
+              src={`/img/symbols/32/color/${row.original.asset.toLocaleLowerCase()}.png`}
+              alt={row.original.asset}
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
             <span className="text-xs font-semibold text-white/80">
-              {row.getValue('supplyAsset')}
-            </span>
-          </div>
-        )
-      },
-      {
-        accessorKey: 'type',
-        header: 'TYPE',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-white/80">
-              {row.getValue('type')}
+              {row.original.asset}
             </span>
           </div>
         )
@@ -209,49 +164,55 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         }
       },
       {
-        id: 'actions',
-        header: '',
+        accessorKey: 'supply',
+        header: 'SUPPLY %',
         cell: ({ row }) => (
-          <div className="flex justify-end items-center gap-2">
-            <div className="flex items-center gap-1">
-              <button
-                className={`px-2 py-1 rounded ${
-                  votingSide[row.original.id] === MarketSide.Supply
-                    ? 'bg-green-500'
-                    : 'bg-gray-700'
-                }`}
-                onClick={() =>
-                  handleSideChange(row.original.id, MarketSide.Supply)
-                }
-                disabled={isVoting}
-              >
-                Supply
-              </button>
-              <button
-                className={`px-2 py-1 rounded ${
-                  votingSide[row.original.id] === MarketSide.Borrow
-                    ? 'bg-red-500'
-                    : 'bg-gray-700'
-                }`}
-                onClick={() =>
-                  handleSideChange(row.original.id, MarketSide.Borrow)
-                }
-                disabled={isVoting}
-              >
-                Borrow
-              </button>
-            </div>
-            <VoteInput
-              key={row.original.id}
-              row={row}
-              disabled={isVoting}
-            />
-          </div>
+          <input
+            type="number"
+            className="w-20 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600"
+            value={selectedRows[`${row.original.marketAddress}-supply`] || ''}
+            onChange={(e) =>
+              handleVoteChange(row.original.marketAddress, 0, e.target.value)
+            }
+            disabled={isVoting}
+            min="0"
+            max="100"
+            step="0.1"
+          />
+        )
+      },
+      {
+        accessorKey: 'borrow',
+        header: 'BORROW %',
+        cell: ({ row }) => (
+          <input
+            type="number"
+            className="w-20 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600"
+            value={selectedRows[`${row.original.marketAddress}-borrow`] || ''}
+            onChange={(e) =>
+              handleVoteChange(row.original.marketAddress, 1, e.target.value)
+            }
+            disabled={isVoting}
+            min="0"
+            max="100"
+            step="0.1"
+          />
+        )
+      },
+      {
+        accessorKey: 'autoVote',
+        header: 'AUTO VOTE',
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.original.autoVote}
+            disabled={isVoting}
+            className="data-[state=checked]:bg-green-500"
+          />
         )
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rowColors, votingSide, isVoting]
+    [selectedRows, isVoting]
   );
 
   const votingContextValue = useMemo(
@@ -266,6 +227,21 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   return (
     <VotingContext.Provider value={votingContextValue}>
       <div className="relative pb-12">
+        <div className="mb-4">
+          <Select
+            value={poolType}
+            onValueChange={(value: '0' | '1') => setPoolType(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select pool type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0">Regular Pool</SelectItem>
+              <SelectItem value="1">Native Pool</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <CommonTable
           columns={columns}
           data={filteredVotingData}

@@ -1,5 +1,3 @@
-import type { Hex } from 'viem';
-
 export type LockedData = {
   id: string;
   tokensLocked: string;
@@ -18,92 +16,92 @@ export type LockedData = {
 
 export const lockedData: LockedData[] = [
   {
-    id: '0012',
-    tokensLocked: '80% ION / 20% ETH',
+    id: '1',
+    tokensLocked: '70% ION / 30% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '100.50 BLP',
+      value: '$350.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '00d : 00h : 00m'
+      date: '15 Jan 2024',
+      timeLeft: '100d : 12h : 45m'
     },
-    votingPower: '0 veION',
+    votingPower: '5 veION',
     network: 'Polygon',
     enableClaim: true
   },
   {
-    id: '0012',
-    tokensLocked: '80% ION / 20% ETH',
+    id: '2',
+    tokensLocked: '60% ION / 40% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '150.75 BLP',
+      value: '$500.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '700d : 23h : 34m'
+      date: '10 Feb 2024',
+      timeLeft: '150d : 5h : 20m'
     },
-    votingPower: '12.03 veION',
+    votingPower: '10.5 veION',
     network: 'Polygon',
     enableClaim: false
   },
   {
-    id: '0012',
-    tokensLocked: '80% ION / 20% ETH',
+    id: '3',
+    tokensLocked: '50% ION / 50% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '200.00 BLP',
+      value: '$650.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '700d : 23h : 34m'
+      date: '25 Dec 2023',
+      timeLeft: '75d : 18h : 30m'
     },
-    votingPower: '12.03 veION',
+    votingPower: '15.75 veION',
     network: 'Polygon',
     enableClaim: false
   },
   {
-    id: '0012',
+    id: '4',
     tokensLocked: '80% ION / 20% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '175.25 BLP',
+      value: '$600.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '700d : 23h : 34m'
+      date: '5 Mar 2024',
+      timeLeft: '200d : 8h : 15m'
     },
-    votingPower: '12.03 veION',
+    votingPower: '25 veION',
     network: 'Polygon',
     enableClaim: false
   },
   {
-    id: '0012',
-    tokensLocked: '80% ION / 20% ETH',
+    id: '5',
+    tokensLocked: '90% ION / 10% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '225.50 BLP',
+      value: '$750.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '700d : 23h : 34m'
+      date: '30 Nov 2023',
+      timeLeft: '50d : 10h : 5m'
     },
-    votingPower: '12.03 veION',
+    votingPower: '50 veION',
     network: 'Polygon',
     enableClaim: false
   },
   {
-    id: '0012',
-    tokensLocked: '80% ION / 20% ETH',
+    id: '6',
+    tokensLocked: '85% ION / 15% ETH',
     lockedBLP: {
-      amount: '124.03 BLP',
-      value: '$437.87'
+      amount: '250.75 BLP',
+      value: '$800.00'
     },
     lockExpires: {
-      date: '20 Mar 2025',
-      timeLeft: '700d : 23h : 34m'
+      date: '1 Apr 2024',
+      timeLeft: '250d : 2h : 50m'
     },
-    votingPower: '12.03 veION',
+    votingPower: '100 veION',
     network: 'Polygon',
     enableClaim: false
   }
@@ -179,133 +177,12 @@ export const lockedDataWithDelegate: LockedDataWithDelegate[] = [
   }
 ];
 
-export type VotingData = {
-  id: string;
-  network: string;
-  networkId: number;
-  supplyAsset: string;
-  totalVotes: {
-    percentage: string;
-    limit: string;
-  };
-  myVotes: {
-    percentage: string;
-    value: string;
-  };
-  marketAddress: Hex;
-  type: 'borrow' | 'supply';
-};
-
-export const votingData: VotingData[] = [
-  {
-    id: '0012',
-    network: 'Mode',
-    networkId: 34443,
-    supplyAsset: 'ETH',
-    totalVotes: {
-      percentage: '12.34%',
-      limit: '25% limit'
-    },
-    myVotes: {
-      percentage: '0',
-      value: '$0'
-    },
-    marketAddress: '0x1234567890123456789012345678901234567890',
-    type: 'supply'
-  },
-  {
-    id: '0014',
-    network: 'Optimism',
-    networkId: 10,
-    supplyAsset: 'USDC',
-    totalVotes: {
-      percentage: '18.5%',
-      limit: '25% limit'
-    },
-    myVotes: {
-      percentage: '10',
-      value: '$2.45'
-    },
-    marketAddress: '0x2345678901234567890123456789012345678901',
-    type: 'supply'
-  },
-  {
-    id: '0014',
-    network: 'Optimism',
-    networkId: 10,
-    supplyAsset: 'OP',
-    totalVotes: {
-      percentage: '8.5%',
-      limit: '23% limit'
-    },
-    myVotes: {
-      percentage: '0',
-      value: '$0'
-    },
-    marketAddress: '0x2345678901234567890123456789012345678901',
-    type: 'borrow'
-  },
-  {
-    id: '0015',
-    network: 'Base',
-    networkId: 8453,
-    supplyAsset: 'BNB',
-    totalVotes: {
-      percentage: '5.7%',
-      limit: '25% limit'
-    },
-    myVotes: {
-      percentage: '0',
-      value: '$0'
-    },
-    marketAddress: '0x3456789012345678901234567890123456789012',
-    type: 'supply'
-  },
-  {
-    id: '0016',
-    network: 'Eth',
-    networkId: 1,
-    supplyAsset: 'USDT',
-    totalVotes: {
-      percentage: '22.1%',
-      limit: '25% limit'
-    },
-    myVotes: {
-      percentage: '0',
-      value: '$0'
-    },
-    marketAddress: '0x4567890123456789012345678901234567890123',
-    type: 'borrow'
-  }
-];
-
 export interface InfoBlock {
   label: string;
   value: string;
   infoContent: string;
   icon: string | null;
 }
-
-export const infoBlocks: InfoBlock[] = [
-  {
-    label: 'Locked Value',
-    value: '$7894',
-    infoContent: 'This is the amount of ION you have locked.',
-    icon: null
-  },
-  {
-    label: 'Locked Until',
-    value: '11 Jan 2026',
-    infoContent: 'This is the date until your ION is locked.',
-    icon: null
-  },
-  {
-    label: 'My Voting Power',
-    value: '5674 veION',
-    infoContent: 'This is your current voting power.',
-    icon: '/img/logo/ion.svg'
-  }
-];
 
 // Types for our rewards data
 type Network = 'Base' | 'Mode';
