@@ -592,7 +592,9 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          underlyingAPR: 15,
+          anzen: 5
         }
       }
     }
