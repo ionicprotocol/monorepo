@@ -172,11 +172,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   /**
-   * @notice Withdraws underlying assets from the veNFT.
-   * If unlock time has not passed, uses a formula to unlock early with penalty.
-   * @param _tokenId Token ID.
+   * @notice Withdraws underlying assets from the veNFT. If the unlock time has not passed, a penalty fee is applied.
+   * @dev Assumes LP tokens use 18 decimals. If non-18-decimal tokens are intended for support, the fee calculation
+   *      will require adjustments to account for varying decimal places.
+   * @param _tokenAddress Address of the token to withdraw.
+   * @param _tokenId Token ID of the veNFT to withdraw from.
    */
-
   function withdraw(address _tokenAddress, uint256 _tokenId) external override {
     address sender = _msgSender();
     if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
