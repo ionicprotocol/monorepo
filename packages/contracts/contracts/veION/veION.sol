@@ -133,7 +133,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
     if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
 
-    _depositFor(_tokenAddress, _tokenId, 0, unlockTime, false, oldLocked, DepositType.INCREASE_UNLOCK_TIME, _lpType);
+    _depositFor(
+      _tokenAddress,
+      _tokenId,
+      0,
+      unlockTime,
+      false,
+      oldLocked,
+      DepositType.INCREASE_UNLOCK_TIME,
+      _lpType,
+      _msgSender()
+    );
   }
 
   function lockAdditionalAsset(
@@ -168,7 +178,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       _stakeUnderlying,
       lockedBalance,
       DepositType.LOCK_ADDITIONAL,
-      lpType
+      lpType,
+      _msgSender()
     );
   }
 
@@ -556,7 +567,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     bool _stakeUnderlying,
     LockedBalance memory _oldLocked,
     DepositType _depositType,
-    LpTokenType _lpType
+    LpTokenType _lpType,
+    address _to
   ) internal {
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
 
@@ -597,16 +609,16 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0) && _stakeUnderlying) {
-        _handleTokenStake(_from, _tokenId, _tokenAddress, _tokenAmount, _stakeStrategy, _stakeData);
+        _handleTokenStake(_to, _tokenId, _tokenAddress, _tokenAmount, _stakeStrategy, _stakeData);
       }
     }
 
-    emit Deposit(_from, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
+    emit Deposit(_to, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
     emit Supply(supplyBefore, s_supply[_lpType]);
   }
 
   function _handleTokenStake(
-    address _from,
+    address _to,
     uint256 _tokenId,
     address _tokenAddress,
     uint256 _tokenAmount,
@@ -614,7 +626,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     bytes memory _stakeData
   ) internal {
     IERC20(_tokenAddress).approve(address(_stakeStrategy), _tokenAmount);
-    _stakeStrategy.stake(_from, _tokenAmount, _stakeData);
+    _stakeStrategy.stake(_to, _tokenAmount, _stakeData);
     s_underlyingStake[_tokenId][_tokenAddress] += _tokenAmount;
   }
 
@@ -690,7 +702,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         _stakeUnderlying[i],
         s_locked[_tokenId][_lpType],
         DepositType.CREATE_LOCK_TYPE,
-        _lpType
+        _lpType,
+        _to
       );
     }
     return _tokenId;
@@ -726,7 +739,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
 
     if (oldLocked.isPermanent) s_permanentLockBalance[_lpType] += _value;
-    _depositFor(_tokenAddress, _tokenId, _value, 0, _stakeUnderlying, oldLocked, _depositType, _lpType);
+    _depositFor(_tokenAddress, _tokenId, _value, 0, _stakeUnderlying, oldLocked, _depositType, _lpType, _msgSender());
   }
 
   function _createSplitVE(
