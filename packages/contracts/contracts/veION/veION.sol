@@ -267,7 +267,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       uint256 start = oldLockedFrom.start;
       uint256 boost = oldLockedFrom.boost;
 
-      if (oldLockedTo.end > oldLockedFrom.end) {
+      if ((oldLockedTo.end - oldLockedTo.start) > (oldLockedFrom.end - oldLockedFrom.start)) {
         end = oldLockedTo.end;
         start = oldLockedTo.start;
         boost = oldLockedTo.boost;
