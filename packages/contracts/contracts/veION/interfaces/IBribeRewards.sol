@@ -10,6 +10,7 @@ interface IBribeRewards {
   error InvalidVotingEscrow();
   error TokenNotWhitelisted();
   error AmountCannotBeZero();
+  error HistoricalPriceNotSet(address lpToken, uint256 epochStart);
 
   event Deposit(address indexed user, uint256 indexed tokenId, uint256 amount);
   event Withdraw(address indexed user, uint256 indexed tokenId, uint256 amount);
