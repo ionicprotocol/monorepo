@@ -501,7 +501,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         address asset = assetsLocked[i];
         LpTokenType lpType = s_lpType[asset];
         removeDelegatees(tokenId, s_delegatees[tokenId][lpType].values(), asset, new uint256[](0), true);
-        removeDelegators(s_delegators[tokenId][lpType].values(), tokenId, asset, new uint256[](0), true);
       }
     }
   }
