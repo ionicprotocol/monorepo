@@ -45,16 +45,6 @@ export default function Quote({
       refetchInterval: 10000
     }
   });
-  console.log('🚀 ~ chain:', chain);
-  console.log('🚀 ~ bridgeAddress:', bridgeAddress);
-  console.log(
-    '🚀 ~ args.destinationChain, args.token, args.amount, args.toAddress:',
-    args.destinationChain,
-    args.token,
-    args.amount,
-    args.toAddress
-  );
-  console.log('🚀 ~ quotation:', quotation);
 
   useEffect(() => {
     if (quotation) getQuote(formatEther(quotation));
