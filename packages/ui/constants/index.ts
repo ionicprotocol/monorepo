@@ -154,7 +154,7 @@ type PoolParams = {
 
 export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
   [mode.id]: {
-    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe']
+    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe', 'weETH']
   }
 };
 
@@ -176,7 +176,7 @@ export const pools: Record<number, PoolParams> = {
           'WETH',
           'USDC',
           'msDAI',
-          'weETH',
+          'weETH.mode',
           'dMBTC',
           'M-BTC',
           'sUSDe',
@@ -185,7 +185,8 @@ export const pools: Record<number, PoolParams> = {
           'STONE',
           'WBTC',
           'USDe',
-          'USDT'
+          'USDT',
+          'weETH'
         ]
       },
       {
