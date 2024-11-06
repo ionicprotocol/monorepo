@@ -517,6 +517,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
     require(_tokens.length == _isWhitelisted.length, "Unequal Arrays");
     for (uint256 i; i < _tokens.length; i++) s_whitelistedToken[_tokens[i]] = _isWhitelisted[i];
+    emit TokensWhitelisted(_tokens, _isWhitelisted);
   }
 
   /**
@@ -527,6 +528,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
     require(_token != address(0), "Invalid token address");
     s_lpType[_token] = _type;
+    emit LpTokenTypeSet(_token, _type);
   }
 
   /**
@@ -537,6 +539,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
     require(address(_strategy) != address(0), "Invalid strategy address");
     s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
+    emit StakeStrategySet(_lpType, address(_strategy));
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
