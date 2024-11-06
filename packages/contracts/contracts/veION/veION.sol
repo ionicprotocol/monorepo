@@ -106,6 +106,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
     _stakeStrategy.claim(msg.sender);
+    emit EmissionsClaimed(msg.sender, _tokenAddress);
   }
 
   function increaseAmount(
@@ -292,6 +293,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
     }
     _burn(_from);
+    emit MergeCompleted(_from, _to, assetsLocked, lengthOfAssets);
   }
 
   function split(
@@ -326,10 +328,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     splitLocked.amount = _splitAmount;
     _tokenId2 = _createSplitVE(owner, splitLocked, _lpType);
     _tokenId1 = _from;
+
+    emit SplitCompleted(_from, _tokenId1, _tokenId2, _splitAmount, _tokenAddress);
   }
 
-  function toggleSplit(address _account, bool _bool) external onlyOwner {
-    s_canSplit[_account] = _bool;
+  function toggleSplit(address _account, bool _isAllowed) external onlyOwner {
+    s_canSplit[_account] = _isAllowed;
+    emit SplitToggle(_account, _isAllowed);
   }
 
   function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
@@ -402,6 +407,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     // Update checkpoints for both token IDs
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
+
+    emit Delegated(fromTokenId, toTokenId, lpToken, amount);
   }
 
   function _removeDelegation(
@@ -438,6 +445,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
     s_locked[fromTokenId][lpType] = fromLocked;
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
+
+    emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount, clearDelegation);
   }
 
   function removeDelegatees(
@@ -807,37 +816,45 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function toggleLimitedBoost(bool _isBoosted) external onlyOwner {
     s_limitedBoostActive = _isBoosted;
+    emit LimitedBoostToggled(_isBoosted);
   }
 
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
     s_limitedBoost = _boostAmount;
+    emit LimitedTimeBoostSet(_boostAmount);
   }
 
   function setVoter(address _voter) external onlyOwner {
     s_voter = _voter;
+    emit VoterSet(_voter);
   }
 
   function setMinimumLockAmount(address _tokenAddress, uint256 _minimumAmount) external onlyOwner {
     require(_minimumAmount > 0, "Minimum amount must be greater than zero");
     LpTokenType lpType = s_lpType[_tokenAddress];
     s_minimumLockAmount[lpType] = _minimumAmount;
+    emit MinimumLockAmountSet(_tokenAddress, _minimumAmount);
   }
 
   function setMinimumLockDuration(uint256 _minimumLockDuration) external onlyOwner {
     require(_minimumLockDuration > 0, "Minimum lock duration must be greater than zero");
     s_minimumLockDuration = _minimumLockDuration;
+    emit MinimumLockDurationSet(_minimumLockDuration);
   }
 
   function setIonicPool(address _ionicPool) external onlyOwner {
     s_ionicPool = _ionicPool;
+    emit IonicPoolSet(_ionicPool);
   }
 
   function setAeroVoting(address _aeroVoting) external onlyOwner {
     s_aeroVoting = _aeroVoting;
+    emit AeroVotingSet(_aeroVoting);
   }
 
   function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
     s_aeroVoterBoost = _aeroVoterBoost;
+    emit AeroVoterBoostSet(_aeroVoterBoost);
   }
 
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
@@ -876,6 +893,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     require(protocolFees > 0, "No protocol fees available");
     s_protocolFees[lpType] = 0;
     IERC20(_tokenAddress).safeTransfer(_recipient, protocolFees);
+    emit ProtocolFeesWithdrawn(_tokenAddress, _recipient, protocolFees);
   }
 
   function withdrawDistributedFees(address _tokenAddress, address _recipient) external onlyOwner {
@@ -884,6 +902,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     require(distributedFees > 0, "No distributed fees available");
     s_distributedFees[lpType] = 0;
     IERC20(_tokenAddress).safeTransfer(_recipient, distributedFees);
+    emit DistributedFeesWithdrawn(_tokenAddress, _recipient, distributedFees);
   }
 }
 

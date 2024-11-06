@@ -96,6 +96,42 @@ interface IveION {
   );
   event Withdraw(address indexed provider, uint256 indexed tokenId, uint256 value, uint256 ts);
   event Supply(uint256 prevSupply, uint256 supply);
+  event Delegated(uint256 indexed fromTokenId, uint256 indexed toTokenId, address lpToken, uint256 amount);
+  event DelegationRemoved(
+    uint256 indexed fromTokenId,
+    uint256 indexed toTokenId,
+    address lpToken,
+    uint256 amount,
+    bool clearDelegation
+  );
+  event ProtocolFeesWithdrawn(address indexed tokenAddress, address indexed recipient, uint256 amount);
+  event DistributedFeesWithdrawn(address indexed tokenAddress, address indexed recipient, uint256 amount);
+  event SplitToggle(address indexed account, bool isAllowed);
+  event LimitedBoostToggled(bool isBoosted);
+  event LimitedTimeBoostSet(uint256 boostAmount);
+  event VoterSet(address indexed newVoter);
+  event AeroVotingSet(address indexed newAeroVoting);
+  event AeroVoterBoostSet(uint256 newAeroVoterBoost);
+  event TokenWhitelisted(address indexed token, bool isWhitelisted);
+  event LpTokenTypeSet(address indexed token, LpTokenType lpTokenType);
+  event StakeStrategySet(LpTokenType indexed lpTokenType, address indexed strategy);
+  event MinimumLockAmountSet(address indexed tokenAddress, uint256 minimumAmount);
+  event MinimumLockDurationSet(uint256 minimumDuration);
+  event IonicPoolSet(address indexed newIonicPool);
+  event SplitCompleted(
+    uint256 indexed fromTokenId,
+    uint256 indexed tokenId1,
+    uint256 indexed tokenId2,
+    uint256 splitAmount,
+    address tokenAddress
+  );
+  event MergeCompleted(
+    uint256 indexed fromTokenId,
+    uint256 indexed toTokenId,
+    address[] assetsLocked,
+    uint256 lengthOfAssets
+  );
+  event EmissionsClaimed(address indexed claimant, address indexed tokenAddress);
 
   /**
    * @notice Mints a veNFT in exchange for tokens provided.
