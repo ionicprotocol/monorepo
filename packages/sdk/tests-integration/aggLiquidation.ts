@@ -20,7 +20,7 @@ const run = async () => {
   const borrower = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
   const cErc20 = "0xA0D844742B4abbbc43d8931a6Edb00C56325aA18";
   const cTokenCollateral = "0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3";
-  const repayAmount = 872137278429660n;
+  const repayAmount = 872137882393881;
 
   const borrowedUnderlying = await publicClient.readContract({
     address: cErc20,
@@ -47,7 +47,14 @@ const run = async () => {
     address: ionicLiquidator,
     abi: ionicUniV3LiquidatorAbi,
     functionName: "safeLiquidateWithAggregator",
-    args: [borrower, repayAmount, cErc20, cTokenCollateral, json.transactionRequest.to, json.transactionRequest.data]
+    args: [
+      borrower,
+      BigInt(repayAmount),
+      cErc20,
+      cTokenCollateral,
+      json.transactionRequest.to,
+      json.transactionRequest.data
+    ]
   });
   console.log(tx);
 };
