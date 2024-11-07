@@ -97,7 +97,12 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @dev requires initialization with at least rewardToken
-  function initialize(address[] calldata _tokens, MasterPriceOracle _mpo, address _rewardToken, address _ve) external initializer {
+  function initialize(
+    address[] calldata _tokens,
+    MasterPriceOracle _mpo,
+    address _rewardToken,
+    address _ve
+  ) external initializer {
     __Ownable_init();
     uint256 _length = _tokens.length;
     if (_length == 0) revert TokensArrayEmpty();
@@ -228,6 +233,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
       .balanceOfNFT(_tokenId);
 
+    _reset(_tokenId);
     for (uint256 i = 0; i < _votingLPs.length; i++) {
       _poke(_tokenId, _votingLPs[i], (_votingLPBalances[i] * _boosts[i]) / 1e18);
     }
@@ -240,7 +246,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     uint256 _marketCnt = _marketVote.length;
     uint256[] memory _weights = new uint256[](_marketCnt);
     uint256 totalVoteWeight = 0;
-  
+
     for (uint256 i = 0; i < _marketCnt; i++) {
       _weights[i] = votes[_tokenId][_marketVote[i]][_marketVoteSide[i]][_votingAsset];
     }
@@ -270,7 +276,6 @@ contract Voter is IVoter, OwnableUpgradeable {
     uint256[] memory _weights,
     uint256 totalVoteWeight
   ) internal {
-    _reset(_tokenId);
     VoteVars memory vars;
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
@@ -340,6 +345,7 @@ contract Voter is IVoter, OwnableUpgradeable {
 
     lastVoted[_tokenId] = vars.timestamp;
     (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
+    _reset(_tokenId);
     for (uint256 j = 0; j < vars.votingLPs.length; j++) {
       if (vars.votingLPBalances[j] > 0) {
         _vote(
