@@ -147,7 +147,10 @@ contract IonicUniV3Liquidator is
   ) external {
     // Transfer tokens in, approve to cErc20, and liquidate borrow
     require(repayAmount > 0, "Repay amount (transaction value) must be greater than 0.");
-    cErc20.flash(repayAmount, abi.encode(borrower, cErc20, cTokenCollateral, aggregatorTarget, aggregatorData, msg.sender));
+    cErc20.flash(
+      repayAmount,
+      abi.encode(borrower, cErc20, cTokenCollateral, aggregatorTarget, aggregatorData, msg.sender)
+    );
   }
 
   function receiveFlashLoan(address _underlyingBorrow, uint256 amount, bytes calldata data) external {
@@ -164,29 +167,33 @@ contract IonicUniV3Liquidator is
     require(cErc20.liquidateBorrow(borrower, amount, address(cTokenCollateral)) == 0, "Liquidation failed.");
 
     // Redeem seized cTokens for underlying asset
-    uint256 seizedCTokenAmount = cTokenCollateral.balanceOf(address(this));
-    require(seizedCTokenAmount > 0, "No cTokens seized.");
-    uint256 redeemResult = cTokenCollateral.redeem(seizedCTokenAmount);
-    require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
-    IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
-    uint256 underlyingCollateralRedeemed = underlyingCollateral.balanceOf(address(this));
+    {
+      uint256 seizedCTokenAmount = cTokenCollateral.balanceOf(address(this));
+      require(seizedCTokenAmount > 0, "No cTokens seized.");
+      uint256 redeemResult = cTokenCollateral.redeem(seizedCTokenAmount);
+      require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
+      IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
+      uint256 underlyingCollateralRedeemed = underlyingCollateral.balanceOf(address(this));
 
-    // Call the aggregator
-    underlyingCollateral.approve(aggregatorTarget, underlyingCollateralRedeemed);
-    (bool success, ) = aggregatorTarget.call(aggregatorData);
-    require(success, "Aggregator call failed");
-    uint256 receivedAmount = underlyingBorrow.balanceOf(address(this));
-    require(receivedAmount >= amount, "Not received enough collateral after swap.");
-
-    // receive profits
-    uint256 profitCollateral = receivedAmount - amount;
-    if (profitCollateral > 0) {
-      underlyingBorrow.safeTransfer(liquidator, profitCollateral);
+      // Call the aggregator
+      underlyingCollateral.approve(aggregatorTarget, underlyingCollateralRedeemed);
+      (bool success, ) = aggregatorTarget.call(aggregatorData);
+      require(success, "Aggregator call failed");
     }
 
-    uint256 profitBorrow = underlyingBorrow.balanceOf(address(this));
-    if (profitBorrow > 0) {
-      underlyingBorrow.safeTransfer(liquidator, profitBorrow);
+    // receive profits
+    {
+      uint256 receivedAmount = underlyingBorrow.balanceOf(address(this));
+      require(receivedAmount >= amount, "Not received enough collateral after swap.");
+      uint256 profitCollateral = receivedAmount - amount;
+      if (profitCollateral > 0) {
+        underlyingBorrow.safeTransfer(liquidator, profitCollateral);
+      }
+
+      uint256 profitBorrow = underlyingBorrow.balanceOf(address(this));
+      if (profitBorrow > 0) {
+        underlyingBorrow.safeTransfer(liquidator, profitBorrow);
+      }
     }
 
     // pay back flashloan
