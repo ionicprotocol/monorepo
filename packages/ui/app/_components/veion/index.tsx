@@ -17,6 +17,6 @@ export { default as MigrateIonDialog } from './MigrateIonDialog';
 export { default as TimeRemaining } from './TimeRemaining';
 export { default as VoteInput } from './VoteInput';
 export { default as InfoBlock } from './InfoBlock';
-export { default as EmissionsManagementTable } from './EmissionsManagementTable';
+export { default as EmissionsManagement } from './EmissionsManagement';
 export { default as GovernanceHeader } from './GovernanceHeader';
 export { default as UniversalClaim } from './UniversalClaim';

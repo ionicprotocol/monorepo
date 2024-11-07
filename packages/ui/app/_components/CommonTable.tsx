@@ -16,14 +16,25 @@ import {
   TableRow
 } from '@ui/components/ui/table';
 
+import { TableLoader } from './TableLoader';
+
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
 
 interface CommonTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
+  isLoading?: boolean;
+  loadingRows?: number;
+  showFooter?: boolean;
 }
 
-function CommonTable<T>({ data, columns }: CommonTableProps<T>) {
+function CommonTable<T>({
+  data,
+  columns,
+  isLoading = false,
+  loadingRows = 5,
+  showFooter = false
+}: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -36,6 +47,16 @@ function CommonTable<T>({ data, columns }: CommonTableProps<T>) {
       sorting
     }
   });
+
+  if (isLoading) {
+    return (
+      <TableLoader
+        columns={columns}
+        rows={loadingRows}
+        showFooter={showFooter}
+      />
+    );
+  }
 
   return (
     <Table className="w-full border-separate border-spacing-y-3">

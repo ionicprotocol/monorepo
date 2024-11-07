@@ -42,8 +42,10 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const [isExtendOpen, setIsExtendOpen] = useState(false);
   const {
     currentChain,
-    locks: { myLocks }
+    locks: { myLocks, isLoading }
   } = useVeIONContext();
+  // eslint-disable-next-line no-console
+  console.log('isLoading', isLoading);
   // eslint-disable-next-line no-console
   console.log('myLocks', myLocks);
 
@@ -189,6 +191,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       <CommonTable
         data={data}
         columns={columns}
+        isLoading={false}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 interface VotingContextType {
   votes: Record<string, string>;
   updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
+  resetVotes: () => void;
 }
 
 export const VotingContext = createContext<VotingContextType | null>(null);
@@ -23,9 +24,7 @@ export const VotingProvider: React.FC<VotingProviderProps> = ({
   onVoteAdd,
   onVoteRemove
 }) => {
-  // Single source of truth for votes
   const [votes, setVotes] = useState<Record<string, string>>(() => {
-    // Initialize with existing market votes
     const initialVotes: Record<string, string> = {};
     Object.values(markets)
       .flat()
@@ -62,8 +61,17 @@ export const VotingProvider: React.FC<VotingProviderProps> = ({
     [onVoteAdd, onVoteRemove]
   );
 
+  const resetVotes = useCallback(() => {
+    // Clear all votes
+    Object.keys(votes).forEach((key) => {
+      const [marketAddress, side] = key.split('-');
+      onVoteRemove(marketAddress);
+    });
+    setVotes({});
+  }, [votes, onVoteRemove]);
+
   return (
-    <VotingContext.Provider value={{ votes, updateVote }}>
+    <VotingContext.Provider value={{ votes, updateVote, resetVotes }}>
       {children}
     </VotingContext.Provider>
   );

@@ -8,7 +8,7 @@ import { base, optimism, mode } from 'viem/chains';
 
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import { InfoBlock, EmissionsManagementTable } from '@ui/app/_components/veion';
+import { InfoBlock, EmissionsManagement } from '@ui/app/_components/veion';
 import {
   Card,
   CardHeader,
@@ -168,7 +168,7 @@ const Vote: React.FC = () => {
             <FlatMap />
           </div>
           <EmissionsProvider>
-            <EmissionsManagementTable tokenId={0} />
+            <EmissionsManagement tokenId={0} />
           </EmissionsProvider>
         </CardContent>
       </Card>

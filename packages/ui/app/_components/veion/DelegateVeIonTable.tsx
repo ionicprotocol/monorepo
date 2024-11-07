@@ -47,8 +47,10 @@ function DelegateVeionTable({
   const { toast } = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const {
-    locks: { delegatedLocks }
+    locks: { delegatedLocks, isLoading }
   } = useVeIONContext();
+  // eslint-disable-next-line no-console
+  console.log('isLoading', isLoading);
   // eslint-disable-next-line no-console
   console.log('delegatedLocks', delegatedLocks);
 
@@ -212,6 +214,7 @@ function DelegateVeionTable({
       <CommonTable
         data={data}
         columns={columns}
+        isLoading={false}
       />
     </div>
   );

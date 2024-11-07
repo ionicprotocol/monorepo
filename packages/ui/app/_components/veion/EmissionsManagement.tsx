@@ -20,7 +20,6 @@ import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
-import TableLoader from './TableLoader';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
@@ -30,10 +29,9 @@ interface EmissionsManagementTableProps {
   tokenId: number;
 }
 
-function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
+function EmissionsManagement({ tokenId }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
   const { markets, isLoading, error } = useEmissionsContext();
-  const [autoRepeat, setAutoRepeat] = useState(false);
   const { toast } = useToast();
   const { addVote, removeVote, submitVote, isVoting } =
     useVeIONVote(currentChain);
@@ -50,10 +48,6 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
           title: 'Success',
           description: 'Votes submitted successfully'
         });
-
-        if (!autoRepeat) {
-          handleReset();
-        }
       }
     } catch (err: any) {
       toast({
@@ -62,10 +56,6 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         variant: 'destructive'
       });
     }
-  };
-
-  const handleReset = () => {
-    setAutoRepeat(false);
   };
 
   const columns = useMemo<ColumnDef<VoteMarket>[]>(
@@ -159,25 +149,11 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
     [isVoting]
   );
 
-  // Show loader until data is initialized and not loading
-  if (isLoading) {
-    return <TableLoader />;
-  }
-
   // Show error state if there's an error
   if (error) {
     return (
       <div className="w-full min-h-[400px] flex items-center justify-center">
         <div className="text-red-500">Error loading data: {error.message}</div>
-      </div>
-    );
-  }
-
-  // Show empty state if no data
-  if (!filteredVotingData.length) {
-    return (
-      <div className="w-full min-h-[400px] flex items-center justify-center">
-        <div className="text-white/60">No market data available</div>
       </div>
     );
   }
@@ -207,12 +183,10 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         <CommonTable
           columns={columns}
           data={filteredVotingData}
+          isLoading={isLoading}
         />
 
         <EmissionsManagementFooter
-          autoRepeat={autoRepeat}
-          setAutoRepeat={setAutoRepeat}
-          handleReset={handleReset}
           onSubmitVotes={handleSubmitVotes}
           isVoting={isVoting}
         />
@@ -221,4 +195,4 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   );
 }
 
-export default EmissionsManagementTable;
+export default EmissionsManagement;

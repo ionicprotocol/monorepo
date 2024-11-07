@@ -1,36 +1,26 @@
-'use client';
-
-import React from 'react';
+import { useState } from 'react';
 
 import { useVoting } from '@ui/app/contexts/VotingContext';
 import { Card } from '@ui/components/ui/card';
 import { Checkbox } from '@ui/components/ui/checkbox';
 
 interface EmissionsManagementFooterProps {
-  autoRepeat: boolean;
-  setAutoRepeat: (value: boolean) => void;
-  handleReset: () => void;
   onSubmitVotes?: () => Promise<void>;
   isVoting?: boolean;
 }
 
 function EmissionsManagementFooter({
-  autoRepeat,
-  setAutoRepeat,
-  handleReset,
   onSubmitVotes,
   isVoting = false
 }: EmissionsManagementFooterProps) {
-  // Calculate total weight
-  const { votes } = useVoting(); // Get votes from context
-
-  const totalWeight = Object.values(votes).reduce(
-    (sum, value) => sum + (parseFloat(value) || 0),
-    0
-  );
-
+  const { votes, resetVotes } = useVoting();
+  const [autoRepeat, setAutoRepeat] = useState(false);
   const hasVotes = Object.keys(votes).length > 0;
-  const isValidWeight = Math.abs(totalWeight - 100) <= 0.01;
+
+  const handleFullReset = () => {
+    resetVotes();
+    setAutoRepeat(false);
+  };
 
   return (
     <Card className="fixed bottom-4 left-4 right-4 p-4 bg-[#35363D] border-t border-white/10 z-10">
@@ -50,15 +40,8 @@ function EmissionsManagementFooter({
           </label>
         </div>
         <div className="flex items-center gap-4">
-          {/* Show total weight */}
-          <div
-            className={`text-sm ${isValidWeight ? 'text-green-500' : 'text-red-500'}`}
-          >
-            Total: {totalWeight.toFixed(2)}%
-          </div>
-
           <button
-            onClick={handleReset}
+            onClick={handleFullReset}
             className="px-4 py-2 text-sm text-white/60 hover:text-white/80 transition-colors border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!hasVotes || isVoting}
           >
@@ -67,11 +50,11 @@ function EmissionsManagementFooter({
 
           <button
             onClick={onSubmitVotes}
-            disabled={!hasVotes || !isValidWeight || isVoting}
+            disabled={!hasVotes || isVoting}
             className={`
               px-4 py-2 text-sm 
               ${
-                hasVotes && isValidWeight && !isVoting
+                hasVotes && !isVoting
                   ? 'bg-green-500 hover:bg-green-600'
                   : 'bg-green-500/50 cursor-not-allowed'
               }
