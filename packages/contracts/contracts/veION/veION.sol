@@ -156,6 +156,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (_tokenAmount == 0) revert ZeroAmount();
     if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
+    if (s_voted[_tokenId]) revert AlreadyVoted();
 
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
