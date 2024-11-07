@@ -1,10 +1,10 @@
 import { chainIdToConfig } from "@ionicprotocol/chains";
 import { config as dotenvConfig } from "dotenv";
 import { createPublicClient, createWalletClient, Hex, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { base, mode } from "viem/chains";
 
-import { cErc20Abi, IonicSdk } from "../src";
-import { privateKeyToAccount } from "viem/accounts";
+import { cErc20Abi, ionicUniV3LiquidatorAbi, IonicSdk } from "../src";
 
 dotenvConfig();
 
@@ -42,6 +42,14 @@ const run = async () => {
   const data = await fetch(url, options);
   const json = await data.json();
   console.log(json);
+
+  const tx = await walletClient.writeContract({
+    address: ionicLiquidator,
+    abi: ionicUniV3LiquidatorAbi,
+    functionName: "safeLiquidateWithAggregator",
+    args: [borrower, repayAmount, cErc20, cTokenCollateral, json.transactionRequest.to, json.transactionRequest.data]
+  });
+  console.log(tx);
 };
 
 run();
