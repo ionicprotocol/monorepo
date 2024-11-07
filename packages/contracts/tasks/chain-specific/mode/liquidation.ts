@@ -303,5 +303,11 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       outputToken: wbtcToken.underlying,
       optimalPath: [mbtcToken.underlying, wbtcToken.underlying]
     });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: weethToken.underlying,
+      outputToken: usdtToken.underlying,
+      optimalPath: [wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
+    });
   }
 );
