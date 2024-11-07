@@ -99,22 +99,60 @@ export const EmissionsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [markets, setMarkets] = useState<Record<string, VoteMarket[]>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with loading true
   const [error, setError] = useState<Error | null>(null);
   const { currentChain: chainId } = useVeIONContext();
 
   // Initialize markets with default values whenever chainId changes
   useEffect(() => {
-    const initialMarkets: Record<string, VoteMarket[]> = {};
-    Object.entries(voteMarkets[chainId] || {}).forEach(
-      ([poolType, markets]) => {
-        initialMarkets[poolType] = markets.map((market) => ({
-          ...market,
-          ...defaultVotingData
-        }));
+    const initializeMarkets = async () => {
+      setIsLoading(true);
+      try {
+        const initialMarkets: Record<string, VoteMarket[]> = {};
+        const chainMarkets = voteMarkets[chainId] || {};
+
+        Object.entries(chainMarkets).forEach(([poolType, markets]) => {
+          initialMarkets[poolType] = markets.map((market) => ({
+            ...market,
+            ...defaultVotingData
+          }));
+        });
+
+        setMarkets(initialMarkets);
+
+        // Immediately fetch initial data if we have markets
+        if (Object.keys(chainMarkets).length > 0) {
+          const votingData = await fetchVotingData(chainId, '0'); // Default NFT ID
+
+          setMarkets((currentMarkets) => {
+            const updatedMarkets: Record<string, VoteMarket[]> = {};
+            Object.entries(currentMarkets).forEach(([poolType, markets]) => {
+              updatedMarkets[poolType] = markets.map((market) => {
+                const marketVotingData =
+                  votingData[market.marketAddress] || defaultVotingData;
+                return {
+                  ...market,
+                  totalVotes: marketVotingData.totalVotes,
+                  myVotes: marketVotingData.myVotes,
+                  autoVote: marketVotingData.autoVote,
+                  supplyVote: marketVotingData.supplyVote,
+                  borrowVote: marketVotingData.borrowVote
+                };
+              });
+            });
+            return updatedMarkets;
+          });
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error('Failed to initialize markets')
+        );
+      } finally {
+        setIsLoading(false);
       }
-    );
-    setMarkets(initialMarkets);
+    };
+
+    initializeMarkets();
   }, [chainId]);
 
   const refreshVotingData = async (nftId: string) => {
@@ -155,12 +193,7 @@ export const EmissionsProvider: React.FC<{
 
   return (
     <EmissionsContext.Provider
-      value={{
-        markets,
-        isLoading,
-        error,
-        refreshVotingData
-      }}
+      value={{ markets, isLoading, error, refreshVotingData }}
     >
       {children}
     </EmissionsContext.Provider>

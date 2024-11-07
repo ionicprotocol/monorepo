@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import Image from 'next/image';
 
@@ -20,6 +20,7 @@ import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
+import TableLoader from './TableLoader';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
@@ -31,8 +32,7 @@ interface EmissionsManagementTableProps {
 
 function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { markets, refreshVotingData, isLoading, error } =
-    useEmissionsContext();
+  const { markets, isLoading, error } = useEmissionsContext();
   const [autoRepeat, setAutoRepeat] = useState(false);
   const { toast } = useToast();
   const { addVote, removeVote, submitVote, isVoting } =
@@ -40,12 +40,6 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   const [poolType, setPoolType] = useState<'0' | '1'>('0');
 
   const filteredVotingData = markets[poolType] ?? [];
-
-  // Load data once
-  useEffect(() => {
-    refreshVotingData(tokenId.toString());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmitVotes = async () => {
     try {
@@ -164,6 +158,29 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
     ],
     [isVoting]
   );
+
+  // Show loader until data is initialized and not loading
+  if (isLoading) {
+    return <TableLoader />;
+  }
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="w-full min-h-[400px] flex items-center justify-center">
+        <div className="text-red-500">Error loading data: {error.message}</div>
+      </div>
+    );
+  }
+
+  // Show empty state if no data
+  if (!filteredVotingData.length) {
+    return (
+      <div className="w-full min-h-[400px] flex items-center justify-center">
+        <div className="text-white/60">No market data available</div>
+      </div>
+    );
+  }
 
   return (
     <VotingProvider
