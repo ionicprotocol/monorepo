@@ -29,7 +29,6 @@ import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
@@ -37,6 +36,7 @@ import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
+import { UniversalClaimDialog } from '../_components/veion';
 
 import type { PopupMode } from '../_components/popup/page';
 
@@ -227,11 +227,8 @@ export default function Dashboard() {
       0n
     ) ?? 0n;
 
-  const {
-    componentRef: rewardRef,
-    isopen: rewardisopen,
-    toggle: rewardToggle
-  } = useOutsideClick();
+  const { isopen: claimDialogIsOpen, toggle: claimDialogToggle } =
+    useOutsideClick();
   const {
     componentRef: swapRef,
     isopen: swapOpen,
@@ -258,12 +255,11 @@ export default function Dashboard() {
           comptroller={marketData?.comptroller}
         />
       )}
-      <ClaimRewardPopover
-        chain={+chain}
-        allchain={allChains}
-        rewardRef={rewardRef}
-        isOpen={rewardisopen}
-        close={() => rewardToggle()}
+      <UniversalClaimDialog
+        isOpen={claimDialogIsOpen}
+        onClose={claimDialogToggle}
+        chainIds={allChains}
+        mode="selective" // Keep the selective mode to maintain the checkbox functionality
       />
       <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
         <div
@@ -418,7 +414,7 @@ export default function Dashboard() {
             <div
               className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
               // href={`/points`}
-              onClick={() => rewardToggle()}
+              onClick={claimDialogToggle}
             >
               CLAIM ALL REWARDS
             </div>

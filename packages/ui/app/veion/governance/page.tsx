@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 
+import { formatEther } from 'viem';
 import { base, optimism, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -14,20 +15,30 @@ import {
   MyVeionTable,
   DelegateVeIonTable,
   GovernanceHeader,
-  UniversalClaim
+  UniversalClaimDialog
 } from '@ui/app/_components/veion';
+import { Button } from '@ui/components/ui/button';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 
 export default function Governance() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const chainId = useChainId();
+  const [isUniversalClaimOpen, setIsUniversalClaimOpen] =
+    useState<boolean>(false);
 
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const chain = querychain ?? String(chainId);
   const view = queryview ?? 'My veION';
+
+  const allChains = [8453, 34443, 10];
+  const { data: claimableRewards, isLoading: isLoadingRewards } =
+    useAllClaimableRewards(allChains);
+  const totalRewards =
+    claimableRewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
   useEffect(() => {
     if (!querychain) {
@@ -44,7 +55,6 @@ export default function Governance() {
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
-      {/* First Card - Now with VeIONHeader */}
       <GovernanceHeader view={view} />
 
       <NetworkSelector
@@ -53,7 +63,6 @@ export default function Governance() {
         enabledChains={[mode.id, base.id, optimism.id]}
       />
 
-      {/* Second Card */}
       <Card className="w-full bg-grayone">
         <CardHeader>
           <div className="flex w-full items-center justify-between mb-4">
@@ -76,7 +85,30 @@ export default function Governance() {
                 currentChain={chain}
               />
             </div>
-            {view === 'My veION' && <UniversalClaim />}
+            {view === 'My veION' && (
+              <>
+                <Button
+                  className="bg-accent text-black hover:bg-accent/90 rounded-xl px-4 py-2 text-sm font-medium"
+                  onClick={() => setIsUniversalClaimOpen(true)}
+                  disabled={isLoadingRewards || totalRewards === 0n}
+                >
+                  {isLoadingRewards ? (
+                    'Loading...'
+                  ) : (
+                    <>
+                      Claim Rewards (
+                      {Math.round(+formatEther(totalRewards)).toLocaleString()})
+                    </>
+                  )}
+                </Button>
+                <UniversalClaimDialog
+                  isOpen={isUniversalClaimOpen}
+                  onClose={() => setIsUniversalClaimOpen(false)}
+                  chainIds={allChains}
+                  mode="selective"
+                />
+              </>
+            )}
           </div>
 
           {view === 'My veION' ? (

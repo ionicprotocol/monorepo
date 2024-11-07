@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { formatUnits } from 'viem';
+import { formatUnits, type Address } from 'viem';
 
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -16,89 +16,117 @@ export interface CategoryReward {
   network: string;
   section: 'Locked LP Emissions' | 'Market Emissions' | 'Protocol Bribes';
   chainId: number;
-  rewardToken: string;
+  rewardToken: Address;
 }
 
+// Helper to determine reward section
+const getRewardSection = (rewardToken: string): CategoryReward['section'] => {
+  const token = rewardToken.toLowerCase();
+  if (token.includes('market')) return 'Market Emissions';
+  if (token.includes('lp')) return 'Locked LP Emissions';
+  return 'Protocol Bribes';
+};
+
+// Helper to get network name
+const getNetworkName = (chainId: number): string => {
+  switch (chainId) {
+    case 8453:
+      return 'Base';
+    case 34443:
+      return 'Mode';
+    case 10:
+      return 'Optimism';
+    default:
+      return 'Unknown';
+  }
+};
+
 export function useVeionUniversalClaim(chainIds: number[]) {
-  const { data: rawRewards, isLoading } = useAllClaimableRewards(chainIds);
+  const { data: rawRewards, isLoading: isLoadingRewards } =
+    useAllClaimableRewards(chainIds);
   const { getSdk } = useMultiIonic();
 
-  // Transform raw rewards into categorized rewards
-  const categorizedRewards = useQuery({
-    queryKey: ['categorizedRewards', rawRewards],
-    queryFn: async () => {
-      if (!rawRewards) return [];
+  const { data: categorizedRewards, isLoading: isProcessingRewards } = useQuery(
+    {
+      queryKey: ['categorizedRewards', rawRewards],
+      queryFn: async () => {
+        if (!rawRewards) return [];
 
-      return rawRewards.map((reward): CategoryReward => {
-        const tokenSymbol =
-          REWARDS_TO_SYMBOL[reward.chainId][
-            reward.rewardToken as keyof (typeof REWARDS_TO_SYMBOL)[SupportedChains]
-          ];
+        return rawRewards.map((reward): CategoryReward => {
+          const tokenSymbol =
+            REWARDS_TO_SYMBOL[reward.chainId][
+              reward.rewardToken as keyof (typeof REWARDS_TO_SYMBOL)[SupportedChains]
+            ];
 
-        const section = reward.rewardToken.toLowerCase().includes('market')
-          ? 'Market Emissions'
-          : reward.rewardToken.toLowerCase().includes('lp')
-            ? 'Locked LP Emissions'
-            : 'Protocol Bribes';
+          return {
+            id: `${reward.chainId}-${reward.rewardToken}`,
+            token: tokenSymbol.toLowerCase(),
+            tokenSymbol,
+            amount: formatUnits(reward.amount, 18),
+            network: getNetworkName(reward.chainId),
+            section: getRewardSection(reward.rewardToken),
+            chainId: reward.chainId,
+            rewardToken: reward.rewardToken as Address
+          };
+        });
+      },
+      enabled: !!rawRewards
+    }
+  );
 
-        return {
-          id: `${reward.chainId}-${reward.rewardToken}`,
-          token: tokenSymbol.toLowerCase(),
-          tokenSymbol: tokenSymbol,
-          amount: formatUnits(reward.amount, 18),
-          network:
-            reward.chainId === 8453
-              ? 'Base'
-              : reward.chainId === 34443
-                ? 'Mode'
-                : 'Optimism',
-          section,
-          chainId: reward.chainId,
-          rewardToken: reward.rewardToken
-        };
-      });
-    },
-    enabled: !!rawRewards
-  });
-
-  // Function to claim selected rewards
-  const claimSelectedRewards = async (selectedIds: string[]) => {
+  const claimRewards = async (selectedIds?: string[]) => {
     if (!rawRewards) return;
 
-    // Group selected rewards by chain
-    const rewardsByChain = selectedIds.reduce(
-      (acc, id) => {
-        const reward = categorizedRewards.data?.find((r) => r.id === id);
-        if (reward) {
-          if (!acc[reward.chainId]) {
-            acc[reward.chainId] = [];
-          }
-          acc[reward.chainId].push(reward.rewardToken);
+    const rewardsToProcess = selectedIds
+      ? categorizedRewards?.filter((r) => selectedIds.includes(r.id))
+      : categorizedRewards;
+
+    if (!rewardsToProcess) return;
+
+    // Group rewards by chain for efficient claiming
+    const rewardsByChain = rewardsToProcess.reduce(
+      (acc, reward) => {
+        if (!acc[reward.chainId]) {
+          acc[reward.chainId] = [];
         }
+        acc[reward.chainId].push(reward.rewardToken);
         return acc;
       },
-      {} as Record<number, string[]>
+      {} as Record<number, Address[]>
     );
 
-    // Claim rewards chain by chain
-    for (const [chainId, rewards] of Object.entries(rewardsByChain)) {
+    // Process claims chain by chain
+    for (const [chainId, rewardTokens] of Object.entries(rewardsByChain)) {
       const sdk = getSdk(Number(chainId));
-      if (sdk) {
-        try {
-          // eslint-disable-next-line no-console
-          console.log('rewards', rewards);
-          //   await sdk.claimRewards(rewards);
-        } catch (error) {
-          console.error(`Error claiming rewards on chain ${chainId}:`, error);
-          throw error;
-        }
+      if (!sdk) continue;
+
+      if (rewardTokens.length === 1) {
+        // Single reward token - use specific claim function
+        await sdk.claimRewardsForRewardToken(rewardTokens[0]);
+      } else {
+        // Multiple reward tokens - use claimAllRewards
+        await sdk.claimAllRewards();
       }
     }
   };
 
+  // Get rewards grouped by section
+  const rewardsBySection =
+    categorizedRewards?.reduce(
+      (acc, reward) => {
+        if (!acc[reward.section]) {
+          acc[reward.section] = [];
+        }
+        acc[reward.section].push(reward);
+        return acc;
+      },
+      {} as Record<CategoryReward['section'], CategoryReward[]>
+    ) ?? {};
+
   return {
-    rewards: categorizedRewards.data ?? [],
-    isLoading: isLoading || categorizedRewards.isLoading,
-    claimSelectedRewards
+    rewards: categorizedRewards ?? [],
+    rewardsBySection,
+    isLoading: isLoadingRewards || isProcessingRewards,
+    claimRewards
   };
 }
