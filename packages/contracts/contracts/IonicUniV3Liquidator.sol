@@ -15,6 +15,7 @@ import "./external/uniswap/IUniswapV3Pool.sol";
 import "./external/pyth/IExpressRelay.sol";
 import "./external/pyth/IExpressRelayFeeReceiver.sol";
 import { IUniswapV3Quoter } from "./external/uniswap/quoter/interfaces/IUniswapV3Quoter.sol";
+import { IFlashLoanReceiver } from "./ionic/IFlashLoanReceiver.sol";
 
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
 
@@ -25,7 +26,13 @@ import "./PoolLens.sol";
  * @author Veliko Minkov <v.minkov@dcvx.io> (https://github.com/vminkov)
  * @notice IonicUniV3Liquidator liquidates unhealthy borrowers with flashloan support.
  */
-contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3FlashCallback, IExpressRelayFeeReceiver {
+contract IonicUniV3Liquidator is
+  OwnableUpgradeable,
+  ILiquidator,
+  IUniswapV3FlashCallback,
+  IExpressRelayFeeReceiver,
+  IFlashLoanReceiver
+{
   using AddressUpgradeable for address payable;
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -130,6 +137,62 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
     return _safeLiquidate(borrower, repayAmount, cErc20, cTokenCollateral, minOutputAmount);
   }
 
+  function safeLiquidateWithAggregator(
+    address borrower,
+    uint256 repayAmount,
+    ICErc20 cErc20,
+    ICErc20 cTokenCollateral,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) external {
+    // Transfer tokens in, approve to cErc20, and liquidate borrow
+    require(repayAmount > 0, "Repay amount (transaction value) must be greater than 0.");
+    cErc20.flash(repayAmount, abi.encode(borrower, cErc20, cTokenCollateral, aggregatorTarget, aggregatorData, msg.sender));
+  }
+
+  function receiveFlashLoan(address _underlyingBorrow, uint256 amount, bytes calldata data) external {
+    (
+      address borrower,
+      ICErc20 cErc20,
+      ICErc20 cTokenCollateral,
+      address aggregatorTarget,
+      bytes memory aggregatorData,
+      address liquidator
+    ) = abi.decode(data, (address, ICErc20, ICErc20, address, bytes, address));
+    IERC20Upgradeable underlyingBorrow = IERC20Upgradeable(_underlyingBorrow);
+    underlyingBorrow.approve(address(cErc20), amount);
+    require(cErc20.liquidateBorrow(borrower, amount, address(cTokenCollateral)) == 0, "Liquidation failed.");
+
+    // Redeem seized cTokens for underlying asset
+    uint256 seizedCTokenAmount = cTokenCollateral.balanceOf(address(this));
+    require(seizedCTokenAmount > 0, "No cTokens seized.");
+    uint256 redeemResult = cTokenCollateral.redeem(seizedCTokenAmount);
+    require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
+    IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
+    uint256 underlyingCollateralRedeemed = underlyingCollateral.balanceOf(address(this));
+
+    // Call the aggregator
+    underlyingCollateral.approve(aggregatorTarget, underlyingCollateralRedeemed);
+    (bool success, ) = aggregatorTarget.call(aggregatorData);
+    require(success, "Aggregator call failed");
+    uint256 receivedAmount = underlyingBorrow.balanceOf(address(this));
+    require(receivedAmount >= amount, "Not received enough collateral after swap.");
+
+    // receive profits
+    uint256 profitCollateral = receivedAmount - amount;
+    if (profitCollateral > 0) {
+      underlyingBorrow.safeTransfer(liquidator, profitCollateral);
+    }
+
+    uint256 profitBorrow = underlyingBorrow.balanceOf(address(this));
+    if (profitBorrow > 0) {
+      underlyingBorrow.safeTransfer(liquidator, profitBorrow);
+    }
+
+    // pay back flashloan
+    underlyingBorrow.approve(address(cErc20), amount);
+  }
+
   /**
    * @dev Transfers seized funds to the sender.
    * @param erc20Contract The address of the token to transfer.
@@ -144,11 +207,9 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
     return seizedOutputAmount;
   }
 
-  function safeLiquidateToTokensWithFlashLoan(LiquidateToTokensWithFlashSwapVars calldata vars)
-    external
-    onlyLowHF(vars.borrower, vars.cTokenCollateral)
-    returns (uint256)
-  {
+  function safeLiquidateToTokensWithFlashLoan(
+    LiquidateToTokensWithFlashSwapVars calldata vars
+  ) external onlyLowHF(vars.borrower, vars.cTokenCollateral) returns (uint256) {
     // Input validation
     require(vars.repayAmount > 0, "Repay amount must be greater than 0.");
 
@@ -217,27 +278,15 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    * @dev Callback function for Uniswap flashloans.
    */
 
-  function supV3FlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) external {
+  function supV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external {
     uniswapV3FlashCallback(fee0, fee1, data);
   }
 
-  function algebraFlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) external {
+  function algebraFlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external {
     uniswapV3FlashCallback(fee0, fee1, data);
   }
 
-  function uniswapV3FlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) public {
+  function uniswapV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) public {
     // Liquidate unhealthy borrow, exchange seized collateral, return flashloaned funds, and exchange profit
     // Decode params
     LiquidateToTokensWithFlashSwapVars memory vars = abi.decode(data[4:], (LiquidateToTokensWithFlashSwapVars));
@@ -396,10 +445,10 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    * Each whitelisted redemption strategy has to be checked to not be able to
    * call `selfdestruct` with the `delegatecall` call in `redeemCustomCollateral`
    */
-  function _whitelistRedemptionStrategies(IRedemptionStrategy[] calldata strategies, bool[] calldata whitelisted)
-    external
-    onlyOwner
-  {
+  function _whitelistRedemptionStrategies(
+    IRedemptionStrategy[] calldata strategies,
+    bool[] calldata whitelisted
+  ) external onlyOwner {
     require(
       strategies.length > 0 && strategies.length == whitelisted.length,
       "list of strategies empty or whitelist does not match its length"
