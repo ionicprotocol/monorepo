@@ -1,59 +1,29 @@
-import { useState, useEffect, memo } from 'react';
-
 import { useVoting } from '@ui/app/contexts/VotingContext';
 import { Input } from '@ui/components/ui/input';
+import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 
 interface VoteInputProps {
-  row: any;
-  disabled?: boolean;
+  marketAddress: string;
+  side: MarketSide;
+  isDisabled: boolean;
 }
 
-const VoteInput = memo(({ row, disabled }: VoteInputProps) => {
-  const { selectedRows, onVoteChange } = useVoting();
-  const [value, setValue] = useState(selectedRows[row.original.id] || '');
-  const id = row.original.id;
-  const hasVotes = parseFloat(row.original.myVotes.percentage) > 0;
-
-  useEffect(() => {
-    setValue(selectedRows[id] || '');
-  }, [id, selectedRows]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setValue(newValue);
-    onVoteChange(id, newValue);
-  };
-
-  if (hasVotes) {
-    return (
-      <div className="text-xs font-semibold text-white/80">
-        {row.original.myVotes.percentage} %
-      </div>
-    );
-  }
+function VoteInput({ marketAddress, side, isDisabled }: VoteInputProps) {
+  const { votes, updateVote } = useVoting();
+  const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
 
   return (
-    <div className="relative w-40">
-      <Input
-        id={`vote-input-${id}`}
-        name={`vote-input-${id}`}
-        className="bg-transparent border-blue-500/20 text-xs h-8 pr-12"
-        value={value}
-        onChange={handleChange}
-        placeholder="Enter % vote"
-        type="number"
-        max={100}
-        min={0}
-        step="0.01"
-        disabled={disabled}
-      />
-      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-green-500 text-xs">
-        MAX
-      </span>
-    </div>
+    <Input
+      type="number"
+      value={votes[key] || ''}
+      className="w-20 h-8 px-2 py-1 text-sm"
+      onChange={(e) => updateVote(marketAddress, side, e.target.value)}
+      disabled={isDisabled}
+      min="0"
+      max="100"
+      step="0.1"
+    />
   );
-});
-
-VoteInput.displayName = 'VoteInput';
+}
 
 export default VoteInput;

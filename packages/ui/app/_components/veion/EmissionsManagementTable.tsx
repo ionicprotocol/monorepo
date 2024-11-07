@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import Image from 'next/image';
 
-import { VotingContext } from '@ui/app/contexts/VotingContext';
+import { VotingProvider } from '@ui/app/contexts/VotingContext';
 import { Checkbox } from '@ui/components/ui/checkbox';
 import {
   Select,
@@ -13,13 +13,14 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/components/ui/select';
+import type { VoteMarket } from '@ui/context/EmissionsManagementContext';
+import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
-import type { VoteMarket } from '@ui/utils/voteMarkets';
-import { voteMarkets } from '@ui/utils/voteMarkets';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
+import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
 import type { ColumnDef } from '@tanstack/react-table';
@@ -30,59 +31,24 @@ interface EmissionsManagementTableProps {
 
 function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { toast } = useToast();
-  const [selectedRows, setSelectedRows] = useState<Record<string, string>>({});
+  const { markets, refreshVotingData, isLoading, error } =
+    useEmissionsContext();
   const [autoRepeat, setAutoRepeat] = useState(false);
-  const [poolType, setPoolType] = useState<'0' | '1'>('0');
-
+  const { toast } = useToast();
   const { addVote, removeVote, submitVote, isVoting } =
     useVeIONVote(currentChain);
+  const [poolType, setPoolType] = useState<'0' | '1'>('0');
 
-  const filteredVotingData = useMemo(() => {
-    return voteMarkets[+currentChain]?.[poolType] ?? [];
-  }, [currentChain, poolType]);
+  const filteredVotingData = markets[poolType] ?? [];
 
-  const handleVoteChange = (id: string, side: MarketSide, value: string) => {
-    setSelectedRows((prev) => {
-      const newRows = { ...prev };
-      const market = filteredVotingData.find((m) => m.marketAddress === id);
-
-      if (market) {
-        const numericValue = parseFloat(value);
-        if (!isNaN(numericValue)) {
-          addVote(id, side, numericValue);
-          newRows[`${id}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`] =
-            value;
-        } else {
-          removeVote(id);
-          delete newRows[
-            `${id}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`
-          ];
-        }
-      }
-      return newRows;
-    });
-  };
+  // Load data once
+  useEffect(() => {
+    refreshVotingData(tokenId.toString());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmitVotes = async () => {
     try {
-      const totalSupplyWeight = Object.entries(selectedRows)
-        .filter(([key]) => key.endsWith('-supply'))
-        .reduce((sum, [, value]) => sum + (parseFloat(value) || 0), 0);
-
-      const totalBorrowWeight = Object.entries(selectedRows)
-        .filter(([key]) => key.endsWith('-borrow'))
-        .reduce((sum, [, value]) => sum + (parseFloat(value) || 0), 0);
-
-      if (
-        Math.abs(totalSupplyWeight - 100) > 0.01 ||
-        Math.abs(totalBorrowWeight - 100) > 0.01
-      ) {
-        throw new Error(
-          'Total vote weight for both supply and borrow must equal 100'
-        );
-      }
-
       const success = await submitVote(tokenId);
 
       if (success) {
@@ -105,7 +71,6 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
   };
 
   const handleReset = () => {
-    setSelectedRows({});
     setAutoRepeat(false);
   };
 
@@ -167,17 +132,10 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         accessorKey: 'supply',
         header: 'SUPPLY %',
         cell: ({ row }) => (
-          <input
-            type="number"
-            className="w-20 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600"
-            value={selectedRows[`${row.original.marketAddress}-supply`] || ''}
-            onChange={(e) =>
-              handleVoteChange(row.original.marketAddress, 0, e.target.value)
-            }
-            disabled={isVoting}
-            min="0"
-            max="100"
-            step="0.1"
+          <VoteInput
+            marketAddress={row.original.marketAddress}
+            side={MarketSide.Supply}
+            isDisabled={isVoting}
           />
         )
       },
@@ -185,17 +143,10 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         accessorKey: 'borrow',
         header: 'BORROW %',
         cell: ({ row }) => (
-          <input
-            type="number"
-            className="w-20 px-2 py-1 text-sm bg-gray-700 rounded border border-gray-600"
-            value={selectedRows[`${row.original.marketAddress}-borrow`] || ''}
-            onChange={(e) =>
-              handleVoteChange(row.original.marketAddress, 1, e.target.value)
-            }
-            disabled={isVoting}
-            min="0"
-            max="100"
-            step="0.1"
+          <VoteInput
+            marketAddress={row.original.marketAddress}
+            side={MarketSide.Borrow}
+            isDisabled={isVoting}
           />
         )
       },
@@ -211,21 +162,15 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         )
       }
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedRows, isVoting]
-  );
-
-  const votingContextValue = useMemo(
-    () => ({
-      selectedRows,
-      onVoteChange: handleVoteChange
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedRows]
+    [isVoting]
   );
 
   return (
-    <VotingContext.Provider value={votingContextValue}>
+    <VotingProvider
+      markets={markets}
+      onVoteAdd={addVote}
+      onVoteRemove={removeVote}
+    >
       <div className="relative pb-12">
         <div className="mb-4">
           <Select
@@ -250,13 +195,12 @@ function EmissionsManagementTable({ tokenId }: EmissionsManagementTableProps) {
         <EmissionsManagementFooter
           autoRepeat={autoRepeat}
           setAutoRepeat={setAutoRepeat}
-          selectedRows={selectedRows}
           handleReset={handleReset}
           onSubmitVotes={handleSubmitVotes}
           isVoting={isVoting}
         />
       </div>
-    </VotingContext.Provider>
+    </VotingProvider>
   );
 }
 

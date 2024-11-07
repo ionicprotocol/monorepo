@@ -23,6 +23,7 @@ import {
 } from '@ui/components/ui/select';
 import { Switch } from '@ui/components/ui/switch';
 import { lockedData } from '@ui/constants/mock';
+import { EmissionsProvider } from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const Vote: React.FC = () => {
@@ -166,7 +167,9 @@ const Vote: React.FC = () => {
           <div className="my-3 w-full">
             <FlatMap />
           </div>
-          <EmissionsManagementTable tokenId={0} />
+          <EmissionsProvider>
+            <EmissionsManagementTable tokenId={0} />
+          </EmissionsProvider>
         </CardContent>
       </Card>
     </div>

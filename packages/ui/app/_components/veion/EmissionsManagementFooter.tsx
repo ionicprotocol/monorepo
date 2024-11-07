@@ -2,13 +2,13 @@
 
 import React from 'react';
 
+import { useVoting } from '@ui/app/contexts/VotingContext';
 import { Card } from '@ui/components/ui/card';
 import { Checkbox } from '@ui/components/ui/checkbox';
 
 interface EmissionsManagementFooterProps {
   autoRepeat: boolean;
   setAutoRepeat: (value: boolean) => void;
-  selectedRows: Record<string, string>;
   handleReset: () => void;
   onSubmitVotes?: () => Promise<void>;
   isVoting?: boolean;
@@ -17,18 +17,19 @@ interface EmissionsManagementFooterProps {
 function EmissionsManagementFooter({
   autoRepeat,
   setAutoRepeat,
-  selectedRows,
   handleReset,
   onSubmitVotes,
   isVoting = false
 }: EmissionsManagementFooterProps) {
   // Calculate total weight
-  const totalWeight = Object.values(selectedRows).reduce(
+  const { votes } = useVoting(); // Get votes from context
+
+  const totalWeight = Object.values(votes).reduce(
     (sum, value) => sum + (parseFloat(value) || 0),
     0
   );
 
-  const hasVotes = Object.keys(selectedRows).length > 0;
+  const hasVotes = Object.keys(votes).length > 0;
   const isValidWeight = Math.abs(totalWeight - 100) <= 0.01;
 
   return (
