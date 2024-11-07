@@ -45,7 +45,6 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
-import { SlippageDropdown } from '../SlippageDropdown';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk/src';
 
@@ -77,6 +76,30 @@ ChartJS.register(
   Filler,
   Legend
 );
+
+// Replace the SlippageDropdown import with a simpler dropdown implementation
+const SlippageSelector = ({
+  onSlippageChange
+}: {
+  onSlippageChange: (value: number) => void;
+}) => {
+  return (
+    <div className="flex items-center justify-between w-full text-xs pb-2">
+      <span className="text-white/50">SLIPPAGE TOLERANCE</span>
+      <select
+        className="bg-graytwo text-white rounded px-2 py-1 text-xs"
+        onChange={(e) => onSlippageChange(Number(e.target.value))}
+        defaultValue="0.01"
+      >
+        <option value="0.001">0.1%</option>
+        <option value="0.005">0.5%</option>
+        <option value="0.01">1%</option>
+        <option value="0.02">2%</option>
+        <option value="0.05">5%</option>
+      </select>
+    </div>
+  );
+};
 
 export default function CollateralSwapPopup({
   swapRef,
@@ -563,7 +586,7 @@ export default function CollateralSwapPopup({
             </div>
           </div>
           <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5" />
-          <SlippageDropdown onSlippageChange={handleSlippageChange} />
+          <SlippageSelector onSlippageChange={handleSlippageChange} />
         </div>
 
         <div className="sticky bottom-0 bg-grayone w-full px-8 pb-4">
