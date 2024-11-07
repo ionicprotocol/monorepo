@@ -11,11 +11,11 @@ import { useChainId } from 'wagmi';
 import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
 import FlatMap from '@ui/app/_components/points_comp/FlatMap';
 import ToggleLinks from '@ui/app/_components/ToggleLink';
+import UniversalClaimDialog from '@ui/app/_components/UniversalClaimDialog';
 import {
   MyVeionTable,
   DelegateVeIonTable,
-  GovernanceHeader,
-  UniversalClaimDialog
+  GovernanceHeader
 } from '@ui/app/_components/veion';
 import { Button } from '@ui/components/ui/button';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';

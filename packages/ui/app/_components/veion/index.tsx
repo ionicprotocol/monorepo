@@ -18,4 +18,3 @@ export { default as VoteInput } from './VoteInput';
 export { default as InfoBlock } from './InfoBlock';
 export { default as EmissionsManagement } from './EmissionsManagement';
 export { default as GovernanceHeader } from './GovernanceHeader';
-export { default as UniversalClaimDialog } from './UniversalClaimDialog';

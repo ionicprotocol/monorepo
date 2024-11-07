@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import Image from 'next/image';
 
@@ -24,64 +24,6 @@ import { useToast } from '@ui/hooks/use-toast';
 import type { CategoryReward } from '@ui/hooks/veion/useVeionUniversalClaim';
 import { useVeionUniversalClaim } from '@ui/hooks/veion/useVeionUniversalClaim';
 
-// Types
-interface ClaimContextType {
-  selectedRewards: Record<string, boolean>;
-  toggleReward: (id: string) => void;
-  clearSelections: () => void;
-  getSelectedCount: () => number;
-}
-
-// Context
-const ClaimContext = createContext<ClaimContextType | null>(null);
-
-export const useClaimContext = () => {
-  const context = useContext(ClaimContext);
-  if (!context) {
-    throw new Error('useClaimContext must be used within a ClaimProvider');
-  }
-  return context;
-};
-
-// Provider Component
-interface ClaimProviderProps {
-  children: React.ReactNode;
-}
-
-export const ClaimProvider = ({ children }: ClaimProviderProps) => {
-  const [selectedRewards, setSelectedRewards] = useState<
-    Record<string, boolean>
-  >({});
-
-  const toggleReward = (id: string) => {
-    setSelectedRewards((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
-
-  const clearSelections = () => {
-    setSelectedRewards({});
-  };
-
-  const getSelectedCount = () => {
-    return Object.values(selectedRewards).filter(Boolean).length;
-  };
-
-  return (
-    <ClaimContext.Provider
-      value={{
-        selectedRewards,
-        toggleReward,
-        clearSelections,
-        getSelectedCount
-      }}
-    >
-      {children}
-    </ClaimContext.Provider>
-  );
-};
-
 // Main Component
 interface ClaimDialogProps {
   isOpen: boolean;
@@ -90,7 +32,7 @@ interface ClaimDialogProps {
   mode?: 'all' | 'selective'; // selective allows choosing rewards, all claims everything
 }
 
-export const UniversalClaimDialog = ({
+const UniversalClaimDialog = ({
   isOpen,
   onClose,
   chainIds,
@@ -114,6 +56,7 @@ export const UniversalClaimDialog = ({
       setIsClaimLoading(true);
       if (mode === 'selective') {
         const selectedIds = Object.entries(selectedRewards)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           .filter(([_, isSelected]) => isSelected)
           .map(([id]) => id);
         await claimRewards(selectedIds);
@@ -168,12 +111,9 @@ export const UniversalClaimDialog = ({
         {isLoading ? (
           <div>Loading rewards...</div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-4">
             {sections.map((section) => (
-              <div
-                key={section}
-                className="space-y-3"
-              >
+              <div key={section}>
                 <h3 className="text-lg font-semibold pl-4">{section}</h3>
                 <Table>
                   <TableHeader>
@@ -235,6 +175,21 @@ export const UniversalClaimDialog = ({
                           )}
                         </TableRow>
                       ))}
+                    {rewards.filter((r) => r.section === section).length ===
+                      0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={mode === 'selective' ? 4 : 3}
+                          className="text-center text-sm text-gray-500"
+                        >
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <span className="text-white/50">
+                              No rewards available
+                            </span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </div>

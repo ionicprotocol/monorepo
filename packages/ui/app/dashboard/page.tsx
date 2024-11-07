@@ -10,6 +10,7 @@ import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { useChainId } from 'wagmi';
 
+import UniversalClaimDialog from '@ui/app/_components/UniversalClaimDialog';
 import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
@@ -36,7 +37,6 @@ import NetworkSelector from '../_components/markets/NetworkSelector';
 import Loop from '../_components/popup/Loop';
 import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
-import { UniversalClaimDialog } from '../_components/veion';
 
 import type { PopupMode } from '../_components/popup/page';
 
