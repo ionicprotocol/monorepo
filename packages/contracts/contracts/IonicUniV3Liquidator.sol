@@ -167,12 +167,12 @@ contract IonicUniV3Liquidator is
     require(cErc20.liquidateBorrow(borrower, amount, address(cTokenCollateral)) == 0, "Liquidation failed.");
 
     // Redeem seized cTokens for underlying asset
+    IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
     {
       uint256 seizedCTokenAmount = cTokenCollateral.balanceOf(address(this));
       require(seizedCTokenAmount > 0, "No cTokens seized.");
       uint256 redeemResult = cTokenCollateral.redeem(seizedCTokenAmount);
       require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
-      IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
       uint256 underlyingCollateralRedeemed = underlyingCollateral.balanceOf(address(this));
 
       // Call the aggregator
@@ -185,14 +185,14 @@ contract IonicUniV3Liquidator is
     {
       uint256 receivedAmount = underlyingBorrow.balanceOf(address(this));
       require(receivedAmount >= amount, "Not received enough collateral after swap.");
-      uint256 profitCollateral = receivedAmount - amount;
-      if (profitCollateral > 0) {
-        underlyingBorrow.safeTransfer(liquidator, profitCollateral);
-      }
-
-      uint256 profitBorrow = underlyingBorrow.balanceOf(address(this));
+      uint256 profitBorrow = receivedAmount - amount;
       if (profitBorrow > 0) {
         underlyingBorrow.safeTransfer(liquidator, profitBorrow);
+      }
+
+      uint256 profitCollateral = underlyingCollateral.balanceOf(address(this));
+      if (profitCollateral > 0) {
+        underlyingCollateral.safeTransfer(liquidator, profitCollateral);
       }
     }
 
