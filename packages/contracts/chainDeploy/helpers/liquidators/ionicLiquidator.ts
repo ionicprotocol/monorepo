@@ -80,8 +80,8 @@ export const deployIonicUniV3Liquidator = async ({
           args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3Quoter]
         }
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig
+      proxyContract: "OpenZeppelinTransparentProxy"
+      // owner: multisig
     }
   });
   if (uniV3Liquidator.transactionHash)
