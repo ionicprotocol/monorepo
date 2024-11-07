@@ -27814,6 +27814,30 @@ export const iHypervisorAbi = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IInterchainSecurityModule
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iInterchainSecurityModuleAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'moduleType',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_metadata', internalType: 'bytes', type: 'bytes' },
+      { name: '_message', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'verify',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IIonicFlywheel
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30747,6 +30771,179 @@ export const iLiquidatorsRegistryStorageAbi = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IMailbox
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iMailboxAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultHook',
+    outputs: [{ name: '', internalType: 'contract IPostDispatchHook', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'defaultIsm',
+    outputs: [{ name: '', internalType: 'contract IInterchainSecurityModule', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'delivered',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'body', internalType: 'bytes', type: 'bytes' },
+      { name: 'customHookMetadata', internalType: 'bytes', type: 'bytes' },
+      { name: 'customHook', internalType: 'contract IPostDispatchHook', type: 'address' },
+    ],
+    name: 'dispatch',
+    outputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'body', internalType: 'bytes', type: 'bytes' },
+      { name: 'defaultHookMetadata', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'dispatch',
+    outputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'messageBody', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'dispatch',
+    outputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'latestDispatchedId',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'localDomain',
+    outputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'metadata', internalType: 'bytes', type: 'bytes' },
+      { name: 'message', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'process',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'messageBody', internalType: 'bytes', type: 'bytes' },
+      { name: 'customHookMetadata', internalType: 'bytes', type: 'bytes' },
+      { name: 'customHook', internalType: 'contract IPostDispatchHook', type: 'address' },
+    ],
+    name: 'quoteDispatch',
+    outputs: [{ name: 'fee', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'messageBody', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'quoteDispatch',
+    outputs: [{ name: 'fee', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'destinationDomain', internalType: 'uint32', type: 'uint32' },
+      { name: 'recipientAddress', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'messageBody', internalType: 'bytes', type: 'bytes' },
+      { name: 'defaultHookMetadata', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'quoteDispatch',
+    outputs: [{ name: 'fee', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'recipient', internalType: 'address', type: 'address' }],
+    name: 'recipientIsm',
+    outputs: [
+      { name: 'module', internalType: 'contract IInterchainSecurityModule', type: 'address' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'requiredHook',
+    outputs: [{ name: '', internalType: 'contract IPostDispatchHook', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'sender', internalType: 'address', type: 'address', indexed: true },
+      { name: 'destination', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: 'recipient', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'message', internalType: 'bytes', type: 'bytes', indexed: false },
+    ],
+    name: 'Dispatch',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32', indexed: true }],
+    name: 'DispatchId',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'origin', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: 'sender', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'recipient', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'Process',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: 'messageId', internalType: 'bytes32', type: 'bytes32', indexed: true }],
+    name: 'ProcessId',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IMasset
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32849,6 +33046,47 @@ export const iPoolOracleAbi = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// IPostDispatchHook
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iPostDispatchHookAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'hookType',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'metadata', internalType: 'bytes', type: 'bytes' },
+      { name: 'message', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'postDispatch',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'metadata', internalType: 'bytes', type: 'bytes' },
+      { name: 'message', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'quoteDispatch',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'metadata', internalType: 'bytes', type: 'bytes' }],
+    name: 'supportsMetadata',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'view',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IPriceOracle
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34739,6 +34977,20 @@ export const iSavingsContractV2Abi = [
     name: 'redeemCredits',
     outputs: [{ name: 'underlyingReturned', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ISpecifiesInterchainSecurityModule
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iSpecifiesInterchainSecurityModuleAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'interchainSecurityModule',
+    outputs: [{ name: '', internalType: 'contract IInterchainSecurityModule', type: 'address' }],
+    stateMutability: 'view',
   },
 ] as const;
 
@@ -58923,6 +59175,224 @@ export const veIonAbi = [
   { type: 'error', inputs: [], name: 'TokenNotWhitelisted' },
   { type: 'error', inputs: [], name: 'ZeroAddress' },
   { type: 'error', inputs: [], name: 'ZeroAmount' },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// xERC20Hyperlane
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const xErc20HyperlaneAbi = [
+  {
+    type: 'constructor',
+    inputs: [
+      { name: '_feeBps', internalType: 'uint256', type: 'uint256' },
+      { name: '_mailbox', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'receive', stateMutability: 'payable' },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    name: 'allowedSenders',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeBps',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_origin', internalType: 'uint32', type: 'uint32' },
+      { name: '_sender', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'handle',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'uint32', type: 'uint32' },
+    ],
+    name: 'mappedTokens',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_dstChainId', internalType: 'uint32', type: 'uint32' },
+      { name: '_token', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+      { name: '_to', internalType: 'address', type: 'address' },
+    ],
+    name: 'quote',
+    outputs: [{ name: 'fee', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+      { name: '_to', internalType: 'address', type: 'address' },
+      { name: '_dstChainId', internalType: 'uint32', type: 'uint32' },
+    ],
+    name: 'send',
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_chainId', internalType: 'uint32', type: 'uint32' },
+      { name: '_sender', internalType: 'address', type: 'address' },
+    ],
+    name: 'setAllowedSender',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_feeBps', internalType: 'uint256', type: 'uint256' }],
+    name: 'setFeeBps',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_chainId', internalType: 'uint32', type: 'uint32' },
+      { name: '_srcToken', internalType: 'address', type: 'address' },
+      { name: '_dstToken', internalType: 'address', type: 'address' },
+    ],
+    name: 'setMappedToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  { type: 'function', inputs: [], name: 'withdrawEth', outputs: [], stateMutability: 'nonpayable' },
+  {
+    type: 'function',
+    inputs: [{ name: '_amount', internalType: 'uint256', type: 'uint256' }],
+    name: 'withdrawEth',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '_token', internalType: 'address', type: 'address' }],
+    name: 'withdrawFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'withdrawFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_chainId', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: '_sender', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'AllowedSenderSet',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [{ name: '_feeBps', internalType: 'uint256', type: 'uint256', indexed: true }],
+    name: 'FeeBpsSet',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'previousOwner', internalType: 'address', type: 'address', indexed: true },
+      { name: 'newOwner', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'OwnershipTransferred',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address', indexed: true },
+      { name: '_chainId', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: '_dstToken', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'TokenMapped',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address', indexed: true },
+      { name: '_amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: '_to', internalType: 'address', type: 'address', indexed: true },
+      { name: '_srcChainId', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: '_guid', internalType: 'bytes32', type: 'bytes32', indexed: false },
+    ],
+    name: 'TokenReceived',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_token', internalType: 'address', type: 'address', indexed: true },
+      { name: '_amount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: '_to', internalType: 'address', type: 'address', indexed: true },
+      { name: '_dstChainId', internalType: 'uint32', type: 'uint32', indexed: true },
+      { name: '_guid', internalType: 'bytes32', type: 'bytes32', indexed: false },
+    ],
+    name: 'TokenSent',
+  },
+  { type: 'error', inputs: [], name: 'ChainIdNotSet' },
+  {
+    type: 'error',
+    inputs: [
+      { name: '_chainId', internalType: 'uint32', type: 'uint32' },
+      { name: '_sender', internalType: 'address', type: 'address' },
+    ],
+    name: 'OriginNotAllowed',
+  },
+  { type: 'error', inputs: [], name: 'OriginNotMirrorAdapter' },
+  { type: 'error', inputs: [], name: 'TokenNotSet' },
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
