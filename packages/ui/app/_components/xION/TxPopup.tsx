@@ -201,7 +201,7 @@ function TxPopup({
 
           <a
             target="_blank"
-            href={`https://layerzeroscan.com/tx/${mock?.hash ?? temp.hash}`}
+            href={`https://explorer.hyperlane.xyz/?search=${mock?.hash ?? temp.hash}`}
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
           >
             TRACK

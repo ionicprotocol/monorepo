@@ -281,6 +281,9 @@
     "VelodromeV2Liquidator": {
       "address": "0xA1aBF92ef468464962aF1CEFFB44631a6fFb33ec"
     },
+    "xERC20Hyperlane": {
+      "address": "0xb81ab95BEE03ed655C8a99d484EFfCfE335319EB"
+    },
     "xERC20LayerZero": {
       "address": "0xb750c43F9338313c7A8af6922dcA1910Ee3583c8"
     }
