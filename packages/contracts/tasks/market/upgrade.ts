@@ -198,3 +198,51 @@ task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provi
       }
     }
   });
+
+task("markets:set-ap", "Sets addresses provider on all markets").setAction(
+  async ({}, { viem, getChainId, deployments, run, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+    const ap = await viem.getContractAt(
+      "AddressesProvider",
+      (await deployments.get("AddressesProvider")).address as Address
+    );
+    const poolDirectory = await viem.getContractAt(
+      "PoolDirectory",
+      (await deployments.get("PoolDirectory")).address as Address
+    );
+    const [, pools] = await poolDirectory.read.getActivePools();
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      console.log("pool", { name: pool.name, address: pool.comptroller });
+      const comptrollerAsExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
+      const markets = await comptrollerAsExtension.read.getAllMarkets();
+      for (let j = 0; j < markets.length; j++) {
+        const market = markets[j];
+        console.log(`market address ${market}`);
+        const ctokenAsExt = await viem.getContractAt("CTokenFirstExtension", market);
+        const comptrollerAdmin = await comptrollerAsExtension.read.admin();
+        if (comptrollerAdmin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: ctokenAsExt,
+            functionName: "_setAddressesProvider",
+            args: [ap.address],
+            description: `Setting AddressesProvider on ${market}`,
+            inputs: [{ internalType: "address", name: "_ap", type: "address" }]
+          });
+        } else {
+          console.log(`Setting AP to to ${ap.address}`);
+          const setAPTX = await ctokenAsExt.write._setAddressesProvider([ap.address]);
+          const receiptAP = await publicClient.waitForTransactionReceipt({
+            hash: setAPTX
+          });
+          if (receiptAP.status !== "success") {
+            throw `Failed set AP to ${ap.address}`;
+          } else {
+            console.log(`AP successfully set to ${ap.address}`);
+          }
+        }
+      }
+    }
+  }
+);

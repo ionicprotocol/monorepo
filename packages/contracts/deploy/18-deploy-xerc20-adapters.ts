@@ -20,7 +20,10 @@ const hyperlaneEndpoints: Record<number, Address> = {
 
 const hyperlaneDeployments: Record<number, Address> = {
   [optimism.id]: "0x80748Ff4c4505742e63ddf4Ab31114ce00Ee0B9e",
-  [base.id]: "0x04d3Fcc666616A76822f303aA4546321458B8F10"
+  [base.id]: "0x04d3Fcc666616A76822f303aA4546321458B8F10",
+  [mode.id]: "0xb81ab95BEE03ed655C8a99d484EFfCfE335319EB",
+  [fraxtal.id]: "0x7F2aFd3Fa3f9CFFb66AaA2ccE0f7527B37C8bbfA",
+  [bob.id]: "0x5aB39DfE9eC8317825Ab6e1BCc7068c4C7897FB9"
 };
 
 const ionTokens: Record<number, Address> = {
