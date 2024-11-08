@@ -27,9 +27,15 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
+  showAutoOnly: boolean;
+  showPendingOnly: boolean;
 }
 
-function EmissionsManagement({ tokenId }: EmissionsManagementTableProps) {
+function EmissionsManagement({
+  tokenId,
+  showAutoOnly,
+  showPendingOnly
+}: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
   const { markets, isLoading, error } = useEmissionsContext();
   const { toast } = useToast();
@@ -37,7 +43,27 @@ function EmissionsManagement({ tokenId }: EmissionsManagementTableProps) {
     useVeIONVote(currentChain);
   const [poolType, setPoolType] = useState<'0' | '1'>('0');
 
-  const filteredVotingData = markets[poolType] ?? [];
+  const filteredVotingData = useMemo(() => {
+    const baseData = markets[poolType] ?? [];
+
+    return baseData.filter((market) => {
+      // Filter for auto votes if showAutoOnly is true
+      if (showAutoOnly && !market.autoVote) {
+        return false;
+      }
+
+      // Filter for pending votes if showPendingOnly is true
+      if (showPendingOnly) {
+        const hasSupplyVote = market.supplyVote !== '';
+        const hasBorrowVote = market.borrowVote !== '';
+        if (!hasSupplyVote && !hasBorrowVote) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [markets, poolType, showAutoOnly, showPendingOnly]);
 
   const handleSubmitVotes = async () => {
     try {

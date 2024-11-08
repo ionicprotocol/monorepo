@@ -168,7 +168,11 @@ const Vote: React.FC = () => {
             <FlatMap />
           </div>
           <EmissionsProvider>
-            <EmissionsManagement tokenId={0} />
+            <EmissionsManagement
+              tokenId={0}
+              showAutoOnly={showAutoOnly}
+              showPendingOnly={showPendingOnly}
+            />
           </EmissionsProvider>
         </CardContent>
       </Card>
