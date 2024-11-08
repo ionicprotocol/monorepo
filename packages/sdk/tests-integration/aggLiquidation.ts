@@ -17,10 +17,10 @@ const run = async () => {
   });
 
   const publicClient = createPublicClient({ transport: http(), chain: mode });
-  const borrower = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
+  const borrower = "0x1Bec4f239F1Ec11FD8DC7B31A8fea7A5bA5a9Aa4";
   const cErc20 = "0xA0D844742B4abbbc43d8931a6Edb00C56325aA18";
-  const cTokenCollateral = "0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3";
-  const repayAmount = 872137882393881;
+  const cTokenCollateral = "0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038";
+  const repayAmount = 843900759317990;
 
   const borrowedUnderlying = await publicClient.readContract({
     address: cErc20,
