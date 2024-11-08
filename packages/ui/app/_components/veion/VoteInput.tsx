@@ -1,5 +1,5 @@
-import { useVoting } from '@ui/app/contexts/VotingContext';
 import { Input } from '@ui/components/ui/input';
+import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 
 interface VoteInputProps {
@@ -9,19 +9,28 @@ interface VoteInputProps {
 }
 
 function VoteInput({ marketAddress, side, isDisabled }: VoteInputProps) {
-  const { votes, updateVote } = useVoting();
+  const { votes, updateVote } = useEmissionsContext();
   const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    // Only allow numbers and empty string
+    if (
+      newValue === '' ||
+      (/^\d*\.?\d*$/.test(newValue) && parseFloat(newValue) <= 100)
+    ) {
+      updateVote(marketAddress, side, newValue);
+    }
+  };
 
   return (
     <Input
-      type="number"
+      type="text"
       value={votes[key] || ''}
       className="w-20 h-8 px-2 py-1 text-sm"
-      onChange={(e) => updateVote(marketAddress, side, e.target.value)}
+      onChange={handleChange}
       disabled={isDisabled}
-      min="0"
-      max="100"
-      step="0.1"
+      placeholder="0"
     />
   );
 }

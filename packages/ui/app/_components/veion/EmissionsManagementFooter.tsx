@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { useVoting } from '@ui/app/contexts/VotingContext';
 import { Card } from '@ui/components/ui/card';
 import { Checkbox } from '@ui/components/ui/checkbox';
+import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 
 interface EmissionsManagementFooterProps {
   onSubmitVotes?: () => Promise<void>;
@@ -13,7 +13,7 @@ function EmissionsManagementFooter({
   onSubmitVotes,
   isVoting = false
 }: EmissionsManagementFooterProps) {
-  const { votes, resetVotes } = useVoting();
+  const { votes, resetVotes } = useEmissionsContext();
   const [autoRepeat, setAutoRepeat] = useState(false);
   const hasVotes = Object.keys(votes).length > 0;
 

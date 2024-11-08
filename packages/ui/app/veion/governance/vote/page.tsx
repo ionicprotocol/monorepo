@@ -146,7 +146,7 @@ const Vote: React.FC = () => {
               checked={showAutoOnly}
               onCheckedChange={setShowAutoOnly}
               className="data-[state=checked]:bg-green-500 "
-              aria-label="Toggle pending votes only"
+              aria-label="Toggle auto votes only"
             />
             <label
               htmlFor="pending-votes"

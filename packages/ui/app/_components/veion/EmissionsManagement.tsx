@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react';
 
 import Image from 'next/image';
 
-import { VotingProvider } from '@ui/app/contexts/VotingContext';
 import { Checkbox } from '@ui/components/ui/checkbox';
 import {
   Select,
@@ -39,8 +38,7 @@ function EmissionsManagement({
   const { currentChain } = useVeIONContext();
   const { markets, isLoading, error } = useEmissionsContext();
   const { toast } = useToast();
-  const { addVote, removeVote, submitVote, isVoting } =
-    useVeIONVote(currentChain);
+  const { submitVote, isVoting } = useVeIONVote(currentChain);
   const [poolType, setPoolType] = useState<'0' | '1'>('0');
 
   const filteredVotingData = useMemo(() => {
@@ -57,6 +55,8 @@ function EmissionsManagement({
         const hasSupplyVote = market.supplyVote !== '';
         const hasBorrowVote = market.borrowVote !== '';
         if (!hasSupplyVote && !hasBorrowVote) {
+          return true;
+        } else {
           return false;
         }
       }
@@ -185,39 +185,33 @@ function EmissionsManagement({
   }
 
   return (
-    <VotingProvider
-      markets={markets}
-      onVoteAdd={addVote}
-      onVoteRemove={removeVote}
-    >
-      <div className="relative pb-12">
-        <div className="mb-4">
-          <Select
-            value={poolType}
-            onValueChange={(value: '0' | '1') => setPoolType(value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select pool type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">Regular Pool</SelectItem>
-              <SelectItem value="1">Native Pool</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <CommonTable
-          columns={columns}
-          data={filteredVotingData}
-          isLoading={isLoading}
-        />
-
-        <EmissionsManagementFooter
-          onSubmitVotes={handleSubmitVotes}
-          isVoting={isVoting}
-        />
+    <div className="relative pb-12">
+      <div className="mb-4">
+        <Select
+          value={poolType}
+          onValueChange={(value: '0' | '1') => setPoolType(value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select pool type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="0">Regular Pool</SelectItem>
+            <SelectItem value="1">Native Pool</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-    </VotingProvider>
+
+      <CommonTable
+        columns={columns}
+        data={filteredVotingData}
+        isLoading={isLoading}
+      />
+
+      <EmissionsManagementFooter
+        onSubmitVotes={handleSubmitVotes}
+        isVoting={isVoting}
+      />
+    </div>
   );
 }
 

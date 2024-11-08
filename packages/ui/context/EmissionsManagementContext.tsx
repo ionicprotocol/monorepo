@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback
+} from 'react';
 
+import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 import { voteMarkets } from '@ui/utils/voteMarkets';
 
 import { useVeIONContext } from './VeIonContext';
@@ -35,6 +42,16 @@ export type VoteMarket = {
   borrowVote: string;
 };
 
+type EmissionsContextType = {
+  markets: Record<string, VoteMarket[]>;
+  isLoading: boolean;
+  error: Error | null;
+  votes: Record<string, string>;
+  updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
+  resetVotes: () => void;
+  refreshVotingData: (nftId: string) => Promise<void>;
+};
+
 const defaultVotingData: VotingData = {
   totalVotes: {
     percentage: '0%',
@@ -54,14 +71,10 @@ export const fetchVotingData = async (
   nftId: string
 ): Promise<Record<string, VotingData>> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // Mock response with supply and borrow votes
   const mockData: Record<string, VotingData> = {};
 
-  // Get all markets for the current chain
   Object.entries(voteMarkets[chainId] || {}).forEach(([_, markets]) => {
     markets.forEach((market) => {
-      // Generate some mock data for each market
       mockData[market.marketAddress] = {
         totalVotes: {
           percentage: '25%',
@@ -72,8 +85,8 @@ export const fetchVotingData = async (
           value: '10,000'
         },
         autoVote: Math.random() > 0.5,
-        supplyVote: (Math.random() * 20).toFixed(1), // Random value between 0 and 20
-        borrowVote: (Math.random() * 20).toFixed(1) // Random value between 0 and 20
+        supplyVote: (Math.random() * 20).toFixed(1),
+        borrowVote: (Math.random() * 20).toFixed(1)
       };
     });
   });
@@ -81,29 +94,26 @@ export const fetchVotingData = async (
   return mockData;
 };
 
-type EmissionsContextType = {
-  markets: Record<string, VoteMarket[]>;
-  isLoading: boolean;
-  error: Error | null;
-  refreshVotingData: (nftId: string) => Promise<void>;
-};
-
 export const EmissionsContext = createContext<EmissionsContextType>({
   markets: {},
   isLoading: false,
   error: null,
+  votes: {},
+  updateVote: () => {},
+  resetVotes: () => {},
   refreshVotingData: async () => {}
 });
 
 export const EmissionsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [markets, setMarkets] = useState<Record<string, VoteMarket[]>>({});
-  const [isLoading, setIsLoading] = useState(true); // Start with loading true
-  const [error, setError] = useState<Error | null>(null);
   const { currentChain: chainId } = useVeIONContext();
+  const [markets, setMarkets] = useState<Record<string, VoteMarket[]>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [votes, setVotes] = useState<Record<string, string>>({});
 
-  // Initialize markets with default values whenever chainId changes
+  // Initialize markets and votes whenever chainId changes
   useEffect(() => {
     const initializeMarkets = async () => {
       setIsLoading(true);
@@ -120,16 +130,29 @@ export const EmissionsProvider: React.FC<{
 
         setMarkets(initialMarkets);
 
-        // Immediately fetch initial data if we have markets
         if (Object.keys(chainMarkets).length > 0) {
-          const votingData = await fetchVotingData(chainId, '0'); // Default NFT ID
+          const votingData = await fetchVotingData(chainId, '0');
 
+          // Initialize both markets and votes
           setMarkets((currentMarkets) => {
             const updatedMarkets: Record<string, VoteMarket[]> = {};
+            const initialVotes: Record<string, string> = {};
+
             Object.entries(currentMarkets).forEach(([poolType, markets]) => {
               updatedMarkets[poolType] = markets.map((market) => {
                 const marketVotingData =
                   votingData[market.marketAddress] || defaultVotingData;
+
+                // Initialize votes
+                if (marketVotingData.supplyVote) {
+                  initialVotes[`${market.marketAddress}-supply`] =
+                    marketVotingData.supplyVote;
+                }
+                if (marketVotingData.borrowVote) {
+                  initialVotes[`${market.marketAddress}-borrow`] =
+                    marketVotingData.borrowVote;
+                }
+
                 return {
                   ...market,
                   totalVotes: marketVotingData.totalVotes,
@@ -140,6 +163,8 @@ export const EmissionsProvider: React.FC<{
                 };
               });
             });
+
+            setVotes(initialVotes);
             return updatedMarkets;
           });
         }
@@ -155,31 +180,89 @@ export const EmissionsProvider: React.FC<{
     initializeMarkets();
   }, [chainId]);
 
+  const updateVote = useCallback(
+    (marketAddress: string, side: MarketSide, value: string) => {
+      const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+
+      setVotes((prev) => {
+        const newVotes = { ...prev };
+        if (value === '' || isNaN(parseFloat(value))) {
+          delete newVotes[key];
+        } else {
+          newVotes[key] = value;
+        }
+        return newVotes;
+      });
+
+      // Update the market data as well
+      setMarkets((prev) => {
+        const newMarkets = { ...prev };
+        Object.entries(newMarkets).forEach(([poolType, markets]) => {
+          newMarkets[poolType] = markets.map((market) => {
+            if (market.marketAddress === marketAddress) {
+              return {
+                ...market,
+                [side === MarketSide.Supply ? 'supplyVote' : 'borrowVote']:
+                  value
+              };
+            }
+            return market;
+          });
+        });
+        return newMarkets;
+      });
+    },
+    []
+  );
+
+  const resetVotes = useCallback(() => {
+    setVotes({});
+    // Reset votes in markets as well
+    setMarkets((prev) => {
+      const newMarkets = { ...prev };
+      Object.entries(newMarkets).forEach(([poolType, markets]) => {
+        newMarkets[poolType] = markets.map((market) => ({
+          ...market,
+          supplyVote: '',
+          borrowVote: ''
+        }));
+      });
+      return newMarkets;
+    });
+  }, []);
+
   const refreshVotingData = async (nftId: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const votingData = await fetchVotingData(chainId, nftId);
-
       setMarkets((currentMarkets) => {
         const updatedMarkets: Record<string, VoteMarket[]> = {};
+        const newVotes: Record<string, string> = {};
 
         Object.entries(currentMarkets).forEach(([poolType, markets]) => {
           updatedMarkets[poolType] = markets.map((market) => {
             const marketVotingData =
               votingData[market.marketAddress] || defaultVotingData;
+
+            if (marketVotingData.supplyVote) {
+              newVotes[`${market.marketAddress}-supply`] =
+                marketVotingData.supplyVote;
+            }
+            if (marketVotingData.borrowVote) {
+              newVotes[`${market.marketAddress}-borrow`] =
+                marketVotingData.borrowVote;
+            }
+
             return {
               ...market,
-              totalVotes: marketVotingData.totalVotes,
-              myVotes: marketVotingData.myVotes,
-              autoVote: marketVotingData.autoVote,
-              supplyVote: marketVotingData.supplyVote,
-              borrowVote: marketVotingData.borrowVote
+              ...marketVotingData
             };
           });
         });
 
+        setVotes(newVotes);
         return updatedMarkets;
       });
     } catch (err) {
@@ -193,7 +276,15 @@ export const EmissionsProvider: React.FC<{
 
   return (
     <EmissionsContext.Provider
-      value={{ markets, isLoading, error, refreshVotingData }}
+      value={{
+        markets,
+        isLoading,
+        error,
+        votes,
+        updateVote,
+        resetVotes,
+        refreshVotingData
+      }}
     >
       {children}
     </EmissionsContext.Provider>
