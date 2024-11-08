@@ -221,9 +221,10 @@ contract Voter is IVoter, OwnableUpgradeable {
           );
         }
         usedWeights[_tokenId][lpRewardTokens[k]] = 0;
-        delete marketVote[_tokenId];
       }
     }
+    delete marketVote[_tokenId];
+    delete marketVoteSide[_tokenId];
     IveION(ve).voting(_tokenId, false);
   }
 
