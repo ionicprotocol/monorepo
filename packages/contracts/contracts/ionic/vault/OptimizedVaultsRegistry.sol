@@ -9,7 +9,7 @@ import "../strategies/flywheel/IonicFlywheel.sol";
 import "../strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 
-import { IERC20MetadataUpgradeable as IERC20Metadata } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import { IERC20MetadataUpgradeable as IERC20 } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 contract OptimizedVaultsRegistry is SafeOwnableUpgradeable {
   OptimizedAPRVaultBase[] public vaults;
@@ -154,8 +154,8 @@ contract OptimizedVaultsRegistry is SafeOwnableUpgradeable {
       vaultsData[i] = VaultInfo({
         vault: address(vault),
         asset: vault.asset(),
-        assetSymbol: IERC20Metadata(vault.asset()).symbol(),
-        assetDecimals: IERC20Metadata(vault.asset()).decimals(),
+        assetSymbol: IERC20(vault.asset()).symbol(),
+        assetDecimals: IERC20(vault.asset()).decimals(),
         estimatedTotalAssets: vault.estimatedTotalAssets(),
         apr: vault.estimatedAPR(),
         adaptersCount: adaptersCount,

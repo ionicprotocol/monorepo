@@ -95,9 +95,12 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
                         IGenericLender FNs
     ------------------------------------------------------------*/
 
+  function rewardsApr() public view returns (uint256) {
+    return _rewardsApr();
+  }
+
   /// @notice Returns an estimation of the current Annual Percentage Rate on the lender
   function apr() public view override returns (uint256) {
-
     return _rewardsApr() + market.supplyRatePerBlock() * blocksPerYear;
   }
 

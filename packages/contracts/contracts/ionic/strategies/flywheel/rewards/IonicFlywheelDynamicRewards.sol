@@ -29,6 +29,9 @@ contract IonicFlywheelDynamicRewards is FlywheelDynamicRewards {
     }
 
     function getRewardsPerSecondPerToken(ERC20 strategy) external view override returns (uint256) {
-        return 0;
+        RewardsCycle memory cycle = rewardsCycle[strategy];
+        if (rewardsCycleLength == 0) return 0;
+        // scaled by 1e18
+        else return (cycle.reward * 1e18) / (rewardsCycleLength * strategy.totalSupply());
     }
 }
