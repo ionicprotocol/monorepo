@@ -24,7 +24,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   // Constants
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
-  uint256 internal constant MULTIPLIER = 1 ether;
   uint256 public constant PRECISION = 1e18;
 
   // State Variables
@@ -41,24 +40,19 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   AddressesProvider public ap;
 
   // Mappings
-  mapping(address => bool) public s_bridges;
   mapping(LpTokenType => uint256) public s_minimumLockAmount;
   mapping(address => bool) public s_whitelistedToken;
   mapping(address => LpTokenType) public s_lpType;
   mapping(address => bool) public s_canSplit;
   mapping(uint256 => mapping(LpTokenType => LockedBalance)) public s_locked; // tokenid => lpType => LockedBalance
-  mapping(uint256 => mapping(LpTokenType => int128)) public s_slopeChanges; // timestamp => lpType => slopeChange
-  mapping(uint256 => mapping(LpTokenType => GlobalPoint)) public s_pointHistory; // epoch => lpType => GlobalPoint
   mapping(uint256 => mapping(LpTokenType => uint256)) public s_userPointEpoch; // tokenid => lpType => user epoch
   mapping(uint256 => mapping(LpTokenType => UserPoint[1000000000])) public s_userPointHistory; // tokenid => lptype => user epoch => UserPoint
   mapping(uint256 => EnumerableSet.AddressSet) internal s_assetsLocked; // tokenid => array of assets locked
   mapping(uint256 => bool) public s_voted;
-  mapping(LpTokenType => uint256) public s_epoch;
   mapping(LpTokenType => uint256) public s_supply;
   mapping(LpTokenType => uint256) public s_permanentLockBalance;
   mapping(LpTokenType => IStakeStrategy) public s_stakeStrategy;
   mapping(uint256 => mapping(address => uint256)) public s_underlyingStake;
-  mapping(IStakeStrategy => mapping(address => uint256)) public s_rewards;
   mapping(LpTokenType => uint256) public s_protocolFees;
   mapping(LpTokenType => uint256) public s_distributedFees;
   mapping(uint256 => mapping(uint256 => mapping(LpTokenType => uint256))) public s_delegations;
@@ -66,13 +60,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   mapping(uint256 => mapping(LpTokenType => EnumerableSet.UintSet)) internal s_delegators;
   mapping(address => EnumerableSet.UintSet) internal s_ownerToTokenIds; // owner => list of token IDs
   mapping(address => mapping(address => uint256)) public s_userCumulativeAssetValues;
-
-  modifier onlyBridge() {
-    if (!s_bridges[msg.sender]) {
-      revert NotMinter();
-    }
-    _;
-  }
 
   function initialize(AddressesProvider _ap) public initializer {
     __Ownable2Step_init();

@@ -26,7 +26,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
   uint256 internal constant MINT_AMT = 1000 ether;
   uint256 internal constant WEEK = 1 weeks;
-  uint256 internal constant MAXTIME = 4 * 365 * 86400;
+  uint256 internal constant MAXTIME = 2 * 365 * 86400;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -51,8 +51,6 @@ contract VotingEscrowNFTTest is BaseTest {
 
     veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
-
-    ve.setTeam(address(this));
   }
 
   // Function: _createLockMultipleInternal
@@ -144,16 +142,18 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 userEpoch;
     uint256 globalEpoch;
     address lockedBalance_tokenAddress;
-    int128 lockedBalance_amount;
+    uint256 lockedBalance_amount;
+    uint256 delegated_lockedBalance_amount;
     uint256 lockedBalance_start;
     uint256 lockedBalance_end;
     bool lockedBalance_isPermanent;
     uint256 lockedBalance_boost;
-    int128 userPoint_bias;
-    int128 userPoint_slope;
+    uint256 userPoint_bias;
+    uint256 userPoint_slope;
     uint256 userPoint_ts;
     uint256 userPoint_blk;
     uint256 userPoint_permanent;
+    uint256 userPoint_permanentDelegate;
     int128 globalPoint_bias;
     int128 globalPoint_slope;
     uint256 globalPoint_ts;
@@ -173,6 +173,7 @@ contract VotingEscrowNFTTest is BaseTest {
     (
       vars.lockedBalance_tokenAddress,
       vars.lockedBalance_amount,
+      vars.delegated_lockedBalance_amount,
       vars.lockedBalance_start,
       vars.lockedBalance_end,
       vars.lockedBalance_isPermanent,
@@ -183,7 +184,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Assert the locked balance state
     assertEq(vars.lockedBalance_tokenAddress, vars.tokenAddresses[0], "Token address mismatch");
-    assertEq(vars.lockedBalance_amount, int128(int256(vars.tokenAmounts[0])), "Token amount mismatch");
+    assertEq(vars.lockedBalance_amount, vars.tokenAmounts[0], "Token amount mismatch");
     assertEq(vars.lockedBalance_end, vars.lockedBalance_end, "Unlock time mismatch");
     assertEq(vars.lockedBalance_isPermanent, false, "Lock should not be permanent");
 
@@ -200,8 +201,14 @@ contract VotingEscrowNFTTest is BaseTest {
     assertEq(vars.globalEpoch, 1, "Global epoch mismatch");
 
     // Check the user point history
-    (vars.userPoint_bias, vars.userPoint_slope, vars.userPoint_ts, vars.userPoint_blk, vars.userPoint_permanent) = ve
-      .s_userPointHistory(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]), vars.userEpoch);
+    (
+      vars.userPoint_bias,
+      vars.userPoint_slope,
+      vars.userPoint_ts,
+      vars.userPoint_blk,
+      vars.userPoint_permanent,
+      vars.userPoint_permanentDelegate
+    ) = ve.s_userPointHistory(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]), vars.userEpoch);
     assertEq(vars.userPoint_ts, block.timestamp, "User point timestamp mismatch");
     assertEq(vars.userPoint_blk, block.number, "User point block number mismatch");
     assertEq(vars.userPoint_bias, 0, "User point bias mismatch");
