@@ -66,7 +66,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     return _getUserTotalCollateral(_user);
   }
 
-  function checkCollateralRatio(address _user) internal view returns (bool) {
+  function _checkCollateralRatio(address _user) internal view returns (bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
     uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
     if ((userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp) {
@@ -75,7 +75,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function reportUser(address _user) external returns (bool) {
-    if (!checkCollateralRatio(_user)) {
+    if (!_checkCollateralRatio(_user)) {
       isBlacklisted[_user] = true;
       blacklistUserAndClaimEmissions(_user);
       return true;
@@ -83,7 +83,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function whitelistUser(address _user) external returns (bool) {
-    if (checkCollateralRatio(_user)) {
+    if (_checkCollateralRatio(_user)) {
       isBlacklisted[_user] = false;
       (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
       for (uint256 i = 0; i < pools.length; i++) {
@@ -106,6 +106,10 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function isUserBlacklisted(address _user) external view returns (bool) {
     return isBlacklisted[_user];
+  }
+
+  function isUserBlacklistable(address _user) external view returns (bool) {
+    return !_checkCollateralRatio(_user);
   }
 
   function blacklistUserAndClaimEmissions(address user) internal {

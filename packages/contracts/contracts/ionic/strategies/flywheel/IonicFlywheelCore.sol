@@ -142,7 +142,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     */
   function claimRewards(address user) external {
     require(!emissionsManager.isUserBlacklisted(user), "blacklisted");
-
+    require(!emissionsManager.isUserBlacklistable(user), "blacklistable");
     uint256 accrued = rewardsAccrued(user);
 
     if (accrued != 0) {
