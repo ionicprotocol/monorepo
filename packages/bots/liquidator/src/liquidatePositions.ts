@@ -349,6 +349,10 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
 
         const data = await fetch(url, options);
         const json = await data.json();
+        if (!json.transactionRequest) {
+          logger.error(`Quote not received for liquidation ${JSON.stringify(liquidationParams)}, url: ${url}`);
+          continue;
+        }
 
         const tx = await walletClient.writeContract({
           address: sdk.contracts.IonicLiquidator.address,
