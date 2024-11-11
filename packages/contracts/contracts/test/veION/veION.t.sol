@@ -23,10 +23,12 @@ contract VotingEscrowNFTTest is BaseTest {
   MockERC20 optimismBalancer8020IonEth;
   IveION.LpTokenType veloLpType;
   IveION.LpTokenType balancerLpType;
+  VelodromeStakingWallet veloStakingWalletImplementation;
 
   uint256 internal constant MINT_AMT = 1000 ether;
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
+  uint256 internal constant EARLY_WITHDRAW_FEE = 0.8e18;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -51,13 +53,17 @@ contract VotingEscrowNFTTest is BaseTest {
 
     veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+
+    veloStakingWalletImplementation = new VelodromeStakingWallet();
+
+    ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
   }
 
   // Function: _createLockMultipleInternal
   // Tokens Locked:
   //   1. "Mode_Velodrome_5050_ION_MODE" - 1000 tokens
   // Lock Duration: 52 weeks for each token
-  function _createLockInternal(address user) internal returns (uint256) {
+  function _createLockInternal(address user) internal returns (uint256, address, uint256, uint256) {
     TestVars memory vars;
     // Mint ModeVelodrome tokens to the user
     vars.user = user;
@@ -84,7 +90,7 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, new bool[](1));
     vm.stopPrank();
 
-    return tokenId;
+    return (tokenId, vars.tokenAddresses[0], vars.tokenAmounts[0], vars.durations[0]);
   }
 
   // Function: _createLockMultipleInternal
@@ -161,15 +167,24 @@ contract VotingEscrowNFTTest is BaseTest {
     uint256 globalPoint_permanentLockBalance;
     uint256[] ownerTokenIds;
     address[] assetsLocked;
+    uint256 tokenId_test;
+    address lockedBalance_tokenAddress_test;
+    uint256 lockedBalance_amount_test;
+    uint256 lockedBalance_duration_test;
+    uint256 lockedBalance_end_test;
   }
 
   function testCreateLockVE() public fork(MODE_MAINNET) {
     TestVars memory vars;
     vars.user = address(0x1234);
-    vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
-    // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
+
     (
       vars.lockedBalance_tokenAddress,
       vars.lockedBalance_amount,
@@ -178,27 +193,27 @@ contract VotingEscrowNFTTest is BaseTest {
       vars.lockedBalance_end,
       vars.lockedBalance_isPermanent,
       vars.lockedBalance_boost
-    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
 
-    vars.lockedBalance_end = ((block.timestamp + vars.durations[0]) / WEEK) * WEEK; // Update end time
+    vars.lockedBalance_end_test = ((block.timestamp + vars.lockedBalance_duration_test) / WEEK) * WEEK; // Update end time
 
     // Assert the locked balance state
-    assertEq(vars.lockedBalance_tokenAddress, vars.tokenAddresses[0], "Token address mismatch");
-    assertEq(vars.lockedBalance_amount, vars.tokenAmounts[0], "Token amount mismatch");
-    assertEq(vars.lockedBalance_end, vars.lockedBalance_end, "Unlock time mismatch");
+    assertEq(vars.lockedBalance_tokenAddress, vars.lockedBalance_tokenAddress_test, "Token address mismatch");
+    assertEq(vars.lockedBalance_amount, vars.lockedBalance_amount_test, "Token amount mismatch");
+    assertEq(vars.lockedBalance_end, vars.lockedBalance_end_test, "Unlock time mismatch");
     assertEq(vars.lockedBalance_isPermanent, false, "Lock should not be permanent");
 
     // Assert the supply state
     vars.expectedSupply = vars.amount;
-    assertEq(ve.s_supply(ve.s_lpType(vars.tokenAddresses[0])), vars.expectedSupply, "Supply mismatch");
+    assertEq(
+      ve.s_supply(ve.s_lpType(vars.lockedBalance_tokenAddress_test)),
+      vars.lockedBalance_amount_test,
+      "Supply mismatch"
+    );
 
     // Assert the user point history state
-    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
     assertEq(vars.userEpoch, 1, "User epoch mismatch");
-
-    // Assert the global point history state
-    vars.globalEpoch = ve.s_epoch(ve.s_lpType(vars.tokenAddresses[0]));
-    assertEq(vars.globalEpoch, 1, "Global epoch mismatch");
 
     // Check the user point history
     (
@@ -208,26 +223,12 @@ contract VotingEscrowNFTTest is BaseTest {
       vars.userPoint_blk,
       vars.userPoint_permanent,
       vars.userPoint_permanentDelegate
-    ) = ve.s_userPointHistory(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]), vars.userEpoch);
+    ) = ve.s_userPointHistory(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test), vars.userEpoch);
     assertEq(vars.userPoint_ts, block.timestamp, "User point timestamp mismatch");
     assertEq(vars.userPoint_blk, block.number, "User point block number mismatch");
-    assertEq(vars.userPoint_bias, 0, "User point bias mismatch");
-    assertEq(vars.userPoint_slope, 0, "User point slope mismatch");
+    assertGt(vars.userPoint_bias, 0, "User point bias mismatch");
+    assertGt(vars.userPoint_slope, 0, "User point slope mismatch");
     assertEq(vars.userPoint_permanent, 0, "User point permanent mismatch");
-
-    // Check the global point history
-    (
-      vars.globalPoint_bias,
-      vars.globalPoint_slope,
-      vars.globalPoint_ts,
-      vars.globalPoint_blk,
-      vars.globalPoint_permanentLockBalance
-    ) = ve.s_pointHistory(vars.globalEpoch, ve.s_lpType(vars.tokenAddresses[0]));
-    assertEq(vars.globalPoint_ts, block.timestamp, "Global point timestamp mismatch");
-    assertEq(vars.globalPoint_blk, block.number, "Global point block number mismatch");
-    assertEq(vars.globalPoint_bias, 0, "Global point bias mismatch");
-    assertEq(vars.globalPoint_slope, 0, "Global point slope mismatch");
-    assertEq(vars.globalPoint_permanentLockBalance, 0, "Global point permanent lock balance mismatch");
 
     // Assert the token ID state
     assertEq(ve.s_tokenId(), vars.tokenId, "Token ID mismatch");
@@ -240,7 +241,7 @@ contract VotingEscrowNFTTest is BaseTest {
     // Assert the assets locked mapping
     vars.assetsLocked = ve.getAssetsLocked(vars.tokenId);
     assertEq(vars.assetsLocked.length, 1, "Assets locked length mismatch");
-    assertEq(vars.assetsLocked[0], vars.tokenAddresses[0], "Assets locked address mismatch");
+    assertEq(vars.assetsLocked[0], vars.lockedBalance_tokenAddress_test, "Assets locked address mismatch");
   }
 
   function testCreateLockMultipleVE() public fork(MODE_MAINNET) {
@@ -281,14 +282,14 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Assert the locked balance state for each token
     for (uint256 i = 0; i < vars.tokenAddresses.length; i++) {
-      (address lb_tokenAddress, int128 lb_amount, , uint256 lb_end, , , ) = ve.s_locked(
+      (address lb_tokenAddress, uint256 lb_amount, , , uint256 lb_end, , ) = ve.s_locked(
         vars.tokenId,
         ve.s_lpType(vars.tokenAddresses[i])
       );
       uint256 unlockTime = ((block.timestamp + vars.durations[i]) / WEEK) * WEEK;
 
       assertEq(lb_tokenAddress, vars.tokenAddresses[i], "Token address mismatch");
-      assertEq(lb_amount, int128(int256(vars.tokenAmounts[i])), "Token amount mismatch");
+      assertEq(lb_amount, vars.tokenAmounts[i], "Token amount mismatch");
       assertEq(lb_end, unlockTime, "Unlock time mismatch");
     }
 
@@ -300,10 +301,6 @@ contract VotingEscrowNFTTest is BaseTest {
     // Assert the user point history state
     vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
     assertEq(vars.userEpoch, 1, "User epoch mismatch");
-
-    // Assert the global point history state
-    vars.globalEpoch = ve.s_epoch(ve.s_lpType(vars.tokenAddresses[0]));
-    assertEq(vars.globalEpoch, 1, "Global epoch mismatch");
 
     // Assert the token ID state
     assertEq(ve.s_tokenId(), vars.tokenId, "Token ID mismatch");
@@ -330,7 +327,8 @@ contract VotingEscrowNFTTest is BaseTest {
     VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
       address(ve),
       ionMode5050,
-      veloGauge
+      veloGauge,
+      address(veloStakingWalletImplementation)
     );
 
     ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
@@ -368,7 +366,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Create lock
     vm.prank(vars.user);
-    uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+    ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
 
     address stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(vars.user);
     uint256 stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
@@ -395,7 +393,8 @@ contract VotingEscrowNFTTest is BaseTest {
     VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
       address(ve),
       ionMode5050,
-      veloGauge
+      veloGauge,
+      address(veloStakingWalletImplementation)
     );
 
     ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
@@ -472,15 +471,22 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
+
     (
       vars.lockedBalance_tokenAddress,
       vars.lockedBalance_amount,
+      vars.delegated_lockedBalance_amount,
       vars.lockedBalance_start,
       vars.lockedBalance_end,
       vars.lockedBalance_isPermanent,
       vars.lockedBalance_boost
-    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
 
     IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
@@ -500,28 +506,24 @@ contract VotingEscrowNFTTest is BaseTest {
     IveION.LockedBalance memory locked = ve.getUserLock(vars.tokenId, lpType);
     assertEq(uint256(int256(locked.amount)), vars.amount + additionalAmount, "Lock amount should be increased");
 
-    vars.lockedBalance_end = ((block.timestamp + vars.durations[0]) / WEEK) * WEEK; // Update end time
+    vars.lockedBalance_end_test = ((block.timestamp + vars.lockedBalance_duration_test) / WEEK) * WEEK; // Update end time
 
     // Assert the locked balance state
-    assertEq(vars.lockedBalance_tokenAddress, vars.tokenAddresses[0], "Token address mismatch");
-    assertEq(vars.lockedBalance_end, vars.lockedBalance_end, "Unlock time mismatch");
+    assertEq(vars.lockedBalance_tokenAddress, vars.lockedBalance_tokenAddress_test, "Token address mismatch");
+    assertEq(vars.lockedBalance_end, vars.lockedBalance_end_test, "Unlock time mismatch");
     assertEq(vars.lockedBalance_isPermanent, false, "Lock should not be permanent");
 
     // Assert the supply state
     vars.expectedSupply = vars.amount;
     assertEq(
-      ve.s_supply(ve.s_lpType(vars.tokenAddresses[0])),
+      ve.s_supply(ve.s_lpType(vars.lockedBalance_tokenAddress_test)),
       vars.expectedSupply + additionalAmount,
       "Supply mismatch"
     );
 
     // Assert the user point history state
-    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
     assertEq(vars.userEpoch, 1, "User epoch mismatch");
-
-    // Assert the global point history state
-    vars.globalEpoch = ve.s_epoch(ve.s_lpType(vars.tokenAddresses[0]));
-    assertEq(vars.globalEpoch, 1, "Global epoch mismatch");
 
     // Assert the token ID state
     assertEq(ve.s_tokenId(), vars.tokenId, "Token ID mismatch");
@@ -534,7 +536,7 @@ contract VotingEscrowNFTTest is BaseTest {
     // Assert the assets locked mapping
     vars.assetsLocked = ve.getAssetsLocked(vars.tokenId);
     assertEq(vars.assetsLocked.length, 1, "Assets locked length mismatch");
-    assertEq(vars.assetsLocked[0], vars.tokenAddresses[0], "Assets locked address mismatch");
+    assertEq(vars.assetsLocked[0], vars.lockedBalance_tokenAddress_test, "Assets locked address mismatch");
 
     // Display results
     emit log_named_uint("Token ID", vars.tokenId);
@@ -552,15 +554,21 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
     (
       vars.lockedBalance_tokenAddress,
       vars.lockedBalance_amount,
+      vars.delegated_lockedBalance_amount,
       vars.lockedBalance_start,
       vars.lockedBalance_end,
       vars.lockedBalance_isPermanent,
       vars.lockedBalance_boost
-    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
 
     IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
@@ -576,7 +584,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Display results
     emit log_named_uint("Token ID", vars.tokenId);
-    emit log_named_uint("Initial Duration", vars.durations[0]);
+    emit log_named_uint("Initial Duration", vars.lockedBalance_duration_test);
     emit log_named_uint("Additional Duration", newLockTime);
     emit log_named_uint("New Lock End Time", locked.end);
   }
@@ -587,19 +595,25 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
     (
       vars.lockedBalance_tokenAddress,
       vars.lockedBalance_amount,
+      vars.delegated_lockedBalance_amount,
       vars.lockedBalance_start,
       vars.lockedBalance_end,
       vars.lockedBalance_isPermanent,
       vars.lockedBalance_boost
-    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.tokenAddresses[0]));
+    ) = ve.s_locked(vars.tokenId, ve.s_lpType(vars.lockedBalance_tokenAddress_test));
 
     IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
 
-    vars.tokenAddresses[0] = address(modeBalancer8020IonEth);
+    vars.lockedBalance_tokenAddress_test = address(modeBalancer8020IonEth);
 
     modeBalancer8020IonEth.mint(vars.user, vars.amount);
 
@@ -609,7 +623,7 @@ contract VotingEscrowNFTTest is BaseTest {
     // Lock additional asset
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     vm.prank(vars.user);
-    ve.lockAdditionalAsset(vars.tokenAddresses[0], additionalAmount, vars.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(vars.lockedBalance_tokenAddress_test, additionalAmount, vars.tokenId, 26 weeks, false);
 
     // Verify the additional asset is locked
     IveION.LockedBalance memory lockedBalancer = ve.getUserLock(vars.tokenId, lpType);
@@ -638,7 +652,12 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
     IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
     // Fast forward time to after the lock duration
@@ -670,7 +689,12 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
     IveION.LpTokenType lpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
     // Fast forward time to after the lock duration
@@ -709,7 +733,8 @@ contract VotingEscrowNFTTest is BaseTest {
     VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
       address(ve),
       ionMode5050,
-      veloGauge
+      veloGauge,
+      address(veloStakingWalletImplementation)
     );
 
     ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
@@ -783,12 +808,16 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.amount = 1000 * 10 ** 18; // 1000 tokens
 
     // Create lock and check the lock
-    vars.tokenId = _createLockInternal(vars.user);
-    IveION.LpTokenType veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
 
     // Create second lock for the user
     vm.prank(vars.user);
-    vars.secondTokenId = _createLockInternal(vars.user);
+    (vars.secondTokenId, , , ) = _createLockInternal(vars.user);
 
     // Merge the locks
     vm.prank(vars.user);
@@ -813,7 +842,7 @@ contract VotingEscrowNFTTest is BaseTest {
 
     vars.user = address(0x1234);
     vars.tokenId = _createLockMultipleInternal(vars.user);
-    vars.secondTokenId = _createLockInternal(vars.user);
+    (vars.secondTokenId, , , ) = _createLockInternal(vars.user);
 
     vm.prank(vars.user);
     ve.merge(vars.tokenId, vars.secondTokenId);
@@ -842,7 +871,7 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.user = address(0x5678);
     vars.tokenId = _createLockMultipleInternal(vars.user);
 
-    vm.prank(ve.s_team());
+    vm.prank(ve.owner());
     ve.toggleSplit(vars.user, true);
 
     // Split the lock
@@ -877,7 +906,7 @@ contract VotingEscrowNFTTest is BaseTest {
     vars.user = address(0x5678);
     vars.tokenId = _createLockMultipleInternal(vars.user);
 
-    vm.prank(ve.s_team());
+    vm.prank(ve.owner());
     ve.toggleSplit(vars.user, true);
 
     // Split the lock
@@ -914,7 +943,12 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Create a user
     vars.user = address(0x5678);
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
 
     // Lock the tokens permanently
     vm.prank(vars.user);
@@ -927,8 +961,14 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Verify the latest user point history for the lock
     vars.userEpoch = ve.s_userPointEpoch(vars.tokenId, veloLpType);
-    (vars.userPoint_bias, vars.userPoint_slope, vars.userPoint_ts, vars.userPoint_blk, vars.userPoint_permanent) = ve
-      .s_userPointHistory(vars.tokenId, veloLpType, vars.userEpoch);
+    (
+      vars.userPoint_bias,
+      vars.userPoint_slope,
+      vars.userPoint_ts,
+      vars.userPoint_blk,
+      vars.userPoint_permanent,
+      vars.userPoint_permanentDelegate
+    ) = ve.s_userPointHistory(vars.tokenId, veloLpType, vars.userEpoch);
     assertEq(vars.userPoint_bias, 0, "User point bias should be zero for permanent lock");
     assertEq(vars.userPoint_slope, 0, "User point slope should be zero for permanent lock");
     assertEq(vars.userPoint_ts, block.timestamp, "User point timestamp should be current block timestamp");
@@ -938,25 +978,6 @@ contract VotingEscrowNFTTest is BaseTest {
       uint256(int256(locked.amount)),
       "User point permanent lock should match lock amount"
     );
-
-    // Verify the latest global point history
-    uint256 epoch = ve.s_epoch(veloLpType);
-    (
-      vars.globalPoint_bias,
-      vars.globalPoint_slope,
-      vars.globalPoint_ts,
-      vars.globalPoint_blk,
-      vars.globalPoint_permanentLockBalance
-    ) = ve.s_pointHistory(epoch, veloLpType);
-    assertEq(vars.globalPoint_bias, 0, "Global point bias should be zero for permanent lock");
-    assertEq(vars.globalPoint_slope, 0, "Global point slope should be zero for permanent lock");
-    assertEq(vars.globalPoint_ts, block.timestamp, "Global point timestamp should be current block timestamp");
-    assertEq(vars.globalPoint_blk, block.number, "Global point block number should be current block number");
-    assertEq(
-      vars.globalPoint_permanentLockBalance,
-      uint256(int256(locked.amount)),
-      "Global permanent lock balance should match lock amount"
-    );
   }
 
   function testUnlockPermanent() public fork(MODE_MAINNET) {
@@ -964,7 +985,12 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Create a user
     vars.user = address(0x5678);
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
 
     // Lock the tokens permanently
     vm.startPrank(vars.user);
@@ -984,11 +1010,16 @@ contract VotingEscrowNFTTest is BaseTest {
 
     // Create a user
     vars.user = address(0x5678);
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
 
     // Create another user
     vars.user2 = address(0x1234);
-    vars.secondTokenId = _createLockInternal(vars.user2);
+    (vars.secondTokenId, , , ) = _createLockInternal(vars.user2);
 
     // Lock both tokens permanently
     vm.prank(vars.user);
@@ -1005,13 +1036,9 @@ contract VotingEscrowNFTTest is BaseTest {
     IveION.LockedBalance memory locked2 = ve.getUserLock(vars.secondTokenId, veloLpType);
 
     assertEq(locked1.amount, 0, "All voting power should have been delegated from this token");
-    assertEq(
-      locked2.amount,
-      int128(uint128(MINT_AMT * 2)),
-      "All voting power should have been delegated to this token"
-    );
+    assertEq(locked2.delegateAmount, MINT_AMT, "All voting power should have been delegated to this token");
 
-    uint256[] memory delegatees = ve.getDelegatees(vars.tokenId);
+    uint256[] memory delegatees = ve.getDelegatees(vars.tokenId, veloLpType);
     bool found = false;
     for (uint256 i = 0; i < delegatees.length; i++) {
       if (delegatees[i] == vars.secondTokenId) {
@@ -1021,19 +1048,28 @@ contract VotingEscrowNFTTest is BaseTest {
     }
     assertTrue(found, "secondTokenId should be in the list of delegatees");
 
-    assertEq(ve.s_delegations(vars.tokenId, vars.secondTokenId), MINT_AMT, "Delegated amount should be recorded");
+    assertEq(
+      ve.s_delegations(vars.tokenId, vars.secondTokenId, veloLpType),
+      MINT_AMT,
+      "Delegated amount should be recorded"
+    );
   }
 
-  function testDeDelegation() public fork(MODE_MAINNET) {
+  function testRemoveDelegatees() public fork(MODE_MAINNET) {
     TestVars memory vars;
 
     // Create a user
     vars.user = address(0x5678);
-    vars.tokenId = _createLockInternal(vars.user);
+    (
+      vars.tokenId,
+      vars.lockedBalance_tokenAddress_test,
+      vars.lockedBalance_amount_test,
+      vars.lockedBalance_duration_test
+    ) = _createLockInternal(vars.user);
 
     // Create another user
     vars.user2 = address(0x1234);
-    vars.secondTokenId = _createLockInternal(vars.user2);
+    (vars.secondTokenId, , , ) = _createLockInternal(vars.user2);
 
     // Lock both tokens permanently
     vm.prank(vars.user);
@@ -1053,20 +1089,16 @@ contract VotingEscrowNFTTest is BaseTest {
     amounts[0] = MINT_AMT;
 
     vm.prank(vars.user);
-    ve.deDelegate(vars.tokenId, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(vars.tokenId, toTokenIds, address(modeVelodrome5050IonMode), amounts);
 
     // Verify the de-delegation
     IveION.LockedBalance memory locked1 = ve.getUserLock(vars.tokenId, veloLpType);
     IveION.LockedBalance memory locked2 = ve.getUserLock(vars.secondTokenId, veloLpType);
 
-    assertEq(locked1.amount, int128(uint128(MINT_AMT)), "Voting power should be returned to the original token");
-    assertEq(
-      locked2.amount,
-      int128(uint128(MINT_AMT)),
-      "Delegated voting power should be removed from the second token"
-    );
+    assertEq(locked1.amount, MINT_AMT, "Voting power should be returned to the original token");
+    assertEq(locked2.delegateAmount, 0, "Delegated voting power should be removed from the second token");
 
-    uint256[] memory delegatees = ve.getDelegatees(vars.tokenId);
+    uint256[] memory delegatees = ve.getDelegatees(vars.tokenId, veloLpType);
     bool found = false;
     for (uint256 i = 0; i < delegatees.length; i++) {
       if (delegatees[i] == vars.secondTokenId) {
@@ -1077,7 +1109,7 @@ contract VotingEscrowNFTTest is BaseTest {
     assertFalse(found, "secondTokenId should not be in the list of delegatees after de-delegation");
 
     assertEq(
-      ve.s_delegations(vars.tokenId, vars.secondTokenId),
+      ve.s_delegations(vars.tokenId, vars.secondTokenId, veloLpType),
       0,
       "Delegated amount should be zero after de-delegation"
     );

@@ -97,13 +97,7 @@ interface IveION {
   event Withdraw(address indexed provider, uint256 indexed tokenId, uint256 value, uint256 ts);
   event Supply(uint256 prevSupply, uint256 supply);
   event Delegated(uint256 indexed fromTokenId, uint256 indexed toTokenId, address lpToken, uint256 amount);
-  event DelegationRemoved(
-    uint256 indexed fromTokenId,
-    uint256 indexed toTokenId,
-    address lpToken,
-    uint256 amount,
-    bool clearDelegation
-  );
+  event DelegationRemoved(uint256 indexed fromTokenId, uint256 indexed toTokenId, address lpToken, uint256 amount);
   event ProtocolFeesWithdrawn(address indexed tokenAddress, address indexed recipient, uint256 amount);
   event DistributedFeesWithdrawn(address indexed tokenAddress, address indexed recipient, uint256 amount);
   event SplitToggle(address indexed account, bool isAllowed);

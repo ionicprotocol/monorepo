@@ -243,58 +243,73 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
   }
 
+  struct MergeVars {
+    address sender;
+    uint256 lengthOfAssets;
+    address[] assetsLocked;
+    address asset;
+    LpTokenType lpType;
+    LockedBalance oldLockedTo;
+    LockedBalance oldLockedFrom;
+    uint256 end;
+    uint256 start;
+    uint256 boost;
+    LockedBalance newLockedTo;
+  }
+
   function merge(uint256 _from, uint256 _to) external {
-    address sender = _msgSender();
+    MergeVars memory vars;
+    vars.sender = _msgSender();
     if (_from == _to) revert SameNFT();
     if (s_voted[_from]) revert AlreadyVoted();
-    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
-    if (!_isApprovedOrOwner(sender, _to)) revert NotApprovedOrOwner();
+    if (!_isApprovedOrOwner(vars.sender, _from)) revert NotApprovedOrOwner();
+    if (!_isApprovedOrOwner(vars.sender, _to)) revert NotApprovedOrOwner();
 
-    uint256 lengthOfAssets = s_assetsLocked[_from].length();
-    address[] memory assetsLocked = s_assetsLocked[_from].values();
+    vars.lengthOfAssets = s_assetsLocked[_from].length();
+    vars.assetsLocked = s_assetsLocked[_from].values();
 
-    for (uint256 i = 0; i < lengthOfAssets; i++) {
-      address asset = assetsLocked[i];
-      LpTokenType _lpType = s_lpType[asset];
-      LockedBalance memory oldLockedTo = s_locked[_to][_lpType];
-      if (oldLockedTo.end != 0 && oldLockedTo.end <= block.timestamp && !oldLockedTo.isPermanent) revert LockExpired();
+    for (uint256 i = 0; i < vars.lengthOfAssets; i++) {
+      vars.asset = vars.assetsLocked[i];
+      vars.lpType = s_lpType[vars.asset];
+      vars.oldLockedTo = s_locked[_to][vars.lpType];
+      if (vars.oldLockedTo.end != 0 && vars.oldLockedTo.end <= block.timestamp && !vars.oldLockedTo.isPermanent)
+        revert LockExpired();
 
-      LockedBalance memory oldLockedFrom = s_locked[_from][_lpType];
-      if (oldLockedFrom.isPermanent) revert PermanentLock();
+      vars.oldLockedFrom = s_locked[_from][vars.lpType];
+      if (vars.oldLockedFrom.isPermanent) revert PermanentLock();
 
-      uint256 end = oldLockedFrom.end;
-      uint256 start = oldLockedFrom.start;
-      uint256 boost = oldLockedFrom.boost;
+      vars.end = vars.oldLockedFrom.end;
+      vars.start = vars.oldLockedFrom.start;
+      vars.boost = vars.oldLockedFrom.boost;
 
-      if ((oldLockedTo.end - oldLockedTo.start) > (oldLockedFrom.end - oldLockedFrom.start)) {
-        end = oldLockedTo.end;
-        start = oldLockedTo.start;
-        boost = oldLockedTo.boost;
+      if ((vars.oldLockedTo.end - vars.oldLockedTo.start) > (vars.oldLockedFrom.end - vars.oldLockedFrom.start)) {
+        vars.end = vars.oldLockedTo.end;
+        vars.start = vars.oldLockedTo.start;
+        vars.boost = vars.oldLockedTo.boost;
       }
 
-      s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
-      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), _lpType);
+      s_locked[_from][vars.lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
+      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), vars.lpType);
 
-      LockedBalance memory newLockedTo;
-      newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
-      newLockedTo.isPermanent = oldLockedTo.isPermanent;
-      newLockedTo.tokenAddress = asset;
-      if (newLockedTo.isPermanent) {
-        s_permanentLockBalance[_lpType] += uint256(int256(oldLockedFrom.amount));
+      vars.newLockedTo.amount = vars.oldLockedTo.amount + vars.oldLockedFrom.amount;
+      vars.newLockedTo.isPermanent = vars.oldLockedTo.isPermanent;
+      vars.newLockedTo.tokenAddress = vars.asset;
+      if (vars.newLockedTo.isPermanent) {
+        s_permanentLockBalance[vars.lpType] += uint256(int256(vars.oldLockedFrom.amount));
       } else {
-        newLockedTo.end = end;
-        newLockedTo.start = start;
-        newLockedTo.boost = oldLockedTo.boost;
+        vars.newLockedTo.end = vars.end;
+        vars.newLockedTo.start = vars.start;
+        vars.newLockedTo.boost = vars.oldLockedTo.boost;
       }
-      _checkpoint(_to, newLockedTo, _lpType);
-      s_locked[_to][_lpType] = newLockedTo;
+      _checkpoint(_to, vars.newLockedTo, vars.lpType);
+      s_locked[_to][vars.lpType] = vars.newLockedTo;
 
-      if (!s_assetsLocked[_to].contains(asset)) {
-        s_assetsLocked[_to].add(asset);
+      if (!s_assetsLocked[_to].contains(vars.asset)) {
+        s_assetsLocked[_to].add(vars.asset);
       }
     }
     _burn(_from);
-    emit MergeCompleted(_from, _to, assetsLocked, lengthOfAssets);
+    emit MergeCompleted(_from, _to, vars.assetsLocked, vars.lengthOfAssets);
   }
 
   function split(
@@ -412,13 +427,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Delegated(fromTokenId, toTokenId, lpToken, amount);
   }
 
-  function _removeDelegation(
-    uint256 fromTokenId,
-    uint256 toTokenId,
-    address lpToken,
-    uint256 amount,
-    bool clearDelegation
-  ) internal {
+  function _removeDelegation(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) internal {
     // Ensure the caller is the owner or approved for the fromTokenId
     if (!_isApprovedOrOwner(msg.sender, fromTokenId) && !_isApprovedOrOwner(msg.sender, toTokenId))
       revert NotApprovedOrOwner();
@@ -427,10 +436,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
     LockedBalance memory toLocked = s_locked[toTokenId][lpType];
 
-    // Ensure the amount to de-delegate is not greater than the delegated amount
-    if (amount > s_delegations[fromTokenId][toTokenId][lpType]) revert AmountTooBig();
-
-    amount = clearDelegation ? s_delegations[fromTokenId][toTokenId][lpType] : amount;
+    amount = amount > s_delegations[fromTokenId][toTokenId][lpType]
+      ? s_delegations[fromTokenId][toTokenId][lpType]
+      : amount;
     // Transfer the voting power back
     toLocked.delegateAmount -= amount;
     fromLocked.amount += amount;
@@ -447,19 +455,18 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_locked[fromTokenId][lpType] = fromLocked;
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
 
-    emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount, clearDelegation);
+    emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
   }
 
   function removeDelegatees(
     uint256 fromTokenId,
     uint256[] memory toTokenIds,
     address lpToken,
-    uint256[] memory amounts,
-    bool clearDelegation
+    uint256[] memory amounts
   ) public {
     require(toTokenIds.length == amounts.length, "Mismatched array lengths");
     for (uint256 i = 0; i < toTokenIds.length; i++) {
-      _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i], clearDelegation);
+      _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i]);
     }
   }
 
@@ -467,12 +474,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256[] memory fromTokenIds,
     uint256 toTokenId,
     address lpToken,
-    uint256[] memory amounts,
-    bool clearDelegation
+    uint256[] memory amounts
   ) public {
     require(fromTokenIds.length == amounts.length, "Mismatched array lengths");
     for (uint256 i = 0; i < fromTokenIds.length; i++) {
-      _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i], clearDelegation);
+      _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
     }
   }
 
@@ -510,7 +516,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       for (uint256 i = 0; i < lengthOfAssets; i++) {
         address asset = assetsLocked[i];
         LpTokenType lpType = s_lpType[asset];
-        removeDelegatees(tokenId, s_delegatees[tokenId][lpType].values(), asset, new uint256[](0), true);
+        uint256[] memory delegatees = s_delegatees[tokenId][lpType].values();
+        uint256[] memory maxAmounts = new uint256[](delegatees.length);
+        for (uint256 j = 0; j < maxAmounts.length; j++) {
+          maxAmounts[j] = type(uint256).max;
+        }
+        removeDelegatees(tokenId, delegatees, asset, maxAmounts);
       }
     }
   }
@@ -547,6 +558,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   // ║                           Internal Functions                              ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  struct DepositVars {
+    uint256 supplyBefore;
+    uint256 totalLockTime;
+    LockedBalance newLocked;
+    address from;
+  }
+
   function _depositFor(
     address _tokenAddress,
     uint256 _tokenId,
@@ -560,17 +578,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   ) internal {
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
 
-    uint256 supplyBefore = s_supply[_lpType];
-    s_supply[_lpType] = supplyBefore + _tokenAmount;
+    DepositVars memory vars;
+    vars.supplyBefore = s_supply[_lpType];
+    s_supply[_lpType] = vars.supplyBefore + _tokenAmount;
 
-    LockedBalance memory newLocked;
     (
-      newLocked.tokenAddress,
-      newLocked.amount,
-      newLocked.start,
-      newLocked.end,
-      newLocked.isPermanent,
-      newLocked.boost
+      vars.newLocked.tokenAddress,
+      vars.newLocked.amount,
+      vars.newLocked.start,
+      vars.newLocked.end,
+      vars.newLocked.isPermanent,
+      vars.newLocked.boost
     ) = (
       _oldLocked.tokenAddress,
       _oldLocked.amount,
@@ -579,30 +597,31 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       _oldLocked.isPermanent,
       _oldLocked.boost
     );
-    newLocked.tokenAddress = _tokenAddress;
-    newLocked.amount += _tokenAmount;
+
+    vars.newLocked.tokenAddress = _tokenAddress;
+    vars.newLocked.amount += _tokenAmount;
     if (_unlockTime != 0) {
-      if (newLocked.start == 0) newLocked.start = block.timestamp;
-      newLocked.end = _unlockTime;
-      uint256 totalLockTime = newLocked.end - newLocked.start;
-      newLocked.boost = _calculateBoost(totalLockTime);
+      if (vars.newLocked.start == 0) vars.newLocked.start = block.timestamp;
+      vars.newLocked.end = _unlockTime;
+      vars.totalLockTime = vars.newLocked.end - vars.newLocked.start;
+      vars.newLocked.boost = _calculateBoost(vars.totalLockTime);
     }
-    s_locked[_tokenId][_lpType] = newLocked;
+    s_locked[_tokenId][_lpType] = vars.newLocked;
 
-    _checkpoint(_tokenId, newLocked, _lpType);
+    _checkpoint(_tokenId, vars.newLocked, _lpType);
 
-    address _from = _msgSender();
+    vars.from = _msgSender();
     if (_tokenAmount != 0) {
       s_userCumulativeAssetValues[ownerOf(_tokenId)][_tokenAddress] += _tokenAmount;
-      IERC20(_tokenAddress).safeTransferFrom(_from, address(this), _tokenAmount);
+      IERC20(_tokenAddress).safeTransferFrom(vars.from, address(this), _tokenAmount);
       (IStakeStrategy _stakeStrategy, bytes memory _stakeData) = _getStakeStrategy(_lpType);
       if (address(_stakeStrategy) != address(0) && _stakeUnderlying) {
         _handleTokenStake(_to, _tokenId, _tokenAddress, _tokenAmount, _stakeStrategy, _stakeData);
       }
     }
 
-    emit Deposit(_to, _tokenId, _depositType, _tokenAmount, newLocked.end, block.timestamp);
-    emit Supply(supplyBefore, s_supply[_lpType]);
+    emit Deposit(_to, _tokenId, _depositType, _tokenAmount, vars.newLocked.end, block.timestamp);
+    emit Supply(vars.supplyBefore, s_supply[_lpType]);
   }
 
   function _handleTokenStake(

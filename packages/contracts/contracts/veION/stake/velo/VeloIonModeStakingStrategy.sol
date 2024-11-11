@@ -27,10 +27,11 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable {
     _;
   }
 
-  constructor(address _escrow, address _stakingToken, address _stakingContract) {
+  constructor(address _escrow, address _stakingToken, address _stakingContract, address _stakingWalletImplementation) {
     escrow = _escrow;
     stakingToken = _stakingToken;
     stakingContract = _stakingContract;
+    stakingWalletImplementation = _stakingWalletImplementation;
   }
 
   /**
