@@ -204,7 +204,7 @@ export const multipliers: Record<
           ionAPR: false
         }
       },
-      weETH: {
+      'weETH.mode': {
         borrow: {
           eigenlayer: true,
           etherfi: 1,
