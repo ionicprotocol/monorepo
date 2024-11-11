@@ -6,13 +6,11 @@ import {
   ionicComptrollerAbi,
   ionicLiquidatorAbi,
   ionicUniV3LiquidatorAbi,
-  LiquidatablePool,
   poolDirectoryAbi,
   poolLensAbi,
   PoolUserStruct,
   PoolUserWithAssets,
   PublicPoolUserWithData,
-  PythLiquidatablePool,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "@ionicprotocol/sdk";
@@ -272,7 +270,6 @@ const getPotentialLiquidation = async (
   // USDC: 6 decimals
   let repayAmount = (debtAsset.borrowBalance * closeFactor) / SCALE_FACTOR_ONE_18_WEI;
   const penalty = await getLiquidationPenalty(collateralAsset.cToken, liquidationIncentive);
-  console.log("🚀 ~ penalty:", penalty);
   // Scale to 18 decimals
   let liquidationValue = (repayAmount * debtAssetUnderlyingPrice) / 10n ** BigInt(debtAssetDecimals);
   // 18 decimals
@@ -316,13 +313,9 @@ const getPotentialLiquidation = async (
   };
 };
 
-const liquidateUsers = async <T extends LiquidatablePool | PythLiquidatablePool>(
-  poolUsers: PoolUserStruct[],
-  pool: PublicPoolUserWithData,
-  botType: BotType
-): Promise<Array<T>> => {
-  const users: Array<T> = [];
+const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserWithData, botType: BotType) => {
   let i: number = 0;
+  const liquidations = [];
   for (const user of poolUsers) {
     try {
       const userAssets = await client.simulateContract({
@@ -338,17 +331,13 @@ const liquidateUsers = async <T extends LiquidatablePool | PythLiquidatablePool>
         assets: userAssets.result as ExtendedPoolAssetStructOutput[],
       };
 
-      let encodedLiquidationTX;
-
       if (botType == BotType.Standard) {
-        console.log("🚀 ~ userWithAssets:", userWithAssets);
         const liquidationParams = await getPotentialLiquidation(
           userWithAssets,
           pool.closeFactor,
           pool.liquidationIncentive
         );
 
-        console.log("🚀 ~ liquidationParams:", liquidationParams);
         if (!liquidationParams) {
           logger.warn("Liquidation params are undefined, doing nothing");
           continue;
@@ -375,6 +364,11 @@ const liquidateUsers = async <T extends LiquidatablePool | PythLiquidatablePool>
           chain: walletClient.chain,
         });
         logger.info(`Liquidation tx: ${tx}`);
+        liquidations.push({
+          type: BotType.Standard,
+          liquidationParams,
+          tx,
+        });
       } else {
         const liquidationParams = await getPotentialPythLiquidation(userWithAssets, pool.closeFactor, pool.comptroller);
         if (!liquidationParams) {
@@ -451,46 +445,47 @@ const liquidateUsers = async <T extends LiquidatablePool | PythLiquidatablePool>
           await pythClient.submitOpportunity(opportunity);
           logger.info("Opportunity submitted successfully:", opportunity);
           await sendDiscordNotification(opportunity);
+
+          liquidations.push({
+            type: BotType.Pyth,
+            liquidationParams,
+            opportunity,
+          });
         }
       }
       logger.info(`${++i}/${poolUsers.length}`);
-      if (encodedLiquidationTX !== null) users.push(encodedLiquidationTX as unknown as T);
     } catch (e) {
       logger.error(`Error while liquidating user ${user}, comptroller: ${pool.comptroller}... Error: ${e}`);
     }
   }
-  return users;
+  return liquidations;
 };
 
-async function gatherLiquidationsFromPoolsAndLiquidate<T extends LiquidatablePool | PythLiquidatablePool>(
-  pools: Array<PublicPoolUserWithData>,
-  botType: BotType
-): Promise<{ liquidations: Array<T> }> {
-  const liquidations: Array<T> = [];
-
+async function gatherLiquidationsFromPoolsAndLiquidate(pools: Array<PublicPoolUserWithData>, botType: BotType) {
+  const liquidations = [];
   for (const pool of pools) {
-    const liquidatableUsers = await liquidateUsers<T>(pool.users, pool, botType);
-    if (liquidatableUsers.length > 0) {
+    const _liquidations = await liquidateUsers(pool.users, pool, botType);
+    if (_liquidations.length > 0) {
       liquidations.push({
         comptroller: pool.comptroller,
-        liquidations: liquidatableUsers,
-      } as unknown as T);
+        liquidations: _liquidations,
+      });
     }
   }
   return { liquidations };
 }
 
-const fetchAndLiquidate = async <T extends LiquidatablePool | PythLiquidatablePool>(botType: BotType) => {
+const fetchAndLiquidate = async (botType: BotType) => {
   // Get potential liquidations from public pools
   const { validPools } = await getPoolsAndUsers(botType);
 
-  const { liquidations } = await gatherLiquidationsFromPoolsAndLiquidate<T>(validPools, botType);
+  const { liquidations } = await gatherLiquidationsFromPoolsAndLiquidate(validPools, botType);
 
   return { liquidations };
 };
 
 export const liquidatePositions = async (botType: BotType) => {
-  const { liquidations } = await fetchAndLiquidate<LiquidatablePool>(botType);
+  const { liquidations } = await fetchAndLiquidate(botType);
 
   logger.info(`Processed liquidations: ${JSON.stringify(liquidations, null, 2)}`);
 };
