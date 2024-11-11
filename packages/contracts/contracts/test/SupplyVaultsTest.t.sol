@@ -170,23 +170,17 @@ contract SupplyVaultsTest is BaseTest {
           // don't upgrade already upgraded fws
           console.log("ALREADY UPGRADED");
         } catch {
-          // upgrade if failing?
+          // upgrade if the getRewardsPerSecondPerToken fn is missing
           {
             TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
             vm.prank(proxyAdmin.owner());
             proxyAdmin.upgrade(proxy, address(newFwImpl));
           }
 
-          ERC20[] memory fwStrategies = flywheel.getAllStrategies();
-          for (uint8 k = 0; k < fwStrategies.length; k++) {
-            vm.prank(ionWhale);
-            ionToken.transfer(address(fwStrategies[k]), ionWhaleStartingBalance / 200);
-          }
-
           FlywheelStaticRewards flywheelRewards = FlywheelStaticRewards(address(flywheel.flywheelRewards()));
 
           IFlywheelRewards newRewards;
-          try flywheelRewards.owner() returns (address owner) {
+          try flywheelRewards.owner() returns (address) {
             (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
             if (rewardsPerSecond != 0) {
               newRewards = new FlywheelStaticRewards(
@@ -211,6 +205,7 @@ contract SupplyVaultsTest is BaseTest {
             flywheel.setFlywheelRewards(newRewards);
           }
 
+          ERC20[] memory fwStrategies = flywheel.getAllStrategies();
           for (uint8 k = 0; k < fwStrategies.length; k++) {
             IonicComptroller marketPool = ICErc20(address(fwStrategies[k])).comptroller();
             if (address(marketPool) != address(pool)) {
@@ -258,32 +253,34 @@ contract SupplyVaultsTest is BaseTest {
 
   function testVaultAprFromRewards() public debuggingOnly fork(MODE_MAINNET) {
     OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    asSecondExtension.pullAccruedVaultRewards();
     uint256 aprBefore = asSecondExtension.estimatedAPR();
 
     (CompoundMarketERC4626 adapter1, uint64 allocation1) = vault.adapters(0);
     (CompoundMarketERC4626 adapter2, uint64 allocation2) = vault.adapters(1);
 
-    //    ICErc20 market1 = adapter1.market();
-    //    uint256 supplyRate1 = market1.supplyRatePerBlock() * blocksPerYear;
-    //    ICErc20 market2 = adapter2.market();
-    //    uint256 supplyRate2 = market2.supplyRatePerBlock() * blocksPerYear;
-
+    uint256 rewardsAprBefore1 = adapter1.rewardsApr();
     uint256 rewardsAprBefore2 = adapter2.rewardsApr();
-    console.log("0 REWARDS Apr %e", adapter1.rewardsApr());
+    console.log("0 REWARDS Apr %e", rewardsAprBefore1);
     console.log("1 REWARDS Apr %e", rewardsAprBefore2);
     console.log("aprBefore %e", aprBefore);
 
-    vm.warp(block.timestamp + 2 days);
+    vm.warp(vm.getBlockTimestamp() + 2592001);
 
     IonicComptroller pool = wethMainMarket.comptroller();
     uint256 rewardsAmountFor1PercentApr;
     {
-      uint256 wethMarketSuppliedAssets = (wethMainMarket.totalSupply() * wethMainMarket.exchangeRateCurrent()) / 1e18;
-      console.log("wethMarketSuppliedAssets %e", wethMarketSuppliedAssets);
+      // total supply = 8340714736106176115889
+      //   fwRewardsAmountFor1PercentAprIncrease 8.3961226709852889815644e22
+      uint256 wethMarketSuppliedAssets = wethMainMarket.getTotalUnderlyingSupplied();
+      //wethMarketSuppliedAssets = (wethMarketSuppliedAssets * wethMainMarket.exchangeRateCurrent()) / 1e18;
+      //console.log("wethMarketSuppliedAssets %e", wethMarketSuppliedAssets);
       uint256 wethPrice = pool.oracle().getUnderlyingPrice(wethMainMarket);
       uint256 rewardsValueFor1PercentApr = ((wethMarketSuppliedAssets * wethPrice) / 1e18) / 100;
+      console.log("rewardsValueFor1PercentApr for 1 year %e", rewardsValueFor1PercentApr);
       uint256 ionPrice = pool.oracle().price(address(ionToken));
       rewardsAmountFor1PercentApr = (rewardsValueFor1PercentApr * 1e18) / ionPrice;
+      console.log("rewardsAmountFor1PercentApr for 1 year %e", rewardsAmountFor1PercentApr);
     }
 
     // find the ION flywheel and add as much rewards
@@ -297,13 +294,11 @@ contract SupplyVaultsTest is BaseTest {
           IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
           (, , uint192 cycleRewards) = flywheelRewards.rewardsCycle(ERC20(address(wethMainMarket)));
           // move to the next rewards cycle
-          vm.warp(block.timestamp + flywheelRewards.rewardsCycleLength() + 1);
-
-          //console.log("flywheelRewards %e", reward);
-          //console.log("cycle len %d", flywheelRewards.rewardsCycleLength());
+          vm.warp(vm.getBlockTimestamp() + flywheelRewards.rewardsCycleLength() + 1);
 
           // adjust the reward amount proportionally to the flywheel specific cycle length
           uint256 fwRewardsAmountFor1PercentAprIncrease = (rewardsAmountFor1PercentApr * flywheelRewards.rewardsCycleLength()) / 365.25 days;
+          console.log("fwRewardsAmountFor1PercentAprIncrease %e", fwRewardsAmountFor1PercentAprIncrease);
           // add as much as the last cycle rewards + more rewards for +1% APR
           fwRewardsAmountFor1PercentAprIncrease = cycleRewards + fwRewardsAmountFor1PercentAprIncrease;
           vm.prank(ionWhale);
@@ -318,17 +313,23 @@ contract SupplyVaultsTest is BaseTest {
       }
     }
 
-    uint256 aprAfter = asSecondExtension.estimatedAPR();
-    console.log("0 REWARDS Apr %e", adapter1.rewardsApr());
-    console.log("1 REWARDS Apr %e", adapter2.rewardsApr());
-    console.log("aprAfter %e", aprAfter);
-    console.log("aprAfter - aprBefore %e", aprAfter - aprBefore);
-    console.log("rewardsAprAfter - rewardsAprBefore %e", adapter2.rewardsApr() - rewardsAprBefore2);
+    {
+      uint256 aprAfter = asSecondExtension.estimatedAPR();
+      uint256 rewardsAprAfter1 = adapter1.rewardsApr();
+      uint256 rewardsAprAfter2 = adapter2.rewardsApr();
+      console.log("0 REWARDS Apr %e", rewardsAprAfter1);
+      console.log("1 REWARDS Apr %e", rewardsAprAfter2);
+      console.log("aprAfter %e", aprAfter);
+      console.log("aprAfter - aprBefore %e", aprAfter - aprBefore);
+      console.log("rewardsAprAfter - rewardsAprBefore %e", rewardsAprAfter2 - rewardsAprBefore2);
+    }
 
     console.log("APR after should be approx adapter2.allocation * adapter2AprIncrease");
 
     uint256 expectedAprIncrease = (uint256(allocation2) * 0.01e18) / 1e18;
     console.log("expectedAprIncrease %e", expectedAprIncrease);
+
+
   }
 
   function testVaultOptimization() public fork(MODE_MAINNET) {
@@ -412,8 +413,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the shares before and after calling mint
     {
@@ -449,8 +450,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the shares before and after calling deposit
     {
@@ -496,8 +497,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the balance before and after calling withdraw
     {
@@ -542,8 +543,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the balance before and after calling redeem
     {
@@ -601,7 +602,7 @@ contract SupplyVaultsTest is BaseTest {
     vm.expectRevert(NotPassedQuitPeriod.selector);
     secondExt.changeAdapters();
 
-    vm.warp(block.timestamp + 3.01 days);
+    vm.warp(vm.getBlockTimestamp() + 3.01 days);
     secondExt.changeAdapters();
   }
 
@@ -682,8 +683,8 @@ contract SupplyVaultsTest is BaseTest {
     {
       // advance time to move away from the first cycle,
       // because the first cycle is initialized with 0 rewards
-      vm.warp(block.timestamp + 25 hours);
-      vm.roll(block.number + 1000);
+      vm.warp(vm.getBlockTimestamp() + 25 hours);
+      vm.roll(vm.getBlockNumber() + 1000);
     }
 
     // pull from the adapters the rewards for the new cycle
@@ -696,8 +697,8 @@ contract SupplyVaultsTest is BaseTest {
       flywheelION.accrue(ERC20(address(vault)), wethWhale);
 
       // advance time in the same cycle in order to accrue some rewards for it
-      vm.warp(block.timestamp + 10 hours);
-      vm.roll(block.number + 1000);
+      vm.warp(vm.getBlockTimestamp() + 10 hours);
+      vm.roll(vm.getBlockNumber() + 1000);
     }
 
     // harvest does nothing when the APR remains the same

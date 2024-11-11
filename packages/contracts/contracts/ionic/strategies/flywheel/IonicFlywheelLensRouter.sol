@@ -136,16 +136,15 @@ contract IonicFlywheelLensRouter {
     uint256 nativeSpeedPerSecondPerCToken = rewardSpeedPerSecondPerCToken * rewardTokenPrice; // scaled to 1e36
     uint256 nativeSpeedPerYearPerCToken = nativeSpeedPerSecondPerCToken * 365.25 days; // scaled to 1e36
     uint256 assetSpeedPerYearPerCToken = nativeSpeedPerYearPerCToken / underlyingPrice; // scaled to 1e18
-    uint256 assetSpeedPerYearPerCTokenScaled = assetSpeedPerYearPerCToken * 1e18; // scaled to 1e36
     if (!isBorrow) {
       // if not borrowing, use exchange rate to scale
-      apr = assetSpeedPerYearPerCTokenScaled / exchangeRate; // scaled to 1e18
+      apr = (assetSpeedPerYearPerCToken * 1e18) / exchangeRate; // scaled to 1e18
     } else {
-      apr = assetSpeedPerYearPerCTokenScaled / 1e18; // scaled to 1e18
+      apr = assetSpeedPerYearPerCToken; // scaled to 1e18
     }
   }
 
-  function getRewardsAprForMarket(ICErc20 market) internal returns (int256 totalMarketRewardsApr) {
+  function getRewardsAprForMarket(ICErc20 market) public view returns (int256 totalMarketRewardsApr) {
     IonicComptroller comptroller = market.comptroller();
     BasePriceOracle oracle = comptroller.oracle();
     uint256 underlyingPrice = oracle.getUnderlyingPrice(market);

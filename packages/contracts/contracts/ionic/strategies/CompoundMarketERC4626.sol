@@ -104,15 +104,8 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
     return _rewardsApr() + market.supplyRatePerBlock() * blocksPerYear;
   }
 
-  function _rewardsApr() internal view returns (uint256 rewardsApr) {
-    ICErc20[] memory marketAsArray = new ICErc20[](1);
-    marketAsArray[0] = market;
-    IonicFlywheelLensRouter.MarketRewardsInfo[] memory marketsRewardData = registry.flr().getMarketRewardsInfo(marketAsArray);
-
-    IonicFlywheelLensRouter.RewardsInfo[] memory rewardData = marketsRewardData[0].rewardsInfo;
-    for (uint256 i = 0; i < rewardData.length; i++) {
-      rewardsApr += rewardData[i].formattedAPR;
-    }
+  function _rewardsApr() internal view returns (uint256) {
+    return uint256(registry.flr().getRewardsAprForMarket(market));
   }
 
   /// @notice Returns an estimation of the current Annual Percentage Rate weighted by the assets under
