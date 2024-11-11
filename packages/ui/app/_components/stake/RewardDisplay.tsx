@@ -70,13 +70,13 @@ export const CHAIN_CONFIGS: ChainConfigs = {
 
 type RewardDisplayProps = {
   chainId: number;
-  isUnstaking: boolean;
+  isUnstaking?: boolean;
   selectedToken?: 'eth' | 'mode' | 'weth';
 };
 
 export default function RewardDisplay({
   chainId,
-  isUnstaking,
+  isUnstaking = false,
   selectedToken = 'eth'
 }: RewardDisplayProps) {
   const chainConfig = CHAIN_CONFIGS[chainId];
