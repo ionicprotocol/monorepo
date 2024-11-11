@@ -17,10 +17,10 @@ const run = async () => {
   });
 
   const publicClient = createPublicClient({ transport: http(), chain: mode });
-  const borrower = "0x1Bec4f239F1Ec11FD8DC7B31A8fea7A5bA5a9Aa4";
-  const cErc20 = "0xA0D844742B4abbbc43d8931a6Edb00C56325aA18";
-  const cTokenCollateral = "0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038";
-  const repayAmount = 843900759317990;
+  const borrower = "0xE4ca2a68a235Ab622273d7A3bcCfA84FD3Ad8F29";
+  const cErc20 = "0xd70254C3baD29504789714A7c69d60Ec1127375C";
+  const cTokenCollateral = "0xA0D844742B4abbbc43d8931a6Edb00C56325aA18";
+  const repayAmount = 843;
 
   const borrowedUnderlying = await publicClient.readContract({
     address: cErc20,
@@ -41,7 +41,6 @@ const run = async () => {
 
   const data = await fetch(url, options);
   const json = await data.json();
-  console.log(json);
 
   const tx = await walletClient.writeContract({
     address: ionicLiquidator,
@@ -56,7 +55,7 @@ const run = async () => {
       json.transactionRequest.data
     ]
   });
-  console.log(tx);
+  console.log("successful liquidation tx: ", tx);
 };
 
 run();

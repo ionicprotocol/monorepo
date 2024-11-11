@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "packages/bots/liquidator/.env" });
+dotenv.config({ path: ".env" });
 
 const config = {
   environment: process.env.NODE_ENV ?? "development",
@@ -20,6 +21,7 @@ const config = {
   chainName: process.env.CHAIN_NAME ?? "mode",
   expressRelayEndpoint: process.env.RELAY_ENDPOINT ?? "https://pyth-express-relay-mainnet.asymmetric.re/",
 };
+console.log("🚀 ~ config.process.env.ETHEREUM_ADMIN_PRIVATE_KEY:", process.env.ETHEREUM_ADMIN_PRIVATE_KEY);
 
 export enum EXCLUDED_ERROR_CODES {
   NETWORK_ERROR,
