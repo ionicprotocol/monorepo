@@ -40,11 +40,9 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
-import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
 import MaxDeposit from '../_components/stake/MaxDeposit';
-import ModeBreakdown from '../_components/stake/ModeBreakdown';
-import OPBreakdown from '../_components/stake/OPBreakdown';
+import RewardDisplay from '../_components/stake/RewardDisplay';
 import Toggle from '../_components/Toggle';
 
 const NetworkSelector = dynamic(
@@ -759,16 +757,15 @@ export default function Stake() {
             </h1>
 
             {/* breakdowns */}
-            {+chain === mode.id && (
-              <ModeBreakdown
-                step3Toggle={step3Toggle}
+            {(+chain === mode.id ||
+              +chain === optimism.id ||
+              +chain === base.id) && (
+              <RewardDisplay
+                chainId={+chain}
+                isUnstaking={step3Toggle === 'Unstake'}
                 selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
               />
             )}
-            {+chain === optimism.id && (
-              <OPBreakdown step3Toggle={step3Toggle} />
-            )}
-            {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto" />
             <button
               disabled={
