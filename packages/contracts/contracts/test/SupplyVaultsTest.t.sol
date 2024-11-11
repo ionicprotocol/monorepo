@@ -188,7 +188,7 @@ contract SupplyVaultsTest is BaseTest {
               );
 
               //            emit log_named_uint("rewardsEndTimestamp", rewardsEndTimestamp);
-              require(rewardsEndTimestamp > block.timestamp, "rewards ended");
+              require(rewardsEndTimestamp > vm.getBlockTimestamp(), "rewards ended");
             }
           } catch {
             // if failing, the rewards contract is for dynamic rewards
@@ -298,7 +298,7 @@ contract SupplyVaultsTest is BaseTest {
 
           // adjust the reward amount proportionally to the flywheel specific cycle length
           uint256 fwRewardsAmountFor1PercentAprIncrease = (rewardsAmountFor1PercentApr * flywheelRewards.rewardsCycleLength()) / 365.25 days;
-          console.log("fwRewardsAmountFor1PercentAprIncrease %e", fwRewardsAmountFor1PercentAprIncrease);
+          //console.log("fwRewardsAmountFor1PercentAprIncrease %e", fwRewardsAmountFor1PercentAprIncrease);
           // add as much as the last cycle rewards + more rewards for +1% APR
           fwRewardsAmountFor1PercentAprIncrease = cycleRewards + fwRewardsAmountFor1PercentAprIncrease;
           vm.prank(ionWhale);
@@ -313,8 +313,8 @@ contract SupplyVaultsTest is BaseTest {
       }
     }
 
+    uint256 aprAfter = asSecondExtension.estimatedAPR();
     {
-      uint256 aprAfter = asSecondExtension.estimatedAPR();
       uint256 rewardsAprAfter1 = adapter1.rewardsApr();
       uint256 rewardsAprAfter2 = adapter2.rewardsApr();
       console.log("0 REWARDS Apr %e", rewardsAprAfter1);
@@ -324,12 +324,11 @@ contract SupplyVaultsTest is BaseTest {
       console.log("rewardsAprAfter - rewardsAprBefore %e", rewardsAprAfter2 - rewardsAprBefore2);
     }
 
-    console.log("APR after should be approx adapter2.allocation * adapter2AprIncrease");
-
+    // APR after should be approx adapter2.allocation * adapter2AprIncrease
     uint256 expectedAprIncrease = (uint256(allocation2) * 0.01e18) / 1e18;
     console.log("expectedAprIncrease %e", expectedAprIncrease);
 
-
+    assertApproxEqRel(expectedAprIncrease, aprAfter - aprBefore, 5e16);
   }
 
   function testVaultOptimization() public fork(MODE_MAINNET) {
