@@ -316,6 +316,7 @@ const getPotentialLiquidation = async (
 const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserWithData, botType: BotType) => {
   let i: number = 0;
   const liquidations = [];
+  const errors = [];
   for (const user of poolUsers) {
     try {
       const userAssets = await client.simulateContract({
@@ -455,37 +456,57 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
       }
       logger.info(`${++i}/${poolUsers.length}`);
     } catch (e) {
-      logger.error(`Error while liquidating user ${user}, comptroller: ${pool.comptroller}... Error: ${e}`);
+      logger.error(
+        `Error while liquidating user ${JSON.stringify(user)}, comptroller: ${pool.comptroller}... Error: ${e}`
+      );
+      errors.push({
+        comptroller: pool.comptroller,
+        user: user,
+        error: {
+          message: (e as Error).message,
+          stack: (e as Error).stack,
+        },
+      });
     }
   }
-  return liquidations;
+  return { liquidations, errors };
 };
 
 async function gatherLiquidationsFromPoolsAndLiquidate(pools: Array<PublicPoolUserWithData>, botType: BotType) {
   const liquidations = [];
+  const errors = [];
   for (const pool of pools) {
-    const _liquidations = await liquidateUsers(pool.users, pool, botType);
+    const { liquidations: _liquidations, errors: _errors } = await liquidateUsers(pool.users, pool, botType);
     if (_liquidations.length > 0) {
       liquidations.push({
         comptroller: pool.comptroller,
         liquidations: _liquidations,
       });
     }
+    if (_errors.length > 0) {
+      errors.push({
+        comptroller: pool.comptroller,
+        errors: _errors,
+      });
+    }
   }
-  return { liquidations };
+  return { liquidations, errors };
 }
 
 const fetchAndLiquidate = async (botType: BotType) => {
   // Get potential liquidations from public pools
   const { validPools } = await getPoolsAndUsers(botType);
 
-  const { liquidations } = await gatherLiquidationsFromPoolsAndLiquidate(validPools, botType);
+  const { liquidations, errors } = await gatherLiquidationsFromPoolsAndLiquidate(validPools, botType);
 
-  return { liquidations };
+  return { liquidations, errors };
 };
 
 export const liquidatePositions = async (botType: BotType) => {
-  const { liquidations } = await fetchAndLiquidate(botType);
+  const { liquidations, errors } = await fetchAndLiquidate(botType);
 
   logger.info(`Processed liquidations: ${JSON.stringify(liquidations, null, 2)}`);
+  if (errors.length > 0) {
+    logger.error(`Errored liquidations: ${JSON.stringify(errors, null, 2)}`);
+  }
 };
