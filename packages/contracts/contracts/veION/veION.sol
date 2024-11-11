@@ -918,6 +918,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return s_delegators[_tokenId][_lpType].values();
   }
 
+  function getUserPoint(
+    uint256 _tokenId,
+    LpTokenType _lpType,
+    uint256 _epoch
+  ) external view returns (UserPoint memory) {
+    return s_userPointHistory[_tokenId][_lpType][_epoch];
+  }
+
   function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
     LpTokenType lpType = s_lpType[_tokenAddress];
     uint256 protocolFees = s_protocolFees[lpType];

@@ -1,43 +1,3 @@
-struct TestVars {
-  address user;
-  address user2;
-  uint256 amount;
-  address[] tokenAddresses;
-  uint256[] tokenAmounts;
-  uint256[] durations;
-  bool[] stakeUnderlying;
-  uint256 tokenId;
-  uint256 secondTokenId;
-  uint256 expectedSupply;
-  uint256 userEpoch;
-  uint256 globalEpoch;
-  address lockedBalance_tokenAddress;
-  uint256 lockedBalance_amount;
-  uint256 delegated_lockedBalance_amount;
-  uint256 lockedBalance_start;
-  uint256 lockedBalance_end;
-  bool lockedBalance_isPermanent;
-  uint256 lockedBalance_boost;
-  uint256 userPoint_bias;
-  uint256 userPoint_slope;
-  uint256 userPoint_ts;
-  uint256 userPoint_blk;
-  uint256 userPoint_permanent;
-  uint256 userPoint_permanentDelegate;
-  int128 globalPoint_bias;
-  int128 globalPoint_slope;
-  uint256 globalPoint_ts;
-  uint256 globalPoint_blk;
-  uint256 globalPoint_permanentLockBalance;
-  uint256[] ownerTokenIds;
-  address[] assetsLocked;
-  uint256 tokenId_test;
-  address lockedBalance_tokenAddress_test;
-  uint256 lockedBalance_amount_test;
-  uint256 lockedBalance_duration_test;
-  uint256 lockedBalance_end_test;
-}
-
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
@@ -104,7 +64,7 @@ contract veIONTest is BaseTest {
   // Tokens Locked:
   //   1. "Mode_Velodrome_5050_ION_MODE" - 1000 tokens
   // Lock Duration: 52 weeks for each token
-  function _createLockInternal(address user) internal returns (uint256, address, uint256, uint256) {
+  function _createLockInternal(address user) internal returns (LockInfo memory) {
     TestVars memory vars;
     // Mint ModeVelodrome tokens to the user
     vars.user = user;
@@ -131,7 +91,7 @@ contract veIONTest is BaseTest {
     uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, new bool[](1));
     vm.stopPrank();
 
-    return (tokenId, vars.tokenAddresses[0], vars.tokenAmounts[0], vars.durations[0]);
+    return LockInfo(tokenId, vars.tokenAddresses[0], vars.tokenAmounts[0], vars.durations[0]);
   }
 
   // Function: _createLockMultipleInternal
@@ -139,7 +99,7 @@ contract veIONTest is BaseTest {
   //   1. "Mode_Velodrome_5050_ION_MODE" - 1000 tokens
   //   2. "Mode_Balancer_8020_ION_ETH" - 1000 tokens
   // Lock Duration: 52 weeks for each token
-  function _createLockMultipleInternal(address user) internal returns (uint256) {
+  function _createLockMultipleInternal(address user) internal returns (LockInfoMultiple memory) {
     TestVars memory vars;
     vars.user = user;
 
@@ -172,6 +132,61 @@ contract veIONTest is BaseTest {
     vm.startPrank(vars.user);
     vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, new bool[](2));
     vm.stopPrank();
-    return vars.tokenId;
+
+    return LockInfoMultiple(vars.tokenId, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
   }
+}
+
+struct TestVars {
+  address user;
+  address user2;
+  uint256 amount;
+  address[] tokenAddresses;
+  uint256[] tokenAmounts;
+  uint256[] durations;
+  bool[] stakeUnderlying;
+  uint256 tokenId;
+  uint256 secondTokenId;
+  uint256 expectedSupply;
+  uint256 userEpoch;
+  uint256 globalEpoch;
+  address lockedBalance_tokenAddress;
+  uint256 lockedBalance_amount;
+  uint256 delegated_lockedBalance_amount;
+  uint256 lockedBalance_start;
+  uint256 lockedBalance_end;
+  bool lockedBalance_isPermanent;
+  uint256 lockedBalance_boost;
+  uint256 userPoint_bias;
+  uint256 userPoint_slope;
+  uint256 userPoint_ts;
+  uint256 userPoint_blk;
+  uint256 userPoint_permanent;
+  uint256 userPoint_permanentDelegate;
+  int128 globalPoint_bias;
+  int128 globalPoint_slope;
+  uint256 globalPoint_ts;
+  uint256 globalPoint_blk;
+  uint256 globalPoint_permanentLockBalance;
+  uint256[] ownerTokenIds;
+  address[] assetsLocked;
+  uint256 tokenId_test;
+  address lockedBalance_tokenAddress_test;
+  uint256 lockedBalance_amount_test;
+  uint256 lockedBalance_duration_test;
+  uint256 lockedBalance_end_test;
+}
+
+struct LockInfo {
+  uint256 tokenId;
+  address tokenAddress;
+  uint256 tokenAmount;
+  uint256 duration;
+}
+
+struct LockInfoMultiple {
+  uint256 tokenId;
+  address[] tokenAddresses;
+  uint256[] tokenAmounts;
+  uint256[] durations;
 }
