@@ -656,8 +656,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
     emit Borrow(borrower, borrowAmount, vars.accountBorrowsNew, vars.totalBorrowsNew);
 
     /* We call the defense hook */
-    // unused function
-    // comptroller.borrowVerify(address(this), borrower, borrowAmount);
+    comptroller.borrowVerify(address(this), borrower);
 
     return uint256(Error.NO_ERROR);
   }
@@ -771,8 +770,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
     emit RepayBorrow(payer, borrower, vars.actualRepayAmount, vars.accountBorrowsNew, vars.totalBorrowsNew);
 
     /* We call the defense hook */
-    // unused function
-    // comptroller.repayBorrowVerify(address(this), payer, borrower, vars.actualRepayAmount, vars.borrowerIndex);
+    comptroller.repayBorrowVerify(address(this), payer, borrower, vars.actualRepayAmount);
 
     return (uint256(Error.NO_ERROR), vars.actualRepayAmount);
   }
@@ -983,8 +981,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
     emit ReservesAdded(address(this), vars.protocolSeizeAmount, vars.totalReservesNew);
 
     /* We call the defense hook */
-    // unused function
-    // comptroller.seizeVerify(address(this), seizerToken, liquidator, borrower, seizeTokens);
+    comptroller.seizeVerify(address(this), seizerToken, liquidator, borrower, seizeTokens);
 
     return uint256(Error.NO_ERROR);
   }

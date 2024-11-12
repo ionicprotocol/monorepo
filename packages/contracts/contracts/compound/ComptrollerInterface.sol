@@ -64,6 +64,8 @@ interface ComptrollerInterface {
 
   function borrowAllowed(address cToken, address borrower, uint256 borrowAmount) external returns (uint256);
 
+  function borrowVerify(address cToken, address borrower) external;
+
   function borrowWithinLimits(address cToken, uint256 accountBorrowsNew) external view returns (uint256);
 
   function repayBorrowAllowed(
@@ -72,6 +74,13 @@ interface ComptrollerInterface {
     address borrower,
     uint256 repayAmount
   ) external returns (uint256);
+
+  function repayBorrowVerify(
+    address cToken,
+    address payer,
+    address borrower,
+    uint256 repayAmount
+  ) external;
 
   function liquidateBorrowAllowed(
     address cTokenBorrowed,
@@ -88,8 +97,18 @@ interface ComptrollerInterface {
     address borrower,
     uint256 seizeTokens
   ) external returns (uint256);
+  
+  function seizeVerify(
+    address cTokenCollateral,
+    address cTokenBorrowed,
+    address liquidator,
+    address borrower,
+    uint256 seizeTokens
+  ) external;
 
   function transferAllowed(address cToken, address src, address dst, uint256 transferTokens) external returns (uint256);
+  
+  function transferVerify(address cToken, address src, address dst, uint256 transferTokens) external;
 
   function mintVerify(address cToken, address minter, uint256 actualMintAmount, uint256 mintTokens) external;
 

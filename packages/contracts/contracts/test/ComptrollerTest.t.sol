@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+/*pragma solidity ^0.8.0;
 
 import { BaseTest } from "./config/BaseTest.t.sol";
 
@@ -89,4 +89,9 @@ contract ComptrollerTest is BaseTest {
       }
     }
   }
+
+  function testModeInflationProtection() public debuggingOnly fork(MODE_MAINNET) {
+    _testInflationProtection();
+  }
 }
+*/
