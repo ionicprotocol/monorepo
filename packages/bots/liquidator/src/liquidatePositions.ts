@@ -26,8 +26,8 @@ import { DiscordService } from "./services/discordnew";
 dotenv.config();
 const discordService = new DiscordService(config.chainId);
 // Validate the API key exists
-if (!process.env.LIFIAPIKEY) {
-  throw new Error("LIFIAPIKEY is required in environment variables");
+if (!config.LIFIAPIKEY) {
+  throw new Error("LIFIAPIKEY is required in config");
 }
 
 const pythClient: Client = new Client({ baseUrl: config.expressRelayEndpoint });
