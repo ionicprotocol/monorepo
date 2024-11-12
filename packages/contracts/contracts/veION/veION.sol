@@ -103,12 +103,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenAmount,
     bool _stakeUnderlying
   ) external {
-    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     _increaseAmountFor(_tokenAddress, _tokenId, _tokenAmount, DepositType.INCREASE_LOCK_AMOUNT, _stakeUnderlying);
   }
 
   function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
-    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
 
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
@@ -141,7 +141,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     bool _stakeUnderlying
   ) external {
     if (_tokenAmount == 0) revert ZeroAmount();
-    if (!_isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
     if (s_voted[_tokenId]) revert AlreadyVoted();
 
@@ -180,7 +180,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    */
   function withdraw(address _tokenAddress, uint256 _tokenId) external override {
     address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (s_voted[_tokenId]) revert AlreadyVoted();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
@@ -262,8 +262,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     vars.sender = _msgSender();
     if (_from == _to) revert SameNFT();
     if (s_voted[_from]) revert AlreadyVoted();
-    if (!_isApprovedOrOwner(vars.sender, _from)) revert NotApprovedOrOwner();
-    if (!_isApprovedOrOwner(vars.sender, _to)) revert NotApprovedOrOwner();
+    if (ownerOf(_from) != _msgSender()) revert NotOwner();
+    if (ownerOf(_to) != _msgSender()) revert NotOwner();
 
     vars.lengthOfAssets = s_assetsLocked[_from].length();
     vars.assetsLocked = s_assetsLocked[_from].values();
@@ -317,12 +317,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _from,
     uint256 _splitAmount
   ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
-    address sender = _msgSender();
     address owner = _ownerOf(_from);
     if (s_voted[_from]) revert AlreadyVoted();
     if (owner == address(0)) revert SplitNoOwner();
     if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
-    if (!_isApprovedOrOwner(sender, _from)) revert NotApprovedOrOwner();
+    if (ownerOf(_from) != _msgSender()) revert NotOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory newLocked = s_locked[_from][_lpType];
     if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
@@ -354,8 +353,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (_newLocked.isPermanent) revert PermanentLock();
@@ -371,8 +369,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    address sender = _msgSender();
-    if (!_isApprovedOrOwner(sender, _tokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (!_newLocked.isPermanent) revert NotPermanentLock();
@@ -388,7 +385,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {
     // Ensure the caller is the owner or approved for the fromTokenId
-    if (!_isApprovedOrOwner(msg.sender, fromTokenId)) revert NotApprovedOrOwner();
+    if (ownerOf(fromTokenId) != _msgSender()) revert NotOwner();
 
     // Retrieve the locked balance for the fromTokenId
     LpTokenType lpType = s_lpType[lpToken];
@@ -429,8 +426,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function _removeDelegation(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) internal {
     // Ensure the caller is the owner or approved for the fromTokenId
-    if (!_isApprovedOrOwner(msg.sender, fromTokenId) && !_isApprovedOrOwner(msg.sender, toTokenId))
-      revert NotApprovedOrOwner();
+    if (ownerOf(fromTokenId) != _msgSender() && ownerOf(toTokenId) != _msgSender()) revert NotOwner();
 
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];

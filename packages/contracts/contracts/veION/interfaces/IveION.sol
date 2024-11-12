@@ -66,6 +66,7 @@ interface IveION {
   error LockDurationTooLong();
   error TokenNotWhitelisted();
   error NotApprovedOrOwner();
+  error NotOwner();
   error AlreadyVoted();
   error NotNormalNFT();
   error PermanentLock();

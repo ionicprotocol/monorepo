@@ -454,6 +454,41 @@ contract IncreaseAmount is veIONTest {
     assertEq(assetsLocked.length, 1, "Assets locked length mismatch");
     assertEq(assetsLocked[0], lockInput.tokenAddress, "Assets locked address mismatch");
   }
+
+  function test_increaseAmount_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
+    modeVelodrome5050IonMode.mint(user, additionalAmount);
+    address otherUser = address(0x9353);
+
+    vm.prank(user);
+    modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
+    vm.prank(otherUser);
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+  }
+
+  function test_increaseAmount_RevertIfValueIsZero() public fork(MODE_MAINNET) {
+    uint256 additionalAmount = 0;
+
+    vm.startPrank(user);
+    modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
+    vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
+    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    vm.stopPrank();
+  }
+
+  function test_increaseAmount_RevertIfLockNonexistent() public fork(MODE_MAINNET) {
+    uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
+    modeVelodrome5050IonMode.mint(user, additionalAmount);
+
+    uint256 nonexistentToken = 3463;
+
+    vm.startPrank(user);
+    modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
+    vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
+    ve.increaseAmount(address(modeVelodrome5050IonMode), nonexistentToken, additionalAmount, false);
+    vm.stopPrank();
+  }
 }
 
 contract IncreaseUnlockTime is veIONTest {
