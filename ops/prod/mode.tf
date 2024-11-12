@@ -36,6 +36,7 @@ module "mode_mainnet_liquidator_ecs" {
   liquidation_discord_webhook_url = var.liquidation_discord_webhook_url
   discord_success_webhook_url = var.discord_success_webhook_url
   discord_failure_webhook_url = var.discord_failure_webhook_url
+  lifi_api_key                = var.lifi_api_key
   subnet_ids                 = ["subnet-0cd439d262800846e"]
   security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region

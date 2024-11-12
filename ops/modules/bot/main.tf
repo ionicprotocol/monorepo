@@ -60,7 +60,11 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
         {
           name  = "DISCORD_SUCCESS_WEBHOOK_URL"
           value = "${var.discord_success_webhook_url}"
-        }  
+        },
+        {
+          name  = "LIFIAPIKEY"
+          value = "${var.lifi_api_key}"
+        }
       ] 
     }
   ])

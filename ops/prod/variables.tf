@@ -49,6 +49,9 @@ variable "discord_success_webhook_url" {
 variable "discord_failure_webhook_url" {
   type = string
 }
+variable "lifi_api_key" {
+  type = string
+}
 variable "per_discord_webhook_url" {
   type = string
 }

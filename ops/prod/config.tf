@@ -12,6 +12,7 @@ locals {
     UPTIME_PYTH_UPDATER_API    = var.uptime_pyth_updater_api,
     DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
     DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
+    LIFIAPIKEY = var.lifi_api_key,
   }
 }
 
@@ -25,7 +26,7 @@ locals {
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
       DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
       DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
-      
+      LIFIAPIKEY = var.lifi_api_key,
     }
   )
   liquidation_base_variables = merge(
@@ -37,6 +38,7 @@ locals {
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
       DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
       DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
+      LIFIAPIKEY = var.lifi_api_key,
     }
   )
   liquidation_optimism_variables = merge(
@@ -48,6 +50,7 @@ locals {
       UPTIME_LIQUIDATOR_API = var.uptime_liquidator_api,
       DISCORD_SUCCESS_WEBHOOK_URL = var.discord_success_webhook_url,
       DISCORD_FAILURE_WEBHOOK_URL = var.discord_failure_webhook_url,
+      LIFIAPIKEY = var.lifi_api_key,
     }
   )
   oracle_price_change_verifier_lambda_variables = merge(
