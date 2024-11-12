@@ -154,13 +154,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
-    if (oldLocked.isPermanent) revert PermanentLock();
     uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
 
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    if (oldLocked.isPermanent) revert PermanentLock();
     if (oldLocked.end <= block.timestamp) revert LockExpired();
     if (oldLocked.amount <= 0) revert NoLockFound();
     if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
@@ -188,10 +187,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    */
   function withdraw(address _tokenAddress, uint256 _tokenId) external override {
     address sender = _msgSender();
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    if (s_voted[_tokenId]) revert AlreadyVoted();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    if (s_voted[_tokenId]) revert AlreadyVoted();
     if (oldLocked.isPermanent) revert PermanentLock();
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
 
