@@ -38,6 +38,7 @@ import { CurveV2LpTokenPriceOracleNoRegistry } from "../oracles/default/CurveV2L
 import { IRouter_Aerodrome } from "../external/aerodrome/IAerodromeRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
 import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
+import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -872,6 +873,44 @@ contract DevTesting is BaseTest {
     emit log_named_uint("reward tokens", rewardTokens.length);
     emit log_named_uint("rewards", rewards.length);
     vm.stopPrank();
+  }
+
+  function test_liquidateWithAggregator() public debuggingOnly forkAtBlock(MODE_MAINNET, 15435970) {
+    IonicUniV3Liquidator liquidator = IonicUniV3Liquidator(payable(0x50F13EC4B68c9522260d3ccd4F19826679B3Ce5C));
+    emit log_named_address("liquidator", address(liquidator));
+    address cErc20 = 0xA0D844742B4abbbc43d8931a6Edb00C56325aA18; // weEth
+    address cTokenCollateral = 0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038; // usdc
+    uint256 repayAmount = 843900759317990;
+    address borrower = 0x1Bec4f239F1Ec11FD8DC7B31A8fea7A5bA5a9Aa4;
+    address aggregatorTarget = 0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE; // lifi
+    // 0xd988097fb8612cc24eeC14542bC03424c656005f usdc
+    // 0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A weeth
+    bytes memory aggregatorData = vm.parseBytes(
+      "0x4666fc800d27477c9a16fe2929353656c1222839791dbe26e815e7533f731ea9a6b919bb00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000010000000000000000000000000050f13ec4b68c9522260d3ccd4f19826679b3ce5c0000000000000000000000000000000000000000000000000002ff85fb26dbe8000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000086c6966692d617069000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a307830303030303030303030303030303030303030303030303030303030303030303030303030303030000000000000000000000000000000000000000000000000000000000000000000007e15eb462cdc67cf92af1f7102465a8f8c7848740000000000000000000000007e15eb462cdc67cf92af1f7102465a8f8c784874000000000000000000000000d988097fb8612cc24eec14542bc03424c656005f00000000000000000000000004c0599ae5a44757c0af6f9ec3b93da8976c150a000000000000000000000000000000000000000000000000000000000027891800000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000f283bd37f90001d988097fb8612cc24eec14542bc03424c656005f000104c0599ae5a44757c0af6f9ec3b93da8976c150a0327891807030361590977620147ae00019b57dca972db5d8866c630554acdbdfe58b2659c000000011231deb6f5749ef6ce6943a275a1d3e7486f4eae59725ade04010205000601020203000205000100010400ff0000000000000000000000000053e85d00f2c6578a1205b842255ab9df9d05374425ba258e510faca5ab7ff941a1584bdd2174c94dd988097fb8612cc24eec14542bc03424c656005f4200000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000"
+    );
+
+    emit log_named_uint(
+      "before collateral",
+      IERC20Upgradeable(ICErc20(cTokenCollateral).underlying()).balanceOf(address(this))
+    );
+    emit log_named_uint("before borrow", IERC20Upgradeable(ICErc20(cErc20).underlying()).balanceOf(address(this)));
+
+    vm.startPrank(0x1155b614971f16758C92c4890eD338C9e3ede6b7);
+    liquidator.safeLiquidateWithAggregator(
+      borrower,
+      repayAmount,
+      ICErc20(cErc20),
+      ICErc20(cTokenCollateral),
+      aggregatorTarget,
+      aggregatorData
+    );
+    vm.stopPrank();
+
+    emit log_named_uint(
+      "profit collateral",
+      IERC20Upgradeable(ICErc20(cTokenCollateral).underlying()).balanceOf(address(this))
+    );
+    emit log_named_uint("profit borrow", IERC20Upgradeable(ICErc20(cErc20).underlying()).balanceOf(address(this)));
   }
 
   function _functionCall(
