@@ -49,7 +49,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          op: true
         }
       },
       dMBTC: {
@@ -64,7 +65,8 @@ export const multipliers: Record<
           underlyingAPR: 10,
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          op: true
         }
       },
       STONE: {
@@ -260,7 +262,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: false,
-          flywheel: false
+          flywheel: false,
+          op: true
         }
       },
       USDC: {
