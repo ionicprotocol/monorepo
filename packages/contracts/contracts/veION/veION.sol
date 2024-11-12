@@ -147,7 +147,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
-    s_assetsLocked[_tokenId].add(_tokenAddress);
+    if (!s_assetsLocked[_tokenId].add(_tokenAddress)) revert DuplicateAsset();
     uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
 
     if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
@@ -692,12 +692,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
-      s_assetsLocked[_tokenId].add(_tokenAddress[i]);
       uint256 unlockTime = ((block.timestamp + _duration[i]) / WEEK) * WEEK;
+      if (!s_assetsLocked[_tokenId].add(_tokenAddress[i])) revert DuplicateAsset();
 
       if (_tokenAmount[i] == 0) revert ZeroAmount();
       if (_duration[i] < s_minimumLockDuration) revert LockDurationTooShort();
-      if (unlockTime <= block.timestamp) revert LockDurationNotInFuture();
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
       if (_tokenAmount[i] < s_minimumLockAmount[_lpType]) revert MinimumNotMet();
 
@@ -716,9 +715,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return _tokenId;
   }
 
-  function _calculateBoost(uint256 _duration) internal pure returns (uint256) {
-    uint256 minDuration = 0;
-    uint256 maxDuration = 2 * 365 days;
+  function _calculateBoost(uint256 _duration) internal view returns (uint256) {
+    uint256 minDuration = s_minimumLockDuration;
+    uint256 maxDuration = MAXTIME;
     uint256 minBoost = 1e18;
     uint256 maxBoost = 2e18;
 

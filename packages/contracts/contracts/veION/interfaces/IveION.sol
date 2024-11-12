@@ -85,6 +85,7 @@ interface IveION {
   error MinimumNotMet();
   error ArrayMismatch();
   error LockDurationTooShort();
+  error DuplicateAsset();
 
   event Deposit(
     address indexed provider,

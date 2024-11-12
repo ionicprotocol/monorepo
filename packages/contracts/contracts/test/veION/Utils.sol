@@ -29,9 +29,11 @@ contract veIONTest is BaseTest {
   uint256 internal constant MINT_AMT = 1000 ether;
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
+  uint256 internal constant MINTIME = 180 * 86400;
   uint256 internal constant EARLY_WITHDRAW_FEE = 0.8e18;
+  uint256 internal constant MINIMUM_LOCK_AMOUNT = 10e18;
 
-  function afterForkSetUp() internal override {
+  function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
     ve = new veION();
     ve.initialize(ap);
@@ -58,6 +60,9 @@ contract veIONTest is BaseTest {
     veloStakingWalletImplementation = new VelodromeStakingWallet();
 
     ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
+    ve.setMinimumLockDuration(MINTIME);
+    ve.setMinimumLockAmount(address(modeVelodrome5050IonMode), MINIMUM_LOCK_AMOUNT);
+    ve.setMinimumLockAmount(address(modeBalancer8020IonEth), MINIMUM_LOCK_AMOUNT);
   }
 
   // Function: _createLockMultipleInternal
