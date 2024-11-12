@@ -60,18 +60,18 @@ export class DiscordService {
 
   async sendLiquidationSuccess(_successfulTxs: SimplifiedTransactionReceipt[], msg: string): Promise<void> {
     const baseMessage = this.createBaseMessage();
-    
+
     // Set a vibrant green color for success messages
     baseMessage.setColor(this.infoColor);
-    
+
     // Create an eye-catching success message with emojis and formatting
     const formattedMessage = [
       `**━━━━━━━━━━━━━━━━━━━━━━**`,
       `🎯 **LIQUIDATION SUCCESSFUL** 🎯`,
       `**━━━━━━━━━━━━━━━━━━━━━━**\n`,
       `${msg}`,
-      `\n✨ *Transaction completed successfully* ✨`
-    ].join('\n');
+      `\n✨ *Transaction completed successfully* ✨`,
+    ].join("\n");
 
     baseMessage.setDescription(formattedMessage);
 
@@ -82,7 +82,7 @@ export class DiscordService {
   async sendLiquidationFailure(pool: LiquidatablePool, errorMessage: string): Promise<void> {
     const baseMessage = this.createBaseMessage();
     baseMessage.setColor(this.errorColor);
-    
+
     const formattedMessage = [
       `**━━━━━━━━━━━━━━━━━━━━━━**`,
       `❌ **LIQUIDATION FAILED** ❌`,
@@ -91,8 +91,8 @@ export class DiscordService {
       `👤 **Borrower:** \`${pool.liquidations[0].borrower}\``,
       `\n⚠️ **Error Message:**`,
       `\`\`\`${errorMessage}\`\`\``,
-      `\n*Please check logs for more details*`
-    ].join('\n');
+      `\n*Please check logs for more details*`,
+    ].join("\n");
 
     baseMessage.setDescription(formattedMessage);
     await this.sendWithRetry(this.failureHook, baseMessage);
