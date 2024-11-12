@@ -368,6 +368,8 @@ jobs:
       #   working-directory: ./ops
       #   run: make price-change-verifier-smoke-test
 
+      #test
+
   terraform-deploy-bots:
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development' || github.ref == 'refs/heads/fix/awslificonfig'
     runs-on: ubuntu-latest
