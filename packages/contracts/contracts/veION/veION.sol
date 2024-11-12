@@ -103,8 +103,61 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenAmount,
     bool _stakeUnderlying
   ) external {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
+
     if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    _increaseAmountFor(_tokenAddress, _tokenId, _tokenAmount, DepositType.INCREASE_LOCK_AMOUNT, _stakeUnderlying);
+    if (_tokenAmount == 0) revert ZeroAmount();
+    if (oldLocked.amount == 0) revert NoLockFound();
+    if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
+
+    if (oldLocked.isPermanent) s_permanentLockBalance[_lpType] += _tokenAmount;
+
+    _depositFor(
+      _tokenAddress,
+      _tokenId,
+      _tokenAmount,
+      0,
+      _stakeUnderlying,
+      oldLocked,
+      DepositType.INCREASE_LOCK_AMOUNT,
+      _lpType,
+      _msgSender()
+    );
+  }
+
+  function lockAdditionalAsset(
+    address _tokenAddress,
+    uint256 _tokenAmount,
+    uint256 _tokenId,
+    uint256 _duration,
+    bool _stakeUnderlying
+  ) external {
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
+    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
+
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    if (_tokenAmount == 0) revert ZeroAmount();
+    if (s_voted[_tokenId]) revert AlreadyVoted();
+    if (!s_assetsLocked[_tokenId].add(_tokenAddress)) revert DuplicateAsset();
+    if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
+    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+    if (_duration < s_minimumLockDuration) revert LockDurationTooShort();
+
+    if (lockedBalance.isPermanent) s_permanentLockBalance[lpType] += _tokenAmount;
+
+    _depositFor(
+      _tokenAddress,
+      _tokenId,
+      _tokenAmount,
+      unlockTime,
+      _stakeUnderlying,
+      lockedBalance,
+      DepositType.LOCK_ADDITIONAL,
+      lpType,
+      _msgSender()
+    );
   }
 
   function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
@@ -129,44 +182,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       oldLocked,
       DepositType.INCREASE_UNLOCK_TIME,
       _lpType,
-      _msgSender()
-    );
-  }
-
-  function lockAdditionalAsset(
-    address _tokenAddress,
-    uint256 _tokenAmount,
-    uint256 _tokenId,
-    uint256 _duration,
-    bool _stakeUnderlying
-  ) external {
-    if (_tokenAmount == 0) revert ZeroAmount();
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
-    if (s_voted[_tokenId]) revert AlreadyVoted();
-
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
-    if (!s_assetsLocked[_tokenId].add(_tokenAddress)) revert DuplicateAsset();
-    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
-
-    if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
-    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
-    if (_duration < s_minimumLockDuration) revert LockDurationTooShort();
-
-    if (lockedBalance.isPermanent) {
-      s_permanentLockBalance[lpType] += _tokenAmount;
-    }
-
-    _depositFor(
-      _tokenAddress,
-      _tokenId,
-      _tokenAmount,
-      unlockTime,
-      _stakeUnderlying,
-      lockedBalance,
-      DepositType.LOCK_ADDITIONAL,
-      lpType,
       _msgSender()
     );
   }
@@ -724,24 +739,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     } else {
       return minBoost + ((_duration - minDuration) * (maxBoost - minBoost)) / (maxDuration - minDuration);
     }
-  }
-
-  function _increaseAmountFor(
-    address _tokenAddress,
-    uint256 _tokenId,
-    uint256 _value,
-    DepositType _depositType,
-    bool _stakeUnderlying
-  ) internal {
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
-
-    if (_value == 0) revert ZeroAmount();
-    if (oldLocked.amount == 0) revert NoLockFound();
-    if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
-
-    if (oldLocked.isPermanent) s_permanentLockBalance[_lpType] += _value;
-    _depositFor(_tokenAddress, _tokenId, _value, 0, _stakeUnderlying, oldLocked, _depositType, _lpType, _msgSender());
   }
 
   function _createSplitVE(
