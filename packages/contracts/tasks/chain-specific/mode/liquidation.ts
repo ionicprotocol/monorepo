@@ -283,13 +283,13 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
       inputToken: wbtcToken.underlying,
       outputToken: usdtToken.underlying,
-      optimalPath: [wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
+      optimalPath: [mbtcToken.underlying, wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
     });
 
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
       inputToken: usdtToken.underlying,
       outputToken: wbtcToken.underlying,
-      optimalPath: [usdcToken.underlying, wethToken.underlying, wbtcToken.underlying]
+      optimalPath: [usdcToken.underlying, wethToken.underlying, mbtcToken.underlying, wbtcToken.underlying]
     });
 
     await setOptimalSwapPath(viem, deployments, deployer as Address, {
@@ -302,6 +302,12 @@ task("mode:liquidation:set-redemption-strategies", "Set redemption strategy").se
       inputToken: wethToken.underlying,
       outputToken: wbtcToken.underlying,
       optimalPath: [mbtcToken.underlying, wbtcToken.underlying]
+    });
+
+    await setOptimalSwapPath(viem, deployments, deployer as Address, {
+      inputToken: weethToken.underlying,
+      outputToken: usdtToken.underlying,
+      optimalPath: [wethToken.underlying, usdcToken.underlying, usdtToken.underlying]
     });
   }
 );

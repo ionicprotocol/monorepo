@@ -123,7 +123,7 @@ export default function FromTOChainSelector({
                 <img
                   alt="logos"
                   className={`w-4 h-4 ml-auto`}
-                  src={`/img/symbols/32/color/${chainslist[1].toLowerCase()}.png`}
+                  src={`/img/symbols/32/color/${chainslist?.[1]?.toLowerCase()}.png`}
                 />
               )}
             </Link>
