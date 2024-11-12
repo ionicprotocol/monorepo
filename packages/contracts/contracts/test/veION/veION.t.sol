@@ -414,17 +414,17 @@ contract CreateLock is veIONTest {
   }
 }
 
-contract ClaimEmissions is veIONTest {}
-
 contract IncreaseAmount is veIONTest {
   address user;
   uint256 tokenId;
   LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
     user = address(0x1234);
     lockInput = _createLockInternal(user);
+    lockInputMultiLP = _createLockMultipleInternal(user);
   }
 
   function test_increaseAmount_UserCanIncreaseLock() public fork(MODE_MAINNET) {
@@ -446,16 +446,20 @@ contract IncreaseAmount is veIONTest {
     assertEq(lockInput.tokenAddress, actualLocked.tokenAddress, "Token address mismatch");
     assertEq(calculated_end, actualLocked.end, "Unlock time mismatch");
     assertEq(false, actualLocked.isPermanent, "Lock should not be permanent");
-    assertEq(ve.s_supply(ve.s_lpType(lockInput.tokenAddress)), actualLocked.amount, "Supply mismatch");
+    assertEq(
+      ve.s_supply(ve.s_lpType(lockInput.tokenAddress)),
+      actualLocked.amount + lockInputMultiLP.tokenAmounts[0],
+      "Supply mismatch"
+    );
     assertEq(userEpoch, 1, "User epoch mismatch");
-    assertEq(lockInput.tokenId, ve.s_tokenId(), "Token ID mismatch");
-    assertEq(ownerTokenIds.length, 1, "Owner should have one token ID");
+    assertEq(lockInput.tokenId + 1, ve.s_tokenId(), "Token ID mismatch");
+    assertEq(ownerTokenIds.length, 2, "Owner should have one token ID");
     assertEq(ownerTokenIds[0], lockInput.tokenId, "Owner token ID mismatch");
     assertEq(assetsLocked.length, 1, "Assets locked length mismatch");
     assertEq(assetsLocked[0], lockInput.tokenAddress, "Assets locked address mismatch");
   }
 
-  function test_increaseAmount_PermanentLock() public fork(MODE_MAINNET) {
+  function test_increaseAmountI_PermanentLock() public fork(MODE_MAINNET) {
     vm.prank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
@@ -485,8 +489,6 @@ contract IncreaseAmount is veIONTest {
   }
 
   function test_increaseAmount_RevertIfAssetWhitelistedButNotLockedByUser() public fork(MODE_MAINNET) {
-    vm.prank(user);
-
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeBalancer8020IonEth.mint(user, additionalAmount);
 
@@ -494,6 +496,21 @@ contract IncreaseAmount is veIONTest {
     modeBalancer8020IonEth.approve(address(ve), additionalAmount);
     vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
     ve.increaseAmount(address(modeBalancer8020IonEth), lockInput.tokenId, additionalAmount, false);
+    vm.stopPrank();
+  }
+
+  function test_increaseAmountI_RevertIfAssetWhitelistedLockedAndWithdrawnByUser() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
+    vm.prank(user);
+    ve.withdraw(lockInputMultiLP.tokenAddresses[0], lockInputMultiLP.tokenId);
+
+    uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
+    modeBalancer8020IonEth.mint(user, additionalAmount);
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), additionalAmount);
+    vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
+    ve.increaseAmount(lockInputMultiLP.tokenAddresses[0], lockInputMultiLP.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 
@@ -558,28 +575,22 @@ contract IncreaseAmount is veIONTest {
   }
 }
 
-contract IncreaseUnlockTime is veIONTest {
-  function test_increaseUnlockTime_UserCanIncreaseTime() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-    vars.user = address(0x1234);
-
-    LockInfo memory lockInput = _createLockInternal(vars.user);
-
-    uint256 newLockTime = 104 weeks;
-    vm.prank(vars.user);
-    ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
-
-    IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
-    uint256 expectedEndTime = ((block.timestamp + newLockTime) / WEEK) * WEEK;
-    assertEq(expectedEndTime, actualLocked.end, "Lock end time should be increased");
-  }
-}
-
 contract LockAdditionalAsset is veIONTest {
+  address user;
+  uint256 tokenId;
+  LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x1234);
+    lockInput = _createLockInternal(user);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+  }
+
   function test_lockAdditionalAsset_UserCanLockAdditionalLp() public fork(MODE_MAINNET) {
     TestVars memory vars;
     vars.user = address(0x1234);
-    LockInfo memory lockInput = _createLockInternal(vars.user);
 
     modeBalancer8020IonEth.mint(vars.user, lockInput.tokenAmount);
 
@@ -603,6 +614,23 @@ contract LockAdditionalAsset is veIONTest {
     assertEq(lockedBalancer.end, expectedEndTimeBalancer, "Lock end time should be increased balancer");
     assertEq(lockedVelo.amount, lockInput.tokenAmount, "Total locked amount mismatch");
     assertEq(lockedVelo.end, expectedEndTimeVelo, "Lock end time should be increased velo");
+  }
+}
+
+contract IncreaseUnlockTime is veIONTest {
+  function test_increaseUnlockTime_UserCanIncreaseTime() public fork(MODE_MAINNET) {
+    TestVars memory vars;
+    vars.user = address(0x1234);
+
+    LockInfo memory lockInput = _createLockInternal(vars.user);
+
+    uint256 newLockTime = 104 weeks;
+    vm.prank(vars.user);
+    ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
+
+    IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
+    uint256 expectedEndTime = ((block.timestamp + newLockTime) / WEEK) * WEEK;
+    assertEq(expectedEndTime, actualLocked.end, "Lock end time should be increased");
   }
 }
 
@@ -961,6 +989,8 @@ contract RemoveDelegatees is veIONTest {
 }
 
 contract RemoveDelegators is veIONTest {}
+
+contract ClaimEmissions is veIONTest {}
 
 contract TrasferVeION is veIONTest {}
 

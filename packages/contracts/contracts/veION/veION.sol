@@ -90,13 +90,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, msg.sender);
   }
 
-  function claimEmissions(address _tokenAddress) external {
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
-    _stakeStrategy.claim(msg.sender);
-    emit EmissionsClaimed(msg.sender, _tokenAddress);
-  }
-
   function increaseAmount(
     address _tokenAddress,
     uint256 _tokenId,
@@ -491,6 +484,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     for (uint256 i = 0; i < fromTokenIds.length; i++) {
       _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
     }
+  }
+
+  function claimEmissions(address _tokenAddress) external {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+    _stakeStrategy.claim(msg.sender);
+    emit EmissionsClaimed(msg.sender, _tokenAddress);
   }
 
   /**
