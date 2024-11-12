@@ -26,8 +26,16 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   ERC20 rewardToken;
   IveION veION;
   mapping(address => bool) isBlacklisted;
+  mapping(address => bool) nonBlacklistable;
+  bytes public nonBlacklistableTargetBytecode;
   uint256 collateralBp;
   uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
+
+  modifier notMatchingBytecode(address _addr) {
+    bytes memory code = _addr.code; 
+    require(keccak256(code) != keccak256(nonBlacklistableTargetBytecode), "Non-blacklistable bytecode");
+    _;
+  }
 
   function initialize(
     PoolDirectory _fpd,
@@ -44,6 +52,19 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function setVeIon(IveION _veIon) external onlyOwner {
     veION = _veIon;
+  }
+
+  function setCollateralBp(uint256 _collateralBp) external onlyOwner {
+    require(_collateralBp < MAXIMUM_BASIS_POINTS, "Maximum limit exceeded");
+    collateralBp = _collateralBp;
+  }
+
+  function setNonBlacklistableAddress(address _user, bool _isNonBlacklistable) external onlyOwner {
+    nonBlacklistable[_user] = _isNonBlacklistable;
+  }
+
+  function setNonBlacklistableTargetBytecode(bytes memory _newBytecode) external onlyOwner {
+    nonBlacklistableTargetBytecode = _newBytecode;
   }
 
   function _getUserTotalCollateral(address _user) internal view returns (uint256) {
@@ -74,7 +95,8 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     } else return false;
   }
 
-  function reportUser(address _user) external returns (bool) {
+  function reportUser(address _user) external notMatchingBytecode(_user) returns (bool) {
+    require(!nonBlacklistable[_user], "Non-blacklistable user");
     if (!_checkCollateralRatio(_user)) {
       isBlacklisted[_user] = true;
       blacklistUserAndClaimEmissions(_user);
@@ -109,6 +131,9 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function isUserBlacklistable(address _user) external view returns (bool) {
+    if(nonBlacklistable[_user] || keccak256(_user.code) == keccak256(nonBlacklistableTargetBytecode)) {
+      return false;
+    }
     return !_checkCollateralRatio(_user);
   }
 
