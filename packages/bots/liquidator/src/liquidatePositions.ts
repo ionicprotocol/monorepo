@@ -20,7 +20,15 @@ import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { client, sdk, walletClient } from "./run";
 import { logger } from "./logger";
 import config from "./config";
+import dotenv from 'dotenv';
 import { sendDiscordNotification } from "./services/PERdiscord";
+import { DiscordService } from "./services/discordnew";
+dotenv.config();
+const discordService = new DiscordService(config.chainId);
+// Validate the API key exists
+if (!process.env.LIFIAPIKEY) {
+  throw new Error('LIFIAPIKEY is required in environment variables');
+}
 
 const pythClient: Client = new Client({ baseUrl: config.expressRelayEndpoint });
 
@@ -345,7 +353,13 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
         }
 
         const url = `https://li.quest/v1/quote/toAmount?fromChain=${config.chainId}&toChain=${config.chainId}&fromToken=${liquidationParams.collateralAssetUnderlyingToken}&toToken=${liquidationParams.debtAssetUnderlyingToken}&fromAddress=${sdk.contracts.IonicLiquidator.address}&toAddress=${sdk.contracts.IonicLiquidator.address}&toAmount=${liquidationParams.repayAmount}&fee=0`;
-        const options = { method: "GET", headers: { accept: "application/json" } };
+
+        const options = {
+          method: 'GET',
+          headers: {
+            'x-lifi-api-key': process.env.LIFIAPIKEY || ''
+          }
+        };
 
         const data = await fetch(url, options);
         const json = await data.json();
@@ -353,27 +367,85 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
           logger.error(`Quote not received for liquidation ${JSON.stringify(liquidationParams)}, url: ${url}`);
           continue;
         }
-
-        const tx = await walletClient.writeContract({
-          address: sdk.contracts.IonicLiquidator.address,
-          abi: ionicUniV3LiquidatorAbi,
-          functionName: "safeLiquidateWithAggregator",
-          args: [
-            liquidationParams.borrower,
-            liquidationParams.repayAmount,
-            liquidationParams.cErc20,
-            liquidationParams.cTokenCollateral,
-            json.transactionRequest.to,
-            json.transactionRequest.data,
-          ],
-          chain: walletClient.chain,
-        });
-        logger.info(`Liquidation tx: ${tx}`);
-        liquidations.push({
-          type: BotType.Standard,
-          liquidationParams,
-          tx,
-        });
+        try {
+          // ... existing quote fetching code ...
+      
+          const tx = await walletClient.writeContract({
+            address: sdk.contracts.IonicLiquidator.address,
+            abi: ionicUniV3LiquidatorAbi,
+            functionName: "safeLiquidateWithAggregator",
+            args: [
+              liquidationParams.borrower,
+              liquidationParams.repayAmount,
+              liquidationParams.cErc20,
+              liquidationParams.cTokenCollateral,
+              json.transactionRequest.to,
+              json.transactionRequest.data,
+            ],
+            chain: walletClient.chain,
+          });
+          
+          logger.info(`Liquidation tx: ${tx}`);
+      
+          try {
+            // Wait for transaction receipt
+            const receipt = await sdk.publicClient.waitForTransactionReceipt({ 
+              hash: tx 
+            });
+      
+            // Create simplified receipt for Discord
+            const simplifiedReceipt = {
+              transactionHash: receipt.transactionHash,
+              contractAddress: sdk.contracts.IonicLiquidator.address,
+              from: receipt.from,
+              to: receipt.to,
+              status: receipt.status
+            };
+      
+            if (receipt.status === 'success') {
+              // Format success message
+              // const successMsg = `Transaction Hash: ${receipt.transactionHash}\n` +
+              const successMsg = `Transaction Hash: ${config.chainName === 'mode' ? `[${receipt.transactionHash}](https://explorer.mode.network/tx/${receipt.transactionHash})` : `[${receipt.transactionHash}](https://basescan.org/tx/${receipt.transactionHash})`}\n` +
+                              //  `Contract Address: ${sdk.contracts.IonicLiquidator.address}\n` +
+                               `From: ${receipt.from}\n` + 
+                               `To: ${receipt.to}\n` +
+                               `Borrower: ${liquidationParams.borrower}\n` +
+                               `Repay Amount: ${liquidationParams.repayAmount.toString()}\n` +
+                               `Block: ${receipt.blockNumber}\n` +
+                               `Gas Used: ${receipt.gasUsed}\n`; +
+                               `Status: **${receipt.status}**\n`
+      
+              // Send success notification
+              await discordService.sendLiquidationSuccess([simplifiedReceipt], successMsg);
+              liquidations.push({
+                type: BotType.Standard,
+                liquidationParams,
+                tx,
+              });
+            } else {
+              // Send failure notification
+              await discordService.sendLiquidationFailure(
+                { liquidations: [liquidationParams] } as any, 
+                `Transaction failed with status: ${receipt.status}`
+              );
+            }
+          } catch (error: any) {
+            // Handle transaction confirmation error
+            logger.error(`Transaction confirmation failed: ${error.message}`);
+            await discordService.sendLiquidationFailure(
+              { liquidations: [liquidationParams] } as any,
+              `Transaction confirmation failed: ${error.message}`
+            );
+          }
+      
+        } catch (error: any) {
+          // Handle transaction submission error
+          logger.error(`Failed to submit liquidation: ${error.message}`);
+          await discordService.sendLiquidationFailure(
+            { liquidations: [liquidationParams] } as any,
+            `Transaction submission failed: ${error.message}`
+          );
+        }
       } else {
         const liquidationParams = await getPotentialPythLiquidation(userWithAssets, pool.closeFactor, pool.comptroller);
         if (!liquidationParams) {
