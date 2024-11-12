@@ -12,6 +12,7 @@ const config = {
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   excludedComptrollers: process.env.EXCLUDED_COMPTROLLERS ? process.env.EXCLUDED_COMPTROLLERS.split(",") : [],
+  LIFIAPIKEY: process.env.LIFIAPIKEY ?? "",
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
   DISCORD_FAILURE_WEBHOOK_URL: process.env.DISCORD_FAILURE_WEBHOOK_URL || "",
   DISCORD_SUCCESS_WEBHOOK_URL: process.env.DISCORD_SUCCESS_WEBHOOK_URL || "",
