@@ -586,19 +586,17 @@ contract LockAdditionalAsset is veIONTest {
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
+    ve.setVoter(address(this));
   }
 
   function test_lockAdditionalAsset_UserCanLockAdditionalLp() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-    vars.user = address(0x1234);
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
 
-    modeBalancer8020IonEth.mint(vars.user, lockInput.tokenAmount);
-
-    vm.prank(vars.user);
+    vm.prank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
 
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
-    vm.prank(vars.user);
+    vm.prank(user);
     ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
 
     IveION.LockedBalance memory lockedBalancer = ve.getUserLock(lockInput.tokenId, balancerLpType);
@@ -614,6 +612,98 @@ contract LockAdditionalAsset is veIONTest {
     assertEq(lockedBalancer.end, expectedEndTimeBalancer, "Lock end time should be increased balancer");
     assertEq(lockedVelo.amount, lockInput.tokenAmount, "Total locked amount mismatch");
     assertEq(lockedVelo.end, expectedEndTimeVelo, "Lock end time should be increased velo");
+  }
+
+  function test_lockAdditionalAsset_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
+    address randomUser = address(0x1345);
+
+    vm.prank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.prank(randomUser);
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+  }
+
+  function test_lockAdditionalAsset_RevertIfZeroAmount() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 0;
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionalAsset_RevertIfAlreadyVoted() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18;
+
+    ve.voting(lockInput.tokenId, true);
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionalAsset_RevertIfDuplicateAsset() public fork(MODE_MAINNET) {
+    modeVelodrome5050IonMode.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18;
+
+    vm.startPrank(user);
+    modeVelodrome5050IonMode.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("DuplicateAsset()"));
+    ve.lockAdditionalAsset(address(modeVelodrome5050IonMode), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionalAsset_RevertIfMinimumNotMet() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 9 * 10 ** 18;
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("MinimumNotMet()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionalAsset_RevertIfLockTooLong() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18;
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("LockDurationTooLong()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 150 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionalAsset_RevertIfLockTooShort() public fork(MODE_MAINNET) {
+    modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18;
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("LockDurationTooShort()"));
+    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 25 weeks, false);
+    vm.stopPrank();
+  }
+
+  function test_lockAdditionAsset_RevertIfTokenNotWhitelisted() public fork(MODE_MAINNET) {
+    MockERC20 randomToken = new MockERC20("Random Token", "RND", 18);
+    randomToken.mint(user, lockInput.tokenAmount);
+    uint256 additionalAmount = 500 * 10 ** 18;
+
+    vm.startPrank(user);
+    randomToken.approve(address(ve), lockInput.tokenAmount);
+    vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
+    ve.lockAdditionalAsset(address(randomToken), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    vm.stopPrank();
   }
 }
 
