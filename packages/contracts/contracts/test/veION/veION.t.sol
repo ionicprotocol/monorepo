@@ -1258,23 +1258,21 @@ contract Merge is veIONTest {
 
 contract Split is veIONTest {
   address user;
-  LockInfo lockInput_1;
-  LockInfo lockInput_2;
   LockInfoMultiple lockInputMultiLP;
+  uint256 splitAmount;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
     user = address(0x1234);
-    lockInput_1 = _createLockInternal(user);
-    lockInput_2 = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
+    splitAmount = MINT_AMT / 2;
     ve.setVoter(address(this));
     vm.prank(ve.owner());
     ve.toggleSplit(user, true);
   }
 
   function test_split_UserCanSplitAllLP() public fork(MODE_MAINNET) {
-    uint256 splitAmount = MINT_AMT;
+    splitAmount = MINT_AMT - MINIMUM_LOCK_AMOUNT;
     vm.prank(user);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
       address(modeVelodrome5050IonMode),
@@ -1287,24 +1285,36 @@ contract Split is veIONTest {
     IveION.LockedBalance memory veloLocked2 = ve.getUserLock(tokenId2, veloLpType);
     IveION.LockedBalance memory balancerLocked2 = ve.getUserLock(tokenId2, balancerLpType);
 
-    assertEq(veloLocked1.amount, 0, "First split lock amount should be half of the original");
-    assertEq(balancerLocked1.amount, splitAmount, "Second split lock amount should be half of the original");
-    assertEq(veloLocked2.amount, splitAmount, "Second split lock amount should be half of the original");
-    assertEq(balancerLocked2.amount, 0, "Second split lock amount should be half of the original");
+    assertEq(ve.balanceOf(user), 2, "User balance should be 2 after split");
+    assertEq(veloLocked1.amount, MINIMUM_LOCK_AMOUNT, "First token's velo balance should be reduced by split amount");
+    assertEq(balancerLocked1.amount, MINT_AMT, "First token's balancer should be unaffected");
+    assertEq(veloLocked2.amount, splitAmount, "Second token's balance should be equal to split amount");
+    assertEq(balancerLocked2.amount, 0, "Second token's balancer should be 0");
+
+    address[] memory assetsLocked1 = ve.getAssetsLocked(tokenId1);
+    address[] memory assetsLocked2 = ve.getAssetsLocked(tokenId2);
+
+    bool foundModeVeloInTokenId1 = false;
+    for (uint256 i = 0; i < assetsLocked1.length; i++) {
+      if (assetsLocked1[i] == address(modeVelodrome5050IonMode)) foundModeVeloInTokenId1 = true;
+    }
+
+    bool foundModeVeloInTokenId2 = false;
+    for (uint256 i = 0; i < assetsLocked2.length; i++) {
+      if (assetsLocked2[i] == address(modeVelodrome5050IonMode)) foundModeVeloInTokenId2 = true;
+    }
+
+    assertTrue(foundModeVeloInTokenId1, "TokenId1 should still have the asset modeVelodrome5050IonMode");
+    assertTrue(foundModeVeloInTokenId2, "TokenId2 should have the asset modeVelodrome5050IonMode");
   }
 
   function test_split_UserCanSplitSomeLP() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-
-    vars.user = address(0x5678);
-    LockInfoMultiple memory lockInput = _createLockMultipleInternal(vars.user);
-
-    vm.prank(ve.owner());
-    ve.toggleSplit(vars.user, true);
-
-    uint256 splitAmount = MINT_AMT / 2;
-    vm.prank(vars.user);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(address(modeVelodrome5050IonMode), lockInput.tokenId, splitAmount);
+    vm.prank(user);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+      address(modeVelodrome5050IonMode),
+      lockInputMultiLP.tokenId,
+      splitAmount
+    );
 
     IveION.LockedBalance memory veloLocked1 = ve.getUserLock(tokenId1, veloLpType);
     IveION.LockedBalance memory balancerLocked1 = ve.getUserLock(tokenId1, balancerLpType);
@@ -1315,6 +1325,60 @@ contract Split is veIONTest {
     assertEq(balancerLocked1.amount, MINT_AMT, "Second split lock amount should be half of the original");
     assertEq(veloLocked2.amount, MINT_AMT / 2, "Second split lock amount should be half of the original");
     assertEq(balancerLocked2.amount, 0, "Second split lock amount should be half of the original");
+  }
+
+  function test_split_RevertIfAlreadyVoted() public fork(MODE_MAINNET) {
+    ve.voting(lockInputMultiLP.tokenId, true);
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_RevertIfSplitNotAllowedForUser() public fork(MODE_MAINNET) {
+    ve.toggleSplit(user, false);
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("SplitNotAllowed()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_CanSplitNotAllowedForUserButAllowedGeneral() public fork(MODE_MAINNET) {
+    ve.toggleSplit(user, false);
+    ve.toggleSplit(address(0), true);
+    vm.prank(user);
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    vm.prank(address(0x9352));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_RevertIfLockExpired() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_RevertIfSplitTooSmall() public fork(MODE_MAINNET) {
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("SplitTooSmall()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, 0);
+  }
+
+  function test_split_RevertIfAmountTooBig() public fork(MODE_MAINNET) {
+    splitAmount = MINT_AMT * 2;
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+  }
+
+  function test_split_RevertIfNotEnoughRemainingInOldToken() public fork(MODE_MAINNET) {
+    splitAmount = 995e18;
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("NotEnoughRemainingAfterSplit()"));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 }
 

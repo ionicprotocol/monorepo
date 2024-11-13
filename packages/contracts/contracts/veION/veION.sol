@@ -317,30 +317,27 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _splitAmount
   ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
     address owner = _ownerOf(_from);
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory oldLocked = s_locked[_from][_lpType];
+    uint256 minimumLockAmount = s_minimumLockAmount[_lpType];
+
     if (s_voted[_from]) revert AlreadyVoted();
-    if (owner == address(0)) revert SplitNoOwner();
     if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
     if (ownerOf(_from) != _msgSender()) revert NotOwner();
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory newLocked = s_locked[_from][_lpType];
-    if (newLocked.end <= block.timestamp && !newLocked.isPermanent) revert LockExpired();
-    if (_splitAmount == 0) revert ZeroAmount();
-    if (newLocked.amount < _splitAmount) revert AmountTooBig();
+    if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
+    if (_splitAmount >= oldLocked.amount) revert AmountTooBig();
+    if (_splitAmount < minimumLockAmount) revert SplitTooSmall();
+    if (oldLocked.amount - _splitAmount < minimumLockAmount) revert NotEnoughRemainingAfterSplit();
 
-    LockedBalance memory originalLocked = newLocked;
-    newLocked.amount -= _splitAmount;
+    LockedBalance memory oldLockedTemp = oldLocked;
 
-    if (newLocked.amount == 0) {
-      s_locked[_from][_lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
-      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), _lpType);
-    } else {
-      s_locked[_from][_lpType] = newLocked;
-      _checkpoint(_from, newLocked, _lpType);
-    }
+    oldLocked.amount -= _splitAmount;
+    s_locked[_from][_lpType] = oldLocked;
+    _checkpoint(_from, oldLocked, _lpType);
 
-    LockedBalance memory splitLocked = originalLocked;
+    LockedBalance memory splitLocked = oldLockedTemp;
     splitLocked.amount = _splitAmount;
-    _tokenId2 = _createSplitVE(owner, splitLocked, _lpType);
+    _tokenId2 = _createSplitVE(owner, splitLocked, _lpType, _tokenAddress);
     _tokenId1 = _from;
 
     emit SplitCompleted(_from, _tokenId1, _tokenId2, _splitAmount, _tokenAddress);
@@ -695,8 +692,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     for (uint i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
       uint256 unlockTime = ((block.timestamp + _duration[i]) / WEEK) * WEEK;
-      if (!s_assetsLocked[_tokenId].add(_tokenAddress[i])) revert DuplicateAsset();
 
+      if (!s_assetsLocked[_tokenId].add(_tokenAddress[i])) revert DuplicateAsset();
       if (_tokenAmount[i] == 0) revert ZeroAmount();
       if (_duration[i] < s_minimumLockDuration) revert LockDurationTooShort();
       if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
@@ -735,10 +732,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function _createSplitVE(
     address _to,
     LockedBalance memory _newLocked,
-    LpTokenType _lpType
+    LpTokenType _lpType,
+    address _tokenAddress
   ) private returns (uint256 _tokenId) {
     _tokenId = ++s_tokenId;
     s_locked[_tokenId][_lpType] = _newLocked;
+    s_assetsLocked[_tokenId].add(_tokenAddress);
     _checkpoint(_tokenId, _newLocked, _lpType);
     _mint(_to, _tokenId);
   }

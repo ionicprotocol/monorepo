@@ -87,6 +87,8 @@ interface IveION {
   error ArrayMismatch();
   error LockDurationTooShort();
   error DuplicateAsset();
+  error SplitTooSmall();
+  error NotEnoughRemainingAfterSplit();
 
   event Deposit(
     address indexed provider,
