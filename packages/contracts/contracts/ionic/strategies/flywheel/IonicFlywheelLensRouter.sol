@@ -34,7 +34,7 @@ contract IonicFlywheelLensRouter {
     uint256 rewardSpeedPerSecondPerToken;
     /// @dev comptroller oracle price of reward token
     uint256 rewardTokenPrice;
-    /// @dev APR scaled by 1e18. Calculated as rewardSpeedPerSecondPerToken * rewardTokenPrice * 365.25 days / underlyingPrice * 1e18 / market.exchangeRate
+    /// @dev APR scaled by 1e18. Calculated as rewardSpeedPerSecondPerToken * rewardTokenPrice * 365.25 days / underlyingPrice
     uint256 formattedAPR;
     address flywheel;
     address rewardToken;
@@ -71,8 +71,8 @@ contract IonicFlywheelLensRouter {
     for (uint256 i = 0; i < markets.length; i++) {
       RewardsInfo[] memory rewardsInfo = new RewardsInfo[](flywheels.length);
 
-      ICErc20 market = ICErc20(address(markets[i]));
-      uint256 price = oracle.price(market.underlying()); // scaled to 1e18
+      ERC20 strategy = ERC20(address(markets[i]));
+      uint256 price = oracle.price(markets[i].underlying()); // scaled to 1e18
 
       if (i == 0) {
         for (uint256 j = 0; j < flywheels.length; j++) {
@@ -85,20 +85,15 @@ contract IonicFlywheelLensRouter {
       for (uint256 j = 0; j < flywheels.length; j++) {
         IonicFlywheelCore flywheel = IonicFlywheelCore(flywheels[j]);
 
-        uint256 rewardSpeedPerSecondPerCToken = getRewardSpeedPerSecondPerCToken(
-          flywheel,
-          market
-        );
-        uint256 marketExchangeRate = market.exchangeRateCurrent();
+        uint256 rewardSpeedPerSecondPerToken = flywheel.getRewardsPerSecondPerToken(strategy);
         uint256 apr = getApr(
-          rewardSpeedPerSecondPerCToken,
+          rewardSpeedPerSecondPerToken,
           rewardTokenPrices[j],
-          price,
-          marketExchangeRate
+          price
         );
 
         rewardsInfo[j] = RewardsInfo({
-          rewardSpeedPerSecondPerToken: (rewardSpeedPerSecondPerCToken * 1e18) / marketExchangeRate, // scaled in 1e18
+          rewardSpeedPerSecondPerToken: rewardSpeedPerSecondPerToken, // scaled in 1e18
           rewardTokenPrice: rewardTokenPrices[j],
           formattedAPR: apr, // scaled in 1e18
           flywheel: address(flywheel),
@@ -106,7 +101,7 @@ contract IonicFlywheelLensRouter {
         });
       }
 
-      infoList[i] = MarketRewardsInfo({ market: market, rewardsInfo: rewardsInfo, underlyingPrice: price });
+      infoList[i] = MarketRewardsInfo({ market: markets[i], rewardsInfo: rewardsInfo, underlyingPrice: price });
     }
 
     return infoList;
@@ -116,26 +111,17 @@ contract IonicFlywheelLensRouter {
     return decimals <= 18 ? uint256(indexDiff) * (10**(18 - decimals)) : uint256(indexDiff) / (10**(decimals - 18));
   }
 
-  function getRewardSpeedPerSecondPerCToken(
-    IonicFlywheelCore flywheel,
-    ICErc20 market
-  ) internal view returns (uint256) {
-    ERC20 strategy = ERC20(address(market));
-    return flywheel.getRewardsPerSecondPerToken(strategy);
-  }
-
   function getApr(
-    uint256 rewardSpeedPerSecondPerCToken,
+    uint256 rewardSpeedPerSecondPerToken,
     uint256 rewardTokenPrice,
-    uint256 underlyingPrice,
-    uint256 exchangeRate
+    uint256 underlyingPrice
   ) internal pure returns (uint256) {
-    if (rewardSpeedPerSecondPerCToken == 0) return 0;
-    uint256 nativeSpeedPerSecondPerCToken = rewardSpeedPerSecondPerCToken * rewardTokenPrice; // scaled to 1e36
-    uint256 nativeSpeedPerYearPerCToken = nativeSpeedPerSecondPerCToken * 365.25 days; // scaled to 1e36
-    uint256 assetSpeedPerYearPerCToken = nativeSpeedPerYearPerCToken / underlyingPrice; // scaled to 1e18
+    if (rewardSpeedPerSecondPerToken == 0) return 0;
+    uint256 nativeSpeedPerSecondPerToken = rewardSpeedPerSecondPerToken * rewardTokenPrice; // scaled to 1e36
+    uint256 nativeSpeedPerYearPerToken = nativeSpeedPerSecondPerToken * 365.25 days; // scaled to 1e36
+    uint256 assetSpeedPerYearPerToken = nativeSpeedPerYearPerToken / underlyingPrice; // scaled to 1e18
 
-    return (assetSpeedPerYearPerCToken * 1e18) / exchangeRate;
+    return assetSpeedPerYearPerToken;
   }
 
   function getRewardsAprForMarket(ICErc20 market) public view returns (int256 totalMarketRewardsApr) {
@@ -143,20 +129,17 @@ contract IonicFlywheelLensRouter {
     BasePriceOracle oracle = comptroller.oracle();
     uint256 underlyingPrice = oracle.getUnderlyingPrice(market);
 
+    ERC20 strategy = ERC20(address(market));
     address[] memory flywheels = comptroller.getAccruingFlywheels();
     for (uint256 j = 0; j < flywheels.length; j++) {
       IonicFlywheelCore flywheel = IonicFlywheelCore(flywheels[j]);
 
-      uint256 rewardSpeedPerSecondPerCToken = getRewardSpeedPerSecondPerCToken(
-        flywheel,
-        market
-      );
+      uint256 rewardSpeedPerSecondPerToken = flywheel.getRewardsPerSecondPerToken(strategy);
 
       uint256 marketApr = getApr(
-        rewardSpeedPerSecondPerCToken,
+        rewardSpeedPerSecondPerToken,
         oracle.price(address(flywheel.rewardToken())),
-        underlyingPrice,
-        market.exchangeRateCurrent()
+        underlyingPrice
       );
 
       totalMarketRewardsApr += int256(marketApr);
