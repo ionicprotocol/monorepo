@@ -274,18 +274,20 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (ownerOf(_from) != _msgSender()) revert NotOwner();
     if (ownerOf(_to) != _msgSender()) revert NotOwner();
 
-    vars.lengthOfAssets = s_assetsLocked[_from].length();
     vars.assetsLocked = s_assetsLocked[_from].values();
 
-    for (uint256 i = 0; i < vars.lengthOfAssets; i++) {
+    for (uint256 i = 0; i < vars.assetsLocked.length; i++) {
       vars.asset = vars.assetsLocked[i];
       vars.lpType = s_lpType[vars.asset];
-      vars.oldLockedTo = s_locked[_to][vars.lpType];
-      if (vars.oldLockedTo.end != 0 && vars.oldLockedTo.end <= block.timestamp && !vars.oldLockedTo.isPermanent)
-        revert LockExpired();
 
+      vars.oldLockedTo = s_locked[_to][vars.lpType];
       vars.oldLockedFrom = s_locked[_from][vars.lpType];
+
+      if (vars.oldLockedTo.end != 0 && vars.oldLockedTo.end <= block.timestamp) revert LockExpired();
+      if (vars.oldLockedFrom.end != 0 && vars.oldLockedFrom.end <= block.timestamp) revert LockExpired();
+
       if (vars.oldLockedFrom.isPermanent) revert PermanentLock();
+      if (vars.oldLockedTo.isPermanent) revert PermanentLock();
 
       vars.end = vars.oldLockedFrom.end;
       vars.start = vars.oldLockedFrom.start;
@@ -318,7 +320,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
     }
     _burn(_from);
-    emit MergeCompleted(_from, _to, vars.assetsLocked, vars.lengthOfAssets);
+    emit MergeCompleted(_from, _to, vars.assetsLocked, vars.assetsLocked.length);
   }
 
   function split(
