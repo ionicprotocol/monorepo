@@ -328,7 +328,7 @@ contract SupplyVaultsTest is BaseTest {
     uint256 expectedAprIncrease = (uint256(allocation2) * 0.01e18) / 1e18;
     console.log("expectedAprIncrease %e", expectedAprIncrease);
 
-    assertApproxEqRel(expectedAprIncrease, aprAfter - aprBefore, 5e16);
+    assertApproxEqRel(expectedAprIncrease, aprAfter - aprBefore, 5e15);
   }
 
   function testVaultOptimization() public fork(MODE_MAINNET) {

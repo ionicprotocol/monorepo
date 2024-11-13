@@ -94,8 +94,7 @@ contract IonicFlywheelLensRouter {
           rewardSpeedPerSecondPerCToken,
           rewardTokenPrices[j],
           price,
-          marketExchangeRate,
-          address(flywheel.flywheelBooster()) != address(0)
+          marketExchangeRate
         );
 
         rewardsInfo[j] = RewardsInfo({
@@ -129,8 +128,7 @@ contract IonicFlywheelLensRouter {
     uint256 rewardSpeedPerSecondPerCToken,
     uint256 rewardTokenPrice,
     uint256 underlyingPrice,
-    uint256 exchangeRate,
-    bool isBorrow
+    uint256 exchangeRate
   ) internal pure returns (uint256) {
     if (rewardSpeedPerSecondPerCToken == 0) return 0;
     uint256 nativeSpeedPerSecondPerCToken = rewardSpeedPerSecondPerCToken * rewardTokenPrice; // scaled to 1e36
@@ -138,12 +136,6 @@ contract IonicFlywheelLensRouter {
     uint256 assetSpeedPerYearPerCToken = nativeSpeedPerYearPerCToken / underlyingPrice; // scaled to 1e18
 
     return (assetSpeedPerYearPerCToken * 1e18) / exchangeRate;
-    //    if (!isBorrow) {
-    //      // if not borrowing, use exchange rate to scale
-    //      apr = (assetSpeedPerYearPerCToken * 1e18) / exchangeRate; // scaled to 1e18
-    //    } else {
-    //      apr = assetSpeedPerYearPerCToken; // scaled to 1e18
-    //    }
   }
 
   function getRewardsAprForMarket(ICErc20 market) public view returns (int256 totalMarketRewardsApr) {
@@ -164,8 +156,7 @@ contract IonicFlywheelLensRouter {
         rewardSpeedPerSecondPerCToken,
         oracle.price(address(flywheel.rewardToken())),
         underlyingPrice,
-        market.exchangeRateCurrent(),
-        address(flywheel.flywheelBooster()) != address(0)
+        market.exchangeRateCurrent()
       );
 
       totalMarketRewardsApr += int256(marketApr);

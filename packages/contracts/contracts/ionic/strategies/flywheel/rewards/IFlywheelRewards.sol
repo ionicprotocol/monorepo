@@ -38,5 +38,5 @@ interface IFlywheelRewards {
     /// @notice return the reward token associated with flywheel core.
     function rewardToken() external view returns (ERC20);
 
-    function getRewardsPerSecondPerToken(ERC20 strategy) external view returns (uint256);
+    function getRewardsPerSecond(ERC20 strategy) external view returns (uint256);
 }

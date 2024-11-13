@@ -325,6 +325,10 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   }
 
   function getRewardsPerSecondPerToken(ERC20 strategy) external view returns (uint256) {
-    return flywheelRewards.getRewardsPerSecondPerToken(strategy);
+    uint256 supplyTokens = address(flywheelBooster) != address(0)
+      ? flywheelBooster.boostedTotalSupply(strategy)
+      : strategy.totalSupply();
+    if (supplyTokens == 0) return 0;
+    return flywheelRewards.getRewardsPerSecond(strategy) / supplyTokens;
   }
 }
