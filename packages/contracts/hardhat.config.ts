@@ -93,14 +93,31 @@ const config: HardhatUserConfig = {
     },
     lisk: {
       url: process.env.OVERRIDE_RPC_URL_LISK ?? "https://rpc.api.lisk.com",
-      accounts
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://blockscout.lisk.com/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
     apiKey: {
       base: process.env.ETHERSCAN_API_KEY_BASE!,
-      optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!
-    }
+      optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
+      lisk: "empty"
+    },
+    customChains: [
+      {
+        network: "lisk",
+        chainId: 1135,
+        urls: {
+          apiURL: "https://blockscout.lisk.com/api",
+          browserURL: "https://blockscout.lisk.com"
+        }
+      }
+    ]
   },
   sourcify: {
     enabled: true

@@ -222,6 +222,9 @@ export enum assetSymbols {
   frxBTC = "frxBTC",
   insfrxETH = "insfrxETH",
 
+  // lisk
+  LSK = "LSK",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",

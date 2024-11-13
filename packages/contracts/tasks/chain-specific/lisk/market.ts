@@ -5,14 +5,15 @@ import { COMPTROLLER_MAIN } from ".";
 import { lisk } from "@ionicprotocol/chains";
 
 task("markets:deploy:lisk:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.WETH];
+  const assetsToDeploy: string[] = [assetSymbols.LSK];
   for (const asset of lisk.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
     }
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
-    console.log(`Deploying ctoken ${name} with symbol ${symbol}`);
+    console.log("Deploying market for ", asset.symbol, asset.name);
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
     await run("market:deploy", {
       signer: "deployer",
       cf: "0",
@@ -39,8 +40,9 @@ task("markets:deploy:lisk:new", "deploy new mode assets").setAction(async (_, { 
   }
 });
 
-task("market:set-cf:lisk:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of lisk.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+task("market:set-caps:lisk:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
+  const assetsToDeploy: string[] = [assetSymbols.WETH, assetSymbols.USDT, assetSymbols.LSK];
+  for (const asset of lisk.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
@@ -51,5 +53,15 @@ task("market:set-cf:lisk:new", "Sets CF on a market").setAction(async (_, { viem
         ltv: asset.initialCf
       });
     }
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
   }
 });

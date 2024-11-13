@@ -213,7 +213,7 @@
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
     },
     "IonicLiquidator_Implementation": {
-      "address": "0x9262c04B631B2aCCEa81E34745af8740f38967Fd"
+      "address": "0xE7093a316581b4feAC84E411d9069a87463c86a6"
     },
     "IonicLiquidator_Proxy": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
@@ -222,7 +222,7 @@
       "address": "0x1c6518B495FdCB1E087A9EC9669DB8C584cE3C1d"
     },
     "IonicUniV3Liquidator_Implementation": {
-      "address": "0xfffFed6428f486794aAD5E60afD4EAdE620263fF"
+      "address": "0x6F761152e02c51c4dcf7f1c1B4a4E26f2A5EEaCE"
     },
     "IonicUniV3Liquidator_Proxy": {
       "address": "0x1c6518B495FdCB1E087A9EC9669DB8C584cE3C1d"

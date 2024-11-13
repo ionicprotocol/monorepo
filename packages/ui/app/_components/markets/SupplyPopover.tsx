@@ -73,7 +73,7 @@ export default function SupplyPopover({
         <span
           className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
         >
-          {merklAprForToken ? (
+          {merklAprForToken || asset === 'dMBTC' ? (
             <>
               +{' '}
               <img
@@ -119,7 +119,7 @@ export default function SupplyPopover({
             %
           </span>
         </div>
-        {merklAprForToken && (
+        {(merklAprForToken || asset === 'dMBTC') && (
           <div className="flex items-center mt-1">
             <img
               src="/images/op-logo-red.svg"
