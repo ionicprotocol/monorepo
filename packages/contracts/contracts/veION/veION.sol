@@ -194,6 +194,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (s_voted[_tokenId]) revert AlreadyVoted();
     if (oldLocked.isPermanent) revert PermanentLock();
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
+    if (oldLocked.amount == 0 || !s_assetsLocked[_tokenId].contains(_tokenAddress)) revert NoLockFound();
 
     uint256 value = uint256(int256(oldLocked.amount));
     s_userCumulativeAssetValues[sender][_tokenAddress] -= value;
