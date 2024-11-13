@@ -349,9 +349,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (_newLocked.isPermanent) revert PermanentLock();
     if (_newLocked.end <= block.timestamp) revert LockExpired();
     if (_newLocked.amount <= 0) revert NoLockFound();
@@ -360,14 +360,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _newLocked.end = 0;
     _newLocked.isPermanent = true;
     _newLocked.boost = _calculateBoost(MAXTIME);
+
     s_locked[_tokenId][_lpType] = _newLocked;
     _checkpoint(_tokenId, _newLocked, _lpType);
+
+    emit PermanentLockCreated(_tokenAddress, _tokenId, _newLocked.amount);
   }
 
   function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (!_newLocked.isPermanent) revert NotPermanentLock();
     if (s_delegatees[_tokenId][_lpType].length() != 0) revert TokenHasDelegatees();
     if (s_delegators[_tokenId][_lpType].length() != 0) revert TokenHasDelegators();
@@ -375,8 +378,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     s_permanentLockBalance[_lpType] -= _newLocked.amount;
     _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
     _newLocked.isPermanent = false;
-    _checkpoint(_tokenId, _newLocked, _lpType);
+
     s_locked[_tokenId][_lpType] = _newLocked;
+    _checkpoint(_tokenId, _newLocked, _lpType);
+
+    emit PermanentLockRemoved(_tokenAddress, _tokenId, _newLocked.amount);
   }
 
   function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {

@@ -1428,24 +1428,100 @@ contract LockPermanent is veIONTest {
     assertEq(userPoint.blk, block.number, "User point block number should be current block number");
     assertEq(userPoint.permanent, lock.amount, "User point permanent lock should match lock amount");
   }
+
+  function test_lockPermanent_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    vm.prank(address(0x2352));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+  }
+
+  function test_lockPermanent_RevertIfPermanentLock() public fork(MODE_MAINNET) {
+    vm.startPrank(user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    vm.stopPrank();
+  }
+
+  function test_lockPermanent_RevertIfLockExpired() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + lockInput.duration);
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+  }
+
+  function test_lockPermanent_RevertIfNoLockFound() public fork(MODE_MAINNET) {
+    vm.prank(user);
+    vm.expectRevert("ERC721: invalid token ID");
+    ve.lockPermanent(address(modeVelodrome5050IonMode), 933);
+  }
 }
 
 contract UnlockPermanent is veIONTest {
-  function test_unlockPermanent_UserCanUnlockPermanent() public fork(MODE_MAINNET) {
-    TestVars memory vars;
+  address user;
+  LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
+  veIONHarness harness;
 
-    vars.user = address(0x5678);
-    LockInfo memory lockInput = _createLockInternal(vars.user);
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x1234);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+    lockInput = _createLockInternal(user);
+    ve.setVoter(address(this));
 
-    vm.startPrank(vars.user);
+    harness = new veIONHarness();
+    vm.prank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+  }
+
+  function test_unlockPermanent_UserCanUnlockPermanent() public fork(MODE_MAINNET) {
+    vm.prank(user);
     ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
-    vm.stopPrank();
 
     uint256 endTime = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
-    IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
-    assertEq(actualLocked.isPermanent, false, "Lock should be permanent");
-    assertEq(actualLocked.end, endTime, "Lock end time should be zero for permanent lock");
+    IveION.LockedBalance memory locked = ve.getUserLock(lockInput.tokenId, veloLpType);
+    assertEq(locked.tokenAddress, lockInput.tokenAddress);
+    assertEq(locked.amount, lockInput.tokenAmount, "Amount should be reset to the original lock input value");
+    assertEq(locked.delegateAmount, 0, "Delegate amount should be zero after unlocking permanent lock");
+    assertEq(locked.start, block.timestamp, "Should get back the original start time");
+    assertEq(locked.end, endTime, "Lock end time should be zero for permanent lock");
+    assertEq(locked.isPermanent, false, "Lock should be permanent");
+    assertEq(
+      locked.boost,
+      harness.exposed_calculateBoost(MAXTIME),
+      "Boost should be zero after unlocking permanent lock"
+    );
+  }
+
+  function test_unlockPermanent_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    vm.prank(address(0x0915));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+  }
+
+  function test_unlockPermanent_RevertIfNotPermanentLock() public fork(MODE_MAINNET) {
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+  }
+
+  function test_unlockPermanent_RevertIfHasDelegatees() public fork(MODE_MAINNET) {
+    vm.startPrank(user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    ve.delegate(lockInput.tokenId, lockInputMultiLP.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
+    vm.expectRevert(abi.encodeWithSignature("TokenHasDelegatees()"));
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    vm.stopPrank();
+  }
+
+  function test_unlockPermanent_RevertIfHasDelegators() public fork(MODE_MAINNET) {
+    vm.startPrank(user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    ve.delegate(lockInputMultiLP.tokenId, lockInput.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
+    vm.expectRevert(abi.encodeWithSignature("TokenHasDelegators()"));
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    vm.stopPrank();
   }
 }
 
