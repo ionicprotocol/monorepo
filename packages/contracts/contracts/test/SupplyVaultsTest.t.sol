@@ -7,6 +7,7 @@ import "../ionic/vault/OptimizedVaultsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { FlywheelStaticRewards } from "../ionic/strategies/flywheel/rewards/FlywheelStaticRewards.sol";
 import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
+import { IonicFlywheelSupplyBooster } from "../ionic/strategies/flywheel/IonicFlywheelSupplyBooster.sol";
 import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
 import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
 
@@ -140,6 +141,7 @@ contract SupplyVaultsTest is BaseTest {
     ap.setAddress("IonicFlywheelLensRouter", address(upgradedIflr));
 
     IonicFlywheel newFwImpl = new IonicFlywheel();
+    IonicFlywheelSupplyBooster marketSupplyBooster = new IonicFlywheelSupplyBooster();
 
     uint256 ionWhaleStartingBalance = ionToken.balanceOf(ionWhale);
 
@@ -175,6 +177,13 @@ contract SupplyVaultsTest is BaseTest {
             TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
             vm.prank(proxyAdmin.owner());
             proxyAdmin.upgrade(proxy, address(newFwImpl));
+
+            // all strategies that are ionic markets must use the supply or
+            // borrow booster in order to show the correct APR
+            if (address(flywheel.flywheelBooster()) == address(0)) {
+              vm.prank(flywheel.owner());
+              flywheel.setBooster(marketSupplyBooster);
+            }
           }
 
           FlywheelStaticRewards flywheelRewards = FlywheelStaticRewards(address(flywheel.flywheelRewards()));
