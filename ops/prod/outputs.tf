@@ -26,3 +26,11 @@ output "task_definition_arn" {
   value = aws_ecs_task_definition.perbotTaskDefinition1.arn
 }
 
+output "debug_task_definition_families" {
+  value = {
+    base = var.task_definition_family_base
+    optimism = var.task_definition_family_optimism
+    mode = var.task_definition_family_mode
+  }
+}
+

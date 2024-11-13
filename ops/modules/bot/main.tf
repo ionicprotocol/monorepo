@@ -72,7 +72,7 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
 
 resource "aws_iam_role" "ecs_task_execution_role" {
   provider = aws.us-east-1
-  name     = "ecs-task-execution-role-test"
+  name     = "ecs-task-execution-role-${var.task_definition_family}"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

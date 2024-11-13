@@ -26,7 +26,7 @@ module "base_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
-  task_definition_family     = "${var.task_definition_family}-base"
+  task_definition_family     = var.task_definition_family_base
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag
   web3_http_provider_urls    = local.base_mainnet_rpcs
