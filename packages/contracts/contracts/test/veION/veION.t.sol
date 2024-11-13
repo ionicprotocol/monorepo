@@ -1660,7 +1660,7 @@ contract Delegate is veIONTest {
   }
 }
 
-contract RemoveDelegatees is veIONTest {
+contract RemoveDelegateesAndRemoveDelegators is veIONTest {
   address cindy;
   address andy;
   LockInfo lockInputAlice;
@@ -1778,9 +1778,60 @@ contract RemoveDelegatees is veIONTest {
     vm.expectRevert(abi.encodeWithSignature("NoDelegationBetweenTokens(uint256,uint256)", tokenIdAlice, tokenIdCandy));
     ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
-}
 
-contract RemoveDelegators is veIONTest {}
+  function test_removeDelegatees_UserCanRemoveDelegators() public fork(MODE_MAINNET) {
+    uint256[] memory fromTokenIds = new uint256[](1);
+    fromTokenIds[0] = tokenIdAlice;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(cindy);
+    ve.removeDelegators(fromTokenIds, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+
+    IveION.LockedBalance memory locked1 = ve.getUserLock(tokenIdAlice, veloLpType);
+    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenIdBob, veloLpType);
+
+    uint256 amountDelegated = ve.s_delegations(tokenIdAlice, tokenIdBob, veloLpType);
+
+    uint256[] memory delegatees = ve.getDelegatees(tokenIdAlice, veloLpType);
+    bool foundDelegatee = false;
+    for (uint256 i = 0; i < delegatees.length; i++) {
+      if (delegatees[i] == tokenIdBob) {
+        foundDelegatee = true;
+        break;
+      }
+    }
+
+    uint256[] memory delegators = ve.getDelegators(tokenIdBob, veloLpType);
+    bool foundDelegator = false;
+    for (uint256 i = 0; i < delegators.length; i++) {
+      if (delegatees[i] == tokenIdBob) {
+        foundDelegator = true;
+        break;
+      }
+    }
+
+    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint = ve.getUserPoint(
+      tokenIdBob,
+      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      userEpoch
+    );
+
+    assertEq(userPoint.ts, block.timestamp, "User point timestamp mismatch");
+    assertEq(userPoint.blk, block.number, "User point block number mismatch");
+    assertEq(userPoint.bias, 0, "User point bias mismatch");
+    assertEq(userPoint.slope, 0, "User point slope mismatch");
+    assertEq(userPoint.permanent, MINT_AMT, "User point permanent mismatch");
+    assertEq(userPoint.permanentDelegate, 0, "User point permanent delegate mismatch");
+
+    assertEq(locked1.amount, MINT_AMT, "Voting power should be returned to the original token");
+    assertEq(locked2.delegateAmount, 0, "Delegated voting power should be removed from the second token");
+    assertFalse(foundDelegatee, "bob token should not be in the list of delegatees for alice after de-delegation");
+    assertFalse(foundDelegator, "alice token should not be in the list of delegators for bob after de-delegation");
+    assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
+  }
+}
 
 contract ClaimEmissions is veIONTest {}
 
