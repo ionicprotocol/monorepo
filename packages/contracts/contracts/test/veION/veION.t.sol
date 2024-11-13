@@ -1526,40 +1526,109 @@ contract UnlockPermanent is veIONTest {
 }
 
 contract Delegate is veIONTest {
-  function test_delegation_UserCanDelegate() public fork(MODE_MAINNET) {
-    TestVars memory vars;
+  address user;
+  LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
+  veIONHarness harness;
+  uint256 tokenId1;
+  uint256 tokenId2;
 
-    vars.user = address(0x5678);
-    LockInfo memory lockInput = _createLockInternal(vars.user);
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x1234);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+    lockInput = _createLockInternal(user);
+    ve.setVoter(address(this));
 
-    vars.user2 = address(0x1234);
-    LockInfo memory lockInput2 = _createLockInternal(vars.user2);
-
-    vm.prank(vars.user);
+    harness = new veIONHarness();
+    vm.startPrank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
-    vm.prank(vars.user2);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput2.tokenId);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    vm.stopPrank();
 
-    vm.prank(vars.user);
-    ve.delegate(lockInput.tokenId, lockInput2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT);
+    (tokenId1, tokenId2) = (lockInput.tokenId, lockInputMultiLP.tokenId);
+  }
 
-    IveION.LockedBalance memory locked1 = ve.getUserLock(lockInput.tokenId, veloLpType);
-    IveION.LockedBalance memory locked2 = ve.getUserLock(lockInput2.tokenId, veloLpType);
+  function test_delegation_UserCanDelegate() public fork(MODE_MAINNET) {
+    vm.prank(user);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
 
-    uint256[] memory delegatees = ve.getDelegatees(lockInput.tokenId, veloLpType);
-    uint256 amountDelegated = ve.s_delegations(lockInput.tokenId, lockInput2.tokenId, veloLpType);
-    bool found = false;
+    IveION.LockedBalance memory locked1 = ve.getUserLock(tokenId1, veloLpType);
+    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenId2, veloLpType);
+
+    uint256 amountDelegated = ve.s_delegations(tokenId1, tokenId2, veloLpType);
+
+    uint256[] memory delegatees = ve.getDelegatees(tokenId1, veloLpType);
+    bool foundDelegatee = false;
     for (uint256 i = 0; i < delegatees.length; i++) {
-      if (delegatees[i] == lockInput2.tokenId) {
-        found = true;
+      if (delegatees[i] == tokenId2) {
+        foundDelegatee = true;
+        break;
+      }
+    }
+
+    uint256[] memory delegators = ve.getDelegators(tokenId2, veloLpType);
+    bool foundDelegator = false;
+    for (uint256 i = 0; i < delegators.length; i++) {
+      if (delegators[i] == tokenId1) {
+        foundDelegator = true;
         break;
       }
     }
 
     assertEq(locked1.amount, 0, "All voting power should have been delegated from this token");
     assertEq(locked2.delegateAmount, MINT_AMT, "All voting power should have been delegated to this token");
-    assertTrue(found, "secondTokenId should be in the list of delegatees");
     assertEq(amountDelegated, MINT_AMT, "Delegated amount should be recorded");
+    assertTrue(foundDelegatee, "tokenId2 found in list of tokenId1's delegatees");
+    assertTrue(foundDelegator, "tokenId1 found in  list of tokenId2's delegators");
+  }
+
+  function test_delegation_NoDuplicateDelegateesOrDelegators() public fork(MODE_MAINNET) {
+    uint256 smallDelegation = 10e18;
+    vm.startPrank(user);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    vm.stopPrank();
+
+    uint256[] memory delegatees = ve.getDelegatees(tokenId1, veloLpType);
+    assertEq(delegatees.length, 1, "Should only be one delegeatee despite several delegations");
+
+    uint256[] memory delegators = ve.getDelegators(tokenId2, veloLpType);
+    assertEq(delegators.length, 1, "Should only be one delegator despite several delegations");
+
+    uint256 amountDelegated = ve.s_delegations(tokenId1, tokenId2, veloLpType);
+    assertEq(amountDelegated, smallDelegation * 5, "Should accumulate");
+  }
+
+  function test_delegation_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    vm.prank(address(0x2352));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+  }
+
+  function test_delegation_RevertIfAmountTooBig() public fork(MODE_MAINNET) {
+    vm.prank(user);
+    vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT * 2);
+  }
+
+  function test_delegation_RevertIfNotPermanentLockFrom() public fork(MODE_MAINNET) {
+    vm.startPrank(user);
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId1);
+    vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    vm.stopPrank();
+  }
+
+  function test_delegation_RevertIfNotPermanentLockTo() public fork(MODE_MAINNET) {
+    vm.startPrank(user);
+    ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId2);
+    vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
+    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    vm.stopPrank();
   }
 }
 

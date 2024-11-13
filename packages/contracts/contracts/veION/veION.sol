@@ -386,31 +386,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {
-    // Ensure the caller is the owner or approved for the fromTokenId
-    if (ownerOf(fromTokenId) != _msgSender()) revert NotOwner();
-
-    // Retrieve the locked balance for the fromTokenId
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
-
-    // Ensure the lock is permanent
-    if (!fromLocked.isPermanent) revert NotPermanentLock();
-
-    // Ensure the amount to delegate is not greater than the available amount
-    if (amount > uint256(int256(fromLocked.amount))) revert AmountTooBig();
-
-    // Retrieve the locked balance for the toTokenId
     LockedBalance memory toLocked = s_locked[toTokenId][lpType];
 
+    if (ownerOf(fromTokenId) != _msgSender()) revert NotOwner();
+    if (amount > fromLocked.amount) revert AmountTooBig();
+    if (!fromLocked.isPermanent) revert NotPermanentLock();
     if (!toLocked.isPermanent) revert NotPermanentLock();
 
-    // Transfer the voting power
-    toLocked.delegateAmount += amount;
     fromLocked.amount -= amount;
-
-    // Update the locked balances
-    s_locked[fromTokenId][lpType] = fromLocked;
-    s_locked[toTokenId][lpType] = toLocked;
+    toLocked.delegateAmount += amount;
 
     if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
       s_delegatees[fromTokenId][lpType].add(toTokenId);
@@ -419,7 +405,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     s_delegations[fromTokenId][toTokenId][lpType] += amount;
 
-    // Update checkpoints for both token IDs
+    s_locked[fromTokenId][lpType] = fromLocked;
+    s_locked[toTokenId][lpType] = toLocked;
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
 
@@ -427,7 +414,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function _removeDelegation(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) internal {
-    // Ensure the caller is the owner or approved for the fromTokenId
     if (ownerOf(fromTokenId) != _msgSender() && ownerOf(toTokenId) != _msgSender()) revert NotOwner();
 
     LpTokenType lpType = s_lpType[lpToken];
@@ -437,11 +423,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     amount = amount > s_delegations[fromTokenId][toTokenId][lpType]
       ? s_delegations[fromTokenId][toTokenId][lpType]
       : amount;
-    // Transfer the voting power back
+
     toLocked.delegateAmount -= amount;
     fromLocked.amount += amount;
 
-    // Update the delegation record
     s_delegations[fromTokenId][toTokenId][lpType] -= amount;
     if (s_delegations[fromTokenId][toTokenId][lpType] == 0) {
       s_delegatees[fromTokenId][lpType].remove(toTokenId);
@@ -449,8 +434,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
 
     s_locked[toTokenId][lpType] = toLocked;
-    _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
     s_locked[fromTokenId][lpType] = fromLocked;
+    _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
 
     emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
