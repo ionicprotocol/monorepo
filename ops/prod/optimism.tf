@@ -29,6 +29,7 @@ module "optimism_mainnet_liquidator_ecs" {
   web3_http_provider_urls    = local.optimism_mainnet_rpc_0
   target_chain_id            = local.optimism_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
+  uptime_liquidator_api      = var.uptime_liquidator_api
   ethereum_admin_private_key = var.ethereum_admin_private_key
   ecs_service_name           = "${var.liquidator_service_name}-optimism"
   desired_count              = var.desired_count

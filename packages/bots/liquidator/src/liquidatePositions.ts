@@ -36,6 +36,7 @@ const PAGE_SIZE = 500; // Define the page size for pagination
 // const BATCH_SIZE = 100; // Define the batch size for processing assets
 const HF_MIN = parseEther("0.5");
 const MAX_HEALTH_FACTOR = parseEther("1");
+const MIN_LIQUIDATION_USD = parseEther("0.01"); // Minimum liquidation value of $0.10
 
 async function getFusePoolUsers(comptroller: Address, botType: BotType) {
   const poolUsers: PoolUserStruct[] = [];
@@ -189,6 +190,14 @@ async function getPotentialPythLiquidation(borrower: PoolUserWithAssets, closeFa
   const debtAsset = borrower.debt[0];
   const collateralAsset = borrower.collateral[0];
 
+  // Calculate liquidation value in USD
+  const liquidationValueUSD = (debtAsset.borrowBalanceWei! * debtAsset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+
+  if (liquidationValueUSD < MIN_LIQUIDATION_USD) {
+    logger.info(`Liquidation value ${liquidationValueUSD.toString()} below minimum threshold, skipping liquidation`);
+    return undefined;
+  }
+
   if (debtAsset.borrowBalanceWei! < 3877938057596160n) {
     logger.info(`Borrow too small, skipping liquidation. Vault: ${borrower.account}`);
     return undefined;
@@ -239,6 +248,7 @@ async function getPotentialPythLiquidation(borrower: PoolUserWithAssets, closeFa
     cTokenCollateral: collateralAsset.cToken,
     collateralAssetUnderlyingToken: collateralAsset.underlyingToken,
     debtAssetUnderlyingToken: debtAsset.underlyingToken,
+    liquidationValueUSD: liquidationValueUSD
   };
 }
 
@@ -265,6 +275,15 @@ const getPotentialLiquidation = async (
   borrower.collateral.sort((a, b) => (b.supplyBalanceWei! > a.supplyBalanceWei! ? 1 : -1));
   const debtAsset = borrower.debt[0];
   const collateralAsset = borrower.collateral[0];
+
+  // Calculate liquidation value in USD
+  const liquidationValueUSD = (debtAsset.borrowBalanceWei! * debtAsset.underlyingPrice) / SCALE_FACTOR_ONE_18_WEI;
+
+  if (liquidationValueUSD < MIN_LIQUIDATION_USD) {
+    logger.info(`Liquidation value ${liquidationValueUSD.toString()} below minimum threshold, skipping liquidation`);
+    return undefined;
+  }
+
   // Get debt and collateral prices
   const debtAssetUnderlyingPrice = debtAsset.underlyingPrice;
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
@@ -311,6 +330,7 @@ const getPotentialLiquidation = async (
     logger.info("Liquidation amount is zero, doing nothing");
     return undefined;
   }
+
   return {
     borrower: borrower.account,
     repayAmount,
@@ -318,6 +338,7 @@ const getPotentialLiquidation = async (
     cTokenCollateral: borrower.collateral[0].cToken as Address,
     collateralAssetUnderlyingToken,
     debtAssetUnderlyingToken,
+    liquidationValueUSD
   };
 };
 
@@ -416,6 +437,7 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
                 `To: ${receipt.to}\n` +
                 `Borrower: ${liquidationParams.borrower}\n` +
                 `Repay Amount: ${liquidationParams.repayAmount.toString()}\n` +
+                `Liquidation Value: $${(Number(liquidationParams.liquidationValueUSD) / 1e18).toFixed(2)}\n` +
                 `Block: ${receipt.blockNumber}\n` +
                 `Gas Used: ${receipt.gasUsed}\n`;
               +`Status: **${receipt.status}**\n`;
@@ -462,6 +484,7 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
         logger.info(`cErc20 Address: ${liquidationParams.cErc20}`);
         logger.info(`cToken Collateral Address: ${liquidationParams.cTokenCollateral}`);
         logger.info(`Minimum Output Amount: ${liquidationParams.underlyingAmountSeized.toString()}`);
+        logger.info(`Liquidation Value: $${(Number(liquidationParams.liquidationValueUSD) / 1e18).toFixed(2)}`);
 
         if (liquidationParams.collateralAssetUnderlyingToken && liquidationParams.debtAssetUnderlyingToken) {
           logger.info(

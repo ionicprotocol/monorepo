@@ -62,6 +62,10 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
           value = "${var.discord_success_webhook_url}"
         },
         {
+          name  = "UPTIME_LIQUIDATOR_API"
+          value = "${var.uptime_liquidator_api}"
+        },
+        {
           name  = "LIFIAPIKEY"
           value = "${var.lifi_api_key}"
         }

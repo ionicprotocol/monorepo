@@ -28,6 +28,7 @@ module "mode_mainnet_liquidator_ecs" {
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag
   web3_http_provider_urls    = local.mode_mainnet_rpcs
+  uptime_liquidator_api      = var.uptime_liquidator_api
   target_chain_id            = local.mode_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
   ethereum_admin_private_key = var.ethereum_admin_private_key

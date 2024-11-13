@@ -32,6 +32,7 @@ module "base_mainnet_liquidator_ecs" {
   web3_http_provider_urls    = local.base_mainnet_rpcs
   target_chain_id            = local.base_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
+  uptime_liquidator_api      = var.uptime_liquidator_api
   ethereum_admin_private_key = var.ethereum_admin_private_key
   ecs_service_name           = "${var.liquidator_service_name}-base"
   desired_count              = var.desired_count
