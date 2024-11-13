@@ -289,15 +289,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (vars.oldLockedFrom.isPermanent) revert PermanentLock();
       if (vars.oldLockedTo.isPermanent) revert PermanentLock();
 
-      vars.end = vars.oldLockedFrom.end;
-      vars.start = vars.oldLockedFrom.start;
-      vars.boost = vars.oldLockedFrom.boost;
-
-      if ((vars.oldLockedTo.end - vars.oldLockedTo.start) > (vars.oldLockedFrom.end - vars.oldLockedFrom.start)) {
-        vars.end = vars.oldLockedTo.end;
-        vars.start = vars.oldLockedTo.start;
-        vars.boost = vars.oldLockedTo.boost;
-      }
+      vars.start = vars.oldLockedTo.start < vars.oldLockedFrom.start
+        ? vars.oldLockedTo.start
+        : vars.oldLockedFrom.start;
+      vars.end = vars.oldLockedTo.end > vars.oldLockedFrom.end ? vars.oldLockedTo.end : vars.oldLockedFrom.end;
+      vars.boost = _calculateBoost(vars.end - vars.start);
 
       s_locked[_from][vars.lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
       _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), vars.lpType);
