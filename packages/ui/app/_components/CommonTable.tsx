@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import {
@@ -18,7 +19,7 @@ import {
 
 import { TableLoader } from './TableLoader';
 
-import type { ColumnDef, SortingState } from '@tanstack/react-table';
+import type { ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 interface CommonTableProps<T> {
   data: T[];
@@ -26,6 +27,7 @@ interface CommonTableProps<T> {
   isLoading?: boolean;
   loadingRows?: number;
   showFooter?: boolean;
+  renderRow?: (row: Row<T>) => ReactNode;
 }
 
 function CommonTable<T>({
@@ -33,7 +35,8 @@ function CommonTable<T>({
   columns,
   isLoading = false,
   loadingRows = 5,
-  showFooter = false
+  showFooter = false,
+  renderRow
 }: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -84,18 +87,22 @@ function CommonTable<T>({
       </TableHeader>
       <TableBody>
         {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl border-none"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
+          table.getRowModel().rows.map((row) =>
+            renderRow ? (
+              renderRow(row)
+            ) : (
+              <TableRow
+                key={row.id}
+                className="hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl border-none"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )
+          )
         ) : (
           <TableRow>
             <TableCell
