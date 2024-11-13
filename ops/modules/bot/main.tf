@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
         },
         {
           name  = "TARGET_CHAIN_ID"
-          value = "34443"
+          value = "${var.target_chain_id}"
         },
         {
           name  = "ETHEREUM_ADMIN_ACCOUNT"
@@ -60,15 +60,27 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
         {
           name  = "DISCORD_SUCCESS_WEBHOOK_URL"
           value = "${var.discord_success_webhook_url}"
-        }  
+        },
+        {
+          name  = "UPTIME_LIQUIDATOR_API"
+          value = "${var.uptime_liquidator_api}"
+        },
+        {
+          name  = "LIFIAPIKEY"
+          value = "${var.lifi_api_key}"
+        }
       ] 
     }
   ])
 }
 
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 resource "aws_iam_role" "ecs_task_execution_role" {
   provider = aws.us-east-1
-  name     = "ecs-task-execution-role-test"
+  name     = "ecs-task-execution-role-${var.task_definition_family}-${random_id.suffix.hex}"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
