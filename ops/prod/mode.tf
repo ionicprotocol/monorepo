@@ -1,5 +1,5 @@
 locals {
-  # Multiple Mode Mainnet RPC URLs (comma-separated environment variable)
+  # Multiple Mode Mainnet RPC URL (comma-separated environment variable)
   mode_mainnet_rpcs    = var.mode_mainnet_rpcs 
   mode_mainnet_chain_id = "34443"
 }
