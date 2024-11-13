@@ -285,31 +285,23 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
       if (vars.oldLockedTo.end != 0 && vars.oldLockedTo.end <= block.timestamp) revert LockExpired();
       if (vars.oldLockedFrom.end != 0 && vars.oldLockedFrom.end <= block.timestamp) revert LockExpired();
-
       if (vars.oldLockedFrom.isPermanent) revert PermanentLock();
       if (vars.oldLockedTo.isPermanent) revert PermanentLock();
 
-      vars.start = vars.oldLockedTo.start < vars.oldLockedFrom.start
+      vars.newLockedTo.tokenAddress = vars.asset;
+      vars.newLockedTo.amount = vars.oldLockedTo.amount + vars.oldLockedFrom.amount;
+      vars.newLockedTo.start = vars.oldLockedTo.start < vars.oldLockedFrom.start
         ? vars.oldLockedTo.start
         : vars.oldLockedFrom.start;
-      vars.end = vars.oldLockedTo.end > vars.oldLockedFrom.end ? vars.oldLockedTo.end : vars.oldLockedFrom.end;
-      vars.boost = _calculateBoost(vars.end - vars.start);
+      vars.newLockedTo.end = vars.oldLockedTo.end > vars.oldLockedFrom.end
+        ? vars.oldLockedTo.end
+        : vars.oldLockedFrom.end;
+      vars.newLockedTo.boost = _calculateBoost(vars.newLockedTo.end - vars.newLockedTo.start);
 
       s_locked[_from][vars.lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
       _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), vars.lpType);
-
-      vars.newLockedTo.amount = vars.oldLockedTo.amount + vars.oldLockedFrom.amount;
-      vars.newLockedTo.isPermanent = vars.oldLockedTo.isPermanent;
-      vars.newLockedTo.tokenAddress = vars.asset;
-      if (vars.newLockedTo.isPermanent) {
-        s_permanentLockBalance[vars.lpType] += uint256(int256(vars.oldLockedFrom.amount));
-      } else {
-        vars.newLockedTo.end = vars.end;
-        vars.newLockedTo.start = vars.start;
-        vars.newLockedTo.boost = vars.oldLockedTo.boost;
-      }
-      _checkpoint(_to, vars.newLockedTo, vars.lpType);
       s_locked[_to][vars.lpType] = vars.newLockedTo;
+      _checkpoint(_to, vars.newLockedTo, vars.lpType);
 
       if (!s_assetsLocked[_to].contains(vars.asset)) {
         s_assetsLocked[_to].add(vars.asset);
