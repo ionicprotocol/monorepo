@@ -43,7 +43,7 @@ export const run = async (): Promise<void> => {
 
     sdk.logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
     sdk.logger.info(`Config for bot: ${JSON.stringify({ ...sdk.chainLiquidationConfig, ...config })}`);
-    
+
     await liquidatePositions(BotType.Standard);
   } catch (error) {
     logger.error(`Error in run: ${error}`);
