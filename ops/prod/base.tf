@@ -1,5 +1,5 @@
 locals {
-  # Base Network RPC URLs (this will be passed in via GitHub Secrets)
+  # Base Network RPC URL (this will be passed in via GitHub Secrets)
   base_mainnet_rpcs = var.base_mainnet_rpcs # List of RPC URLs from environment variable
   base_mainnet_chain_id = "8453"
 }
