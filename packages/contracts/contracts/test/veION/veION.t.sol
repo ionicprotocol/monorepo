@@ -1217,21 +1217,70 @@ contract Merge is veIONTest {
 
     emit log_named_uint("boost", mergedLock.boost);
   }
+
+  function test_merge_IfToHasNoLockForParticularAssetStartShouldNotBeZero() public fork(MODE_MAINNET) {
+    uint256 amount = MINT_AMT;
+    modeBalancer8020IonEth.mint(user, amount);
+
+    address[] memory tokenAddresses = new address[](1);
+    tokenAddresses[0] = address(modeBalancer8020IonEth);
+    uint256[] memory tokenAmounts = new uint256[](1);
+    tokenAmounts[0] = amount;
+    uint256[] memory durations = new uint256[](1);
+    durations[0] = 70 weeks;
+
+    IveION.LockedBalance memory locked1 = ve.getUserLock(lockInput_1.tokenId, veloLpType);
+    uint256 expectedStart = locked1.start;
+    uint256 expectedEnd = locked1.end;
+    uint256 boost = locked1.boost;
+
+    emit log_named_uint("locked1 start time", locked1.start);
+    emit log_named_uint("locked1 end time", locked1.end);
+
+    vm.startPrank(user);
+    modeBalancer8020IonEth.approve(address(ve), amount);
+    uint256 secondTokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION.LockedBalance memory locked2 = ve.getUserLock(secondTokenId, veloLpType);
+    emit log_named_uint("locked2 start time", locked2.start);
+    emit log_named_uint("locked2 end time", locked2.end);
+    ve.merge(lockInput_1.tokenId, secondTokenId);
+    vm.stopPrank();
+
+    IveION.LockedBalance memory mergedLock = ve.getUserLock(secondTokenId, veloLpType);
+
+    emit log_named_uint("mergedLock start time", mergedLock.start);
+    emit log_named_uint("mergedLock end time", mergedLock.end);
+    assertEq(mergedLock.start, expectedStart, "Merged lock should have the earlier start time");
+    assertEq(mergedLock.end, expectedEnd, "Merged lock should have the later end time");
+    assertEq(mergedLock.boost, boost, "Should maintain original boost");
+  }
 }
 
 contract Split is veIONTest {
-  function test_split_UserCanSplitAllLP() public fork(MODE_MAINNET) {
-    TestVars memory vars;
+  address user;
+  LockInfo lockInput_1;
+  LockInfo lockInput_2;
+  LockInfoMultiple lockInputMultiLP;
 
-    vars.user = address(0x5678);
-    LockInfoMultiple memory lockInput = _createLockMultipleInternal(vars.user);
-
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x1234);
+    lockInput_1 = _createLockInternal(user);
+    lockInput_2 = _createLockInternal(user);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+    ve.setVoter(address(this));
     vm.prank(ve.owner());
-    ve.toggleSplit(vars.user, true);
+    ve.toggleSplit(user, true);
+  }
 
+  function test_split_UserCanSplitAllLP() public fork(MODE_MAINNET) {
     uint256 splitAmount = MINT_AMT;
-    vm.prank(vars.user);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(address(modeVelodrome5050IonMode), lockInput.tokenId, splitAmount);
+    vm.prank(user);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+      address(modeVelodrome5050IonMode),
+      lockInputMultiLP.tokenId,
+      splitAmount
+    );
 
     IveION.LockedBalance memory veloLocked1 = ve.getUserLock(tokenId1, veloLpType);
     IveION.LockedBalance memory balancerLocked1 = ve.getUserLock(tokenId1, balancerLpType);

@@ -290,7 +290,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
       vars.newLockedTo.tokenAddress = vars.asset;
       vars.newLockedTo.amount = vars.oldLockedTo.amount + vars.oldLockedFrom.amount;
-      vars.newLockedTo.start = vars.oldLockedTo.start < vars.oldLockedFrom.start
+      vars.newLockedTo.start = vars.oldLockedTo.start < vars.oldLockedFrom.start && vars.oldLockedTo.start != 0
         ? vars.oldLockedTo.start
         : vars.oldLockedFrom.start;
       vars.newLockedTo.end = vars.oldLockedTo.end > vars.oldLockedFrom.end
