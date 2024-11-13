@@ -196,7 +196,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (!s_whitelistedToken[_tokenAddress]) revert TokenNotWhitelisted();
     if (oldLocked.amount == 0 || !s_assetsLocked[_tokenId].contains(_tokenAddress)) revert NoLockFound();
 
-    uint256 value = uint256(int256(oldLocked.amount));
+    uint256 value = oldLocked.amount;
     s_userCumulativeAssetValues[sender][_tokenAddress] -= value;
     uint256 fee = 0;
 
@@ -231,7 +231,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
     }
 
-    s_supply[_lpType] = supplyBefore - uint256(int256(oldLocked.amount));
+    s_supply[_lpType] = supplyBefore - oldLocked.amount;
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, 0, false, 0), _lpType);
     IERC20(_tokenAddress).safeTransfer(sender, value);
 
@@ -249,7 +249,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     if (shouldBurn) _burn(_tokenId);
 
     emit Withdraw(sender, _tokenId, value, block.timestamp);
-    emit Supply(supplyBefore, supplyBefore - uint256(int256(oldLocked.amount)));
+    emit Supply(supplyBefore, supplyBefore - oldLocked.amount);
   }
 
   struct MergeVars {
