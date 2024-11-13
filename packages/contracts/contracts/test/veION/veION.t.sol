@@ -1172,7 +1172,7 @@ contract Merge is veIONTest {
     ve.merge(lockInput_1.tokenId, tokenId);
   }
 
-  function test_merge_RevertIfFromPermanent() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfFromPermanentOrToPermanent() public fork(MODE_MAINNET) {
     vm.prank(user);
     ve.lockPermanent(lockInput_1.tokenAddress, lockInput_1.tokenId);
 
@@ -1183,6 +1183,39 @@ contract Merge is veIONTest {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
     ve.merge(lockInput_2.tokenId, lockInput_1.tokenId);
+  }
+
+  function test_merge_ShouldRecalculateBoostUsingEarlierStartAndLaterEnd() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + 40 weeks);
+    uint256 amount = MINT_AMT;
+    modeVelodrome5050IonMode.mint(user, amount);
+
+    address[] memory tokenAddresses = new address[](1);
+    tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    uint256[] memory tokenAmounts = new uint256[](1);
+    tokenAmounts[0] = amount;
+    uint256[] memory durations = new uint256[](1);
+    durations[0] = 26 weeks;
+
+    IveION.LockedBalance memory locked1 = ve.getUserLock(lockInput_1.tokenId, veloLpType);
+    uint256 expectedStart = locked1.start;
+
+    vm.startPrank(user);
+    modeVelodrome5050IonMode.approve(address(ve), amount);
+    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+
+    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenId, veloLpType);
+    uint256 expectedEnd = locked2.end;
+
+    ve.merge(lockInput_1.tokenId, tokenId);
+    vm.stopPrank();
+
+    IveION.LockedBalance memory mergedLock = ve.getUserLock(tokenId, veloLpType);
+
+    assertEq(mergedLock.start, expectedStart, "Merged lock should have the earlier start time");
+    assertEq(mergedLock.end, expectedEnd, "Merged lock should have the later end time");
+
+    emit log_named_uint("boost", mergedLock.boost);
   }
 }
 
