@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "./Utils.sol";
+import "./harness/veIONHarness.sol";
 
 contract CreateLock is veIONTest {
   function test_createLock_UserCanCreateLock() public fork(MODE_MAINNET) {
@@ -1382,34 +1383,50 @@ contract Split is veIONTest {
   }
 }
 
-contract ToggleSplit is veIONTest {}
-
 contract LockPermanent is veIONTest {
+  address user;
+  LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
+  veIONHarness harness;
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x1234);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+    lockInput = _createLockInternal(user);
+    ve.setVoter(address(this));
+
+    harness = new veIONHarness();
+  }
+
   function test_lockPermanent_UserCanLockPermanent() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-
-    vars.user = address(0x5678);
-    LockInfo memory lockInput = _createLockInternal(vars.user);
-
-    vm.prank(vars.user);
+    vm.prank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
+    IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, veloLpType);
 
-    vars.userEpoch = ve.s_userPointEpoch(lockInput.tokenId, veloLpType);
+    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, veloLpType);
     IveION.UserPoint memory userPoint = ve.getUserPoint(
       lockInput.tokenId,
       ve.s_lpType(lockInput.tokenAddress),
-      vars.userEpoch
+      userEpoch
     );
+    assertEq(
+      lock.tokenAddress,
+      address(modeVelodrome5050IonMode),
+      "Lock token address should match the expected address"
+    );
+    assertEq(lock.amount, lockInput.tokenAmount, "Lock amount should match the initial lock amount");
+    assertEq(lock.boost, harness.exposed_calculateBoost(MAXTIME), "Lock boost should be calculated based on MAXTIME");
+    assertEq(lock.delegateAmount, 0, "Lock delegate amount should be zero for a new permanent lock");
 
-    assertEq(actualLocked.isPermanent, true, "Lock should be permanent");
-    assertEq(actualLocked.end, 0, "Lock end time should be zero for permanent lock");
+    assertEq(lock.isPermanent, true, "Lock should be permanent");
+    assertEq(lock.end, 0, "Lock end time should be zero for permanent lock");
     assertEq(userPoint.bias, 0, "User point bias should be zero for permanent lock");
     assertEq(userPoint.slope, 0, "User point slope should be zero for permanent lock");
     assertEq(userPoint.ts, block.timestamp, "User point timestamp should be current block timestamp");
     assertEq(userPoint.blk, block.number, "User point block number should be current block number");
-    assertEq(userPoint.permanent, actualLocked.amount, "User point permanent lock should match lock amount");
+    assertEq(userPoint.permanent, lock.amount, "User point permanent lock should match lock amount");
   }
 }
 
@@ -1521,6 +1538,8 @@ contract RemoveDelegators is veIONTest {}
 contract ClaimEmissions is veIONTest {}
 
 contract TrasferVeION is veIONTest {}
+
+contract ToggleSplit is veIONTest {}
 
 contract Setters is veIONTest {}
 

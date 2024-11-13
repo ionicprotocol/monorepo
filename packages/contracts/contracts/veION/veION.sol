@@ -360,8 +360,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     _newLocked.end = 0;
     _newLocked.isPermanent = true;
     _newLocked.boost = _calculateBoost(MAXTIME);
-    _checkpoint(_tokenId, _newLocked, _lpType);
     s_locked[_tokenId][_lpType] = _newLocked;
+    _checkpoint(_tokenId, _newLocked, _lpType);
   }
 
   function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
