@@ -248,7 +248,7 @@ async function getPotentialPythLiquidation(borrower: PoolUserWithAssets, closeFa
     cTokenCollateral: collateralAsset.cToken,
     collateralAssetUnderlyingToken: collateralAsset.underlyingToken,
     debtAssetUnderlyingToken: debtAsset.underlyingToken,
-    liquidationValueUSD: liquidationValueUSD
+    liquidationValueUSD: liquidationValueUSD,
   };
 }
 
@@ -338,7 +338,7 @@ const getPotentialLiquidation = async (
     cTokenCollateral: borrower.collateral[0].cToken as Address,
     collateralAssetUnderlyingToken,
     debtAssetUnderlyingToken,
-    liquidationValueUSD
+    liquidationValueUSD,
   };
 };
 
