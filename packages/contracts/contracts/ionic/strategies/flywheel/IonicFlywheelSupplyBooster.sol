@@ -6,8 +6,8 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 import { ICErc20 } from "../../../compound/CTokenInterfaces.sol";
 import "./IFlywheelBooster.sol";
 
-contract IonicFlywheelBorrowBooster is IFlywheelBooster {
-  string public constant BOOSTER_TYPE = "IonicFlywheelBorrowBooster";
+contract IonicFlywheelSupplyBooster is IFlywheelBooster {
+  string public constant BOOSTER_TYPE = "IonicFlywheelSupplyBooster";
 
   /**
       @notice calculate the boosted supply of a strategy.
@@ -16,7 +16,7 @@ contract IonicFlywheelBorrowBooster is IFlywheelBooster {
      */
   function boostedTotalSupply(ERC20 strategy) external view returns (uint256) {
     ICErc20 asMarket = ICErc20(address(strategy));
-    return asMarket.totalBorrows();
+    return asMarket.getTotalUnderlyingSupplied();
   }
 
   /**
@@ -27,6 +27,6 @@ contract IonicFlywheelBorrowBooster is IFlywheelBooster {
      */
   function boostedBalanceOf(ERC20 strategy, address user) external view returns (uint256) {
     ICErc20 asMarket = ICErc20(address(strategy));
-    return asMarket.borrowBalanceCurrent(user);
+    return asMarket.balanceOfUnderlying(user);
   }
 }

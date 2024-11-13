@@ -166,7 +166,7 @@ contract SupplyVaultsTest is BaseTest {
         }
 
         IonicFlywheel flywheel = IonicFlywheel(flywheels[j]);
-        try flywheel.getRewardsPerSecondPerToken(ERC20(address(0))) {
+        try flywheel.getRewardsPerSecondPerToken(ERC20(address(wethMainMarket))) {
           // don't upgrade already upgraded fws
           console.log("ALREADY UPGRADED");
         } catch {
@@ -265,18 +265,18 @@ contract SupplyVaultsTest is BaseTest {
     console.log("1 REWARDS Apr %e", rewardsAprBefore2);
     console.log("aprBefore %e", aprBefore);
 
-    vm.warp(vm.getBlockTimestamp() + 2592001);
+    //vm.warp(vm.getBlockTimestamp() + 2592001);
 
     IonicComptroller pool = wethMainMarket.comptroller();
     uint256 rewardsAmountFor1PercentApr;
     {
       // total supply = 8340714736106176115889
       //   fwRewardsAmountFor1PercentAprIncrease 8.3961226709852889815644e22
-      uint256 wethMarketSuppliedAssets = wethMainMarket.getTotalUnderlyingSupplied();
-      //wethMarketSuppliedAssets = (wethMarketSuppliedAssets * wethMainMarket.exchangeRateCurrent()) / 1e18;
-      //console.log("wethMarketSuppliedAssets %e", wethMarketSuppliedAssets);
+      uint256 wethMarketBorrowedAssets = wethMainMarket.totalBorrows();
+      //wethMarketBorrowedAssets = (wethMarketBorrowedAssets * wethMainMarket.exchangeRateCurrent()) / 1e18;
+      //console.log("wethMarketBorrowedAssets %e", wethMarketBorrowedAssets);
       uint256 wethPrice = pool.oracle().getUnderlyingPrice(wethMainMarket);
-      uint256 rewardsValueFor1PercentApr = ((wethMarketSuppliedAssets * wethPrice) / 1e18) / 100;
+      uint256 rewardsValueFor1PercentApr = ((wethMarketBorrowedAssets * wethPrice) / 1e18) / 100;
       console.log("rewardsValueFor1PercentApr for 1 year %e", rewardsValueFor1PercentApr);
       uint256 ionPrice = pool.oracle().price(address(ionToken));
       rewardsAmountFor1PercentApr = (rewardsValueFor1PercentApr * 1e18) / ionPrice;
