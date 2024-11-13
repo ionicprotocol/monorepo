@@ -81,17 +81,27 @@ export const useMarketData = (selectedPool: string, chain: number | string) => {
         const asset = assets.find((a) => a.underlyingSymbol === symbol);
         if (!asset) return null;
 
-        const supplyRewards = rewards?.[asset.cToken]?.filter((reward) =>
-          FLYWHEEL_TYPE_MAP[+chain]?.supply?.includes(
-            (reward as FlywheelReward).flywheel
+        const supplyRewards = rewards?.[asset.cToken]
+          ?.filter((reward) =>
+            FLYWHEEL_TYPE_MAP[+chain]?.supply?.includes(
+              (reward as FlywheelReward).flywheel
+            )
           )
-        );
+          .map((reward) => ({
+            ...reward,
+            apy: (reward.apy ?? 0) * 100
+          }));
 
-        const borrowRewards = rewards?.[asset.cToken]?.filter((reward) =>
-          FLYWHEEL_TYPE_MAP[+chain]?.borrow?.includes(
-            (reward as FlywheelReward).flywheel
+        const borrowRewards = rewards?.[asset.cToken]
+          ?.filter((reward) =>
+            FLYWHEEL_TYPE_MAP[+chain]?.borrow?.includes(
+              (reward as FlywheelReward).flywheel
+            )
           )
-        );
+          .map((reward) => ({
+            ...reward,
+            apy: (reward.apy ?? 0) * 100
+          }));
 
         const merklAprForToken = merklApr?.find(
           (a) => Object.keys(a)[0].toLowerCase() === asset.cToken.toLowerCase()

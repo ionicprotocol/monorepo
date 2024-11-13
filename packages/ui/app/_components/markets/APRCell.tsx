@@ -43,6 +43,7 @@ export default function APRCell({
   selectedPoolId,
   rewards
 }: APRCellProps) {
+  console.log('rewards', rewards);
   const isMainModeMarket =
     dropdownSelectedChain === 34443 &&
     (asset === 'USDC' || asset === 'WETH') &&
@@ -76,6 +77,7 @@ export default function APRCell({
     );
   };
 
+  console.log('aprTotal', aprTotal);
   const formatTotalAPR = () => {
     if (typeof aprTotal === 'undefined') return '-';
     const prefix = type === 'supply' || aprTotal > 0 ? '+' : '';
