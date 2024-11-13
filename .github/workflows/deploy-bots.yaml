@@ -301,7 +301,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
-          docker build --build-arg UPTIME_PYTH_UPDATER_API=${{ secrets.UPTIME_PYTH_UPDATER_API }} -f docker/pyth-updater/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg UPTIME_PYTH_UPDATER_API=${{ secrets.UPTIME_PYTH_UPDATER_API }} -f docker/pyth-updater-ecs/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
 
@@ -336,6 +336,7 @@ jobs:
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
 
     steps:
       - name: Checkout repository
@@ -392,6 +393,7 @@ jobs:
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
     steps:
       - name: Checkout
         uses: actions/checkout@master

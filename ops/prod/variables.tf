@@ -59,6 +59,9 @@ variable "per_discord_webhook_url" {
 variable "liquidation_sendgrid_api_key" {
   type = string
 }
+variable "optimism_mainnet_rpcs" {
+  type = string
+}
 
 variable "liquidation_sendgrid_email_to" {
   type = string
@@ -75,7 +78,22 @@ variable "uptime_liquidator_api" {
 variable "uptime_pyth_updater_api" {
   type = string
 }
+// ... existing variables ...
 
+variable "task_definition_family_optimism" {
+  description = "Family name for the Optimism task definition"
+  type        = string
+}
+
+variable "task_definition_family_base" {
+  description = "Family name for the Base task definition"
+  type        = string
+}
+
+variable "task_definition_family_mode" {
+  description = "Family name for the Mode task definition"
+  type        = string
+}
 
 
 
