@@ -37,6 +37,7 @@ export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
 export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
 export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
+export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
 
 export const assets: SupportedAsset[] = [
   {
