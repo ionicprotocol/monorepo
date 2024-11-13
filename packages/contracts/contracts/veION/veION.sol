@@ -414,11 +414,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   }
 
   function _removeDelegation(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) internal {
-    if (ownerOf(fromTokenId) != _msgSender() && ownerOf(toTokenId) != _msgSender()) revert NotOwner();
-
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
     LockedBalance memory toLocked = s_locked[toTokenId][lpType];
+
+    if (ownerOf(fromTokenId) != _msgSender() && ownerOf(toTokenId) != _msgSender()) revert NotOwner();
+    if (s_delegations[fromTokenId][toTokenId][lpType] == 0) revert NoDelegationBetweenTokens(fromTokenId, toTokenId);
 
     amount = amount > s_delegations[fromTokenId][toTokenId][lpType]
       ? s_delegations[fromTokenId][toTokenId][lpType]
@@ -447,7 +448,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     address lpToken,
     uint256[] memory amounts
   ) public {
-    require(toTokenIds.length == amounts.length, "Mismatched array lengths");
+    if (toTokenIds.length != amounts.length) revert ArrayMismatch();
     for (uint256 i = 0; i < toTokenIds.length; i++) {
       _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i]);
     }
@@ -459,7 +460,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     address lpToken,
     uint256[] memory amounts
   ) public {
-    require(fromTokenIds.length == amounts.length, "Mismatched array lengths");
+    if (fromTokenIds.length != amounts.length) revert ArrayMismatch();
     for (uint256 i = 0; i < fromTokenIds.length; i++) {
       _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
     }

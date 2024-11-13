@@ -89,6 +89,7 @@ interface IveION {
   error DuplicateAsset();
   error SplitTooSmall();
   error NotEnoughRemainingAfterSplit();
+  error NoDelegationBetweenTokens(uint256 _tokenId1, uint256 _tokenId2);
 
   event Deposit(
     address indexed provider,

@@ -1576,6 +1576,34 @@ contract Delegate is veIONTest {
       }
     }
 
+    uint256 userEpoch2 = ve.s_userPointEpoch(tokenId2, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint2 = ve.getUserPoint(
+      tokenId2,
+      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      userEpoch2
+    );
+
+    uint256 userEpoch1 = ve.s_userPointEpoch(tokenId1, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint1 = ve.getUserPoint(
+      tokenId1,
+      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      userEpoch1
+    );
+
+    assertEq(userPoint2.ts, block.timestamp, "User point timestamp mismatch");
+    assertEq(userPoint2.blk, block.number, "User point block number mismatch");
+    assertEq(userPoint2.bias, 0, "User point bias mismatch");
+    assertEq(userPoint2.slope, 0, "User point slope mismatch");
+    assertEq(userPoint2.permanent, MINT_AMT, "User point permanent mismatch");
+    assertEq(userPoint2.permanentDelegate, MINT_AMT, "User point permanent delegate mismatch");
+
+    assertEq(userPoint1.ts, block.timestamp, "User point timestamp mismatch");
+    assertEq(userPoint1.blk, block.number, "User point block number mismatch");
+    assertEq(userPoint1.bias, 0, "User point bias mismatch");
+    assertEq(userPoint1.slope, 0, "User point slope mismatch");
+    assertEq(userPoint1.permanent, 0, "User point permanent mismatch");
+    assertEq(userPoint1.permanentDelegate, 0, "User point permanent delegate mismatch");
+
     assertEq(locked1.amount, 0, "All voting power should have been delegated from this token");
     assertEq(locked2.delegateAmount, MINT_AMT, "All voting power should have been delegated to this token");
     assertEq(amountDelegated, MINT_AMT, "Delegated amount should be recorded");
@@ -1633,48 +1661,122 @@ contract Delegate is veIONTest {
 }
 
 contract RemoveDelegatees is veIONTest {
+  address cindy;
+  address andy;
+  LockInfo lockInputAlice;
+  LockInfoMultiple lockInputBob;
+  LockInfo lockInputCandy;
+  LockInfo lockInputRalph;
+  veIONHarness harness;
+  uint256 tokenIdAlice;
+  uint256 tokenIdBob;
+  uint256 tokenIdCandy;
+  uint256 tokenIdRalph;
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    cindy = address(0x1234);
+    andy = address(0x3245);
+    lockInputAlice = _createLockInternal(cindy);
+    lockInputBob = _createLockMultipleInternal(cindy);
+    lockInputCandy = _createLockInternal(andy);
+    lockInputRalph = _createLockInternal(andy);
+    ve.setVoter(address(this));
+
+    (tokenIdAlice, tokenIdBob, tokenIdCandy, tokenIdRalph) = (
+      lockInputAlice.tokenId,
+      lockInputBob.tokenId,
+      lockInputCandy.tokenId,
+      lockInputRalph.tokenId
+    );
+
+    vm.startPrank(cindy);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdAlice);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdBob);
+    ve.delegate(tokenIdAlice, tokenIdBob, address(modeVelodrome5050IonMode), MINT_AMT);
+    vm.stopPrank();
+
+    vm.startPrank(andy);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdCandy);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdRalph);
+    ve.delegate(tokenIdCandy, tokenIdRalph, address(modeVelodrome5050IonMode), MINT_AMT);
+    vm.stopPrank();
+  }
+
   function test_removeDelegatees_UserCanRemoveDelegatees() public fork(MODE_MAINNET) {
-    TestVars memory vars;
-
-    vars.user = address(0x5678);
-    LockInfo memory lockInput = _createLockInternal(vars.user);
-
-    vars.user2 = address(0x1234);
-    LockInfo memory lockInput2 = _createLockInternal(vars.user2);
-
-    vm.prank(vars.user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
-    vm.prank(vars.user2);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput2.tokenId);
-
-    vm.prank(vars.user);
-    ve.delegate(lockInput.tokenId, lockInput2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT);
-
     uint256[] memory toTokenIds = new uint256[](1);
-    toTokenIds[0] = lockInput2.tokenId;
+    toTokenIds[0] = tokenIdBob;
     uint256[] memory amounts = new uint256[](1);
     amounts[0] = MINT_AMT;
 
-    vm.prank(vars.user);
-    ve.removeDelegatees(lockInput.tokenId, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    vm.prank(cindy);
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
 
-    IveION.LockedBalance memory locked1 = ve.getUserLock(lockInput.tokenId, veloLpType);
-    IveION.LockedBalance memory locked2 = ve.getUserLock(lockInput2.tokenId, veloLpType);
+    IveION.LockedBalance memory locked1 = ve.getUserLock(tokenIdAlice, veloLpType);
+    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenIdBob, veloLpType);
 
-    uint256[] memory delegatees = ve.getDelegatees(vars.tokenId, veloLpType);
-    uint256 amountDelegated = ve.s_delegations(lockInput.tokenId, lockInput2.tokenId, veloLpType);
+    uint256[] memory delegatees = ve.getDelegatees(tokenIdAlice, veloLpType);
+    uint256 amountDelegated = ve.s_delegations(tokenIdAlice, tokenIdBob, veloLpType);
     bool found = false;
     for (uint256 i = 0; i < delegatees.length; i++) {
-      if (delegatees[i] == vars.secondTokenId) {
+      if (delegatees[i] == tokenIdBob) {
         found = true;
         break;
       }
     }
 
+    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint = ve.getUserPoint(
+      tokenIdBob,
+      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      userEpoch
+    );
+
+    assertEq(userPoint.ts, block.timestamp, "User point timestamp mismatch");
+    assertEq(userPoint.blk, block.number, "User point block number mismatch");
+    assertEq(userPoint.bias, 0, "User point bias mismatch");
+    assertEq(userPoint.slope, 0, "User point slope mismatch");
+    assertEq(userPoint.permanent, MINT_AMT, "User point permanent mismatch");
+    assertEq(userPoint.permanentDelegate, 0, "User point permanent delegate mismatch");
+
     assertEq(locked1.amount, MINT_AMT, "Voting power should be returned to the original token");
     assertEq(locked2.delegateAmount, 0, "Delegated voting power should be removed from the second token");
     assertFalse(found, "secondTokenId should not be in the list of delegatees after de-delegation");
     assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
+  }
+
+  function test_removeDelegatees_RevertIfUnmatchedArrays() public fork(MODE_MAINNET) {
+    uint256[] memory toTokenIds = new uint256[](2);
+    toTokenIds[0] = tokenIdBob;
+    toTokenIds[1] = tokenIdBob;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(cindy);
+    vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+  }
+
+  function test_removeDelegatees_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    uint256[] memory toTokenIds = new uint256[](1);
+    toTokenIds[0] = tokenIdBob;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(address(0x1413));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+  }
+
+  function test_removeDelegatees_RevertIfNoDelegation() public fork(MODE_MAINNET) {
+    uint256[] memory toTokenIds = new uint256[](1);
+    toTokenIds[0] = tokenIdCandy;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(cindy);
+    vm.expectRevert(abi.encodeWithSignature("NoDelegationBetweenTokens(uint256,uint256)", tokenIdAlice, tokenIdCandy));
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
 }
 
