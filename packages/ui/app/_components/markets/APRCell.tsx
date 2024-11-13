@@ -63,6 +63,8 @@ export default function APRCell({
     rewards
   );
 
+  const showOPRewards = merklAprForToken || asset === 'dMBTC';
+
   const formatBaseAPR = () => {
     if (type === 'borrow' && baseAPR > 0)
       return (
@@ -102,7 +104,7 @@ export default function APRCell({
               + ION APR
             </span>
 
-            {showRewardsBadge && (!isMainModeMarket || type === 'supply') && (
+            {showRewardsBadge && (
               <span
                 className={cn(
                   'rounded-md w-max text-[10px] py-[1px] px-2.5',
@@ -110,7 +112,7 @@ export default function APRCell({
                   pools[dropdownSelectedChain].bg
                 )}
               >
-                {isMainModeMarket && type === 'supply' ? (
+                {showOPRewards ? (
                   <div className="flex items-center">
                     +{' '}
                     <Image
@@ -159,8 +161,8 @@ export default function APRCell({
             <span>Base APR: {formatBaseAPR()}%</span>
           </div>
 
-          {type === 'supply' && isMainModeMarket && (
-            <div className="flex items-center">
+          {showOPRewards && (
+            <div className="flex items-center mt-1">
               <Image
                 src="/images/op-logo-red.svg"
                 alt="OP"

@@ -42676,6 +42676,17 @@ export const ionicUniV3LiquidatorAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: '_underlyingBorrow', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'data', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'receiveFlashLoan',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
     name: 'redemptionStrategiesWhitelist',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -42745,6 +42756,20 @@ export const ionicUniV3LiquidatorAbi = [
     ],
     name: 'safeLiquidateToTokensWithFlashLoan',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'borrower', internalType: 'address', type: 'address' },
+      { name: 'repayAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'cErc20', internalType: 'contract ICErc20', type: 'address' },
+      { name: 'cTokenCollateral', internalType: 'contract ICErc20', type: 'address' },
+      { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
+      { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'safeLiquidateWithAggregator',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -59009,13 +59034,6 @@ export const xErc20HyperlaneAbi = [
   { type: 'receive', stateMutability: 'payable' },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
-    name: 'allowedSenders',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'feeBps',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -59031,6 +59049,13 @@ export const xErc20HyperlaneAbi = [
     name: 'handle',
     outputs: [],
     stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint32', type: 'uint32' }],
+    name: 'mappedBridges',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -59082,18 +59107,18 @@ export const xErc20HyperlaneAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      { name: '_chainId', internalType: 'uint32', type: 'uint32' },
-      { name: '_sender', internalType: 'address', type: 'address' },
-    ],
-    name: 'setAllowedSender',
+    inputs: [{ name: '_feeBps', internalType: 'uint256', type: 'uint256' }],
+    name: 'setFeeBps',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: '_feeBps', internalType: 'uint256', type: 'uint256' }],
-    name: 'setFeeBps',
+    inputs: [
+      { name: '_chainId', internalType: 'uint32', type: 'uint32' },
+      { name: '_bridge', internalType: 'address', type: 'address' },
+    ],
+    name: 'setMappedBridge',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -59145,9 +59170,9 @@ export const xErc20HyperlaneAbi = [
     anonymous: false,
     inputs: [
       { name: '_chainId', internalType: 'uint32', type: 'uint32', indexed: true },
-      { name: '_sender', internalType: 'address', type: 'address', indexed: true },
+      { name: '_bridge', internalType: 'address', type: 'address', indexed: true },
     ],
-    name: 'AllowedSenderSet',
+    name: 'BridgeMapped',
   },
   {
     type: 'event',
@@ -59201,13 +59226,17 @@ export const xErc20HyperlaneAbi = [
   { type: 'error', inputs: [], name: 'ChainIdNotSet' },
   {
     type: 'error',
+    inputs: [{ name: '_chainId', internalType: 'uint32', type: 'uint32' }],
+    name: 'DestinationBridgeNotSet',
+  },
+  {
+    type: 'error',
     inputs: [
       { name: '_chainId', internalType: 'uint32', type: 'uint32' },
       { name: '_sender', internalType: 'address', type: 'address' },
     ],
     name: 'OriginNotAllowed',
   },
-  { type: 'error', inputs: [], name: 'OriginNotMirrorAdapter' },
   { type: 'error', inputs: [], name: 'TokenNotSet' },
 ] as const;
 
