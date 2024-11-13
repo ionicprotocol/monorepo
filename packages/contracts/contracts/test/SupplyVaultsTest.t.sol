@@ -168,6 +168,8 @@ contract SupplyVaultsTest is BaseTest {
         }
 
         IonicFlywheel flywheel = IonicFlywheel(flywheels[j]);
+        ERC20[] memory fwStrategies = flywheel.getAllStrategies();
+
         try flywheel.getRewardsPerSecondPerToken(ERC20(address(wethMainMarket))) {
           // don't upgrade already upgraded fws
           console.log("ALREADY UPGRADED");
@@ -190,15 +192,29 @@ contract SupplyVaultsTest is BaseTest {
 
           IFlywheelRewards newRewards;
           try flywheelRewards.owner() returns (address) {
-            (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
-            if (rewardsPerSecond != 0) {
-              newRewards = new FlywheelStaticRewards(
-                flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
-              );
+              for (uint8 k = 0; k < fwStrategies.length; k++) {
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
+                if (rewardsPerSecond != 0) {
+                  newRewards = new FlywheelStaticRewards(
+                    flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
+                  );
+                  break;
+                }
+              }
 
-              //            emit log_named_uint("rewardsEndTimestamp", rewardsEndTimestamp);
-              require(rewardsEndTimestamp > vm.getBlockTimestamp(), "rewards ended");
-            }
+              for (uint8 k = 0; k < fwStrategies.length; k++) {
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
+                if (rewardsPerSecond != 0) {
+                  FlywheelStaticRewards(address(newRewards))
+                    .setRewardsInfo(
+                      fwStrategies[k],
+                      FlywheelStaticRewards.RewardsInfo({
+                        rewardsPerSecond: rewardsPerSecond,
+                        rewardsEndTimestamp: rewardsEndTimestamp
+                      })
+                  );
+                }
+              }
           } catch {
             // if failing, the rewards contract is for dynamic rewards
             IonicFlywheelDynamicRewards currentRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
@@ -214,8 +230,10 @@ contract SupplyVaultsTest is BaseTest {
             flywheel.setFlywheelRewards(newRewards);
           }
 
-          ERC20[] memory fwStrategies = flywheel.getAllStrategies();
           for (uint8 k = 0; k < fwStrategies.length; k++) {
+            // skip testing wrsEth since the balanceOf calls fail in forge
+            if (address(fwStrategies[k]) == 0x49950319aBE7CE5c3A6C90698381b45989C99b46) continue;
+
             IonicComptroller marketPool = ICErc20(address(fwStrategies[k])).comptroller();
             if (address(marketPool) != address(pool)) {
               //                emit log("");

@@ -71,7 +71,7 @@ contract FlywheelStaticRewards is Auth, BaseFlywheelRewards {
         if (rewards.rewardsEndTimestamp == 0 || rewards.rewardsEndTimestamp > block.timestamp) {
             return 0;
         } else {
-            return rewards.rewardsPerSecond * strategy.totalSupply();
+            return rewards.rewardsPerSecond;
         }
     }
 }
