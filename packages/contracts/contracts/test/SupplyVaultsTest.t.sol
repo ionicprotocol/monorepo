@@ -143,8 +143,6 @@ contract SupplyVaultsTest is BaseTest {
     IonicFlywheel newFwImpl = new IonicFlywheel();
     IonicFlywheelSupplyBooster marketSupplyBooster = new IonicFlywheelSupplyBooster();
 
-    uint256 ionWhaleStartingBalance = ionToken.balanceOf(ionWhale);
-
     ProxyAdmin proxyAdmin;
 
     uint8 fwCounter = 0;
@@ -188,22 +186,22 @@ contract SupplyVaultsTest is BaseTest {
             }
           }
 
-          FlywheelStaticRewards flywheelRewards = FlywheelStaticRewards(address(flywheel.flywheelRewards()));
+          FlywheelStaticRewards currentRewards = FlywheelStaticRewards(address(flywheel.flywheelRewards()));
 
           IFlywheelRewards newRewards;
-          try flywheelRewards.owner() returns (address) {
+          try currentRewards.owner() returns (address) {
               for (uint8 k = 0; k < fwStrategies.length; k++) {
-                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = currentRewards.rewardsInfo(ionToken);
                 if (rewardsPerSecond != 0) {
                   newRewards = new FlywheelStaticRewards(
-                    flywheelRewards.flywheel(), flywheelRewards.owner(), flywheelRewards.authority()
+                    currentRewards.flywheel(), currentRewards.owner(), currentRewards.authority()
                   );
                   break;
                 }
               }
 
               for (uint8 k = 0; k < fwStrategies.length; k++) {
-                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = flywheelRewards.rewardsInfo(ionToken);
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = currentRewards.rewardsInfo(ionToken);
                 if (rewardsPerSecond != 0) {
                   FlywheelStaticRewards(address(newRewards))
                     .setRewardsInfo(
@@ -235,13 +233,7 @@ contract SupplyVaultsTest is BaseTest {
             if (address(fwStrategies[k]) == 0x49950319aBE7CE5c3A6C90698381b45989C99b46) continue;
 
             IonicComptroller marketPool = ICErc20(address(fwStrategies[k])).comptroller();
-            if (address(marketPool) != address(pool)) {
-              //                emit log("");
-              //                emit log_named_address("INCTVZD MARKET", address(fwStrategies[k]));
-              //                emit log_named_address("MARKET    POOL", address(marketPool));
-              //                emit log_named_address("CURRENT   POOL", address(pool));
-              //                emit log("");
-            } else {
+            if (address(marketPool) == address(pool)) {
               vm.prank(marketPool.admin());
               CErc20RewardsDelegate(address(fwStrategies[k])).approve(address(ionToken), address(newRewards));
               flywheel.accrue(fwStrategies[k], address(0));
@@ -297,11 +289,7 @@ contract SupplyVaultsTest is BaseTest {
     IonicComptroller pool = wethMainMarket.comptroller();
     uint256 rewardsAmountFor1PercentApr;
     {
-      // total supply = 8340714736106176115889
-      //   fwRewardsAmountFor1PercentAprIncrease 8.3961226709852889815644e22
       uint256 wethMarketBorrowedAssets = wethMainMarket.totalBorrows();
-      //wethMarketBorrowedAssets = (wethMarketBorrowedAssets * wethMainMarket.exchangeRateCurrent()) / 1e18;
-      //console.log("wethMarketBorrowedAssets %e", wethMarketBorrowedAssets);
       uint256 wethPrice = pool.oracle().getUnderlyingPrice(wethMainMarket);
       uint256 rewardsValueFor1PercentApr = ((wethMarketBorrowedAssets * wethPrice) / 1e18) / 100;
       console.log("rewardsValueFor1PercentApr for 1 year %e", rewardsValueFor1PercentApr);
@@ -311,7 +299,7 @@ contract SupplyVaultsTest is BaseTest {
     }
 
     // find the ION flywheel and add as much rewards
-    // as 1% of the value of the weth main market
+    // as 1% of the value of the weth main market borrows
     {
       address[] memory flywheels = pool.getAccruingFlywheels();
       for (uint8 j = 0; j < flywheels.length; j++) {
