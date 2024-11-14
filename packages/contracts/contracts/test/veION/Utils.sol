@@ -33,6 +33,37 @@ contract veIONTest is BaseTest {
   uint256 internal constant EARLY_WITHDRAW_FEE = 0.8e18;
   uint256 internal constant MINIMUM_LOCK_AMOUNT = 10e18;
 
+  function _setUp() internal {
+    ve = new veION();
+    ve.initialize(ap);
+    modeVelodrome5050IonMode = new MockERC20("Mode_Velodrome_5050_ION_MODE", "MV5050", 18);
+    modeBalancer8020IonEth = new MockERC20("Mode_Balancer_8020_ION_ETH", "MB8020", 18);
+
+    address[] memory whitelistedTokens = new address[](2);
+    bool[] memory isWhitelistedTokens = new bool[](2);
+
+    whitelistedTokens[0] = address(modeVelodrome5050IonMode);
+    whitelistedTokens[1] = address(modeBalancer8020IonEth);
+
+    for (uint i = 0; i < 2; i++) {
+      isWhitelistedTokens[i] = true;
+    }
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+
+    ve.setLpTokenType(address(modeVelodrome5050IonMode), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    ve.setLpTokenType(address(modeBalancer8020IonEth), IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
+
+    veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+
+    veloStakingWalletImplementation = new VelodromeStakingWallet();
+
+    ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
+    ve.setMinimumLockDuration(MINTIME);
+    ve.setMinimumLockAmount(address(modeVelodrome5050IonMode), MINIMUM_LOCK_AMOUNT);
+    ve.setMinimumLockAmount(address(modeBalancer8020IonEth), MINIMUM_LOCK_AMOUNT);
+  }
+
   function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
     ve = new veION();
@@ -140,6 +171,29 @@ contract veIONTest is BaseTest {
 
     return LockInfoMultiple(vars.tokenId, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
   }
+
+  // function _createLockInternalRealLP(address user) internal returns (LockInfo memory) {
+  //   uint256 amountStaked = 10 ether;
+  //   vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
+  //   IERC20(ionMode5050LP).transfer(user, amountStaked);
+
+  //   address[] memory tokenAddresses = new address[](1);
+  //   tokenAddresses[0] = address(ionMode5050LP);
+
+  //   uint256[] memory tokenAmounts = new uint256[](1);
+  //   tokenAmounts[0] = amountStaked;
+
+  //   uint256[] memory durations = new uint256[](1);
+  //   durations[0] = 52 weeks;
+
+  //   bool[] memory stakeUnderlying = new bool[](1);
+  //   stakeUnderlying[0] = true;
+
+  //   vm.startPrank(user);
+  //   IERC20(ionMode5050LP).approve(address(ve), amountStaked);
+  //   ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+  //   vm.stopPrank();
+  // }
 }
 
 struct TestVars {

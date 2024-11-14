@@ -1866,7 +1866,79 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
   }
 }
 
-contract ClaimEmissions is veIONTest {}
+contract ClaimEmissions is veIONTest {
+  address user;
+  address ionMode5050LP;
+  address veloGauge;
+  VeloIonModeStakingStrategy veloIonModeStakingStrategy;
+  address stakingWalletInstance;
+  uint256 stakingWalletInstanceBalance;
+  uint256 amountStaked;
+
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    user = address(0x8325);
+    ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
+    veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
+
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+      address(ve),
+      ionMode5050LP,
+      veloGauge,
+      address(veloStakingWalletImplementation)
+    );
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = ionMode5050LP;
+    isWhitelistedTokens[0] = true;
+
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
+
+    amountStaked = 10 ether;
+    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
+    IERC20(ionMode5050LP).transfer(user, amountStaked);
+
+    address[] memory tokenAddresses = new address[](1);
+    tokenAddresses[0] = address(ionMode5050LP);
+
+    uint256[] memory tokenAmounts = new uint256[](1);
+    tokenAmounts[0] = amountStaked;
+
+    uint256[] memory durations = new uint256[](1);
+    durations[0] = 52 weeks;
+
+    bool[] memory stakeUnderlying = new bool[](1);
+    stakeUnderlying[0] = true;
+
+    vm.startPrank(user);
+    IERC20(ionMode5050LP).approve(address(ve), amountStaked);
+    ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.stopPrank();
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(user);
+    stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
+  }
+
+  function setUp() public {
+    _setUp();
+    emit log("setUp function override is running");
+  }
+
+  function test_claimEmissions_UserCanClaimEmissionsFromUnderlyingStake() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + 1 weeks);
+    uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
+
+    vm.prank(user);
+    ve.claimEmissions(address(ionMode5050LP));
+
+    assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
+  }
+
+  function test_claimEmissions_NoEmissionsToClaim() public fork(MODE_MAINNET) {}
+}
 
 contract TrasferVeION is veIONTest {}
 
