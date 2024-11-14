@@ -1779,7 +1779,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
 
-  function test_removeDelegatees_UserCanRemoveDelegators() public fork(MODE_MAINNET) {
+  function test_removeDelegators_UserCanRemoveDelegators() public fork(MODE_MAINNET) {
     uint256[] memory fromTokenIds = new uint256[](1);
     fromTokenIds[0] = tokenIdAlice;
     uint256[] memory amounts = new uint256[](1);
@@ -1830,6 +1830,39 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     assertFalse(foundDelegatee, "bob token should not be in the list of delegatees for alice after de-delegation");
     assertFalse(foundDelegator, "alice token should not be in the list of delegators for bob after de-delegation");
     assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
+  }
+
+  function test_removeDelegators_RevertIfUnmatchedArrays() public fork(MODE_MAINNET) {
+    uint256[] memory fromTokenIDs = new uint256[](2);
+    fromTokenIDs[0] = tokenIdAlice;
+    fromTokenIDs[1] = tokenIdAlice;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(cindy);
+    vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+  }
+  function test_removeDelegators_RevertIfNotOwner() public fork(MODE_MAINNET) {
+    uint256[] memory fromTokenIDs = new uint256[](1);
+    fromTokenIDs[0] = tokenIdAlice;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(address(0x2352));
+    vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+  }
+
+  function test_removeDelegators_RevertIfNoDelegationBetweenTokens() public fork(MODE_MAINNET) {
+    uint256[] memory fromTokenIDs = new uint256[](1);
+    fromTokenIDs[0] = tokenIdCandy;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = MINT_AMT;
+
+    vm.prank(cindy);
+    vm.expectRevert(abi.encodeWithSignature("NoDelegationBetweenTokens(uint256,uint256)", tokenIdCandy, tokenIdBob));
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
   }
 }
 
