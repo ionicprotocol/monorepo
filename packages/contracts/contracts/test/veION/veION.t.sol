@@ -4,7 +4,11 @@ import "./Utils.sol";
 import "./harness/veIONHarness.sol";
 
 contract CreateLock is veIONTest {
-  function test_createLock_UserCanCreateLock() public fork(MODE_MAINNET) {
+  function setUp() public {
+    _setUp();
+  }
+
+  function test_createLock_UserCanCreateLock() public {
     TestVars memory vars;
     vars.user = address(0x1234);
 
@@ -40,7 +44,7 @@ contract CreateLock is veIONTest {
     assertEq(vars.assetsLocked[0], lockInput.tokenAddress, "Assets locked address mismatch");
   }
 
-  function test_createLock_MinBoostIsApplied() public fork(MODE_MAINNET) {
+  function test_createLock_MinBoostIsApplied() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -65,7 +69,7 @@ contract CreateLock is veIONTest {
     assertEq(boost, 1e18, "Boost mismatch");
   }
 
-  function test_createLock_MaxBoostIsApplied() public fork(MODE_MAINNET) {
+  function test_createLock_MaxBoostIsApplied() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -90,7 +94,7 @@ contract CreateLock is veIONTest {
     assertApproxEqAbs(boost, 2e18, 1e16, "Boost mismatch");
   }
 
-  function test_createLock_UserCanLockMultipleLP() public fork(MODE_MAINNET) {
+  function test_createLock_UserCanLockMultipleLP() public {
     TestVars memory vars;
 
     vars.user = address(0x1234);
@@ -260,7 +264,7 @@ contract CreateLock is veIONTest {
     assertGt(userRewardBalance, reward, "User Reward Balance should be the earned amount");
   }
 
-  function test_createLock_RevertsIfUnequalArrayLenghts() public fork(MODE_MAINNET) {
+  function test_createLock_RevertsIfUnequalArrayLenghts() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -282,7 +286,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertsIfZeroAmount() public fork(MODE_MAINNET) {
+  function test_createLock_RevertsIfZeroAmount() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -303,7 +307,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertsIfDurationTooShort() public fork(MODE_MAINNET) {
+  function test_createLock_RevertsIfDurationTooShort() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -324,7 +328,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertIfDurationTooLong() public fork(MODE_MAINNET) {
+  function test_createLock_RevertIfDurationTooLong() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -345,7 +349,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertIfAmountTooSmall() public fork(MODE_MAINNET) {
+  function test_createLock_RevertIfAmountTooSmall() public {
     address user = address(0x1234);
     uint256 amount = 5e18; // 1000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -366,7 +370,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertIfTokenNotWhitelisted() public fork(MODE_MAINNET) {
+  function test_createLock_RevertIfTokenNotWhitelisted() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 1000 tokens
 
@@ -390,7 +394,7 @@ contract CreateLock is veIONTest {
     vm.stopPrank();
   }
 
-  function test_createLock_RevertIfDuplicateTokens() public fork(MODE_MAINNET) {
+  function test_createLock_RevertIfDuplicateTokens() public {
     address user = address(0x1234);
     uint256 amount = MINT_AMT; // 2000 tokens
     modeVelodrome5050IonMode.mint(user, amount);
@@ -421,14 +425,14 @@ contract IncreaseAmount is veIONTest {
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
   }
 
-  function test_increaseAmount_UserCanIncreaseLock() public fork(MODE_MAINNET) {
+  function test_increaseAmount_UserCanIncreaseLock() public {
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeVelodrome5050IonMode.mint(user, additionalAmount);
 
@@ -460,7 +464,7 @@ contract IncreaseAmount is veIONTest {
     assertEq(assetsLocked[0], lockInput.tokenAddress, "Assets locked address mismatch");
   }
 
-  function test_increaseAmountI_PermanentLock() public fork(MODE_MAINNET) {
+  function test_increaseAmountI_PermanentLock() public {
     vm.prank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
@@ -489,7 +493,7 @@ contract IncreaseAmount is veIONTest {
     );
   }
 
-  function test_increaseAmount_RevertIfAssetWhitelistedButNotLockedByUser() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfAssetWhitelistedButNotLockedByUser() public {
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeBalancer8020IonEth.mint(user, additionalAmount);
 
@@ -500,7 +504,7 @@ contract IncreaseAmount is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseAmountI_RevertIfAssetWhitelistedLockedAndWithdrawnByUser() public fork(MODE_MAINNET) {
+  function test_increaseAmountI_RevertIfAssetWhitelistedLockedAndWithdrawnByUser() public {
     vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
     vm.prank(user);
     ve.withdraw(lockInputMultiLP.tokenAddresses[0], lockInputMultiLP.tokenId);
@@ -515,7 +519,7 @@ contract IncreaseAmount is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseAmount_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfNotOwner() public {
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeVelodrome5050IonMode.mint(user, additionalAmount);
     address otherUser = address(0x9353);
@@ -527,7 +531,7 @@ contract IncreaseAmount is veIONTest {
     ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
   }
 
-  function test_increaseAmount_RevertIfValueIsZero() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfValueIsZero() public {
     uint256 additionalAmount = 0;
 
     vm.startPrank(user);
@@ -537,7 +541,7 @@ contract IncreaseAmount is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseAmount_RevertIfTokenIdNonexistent() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfTokenIdNonexistent() public {
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeVelodrome5050IonMode.mint(user, additionalAmount);
 
@@ -550,7 +554,7 @@ contract IncreaseAmount is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseAmount_RevertIfLockExpired() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfLockExpired() public {
     vm.warp(block.timestamp + lockInput.duration);
 
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
@@ -563,7 +567,7 @@ contract IncreaseAmount is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseAmount_RevertIfTokenNotWhitelisted() public fork(MODE_MAINNET) {
+  function test_increaseAmount_RevertIfTokenNotWhitelisted() public {
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     MockERC20 randomMockToken = new MockERC20("MockToken", "MTK", 18);
     randomMockToken.mint(user, additionalAmount);
@@ -582,15 +586,15 @@ contract LockAdditionalAsset is veIONTest {
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
     ve.setVoter(address(this));
   }
 
-  function test_lockAdditionalAsset_UserCanLockAdditionalLp() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_UserCanLockAdditionalLp() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
 
     vm.prank(user);
@@ -615,7 +619,7 @@ contract LockAdditionalAsset is veIONTest {
     assertEq(lockedVelo.end, expectedEndTimeVelo, "Lock end time should be increased velo");
   }
 
-  function test_lockAdditionalAsset_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfNotOwner() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     address randomUser = address(0x1345);
@@ -627,7 +631,7 @@ contract LockAdditionalAsset is veIONTest {
     ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
   }
 
-  function test_lockAdditionalAsset_RevertIfZeroAmount() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfZeroAmount() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 0;
 
@@ -638,7 +642,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionalAsset_RevertIfAlreadyVoted() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfAlreadyVoted() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18;
 
@@ -651,7 +655,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionalAsset_RevertIfDuplicateAsset() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfDuplicateAsset() public {
     modeVelodrome5050IonMode.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18;
 
@@ -662,7 +666,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionalAsset_RevertIfMinimumNotMet() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfMinimumNotMet() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 9 * 10 ** 18;
 
@@ -673,7 +677,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionalAsset_RevertIfLockTooLong() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfLockTooLong() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18;
 
@@ -684,7 +688,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionalAsset_RevertIfLockTooShort() public fork(MODE_MAINNET) {
+  function test_lockAdditionalAsset_RevertIfLockTooShort() public {
     modeBalancer8020IonEth.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18;
 
@@ -695,7 +699,7 @@ contract LockAdditionalAsset is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockAdditionAsset_RevertIfTokenNotWhitelisted() public fork(MODE_MAINNET) {
+  function test_lockAdditionAsset_RevertIfTokenNotWhitelisted() public {
     MockERC20 randomToken = new MockERC20("Random Token", "RND", 18);
     randomToken.mint(user, lockInput.tokenAmount);
     uint256 additionalAmount = 500 * 10 ** 18;
@@ -714,14 +718,14 @@ contract IncreaseUnlockTime is veIONTest {
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLp;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLp = _createLockMultipleInternal(user);
   }
 
-  function test_increaseUnlockTime_UserCanIncreaseTime() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_UserCanIncreaseTime() public {
     uint256 newLockTime = 104 weeks;
     vm.prank(user);
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
@@ -731,14 +735,14 @@ contract IncreaseUnlockTime is veIONTest {
     assertEq(expectedEndTime, actualLocked.end, "Lock end time should be increased");
   }
 
-  function test_increaseUnlockTime_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfNotOwner() public {
     uint256 newLockTime = 104 weeks;
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
   }
 
-  function test_increaseUnlockTime_RevertIfLockPermanent() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfLockPermanent() public {
     uint256 newLockTime = 104 weeks;
     vm.startPrank(user);
     ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
@@ -747,7 +751,7 @@ contract IncreaseUnlockTime is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseUnlockTime_RevertIfLockExpires() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfLockExpires() public {
     uint256 newLockTime = 104 weeks;
     vm.warp(block.timestamp + lockInput.duration);
     vm.prank(user);
@@ -755,7 +759,7 @@ contract IncreaseUnlockTime is veIONTest {
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
   }
 
-  function test_increaseUnlockTime_RevertIfLockNonexistent() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfLockNonexistent() public {
     uint256 newLockTime = 104 weeks;
     uint256 amountToMint = 500 * 10 ** 18; // 500 tokens
     modeBalancer8020IonEth.mint(user, amountToMint);
@@ -767,28 +771,28 @@ contract IncreaseUnlockTime is veIONTest {
     vm.stopPrank();
   }
 
-  function test_increaseUnlockTime_RevertIfLockNotInFuture() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfLockNotInFuture() public {
     uint256 newLockTime = 52 weeks;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockDurationNotInFuture()"));
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
   }
 
-  function test_increaseUnlockTime_RevertIfLockTooLong() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfLockTooLong() public {
     uint256 newLockTime = 120 weeks;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockDurationTooLong()"));
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
   }
 
-  function test_increaseUnlockTime_RevertIfTokenNonexistent() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTime_RevertIfTokenNonexistent() public {
     uint256 newLockTime = 52 weeks;
     vm.prank(user);
     vm.expectRevert("ERC721: invalid token ID");
     ve.increaseUnlockTime(address(modeVelodrome5050IonMode), 544, newLockTime);
   }
 
-  function test_increaseUnlockTimeI_RevertIfUserWithdrewLock() public fork(MODE_MAINNET) {
+  function test_increaseUnlockTimeI_RevertIfUserWithdrewLock() public {
     uint256 newLockTime = 52 weeks;
     vm.startPrank(user);
     ve.withdraw(lockInputMultiLp.tokenAddresses[0], lockInputMultiLp.tokenId);
@@ -802,15 +806,15 @@ contract Withdraw is veIONTest {
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
     ve.setVoter(address(this));
   }
 
-  function test_withdraw_UserCanWithdrawFinishedLock() public fork(MODE_MAINNET) {
+  function test_withdraw_UserCanWithdrawFinishedLock() public {
     vm.warp(block.timestamp + 52 weeks + 1);
 
     uint256 supplyBefore = ve.s_supply(ve.s_lpType(lockInput.tokenAddress));
@@ -851,7 +855,7 @@ contract Withdraw is veIONTest {
     );
   }
 
-  function test_withdraw_UserCanWithdrawEarly() public fork(MODE_MAINNET) {
+  function test_withdraw_UserCanWithdrawEarly() public {
     address randomWallet = address(0x7890);
     uint256 mintAmount = 100000000000000000 ether; // Mint tokens so that penalty comes into effect
     modeVelodrome5050IonMode.mint(randomWallet, mintAmount);
@@ -947,20 +951,20 @@ contract Withdraw is veIONTest {
     assertEq(rewardBalance, rewardEarned, "User should have claimed some reward");
   }
 
-  function test_withdraw_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_withdraw_RevertIfNotOwner() public {
     vm.prank(address(0x3523));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_withdraw_RevertIfVoting() public fork(MODE_MAINNET) {
+  function test_withdraw_RevertIfVoting() public {
     ve.voting(lockInput.tokenId, true);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
     ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_withdraw_RevertIfPermanentLock() public fork(MODE_MAINNET) {
+  function test_withdraw_RevertIfPermanentLock() public {
     vm.startPrank(user);
     ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
@@ -968,21 +972,21 @@ contract Withdraw is veIONTest {
     vm.stopPrank();
   }
 
-  function test_withdraw_RevertIfTokenNotWhitelisted() public fork(MODE_MAINNET) {
+  function test_withdraw_RevertIfTokenNotWhitelisted() public {
     MockERC20 randomMockToken = new MockERC20("Random_Token", "RND", 18);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
     ve.withdraw(address(randomMockToken), lockInput.tokenId);
   }
 
-  function test_withdraw_TokenShouldStillExistIfRemainingLP() public fork(MODE_MAINNET) {
+  function test_withdraw_TokenShouldStillExistIfRemainingLP() public {
     vm.prank(user);
     ve.withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
     address owner = ve.ownerOf(lockInputMultiLP.tokenId);
     assertEq(owner, user, "User should still own their token");
   }
 
-  function test_withdraw_TokenShouldBeBurntInAllLPRemoved() public fork(MODE_MAINNET) {
+  function test_withdraw_TokenShouldBeBurntInAllLPRemoved() public {
     vm.startPrank(user);
     ve.withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
     ve.withdraw(address(modeBalancer8020IonEth), lockInputMultiLP.tokenId);
@@ -1002,7 +1006,7 @@ contract Withdraw is veIONTest {
     assertFalse(tokenIdFound, "Token ID should be removed from user's owned tokens");
   }
 
-  function test_withdraw_WithdrawAssetNotOwnedButWhitelisted() public fork(MODE_MAINNET) {
+  function test_withdraw_WithdrawAssetNotOwnedButWhitelisted() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
     ve.withdraw(address(modeBalancer8020IonEth), lockInput.tokenId);
@@ -1015,8 +1019,8 @@ contract Merge is veIONTest {
   LockInfo lockInput_2;
   LockInfoMultiple lockInputMultiLP;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInput_1 = _createLockInternal(user);
     lockInput_2 = _createLockInternal(user);
@@ -1024,7 +1028,7 @@ contract Merge is veIONTest {
     ve.setVoter(address(this));
   }
 
-  function test_merge_UserCanMerge() public fork(MODE_MAINNET) {
+  function test_merge_UserCanMerge() public {
     vm.prank(user);
     ve.merge(lockInput_1.tokenId, lockInput_2.tokenId);
 
@@ -1043,7 +1047,7 @@ contract Merge is veIONTest {
     ve.ownerOf(lockInput_1.tokenId);
   }
 
-  function test_merge_UserCanMergeMultiLockIntoSingleLock() public fork(MODE_MAINNET) {
+  function test_merge_UserCanMergeMultiLockIntoSingleLock() public {
     vm.prank(user);
     ve.merge(lockInputMultiLP.tokenId, lockInput_2.tokenId);
 
@@ -1073,7 +1077,7 @@ contract Merge is veIONTest {
     assertTrue(foundBalancer, "Balancer token should be in assetsLocked for lockInput_2");
   }
 
-  function test_merge_UserCanMergeSingleLockIntoMultiLock() public fork(MODE_MAINNET) {
+  function test_merge_UserCanMergeSingleLockIntoMultiLock() public {
     vm.prank(user);
     ve.merge(lockInput_1.tokenId, lockInputMultiLP.tokenId);
 
@@ -1103,7 +1107,7 @@ contract Merge is veIONTest {
     assertTrue(foundBalancer, "Balancer token should be in assetsLocked for lockInputMultiLP");
   }
 
-  function test_merge_RevertIfNotOwnerOfFromToken() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfNotOwnerOfFromToken() public {
     address randomUser = address(0x3524);
     LockInfo memory strangerLockInput = _createLockInternal(randomUser);
 
@@ -1112,7 +1116,7 @@ contract Merge is veIONTest {
     ve.merge(lockInput_1.tokenId, strangerLockInput.tokenId);
   }
 
-  function test_merge_RevertIfNotOwnerOfToToken() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfNotOwnerOfToToken() public {
     address randomUser = address(0x3524);
     LockInfo memory strangerLockInput = _createLockInternal(randomUser);
 
@@ -1121,20 +1125,20 @@ contract Merge is veIONTest {
     ve.merge(strangerLockInput.tokenId, lockInput_1.tokenId);
   }
 
-  function test_merge_RevertIfVoting() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfVoting() public {
     ve.voting(lockInput_1.tokenId, true);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
     ve.merge(lockInput_1.tokenId, lockInput_2.tokenId);
   }
 
-  function test_merge_RevertIfSameToken() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfSameToken() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("SameNFT()"));
     ve.merge(lockInput_1.tokenId, lockInput_1.tokenId);
   }
 
-  function test_merge_RevertIfEitherTokenDoesNotExist() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfEitherTokenDoesNotExist() public {
     uint256 nonExistentTokenId = 97959;
 
     vm.prank(user);
@@ -1146,7 +1150,7 @@ contract Merge is veIONTest {
     ve.merge(lockInput_1.tokenId, nonExistentTokenId);
   }
 
-  function test_merge_RevertIfToExpiredOrFromExpired() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfToExpiredOrFromExpired() public {
     uint256 amount = MINT_AMT;
     modeVelodrome5050IonMode.mint(user, amount);
 
@@ -1173,7 +1177,7 @@ contract Merge is veIONTest {
     ve.merge(lockInput_1.tokenId, tokenId);
   }
 
-  function test_merge_RevertIfFromPermanentOrToPermanent() public fork(MODE_MAINNET) {
+  function test_merge_RevertIfFromPermanentOrToPermanent() public {
     vm.prank(user);
     ve.lockPermanent(lockInput_1.tokenAddress, lockInput_1.tokenId);
 
@@ -1186,7 +1190,7 @@ contract Merge is veIONTest {
     ve.merge(lockInput_2.tokenId, lockInput_1.tokenId);
   }
 
-  function test_merge_ShouldRecalculateBoostUsingEarlierStartAndLaterEnd() public fork(MODE_MAINNET) {
+  function test_merge_ShouldRecalculateBoostUsingEarlierStartAndLaterEnd() public {
     vm.warp(block.timestamp + 40 weeks);
     uint256 amount = MINT_AMT;
     modeVelodrome5050IonMode.mint(user, amount);
@@ -1219,7 +1223,7 @@ contract Merge is veIONTest {
     emit log_named_uint("boost", mergedLock.boost);
   }
 
-  function test_merge_IfToHasNoLockForParticularAssetStartShouldNotBeZero() public fork(MODE_MAINNET) {
+  function test_merge_IfToHasNoLockForParticularAssetStartShouldNotBeZero() public {
     uint256 amount = MINT_AMT;
     modeBalancer8020IonEth.mint(user, amount);
 
@@ -1262,8 +1266,8 @@ contract Split is veIONTest {
   LockInfoMultiple lockInputMultiLP;
   uint256 splitAmount;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     splitAmount = MINT_AMT / 2;
@@ -1272,7 +1276,7 @@ contract Split is veIONTest {
     ve.toggleSplit(user, true);
   }
 
-  function test_split_UserCanSplitAllLP() public fork(MODE_MAINNET) {
+  function test_split_UserCanSplitAllLP() public {
     splitAmount = MINT_AMT - MINIMUM_LOCK_AMOUNT;
     vm.prank(user);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
@@ -1309,7 +1313,7 @@ contract Split is veIONTest {
     assertTrue(foundModeVeloInTokenId2, "TokenId2 should have the asset modeVelodrome5050IonMode");
   }
 
-  function test_split_UserCanSplitSomeLP() public fork(MODE_MAINNET) {
+  function test_split_UserCanSplitSomeLP() public {
     vm.prank(user);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
       address(modeVelodrome5050IonMode),
@@ -1328,54 +1332,54 @@ contract Split is veIONTest {
     assertEq(balancerLocked2.amount, 0, "Second split lock amount should be half of the original");
   }
 
-  function test_split_RevertIfAlreadyVoted() public fork(MODE_MAINNET) {
+  function test_split_RevertIfAlreadyVoted() public {
     ve.voting(lockInputMultiLP.tokenId, true);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_RevertIfSplitNotAllowedForUser() public fork(MODE_MAINNET) {
+  function test_split_RevertIfSplitNotAllowedForUser() public {
     ve.toggleSplit(user, false);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("SplitNotAllowed()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_CanSplitNotAllowedForUserButAllowedGeneral() public fork(MODE_MAINNET) {
+  function test_split_CanSplitNotAllowedForUserButAllowedGeneral() public {
     ve.toggleSplit(user, false);
     ve.toggleSplit(address(0), true);
     vm.prank(user);
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_split_RevertIfNotOwner() public {
     vm.prank(address(0x9352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_RevertIfLockExpired() public fork(MODE_MAINNET) {
+  function test_split_RevertIfLockExpired() public {
     vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_RevertIfSplitTooSmall() public fork(MODE_MAINNET) {
+  function test_split_RevertIfSplitTooSmall() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("SplitTooSmall()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, 0);
   }
 
-  function test_split_RevertIfAmountTooBig() public fork(MODE_MAINNET) {
+  function test_split_RevertIfAmountTooBig() public {
     splitAmount = MINT_AMT * 2;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
     ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
-  function test_split_RevertIfNotEnoughRemainingInOldToken() public fork(MODE_MAINNET) {
+  function test_split_RevertIfNotEnoughRemainingInOldToken() public {
     splitAmount = 995e18;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("NotEnoughRemainingAfterSplit()"));
@@ -1389,8 +1393,8 @@ contract LockPermanent is veIONTest {
   LockInfoMultiple lockInputMultiLP;
   veIONHarness harness;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
@@ -1399,7 +1403,7 @@ contract LockPermanent is veIONTest {
     harness = new veIONHarness();
   }
 
-  function test_lockPermanent_UserCanLockPermanent() public fork(MODE_MAINNET) {
+  function test_lockPermanent_UserCanLockPermanent() public {
     vm.prank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
@@ -1429,13 +1433,13 @@ contract LockPermanent is veIONTest {
     assertEq(userPoint.permanent, lock.amount, "User point permanent lock should match lock amount");
   }
 
-  function test_lockPermanent_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_lockPermanent_RevertIfNotOwner() public {
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_lockPermanent_RevertIfPermanentLock() public fork(MODE_MAINNET) {
+  function test_lockPermanent_RevertIfPermanentLock() public {
     vm.startPrank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
@@ -1443,14 +1447,14 @@ contract LockPermanent is veIONTest {
     vm.stopPrank();
   }
 
-  function test_lockPermanent_RevertIfLockExpired() public fork(MODE_MAINNET) {
+  function test_lockPermanent_RevertIfLockExpired() public {
     vm.warp(block.timestamp + lockInput.duration);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_lockPermanent_RevertIfNoLockFound() public fork(MODE_MAINNET) {
+  function test_lockPermanent_RevertIfNoLockFound() public {
     vm.prank(user);
     vm.expectRevert("ERC721: invalid token ID");
     ve.lockPermanent(address(modeVelodrome5050IonMode), 933);
@@ -1463,8 +1467,8 @@ contract UnlockPermanent is veIONTest {
   LockInfoMultiple lockInputMultiLP;
   veIONHarness harness;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
@@ -1475,7 +1479,7 @@ contract UnlockPermanent is veIONTest {
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_unlockPermanent_UserCanUnlockPermanent() public fork(MODE_MAINNET) {
+  function test_unlockPermanent_UserCanUnlockPermanent() public {
     vm.prank(user);
     ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
@@ -1494,19 +1498,19 @@ contract UnlockPermanent is veIONTest {
     );
   }
 
-  function test_unlockPermanent_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_unlockPermanent_RevertIfNotOwner() public {
     vm.prank(address(0x0915));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
-  function test_unlockPermanent_RevertIfNotPermanentLock() public fork(MODE_MAINNET) {
+  function test_unlockPermanent_RevertIfNotPermanentLock() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
     ve.unlockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
   }
 
-  function test_unlockPermanent_RevertIfHasDelegatees() public fork(MODE_MAINNET) {
+  function test_unlockPermanent_RevertIfHasDelegatees() public {
     vm.startPrank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
     ve.delegate(lockInput.tokenId, lockInputMultiLP.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
@@ -1515,7 +1519,7 @@ contract UnlockPermanent is veIONTest {
     vm.stopPrank();
   }
 
-  function test_unlockPermanent_RevertIfHasDelegators() public fork(MODE_MAINNET) {
+  function test_unlockPermanent_RevertIfHasDelegators() public {
     vm.startPrank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
     ve.delegate(lockInputMultiLP.tokenId, lockInput.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
@@ -1533,8 +1537,8 @@ contract Delegate is veIONTest {
   uint256 tokenId1;
   uint256 tokenId2;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
@@ -1549,7 +1553,7 @@ contract Delegate is veIONTest {
     (tokenId1, tokenId2) = (lockInput.tokenId, lockInputMultiLP.tokenId);
   }
 
-  function test_delegation_UserCanDelegate() public fork(MODE_MAINNET) {
+  function test_delegation_UserCanDelegate() public {
     vm.prank(user);
     ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
 
@@ -1611,7 +1615,7 @@ contract Delegate is veIONTest {
     assertTrue(foundDelegator, "tokenId1 found in  list of tokenId2's delegators");
   }
 
-  function test_delegation_NoDuplicateDelegateesOrDelegators() public fork(MODE_MAINNET) {
+  function test_delegation_NoDuplicateDelegateesOrDelegators() public {
     uint256 smallDelegation = 10e18;
     vm.startPrank(user);
     ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
@@ -1631,19 +1635,19 @@ contract Delegate is veIONTest {
     assertEq(amountDelegated, smallDelegation * 5, "Should accumulate");
   }
 
-  function test_delegation_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_delegation_RevertIfNotOwner() public {
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
     ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
   }
 
-  function test_delegation_RevertIfAmountTooBig() public fork(MODE_MAINNET) {
+  function test_delegation_RevertIfAmountTooBig() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
     ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT * 2);
   }
 
-  function test_delegation_RevertIfNotPermanentLockFrom() public fork(MODE_MAINNET) {
+  function test_delegation_RevertIfNotPermanentLockFrom() public {
     vm.startPrank(user);
     ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId1);
     vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
@@ -1651,7 +1655,7 @@ contract Delegate is veIONTest {
     vm.stopPrank();
   }
 
-  function test_delegation_RevertIfNotPermanentLockTo() public fork(MODE_MAINNET) {
+  function test_delegation_RevertIfNotPermanentLockTo() public {
     vm.startPrank(user);
     ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId2);
     vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
@@ -1673,8 +1677,8 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
   uint256 tokenIdCandy;
   uint256 tokenIdRalph;
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+  function setUp() public {
+    _setUp();
     cindy = address(0x1234);
     andy = address(0x3245);
     lockInputAlice = _createLockInternal(cindy);
@@ -1703,7 +1707,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     vm.stopPrank();
   }
 
-  function test_removeDelegatees_UserCanRemoveDelegatees() public fork(MODE_MAINNET) {
+  function test_removeDelegatees_UserCanRemoveDelegatees() public {
     uint256[] memory toTokenIds = new uint256[](1);
     toTokenIds[0] = tokenIdBob;
     uint256[] memory amounts = new uint256[](1);
@@ -1745,7 +1749,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
   }
 
-  function test_removeDelegatees_RevertIfUnmatchedArrays() public fork(MODE_MAINNET) {
+  function test_removeDelegatees_RevertIfUnmatchedArrays() public {
     uint256[] memory toTokenIds = new uint256[](2);
     toTokenIds[0] = tokenIdBob;
     toTokenIds[1] = tokenIdBob;
@@ -1757,7 +1761,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
 
-  function test_removeDelegatees_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_removeDelegatees_RevertIfNotOwner() public {
     uint256[] memory toTokenIds = new uint256[](1);
     toTokenIds[0] = tokenIdBob;
     uint256[] memory amounts = new uint256[](1);
@@ -1768,7 +1772,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
 
-  function test_removeDelegatees_RevertIfNoDelegation() public fork(MODE_MAINNET) {
+  function test_removeDelegatees_RevertIfNoDelegation() public {
     uint256[] memory toTokenIds = new uint256[](1);
     toTokenIds[0] = tokenIdCandy;
     uint256[] memory amounts = new uint256[](1);
@@ -1779,7 +1783,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
   }
 
-  function test_removeDelegators_UserCanRemoveDelegators() public fork(MODE_MAINNET) {
+  function test_removeDelegators_UserCanRemoveDelegators() public {
     uint256[] memory fromTokenIds = new uint256[](1);
     fromTokenIds[0] = tokenIdAlice;
     uint256[] memory amounts = new uint256[](1);
@@ -1832,7 +1836,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
   }
 
-  function test_removeDelegators_RevertIfUnmatchedArrays() public fork(MODE_MAINNET) {
+  function test_removeDelegators_RevertIfUnmatchedArrays() public {
     uint256[] memory fromTokenIDs = new uint256[](2);
     fromTokenIDs[0] = tokenIdAlice;
     fromTokenIDs[1] = tokenIdAlice;
@@ -1843,7 +1847,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
     ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
   }
-  function test_removeDelegators_RevertIfNotOwner() public fork(MODE_MAINNET) {
+  function test_removeDelegators_RevertIfNotOwner() public {
     uint256[] memory fromTokenIDs = new uint256[](1);
     fromTokenIDs[0] = tokenIdAlice;
     uint256[] memory amounts = new uint256[](1);
@@ -1854,7 +1858,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
   }
 
-  function test_removeDelegators_RevertIfNoDelegationBetweenTokens() public fork(MODE_MAINNET) {
+  function test_removeDelegators_RevertIfNoDelegationBetweenTokens() public {
     uint256[] memory fromTokenIDs = new uint256[](1);
     fromTokenIDs[0] = tokenIdCandy;
     uint256[] memory amounts = new uint256[](1);
@@ -1868,58 +1872,12 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
 contract ClaimEmissions is veIONTest {
   address user;
-  address ionMode5050LP;
-  address veloGauge;
-  VeloIonModeStakingStrategy veloIonModeStakingStrategy;
-  address stakingWalletInstance;
-  uint256 stakingWalletInstanceBalance;
-  uint256 amountStaked;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
     user = address(0x8325);
-    ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
-    veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
-
-    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
-      address(ve),
-      ionMode5050LP,
-      veloGauge,
-      address(veloStakingWalletImplementation)
-    );
-
-    address[] memory whitelistedTokens = new address[](1);
-    bool[] memory isWhitelistedTokens = new bool[](1);
-    whitelistedTokens[0] = ionMode5050LP;
-    isWhitelistedTokens[0] = true;
-
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
-
-    amountStaked = 10 ether;
-    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
-    IERC20(ionMode5050LP).transfer(user, amountStaked);
-
-    address[] memory tokenAddresses = new address[](1);
-    tokenAddresses[0] = address(ionMode5050LP);
-
-    uint256[] memory tokenAmounts = new uint256[](1);
-    tokenAmounts[0] = amountStaked;
-
-    uint256[] memory durations = new uint256[](1);
-    durations[0] = 52 weeks;
-
-    bool[] memory stakeUnderlying = new bool[](1);
-    stakeUnderlying[0] = true;
-
-    vm.startPrank(user);
-    IERC20(ionMode5050LP).approve(address(ve), amountStaked);
-    ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
-    vm.stopPrank();
-
+    _createLockInternalRealLP(user);
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(user);
-    stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
   }
 
   function setUp() public {

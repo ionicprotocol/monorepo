@@ -26,6 +26,12 @@ contract veIONTest is BaseTest {
   IveION.LpTokenType balancerLpType;
   VelodromeStakingWallet veloStakingWalletImplementation;
 
+  address ionMode5050LP;
+  address veloGauge;
+  VeloIonModeStakingStrategy veloIonModeStakingStrategy;
+  address stakingWalletInstance;
+  uint256 stakingWalletInstanceBalance;
+
   uint256 internal constant MINT_AMT = 1000 ether;
   uint256 internal constant WEEK = 1 weeks;
   uint256 internal constant MAXTIME = 2 * 365 * 86400;
@@ -68,32 +74,30 @@ contract veIONTest is BaseTest {
     super.afterForkSetUp();
     ve = new veION();
     ve.initialize(ap);
-    modeVelodrome5050IonMode = new MockERC20("Mode_Velodrome_5050_ION_MODE", "MV5050", 18);
-    modeBalancer8020IonEth = new MockERC20("Mode_Balancer_8020_ION_ETH", "MB8020", 18);
 
-    address[] memory whitelistedTokens = new address[](2);
-    bool[] memory isWhitelistedTokens = new bool[](2);
-
-    whitelistedTokens[0] = address(modeVelodrome5050IonMode);
-    whitelistedTokens[1] = address(modeBalancer8020IonEth);
-
-    for (uint i = 0; i < 2; i++) {
-      isWhitelistedTokens[i] = true;
-    }
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-
-    ve.setLpTokenType(address(modeVelodrome5050IonMode), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
-    ve.setLpTokenType(address(modeBalancer8020IonEth), IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
-
-    veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
-    balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+    ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
+    veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
     veloStakingWalletImplementation = new VelodromeStakingWallet();
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+      address(ve),
+      ionMode5050LP,
+      veloGauge,
+      address(veloStakingWalletImplementation)
+    );
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = ionMode5050LP;
+    isWhitelistedTokens[0] = true;
+
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
     ve.setMinimumLockDuration(MINTIME);
-    ve.setMinimumLockAmount(address(modeVelodrome5050IonMode), MINIMUM_LOCK_AMOUNT);
-    ve.setMinimumLockAmount(address(modeBalancer8020IonEth), MINIMUM_LOCK_AMOUNT);
+    ve.setMinimumLockAmount(address(ionMode5050LP), MINIMUM_LOCK_AMOUNT);
   }
 
   // Function: _createLockMultipleInternal
@@ -172,28 +176,30 @@ contract veIONTest is BaseTest {
     return LockInfoMultiple(vars.tokenId, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
   }
 
-  // function _createLockInternalRealLP(address user) internal returns (LockInfo memory) {
-  //   uint256 amountStaked = 10 ether;
-  //   vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
-  //   IERC20(ionMode5050LP).transfer(user, amountStaked);
+  function _createLockInternalRealLP(address user) internal returns (LockInfo memory) {
+    uint256 amountStaked = 10 ether;
+    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
+    IERC20(ionMode5050LP).transfer(user, amountStaked);
 
-  //   address[] memory tokenAddresses = new address[](1);
-  //   tokenAddresses[0] = address(ionMode5050LP);
+    address[] memory tokenAddresses = new address[](1);
+    tokenAddresses[0] = address(ionMode5050LP);
 
-  //   uint256[] memory tokenAmounts = new uint256[](1);
-  //   tokenAmounts[0] = amountStaked;
+    uint256[] memory tokenAmounts = new uint256[](1);
+    tokenAmounts[0] = amountStaked;
 
-  //   uint256[] memory durations = new uint256[](1);
-  //   durations[0] = 52 weeks;
+    uint256[] memory durations = new uint256[](1);
+    durations[0] = 52 weeks;
 
-  //   bool[] memory stakeUnderlying = new bool[](1);
-  //   stakeUnderlying[0] = true;
+    bool[] memory stakeUnderlying = new bool[](1);
+    stakeUnderlying[0] = true;
 
-  //   vm.startPrank(user);
-  //   IERC20(ionMode5050LP).approve(address(ve), amountStaked);
-  //   ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
-  //   vm.stopPrank();
-  // }
+    vm.startPrank(user);
+    IERC20(ionMode5050LP).approve(address(ve), amountStaked);
+    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.stopPrank();
+
+    return LockInfo(tokenId, tokenAddresses[0], tokenAmounts[0], durations[0]);
+  }
 }
 
 struct TestVars {
