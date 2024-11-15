@@ -88,15 +88,16 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         decimals: 6,
         market: 'usdc_market',
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
+          ionAPR: true,
+          flywheel: true,
           op: true
         }
       },
@@ -104,7 +105,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         decimals: 6,
         market: 'usdt_market',
@@ -135,15 +137,16 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'weth_market',
         multiplier: 3000,
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
+          ionAPR: true,
+          flywheel: true,
           op: true
         }
       },
@@ -161,8 +164,8 @@ export const multipliers: Record<
           renzo: 2,
           underlyingAPR: 3.25,
           turtle: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       sUSDe: {
@@ -212,8 +215,8 @@ export const multipliers: Record<
           etherfi: 1,
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'weeth_market_new',
         multiplier: 3000,
@@ -243,8 +246,8 @@ export const multipliers: Record<
           kelp: 2,
           underlyingAPR: 3.63,
           turtle: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       }
     },
