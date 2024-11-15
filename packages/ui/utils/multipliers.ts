@@ -749,8 +749,8 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 5,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       SNX: {
