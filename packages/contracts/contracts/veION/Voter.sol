@@ -11,6 +11,8 @@ import { IBribeRewards } from "./interfaces/IBribeRewards.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
+import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
+
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 interface IPoolLens {
@@ -186,7 +188,7 @@ contract Voter is IVoter, OwnableUpgradeable {
 
   /// @inheritdoc IVoter
   function reset(uint256 _tokenId) external onlyNewEpoch(_tokenId) {
-    if (!IveION(ve).isApprovedOrOwner(msg.sender, _tokenId)) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != msg.sender) revert NotApprovedOrOwner();
     _reset(_tokenId);
   }
 
@@ -331,7 +333,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   ) external onlyNewEpoch(_tokenId) {
     VoteLocalVars memory vars;
     vars.sender = msg.sender;
-    if (!IveION(ve).isApprovedOrOwner(vars.sender, _tokenId)) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != vars.sender) revert NotApprovedOrOwner();
     if (_marketVote.length != _weights.length) revert UnequalLengths();
     if (_marketVote.length != _marketVoteSide.length) revert UnequalLengths();
     if (_marketVote.length > maxVotingNum) revert TooManyPools();
@@ -387,7 +389,7 @@ contract Voter is IVoter, OwnableUpgradeable {
 
   /// @inheritdoc IVoter
   function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {
-    if (!IveION(ve).isApprovedOrOwner(_msgSender(), _tokenId)) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != _msgSender()) revert NotApprovedOrOwner();
     uint256 _length = _bribes.length;
     for (uint256 i = 0; i < _length; i++) {
       IBribeRewards(_bribes[i]).getReward(_tokenId, _tokens[i]);

@@ -265,7 +265,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   /// @inheritdoc IBribeRewards
   function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant onlyVoter {
     address sender = msg.sender;
-    if (!IveION(ve).isApprovedOrOwner(sender, tokenId) && sender != voter) revert Unauthorized();
+    if (ERC721Upgradeable(ve).ownerOf(tokenId) != sender && sender != voter) revert Unauthorized();
 
     address _owner = ERC721Upgradeable(ve).ownerOf(tokenId);
     _getReward(_owner, tokenId, tokens);

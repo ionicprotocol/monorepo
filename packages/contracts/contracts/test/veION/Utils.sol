@@ -259,3 +259,42 @@ struct LockInfoMultiple {
   uint256[] tokenAmounts;
   uint256[] durations;
 }
+
+struct AeroBoostVars {
+  uint256 aeroVoterBoost;
+  address aeroVotingAddress;
+  address ionicPoolAddress;
+  address veAEROAddress;
+  address AERO;
+  uint256 lockAmount;
+  address aeroWhale;
+  uint256 veAeroTokenId;
+  address[] poolVote;
+  uint256[] weights;
+}
+
+interface IveAERO {
+  /// @notice Deposit `_value` tokens for `msg.sender` and lock for `_lockDuration`
+  /// @param _value Amount to deposit
+  /// @param _lockDuration Number of seconds to lock tokens for (rounded down to nearest week)
+  /// @return TokenId of created veNFT
+  function createLock(uint256 _value, uint256 _lockDuration) external returns (uint256);
+}
+
+interface IAEROVoter {
+  /// @notice Called by users to vote for pools. Votes distributed proportionally based on weights.
+  ///         Can only vote or deposit into a managed NFT once per epoch.
+  ///         Can only vote for gauges that have not been killed.
+  /// @dev Weights are distributed proportional to the sum of the weights in the array.
+  ///      Throws if length of _poolVote and _weights do not match.
+  /// @param _tokenId     Id of veNFT you are voting with.
+  /// @param _poolVote    Array of pools you are voting for.
+  /// @param _weights     Weights of pools.
+  function vote(uint256 _tokenId, address[] calldata _poolVote, uint256[] calldata _weights) external;
+
+  /// @notice Returns the number of votes for a given veNFT token ID and pool address.
+  /// @param _tokenId The ID of the veNFT.
+  /// @param _pool The address of the pool.
+  /// @return The number of votes for the given token ID and pool.
+  function votes(uint256 _tokenId, address _pool) external view returns (uint256);
+}

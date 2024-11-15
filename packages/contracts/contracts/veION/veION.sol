@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+import { console } from "forge-std/console.sol";
+
 import { ERC721Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import { IveION } from "./interfaces/IveION.sol";
@@ -303,6 +305,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       s_locked[_to][vars.lpType] = vars.newLockedTo;
       _checkpoint(_to, vars.newLockedTo, vars.lpType);
 
+      s_assetsLocked[_from].remove(vars.asset);
       if (!s_assetsLocked[_to].contains(vars.asset)) {
         s_assetsLocked[_to].add(vars.asset);
       }
@@ -748,24 +751,17 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
   function _getTotalBoost(uint256 _tokenId, LpTokenType _lpType) internal view returns (uint256) {
     uint256 totalBoost = s_locked[_tokenId][_lpType].boost;
-    if (s_limitedBoostActive) {
-      totalBoost += s_limitedBoost;
-    }
-    address _owner = ownerOf(_tokenId);
+    if (s_limitedBoostActive) totalBoost += s_limitedBoost;
     if (s_veAERO == address(0)) return totalBoost;
 
-    uint256 _balance = IAeroVotingEscrow(s_veAERO).balanceOf(_owner);
+    address _owner = ownerOf(_tokenId);
+    IAeroVoter aeroVoter = IAeroVoter(s_aeroVoting);
+    IAeroVotingEscrow veAERO = IAeroVotingEscrow(s_veAERO);
+    uint256 _balance = veAERO.balanceOf(_owner);
     for (uint256 i = 0; i < _balance; i++) {
-      uint256 tokenId = IAeroVotingEscrow(s_veAERO).ownerToNFTokenIdList(_owner, i);
-      address[] memory poolVotes = IAeroVoter(s_aeroVoting).poolVote(tokenId);
-      for (uint256 j = 0; j < poolVotes.length; j++) {
-        if (poolVotes[j] == s_ionicPool) {
-          IAeroVoter aeroVoter = IAeroVoter(s_aeroVoting);
-          uint256 weightToVoteRatio = (aeroVoter.votes(_tokenId, s_ionicPool) * 1e18) / aeroVoter.weights(s_ionicPool);
-          totalBoost += (s_aeroVoterBoost * weightToVoteRatio) / 1e18;
-          break;
-        }
-      }
+      uint256 veAeroTokenId = veAERO.ownerToNFTokenIdList(_owner, i);
+      uint256 weightToVoteRatio = (aeroVoter.votes(veAeroTokenId, s_ionicPool) * 1e18) / aeroVoter.weights(s_ionicPool);
+      totalBoost += (s_aeroVoterBoost * weightToVoteRatio) / 1e18;
     }
 
     return totalBoost;
@@ -836,6 +832,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit StakeStrategySet(_lpType, address(_strategy));
   }
 
+  function setVeAERO(address _veAERO) external onlyOwner {
+    require(_veAERO != address(0), "Invalid veAERO address");
+    s_veAERO = _veAERO;
+    emit VeAEROSet(_veAERO);
+  }
+
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                           View Functions                                  ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -844,13 +846,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function balanceOfNFT(
     uint256 _tokenId
   ) public view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts) {
-    uint256 lengthOfAssets = s_assetsLocked[_tokenId].length();
     address[] memory assetsLocked = s_assetsLocked[_tokenId].values();
 
-    _assets = new address[](lengthOfAssets);
-    _balances = new uint256[](lengthOfAssets);
+    _assets = new address[](assetsLocked.length);
+    _balances = new uint256[](assetsLocked.length);
+    _boosts = new uint256[](assetsLocked.length);
 
-    for (uint256 i = 0; i < lengthOfAssets; i++) {
+    for (uint256 i = 0; i < assetsLocked.length; i++) {
       address asset = assetsLocked[i];
       LpTokenType lpType = s_lpType[asset];
       LockedBalance memory lockedBalance = s_locked[_tokenId][lpType];

@@ -114,6 +114,7 @@ interface IveION {
   event AeroVoterBoostSet(uint256 newAeroVoterBoost);
   event TokensWhitelisted(address[] token, bool[] isWhitelisted);
   event LpTokenTypeSet(address indexed token, LpTokenType lpTokenType);
+  event VeAEROSet(address indexed veAERO);
   event StakeStrategySet(LpTokenType indexed lpTokenType, address indexed strategy);
   event MinimumLockAmountSet(address indexed tokenAddress, uint256 minimumAmount);
   event MinimumLockDurationSet(uint256 minimumDuration);
