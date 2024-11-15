@@ -58,7 +58,19 @@ export default function Market() {
   const columns: ColumnDef<MarketRowData>[] = [
     {
       accessorKey: 'asset',
-      header: 'ASSETS',
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          ASSETS
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
       cell: ({ row }) => (
         <Link
           href={{
@@ -69,8 +81,8 @@ export default function Market() {
               cTokenAddress: row.original.cTokenAddress,
               dropdownSelectedChain: chain,
               pool: selectedPool,
-              borrowAPR: row.original.borrowAPR ?? '-',
-              supplyAPR: row.original.supplyAPR ?? '-',
+              borrowAPR: row.original.borrowAPR,
+              supplyAPR: row.original.supplyAPR,
               selectedChain: chainId,
               selectedSymbol: row.original.asset
             }
@@ -84,43 +96,28 @@ export default function Market() {
           />
           <span className="text-sm">{row.original.asset}</span>
         </Link>
-      )
-    },
-    {
-      accessorKey: 'supplyBalance',
-      header: 'SUPPLY BALANCE',
-      cell: ({ row }) => (
-        <span className="text-right">{row.original.supplyBalance}</span>
-      )
-    },
-    {
-      accessorKey: 'totalSupplied',
-      header: 'TOTAL SUPPLIED',
-      cell: ({ row }) => (
-        <span className="text-right">{row.original.totalSupplied}</span>
-      )
-    },
-    {
-      accessorKey: 'borrowBalance',
-      header: 'BORROW BALANCE',
-      cell: ({ row }) => (
-        <span className="text-right">{row.original.borrowBalance}</span>
-      )
-    },
-    {
-      accessorKey: 'totalBorrowing',
-      header: 'TOTAL BORROWED',
-      cell: ({ row }) => (
-        <span className="text-right">{row.original.totalBorrowing}</span>
-      )
+      ),
+      sortingFn: 'alphanumeric'
     },
     {
       accessorKey: 'supplyAPRTotal',
-      header: 'SUPPLY APR',
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          SUPPLY APR
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
       cell: ({ row }) => (
         <APRCell
           type="supply"
-          aprTotal={row.original.supplyAPRTotal}
+          aprTotal={row.original.supplyAPRTotal ?? 0}
           baseAPR={row.original.supplyAPR}
           asset={row.original.asset}
           rewards={row.original.supplyRewards}
@@ -129,15 +126,29 @@ export default function Market() {
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
         />
-      )
+      ),
+      sortingFn: (a, b) =>
+        (b.original.supplyAPRTotal ?? 0) - (a.original.supplyAPRTotal ?? 0)
     },
     {
       accessorKey: 'borrowAPRTotal',
-      header: 'BORROW APR',
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          BORROW APR
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
       cell: ({ row }) => (
         <APRCell
           type="borrow"
-          aprTotal={row.original.borrowAPRTotal}
+          aprTotal={row.original.borrowAPRTotal ?? 0}
           baseAPR={row.original.borrowAPR}
           asset={row.original.asset}
           rewards={row.original.borrowRewards}
@@ -146,12 +157,91 @@ export default function Market() {
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
         />
-      )
+      ),
+      sortingFn: (a, b) =>
+        (a.original.borrowAPRTotal ?? 0) - (b.original.borrowAPRTotal ?? 0)
+    },
+    {
+      accessorKey: 'supplyBalance',
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          SUPPLY BALANCE
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span className="text-right">{row.original.supplyBalance}</span>
+      ),
+      sortingFn: (a, b) => {
+        const aValue =
+          parseFloat(
+            (a.original.supplyBalance as string).replace(/[^0-9.-]+/g, '')
+          ) || 0;
+        const bValue =
+          parseFloat(
+            (b.original.supplyBalance as string).replace(/[^0-9.-]+/g, '')
+          ) || 0;
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      }
+    },
+    {
+      accessorKey: 'borrowBalance',
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          BORROW BALANCE
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span className="text-right">{row.original.borrowBalance}</span>
+      ),
+      sortingFn: (a, b) => {
+        const aValue =
+          parseFloat(
+            (a.original.borrowBalance as string).replace(/[^0-9.-]+/g, '')
+          ) || 0;
+        const bValue =
+          parseFloat(
+            (b.original.borrowBalance as string).replace(/[^0-9.-]+/g, '')
+          ) || 0;
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      }
     },
     {
       accessorKey: 'collateralFactor',
-      header: 'COLLATERAL FACTOR',
-      cell: ({ row }) => <span>{row.original.collateralFactor}%</span>
+      header: ({ column }) => (
+        <button
+          className="flex items-center gap-2 hover:text-white"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          COLLATERAL FACTOR
+          {column.getIsSorted() === 'asc' ? (
+            <span className="ml-1">↑</span>
+          ) : column.getIsSorted() === 'desc' ? (
+            <span className="ml-1">↓</span>
+          ) : null}
+        </button>
+      ),
+      cell: ({ row }) => <span>{row.original.collateralFactor}%</span>,
+      sortingFn: (a, b) => {
+        const aValue = parseFloat(a.original.collateralFactor) || 0;
+        const bValue = parseFloat(b.original.collateralFactor) || 0;
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      }
     },
     {
       id: 'actions',

@@ -43,7 +43,6 @@ export default function APRCell({
   selectedPoolId,
   rewards
 }: APRCellProps) {
-  console.log('rewards', rewards);
   const isMainModeMarket =
     dropdownSelectedChain === 34443 &&
     (asset === 'USDC' || asset === 'WETH') &&
@@ -77,13 +76,12 @@ export default function APRCell({
     );
   };
 
-  console.log('aprTotal', aprTotal);
   const formatTotalAPR = () => {
-    if (typeof aprTotal === 'undefined') return '-';
-    const prefix = type === 'supply' || aprTotal > 0 ? '+' : '';
+    const numericValue = aprTotal ?? 0;
+    const prefix = type === 'supply' || numericValue > 0 ? '+' : '';
     return (
       prefix +
-      aprTotal.toLocaleString('en-US', {
+      numericValue.toLocaleString('en-US', {
         maximumFractionDigits: type === 'supply' ? 2 : 1
       })
     );
@@ -92,9 +90,9 @@ export default function APRCell({
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
-        <div className="flex flex-col items-center cursor-pointer">
+        <div className="flex flex-col items-start cursor-pointer">
           <span>{formatTotalAPR()}%</span>
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-start gap-1">
             <span
               className={cn(
                 'rounded-md w-max text-[10px] py-[1px] px-3.5',

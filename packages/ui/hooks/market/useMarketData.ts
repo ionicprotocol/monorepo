@@ -127,7 +127,7 @@ export const useMarketData = (selectedPool: string, chain: number | string) => {
               ? parseFloat(
                   formatUnits(asset.supplyBalance, asset.underlyingDecimals)
                 ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '-'
+              : '0'
           } ${asset.underlyingSymbol} / $${asset.supplyBalanceFiat.toLocaleString(
             'en-US',
             { maximumFractionDigits: 2 }
@@ -147,7 +147,7 @@ export const useMarketData = (selectedPool: string, chain: number | string) => {
               ? parseFloat(
                   formatUnits(asset.borrowBalance, asset.underlyingDecimals)
                 ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '-'
+              : '0'
           } ${asset.underlyingSymbol} / $${asset.borrowBalanceFiat.toLocaleString(
             'en-US',
             { maximumFractionDigits: 2 }
