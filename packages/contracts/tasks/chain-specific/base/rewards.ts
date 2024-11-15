@@ -432,7 +432,7 @@ task("base:add-rewards:epoch5:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = wstETH_MARKET;
+    const market = USDz_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
@@ -473,11 +473,11 @@ task("base:add-rewards:epoch5:borrow", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = bsdETH_MARKET;
+    const market = sUSDz_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
-    const rewardAmount = (50_000).toString();
+    const rewardAmount = (5_000).toString();
 
     console.log("setting rewards for token: ", name, rewardAmount);
     await new Promise((resolve) => setTimeout(resolve, 4000));

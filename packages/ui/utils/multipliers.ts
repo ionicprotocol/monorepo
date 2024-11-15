@@ -412,7 +412,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'ioncbeth_base',
         multiplier: 3000,
@@ -461,9 +462,9 @@ export const multipliers: Record<
       RSR: {
         borrow: {
           turtle: false,
-          ionAPR: true,
+          ionAPR: false,
           ionic: 0,
-          flywheel: true
+          flywheel: false
         },
         supply: {
           ionic: 0,
@@ -575,6 +576,12 @@ export const multipliers: Record<
         }
       },
       uSOL: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -583,6 +590,12 @@ export const multipliers: Record<
         }
       },
       uSUI: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -591,6 +604,12 @@ export const multipliers: Record<
         }
       },
       sUSDz: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
