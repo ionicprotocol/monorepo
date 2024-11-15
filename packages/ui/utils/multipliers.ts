@@ -365,7 +365,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ionaero_base',
         multiplier: 1.15,
@@ -526,8 +527,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       'wUSD+': {
