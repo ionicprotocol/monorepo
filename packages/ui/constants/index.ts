@@ -119,7 +119,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
-      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9'
+      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
+      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF'
     ]
   },
   [optimism.id]: {
