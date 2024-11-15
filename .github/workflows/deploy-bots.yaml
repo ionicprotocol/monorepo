@@ -328,6 +328,7 @@ jobs:
       PER_DISCORD_WEBHOOK_URL: ${{ secrets.PER_DISCORD_WEBHOOK_URL }}
       DISCORD_FAILURE_WEBHOOK_URL: ${{secrets.DISCORD_FAILURE_WEBHOOK_URL }}
       DISCORD_SUCCESS_WEBHOOK_URL: ${{secrets.DISCORD_SUCCESS_WEBHOOK_URL }}
+      LIFIAPIKEY: ${{ secrets.LIFIAPIKEY }}
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
@@ -335,6 +336,7 @@ jobs:
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
 
     steps:
       - name: Checkout repository
@@ -367,6 +369,7 @@ jobs:
       #   working-directory: ./ops
       #   run: make price-change-verifier-smoke-test
 
+
   terraform-deploy-bots:
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
     runs-on: ubuntu-latest
@@ -383,12 +386,14 @@ jobs:
       PER_DISCORD_WEBHOOK_URL: ${{ secrets.PER_DISCORD_WEBHOOK_URL }}
       DISCORD_FAILURE_WEBHOOK_URL: ${{secrets.DISCORD_FAILURE_WEBHOOK_URL }}
       DISCORD_SUCCESS_WEBHOOK_URL: ${{secrets.DISCORD_SUCCESS_WEBHOOK_URL }}
+      LIFIAPIKEY: ${{ secrets.LIFIAPIKEY }}
       PYTH_UPDATER_DISCORD_WEBHOOK_URL: ${{ secrets.PYTH_UPDATER_DISCORD_WEBHOOK_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
     steps:
       - name: Checkout
         uses: actions/checkout@master

@@ -239,7 +239,7 @@ task("markets:set-ap", "Sets addresses provider on all markets").setAction(
           if (receiptAP.status !== "success") {
             throw `Failed set AP to ${ap.address}`;
           } else {
-            console.log(`AP successfully set to ${ap.address}`);
+            console.log(`AP successfully set to ${ap.address}: ${setAPTX}`);
           }
         }
       }

@@ -89,7 +89,7 @@ export default function FromTOChainSelector({
             }}
           />
           {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
-            'Select Token'}{' '}
+            'Select Chain'}{' '}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${

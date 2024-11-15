@@ -248,7 +248,7 @@ export default function XION() {
       bridgeToggle();
       setProgress(0);
     } catch (err) {
-      console.error('Error claiming rewards: ', err);
+      console.error('Bridging Error: ', err);
       setLoading((p) => ({ ...p, bridgingStatus: false }));
       setProgress(2);
     }

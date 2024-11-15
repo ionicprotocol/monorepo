@@ -1,8 +1,9 @@
 import { lisk } from "@ionicprotocol/chains";
 
-import { ChainDeployConfig } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { Address } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
 
 const assets = lisk.assets;
 const PRICES_CONTRACT = "0x07F544813E9Fb63D57a92f28FbD3FF0f7136F5cE";
@@ -10,7 +11,7 @@ const PRICES_CONTRACT = "0x07F544813E9Fb63D57a92f28FbD3FF0f7136F5cE";
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: Number(lisk.specificParams.blocksPerYear),
   cgId: lisk.specificParams.cgId,
-  nativeTokenName: "Base",
+  nativeTokenName: "Ethereum",
   nativeTokenSymbol: "ETH",
   stableToken: lisk.chainAddresses.STABLE_TOKEN as Address,
   uniswap: {
@@ -35,6 +36,25 @@ export const deploy = async ({
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
+
+  //// ChainlinkV2 Oracle
+  const chainlinkAssets = assets
+    .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((asset) => ({
+      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Address,
+      feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+      symbol: asset.symbol
+    }));
+  console.log("🚀 ~ chainlinkAssets:", chainlinkAssets);
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: lisk.assets,
+    chainlinkAssets
+  });
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
