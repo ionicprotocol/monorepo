@@ -90,6 +90,7 @@ interface IveION {
   error SplitTooSmall();
   error NotEnoughRemainingAfterSplit();
   error NoDelegationBetweenTokens(uint256 _tokenId1, uint256 _tokenId2);
+  error NoUnderlyingStake();
 
   event Deposit(
     address indexed provider,
@@ -192,12 +193,4 @@ interface IveION {
    * @param _owner Owner to check.
    */
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue);
-
-  /**
-   * @notice Checks if a given address is either the owner or an approved operator of a specific token.
-   * @param _spender The address to check for approval or ownership.
-   * @param _tokenId The token ID to check against.
-   * @return A boolean indicating if the address is approved or the owner of the token.
-   */
-  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool);
 }

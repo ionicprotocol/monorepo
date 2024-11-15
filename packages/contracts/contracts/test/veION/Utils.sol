@@ -38,6 +38,7 @@ contract veIONTest is BaseTest {
   uint256 internal constant MINTIME = 180 * 86400;
   uint256 internal constant EARLY_WITHDRAW_FEE = 0.8e18;
   uint256 internal constant MINIMUM_LOCK_AMOUNT = 10e18;
+  uint256 internal constant REAL_LP_LOCK_AMOUNT = 10e18;
 
   function _setUp() internal {
     ve = new veION();
@@ -79,7 +80,9 @@ contract veIONTest is BaseTest {
     veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
     veloStakingWalletImplementation = new VelodromeStakingWallet();
-    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy.initialize(
       address(ve),
       ionMode5050LP,
       veloGauge,
@@ -176,10 +179,11 @@ contract veIONTest is BaseTest {
     return LockInfoMultiple(vars.tokenId, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
   }
 
-  function _createLockInternalRealLP(address user) internal returns (LockInfo memory) {
-    uint256 amountStaked = 10 ether;
-    vm.prank(0x8034857f8A467624BaF973de28026CEB9A2fF5F1);
-    IERC20(ionMode5050LP).transfer(user, amountStaked);
+  function _createLockInternalRealLP(address _user, bool _stakeUnderlying) internal returns (LockInfo memory) {
+    uint256 amountStaked = REAL_LP_LOCK_AMOUNT;
+    address whale = 0x8ff8b21a0736738b25597D32d8f7cf658f39f157;
+    vm.prank(whale);
+    IERC20(ionMode5050LP).transfer(_user, amountStaked);
 
     address[] memory tokenAddresses = new address[](1);
     tokenAddresses[0] = address(ionMode5050LP);
@@ -191,9 +195,9 @@ contract veIONTest is BaseTest {
     durations[0] = 52 weeks;
 
     bool[] memory stakeUnderlying = new bool[](1);
-    stakeUnderlying[0] = true;
+    stakeUnderlying[0] = _stakeUnderlying;
 
-    vm.startPrank(user);
+    vm.startPrank(_user);
     IERC20(ionMode5050LP).approve(address(ve), amountStaked);
     uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();

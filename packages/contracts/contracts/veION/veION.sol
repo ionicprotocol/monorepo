@@ -469,6 +469,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function claimEmissions(address _tokenAddress) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+    if (_stakeStrategy.userStakingWallet(msg.sender) == address(0)) revert NoUnderlyingStake();
     _stakeStrategy.claim(msg.sender);
     emit EmissionsClaimed(msg.sender, _tokenAddress);
   }
@@ -500,20 +501,22 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
     if (to != address(0)) {
       s_ownerToTokenIds[to].add(tokenId);
+    }
 
-      uint256 lengthOfAssets = s_assetsLocked[tokenId].length();
-      address[] memory assetsLocked = s_assetsLocked[tokenId].values();
+    address[] memory assetsLocked = s_assetsLocked[tokenId].values();
+    for (uint256 i = 0; i < assetsLocked.length; i++) {
+      address asset = assetsLocked[i];
+      LpTokenType _lpType = s_lpType[asset];
+      uint256 amountStaked = s_underlyingStake[tokenId][asset];
+      LockedBalance memory lock = s_locked[tokenId][_lpType];
 
-      for (uint256 i = 0; i < lengthOfAssets; i++) {
-        address asset = assetsLocked[i];
-        LpTokenType lpType = s_lpType[asset];
-        uint256[] memory delegatees = s_delegatees[tokenId][lpType].values();
-        uint256[] memory maxAmounts = new uint256[](delegatees.length);
-        for (uint256 j = 0; j < maxAmounts.length; j++) {
-          maxAmounts[j] = type(uint256).max;
-        }
-        removeDelegatees(tokenId, delegatees, asset, maxAmounts);
+      IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+      if (amountStaked != 0) {
+        _stakeStrategy.transferStakingWallet(from, to, amountStaked);
       }
+
+      s_userCumulativeAssetValues[from][asset] -= lock.amount;
+      s_userCumulativeAssetValues[to][asset] += lock.amount;
     }
   }
 
@@ -523,26 +526,28 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit TokensWhitelisted(_tokens, _isWhitelisted);
   }
 
-  /**
-   * @notice Sets the LP token type for a given token address
-   * @param _token Address of the token
-   * @param _type LP token type to be set
-   */
-  function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
-    require(_token != address(0), "Invalid token address");
-    s_lpType[_token] = _type;
-    emit LpTokenTypeSet(_token, _type);
+  /// @inheritdoc IveION
+  function voting(uint256 _tokenId, bool _voting) external {
+    if (_msgSender() != s_voter) revert NotVoter();
+    s_voted[_tokenId] = _voting;
   }
 
-  /**
-   * @notice Sets the strategy for a given LP token type
-   * @param _lpType LP token type to set the strategy for
-   * @param _strategy Address of the strategy contract
-   */
-  function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
-    require(address(_strategy) != address(0), "Invalid strategy address");
-    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
-    emit StakeStrategySet(_lpType, address(_strategy));
+  function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    uint256 protocolFees = s_protocolFees[lpType];
+    require(protocolFees > 0, "No protocol fees available");
+    s_protocolFees[lpType] = 0;
+    IERC20(_tokenAddress).safeTransfer(_recipient, protocolFees);
+    emit ProtocolFeesWithdrawn(_tokenAddress, _recipient, protocolFees);
+  }
+
+  function withdrawDistributedFees(address _tokenAddress, address _recipient) external onlyOwner {
+    LpTokenType lpType = s_lpType[_tokenAddress];
+    uint256 distributedFees = s_distributedFees[lpType];
+    require(distributedFees > 0, "No distributed fees available");
+    s_distributedFees[lpType] = 0;
+    IERC20(_tokenAddress).safeTransfer(_recipient, distributedFees);
+    emit DistributedFeesWithdrawn(_tokenAddress, _recipient, distributedFees);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -741,53 +746,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return (strategy, "");
   }
 
-  // ╔═══════════════════════════════════════════════════════════════════════════╗
-  // ║                           View Functions                                  ║
-  // ╚═══════════════════════════════════════════════════════════════════════════╝
-
-  function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
-    return s_locked[_tokenId][_lpType];
-  }
-
-  function isApprovedOrOwner(address _spender, uint256 _tokenId) external view returns (bool) {
-    return _isApprovedOrOwner(_spender, _tokenId);
-  }
-
-  /// @inheritdoc IveION
-  function voting(uint256 _tokenId, bool _voting) external {
-    if (_msgSender() != s_voter) revert NotVoter();
-    s_voted[_tokenId] = _voting;
-  }
-
-  /// @inheritdoc IveION
-  function balanceOfNFT(
-    uint256 _tokenId
-  ) public view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts) {
-    uint256 lengthOfAssets = s_assetsLocked[_tokenId].length();
-    address[] memory assetsLocked = s_assetsLocked[_tokenId].values();
-
-    _assets = new address[](lengthOfAssets);
-    _balances = new uint256[](lengthOfAssets);
-
-    for (uint256 i = 0; i < lengthOfAssets; i++) {
-      address asset = assetsLocked[i];
-      LpTokenType lpType = s_lpType[asset];
-      LockedBalance memory lockedBalance = s_locked[_tokenId][lpType];
-      _boosts[i] = _getTotalBoost(_tokenId, lpType);
-      _assets[i] = asset;
-      _balances[i] = BalanceLogicLibrary.balanceOfNFTAt(
-        s_userPointEpoch,
-        s_userPointHistory,
-        lpType,
-        _tokenId,
-        block.timestamp,
-        lockedBalance.isPermanent
-      );
-    }
-
-    return (_assets, _balances, _boosts);
-  }
-
   function _getTotalBoost(uint256 _tokenId, LpTokenType _lpType) internal view returns (uint256) {
     uint256 totalBoost = s_locked[_tokenId][_lpType].boost;
     if (s_limitedBoostActive) {
@@ -812,6 +770,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
 
     return totalBoost;
   }
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           Setter Functions                                ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
 
   function toggleLimitedBoost(bool _isBoosted) external onlyOwner {
     s_limitedBoostActive = _isBoosted;
@@ -862,6 +824,55 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit MaxEarlyWithdrawFeeSet(_maxEarlyWithdrawFee);
   }
 
+  function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
+    require(_token != address(0), "Invalid token address");
+    s_lpType[_token] = _type;
+    emit LpTokenTypeSet(_token, _type);
+  }
+
+  function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
+    require(address(_strategy) != address(0), "Invalid strategy address");
+    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
+    emit StakeStrategySet(_lpType, address(_strategy));
+  }
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           View Functions                                  ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  /// @inheritdoc IveION
+  function balanceOfNFT(
+    uint256 _tokenId
+  ) public view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts) {
+    uint256 lengthOfAssets = s_assetsLocked[_tokenId].length();
+    address[] memory assetsLocked = s_assetsLocked[_tokenId].values();
+
+    _assets = new address[](lengthOfAssets);
+    _balances = new uint256[](lengthOfAssets);
+
+    for (uint256 i = 0; i < lengthOfAssets; i++) {
+      address asset = assetsLocked[i];
+      LpTokenType lpType = s_lpType[asset];
+      LockedBalance memory lockedBalance = s_locked[_tokenId][lpType];
+      _boosts[i] = _getTotalBoost(_tokenId, lpType);
+      _assets[i] = asset;
+      _balances[i] = BalanceLogicLibrary.balanceOfNFTAt(
+        s_userPointEpoch,
+        s_userPointHistory,
+        lpType,
+        _tokenId,
+        block.timestamp,
+        lockedBalance.isPermanent
+      );
+    }
+
+    return (_assets, _balances, _boosts);
+  }
+
+  function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
+    return s_locked[_tokenId][_lpType];
+  }
+
   function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
     return s_ownerToTokenIds[_owner].values();
   }
@@ -898,24 +909,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _epoch
   ) external view returns (UserPoint memory) {
     return s_userPointHistory[_tokenId][_lpType][_epoch];
-  }
-
-  function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    uint256 protocolFees = s_protocolFees[lpType];
-    require(protocolFees > 0, "No protocol fees available");
-    s_protocolFees[lpType] = 0;
-    IERC20(_tokenAddress).safeTransfer(_recipient, protocolFees);
-    emit ProtocolFeesWithdrawn(_tokenAddress, _recipient, protocolFees);
-  }
-
-  function withdrawDistributedFees(address _tokenAddress, address _recipient) external onlyOwner {
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    uint256 distributedFees = s_distributedFees[lpType];
-    require(distributedFees > 0, "No distributed fees available");
-    s_distributedFees[lpType] = 0;
-    IERC20(_tokenAddress).safeTransfer(_recipient, distributedFees);
-    emit DistributedFeesWithdrawn(_tokenAddress, _recipient, distributedFees);
   }
 }
 

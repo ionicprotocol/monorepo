@@ -69,4 +69,18 @@ interface IStakeStrategy {
    * @return The address of the staking token.
    */
   function stakingToken() external view returns (address);
+
+  /**
+   * @notice Returns the staking wallet address for a specific user.
+   * @param user The address of the user.
+   * @return The address of the user's staking wallet.
+   */
+  function userStakingWallet(address user) external view returns (address);
+
+  /**
+   * @notice Transfers the staking wallet from one user to another.
+   * @param from The current owner of the staking wallet.
+   * @param to The new owner of the staking wallet.
+   */
+  function transferStakingWallet(address from, address to, uint256 _amount) external;
 }

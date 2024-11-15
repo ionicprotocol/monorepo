@@ -135,9 +135,10 @@ contract CreateLock is veIONTest {
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
-    VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy.initialize(
       address(ve),
-      ionMode5050,
+      ionMode5050LP,
       veloGauge,
       address(veloStakingWalletImplementation)
     );
@@ -197,9 +198,10 @@ contract CreateLock is veIONTest {
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
-    VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy.initialize(
       address(ve),
-      ionMode5050,
+      ionMode5050LP,
       veloGauge,
       address(veloStakingWalletImplementation)
     );
@@ -883,9 +885,10 @@ contract Withdraw is veIONTest {
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
-    VeloIonModeStakingStrategy veloIonModeStakingStrategy = new VeloIonModeStakingStrategy(
+    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy.initialize(
       address(ve),
-      ionMode5050,
+      ionMode5050LP,
       veloGauge,
       address(veloStakingWalletImplementation)
     );
@@ -1871,13 +1874,18 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 }
 
 contract ClaimEmissions is veIONTest {
-  address user;
+  address alice;
+  address bob;
+  LockInfo lockInfoAlice;
+  LockInfo lockInfoBob;
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
-    user = address(0x8325);
-    _createLockInternalRealLP(user);
-    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(user);
+    alice = address(0x8325);
+    bob = address(0x2542);
+    lockInfoAlice = _createLockInternalRealLP(alice, true);
+    lockInfoBob = _createLockInternalRealLP(bob, false);
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(alice);
   }
 
   function setUp() public {
@@ -1889,24 +1897,275 @@ contract ClaimEmissions is veIONTest {
     vm.warp(block.timestamp + 1 weeks);
     uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
 
-    vm.prank(user);
+    vm.prank(alice);
     ve.claimEmissions(address(ionMode5050LP));
 
     assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
   }
 
-  function test_claimEmissions_NoEmissionsToClaim() public fork(MODE_MAINNET) {}
+  function test_claimEmissions_NoEmissionsToClaim() public fork(MODE_MAINNET) {
+    vm.warp(block.timestamp + 1 weeks);
+
+    vm.prank(bob);
+    vm.expectRevert(abi.encodeWithSignature("NoUnderlyingStake()"));
+    ve.claimEmissions(address(ionMode5050LP));
+  }
+
+  function test_claimEmissions_WithdrawThenClaim() public fork(MODE_MAINNET) {
+    vm.startPrank(alice);
+    ve.withdraw(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId);
+    ve.claimEmissions(address(ionMode5050LP));
+    vm.stopPrank();
+  }
 }
 
-contract TrasferVeION is veIONTest {}
+contract TrasferVeION is veIONTest {
+  address alice;
+  address bob;
+  address cindy;
+  address ralph;
+  LockInfo lockInfoAlice;
+  LockInfo lockInfoBob;
+  LockInfo lockInfoCindy;
+  LockInfo lockInfoRalph;
 
-contract ToggleSplit is veIONTest {}
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+    alice = address(0x8325);
+    bob = address(0x2542);
+    cindy = address(0x3423);
+    ralph = address(0x2524);
+    lockInfoAlice = _createLockInternalRealLP(alice, true);
+    lockInfoBob = _createLockInternalRealLP(bob, false);
+    lockInfoCindy = _createLockInternalRealLP(cindy, true);
+    lockInfoRalph = _createLockInternalRealLP(ralph, false);
+  }
 
-contract Setters is veIONTest {}
+  function test_transfer_UnderlyingStakeShouldBeTransferredToReceipientWithNoStake() public fork(MODE_MAINNET) {
+    uint256 aliceCumulativeValueBefore = ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
+    uint256 bobCumulativeValueBefore = ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
 
-contract ViewFunctions is veIONTest {}
+    address stakingWalletInstanceBefore = veloIonModeStakingStrategy.userStakingWallet(bob);
+    assertTrue(stakingWalletInstanceBefore == address(0), "Bob should start off not having a staking wallet");
 
-contract BalanceOfNFT is veIONTest {}
+    vm.prank(alice);
+    ve.transferFrom(alice, bob, lockInfoAlice.tokenId);
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);
+
+    assertTrue(
+      stakingWalletInstance != address(0),
+      "Bob should now have a staking wallet after being transferred a token that has a stake"
+    );
+    assertEq(
+      veloIonModeStakingStrategy.balanceOf(stakingWalletInstance),
+      REAL_LP_LOCK_AMOUNT,
+      "Bob should have the tokens"
+    );
+
+    uint256 aliceCumulativeValueAfter = ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
+    uint256 bobCumulativeValueAfter = ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
+
+    // Assert that Alice's cumulative value has decreased by the lock amount
+    assertEq(
+      aliceCumulativeValueAfter,
+      aliceCumulativeValueBefore - REAL_LP_LOCK_AMOUNT,
+      "Alice's cumulative value should decrease by the lock amount"
+    );
+
+    // Assert that Bob's cumulative value has increased by the lock amount
+    assertEq(
+      bobCumulativeValueAfter,
+      bobCumulativeValueBefore + REAL_LP_LOCK_AMOUNT,
+      "Bob's cumulative value should increase by the lock amount"
+    );
+
+    uint256[] memory aliceOwnedTokenIds = ve.getOwnedTokenIds(alice);
+    uint256[] memory bobOwnedTokenIds = ve.getOwnedTokenIds(bob);
+
+    // Assert that Alice no longer owns the token
+    assertEq(aliceOwnedTokenIds.length, 0, "Alice should not own any tokens after transfer");
+
+    // Assert that Bob now owns the token
+    assertEq(bobOwnedTokenIds.length, 2, "Bob should own one token after transfer");
+    assertEq(bobOwnedTokenIds[1], lockInfoAlice.tokenId, "Bob should own the transferred token ID");
+  }
+
+  function test_transfer_UnderlyingStakeShouldBeTransferredToRecipientWithStake() public fork(MODE_MAINNET) {
+    vm.prank(alice);
+    ve.transferFrom(alice, cindy, lockInfoAlice.tokenId);
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(cindy);
+
+    assertTrue(stakingWalletInstance != address(0), "Cindy should have a staking wallet");
+    assertEq(
+      veloIonModeStakingStrategy.balanceOf(stakingWalletInstance),
+      REAL_LP_LOCK_AMOUNT * 2,
+      "Cindy's stake should include hers and what was transferred to it"
+    );
+  }
+
+  function test_transfer_NoUnderlyingStakeInFrom() public fork(MODE_MAINNET) {
+    vm.prank(bob);
+    ve.transferFrom(bob, ralph, lockInfoBob.tokenId);
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(ralph);
+
+    assertTrue(stakingWalletInstance == address(0), "Ralph should not have a staking wallet instance");
+  }
+}
+
+contract ToggleSplit is veIONTest {
+  function setUp() public {
+    _setUp();
+  }
+
+  function test_toggleSplit_CanToggleSpit() public {
+    ve.toggleSplit(address(0), true);
+    bool canSplit = ve.s_canSplit(address(0));
+    assertTrue(canSplit, "Splitting allowed");
+  }
+}
+
+contract Setters is veIONTest {
+  function setUp() public {
+    _setUp();
+  }
+
+  function test_setAeroVoting() public {
+    address newAeroVoting = address(0x123);
+    ve.setAeroVoting(newAeroVoting);
+    assertEq(ve.s_aeroVoting(), newAeroVoting, "AeroVoting address should be updated");
+  }
+
+  function test_setAeroVoterBoost() public {
+    uint256 newBoost = 500;
+    ve.setAeroVoterBoost(newBoost);
+    assertEq(ve.s_aeroVoterBoost(), newBoost, "AeroVoterBoost should be updated");
+  }
+
+  function test_setMaxEarlyWithdrawFee() public {
+    uint256 newFee = 100;
+    ve.setMaxEarlyWithdrawFee(newFee);
+    assertEq(ve.s_maxEarlyWithdrawFee(), newFee, "MaxEarlyWithdrawFee should be updated");
+  }
+
+  function test_setLpTokenType() public {
+    address tokenAddress = address(0x456);
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    ve.setLpTokenType(tokenAddress, lpType);
+    assertEq(uint256(ve.s_lpType(tokenAddress)), uint256(lpType), "LP token type should be updated");
+  }
+
+  function test_setStakeStrategy() public {
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IStakeStrategy strategy = IStakeStrategy(address(0x789));
+    ve.setStakeStrategy(lpType, strategy);
+    assertEq(address(ve.s_stakeStrategy(lpType)), address(strategy), "Stake strategy should be updated");
+  }
+
+  function test_toggleLimitedBoost() public {
+    ve.toggleLimitedBoost(true);
+    assertTrue(ve.s_limitedBoostActive(), "Limited boost should be active");
+  }
+
+  function test_setLimitedTimeBoost() public {
+    uint256 boostAmount = 1000;
+    ve.setLimitedTimeBoost(boostAmount);
+    assertEq(ve.s_limitedBoost(), boostAmount, "Limited time boost should be updated");
+  }
+
+  function test_setVoter() public {
+    address newVoter = address(0xABC);
+    ve.setVoter(newVoter);
+    assertEq(ve.s_voter(), newVoter, "Voter address should be updated");
+  }
+
+  function test_setMinimumLockAmount() public {
+    address tokenAddress = address(0xDEF);
+    uint256 minimumAmount = 100;
+    ve.setLpTokenType(tokenAddress, veloLpType);
+    ve.setMinimumLockAmount(tokenAddress, minimumAmount);
+    assertEq(ve.s_minimumLockAmount(ve.s_lpType(tokenAddress)), minimumAmount, "Minimum lock amount should be updated");
+  }
+
+  function test_setMinimumLockDuration() public {
+    uint256 minimumDuration = 1 weeks;
+    ve.setMinimumLockDuration(minimumDuration);
+    assertEq(ve.s_minimumLockDuration(), minimumDuration, "Minimum lock duration should be updated");
+  }
+
+  function test_setIonicPool() public {
+    address newIonicPool = address(0xFED);
+    ve.setIonicPool(newIonicPool);
+    assertEq(ve.s_ionicPool(), newIonicPool, "Ionic pool address should be updated");
+  }
+}
+
+contract ViewFunctions is veIONTest {
+  function test_getUserLock() public {
+    uint256 tokenId = 1;
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveION.LockedBalance memory lock = ve.getUserLock(tokenId, lpType);
+    assertEq(lock.amount, 0, "Initial lock amount should be zero");
+  }
+
+  function test_getOwnedTokenIds() public {
+    address owner = address(this);
+    uint256[] memory tokenIds = ve.getOwnedTokenIds(owner);
+    assertEq(tokenIds.length, 0, "Owner should initially have no token IDs");
+  }
+
+  function test_getTotalEthValueOfTokens() public {
+    address owner = address(this);
+    uint256 totalValue = ve.getTotalEthValueOfTokens(owner);
+    assertEq(totalValue, 0, "Initial total ETH value should be zero");
+  }
+
+  function test_getAssetsLocked() public {
+    uint256 tokenId = 1;
+    address[] memory assets = ve.getAssetsLocked(tokenId);
+    assertEq(assets.length, 0, "Initially, no assets should be locked");
+  }
+
+  function test_getDelegatees() public {
+    uint256 tokenId = 1;
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    uint256[] memory delegatees = ve.getDelegatees(tokenId, lpType);
+    assertEq(delegatees.length, 0, "Initially, there should be no delegatees");
+  }
+
+  function test_getDelegators() public {
+    uint256 tokenId = 1;
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    uint256[] memory delegators = ve.getDelegators(tokenId, lpType);
+    assertEq(delegators.length, 0, "Initially, there should be no delegators");
+  }
+
+  function test_getUserPoint() public {
+    uint256 tokenId = 1;
+    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    uint256 epoch = 0;
+    IveION.UserPoint memory userPoint = ve.getUserPoint(tokenId, lpType, epoch);
+    assertEq(userPoint.bias, 0, "Initial user point bias should be zero");
+  }
+}
+
+contract BalanceOfNFT is veIONTest {
+  address user;
+  LockInfo lockInput;
+  LockInfoMultiple lockInputMultiLP;
+
+  function setUp() public {
+    _setUp();
+    user = address(0x1234);
+    lockInput = _createLockInternal(user);
+    lockInputMultiLP = _createLockMultipleInternal(user);
+    ve.setVoter(address(this));
+  }
+
+  function test_balanceOfNFT_GetsBalanceIfLockExists() public {}
+}
 
 contract Voting is veIONTest {}
 
