@@ -530,8 +530,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       'wUSD+': {
