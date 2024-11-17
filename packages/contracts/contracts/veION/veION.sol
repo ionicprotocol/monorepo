@@ -496,9 +496,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param tokenId Token ID to burn.
    */
   function _burn(uint256 tokenId) internal override {
-    address owner = ownerOf(tokenId);
     super._burn(tokenId);
-    s_ownerToTokenIds[owner].remove(tokenId);
   }
 
   function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
