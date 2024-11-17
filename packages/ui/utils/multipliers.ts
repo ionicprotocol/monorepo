@@ -335,33 +335,33 @@ export const multipliers: Record<
       },
       bsdETH: {
         borrow: {
-          flywheel: true,
           ionic: 0,
           turtle: false,
-          ionAPR: true
+          ionAPR: true,
+          flywheel: true
         },
         supply: {
-          flywheel: true,
           ionic: 0,
           nektar: 1,
           underlyingAPR: 2.6,
           turtle: false,
-          ionAPR: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       hyUSD: {
         supply: {
-          flywheel: true,
           ionic: 0,
           underlyingAPR: 3.5,
           turtle: false,
-          ionAPR: true
+          ionAPR: false,
+          flywheel: false
         },
         borrow: {
-          flywheel: true,
           ionic: 0,
           turtle: false,
-          ionAPR: true
+          ionAPR: true,
+          flywheel: true
         }
       },
       AERO: {
@@ -517,8 +517,8 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 5,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       'USD+': {
@@ -558,8 +558,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true,
+          ionAPR: false,
+          flywheel: false,
           anzen: 20
         }
       },
@@ -589,8 +589,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       uSUI: {
@@ -603,8 +603,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       sUSDz: {
@@ -617,8 +617,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true,
+          ionAPR: false,
+          flywheel: false,
           underlyingAPR: 15,
           anzen: 5
         }
