@@ -2694,15 +2694,179 @@ contract BalanceOfNFT is veIONTest {
     );
   }
 
-  function test_balanceOfNFT_BalanceChangesAfterSplit() public {}
+  function test_balanceOfNFT_BalanceChangesAfterSplit() public {
+    ve.toggleSplit(address(0), true);
+    vm.prank(user);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+      lockInput.tokenAddress,
+      lockInput.tokenId,
+      lockInput.tokenAmount / 2
+    );
 
-  function test_balanceOfNFT_BalanceChangesAfterUnlockPermanent() public {}
+    (address[] memory assets1, uint256[] memory balances1, uint256[] memory boosts1) = ve.balanceOfNFT(tokenId1);
+    (address[] memory assets2, uint256[] memory balances2, uint256[] memory boosts2) = ve.balanceOfNFT(tokenId2);
 
-  function test_balanceOfNFT_BalanceChangesAfterRemoveDelegation() public {}
+    for (uint256 i = 0; i < assets1.length; i++) {
+      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets1[i]));
+      assertEq(assets1[i], lock.tokenAddress, "Asset address should be 0");
+      assertApproxEqRel(balances1[i], MINT_AMT / 4, 0.01e18, "Balance should be 0");
+      assertEq(boosts1[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
+    }
 
-  function test_balanceOfNFT_NonExistentTokenId() public {}
+    for (uint256 i = 0; i < assets2.length; i++) {
+      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets2[i]));
+      assertEq(assets2[i], lock.tokenAddress, "Asset address should be 0");
+      assertApproxEqRel(balances2[i], MINT_AMT / 4, 0.01e18, "Balance should be 0");
+      assertEq(boosts2[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
+    }
+  }
+
+  function test_balanceOfNFT_BalanceChangesAfterUnlockPermanent() public {
+    address delegatee = address(0x2352);
+
+    vm.startPrank(user);
+    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    ve.unlockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    vm.stopPrank();
+
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+
+    for (uint256 i = 0; i < assets.length; i++) {
+      assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
+      assertApproxEqRel(balances[i], MINT_AMT, 0.01e18, "Balance should approximately match the lock input");
+      assertEq(boosts[i], harness.exposed_calculateBoost(MAXTIME), "Boost should match the lock input");
+    }
+  }
+
+  function test_balanceOfNFT_BalanceChangesAfterRemoveDelegation() public {
+    address delegatee = address(0x2352);
+    LockInfo memory delegateeInfo = _createLockInternal(delegatee);
+    vm.prank(delegatee);
+    ve.lockPermanent(delegateeInfo.tokenAddress, delegateeInfo.tokenId);
+
+    vm.startPrank(user);
+    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    ve.delegate(lockInput.tokenId, delegateeInfo.tokenId, lockInput.tokenAddress, lockInput.tokenAmount);
+    uint256[] memory toTokenIds = new uint256[](1);
+    toTokenIds[0] = delegateeInfo.tokenId;
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = lockInput.tokenAmount;
+    ve.removeDelegatees(lockInput.tokenId, toTokenIds, lockInput.tokenAddress, amounts);
+    vm.stopPrank();
+
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+
+    for (uint256 i = 0; i < assets.length; i++) {
+      assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
+      assertEq(balances[i], MINT_AMT, "Balance should approximately match the lock input");
+      assertEq(boosts[i], harness.exposed_calculateBoost(MAXTIME), "Boost should match the lock input");
+    }
+  }
+
+  function test_balanceOfNFT_NonExistentTokenId() public {
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(23526);
+    assertEq(assets.length, 0, "Assets array should be empty");
+    assertEq(balances.length, 0, "Balances array should be empty");
+    assertEq(boosts.length, 0, "Boosts array should be empty");
+  }
 }
 
-contract Voting is veIONTest {}
+contract Voting is veIONTest {
+  address user;
+  LockInfo lockInput;
 
-contract Withdrawals is veIONTest {}
+  function setUp() public {
+    _setUp();
+    user = address(0x1234);
+    lockInput = _createLockInternal(user);
+  }
+
+  function test_voting_VotingCanBeSet() public {
+    address voter = address(this);
+    ve.setVoter(voter);
+    uint256 tokenId = lockInput.tokenId;
+
+    vm.prank(voter);
+    ve.voting(tokenId, true);
+
+    bool isVoted = ve.s_voted(tokenId);
+    assertTrue(isVoted, "Token should be marked as voted");
+
+    vm.prank(voter);
+    ve.voting(tokenId, false);
+
+    isVoted = ve.s_voted(tokenId);
+    assertFalse(isVoted, "Token should not be marked as voted");
+  }
+}
+
+contract Withdrawals is veIONTest {
+  address user;
+  LockInfo lockInput;
+
+  function setUp() public {
+    _setUp();
+    user = address(0x1234);
+    lockInput = _createLockInternal(user);
+
+    modeVelodrome5050IonMode.mint(address(0x1241), 20_000_000 ether);
+    vm.prank(user);
+    ve.withdraw(lockInput.tokenAddress, lockInput.tokenId);
+  }
+
+  function test_withdrawProtocolFees_SuccessfulWithdrawal() public {
+    address recipient = address(0x5678);
+    address tokenAddress = lockInput.tokenAddress;
+    uint256 initialRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
+    uint256 initialProtocolFees = ve.s_protocolFees(ve.s_lpType(tokenAddress));
+
+    ve.withdrawProtocolFees(tokenAddress, recipient);
+
+    uint256 protocolFees = ve.s_protocolFees(ve.s_lpType(tokenAddress));
+    assertEq(protocolFees, 0, "Protocol fees should be zero after withdrawal");
+
+    uint256 finalRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
+    assertEq(
+      finalRecipientBalance,
+      initialRecipientBalance + initialProtocolFees,
+      "Recipient should receive the protocol fees"
+    );
+  }
+
+  function test_withdrawProtocolFees_NotOwner() public {
+    address recipient = address(0x5678);
+    address tokenAddress = lockInput.tokenAddress;
+
+    vm.prank(user);
+    vm.expectRevert("Ownable: caller is not the owner");
+    ve.withdrawProtocolFees(tokenAddress, recipient);
+  }
+
+  function test_withdrawDistributedFees_SuccessfulWithdrawal() public {
+    address recipient = address(0x5678);
+    address tokenAddress = lockInput.tokenAddress;
+    uint256 initialRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
+    uint256 initialDistributedFees = ve.s_distributedFees(ve.s_lpType(tokenAddress));
+
+    ve.withdrawDistributedFees(tokenAddress, recipient);
+
+    uint256 distributedFees = ve.s_distributedFees(ve.s_lpType(tokenAddress));
+    assertEq(distributedFees, 0, "Distributed fees should be zero after withdrawal");
+
+    uint256 finalRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
+    assertEq(
+      finalRecipientBalance,
+      initialRecipientBalance + initialDistributedFees,
+      "Recipient should receive the distributed fees"
+    );
+  }
+
+  function test_withdrawDistributedFees_NotOwner() public {
+    address recipient = address(0x5678);
+    address tokenAddress = lockInput.tokenAddress;
+
+    vm.prank(user);
+    vm.expectRevert("Ownable: caller is not the owner");
+    ve.withdrawDistributedFees(tokenAddress, recipient);
+  }
+}

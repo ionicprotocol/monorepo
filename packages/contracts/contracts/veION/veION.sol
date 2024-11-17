@@ -499,27 +499,25 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override {
     super._beforeTokenTransfer(from, to, tokenId);
 
-    if (from != address(0)) {
-      s_ownerToTokenIds[from].remove(tokenId);
-    }
-    if (to != address(0)) {
-      s_ownerToTokenIds[to].add(tokenId);
-    }
+    if (from != address(0)) s_ownerToTokenIds[from].remove(tokenId);
+    if (to != address(0)) s_ownerToTokenIds[to].add(tokenId);
 
-    address[] memory assetsLocked = s_assetsLocked[tokenId].values();
-    for (uint256 i = 0; i < assetsLocked.length; i++) {
-      address asset = assetsLocked[i];
-      LpTokenType _lpType = s_lpType[asset];
-      uint256 amountStaked = s_underlyingStake[tokenId][asset];
-      LockedBalance memory lock = s_locked[tokenId][_lpType];
+    if (from != address(0) && to != address(0)) {
+      address[] memory assetsLocked = s_assetsLocked[tokenId].values();
+      for (uint256 i = 0; i < assetsLocked.length; i++) {
+        address asset = assetsLocked[i];
+        LpTokenType _lpType = s_lpType[asset];
+        uint256 amountStaked = s_underlyingStake[tokenId][asset];
+        LockedBalance memory lock = s_locked[tokenId][_lpType];
 
-      IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
-      if (amountStaked != 0) {
-        _stakeStrategy.transferStakingWallet(from, to, amountStaked);
+        IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+        if (amountStaked != 0) {
+          _stakeStrategy.transferStakingWallet(from, to, amountStaked);
+        }
+
+        s_userCumulativeAssetValues[from][asset] -= lock.amount;
+        s_userCumulativeAssetValues[to][asset] += lock.amount;
       }
-
-      s_userCumulativeAssetValues[from][asset] -= lock.amount;
-      s_userCumulativeAssetValues[to][asset] += lock.amount;
     }
   }
 
@@ -736,10 +734,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     address _tokenAddress
   ) private returns (uint256 _tokenId) {
     _tokenId = ++s_tokenId;
+    _mint(_to, _tokenId);
     s_locked[_tokenId][_lpType] = _newLocked;
     s_assetsLocked[_tokenId].add(_tokenAddress);
     _checkpoint(_tokenId, _newLocked, _lpType);
-    _mint(_to, _tokenId);
   }
 
   function _getStakeStrategy(
