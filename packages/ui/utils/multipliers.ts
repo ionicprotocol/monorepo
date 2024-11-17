@@ -88,15 +88,16 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         decimals: 6,
         market: 'usdc_market',
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
+          ionAPR: true,
+          flywheel: true,
           op: true
         }
       },
@@ -104,7 +105,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         decimals: 6,
         market: 'usdt_market',
@@ -135,15 +137,16 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'weth_market',
         multiplier: 3000,
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
+          ionAPR: true,
+          flywheel: true,
           op: true
         }
       },
@@ -161,8 +164,8 @@ export const multipliers: Record<
           renzo: 2,
           underlyingAPR: 3.25,
           turtle: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       sUSDe: {
@@ -212,8 +215,8 @@ export const multipliers: Record<
           etherfi: 1,
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'weeth_market_new',
         multiplier: 3000,
@@ -243,8 +246,8 @@ export const multipliers: Record<
           kelp: 2,
           underlyingAPR: 3.63,
           turtle: true,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       }
     },
@@ -365,7 +368,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ionaero_base',
         multiplier: 1.15,
@@ -412,7 +416,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         },
         market: 'ioncbeth_base',
         multiplier: 3000,
@@ -461,9 +466,9 @@ export const multipliers: Record<
       RSR: {
         borrow: {
           turtle: false,
-          ionAPR: true,
+          ionAPR: false,
           ionic: 0,
-          flywheel: true
+          flywheel: false
         },
         supply: {
           ionic: 0,
@@ -525,8 +530,8 @@ export const multipliers: Record<
         supply: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       'wUSD+': {
@@ -575,6 +580,12 @@ export const multipliers: Record<
         }
       },
       uSOL: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -583,6 +594,12 @@ export const multipliers: Record<
         }
       },
       uSUI: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -591,6 +608,12 @@ export const multipliers: Record<
         }
       },
       sUSDz: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionic: 0,
           turtle: false,
@@ -726,8 +749,8 @@ export const multipliers: Record<
           ionic: 0,
           underlyingAPR: 5,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       SNX: {

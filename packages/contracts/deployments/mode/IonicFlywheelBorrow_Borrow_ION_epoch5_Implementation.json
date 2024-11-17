@@ -1,0 +1,1160 @@
+{
+  "address": "0x82e88bC1d17d507ad23D9909ec90C6707BA0fBaF",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rewardsDelta",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rewardsIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "AccrueRewards",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newStrategy",
+          "type": "address"
+        }
+      ],
+      "name": "AddStrategy",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ClaimRewards",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newBooster",
+          "type": "address"
+        }
+      ],
+      "name": "FlywheelBoosterUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newFlywheelRewards",
+          "type": "address"
+        }
+      ],
+      "name": "FlywheelRewardsUpdate",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "NewOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingOwner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldPerformanceFee",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newPerformanceFee",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldFeeRecipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newFeeRecipient",
+          "type": "address"
+        }
+      ],
+      "name": "UpdatedFeeSettings",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "_acceptOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "accrue",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "secondUser",
+          "type": "address"
+        }
+      ],
+      "name": "accrue",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "addMarketForRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "addStrategyForRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "allStrategies",
+      "outputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "claimRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "compAccrued",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeRecipient",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "flywheelBooster",
+      "outputs": [
+        {
+          "internalType": "contract IFlywheelBooster",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "market",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "borrower",
+          "type": "address"
+        }
+      ],
+      "name": "flywheelPreBorrowerAction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "market",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "supplier",
+          "type": "address"
+        }
+      ],
+      "name": "flywheelPreSupplierAction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "market",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "src",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "dst",
+          "type": "address"
+        }
+      ],
+      "name": "flywheelPreTransferAction",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "flywheelRewards",
+      "outputs": [
+        {
+          "internalType": "contract IFlywheelRewards",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllStrategies",
+      "outputs": [
+        {
+          "internalType": "contract ERC20[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "_rewardToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IFlywheelRewards",
+          "name": "_flywheelRewards",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IFlywheelBooster",
+          "name": "_flywheelBooster",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isFlywheel",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isRewardsDistributor",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "marketState",
+      "outputs": [
+        {
+          "internalType": "uint224",
+          "name": "",
+          "type": "uint224"
+        },
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pendingOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "performanceFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rewardToken",
+      "outputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "rewardsAccrued",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IFlywheelBooster",
+          "name": "newBooster",
+          "type": "address"
+        }
+      ],
+      "name": "setBooster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IFlywheelRewards",
+          "name": "newFlywheelRewards",
+          "type": "address"
+        }
+      ],
+      "name": "setFlywheelRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        }
+      ],
+      "name": "strategyState",
+      "outputs": [
+        {
+          "internalType": "uint224",
+          "name": "index",
+          "type": "uint224"
+        },
+        {
+          "internalType": "uint32",
+          "name": "lastUpdatedTimestamp",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_performanceFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_feeRecipient",
+          "type": "address"
+        }
+      ],
+      "name": "updateFeeSettings",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "strategy",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "userIndex",
+      "outputs": [
+        {
+          "internalType": "uint224",
+          "name": "",
+          "type": "uint224"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd0f321878f0e3718c02a6741e565bf3a0c07aca5af6376816da18e003f9d7182",
+  "receipt": {
+    "to": null,
+    "from": "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+    "contractAddress": "0x82e88bC1d17d507ad23D9909ec90C6707BA0fBaF",
+    "transactionIndex": 2,
+    "gasUsed": "1555450",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000080000000000040000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000",
+    "blockHash": "0x892e60e1c4023a73df192a344586b336bb915c8572f684e8b408dc257f89d6d3",
+    "transactionHash": "0xd0f321878f0e3718c02a6741e565bf3a0c07aca5af6376816da18e003f9d7182",
+    "logs": [
+      {
+        "transactionIndex": 2,
+        "blockNumber": 15753775,
+        "transactionHash": "0xd0f321878f0e3718c02a6741e565bf3a0c07aca5af6376816da18e003f9d7182",
+        "address": "0x82e88bC1d17d507ad23D9909ec90C6707BA0fBaF",
+        "topics": [
+          "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000ff",
+        "logIndex": 7,
+        "blockHash": "0x892e60e1c4023a73df192a344586b336bb915c8572f684e8b408dc257f89d6d3"
+      }
+    ],
+    "blockNumber": 15753775,
+    "cumulativeGasUsed": "2060613",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "0f216c69ca7d69b5e67c1cffac004e22",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.22+commit.4fc1097e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rewardsDelta\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rewardsIndex\",\"type\":\"uint256\"}],\"name\":\"AccrueRewards\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newStrategy\",\"type\":\"address\"}],\"name\":\"AddStrategy\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"ClaimRewards\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newBooster\",\"type\":\"address\"}],\"name\":\"FlywheelBoosterUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newFlywheelRewards\",\"type\":\"address\"}],\"name\":\"FlywheelRewardsUpdate\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"NewOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldPendingOwner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newPendingOwner\",\"type\":\"address\"}],\"name\":\"NewPendingOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldPerformanceFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPerformanceFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldFeeRecipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newFeeRecipient\",\"type\":\"address\"}],\"name\":\"UpdatedFeeSettings\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_acceptOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newPendingOwner\",\"type\":\"address\"}],\"name\":\"_setPendingOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"accrue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"secondUser\",\"type\":\"address\"}],\"name\":\"accrue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"}],\"name\":\"addMarketForRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"}],\"name\":\"addStrategyForRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allStrategies\",\"outputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"claimRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"compAccrued\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeRecipient\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"flywheelBooster\",\"outputs\":[{\"internalType\":\"contract IFlywheelBooster\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"market\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"borrower\",\"type\":\"address\"}],\"name\":\"flywheelPreBorrowerAction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"market\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"supplier\",\"type\":\"address\"}],\"name\":\"flywheelPreSupplierAction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"market\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"src\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"dst\",\"type\":\"address\"}],\"name\":\"flywheelPreTransferAction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"flywheelRewards\",\"outputs\":[{\"internalType\":\"contract IFlywheelRewards\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllStrategies\",\"outputs\":[{\"internalType\":\"contract ERC20[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"_rewardToken\",\"type\":\"address\"},{\"internalType\":\"contract IFlywheelRewards\",\"name\":\"_flywheelRewards\",\"type\":\"address\"},{\"internalType\":\"contract IFlywheelBooster\",\"name\":\"_flywheelBooster\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isFlywheel\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"isRewardsDistributor\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"}],\"name\":\"marketState\",\"outputs\":[{\"internalType\":\"uint224\",\"name\":\"\",\"type\":\"uint224\"},{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pendingOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"performanceFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardToken\",\"outputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"rewardsAccrued\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IFlywheelBooster\",\"name\":\"newBooster\",\"type\":\"address\"}],\"name\":\"setBooster\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IFlywheelRewards\",\"name\":\"newFlywheelRewards\",\"type\":\"address\"}],\"name\":\"setFlywheelRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"}],\"name\":\"strategyState\",\"outputs\":[{\"internalType\":\"uint224\",\"name\":\"index\",\"type\":\"uint224\"},{\"internalType\":\"uint32\",\"name\":\"lastUpdatedTimestamp\",\"type\":\"uint32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_performanceFee\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_feeRecipient\",\"type\":\"address\"}],\"name\":\"updateFeeSettings\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ERC20\",\"name\":\"strategy\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"userIndex\",\"outputs\":[{\"internalType\":\"uint224\",\"name\":\"\",\"type\":\"uint224\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"AccrueRewards(address,address,uint256,uint256)\":{\"params\":{\"rewardsDelta\":\"how many new rewards accrued to the user\",\"rewardsIndex\":\"the market index for rewards per token accrued\",\"strategy\":\"the updated rewards strategy\",\"user\":\"the user of the rewards\"}},\"AddStrategy(address)\":{\"params\":{\"newStrategy\":\"the new added strategy\"}},\"ClaimRewards(address,uint256)\":{\"params\":{\"amount\":\"the amount of rewards claimed\",\"user\":\"the user of the rewards\"}},\"FlywheelBoosterUpdate(address)\":{\"params\":{\"newBooster\":\"the new booster module\"}},\"FlywheelRewardsUpdate(address)\":{\"params\":{\"newFlywheelRewards\":\"the new rewards module\"}},\"Initialized(uint8)\":{\"details\":\"Triggered when the contract has been initialized or reinitialized.\"}},\"kind\":\"dev\",\"methods\":{\"_acceptOwner()\":{\"details\":\"Owner function for pending owner to accept role and update owner\"},\"_setPendingOwner(address)\":{\"details\":\"Owner function to begin change of owner. The newPendingOwner must call `_acceptOwner` to finalize the transfer.\",\"params\":{\"newPendingOwner\":\"New pending owner.\"}},\"accrue(address,address)\":{\"params\":{\"strategy\":\"the strategy to accrue a user's rewards on\",\"user\":\"the user to be accrued\"},\"returns\":{\"_0\":\"the cumulative amount of rewards accrued to user (including prior)\"}},\"accrue(address,address,address)\":{\"params\":{\"strategy\":\"the strategy to accrue a user's rewards on\",\"user\":\"the second user to be accrued\"},\"returns\":{\"_0\":\"the cumulative amount of rewards accrued to the first user (including prior)\",\"_1\":\"the cumulative amount of rewards accrued to the second user (including prior)\"}},\"claimRewards(address)\":{\"details\":\"this function is public, and all rewards transfer to the user\",\"params\":{\"user\":\"the user claiming rewards\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"updateFeeSettings(uint256,address)\":{\"details\":\"Claim rewards first from the previous feeRecipient before changing it\"}},\"version\":1},\"userdoc\":{\"events\":{\"AccrueRewards(address,address,uint256,uint256)\":{\"notice\":\"Emitted when a user's rewards accrue to a given strategy.\"},\"AddStrategy(address)\":{\"notice\":\"Emitted when a new strategy is added to flywheel by the admin\"},\"ClaimRewards(address,uint256)\":{\"notice\":\"Emitted when a user claims accrued rewards.\"},\"FlywheelBoosterUpdate(address)\":{\"notice\":\"Emitted when the booster module changes\"},\"FlywheelRewardsUpdate(address)\":{\"notice\":\"Emitted when the rewards module changes\"},\"NewOwner(address,address)\":{\"notice\":\"Emitted when pendingOwner is accepted, which means owner is updated\"},\"NewPendingOwner(address,address)\":{\"notice\":\"Emitted when pendingOwner is changed\"}},\"kind\":\"user\",\"methods\":{\"_acceptOwner()\":{\"notice\":\"Accepts transfer of owner rights. msg.sender must be pendingOwner\"},\"_setPendingOwner(address)\":{\"notice\":\"Begins transfer of owner rights. The newPendingOwner must call `_acceptOwner` to finalize the transfer.\"},\"accrue(address,address)\":{\"notice\":\"accrue rewards for a single user on a strategy\"},\"accrue(address,address,address)\":{\"notice\":\"accrue rewards for a two users on a strategy\"},\"addStrategyForRewards(address)\":{\"notice\":\"initialize a new strategy\"},\"allStrategies(uint256)\":{\"notice\":\"append-only list of strategies added\"},\"claimRewards(address)\":{\"notice\":\"claim rewards for a given user\"},\"feeRecipient()\":{\"notice\":\"Address that gets rewardsToken accrued by performanceFee\"},\"flywheelBooster()\":{\"notice\":\"optional booster module for calculating virtual balances on strategies\"},\"flywheelRewards()\":{\"notice\":\"the rewards contract for managing streams\"},\"pendingOwner()\":{\"notice\":\"Pending owner of this contract\"},\"performanceFee()\":{\"notice\":\"How much rewardsToken will be send to treasury\"},\"rewardToken()\":{\"notice\":\"The token to reward\"},\"setBooster(address)\":{\"notice\":\"swap out the flywheel booster contract\"},\"setFlywheelRewards(address)\":{\"notice\":\"swap out the flywheel rewards contract\"},\"updateFeeSettings(uint256,address)\":{\"notice\":\"Update performanceFee and/or feeRecipient\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol\":\"IonicFlywheelBorrow\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/ionic/SafeOwnableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity >=0.8.0;\\n\\nimport \\\"openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol\\\";\\n\\n/**\\n * @dev Ownable extension that requires a two-step process of setting the pending owner and the owner accepting it.\\n * @notice Existing OwnableUpgradeable contracts cannot be upgraded due to the extra storage variable\\n * that will shift the other.\\n */\\nabstract contract SafeOwnableUpgradeable is OwnableUpgradeable {\\n  /**\\n   * @notice Pending owner of this contract\\n   */\\n  address public pendingOwner;\\n\\n  function __SafeOwnable_init(address owner_) internal onlyInitializing {\\n    __Ownable_init();\\n    _transferOwnership(owner_);\\n  }\\n\\n  struct AddressSlot {\\n    address value;\\n  }\\n\\n  modifier onlyOwnerOrAdmin() {\\n    bool isOwner = owner() == _msgSender();\\n    if (!isOwner) {\\n      address admin = _getProxyAdmin();\\n      bool isAdmin = admin == _msgSender();\\n      require(isAdmin, \\\"Ownable: caller is neither the owner nor the admin\\\");\\n    }\\n    _;\\n  }\\n\\n  /**\\n   * @notice Emitted when pendingOwner is changed\\n   */\\n  event NewPendingOwner(address oldPendingOwner, address newPendingOwner);\\n\\n  /**\\n   * @notice Emitted when pendingOwner is accepted, which means owner is updated\\n   */\\n  event NewOwner(address oldOwner, address newOwner);\\n\\n  /**\\n   * @notice Begins transfer of owner rights. The newPendingOwner must call `_acceptOwner` to finalize the transfer.\\n   * @dev Owner function to begin change of owner. The newPendingOwner must call `_acceptOwner` to finalize the transfer.\\n   * @param newPendingOwner New pending owner.\\n   */\\n  function _setPendingOwner(address newPendingOwner) public onlyOwner {\\n    // Save current value, if any, for inclusion in log\\n    address oldPendingOwner = pendingOwner;\\n\\n    // Store pendingOwner with value newPendingOwner\\n    pendingOwner = newPendingOwner;\\n\\n    // Emit NewPendingOwner(oldPendingOwner, newPendingOwner)\\n    emit NewPendingOwner(oldPendingOwner, newPendingOwner);\\n  }\\n\\n  /**\\n   * @notice Accepts transfer of owner rights. msg.sender must be pendingOwner\\n   * @dev Owner function for pending owner to accept role and update owner\\n   */\\n  function _acceptOwner() public {\\n    // Check caller is pendingOwner and pendingOwner \\u2260 address(0)\\n    require(msg.sender == pendingOwner, \\\"not the pending owner\\\");\\n\\n    // Save current values for inclusion in log\\n    address oldOwner = owner();\\n    address oldPendingOwner = pendingOwner;\\n\\n    // Store owner with value pendingOwner\\n    _transferOwnership(pendingOwner);\\n\\n    // Clear the pending value\\n    pendingOwner = address(0);\\n\\n    emit NewOwner(oldOwner, pendingOwner);\\n    emit NewPendingOwner(oldPendingOwner, pendingOwner);\\n  }\\n\\n  function renounceOwnership() public override onlyOwner {\\n    // do not remove this overriding fn\\n    revert(\\\"not used anymore\\\");\\n  }\\n\\n  function transferOwnership(address newOwner) public override onlyOwner {\\n    emit NewPendingOwner(pendingOwner, newOwner);\\n    pendingOwner = newOwner;\\n  }\\n\\n  function _getProxyAdmin() internal view returns (address admin) {\\n    bytes32 _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;\\n    AddressSlot storage adminSlot;\\n    assembly {\\n      adminSlot.slot := _ADMIN_SLOT\\n    }\\n    admin = adminSlot.value;\\n  }\\n}\\n\",\"keccak256\":\"0x73f50a022ee86874b63ebd7e418b5948ef2913e32cb80024fe3cd4f17be7f2a5\",\"license\":\"UNLICENSED\"},\"contracts/ionic/strategies/flywheel/IFlywheelBooster.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity ^0.8.10;\\n\\nimport {ERC20} from \\\"solmate/tokens/ERC20.sol\\\";\\n\\n/**\\n @title Balance Booster Module for Flywheel\\n @notice Flywheel is a general framework for managing token incentives.\\n         It takes reward streams to various *strategies* such as staking LP tokens and divides them among *users* of those strategies.\\n\\n         The Booster module is an optional module for virtually boosting or otherwise transforming user balances. \\n         If a booster is not configured, the strategies ERC-20 balanceOf/totalSupply will be used instead.\\n        \\n         Boosting logic can be associated with referrals, vote-escrow, or other strategies.\\n\\n         SECURITY NOTE: similar to how Core needs to be notified any time the strategy user composition changes, the booster would need to be notified of any conditions which change the boosted balances atomically.\\n         This prevents gaming of the reward calculation function by using manipulated balances when accruing.\\n*/\\ninterface IFlywheelBooster {\\n    /**\\n      @notice calculate the boosted supply of a strategy.\\n      @param strategy the strategy to calculate boosted supply of\\n      @return the boosted supply\\n     */\\n    function boostedTotalSupply(ERC20 strategy) external view returns (uint256);\\n\\n    /**\\n      @notice calculate the boosted balance of a user in a given strategy.\\n      @param strategy the strategy to calculate boosted balance of\\n      @param user the user to calculate boosted balance of\\n      @return the boosted balance\\n     */\\n    function boostedBalanceOf(ERC20 strategy, address user) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xcdab1b4b5662148d74acc3491a810d263ec509f9f81a267e9f6c1542ba15eabc\",\"license\":\"AGPL-3.0-only\"},\"contracts/ionic/strategies/flywheel/IIonicFlywheel.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity ^0.8.10;\\n\\nimport { ERC20 } from \\\"solmate/tokens/ERC20.sol\\\";\\n\\ninterface IIonicFlywheel {\\n  function isRewardsDistributor() external returns (bool);\\n\\n  function isFlywheel() external returns (bool);\\n\\n  function flywheelPreSupplierAction(address market, address supplier) external;\\n\\n  function flywheelPreBorrowerAction(address market, address borrower) external;\\n\\n  function flywheelPreTransferAction(address market, address src, address dst) external;\\n\\n  function compAccrued(address user) external view returns (uint256);\\n\\n  function addMarketForRewards(ERC20 strategy) external;\\n\\n  function marketState(ERC20 strategy) external view returns (uint224 index, uint32 lastUpdatedTimestamp);\\n}\\n\",\"keccak256\":\"0xb24009cac18b0f9b6d12884169ab4461ec04027110a768091077dc5c648e934c\",\"license\":\"AGPL-3.0-only\"},\"contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity ^0.8.10;\\n\\nimport { ERC20 } from \\\"solmate/tokens/ERC20.sol\\\";\\nimport { IonicFlywheelCore } from \\\"./IonicFlywheelCore.sol\\\";\\nimport \\\"./IIonicFlywheel.sol\\\";\\n\\ncontract IonicFlywheelBorrow is IonicFlywheelCore, IIonicFlywheel {\\n  bool public constant isRewardsDistributor = true;\\n  bool public constant isFlywheel = true;\\n\\n  function flywheelPreSupplierAction(address market, address supplier) external {}\\n\\n  function flywheelPreBorrowerAction(address market, address borrower) external {\\n    accrue(ERC20(market), borrower);\\n  }\\n\\n  function flywheelPreTransferAction(address market, address src, address dst) external {}\\n\\n  function compAccrued(address user) external view returns (uint256) {\\n    return _rewardsAccrued[user];\\n  }\\n\\n  function addMarketForRewards(ERC20 strategy) external onlyOwner {\\n    _addStrategyForRewards(strategy);\\n  }\\n\\n  // TODO remove\\n  function marketState(ERC20 strategy) external view returns (uint224, uint32) {\\n    return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);\\n  }\\n}\\n\",\"keccak256\":\"0x9789f4d1e820009ebe83c1102f5a98811c6185daf3b41dcf5a45b738895a6e40\",\"license\":\"AGPL-3.0-only\"},\"contracts/ionic/strategies/flywheel/IonicFlywheelCore.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity ^0.8.10;\\n\\nimport { ERC20 } from \\\"solmate/tokens/ERC20.sol\\\";\\nimport { SafeTransferLib } from \\\"solmate/utils/SafeTransferLib.sol\\\";\\nimport { SafeCastLib } from \\\"solmate/utils/SafeCastLib.sol\\\";\\n\\nimport { IFlywheelRewards } from \\\"./rewards/IFlywheelRewards.sol\\\";\\nimport { IFlywheelBooster } from \\\"./IFlywheelBooster.sol\\\";\\n\\nimport { SafeOwnableUpgradeable } from \\\"../../../ionic/SafeOwnableUpgradeable.sol\\\";\\n\\ncontract IonicFlywheelCore is SafeOwnableUpgradeable {\\n  using SafeTransferLib for ERC20;\\n  using SafeCastLib for uint256;\\n\\n  /// @notice How much rewardsToken will be send to treasury\\n  uint256 public performanceFee;\\n\\n  /// @notice Address that gets rewardsToken accrued by performanceFee\\n  address public feeRecipient;\\n\\n  /// @notice The token to reward\\n  ERC20 public rewardToken;\\n\\n  /// @notice append-only list of strategies added\\n  ERC20[] public allStrategies;\\n\\n  /// @notice the rewards contract for managing streams\\n  IFlywheelRewards public flywheelRewards;\\n\\n  /// @notice optional booster module for calculating virtual balances on strategies\\n  IFlywheelBooster public flywheelBooster;\\n\\n  /// @notice The accrued but not yet transferred rewards for each user\\n  mapping(address => uint256) internal _rewardsAccrued;\\n\\n  /// @notice The strategy index and last updated per strategy\\n  mapping(ERC20 => RewardsState) internal _strategyState;\\n\\n  /// @notice user index per strategy\\n  mapping(ERC20 => mapping(address => uint224)) internal _userIndex;\\n\\n  constructor() {\\n    // prevents the misusage of the implementation contract\\n    _disableInitializers();\\n  }\\n\\n  function initialize(\\n    ERC20 _rewardToken,\\n    IFlywheelRewards _flywheelRewards,\\n    IFlywheelBooster _flywheelBooster,\\n    address _owner\\n  ) public initializer {\\n    __SafeOwnable_init(msg.sender);\\n\\n    rewardToken = _rewardToken;\\n    flywheelRewards = _flywheelRewards;\\n    flywheelBooster = _flywheelBooster;\\n\\n    _transferOwnership(_owner);\\n\\n    performanceFee = 10e16; // 10%\\n    feeRecipient = _owner;\\n  }\\n\\n  /*----------------------------------------------------------------\\n                        ACCRUE/CLAIM LOGIC\\n    ----------------------------------------------------------------*/\\n\\n  /** \\n      @notice Emitted when a user's rewards accrue to a given strategy.\\n      @param strategy the updated rewards strategy\\n      @param user the user of the rewards\\n      @param rewardsDelta how many new rewards accrued to the user\\n      @param rewardsIndex the market index for rewards per token accrued\\n    */\\n  event AccrueRewards(ERC20 indexed strategy, address indexed user, uint256 rewardsDelta, uint256 rewardsIndex);\\n\\n  /** \\n      @notice Emitted when a user claims accrued rewards.\\n      @param user the user of the rewards\\n      @param amount the amount of rewards claimed\\n    */\\n  event ClaimRewards(address indexed user, uint256 amount);\\n\\n  /** \\n      @notice accrue rewards for a single user on a strategy\\n      @param strategy the strategy to accrue a user's rewards on\\n      @param user the user to be accrued\\n      @return the cumulative amount of rewards accrued to user (including prior)\\n    */\\n  function accrue(ERC20 strategy, address user) public returns (uint256) {\\n    (uint224 index, uint32 ts) = strategyState(strategy);\\n    RewardsState memory state = RewardsState(index, ts);\\n\\n    if (state.index == 0) return 0;\\n\\n    state = accrueStrategy(strategy, state);\\n    return accrueUser(strategy, user, state);\\n  }\\n\\n  /** \\n      @notice accrue rewards for a two users on a strategy\\n      @param strategy the strategy to accrue a user's rewards on\\n      @param user the first user to be accrued\\n      @param user the second user to be accrued\\n      @return the cumulative amount of rewards accrued to the first user (including prior)\\n      @return the cumulative amount of rewards accrued to the second user (including prior)\\n    */\\n  function accrue(\\n    ERC20 strategy,\\n    address user,\\n    address secondUser\\n  ) public returns (uint256, uint256) {\\n    (uint224 index, uint32 ts) = strategyState(strategy);\\n    RewardsState memory state = RewardsState(index, ts);\\n\\n    if (state.index == 0) return (0, 0);\\n\\n    state = accrueStrategy(strategy, state);\\n    return (accrueUser(strategy, user, state), accrueUser(strategy, secondUser, state));\\n  }\\n\\n  /** \\n      @notice claim rewards for a given user\\n      @param user the user claiming rewards\\n      @dev this function is public, and all rewards transfer to the user\\n    */\\n  function claimRewards(address user) external {\\n    uint256 accrued = rewardsAccrued(user);\\n\\n    if (accrued != 0) {\\n      _rewardsAccrued[user] = 0;\\n\\n      rewardToken.safeTransferFrom(address(flywheelRewards), user, accrued);\\n\\n      emit ClaimRewards(user, accrued);\\n    }\\n  }\\n\\n  /*----------------------------------------------------------------\\n                          ADMIN LOGIC\\n    ----------------------------------------------------------------*/\\n\\n  /** \\n      @notice Emitted when a new strategy is added to flywheel by the admin\\n      @param newStrategy the new added strategy\\n    */\\n  event AddStrategy(address indexed newStrategy);\\n\\n  /// @notice initialize a new strategy\\n  function addStrategyForRewards(ERC20 strategy) external onlyOwner {\\n    _addStrategyForRewards(strategy);\\n  }\\n\\n  function _addStrategyForRewards(ERC20 strategy) internal {\\n    (uint224 index, ) = strategyState(strategy);\\n    require(index == 0, \\\"strategy\\\");\\n    _strategyState[strategy] = RewardsState({\\n      index: (10**rewardToken.decimals()).safeCastTo224(),\\n      lastUpdatedTimestamp: block.timestamp.safeCastTo32()\\n    });\\n\\n    allStrategies.push(strategy);\\n    emit AddStrategy(address(strategy));\\n  }\\n\\n  function getAllStrategies() external view returns (ERC20[] memory) {\\n    return allStrategies;\\n  }\\n\\n  /** \\n      @notice Emitted when the rewards module changes\\n      @param newFlywheelRewards the new rewards module\\n    */\\n  event FlywheelRewardsUpdate(address indexed newFlywheelRewards);\\n\\n  /// @notice swap out the flywheel rewards contract\\n  function setFlywheelRewards(IFlywheelRewards newFlywheelRewards) external onlyOwner {\\n    if (address(flywheelRewards) != address(0)) {\\n      uint256 oldRewardBalance = rewardToken.balanceOf(address(flywheelRewards));\\n      if (oldRewardBalance > 0) {\\n        rewardToken.safeTransferFrom(address(flywheelRewards), address(newFlywheelRewards), oldRewardBalance);\\n      }\\n    }\\n\\n    flywheelRewards = newFlywheelRewards;\\n\\n    emit FlywheelRewardsUpdate(address(newFlywheelRewards));\\n  }\\n\\n  /** \\n      @notice Emitted when the booster module changes\\n      @param newBooster the new booster module\\n    */\\n  event FlywheelBoosterUpdate(address indexed newBooster);\\n\\n  /// @notice swap out the flywheel booster contract\\n  function setBooster(IFlywheelBooster newBooster) external onlyOwner {\\n    flywheelBooster = newBooster;\\n\\n    emit FlywheelBoosterUpdate(address(newBooster));\\n  }\\n\\n  event UpdatedFeeSettings(\\n    uint256 oldPerformanceFee,\\n    uint256 newPerformanceFee,\\n    address oldFeeRecipient,\\n    address newFeeRecipient\\n  );\\n\\n  /**\\n   * @notice Update performanceFee and/or feeRecipient\\n   * @dev Claim rewards first from the previous feeRecipient before changing it\\n   */\\n  function updateFeeSettings(uint256 _performanceFee, address _feeRecipient) external onlyOwner {\\n    _updateFeeSettings(_performanceFee, _feeRecipient);\\n  }\\n\\n  function _updateFeeSettings(uint256 _performanceFee, address _feeRecipient) internal {\\n    emit UpdatedFeeSettings(performanceFee, _performanceFee, feeRecipient, _feeRecipient);\\n\\n    if (feeRecipient != _feeRecipient) {\\n      _rewardsAccrued[_feeRecipient] += rewardsAccrued(feeRecipient);\\n      _rewardsAccrued[feeRecipient] = 0;\\n    }\\n    performanceFee = _performanceFee;\\n    feeRecipient = _feeRecipient;\\n  }\\n\\n  /*----------------------------------------------------------------\\n                    INTERNAL ACCOUNTING LOGIC\\n    ----------------------------------------------------------------*/\\n\\n  struct RewardsState {\\n    /// @notice The strategy's last updated index\\n    uint224 index;\\n    /// @notice The timestamp the index was last updated at\\n    uint32 lastUpdatedTimestamp;\\n  }\\n\\n  /// @notice accumulate global rewards on a strategy\\n  function accrueStrategy(ERC20 strategy, RewardsState memory state)\\n    private\\n    returns (RewardsState memory rewardsState)\\n  {\\n    // calculate accrued rewards through module\\n    uint256 strategyRewardsAccrued = flywheelRewards.getAccruedRewards(strategy, state.lastUpdatedTimestamp);\\n\\n    rewardsState = state;\\n\\n    if (strategyRewardsAccrued > 0) {\\n      // use the booster or token supply to calculate reward index denominator\\n      uint256 supplyTokens = address(flywheelBooster) != address(0)\\n        ? flywheelBooster.boostedTotalSupply(strategy)\\n        : strategy.totalSupply();\\n\\n      // 100% = 100e16\\n      uint256 accruedFees = (strategyRewardsAccrued * performanceFee) / uint224(100e16);\\n\\n      _rewardsAccrued[feeRecipient] += accruedFees;\\n      strategyRewardsAccrued -= accruedFees;\\n\\n      uint224 deltaIndex;\\n\\n      if (supplyTokens != 0)\\n        deltaIndex = ((strategyRewardsAccrued * (10**strategy.decimals())) / supplyTokens).safeCastTo224();\\n\\n      // accumulate rewards per token onto the index, multiplied by fixed-point factor\\n      rewardsState = RewardsState({\\n        index: state.index + deltaIndex,\\n        lastUpdatedTimestamp: block.timestamp.safeCastTo32()\\n      });\\n      _strategyState[strategy] = rewardsState;\\n    }\\n  }\\n\\n  /// @notice accumulate rewards on a strategy for a specific user\\n  function accrueUser(\\n    ERC20 strategy,\\n    address user,\\n    RewardsState memory state\\n  ) private returns (uint256) {\\n    // load indices\\n    uint224 strategyIndex = state.index;\\n    uint224 supplierIndex = userIndex(strategy, user);\\n\\n    // sync user index to global\\n    _userIndex[strategy][user] = strategyIndex;\\n\\n    // if user hasn't yet accrued rewards, grant them interest from the strategy beginning if they have a balance\\n    // zero balances will have no effect other than syncing to global index\\n    if (supplierIndex == 0) {\\n      supplierIndex = (10**rewardToken.decimals()).safeCastTo224();\\n    }\\n\\n    uint224 deltaIndex = strategyIndex - supplierIndex;\\n    // use the booster or token balance to calculate reward balance multiplier\\n    uint256 supplierTokens = address(flywheelBooster) != address(0)\\n      ? flywheelBooster.boostedBalanceOf(strategy, user)\\n      : strategy.balanceOf(user);\\n\\n    // accumulate rewards by multiplying user tokens by rewardsPerToken index and adding on unclaimed\\n    uint256 supplierDelta = (deltaIndex * supplierTokens) / (10**strategy.decimals());\\n    uint256 supplierAccrued = rewardsAccrued(user) + supplierDelta;\\n\\n    _rewardsAccrued[user] = supplierAccrued;\\n\\n    emit AccrueRewards(strategy, user, supplierDelta, strategyIndex);\\n\\n    return supplierAccrued;\\n  }\\n\\n  function rewardsAccrued(address user) public virtual returns (uint256) {\\n    return _rewardsAccrued[user];\\n  }\\n\\n  function userIndex(ERC20 strategy, address user) public virtual returns (uint224) {\\n    return _userIndex[strategy][user];\\n  }\\n\\n  function strategyState(ERC20 strategy) public virtual returns (uint224 index, uint32 lastUpdatedTimestamp) {\\n    return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);\\n  }\\n}\\n\",\"keccak256\":\"0xbd54c90dbc7f93cad52016f14eb5f9b634f98d18da083ef443951deebc5f82aa\",\"license\":\"AGPL-3.0-only\"},\"contracts/ionic/strategies/flywheel/rewards/IFlywheelRewards.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity ^0.8.10;\\n\\nimport {ERC20} from \\\"solmate/tokens/ERC20.sol\\\";\\nimport {IonicFlywheelCore} from \\\"../IonicFlywheelCore.sol\\\";\\n\\n/**\\n @title Rewards Module for Flywheel\\n @notice Flywheel is a general framework for managing token incentives.\\n         It takes reward streams to various *strategies* such as staking LP tokens and divides them among *users* of those strategies.\\n\\n         The Rewards module is responsible for:\\n         * determining the ongoing reward amounts to entire strategies (core handles the logic for dividing among users)\\n         * actually holding rewards that are yet to be claimed\\n\\n         The reward stream can follow arbitrary logic as long as the amount of rewards passed to flywheel core has been sent to this contract.\\n\\n         Different module strategies include:\\n         * a static reward rate per second\\n         * a decaying reward rate\\n         * a dynamic just-in-time reward stream\\n         * liquid governance reward delegation (Curve Gauge style)\\n\\n         SECURITY NOTE: The rewards strategy should be smooth and continuous, to prevent gaming the reward distribution by frontrunning.\\n */\\ninterface IFlywheelRewards {\\n    /**\\n     @notice calculate the rewards amount accrued to a strategy since the last update.\\n     @param strategy the strategy to accrue rewards for.\\n     @param lastUpdatedTimestamp the last time rewards were accrued for the strategy.\\n     @return rewards the amount of rewards accrued to the market\\n    */\\n    function getAccruedRewards(ERC20 strategy, uint32 lastUpdatedTimestamp) external returns (uint256 rewards);\\n\\n    /// @notice return the flywheel core address\\n    function flywheel() external view returns (IonicFlywheelCore);\\n\\n    /// @notice return the reward token associated with flywheel core.\\n    function rewardToken() external view returns (ERC20);\\n}\\n\",\"keccak256\":\"0x7e966a0e7cc80f799ee7cb3611027381847dafb92b8d8c0f3e96500ecbe217f7\",\"license\":\"AGPL-3.0-only\"},\"openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../utils/ContextUpgradeable.sol\\\";\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * By default, the owner account will be the one that deploys the contract. This\\n * can later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {\\n    address private _owner;\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the deployer as the initial owner.\\n     */\\n    function __Ownable_init() internal onlyInitializing {\\n        __Ownable_init_unchained();\\n    }\\n\\n    function __Ownable_init_unchained() internal onlyInitializing {\\n        _transferOwnership(_msgSender());\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        require(owner() == _msgSender(), \\\"Ownable: caller is not the owner\\\");\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions anymore. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby removing any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        require(newOwner != address(0), \\\"Ownable: new owner is the zero address\\\");\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[49] private __gap;\\n}\\n\",\"keccak256\":\"0x247c62047745915c0af6b955470a72d1696ebad4352d7d3011aef1a2463cd888\",\"license\":\"MIT\"},\"openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.2;\\n\\nimport \\\"../../utils/AddressUpgradeable.sol\\\";\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * The initialization functions use a version number. Once a version number is used, it is consumed and cannot be\\n * reused. This mechanism prevents re-execution of each \\\"step\\\" but allows the creation of new initialization steps in\\n * case an upgrade adds a module that needs to be initialized.\\n *\\n * For example:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * contract MyToken is ERC20Upgradeable {\\n *     function initialize() initializer public {\\n *         __ERC20_init(\\\"MyToken\\\", \\\"MTK\\\");\\n *     }\\n * }\\n * contract MyTokenV2 is MyToken, ERC20PermitUpgradeable {\\n *     function initializeV2() reinitializer(2) public {\\n *         __ERC20Permit_init(\\\"MyToken\\\");\\n *     }\\n * }\\n * ```\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To prevent the implementation contract from being used, you should invoke\\n * the {_disableInitializers} function in the constructor to automatically lock it when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() {\\n *     _disableInitializers();\\n * }\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Indicates that the contract has been initialized.\\n     * @custom:oz-retyped-from bool\\n     */\\n    uint8 private _initialized;\\n\\n    /**\\n     * @dev Indicates that the contract is in the process of being initialized.\\n     */\\n    bool private _initializing;\\n\\n    /**\\n     * @dev Triggered when the contract has been initialized or reinitialized.\\n     */\\n    event Initialized(uint8 version);\\n\\n    /**\\n     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,\\n     * `onlyInitializing` functions can be used to initialize parent contracts.\\n     *\\n     * Similar to `reinitializer(1)`, except that functions marked with `initializer` can be nested in the context of a\\n     * constructor.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier initializer() {\\n        bool isTopLevelCall = !_initializing;\\n        require(\\n            (isTopLevelCall && _initialized < 1) || (!AddressUpgradeable.isContract(address(this)) && _initialized == 1),\\n            \\\"Initializable: contract is already initialized\\\"\\n        );\\n        _initialized = 1;\\n        if (isTopLevelCall) {\\n            _initializing = true;\\n        }\\n        _;\\n        if (isTopLevelCall) {\\n            _initializing = false;\\n            emit Initialized(1);\\n        }\\n    }\\n\\n    /**\\n     * @dev A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the\\n     * contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be\\n     * used to initialize parent contracts.\\n     *\\n     * A reinitializer may be used after the original initialization step. This is essential to configure modules that\\n     * are added through upgrades and that require initialization.\\n     *\\n     * When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`\\n     * cannot be nested. If one is invoked in the context of another, execution will revert.\\n     *\\n     * Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in\\n     * a contract, executing them in the right order is up to the developer or operator.\\n     *\\n     * WARNING: setting the version to 255 will prevent any future reinitialization.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier reinitializer(uint8 version) {\\n        require(!_initializing && _initialized < version, \\\"Initializable: contract is already initialized\\\");\\n        _initialized = version;\\n        _initializing = true;\\n        _;\\n        _initializing = false;\\n        emit Initialized(version);\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} and {reinitializer} modifiers, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        require(_initializing, \\\"Initializable: contract is not initializing\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.\\n     * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized\\n     * to any version. It is recommended to use this to lock implementation contracts that are designed to be called\\n     * through proxies.\\n     *\\n     * Emits an {Initialized} event the first time it is successfully executed.\\n     */\\n    function _disableInitializers() internal virtual {\\n        require(!_initializing, \\\"Initializable: contract is initializing\\\");\\n        if (_initialized < type(uint8).max) {\\n            _initialized = type(uint8).max;\\n            emit Initialized(type(uint8).max);\\n        }\\n    }\\n\\n    /**\\n     * @dev Internal function that returns the initialized version. Returns `_initialized`\\n     */\\n    function _getInitializedVersion() internal view returns (uint8) {\\n        return _initialized;\\n    }\\n\\n    /**\\n     * @dev Internal function that returns the initialized version. Returns `_initializing`\\n     */\\n    function _isInitializing() internal view returns (bool) {\\n        return _initializing;\\n    }\\n}\\n\",\"keccak256\":\"0x6c2b54ec184943843041ab77f61988b5060f6f03acbfe92cdc125f95f00891da\",\"license\":\"MIT\"},\"openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.7.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.1;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary AddressUpgradeable {\\n    /**\\n     * @dev Returns true if `account` is a contract.\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * It is unsafe to assume that an address for which this function returns\\n     * false is an externally-owned account (EOA) and not a contract.\\n     *\\n     * Among others, `isContract` will return false for the following\\n     * types of addresses:\\n     *\\n     *  - an externally-owned account\\n     *  - a contract in construction\\n     *  - an address where a contract will be created\\n     *  - an address where a contract lived, but was destroyed\\n     * ====\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * You shouldn't rely on `isContract` to protect against flash loan attacks!\\n     *\\n     * Preventing calls from contracts is highly discouraged. It breaks composability, breaks support for smart wallets\\n     * like Gnosis Safe, and does not provide security since it can be circumvented by calling from a contract\\n     * constructor.\\n     * ====\\n     */\\n    function isContract(address account) internal view returns (bool) {\\n        // This method relies on extcodesize/address.code.length, which returns 0\\n        // for contracts in construction, since the code is only stored at the end\\n        // of the constructor execution.\\n\\n        return account.code.length > 0;\\n    }\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        require(address(this).balance >= amount, \\\"Address: insufficient balance\\\");\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        require(success, \\\"Address: unable to send value, recipient may have reverted\\\");\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason, it is bubbled up by this\\n     * function (like regular Solidity function calls).\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, \\\"Address: low-level call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with\\n     * `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, value, \\\"Address: low-level call with value failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but\\n     * with `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(address(this).balance >= value, \\\"Address: insufficient balance for call\\\");\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResultFromTarget(target, success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        return functionStaticCall(target, data, \\\"Address: low-level static call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResultFromTarget(target, success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call to smart-contract was successful, and revert (either by bubbling\\n     * the revert reason or using the provided one) in case of unsuccessful call or if target was not a contract.\\n     *\\n     * _Available since v4.8._\\n     */\\n    function verifyCallResultFromTarget(\\n        address target,\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        if (success) {\\n            if (returndata.length == 0) {\\n                // only check isContract if the call was successful and the return data is empty\\n                // otherwise we already know that it was a contract\\n                require(isContract(target), \\\"Address: call to non-contract\\\");\\n            }\\n            return returndata;\\n        } else {\\n            _revert(returndata, errorMessage);\\n        }\\n    }\\n\\n    /**\\n     * @dev Tool to verify that a low level call was successful, and revert if it wasn't, either by bubbling the\\n     * revert reason or using the provided one.\\n     *\\n     * _Available since v4.3._\\n     */\\n    function verifyCallResult(\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else {\\n            _revert(returndata, errorMessage);\\n        }\\n    }\\n\\n    function _revert(bytes memory returndata, string memory errorMessage) private pure {\\n        // Look for revert reason and bubble it up if present\\n        if (returndata.length > 0) {\\n            // The easiest way to bubble the revert reason is using memory via assembly\\n            /// @solidity memory-safe-assembly\\n            assembly {\\n                let returndata_size := mload(returndata)\\n                revert(add(32, returndata), returndata_size)\\n            }\\n        } else {\\n            revert(errorMessage);\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x0a3b4afc301241e2629ad192fa02e0f8626e3cf38ab6f45342bfd7afbde16ee0\",\"license\":\"MIT\"},\"openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract ContextUpgradeable is Initializable {\\n    function __Context_init() internal onlyInitializing {\\n    }\\n\\n    function __Context_init_unchained() internal onlyInitializing {\\n    }\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[50] private __gap;\\n}\\n\",\"keccak256\":\"0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149\",\"license\":\"MIT\"},\"solmate/tokens/ERC20.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity >=0.8.0;\\n\\n/// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.\\n/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC20.sol)\\n/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)\\n/// @dev Do not manually set balances without updating totalSupply, as the sum of all user balances must not exceed it.\\nabstract contract ERC20 {\\n    /*//////////////////////////////////////////////////////////////\\n                                 EVENTS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    event Transfer(address indexed from, address indexed to, uint256 amount);\\n\\n    event Approval(address indexed owner, address indexed spender, uint256 amount);\\n\\n    /*//////////////////////////////////////////////////////////////\\n                            METADATA STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    string public name;\\n\\n    string public symbol;\\n\\n    uint8 public immutable decimals;\\n\\n    /*//////////////////////////////////////////////////////////////\\n                              ERC20 STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    uint256 public totalSupply;\\n\\n    mapping(address => uint256) public balanceOf;\\n\\n    mapping(address => mapping(address => uint256)) public allowance;\\n\\n    /*//////////////////////////////////////////////////////////////\\n                            EIP-2612 STORAGE\\n    //////////////////////////////////////////////////////////////*/\\n\\n    uint256 internal immutable INITIAL_CHAIN_ID;\\n\\n    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;\\n\\n    mapping(address => uint256) public nonces;\\n\\n    /*//////////////////////////////////////////////////////////////\\n                               CONSTRUCTOR\\n    //////////////////////////////////////////////////////////////*/\\n\\n    constructor(\\n        string memory _name,\\n        string memory _symbol,\\n        uint8 _decimals\\n    ) {\\n        name = _name;\\n        symbol = _symbol;\\n        decimals = _decimals;\\n\\n        INITIAL_CHAIN_ID = block.chainid;\\n        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();\\n    }\\n\\n    /*//////////////////////////////////////////////////////////////\\n                               ERC20 LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function approve(address spender, uint256 amount) public virtual returns (bool) {\\n        allowance[msg.sender][spender] = amount;\\n\\n        emit Approval(msg.sender, spender, amount);\\n\\n        return true;\\n    }\\n\\n    function transfer(address to, uint256 amount) public virtual returns (bool) {\\n        balanceOf[msg.sender] -= amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(msg.sender, to, amount);\\n\\n        return true;\\n    }\\n\\n    function transferFrom(\\n        address from,\\n        address to,\\n        uint256 amount\\n    ) public virtual returns (bool) {\\n        uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.\\n\\n        if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed - amount;\\n\\n        balanceOf[from] -= amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(from, to, amount);\\n\\n        return true;\\n    }\\n\\n    /*//////////////////////////////////////////////////////////////\\n                             EIP-2612 LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function permit(\\n        address owner,\\n        address spender,\\n        uint256 value,\\n        uint256 deadline,\\n        uint8 v,\\n        bytes32 r,\\n        bytes32 s\\n    ) public virtual {\\n        require(deadline >= block.timestamp, \\\"PERMIT_DEADLINE_EXPIRED\\\");\\n\\n        // Unchecked because the only math done is incrementing\\n        // the owner's nonce which cannot realistically overflow.\\n        unchecked {\\n            address recoveredAddress = ecrecover(\\n                keccak256(\\n                    abi.encodePacked(\\n                        \\\"\\\\x19\\\\x01\\\",\\n                        DOMAIN_SEPARATOR(),\\n                        keccak256(\\n                            abi.encode(\\n                                keccak256(\\n                                    \\\"Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)\\\"\\n                                ),\\n                                owner,\\n                                spender,\\n                                value,\\n                                nonces[owner]++,\\n                                deadline\\n                            )\\n                        )\\n                    )\\n                ),\\n                v,\\n                r,\\n                s\\n            );\\n\\n            require(recoveredAddress != address(0) && recoveredAddress == owner, \\\"INVALID_SIGNER\\\");\\n\\n            allowance[recoveredAddress][spender] = value;\\n        }\\n\\n        emit Approval(owner, spender, value);\\n    }\\n\\n    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {\\n        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();\\n    }\\n\\n    function computeDomainSeparator() internal view virtual returns (bytes32) {\\n        return\\n            keccak256(\\n                abi.encode(\\n                    keccak256(\\\"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)\\\"),\\n                    keccak256(bytes(name)),\\n                    keccak256(\\\"1\\\"),\\n                    block.chainid,\\n                    address(this)\\n                )\\n            );\\n    }\\n\\n    /*//////////////////////////////////////////////////////////////\\n                        INTERNAL MINT/BURN LOGIC\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function _mint(address to, uint256 amount) internal virtual {\\n        totalSupply += amount;\\n\\n        // Cannot overflow because the sum of all user\\n        // balances can't exceed the max uint256 value.\\n        unchecked {\\n            balanceOf[to] += amount;\\n        }\\n\\n        emit Transfer(address(0), to, amount);\\n    }\\n\\n    function _burn(address from, uint256 amount) internal virtual {\\n        balanceOf[from] -= amount;\\n\\n        // Cannot underflow because a user's balance\\n        // will never be larger than the total supply.\\n        unchecked {\\n            totalSupply -= amount;\\n        }\\n\\n        emit Transfer(from, address(0), amount);\\n    }\\n}\\n\",\"keccak256\":\"0xcdfd8db76b2a3415620e4d18cc5545f3d50de792dbf2c3dd5adb40cbe6f94b10\",\"license\":\"AGPL-3.0-only\"},\"solmate/utils/SafeCastLib.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity >=0.8.0;\\n\\n/// @notice Safe unsigned integer casting library that reverts on overflow.\\n/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/SafeCastLib.sol)\\n/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol)\\nlibrary SafeCastLib {\\n    function safeCastTo248(uint256 x) internal pure returns (uint248 y) {\\n        require(x < 1 << 248);\\n\\n        y = uint248(x);\\n    }\\n\\n    function safeCastTo224(uint256 x) internal pure returns (uint224 y) {\\n        require(x < 1 << 224);\\n\\n        y = uint224(x);\\n    }\\n\\n    function safeCastTo192(uint256 x) internal pure returns (uint192 y) {\\n        require(x < 1 << 192);\\n\\n        y = uint192(x);\\n    }\\n\\n    function safeCastTo160(uint256 x) internal pure returns (uint160 y) {\\n        require(x < 1 << 160);\\n\\n        y = uint160(x);\\n    }\\n\\n    function safeCastTo128(uint256 x) internal pure returns (uint128 y) {\\n        require(x < 1 << 128);\\n\\n        y = uint128(x);\\n    }\\n\\n    function safeCastTo96(uint256 x) internal pure returns (uint96 y) {\\n        require(x < 1 << 96);\\n\\n        y = uint96(x);\\n    }\\n\\n    function safeCastTo64(uint256 x) internal pure returns (uint64 y) {\\n        require(x < 1 << 64);\\n\\n        y = uint64(x);\\n    }\\n\\n    function safeCastTo32(uint256 x) internal pure returns (uint32 y) {\\n        require(x < 1 << 32);\\n\\n        y = uint32(x);\\n    }\\n\\n    function safeCastTo24(uint256 x) internal pure returns (uint24 y) {\\n        require(x < 1 << 24);\\n\\n        y = uint24(x);\\n    }\\n\\n    function safeCastTo16(uint256 x) internal pure returns (uint16 y) {\\n        require(x < 1 << 16);\\n\\n        y = uint16(x);\\n    }\\n\\n    function safeCastTo8(uint256 x) internal pure returns (uint8 y) {\\n        require(x < 1 << 8);\\n\\n        y = uint8(x);\\n    }\\n}\\n\",\"keccak256\":\"0xb784a14411858036491124e677aecde6d500e695b7a70c74aa8f1001bda2ccab\",\"license\":\"AGPL-3.0-only\"},\"solmate/utils/SafeTransferLib.sol\":{\"content\":\"// SPDX-License-Identifier: AGPL-3.0-only\\npragma solidity >=0.8.0;\\n\\nimport {ERC20} from \\\"../tokens/ERC20.sol\\\";\\n\\n/// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.\\n/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/SafeTransferLib.sol)\\n/// @dev Use with caution! Some functions in this library knowingly create dirty bits at the destination of the free memory pointer.\\n/// @dev Note that none of the functions in this library check that a token has code at all! That responsibility is delegated to the caller.\\nlibrary SafeTransferLib {\\n    /*//////////////////////////////////////////////////////////////\\n                             ETH OPERATIONS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function safeTransferETH(address to, uint256 amount) internal {\\n        bool success;\\n\\n        assembly {\\n            // Transfer the ETH and store if it succeeded or not.\\n            success := call(gas(), to, amount, 0, 0, 0, 0)\\n        }\\n\\n        require(success, \\\"ETH_TRANSFER_FAILED\\\");\\n    }\\n\\n    /*//////////////////////////////////////////////////////////////\\n                            ERC20 OPERATIONS\\n    //////////////////////////////////////////////////////////////*/\\n\\n    function safeTransferFrom(\\n        ERC20 token,\\n        address from,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool success;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata into memory, beginning with the function selector.\\n            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000)\\n            mstore(add(freeMemoryPointer, 4), from) // Append the \\\"from\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), to) // Append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 68), amount) // Append the \\\"amount\\\" argument.\\n\\n            success := and(\\n                // Set success to whether the call reverted, if not we check it either\\n                // returned exactly 1 (can't just be non-zero data), or had no return data.\\n                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),\\n                // We use 100 because the length of our calldata totals up like so: 4 + 32 * 3.\\n                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.\\n                // Counterintuitively, this call must be positioned second to the or() call in the\\n                // surrounding and() call or else returndatasize() will be zero during the computation.\\n                call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)\\n            )\\n        }\\n\\n        require(success, \\\"TRANSFER_FROM_FAILED\\\");\\n    }\\n\\n    function safeTransfer(\\n        ERC20 token,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool success;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata into memory, beginning with the function selector.\\n            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000)\\n            mstore(add(freeMemoryPointer, 4), to) // Append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), amount) // Append the \\\"amount\\\" argument.\\n\\n            success := and(\\n                // Set success to whether the call reverted, if not we check it either\\n                // returned exactly 1 (can't just be non-zero data), or had no return data.\\n                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),\\n                // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.\\n                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.\\n                // Counterintuitively, this call must be positioned second to the or() call in the\\n                // surrounding and() call or else returndatasize() will be zero during the computation.\\n                call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)\\n            )\\n        }\\n\\n        require(success, \\\"TRANSFER_FAILED\\\");\\n    }\\n\\n    function safeApprove(\\n        ERC20 token,\\n        address to,\\n        uint256 amount\\n    ) internal {\\n        bool success;\\n\\n        assembly {\\n            // Get a pointer to some free memory.\\n            let freeMemoryPointer := mload(0x40)\\n\\n            // Write the abi-encoded calldata into memory, beginning with the function selector.\\n            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000)\\n            mstore(add(freeMemoryPointer, 4), to) // Append the \\\"to\\\" argument.\\n            mstore(add(freeMemoryPointer, 36), amount) // Append the \\\"amount\\\" argument.\\n\\n            success := and(\\n                // Set success to whether the call reverted, if not we check it either\\n                // returned exactly 1 (can't just be non-zero data), or had no return data.\\n                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),\\n                // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.\\n                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.\\n                // Counterintuitively, this call must be positioned second to the or() call in the\\n                // surrounding and() call or else returndatasize() will be zero during the computation.\\n                call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)\\n            )\\n        }\\n\\n        require(success, \\\"APPROVE_FAILED\\\");\\n    }\\n}\\n\",\"keccak256\":\"0x333b56bef66ff71e3838910781df214acbeb6c2d6ace27a04ebb510f0e669300\",\"license\":\"AGPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061001961001e565b6100de565b600054610100900460ff161561008a5760405162461bcd60e51b815260206004820152602760248201527f496e697469616c697a61626c653a20636f6e747261637420697320696e697469604482015266616c697a696e6760c81b606482015260840160405180910390fd5b60005460ff90811610156100dc576000805460ff191660ff9081179091556040519081527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b565b611aae806100ed6000396000f3fe608060405234801561001057600080fd5b50600436106101f05760003560e01c8063abc6d72d1161010f578063e30c3978116100a2578063f2fde38b11610071578063f2fde38b14610440578063f7c618c114610453578063f8c8765e14610466578063fc4d33f91461047957600080fd5b8063e30c3978146103f4578063e6e162e814610407578063ef5cfb8c1461041a578063f046ee5c1461042d57600080fd5b8063cc6bc101116100de578063cc6bc101146103b9578063cc7ebdc4146102e3578063dde684a514610347578063e1e3dfeb146103e157600080fd5b8063abc6d72d1461023a578063b006340d146102d0578063b9be44ac14610391578063c3b28864146103a457600080fd5b8063715018a6116101875780638da5cb5b116101565780638da5cb5b146103235780638fb0091314610334578063a7a9a62c14610347578063ab5497d71461037e57600080fd5b8063715018a6146102c8578063715cad16146102d05780637fb5ad38146102e3578063877887821461031a57600080fd5b806346904840116101c357806346904840146102645780634e081c951461028f5780635a826df3146102a25780636e96dfd7146102b557600080fd5b806310509aa9146101f5578063116139d31461020a57806317e6a45f1461023a5780631c9161e014610252575b600080fd5b6102086102033660046116ba565b610481565b005b61021d6102183660046116ea565b610493565b6040516001600160e01b0390911681526020015b60405180910390f35b610242600181565b6040519015158152602001610231565b6102086102603660046116ea565b5050565b606754610277906001600160a01b031681565b6040516001600160a01b039091168152602001610231565b61020861029d366004611718565b505050565b6102086102b0366004611763565b6104c9565b6102086102c3366004611763565b61051b565b610208610585565b6102086102de366004611763565b6105cd565b61030c6102f1366004611763565b6001600160a01b03166000908152606c602052604090205490565b604051908152602001610231565b61030c60665481565b6033546001600160a01b0316610277565b610208610342366004611763565b6105e1565b61035a610355366004611763565b6106e1565b604080516001600160e01b03909316835263ffffffff909116602083015201610231565b606b54610277906001600160a01b031681565b61030c61039f3660046116ea565b610715565b6103ac610781565b6040516102319190611787565b6103cc6103c7366004611718565b6107e3565b60408051928352602083019190915201610231565b6102776103ef3660046117d4565b610864565b606554610277906001600160a01b031681565b6102086104153660046116ea565b61088e565b610208610428366004611763565b610898565b606a54610277906001600160a01b031681565b61020861044e366004611763565b61092e565b606854610277906001600160a01b031681565b6102086104743660046117ed565b61099f565b610208610b22565b610489610c36565b6102608282610c92565b6001600160a01b038083166000908152606e60209081526040808320938516835292905220546001600160e01b03165b92915050565b6104d1610c36565b606b80546001600160a01b0319166001600160a01b0383169081179091556040517ff2fb4350e8466c152b500f8e58c0c23f01bbc332dc82f5375267e70b5f50f19990600090a250565b610523610c36565b606580546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b91015b60405180910390a15050565b61058d610c36565b60405162461bcd60e51b815260206004820152601060248201526f6e6f74207573656420616e796d6f726560801b60448201526064015b60405180910390fd5b6105d5610c36565b6105de81610d7b565b50565b6105e9610c36565b606a546001600160a01b03161561069757606854606a546040516370a0823160e01b81526001600160a01b03918216600482015260009291909116906370a0823190602401602060405180830381865afa15801561064b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061066f9190611849565b9050801561069557606a54606854610695916001600160a01b0391821691168484610f1c565b505b606a80546001600160a01b0319166001600160a01b0383169081179091556040517ff1ba364f52e65f08563196b608289b1da2a923cdd0aa7e20dfe664c4ad294c9590600090a250565b6001600160a01b03166000908152606d60205260409020546001600160e01b03811691600160e01b90910463ffffffff1690565b6000806000610723856106e1565b604080518082019091526001600160e01b03831680825263ffffffff831660208301529294509092509060000361076057600093505050506104c3565b61076a8682610f9f565b90506107778686836112ad565b9695505050505050565b606060698054806020026020016040519081016040528092919081815260200182805480156107d957602002820191906000526020600020905b81546001600160a01b031681526001909101906020018083116107bb575b5050505050905090565b6000806000806107f2876106e1565b604080518082019091526001600160e01b03831680825263ffffffff8316602083015292945090925090600003610832576000809450945050505061085c565b61083c8882610f9f565b90506108498888836112ad565b6108548988846112ad565b945094505050505b935093915050565b6069818154811061087457600080fd5b6000918252602090912001546001600160a01b0316905081565b61029d8282610715565b6001600160a01b0381166000908152606c60205260409020548015610260576001600160a01b038083166000908152606c6020526040812055606a546068546108e79290811691168484610f1c565b816001600160a01b03167f1f89f96333d3133000ee447473151fa9606543368f02271c9d95ae14f13bcc678260405161092291815260200190565b60405180910390a25050565b610936610c36565b606554604080516001600160a01b03928316815291831660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b910160405180910390a1606580546001600160a01b0319166001600160a01b0392909216919091179055565b600054610100900460ff16158080156109bf5750600054600160ff909116105b806109d95750303b1580156109d9575060005460ff166001145b610a3c5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084016105c4565b6000805460ff191660011790558015610a5f576000805461ff0019166101001790555b610a683361159c565b606880546001600160a01b038088166001600160a01b031992831617909255606a8054878416908316179055606b805492861692909116919091179055610aae826115d0565b67016345785d8a0000606655606780546001600160a01b0319166001600160a01b0384161790558015610b1b576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b5050505050565b6065546001600160a01b03163314610b745760405162461bcd60e51b81526020600482015260156024820152743737ba103a3432903832b73234b7339037bbb732b960591b60448201526064016105c4565b6000610b886033546001600160a01b031690565b6065549091506001600160a01b0316610ba0816115d0565b606580546001600160a01b0319169055604080516001600160a01b0384168152600060208201527f70aea8d848e8a90fb7661b227dc522eb6395c3dac71b63cb59edd5c9899b2364910160405180910390a1606554604080516001600160a01b03808516825290921660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b9101610579565b6033546001600160a01b03163314610c905760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105c4565b565b60665460675460408051928352602083018590526001600160a01b0391821690830152821660608201527fb3b62da5184b9e7e2f5d280014bb485d4444b66738025e5fb5738bbddcb6b8489060800160405180910390a16067546001600160a01b03828116911614610d54576067546001600160a01b039081166000908152606c602052604080822054928416825281208054909190610d33908490611878565b90915550506067546001600160a01b03166000908152606c60205260408120555b606691909155606780546001600160a01b0319166001600160a01b03909216919091179055565b6000610d86826106e1565b5090506001600160e01b03811615610dcb5760405162461bcd60e51b8152602060048201526008602482015267737472617465677960c01b60448201526064016105c4565b6040805180820180835260685463313ce56760e01b909152915190918291610e53916001600160a01b03169063313ce567906044808601916020918188030181865afa158015610e1f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e43919061188b565b610e4e90600a611992565b611622565b6001600160e01b03168152602001610e6a42611638565b63ffffffff9081169091526001600160a01b0384166000818152606d6020908152604080832086519690920151909416600160e01b026001600160e01b0390951694909417909355606980546001810182559084527f7fb4302e8e91f9110a6554c2c0a24601252c2a42c2220ca988efcfe3999143080180546001600160a01b03191682179055905190917f69887873d46778fb35539b0a9992d9176ca03c1820b0afb538bc3a6f63326b1091a25050565b60006040516323b872dd60e01b81528460048201528360248201528260448201526020600060648360008a5af13d15601f3d1160016000511416171691505080610b1b5760405162461bcd60e51b81526020600482015260146024820152731514905394d1915497d19493d357d1905253115160621b60448201526064016105c4565b6040805180820190915260008082526020820152606a54602083015160405163b334db7b60e01b81526001600160a01b03868116600483015263ffffffff9092166024820152600092919091169063b334db7b906044016020604051808303816000875af1158015611015573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110399190611849565b839250905080156112a657606b546000906001600160a01b03166110be57846001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015611095573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110b99190611849565b61112c565b606b54604051631e1932fb60e01b81526001600160a01b03878116600483015290911690631e1932fb90602401602060405180830381865afa158015611108573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061112c9190611849565b90506000670de0b6b3a76400006001600160e01b03166066548461115091906119a1565b61115a91906119b8565b6067546001600160a01b03166000908152606c6020526040812080549293508392909190611189908490611878565b90915550611199905081846119da565b92506000821561122b5761122883886001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156111e5573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611209919061188b565b61121490600a611992565b61121e90876119a1565b610e4e91906119b8565b90505b604051806040016040528082886000015161124691906119ed565b6001600160e01b0316815260200161125d42611638565b63ffffffff9081169091526001600160a01b0389166000908152606d60209081526040909120835191840151909216600160e01b026001600160e01b0390911617905594505050505b5092915050565b8051600090816112bd8686610493565b6001600160a01b038781166000908152606e60209081526040808320938a16835292905290812080546001600160e01b0319166001600160e01b0386811691909117909155919250908216900361135c576068546040805163313ce56760e01b81529051611359926001600160a01b03169163313ce5679160048083019260209291908290030181865afa158015610e1f573d6000803e3d6000fd5b90505b60006113688284611a0d565b606b549091506000906001600160a01b03166113ed576040516370a0823160e01b81526001600160a01b0388811660048301528916906370a0823190602401602060405180830381865afa1580156113c4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906113e89190611849565b611463565b606b54604051631a50ef2f60e01b81526001600160a01b038a81166004830152898116602483015290911690631a50ef2f90604401602060405180830381865afa15801561143f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114639190611849565b90506000886001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156114a5573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114c9919061188b565b6114d490600a611992565b6114e7836001600160e01b0386166119a1565b6114f191906119b8565b90506000816115158a6001600160a01b03166000908152606c602052604090205490565b61151f9190611878565b6001600160a01b03808b166000818152606c6020526040908190208490555192935091908c16907f35a61f3c719e8f59f636c336e563ba74f667fadafcc80d709231ca8bb59eecce906115879086908b909182526001600160e01b0316602082015260400190565b60405180910390a39998505050505050505050565b600054610100900460ff166115c35760405162461bcd60e51b81526004016105c490611a2d565b6115cb61164b565b6105de815b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b6000600160e01b821061163457600080fd5b5090565b6000640100000000821061163457600080fd5b600054610100900460ff166116725760405162461bcd60e51b81526004016105c490611a2d565b610c90600054610100900460ff1661169c5760405162461bcd60e51b81526004016105c490611a2d565b610c90336115d0565b6001600160a01b03811681146105de57600080fd5b600080604083850312156116cd57600080fd5b8235915060208301356116df816116a5565b809150509250929050565b600080604083850312156116fd57600080fd5b8235611708816116a5565b915060208301356116df816116a5565b60008060006060848603121561172d57600080fd5b8335611738816116a5565b92506020840135611748816116a5565b91506040840135611758816116a5565b809150509250925092565b60006020828403121561177557600080fd5b8135611780816116a5565b9392505050565b6020808252825182820181905260009190848201906040850190845b818110156117c85783516001600160a01b0316835292840192918401916001016117a3565b50909695505050505050565b6000602082840312156117e657600080fd5b5035919050565b6000806000806080858703121561180357600080fd5b843561180e816116a5565b9350602085013561181e816116a5565b9250604085013561182e816116a5565b9150606085013561183e816116a5565b939692955090935050565b60006020828403121561185b57600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b808201808211156104c3576104c3611862565b60006020828403121561189d57600080fd5b815160ff8116811461178057600080fd5b600181815b808511156118e95781600019048211156118cf576118cf611862565b808516156118dc57918102915b93841c93908002906118b3565b509250929050565b600082611900575060016104c3565b8161190d575060006104c3565b8160018114611923576002811461192d57611949565b60019150506104c3565b60ff84111561193e5761193e611862565b50506001821b6104c3565b5060208310610133831016604e8410600b841016171561196c575081810a6104c3565b61197683836118ae565b806000190482111561198a5761198a611862565b029392505050565b600061178060ff8416836118f1565b80820281158282048414176104c3576104c3611862565b6000826119d557634e487b7160e01b600052601260045260246000fd5b500490565b818103818111156104c3576104c3611862565b6001600160e01b038181168382160190808211156112a6576112a6611862565b6001600160e01b038281168282160390808211156112a6576112a6611862565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b60608201526080019056fea2646970667358221220c7f08d004d28144f252891f23c5c90593e94e0d81f9e0e95243d11f4c8054c4364736f6c63430008160033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101f05760003560e01c8063abc6d72d1161010f578063e30c3978116100a2578063f2fde38b11610071578063f2fde38b14610440578063f7c618c114610453578063f8c8765e14610466578063fc4d33f91461047957600080fd5b8063e30c3978146103f4578063e6e162e814610407578063ef5cfb8c1461041a578063f046ee5c1461042d57600080fd5b8063cc6bc101116100de578063cc6bc101146103b9578063cc7ebdc4146102e3578063dde684a514610347578063e1e3dfeb146103e157600080fd5b8063abc6d72d1461023a578063b006340d146102d0578063b9be44ac14610391578063c3b28864146103a457600080fd5b8063715018a6116101875780638da5cb5b116101565780638da5cb5b146103235780638fb0091314610334578063a7a9a62c14610347578063ab5497d71461037e57600080fd5b8063715018a6146102c8578063715cad16146102d05780637fb5ad38146102e3578063877887821461031a57600080fd5b806346904840116101c357806346904840146102645780634e081c951461028f5780635a826df3146102a25780636e96dfd7146102b557600080fd5b806310509aa9146101f5578063116139d31461020a57806317e6a45f1461023a5780631c9161e014610252575b600080fd5b6102086102033660046116ba565b610481565b005b61021d6102183660046116ea565b610493565b6040516001600160e01b0390911681526020015b60405180910390f35b610242600181565b6040519015158152602001610231565b6102086102603660046116ea565b5050565b606754610277906001600160a01b031681565b6040516001600160a01b039091168152602001610231565b61020861029d366004611718565b505050565b6102086102b0366004611763565b6104c9565b6102086102c3366004611763565b61051b565b610208610585565b6102086102de366004611763565b6105cd565b61030c6102f1366004611763565b6001600160a01b03166000908152606c602052604090205490565b604051908152602001610231565b61030c60665481565b6033546001600160a01b0316610277565b610208610342366004611763565b6105e1565b61035a610355366004611763565b6106e1565b604080516001600160e01b03909316835263ffffffff909116602083015201610231565b606b54610277906001600160a01b031681565b61030c61039f3660046116ea565b610715565b6103ac610781565b6040516102319190611787565b6103cc6103c7366004611718565b6107e3565b60408051928352602083019190915201610231565b6102776103ef3660046117d4565b610864565b606554610277906001600160a01b031681565b6102086104153660046116ea565b61088e565b610208610428366004611763565b610898565b606a54610277906001600160a01b031681565b61020861044e366004611763565b61092e565b606854610277906001600160a01b031681565b6102086104743660046117ed565b61099f565b610208610b22565b610489610c36565b6102608282610c92565b6001600160a01b038083166000908152606e60209081526040808320938516835292905220546001600160e01b03165b92915050565b6104d1610c36565b606b80546001600160a01b0319166001600160a01b0383169081179091556040517ff2fb4350e8466c152b500f8e58c0c23f01bbc332dc82f5375267e70b5f50f19990600090a250565b610523610c36565b606580546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b91015b60405180910390a15050565b61058d610c36565b60405162461bcd60e51b815260206004820152601060248201526f6e6f74207573656420616e796d6f726560801b60448201526064015b60405180910390fd5b6105d5610c36565b6105de81610d7b565b50565b6105e9610c36565b606a546001600160a01b03161561069757606854606a546040516370a0823160e01b81526001600160a01b03918216600482015260009291909116906370a0823190602401602060405180830381865afa15801561064b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061066f9190611849565b9050801561069557606a54606854610695916001600160a01b0391821691168484610f1c565b505b606a80546001600160a01b0319166001600160a01b0383169081179091556040517ff1ba364f52e65f08563196b608289b1da2a923cdd0aa7e20dfe664c4ad294c9590600090a250565b6001600160a01b03166000908152606d60205260409020546001600160e01b03811691600160e01b90910463ffffffff1690565b6000806000610723856106e1565b604080518082019091526001600160e01b03831680825263ffffffff831660208301529294509092509060000361076057600093505050506104c3565b61076a8682610f9f565b90506107778686836112ad565b9695505050505050565b606060698054806020026020016040519081016040528092919081815260200182805480156107d957602002820191906000526020600020905b81546001600160a01b031681526001909101906020018083116107bb575b5050505050905090565b6000806000806107f2876106e1565b604080518082019091526001600160e01b03831680825263ffffffff8316602083015292945090925090600003610832576000809450945050505061085c565b61083c8882610f9f565b90506108498888836112ad565b6108548988846112ad565b945094505050505b935093915050565b6069818154811061087457600080fd5b6000918252602090912001546001600160a01b0316905081565b61029d8282610715565b6001600160a01b0381166000908152606c60205260409020548015610260576001600160a01b038083166000908152606c6020526040812055606a546068546108e79290811691168484610f1c565b816001600160a01b03167f1f89f96333d3133000ee447473151fa9606543368f02271c9d95ae14f13bcc678260405161092291815260200190565b60405180910390a25050565b610936610c36565b606554604080516001600160a01b03928316815291831660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b910160405180910390a1606580546001600160a01b0319166001600160a01b0392909216919091179055565b600054610100900460ff16158080156109bf5750600054600160ff909116105b806109d95750303b1580156109d9575060005460ff166001145b610a3c5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084016105c4565b6000805460ff191660011790558015610a5f576000805461ff0019166101001790555b610a683361159c565b606880546001600160a01b038088166001600160a01b031992831617909255606a8054878416908316179055606b805492861692909116919091179055610aae826115d0565b67016345785d8a0000606655606780546001600160a01b0319166001600160a01b0384161790558015610b1b576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b5050505050565b6065546001600160a01b03163314610b745760405162461bcd60e51b81526020600482015260156024820152743737ba103a3432903832b73234b7339037bbb732b960591b60448201526064016105c4565b6000610b886033546001600160a01b031690565b6065549091506001600160a01b0316610ba0816115d0565b606580546001600160a01b0319169055604080516001600160a01b0384168152600060208201527f70aea8d848e8a90fb7661b227dc522eb6395c3dac71b63cb59edd5c9899b2364910160405180910390a1606554604080516001600160a01b03808516825290921660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b9101610579565b6033546001600160a01b03163314610c905760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105c4565b565b60665460675460408051928352602083018590526001600160a01b0391821690830152821660608201527fb3b62da5184b9e7e2f5d280014bb485d4444b66738025e5fb5738bbddcb6b8489060800160405180910390a16067546001600160a01b03828116911614610d54576067546001600160a01b039081166000908152606c602052604080822054928416825281208054909190610d33908490611878565b90915550506067546001600160a01b03166000908152606c60205260408120555b606691909155606780546001600160a01b0319166001600160a01b03909216919091179055565b6000610d86826106e1565b5090506001600160e01b03811615610dcb5760405162461bcd60e51b8152602060048201526008602482015267737472617465677960c01b60448201526064016105c4565b6040805180820180835260685463313ce56760e01b909152915190918291610e53916001600160a01b03169063313ce567906044808601916020918188030181865afa158015610e1f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e43919061188b565b610e4e90600a611992565b611622565b6001600160e01b03168152602001610e6a42611638565b63ffffffff9081169091526001600160a01b0384166000818152606d6020908152604080832086519690920151909416600160e01b026001600160e01b0390951694909417909355606980546001810182559084527f7fb4302e8e91f9110a6554c2c0a24601252c2a42c2220ca988efcfe3999143080180546001600160a01b03191682179055905190917f69887873d46778fb35539b0a9992d9176ca03c1820b0afb538bc3a6f63326b1091a25050565b60006040516323b872dd60e01b81528460048201528360248201528260448201526020600060648360008a5af13d15601f3d1160016000511416171691505080610b1b5760405162461bcd60e51b81526020600482015260146024820152731514905394d1915497d19493d357d1905253115160621b60448201526064016105c4565b6040805180820190915260008082526020820152606a54602083015160405163b334db7b60e01b81526001600160a01b03868116600483015263ffffffff9092166024820152600092919091169063b334db7b906044016020604051808303816000875af1158015611015573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110399190611849565b839250905080156112a657606b546000906001600160a01b03166110be57846001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015611095573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906110b99190611849565b61112c565b606b54604051631e1932fb60e01b81526001600160a01b03878116600483015290911690631e1932fb90602401602060405180830381865afa158015611108573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061112c9190611849565b90506000670de0b6b3a76400006001600160e01b03166066548461115091906119a1565b61115a91906119b8565b6067546001600160a01b03166000908152606c6020526040812080549293508392909190611189908490611878565b90915550611199905081846119da565b92506000821561122b5761122883886001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156111e5573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611209919061188b565b61121490600a611992565b61121e90876119a1565b610e4e91906119b8565b90505b604051806040016040528082886000015161124691906119ed565b6001600160e01b0316815260200161125d42611638565b63ffffffff9081169091526001600160a01b0389166000908152606d60209081526040909120835191840151909216600160e01b026001600160e01b0390911617905594505050505b5092915050565b8051600090816112bd8686610493565b6001600160a01b038781166000908152606e60209081526040808320938a16835292905290812080546001600160e01b0319166001600160e01b0386811691909117909155919250908216900361135c576068546040805163313ce56760e01b81529051611359926001600160a01b03169163313ce5679160048083019260209291908290030181865afa158015610e1f573d6000803e3d6000fd5b90505b60006113688284611a0d565b606b549091506000906001600160a01b03166113ed576040516370a0823160e01b81526001600160a01b0388811660048301528916906370a0823190602401602060405180830381865afa1580156113c4573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906113e89190611849565b611463565b606b54604051631a50ef2f60e01b81526001600160a01b038a81166004830152898116602483015290911690631a50ef2f90604401602060405180830381865afa15801561143f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114639190611849565b90506000886001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa1580156114a5573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114c9919061188b565b6114d490600a611992565b6114e7836001600160e01b0386166119a1565b6114f191906119b8565b90506000816115158a6001600160a01b03166000908152606c602052604090205490565b61151f9190611878565b6001600160a01b03808b166000818152606c6020526040908190208490555192935091908c16907f35a61f3c719e8f59f636c336e563ba74f667fadafcc80d709231ca8bb59eecce906115879086908b909182526001600160e01b0316602082015260400190565b60405180910390a39998505050505050505050565b600054610100900460ff166115c35760405162461bcd60e51b81526004016105c490611a2d565b6115cb61164b565b6105de815b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b6000600160e01b821061163457600080fd5b5090565b6000640100000000821061163457600080fd5b600054610100900460ff166116725760405162461bcd60e51b81526004016105c490611a2d565b610c90600054610100900460ff1661169c5760405162461bcd60e51b81526004016105c490611a2d565b610c90336115d0565b6001600160a01b03811681146105de57600080fd5b600080604083850312156116cd57600080fd5b8235915060208301356116df816116a5565b809150509250929050565b600080604083850312156116fd57600080fd5b8235611708816116a5565b915060208301356116df816116a5565b60008060006060848603121561172d57600080fd5b8335611738816116a5565b92506020840135611748816116a5565b91506040840135611758816116a5565b809150509250925092565b60006020828403121561177557600080fd5b8135611780816116a5565b9392505050565b6020808252825182820181905260009190848201906040850190845b818110156117c85783516001600160a01b0316835292840192918401916001016117a3565b50909695505050505050565b6000602082840312156117e657600080fd5b5035919050565b6000806000806080858703121561180357600080fd5b843561180e816116a5565b9350602085013561181e816116a5565b9250604085013561182e816116a5565b9150606085013561183e816116a5565b939692955090935050565b60006020828403121561185b57600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b808201808211156104c3576104c3611862565b60006020828403121561189d57600080fd5b815160ff8116811461178057600080fd5b600181815b808511156118e95781600019048211156118cf576118cf611862565b808516156118dc57918102915b93841c93908002906118b3565b509250929050565b600082611900575060016104c3565b8161190d575060006104c3565b8160018114611923576002811461192d57611949565b60019150506104c3565b60ff84111561193e5761193e611862565b50506001821b6104c3565b5060208310610133831016604e8410600b841016171561196c575081810a6104c3565b61197683836118ae565b806000190482111561198a5761198a611862565b029392505050565b600061178060ff8416836118f1565b80820281158282048414176104c3576104c3611862565b6000826119d557634e487b7160e01b600052601260045260246000fd5b500490565b818103818111156104c3576104c3611862565b6001600160e01b038181168382160190808211156112a6576112a6611862565b6001600160e01b038281168282160390808211156112a6576112a6611862565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b60608201526080019056fea2646970667358221220c7f08d004d28144f252891f23c5c90593e94e0d81f9e0e95243d11f4c8054c4364736f6c63430008160033",
+  "devdoc": {
+    "events": {
+      "AccrueRewards(address,address,uint256,uint256)": {
+        "params": {
+          "rewardsDelta": "how many new rewards accrued to the user",
+          "rewardsIndex": "the market index for rewards per token accrued",
+          "strategy": "the updated rewards strategy",
+          "user": "the user of the rewards"
+        }
+      },
+      "AddStrategy(address)": {
+        "params": {
+          "newStrategy": "the new added strategy"
+        }
+      },
+      "ClaimRewards(address,uint256)": {
+        "params": {
+          "amount": "the amount of rewards claimed",
+          "user": "the user of the rewards"
+        }
+      },
+      "FlywheelBoosterUpdate(address)": {
+        "params": {
+          "newBooster": "the new booster module"
+        }
+      },
+      "FlywheelRewardsUpdate(address)": {
+        "params": {
+          "newFlywheelRewards": "the new rewards module"
+        }
+      },
+      "Initialized(uint8)": {
+        "details": "Triggered when the contract has been initialized or reinitialized."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "_acceptOwner()": {
+        "details": "Owner function for pending owner to accept role and update owner"
+      },
+      "_setPendingOwner(address)": {
+        "details": "Owner function to begin change of owner. The newPendingOwner must call `_acceptOwner` to finalize the transfer.",
+        "params": {
+          "newPendingOwner": "New pending owner."
+        }
+      },
+      "accrue(address,address)": {
+        "params": {
+          "strategy": "the strategy to accrue a user's rewards on",
+          "user": "the user to be accrued"
+        },
+        "returns": {
+          "_0": "the cumulative amount of rewards accrued to user (including prior)"
+        }
+      },
+      "accrue(address,address,address)": {
+        "params": {
+          "strategy": "the strategy to accrue a user's rewards on",
+          "user": "the second user to be accrued"
+        },
+        "returns": {
+          "_0": "the cumulative amount of rewards accrued to the first user (including prior)",
+          "_1": "the cumulative amount of rewards accrued to the second user (including prior)"
+        }
+      },
+      "claimRewards(address)": {
+        "details": "this function is public, and all rewards transfer to the user",
+        "params": {
+          "user": "the user claiming rewards"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "updateFeeSettings(uint256,address)": {
+        "details": "Claim rewards first from the previous feeRecipient before changing it"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "AccrueRewards(address,address,uint256,uint256)": {
+        "notice": "Emitted when a user's rewards accrue to a given strategy."
+      },
+      "AddStrategy(address)": {
+        "notice": "Emitted when a new strategy is added to flywheel by the admin"
+      },
+      "ClaimRewards(address,uint256)": {
+        "notice": "Emitted when a user claims accrued rewards."
+      },
+      "FlywheelBoosterUpdate(address)": {
+        "notice": "Emitted when the booster module changes"
+      },
+      "FlywheelRewardsUpdate(address)": {
+        "notice": "Emitted when the rewards module changes"
+      },
+      "NewOwner(address,address)": {
+        "notice": "Emitted when pendingOwner is accepted, which means owner is updated"
+      },
+      "NewPendingOwner(address,address)": {
+        "notice": "Emitted when pendingOwner is changed"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "_acceptOwner()": {
+        "notice": "Accepts transfer of owner rights. msg.sender must be pendingOwner"
+      },
+      "_setPendingOwner(address)": {
+        "notice": "Begins transfer of owner rights. The newPendingOwner must call `_acceptOwner` to finalize the transfer."
+      },
+      "accrue(address,address)": {
+        "notice": "accrue rewards for a single user on a strategy"
+      },
+      "accrue(address,address,address)": {
+        "notice": "accrue rewards for a two users on a strategy"
+      },
+      "addStrategyForRewards(address)": {
+        "notice": "initialize a new strategy"
+      },
+      "allStrategies(uint256)": {
+        "notice": "append-only list of strategies added"
+      },
+      "claimRewards(address)": {
+        "notice": "claim rewards for a given user"
+      },
+      "feeRecipient()": {
+        "notice": "Address that gets rewardsToken accrued by performanceFee"
+      },
+      "flywheelBooster()": {
+        "notice": "optional booster module for calculating virtual balances on strategies"
+      },
+      "flywheelRewards()": {
+        "notice": "the rewards contract for managing streams"
+      },
+      "pendingOwner()": {
+        "notice": "Pending owner of this contract"
+      },
+      "performanceFee()": {
+        "notice": "How much rewardsToken will be send to treasury"
+      },
+      "rewardToken()": {
+        "notice": "The token to reward"
+      },
+      "setBooster(address)": {
+        "notice": "swap out the flywheel booster contract"
+      },
+      "setFlywheelRewards(address)": {
+        "notice": "swap out the flywheel rewards contract"
+      },
+      "updateFeeSettings(uint256,address)": {
+        "notice": "Update performanceFee and/or feeRecipient"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 176201,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_initialized",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint8"
+      },
+      {
+        "astId": 176204,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_initializing",
+        "offset": 1,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 178552,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_uint256)50_storage"
+      },
+      {
+        "astId": 175825,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "51",
+        "type": "t_address"
+      },
+      {
+        "astId": 175945,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "52",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 47957,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "pendingOwner",
+        "offset": 0,
+        "slot": "101",
+        "type": "t_address"
+      },
+      {
+        "astId": 54736,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "performanceFee",
+        "offset": 0,
+        "slot": "102",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 54739,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "feeRecipient",
+        "offset": 0,
+        "slot": "103",
+        "type": "t_address"
+      },
+      {
+        "astId": 54743,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "rewardToken",
+        "offset": 0,
+        "slot": "104",
+        "type": "t_contract(ERC20)180913"
+      },
+      {
+        "astId": 54748,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "allStrategies",
+        "offset": 0,
+        "slot": "105",
+        "type": "t_array(t_contract(ERC20)180913)dyn_storage"
+      },
+      {
+        "astId": 54752,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "flywheelRewards",
+        "offset": 0,
+        "slot": "106",
+        "type": "t_contract(IFlywheelRewards)58375"
+      },
+      {
+        "astId": 54756,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "flywheelBooster",
+        "offset": 0,
+        "slot": "107",
+        "type": "t_contract(IFlywheelBooster)54379"
+      },
+      {
+        "astId": 54761,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_rewardsAccrued",
+        "offset": 0,
+        "slot": "108",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 54768,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_strategyState",
+        "offset": 0,
+        "slot": "109",
+        "type": "t_mapping(t_contract(ERC20)180913,t_struct(RewardsState)55244_storage)"
+      },
+      {
+        "astId": 54776,
+        "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+        "label": "_userIndex",
+        "offset": 0,
+        "slot": "110",
+        "type": "t_mapping(t_contract(ERC20)180913,t_mapping(t_address,t_uint224))"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_contract(ERC20)180913)dyn_storage": {
+        "base": "t_contract(ERC20)180913",
+        "encoding": "dynamic_array",
+        "label": "contract ERC20[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)49_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[49]",
+        "numberOfBytes": "1568"
+      },
+      "t_array(t_uint256)50_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[50]",
+        "numberOfBytes": "1600"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(ERC20)180913": {
+        "encoding": "inplace",
+        "label": "contract ERC20",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IFlywheelBooster)54379": {
+        "encoding": "inplace",
+        "label": "contract IFlywheelBooster",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IFlywheelRewards)58375": {
+        "encoding": "inplace",
+        "label": "contract IFlywheelRewards",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_uint224)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint224)",
+        "numberOfBytes": "32",
+        "value": "t_uint224"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_contract(ERC20)180913,t_mapping(t_address,t_uint224))": {
+        "encoding": "mapping",
+        "key": "t_contract(ERC20)180913",
+        "label": "mapping(contract ERC20 => mapping(address => uint224))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_uint224)"
+      },
+      "t_mapping(t_contract(ERC20)180913,t_struct(RewardsState)55244_storage)": {
+        "encoding": "mapping",
+        "key": "t_contract(ERC20)180913",
+        "label": "mapping(contract ERC20 => struct IonicFlywheelCore.RewardsState)",
+        "numberOfBytes": "32",
+        "value": "t_struct(RewardsState)55244_storage"
+      },
+      "t_struct(RewardsState)55244_storage": {
+        "encoding": "inplace",
+        "label": "struct IonicFlywheelCore.RewardsState",
+        "members": [
+          {
+            "astId": 55240,
+            "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+            "label": "index",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint224"
+          },
+          {
+            "astId": 55243,
+            "contract": "contracts/ionic/strategies/flywheel/IonicFlywheelBorrow.sol:IonicFlywheelBorrow",
+            "label": "lastUpdatedTimestamp",
+            "offset": 28,
+            "slot": "0",
+            "type": "t_uint32"
+          }
+        ],
+        "numberOfBytes": "32"
+      },
+      "t_uint224": {
+        "encoding": "inplace",
+        "label": "uint224",
+        "numberOfBytes": "28"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint32": {
+        "encoding": "inplace",
+        "label": "uint32",
+        "numberOfBytes": "4"
+      },
+      "t_uint8": {
+        "encoding": "inplace",
+        "label": "uint8",
+        "numberOfBytes": "1"
+      }
+    }
+  }
+}
