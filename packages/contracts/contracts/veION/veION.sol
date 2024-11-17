@@ -309,6 +309,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       if (!s_assetsLocked[_to].contains(vars.asset)) {
         s_assetsLocked[_to].add(vars.asset);
       }
+
+      if (s_underlyingStake[_from][vars.asset] != 0) {
+        s_underlyingStake[_to][vars.asset] = s_underlyingStake[_from][vars.asset];
+        s_underlyingStake[_from][vars.asset] = 0;
+      }
     }
     _burn(_from);
     emit MergeCompleted(_from, _to, vars.assetsLocked, vars.assetsLocked.length);
