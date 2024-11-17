@@ -4,10 +4,10 @@
 import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-import { type ColumnDef } from '@tanstack/react-table';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
@@ -26,6 +26,9 @@ import TvlTile from '../_components/markets/TvlTile';
 import Popup, { PopupMode } from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 
+import type { EnhancedColumnDef } from '../_components/CommonTable';
+import type { Row } from '@tanstack/react-table';
+
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   { ssr: false }
@@ -34,6 +37,11 @@ const NetworkSelector = dynamic(
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
 });
+
+interface MarketCellProps {
+  row: Row<MarketRowData>;
+  getValue: () => any;
+}
 
 export default function Market() {
   const searchParams = useSearchParams();
@@ -55,23 +63,12 @@ export default function Market() {
     chain
   );
 
-  const columns: ColumnDef<MarketRowData>[] = [
+  const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
-      accessorKey: 'asset',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          ASSETS
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => (
+      id: 'asset',
+      header: 'ASSETS',
+      sortingFn: 'alphabetical',
+      cell: ({ row }: MarketCellProps) => (
         <Link
           href={{
             pathname: `/market/details/${row.original.asset}`,
@@ -89,32 +86,22 @@ export default function Market() {
           }}
           className="flex items-center gap-2"
         >
-          <img
+          <Image
             src={row.original.logo}
             alt={row.original.asset}
+            width={28}
+            height={28}
             className="w-7 h-7"
           />
           <span className="text-sm">{row.original.asset}</span>
         </Link>
-      ),
-      sortingFn: 'alphanumeric'
+      )
     },
     {
-      accessorKey: 'supplyAPRTotal',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          SUPPLY APR
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => (
+      id: 'supplyAPRTotal',
+      header: 'SUPPLY APR',
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="supply"
           aprTotal={row.original.supplyAPRTotal ?? 0}
@@ -126,26 +113,13 @@ export default function Market() {
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
         />
-      ),
-      sortingFn: (a, b) =>
-        (b.original.supplyAPRTotal ?? 0) - (a.original.supplyAPRTotal ?? 0)
+      )
     },
     {
-      accessorKey: 'borrowAPRTotal',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          BORROW APR
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => (
+      id: 'borrowAPRTotal',
+      header: 'BORROW APR',
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="borrow"
           aprTotal={row.original.borrowAPRTotal ?? 0}
@@ -157,96 +131,37 @@ export default function Market() {
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
         />
-      ),
-      sortingFn: (a, b) =>
-        (a.original.borrowAPRTotal ?? 0) - (b.original.borrowAPRTotal ?? 0)
+      )
     },
     {
-      accessorKey: 'supplyBalance',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          SUPPLY BALANCE
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => (
+      id: 'supplyBalance',
+      header: 'SUPPLY BALANCE',
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <span className="text-right">{row.original.supplyBalance}</span>
-      ),
-      sortingFn: (a, b) => {
-        const aValue =
-          parseFloat(
-            (a.original.supplyBalance as string).replace(/[^0-9.-]+/g, '')
-          ) || 0;
-        const bValue =
-          parseFloat(
-            (b.original.supplyBalance as string).replace(/[^0-9.-]+/g, '')
-          ) || 0;
-        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-      }
+      )
     },
     {
-      accessorKey: 'borrowBalance',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          BORROW BALANCE
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => (
+      id: 'borrowBalance',
+      header: 'BORROW BALANCE',
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <span className="text-right">{row.original.borrowBalance}</span>
-      ),
-      sortingFn: (a, b) => {
-        const aValue =
-          parseFloat(
-            (a.original.borrowBalance as string).replace(/[^0-9.-]+/g, '')
-          ) || 0;
-        const bValue =
-          parseFloat(
-            (b.original.borrowBalance as string).replace(/[^0-9.-]+/g, '')
-          ) || 0;
-        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-      }
+      )
     },
     {
-      accessorKey: 'collateralFactor',
-      header: ({ column }) => (
-        <button
-          className="flex items-center gap-2 hover:text-white"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          COLLATERAL FACTOR
-          {column.getIsSorted() === 'asc' ? (
-            <span className="ml-1">↑</span>
-          ) : column.getIsSorted() === 'desc' ? (
-            <span className="ml-1">↓</span>
-          ) : null}
-        </button>
-      ),
-      cell: ({ row }) => <span>{row.original.collateralFactor}%</span>,
-      sortingFn: (a, b) => {
-        const aValue = parseFloat(a.original.collateralFactor) || 0;
-        const bValue = parseFloat(b.original.collateralFactor) || 0;
-        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-      }
+      id: 'collateralFactor',
+      header: 'COLLATERAL FACTOR',
+      sortingFn: 'percentage',
+      cell: ({ row }: MarketCellProps) => (
+        <span>{row.original.collateralFactor}%</span>
+      )
     },
     {
       id: 'actions',
       header: 'SUPPLY/BORROW',
-      cell: ({ row }) => (
+      enableSorting: false,
+      cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col gap-1">
           <button
             className="rounded-md bg-accent disabled:opacity-50 text-black py-1.5 px-1 uppercase truncate"
