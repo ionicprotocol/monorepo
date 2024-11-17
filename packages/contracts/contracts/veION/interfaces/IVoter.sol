@@ -36,6 +36,23 @@ interface IVoter {
     MarketSide side;
   }
 
+  struct VoteVars {
+    uint256 totalWeight;
+    uint256 usedWeight;
+    address market;
+    MarketSide marketSide;
+    address rewardAccumulator;
+    uint256 marketWeight;
+  }
+
+  struct VoteLocalVars {
+    address sender;
+    uint256 timestamp;
+    address[] votingLPs;
+    uint256[] votingLPBalances;
+    uint256[] boosts;
+  }
+
   enum MarketSide {
     Supply,
     Borrow

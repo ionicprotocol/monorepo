@@ -12,7 +12,6 @@ import { AddressesProvider } from "../../ionic/AddressesProvider.sol";
 import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
 import "../../veION/stake/velo/VelodromeStakingWallet.sol";
 import "../../veION/stake/velo/IVeloIonModeStaking.sol";
-import "./Utils.sol";
 
 contract veIONTest is BaseTest {
   veION ve;
