@@ -39,7 +39,7 @@ contract veIONTest is BaseTest {
   uint256 internal constant MINIMUM_LOCK_AMOUNT = 10e18;
   uint256 internal constant REAL_LP_LOCK_AMOUNT = 10e18;
 
-  function _setUp() internal {
+  function _setUp() internal virtual {
     ve = new veION();
     ve.initialize(ap);
     modeVelodrome5050IonMode = new MockERC20("Mode_Velodrome_5050_ION_MODE", "MV5050", 18);
@@ -202,6 +202,10 @@ contract veIONTest is BaseTest {
     vm.stopPrank();
 
     return LockInfo(tokenId, tokenAddresses[0], tokenAmounts[0], durations[0]);
+  }
+
+  function _generateRandomAddress(uint256 seed) internal pure returns (address) {
+    return address(uint160(uint256(keccak256(abi.encodePacked(seed)))));
   }
 }
 

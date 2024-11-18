@@ -136,6 +136,7 @@ interface IveION {
   event MaxEarlyWithdrawFeeSet(uint256 maxEarlyWithdrawFee);
   event PermanentLockCreated(address indexed tokenAddress, uint256 indexed tokenId, uint256 amount);
   event PermanentLockRemoved(address indexed tokenAddress, uint256 indexed tokenId, uint256 amount);
+  event Voted(uint256 _tokenId, bool _voting);
 
   /**
    * @notice Mints a veNFT in exchange for tokens provided.

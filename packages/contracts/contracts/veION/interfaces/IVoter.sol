@@ -43,6 +43,7 @@ interface IVoter {
     MarketSide marketSide;
     address rewardAccumulator;
     uint256 marketWeight;
+    address bribes;
   }
 
   struct VoteLocalVars {
@@ -104,7 +105,7 @@ interface IVoter {
 
   function epochGovernor() external view returns (address);
 
-  function length() external view returns (uint256);
+  function marketsLength() external view returns (uint256);
 
   /// @notice Called by users to update voting balances in voting rewards contracts.
   /// @param _tokenId Id of veNFT whose balance you wish to update.

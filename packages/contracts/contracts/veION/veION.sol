@@ -532,6 +532,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function voting(uint256 _tokenId, bool _voting) external {
     if (_msgSender() != s_voter) revert NotVoter();
     s_voted[_tokenId] = _voting;
+    emit Voted(_tokenId, _voting);
   }
 
   function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {

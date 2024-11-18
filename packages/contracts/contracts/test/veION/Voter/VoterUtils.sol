@@ -2,11 +2,28 @@
 pragma solidity >=0.8.0;
 import "../Utils.sol";
 import "../../../veION/Voter.sol";
+import "./MockBribeRewards.sol";
+import { IVoter } from "../../../veION/interfaces/IVoter.sol";
 
 contract VoterTest is veIONTest {
   Voter voter;
-  function _setUp() internal {
+  uint256 voterTokenIdSingleLp;
+  uint256 voterTokenIdMultiLp;
+  address user;
+
+  address ethMarket;
+  address btcMarket;
+
+  MockBribeRewards bribeEthSupply;
+  MockBribeRewards bribeEthBorrow;
+  MockBribeRewards bribeBtcSupply;
+  MockBribeRewards bribeBtcBorrow;
+
+  function _setUp() internal virtual override {
+    super._setUp();
     voter = new Voter();
+    ethMarket = _generateRandomAddress(1);
+    btcMarket = _generateRandomAddress(2);
 
     address[] memory _tokens = new address[](2);
     _tokens[0] = address(modeVelodrome5050IonMode);
@@ -19,42 +36,58 @@ contract VoterTest is veIONTest {
 
     voter.initialize(_tokens, _mpo, _rewardToken, _ve);
 
-    Market[] memory dummyMarkets = new Market[](4);
-    dummyMarkets[0] = Market(address(0x123), MarketSide.Supply);
-    dummyMarkets[1] = Market(address(0x123), MarketSide.Borrow);
-    dummyMarkets[2] = Market(address(0x789), MarketSide.Supply);
-    dummyMarkets[3] = Market(address(0x789), MarketSide.Borrow);
+    IVoter.Market[] memory dummyMarkets = new IVoter.Market[](4);
+    dummyMarkets[0] = IVoter.Market(ethMarket, IVoter.MarketSide.Supply);
+    dummyMarkets[1] = IVoter.Market(ethMarket, IVoter.MarketSide.Borrow);
+    dummyMarkets[2] = IVoter.Market(btcMarket, IVoter.MarketSide.Supply);
+    dummyMarkets[3] = IVoter.Market(btcMarket, IVoter.MarketSide.Borrow);
     voter.addMarkets(dummyMarkets);
 
     address[] memory marketAddresses = new address[](4);
-    MarketSide[] memory marketSides = new MarketSide[](4);
+    IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](4);
     address[] memory rewardAccumulators = new address[](4);
-    marketAddresses[0] = dummyMarkets[0].marketAddress;
-    marketSides[0] = dummyMarkets[0].side;
+    marketAddresses[0] = ethMarket;
+    marketSides[0] = IVoter.MarketSide.Supply;
     rewardAccumulators[0] = address(0x1111111111111111111111111111111111111111);
-    marketAddresses[1] = dummyMarkets[1].marketAddress;
-    marketSides[1] = dummyMarkets[1].side;
+    marketAddresses[1] = ethMarket;
+    marketSides[1] = IVoter.MarketSide.Borrow;
     rewardAccumulators[1] = address(0x2222222222222222222222222222222222222222);
-    marketAddresses[2] = dummyMarkets[2].marketAddress;
-    marketSides[2] = dummyMarkets[2].side;
+    marketAddresses[2] = btcMarket;
+    marketSides[2] = IVoter.MarketSide.Supply;
     rewardAccumulators[2] = address(0x3333333333333333333333333333333333333333);
-    marketAddresses[3] = dummyMarkets[3].marketAddress;
-    marketSides[3] = dummyMarkets[3].side;
+    marketAddresses[3] = btcMarket;
+    marketSides[3] = IVoter.MarketSide.Borrow;
     rewardAccumulators[3] = address(0x4444444444444444444444444444444444444444);
     voter.setMarketRewardAccumulators(marketAddresses, marketSides, rewardAccumulators);
 
+    bribeEthSupply = new MockBribeRewards();
+    bribeEthBorrow = new MockBribeRewards();
+    bribeBtcSupply = new MockBribeRewards();
+    bribeBtcBorrow = new MockBribeRewards();
+
     address[] memory rewardAccumulatorsForBribes = new address[](4);
     address[] memory bribes = new address[](4);
+
     rewardAccumulatorsForBribes[0] = rewardAccumulators[0];
-    bribes[0] = address(0x5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A);
+    bribes[0] = address(bribeEthSupply);
     rewardAccumulatorsForBribes[1] = rewardAccumulators[1];
-    bribes[1] = address(0x6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B6B);
+    bribes[1] = address(bribeEthBorrow);
     rewardAccumulatorsForBribes[2] = rewardAccumulators[2];
-    bribes[2] = address(0x7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C7C);
+    bribes[2] = address(bribeBtcSupply);
     rewardAccumulatorsForBribes[3] = rewardAccumulators[3];
-    bribes[3] = address(0x8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D);
+    bribes[3] = address(bribeBtcBorrow);
     voter.setBribes(rewardAccumulatorsForBribes, bribes);
 
     voter.setMaxVotingNum(20);
+    user = address(0x9523);
+    vm.warp(block.timestamp + 10 * 365 days);
+
+    LockInfo memory voterLockInfoSingleLp = _createLockInternal(user);
+    LockInfoMultiple memory voterLockInfoMultiLp = _createLockMultipleInternal(user);
+
+    voterTokenIdSingleLp = voterLockInfoSingleLp.tokenId;
+    voterTokenIdMultiLp = voterLockInfoMultiLp.tokenId;
+
+    ve.setVoter(address(voter));
   }
 }
