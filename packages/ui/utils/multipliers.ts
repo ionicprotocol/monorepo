@@ -256,8 +256,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
