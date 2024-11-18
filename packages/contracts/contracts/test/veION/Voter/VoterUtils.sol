@@ -79,6 +79,11 @@ contract VoterTest is veIONTest {
     voter.setBribes(rewardAccumulatorsForBribes, bribes);
 
     voter.setMaxVotingNum(20);
+    address[] memory lpTokens = new address[](2);
+    lpTokens[0] = address(modeVelodrome5050IonMode);
+    lpTokens[1] = address(modeBalancer8020IonEth);
+
+    voter.setLpTokens(lpTokens);
     user = address(0x9523);
     vm.warp(block.timestamp + 10 * 365 days);
 

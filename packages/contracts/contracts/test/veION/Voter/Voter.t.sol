@@ -189,7 +189,91 @@ contract Vote is VoterTest {
     );
   }
 
-  function test_vote_VoteResetsAfterVotingAgain() public {}
+  function test_vote_VoteResetsAfterVotingForSameMarketsAgain() public {
+    VoteLocalVars memory vars;
+
+    vars.marketVote = new address[](2);
+    vars.marketVoteSide = new IVoter.MarketSide[](2);
+    vars.weights = new uint256[](2);
+
+    vars.marketVote[0] = ethMarket;
+    vars.marketVoteSide[0] = IVoter.MarketSide.Supply;
+    vars.weights[0] = 100;
+
+    vars.marketVote[1] = btcMarket;
+    vars.marketVoteSide[1] = IVoter.MarketSide.Borrow;
+    vars.weights[1] = 200;
+
+    vm.prank(user);
+    voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
+
+    vm.warp(block.timestamp + 14 * 86400);
+
+    vars.marketVote[0] = ethMarket;
+    vars.marketVoteSide[0] = IVoter.MarketSide.Supply;
+    vars.weights[0] = 400;
+
+    vars.marketVote[1] = btcMarket;
+    vars.marketVoteSide[1] = IVoter.MarketSide.Borrow;
+    vars.weights[1] = 400;
+
+    vm.startPrank(user);
+    voter.reset(voterTokenIdMultiLp);
+    voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
+    vm.stopPrank();
+
+    (, vars.votingLPBalances, vars.boosts) = ve.balanceOfNFT(voterTokenIdMultiLp);
+
+    (vars.marketVotesVelo, vars.marketVoteSidesVelo, vars.votesVelo, vars.usedWeightVelo) = voter.getVoteDetails(
+      voterTokenIdMultiLp,
+      address(modeVelodrome5050IonMode)
+    );
+
+    (vars.marketVotesBalancer, vars.marketVoteSidesBalancer, vars.votesBalancer, vars.usedWeightBalancer) = voter
+      .getVoteDetails(voterTokenIdMultiLp, address(modeBalancer8020IonEth));
+
+    vars.effectiveVotingPowerVelo = (vars.votingLPBalances[0] * vars.boosts[0]) / 1e18;
+    vars.totalWeightVelo = vars.weights[0] + vars.weights[1];
+
+    vars.effectiveVotingPowerBalancer = (vars.votingLPBalances[1] * vars.boosts[1]) / 1e18;
+    vars.totalWeightBalancer = vars.weights[0] + vars.weights[1];
+
+    // Display vote details for Velodrome
+    console.log("Velodrome Market Votes:");
+    for (uint256 i = 0; i < vars.marketVotesVelo.length; i++) {
+      console.log("Market:", vars.marketVotesVelo[i]);
+      console.log("Market Side:", uint256(vars.marketVoteSidesVelo[i]));
+      console.log("Votes:", vars.votesVelo[i]);
+      assertEq(vars.marketVotesVelo[i], vars.marketVote[i], "Market Vote should be applied");
+      assertEq(
+        uint256(vars.marketVoteSidesVelo[i]),
+        uint256(vars.marketVoteSide[i]),
+        "Market Vote Side should be applied"
+      );
+      assertEq(vars.votesVelo[i], (vars.effectiveVotingPowerVelo * vars.weights[i]) / vars.totalWeightVelo);
+    }
+    console.log("Used Weight for Velodrome:", vars.usedWeightVelo);
+
+    console.log("--------------------------------------------------------------");
+    // Display vote details for Balancer
+    console.log("Balancer Market Votes:");
+    for (uint256 i = 0; i < vars.marketVotesBalancer.length; i++) {
+      console.log("Market:", vars.marketVotesBalancer[i]);
+      console.log("Market Side:", uint256(vars.marketVoteSidesBalancer[i]));
+      console.log("Votes:", vars.votesBalancer[i]);
+
+      assertEq(vars.marketVotesBalancer[i], vars.marketVote[i], "Market Vote should be applied");
+      assertEq(
+        uint256(vars.marketVoteSidesBalancer[i]),
+        uint256(vars.marketVoteSide[i]),
+        "Market Vote Side should be applied"
+      );
+      assertEq(vars.votesBalancer[i], (vars.effectiveVotingPowerBalancer * vars.weights[i]) / vars.totalWeightBalancer);
+    }
+    console.log("Used Weight for Balancer:", vars.usedWeightBalancer);
+  }
+
+  function test_vote_RevertIfSameEpoch() public {}
 }
 
 contract Poke is VoterTest {}
