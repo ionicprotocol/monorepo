@@ -116,13 +116,16 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
       '0xc39441b305705AfD07de97237bC835a4501AbbEC',
       '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
-      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4'
+      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
+      '0x1d0a712aE0162431E0573A8a735D02a29805d124',
+      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
       '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
-      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF'
+      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
+      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424'
     ]
   },
   [optimism.id]: {
@@ -236,7 +239,8 @@ export const pools: Record<number, PoolParams> = {
           'RSR',
           'wstETH',
           'cbETH',
-          'USD+'
+          'USD+',
+          'fBOMB'
         ]
       }
     ]

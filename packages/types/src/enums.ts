@@ -206,6 +206,7 @@ export enum assetSymbols {
   uSOL = "uSOL",
   uSUI = "uSUI",
   sUSDz = "sUSDz",
+  fBOMB = "fBOMB",
 
   // optimism
   OP = "OP",

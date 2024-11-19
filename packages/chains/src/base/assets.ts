@@ -364,6 +364,21 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(80_000)).toString(),
     initialSupplyCap: parseEther(String(100_000)).toString(),
     initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.fBOMB,
+    underlying: fBOMB,
+    name: "Fantom Bomb",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xFB1267A29C0aa19daae4a483ea895862A69e4AA5", // redstone: https://app.redstone.finance/app/feeds/?search=fbomb&page=1&sortBy=popularity&sortDesc=false&perPage=32
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", fBOMB),
+    initialCf: "0.30",
+    initialSupplyCap: parseEther(String(20_000_000)).toString(),
+    initialBorrowCap: parseEther(String(15_000_000)).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {
