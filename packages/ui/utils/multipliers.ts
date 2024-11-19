@@ -622,6 +622,20 @@ export const multipliers: Record<
           underlyingAPR: 15,
           anzen: 5
         }
+      },
+      fBOMB: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          flywheel: false
+        },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },

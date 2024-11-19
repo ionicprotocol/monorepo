@@ -7,6 +7,7 @@ import {
   EURC_MARKET,
   eUSD,
   eUSD_MARKET,
+  fBOMB_MARKET,
   hyUSD,
   hyUSD_MARKET,
   ION,
@@ -432,7 +433,7 @@ task("base:add-rewards:epoch5:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = wstETH_MARKET;
+    const market = fBOMB_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
