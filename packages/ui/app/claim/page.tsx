@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 
-import { createClient } from '@supabase/supabase-js';
-import { formatEther, parseEther } from 'viem';
+// import { createClient } from '@supabase/supabase-js';
+import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -13,10 +13,10 @@ import {
   useWalletClient
 } from 'wagmi';
 
-const supabase = createClient(
-  'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/airdrop_season_2?select=*',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
-);
+// const supabase = createClient(
+//   'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/airdrop_season_2?select=*',
+//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
+// );
 
 // Create a single supabase client for interacting with your database
 // import { simulateContract } from 'viem/contract'
@@ -24,7 +24,11 @@ import { DROPDOWN } from '@ui/constants/index';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import { claimAbi, claimContractAddress } from '../../constants/claim';
+import {
+  claimAbi,
+  claimContractAddress,
+  claimContractAddressSeason2
+} from '../../constants/claim';
 import {
   PublicSaleAbi,
   PublicSaleContractAddress
@@ -34,7 +38,7 @@ import EligibilityPopup from '../_components/claim/EligibilityPopup';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { User } from '../_components/claim/EligibilityPopup';
+// import type { User } from '../_components/claim/EligibilityPopup';
 
 export default function Claim() {
   const [season1Claimable, setseason1Claimable] = useState(BigInt(0));
@@ -51,6 +55,7 @@ export default function Claim() {
   // const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [haveClaimed, setHaveClaimed] = useState(false);
+  const [haveClaimedS2, setHaveClaimedS2] = useState(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
     useState<number>(DROPDOWN.AirdropSZN2);
   const [popupV2, setPopupV2] = useState(false);
@@ -65,33 +70,44 @@ export default function Claim() {
     //we setting this to what we want for season 2
     async function getVested() {
       try {
-        if (!isConnected) return;
+        if (!isConnected || !address || !publicClient) return;
         await handleSwitchOriginChain(mode.id, chainId);
-        const totalTokenData = await publicClient?.readContract({
+        const totalTokenData = await publicClient.readContract({
           abi: claimAbi,
           address: claimContractAddress,
           args: [address],
           functionName: 'vests'
         });
 
-        const claimable = await publicClient?.readContract({
+        const claimable = await publicClient.readContract({
           abi: claimAbi,
           address: claimContractAddress,
           args: [address],
           functionName: 'claimable'
         });
 
-        const total = totalTokenData as [bigint, bigint, boolean];
-
-        setseason1Claimable(claimable as bigint);
-        setseason1TotalTokens(total[0]);
+        setseason1Claimable(claimable);
+        setseason1TotalTokens(totalTokenData[0]);
         // setAlreadyClaimed(total[1]);
-        setHaveClaimed(total[2]);
-        // eslint-disable-next-line no-console
-        // console.log(totalTokenData, claimable);
+        setHaveClaimed(totalTokenData[2]);
+
+        const totalTokenDataS2 = await publicClient.readContract({
+          abi: claimAbi,
+          address: claimContractAddressSeason2,
+          args: [address],
+          functionName: 'vests'
+        });
+        const claimableS2 = await publicClient.readContract({
+          abi: claimAbi,
+          address: claimContractAddressSeason2,
+          args: [address],
+          functionName: 'claimable'
+        });
+        setseason2Claimable(claimableS2);
+        setseason2TotalTokens(totalTokenDataS2[0]);
+        setHaveClaimedS2(totalTokenDataS2[2]);
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
+        console.error(err);
       }
     }
     getVested();
@@ -200,35 +216,6 @@ export default function Claim() {
     }
   }
 
-  useEffect(() => {
-    async function getseason2Eligible() {
-      try {
-        const { data: airdrop, error } = await supabase
-          .from('airdrop_season_2')
-          .select('*')
-          .ilike('user', address!);
-        if (error) {
-          throw new Error('Error fetching user: ' + error);
-        }
-        // console.log(airdrop);
-        const [_user]: User[] = airdrop;
-
-        if (!_user || _user.ion_amount === '0') {
-          throw new Error('User not found or amount is 0');
-        }
-        setseason2TotalTokens(parseEther(_user.ion_amount));
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    getseason2Eligible();
-  }, [
-    address,
-    dropdownSelectedCampaign,
-    season1TotalTokens,
-    publicTotalTokens
-  ]);
-
   const {
     componentRef: eligibleRef,
     isopen: eligibleOpen,
@@ -264,7 +251,7 @@ export default function Claim() {
   const isDisabled =
     Number(formatEther(claimableTokens)) == 0 ||
     (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && haveClaimed == true) ||
-    dropdownSelectedCampaign == DROPDOWN.AirdropSZN2
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN2 && haveClaimedS2 == true)
       ? true
       : false;
 
