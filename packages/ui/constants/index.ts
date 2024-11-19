@@ -236,7 +236,8 @@ export const pools: Record<number, PoolParams> = {
           'RSR',
           'wstETH',
           'cbETH',
-          'USD+'
+          'USD+',
+          'fBOMB'
         ]
       }
     ]

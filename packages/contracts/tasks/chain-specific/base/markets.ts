@@ -2,11 +2,11 @@ import { task } from "hardhat/config";
 import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.sUSDz];
+  const assetsToDeploy: string[] = [assetSymbols.fBOMB];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     console.log("Deploying market for ", asset.symbol, asset.name);
     await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
@@ -26,21 +26,23 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log(`Deployed ${asset.symbol} at ${cToken}`);
 
-    await run("market:set-supply-cap", {
-      market: cToken,
-      maxSupply: asset.initialSupplyCap
-    });
+    if (cToken !== zeroAddress) {
+      await run("market:set-supply-cap", {
+        market: cToken,
+        maxSupply: asset.initialSupplyCap
+      });
 
-    await run("market:set-borrow-cap", {
-      market: cToken,
-      maxBorrow: asset.initialBorrowCap
-    });
+      await run("market:set-borrow-cap", {
+        market: cToken,
+        maxBorrow: asset.initialBorrowCap
+      });
+    }
   }
 });
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.sUSDz);
+  const asset = base.assets.find((asset) => asset.symbol === assetSymbols.fBOMB);
   if (!asset) {
     throw new Error("asset not found in base assets");
   }
@@ -49,23 +51,23 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
   const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
   const admin = await pool.read.admin();
   const ap = await deployments.get("AddressesProvider");
-  // if (admin.toLowerCase() !== deployer.toLowerCase()) {
-  //   await prepareAndLogTransaction({
-  //     contractInstance: asExt,
-  //     functionName: "_setAddressesProvider",
-  //     args: [ap.address as Address],
-  //     description: "Set Addresses Provider",
-  //     inputs: [
-  //       {
-  //         internalType: "address",
-  //         name: "_ap",
-  //         type: "address"
-  //       }
-  //     ]
-  //   });
-  // } else {
-  //   await asExt.write._setAddressesProvider([ap.address as Address]);
-  // }
+  if (admin.toLowerCase() !== deployer.toLowerCase()) {
+    await prepareAndLogTransaction({
+      contractInstance: asExt,
+      functionName: "_setAddressesProvider",
+      args: [ap.address as Address],
+      description: "Set Addresses Provider",
+      inputs: [
+        {
+          internalType: "address",
+          name: "_ap",
+          type: "address"
+        }
+      ]
+    });
+  } else {
+    await asExt.write._setAddressesProvider([ap.address as Address]);
+  }
 
   await run("market:set-borrow-cap", {
     market: cToken,
