@@ -509,6 +509,88 @@ task("base:add-rewards:epoch5:borrow", "add rewards to a market").setAction(
   }
 );
 
+task("base:add-rewards:epoch5:supply:reserve", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = eUSD;
+    const rewardTokenName = "eUSD";
+    const market = hyUSD_MARKET;
+    const _market = await viem.getContractAt("EIP20Interface", market);
+    const name = await _market.read.name();
+
+    const rewardAmount = (2_000).toString();
+
+    console.log("setting rewards for token: ", name, rewardAmount, rewardTokenName);
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "supply",
+      market,
+      rewardTokenName,
+      rewardToken,
+      SUPPLY_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address,
+      "IonicFlywheel_eUSD_epoch5",
+      "IonicFlywheelDynamicRewards_eUSD_epoch5"
+    );
+  }
+);
+
+task("base:add-rewards:epoch5:borrow:reserve", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer, multisig } = await getNamedAccounts();
+    const rewardToken = hyUSD;
+    const rewardTokenName = "hyUSD";
+    const market = eUSD_MARKET;
+    const _market = await viem.getContractAt("EIP20Interface", market);
+    const name = await _market.read.name();
+
+    const rewardAmount = (900).toString();
+
+    console.log("setting rewards for token: ", name, rewardAmount);
+    await new Promise((resolve) => setTimeout(resolve, 4000));
+
+    // Sending tokens
+    const _rewardToken = await viem.getContractAt("EIP20Interface", rewardToken);
+    let balance = await _rewardToken.read.balanceOf([market]);
+    console.log("balance: ", balance);
+    if (balance < parseEther(rewardAmount)) {
+      const tx = await _rewardToken.write.transfer([market, parseEther(rewardAmount) - balance]);
+      console.log(`Sent ${rewardAmount} ${rewardTokenName} to ${market} - ${tx}`);
+    } else {
+      console.log(`Market already has enough ${rewardTokenName} - ${market}`);
+    }
+
+    await setupRewards(
+      "borrow",
+      market,
+      rewardTokenName,
+      rewardToken,
+      BORROW_DURATION,
+      deployer as Address,
+      viem,
+      deployments,
+      multisig as Address,
+      "IonicFlywheelBorrow_Borrow_hyUSD_epoch5",
+      "IonicFlywheelDynamicRewards_Borrow_hyUSD_epoch5"
+    );
+  }
+);
+
 task("base:approve-flywheel", "approve flywheel for market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();

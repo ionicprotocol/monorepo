@@ -355,7 +355,7 @@ export const multipliers: Record<
           underlyingAPR: 3.5,
           turtle: false,
           ionAPR: false,
-          flywheel: false
+          flywheel: true
         },
         borrow: {
           ionic: 0,
