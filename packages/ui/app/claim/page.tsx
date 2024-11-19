@@ -296,9 +296,10 @@ export default function Claim() {
             <p>Welcome to the </p> <p>$ION Airdrop </p>
             <button
               className={`rounded-md bg-accent disabled:opacity-50 text-black py-1.5  text-xs  uppercase truncate w-max px-6 mt-4 `}
-              onClick={() => eligibletoggle()}
+              // onClick={() => eligibletoggle()}
+              disabled={true}
             >
-              Check Eligibility
+              Eligibility Check Period Expired
             </button>
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
