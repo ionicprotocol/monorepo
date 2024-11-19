@@ -78,15 +78,10 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
     market: cToken,
     maxSupply: asset.initialSupplyCap
   });
-
-  await run("market:set:ltv", {
-    marketAddress: cToken,
-    ltv: asset.initialCf
-  });
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.wsuperOETHb)) {
+  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.fBOMB)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
