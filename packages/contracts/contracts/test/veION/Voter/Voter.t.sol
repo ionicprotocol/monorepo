@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "./VoterUtils.sol";
+import { UniswapLpTokenPriceOracle } from "../../../oracles/default/UniswapLpTokenPriceOracle.sol";
+import { BasePriceOracle } from "../../../oracles/BasePriceOracle.sol";
 
 contract Vote is VoterTest {
   function setUp() public {
@@ -1115,18 +1117,76 @@ contract Reset is VoterTest {
   }
 }
 
-contract DistributeRewards is VoterTest {}
+contract DistributeRewards is VoterTest {
+  address ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
+  address weth = 0x4200000000000000000000000000000000000006;
+  address ionWhale = 0x7862Ba142511eEf11a5a8b179DB4F53AC115AB59;
+  address[] markets;
+  IVoter.MarketSide[] sides;
+  uint256[] weights;
+  function afterForkSetUp() internal override {
+    super.afterForkSetUp();
+
+    markets = new address[](4);
+    sides = new IVoter.MarketSide[](4);
+    weights = new uint256[](4);
+
+    markets[0] = ethMarket;
+    sides[0] = IVoter.MarketSide.Supply;
+    weights[0] = 100;
+
+    markets[1] = ethMarket;
+    sides[1] = IVoter.MarketSide.Borrow;
+    weights[1] = 100;
+
+    markets[2] = btcMarket;
+    sides[2] = IVoter.MarketSide.Supply;
+    weights[2] = 100;
+
+    markets[3] = btcMarket;
+    sides[3] = IVoter.MarketSide.Borrow;
+    weights[3] = 100;
+
+    vm.prank(user);
+    voter.vote(baseTokenIdSingleLp, markets, sides, weights);
+
+    ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
+    weth = 0x4200000000000000000000000000000000000006;
+    UniswapLpTokenPriceOracle uniswapLpTokenPriceOracle = new UniswapLpTokenPriceOracle(address(weth));
+    address[] memory underlyings = new address[](1);
+    BasePriceOracle[] memory oracles = new BasePriceOracle[](1);
+
+    underlyings[0] = address(ionWeth5050lPAero);
+    oracles[0] = BasePriceOracle(address(uniswapLpTokenPriceOracle));
+
+    vm.prank(mpo.admin());
+    mpo.add(underlyings, oracles);
+  }
+
+  function test_Distribute_RewardsCanBeDistributed() public fork(BASE_MAINNET) {
+    uint256 ionPrice = mpo.price(ion);
+    uint256 wethPrice = mpo.price(weth);
+
+    uint256 ionWethLpPrice = mpo.price(ionWeth5050lPAero);
+
+    console.log("ION Price:", ionPrice);
+    console.log("WETH Price:", wethPrice);
+    console.log("ION-WETH LP Price:", ionWethLpPrice);
+
+    vm.warp(voter.epochVoteEnd(block.timestamp) + 1);
+
+    vm.prank(ionWhale);
+    IERC20(ion).transfer(address(voter), 1_000_000 * 1e18);
+    voter.distributeRewards();
+
+    for (uint256 i = 0; i < markets.length; i++) {
+      address rewardAccumulator = voter.marketToRewardAccumulators(markets[i], sides[i]);
+      uint256 ionBalance = IERC20(ion).balanceOf(rewardAccumulator);
+      console.log("ION Balance for Reward Accumulator", rewardAccumulator, ":", ionBalance);
+    }
+  }
+}
 
 contract ClaimBribes is VoterTest {}
 
-contract SetGovernorTest is VoterTest {}
-
-contract SetEpochGovernorTest is VoterTest {}
-
-contract SetMarketRewardAccumulatorsTest is VoterTest {}
-
-contract SetBribesTest is VoterTest {}
-
-contract SetMaxVotingNumTest is VoterTest {}
-
-contract AddMarketsTest is VoterTest {}
+contract Setters is VoterTest {}

@@ -76,6 +76,11 @@ contract Voter is IVoter, OwnableUpgradeable {
     _;
   }
 
+  modifier onlyGovernance() {
+    if (msg.sender != governor) revert NotGovernor();
+    _;
+  }
+
   /// @dev requires initialization with at least rewardToken
   function initialize(
     address[] calldata _tokens,
@@ -176,8 +181,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   // ║                           Admin External Functions                        ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
-  function distributeRewards() external {
-    if (msg.sender != governor) revert NotGovernor();
+  function distributeRewards() external onlyGovernance {
     if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
     uint256 _totalLPValueETH = _calculateTotalLPValue();
@@ -193,15 +197,13 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function whitelistToken(address _token, bool _bool) external {
-    if (msg.sender != governor) revert NotGovernor();
+  function whitelistToken(address _token, bool _bool) external onlyGovernance {
     _whitelistToken(_token, _bool);
   }
 
   /// @inheritdoc IVoter
-  function whitelistNFT(uint256 _tokenId, bool _bool) external {
+  function whitelistNFT(uint256 _tokenId, bool _bool) external onlyGovernance {
     address _sender = msg.sender;
-    if (_sender != governor) revert NotGovernor();
     isWhitelistedNFT[_tokenId] = _bool;
     emit WhitelistNFT(_sender, _tokenId, _bool);
   }
@@ -369,21 +371,18 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function setGovernor(address _governor) public {
-    if (msg.sender != governor) revert NotGovernor();
+  function setGovernor(address _governor) public onlyOwner {
     if (_governor == address(0)) revert ZeroAddress();
     governor = _governor;
   }
 
   /// @inheritdoc IVoter
-  function setEpochGovernor(address _epochGovernor) public {
-    if (msg.sender != governor) revert NotGovernor();
+  function setEpochGovernor(address _epochGovernor) public onlyGovernance {
     if (_epochGovernor == address(0)) revert ZeroAddress();
     epochGovernor = _epochGovernor;
   }
 
-  function addMarkets(Market[] calldata _markets) external {
-    if (msg.sender != governor) revert NotGovernor();
+  function addMarkets(Market[] calldata _markets) external onlyGovernance {
     for (uint256 i = 0; i < _markets.length; i++) {
       Market memory newMarket = _markets[i];
       if (_marketExists(newMarket.marketAddress, newMarket.side)) revert MarketAlreadyExists();
@@ -395,8 +394,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     address[] calldata _markets,
     MarketSide[] calldata _marketSides,
     address[] calldata _rewardAccumulators
-  ) external {
-    if (msg.sender != governor) revert NotGovernor();
+  ) external onlyGovernance {
     uint256 _length = _markets.length;
     if (_marketSides.length != _length) revert MismatchedArrayLengths();
     if (_rewardAccumulators.length != _length) revert MismatchedArrayLengths();
@@ -406,8 +404,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
   }
 
-  function setBribes(address[] calldata _rewardAccumulators, address[] calldata _bribes) external {
-    if (msg.sender != governor) revert NotGovernor();
+  function setBribes(address[] calldata _rewardAccumulators, address[] calldata _bribes) external onlyGovernance {
     uint256 _length = _bribes.length;
     if (_rewardAccumulators.length != _length) revert MismatchedArrayLengths();
     for (uint256 i = 0; i < _length; i++) {
@@ -415,15 +412,17 @@ contract Voter is IVoter, OwnableUpgradeable {
     }
   }
 
-  function setMaxVotingNum(uint256 _maxVotingNum) external {
-    if (msg.sender != governor) revert NotGovernor();
+  function setMaxVotingNum(uint256 _maxVotingNum) external onlyGovernance {
     if (_maxVotingNum < MIN_MAXVOTINGNUM) revert MaximumVotingNumberTooLow();
     if (_maxVotingNum == maxVotingNum) revert SameValue();
     maxVotingNum = _maxVotingNum;
   }
 
-  function toggleRewardAccumulatorAlive(address _market, MarketSide _marketSide, bool _isAlive) external {
-    if (msg.sender != governor) revert NotGovernor();
+  function toggleRewardAccumulatorAlive(
+    address _market,
+    MarketSide _marketSide,
+    bool _isAlive
+  ) external onlyGovernance {
     address _rewardAccumulator = marketToRewardAccumulators[_market][_marketSide];
     if (_rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(_market);
     isAlive[_rewardAccumulator] = _isAlive;

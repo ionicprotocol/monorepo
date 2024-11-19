@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
+
 import "../Utils.sol";
 import "../../../veION/Voter.sol";
 import "./MockBribeRewards.sol";
@@ -20,6 +21,10 @@ contract VoterTest is veIONTest {
   MockBribeRewards bribeEthBorrow;
   MockBribeRewards bribeBtcSupply;
   MockBribeRewards bribeBtcBorrow;
+
+  uint256 baseTokenIdSingleLp;
+
+  MasterPriceOracle mpo;
 
   function _setUp() internal virtual override {
     super._setUp();
@@ -96,5 +101,104 @@ contract VoterTest is veIONTest {
     voterTokenIdMultiLp = voterLockInfoMultiLp.tokenId;
 
     ve.setVoter(address(voter));
+  }
+
+  function afterForkSetUp() internal virtual override {
+    ve = new veION();
+    ve.initialize(ap);
+
+    ionWeth5050lPAero = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    address[] memory whitelistedTokens = new address[](1);
+    bool[] memory isWhitelistedTokens = new bool[](1);
+    whitelistedTokens[0] = ionWeth5050lPAero;
+    isWhitelistedTokens[0] = true;
+
+    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    ve.setLpTokenType(ionWeth5050lPAero, IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH);
+
+    ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
+    ve.setMinimumLockDuration(MINTIME);
+    ve.setMinimumLockAmount(address(ionWeth5050lPAero), MINIMUM_LOCK_AMOUNT);
+
+    ethMarket = 0x49420311B518f3d0c94e897592014de53831cfA3;
+    btcMarket = 0x1De166df671AE6DB4C4C98903df88E8007593748;
+
+    address[] memory _tokens = new address[](1);
+    _tokens[0] = address(0x0FAc819628a7F612AbAc1CaD939768058cc0170c);
+
+    mpo = MasterPriceOracle(0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4);
+    IERC20 ion = IERC20(0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5);
+
+    voter = new Voter();
+    voter.initialize(_tokens, mpo, address(ion), address(ve));
+
+    IVoter.Market[] memory markets = new IVoter.Market[](4);
+    markets[0] = IVoter.Market(ethMarket, IVoter.MarketSide.Supply);
+    markets[1] = IVoter.Market(ethMarket, IVoter.MarketSide.Borrow);
+    markets[2] = IVoter.Market(btcMarket, IVoter.MarketSide.Supply);
+    markets[3] = IVoter.Market(btcMarket, IVoter.MarketSide.Borrow);
+    voter.addMarkets(markets);
+
+    address[] memory marketAddresses = new address[](4);
+    IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](4);
+    address[] memory rewardAccumulators = new address[](4);
+    marketAddresses[0] = ethMarket;
+    marketSides[0] = IVoter.MarketSide.Supply;
+    rewardAccumulators[0] = address(0x1111111111111111111111111111111111111111);
+    marketAddresses[1] = ethMarket;
+    marketSides[1] = IVoter.MarketSide.Borrow;
+    rewardAccumulators[1] = address(0x2222222222222222222222222222222222222222);
+    marketAddresses[2] = btcMarket;
+    marketSides[2] = IVoter.MarketSide.Supply;
+    rewardAccumulators[2] = address(0x3333333333333333333333333333333333333333);
+    marketAddresses[3] = btcMarket;
+    marketSides[3] = IVoter.MarketSide.Borrow;
+    rewardAccumulators[3] = address(0x4444444444444444444444444444444444444444);
+    voter.setMarketRewardAccumulators(marketAddresses, marketSides, rewardAccumulators);
+
+    bribeEthSupply = new MockBribeRewards();
+    bribeEthBorrow = new MockBribeRewards();
+    bribeBtcSupply = new MockBribeRewards();
+    bribeBtcBorrow = new MockBribeRewards();
+    address[] memory rewardAccumulatorsForBribes = new address[](4);
+    address[] memory bribes = new address[](4);
+    rewardAccumulatorsForBribes[0] = rewardAccumulators[0];
+    bribes[0] = address(bribeEthSupply);
+    rewardAccumulatorsForBribes[1] = rewardAccumulators[1];
+    bribes[1] = address(bribeEthBorrow);
+    rewardAccumulatorsForBribes[2] = rewardAccumulators[2];
+    bribes[2] = address(bribeBtcSupply);
+    rewardAccumulatorsForBribes[3] = rewardAccumulators[3];
+    bribes[3] = address(bribeBtcBorrow);
+    voter.setBribes(rewardAccumulatorsForBribes, bribes);
+
+    voter.setMaxVotingNum(20);
+
+    address[] memory lpTokens = new address[](1);
+    lpTokens[0] = address(ionWeth5050lPAero);
+    voter.setLpTokens(lpTokens);
+
+    user = address(0x9523);
+    ve.setVoter(address(voter));
+
+    uint256 amountStaked = REAL_LP_LOCK_AMOUNT;
+    address whale = 0x9b42e5F8c45222b2715F804968251c747c588fd7;
+    vm.prank(whale);
+    IERC20(ionWeth5050lPAero).transfer(user, amountStaked);
+
+    address[] memory tokenAddresses = new address[](1);
+    uint256[] memory tokenAmounts = new uint256[](1);
+    uint256[] memory durations = new uint256[](1);
+    bool[] memory stakeUnderlying = new bool[](1);
+    tokenAddresses[0] = address(ionWeth5050lPAero);
+    tokenAmounts[0] = amountStaked;
+    durations[0] = 52 weeks;
+    stakeUnderlying[0] = false;
+
+    vm.startPrank(user);
+    IERC20(ionWeth5050lPAero).approve(address(ve), amountStaked);
+    baseTokenIdSingleLp = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.stopPrank();
   }
 }

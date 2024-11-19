@@ -26,6 +26,7 @@ contract veIONTest is BaseTest {
   VelodromeStakingWallet veloStakingWalletImplementation;
 
   address ionMode5050LP;
+  address ionWeth5050lPAero;
   address veloGauge;
   VeloIonModeStakingStrategy veloIonModeStakingStrategy;
   address stakingWalletInstance;
