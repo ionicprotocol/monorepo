@@ -159,44 +159,26 @@ export default function Market() {
     },
     {
       id: 'actions',
-      header: 'SUPPLY/BORROW',
+      header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col gap-1">
-          <button
-            className="rounded-md bg-accent disabled:opacity-50 text-black py-1.5 px-1 uppercase truncate"
-            onClick={async () => {
-              const result = await handleSwitchOriginChain(+chain, chainId);
-              if (result) {
-                setSelectedSymbol(row.original.asset);
-                setPopupMode(PopupMode.SUPPLY);
-              }
-            }}
-            disabled={!address}
-          >
-            Supply / Withdraw
-          </button>
-          <button
-            className={`rounded-md ${pools[+chain].bg} ${
-              pools[+chain].text
-            } disabled:opacity-50 py-1.5 px-1 uppercase truncate`}
-            onClick={async () => {
-              const result = await handleSwitchOriginChain(+chain, chainId);
-              if (result) {
-                setSelectedSymbol(row.original.asset);
-                setPopupMode(PopupMode.BORROW);
-              }
-            }}
-            disabled={
-              (!address || row.original.isBorrowDisabled) &&
-              !row.original.loopPossible
+        <button
+          className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
+          onClick={async () => {
+            const result = await handleSwitchOriginChain(+chain, chainId);
+            if (result) {
+              setSelectedSymbol(row.original.asset);
+              setPopupMode(
+                row.original.isBorrowDisabled && row.original.loopPossible
+                  ? PopupMode.LOOP
+                  : PopupMode.SUPPLY
+              );
             }
-          >
-            {row.original.isBorrowDisabled && row.original.loopPossible
-              ? 'Loop'
-              : `Borrow / Repay${row.original.loopPossible ? ' / Loop' : ''}`}
-          </button>
-        </div>
+          }}
+          disabled={!address}
+        >
+          Manage
+        </button>
       )
     }
   ];

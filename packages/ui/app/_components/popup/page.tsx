@@ -6,7 +6,6 @@ import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 
 import { useQueryClient } from '@tanstack/react-query';
-import millify from 'millify';
 import toast from 'react-hot-toast';
 import {
   type Address,
@@ -18,6 +17,13 @@ import {
 } from 'viem';
 import { useChainId } from 'wagmi';
 
+import { Dialog, DialogContent } from '@ui/components/ui/dialog';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from '@ui/components/ui/tabs';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
@@ -39,15 +45,14 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import Amount from './Amount';
-import MemoizedDonutChart from './DonutChart';
 import Loop from './Loop';
-import SliderComponent from './Slider';
-import Tab from './Tab';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './TransactionStepsHandler';
-import ResultHandler from '../ResultHandler';
+import { useTransactionSteps } from './TransactionStepsHandler';
+import {
+  SupplyTab,
+  WithdrawTab,
+  BorrowTab,
+  RepayTab
+} from '../markets/ManageTabs';
 
 import { FundOperationMode } from '@ionicprotocol/types';
 
@@ -165,18 +170,17 @@ const Popup = ({
     [selectedMarketData],
     chainId
   );
-  const collateralApr = useMemo<string>(() => {
+  const collateralApr = useMemo<number>(() => {
     // Todo: add the market rewards to this calculation
     if (assetsSupplyAprData) {
-      return `${assetsSupplyAprData[selectedMarketData.cToken].apy.toFixed(
-        2
-      )}%`;
+      return parseFloat(
+        assetsSupplyAprData[selectedMarketData.cToken].apy.toFixed(2)
+      );
     }
 
-    return '0.00%';
+    return 0.0;
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<PopupMode>(mode);
-  const slide = useRef<HTMLDivElement>(null!);
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
       value,
@@ -455,31 +459,19 @@ const Popup = ({
 
     switch (active) {
       case PopupMode.SUPPLY:
-        slide.current.style.transform = 'translateX(0%)';
-
         setCurrentFundOperation(FundOperationMode.SUPPLY);
-
         break;
 
       case PopupMode.WITHDRAW:
-        slide.current.style.transform = 'translateX(-100%)';
-
         setCurrentFundOperation(FundOperationMode.WITHDRAW);
-
         break;
 
       case PopupMode.BORROW:
-        slide.current.style.transform = 'translateX(0%)';
-
         setCurrentFundOperation(FundOperationMode.BORROW);
-
         break;
 
       case PopupMode.REPAY:
-        slide.current.style.transform = 'translateX(-100%)';
-
         setCurrentFundOperation(FundOperationMode.REPAY);
-
         break;
     }
   }, [active, mode, upsertTransactionStep]);
@@ -1193,31 +1185,12 @@ const Popup = ({
   }, [predictedHealthFactor]);
   return (
     <>
-      <div
-        className={` z-40 fixed top-0 right-0 w-full h-screen  bg-black/25 flex transition-opacity duration-300 overflow-y-auto animate-fade-in ${
-          isMounted && 'animated'
-        }`}
+      <Dialog
+        open={isMounted}
+        onOpenChange={(open) => !open && initiateCloseAnimation()}
       >
-        <SwapWidget
-          close={() => setSwapWidgetOpen(false)}
-          open={swapWidgetOpen}
-          fromChain={chainId}
-          toChain={chainId}
-          toToken={selectedMarketData.underlyingToken}
-          onRouteExecutionCompleted={() => refetchMaxSupplyAmount()}
-        />
-        <div
-          className={`w-[85%] sm:w-[55%] md:w-[45%] relative m-auto bg-grayUnselect rounded-xl overflow-hidden scrollbar-hide transition-all duration-300 animate-pop-in ${
-            isMounted && 'animated'
-          }`}
-        >
-          <img
-            alt="close"
-            className={` h-5 z-10 absolute right-4 top-3 cursor-pointer `}
-            onClick={initiateCloseAnimation}
-            src="/img/assets/close.png"
-          />
-          <div className={`flex w-20 mx-auto mt-4 mb-2 relative text-center`}>
+        <DialogContent className="w-[85%] sm:w-[55%] md:w-[45%] bg-grayUnselect">
+          <div className="flex w-20 mx-auto relative text-center">
             <img
               alt="modlogo"
               className="mx-auto"
@@ -1226,617 +1199,200 @@ const Popup = ({
               width="32"
             />
           </div>
-          <Tab
-            active={active}
-            loopPossible={
-              loopMarkets
-                ? loopMarkets[selectedMarketData.cToken].length > 0
-                : false
-            }
-            mode={mode}
-            setActive={setActive}
-            borrowPossible={borrowCap ? borrowCap?.totalBorrowCap > 1n : true}
-          />
-          {/* all the respective slides */}
 
-          <div
-            className={`w-full transition-all duration-300 ease-linear h-min  flex`}
-            ref={slide}
+          <Tabs
+            defaultValue={active === PopupMode.SUPPLY ? 'supply' : 'borrow'}
+            onValueChange={(value) => {
+              switch (value) {
+                case 'supply':
+                  setActive(PopupMode.SUPPLY);
+                  break;
+                case 'withdraw':
+                  setActive(PopupMode.WITHDRAW);
+                  break;
+                case 'borrow':
+                  setActive(PopupMode.BORROW);
+                  break;
+                case 'repay':
+                  setActive(PopupMode.REPAY);
+                  break;
+              }
+            }}
           >
-            {(mode === PopupMode.SUPPLY || mode === PopupMode.WITHDRAW) && (
-              <>
-                {/* ---------------------------------------------------------------------------- */}
-                {/* SUPPLY-Collateral section */}
-                {/* ---------------------------------------------------------------------------- */}
-                <div className={`min-w-full pb-5 px-[6%] h-min `}>
-                  <button
-                    className={`w-full font-bold uppercase rounded-md py-1 transition-colors bg-accent text-darkone text-xs mx-auto my-2`}
-                    onClick={() => setSwapWidgetOpen(true)}
-                  >
-                    Get {selectedMarketData.underlyingSymbol}
-                  </button>
-                  {/* <div className={`w-full flex items-center justify-center`}> */}
-                  {/* </div> */}
-                  <Amount
-                    amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
-                    isLoading={isLoadingMaxSupply}
-                    max={formatUnits(
-                      maxSupplyAmount?.bigNumber ?? 0n,
-                      selectedMarketData.underlyingDecimals
-                    )}
-                    selectedMarketData={selectedMarketData}
-                    symbol={selectedMarketData.underlyingSymbol}
-                  />
-                  <SliderComponent
-                    currentUtilizationPercentage={currentUtilizationPercentage}
-                    handleUtilization={handleSupplyUtilization}
-                  />
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="supply">Supply</TabsTrigger>
+              <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
+              <TabsTrigger value="borrow">Borrow</TabsTrigger>
+              <TabsTrigger value="repay">Repay</TabsTrigger>
+            </TabsList>
 
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between text-sm text-white/50 `}
-                  >
-                    <span className={``}>COLLATERAL APR</span>
-                    <span className={`font-bold pl-2`}>
-                      {collateralApr}
-                      {/* to do: add the rewards to the calculation */}
-                    </span>
-                  </div>
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase `}
-                  >
-                    <span className={``}>Market Supply Balance</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {supplyBalanceFrom}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {supplyBalanceTo}
-                      </ResultHandler>
-                      {/* this will be dynamic */}
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Market Supply APR</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${supplyAPY?.toFixed(2)}%`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {updatedSupplyAPY?.toFixed(2)}%
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  {/* <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Health Factor</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${Number(healthFactor).toFixed(2)}`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingPredictedHealthFactor}
-                        width="16"
-                      >
-                        {Number(
-                          formatEther(predictedHealthFactor ?? 0n)
-                        ).toFixed(2)}
-                      </ResultHandler>
-                    </span>
-                  </div> */}
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
+            <TabsContent value="supply">
+              <SupplyTab
+                selectedMarketData={selectedMarketData}
+                amount={amount}
+                setAmount={setAmount}
+                currentUtilizationPercentage={currentUtilizationPercentage}
+                handleUtilization={handleSupplyUtilization}
+                hfpStatus={hfpStatus}
+                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
+                transactionSteps={transactionSteps}
+                resetTransactionSteps={resetTransactionSteps}
+                chainId={chainId}
+                maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
+                onAction={supplyAmount}
+                isLoadingMax={isLoadingMaxSupply}
+                isDisabled={!amount || amountAsBInt === 0n}
+                updatedValues={{
+                  balanceFrom: supplyBalanceFrom,
+                  balanceTo: supplyBalanceTo,
+                  aprFrom: supplyAPY,
+                  aprTo: updatedSupplyAPY,
+                  collateralApr
+                }}
+                totalStats={{
+                  capAmount: supplyCapAsNumber,
+                  totalAmount: totalSupplyAsNumber,
+                  capFiat: supplyCapAsFiat,
+                  totalFiat: selectedMarketData.totalSupplyFiat
+                }}
+                setSwapWidgetOpen={setSwapWidgetOpen}
+                enableCollateral={enableCollateral}
+                onCollateralToggle={handleCollateralToggle}
+                loopPossible={
+                  loopMarkets
+                    ? loopMarkets[selectedMarketData.cToken].length > 0
+                    : false
+                }
+              />
+            </TabsContent>
 
-                  <div className="flex justify-center items-center">
-                    <ResultHandler
-                      height="80"
-                      isLoading={!totalSupplyAsNumber && !supplyCapAsNumber}
-                      width="80"
-                    >
-                      <div className="w-[80px] mr-4">
-                        <MemoizedDonutChart
-                          max={supplyCapAsNumber}
-                          value={totalSupplyAsNumber}
-                        />
-                      </div>
+            <TabsContent value="withdraw">
+              <WithdrawTab
+                selectedMarketData={selectedMarketData}
+                amount={amount}
+                setAmount={setAmount}
+                currentUtilizationPercentage={currentUtilizationPercentage}
+                handleUtilization={handleWithdrawUtilization}
+                hfpStatus={hfpStatus}
+                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
+                transactionSteps={transactionSteps}
+                resetTransactionSteps={resetTransactionSteps}
+                chainId={chainId}
+                maxAmount={maxWithdrawAmount ?? 0n}
+                onAction={withdrawAmount}
+                isLoadingMax={isLoadingMaxWithdrawAmount}
+                isDisabled={
+                  !amount ||
+                  amountAsBInt === 0n ||
+                  isLoadingPredictedHealthFactor ||
+                  hfpStatus === HFPStatus.CRITICAL ||
+                  hfpStatus === HFPStatus.UNKNOWN
+                }
+                updatedValues={{
+                  balanceFrom: supplyBalanceFrom,
+                  balanceTo: supplyBalanceTo,
+                  aprFrom: supplyAPY,
+                  aprTo: updatedSupplyAPY
+                }}
+                healthFactor={{
+                  current: normalizedHealthFactor ?? '0',
+                  predicted: normalizedPredictedHealthFactor
+                }}
+                setSwapWidgetOpen={setSwapWidgetOpen}
+              />
+            </TabsContent>
+            <TabsContent value="borrow">
+              <BorrowTab
+                selectedMarketData={selectedMarketData}
+                amount={amount}
+                setAmount={setAmount}
+                currentUtilizationPercentage={currentUtilizationPercentage}
+                handleUtilization={handleBorrowUtilization}
+                hfpStatus={hfpStatus}
+                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
+                transactionSteps={transactionSteps}
+                resetTransactionSteps={resetTransactionSteps}
+                chainId={chainId}
+                maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
+                onAction={borrowAmount}
+                isLoadingMax={isLoadingMaxBorrowAmount}
+                isDisabled={
+                  !amount ||
+                  amountAsBInt === 0n ||
+                  isLoadingPredictedHealthFactor ||
+                  hfpStatus === HFPStatus.CRITICAL ||
+                  hfpStatus === HFPStatus.UNKNOWN
+                }
+                updatedValues={{
+                  balanceFrom: borrowBalanceFrom,
+                  balanceTo: borrowBalanceTo,
+                  aprFrom: borrowAPR,
+                  aprTo: updatedBorrowAPR
+                }}
+                borrowLimits={{
+                  min: formatUnits(
+                    minBorrowAmount?.minBorrowAsset ?? 0n,
+                    selectedMarketData.underlyingDecimals
+                  ),
+                  max:
+                    maxBorrowAmount?.number?.toFixed(
+                      parseInt(selectedMarketData.underlyingDecimals.toString())
+                    ) ?? '0.00'
+                }}
+                totalStats={{
+                  capAmount: borrowCapAsNumber,
+                  totalAmount: totalBorrowAsNumber,
+                  capFiat: borrowCapAsFiat,
+                  totalFiat: selectedMarketData.totalBorrowFiat
+                }}
+                healthFactor={{
+                  current: normalizedHealthFactor ?? '0',
+                  predicted: normalizedPredictedHealthFactor
+                }}
+              />
+            </TabsContent>
+            <TabsContent value="repay">
+              <RepayTab
+                selectedMarketData={selectedMarketData}
+                amount={amount}
+                setAmount={setAmount}
+                currentUtilizationPercentage={currentUtilizationPercentage}
+                handleUtilization={handleRepayUtilization}
+                hfpStatus={hfpStatus}
+                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
+                transactionSteps={transactionSteps}
+                resetTransactionSteps={resetTransactionSteps}
+                chainId={chainId}
+                maxAmount={maxRepayAmount ?? 0n}
+                onAction={repayAmount}
+                isLoadingMax={isLoadingMaxRepayAmount}
+                isDisabled={
+                  !amount || amountAsBInt === 0n || !currentBorrowAmountAsFloat
+                }
+                updatedValues={{
+                  balanceFrom: borrowBalanceFrom,
+                  balanceTo: borrowBalanceTo,
+                  aprFrom: borrowAPR,
+                  aprTo: updatedBorrowAPR
+                }}
+                healthFactor={{
+                  current: normalizedHealthFactor ?? '0',
+                  predicted: normalizedPredictedHealthFactor
+                }}
+              />
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
 
-                      <div className="text">
-                        <div className="text-gray-400">Total Supplied:</div>
-
-                        <div className="text-white">
-                          <strong>
-                            {millify(Math.round(totalSupplyAsNumber))} of{' '}
-                            {millify(Math.round(supplyCapAsNumber))}{' '}
-                            {selectedMarketData.underlyingSymbol}
-                          </strong>
-                        </div>
-
-                        <div className="text-small text-gray-300">
-                          $
-                          {millify(
-                            Math.round(selectedMarketData.totalSupplyFiat)
-                          )}{' '}
-                          of ${millify(Math.round(supplyCapAsFiat))}
-                        </div>
-                      </div>
-                    </ResultHandler>
-                  </div>
-
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div className="flex items-center text-sm text-white/50 uppercase">
-                    Enable collateral
-                    <div className="ml-2">
-                      <span
-                        className={`toggle ${enableCollateral && 'is-on'}`}
-                        onClick={handleCollateralToggle}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between gap-2 text-sm mb-1 mt-4 text-darkone `}
-                  >
-                    {transactionSteps.length > 0 ? (
-                      <TransactionStepsHandler
-                        chainId={chainId}
-                        resetTransactionSteps={resetTransactionSteps}
-                        transactionSteps={transactionSteps}
-                      />
-                    ) : (
-                      <>
-                        <button
-                          className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                            amount && amountAsBInt > 0n
-                              ? 'bg-accent'
-                              : 'bg-stone-500'
-                          } `}
-                          onClick={() => supplyAmount()}
-                        >
-                          Supply {selectedMarketData.underlyingSymbol}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                  {/* <Approved /> */}
-                </div>
-                <div
-                  className={`min-w-full flex flex-col min-h-full py-5 px-[6%] gap-y-1.5 `}
-                >
-                  {/* ---------------------------------------------------------------------------- */}
-                  {/* SUPPLY-Withdraw section */}
-                  {/* ---------------------------------------------------------------------------- */}
-                  <Amount
-                    amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
-                    hintText="Max Withdraw"
-                    isLoading={isLoadingMaxWithdrawAmount}
-                    max={formatUnits(
-                      maxWithdrawAmount ?? 0n,
-                      selectedMarketData.underlyingDecimals
-                    )}
-                    selectedMarketData={selectedMarketData}
-                    symbol={selectedMarketData.underlyingSymbol}
-                  />
-                  <SliderComponent
-                    currentUtilizationPercentage={currentUtilizationPercentage}
-                    handleUtilization={handleWithdrawUtilization}
-                  />
-
-                  {hfpStatus === HFPStatus.WARNING && (
-                    <div className="text-lime text-xs text-center">
-                      Warning: You are close to the liquidation threshold and
-                      will need to manage your health factor.
-                    </div>
-                  )}
-
-                  {hfpStatus === HFPStatus.CRITICAL && (
-                    <div className="text-error text-xs text-center">
-                      Health factor too low.
-                    </div>
-                  )}
-
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Market Supply Balance</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {supplyBalanceFrom}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {supplyBalanceTo}
-                      </ResultHandler>
-                      {/* this will be dynamic */}
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Market Supply APR</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${supplyAPY?.toFixed(2)}%`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {updatedSupplyAPY?.toFixed(2)}%
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Health Factor</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${normalizedHealthFactor}`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingPredictedHealthFactor}
-                        width="16"
-                      >
-                        {normalizedPredictedHealthFactor}
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1  mt-auto self-end text-darkone`}
-                  >
-                    {transactionSteps.length > 0 ? (
-                      <TransactionStepsHandler
-                        chainId={chainId}
-                        resetTransactionSteps={resetTransactionSteps}
-                        transactionSteps={transactionSteps}
-                      />
-                    ) : (
-                      <button
-                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                          amount &&
-                          amountAsBInt > 0n &&
-                          !isLoadingPredictedHealthFactor &&
-                          hfpStatus !== HFPStatus.CRITICAL &&
-                          hfpStatus !== HFPStatus.UNKNOWN
-                            ? 'bg-accent'
-                            : 'bg-stone-500'
-                        } `}
-                        disabled={
-                          isLoadingPredictedHealthFactor ||
-                          hfpStatus === HFPStatus.CRITICAL ||
-                          hfpStatus === HFPStatus.UNKNOWN
-                        }
-                        onClick={withdrawAmount}
-                      >
-                        Withdraw {selectedMarketData.underlyingSymbol}
-                      </button>
-                    )}
-                  </div>
-                  {/* <Approved /> */}
-                </div>
-              </>
-            )}
-            {(mode === PopupMode.BORROW || mode === PopupMode.REPAY) && (
-              <>
-                <div className={`min-w-full py-5 px-[6%] h-min`}>
-                  {/* ---------------------------------------------------------------------------- */}
-                  {/* SUPPLY-borrow section */}
-                  {/* ---------------------------------------------------------------------------- */}
-                  <Amount
-                    amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
-                    hintText="Max Borrow Amount"
-                    isLoading={isLoadingMaxBorrowAmount}
-                    max={formatUnits(
-                      maxBorrowAmount?.bigNumber ?? 0n,
-                      selectedMarketData.underlyingDecimals
-                    )}
-                    selectedMarketData={selectedMarketData}
-                    symbol={selectedMarketData.underlyingSymbol}
-                  />
-                  <SliderComponent
-                    currentUtilizationPercentage={currentUtilizationPercentage}
-                    handleUtilization={handleBorrowUtilization}
-                  />
-
-                  {hfpStatus === HFPStatus.WARNING && (
-                    <div className="text-lime text-xs text-center">
-                      Warning: You are close to the liquidation threshold and
-                      will need to manage your health factor.
-                    </div>
-                  )}
-
-                  {hfpStatus === HFPStatus.CRITICAL && (
-                    <div className="text-error text-xs text-center">
-                      Health factor too low.
-                    </div>
-                  )}
-
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                  >
-                    <span className={``}>MIN BORROW</span>
-                    <span className={`font-bold pl-2`}>
-                      {formatUnits(
-                        minBorrowAmount?.minBorrowAsset ?? 0n,
-                        selectedMarketData.underlyingDecimals
-                      )}
-                      {/* this will be dynamic */}
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                  >
-                    <span className={``}>MAX BORROW</span>
-                    <span className={`font-bold pl-2`}>
-                      {maxBorrowAmount?.number?.toFixed(
-                        parseInt(
-                          selectedMarketData.underlyingDecimals.toString()
-                        )
-                      ) ?? '0.00'}
-                      {/* this will be dynamic */}
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                  >
-                    <span className={``}>CURRENTLY BORROWING</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${borrowBalanceFrom}`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {borrowBalanceTo}
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Market Borrow Apr</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${borrowAPR?.toFixed(2)}%`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        {updatedBorrowAPR?.toFixed(2)}%
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Health Factor</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${normalizedHealthFactor}`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingPredictedHealthFactor}
-                        width="16"
-                      >
-                        {normalizedPredictedHealthFactor}
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-
-                  <div className="flex justify-center items-center">
-                    <ResultHandler
-                      height="80"
-                      isLoading={!totalBorrowAsNumber && !borrowCapAsNumber}
-                      width="80"
-                    >
-                      <div className="w-[80px] mr-4">
-                        <MemoizedDonutChart
-                          max={borrowCapAsNumber}
-                          value={totalBorrowAsNumber}
-                        />
-                      </div>
-
-                      <div className="text">
-                        <div className="text-gray-400">Total Borrowed:</div>
-
-                        <div className="text-white">
-                          <strong>
-                            {millify(Math.round(totalBorrowAsNumber))} of{' '}
-                            {millify(Math.round(borrowCapAsNumber))}{' '}
-                            {selectedMarketData.underlyingSymbol}
-                          </strong>
-                        </div>
-
-                        <div className="text-small text-gray-300">
-                          $
-                          {millify(
-                            Math.round(selectedMarketData.totalBorrowFiat)
-                          )}{' '}
-                          of ${millify(Math.round(borrowCapAsFiat))}
-                        </div>
-                      </div>
-                    </ResultHandler>
-                  </div>
-
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                  >
-                    {transactionSteps.length > 0 ? (
-                      <TransactionStepsHandler
-                        chainId={chainId}
-                        resetTransactionSteps={resetTransactionSteps}
-                        transactionSteps={transactionSteps}
-                      />
-                    ) : (
-                      <button
-                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                          amount &&
-                          amountAsBInt > 0n &&
-                          minBorrowAmount &&
-                          amountAsBInt >=
-                            (minBorrowAmount.minBorrowAsset ?? 0n) &&
-                          maxBorrowAmount &&
-                          amountAsBInt <= (maxBorrowAmount?.bigNumber ?? 0n) &&
-                          !isLoadingPredictedHealthFactor &&
-                          hfpStatus !== HFPStatus.CRITICAL &&
-                          hfpStatus !== HFPStatus.UNKNOWN
-                            ? 'bg-accent'
-                            : 'bg-stone-500'
-                        } `}
-                        disabled={
-                          isLoadingPredictedHealthFactor ||
-                          hfpStatus === HFPStatus.CRITICAL ||
-                          hfpStatus === HFPStatus.UNKNOWN
-                        }
-                        onClick={borrowAmount}
-                      >
-                        Borrow {selectedMarketData.underlyingSymbol}
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div className={`min-w-full py-5 px-[6%] h-min`}>
-                  {/* ---------------------------------------------------------------------------- */}
-                  {/* SUPPLY-repay section */}
-                  {/* ---------------------------------------------------------------------------- */}
-                  <Amount
-                    amount={amount}
-                    handleInput={(val?: string) => setAmount(val)}
-                    hintText={'Max Repay Amount'}
-                    isLoading={isLoadingMaxRepayAmount}
-                    max={formatUnits(
-                      maxRepayAmount ?? 0n,
-                      selectedMarketData.underlyingDecimals
-                    )}
-                    selectedMarketData={selectedMarketData}
-                    symbol={selectedMarketData.underlyingSymbol}
-                  />
-                  <SliderComponent
-                    currentUtilizationPercentage={currentUtilizationPercentage}
-                    handleUtilization={handleRepayUtilization}
-                  />
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between mb-2 text-xs text-white/50 `}
-                  >
-                    <span className={``}>CURRENTLY BORROWING</span>
-                    <span className={`flex font-bold pl-2`}>
-                      <span className={`text-error`}>
-                        {`${borrowBalanceFrom}`}
-                      </span>
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        <span className="text-accent">{borrowBalanceTo}</span>
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Market Borrow Apr</span>
-                    <span className={`flex font-bold pl-2`}>
-                      <span className="">{`${borrowAPR?.toFixed(2)}%`}</span>
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingUpdatedAssets}
-                        width="16"
-                      >
-                        <span>{updatedBorrowAPR?.toFixed(2)}%</span>
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={`flex w-full items-center justify-between text-xs mb-1 text-white/50 uppercase`}
-                  >
-                    <span className={``}>Health Factor</span>
-                    <span className={`flex font-bold pl-2`}>
-                      {`${normalizedHealthFactor}`}
-                      <span className="mx-1">{`->`}</span>
-                      <ResultHandler
-                        height="16"
-                        isLoading={isLoadingPredictedHealthFactor}
-                        width="16"
-                      >
-                        {normalizedPredictedHealthFactor}
-                      </ResultHandler>
-                    </span>
-                  </div>
-                  <div
-                    className={` w-full h-[1px]  bg-white/30 mx-auto my-3`}
-                  />
-                  <div
-                    className={`flex w-full items-center justify-between gap-2  text-sm mb-1 mt-4 text-darkone `}
-                  >
-                    {transactionSteps.length > 0 ? (
-                      <TransactionStepsHandler
-                        chainId={chainId}
-                        resetTransactionSteps={resetTransactionSteps}
-                        transactionSteps={transactionSteps}
-                      />
-                    ) : (
-                      <button
-                        className={`w-full font-bold uppercase rounded-md py-1 transition-colors ${
-                          amount &&
-                          amountAsBInt > 0n &&
-                          currentBorrowAmountAsFloat
-                            ? 'bg-accent'
-                            : 'bg-stone-500'
-                        } `}
-                        onClick={repayAmount}
-                      >
-                        Repay {selectedMarketData.underlyingSymbol}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
+      <SwapWidget
+        close={() => setSwapWidgetOpen(false)}
+        open={swapWidgetOpen}
+        fromChain={chainId}
+        toChain={chainId}
+        toToken={selectedMarketData.underlyingToken}
+        onRouteExecutionCompleted={() => refetchMaxSupplyAmount()}
+      />
 
       <Loop
         borrowableAssets={
