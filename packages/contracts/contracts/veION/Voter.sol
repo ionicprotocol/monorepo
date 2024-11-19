@@ -61,7 +61,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   /// @dev Gauge => Amount claimable
   mapping(address => uint256) public claimable;
   /// @dev Market => Market Side => Reward Accumulator
-  mapping(address => mapping(MarketSide => address)) marketToRewardAccumulators;
+  mapping(address => mapping(MarketSide => address)) public marketToRewardAccumulators;
   /// @dev Market => Market Side => Supply Index
   mapping(address => uint256) public supplyIndex;
 
@@ -108,11 +108,11 @@ contract Voter is IVoter, OwnableUpgradeable {
   ) external onlyNewEpoch(_tokenId) {
     VoteLocalVars memory vars;
     vars.sender = msg.sender;
-    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != vars.sender) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != vars.sender) revert NotOwner();
     if (
       _marketVote.length != _marketVoteSide.length ||
       _marketVoteSide.length != _weights.length ||
-      _weights != _marketVote.length
+      _weights.length != _marketVote.length
     ) revert UnequalLengths();
     if (_marketVote.length > maxVotingNum) revert TooManyPools();
     vars.timestamp = block.timestamp;
@@ -128,17 +128,15 @@ contract Voter is IVoter, OwnableUpgradeable {
     lastVoted[_tokenId] = vars.timestamp;
     (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
     for (uint256 j = 0; j < vars.votingLPs.length; j++) {
-      if (vars.votingLPBalances[j] > 0) {
-        _vote(
-          _tokenId,
-          vars.votingLPs[j],
-          (vars.votingLPBalances[j] * vars.boosts[j]) / 1e18,
-          _marketVote,
-          _marketVoteSide,
-          _weights,
-          totalVoteWeight
-        );
-      }
+      _vote(
+        _tokenId,
+        vars.votingLPs[j],
+        (vars.votingLPBalances[j] * vars.boosts[j]) / 1e18,
+        _marketVote,
+        _marketVoteSide,
+        _weights,
+        totalVoteWeight
+      );
     }
   }
 
@@ -148,15 +146,18 @@ contract Voter is IVoter, OwnableUpgradeable {
     (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
       .balanceOfNFT(_tokenId);
 
-    reset(_tokenId);
-    for (uint256 i = 0; i < _votingLPs.length; i++) {
-      _poke(_tokenId, _votingLPs[i], (_votingLPBalances[i] * _boosts[i]) / 1e18);
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      uint256 tokenIndex = _getIndexOfLp(_votingLPs, lpTokens[i]);
+      uint256 effectiveBalance = tokenIndex != type(uint256).max
+        ? (_votingLPBalances[tokenIndex] * _boosts[tokenIndex]) / 1e18
+        : 0;
+      _poke(_tokenId, lpTokens[i], effectiveBalance);
     }
   }
 
   /// @inheritdoc IVoter
   function reset(uint256 _tokenId) public onlyNewEpoch(_tokenId) {
-    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != msg.sender) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != msg.sender) revert NotOwner();
     for (uint256 i = 0; i < lpTokens.length; i++) {
       _reset(_tokenId, lpTokens[i]);
     }
@@ -164,7 +165,7 @@ contract Voter is IVoter, OwnableUpgradeable {
 
   /// @inheritdoc IVoter
   function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {
-    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != _msgSender()) revert NotApprovedOrOwner();
+    if (ERC721Upgradeable(ve).ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     uint256 _length = _bribes.length;
     for (uint256 i = 0; i < _length; i++) {
       IBribeRewards(_bribes[i]).getReward(_tokenId, _tokens[i]);
@@ -225,6 +226,7 @@ contract Voter is IVoter, OwnableUpgradeable {
       vars.marketSide = _marketVoteSide[i];
       vars.rewardAccumulator = marketToRewardAccumulators[vars.market][vars.marketSide];
       vars.bribes = rewardAccumulatorToBribe[vars.rewardAccumulator];
+      if (_weights[i] == 0) revert ZeroWeight();
       if (vars.rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(vars.market);
       if (!isAlive[vars.rewardAccumulator]) revert RewardAccumulatorNotAlive(vars.rewardAccumulator);
 
@@ -270,7 +272,10 @@ contract Voter is IVoter, OwnableUpgradeable {
       totalVoteWeight += _weights[i];
     }
 
-    _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights, totalVoteWeight);
+    _reset(_tokenId, _votingAsset);
+    if (_votingAssetBalance != 0) {
+      _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights, totalVoteWeight);
+    }
   }
 
   function _reset(uint256 _tokenId, address _votingAsset) internal {
@@ -342,6 +347,13 @@ contract Voter is IVoter, OwnableUpgradeable {
       }
     }
     return false;
+  }
+
+  function _getIndexOfLp(address[] memory _votingLpTokens, address _lpToken) internal pure returns (uint256 _index) {
+    for (uint256 i = 0; i < _votingLpTokens.length; i++) {
+      if (_votingLpTokens[i] == _lpToken) return i;
+    }
+    return type(uint256).max;
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -441,28 +453,15 @@ contract Voter is IVoter, OwnableUpgradeable {
     return markets.length;
   }
 
-  // External function to get all LP tokens
   function getAllLpRewardTokens() external view returns (address[] memory) {
     return lpTokens;
   }
 
-  function getVoteDetails(
-    uint256 _tokenId,
-    address _lpAsset
-  )
-    external
-    view
-    returns (
-      address[] memory _marketVotes,
-      MarketSide[] memory _marketVoteSides,
-      uint256[] memory _votes,
-      uint256 _usedWeight
-    )
-  {
+  function getVoteDetails(uint256 _tokenId, address _lpAsset) external view returns (VoteDetails memory) {
     uint256 length = marketVote[_tokenId][_lpAsset].length;
-    _marketVotes = new address[](length);
-    _marketVoteSides = new MarketSide[](length);
-    _votes = new uint256[](length);
+    address[] memory _marketVotes = new address[](length);
+    MarketSide[] memory _marketVoteSides = new MarketSide[](length);
+    uint256[] memory _votes = new uint256[](length);
 
     for (uint256 i = 0; i < length; i++) {
       _marketVotes[i] = marketVote[_tokenId][_lpAsset][i];
@@ -470,6 +469,14 @@ contract Voter is IVoter, OwnableUpgradeable {
       _votes[i] = votes[_tokenId][_marketVotes[i]][_marketVoteSides[i]][_lpAsset];
     }
 
-    _usedWeight = usedWeights[_tokenId][_lpAsset];
+    uint256 _usedWeight = usedWeights[_tokenId][_lpAsset];
+
+    return
+      VoteDetails({
+        marketVotes: _marketVotes,
+        marketVoteSides: _marketVoteSides,
+        votes: _votes,
+        usedWeight: _usedWeight
+      });
   }
 }

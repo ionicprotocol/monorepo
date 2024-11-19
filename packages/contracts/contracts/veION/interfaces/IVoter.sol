@@ -17,7 +17,7 @@ interface IVoter {
   error NonZeroVotes();
   error NotAllPools();
   error NotAPool();
-  error NotApprovedOrOwner();
+  error NotOwner();
   error NotDistributeWindow();
   error NotGovernor();
   error NotMinter();
@@ -30,6 +30,14 @@ interface IVoter {
   error ZeroBalance();
   error ZeroAddress();
   error TokensArrayEmpty();
+  error ZeroWeight();
+
+  struct VoteDetails {
+    address[] marketVotes;
+    MarketSide[] marketVoteSides;
+    uint256[] votes;
+    uint256 usedWeight;
+  }
 
   struct Market {
     address marketAddress;

@@ -270,7 +270,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     MergeVars memory vars;
     vars.sender = _msgSender();
     if (_from == _to) revert SameNFT();
-    if (s_voted[_from]) revert AlreadyVoted();
+    if (s_voted[_from] || s_voted[_to]) revert AlreadyVoted();
     if (ownerOf(_from) != _msgSender()) revert NotOwner();
     if (ownerOf(_to) != _msgSender()) revert NotOwner();
 

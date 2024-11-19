@@ -7,6 +7,8 @@ import { IVoter } from "../../../veION/interfaces/IVoter.sol";
 
 contract VoterTest is veIONTest {
   Voter voter;
+  LockInfo voterLockInfoSingleLp;
+  LockInfoMultiple voterLockInfoMultiLp;
   uint256 voterTokenIdSingleLp;
   uint256 voterTokenIdMultiLp;
   address user;
@@ -87,8 +89,8 @@ contract VoterTest is veIONTest {
     user = address(0x9523);
     vm.warp(block.timestamp + 10 * 365 days);
 
-    LockInfo memory voterLockInfoSingleLp = _createLockInternal(user);
-    LockInfoMultiple memory voterLockInfoMultiLp = _createLockMultipleInternal(user);
+    voterLockInfoSingleLp = _createLockInternal(user);
+    voterLockInfoMultiLp = _createLockMultipleInternal(user);
 
     voterTokenIdSingleLp = voterLockInfoSingleLp.tokenId;
     voterTokenIdMultiLp = voterLockInfoMultiLp.tokenId;
