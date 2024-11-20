@@ -46,40 +46,23 @@ interface MarketCellProps {
 
 export default function Market() {
   const searchParams = useSearchParams();
+  const chainId = useChainId();
+  const { address } = useMultiIonic();
+
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
+  const selectedPool = querypool ?? '0';
+  const chain = querychain ? querychain : mode.id.toString();
+
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
-  const chainId = useChainId();
-  const { address } = useMultiIonic();
-  const [loopMarkets, setLoopMarkets] = useState<LoopMarketData>();
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
-
-  const selectedPool = querypool ?? '0';
-  const chain = querychain ? querychain : mode.id.toString();
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
 
-  const { marketData, isLoading, poolData } = useMarketData(
-    selectedPool,
-    chain
-  );
-
-  const selectedMarketData = marketData.find(
-    (asset) => asset.asset === selectedSymbol
-  );
-
-  const loopProps = useMemo(() => {
-    if (!selectedMarketData || !poolData) return null;
-    return {
-      borrowableAssets: loopMarkets
-        ? loopMarkets[selectedMarketData.cToken]
-        : [],
-      comptrollerAddress: poolData.comptroller,
-      selectedCollateralAsset: selectedMarketData
-    };
-  }, [selectedMarketData, poolData, loopMarkets]);
+  const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
+    useMarketData(selectedPool, chain, selectedSymbol);
 
   const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
@@ -223,23 +206,23 @@ export default function Market() {
           <div className="grid gap-y-2 col-span-3 h-full">
             <TotalTvlTile />
             <TvlTile
+              isLoadingPoolData={isLoading}
               dropdownSelectedChain={chain}
               poolData={poolData!}
-              isLoadingPoolData={isLoading}
               isLoadingLoopMarkets={false}
               selectedPool={selectedPool}
             />
           </div>
           <FeaturedMarketTile
-            setIsManageDialogOpen={setIsManageDialogOpen}
-            setSelectedSymbol={setSelectedSymbol}
-            selectedChain={chainId}
             isLoadingPoolData={isLoading}
-            setSwapWidgetOpen={setSwapWidgetOpen}
-            swapWidgetOpen={swapWidgetOpen}
             dropdownSelectedChain={chain}
-            setWrapWidgetOpen={setWrapWidgetOpen}
+            selectedChain={chainId}
+            setSelectedSymbol={setSelectedSymbol}
+            swapWidgetOpen={swapWidgetOpen}
             wrapWidgetOpen={wrapWidgetOpen}
+            setIsManageDialogOpen={setIsManageDialogOpen}
+            setSwapWidgetOpen={setSwapWidgetOpen}
+            setWrapWidgetOpen={setWrapWidgetOpen}
           />
           <StakingTile chain={+chain} />
         </div>

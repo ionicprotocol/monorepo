@@ -37,7 +37,11 @@ export type MarketRowData = MarketData & {
   isBorrowDisabled: boolean;
 };
 
-export const useMarketData = (selectedPool: string, chain: number | string) => {
+export const useMarketData = (
+  selectedPool: string,
+  chain: number | string,
+  selectedSymbol: string | undefined
+) => {
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
     +chain
@@ -203,9 +207,26 @@ export const useMarketData = (selectedPool: string, chain: number | string) => {
     borrowCapsData
   ]);
 
+  const selectedMarketData = marketData.find(
+    (asset) => asset.asset === selectedSymbol
+  );
+
+  const loopProps = useMemo(() => {
+    if (!selectedMarketData || !poolData) return null;
+    return {
+      borrowableAssets: loopMarkets
+        ? loopMarkets[selectedMarketData.cToken]
+        : [],
+      comptrollerAddress: poolData.comptroller,
+      selectedCollateralAsset: selectedMarketData
+    };
+  }, [selectedMarketData, poolData, loopMarkets]);
+
   return {
     marketData,
-    isLoading: isLoadingPoolData || isLoadingLoopMarkets,
-    poolData
+    isLoading: isLoadingPoolData,
+    poolData,
+    selectedMarketData,
+    loopProps
   };
 };
