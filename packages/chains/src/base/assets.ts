@@ -143,7 +143,9 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
     },
     initialCf: "0.70",
-    extraDocs: defaultDocs("https://basescan.org", weETH)
+    extraDocs: defaultDocs("https://basescan.org", weETH),
+    initialSupplyCap: parseEther(String(1_500)).toString(),
+    initialBorrowCap: parseEther(String(1_200)).toString()
   },
   {
     symbol: assetSymbols.eUSD,
@@ -249,8 +251,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(250_000)).toString(),
-    initialBorrowCap: parseEther(String(120_000)).toString(),
+    initialSupplyCap: parseEther(String(2_500_000)).toString(),
+    initialBorrowCap: parseEther(String(2_000_000)).toString(),
     initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
@@ -361,8 +363,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0xD89c7fFB39C44b17EAecd8717a75A36c19C07582",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialBorrowCap: parseEther(String(80_000)).toString(),
-    initialSupplyCap: parseEther(String(100_000)).toString(),
+    initialBorrowCap: parseEther(String(215_000)).toString(),
+    initialSupplyCap: parseEther(String(270_000)).toString(),
     initialCf: "0.70"
   },
   {
