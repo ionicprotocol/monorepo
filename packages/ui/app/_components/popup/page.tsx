@@ -1,7 +1,5 @@
 'use client';
-/* eslint-disable @next/next/no-img-element */
-// import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -35,7 +33,6 @@ import {
 } from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
@@ -61,12 +58,16 @@ const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
 });
 
 export enum PopupMode {
-  SUPPLY = 1,
-  WITHDRAW,
-  BORROW,
-  REPAY,
-  LOOP
+  MANAGE = 1,
+  LOOP = 2
 }
+
+type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
+type FundOperation =
+  | FundOperationMode.BORROW
+  | FundOperationMode.REPAY
+  | FundOperationMode.SUPPLY
+  | FundOperationMode.WITHDRAW;
 
 export enum HFPStatus {
   CRITICAL = 'CRITICAL',
@@ -78,13 +79,10 @@ export enum HFPStatus {
 interface IPopup {
   closePopup: () => void;
   comptrollerAddress: Address;
-  loopMarkets?: LoopMarketData;
-  mode?: PopupMode;
   selectedMarketData: MarketData;
 }
+
 const Popup = ({
-  mode = PopupMode.SUPPLY,
-  loopMarkets,
   selectedMarketData,
   closePopup,
   comptrollerAddress
@@ -180,7 +178,22 @@ const Popup = ({
 
     return 0.0;
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
-  const [active, setActive] = useState<PopupMode>(mode);
+  const [active, setActive] = useState<ActiveTab>('supply');
+  const operationMap: Record<ActiveTab, FundOperation> = {
+    supply: FundOperationMode.SUPPLY,
+    withdraw: FundOperationMode.WITHDRAW,
+    borrow: FundOperationMode.BORROW,
+    repay: FundOperationMode.REPAY
+  };
+
+  useEffect(() => {
+    setAmount('0');
+    setCurrentUtilizationPercentage(0);
+    upsertTransactionStep(undefined);
+    setCurrentFundOperation(operationMap[active]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, upsertTransactionStep]);
+
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
       value,
@@ -209,13 +222,13 @@ const Popup = ({
     comptrollerAddress,
     address ?? ('' as Address),
     selectedMarketData.cToken,
-    active === PopupMode.WITHDRAW
+    active === 'withdraw'
       ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === PopupMode.BORROW
+    active === 'borrow'
       ? amountAsBInt
       : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === PopupMode.REPAY
+    active === 'repay'
       ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
       : parseUnits('0', selectedMarketData.underlyingDecimals)
   );
@@ -388,57 +401,43 @@ const Popup = ({
    */
   useEffect(() => {
     switch (active) {
-      case PopupMode.SUPPLY: {
+      case 'supply': {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
             ? Number(formatEther(maxSupplyAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-
         break;
       }
 
-      case PopupMode.WITHDRAW: {
+      case 'withdraw': {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxWithdrawAmount && maxWithdrawAmount > 0n
             ? Number(formatEther(maxWithdrawAmount))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-
         break;
       }
 
-      case PopupMode.BORROW: {
+      case 'borrow': {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
             ? Number(formatEther(maxBorrowAmount?.bigNumber))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-        // setBorrow(
-        //   maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
-        //     ? formatEther(maxBorrowAmount?.bigNumber)
-        //     : ''
-        // );
         break;
       }
 
-      case PopupMode.REPAY: {
+      case 'repay': {
         const div =
           Number(formatEther(amountAsBInt)) /
           (maxRepayAmount && maxRepayAmount > 0n
             ? Number(formatEther(maxRepayAmount))
             : 1);
         setCurrentUtilizationPercentage(Math.round(div * 100));
-
-        break;
-      }
-
-      case PopupMode.LOOP: {
-        setLoopOpen(true);
-
         break;
       }
     }
@@ -449,7 +448,6 @@ const Popup = ({
     maxRepayAmount,
     maxSupplyAmount,
     maxWithdrawAmount
-    // setBorrow
   ]);
 
   useEffect(() => {
@@ -458,23 +456,23 @@ const Popup = ({
     upsertTransactionStep(undefined);
 
     switch (active) {
-      case PopupMode.SUPPLY:
+      case 'supply':
         setCurrentFundOperation(FundOperationMode.SUPPLY);
         break;
 
-      case PopupMode.WITHDRAW:
+      case 'withdraw':
         setCurrentFundOperation(FundOperationMode.WITHDRAW);
         break;
 
-      case PopupMode.BORROW:
+      case 'borrow':
         setCurrentFundOperation(FundOperationMode.BORROW);
         break;
 
-      case PopupMode.REPAY:
+      case 'repay':
         setCurrentFundOperation(FundOperationMode.REPAY);
         break;
     }
-  }, [active, mode, upsertTransactionStep]);
+  }, [active, upsertTransactionStep]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
 
@@ -1201,22 +1199,9 @@ const Popup = ({
           </div>
 
           <Tabs
-            defaultValue={active === PopupMode.SUPPLY ? 'supply' : 'borrow'}
+            defaultValue={active}
             onValueChange={(value) => {
-              switch (value) {
-                case 'supply':
-                  setActive(PopupMode.SUPPLY);
-                  break;
-                case 'withdraw':
-                  setActive(PopupMode.WITHDRAW);
-                  break;
-                case 'borrow':
-                  setActive(PopupMode.BORROW);
-                  break;
-                case 'repay':
-                  setActive(PopupMode.REPAY);
-                  break;
-              }
+              setActive(value as ActiveTab);
             }}
           >
             <TabsList className="grid w-full grid-cols-4">
@@ -1258,11 +1243,6 @@ const Popup = ({
                 setSwapWidgetOpen={setSwapWidgetOpen}
                 enableCollateral={enableCollateral}
                 onCollateralToggle={handleCollateralToggle}
-                loopPossible={
-                  loopMarkets
-                    ? loopMarkets[selectedMarketData.cToken].length > 0
-                    : false
-                }
               />
             </TabsContent>
 
@@ -1393,30 +1373,8 @@ const Popup = ({
         toToken={selectedMarketData.underlyingToken}
         onRouteExecutionCompleted={() => refetchMaxSupplyAmount()}
       />
-
-      <Loop
-        borrowableAssets={
-          loopMarkets ? loopMarkets[selectedMarketData.cToken] : []
-        }
-        closeLoop={() => {
-          setLoopOpen(false);
-          setActive(PopupMode.BORROW);
-        }}
-        comptrollerAddress={comptrollerAddress}
-        isOpen={loopOpen}
-        selectedCollateralAsset={selectedMarketData}
-      />
     </>
   );
 };
 
 export default Popup;
-
-/*mode should be of 
-supply consist of collateral , withdraw
- borrow ( borrow repay)
-manage collateral withdraw borrow repay - default
-*/
-
-/* <div className={``}></div>  <p className={``}></p>
-          <p className={``}></p>  colleteralT , borrowingT , lendingT , cAPR , lAPR , bAPR} */

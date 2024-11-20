@@ -38,7 +38,6 @@ interface BaseTabProps {
   };
   enableCollateral?: boolean;
   onCollateralToggle?: () => void;
-  loopPossible?: boolean;
   totalStats?: {
     capAmount: number;
     totalAmount: number;
@@ -111,8 +110,7 @@ export const SupplyTab = ({
   totalStats,
   setSwapWidgetOpen,
   enableCollateral,
-  onCollateralToggle,
-  loopPossible
+  onCollateralToggle
 }: SupplyTabProps) => {
   return (
     <div className="space-y-4">
@@ -123,17 +121,6 @@ export const SupplyTab = ({
         >
           Get {selectedMarketData.underlyingSymbol}
         </Button>
-        {loopPossible && (
-          <Button
-            className="text-xs uppercase"
-            variant="secondary"
-            onClick={() => {
-              /* Handle loop */
-            }}
-          >
-            Loop
-          </Button>
-        )}
       </div>
 
       <Amount

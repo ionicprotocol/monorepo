@@ -1,7 +1,7 @@
 // Market.tsx
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -11,10 +11,10 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import { pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
+import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';
@@ -23,6 +23,7 @@ import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import StakingTile from '../_components/markets/StakingTile';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
+import Loop from '../_components/popup/Loop';
 import Popup, { PopupMode } from '../_components/popup/page';
 import Swap from '../_components/popup/Swap';
 
@@ -50,9 +51,10 @@ export default function Market() {
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
-  const [popupMode, setPopupMode] = useState<PopupMode>();
   const chainId = useChainId();
   const { address } = useMultiIonic();
+  const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [loopMarkets, setLoopMarkets] = useState<LoopMarketData>();
 
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
@@ -62,6 +64,21 @@ export default function Market() {
     selectedPool,
     chain
   );
+
+  const selectedMarketData = marketData.find(
+    (asset) => asset.asset === selectedSymbol
+  );
+
+  const loopProps = useMemo(() => {
+    if (!selectedMarketData || !poolData) return null;
+    return {
+      borrowableAssets: loopMarkets
+        ? loopMarkets[selectedMarketData.cToken]
+        : [],
+      comptrollerAddress: poolData.comptroller,
+      selectedCollateralAsset: selectedMarketData
+    };
+  }, [selectedMarketData, poolData, loopMarkets]);
 
   const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
@@ -162,30 +179,41 @@ export default function Market() {
       header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
-        <button
-          className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
-          onClick={async () => {
-            const result = await handleSwitchOriginChain(+chain, chainId);
-            if (result) {
-              setSelectedSymbol(row.original.asset);
-              setPopupMode(
-                row.original.isBorrowDisabled && row.original.loopPossible
-                  ? PopupMode.LOOP
-                  : PopupMode.SUPPLY
-              );
-            }
-          }}
-          disabled={!address}
-        >
-          Manage
-        </button>
+        <div className="flex gap-2">
+          {!row.original.isBorrowDisabled && (
+            <button
+              className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(+chain, chainId);
+                if (result) {
+                  setSelectedSymbol(row.original.asset);
+                  setPopupMode(PopupMode.MANAGE);
+                }
+              }}
+              disabled={!address}
+            >
+              Manage
+            </button>
+          )}
+          {row.original.loopPossible && (
+            <button
+              className="rounded-md bg-white/10 text-white py-1.5 px-4 uppercase truncate disabled:opacity-50 hover:bg-white/20"
+              onClick={async () => {
+                const result = await handleSwitchOriginChain(+chain, chainId);
+                if (result) {
+                  setSelectedSymbol(row.original.asset);
+                  setPopupMode(PopupMode.LOOP);
+                }
+              }}
+              disabled={!address}
+            >
+              Loop
+            </button>
+          )}
+        </div>
       )
     }
   ];
-
-  const selectedMarketData = marketData.find(
-    (asset) => asset.asset === selectedSymbol
-  );
 
   return (
     <>
@@ -248,12 +276,19 @@ export default function Market() {
         </div>
       </div>
 
-      {popupMode && selectedMarketData && poolData && (
+      {popupMode === PopupMode.MANAGE && selectedMarketData && poolData && (
         <Popup
           closePopup={() => setPopupMode(undefined)}
           comptrollerAddress={poolData.comptroller}
-          mode={popupMode}
           selectedMarketData={selectedMarketData}
+        />
+      )}
+
+      {popupMode === PopupMode.LOOP && loopProps && (
+        <Loop
+          {...loopProps}
+          closeLoop={() => setPopupMode(undefined)}
+          isOpen={true}
         />
       )}
 
