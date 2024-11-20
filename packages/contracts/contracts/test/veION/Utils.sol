@@ -27,6 +27,7 @@ contract veIONTest is BaseTest {
 
   address ionMode5050LP;
   address ionWeth5050lPAero;
+  address wethAero5050LPAero;
   address veloGauge;
   VeloIonModeStakingStrategy veloIonModeStakingStrategy;
   address stakingWalletInstance;

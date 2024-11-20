@@ -61,11 +61,11 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     _;
   }
 
-  function initialize(address _voter) public initializer {
+  function initialize(address _voter, address _ve) public initializer {
     __ReentrancyGuard_init();
     __Ownable_init();
     voter = _voter;
-    ve = IVoter(_voter).ve();
+    ve = _ve;
   }
 
   /// @inheritdoc IBribeRewards

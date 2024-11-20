@@ -108,18 +108,23 @@ contract VoterTest is veIONTest {
     ve.initialize(ap);
 
     ionWeth5050lPAero = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+    wethAero5050LPAero = 0x7f670f78B17dEC44d5Ef68a48740b6f8849cc2e6;
 
-    address[] memory whitelistedTokens = new address[](1);
-    bool[] memory isWhitelistedTokens = new bool[](1);
+    address[] memory whitelistedTokens = new address[](2);
+    bool[] memory isWhitelistedTokens = new bool[](2);
     whitelistedTokens[0] = ionWeth5050lPAero;
     isWhitelistedTokens[0] = true;
+    whitelistedTokens[1] = wethAero5050LPAero;
+    isWhitelistedTokens[1] = true;
 
     ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
     ve.setLpTokenType(ionWeth5050lPAero, IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH);
+    ve.setLpTokenType(wethAero5050LPAero, IveION.LpTokenType.Base_Balancer_8020_ION_ETH);
 
     ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
     ve.setMinimumLockDuration(MINTIME);
     ve.setMinimumLockAmount(address(ionWeth5050lPAero), MINIMUM_LOCK_AMOUNT);
+    ve.setMinimumLockAmount(address(wethAero5050LPAero), MINIMUM_LOCK_AMOUNT);
 
     ethMarket = 0x49420311B518f3d0c94e897592014de53831cfA3;
     btcMarket = 0x1De166df671AE6DB4C4C98903df88E8007593748;
@@ -175,30 +180,92 @@ contract VoterTest is veIONTest {
 
     voter.setMaxVotingNum(20);
 
-    address[] memory lpTokens = new address[](1);
+    address[] memory lpTokens = new address[](2);
     lpTokens[0] = address(ionWeth5050lPAero);
+    lpTokens[1] = address(wethAero5050LPAero);
     voter.setLpTokens(lpTokens);
 
     user = address(0x9523);
     ve.setVoter(address(voter));
 
-    uint256 amountStaked = REAL_LP_LOCK_AMOUNT;
+    baseTokenIdSingleLp = _lockSingleLPFork(user, REAL_LP_LOCK_AMOUNT);
+  }
+
+  function _lockSingleLPFork(address _user, uint256 _amount) internal returns (uint256) {
     address whale = 0x9b42e5F8c45222b2715F804968251c747c588fd7;
     vm.prank(whale);
-    IERC20(ionWeth5050lPAero).transfer(user, amountStaked);
+    IERC20(ionWeth5050lPAero).transfer(_user, _amount);
 
     address[] memory tokenAddresses = new address[](1);
     uint256[] memory tokenAmounts = new uint256[](1);
     uint256[] memory durations = new uint256[](1);
     bool[] memory stakeUnderlying = new bool[](1);
     tokenAddresses[0] = address(ionWeth5050lPAero);
-    tokenAmounts[0] = amountStaked;
+    tokenAmounts[0] = _amount;
     durations[0] = 52 weeks;
     stakeUnderlying[0] = false;
 
-    vm.startPrank(user);
-    IERC20(ionWeth5050lPAero).approve(address(ve), amountStaked);
-    baseTokenIdSingleLp = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.startPrank(_user);
+    IERC20(ionWeth5050lPAero).approve(address(ve), _amount);
+    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
+
+    return tokenId;
+  }
+
+  function _lockMultiLpFork(address _user, uint256 _amountIonWeth, uint256 _amountWethAERO) internal returns (uint256) {
+    address ionWethWhale = 0x9b42e5F8c45222b2715F804968251c747c588fd7;
+    address wethAEROWhale = 0x96a24aB830D4ec8b1F6f04Ceac104F1A3b211a01;
+
+    vm.prank(ionWethWhale);
+    IERC20(ionWeth5050lPAero).transfer(_user, _amountIonWeth);
+    vm.prank(wethAEROWhale);
+    IERC20(wethAero5050LPAero).transfer(_user, _amountWethAERO);
+
+    address[] memory tokenAddresses = new address[](2);
+    uint256[] memory tokenAmounts = new uint256[](2);
+    uint256[] memory durations = new uint256[](2);
+    bool[] memory stakeUnderlying = new bool[](2);
+    tokenAddresses[0] = address(ionWeth5050lPAero);
+    tokenAmounts[0] = _amountIonWeth;
+    durations[0] = 52 weeks;
+    stakeUnderlying[0] = false;
+    tokenAddresses[1] = address(wethAero5050LPAero);
+    tokenAmounts[1] = _amountWethAERO;
+    durations[1] = 52 weeks;
+    stakeUnderlying[1] = false;
+
+    vm.startPrank(_user);
+    IERC20(ionWeth5050lPAero).approve(address(ve), _amountIonWeth);
+    IERC20(wethAero5050LPAero).approve(address(ve), _amountWethAERO);
+    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.stopPrank();
+
+    return tokenId;
+  }
+
+  function _vote(address _user, uint256 _tokenId, uint256[] memory weights) internal {
+    address[] memory selectedMarkets = new address[](4);
+    IVoter.MarketSide[] memory selectedSides = new IVoter.MarketSide[](4);
+    uint256[] memory selectedWeights = new uint256[](4);
+
+    selectedMarkets[0] = ethMarket;
+    selectedSides[0] = IVoter.MarketSide.Supply;
+    selectedWeights[0] = weights[0];
+
+    selectedMarkets[1] = btcMarket;
+    selectedSides[1] = IVoter.MarketSide.Supply;
+    selectedWeights[1] = weights[1];
+
+    selectedMarkets[2] = ethMarket;
+    selectedSides[2] = IVoter.MarketSide.Borrow;
+    selectedWeights[2] = weights[2];
+
+    selectedMarkets[3] = btcMarket;
+    selectedSides[3] = IVoter.MarketSide.Borrow;
+    selectedWeights[3] = weights[3];
+
+    vm.prank(_user);
+    voter.vote(_tokenId, selectedMarkets, selectedSides, selectedWeights);
   }
 }

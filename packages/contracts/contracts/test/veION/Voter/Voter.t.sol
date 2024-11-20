@@ -1124,6 +1124,8 @@ contract DistributeRewards is VoterTest {
   address[] markets;
   IVoter.MarketSide[] sides;
   uint256[] weights;
+  uint256 rewardAmount = 1_000_000 * 1e18;
+
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
 
@@ -1147,23 +1149,26 @@ contract DistributeRewards is VoterTest {
     sides[3] = IVoter.MarketSide.Borrow;
     weights[3] = 100;
 
-    vm.prank(user);
-    voter.vote(baseTokenIdSingleLp, markets, sides, weights);
+    // vm.prank(user);
+    // voter.vote(baseTokenIdSingleLp, markets, sides, weights);
 
     ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
     weth = 0x4200000000000000000000000000000000000006;
-    UniswapLpTokenPriceOracle uniswapLpTokenPriceOracle = new UniswapLpTokenPriceOracle(address(weth));
-    address[] memory underlyings = new address[](1);
-    BasePriceOracle[] memory oracles = new BasePriceOracle[](1);
+    UniswapLpTokenPriceOracle uniswapLpTokenPriceOracleIonWeth = new UniswapLpTokenPriceOracle(address(weth));
+    UniswapLpTokenPriceOracle uniswapLpTokenPriceOracleWethAero = new UniswapLpTokenPriceOracle(address(weth));
+    address[] memory underlyings = new address[](2);
+    BasePriceOracle[] memory oracles = new BasePriceOracle[](2);
 
     underlyings[0] = address(ionWeth5050lPAero);
-    oracles[0] = BasePriceOracle(address(uniswapLpTokenPriceOracle));
+    oracles[0] = BasePriceOracle(address(uniswapLpTokenPriceOracleIonWeth));
+    underlyings[1] = address(wethAero5050LPAero);
+    oracles[1] = BasePriceOracle(address(uniswapLpTokenPriceOracleWethAero));
 
     vm.prank(mpo.admin());
     mpo.add(underlyings, oracles);
   }
 
-  function test_Distribute_RewardsCanBeDistributed() public fork(BASE_MAINNET) {
+  function test_distributeRewards_RewardsCanBeDistributed() public fork(BASE_MAINNET) {
     uint256 ionPrice = mpo.price(ion);
     uint256 wethPrice = mpo.price(weth);
 
@@ -1176,17 +1181,187 @@ contract DistributeRewards is VoterTest {
     vm.warp(voter.epochVoteEnd(block.timestamp) + 1);
 
     vm.prank(ionWhale);
-    IERC20(ion).transfer(address(voter), 1_000_000 * 1e18);
+    IERC20(ion).transfer(address(voter), rewardAmount);
     voter.distributeRewards();
 
     for (uint256 i = 0; i < markets.length; i++) {
       address rewardAccumulator = voter.marketToRewardAccumulators(markets[i], sides[i]);
       uint256 ionBalance = IERC20(ion).balanceOf(rewardAccumulator);
       console.log("ION Balance for Reward Accumulator", rewardAccumulator, ":", ionBalance);
+
+      uint256 expectedBalance = rewardAmount / 4;
+      assertEq(ionBalance, expectedBalance, "Each reward accumulator should have a quarter of the tokens");
     }
+  }
+
+  function test_distributeRewards_MultiLPAndVoters() public fork(BASE_MAINNET) {
+    address[] memory voters = new address[](20);
+    uint256[] memory tokenIds = new uint256[](20);
+    for (uint256 i = 0; i < voters.length; i++) {
+      voters[i] = address(uint160(uint256(keccak256(abi.encodePacked(i, block.timestamp)))));
+
+      uint256 ionWethAmount = 10 + (uint256(keccak256(abi.encodePacked(i, block.timestamp))) % 11);
+      uint256 wethAeroAmount = 10 + (uint256(keccak256(abi.encodePacked(i, block.timestamp, uint256(1)))) % 11);
+
+      tokenIds[i] = _lockMultiLpFork(voters[i], ionWethAmount * 1e18, wethAeroAmount * 1e18);
+
+      uint256[] memory weights = new uint256[](4);
+      for (uint256 j = 0; j < weights.length; j++) {
+        weights[j] = 1 + (uint256(keccak256(abi.encodePacked(j, block.timestamp, i))) % 100);
+      }
+      _vote(voters[i], tokenIds[i], weights);
+    }
+
+    for (uint256 i = 0; i < markets.length; i++) {
+      uint256 marketWeightIonWeth = voter.weights(markets[i], sides[i], address(ionWeth5050lPAero));
+      uint256 marketWeightWethAero = voter.weights(markets[i], sides[i], address(wethAero5050LPAero));
+      console.log("-----------------------------------------------------");
+      console.log("Market:", markets[i]);
+      console.log("Side:", uint256(sides[i]));
+      console.log("Market Weight ION-WETH:", marketWeightIonWeth);
+      console.log("Market Weight WETH-AERO:", marketWeightWethAero);
+    }
+    console.log("-----------------------------------------------------");
+
+    vm.warp(voter.epochVoteEnd(block.timestamp) + 1);
+    vm.prank(ionWhale);
+    IERC20(ion).transfer(address(voter), rewardAmount);
+    voter.distributeRewards();
+
+    for (uint256 i = 0; i < markets.length; i++) {
+      address rewardAccumulator = voter.marketToRewardAccumulators(markets[i], sides[i]);
+      uint256 ionBalance = IERC20(ion).balanceOf(rewardAccumulator);
+      console.log("ION Balance for Reward Accumulator", rewardAccumulator, ":", ionBalance);
+
+      uint256 expectedBalance = rewardAmount / 4;
+      // assertEq(ionBalance, expectedBalance, "Each reward accumulator should have a quarter of the tokens");
+    }
+
+    // Log the price of ION-WETH LP using mpo.price
+    uint256 ionWethPrice = mpo.price(address(ionWeth5050lPAero));
+    console.log("Price of ION-WETH LP:", ionWethPrice);
+
+    // Log the price of WETH-AERO LP using mpo.price
+    uint256 wethAeroPrice = mpo.price(address(wethAero5050LPAero));
+    console.log("Price of WETH-AERO LP:", wethAeroPrice);
   }
 }
 
 contract ClaimBribes is VoterTest {}
 
-contract Setters is VoterTest {}
+contract Setters is VoterTest {
+  function testSetLpTokens() public {
+    address[] memory newLpTokens = new address[](2);
+    newLpTokens[0] = address(0x123);
+    newLpTokens[1] = address(0x456);
+
+    voter.setLpTokens(newLpTokens);
+
+    address[] memory lpTokens = voter.getAllLpRewardTokens();
+    assertEq(lpTokens.length, newLpTokens.length, "LP tokens length mismatch");
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      assertEq(lpTokens[i], newLpTokens[i], "LP token mismatch");
+    }
+  }
+
+  function testSetMpo() public {
+    address newMpo = address(0x789);
+    voter.setMpo(newMpo);
+
+    assertEq(address(voter.mpo()), newMpo, "MPO address mismatch");
+  }
+
+  function testSetGovernor() public {
+    address newGovernor = address(0xABC);
+    voter.setGovernor(newGovernor);
+
+    assertEq(voter.governor(), newGovernor, "Governor address mismatch");
+  }
+
+  function testSetEpochGovernor() public {
+    address newEpochGovernor = address(0xDEF);
+    voter.setEpochGovernor(newEpochGovernor);
+
+    assertEq(voter.epochGovernor(), newEpochGovernor, "Epoch Governor address mismatch");
+  }
+
+  function testSetMaxVotingNum() public {
+    uint256 newMaxVotingNum = 25;
+    voter.setMaxVotingNum(newMaxVotingNum);
+
+    assertEq(voter.maxVotingNum(), newMaxVotingNum, "Max voting number mismatch");
+  }
+
+  function testWhitelistToken() public {
+    address token = address(0xFED);
+    voter.whitelistToken(token, true);
+
+    assertTrue(voter.isWhitelistedToken(token), "Token should be whitelisted");
+  }
+
+  function testWhitelistNFT() public {
+    uint256 tokenId = 1;
+    voter.whitelistNFT(tokenId, true);
+
+    assertTrue(voter.isWhitelistedNFT(tokenId), "NFT should be whitelisted");
+  }
+
+  function testAddMarkets() public {
+    IVoter.Market[] memory newMarkets = new IVoter.Market[](2);
+    newMarkets[0] = IVoter.Market(address(0x123), IVoter.MarketSide.Supply);
+    newMarkets[1] = IVoter.Market(address(0x456), IVoter.MarketSide.Borrow);
+
+    voter.addMarkets(newMarkets);
+
+    assertEq(voter.marketsLength(), 2, "Markets length mismatch");
+    (address marketAddress, IVoter.MarketSide marketSide) = voter.markets(0);
+    assertEq(marketAddress, address(0x123), "First market address mismatch");
+    assertEq(uint256(marketSide), uint256(IVoter.MarketSide.Supply), "First market side mismatch");
+
+    (marketAddress, marketSide) = voter.markets(1);
+    assertEq(marketAddress, address(0x456), "Second market address mismatch");
+    assertEq(uint256(marketSide), uint256(IVoter.MarketSide.Borrow), "Second market side mismatch");
+  }
+
+  function testSetMarketRewardAccumulators() public {
+    address[] memory marketAddresses = new address[](2);
+    marketAddresses[0] = address(0x123);
+    marketAddresses[1] = address(0x456);
+
+    IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](2);
+    marketSides[0] = IVoter.MarketSide.Supply;
+    marketSides[1] = IVoter.MarketSide.Borrow;
+
+    address[] memory rewardAccumulators = new address[](2);
+    rewardAccumulators[0] = address(0x789);
+    rewardAccumulators[1] = address(0xABC);
+
+    voter.setMarketRewardAccumulators(marketAddresses, marketSides, rewardAccumulators);
+
+    assertEq(
+      voter.marketToRewardAccumulators(address(0x123), IVoter.MarketSide.Supply),
+      address(0x789),
+      "First reward accumulator mismatch"
+    );
+    assertEq(
+      voter.marketToRewardAccumulators(address(0x456), IVoter.MarketSide.Borrow),
+      address(0xABC),
+      "Second reward accumulator mismatch"
+    );
+  }
+
+  function testSetBribes() public {
+    address[] memory rewardAccumulators = new address[](2);
+    rewardAccumulators[0] = address(0x789);
+    rewardAccumulators[1] = address(0xABC);
+
+    address[] memory bribes = new address[](2);
+    bribes[0] = address(0xDEF);
+    bribes[1] = address(0xFED);
+
+    voter.setBribes(rewardAccumulators, bribes);
+
+    assertEq(voter.rewardAccumulatorToBribe(address(0x789)), address(0xDEF), "First bribe mismatch");
+    assertEq(voter.rewardAccumulatorToBribe(address(0xABC)), address(0xFED), "Second bribe mismatch");
+  }
+}

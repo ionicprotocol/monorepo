@@ -3,52 +3,36 @@ pragma solidity ^0.8.10;
 
 import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "forge-std/Test.sol";
-import "../../veION/BribeRewards.sol";
+import "../../../veION/BribeRewards.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../config/BaseTest.t.sol";
-import "../../veION/Voter.sol";
-import "../../oracles/MasterPriceOracle.sol";
-import { SimplePriceOracle } from "../../oracles/default/SimplePriceOracle.sol";
-import "../../veION/libraries/IonicTimeLibrary.sol";
+import "../../config/BaseTest.t.sol";
+import "../../../veION/Voter.sol";
+import "../../../oracles/MasterPriceOracle.sol";
+import { SimplePriceOracle } from "../../../oracles/default/SimplePriceOracle.sol";
+import "../../../veION/libraries/IonicTimeLibrary.sol";
 
 contract BribeRewardsTest is BaseTest {
   MockERC20 bribeTokenA;
   MockERC20 bribeTokenB;
   MockERC20 bribeTokenC;
   BribeRewards bribeRewards;
-  Voter voter;
   SimplePriceOracle simpleOracle;
-  MasterPriceOracle mpo = MasterPriceOracle(0x2BAF3A2B667A5027a83101d218A9e8B73577F117);
+  address ve = address(0x123);
+  address voter = address(0x456);
   address rewardToken = 0x18470019bF0E94611f15852F7e93cf5D65BC34CA;
-  address token = address(0x4);
   address lpTokenA = address(0x5);
   address lpTokenB = address(0x6);
   uint256 tokenId = 1;
   uint256 amount = 1000 ether;
+  address user = address(0x789);
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
-    voter = new Voter();
-    voter.initialize(new address[](0), MasterPriceOracle(mpo), rewardToken, address(0));
+  }
+
+  function setUp() public {
     bribeRewards = new BribeRewards();
-    bribeRewards.initialize(address(voter));
-
-    simpleOracle = new SimplePriceOracle();
-    simpleOracle.initialize();
-
-    simpleOracle.setDirectPrice(lpTokenA, 3e18); // Set price for lpTokenA
-    simpleOracle.setDirectPrice(lpTokenB, 5e18); // Set price for lpTokenB
-
-    address[] memory underlyings = new address[](2);
-    underlyings[0] = lpTokenA;
-    underlyings[1] = lpTokenB;
-
-    BasePriceOracle[] memory _oracles = new BasePriceOracle[](2);
-    _oracles[0] = simpleOracle;
-    _oracles[1] = simpleOracle;
-
-    vm.prank(mpo.admin());
-    mpo.add(underlyings, _oracles);
+    bribeRewards.initialize(address(voter), ve);
 
     address[] memory mockLpTokens = new address[](2);
     mockLpTokens[0] = lpTokenA;
@@ -65,20 +49,27 @@ contract BribeRewardsTest is BaseTest {
     bribeTokens[2] = address(bribeTokenC);
 
     for (uint256 i = 0; i < bribeTokens.length; i++) {
-      vm.prank(voter.governor());
-      voter.whitelistToken(bribeTokens[i], true);
+      vm.mockCall(
+        address(voter),
+        abi.encodeWithSelector(IVoter.isWhitelistedToken.selector, bribeTokens[i]),
+        abi.encode(true)
+      );
+
+      vm.mockCall(ve, abi.encodeWithSelector(ERC721Upgradeable.ownerOf.selector, tokenId), abi.encode(user));
     }
   }
 
-  function testBribeDeposit() public fork(MODE_MAINNET) {
+  function test_deposit_VoterCanDeposit() public {
     vm.prank(address(voter));
     bribeRewards.deposit(lpTokenA, amount, tokenId);
 
     uint256 balance = bribeRewards.balanceOf(tokenId, lpTokenA);
     assertEq(balance, amount, "Balance should be equal to deposited amount");
+    uint256 totalSupply = bribeRewards.totalSupply(lpTokenA);
+    assertEq(totalSupply, amount, "Total supply should be equal to deposited amount");
   }
 
-  function testBribeWithdraw() public fork(MODE_MAINNET) {
+  function test_withdraw_VoterCanWithdraw() public {
     vm.prank(address(voter));
     bribeRewards.deposit(lpTokenA, amount, tokenId);
 
@@ -89,21 +80,25 @@ contract BribeRewardsTest is BaseTest {
     assertEq(balance, 0, "Balance should be zero after withdrawal");
   }
 
-  function testBribeGetReward() public fork(MODE_MAINNET) {
+  function test_getReward_VoterCanGetReward() public {
+    bribeTokenA.mint(address(this), 1_000_000 ether);
+    bribeTokenA.approve(address(bribeRewards), 1_000_000 ether);
+
+    bribeRewards.notifyRewardAmount(address(bribeTokenA), 1_000_000 ether);
+
     address[] memory tokens = new address[](1);
-    tokens[0] = token;
+    tokens[0] = address(bribeTokenA);
 
-    vm.prank(address(voter));
-    bribeRewards.notifyRewardAmount(token, amount);
-
-    vm.prank(address(voter));
+    vm.startPrank(address(voter));
+    bribeRewards.deposit(lpTokenA, amount, tokenId);
     bribeRewards.getReward(tokenId, tokens);
+    vm.stopPrank();
 
-    uint256 lastEarned = bribeRewards.lastEarn(token, tokenId);
+    uint256 lastEarned = bribeRewards.lastEarn(tokens[0], tokenId);
     assertEq(lastEarned, block.timestamp, "Last earned timestamp should be updated");
   }
 
-  function testBribeEarned() public fork(MODE_MAINNET) {
+  function test_earned_EarnedShouldBeCorrect() public {
     bribeTokenA.mint(address(this), 1_000_000 ether);
     bribeTokenA.approve(address(bribeRewards), 1_000_000 ether);
 
@@ -135,3 +130,5 @@ contract BribeRewardsTest is BaseTest {
     emit log_named_uint("Earned amount", earnedAmount);
   }
 }
+
+// TODO try for multiple users with multiple LPs
