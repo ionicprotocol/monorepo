@@ -172,12 +172,8 @@ const ManageDialog = ({
       selectedMarketData={selectedMarketData}
     >
       <Dialog
-        open={true}
-        onOpenChange={(open) => {
-          if (!open) {
-            setIsOpen(false); // Close the popup when the dialog is closed
-          }
-        }}
+        open={isOpen}
+        onOpenChange={setIsOpen}
       >
         <DialogContent className="w-[85%] sm:w-[55%] md:w-[45%] bg-grayUnselect">
           <div className="flex w-20 mx-auto relative text-center">
