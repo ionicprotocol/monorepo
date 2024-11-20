@@ -18,14 +18,14 @@ import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';
+import ManageDialog, { PopupMode } from '../_components/manage-dialog';
+import Loop from '../_components/manage-dialog/Loop';
+import Swap from '../_components/manage-dialog/Swap';
 import APRCell from '../_components/markets/APRCell';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import StakingTile from '../_components/markets/StakingTile';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
-import Loop from '../_components/popup/Loop';
-import Popup, { PopupMode } from '../_components/popup/page';
-import Swap from '../_components/popup/Swap';
 
 import type { EnhancedColumnDef } from '../_components/CommonTable';
 import type { Row } from '@tanstack/react-table';
@@ -277,7 +277,7 @@ export default function Market() {
       </div>
 
       {popupMode === PopupMode.MANAGE && selectedMarketData && poolData && (
-        <Popup
+        <ManageDialog
           closePopup={() => setPopupMode(undefined)}
           comptrollerAddress={poolData.comptroller}
           selectedMarketData={selectedMarketData}

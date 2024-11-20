@@ -6,7 +6,7 @@ import { useStore } from '@ui/store/Store';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import WrapEthSwaps from './WrapEthSwaps';
-import { PopupMode } from '../popup/page';
+import { PopupMode } from '../manage-dialog';
 import ResultHandler from '../ResultHandler';
 
 // import BorrowPopover from './BorrowPopover';

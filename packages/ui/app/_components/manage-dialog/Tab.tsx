@@ -1,4 +1,4 @@
-import { PopupMode } from './page';
+import { PopupMode } from '.';
 interface IMode {
   active: PopupMode;
   loopPossible: boolean;

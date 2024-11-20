@@ -34,11 +34,11 @@ import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
 import NetworkSelector from '../_components/markets/NetworkSelector';
-import Loop from '../_components/popup/Loop';
-import Popup from '../_components/popup/page';
+import Loop from '../_components/manage-dialog/Loop';
+import Popup from '../_components/manage-dialog';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { PopupMode } from '../_components/popup/page';
+import type { PopupMode } from '../_components/manage-dialog';
 
 import type {
   FlywheelReward,

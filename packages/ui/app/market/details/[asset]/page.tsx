@@ -59,10 +59,10 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
-import Popup, { PopupMode } from '@ui/app/_components/popup/page';
+import Popup, { PopupMode } from '@ui/app/_components/manage-dialog/page';
 import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import Swap from '@ui/app/_components/popup/Swap';
+import Swap from '@ui/app/_components/manage-dialog/Swap';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';

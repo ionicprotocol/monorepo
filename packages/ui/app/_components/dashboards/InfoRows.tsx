@@ -20,7 +20,7 @@ const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
 import APRCell from '../markets/APRCell';
-import { PopupMode } from '../popup/page';
+import { PopupMode } from '../manage-dialog';
 
 import type { Address } from 'viem';
 
