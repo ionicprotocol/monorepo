@@ -5,7 +5,10 @@ import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import { INFO_MESSAGES } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import {
+  HFPStatus,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
@@ -15,25 +18,11 @@ import TransactionStepsHandler, {
 import ResultHandler from '../ResultHandler';
 
 interface WithdrawTabProps {
-  isLoadingUpdatedAssets: boolean;
   maxAmount: bigint;
   isLoadingMax: boolean;
-  isDisabled: boolean;
-  updatedValues: {
-    balanceFrom?: string;
-    balanceTo?: string;
-    aprFrom?: number;
-    aprTo?: number;
-  };
 }
 
-const WithdrawTab = ({
-  isLoadingUpdatedAssets,
-  maxAmount,
-  isLoadingMax,
-  isDisabled,
-  updatedValues
-}: WithdrawTabProps) => {
+const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -46,8 +35,18 @@ const WithdrawTab = ({
     chainId,
     normalizedHealthFactor,
     normalizedPredictedHealthFactor,
-    amountAsBInt
+    amountAsBInt,
+    isLoadingPredictedHealthFactor,
+    updatedValues,
+    isLoadingUpdatedAssets
   } = useManageDialogContext();
+
+  const isDisabled =
+    !amount ||
+    amountAsBInt === 0n ||
+    isLoadingPredictedHealthFactor ||
+    hfpStatus === HFPStatus.CRITICAL ||
+    hfpStatus === HFPStatus.UNKNOWN;
 
   const healthFactor = {
     current: normalizedHealthFactor ?? '0',
@@ -183,10 +182,10 @@ const WithdrawTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply Balance</span>
           <div className="flex items-center">
-            <span>{updatedValues.balanceFrom}</span>
+            <span>{updatedValues.supplyBalanceFrom}</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.balanceTo}
+              {updatedValues.supplyBalanceTo}
             </ResultHandler>
           </div>
         </div>
@@ -194,10 +193,10 @@ const WithdrawTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.aprFrom}%</span>
+            <span>{updatedValues.supplyAPY}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.aprTo}%
+              {updatedValues.updatedSupplyAPY}%
             </ResultHandler>
           </div>
         </div>

@@ -6,7 +6,10 @@ import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import { INFO_MESSAGES } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import {
+  HFPStatus,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
@@ -17,16 +20,8 @@ import TransactionStepsHandler, {
 import ResultHandler from '../ResultHandler';
 
 interface BorrowTabProps {
-  isLoadingUpdatedAssets: boolean;
   maxAmount: bigint;
   isLoadingMax: boolean;
-  isDisabled: boolean;
-  updatedValues: {
-    balanceFrom?: string;
-    balanceTo?: string;
-    aprFrom?: number;
-    aprTo?: number;
-  };
   totalStats?: {
     capAmount: number;
     totalAmount: number;
@@ -35,14 +30,7 @@ interface BorrowTabProps {
   };
 }
 
-const BorrowTab = ({
-  isLoadingUpdatedAssets,
-  maxAmount,
-  isLoadingMax,
-  isDisabled,
-  updatedValues,
-  totalStats
-}: BorrowTabProps) => {
+const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -57,8 +45,18 @@ const BorrowTab = ({
     normalizedPredictedHealthFactor,
     amountAsBInt,
     minBorrowAmount,
-    maxBorrowAmount
+    maxBorrowAmount,
+    isLoadingPredictedHealthFactor,
+    isLoadingUpdatedAssets,
+    updatedValues
   } = useManageDialogContext();
+
+  const isDisabled =
+    !amount ||
+    amountAsBInt === 0n ||
+    isLoadingPredictedHealthFactor ||
+    hfpStatus === HFPStatus.CRITICAL ||
+    hfpStatus === HFPStatus.UNKNOWN;
 
   const healthFactor = {
     current: normalizedHealthFactor ?? '0',
@@ -220,10 +218,10 @@ const BorrowTab = ({
         <div className="flex justify-between text-xs text-gray-400">
           <span>CURRENTLY BORROWING</span>
           <div className="flex items-center">
-            <span>{updatedValues.balanceFrom}</span>
+            <span>{updatedValues.borrowBalanceFrom}</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.balanceTo}
+              {updatedValues.borrowBalanceTo}
             </ResultHandler>
           </div>
         </div>
@@ -231,10 +229,10 @@ const BorrowTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Borrow APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.aprFrom}%</span>
+            <span>{updatedValues.borrowAPR}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.aprTo}%
+              {updatedValues.updatedBorrowAPR}%
             </ResultHandler>
           </div>
         </div>

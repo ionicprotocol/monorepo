@@ -38,6 +38,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 
 import { FundOperationMode } from '@ionicprotocol/types';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export enum PopupMode {
   MANAGE = 1,
@@ -91,6 +92,21 @@ interface PopupContextType {
       }
     | null
     | undefined;
+  updatedValues: {
+    borrowAPR: number | undefined;
+    borrowBalanceFrom: string;
+    borrowBalanceTo: string | undefined;
+    supplyAPY: number | undefined;
+    supplyBalanceFrom: string;
+    supplyBalanceTo: string | undefined;
+    totalBorrows: number | undefined;
+    updatedBorrowAPR: number | undefined;
+    updatedSupplyAPY: number | undefined;
+    updatedTotalBorrows: number | undefined;
+  };
+  isLoadingPredictedHealthFactor: boolean;
+  isLoadingUpdatedAssets: boolean;
+
   // Add any other shared variables or functions here
 }
 
@@ -160,7 +176,10 @@ export const PopupProvider: React.FC<{
   );
 
   const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
-  const { data: _predictedHealthFactor } = useHealthFactorPrediction(
+  const {
+    data: _predictedHealthFactor,
+    isLoading: isLoadingPredictedHealthFactor
+  } = useHealthFactorPrediction(
     comptrollerAddress,
     address ?? ('' as Address),
     selectedMarketData.cToken,
@@ -179,13 +198,14 @@ export const PopupProvider: React.FC<{
     useState<number>(0);
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
-  const { data: updatedAssets } = useUpdatedUserAssets({
-    amount: amountAsBInt,
-    assets: [selectedMarketData],
-    index: 0,
-    mode: currentFundOperation,
-    poolChainId: chainId
-  });
+  const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
+    useUpdatedUserAssets({
+      amount: amountAsBInt,
+      assets: [selectedMarketData],
+      index: 0,
+      mode: currentFundOperation,
+      poolChainId: chainId
+    });
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
     selectedMarketData,
@@ -557,6 +577,86 @@ export const PopupProvider: React.FC<{
     }
   };
 
+  const updatedValues = useMemo(() => {
+    const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
+
+    if (currentSdk) {
+      return {
+        borrowAPR: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.borrowRatePerBlock,
+          blocksPerMinute
+        ),
+        borrowBalanceFrom: Number(
+          formatUnits(
+            selectedMarketData.borrowBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        borrowBalanceTo: updatedAsset
+          ? Number(
+              formatUnits(
+                updatedAsset.borrowBalance,
+                updatedAsset.underlyingDecimals
+              )
+            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : undefined,
+        supplyAPY: currentSdk.ratePerBlockToAPY(
+          selectedMarketData.supplyRatePerBlock,
+          blocksPerMinute
+        ),
+        supplyBalanceFrom: Number(
+          formatUnits(
+            selectedMarketData.supplyBalance,
+            selectedMarketData.underlyingDecimals
+          )
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        supplyBalanceTo: updatedAsset
+          ? Math.abs(
+              Number(
+                formatUnits(
+                  updatedAsset.supplyBalance,
+                  updatedAsset.underlyingDecimals
+                )
+              )
+            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
+          : undefined,
+        totalBorrows: updatedAssets?.reduce(
+          (acc, cur) => acc + cur.borrowBalanceFiat,
+          0
+        ),
+        updatedBorrowAPR: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.borrowRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedSupplyAPY: updatedAsset
+          ? currentSdk.ratePerBlockToAPY(
+              updatedAsset.supplyRatePerBlock,
+              blocksPerMinute
+            )
+          : undefined,
+        updatedTotalBorrows: updatedAssets
+          ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
+          : undefined
+      };
+    }
+
+    // Ensure all properties are defined, even if undefined
+    return {
+      borrowAPR: undefined,
+      borrowBalanceFrom: '',
+      borrowBalanceTo: undefined,
+      supplyAPY: undefined,
+      supplyBalanceFrom: '',
+      supplyBalanceTo: undefined,
+      totalBorrows: undefined,
+      updatedBorrowAPR: undefined,
+      updatedSupplyAPY: undefined,
+      updatedTotalBorrows: undefined
+    };
+  }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
+
   const normalizedHealthFactor = useMemo(() => {
     return healthFactor
       ? healthFactor === '-1'
@@ -595,7 +695,10 @@ export const PopupProvider: React.FC<{
         amountAsBInt,
         comptrollerAddress,
         minBorrowAmount,
-        maxBorrowAmount
+        maxBorrowAmount,
+        isLoadingPredictedHealthFactor,
+        isLoadingUpdatedAssets,
+        updatedValues
       }}
     >
       {children}

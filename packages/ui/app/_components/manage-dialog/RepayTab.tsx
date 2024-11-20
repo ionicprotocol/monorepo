@@ -17,23 +17,11 @@ import TransactionStepsHandler, {
 import ResultHandler from '../ResultHandler';
 
 interface RepayTabProps {
-  isLoadingUpdatedAssets: boolean;
   maxAmount: bigint;
   isLoadingMax: boolean;
-  updatedValues: {
-    balanceFrom?: string;
-    balanceTo?: string;
-    aprFrom?: number;
-    aprTo?: number;
-  };
 }
 
-const RepayTab = ({
-  isLoadingUpdatedAssets,
-  maxAmount,
-  isLoadingMax,
-  updatedValues
-}: RepayTabProps) => {
+const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -46,7 +34,9 @@ const RepayTab = ({
     chainId,
     normalizedHealthFactor,
     normalizedPredictedHealthFactor,
-    amountAsBInt
+    amountAsBInt,
+    isLoadingUpdatedAssets,
+    updatedValues
   } = useManageDialogContext();
   const { currentSdk, address } = useMultiIonic();
 
@@ -211,10 +201,14 @@ const RepayTab = ({
         <div className="flex justify-between text-xs text-gray-400">
           <span>CURRENTLY BORROWING</span>
           <div className="flex items-center">
-            <span className="text-error">{updatedValues.balanceFrom}</span>
+            <span className="text-error">
+              {updatedValues.borrowBalanceFrom}
+            </span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              <span className="text-accent">{updatedValues.balanceTo}</span>
+              <span className="text-accent">
+                {updatedValues.borrowBalanceTo}
+              </span>
             </ResultHandler>
           </div>
         </div>
@@ -222,10 +216,10 @@ const RepayTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Borrow APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.aprFrom}%</span>
+            <span>{updatedValues.borrowAPR}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.aprTo}%
+              {updatedValues.updatedBorrowAPR}%
             </ResultHandler>
           </div>
         </div>

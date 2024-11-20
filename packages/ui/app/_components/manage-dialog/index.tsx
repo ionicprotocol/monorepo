@@ -1,18 +1,10 @@
 'use client';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  type Address,
-  formatEther,
-  formatUnits,
-  maxUint256,
-  parseEther,
-  parseUnits
-} from 'viem';
+import { type Address, formatEther, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
 import { Dialog, DialogContent } from '@ui/components/ui/dialog';
@@ -26,11 +18,6 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { PopupProvider } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
-import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
-import {
-  useHealthFactor,
-  useHealthFactorPrediction
-} from '@ui/hooks/pools/useHealthFactor';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
@@ -38,14 +25,11 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import BorrowTab from './BorrowTab';
 import RepayTab from './RepayTab';
 import SupplyTab from './SupplyTab';
 import WithdrawTab from './WithdrawTab';
-
-import { FundOperationMode } from '@ionicprotocol/types';
 
 const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
   ssr: false
@@ -66,17 +50,19 @@ export enum HFPStatus {
 }
 
 interface IPopup {
-  closePopup: () => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   comptrollerAddress: Address;
   selectedMarketData: MarketData;
 }
 
 const ManageDialog = ({
+  isOpen,
+  setIsOpen,
   selectedMarketData,
-  closePopup,
   comptrollerAddress
 }: IPopup) => {
-  const { currentSdk, address } = useMultiIonic();
+  const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const pricePerSingleAsset = useMemo<number>(
@@ -163,209 +149,35 @@ const ManageDialog = ({
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
   const [active, setActive] = useState<ActiveTab>('supply');
 
-  const [amount, setAmount] = useReducer(
-    (_: string | undefined, value: string | undefined): string | undefined =>
-      value,
-    '0'
-  );
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
-  const amountAsBInt = useMemo<bigint>(
-    () =>
-      parseUnits(
-        amount?.toString() ?? '0',
-        selectedMarketData.underlyingDecimals
-      ),
-    [amount, selectedMarketData.underlyingDecimals]
-  );
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
 
   // const setBorrow = useStore((state) => state.setBorrowAmount);
 
-  const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
-  const {
-    data: _predictedHealthFactor,
-    isLoading: isLoadingPredictedHealthFactor
-  } = useHealthFactorPrediction(
-    comptrollerAddress,
-    address ?? ('' as Address),
-    selectedMarketData.cToken,
-    active === 'withdraw'
-      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
-      : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === 'borrow'
-      ? amountAsBInt
-      : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === 'repay'
-      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
-      : parseUnits('0', selectedMarketData.underlyingDecimals)
-  );
-
-  const [currentFundOperation, setCurrentFundOperation] =
-    useState<FundOperationMode>(FundOperationMode.SUPPLY);
-  const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
-    useUpdatedUserAssets({
-      amount: amountAsBInt,
-      assets: [selectedMarketData],
-      index: 0,
-      mode: currentFundOperation,
-      poolChainId: chainId
-    });
-  const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
   const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
     useMaxWithdrawAmount(selectedMarketData, chainId);
 
-  const {
-    supplyAPY,
-    borrowAPR,
-    updatedSupplyAPY,
-    updatedBorrowAPR,
-    supplyBalanceFrom,
-    supplyBalanceTo,
-    borrowBalanceFrom,
-    borrowBalanceTo
-  } = useMemo(() => {
-    const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
-
-    if (currentSdk) {
-      return {
-        borrowAPR: currentSdk.ratePerBlockToAPY(
-          selectedMarketData.borrowRatePerBlock,
-          blocksPerMinute
-        ),
-        borrowBalanceFrom: Number(
-          formatUnits(
-            selectedMarketData.borrowBalance,
-            selectedMarketData.underlyingDecimals
-          )
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
-        borrowBalanceTo: updatedAsset
-          ? Number(
-              formatUnits(
-                updatedAsset.borrowBalance,
-                updatedAsset.underlyingDecimals
-              )
-            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : undefined,
-        supplyAPY: currentSdk.ratePerBlockToAPY(
-          selectedMarketData.supplyRatePerBlock,
-          blocksPerMinute
-        ),
-        supplyBalanceFrom: Number(
-          formatUnits(
-            selectedMarketData.supplyBalance,
-            selectedMarketData.underlyingDecimals
-          )
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
-        supplyBalanceTo: updatedAsset
-          ? Math.abs(
-              Number(
-                formatUnits(
-                  updatedAsset.supplyBalance,
-                  updatedAsset.underlyingDecimals
-                )
-              )
-            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : undefined,
-        totalBorrows: updatedAssets?.reduce(
-          (acc, cur) => acc + cur.borrowBalanceFiat,
-          0
-        ),
-        updatedBorrowAPR: updatedAsset
-          ? currentSdk.ratePerBlockToAPY(
-              updatedAsset.borrowRatePerBlock,
-              blocksPerMinute
-            )
-          : undefined,
-        updatedSupplyAPY: updatedAsset
-          ? currentSdk.ratePerBlockToAPY(
-              updatedAsset.supplyRatePerBlock,
-              blocksPerMinute
-            )
-          : undefined,
-        updatedTotalBorrows: updatedAssets
-          ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
-          : undefined
-      };
-    }
-
-    return {};
-  }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
-  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
-  const predictedHealthFactor = useMemo<bigint | undefined>(() => {
-    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
-      return maxUint256;
-    }
-
-    if (amountAsBInt === 0n) {
-      return parseEther(healthFactor ?? '0');
-    }
-
-    return _predictedHealthFactor;
-  }, [_predictedHealthFactor, updatedAsset, amountAsBInt, healthFactor]);
-
-  const hfpStatus = useMemo<HFPStatus>(() => {
-    if (!predictedHealthFactor) {
-      return HFPStatus.UNKNOWN;
-    }
-
-    if (predictedHealthFactor === maxUint256) {
-      return HFPStatus.NORMAL;
-    }
-
-    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
-      return HFPStatus.NORMAL;
-    }
-
-    const predictedHealthFactorNumber = Number(
-      formatEther(predictedHealthFactor)
-    );
-
-    if (predictedHealthFactorNumber <= 1.1) {
-      return HFPStatus.CRITICAL;
-    }
-
-    if (predictedHealthFactorNumber <= 1.2) {
-      return HFPStatus.WARNING;
-    }
-
-    return HFPStatus.NORMAL;
-  }, [predictedHealthFactor, updatedAsset]);
 
   /**
    * Fade in animation
    */
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    let closeTimer: ReturnType<typeof setTimeout>;
-
-    if (!isMounted) {
-      closeTimer = setTimeout(() => {
-        closePopup();
-      }, 301);
-    }
-
-    return () => {
-      clearTimeout(closeTimer);
-    };
-  }, [isMounted, closePopup]);
-
-  const initiateCloseAnimation = () => setIsMounted(false);
 
   return (
     <PopupProvider
       comptrollerAddress={comptrollerAddress}
-      closePopup={closePopup}
+      closePopup={() => setIsOpen(false)}
       selectedMarketData={selectedMarketData}
     >
       <Dialog
-        open={isMounted}
-        onOpenChange={(open) => !open && initiateCloseAnimation()}
+        open={true}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsOpen(false); // Close the popup when the dialog is closed
+          }
+        }}
       >
         <DialogContent className="w-[85%] sm:w-[55%] md:w-[45%] bg-grayUnselect">
           <div className="flex w-20 mx-auto relative text-center">
@@ -393,17 +205,9 @@ const ManageDialog = ({
 
             <TabsContent value="supply">
               <SupplyTab
-                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
                 maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
                 isLoadingMax={isLoadingMaxSupply}
-                isDisabled={!amount || amountAsBInt === 0n}
-                updatedValues={{
-                  balanceFrom: supplyBalanceFrom,
-                  balanceTo: supplyBalanceTo,
-                  aprFrom: supplyAPY,
-                  aprTo: updatedSupplyAPY,
-                  collateralApr
-                }}
+                collateralApr={collateralApr}
                 totalStats={{
                   capAmount: supplyCapAsNumber,
                   totalAmount: totalSupplyAsNumber,
@@ -416,42 +220,14 @@ const ManageDialog = ({
 
             <TabsContent value="withdraw">
               <WithdrawTab
-                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
                 maxAmount={maxWithdrawAmount ?? 0n}
                 isLoadingMax={isLoadingMaxWithdrawAmount}
-                isDisabled={
-                  !amount ||
-                  amountAsBInt === 0n ||
-                  isLoadingPredictedHealthFactor ||
-                  hfpStatus === HFPStatus.CRITICAL ||
-                  hfpStatus === HFPStatus.UNKNOWN
-                }
-                updatedValues={{
-                  balanceFrom: supplyBalanceFrom,
-                  balanceTo: supplyBalanceTo,
-                  aprFrom: supplyAPY,
-                  aprTo: updatedSupplyAPY
-                }}
               />
             </TabsContent>
             <TabsContent value="borrow">
               <BorrowTab
-                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
                 maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
                 isLoadingMax={isLoadingMaxBorrowAmount}
-                isDisabled={
-                  !amount ||
-                  amountAsBInt === 0n ||
-                  isLoadingPredictedHealthFactor ||
-                  hfpStatus === HFPStatus.CRITICAL ||
-                  hfpStatus === HFPStatus.UNKNOWN
-                }
-                updatedValues={{
-                  balanceFrom: borrowBalanceFrom,
-                  balanceTo: borrowBalanceTo,
-                  aprFrom: borrowAPR,
-                  aprTo: updatedBorrowAPR
-                }}
                 totalStats={{
                   capAmount: borrowCapAsNumber,
                   totalAmount: totalBorrowAsNumber,
@@ -462,15 +238,8 @@ const ManageDialog = ({
             </TabsContent>
             <TabsContent value="repay">
               <RepayTab
-                isLoadingUpdatedAssets={isLoadingUpdatedAssets}
                 maxAmount={maxRepayAmount ?? 0n}
                 isLoadingMax={isLoadingMaxRepayAmount}
-                updatedValues={{
-                  balanceFrom: borrowBalanceFrom,
-                  balanceTo: borrowBalanceTo,
-                  aprFrom: borrowAPR,
-                  aprTo: updatedBorrowAPR
-                }}
               />
             </TabsContent>
           </Tabs>

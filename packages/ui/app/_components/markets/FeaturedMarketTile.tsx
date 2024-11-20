@@ -6,7 +6,6 @@ import { useStore } from '@ui/store/Store';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import WrapEthSwaps from './WrapEthSwaps';
-import { PopupMode } from '../manage-dialog';
 import ResultHandler from '../ResultHandler';
 
 // import BorrowPopover from './BorrowPopover';
@@ -16,7 +15,7 @@ import ResultHandler from '../ResultHandler';
 
 interface Iprop {
   selectedChain: number;
-  setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
+  setIsManageDialogOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   isLoadingPoolData: boolean;
   dropdownSelectedChain: string;
@@ -28,7 +27,7 @@ interface Iprop {
 
 export default function FeaturedMarketTile({
   selectedChain,
-  setPopupMode,
+  setIsManageDialogOpen,
   setSelectedSymbol,
   isLoadingPoolData = true,
   dropdownSelectedChain,
@@ -37,6 +36,11 @@ export default function FeaturedMarketTile({
   setWrapWidgetOpen,
   wrapWidgetOpen
 }: Iprop) {
+  console.log('dropdownSelectedChain', dropdownSelectedChain);
+  console.log('selectedChain', selectedChain);
+  console.log('isLoadingPoolData', isLoadingPoolData);
+  console.log('setWrapWidgetOpen', setWrapWidgetOpen);
+  console.log('wrapWidgetOpen', wrapWidgetOpen);
   // const {
   //   asset,
   //   borrowAPR,
@@ -49,7 +53,9 @@ export default function FeaturedMarketTile({
   //   loopPossible
   // } = useStore((state) => state.featuredBorrow);
   const featuredSupply = useStore((state) => state.featuredSupply);
+  console.log('featuredSupply', featuredSupply);
   const featuredSupply2 = useStore((state) => state.featuredSupply2);
+  console.log('featuredSupply2', featuredSupply2);
 
   return (
     <div
@@ -113,7 +119,7 @@ export default function FeaturedMarketTile({
                 );
                 if (result) {
                   setSelectedSymbol(featuredSupply.asset);
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
                 }
               }}
             >
@@ -169,7 +175,7 @@ export default function FeaturedMarketTile({
                 );
                 if (result) {
                   setSelectedSymbol(featuredSupply2.asset);
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
                 }
               }}
             >

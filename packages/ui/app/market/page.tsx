@@ -18,7 +18,7 @@ import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';
-import ManageDialog, { PopupMode } from '../_components/manage-dialog';
+import ManageDialog from '../_components/manage-dialog';
 import Loop from '../_components/manage-dialog/Loop';
 import Swap from '../_components/manage-dialog/Swap';
 import APRCell from '../_components/markets/APRCell';
@@ -53,8 +53,9 @@ export default function Market() {
   const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const chainId = useChainId();
   const { address } = useMultiIonic();
-  const [popupMode, setPopupMode] = useState<PopupMode>();
   const [loopMarkets, setLoopMarkets] = useState<LoopMarketData>();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
 
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
@@ -187,7 +188,7 @@ export default function Market() {
                 const result = await handleSwitchOriginChain(+chain, chainId);
                 if (result) {
                   setSelectedSymbol(row.original.asset);
-                  setPopupMode(PopupMode.MANAGE);
+                  setIsManageDialogOpen(true);
                 }
               }}
               disabled={!address}
@@ -202,7 +203,7 @@ export default function Market() {
                 const result = await handleSwitchOriginChain(+chain, chainId);
                 if (result) {
                   setSelectedSymbol(row.original.asset);
-                  setPopupMode(PopupMode.LOOP);
+                  setIsLoopDialogOpen(true);
                 }
               }}
               disabled={!address}
@@ -230,7 +231,7 @@ export default function Market() {
             />
           </div>
           <FeaturedMarketTile
-            setPopupMode={setPopupMode}
+            setIsManageDialogOpen={setIsManageDialogOpen}
             setSelectedSymbol={setSelectedSymbol}
             selectedChain={chainId}
             isLoadingPoolData={isLoading}
@@ -276,19 +277,20 @@ export default function Market() {
         </div>
       </div>
 
-      {popupMode === PopupMode.MANAGE && selectedMarketData && poolData && (
+      {selectedMarketData && poolData && (
         <ManageDialog
-          closePopup={() => setPopupMode(undefined)}
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={poolData.comptroller}
           selectedMarketData={selectedMarketData}
         />
       )}
 
-      {popupMode === PopupMode.LOOP && loopProps && (
+      {loopProps && (
         <Loop
           {...loopProps}
-          closeLoop={() => setPopupMode(undefined)}
-          isOpen={true}
+          closeLoop={() => setIsLoopDialogOpen(false)}
+          isOpen={isLoopDialogOpen}
         />
       )}
 

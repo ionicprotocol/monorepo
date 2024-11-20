@@ -17,17 +17,8 @@ import TransactionStepsHandler, {
 import ResultHandler from '../ResultHandler';
 
 interface SupplyTabProps {
-  isLoadingUpdatedAssets: boolean;
   maxAmount: bigint;
   isLoadingMax: boolean;
-  isDisabled: boolean;
-  updatedValues: {
-    balanceFrom?: string;
-    balanceTo?: string;
-    aprFrom?: number;
-    aprTo?: number;
-    collateralApr?: number;
-  };
   totalStats?: {
     capAmount: number;
     totalAmount: number;
@@ -35,16 +26,15 @@ interface SupplyTabProps {
     totalFiat: number;
   };
   setSwapWidgetOpen: (open: boolean) => void;
+  collateralApr: number;
 }
 
 const SupplyTab = ({
-  isLoadingUpdatedAssets,
   maxAmount,
   isLoadingMax,
-  isDisabled,
-  updatedValues,
   totalStats,
-  setSwapWidgetOpen
+  setSwapWidgetOpen,
+  collateralApr
 }: SupplyTabProps) => {
   const {
     selectedMarketData,
@@ -58,9 +48,12 @@ const SupplyTab = ({
     chainId,
     amountAsBInt,
     comptrollerAddress,
-    handleCollateralToggle
+    handleCollateralToggle,
+    updatedValues,
+    isLoadingUpdatedAssets
   } = useManageDialogContext();
 
+  const isDisabled = !amount || amountAsBInt === 0n;
   const { currentSdk, address } = useMultiIonic();
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
 
@@ -243,16 +236,16 @@ const SupplyTab = ({
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-gray-400">
           <span>COLLATERAL APR</span>
-          <span className="font-bold">{updatedValues.collateralApr}%</span>
+          <span className="font-bold">{collateralApr}%</span>
         </div>
 
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply Balance</span>
           <div className="flex items-center">
-            <span>{updatedValues.balanceFrom}</span>
+            <span>{updatedValues.supplyBalanceFrom}</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.balanceTo}
+              {updatedValues.supplyBalanceTo}
             </ResultHandler>
           </div>
         </div>
@@ -260,10 +253,10 @@ const SupplyTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.aprFrom}%</span>
+            <span>{updatedValues.supplyAPY}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.aprTo}%
+              {updatedValues.updatedSupplyAPY}%
             </ResultHandler>
           </div>
         </div>
