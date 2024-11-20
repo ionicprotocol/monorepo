@@ -54,13 +54,15 @@ interface IPopup {
   setIsOpen: (open: boolean) => void;
   comptrollerAddress: Address;
   selectedMarketData: MarketData;
+  isBorrowDisabled?: boolean;
 }
 
 const ManageDialog = ({
   isOpen,
   setIsOpen,
   selectedMarketData,
-  comptrollerAddress
+  comptrollerAddress,
+  isBorrowDisabled = false
 }: IPopup) => {
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
@@ -187,16 +189,25 @@ const ManageDialog = ({
           </div>
 
           <Tabs
-            defaultValue={active}
-            onValueChange={(value) => {
-              setActive(value as ActiveTab);
-            }}
+            defaultValue="supply"
+            value={active}
+            onValueChange={(value) => setActive(value as ActiveTab)}
           >
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="supply">Supply</TabsTrigger>
               <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
-              <TabsTrigger value="borrow">Borrow</TabsTrigger>
-              <TabsTrigger value="repay">Repay</TabsTrigger>
+              <TabsTrigger
+                value="borrow"
+                disabled={isBorrowDisabled}
+              >
+                Borrow
+              </TabsTrigger>
+              <TabsTrigger
+                value="repay"
+                disabled={isBorrowDisabled}
+              >
+                Repay
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="supply">
@@ -220,6 +231,7 @@ const ManageDialog = ({
                 isLoadingMax={isLoadingMaxWithdrawAmount}
               />
             </TabsContent>
+
             <TabsContent value="borrow">
               <BorrowTab
                 maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
@@ -232,6 +244,7 @@ const ManageDialog = ({
                 }}
               />
             </TabsContent>
+
             <TabsContent value="repay">
               <RepayTab
                 maxAmount={maxRepayAmount ?? 0n}

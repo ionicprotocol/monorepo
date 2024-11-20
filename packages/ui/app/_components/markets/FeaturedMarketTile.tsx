@@ -36,26 +36,8 @@ export default function FeaturedMarketTile({
   setWrapWidgetOpen,
   wrapWidgetOpen
 }: Iprop) {
-  console.log('dropdownSelectedChain', dropdownSelectedChain);
-  console.log('selectedChain', selectedChain);
-  console.log('isLoadingPoolData', isLoadingPoolData);
-  console.log('setWrapWidgetOpen', setWrapWidgetOpen);
-  console.log('wrapWidgetOpen', wrapWidgetOpen);
-  // const {
-  //   asset,
-  //   borrowAPR,
-  //   rewardsAPR,
-  //   dropdownSelectedChain,
-  //   selectedPoolId,
-  //   cToken,
-  //   pool,
-  //   rewards,
-  //   loopPossible
-  // } = useStore((state) => state.featuredBorrow);
   const featuredSupply = useStore((state) => state.featuredSupply);
-  console.log('featuredSupply', featuredSupply);
   const featuredSupply2 = useStore((state) => state.featuredSupply2);
-  console.log('featuredSupply2', featuredSupply2);
 
   return (
     <div

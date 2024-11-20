@@ -60,6 +60,7 @@ export default function Market() {
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
+  const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
@@ -164,21 +165,22 @@ export default function Market() {
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
         <div className="flex gap-2">
-          {!row.original.isBorrowDisabled && (
-            <button
-              className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
-              onClick={async () => {
-                const result = await handleSwitchOriginChain(+chain, chainId);
-                if (result) {
-                  setSelectedSymbol(row.original.asset);
-                  setIsManageDialogOpen(true);
+          <button
+            className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
+            onClick={async () => {
+              const result = await handleSwitchOriginChain(+chain, chainId);
+              if (result) {
+                setSelectedSymbol(row.original.asset);
+                setIsManageDialogOpen(true);
+                if (row.original.isBorrowDisabled) {
+                  setIsBorrowDisabled(true);
                 }
-              }}
-              disabled={!address}
-            >
-              Manage
-            </button>
-          )}
+              }
+            }}
+            disabled={!address}
+          >
+            Manage
+          </button>
           {row.original.loopPossible && (
             <button
               className="rounded-md bg-white/10 text-white py-1.5 px-4 uppercase truncate disabled:opacity-50 hover:bg-white/20"
@@ -264,6 +266,7 @@ export default function Market() {
         <ManageDialog
           isOpen={isManageDialogOpen}
           setIsOpen={setIsManageDialogOpen}
+          isBorrowDisabled={isBorrowDisabled}
           comptrollerAddress={poolData.comptroller}
           selectedMarketData={selectedMarketData}
         />

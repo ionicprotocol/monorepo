@@ -1,9 +1,13 @@
 // hooks/useMarketData.ts
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { type Address, formatEther, formatUnits } from 'viem';
 
-import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import {
+  FLYWHEEL_TYPE_MAP,
+  pools,
+  shouldGetFeatured
+} from '@ui/constants/index';
 import { useBorrowCapsForAssets } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -14,6 +18,7 @@ import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { useStore } from '@ui/store/Store';
 
 export type MarketRowData = MarketData & {
   asset: string;
@@ -46,6 +51,9 @@ export const useMarketData = (
     selectedPool,
     +chain
   );
+
+  const setFeaturedSupply = useStore((state) => state.setFeaturedSupply);
+  const setFeaturedSupply2 = useStore((state) => state.setFeaturedSupply2);
 
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
@@ -205,6 +213,57 @@ export const useMarketData = (
     loopMarkets,
     poolData?.comptroller,
     borrowCapsData
+  ]);
+
+  useEffect(() => {
+    if (!marketData.length) return;
+
+    // Find and set featured supply assets based on shouldGetFeatured mapping
+    marketData.forEach((market) => {
+      // Check if this market is featured supply 1
+      if (
+        shouldGetFeatured.featuredSupply[+chain][
+          selectedPool
+        ]?.toLowerCase() === market.asset.toLowerCase()
+      ) {
+        console.log('yeee');
+        setFeaturedSupply({
+          asset: market.asset,
+          supplyAPR: market.supplyAPR,
+          supplyAPRTotal: market.supplyAPRTotal,
+          rewards: market.supplyRewards,
+          dropdownSelectedChain: +chain,
+          selectedPoolId: selectedPool,
+          cToken: market.cTokenAddress,
+          pool: market.comptrollerAddress
+        });
+      }
+
+      // Check if this market is featured supply 2
+      if (
+        shouldGetFeatured.featuredSupply2[+chain][
+          selectedPool
+        ]?.toLowerCase() === market.asset.toLowerCase()
+      ) {
+        setFeaturedSupply2({
+          asset: market.asset,
+          supplyAPR: market.supplyAPR,
+          supplyAPRTotal: market.supplyAPRTotal,
+          rewards: market.supplyRewards,
+          dropdownSelectedChain: +chain,
+          selectedPoolId: selectedPool,
+          cToken: market.cTokenAddress,
+          pool: market.comptrollerAddress
+        });
+      }
+    });
+  }, [
+    marketData,
+    chain,
+    selectedPool,
+    setFeaturedSupply,
+    setFeaturedSupply2,
+    poolData?.comptroller
   ]);
 
   const selectedMarketData = marketData.find(
