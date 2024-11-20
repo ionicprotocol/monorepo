@@ -15,7 +15,7 @@ interface IProp {
 
 const CountdownTimer = ({ dropdownSelectedCampaign }: IProp) => {
   const diffSeason1 = +new Date('2024-08-31T00:00:00+00:00') - +new Date();
-  const diffSeason2 = +new Date('2025-01-23T00:00:00+00:00') - +new Date();
+  const diffSeason2 = +new Date('2025-02-15T04:20:00+00:00') - +new Date();
   const diffS1presale = +new Date('2024-08-21T00:00:00+00:00') - +new Date();
 
   // let timeLeft: ITime;
