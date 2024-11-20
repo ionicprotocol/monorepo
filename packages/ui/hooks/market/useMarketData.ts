@@ -15,10 +15,10 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
+import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import { useStore } from '@ui/store/Store';
 
 export type MarketRowData = MarketData & {
   asset: string;
@@ -226,7 +226,6 @@ export const useMarketData = (
           selectedPool
         ]?.toLowerCase() === market.asset.toLowerCase()
       ) {
-        console.log('yeee');
         setFeaturedSupply({
           asset: market.asset,
           supplyAPR: market.supplyAPR,

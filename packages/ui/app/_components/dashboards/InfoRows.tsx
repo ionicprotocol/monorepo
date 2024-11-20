@@ -19,8 +19,8 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
-import APRCell from '../markets/APRCell';
 import { PopupMode } from '../manage-dialog';
+import APRCell from '../markets/APRCell';
 
 import type { Address } from 'viem';
 

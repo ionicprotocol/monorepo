@@ -59,8 +59,7 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
-import Popup, { PopupMode } from '@ui/app/_components/manage-dialog/page';
-import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
+
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import Swap from '@ui/app/_components/manage-dialog/Swap';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
@@ -72,6 +71,7 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
+import ManageDialog from '@ui/app/_components/manage-dialog';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -80,6 +80,7 @@ interface IGraph {
   supplyAtY: number[];
   valAtX: string[];
 }
+type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 
 const supabase = createClient(
   'https://uoagtjstsdrjypxlkuzr.supabase.co/',
@@ -95,6 +96,8 @@ const Asset = ({ params }: IProp) => {
   // console.log(data);
   const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>();
 
   //URL passed Data ----------------------------
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
@@ -108,7 +111,6 @@ const Asset = ({ params }: IProp) => {
   const availableAPR = searchParams.get('supplyAPR');
   //--------------------------------------------------------
 
-  const [popupMode, setPopupMode] = useState<PopupMode>();
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
   const [selectedMarketData, setSelectedMarketData] = useState<
@@ -596,7 +598,8 @@ const Asset = ({ params }: IProp) => {
                   Number(selectedChain)
                 );
                 if (result) {
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
+                  setActiveTab('supply');
                 }
               }}
             >
@@ -638,7 +641,8 @@ const Asset = ({ params }: IProp) => {
                   Number(selectedChain)
                 );
                 if (result) {
-                  setPopupMode(PopupMode.BORROW);
+                  setIsManageDialogOpen(true);
+                  setActiveTab('borrow');
                 }
               }}
             >
@@ -707,13 +711,13 @@ const Asset = ({ params }: IProp) => {
           </div>
         </div>
       </div>
-      {popupMode && selectedMarketData && poolData && (
-        <Popup
-          closePopup={() => setPopupMode(undefined)}
+      {selectedMarketData && poolData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={comptrollerAddress as Address}
-          loopMarkets={loopMarkets}
-          mode={popupMode}
           selectedMarketData={selectedMarketData}
+          activeTab={activeTab}
         />
       )}
 

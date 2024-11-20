@@ -5,11 +5,11 @@ import { formatUnits } from 'viem';
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import {
   HFPStatus,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';

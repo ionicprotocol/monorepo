@@ -1,7 +1,7 @@
 // Market.tsx
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -14,7 +14,6 @@ import { useChainId } from 'wagmi';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';

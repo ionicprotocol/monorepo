@@ -36,9 +36,9 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import { FundOperationMode } from '@ionicprotocol/types';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export enum PopupMode {
   MANAGE = 1,

@@ -14,7 +14,6 @@ import {
   TabsTrigger,
   TabsContent
 } from '@ui/components/ui/tabs';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { PopupProvider } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
@@ -55,6 +54,7 @@ interface IPopup {
   comptrollerAddress: Address;
   selectedMarketData: MarketData;
   isBorrowDisabled?: boolean;
+  activeTab?: ActiveTab;
 }
 
 const ManageDialog = ({
@@ -62,9 +62,9 @@ const ManageDialog = ({
   setIsOpen,
   selectedMarketData,
   comptrollerAddress,
-  isBorrowDisabled = false
+  isBorrowDisabled = false,
+  activeTab = 'supply'
 }: IPopup) => {
-  const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const pricePerSingleAsset = useMemo<number>(
@@ -149,7 +149,6 @@ const ManageDialog = ({
 
     return 0.0;
   }, [assetsSupplyAprData, selectedMarketData.cToken]);
-  const [active, setActive] = useState<ActiveTab>('supply');
 
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
@@ -189,9 +188,8 @@ const ManageDialog = ({
           </div>
 
           <Tabs
-            defaultValue="supply"
-            value={active}
-            onValueChange={(value) => setActive(value as ActiveTab)}
+            defaultValue={activeTab}
+            // onValueChange={(value) => setActive(value as ActiveTab)}
           >
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="supply">Supply</TabsTrigger>

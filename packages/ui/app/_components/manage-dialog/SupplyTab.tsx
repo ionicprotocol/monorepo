@@ -5,8 +5,8 @@ import { formatUnits } from 'viem';
 import { Button } from '@ui/components/ui/button';
 import { Switch } from '@ui/components/ui/switch';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
 import MemoizedDonutChart from './DonutChart';
