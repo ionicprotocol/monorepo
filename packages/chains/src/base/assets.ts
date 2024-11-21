@@ -380,7 +380,7 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", fBOMB),
-    initialCf: "0.30",
+    initialCf: "0.50",
     initialSupplyCap: parseEther(String(20_000_000)).toString(),
     initialBorrowCap: parseEther(String(15_000_000)).toString()
   },
