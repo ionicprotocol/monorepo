@@ -11,6 +11,7 @@ import {
   hyUSD,
   hyUSD_MARKET,
   ION,
+  KLIMA_MARKET,
   RSR_MARKET,
   sUSDz_MARKET,
   USDC_MARKET,
@@ -433,7 +434,7 @@ task("base:add-rewards:epoch5:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = fBOMB_MARKET;
+    const market = KLIMA_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
