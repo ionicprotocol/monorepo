@@ -16,7 +16,7 @@ import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
+const FlyWheelRewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
 import APRCell from '../markets/APRCell';
@@ -75,6 +75,9 @@ const InfoRows = ({
   const { data: merklApr } = useMerklApr();
   const { getSdk } = useMultiIonic();
   const sdk = getSdk(+selectedChain);
+  const type = mode === InfoMode.SUPPLY ? 'supply' : 'borrow';
+  const hasFlywheelRewards =
+    multipliers[selectedChain]?.[pool]?.[asset]?.[type]?.flywheel;
 
   const merklAprForToken = merklApr?.find(
     (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
@@ -165,23 +168,13 @@ const InfoRows = ({
           rewards={mode === InfoMode.SUPPLY ? supplyRewards : borrowRewards}
         />
       </h3>
-      {multipliers[selectedChain]?.[pool]?.[asset]?.borrow?.flywheel &&
-      mode == InfoMode.BORROW ? (
-        <Rewards
+      {hasFlywheelRewards ? (
+        <FlyWheelRewards
           cToken={cToken as `0x${string}`}
           pool={comptrollerAddress}
           poolChainId={selectedChain}
-          type="borrow"
-          className="items-center justify-center"
-        />
-      ) : multipliers[selectedChain]?.[pool]?.[asset]?.supply?.flywheel &&
-        mode == InfoMode.SUPPLY ? (
-        <Rewards
-          cToken={cToken as `0x${string}`}
-          pool={comptrollerAddress}
-          poolChainId={selectedChain}
-          type="supply"
-          className="items-center justify-center"
+          type={type}
+          isStandalone
         />
       ) : (
         <div />

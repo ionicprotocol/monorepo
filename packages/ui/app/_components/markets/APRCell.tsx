@@ -1,4 +1,3 @@
-// components/APRCell.tsx
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,10 +14,11 @@ import { cn } from '@ui/lib/utils';
 import { multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
-
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-const Rewards = dynamic(() => import('./FlyWheelRewards'), { ssr: false });
+const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
+  ssr: false
+});
 
 export type APRCellProps = {
   type: 'borrow' | 'supply';
@@ -87,6 +87,19 @@ export default function APRCell({
     );
   };
 
+  const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
+    <div className="flex items-center gap-2 py-0.5">
+      <Image
+        alt=""
+        src={icon}
+        width={16}
+        height={16}
+        className="size-4 rounded"
+      />
+      <span className="text-sm">{text}</span>
+    </div>
+  );
+
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
@@ -153,39 +166,39 @@ export default function APRCell({
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        className="w-80 bg-grayUnselect border-accent"
+        className="w-64 bg-grayUnselect border-accent p-3"
         align="center"
       >
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-1">
+          <div className="flex items-center justify-between py-0.5">
             <span>Base APR: {formatBaseAPR()}%</span>
           </div>
 
           {showOPRewards && (
-            <div className="flex items-center mt-1">
+            <Link
+              href="https://app.merkl.xyz/?chain=34443"
+              target="_blank"
+              className="flex items-center py-0.5 text-white hover:underline"
+            >
               <Image
                 src="/images/op-logo-red.svg"
                 alt="OP"
                 width={16}
                 height={16}
-                className="w-4 h-4 mr-1"
+                className="size-4 mr-2"
               />
-              <Link
-                href="https://app.merkl.xyz/?chain=34443"
-                target="_blank"
-                className="text-white underline"
-              >
+              <span className="text-xs">
                 + OP Rewards:{' '}
                 {merklAprForToken?.toLocaleString('en-US', {
                   maximumFractionDigits: 2
                 })}
                 %
-              </Link>
-            </div>
+              </span>
+            </Link>
           )}
 
           {config?.underlyingAPR && (
-            <p>
+            <p className="py-0.5 text-xs">
               Native Asset Yield: +
               {config.underlyingAPR.toLocaleString('en-US', {
                 maximumFractionDigits: 2
@@ -195,145 +208,85 @@ export default function APRCell({
           )}
 
           {config?.flywheel && (
-            <Rewards
-              cToken={cToken}
-              pool={pool}
-              poolChainId={dropdownSelectedChain}
-              type={type}
-              rewards={rewards}
-            />
+            <div className="py-0.5">
+              <FlyWheelRewards
+                cToken={cToken}
+                pool={pool}
+                poolChainId={dropdownSelectedChain}
+                type={type}
+                rewards={rewards}
+              />
+            </div>
           )}
 
-          {/* Common rewards sections */}
           {(config?.ionic ?? 0) > 0 && (
             <>
-              <div className="flex mt-1">
-                <Image
-                  alt=""
-                  src="/img/ionic-sq.png"
-                  width={16}
-                  height={16}
-                  className="size-4 rounded mr-1"
-                />
-                + {config?.ionic}x Ionic Points
-              </div>
-              <div className="flex">
-                <Image
-                  alt=""
-                  src="/images/turtle-ionic.png"
-                  width={16}
-                  height={16}
-                  className="size-4 rounded mr-1"
-                />
-                + Turtle Ionic Points
-              </div>
+              <RewardRow
+                icon="/img/ionic-sq.png"
+                text={`+ ${config?.ionic}x Ionic Points`}
+              />
+              <RewardRow
+                icon="/images/turtle-ionic.png"
+                text="+ Turtle Ionic Points"
+              />
             </>
           )}
 
           {config?.turtle && asset === 'STONE' && (
-            <div className="flex">
-              <Image
-                alt=""
-                src="/img/symbols/32/color/stone.png"
-                width={16}
-                height={16}
-                className="size-4 mr-1"
-              />
-              + Stone Turtle Points
-            </div>
+            <RewardRow
+              icon="/img/symbols/32/color/stone.png"
+              text="+ Stone Turtle Points"
+            />
           )}
 
           {config?.etherfi && (
-            <div className="flex">
-              <Image
-                alt=""
-                src="/images/etherfi.png"
-                width={16}
-                height={16}
-                className="size-4 mr-1"
-              />
-              + {config.etherfi}x ether.fi Points
-            </div>
+            <RewardRow
+              icon="/images/etherfi.png"
+              text={`+ ${config.etherfi}x ether.fi Points`}
+            />
           )}
 
           {config?.kelp && (
             <>
-              <div className="flex">
-                <Image
-                  alt=""
-                  src="/images/kelpmiles.png"
-                  width={16}
-                  height={16}
-                  className="size-4 mr-1"
-                />
-                + {config.kelp}x Kelp Miles
-              </div>
-              <div className="flex">
-                <Image
-                  alt=""
-                  src="/images/turtle-renzo.png"
-                  width={16}
-                  height={16}
-                  className="size-4 mr-1"
-                />
-                + Turtle Kelp Points
-              </div>
+              <RewardRow
+                icon="/images/kelpmiles.png"
+                text={`+ ${config.kelp}x Kelp Miles`}
+              />
+              <RewardRow
+                icon="/images/turtle-renzo.png"
+                text="+ Turtle Kelp Points"
+              />
             </>
           )}
 
           {config?.eigenlayer && (
-            <div className="flex">
-              <Image
-                alt=""
-                src="/images/eigen.png"
-                width={16}
-                height={16}
-                className="size-4 mr-1"
-              />
-              + EigenLayer Points
-            </div>
+            <RewardRow
+              icon="/images/eigen.png"
+              text="+ EigenLayer Points"
+            />
           )}
 
           {config?.spice && (
-            <div className="flex">
-              <Image
-                alt=""
-                src="/img/symbols/32/color/bob.png"
-                width={16}
-                height={16}
-                className="size-4 mr-1"
-              />
-              + Spice Points
-            </div>
+            <RewardRow
+              icon="/img/symbols/32/color/bob.png"
+              text="+ Spice Points"
+            />
           )}
 
-          {/* Supply-specific rewards */}
           {type === 'supply' && (
             <>
               {(config?.anzen ?? 0) > 0 && (
-                <div className="flex mt-1">
-                  <Image
-                    alt=""
-                    src="/img/symbols/32/color/usdz.png"
-                    width={16}
-                    height={16}
-                    className="size-4 rounded mr-1"
-                  />
-                  + {config?.anzen}x Anzen Points
-                </div>
+                <RewardRow
+                  icon="/img/symbols/32/color/usdz.png"
+                  text={`+ ${config?.anzen}x Anzen Points`}
+                />
               )}
 
               {config?.nektar && (
-                <div className="flex mt-1">
-                  <Image
-                    alt=""
-                    src="/img/symbols/32/color/nektar.png"
-                    width={16}
-                    height={16}
-                    className="size-4 mr-1"
-                  />
-                  + Nektar Points
-                </div>
+                <RewardRow
+                  icon="/img/symbols/32/color/nektar.png"
+                  text="+ Nektar Points"
+                />
               )}
             </>
           )}
