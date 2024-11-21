@@ -183,11 +183,11 @@ task("mode:add-rewards:epoch5:supply", "add rewards to a market").setAction(
     const { deployer, multisig } = await getNamedAccounts();
     const rewardToken = ION;
     const rewardTokenName = "ION";
-    const market = wBTC_MARKET;
+    const market = WETH_NATIVE_MARKET;
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
-    const rewardAmount = (50_000).toString();
+    const rewardAmount = (10_000).toString();
 
     console.log("setting supply rewards for token: ", name, rewardAmount);
     await new Promise((resolve) => setTimeout(resolve, 4000));

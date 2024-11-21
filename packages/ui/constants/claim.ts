@@ -1,6 +1,9 @@
 export const claimContractAddress =
   '0xa7BC89F9Bcd2E6565c250182767f20e2aC89bc7B';
 
+export const claimContractAddressSeason2 =
+  '0x3931803bE318676C8F32A40F97448b4B26bf20a1';
+
 export const claimAbi = [
   {
     inputs: [
@@ -326,4 +329,4 @@ export const claimAbi = [
     stateMutability: 'nonpayable',
     type: 'function'
   }
-];
+] as const;

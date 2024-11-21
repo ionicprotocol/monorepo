@@ -1,8 +1,5 @@
 import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
 
-export const SEASON_2_START_DATE = '2024-5-15';
-export const SEASON_2_BASE_START_DATE = '2024-5-20';
-
 export type Multipliers = {
   eigenlayer?: boolean;
   etherfi?: number;
@@ -256,8 +253,8 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
@@ -355,7 +352,7 @@ export const multipliers: Record<
           underlyingAPR: 3.5,
           turtle: false,
           ionAPR: false,
-          flywheel: false
+          flywheel: true
         },
         borrow: {
           ionic: 0,
@@ -622,6 +619,34 @@ export const multipliers: Record<
           underlyingAPR: 15,
           anzen: 5
         }
+      },
+      fBOMB: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          flywheel: false
+        },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      KLIMA: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          flywheel: false
+        },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
@@ -807,29 +832,4 @@ export type LpMultipliers = {
   filterIn?: string;
   filterOut?: string;
   decimals?: number;
-};
-
-export const ionLPMultipliersMode: LpMultipliers = {
-  ionMultiplier: 3,
-  market: 'ion_weth_pool',
-  priceMultiplier: -120,
-  filterIn: "AND event_to='0x3f385fedd141f57323dd91aa735c7243382831d8'",
-  filterOut: "AND event_from='0x3f385fedd141f57323dd91aa735c7243382831d8'"
-};
-
-export const ionLPMultipliersBase: LpMultipliers = {
-  ionMultiplier: 3,
-  market: 'ion_weth_pool_base',
-  priceMultiplier: -120,
-  filterIn: "AND event_to='0x9b42e5f8c45222b2715f804968251c747c588fd7'",
-  filterOut: "AND event_from='0x9b42e5f8c45222b2715f804968251c747c588fd7'"
-};
-
-export const steerLPMultipliers: Record<string, LpMultipliers> = {
-  'ionUSDC-ionUSDT': {
-    ionMultiplier: 1.5,
-    market: 'iusdc_iusdt_pool',
-    priceMultiplier: 10,
-    decimals: 6
-  }
 };

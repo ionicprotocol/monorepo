@@ -5,6 +5,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
 import { ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "../types";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
+import { deployDiaPriceOracle } from "../helpers/oracles/dia";
+import { DiaSpecificParams } from "@ionicprotocol/types";
 
 const assets = base.assets;
 
@@ -61,7 +63,7 @@ export const deploy = async ({
     usdToken: base.chainAddresses.STABLE_TOKEN as Address
   });
 
-  //// ERC4626 Oracle
+  // //// ERC4626 Oracle
   await deployErc4626PriceOracle({
     run,
     viem,
@@ -102,6 +104,23 @@ export const deploy = async ({
     deployConfig,
     assets: base.assets,
     chainlinkAssets
+  });
+
+  const diaAssets = base.assets
+    .filter((asset) => asset.oracle === OracleTypes.DiaPriceOracle)
+    .map((asset) => ({
+      feed: (asset.oracleSpecificParams as DiaSpecificParams).feed,
+      underlying: asset.underlying,
+      key: (asset.oracleSpecificParams as DiaSpecificParams).key,
+      symbol: asset.symbol
+    }));
+  await deployDiaPriceOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    diaAssets
   });
 
   const ap = await viem.getContractAt(

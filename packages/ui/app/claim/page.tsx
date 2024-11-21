@@ -1,22 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { createClient } from '@supabase/supabase-js';
-import { formatEther, parseEther } from 'viem';
+// import { createClient } from '@supabase/supabase-js';
+import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
   usePublicClient,
+  useReadContracts,
   useWalletClient
 } from 'wagmi';
 
-const supabase = createClient(
-  'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/airdrop_season_2?select=*',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
-);
+// const supabase = createClient(
+//   'https://uoagtjstsdrjypxlkuzr.supabase.co/rest/v1/airdrop_season_2?select=*',
+//   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
+// );
 
 // Create a single supabase client for interacting with your database
 // import { simulateContract } from 'viem/contract'
@@ -24,7 +25,11 @@ import { DROPDOWN } from '@ui/constants/index';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import { claimAbi, claimContractAddress } from '../../constants/claim';
+import {
+  claimAbi,
+  claimContractAddress,
+  claimContractAddressSeason2
+} from '../../constants/claim';
 import {
   PublicSaleAbi,
   PublicSaleContractAddress
@@ -34,23 +39,10 @@ import EligibilityPopup from '../_components/claim/EligibilityPopup';
 import SeasonSelector from '../_components/claim/SeasonSelector';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { User } from '../_components/claim/EligibilityPopup';
+// import type { User } from '../_components/claim/EligibilityPopup';
 
 export default function Claim() {
-  const [season1Claimable, setseason1Claimable] = useState(BigInt(0));
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [season2Claimable, setseason2Claimable] = useState(BigInt(0));
-  const [publicClaimable, setPublicClaimable] = useState(BigInt(0));
-  const [season1TotalTokens, setseason1TotalTokens] = useState(BigInt(0));
-  const [season2TotalTokens, setseason2TotalTokens] = useState(BigInt(0));
-  const [publicTotalTokens, setpublicTotalTokens] = useState(BigInt(0));
-  // const [alreadyClaimed, setAlreadyClaimed] = useState(BigInt(0));
-  const [publicSaleAlreadyClaimed, setPublicSaleAlreadyClaimed] = useState(
-    BigInt(0)
-  );
-  // const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [haveClaimed, setHaveClaimed] = useState(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
     useState<number>(DROPDOWN.AirdropSZN2);
   const [popupV2, setPopupV2] = useState(false);
@@ -59,75 +51,61 @@ export default function Claim() {
   const { data: walletClient } = useWalletClient();
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
+  const { data } = useReadContracts({
+    contracts: [
+      {
+        address: claimContractAddress,
+        abi: claimAbi,
+        args: [address!],
+        functionName: 'vests',
+        chainId: mode.id
+      },
+      {
+        abi: claimAbi,
+        address: claimContractAddress,
+        args: [address!],
+        functionName: 'claimable',
+        chainId: mode.id
+      },
+      {
+        abi: claimAbi,
+        address: claimContractAddressSeason2,
+        args: [address!],
+        functionName: 'vests',
+        chainId: mode.id
+      },
+      {
+        abi: claimAbi,
+        address: claimContractAddressSeason2,
+        args: [address!],
+        functionName: 'claimable',
+        chainId: mode.id
+      },
+      {
+        abi: PublicSaleAbi,
+        address: PublicSaleContractAddress,
+        args: [address!],
+        functionName: 'vests',
+        chainId: mode.id
+      },
+      {
+        abi: PublicSaleAbi,
+        address: PublicSaleContractAddress,
+        args: [address!],
+        functionName: 'claimable',
+        chainId: mode.id
+      }
+    ]
+  });
+  const [
+    vestsS1,
+    claimableS1,
+    vestsS2,
+    claimableS2,
+    publicVests,
+    publicClaimable
+  ] = data || [];
   // const newRef = useRef(null!);
-
-  useEffect(() => {
-    //we setting this to what we want for season 2
-    async function getVested() {
-      try {
-        if (!isConnected) return;
-        await handleSwitchOriginChain(mode.id, chainId);
-        const totalTokenData = await publicClient?.readContract({
-          abi: claimAbi,
-          address: claimContractAddress,
-          args: [address],
-          functionName: 'vests'
-        });
-
-        const claimable = await publicClient?.readContract({
-          abi: claimAbi,
-          address: claimContractAddress,
-          args: [address],
-          functionName: 'claimable'
-        });
-
-        const total = totalTokenData as [bigint, bigint, boolean];
-
-        setseason1Claimable(claimable as bigint);
-        setseason1TotalTokens(total[0]);
-        // setAlreadyClaimed(total[1]);
-        setHaveClaimed(total[2]);
-        // eslint-disable-next-line no-console
-        // console.log(totalTokenData, claimable);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
-    }
-    getVested();
-  }, [address, chainId, isConnected, publicClient]);
-
-  useEffect(() => {
-    async function getPublicSale() {
-      try {
-        if (!isConnected) return;
-        await handleSwitchOriginChain(mode.id, chainId);
-        const totalTokenData = await publicClient?.readContract({
-          abi: PublicSaleAbi,
-          address: PublicSaleContractAddress,
-          args: [address],
-          functionName: 'vests'
-        });
-
-        const claimable = await publicClient?.readContract({
-          abi: PublicSaleAbi,
-          address: PublicSaleContractAddress,
-          args: [address],
-          functionName: 'claimable'
-        });
-
-        const total = totalTokenData as [bigint, bigint];
-        // console.log({ total, claimable }, claimable.toString());
-        setPublicClaimable(claimable as bigint);
-        setpublicTotalTokens(total[0]);
-        setPublicSaleAlreadyClaimed(total[1]);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
-    }
-    getPublicSale();
-  }, [address, chainId, isConnected, publicClient]);
 
   async function claimAirdrop() {
     try {
@@ -200,35 +178,6 @@ export default function Claim() {
     }
   }
 
-  useEffect(() => {
-    async function getseason2Eligible() {
-      try {
-        const { data: airdrop, error } = await supabase
-          .from('airdrop_season_2')
-          .select('*')
-          .ilike('user', address!);
-        if (error) {
-          throw new Error('Error fetching user: ' + error);
-        }
-        // console.log(airdrop);
-        const [_user]: User[] = airdrop;
-
-        if (!_user || _user.ion_amount === '0') {
-          throw new Error('User not found or amount is 0');
-        }
-        setseason2TotalTokens(parseEther(_user.ion_amount));
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    getseason2Eligible();
-  }, [
-    address,
-    dropdownSelectedCampaign,
-    season1TotalTokens,
-    publicTotalTokens
-  ]);
-
   const {
     componentRef: eligibleRef,
     isopen: eligibleOpen,
@@ -245,15 +194,15 @@ export default function Claim() {
   // claimed tokens
 
   const tokenMapping = {
-    [DROPDOWN.AirdropSZN1]: season1TotalTokens,
-    [DROPDOWN.AirdropSZN2]: season2TotalTokens, // can add more campaigns like this
-    [DROPDOWN.PublicSale]: publicTotalTokens
+    [DROPDOWN.AirdropSZN1]: vestsS1?.result?.[0],
+    [DROPDOWN.AirdropSZN2]: vestsS2?.result?.[0], // can add more campaigns like this
+    [DROPDOWN.PublicSale]: publicVests?.result?.[0]
   };
 
   const claimableMapping = {
-    [DROPDOWN.AirdropSZN1]: season1Claimable,
-    [DROPDOWN.AirdropSZN2]: season2Claimable, // Add more campaigns as needed
-    [DROPDOWN.PublicSale]: publicClaimable
+    [DROPDOWN.AirdropSZN1]: claimableS1?.result,
+    [DROPDOWN.AirdropSZN2]: claimableS2?.result, // Add more campaigns as needed
+    [DROPDOWN.PublicSale]: publicClaimable?.result
   };
 
   // const claimableCampaigns = [DROPDOWN.AirdropSZN1, DROPDOWN.AirdropSZN2];
@@ -263,8 +212,9 @@ export default function Claim() {
 
   const isDisabled =
     Number(formatEther(claimableTokens)) == 0 ||
-    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 && haveClaimed == true) ||
-    dropdownSelectedCampaign == DROPDOWN.AirdropSZN2
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 &&
+      vestsS1?.result?.[2]) ||
+    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN2 && vestsS2?.result?.[2])
       ? true
       : false;
 
@@ -296,9 +246,10 @@ export default function Claim() {
             <p>Welcome to the </p> <p>$ION Airdrop </p>
             <button
               className={`rounded-md bg-accent disabled:opacity-50 text-black py-1.5  text-xs  uppercase truncate w-max px-6 mt-4 `}
-              onClick={() => eligibletoggle()}
+              // onClick={() => eligibletoggle()}
+              disabled={true}
             >
-              Check Eligibility
+              Eligibility Check Period Expired
             </button>
           </div>
           <div className="grid grid-cols-3 ml-auto gap-3">
@@ -341,8 +292,10 @@ export default function Claim() {
               >
                 VESTING PERIOD
               </span>
-              {haveClaimed &&
-              dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 ? (
+              {(vestsS1?.result?.[2] &&
+                dropdownSelectedCampaign === DROPDOWN.AirdropSZN1) ||
+              (vestsS2?.result?.[2] &&
+                dropdownSelectedCampaign === DROPDOWN.AirdropSZN2) ? (
                 <span
                   className={`lg:text-xs text-[11px] my-auto  md:self-start self-center`}
                 >
@@ -402,9 +355,11 @@ export default function Claim() {
                 className={`flex flex-col items-start justify-start gap-y-1`}
               >
                 <span>
-                  {dropdownSelectedCampaign != DROPDOWN.PublicSale &&
-                  haveClaimed &&
-                  dropdownSelectedCampaign in claimableMapping
+                  {(dropdownSelectedCampaign != DROPDOWN.PublicSale &&
+                    vestsS1?.result?.[2] &&
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) ||
+                  (vestsS2?.result?.[2] &&
+                    dropdownSelectedCampaign == DROPDOWN.AirdropSZN2)
                     ? 0
                     : Number(formatEther(claimableTokens)).toLocaleString(
                         undefined,
@@ -435,12 +390,11 @@ export default function Claim() {
             {dropdownSelectedCampaign === DROPDOWN.PublicSale && (
               <p className={` text-xs text-start`}>
                 Already claimed:{' '}
-                {Number(formatEther(publicSaleAlreadyClaimed)).toLocaleString(
-                  undefined,
-                  {
-                    maximumFractionDigits: 2
-                  }
-                )}{' '}
+                {Number(
+                  formatEther(publicVests?.result?.[1] ?? BigInt(0))
+                ).toLocaleString(undefined, {
+                  maximumFractionDigits: 2
+                })}{' '}
                 ION
               </p>
             )}
