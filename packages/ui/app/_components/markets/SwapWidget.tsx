@@ -1,15 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-
-import { useEffect, useRef } from 'react';
-
+import { useEffect } from 'react';
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import { type Address, zeroAddress } from 'viem';
 import { mode } from 'viem/chains';
-
+import { Dialog, DialogContent } from '@ui/components/ui/dialog';
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
-
 import type { Route, WidgetConfig } from '@lifi/widget';
 
 interface IProps {
@@ -22,7 +17,7 @@ interface IProps {
   onRouteExecutionCompleted?: (route: Route) => void;
 }
 
-export default function Widget({
+export default function SwapWidget({
   close,
   open,
   toChain,
@@ -38,10 +33,9 @@ export default function Widget({
       WidgetEvent.RouteExecutionCompleted,
       onRouteExecutionCompleted
     );
-
     return () => widgetEvents.all.clear();
   }, [onRouteExecutionCompleted, widgetEvents]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const widgetConfig: WidgetConfig = {
     toChain,
     fromChain: fromChain ?? toChain,
@@ -60,50 +54,29 @@ export default function Widget({
     },
     sdkConfig: {
       routeOptions: {
-        maxPriceImpact: 0.4, // increases threshold to 40%
+        maxPriceImpact: 0.4,
         slippage: 0.005
       }
     },
     fee: 0.01,
-    // theme : { palette : "grey"},
     integrator: 'ionic',
     appearance: 'dark'
   };
 
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    const handleOutsideClick = (e: any) => {
-      //@ts-ignore
-      if (newRef.current && !newRef.current?.contains(e?.target)) {
-        close();
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [close]);
-
-  // ...
-
   return (
-    <div
-      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
-        open ? 'flex' : 'hidden'
-      } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm`}
+    <Dialog
+      open={open}
+      onOpenChange={close}
     >
-      <div
-        className={`w-max h-max relative flex flex-col items-center justify-center`}
-        ref={newRef}
+      <DialogContent
+        className="max-w-[480px] p-0 bg-transparent border-0"
+        hideCloseButton
       >
         <LiFiWidget
           integrator="ionic"
           config={widgetConfig}
         />
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
-
-// export default dynamic(() => Promise.resolve(Widget), { ssr: false });
