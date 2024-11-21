@@ -13,6 +13,7 @@ import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
 import "../../veION/stake/velo/VelodromeStakingWallet.sol";
 import "../../veION/stake/velo/IVeloIonModeStaking.sol";
 
+// file name could be veION based
 contract veIONTest is BaseTest {
   veION ve;
   MockERC20 modeVelodrome5050IonMode;
@@ -72,6 +73,7 @@ contract veIONTest is BaseTest {
     ve.setMinimumLockAmount(address(modeBalancer8020IonEth), MINIMUM_LOCK_AMOUNT);
   }
 
+  // could move this to the particular contracts that fork velo, or move the velo setup into this contract and differentiate them as afterForkSetupVelo and afterForkSetupBase
   function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
     ve = new veION();

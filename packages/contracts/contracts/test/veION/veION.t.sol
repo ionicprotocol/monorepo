@@ -2167,6 +2167,7 @@ contract BalanceOfNFT is veIONTest {
     harness = new veIONHarness(MINTIME);
   }
 
+  // could move into utils as a base setup
   function afterForkSetUp() internal virtual override {
     ve = new veION();
     ve.initialize(ap);

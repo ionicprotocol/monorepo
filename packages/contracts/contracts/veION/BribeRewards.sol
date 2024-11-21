@@ -196,25 +196,19 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
         continue;
       }
 
-      vars.reward = 0;
-      vars.supplyValue = 1;
-      vars.currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]); // take epoch last claimed in as starting point
+      vars.currTs = IonicTimeLibrary.epochStart(lastEarn[token][tokenId]);
       vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs);
       Checkpoint memory cp0 = checkpoints[tokenId][lpToken][vars.index];
 
-      // accounts for case where lastEarn is before first checkpoint
       vars.currTs = Math.max(vars.currTs, IonicTimeLibrary.epochStart(cp0.timestamp));
-
-      // get epochs between current epoch and first checkpoint in same epoch as last claim
       vars.numEpochs = (IonicTimeLibrary.epochStart(block.timestamp) - vars.currTs) / DURATION;
 
       if (vars.numEpochs > 0) {
         for (uint256 i = 0; i < vars.numEpochs; i++) {
-          // get index of last checkpoint in this epoch
           vars.index = getPriorBalanceIndex(tokenId, lpToken, vars.currTs + DURATION - 1);
-          // get checkpoint in this epoch
           cp0 = checkpoints[tokenId][lpToken][vars.index];
-          // get supply of last checkpoint in this epoch
+          vars.epochBalanceValue = _getTokenEthValueAt(cp0.balanceOf, lpToken, vars.currTs);
+
           vars.supplyValue = 0;
           for (uint256 k = 0; k < lpTokens.length; k++) {
             address currentLpToken = lpTokens[k];
@@ -224,7 +218,6 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
             );
             vars.supplyValue += _getTokenEthValueAt(supplyAmount, currentLpToken, vars.currTs);
           }
-          vars.epochBalanceValue = _getTokenEthValueAt(cp0.balanceOf, lpToken, vars.currTs);
           if (vars.supplyValue > 0) {
             vars.totalReward += (vars.epochBalanceValue * tokenRewardsPerEpoch[token][vars.currTs]) / vars.supplyValue;
           }
@@ -262,7 +255,11 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     emit Withdraw(sender, tokenId, amount);
   }
 
-  /// @inheritdoc IBribeRewards
+  /**
+   * @inheritdoc IBribeRewards
+   * @notice This function can accept any token, regardless of its whitelisting status.
+   * @dev If we were to check the whitelisting status, it could prevent tokens that were initially whitelisted and later de-whitelisted from having their rewards claimed, leading to unclaimable rewards.
+   */
   function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant onlyVoter {
     address sender = msg.sender;
     if (ERC721Upgradeable(ve).ownerOf(tokenId) != sender && sender != voter) revert Unauthorized();
@@ -273,6 +270,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
 
   /// @dev used with all getReward implementations
   function _getReward(address recipient, uint256 tokenId, address[] memory tokens) internal {
+    // check if token whitelisted
     uint256 _length = tokens.length;
     for (uint256 i = 0; i < _length; i++) {
       uint256 _reward = earned(tokens[i], tokenId);
@@ -331,5 +329,9 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
 
   function setAuthorized(address _authorized) external onlyOwner {
     authorized = _authorized;
+  }
+
+  function getCheckpoint(uint256 tokenId, address lpToken, uint256 index) external view returns (Checkpoint memory) {
+    return checkpoints[tokenId][lpToken][index];
   }
 }

@@ -103,6 +103,7 @@ contract VoterTest is veIONTest {
     ve.setVoter(address(voter));
   }
 
+  // could leverage afterForkSetupBase from Util
   function afterForkSetUp() internal virtual override {
     ve = new veION();
     ve.initialize(ap);
