@@ -80,6 +80,9 @@
     "DefaultProxyAdmin": {
       "address": "0x04C21Db52CcA974dF3Dc019C92E52e522ce57156"
     },
+    "DiaPriceOracle": {
+      "address": "0xa66bff05c0410883951F2Da2Fa6b135D4856aF84"
+    },
     "ERC4626Oracle": {
       "address": "0xa87c5D63AC47911639A3Cbf65a618E397B7De144"
     },

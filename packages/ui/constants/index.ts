@@ -240,7 +240,8 @@ export const pools: Record<number, PoolParams> = {
           'wstETH',
           'cbETH',
           'USD+',
-          'fBOMB'
+          'fBOMB',
+          'KLIMA'
         ]
       }
     ]
