@@ -14,7 +14,7 @@ import {
   TabsTrigger,
   TabsContent
 } from '@ui/components/ui/tabs';
-import { PopupProvider } from '@ui/context/ManageDialogContext';
+import { ManageDialogProvider } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
@@ -167,7 +167,7 @@ const ManageDialog = ({
    */
 
   return (
-    <PopupProvider
+    <ManageDialogProvider
       comptrollerAddress={comptrollerAddress}
       closePopup={() => setIsOpen(false)}
       selectedMarketData={selectedMarketData}
@@ -261,7 +261,7 @@ const ManageDialog = ({
         toToken={selectedMarketData.underlyingToken}
         onRouteExecutionCompleted={() => refetchMaxSupplyAmount()}
       />
-    </PopupProvider>
+    </ManageDialogProvider>
   );
 };
 

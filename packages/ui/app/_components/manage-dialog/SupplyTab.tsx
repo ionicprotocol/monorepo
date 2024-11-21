@@ -52,6 +52,7 @@ const SupplyTab = ({
     updatedValues,
     isLoadingUpdatedAssets
   } = useManageDialogContext();
+  console.log('updatedValues', updatedValues);
 
   const isDisabled = !amount || amountAsBInt === 0n;
   const { currentSdk, address } = useMultiIonic();
@@ -253,10 +254,10 @@ const SupplyTab = ({
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.supplyAPY}%</span>
+            <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.updatedSupplyAPY}%
+              {updatedValues.updatedSupplyAPY?.toFixed(2)}%
             </ResultHandler>
           </div>
         </div>

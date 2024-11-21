@@ -93,7 +93,7 @@ interface PopupContextType {
     borrowBalanceTo: string | undefined;
     supplyAPY: number | undefined;
     supplyBalanceFrom: string;
-    supplyBalanceTo: string | undefined;
+    supplyBalanceTo: string | number;
     totalBorrows: number | undefined;
     updatedBorrowAPR: number | undefined;
     updatedSupplyAPY: number | undefined;
@@ -109,7 +109,7 @@ const ManageDialogContext = createContext<PopupContextType | undefined>(
   undefined
 );
 
-export const PopupProvider: React.FC<{
+export const ManageDialogProvider: React.FC<{
   selectedMarketData: MarketData;
   comptrollerAddress: Address;
   closePopup: () => void;
@@ -576,35 +576,36 @@ export const PopupProvider: React.FC<{
     const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
 
     if (currentSdk) {
+      const formatBalanceValue = (value: bigint, decimals: number) => {
+        const formatted = Number(formatUnits(value, decimals));
+        return isNaN(formatted)
+          ? '0'
+          : formatted.toLocaleString('en-US', { maximumFractionDigits: 2 });
+      };
+
       return {
         borrowAPR: currentSdk.ratePerBlockToAPY(
           selectedMarketData.borrowRatePerBlock,
           blocksPerMinute
         ),
-        borrowBalanceFrom: Number(
-          formatUnits(
-            selectedMarketData.borrowBalance,
-            selectedMarketData.underlyingDecimals
-          )
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        borrowBalanceFrom: formatBalanceValue(
+          selectedMarketData.borrowBalance,
+          selectedMarketData.underlyingDecimals
+        ),
         borrowBalanceTo: updatedAsset
-          ? Number(
-              formatUnits(
-                updatedAsset.borrowBalance,
-                updatedAsset.underlyingDecimals
-              )
-            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : undefined,
+          ? formatBalanceValue(
+              updatedAsset.borrowBalance,
+              updatedAsset.underlyingDecimals
+            )
+          : '0',
         supplyAPY: currentSdk.ratePerBlockToAPY(
           selectedMarketData.supplyRatePerBlock,
           blocksPerMinute
         ),
-        supplyBalanceFrom: Number(
-          formatUnits(
-            selectedMarketData.supplyBalance,
-            selectedMarketData.underlyingDecimals
-          )
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        supplyBalanceFrom: formatBalanceValue(
+          selectedMarketData.supplyBalance ?? 0n,
+          selectedMarketData.underlyingDecimals
+        ),
         supplyBalanceTo: updatedAsset
           ? Math.abs(
               Number(
@@ -613,12 +614,14 @@ export const PopupProvider: React.FC<{
                   updatedAsset.underlyingDecimals
                 )
               )
-            ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-          : undefined,
-        totalBorrows: updatedAssets?.reduce(
-          (acc, cur) => acc + cur.borrowBalanceFiat,
-          0
-        ),
+            ) || 0
+          : '0',
+        totalBorrows:
+          updatedAssets?.reduce(
+            (acc, cur) =>
+              acc + (isNaN(cur.borrowBalanceFiat) ? 0 : cur.borrowBalanceFiat),
+            0
+          ) ?? 0,
         updatedBorrowAPR: updatedAsset
           ? currentSdk.ratePerBlockToAPY(
               updatedAsset.borrowRatePerBlock,
@@ -632,23 +635,28 @@ export const PopupProvider: React.FC<{
             )
           : undefined,
         updatedTotalBorrows: updatedAssets
-          ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
-          : undefined
+          ? updatedAssets.reduce(
+              (acc, cur) =>
+                acc +
+                (isNaN(cur.borrowBalanceFiat) ? 0 : cur.borrowBalanceFiat),
+              0
+            )
+          : 0
       };
     }
 
-    // Ensure all properties are defined, even if undefined
+    // Default values when currentSdk is not available
     return {
-      borrowAPR: undefined,
-      borrowBalanceFrom: '',
-      borrowBalanceTo: undefined,
-      supplyAPY: undefined,
-      supplyBalanceFrom: '',
-      supplyBalanceTo: undefined,
-      totalBorrows: undefined,
-      updatedBorrowAPR: undefined,
-      updatedSupplyAPY: undefined,
-      updatedTotalBorrows: undefined
+      borrowAPR: 0,
+      borrowBalanceFrom: '0',
+      borrowBalanceTo: '0',
+      supplyAPY: 0,
+      supplyBalanceFrom: '0',
+      supplyBalanceTo: '0',
+      totalBorrows: 0,
+      updatedBorrowAPR: 0,
+      updatedSupplyAPY: 0,
+      updatedTotalBorrows: 0
     };
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
 
@@ -705,7 +713,7 @@ export const useManageDialogContext = (): PopupContextType => {
   const context = useContext(ManageDialogContext);
   if (!context) {
     throw new Error(
-      'useManageDialogContext must be used within a PopupProvider'
+      'useManageDialogContext must be used within a ManageDialogProvider'
     );
   }
   return context;
