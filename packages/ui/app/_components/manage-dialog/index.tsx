@@ -39,7 +39,7 @@ export enum PopupMode {
   LOOP = 2
 }
 
-type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
+export type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 
 export enum HFPStatus {
   CRITICAL = 'CRITICAL',

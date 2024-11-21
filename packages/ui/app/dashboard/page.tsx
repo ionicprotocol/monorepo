@@ -33,12 +33,12 @@ import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
-import Popup from '../_components/manage-dialog';
+import ManageDialog from '../_components/manage-dialog';
 import Loop from '../_components/manage-dialog/Loop';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { PopupMode } from '../_components/manage-dialog';
+import type { ActiveTab } from '../_components/manage-dialog';
 
 import type {
   FlywheelReward,
@@ -58,7 +58,8 @@ export default function Dashboard() {
   const chain = querychain ? querychain : 34443;
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
-  const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [activeTab, setActiveTab] = useState<ActiveTab>();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
   const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
     useState<MarketData>();
   const walletChain = useChainId();
@@ -238,7 +239,6 @@ export default function Dashboard() {
     toggle: swapToggle
   } = useOutsideClick();
 
-  // console.log(suppliedAssets);
   return (
     <>
       {swapOpen && marketData?.comptroller && (
@@ -555,7 +555,8 @@ export default function Dashboard() {
                         })) as FlywheelReward[]) ?? []
                       }
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setActiveTab={setActiveTab}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
                       toggler={async () => {
@@ -657,7 +658,8 @@ export default function Dashboard() {
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
+                      setActiveTab={setActiveTab}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
                       utilization="0.00%"
@@ -748,11 +750,12 @@ export default function Dashboard() {
         />
       )}
 
-      {popupMode && selectedMarketData && marketData && (
-        <Popup
-          closePopup={() => setPopupMode(undefined)}
+      {selectedMarketData && marketData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={marketData.comptroller}
-          mode={popupMode}
+          activeTab={activeTab}
           selectedMarketData={selectedMarketData}
         />
       )}

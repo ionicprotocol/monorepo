@@ -40,11 +40,6 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import { FundOperationMode } from '@ionicprotocol/types';
 
-export enum PopupMode {
-  MANAGE = 1,
-  LOOP = 2
-}
-
 type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 type FundOperation =
   | FundOperationMode.BORROW

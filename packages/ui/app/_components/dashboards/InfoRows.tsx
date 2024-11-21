@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -19,7 +19,6 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
-import { PopupMode } from '../manage-dialog';
 import APRCell from '../markets/APRCell';
 
 import type { Address } from 'viem';
@@ -30,6 +29,8 @@ export enum InfoMode {
   SUPPLY = 0,
   BORROW = 1
 }
+
+type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 
 export type InfoRowsProps = {
   amount: string;
@@ -44,7 +45,8 @@ export type InfoRowsProps = {
   comptrollerAddress: Address;
   rewards: FlywheelReward[];
   selectedChain: number;
-  setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
+  setActiveTab: Dispatch<SetStateAction<ActiveTab | undefined>>;
+  setIsManageDialogOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSymbol: Dispatch<SetStateAction<string>>;
   utilization: string;
   toggler?: () => void;
@@ -58,7 +60,8 @@ const InfoRows = ({
   membership,
   mode,
   setSelectedSymbol,
-  setPopupMode,
+  setActiveTab,
+  setIsManageDialogOpen,
   apr,
   selectedChain,
   cToken,
@@ -195,9 +198,8 @@ const InfoRows = ({
             );
             if (result) {
               setSelectedSymbol(asset);
-              setPopupMode(
-                mode === InfoMode.SUPPLY ? PopupMode.SUPPLY : PopupMode.REPAY
-              );
+              setIsManageDialogOpen(true);
+              setActiveTab(mode === InfoMode.SUPPLY ? 'supply' : 'repay');
             }
           }}
         >
@@ -224,7 +226,8 @@ const InfoRows = ({
                   // Router.push()
                   // toggle the mode
                   setSelectedSymbol(asset);
-                  setPopupMode(PopupMode.BORROW);
+                  setIsManageDialogOpen(true);
+                  setActiveTab('borrow');
                 }
               }
             }}

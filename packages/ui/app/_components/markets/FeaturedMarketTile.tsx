@@ -8,11 +8,6 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import WrapEthSwaps from './WrapEthSwaps';
 import ResultHandler from '../ResultHandler';
 
-// import BorrowPopover from './BorrowPopover';
-// import SupplyPopover from './SupplyPopover';
-
-// import { pools } from '@ui/constants/index';
-
 interface Iprop {
   selectedChain: number;
   setIsManageDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -81,15 +76,6 @@ export default function FeaturedMarketTile({
                   }) ?? '-'}
                   %
                 </span>
-                {/* <SupplyPopover
-                  asset={featuredSupply.asset}
-                  supplyAPR={featuredSupply.supplyAPR}
-                  rewards={featuredSupply.rewards}
-                  dropdownSelectedChain={featuredSupply.dropdownSelectedChain}
-                  selectedPoolId={featuredSupply.selectedPoolId}
-                  cToken={featuredSupply.cToken}
-                  pool={featuredSupply.pool}
-                /> */}
               </div>
             </div>
             <button
@@ -137,15 +123,6 @@ export default function FeaturedMarketTile({
                   }) ?? '-'}
                   %
                 </span>
-                {/* <SupplyPopover
-                  asset={featuredSupply2.asset}
-                  supplyAPR={featuredSupply2.supplyAPR}
-                  rewards={featuredSupply2.rewards}
-                  dropdownSelectedChain={featuredSupply2.dropdownSelectedChain}
-                  selectedPoolId={featuredSupply2.selectedPoolId}
-                  cToken={featuredSupply2.cToken}
-                  pool={featuredSupply2.pool}
-                /> */}
               </div>
             </div>
             <button
@@ -163,21 +140,6 @@ export default function FeaturedMarketTile({
             >
               Supply / Withdraw
             </button>
-            {/* <button
-            className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} text-xs w-[80%] col-span-2  py-2  lg:py-1.5 text-center px-1  uppercase truncate flex items-center justify-center mx-auto`}
-            onClick={async () => {
-              const result = await handleSwitchOriginChain(
-                dropdownSelectedChain,
-                selectedChain
-              );
-              if (result) {
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
-              }
-            }}
-          >
-            Borrow / Repay {loopPossible && '/ Loop'}
-          </button> */}
           </div>
         )}
       </ResultHandler>
