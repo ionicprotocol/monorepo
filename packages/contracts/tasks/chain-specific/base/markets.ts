@@ -6,7 +6,7 @@ import { Address, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.fBOMB];
+  const assetsToDeploy: string[] = [assetSymbols.KLIMA];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     console.log("Deploying market for ", asset.symbol, asset.name);
     await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
@@ -42,13 +42,13 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.sUSDz, assetSymbols.weETH, assetSymbols.wUSDM];
+  const assetsToDeploy: string[] = [assetSymbols.KLIMA];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
     const admin = await pool.read.admin();
-    const ap = await deployments.get("AddressesProvider");
+    // const ap = await deployments.get("AddressesProvider");
     // if (admin.toLowerCase() !== deployer.toLowerCase()) {
     //   await prepareAndLogTransaction({
     //     contractInstance: asExt,

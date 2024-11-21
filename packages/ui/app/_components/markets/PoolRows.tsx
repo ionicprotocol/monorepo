@@ -339,7 +339,7 @@ const PoolRows = ({
         <span className="text-white/40 font-semibold text-[11px] text-center md:hidden ">
           COLLATERAL FACTOR:
         </span>
-        {collateralFactor}%
+        {Math.round(collateralFactor)}%
       </h3>
       <div
         className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px]  font-semibold  px-2 lg:px-10 w-full`}

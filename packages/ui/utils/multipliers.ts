@@ -633,6 +633,20 @@ export const multipliers: Record<
           ionAPR: true,
           flywheel: true
         }
+      },
+      KLIMA: {
+        borrow: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: false,
+          flywheel: false
+        },
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
       }
     }
   },
