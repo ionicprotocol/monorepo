@@ -148,7 +148,7 @@ export default function Market() {
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col items-start">
           <span>{row.original.supply.balance}</span>
-          <span className="text-white/50 text-xs">
+          <span className="text-xs text-white/40 font-light">
             ${row.original.supply.balanceUSD}
           </span>
         </div>
@@ -161,7 +161,7 @@ export default function Market() {
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col items-start">
           <span>{row.original.borrow.balance}</span>
-          <span className="text-white/50 text-xs">
+          <span className="text-xs text-white/40 font-light">
             ${row.original.borrow.balanceUSD}
           </span>
         </div>
