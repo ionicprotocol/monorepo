@@ -176,7 +176,11 @@ const ManageDialog = ({
         open={isOpen}
         onOpenChange={setIsOpen}
       >
-        <DialogContent className="w-[85%] sm:w-[55%] md:w-[45%] bg-grayUnselect">
+        <DialogContent
+          maxWidth="800px"
+          className="bg-grayUnselect"
+          fullWidth
+        >
           <div className="flex w-20 mx-auto relative text-center">
             <Image
               alt="modlogo"

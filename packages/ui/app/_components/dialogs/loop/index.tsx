@@ -586,7 +586,11 @@ export default function Loop({
         open={isOpen}
         onOpenChange={setIsOpen}
       >
-        <DialogContent>
+        <DialogContent
+          maxWidth="800px"
+          className="bg-grayUnselect"
+          fullWidth
+        >
           <DialogHeader>
             <DialogTitle>
               <div className="flex items-center text-lg font-bold">
