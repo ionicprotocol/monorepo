@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-
 import { formatEther } from 'viem';
-
+import { mode } from 'viem/chains';
+import { DROPDOWN } from '@ui/constants';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { Button } from '@ui/components/ui/button';
 import { Checkbox } from '@ui/components/ui/checkbox';
 import {
@@ -11,9 +12,16 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import { DROPDOWN } from '@ui/constants';
-
 import ResultHandler from '../ResultHandler';
+import {
+  claimAbi,
+  claimContractAddress,
+  claimContractAddressSeason2
+} from '@ui/constants/claim';
+import {
+  PublicSaleAbi,
+  PublicSaleContractAddress
+} from '@ui/constants/publicsale';
 
 type ClaimDialogProps = {
   claimableTokens: bigint;
@@ -23,8 +31,11 @@ type ClaimDialogProps = {
   dialogOpen: boolean;
   setDialogOpen: (open: boolean) => void;
   dropdownSelectedCampaign: number;
-  claimAirdrop: () => void;
-  claimPublicSale: () => void;
+  isConnected: boolean;
+  chainId: number;
+  walletClient: any;
+  publicClient: any;
+  setLoading: (loading: boolean) => void;
 };
 
 const ClaimDialog: React.FC<ClaimDialogProps> = ({
@@ -35,8 +46,11 @@ const ClaimDialog: React.FC<ClaimDialogProps> = ({
   dialogOpen,
   setDialogOpen,
   dropdownSelectedCampaign,
-  claimAirdrop,
-  claimPublicSale
+  isConnected,
+  chainId,
+  walletClient,
+  publicClient,
+  setLoading
 }) => {
   const [agreement, setAgreement] = useState<boolean>(false);
 
@@ -45,6 +59,56 @@ const ClaimDialog: React.FC<ClaimDialogProps> = ({
       setAgreement(false);
     }
   }, [dialogOpen]);
+
+  const handleClaim = async () => {
+    try {
+      if (!isConnected) {
+        console.error('Not connected');
+        return;
+      }
+      await handleSwitchOriginChain(mode.id, chainId);
+      setLoading(true);
+
+      let contractConfig;
+      switch (dropdownSelectedCampaign) {
+        case DROPDOWN.AirdropSZN1:
+          contractConfig = {
+            abi: claimAbi,
+            address: claimContractAddress
+          };
+          break;
+        case DROPDOWN.AirdropSZN2:
+          contractConfig = {
+            abi: claimAbi,
+            address: claimContractAddressSeason2
+          };
+          break;
+        case DROPDOWN.PublicSale:
+          contractConfig = {
+            abi: PublicSaleAbi,
+            address: PublicSaleContractAddress
+          };
+          break;
+        default:
+          throw new Error('Invalid campaign selected');
+      }
+
+      const tx = await walletClient.writeContract({
+        ...contractConfig,
+        account: walletClient?.account,
+        args: [],
+        functionName: 'claim'
+      });
+
+      if (!tx) return;
+      await publicClient?.waitForTransactionReceipt({ hash: tx });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setDialogOpen(false);
+    }
+  };
 
   return (
     <Dialog
@@ -71,7 +135,10 @@ const ClaimDialog: React.FC<ClaimDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ResultHandler isLoading={loading}>
+        <ResultHandler
+          isLoading={loading}
+          center
+        >
           <div className="flex flex-col gap-6 mt-6">
             {dropdownSelectedCampaign !== DROPDOWN.PublicSale && (
               <div className="flex items-start space-x-3 px-2">
@@ -105,14 +172,7 @@ const ClaimDialog: React.FC<ClaimDialogProps> = ({
                 isDisabled ||
                 (dropdownSelectedCampaign !== DROPDOWN.PublicSale && !agreement)
               }
-              onClick={() => {
-                if (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1) {
-                  claimAirdrop();
-                }
-                if (dropdownSelectedCampaign === DROPDOWN.PublicSale) {
-                  claimPublicSale();
-                }
-              }}
+              onClick={handleClaim}
             >
               {dropdownSelectedCampaign !== DROPDOWN.PublicSale && 'Instant'}{' '}
               Claim
