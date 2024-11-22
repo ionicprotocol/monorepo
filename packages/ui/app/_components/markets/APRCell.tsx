@@ -13,6 +13,8 @@ import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
 import { cn } from '@ui/lib/utils';
 import { multipliers } from '@ui/utils/multipliers';
 
+import { RewardIcons } from './RewardsIcon';
+
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
@@ -101,6 +103,24 @@ export default function APRCell({
     </div>
   );
 
+  const getRewardIcons = () => {
+    const icons: string[] = [];
+
+    if (showOPRewards) icons.push('op');
+    if (config?.ionic) icons.push('ionic');
+    if (config?.turtle) icons.push('turtle');
+    if (config?.etherfi) icons.push('etherfi');
+    if (config?.kelp) icons.push('kelp');
+    if (config?.eigenlayer) icons.push('eigen');
+    if (config?.spice) icons.push('spice');
+    if (type === 'supply') {
+      if (config?.anzen) icons.push('anzen');
+      if (config?.nektar) icons.push('nektar');
+    }
+
+    return icons;
+  };
+
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
@@ -109,7 +129,7 @@ export default function APRCell({
           <div className="flex flex-col items-start gap-1">
             <span
               className={cn(
-                'rounded-md w-max text-[10px] py-[1px] px-3.5',
+                'rounded-md w-max text-[10px] py-[3px] px-1.5',
                 config?.ionAPR
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
@@ -119,35 +139,23 @@ export default function APRCell({
             </span>
 
             {showRewardsBadge && (
-              <span
+              <div
                 className={cn(
-                  'rounded-md w-max text-[10px] py-[1px] px-2.5',
+                  'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1',
+                  'font-light text-[10px]',
                   pools[dropdownSelectedChain].text,
                   pools[dropdownSelectedChain].bg
                 )}
               >
-                {showOPRewards ? (
-                  <div className="flex items-center">
-                    +{' '}
-                    <Image
-                      src="/images/op-logo-red.svg"
-                      alt="OP"
-                      width={12}
-                      height={12}
-                      className="inline-block mx-[2px]"
-                    />{' '}
-                    REWARDS
-                  </div>
-                ) : (
-                  '+ REWARDS'
-                )}
-              </span>
+                <span>+ Rewards</span>
+                <RewardIcons rewards={getRewardIcons()} />
+              </div>
             )}
 
             {config?.turtle && !isMainModeMarket && (
               <span className="text-darkone rounded-md w-max md:ml-0 text-center">
                 <a
-                  className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-3.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
+                  className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[3px] md:px-1 lg:px-1.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
                   href="https://turtle.club/dashboard/?ref=IONIC"
                   target="_blank"
                   rel="noreferrer"
