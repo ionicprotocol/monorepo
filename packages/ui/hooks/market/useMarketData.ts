@@ -88,7 +88,7 @@ export const useMarketData = (
   const marketData = useMemo(() => {
     if (!assets) return [];
 
-    return pools[+chain].pools[+selectedPool].assets
+    const transformedData = pools[+chain].pools[+selectedPool].assets
       .map((symbol: string) => {
         const asset = assets.find((a) => a.underlyingSymbol === symbol);
         if (!asset) return null;
@@ -202,6 +202,8 @@ export const useMarketData = (
         };
       })
       .filter(Boolean) as MarketRowData[];
+
+    return transformedData;
   }, [
     assets,
     chain,
@@ -265,9 +267,12 @@ export const useMarketData = (
     poolData?.comptroller
   ]);
 
-  const selectedMarketData = marketData.find(
-    (asset) => asset.asset === selectedSymbol
-  );
+  const selectedMarketData = useMemo(() => {
+    const found = assets?.find(
+      (asset) => asset.underlyingSymbol === selectedSymbol
+    );
+    return found;
+  }, [assets, selectedSymbol]);
 
   const loopProps = useMemo(() => {
     if (!selectedMarketData || !poolData) return null;

@@ -105,6 +105,11 @@ interface PopupContextType {
   // Add any other shared variables or functions here
 }
 
+const formatBalance = (value: bigint | undefined, decimals: number): string => {
+  const formatted = Number(formatUnits(value ?? 0n, decimals));
+  return formatted === 0 ? '0' : formatted.toFixed(2);
+};
+
 const ManageDialogContext = createContext<PopupContextType | undefined>(
   undefined
 );
@@ -602,19 +607,15 @@ export const ManageDialogProvider: React.FC<{
           selectedMarketData.supplyRatePerBlock,
           blocksPerMinute
         ),
-        supplyBalanceFrom: formatBalanceValue(
-          selectedMarketData.supplyBalance ?? 0n,
+        supplyBalanceFrom: formatBalance(
+          selectedMarketData.supplyBalance,
           selectedMarketData.underlyingDecimals
         ),
         supplyBalanceTo: updatedAsset
-          ? Math.abs(
-              Number(
-                formatUnits(
-                  updatedAsset.supplyBalance,
-                  updatedAsset.underlyingDecimals
-                )
-              )
-            ) || 0
+          ? formatBalance(
+              updatedAsset.supplyBalance,
+              updatedAsset.underlyingDecimals
+            )
           : '0',
         totalBorrows:
           updatedAssets?.reduce(

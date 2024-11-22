@@ -52,7 +52,6 @@ const SupplyTab = ({
     updatedValues,
     isLoadingUpdatedAssets
   } = useManageDialogContext();
-  console.log('updatedValues', updatedValues);
 
   const isDisabled = !amount || amountAsBInt === 0n;
   const { currentSdk, address } = useMultiIonic();
