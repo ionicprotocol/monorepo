@@ -34,10 +34,10 @@ import {
   PublicSaleAbi,
   PublicSaleContractAddress
 } from '../../constants/publicsale';
+import ClaimDialog from '../_components/claim/ClaimDialog';
 import CountdownTimer from '../_components/claim/CountdownTimer';
 import EligibilityPopup from '../_components/claim/EligibilityPopup';
 import SeasonSelector from '../_components/claim/SeasonSelector';
-import ResultHandler from '../_components/ResultHandler';
 
 // import type { User } from '../_components/claim/EligibilityPopup';
 
@@ -45,12 +45,14 @@ export default function Claim() {
   const [loading, setLoading] = useState(false);
   const [dropdownSelectedCampaign, setDropdownSelectedCampaign] =
     useState<number>(DROPDOWN.AirdropSZN2);
-  const [popupV2, setPopupV2] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [agreement, setAgreement] = useState(false);
+
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
+
   const { data } = useReadContracts({
     contracts: [
       {
@@ -122,24 +124,17 @@ export default function Claim() {
         args: [],
         functionName: 'claim'
       });
-      // eslint-disable-next-line no-console
-      console.log('Transaction Hash --->>>', tx);
+
       if (!tx) return;
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
       setLoading(false);
-      setPopupV2(false);
-      // eslint-disable-next-line no-console
-      console.log('Transaction --->>>', transaction);
+      setDialogOpen(false);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
+      console.error(err);
       setLoading(false);
-      setPopupV2(false);
-    } finally {
-      setLoading(false);
-      setPopupV2(false);
+      setDialogOpen(false);
     }
   }
   async function claimPublicSale() {
@@ -164,17 +159,17 @@ export default function Claim() {
         hash: tx
       });
       setLoading(false);
-      setPopupV2(false);
+      setDialogOpen(false);
       // eslint-disable-next-line no-console
       console.log('Transaction --->>>', transaction);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
       setLoading(false);
-      setPopupV2(false);
+      setDialogOpen(false);
     } finally {
       setLoading(false);
-      setPopupV2(false);
+      setDialogOpen(false);
     }
   }
 
@@ -210,13 +205,12 @@ export default function Claim() {
   const claimableTokens =
     claimableMapping[dropdownSelectedCampaign] || BigInt(0);
 
-  const isDisabled =
-    Number(formatEther(claimableTokens)) == 0 ||
-    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1 &&
+  const isDisabled = !!(
+    Number(formatEther(claimableTokens)) === 0 ||
+    (dropdownSelectedCampaign === DROPDOWN.AirdropSZN1 &&
       vestsS1?.result?.[2]) ||
-    (dropdownSelectedCampaign == DROPDOWN.AirdropSZN2 && vestsS2?.result?.[2])
-      ? true
-      : false;
+    (dropdownSelectedCampaign === DROPDOWN.AirdropSZN2 && vestsS2?.result?.[2])
+  );
 
   // ||
   // (dropdownSelectedCampaign in claimableCampaigns && haveClaimed)
@@ -375,7 +369,7 @@ export default function Claim() {
                 className={`bg-accent text-darkone py-1  ml-auto px-10 rounded-md disabled:opacity-40 `}
                 disabled={isDisabled}
                 onClick={() => {
-                  setPopupV2(true);
+                  setDialogOpen(true);
                 }}
               >
                 Claim
@@ -401,86 +395,17 @@ export default function Claim() {
           </div>
         </div>
       </div>
-      {popupV2 && (
-        <div
-          className={`w-full bg-black/40 backdrop-blur-md z-50 flex items-center justify-center min-h-screen fixed top-0 left-0`}
-        >
-          <div
-            className={`md:w-[30%] w-[70%] bg-grayone py-8 px-8 rounded-xl  flex flex-col items-center justify-center min-h-[20vh] relative text-center `}
-          >
-            <ResultHandler isLoading={loading}>
-              <img
-                alt="close"
-                className={`absolute top-4 right-4 h-5 w-5 cursor-pointer z-20 opacity-70`}
-                onClick={() => setPopupV2(false)}
-                src="/img/assets/close.png"
-              />
-              <p className="w-full tracking-wide text-lg font-semibold mb-4">
-                You can{' '}
-                {dropdownSelectedCampaign != DROPDOWN.PublicSale
-                  ? 'now instantly'
-                  : ''}{' '}
-                claim{' '}
-                {Number(formatEther(claimableTokens)).toLocaleString(
-                  undefined,
-                  {
-                    maximumFractionDigits: 2
-                  }
-                )}{' '}
-                ION
-              </p>
-              <p className={`opacity-40 text-xs `}>
-                {dropdownSelectedCampaign != DROPDOWN.PublicSale
-                  ? 'To receive the full Airdrop amount, please wait till the end of the vesting period'
-                  : 'The rest of the tokens will be vested linearly.'}
-              </p>
-              <div className="text-xs font-semibold flex gap-2 mt-4 flex-col">
-                {dropdownSelectedCampaign != DROPDOWN.PublicSale && (
-                  <div className={`flex w-full gap-2 mb-2`}>
-                    <input
-                      className={`before:content[''] peer relative h-4 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-accent checked:bg-accent checked:before:bg-accent hover:before:opacity-10`}
-                      id="checkme"
-                      onChange={(e) => setAgreement(e.target.checked)}
-                      type="checkbox"
-                    />
-                    <span>
-                      I understand and agree to forfeit{' '}
-                      {(
-                        Number(formatEther(totalTokens)) -
-                        Number(formatEther(claimableTokens))
-                      ).toLocaleString(undefined, {
-                        maximumFractionDigits: 2
-                      })}{' '}
-                      vested $ION, in favour of instantly receiving tokens now
-                    </span>
-                  </div>
-                )}
-                <button
-                  className={`bg-accent disabled:opacity-50 w-full text-darkone py-2 px-10 rounded-md`}
-                  disabled={
-                    isDisabled ||
-                    (dropdownSelectedCampaign != DROPDOWN.PublicSale &&
-                      agreement == true)
-                      ? true
-                      : false
-                  }
-                  onClick={() => {
-                    if (dropdownSelectedCampaign == DROPDOWN.AirdropSZN1) {
-                      claimAirdrop();
-                    }
-                    if (dropdownSelectedCampaign == DROPDOWN.PublicSale) {
-                      claimPublicSale();
-                    }
-                  }}
-                >
-                  {dropdownSelectedCampaign != DROPDOWN.PublicSale && 'Instant'}{' '}
-                  Claim
-                </button>
-              </div>
-            </ResultHandler>
-          </div>
-        </div>
-      )}
+      <ClaimDialog
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        dropdownSelectedCampaign={dropdownSelectedCampaign}
+        claimableTokens={claimableTokens}
+        totalTokens={totalTokens}
+        loading={loading}
+        claimAirdrop={claimAirdrop}
+        claimPublicSale={claimPublicSale}
+        isDisabled={isDisabled}
+      />
     </div>
   );
 }
