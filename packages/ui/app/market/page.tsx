@@ -84,7 +84,7 @@ export default function Market() {
               selectedSymbol: row.original.asset
             }
           }}
-          className="flex items-center gap-2"
+          className="flex gap-3 items-center"
         >
           <Image
             src={row.original.logo}
@@ -93,7 +93,13 @@ export default function Market() {
             height={28}
             className="w-7 h-7"
           />
-          <span className="text-sm">{row.original.asset}</span>
+          <div className="flex flex-col">
+            <span className="text-sm">{row.original.asset}</span>
+            <div className="flex flex-col text-xs text-white/40 font-light">
+              <span>Supplied: {row.original.supply.total.split(' ')[0]}</span>
+              <span>Borrowed: {row.original.borrow.total.split(' ')[0]}</span>
+            </div>
+          </div>
         </Link>
       )
     },
@@ -138,9 +144,9 @@ export default function Market() {
       header: 'SUPPLY BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-end">
-          <span className="text-right">{row.original.supply.balance}</span>
-          <span className="text-right text-white/50 text-xs">
+        <div className="flex flex-col items-start">
+          <span>{row.original.supply.balance}</span>
+          <span className="text-white/50 text-xs">
             ${row.original.supply.balanceUSD}
           </span>
         </div>
@@ -151,9 +157,9 @@ export default function Market() {
       header: 'BORROW BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-end">
-          <span className="text-right">{row.original.borrow.balance}</span>
-          <span className="text-right text-white/50 text-xs">
+        <div className="flex flex-col items-start">
+          <span>{row.original.borrow.balance}</span>
+          <span className="text-white/50 text-xs">
             ${row.original.borrow.balanceUSD}
           </span>
         </div>
