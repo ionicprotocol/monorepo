@@ -3,13 +3,13 @@ pragma solidity ^0.8.10;
 
 import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "forge-std/Test.sol";
-import "../../../veION/BribeRewards.sol";
+import "../../../../veION/BribeRewards.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../../config/BaseTest.t.sol";
-import "../../../veION/Voter.sol";
-import "../../../oracles/MasterPriceOracle.sol";
-import { SimplePriceOracle } from "../../../oracles/default/SimplePriceOracle.sol";
-import "../../../veION/libraries/IonicTimeLibrary.sol";
+import "../../../config/BaseTest.t.sol";
+import "../../../../veION/Voter.sol";
+import "../../../../oracles/MasterPriceOracle.sol";
+import { SimplePriceOracle } from "../../../../oracles/default/SimplePriceOracle.sol";
+import "../../../../veION/libraries/IonicTimeLibrary.sol";
 
 contract BribeRewardsTest is BaseTest {
   MockERC20 bribeTokenA;

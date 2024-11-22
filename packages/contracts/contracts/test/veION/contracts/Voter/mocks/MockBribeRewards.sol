@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.10;
 
-import "../../../veION/interfaces/IBribeRewards.sol";
+import "../../../../../veION/interfaces/IBribeRewards.sol";
 
 contract MockBribeRewards is IBribeRewards {
   function deposit(address lpToken, uint256 amount, uint256 tokenId) external override {

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "../Utils.sol";
-import "../../../veION/Voter.sol";
-import "./MockBribeRewards.sol";
-import { IVoter } from "../../../veION/interfaces/IVoter.sol";
+import "../../../Utils.sol";
+import "../../../../../veION/Voter.sol";
+import "../mocks/MockBribeRewards.sol";
+import { IVoter } from "../../../../../veION/interfaces/IVoter.sol";
 
 contract VoterTest is veIONTest {
   Voter voter;
