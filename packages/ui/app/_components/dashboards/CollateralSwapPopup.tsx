@@ -30,10 +30,10 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/app/_components/manage-dialog/Slider';
+import SliderComponent from '@ui/app/_components/dialogs/manage/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '@ui/app/_components/manage-dialog/TransactionStepsHandler';
+} from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
 import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
 import { INFO_MESSAGES } from '@ui/constants/index';

@@ -33,12 +33,12 @@ import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
-import ManageDialog from '../_components/manage-dialog';
-import Loop from '../_components/loop-dialog';
+import Loop from '../_components/dialogs/loop';
+import ManageDialog from '../_components/dialogs/manage';
 import NetworkSelector from '../_components/markets/NetworkSelector';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { ActiveTab } from '../_components/manage-dialog';
+import type { ActiveTab } from '../_components/dialogs/manage';
 
 import type {
   FlywheelReward,

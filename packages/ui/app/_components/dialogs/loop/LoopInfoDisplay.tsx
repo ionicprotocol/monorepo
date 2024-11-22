@@ -6,7 +6,7 @@ import { type Address } from 'viem';
 
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import ResultHandler from '../ResultHandler';
+import ResultHandler from '../../ResultHandler';
 
 export type LoopProps = {
   borrowableAssets: Address[];

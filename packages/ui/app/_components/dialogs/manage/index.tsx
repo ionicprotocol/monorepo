@@ -30,7 +30,7 @@ import RepayTab from './RepayTab';
 import SupplyTab from './SupplyTab';
 import WithdrawTab from './WithdrawTab';
 
-const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
+const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
   ssr: false
 });
 

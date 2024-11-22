@@ -61,7 +61,7 @@ import {
 import { INFO } from '@ui/constants/index';
 
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import Swap from '@ui/app/_components/manage-dialog/Swap';
+import Swap from '@ui/app/_components/dialogs/manage/Swap';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -71,7 +71,7 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
-import ManageDialog from '@ui/app/_components/manage-dialog';
+import ManageDialog from '@ui/app/_components/dialogs/manage';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 

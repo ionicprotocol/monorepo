@@ -27,19 +27,19 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from '../manage-dialog/TransactionStepsHandler';
-import Modal from '../Modal';
-import ResultHandler from '../ResultHandler';
-
-import type { OpenPosition } from '@ionicprotocol/types';
 import BorrowActions from './BorrowActions';
 import LoopHealthRatioDisplay from './LoopHealthRatioDisplay';
 import LoopInfoDisplay from './LoopInfoDisplay';
 import SupplyActions from './SupplyActions';
+import Modal from '../../Modal';
+import ResultHandler from '../../ResultHandler';
+import TransactionStepsHandler, {
+  useTransactionSteps
+} from '../manage/TransactionStepsHandler';
 
-const SwapWidget = dynamic(() => import('../markets/SwapWidget'), {
+import type { OpenPosition } from '@ionicprotocol/types';
+
+const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
   ssr: false
 });
 

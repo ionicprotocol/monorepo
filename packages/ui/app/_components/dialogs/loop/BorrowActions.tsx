@@ -7,9 +7,9 @@ import { useChainId } from 'wagmi';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import Amount from '../manage-dialog/Amount';
-import Range from '../Range';
-import ResultHandler from '../ResultHandler';
+import Range from '../../Range';
+import ResultHandler from '../../ResultHandler';
+import Amount from '../manage/Amount';
 
 export type LoopProps = {
   borrowableAssets: Address[];

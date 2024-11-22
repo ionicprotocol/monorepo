@@ -17,7 +17,7 @@ import SliderComponent from './Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
-import ResultHandler from '../ResultHandler';
+import ResultHandler from '../../ResultHandler';
 
 interface BorrowTabProps {
   maxAmount: bigint;

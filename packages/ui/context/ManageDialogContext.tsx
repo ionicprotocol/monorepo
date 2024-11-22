@@ -20,8 +20,8 @@ import {
 } from 'viem';
 import { useChainId } from 'wagmi';
 
-import type { TransactionStep } from '@ui/app/_components/manage-dialog/TransactionStepsHandler';
-import { useTransactionSteps } from '@ui/app/_components/manage-dialog/TransactionStepsHandler';
+import type { TransactionStep } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';

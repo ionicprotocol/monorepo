@@ -1,12 +1,13 @@
-import { useMemo } from 'react';
-
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import {
+  HFPStatus,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
@@ -14,14 +15,14 @@ import SliderComponent from './Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
-import ResultHandler from '../ResultHandler';
+import ResultHandler from '../../ResultHandler';
 
-interface RepayTabProps {
+interface WithdrawTabProps {
   maxAmount: bigint;
   isLoadingMax: boolean;
 }
 
-const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
+const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -35,103 +36,67 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
     normalizedHealthFactor,
     normalizedPredictedHealthFactor,
     amountAsBInt,
-    isLoadingUpdatedAssets,
-    updatedValues
+    isLoadingPredictedHealthFactor,
+    updatedValues,
+    isLoadingUpdatedAssets
   } = useManageDialogContext();
+
+  const isDisabled =
+    !amount ||
+    amountAsBInt === 0n ||
+    isLoadingPredictedHealthFactor ||
+    hfpStatus === HFPStatus.CRITICAL ||
+    hfpStatus === HFPStatus.UNKNOWN;
+
+  const healthFactor = {
+    current: normalizedHealthFactor ?? '0',
+    predicted: normalizedPredictedHealthFactor ?? '0'
+  };
   const { currentSdk, address } = useMultiIonic();
 
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
-  const currentBorrowAmountAsFloat = useMemo<number>(
-    () => parseFloat(selectedMarketData.borrowBalance.toString()),
-    [selectedMarketData]
-  );
 
-  const repayAmount = async () => {
+  const withdrawAmount = async () => {
     if (
       !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
       amountAsBInt > 0n &&
-      currentBorrowAmountAsFloat
+      maxAmount
     ) {
-      let currentTransactionStep = 0;
+      const currentTransactionStep = 0;
       addStepsForAction([
         {
           error: false,
-          message: INFO_MESSAGES.REPAY.APPROVE,
-          success: false
-        },
-        {
-          error: false,
-          message: INFO_MESSAGES.REPAY.REPAYING,
+          message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
           success: false
         }
       ]);
 
       try {
-        const token = currentSdk.getEIP20TokenInstance(
-          selectedMarketData.underlyingToken,
-          currentSdk.publicClient as any
+        const amountToWithdraw = amountAsBInt;
+
+        console.warn(
+          'Withdraw params:',
+          selectedMarketData.cToken,
+          amountToWithdraw.toString()
         );
-        const hasApprovedEnough =
-          (await token.read.allowance([address, selectedMarketData.cToken])) >=
-          amountAsBInt;
-
-        if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(
-            selectedMarketData.cToken,
-            selectedMarketData.underlyingToken,
-            (amountAsBInt * 105n) / 100n
-          );
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx
-            }
-          });
-
-          await currentSdk.publicClient.waitForTransactionReceipt({
-            hash: tx,
-            confirmations: 2
-          });
-
-          // wait for 5 seconds to resolve timing issue
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+        let isMax = false;
+        if (amountToWithdraw === maxAmount) {
+          isMax = true;
         }
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            success: true
-          }
-        });
-
-        currentTransactionStep++;
-
-        const isRepayingMax =
-          amountAsBInt >= (selectedMarketData.borrowBalance ?? 0n);
-        console.warn(
-          'Repay params:',
+        const { tx, errorCode } = await currentSdk.withdraw(
           selectedMarketData.cToken,
-          isRepayingMax,
-          isRepayingMax
-            ? selectedMarketData.borrowBalance.toString()
-            : amountAsBInt.toString()
-        );
-        const { tx, errorCode } = await currentSdk.repay(
-          selectedMarketData.cToken,
-          isRepayingMax,
-          isRepayingMax ? selectedMarketData.borrowBalance : amountAsBInt
+          amountToWithdraw,
+          isMax
         );
 
         if (errorCode) {
           console.error(errorCode);
 
-          throw new Error('Error during repaying!');
+          throw new Error('Error during withdrawing!');
         }
 
         upsertTransactionStep({
@@ -154,6 +119,10 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
             success: true
           }
         });
+
+        toast.success(
+          `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
+        );
       } catch (error) {
         console.error(error);
 
@@ -165,14 +134,9 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
           }
         });
 
-        toast.error('Error while repaying!');
+        toast.error('Error while withdrawing!');
       }
     }
-  };
-
-  const healthFactor = {
-    current: normalizedHealthFactor ?? '0',
-    predicted: normalizedPredictedHealthFactor ?? '0'
   };
 
   return (
@@ -191,35 +155,48 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
         handleUtilization={handleUtilization}
       />
 
+      {hfpStatus === 'WARNING' && (
+        <Alert variant="default">
+          <AlertDescription>
+            You are close to the liquidation threshold. Manage your health
+            factor carefully.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {hfpStatus === 'CRITICAL' && (
         <Alert variant="destructive">
           <AlertDescription>Health factor too low.</AlertDescription>
         </Alert>
       )}
 
+      {hfpStatus === 'UNKNOWN' && (
+        <Alert variant="default">
+          <AlertDescription>
+            Unable to calculate health factor.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="space-y-2">
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>CURRENTLY BORROWING</span>
+        <div className="flex justify-between text-xs text-gray-400 uppercase">
+          <span>Market Supply Balance</span>
           <div className="flex items-center">
-            <span className="text-error">
-              {updatedValues.borrowBalanceFrom}
-            </span>
+            <span>{updatedValues.supplyBalanceFrom}</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              <span className="text-accent">
-                {updatedValues.borrowBalanceTo}
-              </span>
+              {updatedValues.supplyBalanceTo}
             </ResultHandler>
           </div>
         </div>
 
         <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Borrow APR</span>
+          <span>Market Supply APR</span>
           <div className="flex items-center">
-            <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
+            <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
             <ResultHandler isLoading={isLoadingUpdatedAssets}>
-              {updatedValues.updatedBorrowAPR?.toFixed(2)}%
+              {updatedValues.updatedSupplyAPY?.toFixed(2)}%
             </ResultHandler>
           </div>
         </div>
@@ -245,16 +222,14 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
       ) : (
         <Button
           className="w-full"
-          disabled={
-            !amount || amountAsBInt === 0n || !currentBorrowAmountAsFloat
-          }
-          onClick={repayAmount}
+          disabled={isDisabled}
+          onClick={withdrawAmount}
         >
-          Repay {selectedMarketData.underlyingSymbol}
+          Withdraw {selectedMarketData.underlyingSymbol}
         </Button>
       )}
     </div>
   );
 };
 
-export default RepayTab;
+export default WithdrawTab;

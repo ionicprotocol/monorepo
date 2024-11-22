@@ -16,9 +16,9 @@ import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';
-import ManageDialog from '../_components/manage-dialog';
-import Loop from '../_components/loop-dialog';
-import Swap from '../_components/manage-dialog/Swap';
+import Loop from '../_components/dialogs/loop';
+import ManageDialog from '../_components/dialogs/manage';
+import Swap from '../_components/dialogs/manage/Swap';
 import APRCell from '../_components/markets/APRCell';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import StakingTile from '../_components/markets/StakingTile';
