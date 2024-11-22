@@ -23,10 +23,18 @@ import type { FlywheelReward } from '@ionicprotocol/types';
 export type MarketRowData = MarketData & {
   asset: string;
   logo: string;
-  supplyBalance: string;
-  totalSupplied: string;
-  borrowBalance: string;
-  totalBorrowing: string;
+  supply: {
+    balance: string;
+    balanceUSD: string;
+    total: string;
+    totalUSD: string;
+  };
+  borrow: {
+    balance: string;
+    balanceUSD: string;
+    total: string;
+    totalUSD: string;
+  };
   supplyAPR: number;
   borrowAPR: number;
   collateralFactor: number;
@@ -40,6 +48,7 @@ export type MarketRowData = MarketData & {
   supplyAPRTotal: number | undefined;
   borrowAPRTotal: number | undefined;
   isBorrowDisabled: boolean;
+  underlyingSymbol: string;
 };
 
 export const useMarketData = (
@@ -84,6 +93,15 @@ export const useMarketData = (
     cTokenAddresses,
     +chain
   );
+
+  const formatNumber = (value: bigint | number, decimals: number): string => {
+    const parsedValue =
+      typeof value === 'bigint'
+        ? parseFloat(formatUnits(value, decimals))
+        : value;
+
+    return parsedValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  };
 
   const marketData = useMemo(() => {
     if (!assets) return [];
@@ -130,50 +148,36 @@ export const useMarketData = (
         // Get borrow caps for this specific asset from the bulk query result
         const assetBorrowCaps = borrowCapsData?.[asset.cToken];
 
+        const supply = {
+          balance:
+            typeof asset.supplyBalance === 'bigint'
+              ? `${formatNumber(asset.supplyBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
+              : `0 ${asset.underlyingSymbol}`,
+          balanceUSD: formatNumber(asset.supplyBalanceFiat, 0),
+          total: asset.totalSupplyNative
+            ? `${formatNumber(asset.totalSupply, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
+            : `0 ${asset.underlyingSymbol}`,
+          totalUSD: formatNumber(asset.totalSupplyFiat, 0)
+        };
+
+        const borrow = {
+          balance:
+            typeof asset.borrowBalance === 'bigint'
+              ? `${formatNumber(asset.borrowBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
+              : `0 ${asset.underlyingSymbol}`,
+          balanceUSD: formatNumber(asset.borrowBalanceFiat, 0),
+          total: asset.totalBorrowNative
+            ? `${formatNumber(asset.totalBorrow, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
+            : `0 ${asset.underlyingSymbol}`,
+          totalUSD: formatNumber(asset.totalBorrowFiat, 0)
+        };
+
         return {
           ...asset,
           asset: asset.underlyingSymbol,
           logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
-          supplyBalance: `${
-            typeof asset.supplyBalance === 'bigint'
-              ? parseFloat(
-                  formatUnits(asset.supplyBalance, asset.underlyingDecimals)
-                ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '0'
-          } ${asset.underlyingSymbol} / $${asset.supplyBalanceFiat.toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}`,
-          totalSupplied: `${
-            asset.totalSupplyNative
-              ? parseFloat(
-                  formatUnits(asset.totalSupply, asset.underlyingDecimals)
-                ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '0'
-          } ${asset.underlyingSymbol} / $${asset.totalSupplyFiat.toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}`,
-          borrowBalance: `${
-            typeof asset.borrowBalance === 'bigint'
-              ? parseFloat(
-                  formatUnits(asset.borrowBalance, asset.underlyingDecimals)
-                ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '0'
-          } ${asset.underlyingSymbol} / $${asset.borrowBalanceFiat.toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}`,
-          totalBorrowing: `${
-            asset.totalBorrowNative
-              ? parseFloat(
-                  formatUnits(asset.totalBorrow, asset.underlyingDecimals)
-                ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-              : '0'
-          } ${asset.underlyingSymbol} / $${asset.totalBorrowFiat.toLocaleString(
-            'en-US',
-            { maximumFractionDigits: 2 }
-          )}`,
+          supply,
+          borrow,
           supplyAPR: supplyRates?.[asset.cToken]
             ? supplyRates[asset.cToken] * 100
             : 0,

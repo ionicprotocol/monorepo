@@ -1,4 +1,3 @@
-// Market.tsx
 'use client';
 
 import { useState } from 'react';
@@ -139,7 +138,12 @@ export default function Market() {
       header: 'SUPPLY BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <span className="text-right">{row.original.supplyBalance}</span>
+        <div className="flex flex-col items-end">
+          <span className="text-right">{row.original.supply.balance}</span>
+          <span className="text-right text-white/50 text-xs">
+            ${row.original.supply.balanceUSD}
+          </span>
+        </div>
       )
     },
     {
@@ -147,7 +151,12 @@ export default function Market() {
       header: 'BORROW BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <span className="text-right">{row.original.borrowBalance}</span>
+        <div className="flex flex-col items-end">
+          <span className="text-right">{row.original.borrow.balance}</span>
+          <span className="text-right text-white/50 text-xs">
+            ${row.original.borrow.balanceUSD}
+          </span>
+        </div>
       )
     },
     {
@@ -163,9 +172,11 @@ export default function Market() {
       header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full">
           <button
-            className="rounded-md bg-accent text-black py-1.5 px-4 uppercase truncate disabled:opacity-50"
+            className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 ${
+              row.original.loopPossible ? 'w-1/2' : 'w-full'
+            }`}
             onClick={async () => {
               const result = await handleSwitchOriginChain(+chain, chainId);
               if (result) {
@@ -182,7 +193,7 @@ export default function Market() {
           </button>
           {row.original.loopPossible && (
             <button
-              className="rounded-md bg-white/10 text-white py-1.5 px-4 uppercase truncate disabled:opacity-50 hover:bg-white/20"
+              className="rounded-md bg-lime text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 hover:bg-lime-400 w-1/2"
               onClick={async () => {
                 const result = await handleSwitchOriginChain(+chain, chainId);
                 if (result) {
