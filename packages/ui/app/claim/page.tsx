@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 import {
@@ -11,8 +12,10 @@ import {
   useReadContracts,
   useWalletClient
 } from 'wagmi';
+
 import { DROPDOWN } from '@ui/constants/index';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
+
 import { claimAbi, claimContractAddressSeason2 } from '../../constants/claim';
 import {
   PublicSaleAbi,

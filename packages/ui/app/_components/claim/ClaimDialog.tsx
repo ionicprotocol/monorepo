@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+
 import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
-import { DROPDOWN } from '@ui/constants';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import { Button } from '@ui/components/ui/button';
 import { Checkbox } from '@ui/components/ui/checkbox';
 import {
@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import ResultHandler from '../ResultHandler';
+import { DROPDOWN } from '@ui/constants';
 import {
   claimAbi,
   claimContractAddress,
@@ -22,6 +22,9 @@ import {
   PublicSaleAbi,
   PublicSaleContractAddress
 } from '@ui/constants/publicsale';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import ResultHandler from '../ResultHandler';
 
 type ClaimDialogProps = {
   claimableTokens: bigint;

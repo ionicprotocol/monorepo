@@ -2,6 +2,7 @@
 'use client';
 
 import { formatEther } from 'viem';
+
 import { DROPDOWN } from '@ui/constants/index';
 
 type ClaimPanelProps = {
