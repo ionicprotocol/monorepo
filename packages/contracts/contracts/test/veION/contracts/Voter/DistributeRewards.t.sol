@@ -53,7 +53,7 @@ contract DistributeRewards is VoterTest {
   }
 
   function test_distributeRewards_RewardsCanBeDistributed() public fork(BASE_MAINNET) {
-    vm.prank(user);
+    vm.prank(baseUser);
     voter.vote(baseTokenIdSingleLp, markets, sides, weights);
     uint256 ionPrice = mpo.price(ion);
     uint256 wethPrice = mpo.price(weth);

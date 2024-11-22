@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract BalanceOfNFT is veIONTest {
   address user;
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
-  veIONHarness harness;
-  uint256 baseLockTokenId;
 
   function setUp() public {
     _setUp();
@@ -16,50 +13,11 @@ contract BalanceOfNFT is veIONTest {
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
     ve.setVoter(address(this));
-    harness = new veIONHarness(MINTIME);
   }
 
-  // could move into utils as a base setup
-  function afterForkSetUp() internal virtual override {
-    ve = new veION();
-    ve.initialize(ap);
-    harness = new veIONHarness(MINTIME);
-
-    address ionWeth5050LP = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
-
-    address[] memory whitelistedTokens = new address[](1);
-    bool[] memory isWhitelistedTokens = new bool[](1);
-    whitelistedTokens[0] = ionWeth5050LP;
-    isWhitelistedTokens[0] = true;
-
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(ionWeth5050LP, IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH);
-
-    ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
-    ve.setMinimumLockDuration(MINTIME);
-    ve.setMinimumLockAmount(address(ionWeth5050LP), MINIMUM_LOCK_AMOUNT);
-
-    uint256 amountStaked = REAL_LP_LOCK_AMOUNT;
-    address whale = 0x9b42e5F8c45222b2715F804968251c747c588fd7;
-    vm.prank(whale);
-    IERC20(ionWeth5050LP).transfer(user, amountStaked);
-
-    address[] memory tokenAddresses = new address[](1);
-    tokenAddresses[0] = address(ionWeth5050LP);
-
-    uint256[] memory tokenAmounts = new uint256[](1);
-    tokenAmounts[0] = amountStaked;
-
-    uint256[] memory durations = new uint256[](1);
-    durations[0] = 52 weeks;
-
-    bool[] memory stakeUnderlying = new bool[](1);
-    stakeUnderlying[0] = false;
-
-    vm.startPrank(user);
-    IERC20(ionWeth5050LP).approve(address(ve), amountStaked);
-    baseLockTokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
-    vm.stopPrank();
+  function afterForkSetUp() internal override {
+    _afterForkSetUpBase();
+    baseTokenIdSingleLp = _lockSingleLPFork(baseUser, REAL_LP_LOCK_AMOUNT);
   }
 
   function test_balanceOfNFT_GetsBalanceIfLockExists() public {
@@ -298,9 +256,9 @@ contract BalanceOfNFT is veIONTest {
 
     vars.aeroWhale = 0x6cDcb1C4A4D1C3C6d054b27AC5B77e89eAFb971d;
     vm.prank(vars.aeroWhale);
-    IERC20(vars.AERO).transfer(user, vars.lockAmount);
+    IERC20(vars.AERO).transfer(baseUser, vars.lockAmount);
 
-    vm.startPrank(user);
+    vm.startPrank(baseUser);
     IERC20(vars.AERO).approve(vars.veAEROAddress, vars.lockAmount);
     vars.veAeroTokenId = IveAERO(vars.veAEROAddress).createLock(vars.lockAmount, 2 * 365 * 86400);
     IAEROVoter(vars.aeroVotingAddress).vote(vars.veAeroTokenId, vars.poolVote, vars.weights);
@@ -310,10 +268,12 @@ contract BalanceOfNFT is veIONTest {
 
     console.log("Pool weight", weight);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(baseLockTokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(
+      baseTokenIdSingleLp
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(baseLockTokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = ve.getUserLock(baseTokenIdSingleLp, ve.s_lpType(assets[i]));
       assertGt(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
       console.log("Lock", i);
       console.log("Asset:", assets[i]);

@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract LockPermanent is veIONTest {
   address user;
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
-  veIONHarness harness;
 
   function setUp() public {
     _setUp();
@@ -15,8 +13,6 @@ contract LockPermanent is veIONTest {
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
     ve.setVoter(address(this));
-
-    harness = new veIONHarness(MINTIME);
   }
 
   function test_lockPermanent_UserCanLockPermanent() public {

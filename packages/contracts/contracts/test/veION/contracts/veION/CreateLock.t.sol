@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract CreateLock is veIONTest {
   function setUp() public {
     _setUp();
+  }
+
+  function afterForkSetUp() internal override {
+    _afterForkSetUpMode();
   }
 
   function test_createLock_UserCanCreateLock() public {

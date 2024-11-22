@@ -26,10 +26,6 @@ contract BribeRewardsTest is BaseTest {
   uint256 amount = 1000 ether;
   address user = address(0x789);
 
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-  }
-
   function setUp() public {
     bribeRewards = new BribeRewards();
     bribeRewards.initialize(address(voter), ve);

@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract Delegate is veIONTest {
   address user;
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
-  veIONHarness harness;
   uint256 tokenId1;
   uint256 tokenId2;
 
@@ -18,7 +16,6 @@ contract Delegate is veIONTest {
     lockInput = _createLockInternal(user);
     ve.setVoter(address(this));
 
-    harness = new veIONHarness(MINTIME);
     vm.startPrank(user);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
     ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);

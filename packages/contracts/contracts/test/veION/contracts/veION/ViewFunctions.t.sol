@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract ViewFunctions is veIONTest {
   function setUp() public {
@@ -55,6 +54,7 @@ contract ViewFunctions is veIONTest {
     assertEq(totalValue, 0, "Initial total ETH value should be zero");
   }
 
+  //TODO
   function test_getTotalEthValueOfTokensFork() public {}
 
   function test_getAssetsLocked() public {

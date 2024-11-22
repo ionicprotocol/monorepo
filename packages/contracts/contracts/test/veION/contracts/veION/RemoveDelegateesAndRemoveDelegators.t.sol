@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract RemoveDelegateesAndRemoveDelegators is veIONTest {
   address cindy;
@@ -10,7 +9,6 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
   LockInfoMultiple lockInputBob;
   LockInfo lockInputCandy;
   LockInfo lockInputRalph;
-  veIONHarness harness;
   uint256 tokenIdAlice;
   uint256 tokenIdBob;
   uint256 tokenIdCandy;

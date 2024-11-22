@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract Withdraw is veIONTest {
   address user;
@@ -14,6 +13,10 @@ contract Withdraw is veIONTest {
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
     ve.setVoter(address(this));
+  }
+
+  function afterForkSetUp() internal override {
+    _afterForkSetUpMode();
   }
 
   function test_withdraw_UserCanWithdrawFinishedLock() public {

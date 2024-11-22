@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 import "../../Utils.sol";
-import "../../harness/veIONHarness.sol";
 
 contract ClaimEmissions is veIONTest {
   address alice;
@@ -10,7 +9,7 @@ contract ClaimEmissions is veIONTest {
   LockInfo lockInfoBob;
 
   function afterForkSetUp() internal override {
-    super.afterForkSetUp();
+    _afterForkSetUpMode();
     alice = address(0x8325);
     bob = address(0x2542);
     lockInfoAlice = _createLockInternalRealLP(alice, true);
