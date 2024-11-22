@@ -293,7 +293,7 @@ export default function Market() {
       {loopProps && (
         <Loop
           {...loopProps}
-          closeLoop={() => setIsLoopDialogOpen(false)}
+          setIsOpen={setIsLoopDialogOpen}
           isOpen={isLoopDialogOpen}
         />
       )}

@@ -174,7 +174,7 @@ export default function Dashboard() {
   );
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
-  const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
     +chain
@@ -720,7 +720,7 @@ export default function Dashboard() {
                         usdPrice={usdPrice ?? undefined}
                         setSelectedLoopBorrowData={setSelectedLoopBorrowData}
                         setSelectedSymbol={setSelectedSymbol}
-                        setLoopOpen={setLoopOpen}
+                        setLoopOpen={setIsLoopDialogOpen}
                         chain={+chain}
                       />
                     );
@@ -739,12 +739,10 @@ export default function Dashboard() {
       {selectedMarketData && (
         <Loop
           borrowableAssets={loopData ? loopData[selectedMarketData.cToken] : []}
-          closeLoop={() => {
-            setLoopOpen(false);
-          }}
+          isOpen={isLoopDialogOpen}
+          setIsOpen={setIsLoopDialogOpen}
           comptrollerAddress={marketData?.comptroller ?? ('' as Address)}
           currentBorrowAsset={selectedLoopBorrowData}
-          isOpen={loopOpen}
           selectedCollateralAsset={selectedMarketData}
         />
       )}

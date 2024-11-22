@@ -14,6 +14,12 @@ import {
 } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@ui/components/ui/dialog';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatio } from '@ui/hooks/leverage/useCurrentLeverageRatio';
@@ -31,7 +37,6 @@ import BorrowActions from './BorrowActions';
 import LoopHealthRatioDisplay from './LoopHealthRatioDisplay';
 import LoopInfoDisplay from './LoopInfoDisplay';
 import SupplyActions from './SupplyActions';
-import Modal from '../../Modal';
 import ResultHandler from '../../ResultHandler';
 import TransactionStepsHandler, {
   useTransactionSteps
@@ -44,21 +49,21 @@ const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
 });
 
 export type LoopProps = {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   borrowableAssets: Address[];
-  closeLoop: () => void;
   comptrollerAddress: Address;
   currentBorrowAsset?: MarketData;
-  isOpen: boolean;
   selectedCollateralAsset: MarketData;
 };
 
 export default function Loop({
+  isOpen,
+  setIsOpen,
   borrowableAssets,
-  closeLoop,
   comptrollerAddress,
   currentBorrowAsset,
-  selectedCollateralAsset,
-  isOpen
+  selectedCollateralAsset
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
@@ -570,82 +575,87 @@ export default function Loop({
 
   return (
     <>
-      {isOpen && (
-        <>
-          <SwapWidget
-            close={() => setSwapWidgetOpen(false)}
-            open={swapWidgetOpen}
-            fromChain={chainId}
-            toChain={chainId}
-            toToken={selectedCollateralAsset.underlyingToken}
-          />
-          <Modal close={() => closeLoop()}>
-            <div className="flex mb-4 items-center text-lg font-bold">
-              <Image
-                alt=""
-                className="mr-2"
-                height="20"
-                src={`/img/symbols/32/color/${selectedCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
-                width="20"
-              />
+      <SwapWidget
+        close={() => setSwapWidgetOpen(false)}
+        open={swapWidgetOpen}
+        fromChain={chainId}
+        toChain={chainId}
+        toToken={selectedCollateralAsset.underlyingToken}
+      />
+      <Dialog
+        open={isOpen}
+        onOpenChange={setIsOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <div className="flex items-center text-lg font-bold">
+                <Image
+                  alt=""
+                  className="mr-2"
+                  height="20"
+                  src={`/img/symbols/32/color/${selectedCollateralAsset.underlyingSymbol.toLowerCase()}.png`}
+                  width="20"
+                />
+                {selectedCollateralAsset.underlyingSymbol}
+              </div>
+            </DialogTitle>
+          </DialogHeader>
 
-              {selectedCollateralAsset.underlyingSymbol}
-            </div>
+          <div className="flex mb-4 items-center text-sm font-bold">
+            {currentPosition
+              ? `Loop Position Found: `
+              : 'No Loop Position Found, Create a New One'}
+            {currentPosition && (
+              <a
+                href={`${getScanUrlByChainId(chainId)}/address/${currentPosition.address}`}
+                target="_blank"
+                className="text-cyan-400 pl-2"
+              >
+                0x{currentPosition.address.slice(2, 4)}...
+                {currentPosition.address.slice(-6)}
+              </a>
+            )}
+          </div>
+          <button
+            className={`w-full font-bold uppercase rounded-md py-1 transition-colors bg-accent text-darkone text-xs mx-auto mb-4`}
+            onClick={() => setSwapWidgetOpen(true)}
+          >
+            Get {selectedCollateralAsset.underlyingSymbol}
+          </button>
 
-            <div className="flex mb-4 items-center text-sm font-bold">
-              {currentPosition
-                ? `Loop Position Found: `
-                : 'No Loop Position Found, Create a New One'}
-              {currentPosition && (
-                <a
-                  href={`${getScanUrlByChainId(chainId)}/address/${currentPosition.address}`}
-                  target="_blank"
-                  className="text-cyan-400 pl-2"
+          <div className="lg:flex justify-between items-center">
+            <div className="grow-0 shrink-0 basis-[45%]">
+              <div
+                className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+              >
+                <span className={``}>Position Value</span>
+                <ResultHandler
+                  height="20"
+                  isLoading={isFetchingPositionInfo}
+                  width="20"
                 >
-                  0x{currentPosition.address.slice(2, 4)}...
-                  {currentPosition.address.slice(-6)}
-                </a>
-              )}
-            </div>
-            <button
-              className={`w-full font-bold uppercase rounded-md py-1 transition-colors bg-accent text-darkone text-xs mx-auto mb-4`}
-              onClick={() => setSwapWidgetOpen(true)}
-            >
-              Get {selectedCollateralAsset.underlyingSymbol}
-            </button>
-
-            <div className="lg:flex justify-between items-center">
-              <div className="grow-0 shrink-0 basis-[45%]">
-                <div
-                  className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+                  <span className={`flex text-sm font-bold pl-2 text-white`}>
+                    ${positionValueMillified}
+                  </span>
+                </ResultHandler>
+              </div>
+              <div
+                className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
+              >
+                <span className={``}>Net APR</span>
+                <ResultHandler
+                  height="20"
+                  isLoading={isFetchingPositionNetApy}
+                  width="20"
                 >
-                  <span className={``}>Position Value</span>
-                  <ResultHandler
-                    height="20"
-                    isLoading={isFetchingPositionInfo}
-                    width="20"
-                  >
-                    <span className={`flex text-sm font-bold pl-2 text-white`}>
-                      ${positionValueMillified}
-                    </span>
-                  </ResultHandler>
-                </div>
-                <div
-                  className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
-                >
-                  <span className={``}>Net APR</span>
-                  <ResultHandler
-                    height="20"
-                    isLoading={isFetchingPositionNetApy}
-                    width="20"
-                  >
-                    <span className={`flex text-sm font-bold pl-2 text-white`}>
-                      {positionNetApy?.toFixed(2) ?? '0.00'}%
-                    </span>
-                  </ResultHandler>
-                </div>
+                  <span className={`flex text-sm font-bold pl-2 text-white`}>
+                    {positionNetApy?.toFixed(2) ?? '0.00'}%
+                  </span>
+                </ResultHandler>
+              </div>
 
-                {/* <div
+              {/* <div
                 className={`flex w-full items-center justify-between mb-1 hint-text-uppercase `}
               >
                 <span className={``}>Annual yield</span>
@@ -653,32 +663,31 @@ export default function Loop({
                   TODO
                 </span>
               </div> */}
-              </div>
-
-              <div className={`separator lg:hidden`} />
-
-              <div className="separator-vertical hidden lg:block" />
-
-              <LoopHealthRatioDisplay
-                currentValue={positionValueMillified}
-                healthRatio={healthRatio}
-                liquidationValue={millify(liquidationValue)}
-                projectedHealthRatio={
-                  parseFloat(amount ?? '0') > 0 ||
-                  (!!currentPositionLeverageRatio &&
-                    Math.round(currentPositionLeverageRatio) !==
-                      currentLeverage)
-                    ? projectedHealthRatio
-                    : undefined
-                }
-              />
             </div>
 
-            <div className={`separator`} />
+            <div className={`separator lg:hidden`} />
 
-            <div className="md:flex justify-between items-center">
-              <LoopInfoDisplay
-                aprPercentage={`
+            <div className="separator-vertical hidden lg:block" />
+
+            <LoopHealthRatioDisplay
+              currentValue={positionValueMillified}
+              healthRatio={healthRatio}
+              liquidationValue={millify(liquidationValue)}
+              projectedHealthRatio={
+                parseFloat(amount ?? '0') > 0 ||
+                (!!currentPositionLeverageRatio &&
+                  Math.round(currentPositionLeverageRatio) !== currentLeverage)
+                  ? projectedHealthRatio
+                  : undefined
+              }
+            />
+          </div>
+
+          <div className={`separator`} />
+
+          <div className="md:flex justify-between items-center">
+            <LoopInfoDisplay
+              aprPercentage={`
                   ${
                     collateralsAPR &&
                     collateralsAPR[selectedCollateralAsset.cToken]
@@ -689,186 +698,181 @@ export default function Loop({
                   }
                   %
               `}
-                aprText={'Collateral APR'}
-                isLoading={
-                  isFetchingPositionInfo ||
-                  typeof collateralsAPR === 'undefined'
-                }
-                nativeAmount={
-                  currentPosition
-                    ? formatUnits(
-                        positionInfo?.equityAmount ?? 0n,
-                        Number(currentPosition.collateral.underlyingDecimals)
-                      )
-                    : '0'
-                }
-                symbol={selectedCollateralAsset.underlyingSymbol}
-                title={'My Collateral'}
-                usdAmount={
-                  currentPosition
-                    ? millify(
-                        Number(
-                          formatUnits(
-                            positionInfo?.equityAmount ?? 0n,
-                            selectedCollateralAsset.underlyingDecimals
-                          )
-                        ) * selectedCollateralAssetUSDPrice
-                      )
-                    : '0'
-                }
-              />
+              aprText={'Collateral APR'}
+              isLoading={
+                isFetchingPositionInfo || typeof collateralsAPR === 'undefined'
+              }
+              nativeAmount={
+                currentPosition
+                  ? formatUnits(
+                      positionInfo?.equityAmount ?? 0n,
+                      Number(currentPosition.collateral.underlyingDecimals)
+                    )
+                  : '0'
+              }
+              symbol={selectedCollateralAsset.underlyingSymbol}
+              title={'My Collateral'}
+              usdAmount={
+                currentPosition
+                  ? millify(
+                      Number(
+                        formatUnits(
+                          positionInfo?.equityAmount ?? 0n,
+                          selectedCollateralAsset.underlyingDecimals
+                        )
+                      ) * selectedCollateralAssetUSDPrice
+                    )
+                  : '0'
+              }
+            />
 
-              <div className="separator lg:hidden" />
+            <div className="separator lg:hidden" />
 
-              <div className="separator-vertical hidden lg:block" />
+            <div className="separator-vertical hidden lg:block" />
 
-              <LoopInfoDisplay
-                aprPercentage={`
+            <LoopInfoDisplay
+              aprPercentage={`
                   ${Number(formatEther(borrowApr ?? 0n)).toFixed(2)}
                   %
               `}
-                aprText={'Borrow APR'}
-                isLoading={isFetchingPositionInfo}
-                nativeAmount={borrowedAssetAmount.toFixed(
-                  selectedBorrowAsset?.underlyingDecimals ?? 18
-                )}
-                symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
-                title={'My Borrow'}
-                usdAmount={millify(
-                  borrowedAssetAmount * selectedBorrowAssetUSDPrice
-                )}
-              />
-            </div>
+              aprText={'Borrow APR'}
+              isLoading={isFetchingPositionInfo}
+              nativeAmount={borrowedAssetAmount.toFixed(
+                selectedBorrowAsset?.underlyingDecimals ?? 18
+              )}
+              symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
+              title={'My Borrow'}
+              usdAmount={millify(
+                borrowedAssetAmount * selectedBorrowAssetUSDPrice
+              )}
+            />
+          </div>
 
-            <div className="separator" />
+          <div className="separator" />
 
-            {currentPosition && (
-              <>
-                <div className="md:flex justify-between items-center">
-                  <LoopInfoDisplay
-                    isLoading={isFetchingPositionInfo || !collateralsAPR}
-                    nativeAmount={projectedCollateral}
-                    symbol={selectedCollateralAsset.underlyingSymbol}
-                    title={'Projected Collateral'}
-                    usdAmount={millify(projectedCollateralValue)}
-                  />
+          {currentPosition && (
+            <>
+              <div className="md:flex justify-between items-center">
+                <LoopInfoDisplay
+                  isLoading={isFetchingPositionInfo || !collateralsAPR}
+                  nativeAmount={projectedCollateral}
+                  symbol={selectedCollateralAsset.underlyingSymbol}
+                  title={'Projected Collateral'}
+                  usdAmount={millify(projectedCollateralValue)}
+                />
 
-                  <div className="separator lg:hidden" />
+                <div className="separator lg:hidden" />
 
-                  <div className="separator-vertical hidden lg:block" />
+                <div className="separator-vertical hidden lg:block" />
 
-                  <LoopInfoDisplay
-                    isLoading={isFetchingPositionInfo}
-                    nativeAmount={projectedBorrowAmount.toString() ?? '0'}
-                    symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
-                    title={'Projected Borrow'}
-                    usdAmount={millify(
-                      Number(projectedBorrowAmount) *
-                        selectedBorrowAssetUSDPrice
-                    )}
-                  />
-                </div>
-
-                <div className="separator" />
-              </>
-            )}
-
-            <div className="lg:flex justify-between items-center">
-              <SupplyActions
-                amount={amount}
-                comptrollerAddress={comptrollerAddress}
-                handleClosePosition={handleClosePosition}
-                isClosingPosition={!!transactionSteps.length}
-                selectedCollateralAsset={selectedCollateralAsset}
-                selectedCollateralAssetUSDPrice={
-                  selectedCollateralAssetUSDPrice
-                }
-                setAmount={setAmount}
-              />
-
-              <div className="separator lg:hidden" />
-
-              <div className="separator-vertical hidden lg:block" />
-
-              <BorrowActions
-                borrowAmount={(
-                  (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
-                  (currentLeverage - 1)
-                ).toFixed(
-                  parseInt(
-                    selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
-                  )
-                )}
-                borrowableAssets={borrowableAssets}
-                currentLeverage={currentLeverage}
-                currentPositionLeverage={
-                  currentPositionLeverageRatio
-                    ? Math.round(currentPositionLeverageRatio)
-                    : undefined
-                }
-                selectedBorrowAsset={selectedBorrowAsset}
-                selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
-                setCurrentLeverage={setCurrentLeverage}
-                setSelectedBorrowAsset={setSelectedBorrowAsset}
-              />
-            </div>
-
-            <div className="mt-4">
-              <ResultHandler
-                center
-                height="32"
-                isLoading={isFetchingPositionInfo}
-              >
-                <>
-                  {transactionSteps.length > 0 ? (
-                    <div className="flex justify-center">
-                      <TransactionStepsHandler
-                        chainId={chainId}
-                        resetTransactionSteps={handleTransactionStepsReset}
-                        transactionSteps={transactionSteps}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      {currentPosition ? (
-                        <div className="md:flex">
-                          <button
-                            className={`block w-full btn-green md:mr-6 uppercase`}
-                            disabled={parseFloat(amount ?? '0') <= 0}
-                            onClick={handlePositionFunding}
-                          >
-                            Fund position
-                          </button>
-
-                          <button
-                            className={`block w-full btn-green mt-2 md:mt-0 md:ml-6 uppercase`}
-                            disabled={
-                              !!currentPositionLeverageRatio &&
-                              Math.round(currentPositionLeverageRatio) ===
-                                currentLeverage
-                            }
-                            onClick={handleLeverageAdjustment}
-                          >
-                            Adjust leverage
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          className={`block w-full btn-green uppercase`}
-                          disabled={parseFloat(amount ?? '0') <= 0}
-                          onClick={handleOpenPosition}
-                        >
-                          Loop
-                        </button>
-                      )}
-                    </>
+                <LoopInfoDisplay
+                  isLoading={isFetchingPositionInfo}
+                  nativeAmount={projectedBorrowAmount.toString() ?? '0'}
+                  symbol={selectedBorrowAsset?.underlyingSymbol ?? ''}
+                  title={'Projected Borrow'}
+                  usdAmount={millify(
+                    Number(projectedBorrowAmount) * selectedBorrowAssetUSDPrice
                   )}
-                </>
-              </ResultHandler>
-            </div>
-          </Modal>
-        </>
-      )}
+                />
+              </div>
+
+              <div className="separator" />
+            </>
+          )}
+
+          <div className="lg:flex justify-between items-center">
+            <SupplyActions
+              amount={amount}
+              comptrollerAddress={comptrollerAddress}
+              handleClosePosition={handleClosePosition}
+              isClosingPosition={!!transactionSteps.length}
+              selectedCollateralAsset={selectedCollateralAsset}
+              selectedCollateralAssetUSDPrice={selectedCollateralAssetUSDPrice}
+              setAmount={setAmount}
+            />
+
+            <div className="separator lg:hidden" />
+
+            <div className="separator-vertical hidden lg:block" />
+
+            <BorrowActions
+              borrowAmount={(
+                (parseFloat(amount ?? '0') / borrowedToCollateralRatio) *
+                (currentLeverage - 1)
+              ).toFixed(
+                parseInt(
+                  selectedBorrowAsset?.underlyingDecimals.toString() ?? '18'
+                )
+              )}
+              borrowableAssets={borrowableAssets}
+              currentLeverage={currentLeverage}
+              currentPositionLeverage={
+                currentPositionLeverageRatio
+                  ? Math.round(currentPositionLeverageRatio)
+                  : undefined
+              }
+              selectedBorrowAsset={selectedBorrowAsset}
+              selectedBorrowAssetUSDPrice={selectedBorrowAssetUSDPrice}
+              setCurrentLeverage={setCurrentLeverage}
+              setSelectedBorrowAsset={setSelectedBorrowAsset}
+            />
+          </div>
+
+          <div className="mt-4">
+            <ResultHandler
+              center
+              height="32"
+              isLoading={isFetchingPositionInfo}
+            >
+              <>
+                {transactionSteps.length > 0 ? (
+                  <div className="flex justify-center">
+                    <TransactionStepsHandler
+                      chainId={chainId}
+                      resetTransactionSteps={handleTransactionStepsReset}
+                      transactionSteps={transactionSteps}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {currentPosition ? (
+                      <div className="md:flex">
+                        <button
+                          className={`block w-full btn-green md:mr-6 uppercase`}
+                          disabled={parseFloat(amount ?? '0') <= 0}
+                          onClick={handlePositionFunding}
+                        >
+                          Fund position
+                        </button>
+
+                        <button
+                          className={`block w-full btn-green mt-2 md:mt-0 md:ml-6 uppercase`}
+                          disabled={
+                            !!currentPositionLeverageRatio &&
+                            Math.round(currentPositionLeverageRatio) ===
+                              currentLeverage
+                          }
+                          onClick={handleLeverageAdjustment}
+                        >
+                          Adjust leverage
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className={`block w-full btn-green uppercase`}
+                        disabled={parseFloat(amount ?? '0') <= 0}
+                        onClick={handleOpenPosition}
+                      >
+                        Loop
+                      </button>
+                    )}
+                  </>
+                )}
+              </>
+            </ResultHandler>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
