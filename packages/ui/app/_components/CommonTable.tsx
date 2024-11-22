@@ -30,15 +30,18 @@ import ResultHandler from './ResultHandler';
 // Sorting functions
 export const sortingFunctions = {
   numerical: (a: any, b: any) => {
+    if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    }
     const aValue = parseFloat(String(a).replace(/[^0-9.-]+/g, '')) || 0;
     const bValue = parseFloat(String(b).replace(/[^0-9.-]+/g, '')) || 0;
-    return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    return aValue - bValue;
   },
   alphabetical: (a: any, b: any) => String(a).localeCompare(String(b)),
   percentage: (a: any, b: any) => {
     const aValue = parseFloat(String(a).replace('%', '')) || 0;
     const bValue = parseFloat(String(b).replace('%', '')) || 0;
-    return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    return aValue - bValue;
   }
 };
 
@@ -49,6 +52,7 @@ export type EnhancedColumnDef<T> = Omit<ColumnDef<T>, 'sortingFn'> & {
   header: string;
   sortingFn?: SortingType | ((rowA: any, rowB: any) => number);
   enableSorting?: boolean;
+  accessorFn?: (row: T) => any; // Allow custom accessor function to be passed
 };
 
 interface CommonTableProps<T> {
@@ -71,7 +75,13 @@ const SortableHeader = ({
   return (
     <button
       className={`flex items-center gap-2 hover:text-white ${!isSortable ? 'cursor-default' : ''}`}
-      onClick={() => isSortable && column.toggleSorting(sorted === 'desc')}
+      onClick={() => {
+        if (isSortable) {
+          const nextSortingOrder =
+            sorted === false ? 'asc' : sorted === 'asc' ? 'desc' : false;
+          column.toggleSorting(nextSortingOrder === 'desc', false);
+        }
+      }}
       disabled={!isSortable}
     >
       {children}
@@ -101,7 +111,7 @@ function CommonTable<T extends object>({
   const processedColumns = columns.map(
     (col): ColumnDef<T> => ({
       ...col,
-      accessorFn: (row: T) => (row as any)[col.id],
+      accessorFn: col.accessorFn || ((row: T) => (row as any)[col.id]),
       header: ({ column }) => (
         <SortableHeader column={column}>{col.header}</SortableHeader>
       ),
@@ -109,9 +119,10 @@ function CommonTable<T extends object>({
         typeof col.sortingFn === 'string'
           ? (rowA: any, rowB: any) => {
               const sortFn = sortingFunctions[col.sortingFn as SortingType];
-              return sortFn(rowA.original[col.id], rowB.original[col.id]);
+              return sortFn(rowA.getValue(col.id), rowB.getValue(col.id));
             }
-          : col.sortingFn
+          : col.sortingFn,
+      enableSorting: col.enableSorting !== false
     })
   );
 
@@ -121,7 +132,8 @@ function CommonTable<T extends object>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    state: { sorting }
+    state: { sorting },
+    enableMultiSort: false
   });
 
   return (

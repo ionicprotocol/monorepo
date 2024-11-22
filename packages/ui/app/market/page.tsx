@@ -107,6 +107,7 @@ export default function Market() {
       id: 'supplyAPRTotal',
       header: 'SUPPLY APR',
       sortingFn: 'numerical',
+      accessorFn: (row) => row.supplyAPR,
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="supply"
@@ -125,6 +126,7 @@ export default function Market() {
       id: 'borrowAPRTotal',
       header: 'BORROW APR',
       sortingFn: 'numerical',
+      accessorFn: (row) => row.borrowAPR,
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="borrow"
