@@ -17,7 +17,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../_components/CommonTable';
 import ManageDialog from '../_components/manage-dialog';
-import Loop from '../_components/manage-dialog/Loop';
+import Loop from '../_components/loop-dialog';
 import Swap from '../_components/manage-dialog/Swap';
 import APRCell from '../_components/markets/APRCell';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
