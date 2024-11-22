@@ -14,6 +14,7 @@ import { cn } from '@ui/lib/utils';
 import { multipliers } from '@ui/utils/multipliers';
 
 import type { Address } from 'viem';
+
 import type { FlywheelReward } from '@ionicprotocol/types';
 
 const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {

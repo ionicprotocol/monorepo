@@ -93,7 +93,7 @@ interface PopupContextType {
     borrowBalanceTo: string | undefined;
     supplyAPY: number | undefined;
     supplyBalanceFrom: string;
-    supplyBalanceTo: string | number;
+    supplyBalanceTo: number | string;
     totalBorrows: number | undefined;
     updatedBorrowAPR: number | undefined;
     updatedSupplyAPY: number | undefined;

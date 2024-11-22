@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
+
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
 import { type Address, zeroAddress } from 'viem';
 import { mode } from 'viem/chains';
+
 import { Dialog, DialogContent } from '@ui/components/ui/dialog';
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
+
 import type { Route, WidgetConfig } from '@lifi/widget';
 
 interface IProps {
