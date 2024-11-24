@@ -30,7 +30,6 @@ if (!config.LIFIAPIKEY) {
   throw new Error("LIFIAPIKEY is required in config");
 }
 
-
 const pythClient: Client = new Client({ baseUrl: config.expressRelayEndpoint });
 
 const PAGE_SIZE = 500; // Define the page size for pagination
@@ -367,7 +366,6 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
           userWithAssets,
           pool.closeFactor,
           pool.liquidationIncentive
-
         );
 
         if (!liquidationParams) {
@@ -429,7 +427,7 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
           // In your gas estimation code
           try {
             const gasPrice = await sdk.publicClient.getGasPrice();
-            
+
             const txData = encodeFunctionData({
               abi: ionicUniV3LiquidatorAbi,
               functionName: "safeLiquidateWithAggregator",
@@ -451,22 +449,22 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
 
             // Convert estimatedGas to BigInt to ensure consistent math
             const estimatedGasBI = BigInt(estimatedGas);
-            
+
             // L2 execution fee (both values in wei)
             const l2GasCost = estimatedGasBI * gasPrice;
 
             // Get L1 fee directly using getL1Fee
-            const gasPriceOracle = '0x420000000000000000000000000000000000000F';
+            const gasPriceOracle = "0x420000000000000000000000000000000000000F";
             const l1Fee = await sdk.publicClient.readContract({
               address: gasPriceOracle,
               abi: gasPriceOracleAbi,
-              functionName: 'getL1Fee',
-              args: [txData]
+              functionName: "getL1Fee",
+              args: [txData],
             });
 
             // Add buffer for gas price fluctuations (e.g., 5%)
             const BUFFER_PERCENTAGE = 5n;
-            const totalGasCost = (l2GasCost + l1Fee) * (100n + BUFFER_PERCENTAGE) / 100n;
+            const totalGasCost = ((l2GasCost + l1Fee) * (100n + BUFFER_PERCENTAGE)) / 100n;
 
             // Log the breakdown for debugging
             logger.info(`Gas breakdown:
@@ -568,7 +566,7 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
             } catch (error: any) {
               // Handle transaction confirmation error
               logger.error(`Transaction confirmation failed: ${error.message}`);
-              
+
               const errorDetails = `Transaction confirmation failed:
 Borrower: ${liquidationParams.borrower}
 Repay Amount: ${liquidationParams.repayAmount.toString()}
@@ -577,10 +575,7 @@ cTokenCollateral: ${liquidationParams.cTokenCollateral}
 Aggregator: ${json.transactionRequest.to}
 Error: ${error.message}`;
 
-              await discordService.sendLiquidationFailure(
-                { liquidations: [liquidationParams] } as any,
-                errorDetails
-              );
+              await discordService.sendLiquidationFailure({ liquidations: [liquidationParams] } as any, errorDetails);
             }
           } catch (error) {
             logger.error(`Error estimating gas costs: ${error instanceof Error ? error.message : String(error)}`);
