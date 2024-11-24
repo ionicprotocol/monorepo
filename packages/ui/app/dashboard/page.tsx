@@ -417,7 +417,6 @@ export default function Dashboard() {
             </div>
             <div
               className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
-              // href={`/points`}
               onClick={() => rewardToggle()}
             >
               CLAIM ALL REWARDS
