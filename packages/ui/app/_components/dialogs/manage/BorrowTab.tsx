@@ -4,6 +4,7 @@ import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
+import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
@@ -204,6 +205,8 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         </Alert>
       )}
 
+      <Separator className="my-4 bg-white/50" />
+
       <div className="space-y-2">
         <div className="flex justify-between text-xs text-gray-400">
           <span>MIN BORROW</span>
@@ -220,7 +223,11 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           <div className="flex items-center">
             <span>{updatedValues.borrowBalanceFrom}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              height={16}
+              width={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {updatedValues.borrowBalanceTo}
             </ResultHandler>
           </div>
@@ -231,7 +238,11 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           <div className="flex items-center">
             <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              height={16}
+              width={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {updatedValues.updatedBorrowAPR?.toFixed(2)}%
             </ResultHandler>
           </div>
@@ -242,12 +253,18 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           <div className="flex items-center">
             <span>{healthFactor.current}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              width={16}
+              height={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {healthFactor.predicted}
             </ResultHandler>
           </div>
         </div>
       </div>
+
+      <Separator className="my-4 bg-white/50" />
 
       {totalStats && (
         <div className="flex items-center justify-center">

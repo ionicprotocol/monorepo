@@ -1,6 +1,7 @@
 'use client';
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -131,20 +132,26 @@ export const ManageDialogProvider: React.FC<{
     chainId
   );
   const [active, setActive] = useState<ActiveTab>('supply');
-  const operationMap: Record<ActiveTab, FundOperation> = {
-    supply: FundOperationMode.SUPPLY,
-    withdraw: FundOperationMode.WITHDRAW,
-    borrow: FundOperationMode.BORROW,
-    repay: FundOperationMode.REPAY
-  };
+  const operationMap = useMemo<Record<ActiveTab, FundOperation>>(
+    () => ({
+      supply: FundOperationMode.SUPPLY,
+      withdraw: FundOperationMode.WITHDRAW,
+      borrow: FundOperationMode.BORROW,
+      repay: FundOperationMode.REPAY
+    }),
+    []
+  );
 
-  useEffect(() => {
+  const resetTabState = useCallback(() => {
     setAmount('0');
     setCurrentUtilizationPercentage(0);
     upsertTransactionStep(undefined);
+  }, [upsertTransactionStep]);
+
+  useEffect(() => {
+    resetTabState();
     setCurrentFundOperation(operationMap[active]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, upsertTransactionStep]);
+  }, [active, resetTabState, operationMap]);
 
   const [amount, setAmount] = useReducer(
     (_: string | undefined, value: string | undefined): string | undefined =>
@@ -229,7 +236,18 @@ export const ManageDialogProvider: React.FC<{
   }, [_predictedHealthFactor, updatedAsset, amountAsBInt, healthFactor]);
 
   const hfpStatus = useMemo<HFPStatus>(() => {
-    if (!predictedHealthFactor) {
+    // If we're loading but have a previous health factor, keep using it
+    if (isLoadingPredictedHealthFactor && healthFactor) {
+      return healthFactor === '-1'
+        ? HFPStatus.NORMAL
+        : Number(healthFactor) <= 1.1
+          ? HFPStatus.CRITICAL
+          : Number(healthFactor) <= 1.2
+            ? HFPStatus.WARNING
+            : HFPStatus.NORMAL;
+    }
+
+    if (!predictedHealthFactor && !healthFactor) {
       return HFPStatus.UNKNOWN;
     }
 
@@ -242,7 +260,7 @@ export const ManageDialogProvider: React.FC<{
     }
 
     const predictedHealthFactorNumber = Number(
-      formatEther(predictedHealthFactor)
+      formatEther(predictedHealthFactor ?? 0n)
     );
 
     if (predictedHealthFactorNumber <= 1.1) {
@@ -254,7 +272,14 @@ export const ManageDialogProvider: React.FC<{
     }
 
     return HFPStatus.NORMAL;
-  }, [predictedHealthFactor, updatedAsset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    predictedHealthFactor,
+    updatedAsset,
+    healthFactor,
+    isLoadingPredictedHealthFactor
+  ]);
+
   const queryClient = useQueryClient();
 
   /**
@@ -282,128 +307,101 @@ export const ManageDialogProvider: React.FC<{
    * Update utilization percentage when amount changes
    */
   useEffect(() => {
-    switch (active) {
-      case 'supply': {
-        const div =
-          Number(formatEther(amountAsBInt)) /
-          (maxSupplyAmount?.bigNumber && maxSupplyAmount.number > 0
-            ? Number(formatEther(maxSupplyAmount?.bigNumber))
-            : 1);
-        setCurrentUtilizationPercentage(Math.round(div * 100));
-        break;
-      }
-
-      case 'withdraw': {
-        const div =
-          Number(formatEther(amountAsBInt)) /
-          (maxWithdrawAmount && maxWithdrawAmount > 0n
-            ? Number(formatEther(maxWithdrawAmount))
-            : 1);
-        setCurrentUtilizationPercentage(Math.round(div * 100));
-        break;
-      }
-
-      case 'borrow': {
-        const div =
-          Number(formatEther(amountAsBInt)) /
-          (maxBorrowAmount?.bigNumber && maxBorrowAmount.number > 0
-            ? Number(formatEther(maxBorrowAmount?.bigNumber))
-            : 1);
-        setCurrentUtilizationPercentage(Math.round(div * 100));
-        break;
-      }
-
-      case 'repay': {
-        const div =
-          Number(formatEther(amountAsBInt)) /
-          (maxRepayAmount && maxRepayAmount > 0n
-            ? Number(formatEther(maxRepayAmount))
-            : 1);
-        setCurrentUtilizationPercentage(Math.round(div * 100));
-        break;
-      }
+    if (amount === '0' || !amount) {
+      setCurrentUtilizationPercentage(0);
+      return;
     }
-  }, [
-    amountAsBInt,
-    active,
-    maxBorrowAmount,
-    maxRepayAmount,
-    maxSupplyAmount,
-    maxWithdrawAmount
-  ]);
 
-  useEffect(() => {
-    setAmount('0');
-    setCurrentUtilizationPercentage(0);
-    upsertTransactionStep(undefined);
-
+    let maxAmount: bigint;
     switch (active) {
       case 'supply':
-        setCurrentFundOperation(FundOperationMode.SUPPLY);
+        maxAmount = maxSupplyAmount?.bigNumber ?? 0n;
         break;
-
       case 'withdraw':
-        setCurrentFundOperation(FundOperationMode.WITHDRAW);
+        maxAmount = maxWithdrawAmount ?? 0n;
         break;
-
       case 'borrow':
-        setCurrentFundOperation(FundOperationMode.BORROW);
+        maxAmount = maxBorrowAmount?.bigNumber ?? 0n;
         break;
-
       case 'repay':
-        setCurrentFundOperation(FundOperationMode.REPAY);
+        maxAmount = maxRepayAmount ?? 0n;
         break;
+      default:
+        maxAmount = 0n;
     }
-  }, [active, upsertTransactionStep]);
+
+    if (maxAmount === 0n) {
+      setCurrentUtilizationPercentage(0);
+      return;
+    }
+
+    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
+    setCurrentUtilizationPercentage(Math.min(Math.round(utilization), 100));
+  }, [
+    active,
+    amountAsBInt,
+    maxSupplyAmount?.bigNumber,
+    maxWithdrawAmount,
+    maxBorrowAmount?.bigNumber,
+    maxRepayAmount,
+    amount
+  ]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
 
-  const handleUtilization = (utilizationPercentage: number) => {
-    let maxAmountNumber = 0;
+  const handleUtilization = useCallback(
+    (utilizationPercentage: number) => {
+      let maxAmountNumber = 0;
+      switch (active) {
+        case 'supply':
+          maxAmountNumber = Number(
+            formatUnits(
+              maxSupplyAmount?.bigNumber ?? 0n,
+              selectedMarketData.underlyingDecimals
+            )
+          );
+          break;
+        case 'withdraw':
+          maxAmountNumber = Number(
+            formatUnits(
+              maxWithdrawAmount ?? 0n,
+              selectedMarketData.underlyingDecimals
+            )
+          );
+          break;
+        case 'borrow':
+          maxAmountNumber = Number(
+            formatUnits(
+              maxBorrowAmount?.bigNumber ?? 0n,
+              selectedMarketData.underlyingDecimals
+            )
+          );
+          break;
+        case 'repay':
+          maxAmountNumber = Number(
+            formatUnits(
+              maxRepayAmount ?? 0n,
+              selectedMarketData.underlyingDecimals
+            )
+          );
+          break;
+        default:
+          break;
+      }
 
-    switch (active) {
-      case 'supply':
-        maxAmountNumber = Number(
-          formatUnits(
-            maxSupplyAmount?.bigNumber ?? 0n,
-            selectedMarketData.underlyingDecimals
-          )
-        );
-        break;
-      case 'withdraw':
-        maxAmountNumber = Number(
-          formatUnits(
-            maxWithdrawAmount ?? 0n,
-            selectedMarketData.underlyingDecimals
-          )
-        );
-        break;
-      case 'borrow':
-        maxAmountNumber = Number(
-          formatUnits(
-            maxBorrowAmount?.bigNumber ?? 0n,
-            selectedMarketData.underlyingDecimals
-          )
-        );
-        break;
-      case 'repay':
-        maxAmountNumber = Number(
-          formatUnits(
-            maxRepayAmount ?? 0n,
-            selectedMarketData.underlyingDecimals
-          )
-        );
-        break;
-      default:
-        break;
-    }
-
-    const calculatedAmount = (
-      (utilizationPercentage / 100) *
-      maxAmountNumber
-    ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-    setAmount(calculatedAmount);
-  };
+      const calculatedAmount = (
+        (utilizationPercentage / 100) *
+        maxAmountNumber
+      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
+      setAmount(calculatedAmount);
+      // Don't set utilization here - let the effect handle it
+    },
+    [
+      active,
+      maxSupplyAmount?.bigNumber,
+      selectedMarketData.underlyingDecimals /* add other dependencies */
+    ]
+  );
 
   const resetTransactionSteps = () => {
     refetchUsedQueries();

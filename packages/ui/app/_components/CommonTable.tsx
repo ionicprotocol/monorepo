@@ -52,7 +52,7 @@ export type EnhancedColumnDef<T> = Omit<ColumnDef<T>, 'sortingFn'> & {
   header: string;
   sortingFn?: SortingType | ((rowA: any, rowB: any) => number);
   enableSorting?: boolean;
-  accessorFn?: (row: T) => any; // Allow custom accessor function to be passed
+  accessorFn?: (row: T) => any;
 };
 
 interface CommonTableProps<T> {
@@ -103,10 +103,19 @@ const SortableHeader = ({
 function CommonTable<T extends object>({
   data,
   columns,
-  isLoading = false,
+  isLoading: externalIsLoading = false,
   renderRow
 }: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Consider the table as loading if it hasn't initialized yet or if external loading state is true
+  const isLoading = !hasInitialized || externalIsLoading;
+
+  // Once we get data for the first time, mark as initialized
+  if (!hasInitialized && data.length > 0) {
+    setHasInitialized(true);
+  }
 
   const processedColumns = columns.map(
     (col): ColumnDef<T> => ({
@@ -137,7 +146,10 @@ function CommonTable<T extends object>({
   });
 
   return (
-    <ResultHandler isLoading={isLoading}>
+    <ResultHandler
+      isLoading={isLoading}
+      center
+    >
       <Table className="w-full border-separate border-spacing-y-3">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -162,7 +174,16 @@ function CommonTable<T extends object>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {!isLoading && table.getRowModel().rows?.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+          ) : (
             table.getRowModel().rows.map((row) =>
               renderRow ? (
                 renderRow(row)
@@ -182,15 +203,6 @@ function CommonTable<T extends object>({
                 </TableRow>
               )
             )
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center"
-              >
-                No results.
-              </TableCell>
-            </TableRow>
           )}
         </TableBody>
       </Table>

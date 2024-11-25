@@ -5,6 +5,7 @@ import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
+import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -196,6 +197,7 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
           <AlertDescription>Health factor too low.</AlertDescription>
         </Alert>
       )}
+      <Separator className="my-4 bg-white/50" />
 
       <div className="space-y-2">
         <div className="flex justify-between text-xs text-gray-400">
@@ -205,7 +207,11 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
               {updatedValues.borrowBalanceFrom}
             </span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              width={16}
+              height={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               <span className="text-accent">
                 {updatedValues.borrowBalanceTo}
               </span>
@@ -218,7 +224,11 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
           <div className="flex items-center">
             <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              width={16}
+              height={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {updatedValues.updatedBorrowAPR?.toFixed(2)}%
             </ResultHandler>
           </div>
@@ -229,7 +239,11 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
           <div className="flex items-center">
             <span>{healthFactor.current}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              width={16}
+              height={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {healthFactor.predicted}
             </ResultHandler>
           </div>

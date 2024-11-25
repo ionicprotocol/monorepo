@@ -3,6 +3,7 @@ import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
+import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
@@ -148,11 +149,13 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
+        hintText="Max Withdraw"
       />
 
       <SliderComponent
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
+        max={Number(maxAmount)}
       />
 
       {hfpStatus === 'WARNING' && (
@@ -178,13 +181,19 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
         </Alert>
       )}
 
+      <Separator className="my-4 bg-white/50" />
+
       <div className="space-y-2">
         <div className="flex justify-between text-xs text-gray-400 uppercase">
           <span>Market Supply Balance</span>
           <div className="flex items-center">
             <span>{updatedValues.supplyBalanceFrom}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              height={16}
+              width={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {updatedValues.supplyBalanceTo}
             </ResultHandler>
           </div>
@@ -195,7 +204,11 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
           <div className="flex items-center">
             <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              height={16}
+              width={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {updatedValues.updatedSupplyAPY?.toFixed(2)}%
             </ResultHandler>
           </div>
@@ -206,7 +219,11 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
           <div className="flex items-center">
             <span>{healthFactor.current}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              height={16}
+              width={16}
+              isLoading={isLoadingUpdatedAssets}
+            >
               {healthFactor.predicted}
             </ResultHandler>
           </div>

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
+import { Separator } from '@ui/components/ui/separator';
 import { Switch } from '@ui/components/ui/switch';
 import { INFO_MESSAGES } from '@ui/constants';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
@@ -239,12 +240,18 @@ const SupplyTab = ({
           <span className="font-bold">{collateralApr}%</span>
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
+        <Separator className="my-4 bg-white/50" />
+
+        <div className="flex justify-between text-xs text-gray-400 pt-2 uppercase">
           <span>Market Supply Balance</span>
           <div className="flex items-center">
             <span>{updatedValues.supplyBalanceFrom}</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              isLoading={isLoadingUpdatedAssets}
+              height={16}
+              width={16}
+            >
               {updatedValues.supplyBalanceTo}
             </ResultHandler>
           </div>
@@ -255,49 +262,58 @@ const SupplyTab = ({
           <div className="flex items-center">
             <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
             <span className="mx-1">→</span>
-            <ResultHandler isLoading={isLoadingUpdatedAssets}>
+            <ResultHandler
+              isLoading={isLoadingUpdatedAssets}
+              height={16}
+              width={16}
+            >
               {updatedValues.updatedSupplyAPY?.toFixed(2)}%
             </ResultHandler>
           </div>
         </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-400 uppercase">
-            Enable Collateral
-          </span>
-          <Switch
-            checked={enableCollateral}
-            onCheckedChange={handleCollateralToggle}
-            disabled={
-              transactionSteps.length > 0 || !selectedMarketData.supplyBalance
-            }
-          />
-        </div>
       </div>
 
       {totalStats && (
-        <div className="flex items-center justify-center">
-          <div className="w-20 mr-4">
-            <MemoizedDonutChart
-              max={totalStats.capAmount}
-              value={totalStats.totalAmount}
-            />
-          </div>
-          <div>
-            <div className="text-gray-400">Total Supplied:</div>
-            <div className="text-white">
-              <strong>
-                {millify(totalStats.totalAmount)} of{' '}
-                {millify(totalStats.capAmount)}{' '}
-                {selectedMarketData.underlyingSymbol}
-              </strong>
+        <>
+          <Separator className="mb-4 bg-white/50" />
+          <div className="flex items-center justify-center">
+            <div className="w-20 mr-4">
+              <MemoizedDonutChart
+                max={totalStats.capAmount}
+                value={totalStats.totalAmount}
+              />
             </div>
-            <div className="text-sm text-gray-300">
-              ${millify(totalStats.totalFiat)} of ${millify(totalStats.capFiat)}
+            <div>
+              <div className="text-gray-400">Total Supplied:</div>
+              <div className="text-white">
+                <strong>
+                  {millify(totalStats.totalAmount)} of{' '}
+                  {millify(totalStats.capAmount)}{' '}
+                  {selectedMarketData.underlyingSymbol}
+                </strong>
+              </div>
+              <div className="text-sm text-gray-300">
+                ${millify(totalStats.totalFiat)} of $
+                {millify(totalStats.capFiat)}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
+      <Separator className="my-4 bg-white/50" />
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-gray-400 uppercase">
+          Enable Collateral
+        </span>
+        <Switch
+          checked={enableCollateral}
+          onCheckedChange={handleCollateralToggle}
+          disabled={
+            transactionSteps.length > 0 || !selectedMarketData.supplyBalance
+          }
+        />
+      </div>
 
       {transactionSteps.length > 0 ? (
         <TransactionStepsHandler
