@@ -64,6 +64,4 @@ contract veIONFuzzing is veIONTest {
     (, uint256[] memory balances, ) = ve.balanceOfNFT(tokenId);
     assertGe(_amount, balances[0], "Boost should never be above the maximum");
   }
-
-  function testFuzz_createLock_Cumu
 }
