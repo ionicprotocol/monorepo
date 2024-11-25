@@ -508,14 +508,21 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       for (uint256 i = 0; i < assetsLocked.length; i++) {
         address asset = assetsLocked[i];
         LpTokenType _lpType = s_lpType[asset];
-        uint256 amountStaked = s_underlyingStake[tokenId][asset];
-        LockedBalance memory lock = s_locked[tokenId][_lpType];
 
-        IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
+        uint256[] memory delegatees = s_delegatees[tokenId][_lpType].values();
+        uint256[] memory amounts = new uint256[](delegatees.length);
+        for (uint256 j = 0; j < delegatees.length; j++) {
+          amounts[i] = type(uint256).max;
+        }
+        removeDelegatees(tokenId, delegatees, asset, amounts);
+
+        uint256 amountStaked = s_underlyingStake[tokenId][asset];
         if (amountStaked != 0) {
+          IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
           _stakeStrategy.transferStakingWallet(from, to, amountStaked);
         }
 
+        LockedBalance memory lock = s_locked[tokenId][_lpType];
         s_userCumulativeAssetValues[from][asset] -= lock.amount;
         s_userCumulativeAssetValues[to][asset] += lock.amount;
       }

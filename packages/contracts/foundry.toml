@@ -17,3 +17,6 @@ mode_archive = "${MODE_MAINNET_ARCHIVE_RPC_URL}"
 base_archive = "${BASE_MAINNET__RPC_URL}"
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config
+
+[fuzz]
+runs = 512
