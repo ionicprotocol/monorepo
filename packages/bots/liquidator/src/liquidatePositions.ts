@@ -14,7 +14,7 @@ import {
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "@ionicprotocol/sdk";
-import { Address, encodeAbiParameters, encodeFunctionData, parseEther } from "viem";
+import { Address, encodeAbiParameters, encodeFunctionData, formatEther, parseEther } from "viem";
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import dotenv from "dotenv";
 
@@ -36,7 +36,7 @@ const PAGE_SIZE = 500; // Define the page size for pagination
 // const BATCH_SIZE = 100; // Define the batch size for processing assets
 const HF_MIN = parseEther("0.5");
 const MAX_HEALTH_FACTOR = parseEther("1");
-const MIN_LIQUIDATION_USD = parseEther("0.01"); // Minimum liquidation value of $0.10
+const MIN_LIQUIDATION_USD = parseEther("0"); // Minimum liquidation value of $0.10
 
 async function getFusePoolUsers(comptroller: Address, botType: BotType) {
   const poolUsers: PoolUserStruct[] = [];
@@ -391,78 +391,195 @@ const liquidateUsers = async (poolUsers: PoolUserStruct[], pool: PublicPoolUserW
         try {
           // ... existing quote fetching code ...
 
-          const tx = await walletClient.writeContract({
-            address: sdk.contracts.IonicLiquidator.address,
-            abi: ionicUniV3LiquidatorAbi,
-            functionName: "safeLiquidateWithAggregator",
-            args: [
-              liquidationParams.borrower,
-              liquidationParams.repayAmount,
-              liquidationParams.cErc20,
-              liquidationParams.cTokenCollateral,
-              json.transactionRequest.to,
-              json.transactionRequest.data,
-            ],
-            chain: walletClient.chain,
-          });
+          // Get gas price using publicClient
+          // Add to your imports
+          const gasPriceOracleAbi = [
+            {
+              inputs: [{ name: "_data", type: "bytes" }],
+              name: "getL1Fee",
+              outputs: [{ name: "", type: "uint256" }],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "l1BaseFee",
+              outputs: [{ name: "", type: "uint256" }],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "overhead",
+              outputs: [{ name: "", type: "uint256" }],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "scalar",
+              outputs: [{ name: "", type: "uint256" }],
+              stateMutability: "view",
+              type: "function",
+            },
+          ] as const;
 
-          logger.info(`Liquidation tx: ${tx}`);
-
+          // In your gas estimation code
           try {
-            // Wait for transaction receipt
-            const receipt = await sdk.publicClient.waitForTransactionReceipt({
-              hash: tx,
+            const gasPrice = await sdk.publicClient.getGasPrice();
+
+            const txData = encodeFunctionData({
+              abi: ionicUniV3LiquidatorAbi,
+              functionName: "safeLiquidateWithAggregator",
+              args: [
+                liquidationParams.borrower,
+                liquidationParams.repayAmount,
+                liquidationParams.cErc20,
+                liquidationParams.cTokenCollateral,
+                json.transactionRequest.to,
+                json.transactionRequest.data,
+              ],
             });
 
-            // Create simplified receipt for Discord
-            const simplifiedReceipt = {
-              transactionHash: receipt.transactionHash,
-              contractAddress: sdk.contracts.IonicLiquidator.address,
-              from: receipt.from,
-              to: receipt.to,
-              status: receipt.status,
-            };
+            const estimatedGas = await sdk.publicClient.estimateGas({
+              account: walletClient.account,
+              to: sdk.contracts.IonicLiquidator.address,
+              data: txData,
+            });
 
-            if (receipt.status === "success") {
-              // Format success message
-              // const successMsg = `Transaction Hash: ${receipt.transactionHash}\n` +
-              const successMsg =
-                `Transaction Hash: ${
-                  config.chainName === "mode"
-                    ? `[${receipt.transactionHash}](https://explorer.mode.network/tx/${receipt.transactionHash})`
-                    : `[${receipt.transactionHash}](https://basescan.org/tx/${receipt.transactionHash})`
-                }\n` +
-                //  `Contract Address: ${sdk.contracts.IonicLiquidator.address}\n` +
-                `From: ${receipt.from}\n` +
-                `To: ${receipt.to}\n` +
-                `Borrower: ${liquidationParams.borrower}\n` +
-                `Repay Amount: ${liquidationParams.repayAmount.toString()}\n` +
-                `Liquidation Value: $${(Number(liquidationParams.liquidationValueUSD) / 1e18).toFixed(2)}\n` +
-                `Block: ${receipt.blockNumber}\n` +
-                `Gas Used: ${receipt.gasUsed}\n`;
-              +`Status: **${receipt.status}**\n`;
+            // Convert estimatedGas to BigInt to ensure consistent math
+            const estimatedGasBI = BigInt(estimatedGas);
 
-              // Send success notification
-              await discordService.sendLiquidationSuccess([simplifiedReceipt], successMsg);
-              liquidations.push({
-                type: BotType.Standard,
-                liquidationParams,
-                tx,
-              });
-            } else {
-              // Send failure notification
-              await discordService.sendLiquidationFailure(
-                { liquidations: [liquidationParams] } as any,
-                `Transaction failed with status: ${receipt.status}`
-              );
+            // L2 execution fee (both values in wei)
+            const l2GasCost = estimatedGasBI * gasPrice;
+
+            // Get L1 fee directly using getL1Fee
+            const gasPriceOracle = "0x420000000000000000000000000000000000000F";
+            const l1Fee = await sdk.publicClient.readContract({
+              address: gasPriceOracle,
+              abi: gasPriceOracleAbi,
+              functionName: "getL1Fee",
+              args: [txData],
+            });
+
+            // Add buffer for gas price fluctuations (e.g., 5%)
+            const BUFFER_PERCENTAGE = 5n;
+            const totalGasCost = ((l2GasCost + l1Fee) * (100n + BUFFER_PERCENTAGE)) / 100n;
+
+            // Log the breakdown for debugging
+            logger.info(`Gas breakdown:
+              Estimated gas units: ${estimatedGasBI}
+              Gas price (wei): ${gasPrice}
+              L2 cost (wei): ${l2GasCost}
+              L1 fee (wei): ${l1Fee}
+              Total with ${BUFFER_PERCENTAGE}% buffer (ETH): ${formatEther(totalGasCost)}
+            `);
+
+            // Calculate expected profit from the quote
+            const expectedProfitInEth = BigInt(json.estimate.toAmountMin) - BigInt(json.estimate.fromAmount);
+
+            // console.log("jsonsakdjakd", json);
+            logger.info(`Estimated gas: ${formatEther(estimatedGas)} ETH`);
+            logger.info(`Gas price: ${formatEther(gasPrice)} ETH`);
+            logger.info(`Total gas cost: ${formatEther(totalGasCost)} ETH`);
+            logger.info(`Expected profit: ${formatEther(expectedProfitInEth)} ACC TO COIN RECEIVED`);
+
+            // Profit checks
+            if (expectedProfitInEth <= 0n) {
+              logger.warn(`No profit expected (${formatEther(expectedProfitInEth)} ETH), skipping transaction`);
+              continue;
             }
-          } catch (error: any) {
-            // Handle transaction confirmation error
-            logger.error(`Transaction confirmation failed: ${error.message}`);
-            await discordService.sendLiquidationFailure(
-              { liquidations: [liquidationParams] } as any,
-              `Transaction confirmation failed: ${error.message}`
-            );
+            // Check if the gas cost is too high compared to the expected profit
+            if (totalGasCost * 1000n > expectedProfitInEth * 800n) {
+              logger.warn(`Gas cost too high compared to expected profit, skipping transaction`);
+              continue;
+            }
+
+            // Proceed with the liquidation transaction if the gas cost is acceptable
+            const tx = await walletClient.writeContract({
+              address: sdk.contracts.IonicLiquidator.address,
+              abi: ionicUniV3LiquidatorAbi,
+              functionName: "safeLiquidateWithAggregator",
+              args: [
+                liquidationParams.borrower,
+                liquidationParams.repayAmount,
+                liquidationParams.cErc20,
+                liquidationParams.cTokenCollateral,
+                json.transactionRequest.to,
+                json.transactionRequest.data,
+              ],
+              chain: walletClient.chain,
+              gas: estimatedGas, // Use the estimated gas
+            });
+
+            // Log the transaction hash for the liquidation
+            logger.info(`Liquidation tx: ${tx}`);
+
+            try {
+              // Wait for transaction receipt
+              const receipt = await sdk.publicClient.waitForTransactionReceipt({
+                hash: tx,
+              });
+
+              // Create simplified receipt for Discord
+              const simplifiedReceipt = {
+                transactionHash: receipt.transactionHash,
+                contractAddress: sdk.contracts.IonicLiquidator.address,
+                from: receipt.from,
+                to: receipt.to,
+                status: receipt.status,
+              };
+
+              if (receipt.status === "success") {
+                // Format success message
+                // const successMsg = `Transaction Hash: ${receipt.transactionHash}\n` +
+                const successMsg =
+                  `Transaction Hash: ${
+                    config.chainName === "mode"
+                      ? `[${receipt.transactionHash}](https://explorer.mode.network/tx/${receipt.transactionHash})`
+                      : `[${receipt.transactionHash}](https://basescan.org/tx/${receipt.transactionHash})`
+                  }\n` +
+                  //  `Contract Address: ${sdk.contracts.IonicLiquidator.address}\n` +
+                  `From: ${receipt.from}\n` +
+                  `To: ${receipt.to}\n` +
+                  `Borrower: ${liquidationParams.borrower}\n` +
+                  `Repay Amount: ${liquidationParams.repayAmount.toString()}\n` +
+                  // `Liquidation Value: $${(Number(liquidationParams.liquidationValueUSD) / 1e18).toFixed(2)}\n` +
+                  `Block: ${receipt.blockNumber}\n` +
+                  `Gas Used: ${receipt.gasUsed}\n`;
+                +`Status: **${receipt.status}**\n`;
+
+                // Send success notification
+                await discordService.sendLiquidationSuccess([simplifiedReceipt], successMsg);
+                liquidations.push({
+                  type: BotType.Standard,
+                  liquidationParams,
+                  tx,
+                });
+              } else {
+                // Send failure notification
+                await discordService.sendLiquidationFailure(
+                  { liquidations: [liquidationParams] } as any,
+                  `Transaction failed with status: ${receipt.status}`
+                );
+              }
+            } catch (error: any) {
+              // Handle transaction confirmation error
+              logger.error(`Transaction confirmation failed: ${error.message}`);
+
+              const errorDetails = `Transaction confirmation failed:
+Borrower: ${liquidationParams.borrower}
+Repay Amount: ${liquidationParams.repayAmount.toString()}
+cErc20: ${liquidationParams.cErc20}
+cTokenCollateral: ${liquidationParams.cTokenCollateral}
+Aggregator: ${json.transactionRequest.to}
+Error: ${error.message}`;
+
+              await discordService.sendLiquidationFailure({ liquidations: [liquidationParams] } as any, errorDetails);
+            }
+          } catch (error) {
+            logger.error(`Error estimating gas costs: ${error instanceof Error ? error.message : String(error)}`);
+            continue;
           }
         } catch (error: any) {
           // Handle transaction submission error
