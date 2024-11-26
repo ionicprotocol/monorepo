@@ -295,16 +295,6 @@ export default function SupplyPopover({
             + Spice Points
           </div>
         )}
-        {supplyConfig?.nektar && (
-          <div className="flex mt-1">
-            <img
-              alt=""
-              className="size-4 mr-1"
-              src="/img/symbols/32/color/nektar.png"
-            />{' '}
-            + Nektar Points
-          </div>
-        )}
       </div>
     </>
   );

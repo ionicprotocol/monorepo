@@ -11,7 +11,6 @@ export type Multipliers = {
   turtle?: boolean;
   spice?: boolean;
   underlyingAPR?: number;
-  nektar?: number;
   op?: boolean;
   anzen?: number;
 };
@@ -339,7 +338,6 @@ export const multipliers: Record<
         },
         supply: {
           ionic: 0,
-          nektar: 1,
           underlyingAPR: 2.6,
           turtle: false,
           ionAPR: false,
