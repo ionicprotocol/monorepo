@@ -66,6 +66,7 @@ import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
+import ChartWithDateRange from '@ui/app/_components/markets/ChartWithDateRange';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -412,130 +413,79 @@ const Asset = () => {
             </div>
           </div>
 
-          <div className={`w-full flex items-center justify-start gap-5`}>
-            <div className={` w-14 h-14`}>
-              <Doughnut
-                data={getDonutData(
-                  Math.round(
-                    info === INFO.BORROW
-                      ? (selectedMarketData?.totalBorrowFiat as number)
-                      : (selectedMarketData?.totalSupplyFiat as number)
-                  ),
-                  Math.round(
-                    info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
-                  )
-                )}
-                options={donutoptions}
-                updateMode="resize"
-              />
-            </div>
+          <ChartWithDateRange
+            graph={graph}
+            info={info}
+            INFO={INFO}
+            headerContent={
+              <div className={`w-full flex items-center justify-start gap-5`}>
+                <div className={` w-14 h-14`}>
+                  <Doughnut
+                    data={getDonutData(
+                      Math.round(
+                        info === INFO.BORROW
+                          ? (selectedMarketData?.totalBorrowFiat as number)
+                          : (selectedMarketData?.totalSupplyFiat as number)
+                      ),
+                      Math.round(
+                        info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
+                      )
+                    )}
+                    options={donutoptions}
+                    updateMode="resize"
+                  />
+                </div>
 
-            <div className={`w-[40%] flex gap-5 items-start justify-start `}>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60 text-[10px]`}>
-                  TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
-                </p>
-                <p className={`font-semibold`}>
-                  {info === INFO.BORROW ? totalBorrows : totalSupplied}{' '}
-                  {selectedSymbol}
-                </p>
-                <p className={`font-semibold text-[8px] text-white/30`}>
-                  $
-                  {millify(
-                    Math.round(
-                      info === INFO.BORROW
-                        ? (selectedMarketData?.totalBorrowFiat as number)
-                        : (selectedMarketData?.totalSupplyFiat as number)
-                    )
-                  )}{' '}
-                  of $
-                  {millify(
-                    Math.round(
-                      info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
-                    )
-                  )}
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60 text-[10px]`}>APR</p>
-                <p className={`font-semibold`}>
-                  {info === INFO.BORROW
-                    ? Number(borrowAPR).toLocaleString('en-US', {
-                        maximumFractionDigits: 1
-                      })
-                    : Number(availableAPR).toLocaleString('en-US', {
-                        maximumFractionDigits: 1
-                      })}
-                  %
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-            </div>
-            {/* <div className={`w-[40%] flex gap-5 items-start justify-start`}>
-              <div
-                className={`flex flex-col  items-center justify-center gap-y-1`}
-              >
-                <img
-                  alt={assetdetails.asset}
-                  className={`h-6`}
-                  src={`/img/logo/${assetdetails.asset}.png `}
-                />
-                <p className={`text-white/60 text-[8px] text-center`}>
-                  COLLATERAL ASSET
-                </p>
-                <p className={`font-semibold text-sm`}>{assetdetails.asset}</p>
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1 w-full `}
-              >
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Lending Supply</p>
-                  <p className={`font-semibold`}>${assetdetails.lendingT}</p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Available APR</p>
-                  <p className={`font-semibold`}>{assetdetails.lAPR}% </p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Total Borrows</p>
-                  <p className={`font-semibold`}>${assetdetails.borrowingT}</p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Borrowing APR</p>
-                  <p className={`font-semibold`}>{assetdetails.bAPR}% </p>
+                <div className={`flex gap-5 items-start justify-start `}>
+                  <div
+                    className={`flex flex-col items-start justify-center gap-y-1`}
+                  >
+                    <p className={`text-white/60 text-[10px]`}>
+                      TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
+                    </p>
+                    <p className={`font-semibold`}>
+                      {info === INFO.BORROW ? totalBorrows : totalSupplied}{' '}
+                      {selectedSymbol}
+                    </p>
+                    <p className={`font-semibold text-[8px] text-white/30`}>
+                      $
+                      {millify(
+                        Math.round(
+                          info === INFO.BORROW
+                            ? (selectedMarketData?.totalBorrowFiat as number)
+                            : (selectedMarketData?.totalSupplyFiat as number)
+                        )
+                      )}{' '}
+                      of $
+                      {millify(
+                        Math.round(
+                          info === INFO.BORROW
+                            ? borrowCapAsFiat
+                            : supplyCapAsFiat
+                        )
+                      )}
+                    </p>
+                    {/* this neeeds to be changed */}
+                  </div>
+                  <div
+                    className={`flex flex-col items-start justify-center gap-y-1`}
+                  >
+                    <p className={`text-white/60 text-[10px]`}>APR</p>
+                    <p className={`font-semibold`}>
+                      {info === INFO.BORROW
+                        ? Number(borrowAPR).toLocaleString('en-US', {
+                            maximumFractionDigits: 1
+                          })
+                        : Number(availableAPR).toLocaleString('en-US', {
+                            maximumFractionDigits: 1
+                          })}
+                      %
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div> */}
-          </div>
-
-          <div className={`relative w-full h-28`}>
-            <Line
-              data={getChartData(
-                graph.valAtX,
-                info === INFO.BORROW ? graph.borrowAtY : graph.supplyAtY
-              )}
-              options={chartoptions}
-              updateMode="resize"
-            />
-            {/* <div
-              className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
-            >
-              <span>Comming Soon</span>
-            </div> */}
-          </div>
+            }
+          />
         </div>
         <div
           className={` rounded-xl  md:col-span-2 md:row-span-2 row-start-3 col-span-6 min-h-[40vh] bg-grayone flex flex-col  items-start p-[3%] justify-start`}
