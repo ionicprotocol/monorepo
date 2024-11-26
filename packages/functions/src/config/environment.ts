@@ -17,6 +17,7 @@ const environment = {
   uptimeTotalApyApi: process.env.UPTIME_TOTAL_APY_API ?? '',
   uptimeTotalHistoryApyApi: process.env.UPTIME_TOTAL_HISTORY_APY_API ?? '',
   uptimeTvlApi: process.env.UPTIME_TVL_API ?? '',
+  supabaseInterestModelTableName: process.env.SUPABASE_INTEREST_MODEL_TABLE_NAME ?? '',
 };
 
 export default environment;
