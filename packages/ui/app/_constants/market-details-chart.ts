@@ -1,16 +1,5 @@
 //----------donut chart
 
-export const donutdata = {
-  datasets: [
-    {
-      backgroundColor: ['#3bff89ff', '#34363dff'],
-      // label: 'My First Dataset',
-      data: [30, 70]
-    }
-  ],
-  labels: ['Lend', 'Total']
-};
-
 export function getDonutData(ofdata: number, total: number) {
   const data2 = total - ofdata;
   const donutdata = {
@@ -105,32 +94,6 @@ export const chartoptions = {
     }
   }
 };
-export const chartoptions2 = {
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false
-    },
-    title: {
-      display: true,
-      position: 'top' as const,
-      text: 'Borrow APR Variable'
-    }
-  },
-  responsive: true,
-  scales: {
-    x: {
-      grid: {
-        display: false
-      }
-    },
-    y: {
-      grid: {
-        display: false
-      }
-    }
-  }
-};
 
 const x = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 const y = [87, -73, 24, 45, 75, -44, 76];
@@ -164,29 +127,67 @@ export const chartdata = {
   labels: x
 };
 
-const x1 = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-const y1 = [0, 0, 0, 0, 75, 44, 76];
-
-export const chartdata2 = {
-  datasets: [
-    // {
-    {
-      backgroundColor: '#ff386310',
-      borderColor: '#ff3863ff',
-      data: y1,
-      fill: 'origin'
+export const chartoptions2 = {
+  maintainAspectRatio: false,
+  aspectRatio: 2,
+  responsive: true,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top' as const,
+      labels: {
+        padding: 10,
+        boxWidth: 15
+      }
+    },
+    title: {
+      display: true,
+      position: 'top' as const,
+      text: 'Interest Rate Model',
+      padding: {
+        top: 0,
+        bottom: 10
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function (context: any) {
+          return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+        }
+      }
     }
-
-    // 0: fill to 'origin'
-    // {fill: '-1'},       // 1: fill to dataset 0
-    // {fill: 1},          // 2: fill to dataset 1
-    // {fill: false},      // 3: no fill
-    // {fill: '-2'}
-    // label: 'Dataset 2',
-    // data: y,
-    // borderColor: '#3bff89ff',
-    // backgroundColor: '#3bff8910',
-    // },
-  ],
-  labels: x1
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: 'Utilization Rate (%)'
+      },
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)',
+        drawBorder: false
+      },
+      ticks: {
+        maxRotation: 0,
+        autoSkip: true,
+        maxTicksLimit: 10
+      }
+    },
+    y: {
+      title: {
+        display: true,
+        text: 'Interest Rate (%)',
+        padding: { top: 0, bottom: 0 }
+      },
+      grid: {
+        color: 'rgba(255, 255, 255, 0.1)',
+        drawBorder: false
+      },
+      min: 0,
+      ticks: {
+        callback: (value: any) => `${value}%`,
+        padding: 8
+      }
+    }
+  }
 };
