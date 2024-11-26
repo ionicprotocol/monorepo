@@ -100,13 +100,24 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    superseed: {
+      url: process.env.OVERRIDE_RPC_URL_SUPERSEED ?? "https://rpc-superseed-mainnet-0.t.conduit.xyz",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
     apiKey: {
       base: process.env.ETHERSCAN_API_KEY_BASE!,
       optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
-      lisk: "empty"
+      lisk: "empty",
+      superseed: "empty"
     },
     customChains: [
       {
@@ -115,6 +126,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://blockscout.lisk.com/api",
           browserURL: "https://blockscout.lisk.com"
+        }
+      },
+      {
+        network: "superseed",
+        chainId: 5330,
+        urls: {
+          apiURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          browserURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz"
         }
       }
     ]
