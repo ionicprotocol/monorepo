@@ -67,6 +67,7 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPo
 import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
 import ChartWithDateRange from '@ui/app/_components/markets/ChartWithDateRange';
+import ResultHandler from '@ui/app/_components/ResultHandler';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -125,6 +126,7 @@ const Asset = () => {
     selectedMarketData,
     Number(chain)
   );
+  console.log('irmData', irmData);
 
   // const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
   const totalSupplied = assetData?.totalSupplyNative
@@ -627,32 +629,37 @@ const Asset = () => {
               {selectedMarketData?.utilization.toFixed(2)}%
             </p>
           </div>
-          <div className={`relative w-full h-48`}>
-            <Line
-              data={irmData?.formattedData || { datasets: [], labels: [] }}
-              options={{
-                ...chartoptions2,
-                maintainAspectRatio: false,
-                aspectRatio: 2,
-                layout: {
-                  padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                  }
-                }
-              }}
-              updateMode="resize"
-            />
-            {isLoading && (
-              <div
-                className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60`}
-              >
-                <span>Loading...</span>
-              </div>
-            )}
-          </div>
+          <ResultHandler
+            isLoading={isLoading}
+            center
+          >
+            <div className={`relative w-full h-48`}>
+              {irmData?.formattedData?.datasets &&
+              irmData.formattedData.datasets.length > 0 ? (
+                <Line
+                  data={irmData.formattedData}
+                  options={{
+                    ...chartoptions2,
+                    maintainAspectRatio: false,
+                    aspectRatio: 2,
+                    layout: {
+                      padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 10,
+                        left: 10
+                      }
+                    }
+                  }}
+                  updateMode="resize"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-white/60">
+                  No chart data available
+                </div>
+              )}
+            </div>
+          </ResultHandler>
         </div>
       </div>
       {popupMode && selectedMarketData && poolData && (
