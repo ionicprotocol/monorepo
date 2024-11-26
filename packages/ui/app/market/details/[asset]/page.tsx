@@ -169,6 +169,7 @@ const Asset = () => {
           .from('asset_total_apy_history')
           .select('*')
           .ilike('ctoken_address', cTokenAddress as string);
+        console.log('data', data);
 
         if (error) {
           throw new Error(`HTTP error! Status: ${error.message}`);
@@ -189,7 +190,10 @@ const Asset = () => {
           )
             return;
           borrowOBJAtY.push({
-            apy: Number(val.borrowApy.toFixed(4)),
+            apy:
+              typeof val.borrowApy === 'number'
+                ? Number(val.borrowApy.toFixed(4))
+                : 0,
             createdAt: extractTime(val.created_at).dateStr
           });
         });
