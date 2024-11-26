@@ -86,6 +86,74 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     assertEq(amountDelegated, 0, "Delegated amount should be zero after de-delegation");
   }
 
+  function test_removeDelegatees_RemoveByTransfer() public {
+    LockInfo memory lockInfoUser1 = _createLockInternal(address(0x1234));
+    LockInfo memory lockInfoUser2 = _createLockInternal(address(0x5678));
+    LockInfo memory lockInfoUser3 = _createLockInternal(address(0x9ABC));
+    LockInfo memory lockInfoUser4 = _createLockInternal(address(0xDEF0));
+    LockInfo memory lockInfoUser5 = _createLockInternal(address(0x1111));
+    LockInfo memory lockInfoUser6 = _createLockInternal(address(0x2222));
+    LockInfo memory lockInfoUser7 = _createLockInternal(address(0x3333));
+
+    console.log("Token ID User 1:", lockInfoUser1.tokenId);
+    console.log("Token ID User 2:", lockInfoUser2.tokenId);
+    console.log("Token ID User 3:", lockInfoUser3.tokenId);
+    console.log("Token ID User 4:", lockInfoUser4.tokenId);
+    console.log("Token ID User 5:", lockInfoUser5.tokenId);
+    console.log("Token ID User 6:", lockInfoUser6.tokenId);
+    console.log("Token ID User 7:", lockInfoUser7.tokenId);
+
+    vm.startPrank(address(0x1234));
+    ve.lockPermanent(lockInfoUser1.tokenAddress, lockInfoUser1.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0x5678));
+    ve.lockPermanent(lockInfoUser2.tokenAddress, lockInfoUser2.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0x9ABC));
+    ve.lockPermanent(lockInfoUser3.tokenAddress, lockInfoUser3.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0xDEF0));
+    ve.lockPermanent(lockInfoUser4.tokenAddress, lockInfoUser4.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0x1111));
+    ve.lockPermanent(lockInfoUser5.tokenAddress, lockInfoUser5.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0x2222));
+    ve.lockPermanent(lockInfoUser6.tokenAddress, lockInfoUser6.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(address(0x3333));
+    ve.lockPermanent(lockInfoUser7.tokenAddress, lockInfoUser7.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(cindy);
+    ve.delegate(tokenIdBob, lockInfoUser1.tokenId, lockInfoUser1.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser2.tokenId, lockInfoUser2.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser3.tokenId, lockInfoUser3.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser4.tokenId, lockInfoUser4.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser5.tokenId, lockInfoUser5.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser6.tokenId, lockInfoUser6.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser7.tokenId, lockInfoUser7.tokenAddress, MINT_AMT / 7);
+    vm.stopPrank();
+
+    uint256[] memory delegateesBefore = ve.getDelegatees(tokenIdBob, veloLpType);
+    console.log("Delegatees length before transfer:", delegateesBefore.length);
+
+    vm.prank(cindy);
+    ve.transferFrom(cindy, address(0x9ABC), tokenIdBob);
+
+    uint256[] memory delegateesAfter = ve.getDelegatees(tokenIdBob, veloLpType);
+    console.log("Delegatees length after transfer:", delegateesAfter.length);
+
+    assertEq(delegateesBefore.length, 7, "Expected 7 delegatees before transfer");
+    assertEq(delegateesAfter.length, 0, "Expected 0 delegatees after transfer");
+  }
+
   function test_removeDelegatees_RevertIfUnmatchedArrays() public {
     uint256[] memory toTokenIds = new uint256[](2);
     toTokenIds[0] = tokenIdBob;

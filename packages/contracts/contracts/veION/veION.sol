@@ -512,7 +512,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         uint256[] memory delegatees = s_delegatees[tokenId][_lpType].values();
         uint256[] memory amounts = new uint256[](delegatees.length);
         for (uint256 j = 0; j < delegatees.length; j++) {
-          amounts[i] = type(uint256).max;
+          amounts[j] = type(uint256).max;
         }
         removeDelegatees(tokenId, delegatees, asset, amounts);
 
