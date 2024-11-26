@@ -4,9 +4,9 @@ pragma solidity ^0.8.10;
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 interface IIonicFlywheel {
-  function isRewardsDistributor() external returns (bool);
+  function isRewardsDistributor() external view returns (bool);
 
-  function isFlywheel() external returns (bool);
+  function isFlywheel() external view returns (bool);
 
   function flywheelPreSupplierAction(address market, address supplier) external;
 

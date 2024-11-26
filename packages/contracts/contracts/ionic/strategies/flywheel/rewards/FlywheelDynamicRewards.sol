@@ -68,4 +68,10 @@ abstract contract FlywheelDynamicRewards is BaseFlywheelRewards {
     }
 
     function getNextCycleRewards(ERC20 strategy) internal virtual returns (uint192);
+
+    function getRewardsPerSecond(ERC20 strategy) external view override returns (uint256) {
+        RewardsCycle memory cycle = rewardsCycle[strategy];
+        if (rewardsCycleLength == 0) return 0;
+        else return cycle.reward / rewardsCycleLength;
+    }
 }

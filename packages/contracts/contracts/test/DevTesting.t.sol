@@ -113,8 +113,11 @@ contract DevTesting is BaseTest {
     levPosLens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
 
-  function testModePoolBorrowers() public debuggingOnly fork(MODE_MAINNET) {
-    emit log_named_array("borrowers", pool.getAllBorrowers());
+  function testProxyAdmin() public debuggingOnly fork(MODE_MAINNET) {
+    TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(0x4E854cde138495a3eB9CFe48e50F12dC352cD834));
+    bytes32 bytesAtSlot = vm.load(address(proxy), _ADMIN_SLOT);
+    address admin = address(uint160(uint256(bytesAtSlot)));
+    emit log_named_address("admin from slot", admin);
   }
 
   function testModeLiquidationShortfall() public debuggingOnly fork(MODE_MAINNET) {

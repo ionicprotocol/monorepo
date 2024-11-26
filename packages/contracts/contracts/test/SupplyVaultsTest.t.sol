@@ -1,8 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 import "../ionic/vault/OptimizedVaultsRegistry.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
+import { FlywheelStaticRewards } from "../ionic/strategies/flywheel/rewards/FlywheelStaticRewards.sol";
+import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
+import { IonicFlywheelSupplyBooster } from "../ionic/strategies/flywheel/IonicFlywheelSupplyBooster.sol";
+import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
+import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
 
 import "./config/BaseTest.t.sol";
 
@@ -15,9 +22,11 @@ contract SupplyVaultsTest is BaseTest {
 
   uint256 blocksPerYear;
   address wethWhale = 0x7380511493DD4c2f1dD75E9CCe5bD52C787D4B51;
+  address ionWhale = 0x0D0707963952f2fBA59dD06f2b425ace40b492Fe;
 
   ICErc20 wethNativeMarket = ICErc20(0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2);
   ICErc20 wethMainMarket = ICErc20(0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2);
+  ERC20 ionToken = ERC20(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
 
   ERC20 weth;
 
@@ -35,6 +44,9 @@ contract SupplyVaultsTest is BaseTest {
 
   function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
+
+    lenderSharesHint[0] = 0.5e17;
+    lenderSharesHint[1] = 9.5e17;
 
     weth = ERC20(wethMainMarket.underlying());
 
@@ -75,7 +87,7 @@ contract SupplyVaultsTest is BaseTest {
       registry
     );
     uint256 wethNativeMarketApr = wethNativeMarketAdapter.apr();
-    emit log_named_uint("wethNativeMarketApr", wethNativeMarketApr);
+    console.log("wethNativeMarketApr %e", wethNativeMarketApr);
 
     CompoundMarketERC4626 wethMainMarketAdapter = new CompoundMarketERC4626();
     {
@@ -85,7 +97,7 @@ contract SupplyVaultsTest is BaseTest {
     }
     wethMainMarketAdapter.initialize(wethMainMarket, blocksPerYear, registry);
     uint256 wethMainMarketApr = wethMainMarketAdapter.apr();
-    emit log_named_uint("wethMainMarketApr", wethMainMarketApr);
+    console.log("wethMainMarketApr %e", wethMainMarketApr);
 
     adapters[0].adapter = wethNativeMarketAdapter;
     adapters[0].allocation = 1e17;
@@ -123,9 +135,120 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
   }
 
+  function upgradeIflr() internal {
+    IonicFlywheelLensRouter upgradedIflr = new IonicFlywheelLensRouter(PoolDirectory(ap.getAddress("PoolDirectory")));
+    vm.prank(ap.owner());
+    ap.setAddress("IonicFlywheelLensRouter", address(upgradedIflr));
+
+    IonicFlywheel newFwImpl = new IonicFlywheel();
+    IonicFlywheelSupplyBooster marketSupplyBooster = new IonicFlywheelSupplyBooster();
+
+    ProxyAdmin proxyAdmin;
+
+    uint8 fwCounter = 0;
+    // replace all flywheels
+    PoolDirectory.Pool[] memory pools = upgradedIflr.fpd().getAllPools();
+    for (uint8 i = 0; i < pools.length; i++) {
+      IonicComptroller pool = IonicComptroller(pools[i].comptroller);
+      address[] memory flywheels = pool.getAccruingFlywheels();
+      for (uint8 j = 0; j < flywheels.length; j++) {
+        if (flywheels[j] == 0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec) {
+          proxyAdmin = ProxyAdmin(0xd122669FeF7e62Aa5Df85e945b68dd0B02A42343);
+        }
+        else if (flywheels[j] == 0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062) {
+          proxyAdmin = ProxyAdmin(0x4De2d8ef97D19def01f236b7a12e5Fb39c087b56);
+        }
+        else if (flywheels[j] == 0x6AfCca37CC93DB6bed729d20ADF203290d465df5 || flywheels[j] == 0x4E854cde138495a3eB9CFe48e50F12dC352cD834) {
+          proxyAdmin = ProxyAdmin(0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83);
+        }
+        else {
+          proxyAdmin = dpa;
+        }
+
+        IonicFlywheel flywheel = IonicFlywheel(flywheels[j]);
+        ERC20[] memory fwStrategies = flywheel.getAllStrategies();
+
+        try flywheel.getRewardsPerSecondPerToken(ERC20(address(wethMainMarket))) {
+          // don't upgrade already upgraded fws
+          console.log("ALREADY UPGRADED");
+        } catch {
+          // upgrade if the getRewardsPerSecondPerToken fn is missing
+          {
+            TransparentUpgradeableProxy proxy = TransparentUpgradeableProxy(payable(flywheels[j]));
+            vm.prank(proxyAdmin.owner());
+            proxyAdmin.upgrade(proxy, address(newFwImpl));
+
+            // all strategies that are ionic markets must use the supply or
+            // borrow booster in order to show the correct APR
+            if (address(flywheel.flywheelBooster()) == address(0)) {
+              vm.prank(flywheel.owner());
+              flywheel.setBooster(marketSupplyBooster);
+            }
+          }
+
+          FlywheelStaticRewards currentRewards = FlywheelStaticRewards(address(flywheel.flywheelRewards()));
+
+          IFlywheelRewards newRewards;
+          try currentRewards.owner() returns (address) {
+              for (uint8 k = 0; k < fwStrategies.length; k++) {
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = currentRewards.rewardsInfo(ionToken);
+                if (rewardsPerSecond != 0) {
+                  newRewards = new FlywheelStaticRewards(
+                    currentRewards.flywheel(), currentRewards.owner(), currentRewards.authority()
+                  );
+                  break;
+                }
+              }
+
+              for (uint8 k = 0; k < fwStrategies.length; k++) {
+                (uint224 rewardsPerSecond, uint32 rewardsEndTimestamp) = currentRewards.rewardsInfo(ionToken);
+                if (rewardsPerSecond != 0) {
+                  FlywheelStaticRewards(address(newRewards))
+                    .setRewardsInfo(
+                      fwStrategies[k],
+                      FlywheelStaticRewards.RewardsInfo({
+                        rewardsPerSecond: rewardsPerSecond,
+                        rewardsEndTimestamp: rewardsEndTimestamp
+                      })
+                  );
+                }
+              }
+          } catch {
+            // if failing, the rewards contract is for dynamic rewards
+            IonicFlywheelDynamicRewards currentRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
+
+            newRewards = new IonicFlywheelDynamicRewards(
+              currentRewards.flywheel(), currentRewards.rewardsCycleLength()
+            );
+          }
+
+          if (address(newRewards) != address(0)) {
+            vm.label(address(newRewards), string.concat("NewRewards", Strings.toString(++fwCounter)));
+            vm.prank(flywheel.owner());
+            flywheel.setFlywheelRewards(newRewards);
+          }
+
+          for (uint8 k = 0; k < fwStrategies.length; k++) {
+            // skip testing wrsEth since the balanceOf calls fail in forge
+            if (address(fwStrategies[k]) == 0x49950319aBE7CE5c3A6C90698381b45989C99b46) continue;
+
+            IonicComptroller marketPool = ICErc20(address(fwStrategies[k])).comptroller();
+            if (address(marketPool) == address(pool)) {
+              vm.prank(marketPool.admin());
+              CErc20RewardsDelegate(address(fwStrategies[k])).approve(address(ionToken), address(newRewards));
+              flywheel.accrue(fwStrategies[k], address(0));
+            }
+          }
+        }
+      }
+    }
+  }
+
   function setUpVault() internal {
     // make sure there is enough liquidity in the testing markets
     addLiquidity();
+
+    upgradeIflr();
 
     deployVaultRegistry();
 
@@ -145,6 +268,82 @@ contract SupplyVaultsTest is BaseTest {
     assertGt(asSecondExtension.estimatedTotalAssets(), 0, "!emergency withdrawn");
 
     asSecondExtension.harvest(lenderSharesHint);
+  }
+
+  function testVaultAprFromRewards() public debuggingOnly fork(MODE_MAINNET) {
+    OptimizedAPRVaultSecondExtension asSecondExtension = vault.asSecondExtension();
+    asSecondExtension.pullAccruedVaultRewards();
+    uint256 aprBefore = asSecondExtension.estimatedAPR();
+
+    (CompoundMarketERC4626 adapter1, uint64 allocation1) = vault.adapters(0);
+    (CompoundMarketERC4626 adapter2, uint64 allocation2) = vault.adapters(1);
+
+    uint256 rewardsAprBefore1 = adapter1.rewardsApr();
+    uint256 rewardsAprBefore2 = adapter2.rewardsApr();
+    console.log("0 REWARDS Apr %e", rewardsAprBefore1);
+    console.log("1 REWARDS Apr %e", rewardsAprBefore2);
+    console.log("aprBefore %e", aprBefore);
+
+    //vm.warp(vm.getBlockTimestamp() + 2592001);
+
+    IonicComptroller pool = wethMainMarket.comptroller();
+    uint256 rewardsAmountFor1PercentApr;
+    {
+      uint256 wethMarketBorrowedAssets = wethMainMarket.totalBorrows();
+      uint256 wethPrice = pool.oracle().getUnderlyingPrice(wethMainMarket);
+      uint256 rewardsValueFor1PercentApr = ((wethMarketBorrowedAssets * wethPrice) / 1e18) / 100;
+      console.log("rewardsValueFor1PercentApr for 1 year %e", rewardsValueFor1PercentApr);
+      uint256 ionPrice = pool.oracle().price(address(ionToken));
+      rewardsAmountFor1PercentApr = (rewardsValueFor1PercentApr * 1e18) / ionPrice;
+      console.log("rewardsAmountFor1PercentApr for 1 year %e", rewardsAmountFor1PercentApr);
+    }
+
+    // find the ION flywheel and add as much rewards
+    // as 1% of the value of the weth main market borrows
+    {
+      address[] memory flywheels = pool.getAccruingFlywheels();
+      for (uint8 j = 0; j < flywheels.length; j++) {
+        IonicFlywheel flywheel = IonicFlywheel(flywheels[j]);
+        ERC20 rewardToken = flywheel.rewardToken();
+        if (rewardToken == ionToken) {
+          IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
+          (, , uint192 cycleRewards) = flywheelRewards.rewardsCycle(ERC20(address(wethMainMarket)));
+          // move to the next rewards cycle
+          vm.warp(vm.getBlockTimestamp() + flywheelRewards.rewardsCycleLength() + 1);
+
+          // adjust the reward amount proportionally to the flywheel specific cycle length
+          uint256 fwRewardsAmountFor1PercentAprIncrease = (rewardsAmountFor1PercentApr * flywheelRewards.rewardsCycleLength()) / 365.25 days;
+          //console.log("fwRewardsAmountFor1PercentAprIncrease %e", fwRewardsAmountFor1PercentAprIncrease);
+          // add as much as the last cycle rewards + more rewards for +1% APR
+          fwRewardsAmountFor1PercentAprIncrease = cycleRewards + fwRewardsAmountFor1PercentAprIncrease;
+          vm.prank(ionWhale);
+          ionToken.transfer(address(wethMainMarket), fwRewardsAmountFor1PercentAprIncrease);
+
+          // pull and account for the just transferred rewards in the market
+          flywheel.accrue(ERC20(address(wethMainMarket)), address(0));
+
+          // done adding rewards for the APR increase
+          break;
+        }
+      }
+    }
+
+    uint256 aprAfter = asSecondExtension.estimatedAPR();
+    {
+      uint256 rewardsAprAfter1 = adapter1.rewardsApr();
+      uint256 rewardsAprAfter2 = adapter2.rewardsApr();
+      console.log("0 REWARDS Apr %e", rewardsAprAfter1);
+      console.log("1 REWARDS Apr %e", rewardsAprAfter2);
+      console.log("aprAfter %e", aprAfter);
+      console.log("aprAfter - aprBefore %e", aprAfter - aprBefore);
+      console.log("rewardsAprAfter - rewardsAprBefore %e", rewardsAprAfter2 - rewardsAprBefore2);
+    }
+
+    // APR after should be approx adapter2.allocation * adapter2AprIncrease
+    uint256 expectedAprIncrease = (uint256(allocation2) * 0.01e18) / 1e18;
+    console.log("expectedAprIncrease %e", expectedAprIncrease);
+
+    assertApproxEqRel(expectedAprIncrease, aprAfter - aprBefore, 5e15);
   }
 
   function testVaultOptimization() public fork(MODE_MAINNET) {
@@ -228,8 +427,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the shares before and after calling mint
     {
@@ -265,8 +464,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the shares before and after calling deposit
     {
@@ -312,8 +511,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the balance before and after calling withdraw
     {
@@ -358,8 +557,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(block.timestamp + 365.25 days);
-    vm.roll(block.number + blocksPerYear);
+    vm.warp(vm.getBlockTimestamp() + 365.25 days);
+    vm.roll(vm.getBlockNumber() + blocksPerYear);
 
     // test the balance before and after calling redeem
     {
@@ -417,7 +616,7 @@ contract SupplyVaultsTest is BaseTest {
     vm.expectRevert(NotPassedQuitPeriod.selector);
     secondExt.changeAdapters();
 
-    vm.warp(block.timestamp + 3.01 days);
+    vm.warp(vm.getBlockTimestamp() + 3.01 days);
     secondExt.changeAdapters();
   }
 
@@ -438,15 +637,11 @@ contract SupplyVaultsTest is BaseTest {
 
   // TODO test claiming the rewards for multiple vaults
   function testVaultAccrueRewards() public fork(MODE_MAINNET) {
-    IERC20Metadata ionToken = IERC20Metadata(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
-    address ionWhale = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
-    address someDeployer = address(321);
+    address someDeployer = ap.owner();
     IonicFlywheel flywheelLogic = new IonicFlywheel();
 
     // set up the registry, the vault and the adapter
     vm.startPrank(someDeployer);
-    deployVaultRegistry();
-
     {
       // deploy the adapter
       CompoundMarketERC4626 marketAdapter = new CompoundMarketERC4626();
@@ -483,11 +678,12 @@ contract SupplyVaultsTest is BaseTest {
       vm.label(address(vault), "vault");
       vault.initialize(exts, params);
 
-      vault.asFirstExtension().addRewardToken(ionToken);
-
-      registry.addVault(address(vault));
+      vault.asFirstExtension().addRewardToken(IERC20(address(ionToken)));
     }
     vm.stopPrank();
+
+    vm.prank(registry.owner());
+    registry.addVault(address(vault));
 
     uint256 whaleStartingOpBalance = ionToken.balanceOf(wethWhale);
 
@@ -501,8 +697,8 @@ contract SupplyVaultsTest is BaseTest {
     {
       // advance time to move away from the first cycle,
       // because the first cycle is initialized with 0 rewards
-      vm.warp(block.timestamp + 25 hours);
-      vm.roll(block.number + 1000);
+      vm.warp(vm.getBlockTimestamp() + 25 hours);
+      vm.roll(vm.getBlockNumber() + 1000);
     }
 
     // pull from the adapters the rewards for the new cycle
@@ -511,12 +707,12 @@ contract SupplyVaultsTest is BaseTest {
     OptimizedAPRVaultFirstExtension vaultFirstExt = vault.asFirstExtension();
     {
       // TODO figure out why these accrue calls are necessary
-      IonicFlywheel flywheelION = vaultFirstExt.flywheelForRewardToken(ionToken);
+      IonicFlywheel flywheelION = vaultFirstExt.flywheelForRewardToken(IERC20(address(ionToken)));
       flywheelION.accrue(ERC20(address(vault)), wethWhale);
 
       // advance time in the same cycle in order to accrue some rewards for it
-      vm.warp(block.timestamp + 10 hours);
-      vm.roll(block.number + 1000);
+      vm.warp(vm.getBlockTimestamp() + 10 hours);
+      vm.roll(vm.getBlockNumber() + 1000);
     }
 
     // harvest does nothing when the APR remains the same
@@ -529,7 +725,10 @@ contract SupplyVaultsTest is BaseTest {
     vaultFirstExt.claimRewards();
 
     // check if any rewards were claimed
-    assertGt(ionToken.balanceOf(wethWhale), whaleStartingOpBalance, "!received ION");
+    uint256 finalWhaleBalance = ionToken.balanceOf(wethWhale);
+    assertGt(finalWhaleBalance, whaleStartingOpBalance, "!received ION");
+
+    console.log("rewards claimed %e", finalWhaleBalance - whaleStartingOpBalance);
   }
 }
 
