@@ -38,11 +38,11 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import MaxDeposit from '../_components/MaxDeposit';
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
-import MaxDeposit from '../_components/stake/MaxDeposit';
 import ModeBreakdown from '../_components/stake/ModeBreakdown';
 import OPBreakdown from '../_components/stake/OPBreakdown';
 import Toggle from '../_components/Toggle';
@@ -740,11 +740,6 @@ export default function Stake() {
             )}
             {step3Toggle === 'Unstake' && (
               <MaxDeposit
-                max={
-                  allStakedAmount.status === 'success'
-                    ? formatEther(allStakedAmount?.data as bigint)
-                    : '0'
-                }
                 headerText={step3Toggle}
                 amount={maxUnstake}
                 tokenName={`ion/${selectedtoken}`}
