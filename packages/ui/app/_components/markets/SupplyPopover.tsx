@@ -73,7 +73,7 @@ export default function SupplyPopover({
         <span
           className={`${pools[+dropdownSelectedChain].text} ${pools[+dropdownSelectedChain].bg} rounded-md w-max lg:text-[10px] md:text-[9px] text-[8px] md:mb-1 ml-1 md:ml-0 text-center py-[1px] md:px-1 lg:px-2.5 px-1 flex items-center justify-center`}
         >
-          {merklAprForToken || asset === 'dMBTC' ? (
+          {merklAprForToken ? (
             <>
               +{' '}
               <img
@@ -293,16 +293,6 @@ export default function SupplyPopover({
               src="/img/symbols/32/color/bob.png"
             />{' '}
             + Spice Points
-          </div>
-        )}
-        {supplyConfig?.nektar && (
-          <div className="flex mt-1">
-            <img
-              alt=""
-              className="size-4 mr-1"
-              src="/img/symbols/32/color/nektar.png"
-            />{' '}
-            + Nektar Points
           </div>
         )}
       </div>

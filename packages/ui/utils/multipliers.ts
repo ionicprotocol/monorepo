@@ -11,7 +11,6 @@ export type Multipliers = {
   turtle?: boolean;
   spice?: boolean;
   underlyingAPR?: number;
-  nektar?: number;
   op?: boolean;
   anzen?: number;
 };
@@ -38,28 +37,13 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false
+          ionAPR: false,
+          op: true
         },
         market: 'm_btc_market',
         multiplier: 66000,
         supply: {
           ionic: 0,
-          turtle: false,
-          ionAPR: true,
-          flywheel: true,
-          op: true
-        }
-      },
-      dMBTC: {
-        borrow: {
-          ionAPR: false,
-          turtle: false,
-          ionic: 0
-        },
-        market: 'dmBTC_market',
-        supply: {
-          ionic: 0,
-          underlyingAPR: 10,
           turtle: false,
           ionAPR: true,
           flywheel: true,
@@ -254,7 +238,8 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: false,
-          flywheel: false
+          flywheel: false,
+          op: true
         },
         market: 'ionmode_modenative',
         multiplier: 0.035,
@@ -339,7 +324,6 @@ export const multipliers: Record<
         },
         supply: {
           ionic: 0,
-          nektar: 1,
           underlyingAPR: 2.6,
           turtle: false,
           ionAPR: false,
