@@ -11,7 +11,7 @@ import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 // import { useWatchContractEvent } from 'wagmi';
 
-import { chainsArr, pools, scans } from '@ui/constants/index';
+import { chainsArr, pools } from '@ui/constants/index';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
 // import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
