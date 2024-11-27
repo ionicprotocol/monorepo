@@ -1,10 +1,8 @@
-import millify from 'millify';
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
-import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
@@ -13,12 +11,13 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
+import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
+import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface BorrowTabProps {
   maxAmount: bigint;
@@ -158,7 +157,7 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-2">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -166,12 +165,11 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
-      />
-
-      <SliderComponent
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
       />
+
+      {/* <SliderComponent /> */}
 
       {isUnderMinBorrow && (
         <Alert variant="default">
@@ -182,113 +180,86 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         </Alert>
       )}
 
-      {hfpStatus === 'UNKNOWN' && (
-        <Alert variant="default">
-          <AlertDescription>
-            Unable to calculate health factor.
-          </AlertDescription>
-        </Alert>
-      )}
+      <StatusAlerts
+        status={hfpStatus}
+        availableStates={[
+          HFPStatus.CRITICAL,
+          HFPStatus.UNKNOWN,
+          HFPStatus.WARNING
+        ]}
+      />
 
-      {hfpStatus === 'WARNING' && (
-        <Alert>
-          <AlertDescription>
-            You are close to the liquidation threshold. Manage your health
-            factor carefully.
-          </AlertDescription>
-        </Alert>
-      )}
+      <div className="grid grid-cols-2 gap-x-8">
+        {/* Left Column */}
+        <div className="space-y-4 content-center">
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>MIN BORROW</span>
+            <span>{borrowLimits.min}</span>
+          </div>
 
-      {hfpStatus === 'CRITICAL' && (
-        <Alert variant="destructive">
-          <AlertDescription>Health factor too low.</AlertDescription>
-        </Alert>
-      )}
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>MAX BORROW</span>
+            <span>{borrowLimits.max}</span>
+          </div>
 
-      <Separator className="my-4 bg-white/50" />
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>CURRENTLY BORROWING</span>
+            <div className="flex items-center">
+              <span>{updatedValues.borrowBalanceFrom}</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                height={16}
+                width={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {updatedValues.borrowBalanceTo}
+              </ResultHandler>
+            </div>
+          </div>
 
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>MIN BORROW</span>
-          <span>{borrowLimits.min}</span>
-        </div>
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Market Borrow APR</span>
+            <div className="flex items-center">
+              <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                height={16}
+                width={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {updatedValues.updatedBorrowAPR?.toFixed(2)}%
+              </ResultHandler>
+            </div>
+          </div>
 
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>MAX BORROW</span>
-          <span>{borrowLimits.max}</span>
-        </div>
-
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>CURRENTLY BORROWING</span>
-          <div className="flex items-center">
-            <span>{updatedValues.borrowBalanceFrom}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              height={16}
-              width={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {updatedValues.borrowBalanceTo}
-            </ResultHandler>
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Health Factor</span>
+            <div className="flex items-center">
+              <span>{healthFactor.current}</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                width={16}
+                height={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {healthFactor.predicted}
+              </ResultHandler>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Borrow APR</span>
-          <div className="flex items-center">
-            <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              height={16}
-              width={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {updatedValues.updatedBorrowAPR?.toFixed(2)}%
-            </ResultHandler>
-          </div>
-        </div>
-
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Health Factor</span>
-          <div className="flex items-center">
-            <span>{healthFactor.current}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              width={16}
-              height={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {healthFactor.predicted}
-            </ResultHandler>
-          </div>
-        </div>
+        {/* Right Column */}
+        {totalStats && (
+          <MemoizedUtilizationStats
+            label="Total Supplied"
+            value={totalStats.totalAmount}
+            max={totalStats.capAmount}
+            symbol={selectedMarketData.underlyingSymbol}
+            valueInFiat={totalStats.totalFiat}
+            maxInFiat={totalStats.capFiat}
+          />
+        )}
       </div>
-
-      <Separator className="my-4 bg-white/50" />
-
-      {totalStats && (
-        <div className="flex items-center justify-center">
-          <div className="w-20 mr-4">
-            <MemoizedDonutChart
-              max={totalStats.capAmount}
-              value={totalStats.totalAmount}
-            />
-          </div>
-          <div>
-            <div className="text-gray-400">Total Borrowed:</div>
-            <div className="text-white">
-              <strong>
-                {millify(totalStats.totalAmount)} of{' '}
-                {millify(totalStats.capAmount)}{' '}
-                {selectedMarketData.underlyingSymbol}
-              </strong>
-            </div>
-            <div className="text-sm text-gray-300">
-              ${millify(totalStats.totalFiat)} of ${millify(totalStats.capFiat)}
-            </div>
-          </div>
-        </div>
-      )}
 
       {transactionSteps.length > 0 ? (
         <TransactionStepsHandler

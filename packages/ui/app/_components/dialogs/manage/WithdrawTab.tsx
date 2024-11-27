@@ -1,9 +1,7 @@
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
-import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
-import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
@@ -13,17 +11,29 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
 import SliderComponent from './Slider';
+import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
+import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface WithdrawTabProps {
   maxAmount: bigint;
   isLoadingMax: boolean;
+  totalStats?: {
+    capAmount: number;
+    totalAmount: number;
+    capFiat: number;
+    totalFiat: number;
+  };
 }
 
-const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
+const WithdrawTab = ({
+  maxAmount,
+  isLoadingMax,
+  totalStats
+}: WithdrawTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -141,7 +151,7 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-2">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -150,84 +160,79 @@ const WithdrawTab = ({ maxAmount, isLoadingMax }: WithdrawTabProps) => {
         selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
         hintText="Max Withdraw"
-      />
-
-      <SliderComponent
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
-        max={Number(maxAmount)}
       />
 
-      {hfpStatus === 'WARNING' && (
-        <Alert variant="default">
-          <AlertDescription>
-            You are close to the liquidation threshold. Manage your health
-            factor carefully.
-          </AlertDescription>
-        </Alert>
-      )}
+      {/* <SliderComponent /> */}
 
-      {hfpStatus === 'CRITICAL' && (
-        <Alert variant="destructive">
-          <AlertDescription>Health factor too low.</AlertDescription>
-        </Alert>
-      )}
+      <StatusAlerts
+        status={hfpStatus}
+        availableStates={[
+          HFPStatus.CRITICAL,
+          HFPStatus.WARNING,
+          HFPStatus.UNKNOWN
+        ]}
+      />
 
-      {hfpStatus === 'UNKNOWN' && (
-        <Alert variant="default">
-          <AlertDescription>
-            Unable to calculate health factor.
-          </AlertDescription>
-        </Alert>
-      )}
+      <div className="grid grid-cols-2 gap-x-8">
+        <div className="space-y-4 content-center">
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Market Supply Balance</span>
+            <div className="flex items-center">
+              <span>{updatedValues.supplyBalanceFrom}</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                height={16}
+                width={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {updatedValues.supplyBalanceTo}
+              </ResultHandler>
+            </div>
+          </div>
 
-      <Separator className="my-4 bg-white/50" />
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Market Supply APR</span>
+            <div className="flex items-center">
+              <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                height={16}
+                width={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {updatedValues.updatedSupplyAPY?.toFixed(2)}%
+              </ResultHandler>
+            </div>
+          </div>
 
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Supply Balance</span>
-          <div className="flex items-center">
-            <span>{updatedValues.supplyBalanceFrom}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              height={16}
-              width={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {updatedValues.supplyBalanceTo}
-            </ResultHandler>
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Health Factor</span>
+            <div className="flex items-center">
+              <span>{healthFactor.current}</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                height={16}
+                width={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {healthFactor.predicted}
+              </ResultHandler>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Supply APR</span>
-          <div className="flex items-center">
-            <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              height={16}
-              width={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {updatedValues.updatedSupplyAPY?.toFixed(2)}%
-            </ResultHandler>
-          </div>
-        </div>
-
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Health Factor</span>
-          <div className="flex items-center">
-            <span>{healthFactor.current}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              height={16}
-              width={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {healthFactor.predicted}
-            </ResultHandler>
-          </div>
-        </div>
+        {totalStats && (
+          <MemoizedUtilizationStats
+            label="Total Supplied"
+            value={totalStats.totalAmount}
+            max={totalStats.capAmount}
+            symbol={selectedMarketData.underlyingSymbol}
+            valueInFiat={totalStats.totalFiat}
+            maxInFiat={totalStats.capFiat}
+          />
+        )}
       </div>
 
       {transactionSteps.length > 0 ? (

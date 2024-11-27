@@ -1,15 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
 import React, { useState } from 'react';
 
-import dynamic from 'next/dynamic';
-
-// import { useSearchParams } from 'next/navigation';
-import { parseUnits } from 'viem';
-
+import { Slider } from '@ui/components/ui/slider';
+import { cn } from '@ui/lib/utils';
 import type { MarketData } from '@ui/types/TokensDataMap';
-
-import ResultHandler from '../../ResultHandler';
 
 interface IAmount {
   amount?: string;
@@ -23,6 +16,8 @@ interface IAmount {
   selectedMarketData: MarketData;
   setSelectedAsset?: (asset: MarketData) => void;
   symbol: string;
+  currentUtilizationPercentage?: number;
+  handleUtilization?: (val: number) => void;
 }
 
 const Amount = ({
@@ -36,151 +31,176 @@ const Amount = ({
   symbol,
   isLoading = false,
   readonly,
-  setSelectedAsset
+  setSelectedAsset,
+  currentUtilizationPercentage,
+  handleUtilization
 }: IAmount) => {
-  const [availableAssetsOpen, setAvailableAssetsOpen] =
-    useState<boolean>(false);
-
-  function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
-    const currentValue = e.target.value.trim();
-    let newAmount = currentValue === '' ? undefined : currentValue;
-    const numbersBeforeSeparator = new RegExp(/[0-9]\./gm).test(
-      currentValue ?? ''
-    )
-      ? 1
-      : 0;
-
-    if (
-      newAmount &&
-      newAmount.length > 1 &&
-      newAmount[0] === '0' &&
-      newAmount[1] !== '.'
-    ) {
-      newAmount = newAmount.slice(1, newAmount.length);
-    }
-
-    if (
-      newAmount &&
-      newAmount.length >
-        selectedMarketData.underlyingDecimals + 1 + numbersBeforeSeparator
-    ) {
-      return;
-    }
-
-    if (
-      newAmount &&
-      parseUnits(max, selectedMarketData.underlyingDecimals) <
-        parseUnits(newAmount, selectedMarketData.underlyingDecimals)
-    ) {
-      handleInput(max);
-
-      return;
-    }
-
-    handleInput(newAmount);
-  }
-  function handleMax(val: string) {
-    handleInput(val);
-  }
+  const [availableAssetsOpen, setAvailableAssetsOpen] = useState(false);
+  const percentages = [0, 20, 40, 60, 80, 100];
 
   return (
-    <div className={`relative w-full flex-col items-start justify-start`}>
-      <div className={`flex w-full items-center text-[10px] text-white/50 `}>
-        <span className={``}>{mainText}</span>
+    <div className="w-full">
+      {/* Mobile Layout */}
+      <div className="flex md:hidden flex-col w-full gap-4">
+        <div className="flex justify-between items-end w-full">
+          <div className="w-32">
+            <div className="text-[10px] text-white/50 mb-1">{mainText}</div>
+            <input
+              className="w-full bg-transparent text-lg font-bold focus:outline-none"
+              onChange={(e) => handleInput(e.target.value)}
+              placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
+              readOnly={!!readonly}
+              type="number"
+              value={amount}
+            />
+          </div>
 
-        {!readonly && (
-          <div className="ml-auto">
-            <ResultHandler
-              height="15"
-              isLoading={isLoading}
-              width="15"
-            >
-              <>
-                <span className={`ml-auto`}>
+          <div className="flex flex-col items-end gap-1">
+            {!readonly && !isLoading && (
+              <div className="flex items-center gap-2 text-[10px]">
+                <span className="text-white/50">
                   {hintText} {max}
                 </span>
                 <button
-                  className={`text-accent pl-2`}
-                  onClick={() => handleMax(max)}
+                  className="text-accent"
+                  onClick={() => handleInput(max)}
                 >
                   MAX
                 </button>
-              </>
-            </ResultHandler>
+              </div>
+            )}
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => setAvailableAssetsOpen(!availableAssetsOpen)}
+            >
+              <img
+                alt={symbol}
+                height="20"
+                src={`/img/symbols/32/color/${symbol.toLowerCase()}.png`}
+                width="20"
+              />
+              <span className="text-white pl-2">{symbol}</span>
+              {availableAssets && (
+                <img
+                  alt="dropdown"
+                  height="24"
+                  src="/images/chevron-down.png"
+                  width="24"
+                />
+              )}
+            </div>
           </div>
-        )}
+        </div>
+
+        <div className="w-full">
+          {currentUtilizationPercentage !== undefined && (
+            <Slider
+              value={[currentUtilizationPercentage]}
+              step={1}
+              min={0}
+              max={100}
+              onValueChange={(value) => handleUtilization?.(value[0])}
+              className="w-full"
+            />
+          )}
+        </div>
       </div>
-      <div
-        className={`relative flex w-full  pt-1.5 items-center text-lg text-white/50 justify-between`}
-      >
-        <input
-          className={`focus:outline-none amount-field font-bold bg-transparent flex-auto block w-full`}
-          onChange={handlInpData}
-          placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
-          readOnly={!!readonly}
-          type="number"
-          value={amount}
-        />
 
-        <div
-          className="relative flex items-center cursor-pointer grow-0 shrink-0"
-          onClick={() => setAvailableAssetsOpen(!availableAssetsOpen)}
-        >
-          <img
-            alt="link"
-            height="20"
-            src={`/img/symbols/32/color/${symbol.toLowerCase()}.png`}
-            width="20"
+      {/* Desktop Layout */}
+      <div className="hidden md:flex items-center gap-8">
+        <div className="w-32">
+          <div className="text-[10px] text-white/50 mb-1">{mainText}</div>
+          <input
+            className="w-full bg-transparent text-lg font-bold focus:outline-none"
+            onChange={(e) => handleInput(e.target.value)}
+            placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
+            readOnly={!!readonly}
+            type="number"
+            value={amount}
           />
-          <span className={`text-white pl-2`}>{symbol}</span>
+        </div>
 
-          {availableAssets && (
-            <img
-              alt="link"
-              height="24"
-              src={`/images/chevron-down.png`}
-              width="24"
+        <div className="flex-1">
+          {currentUtilizationPercentage !== undefined && (
+            <Slider
+              value={[currentUtilizationPercentage]}
+              step={1}
+              min={0}
+              max={100}
+              onValueChange={(value) => handleUtilization?.(value[0])}
+              className="w-full"
             />
           )}
         </div>
 
-        {availableAssets && (
-          <div
-            className={`absolute w-[180px] top-full right-0 px-4 py-3 origin-top-right rounded-lg bg-grayone transition-all ${
-              availableAssetsOpen
-                ? 'visible opacity-100 scale-100 '
-                : 'opacity-0 scale-90 invisible'
-            }`}
-          >
-            {availableAssets.map((asset) => (
-              <div
-                className="flex py-1 items-center font-bold text-white cursor-pointer"
-                key={`asset-${asset.underlyingSymbol}`}
-                onClick={() => {
-                  setSelectedAsset && setSelectedAsset(asset);
-                  setAvailableAssetsOpen(false);
-                }}
+        <div className="flex flex-col items-end gap-1">
+          {!readonly && !isLoading && (
+            <div className="flex items-center gap-2 text-[10px]">
+              <span className="text-white/50">
+                {hintText} {max}
+              </span>
+              <button
+                className="text-accent"
+                onClick={() => handleInput(max)}
               >
-                <img
-                  alt="link"
-                  height="20"
-                  src={`/img/symbols/32/color/${asset.underlyingSymbol?.toLowerCase()}.png`}
-                  width="20"
-                />
-                <span className={`text-white pl-2`}>
-                  {asset.underlyingSymbol}
-                </span>
-              </div>
-            ))}
+                MAX
+              </button>
+            </div>
+          )}
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setAvailableAssetsOpen(!availableAssetsOpen)}
+          >
+            <img
+              alt={symbol}
+              height="20"
+              src={`/img/symbols/32/color/${symbol.toLowerCase()}.png`}
+              width="20"
+            />
+            <span className="text-white pl-2">{symbol}</span>
+            {availableAssets && (
+              <img
+                alt="dropdown"
+                height="24"
+                src="/images/chevron-down.png"
+                width="24"
+              />
+            )}
           </div>
-        )}
+        </div>
       </div>
+
+      {availableAssets && (
+        <div
+          className={cn(
+            'absolute w-[180px] top-full right-0 px-4 py-3 rounded-lg bg-grayone transition-all',
+            availableAssetsOpen
+              ? 'visible opacity-100 scale-100'
+              : 'opacity-0 scale-90 invisible'
+          )}
+        >
+          {availableAssets.map((asset) => (
+            <div
+              key={`asset-${asset.underlyingSymbol}`}
+              className="flex py-1 items-center font-bold text-white cursor-pointer"
+              onClick={() => {
+                setSelectedAsset?.(asset);
+                setAvailableAssetsOpen(false);
+              }}
+            >
+              <img
+                alt={asset.underlyingSymbol}
+                height="20"
+                src={`/img/symbols/32/color/${asset.underlyingSymbol?.toLowerCase()}.png`}
+                width="20"
+              />
+              <span className="text-white pl-2">{asset.underlyingSymbol}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-// export default Amount
-export default dynamic(() => Promise.resolve(Amount), { ssr: false });
-{
-  /* <div className={``}></div> */
-}
+export default Amount;

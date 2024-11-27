@@ -3,26 +3,34 @@ import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
-import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
-import { Separator } from '@ui/components/ui/separator';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import {
+  HFPStatus,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import SliderComponent from './Slider';
+import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
+import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface RepayTabProps {
   maxAmount: bigint;
   isLoadingMax: boolean;
+  totalStats?: {
+    capAmount: number;
+    totalAmount: number;
+    capFiat: number;
+    totalFiat: number;
+  };
 }
 
-const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
+const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   const {
     selectedMarketData,
     amount,
@@ -177,7 +185,7 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-2">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -185,69 +193,77 @@ const RepayTab = ({ maxAmount, isLoadingMax }: RepayTabProps) => {
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
-      />
-
-      <SliderComponent
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
       />
 
-      {hfpStatus === 'CRITICAL' && (
-        <Alert variant="destructive">
-          <AlertDescription>Health factor too low.</AlertDescription>
-        </Alert>
-      )}
-      <Separator className="my-4 bg-white/50" />
+      <StatusAlerts
+        status={hfpStatus}
+        availableStates={[HFPStatus.CRITICAL]}
+      />
 
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>CURRENTLY BORROWING</span>
-          <div className="flex items-center">
-            <span className="text-error">
-              {updatedValues.borrowBalanceFrom}
-            </span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              width={16}
-              height={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              <span className="text-accent">
-                {updatedValues.borrowBalanceTo}
+      <div className="grid grid-cols-2 gap-x-8">
+        <div className="space-y-4 content-center">
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>CURRENTLY BORROWING</span>
+            <div className="flex items-center">
+              <span className="text-error">
+                {updatedValues.borrowBalanceFrom}
               </span>
-            </ResultHandler>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                width={16}
+                height={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                <span className="text-accent">
+                  {updatedValues.borrowBalanceTo}
+                </span>
+              </ResultHandler>
+            </div>
+          </div>
+
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Market Borrow APR</span>
+            <div className="flex items-center">
+              <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                width={16}
+                height={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {updatedValues.updatedBorrowAPR?.toFixed(2)}%
+              </ResultHandler>
+            </div>
+          </div>
+
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Health Factor</span>
+            <div className="flex items-center">
+              <span>{healthFactor.current}</span>
+              <span className="mx-1">→</span>
+              <ResultHandler
+                width={16}
+                height={16}
+                isLoading={isLoadingUpdatedAssets}
+              >
+                {healthFactor.predicted}
+              </ResultHandler>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Borrow APR</span>
-          <div className="flex items-center">
-            <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              width={16}
-              height={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {updatedValues.updatedBorrowAPR?.toFixed(2)}%
-            </ResultHandler>
-          </div>
-        </div>
-
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Health Factor</span>
-          <div className="flex items-center">
-            <span>{healthFactor.current}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              width={16}
-              height={16}
-              isLoading={isLoadingUpdatedAssets}
-            >
-              {healthFactor.predicted}
-            </ResultHandler>
-          </div>
-        </div>
+        {totalStats && (
+          <MemoizedUtilizationStats
+            label="Total Supplied"
+            value={totalStats.totalAmount}
+            max={totalStats.capAmount}
+            symbol={selectedMarketData.underlyingSymbol}
+            valueInFiat={totalStats.totalFiat}
+            maxInFiat={totalStats.capFiat}
+          />
+        )}
       </div>
 
       {transactionSteps.length > 0 ? (

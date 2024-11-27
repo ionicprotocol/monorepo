@@ -1,4 +1,3 @@
-import millify from 'millify';
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
@@ -10,12 +9,12 @@ import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import MemoizedDonutChart from './DonutChart';
 import SliderComponent from './Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
+import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface SupplyTabProps {
   maxAmount: bigint;
@@ -27,15 +26,13 @@ interface SupplyTabProps {
     totalFiat: number;
   };
   setSwapWidgetOpen: (open: boolean) => void;
-  collateralApr: number;
 }
 
 const SupplyTab = ({
   maxAmount,
   isLoadingMax,
   totalStats,
-  setSwapWidgetOpen,
-  collateralApr
+  setSwapWidgetOpen
 }: SupplyTabProps) => {
   const {
     selectedMarketData,
@@ -210,10 +207,10 @@ const SupplyTab = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-2">
       <div className="flex justify-between">
         <Button
-          className="w-full text-xs uppercase mr-2"
+          className="w-full text-xs uppercase"
           onClick={() => setSwapWidgetOpen(true)}
         >
           Get {selectedMarketData.underlyingSymbol}
@@ -227,80 +224,58 @@ const SupplyTab = ({
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
-      />
-
-      <SliderComponent
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
       />
 
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm text-gray-400">
-          <span>COLLATERAL APR</span>
-          <span className="font-bold">{collateralApr}%</span>
-        </div>
+      <div className="grid grid-cols-2 gap-x-8">
+        {/* Left Column - Market Stats */}
+        <div className="space-y-4 content-center">
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-gray-400 uppercase">
+              <span>Market Supply Balance</span>
+              <div className="flex items-center">
+                <span>{updatedValues.supplyBalanceFrom}</span>
+                <span className="mx-1">→</span>
+                <ResultHandler
+                  isLoading={isLoadingUpdatedAssets}
+                  height={16}
+                  width={16}
+                >
+                  {updatedValues.supplyBalanceTo}
+                </ResultHandler>
+              </div>
+            </div>
 
-        <Separator className="my-4 bg-white/50" />
-
-        <div className="flex justify-between text-xs text-gray-400 pt-2 uppercase">
-          <span>Market Supply Balance</span>
-          <div className="flex items-center">
-            <span>{updatedValues.supplyBalanceFrom}</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              isLoading={isLoadingUpdatedAssets}
-              height={16}
-              width={16}
-            >
-              {updatedValues.supplyBalanceTo}
-            </ResultHandler>
+            <div className="flex justify-between text-xs text-gray-400 uppercase">
+              <span>Market Supply APR</span>
+              <div className="flex items-center">
+                <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
+                <span className="mx-1">→</span>
+                <ResultHandler
+                  isLoading={isLoadingUpdatedAssets}
+                  height={16}
+                  width={16}
+                >
+                  {updatedValues.updatedSupplyAPY?.toFixed(2)}%
+                </ResultHandler>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between text-xs text-gray-400 uppercase">
-          <span>Market Supply APR</span>
-          <div className="flex items-center">
-            <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
-            <span className="mx-1">→</span>
-            <ResultHandler
-              isLoading={isLoadingUpdatedAssets}
-              height={16}
-              width={16}
-            >
-              {updatedValues.updatedSupplyAPY?.toFixed(2)}%
-            </ResultHandler>
-          </div>
-        </div>
+        {/* Right Column - Donut Chart Stats */}
+        {totalStats && (
+          <MemoizedUtilizationStats
+            label="Total Supplied"
+            value={totalStats.totalAmount}
+            max={totalStats.capAmount}
+            symbol={selectedMarketData.underlyingSymbol}
+            valueInFiat={totalStats.totalFiat}
+            maxInFiat={totalStats.capFiat}
+          />
+        )}
       </div>
-
-      {totalStats && (
-        <>
-          <Separator className="mb-4 bg-white/50" />
-          <div className="flex items-center justify-center">
-            <div className="w-20 mr-4">
-              <MemoizedDonutChart
-                max={totalStats.capAmount}
-                value={totalStats.totalAmount}
-              />
-            </div>
-            <div>
-              <div className="text-gray-400">Total Supplied:</div>
-              <div className="text-white">
-                <strong>
-                  {millify(totalStats.totalAmount)} of{' '}
-                  {millify(totalStats.capAmount)}{' '}
-                  {selectedMarketData.underlyingSymbol}
-                </strong>
-              </div>
-              <div className="text-sm text-gray-300">
-                ${millify(totalStats.totalFiat)} of $
-                {millify(totalStats.capFiat)}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      <Separator className="my-4 bg-white/50" />
 
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-400 uppercase">

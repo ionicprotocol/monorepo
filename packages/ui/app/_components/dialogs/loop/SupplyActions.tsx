@@ -7,7 +7,6 @@ import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import Amount from '../manage/Amount';
-import SliderComponent from '../manage/Slider';
 
 export type LoopProps = {
   borrowableAssets: Address[];
@@ -129,6 +128,8 @@ function SupplyActions({
             )}
             selectedMarketData={selectedCollateralAsset}
             symbol={selectedCollateralAsset.underlyingSymbol}
+            currentUtilizationPercentage={utilization}
+            handleUtilization={handleSupplyUtilization}
           />
 
           <div className="flex text-xs text-white/50">
@@ -137,11 +138,6 @@ function SupplyActions({
               selectedCollateralAssetUSDPrice * parseFloat(amount ?? '0')
             ).toFixed(2)}
           </div>
-
-          <SliderComponent
-            currentUtilizationPercentage={utilization}
-            handleUtilization={handleSupplyUtilization}
-          />
         </>
       )}
 

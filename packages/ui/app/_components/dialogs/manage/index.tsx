@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -25,13 +25,13 @@ import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import BorrowTab from './BorrowTab';
 import RepayTab from './RepayTab';
 import SupplyTab from './SupplyTab';
 import WithdrawTab from './WithdrawTab';
+import AnimateHeight from '../../AnimateHeight';
 
 const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
   ssr: false
@@ -138,20 +138,6 @@ const ManageDialog = ({
     isLoading: isLoadingMaxSupply,
     refetch: refetchMaxSupplyAmount
   } = useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
-  const { data: assetsSupplyAprData } = useTotalSupplyAPYs(
-    [selectedMarketData],
-    chainId
-  );
-  const collateralApr = useMemo<number>(() => {
-    // Todo: add the market rewards to this calculation
-    if (assetsSupplyAprData) {
-      return parseFloat(
-        assetsSupplyAprData[selectedMarketData.cToken].apy.toFixed(2)
-      );
-    }
-
-    return 0.0;
-  }, [assetsSupplyAprData, selectedMarketData.cToken]);
 
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
@@ -179,69 +165,82 @@ const ManageDialog = ({
     const { setActive } = useManageDialogContext();
 
     return (
-      <Tabs
-        defaultValue={activeTab}
-        onValueChange={(value) => setActive(value as ActiveTab)}
-      >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="supply">Supply</TabsTrigger>
-          <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
-          <TabsTrigger
-            value="borrow"
-            disabled={isBorrowDisabled}
+      <div className="tabs-container">
+        <Tabs
+          defaultValue={activeTab}
+          onValueChange={(value) => setActive(value as ActiveTab)}
+        >
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="supply">Supply</TabsTrigger>
+            <TabsTrigger
+              value="borrow"
+              disabled={isBorrowDisabled}
+            >
+              Borrow
+            </TabsTrigger>
+            <TabsTrigger
+              value="repay"
+              disabled={isBorrowDisabled}
+            >
+              Repay
+            </TabsTrigger>
+            <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
+          </TabsList>
+
+          <TabsContent
+            value="supply"
+            className="mt-2"
           >
-            Borrow
-          </TabsTrigger>
-          <TabsTrigger
-            value="repay"
-            disabled={isBorrowDisabled}
-          >
-            Repay
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="supply">
-          <SupplyTab
-            maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
-            isLoadingMax={isLoadingMaxSupply}
-            collateralApr={collateralApr}
-            totalStats={{
-              capAmount: supplyCapAsNumber,
-              totalAmount: totalSupplyAsNumber,
-              capFiat: supplyCapAsFiat,
-              totalFiat: selectedMarketData.totalSupplyFiat
-            }}
-            setSwapWidgetOpen={setSwapWidgetOpen}
-          />
-        </TabsContent>
-
-        <TabsContent value="withdraw">
-          <WithdrawTab
-            maxAmount={maxWithdrawAmount ?? 0n}
-            isLoadingMax={isLoadingMaxWithdrawAmount}
-          />
-        </TabsContent>
-
-        <TabsContent value="borrow">
-          <BorrowTab
-            maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
-            isLoadingMax={isLoadingMaxBorrowAmount}
-            totalStats={{
-              capAmount: borrowCapAsNumber,
-              totalAmount: totalBorrowAsNumber,
-              capFiat: borrowCapAsFiat,
-              totalFiat: selectedMarketData.totalBorrowFiat
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="repay">
-          <RepayTab
-            maxAmount={maxRepayAmount ?? 0n}
-            isLoadingMax={isLoadingMaxRepayAmount}
-          />
-        </TabsContent>
-      </Tabs>
+            <SupplyTab
+              maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
+              isLoadingMax={isLoadingMaxSupply}
+              totalStats={{
+                capAmount: supplyCapAsNumber,
+                totalAmount: totalSupplyAsNumber,
+                capFiat: supplyCapAsFiat,
+                totalFiat: selectedMarketData.totalSupplyFiat
+              }}
+              setSwapWidgetOpen={setSwapWidgetOpen}
+            />
+          </TabsContent>
+          <TabsContent value="borrow">
+            <BorrowTab
+              maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
+              isLoadingMax={isLoadingMaxBorrowAmount}
+              totalStats={{
+                capAmount: borrowCapAsNumber,
+                totalAmount: totalBorrowAsNumber,
+                capFiat: borrowCapAsFiat,
+                totalFiat: selectedMarketData.totalBorrowFiat
+              }}
+            />
+          </TabsContent>
+          <TabsContent value="repay">
+            <RepayTab
+              maxAmount={maxRepayAmount ?? 0n}
+              isLoadingMax={isLoadingMaxRepayAmount}
+              totalStats={{
+                capAmount: borrowCapAsNumber,
+                totalAmount: totalBorrowAsNumber,
+                capFiat: borrowCapAsFiat,
+                totalFiat: selectedMarketData.totalBorrowFiat
+              }}
+            />
+          </TabsContent>
+          <TabsContent value="withdraw">
+            <WithdrawTab
+              maxAmount={maxWithdrawAmount ?? 0n}
+              isLoadingMax={isLoadingMaxWithdrawAmount}
+              totalStats={{
+                capAmount: supplyCapAsNumber,
+                totalAmount: totalSupplyAsNumber,
+                capFiat: supplyCapAsFiat,
+                totalFiat: selectedMarketData.totalSupplyFiat
+              }}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
     );
   };
 
@@ -270,10 +269,12 @@ const ManageDialog = ({
             />
           </div>
 
-          <TabsWithContext
-            activeTab={activeTab}
-            isBorrowDisabled={isBorrowDisabled}
-          />
+          <AnimateHeight>
+            <TabsWithContext
+              activeTab={activeTab}
+              isBorrowDisabled={isBorrowDisabled}
+            />
+          </AnimateHeight>
         </DialogContent>
       </Dialog>
 

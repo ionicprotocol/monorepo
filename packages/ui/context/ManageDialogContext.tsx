@@ -396,6 +396,7 @@ export const ManageDialogProvider: React.FC<{
       setAmount(calculatedAmount);
       // Don't set utilization here - let the effect handle it
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       active,
       maxSupplyAmount?.bigNumber,
