@@ -151,6 +151,9 @@
     },
     "UniswapV3LiquidatorFunder": {
       "address": "0x1D7669b6BDfdb83066dd7C0aDa4B630b25cBc28a"
+    },
+    "xERC20Hyperlane": {
+      "address": "0x14A71B2822663491D98CBB8332bB15Db61c36f7a"
     }
   }
 }

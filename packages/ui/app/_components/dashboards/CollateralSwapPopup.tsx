@@ -35,7 +35,10 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
-import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
+import {
+  donutoptions,
+  getDonutData
+} from '@ui/app/_constants/market-details-chart';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
