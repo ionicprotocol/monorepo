@@ -126,7 +126,6 @@ const Asset = () => {
     selectedMarketData,
     Number(chain)
   );
-  console.log('irmData', irmData);
 
   // const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
   const totalSupplied = assetData?.totalSupplyNative
@@ -172,7 +171,6 @@ const Asset = () => {
           .from('asset_total_apy_history')
           .select('*')
           .ilike('ctoken_address', cTokenAddress as string);
-        console.log('data', data);
 
         if (error) {
           throw new Error(`HTTP error! Status: ${error.message}`);
