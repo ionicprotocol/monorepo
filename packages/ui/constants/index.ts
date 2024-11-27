@@ -77,19 +77,12 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
 };
 
 export const chainsArr: Record<number, string> = {
-  34443: 'Mode',
-  8453: 'Base',
-  10: 'Optimism',
-  60808: 'Bob',
-  252: 'Frax'
-};
-
-export const scans: Record<number, string> = {
-  34443: 'https://explorer.mode.network/tx/',
-  8453: 'https://basescan.org/tx/',
-  10: 'https://optimistic.etherscan.io/tx/',
-  60808: 'https://explorer.gobob.xyz/tx/',
-  252: 'https://fraxscan.com/tx/'
+  [mode.id]: 'Mode',
+  [base.id]: 'Base',
+  [optimism.id]: 'Optimism',
+  [bob.id]: 'Bob',
+  [fraxtal.id]: 'Fraxtal',
+  [lisk.id]: 'Lisk'
 };
 
 export const FLYWHEEL_TYPE_MAP: Record<

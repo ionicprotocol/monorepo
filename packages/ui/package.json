@@ -9,7 +9,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@gasbot/widget": "^0.4.7",
     "@ionicprotocol/sdk": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@layerzerolabs/lz-v2-utilities": "^2.3.40",
