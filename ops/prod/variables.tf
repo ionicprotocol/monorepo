@@ -62,6 +62,12 @@ variable "liquidation_sendgrid_api_key" {
 variable "optimism_mainnet_rpcs" {
   type = string
 }
+variable "lisk_mainnet_rpcs" {
+  type = string
+}
+variable "fraxtal_mainnet_rpcs" {
+  type = string
+}
 
 variable "liquidation_sendgrid_email_to" {
   type = string
@@ -78,7 +84,6 @@ variable "uptime_liquidator_api" {
 variable "uptime_pyth_updater_api" {
   type = string
 }
-// ... existing variables ...
 
 variable "task_definition_family_optimism" {
   description = "Family name for the Optimism task definition"
@@ -94,8 +99,15 @@ variable "task_definition_family_mode" {
   description = "Family name for the Mode task definition"
   type        = string
 }
+variable "task_definition_family_lisk" {
+  description = "Family name for the Lisk task definition"
+  type        = string
+}
 
-
+variable "task_definition_family_fraxtal" {
+  description = "Family name for the Fraxtal task definition"
+  type        = string
+}
 
 
 variable "ecr_repository_name" {

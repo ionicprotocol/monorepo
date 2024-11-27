@@ -26,6 +26,14 @@ output "task_definition_arn" {
   value = aws_ecs_task_definition.perbotTaskDefinition1.arn
 }
 
+output "lisk_task_definition_arn" {
+  value = aws_ecs_task_definition.liskTaskDefinition1.arn
+}
+
+output "fraxtal_task_definition_arn" {
+  value = aws_ecs_task_definition.fraxtalTaskDefinition1.arn
+}
+
 output "debug_task_definition_families" {
   value = {
     base = var.task_definition_family_base
