@@ -101,8 +101,6 @@ interface IVoter {
 
   function lastVoted(uint256 tokenId) external view returns (uint256);
 
-  function isGauge(address gauge) external view returns (bool);
-
   function isWhitelistedToken(address token) external view returns (bool);
 
   function isWhitelistedNFT(uint256 tokenId) external view returns (bool);
