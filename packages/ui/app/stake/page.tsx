@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -70,7 +70,24 @@ export default function Stake() {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
-  const selectedtoken = queryToken ?? 'eth';
+  const getDefaultToken = (chain: string) => {
+    return chain === '34443' ? 'mode' : 'eth';
+  };
+
+  const selectedtoken =
+    queryToken ?? getDefaultToken(querychain ?? String(chainId));
+
+  useEffect(() => {
+    if (!queryToken && window) {
+      const url = new URL(window.location.href);
+      url.searchParams.set(
+        'token',
+        getDefaultToken(querychain ?? String(chainId))
+      );
+      window.history.pushState({}, '', url);
+    }
+  }, [chainId, queryToken, querychain]);
+
   const chain = querychain ? querychain : String(chainId);
   const stakingContractAddress = getStakingToContract(
     +chain,
@@ -612,7 +629,7 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
-                  tokenName={selectedtoken ?? 'eth'}
+                  tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
                   tokenSelector={true}

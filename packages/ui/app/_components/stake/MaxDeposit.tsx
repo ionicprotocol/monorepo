@@ -1,6 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
-
 import {
   useState,
   useMemo,
@@ -11,12 +8,21 @@ import {
 } from 'react';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import { formatUnits, parseUnits } from 'viem';
-// import { mode } from 'viem/chains';
 import { useAccount, useBalance } from 'wagmi';
 
+import { Button } from '@ui/components/ui/button';
+import { Card, CardContent } from '@ui/components/ui/card';
+import { Input } from '@ui/components/ui/input';
+
 import TokenSelector from './TokenSelector';
+
+export interface IBal {
+  decimals: number;
+  value: bigint;
+}
 
 interface IMaxDeposit {
   amount?: string;
@@ -30,11 +36,6 @@ interface IMaxDeposit {
   tokenSelector?: boolean;
   tokenArr?: string[];
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
-}
-
-export interface IBal {
-  decimals: number;
-  value: bigint;
 }
 
 function MaxDeposit({
@@ -71,138 +72,146 @@ function MaxDeposit({
         value: parseUnits(max, data?.decimals ?? 18),
         decimals: data?.decimals ?? 18
       });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: parseUnits(max, data?.decimals ?? 18),
-      //     decimals: data?.decimals ?? 18
-      //   });
-    } else if (max == '0') {
+    } else if (max === '0') {
       setBal({ value: BigInt(0), decimals: data?.decimals ?? 18 });
-      // setMaxTokenForUtilization &&
-      //   setMaxTokenForUtilization({
-      //     value: BigInt(0),
-      //     decimals: data?.decimals ?? 18
-      //   });
     } else {
       data && setBal({ value: data?.value, decimals: data?.decimals });
     }
   }, [data, max]);
-  // console.log(data);
+
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
       bal &&
-      Number(e.target.value) > Number(formatUnits(bal?.value, bal?.decimals))
+      Number(e.target.value) > Number(formatUnits(bal.value, bal.decimals))
     )
       return;
     if (!handleInput) return;
     handleInput(e.target.value);
   }
+
   function handleMax(val: string) {
     if (!handleInput) return;
     handleInput(val);
   }
 
-  const newRef = useRef(null!);
+  const newRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState<boolean>(false);
+
   useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (newRef.current && !newRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, []);
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
+  // Split tokenName if it contains multiple tokens
+  const tokens = tokenName?.split('/') ?? ['eth'];
+
   return (
-    <>
-      <div
-        className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40 ${
-          !fetchOwn ? 'flex' : 'hidden'
-        }`}
-      >
-        <span>{headerText}</span>
-        <div>
-          {' '}
-          {tokenName?.toUpperCase() ?? ''} Balance :{' '}
-          {bal
-            ? parseFloat(formatUnits(bal?.value, bal?.decimals)).toLocaleString(
-                'en-US',
-                {
-                  maximumFractionDigits: 3
-                }
-              )
-            : max}
-          {handleInput && (
-            <button
-              className={`text-accent ml-2`}
-              onClick={() => {
-                handleMax(bal ? formatUnits(bal?.value, bal?.decimals) : max);
-                setMaxTokenForUtilization &&
-                  setMaxTokenForUtilization({
-                    value: bal?.value ?? BigInt(0),
-                    decimals: bal?.decimals ?? 18
-                  });
-              }}
-            >
-              MAX
-            </button>
-          )}
-        </div>
-      </div>
-      <div
-        className={`flex max-w-full mt-2 items-center justify-between text-md gap-x-1 `}
-      >
-        <input
-          className={`focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-auto flex w-full trucnate`}
-          placeholder={`0.0`}
-          type="number"
-          value={
-            fetchOwn
-              ? bal &&
-                parseFloat(
-                  formatUnits(bal?.value, bal?.decimals)
-                ).toLocaleString('en-US', {
-                  maximumFractionDigits: 3
-                })
-              : amount
-          }
-          onChange={(e) => handlInpData(e)}
-          disabled={handleInput ? false : true}
-        />
+    <Card className="border-0 bg-transparent shadow-none">
+      <CardContent className="p-0">
         <div
-          className={`ml-auto min-w-max px-0.5 flex items-center justify-end`}
+          className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40 ${
+            !fetchOwn ? 'flex' : 'hidden'
+          }`}
         >
-          {tokenSelector ? (
-            <TokenSelector
-              newRef={newRef}
-              open={open}
-              setOpen={setOpen}
-              // chain={+chain}
-              tokenArr={tokenArr}
-            />
-          ) : (
-            <>
-              {' '}
-              <img
-                alt="ion logo"
-                className={`w-5 h-5 inline-block ml-2`}
-                src={`/img/symbols/32/color/${tokenName.toLowerCase()}.png`}
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null; // prevents looping
-                  currentTarget.src = '/img/logo/ION.png';
+          <span>{headerText}</span>
+          <div>
+            {tokenName?.toUpperCase() ?? ''} Balance:{' '}
+            {bal
+              ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString(
+                  'en-US',
+                  {
+                    maximumFractionDigits: 3
+                  }
+                )
+              : max}
+            {handleInput && (
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-accent h-4 text-[10px] hover:bg-transparent pr-0"
+                onClick={() => {
+                  handleMax(bal ? formatUnits(bal.value, bal.decimals) : max);
+                  setMaxTokenForUtilization &&
+                    setMaxTokenForUtilization({
+                      value: bal?.value ?? BigInt(0),
+                      decimals: bal?.decimals ?? 18
+                    });
                 }}
-              />
-              <button className={` ml-2`}>{tokenName.toUpperCase()}</button>{' '}
-            </>
-          )}
+              >
+                MAX
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+        <div className="flex max-w-full items-center gap-x-4">
+          <Input
+            className="focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-1 min-w-0 border-0 p-0"
+            placeholder="0.0"
+            type="number"
+            value={
+              fetchOwn
+                ? bal &&
+                  parseFloat(
+                    formatUnits(bal.value, bal.decimals)
+                  ).toLocaleString('en-US', {
+                    maximumFractionDigits: 3
+                  })
+                : amount
+            }
+            onChange={handlInpData}
+            disabled={!handleInput}
+          />
+          <div className="flex-none flex items-center">
+            {tokenSelector ? (
+              <TokenSelector
+                newRef={newRef}
+                open={open}
+                setOpen={setOpen}
+                tokenArr={tokenArr}
+                selectedToken={tokenName}
+              />
+            ) : (
+              <div className="flex items-center">
+                <div className="relative flex items-center">
+                  {tokens.map((token, index) => (
+                    <div
+                      key={token}
+                      className="relative"
+                      style={{
+                        marginLeft: index > 0 ? '-0.5rem' : '0',
+                        zIndex: tokens.length - index
+                      }}
+                    >
+                      <Image
+                        src={`/img/symbols/32/color/${token.toLowerCase()}.png`}
+                        alt={`${token} logo`}
+                        width={18}
+                        height={18}
+                        className="rounded-full border border-black bg-black"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = '/img/logo/ION.png';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <span className="ml-2">{tokenName?.toUpperCase()}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
