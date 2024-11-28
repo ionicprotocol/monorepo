@@ -1,5 +1,7 @@
 import Image from 'next/image';
+
 import { base, mode, optimism } from 'viem/chains';
+
 import { BaseSugarAddress } from '@ui/constants/baselp';
 import { ModeSugarAddress } from '@ui/constants/lp';
 import { OPSugarAddress } from '@ui/constants/oplp';

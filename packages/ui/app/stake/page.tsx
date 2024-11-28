@@ -38,12 +38,11 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import RewardDisplay from '../_components/stake/RewardDisplay';
-
 import MaxDeposit from '../_components/MaxDeposit';
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import ClaimRewards from '../_components/stake/ClaimRewards';
+import RewardDisplay from '../_components/stake/RewardDisplay';
 import Toggle from '../_components/Toggle';
 
 const NetworkSelector = dynamic(
@@ -71,14 +70,12 @@ export default function Stake() {
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
   const chain = querychain ? querychain : String(chainId);
-  console.log('chain', chain);
 
   const getDefaultToken = (chain: string) => {
     return chain === String(mode.id) ? 'mode' : 'eth';
   };
   const selectedtoken =
     queryToken ?? getDefaultToken(querychain ?? String(chainId));
-  console.log('selectedtoken', selectedtoken);
 
   const stakingContractAddress = getStakingToContract(
     +chain,
@@ -129,6 +126,7 @@ export default function Stake() {
     if (shouldUpdate) {
       router.push(`?${params.toString()}`, { scroll: false });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, querychain, router, searchParams]);
 
   const { address, isConnected } = useAccount();

@@ -16,8 +16,9 @@ import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
 import { Input } from '@ui/components/ui/input';
 
-import { icErc20Abi } from '@ionicprotocol/sdk';
 import TokenSelector from './stake/TokenSelector';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 export interface IBal {
   decimals: number;
