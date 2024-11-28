@@ -212,7 +212,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       fee = (value * fee) / 1e18;
       value -= fee;
 
-      // Distribute fee
       uint256 feeToDistribute = (fee * 75) / 100;
       uint256 feeToProtocol = fee - feeToDistribute;
       s_protocolFees[_lpType] += feeToProtocol;
@@ -252,69 +251,53 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Supply(supplyBefore, supplyBefore - oldLocked.amount);
   }
 
-  struct MergeVars {
-    address sender;
-    uint256 lengthOfAssets;
-    address[] assetsLocked;
-    address asset;
-    LpTokenType lpType;
-    LockedBalance oldLockedTo;
-    LockedBalance oldLockedFrom;
-    uint256 end;
-    uint256 start;
-    uint256 boost;
-    LockedBalance newLockedTo;
-  }
-
   function merge(uint256 _from, uint256 _to) external {
-    MergeVars memory vars;
-    vars.sender = _msgSender();
     if (_from == _to) revert SameNFT();
     if (s_voted[_from] || s_voted[_to]) revert AlreadyVoted();
     if (ownerOf(_from) != _msgSender()) revert NotOwner();
     if (ownerOf(_to) != _msgSender()) revert NotOwner();
 
-    vars.assetsLocked = s_assetsLocked[_from].values();
+    address[] memory assetsLocked = s_assetsLocked[_from].values();
 
-    for (uint256 i = 0; i < vars.assetsLocked.length; i++) {
-      vars.asset = vars.assetsLocked[i];
-      vars.lpType = s_lpType[vars.asset];
+    for (uint256 i = 0; i < assetsLocked.length; i++) {
+      address asset = assetsLocked[i];
+      LpTokenType lpType = s_lpType[asset];
 
-      vars.oldLockedTo = s_locked[_to][vars.lpType];
-      vars.oldLockedFrom = s_locked[_from][vars.lpType];
+      LockedBalance memory oldLockedTo = s_locked[_to][lpType];
+      LockedBalance memory oldLockedFrom = s_locked[_from][lpType];
 
-      if (vars.oldLockedTo.end != 0 && vars.oldLockedTo.end <= block.timestamp) revert LockExpired();
-      if (vars.oldLockedFrom.end != 0 && vars.oldLockedFrom.end <= block.timestamp) revert LockExpired();
-      if (vars.oldLockedFrom.isPermanent) revert PermanentLock();
-      if (vars.oldLockedTo.isPermanent) revert PermanentLock();
+      if (oldLockedTo.end != 0 && oldLockedTo.end <= block.timestamp) revert LockExpired();
+      if (oldLockedFrom.end != 0 && oldLockedFrom.end <= block.timestamp) revert LockExpired();
+      if (oldLockedFrom.isPermanent) revert PermanentLock();
+      if (oldLockedTo.isPermanent) revert PermanentLock();
 
-      vars.newLockedTo.tokenAddress = vars.asset;
-      vars.newLockedTo.amount = vars.oldLockedTo.amount + vars.oldLockedFrom.amount;
-      vars.newLockedTo.start = vars.oldLockedTo.start < vars.oldLockedFrom.start && vars.oldLockedTo.start != 0
-        ? vars.oldLockedTo.start
-        : vars.oldLockedFrom.start;
-      vars.newLockedTo.end = vars.oldLockedTo.end > vars.oldLockedFrom.end
-        ? vars.oldLockedTo.end
-        : vars.oldLockedFrom.end;
-      vars.newLockedTo.boost = _calculateBoost(vars.newLockedTo.end - vars.newLockedTo.start);
+      LockedBalance memory newLockedTo;
 
-      s_locked[_from][vars.lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
-      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), vars.lpType);
-      s_locked[_to][vars.lpType] = vars.newLockedTo;
-      _checkpoint(_to, vars.newLockedTo, vars.lpType);
+      newLockedTo.tokenAddress = asset;
+      newLockedTo.amount = oldLockedTo.amount + oldLockedFrom.amount;
+      newLockedTo.start = oldLockedTo.start < oldLockedFrom.start && oldLockedTo.start != 0
+        ? oldLockedTo.start
+        : oldLockedFrom.start;
+      newLockedTo.end = oldLockedTo.end > oldLockedFrom.end ? oldLockedTo.end : oldLockedFrom.end;
+      newLockedTo.boost = _calculateBoost(newLockedTo.end - newLockedTo.start);
 
-      s_assetsLocked[_from].remove(vars.asset);
-      if (!s_assetsLocked[_to].contains(vars.asset)) {
-        s_assetsLocked[_to].add(vars.asset);
+      s_locked[_from][lpType] = LockedBalance(address(0), 0, 0, 0, 0, false, 0);
+      _checkpoint(_from, LockedBalance(address(0), 0, 0, 0, 0, false, 0), lpType);
+      s_locked[_to][lpType] = newLockedTo;
+      _checkpoint(_to, newLockedTo, lpType);
+
+      s_assetsLocked[_from].remove(asset);
+      if (!s_assetsLocked[_to].contains(asset)) {
+        s_assetsLocked[_to].add(asset);
       }
 
-      if (s_underlyingStake[_from][vars.asset] != 0) {
-        s_underlyingStake[_to][vars.asset] += s_underlyingStake[_from][vars.asset];
-        s_underlyingStake[_from][vars.asset] = 0;
+      if (s_underlyingStake[_from][asset] != 0) {
+        s_underlyingStake[_to][asset] += s_underlyingStake[_from][asset];
+        s_underlyingStake[_from][asset] = 0;
       }
     }
     _burn(_from);
-    emit MergeCompleted(_from, _to, vars.assetsLocked, vars.assetsLocked.length);
+    emit MergeCompleted(_from, _to, assetsLocked, assetsLocked.length);
   }
 
   function split(

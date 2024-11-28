@@ -128,6 +128,9 @@ contract veIONTest is BaseTest {
     ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     ve.setLpTokenType(wethUSDC5050LP, IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
 
+    veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+
     ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
     ve.setStakeStrategy(balancerLpType, IStakeStrategy(veloWethUsdcStakingStrategy));
 
