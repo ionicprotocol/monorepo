@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
@@ -8,6 +10,8 @@ import {
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBalancePolling } from '@ui/hooks/useBalancePolling';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
@@ -16,6 +20,8 @@ import TransactionStepsHandler, {
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+
+import type { Address } from 'viem';
 
 interface WithdrawTabProps {
   maxAmount: bigint;
@@ -33,6 +39,9 @@ const WithdrawTab = ({
   isLoadingMax,
   totalStats
 }: WithdrawTabProps) => {
+  const [txHash, setTxHash] = useState<Address>();
+  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+
   const {
     selectedMarketData,
     amount,
@@ -50,6 +59,10 @@ const WithdrawTab = ({
     updatedValues,
     isLoadingUpdatedAssets
   } = useManageDialogContext();
+  const { refetch: refetchMaxWithdraw } = useMaxWithdrawAmount(
+    selectedMarketData,
+    chainId
+  );
 
   const isDisabled =
     !amount ||
@@ -63,8 +76,22 @@ const WithdrawTab = ({
     predicted: normalizedPredictedHealthFactor ?? '0'
   };
   const { currentSdk, address } = useMultiIonic();
-
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+
+  const { isPolling } = useBalancePolling({
+    address,
+    chainId,
+    txHash,
+    enabled: isWaitingForIndexing,
+    onSuccess: () => {
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      refetchMaxWithdraw();
+      toast.success(
+        `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
+      );
+    }
+  });
 
   const withdrawAmount = async () => {
     if (
@@ -117,24 +144,30 @@ const WithdrawTab = ({
           }
         });
 
-        tx &&
-          (await currentSdk.publicClient.waitForTransactionReceipt({
+        if (tx) {
+          await currentSdk.publicClient.waitForTransactionReceipt({
             hash: tx
-          }));
+          });
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            success: true
-          }
-        });
+          setTxHash(tx);
+          setIsWaitingForIndexing(true);
 
-        toast.success(
-          `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
-        );
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            }
+          });
+
+          toast.success(
+            `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
+          );
+        }
       } catch (error) {
         console.error(error);
+        setIsWaitingForIndexing(false);
+        setTxHash(undefined);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -154,9 +187,8 @@ const WithdrawTab = ({
       <Amount
         amount={amount}
         handleInput={setAmount}
-        isLoading={isLoadingMax}
+        isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
-        selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
         hintText="Max Withdraw"
         currentUtilizationPercentage={currentUtilizationPercentage}
@@ -197,9 +229,9 @@ const WithdrawTab = ({
               <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
+                isLoading={isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
               >
                 {updatedValues.updatedSupplyAPY?.toFixed(2)}%
               </ResultHandler>
@@ -246,7 +278,9 @@ const WithdrawTab = ({
           disabled={isDisabled}
           onClick={withdrawAmount}
         >
-          Withdraw {selectedMarketData.underlyingSymbol}
+          {isWaitingForIndexing
+            ? 'Updating Balances...'
+            : `Withdraw ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>

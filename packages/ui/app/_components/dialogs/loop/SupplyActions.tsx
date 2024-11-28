@@ -126,7 +126,6 @@ function SupplyActions({
               maxSupplyAmount?.bigNumber ?? 0n,
               selectedCollateralAsset.underlyingDecimals
             )}
-            selectedMarketData={selectedCollateralAsset}
             symbol={selectedCollateralAsset.underlyingSymbol}
             currentUtilizationPercentage={utilization}
             handleUtilization={handleSupplyUtilization}

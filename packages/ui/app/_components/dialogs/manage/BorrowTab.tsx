@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
@@ -10,6 +12,8 @@ import {
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBalancePolling } from '@ui/hooks/useBalancePolling';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
@@ -18,6 +22,8 @@ import TransactionStepsHandler, {
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+
+import type { Address } from 'viem';
 
 interface BorrowTabProps {
   maxAmount: bigint;
@@ -31,6 +37,9 @@ interface BorrowTabProps {
 }
 
 const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
+  const [txHash, setTxHash] = useState<Address>();
+  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+
   const {
     selectedMarketData,
     amount,
@@ -48,8 +57,31 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     maxBorrowAmount,
     isLoadingPredictedHealthFactor,
     isLoadingUpdatedAssets,
-    updatedValues
+    updatedValues,
+    comptrollerAddress
   } = useManageDialogContext();
+
+  const { refetch: refetchMaxBorrow } = useMaxBorrowAmount(
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
+  );
+  const { currentSdk, address } = useMultiIonic();
+
+  const { isPolling } = useBalancePolling({
+    address,
+    chainId,
+    txHash,
+    enabled: isWaitingForIndexing,
+    onSuccess: () => {
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      refetchMaxBorrow();
+      toast.success(
+        `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
+      );
+    }
+  });
 
   const isDisabled =
     !amount ||
@@ -78,8 +110,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     amount &&
     borrowLimits.min &&
     parseFloat(amount) < parseFloat(borrowLimits.min);
-
-  const { currentSdk, address } = useMultiIonic();
 
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
 
@@ -124,24 +154,30 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           }
         });
 
-        tx &&
-          (await currentSdk.publicClient.waitForTransactionReceipt({
+        if (tx) {
+          await currentSdk.publicClient.waitForTransactionReceipt({
             hash: tx
-          }));
+          });
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            success: true
-          }
-        });
+          setTxHash(tx);
+          setIsWaitingForIndexing(true);
 
-        toast.success(
-          `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
-        );
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            }
+          });
+
+          toast.success(
+            `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
+          );
+        }
       } catch (error) {
         console.error(error);
+        setIsWaitingForIndexing(false);
+        setTxHash(undefined);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -161,9 +197,8 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
       <Amount
         amount={amount}
         handleInput={setAmount}
-        isLoading={isLoadingMax}
+        isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
-        selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
@@ -214,9 +249,9 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
               <span>{updatedValues.borrowBalanceFrom}</span>
               <span className="mx-1">→</span>
               <ResultHandler
+                isLoading={isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
               >
                 {updatedValues.borrowBalanceTo}
               </ResultHandler>
@@ -276,10 +311,12 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
       ) : (
         <Button
           className="w-full bg-accent"
-          disabled={isDisabled || !!isUnderMinBorrow}
+          disabled={isDisabled || !!isUnderMinBorrow || isWaitingForIndexing}
           onClick={borrowAmount}
         >
-          Borrow {selectedMarketData.underlyingSymbol}
+          {isWaitingForIndexing
+            ? 'Updating Balances...'
+            : `Borrow ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>

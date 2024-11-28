@@ -69,7 +69,6 @@ function BorrowActions({
               mainText="AMOUNT TO BORROW"
               max={''}
               readonly
-              selectedMarketData={selectedBorrowAsset}
               setSelectedAsset={(asset: MarketData) =>
                 setSelectedBorrowAsset(asset)
               }

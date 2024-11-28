@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
@@ -10,6 +10,8 @@ import {
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBalancePolling } from '@ui/hooks/useBalancePolling';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
@@ -18,6 +20,8 @@ import TransactionStepsHandler, {
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+
+import type { Address } from 'viem';
 
 interface RepayTabProps {
   maxAmount: bigint;
@@ -31,6 +35,8 @@ interface RepayTabProps {
 }
 
 const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
+  const [txHash, setTxHash] = useState<Address>();
+  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const {
     selectedMarketData,
     amount,
@@ -47,13 +53,30 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     isLoadingUpdatedAssets,
     updatedValues
   } = useManageDialogContext();
-  const { currentSdk, address } = useMultiIonic();
 
+  const { refetch: refetchMaxRepay } = useMaxRepayAmount(
+    selectedMarketData,
+    chainId
+  );
+  const { currentSdk, address } = useMultiIonic();
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
   );
+
+  const { isPolling } = useBalancePolling({
+    address,
+    chainId,
+    txHash,
+    enabled: isWaitingForIndexing,
+    onSuccess: () => {
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      refetchMaxRepay();
+      toast.success(`Repaid ${amount} ${selectedMarketData.underlyingSymbol}`);
+    }
+  });
 
   const repayAmount = async () => {
     if (
@@ -151,20 +174,30 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
           }
         });
 
-        tx &&
-          (await currentSdk.publicClient.waitForTransactionReceipt({
+        if (tx) {
+          await currentSdk.publicClient.waitForTransactionReceipt({
             hash: tx
-          }));
+          });
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            success: true
-          }
-        });
+          setTxHash(tx);
+          setIsWaitingForIndexing(true);
+
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            }
+          });
+
+          toast.success(
+            `Repaid ${amount} ${selectedMarketData.underlyingSymbol}`
+          );
+        }
       } catch (error) {
         console.error(error);
+        setIsWaitingForIndexing(false);
+        setTxHash(undefined);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -189,9 +222,8 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
       <Amount
         amount={amount}
         handleInput={setAmount}
-        isLoading={isLoadingMax}
+        isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
-        selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
@@ -229,9 +261,9 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
               <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
+                isLoading={isLoadingUpdatedAssets || isPolling}
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
               >
                 {updatedValues.updatedBorrowAPR?.toFixed(2)}%
               </ResultHandler>
@@ -280,7 +312,9 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
           }
           onClick={repayAmount}
         >
-          Repay {selectedMarketData.underlyingSymbol}
+          {isWaitingForIndexing
+            ? 'Updating Balances...'
+            : `Repay ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>

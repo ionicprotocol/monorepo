@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
@@ -11,6 +13,8 @@ import {
 import { INFO_MESSAGES } from '@ui/constants';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useBalancePolling } from '@ui/hooks/useBalancePolling';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
 import Amount from './Amount';
 import TransactionStepsHandler, {
@@ -18,6 +22,8 @@ import TransactionStepsHandler, {
 } from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+
+import type { Address } from 'viem';
 
 interface SupplyTabProps {
   maxAmount: bigint;
@@ -37,6 +43,9 @@ const SupplyTab = ({
   totalStats,
   setSwapWidgetOpen
 }: SupplyTabProps) => {
+  const [txHash, setTxHash] = useState<Address>();
+  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+
   const {
     selectedMarketData,
     amount,
@@ -54,9 +63,30 @@ const SupplyTab = ({
     isLoadingUpdatedAssets
   } = useManageDialogContext();
 
+  const { refetch: refetchMaxSupply } = useMaxSupplyAmount(
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
+  );
+
   const isDisabled = !amount || amountAsBInt === 0n;
   const { currentSdk, address } = useMultiIonic();
   const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+
+  const { isPolling } = useBalancePolling({
+    address,
+    chainId,
+    txHash,
+    enabled: isWaitingForIndexing,
+    onSuccess: () => {
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      refetchMaxSupply();
+      toast.success(
+        `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
+      );
+    }
+  });
 
   const supplyAmount = async () => {
     if (
@@ -179,24 +209,30 @@ const SupplyTab = ({
           }
         });
 
-        tx &&
-          (await currentSdk.publicClient.waitForTransactionReceipt({
+        if (tx) {
+          await currentSdk.publicClient.waitForTransactionReceipt({
             hash: tx
-          }));
+          });
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            success: true
-          }
-        });
+          setTxHash(tx);
+          setIsWaitingForIndexing(true);
 
-        toast.success(
-          `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
-        );
+          upsertTransactionStep({
+            index: currentTransactionStep,
+            transactionStep: {
+              ...transactionSteps[currentTransactionStep],
+              success: true
+            }
+          });
+
+          toast.success(
+            `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
+          );
+        }
       } catch (error) {
-        toast.error('Error while supplying!');
+        console.error(error);
+        setIsWaitingForIndexing(false);
+        setTxHash(undefined);
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -205,6 +241,8 @@ const SupplyTab = ({
             error: true
           }
         });
+
+        toast.error('Error while supplying!');
       }
     }
   };
@@ -223,9 +261,8 @@ const SupplyTab = ({
       <Amount
         amount={amount}
         handleInput={setAmount}
-        isLoading={isLoadingMax}
+        isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
-        selectedMarketData={selectedMarketData}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
@@ -241,7 +278,7 @@ const SupplyTab = ({
                 <span>{updatedValues.supplyBalanceFrom}</span>
                 <span className="mx-1">→</span>
                 <ResultHandler
-                  isLoading={isLoadingUpdatedAssets}
+                  isLoading={isLoadingUpdatedAssets || isPolling}
                   height={16}
                   width={16}
                 >
@@ -317,10 +354,12 @@ const SupplyTab = ({
       ) : (
         <Button
           className="w-full bg-accent"
-          disabled={isDisabled}
+          disabled={isDisabled || isWaitingForIndexing}
           onClick={supplyAmount}
         >
-          Supply {selectedMarketData.underlyingSymbol}
+          {isWaitingForIndexing
+            ? 'Updating Balances...'
+            : `Supply ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>

@@ -10,6 +10,8 @@ import {
 import { cn } from '@ui/lib/utils';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
+import ResultHandler from '../../ResultHandler';
+
 interface IAmount {
   amount?: string;
   availableAssets?: MarketData[];
@@ -19,30 +21,46 @@ interface IAmount {
   mainText?: string;
   max?: string;
   readonly?: boolean;
-  selectedMarketData: MarketData;
   setSelectedAsset?: (asset: MarketData) => void;
   symbol: string;
   currentUtilizationPercentage?: number;
   handleUtilization?: (val: number) => void;
 }
 
-// Extracted common input component
 const AmountInput = ({
   mainText,
   handleInput,
-  selectedMarketData,
   readonly,
   amount,
-  max
+  max,
+  isLoading
 }: {
   mainText?: string;
   handleInput: (val?: string) => void;
-  selectedMarketData: MarketData;
   readonly?: boolean;
   amount?: string;
   max?: string;
+  isLoading?: boolean;
 }) => {
-  const isDisabled = readonly || max === '0';
+  const isDisabled = readonly || max === '0' || isLoading;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      handleInput(undefined);
+      return;
+    }
+
+    const numValue = parseFloat(value);
+    const maxValue = parseFloat(max || '0');
+
+    if (numValue > maxValue) {
+      handleInput(max);
+      return;
+    }
+
+    handleInput(value);
+  };
 
   return (
     <div className="w-32">
@@ -52,18 +70,19 @@ const AmountInput = ({
           'w-full bg-transparent text-md border border-white/10 rounded px-2 py-1 focus:outline-none focus:border-white/20',
           isDisabled && 'opacity-50 cursor-not-allowed'
         )}
-        onChange={(e) => handleInput(e.target.value)}
-        placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
+        onChange={handleChange}
+        placeholder="0,00"
         readOnly={isDisabled}
         disabled={isDisabled}
         type="number"
         value={amount}
+        min="0"
+        max={max}
       />
     </div>
   );
 };
 
-// Extracted common asset selector component
 const AssetSelector = ({
   symbol,
   availableAssets,
@@ -76,6 +95,8 @@ const AssetSelector = ({
   children: React.ReactNode;
 }) => (
   <div className="flex flex-col items-end gap-1">
+    {children}
+
     <div
       className="flex items-center cursor-pointer"
       onClick={onClick}
@@ -96,11 +117,9 @@ const AssetSelector = ({
         />
       )}
     </div>
-    {children}
   </div>
 );
 
-// Extracted slider component with tooltip
 const UtilizationSlider = ({
   currentUtilizationPercentage,
   handleUtilization,
@@ -146,7 +165,6 @@ const UtilizationSlider = ({
 };
 
 const Amount = ({
-  selectedMarketData,
   handleInput,
   amount,
   availableAssets,
@@ -162,17 +180,21 @@ const Amount = ({
 }: IAmount) => {
   const [availableAssetsOpen, setAvailableAssetsOpen] = useState(false);
 
-  // Extracted common max button component
-  const MaxButton = !readonly && !isLoading && (
-    <button
-      onClick={() => handleInput(max)}
-      className="text-xs text-white/50 hover:text-white transition-colors"
+  const MaxButton = (
+    <ResultHandler
+      isLoading={isLoading}
+      height={16}
+      width={16}
     >
-      {hintText}: {max}
-    </button>
+      <button
+        onClick={() => handleInput(max)}
+        className="text-xs text-white/50 hover:text-white transition-colors"
+      >
+        {hintText}: {parseFloat(max).toFixed(3)}
+      </button>
+    </ResultHandler>
   );
 
-  // Extracted available assets dropdown
   const AssetsDropdown = availableAssets && (
     <div
       className={cn(
@@ -211,7 +233,6 @@ const Amount = ({
           <AmountInput
             mainText={mainText}
             handleInput={handleInput}
-            selectedMarketData={selectedMarketData}
             readonly={readonly}
             amount={amount}
             max={max}
@@ -239,7 +260,6 @@ const Amount = ({
         <AmountInput
           mainText={mainText}
           handleInput={handleInput}
-          selectedMarketData={selectedMarketData}
           readonly={readonly}
           amount={amount}
           max={max}
