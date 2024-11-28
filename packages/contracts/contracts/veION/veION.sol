@@ -13,8 +13,9 @@ import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { IVoter } from "./interfaces/IVoter.sol";
+import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
 
-contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
+contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpgradeable, IveION {
   using EnumerableSet for EnumerableSet.UintSet;
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for IERC20;
@@ -64,6 +65,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   function initialize(AddressesProvider _ap) public initializer {
     __Ownable2Step_init();
     __ERC721_init("veION", "veION");
+    __ReentrancyGuard_init();
     ap = _ap;
   }
 
@@ -86,7 +88,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256[] memory _duration,
     bool[] memory _stakeUnderlying,
     address _to
-  ) external override returns (uint256) {
+  ) external override nonReentrant returns (uint256) {
     return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, _to);
   }
 
@@ -103,7 +105,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256[] calldata _tokenAmount,
     uint256[] calldata _duration,
     bool[] memory _stakeUnderlying
-  ) external override returns (uint256) {
+  ) external override nonReentrant returns (uint256) {
     return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, msg.sender);
   }
 
@@ -119,7 +121,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenId,
     uint256 _tokenAmount,
     bool _stakeUnderlying
-  ) external {
+  ) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
 
@@ -157,7 +159,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 _tokenId,
     uint256 _duration,
     bool _stakeUnderlying
-  ) external {
+  ) external nonReentrant {
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
     uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
@@ -191,7 +193,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _tokenId ID of the veNFT
    * @param _lockDuration New lock duration to extend to
    */
-  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
+  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
     uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
@@ -223,7 +225,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _tokenAddress Address of the token to withdraw.
    * @param _tokenId Token ID of the veNFT to withdraw from.
    */
-  function withdraw(address _tokenAddress, uint256 _tokenId) external override {
+  function withdraw(address _tokenAddress, uint256 _tokenId) external override nonReentrant {
     address sender = _msgSender();
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
@@ -294,7 +296,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _from ID of the source veNFT
    * @param _to ID of the destination veNFT
    */
-  function merge(uint256 _from, uint256 _to) external {
+  function merge(uint256 _from, uint256 _to) external nonReentrant {
     if (_from == _to) revert SameNFT();
     if (s_voted[_from] || s_voted[_to]) revert AlreadyVoted();
     if (ownerOf(_from) != _msgSender()) revert NotOwner();
@@ -355,7 +357,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     address _tokenAddress,
     uint256 _from,
     uint256 _splitAmount
-  ) external returns (uint256 _tokenId1, uint256 _tokenId2) {
+  ) external nonReentrant returns (uint256 _tokenId1, uint256 _tokenId2) {
     address owner = _ownerOf(_from);
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_from][_lpType];
@@ -403,7 +405,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _tokenAddress Address of the token
    * @param _tokenId ID of the veNFT
    */
-  function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
+  function lockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
@@ -427,7 +429,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param _tokenAddress Address of the token
    * @param _tokenId ID of the veNFT
    */
-  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
+  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
     if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
@@ -452,7 +454,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @param lpToken Address of the LP token
    * @param amount Amount of voting power to delegate
    */
-  function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {
+  function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external nonReentrant {
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
     LockedBalance memory toLocked = s_locked[toTokenId][lpType];
@@ -533,7 +535,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     uint256 toTokenId,
     address lpToken,
     uint256[] memory amounts
-  ) public {
+  ) public nonReentrant {
     if (fromTokenIds.length != amounts.length) revert ArrayMismatch();
     for (uint256 i = 0; i < fromTokenIds.length; i++) {
       _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
@@ -544,7 +546,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
    * @notice Claims accumulated emissions rewards for staked tokens
    * @param _tokenAddress Address of the token to claim emissions for
    */
-  function claimEmissions(address _tokenAddress) external {
+  function claimEmissions(address _tokenAddress) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
     if (_stakeStrategy.userStakingWallet(msg.sender) == address(0)) revert NoUnderlyingStake();
