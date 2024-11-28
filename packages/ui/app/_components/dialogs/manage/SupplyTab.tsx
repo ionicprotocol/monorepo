@@ -2,14 +2,17 @@ import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
-import { Separator } from '@ui/components/ui/separator';
 import { Switch } from '@ui/components/ui/switch';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
 import { INFO_MESSAGES } from '@ui/constants';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import SliderComponent from './Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
@@ -210,7 +213,7 @@ const SupplyTab = ({
     <div className="space-y-4 pt-2">
       <div className="flex justify-between">
         <Button
-          className="w-full text-xs uppercase"
+          className="w-full text-xs uppercase bg-accent"
           onClick={() => setSwapWidgetOpen(true)}
         >
           Get {selectedMarketData.underlyingSymbol}
@@ -281,13 +284,28 @@ const SupplyTab = ({
         <span className="text-sm text-gray-400 uppercase">
           Enable Collateral
         </span>
-        <Switch
-          checked={enableCollateral}
-          onCheckedChange={handleCollateralToggle}
-          disabled={
-            transactionSteps.length > 0 || !selectedMarketData.supplyBalance
-          }
-        />
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger asChild>
+            <div>
+              <Switch
+                checked={enableCollateral}
+                onCheckedChange={handleCollateralToggle}
+                disabled={
+                  transactionSteps.length > 0 ||
+                  !selectedMarketData.supplyBalance
+                }
+              />
+            </div>
+          </TooltipTrigger>
+          {(transactionSteps.length > 0 ||
+            !selectedMarketData.supplyBalance) && (
+            <TooltipContent side="top">
+              {transactionSteps.length > 0
+                ? 'Cannot modify collateral during an active transaction'
+                : 'You need to supply assets first before enabling as collateral'}
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
 
       {transactionSteps.length > 0 ? (
@@ -298,7 +316,7 @@ const SupplyTab = ({
         />
       ) : (
         <Button
-          className="w-full"
+          className="w-full bg-accent"
           disabled={isDisabled}
           onClick={supplyAmount}
         >

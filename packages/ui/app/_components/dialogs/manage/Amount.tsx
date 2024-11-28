@@ -25,8 +25,8 @@ const Amount = ({
   handleInput,
   amount,
   availableAssets,
-  hintText = 'Wallet Balance',
-  mainText = 'Amount',
+  hintText = 'Balance',
+  mainText = 'Token Amount',
   max = '0',
   symbol,
   isLoading = false,
@@ -36,7 +36,6 @@ const Amount = ({
   handleUtilization
 }: IAmount) => {
   const [availableAssetsOpen, setAvailableAssetsOpen] = useState(false);
-  const percentages = [0, 20, 40, 60, 80, 100];
 
   return (
     <div className="w-full">
@@ -44,9 +43,9 @@ const Amount = ({
       <div className="flex md:hidden flex-col w-full gap-4">
         <div className="flex justify-between items-end w-full">
           <div className="w-32">
-            <div className="text-[10px] text-white/50 mb-1">{mainText}</div>
+            <div className="text-xs text-white/50 mb-1">{mainText}</div>
             <input
-              className="w-full bg-transparent text-lg font-bold focus:outline-none"
+              className="w-full bg-transparent text-md border border-white/10 rounded px-2 py-1 focus:outline-none focus:border-white/20"
               onChange={(e) => handleInput(e.target.value)}
               placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
               readOnly={!!readonly}
@@ -57,17 +56,12 @@ const Amount = ({
 
           <div className="flex flex-col items-end gap-1">
             {!readonly && !isLoading && (
-              <div className="flex items-center gap-2 text-[10px]">
-                <span className="text-white/50">
-                  {hintText} {max}
-                </span>
-                <button
-                  className="text-accent"
-                  onClick={() => handleInput(max)}
-                >
-                  MAX
-                </button>
-              </div>
+              <button
+                onClick={() => handleInput(max)}
+                className="text-xs text-white/50 hover:text-white transition-colors"
+              >
+                {hintText} {max}
+              </button>
             )}
             <div
               className="flex items-center cursor-pointer"
@@ -109,9 +103,9 @@ const Amount = ({
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center gap-8">
         <div className="w-32">
-          <div className="text-[10px] text-white/50 mb-1">{mainText}</div>
+          <div className="text-xs text-white/50 mb-1">{mainText}</div>
           <input
-            className="w-full bg-transparent text-lg font-bold focus:outline-none"
+            className="w-full bg-transparent text-md border border-white/10 rounded px-2 py-1 focus:outline-none focus:border-white/20"
             onChange={(e) => handleInput(e.target.value)}
             placeholder={`${selectedMarketData.underlyingSymbol} Amount`}
             readOnly={!!readonly}
@@ -135,17 +129,12 @@ const Amount = ({
 
         <div className="flex flex-col items-end gap-1">
           {!readonly && !isLoading && (
-            <div className="flex items-center gap-2 text-[10px]">
-              <span className="text-white/50">
-                {hintText} {max}
-              </span>
-              <button
-                className="text-accent"
-                onClick={() => handleInput(max)}
-              >
-                MAX
-              </button>
-            </div>
+            <button
+              onClick={() => handleInput(max)}
+              className="text-xs text-white/50 hover:text-white transition-colors"
+            >
+              {hintText}: {max}
+            </button>
           )}
           <div
             className="flex items-center cursor-pointer"

@@ -10,7 +10,6 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import SliderComponent from './Slider';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler, {
   useTransactionSteps
@@ -151,7 +150,7 @@ const WithdrawTab = ({
   };
 
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -243,7 +242,7 @@ const WithdrawTab = ({
         />
       ) : (
         <Button
-          className="w-full"
+          className="w-full bg-accent"
           disabled={isDisabled}
           onClick={withdrawAmount}
         >

@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
@@ -11,7 +12,6 @@ import {
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import Amount from './Amount';
-import SliderComponent from './Slider';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler, {
   useTransactionSteps
@@ -157,7 +157,7 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   };
 
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -172,11 +172,17 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
       {/* <SliderComponent /> */}
 
       {isUnderMinBorrow && (
-        <Alert variant="default">
-          <AlertDescription>
-            Amount must be greater than minimum borrow amount (
-            {borrowLimits.min} {selectedMarketData.underlyingSymbol})
-          </AlertDescription>
+        <Alert
+          variant="default"
+          className="py-2 border-0 bg-opacity-90"
+        >
+          <div className="flex items-center">
+            <Info className="mr-2 h-4 w-4 text-white" />
+            <AlertDescription>
+              Amount must be greater than minimum borrow amount (
+              {borrowLimits.min} {selectedMarketData.underlyingSymbol})
+            </AlertDescription>
+          </div>
         </Alert>
       )}
 
@@ -269,7 +275,7 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         />
       ) : (
         <Button
-          className="w-full"
+          className="w-full bg-accent"
           disabled={isDisabled || !!isUnderMinBorrow}
           onClick={borrowAmount}
         >

@@ -185,7 +185,7 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   };
 
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
         handleInput={setAmount}
@@ -274,7 +274,7 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
         />
       ) : (
         <Button
-          className="w-full"
+          className="w-full bg-accent"
           disabled={
             !amount || amountAsBInt === 0n || !currentBorrowAmountAsFloat
           }

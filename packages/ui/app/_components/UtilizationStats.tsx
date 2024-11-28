@@ -31,7 +31,7 @@ function UtilizationStats({
           />
         </div>
         <div>
-          <div className="text-gray-400">{label}:</div>
+          <div className="text-gray-400 text-xs uppercase">{label}</div>
           <div className="text-white">
             <strong>
               {millify(value)} of {millify(max)} {symbol}
