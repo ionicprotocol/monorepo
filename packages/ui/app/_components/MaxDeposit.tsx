@@ -1,6 +1,6 @@
 import {
   useState,
-  useEffect,
+  useMemo,
   useRef,
   type SetStateAction,
   type Dispatch
@@ -9,16 +9,15 @@ import {
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-import { formatUnits, type Address } from 'viem';
+import { formatUnits, parseUnits, type Address } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
 import { Input } from '@ui/components/ui/input';
 
-import TokenSelector from './stake/TokenSelector';
-
 import { icErc20Abi } from '@ionicprotocol/sdk';
+import TokenSelector from './stake/TokenSelector';
 
 export interface IBal {
   decimals: number;
@@ -26,44 +25,48 @@ export interface IBal {
 }
 
 interface IMaxDeposit {
-  amount: string;
-  tokenName: string;
+  amount?: string;
+  tokenName?: string;
   token?: Address;
   handleInput?: (val?: string) => void;
   fetchOwn?: boolean;
   headerText?: string;
+  max?: string;
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
   setMaxTokenForUtilization?: Dispatch<SetStateAction<IBal>>;
-  // Optional props for dashboard-specific features
-  useUnderlyingBalance?: boolean; // Flag to determine which balance to use
+  useUnderlyingBalance?: boolean;
   footerText?: string;
   decimals?: number;
 }
 
 function MaxDeposit({
-  headerText,
+  headerText = 'Deposit',
   amount,
-  tokenName,
+  tokenName = 'eth',
   token,
   handleInput,
   fetchOwn = false,
+  max,
   chain,
   tokenSelector = false,
   tokenArr,
   setMaxTokenForUtilization,
-  useUnderlyingBalance = false, // Default to regular balance
+  useUnderlyingBalance = false,
   footerText,
   decimals: propDecimals
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const { address } = useAccount();
 
-  // Use either underlying balance or regular balance based on flag
+  // For regular token balance
+  const hooktoken =
+    token === '0x0000000000000000000000000000000000000000' ? undefined : token;
+
   const { data: regularBalance } = useBalance({
     address,
-    token,
+    token: hooktoken,
     chainId: chain,
     query: {
       enabled: !useUnderlyingBalance,
@@ -71,32 +74,50 @@ function MaxDeposit({
     }
   });
 
+  // For underlying token balance
   const { data: underlyingBalance } = useReadContract({
     abi: icErc20Abi,
     address: token,
     functionName: 'balanceOfUnderlying',
     args: [address!],
     query: {
-      enabled: useUnderlyingBalance,
+      enabled: useUnderlyingBalance && !!address,
       refetchInterval: 5000
     }
   });
 
-  // Determine which balance and decimals to use
-  const balance = useUnderlyingBalance
-    ? underlyingBalance ?? 0n
-    : regularBalance?.value ?? 0n;
-  const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
+  useMemo(() => {
+    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
 
-  useEffect(() => {
-    if (balance) {
-      setBal({ value: balance, decimals });
+    if (max) {
+      const value = parseUnits(max, decimals);
+      setBal({ value, decimals });
+      setMaxTokenForUtilization?.({ value, decimals });
+    } else if (max === '0') {
+      setBal({ value: BigInt(0), decimals });
+      setMaxTokenForUtilization?.({ value: BigInt(0), decimals });
+    } else if (useUnderlyingBalance) {
+      const value = underlyingBalance ?? BigInt(0);
+      setBal({ value, decimals });
+      setMaxTokenForUtilization?.({ value, decimals });
+    } else if (!useUnderlyingBalance && regularBalance) {
+      setBal({
+        value: regularBalance.value,
+        decimals: regularBalance.decimals
+      });
       setMaxTokenForUtilization?.({
-        value: balance,
-        decimals
+        value: regularBalance.value,
+        decimals: regularBalance.decimals
       });
     }
-  }, [balance, decimals, setMaxTokenForUtilization]);
+  }, [
+    max,
+    regularBalance,
+    underlyingBalance,
+    useUnderlyingBalance,
+    propDecimals,
+    setMaxTokenForUtilization
+  ]);
 
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
@@ -104,31 +125,23 @@ function MaxDeposit({
       Number(e.target.value) > Number(formatUnits(bal.value, bal.decimals))
     )
       return;
-    handleInput?.(e.target.value);
+    if (!handleInput) return;
+    handleInput(e.target.value);
   }
 
-  function handleMax(val?: string) {
-    if (!handleInput || !val) return;
-    handleInput(val);
+  function handleMax() {
+    if (!handleInput || !bal) return;
+    const maxValue = formatUnits(bal.value, bal.decimals);
+    handleInput(maxValue);
+    setMaxTokenForUtilization?.({
+      value: bal.value,
+      decimals: bal.decimals
+    });
   }
 
   const newRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (newRef.current && !newRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // Split tokenName if it contains multiple tokens
   const tokens = tokenName?.split('/') ?? ['eth'];
 
   return (
@@ -149,22 +162,20 @@ function MaxDeposit({
                     maximumFractionDigits: 3
                   }
                 )
-              : '0'}
+              : max ?? '0'}
             {handleInput && (
               <Button
                 variant="ghost"
-                size="sm"
-                className="text-accent ml-2 h-6 px-2"
-                onClick={() => {
-                  handleMax(bal ? formatUnits(bal.value, bal.decimals) : '0');
-                }}
+                size="xs"
+                className="text-accent h-4 text-[10px] hover:bg-transparent pr-0"
+                onClick={handleMax}
               >
                 MAX
               </Button>
             )}
           </div>
         </div>
-        <div className="flex max-w-full mt-2 items-center gap-x-4">
+        <div className="flex max-w-full items-center gap-x-4">
           <Input
             className="focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-1 min-w-0 border-0 p-0"
             placeholder="0.0"
@@ -182,7 +193,7 @@ function MaxDeposit({
             onChange={handlInpData}
             disabled={!handleInput}
           />
-          <div className="flex-none flex items-center justify-end">
+          <div className="flex-none flex items-center">
             {tokenSelector ? (
               <TokenSelector
                 newRef={newRef}

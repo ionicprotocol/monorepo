@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import {
   erc20Abi,
@@ -38,13 +38,12 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import RewardDisplay from '../_components/stake/RewardDisplay';
+
 import MaxDeposit from '../_components/MaxDeposit';
 import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
-import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
-import ModeBreakdown from '../_components/stake/ModeBreakdown';
-import OPBreakdown from '../_components/stake/OPBreakdown';
 import Toggle from '../_components/Toggle';
 
 const NetworkSelector = dynamic(
@@ -67,42 +66,20 @@ export default function Stake() {
   const [step3Toggle, setstep3Toggle] = useState<string>('');
   //---------------
   const chainId = useChainId();
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
+  const chain = querychain ? querychain : String(chainId);
+  console.log('chain', chain);
 
   const getDefaultToken = (chain: string) => {
     return chain === String(mode.id) ? 'mode' : 'eth';
   };
-
   const selectedtoken =
     queryToken ?? getDefaultToken(querychain ?? String(chainId));
+  console.log('selectedtoken', selectedtoken);
 
-  useEffect(() => {
-    // Create new URLSearchParams instance
-    const params = new URLSearchParams(searchParams);
-    const currentChain = querychain ?? String(chainId);
-    let shouldUpdate = false;
-
-    // If chain is Mode, ensure token is 'mode'
-    if (currentChain === String(mode.id) && params.get('token') !== 'mode') {
-      params.set('token', 'mode');
-      shouldUpdate = true;
-    }
-    // For other chains, set default token if none exists
-    else if (!params.get('token')) {
-      params.set('token', getDefaultToken(currentChain));
-      shouldUpdate = true;
-    }
-
-    // Only update if changes were made
-    if (shouldUpdate) {
-      router.push(`?${params.toString()}`, { scroll: false });
-    }
-  }, [chainId, querychain, router, searchParams]);
-
-  const chain = querychain ? querychain : String(chainId);
   const stakingContractAddress = getStakingToContract(
     +chain,
     selectedtoken as 'eth' | 'mode' | 'weth'
@@ -111,6 +88,48 @@ export default function Stake() {
     +chain,
     selectedtoken as 'eth' | 'mode' | 'weth'
   );
+
+  function resetAllInputs() {
+    setMaxDeposit({ ion: '', eth: '' });
+    setMaxWithdrawl({ ion: '', eth: '' });
+    setUtilization(0);
+    setMaxLp('');
+    setMaxUnstake('');
+  }
+
+  useEffect(() => {
+    resetAllInputs();
+  }, [step2Toggle, step3Toggle, chain]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    const currentChain = querychain ?? String(chainId);
+    let shouldUpdate = false;
+
+    // If on Mode chain, ALWAYS set token to 'mode'
+    if (currentChain === String(mode.id)) {
+      if (params.get('token') !== 'mode') {
+        params.set('token', 'mode');
+        shouldUpdate = true;
+      }
+    }
+    // For other chains
+    else {
+      // Get available tokens for current chain
+      const availableTokens = tokenArrOfChain[+currentChain] || ['eth', 'weth'];
+      const currentToken = params.get('token');
+
+      // If current token isn't available on this chain or no token is set
+      if (!currentToken || !availableTokens.includes(currentToken)) {
+        params.set('token', 'eth');
+        shouldUpdate = true;
+      }
+    }
+
+    if (shouldUpdate) {
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [chainId, querychain, router, searchParams]);
 
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -754,6 +773,11 @@ export default function Stake() {
             )}
             {step3Toggle === 'Unstake' && (
               <MaxDeposit
+                max={
+                  allStakedAmount.status === 'success'
+                    ? formatEther(allStakedAmount?.data as bigint)
+                    : '0'
+                }
                 headerText={step3Toggle}
                 amount={maxUnstake}
                 tokenName={`ion/${selectedtoken}`}
@@ -785,16 +809,15 @@ export default function Stake() {
             </h1>
 
             {/* breakdowns */}
-            {+chain === mode.id && (
-              <ModeBreakdown
-                step3Toggle={step3Toggle}
+            {(+chain === mode.id ||
+              +chain === optimism.id ||
+              +chain === base.id) && (
+              <RewardDisplay
+                chainId={+chain}
+                isUnstaking={step3Toggle === 'Unstake'}
                 selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
               />
             )}
-            {+chain === optimism.id && (
-              <OPBreakdown step3Toggle={step3Toggle} />
-            )}
-            {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto" />
             <button
               disabled={
