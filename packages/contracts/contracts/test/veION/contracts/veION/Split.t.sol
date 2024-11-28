@@ -7,6 +7,15 @@ contract Split is veIONTest {
   LockInfoMultiple lockInputMultiLP;
   uint256 splitAmount;
 
+  address alice;
+  address bob;
+  address cindy;
+  address ralph;
+  LockInfo lockInfoAlice;
+  LockInfo lockInfoBob;
+  LockInfo lockInfoCindy;
+  LockInfo lockInfoRalph;
+
   function setUp() public {
     _setUp();
     user = address(0x1234);
@@ -15,6 +24,18 @@ contract Split is veIONTest {
     ve.setVoter(address(this));
     vm.prank(ve.owner());
     ve.toggleSplit(user, true);
+  }
+
+  function afterForkSetUp() internal override {
+    _afterForkSetUpMode();
+    alice = address(0x8325);
+    bob = address(0x2542);
+    cindy = address(0x3423);
+    ralph = address(0x2524);
+    lockInfoAlice = _createLockInternalRealLP(alice, true);
+    lockInfoBob = _createLockInternalRealLP(bob, false);
+    lockInfoCindy = _createLockInternalRealLP(cindy, true);
+    lockInfoRalph = _createLockInternalRealLP(ralph, false);
   }
 
   function test_split_UserCanSplitAllLP() public {
@@ -71,6 +92,30 @@ contract Split is veIONTest {
     assertEq(balancerLocked1.amount, MINT_AMT, "Second split lock amount should be half of the original");
     assertEq(veloLocked2.amount, MINT_AMT / 2, "Second split lock amount should be half of the original");
     assertEq(balancerLocked2.amount, 0, "Second split lock amount should be half of the original");
+  }
+
+  function test_split_UnderlyingStakeAlsoSplit() public fork(MODE_MAINNET) {
+    ve.toggleSplit(address(0), true);
+    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+
+    uint256 splitAmt = 4e18;
+
+    vm.startPrank(alice);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+
+    assertEq(
+      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Underlying stake for tokenId1 should be half of the original lock amount"
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      splitAmt,
+      "Underlying stake for tokenId2 should be half of the original lock amount"
+    );
+
+    vm.stopPrank();
   }
 
   function test_split_RevertIfAlreadyVoted() public {

@@ -7,6 +7,15 @@ contract Withdraw is veIONTest {
   LockInfo lockInput;
   LockInfoMultiple lockInputMultiLP;
 
+  address alice;
+  address bob;
+  address cindy;
+  address ralph;
+  LockInfo lockInfoAlice;
+  LockInfo lockInfoBob;
+  LockInfo lockInfoCindy;
+  LockInfo lockInfoRalph;
+
   function setUp() public {
     _setUp();
     user = address(0x1234);
@@ -17,6 +26,15 @@ contract Withdraw is veIONTest {
 
   function afterForkSetUp() internal override {
     _afterForkSetUpMode();
+
+    alice = address(0x8325);
+    bob = address(0x2542);
+    cindy = address(0x3423);
+    ralph = address(0x2524);
+    lockInfoAlice = _createLockInternalRealLP(alice, true);
+    lockInfoBob = _createLockInternalRealLP(bob, false);
+    lockInfoCindy = _createLockInternalRealLP(cindy, true);
+    lockInfoRalph = _createLockInternalRealLP(ralph, false);
   }
 
   function test_withdraw_UserCanWithdrawFinishedLock() public {
@@ -155,6 +173,258 @@ contract Withdraw is veIONTest {
       "User's balance should be equal to the initial amount, minus the penalty after withdrawal"
     );
     assertEq(rewardBalance, rewardEarned, "User should have claimed some reward");
+  }
+
+  function test_withdraw_WithdrawCorrectUnderlyingStakingAfterSplitAndTransfer() public fork(MODE_MAINNET) {
+    ve.toggleSplit(address(0), true);
+    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+
+    uint256 splitAmt = 4e18;
+    uint256 originalTokenAmt = REAL_LP_LOCK_AMOUNT - 4e18;
+
+    vm.startPrank(alice);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+
+    assertEq(
+      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT,
+      "Alice cumulative value should be the original locked amount"
+    );
+    assertEq(
+      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT,
+      "Bob cumulative value should be the original locked amount"
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Underlying stake for tokenId1 should be half of the original lock amount"
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      splitAmt,
+      "Underlying stake for tokenId2 should be half of the original lock amount"
+    );
+    ve.transferFrom(alice, bob, tokenId1);
+    vm.stopPrank();
+
+    uint256 cumulativeAssetBalancePostTransferAlice = splitAmt;
+    uint256 cumulativeAssetBalancePostTransferBob = REAL_LP_LOCK_AMOUNT + originalTokenAmt;
+
+    assertEq(
+      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      cumulativeAssetBalancePostTransferAlice,
+      "Cumulative asset value for alice should drop post transfer"
+    );
+    assertEq(
+      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      cumulativeAssetBalancePostTransferBob,
+      "Cumulative asset value for bob should increase post transfer"
+    );
+
+    address stakingWalletInstanceAlice = veloIonModeStakingStrategy.userStakingWallet(alice);
+    address stakingWalletInstanceBob = veloIonModeStakingStrategy.userStakingWallet(bob);
+
+    uint256 stakedBalanceAlice = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceAlice);
+    uint256 stakedBalanceBob = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceBob);
+
+    console.log("Staked Balance Alice:", stakedBalanceAlice);
+    console.log("Staked Balance Bob:", stakedBalanceBob);
+
+    assertEq(
+      stakedBalanceAlice,
+      splitAmt,
+      "Alice's staked balance should be equal to the original lock amount minus the split amount"
+    );
+
+    assertEq(stakedBalanceBob, REAL_LP_LOCK_AMOUNT - splitAmt, "Bob's staked balance should be zero before withdrawal");
+
+    vm.warp(block.timestamp + 52 weeks);
+
+    vm.prank(bob);
+    ve.withdraw(lockInfoAlice.tokenAddress, tokenId1);
+
+    vm.prank(alice);
+    ve.withdraw(lockInfoAlice.tokenAddress, tokenId2);
+
+    assertEq(
+      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      cumulativeAssetBalancePostTransferAlice - splitAmt,
+      "CumulativeAssetValue should be reduced post withdrawal for alice"
+    );
+    assertEq(
+      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      cumulativeAssetBalancePostTransferBob - originalTokenAmt,
+      "CumulativeAssetValue should be reduced post withdrawal for bob"
+    );
+
+    assertEq(
+      IERC20(lockInfoAlice.tokenAddress).balanceOf(bob),
+      REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Bob's balance should be equal to the original lock amount minus the split amount"
+    );
+
+    assertEq(
+      IERC20(lockInfoAlice.tokenAddress).balanceOf(alice),
+      splitAmt,
+      "Alice's balance should be equal to the split amount"
+    );
+  }
+
+  function test_withdraw_WithdrawCorrectUnderlyingStakingAfterSplitThenTransferToUserWithUnderlyingStake()
+    public
+    fork(MODE_MAINNET)
+  {
+    ve.toggleSplit(address(0), true);
+    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+
+    uint256 splitAmt = 4e18;
+
+    vm.startPrank(alice);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+
+    assertEq(
+      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Underlying stake for tokenId1 should be half of the original lock amount"
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      splitAmt,
+      "Underlying stake for tokenId2 should be half of the original lock amount"
+    );
+    ve.transferFrom(alice, cindy, tokenId1);
+    vm.stopPrank();
+
+    address stakingWalletInstanceAlice = veloIonModeStakingStrategy.userStakingWallet(alice);
+    address stakingWalletInstanceCindy = veloIonModeStakingStrategy.userStakingWallet(cindy);
+
+    uint256 stakedBalanceAlice = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceAlice);
+    uint256 stakedBalanceCindy = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceCindy);
+
+    console.log("Staked Balance Alice:", stakedBalanceAlice);
+    console.log("Staked Balance Cindy:", stakedBalanceCindy);
+
+    assertEq(stakedBalanceAlice, splitAmt, "Alice's staked balance should be the split amount");
+
+    assertEq(
+      stakedBalanceCindy,
+      REAL_LP_LOCK_AMOUNT + REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Cindy's staked balance should be equal to the original lock amount minus the split amount"
+    );
+
+    vm.warp(block.timestamp + 52 weeks);
+
+    vm.prank(cindy);
+    ve.withdraw(lockInfoAlice.tokenAddress, tokenId1);
+
+    vm.prank(alice);
+    ve.withdraw(lockInfoAlice.tokenAddress, tokenId2);
+
+    assertEq(
+      IERC20(lockInfoAlice.tokenAddress).balanceOf(cindy),
+      REAL_LP_LOCK_AMOUNT - splitAmt,
+      "Bob's balance should be equal to the original lock amount minus the split amount"
+    );
+
+    assertEq(
+      IERC20(lockInfoAlice.tokenAddress).balanceOf(alice),
+      splitAmt,
+      "Alice's balance should be equal to the split amount"
+    );
+  }
+
+  function test_withdraw_MultiLpSplitTransferThenWithdraw() public fork(MODE_MAINNET) {
+    ve.setMinimumLockAmount(address(ionWeth5050lPAero), 1);
+    ve.setMinimumLockAmount(address(wethUSDC5050LP), 1);
+    ve.toggleSplit(address(0), true);
+    uint256 wethUSDCAmt = 2e16;
+
+    address[] memory lpTokens = new address[](2);
+    lpTokens[0] = address(ionMode5050LP);
+    lpTokens[1] = address(wethUSDC5050LP);
+
+    address[] memory users = new address[](4);
+    users[0] = alice;
+    users[1] = bob;
+    users[2] = cindy;
+    users[3] = ralph;
+
+    console.log("Stakes before alice locks multi lp");
+    _logUnderlyingStake(users);
+
+    vm.prank(0x030B78756013AD403d6da6BB6fCd305E2E26830d);
+    IERC20(ionMode5050LP).transfer(alice, REAL_LP_LOCK_AMOUNT);
+    vm.prank(0x4d410D60c7099072fcaa017e591D3fe0751f9F5D);
+    IERC20(wethUSDC5050LP).transfer(alice, wethUSDCAmt);
+
+    address[] memory tokenAddresses = new address[](2);
+    uint256[] memory tokenAmounts = new uint256[](2);
+    uint256[] memory durations = new uint256[](2);
+    bool[] memory stakeUnderlying = new bool[](2);
+    tokenAddresses[0] = address(ionMode5050LP);
+    tokenAmounts[0] = REAL_LP_LOCK_AMOUNT;
+    durations[0] = 52 weeks;
+    stakeUnderlying[0] = true;
+    tokenAddresses[1] = address(wethUSDC5050LP);
+    tokenAmounts[1] = wethUSDCAmt;
+    durations[1] = 52 weeks;
+    stakeUnderlying[1] = true;
+
+    vm.startPrank(alice);
+    IERC20(ionMode5050LP).approve(address(ve), REAL_LP_LOCK_AMOUNT);
+    IERC20(wethUSDC5050LP).approve(address(ve), wethUSDCAmt);
+    uint256 tokenId1 = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    vm.stopPrank();
+
+    console.log("Stakes after alice locks multi lp");
+    _logUnderlyingStake(users);
+
+    vm.prank(alice);
+    (, uint256 tokenId2) = ve.split(ionMode5050LP, tokenId1, 3e18);
+
+    vm.prank(alice);
+    (, uint256 tokenId3) = ve.split(wethUSDC5050LP, tokenId1, 1e16);
+
+    console.log("Stakes after alice splits multi lp into one token with 3e18 ion-mode and 1e16 weth-usdc");
+    _logUnderlyingStake(users);
+
+    uint256[] memory tokenIds = new uint256[](3);
+    tokenIds[0] = tokenId1;
+    tokenIds[1] = tokenId2;
+    tokenIds[2] = tokenId3;
+
+    vm.startPrank(alice);
+    ve.transferFrom(alice, bob, tokenId1);
+    ve.transferFrom(alice, cindy, tokenId2);
+    ve.transferFrom(alice, ralph, tokenId3);
+    vm.stopPrank();
+
+    console.log(
+      "Stakes after alice sends 7e18 ion-mode and 1e16 weth-usdc token to bob, 3e18 ion-mode token to cindy, 1e16 weth-usdc token to ralph"
+    );
+    _logUnderlyingStake(users);
+
+    vm.startPrank(bob);
+    ve.withdraw(address(ionMode5050LP), tokenId1);
+    ve.withdraw(address(wethUSDC5050LP), tokenId1);
+    vm.stopPrank();
+
+    vm.prank(cindy);
+    ve.withdraw(address(ionMode5050LP), tokenId2);
+
+    vm.prank(ralph);
+    ve.withdraw(address(wethUSDC5050LP), tokenId3);
+
+    console.log(
+      "bob withdraws 7e18 ion-mode, 1e16 weth-usdc, cindy withdraws ion-mode 3e18, ralph withdraws 1e16 weth-usdc"
+    );
+    _logUnderlyingStake(users);
+    // _logCumulativeAssetValues(users, lpTokens);
+    // _logTokens(tokenIds, lpTokens);
   }
 
   function test_withdraw_RevertIfNotOwner() public {

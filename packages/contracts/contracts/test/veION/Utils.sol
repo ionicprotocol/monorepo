@@ -13,8 +13,13 @@ import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
 import "../../veION/stake/velo/VelodromeStakingWallet.sol";
 import "../../veION/stake/velo/IVeloIonModeStaking.sol";
 import "./harness/veIONHarness.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract veIONTest is BaseTest {
+  using Strings for uint256;
+  using Strings for bool;
+  using Strings for address;
+
   veION ve;
   MockERC20 modeVelodrome5050IonMode;
   MockERC20 modeBalancer8020IonEth;
@@ -32,8 +37,12 @@ contract veIONTest is BaseTest {
   address wethAero5050LPAero;
   address veloGauge;
   VeloIonModeStakingStrategy veloIonModeStakingStrategy;
+  VeloIonModeStakingStrategy veloWethUsdcStakingStrategy;
   address stakingWalletInstance;
   uint256 stakingWalletInstanceBalance;
+
+  address wethUSDC5050LP;
+  address wethUSDCGauge;
 
   // Base Fork Vars
   address baseUser;
@@ -87,6 +96,9 @@ contract veIONTest is BaseTest {
     ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
+    wethUSDC5050LP = 0x283bA4E204DFcB6381BCBf2cb5d0e765A2B57bC2;
+    wethUSDCGauge = 0x98d34C7b004688F35b67Aa30D4dF5E67113f6B3D;
+
     veloStakingWalletImplementation = new VelodromeStakingWallet();
 
     veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
@@ -97,18 +109,32 @@ contract veIONTest is BaseTest {
       address(veloStakingWalletImplementation)
     );
 
-    address[] memory whitelistedTokens = new address[](1);
-    bool[] memory isWhitelistedTokens = new bool[](1);
+    veloWethUsdcStakingStrategy = new VeloIonModeStakingStrategy();
+    veloWethUsdcStakingStrategy.initialize(
+      address(ve),
+      wethUSDC5050LP,
+      wethUSDCGauge,
+      address(veloStakingWalletImplementation)
+    );
+
+    address[] memory whitelistedTokens = new address[](2);
+    bool[] memory isWhitelistedTokens = new bool[](2);
     whitelistedTokens[0] = ionMode5050LP;
     isWhitelistedTokens[0] = true;
+    whitelistedTokens[1] = wethUSDC5050LP;
+    isWhitelistedTokens[1] = true;
 
     ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
     ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    ve.setLpTokenType(wethUSDC5050LP, IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
+
     ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
+    ve.setStakeStrategy(balancerLpType, IStakeStrategy(veloWethUsdcStakingStrategy));
 
     ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
     ve.setMinimumLockDuration(MINTIME);
     ve.setMinimumLockAmount(address(ionMode5050LP), MINIMUM_LOCK_AMOUNT);
+    ve.setMinimumLockAmount(address(wethUSDC5050LP), MINIMUM_LOCK_AMOUNT);
   }
 
   function _afterForkSetUpBase() internal {
@@ -277,6 +303,79 @@ contract veIONTest is BaseTest {
 
   function _generateRandomAddress(uint256 seed) internal pure returns (address) {
     return address(uint160(uint256(keccak256(abi.encodePacked(seed)))));
+  }
+
+  function _logTokens(uint256[] memory tokenIds, address[] memory lpTokens) internal view {
+    for (uint256 i = 0; i < tokenIds.length; i++) {
+      for (uint256 j = 0; j < lpTokens.length; j++) {
+        IveION.LockedBalance memory lock = ve.getUserLock(tokenIds[i], ve.s_lpType(lpTokens[j]));
+        uint256 tokenId = i + 1;
+        console.log(
+          string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Token: ", lock.tokenAddress.toHexString()))
+        );
+        console.log(
+          string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Amount: ", lock.amount.toString()))
+        );
+        console.log(
+          string(
+            abi.encodePacked(
+              "Token ID ",
+              tokenId.toString(),
+              " Locked Delegate Amount: ",
+              lock.delegateAmount.toString()
+            )
+          )
+        );
+        console.log(
+          string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Start: ", lock.start.toString()))
+        );
+        console.log(string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked End: ", lock.end.toString())));
+        console.log(
+          string(
+            abi.encodePacked(
+              "Token ID ",
+              tokenId.toString(),
+              " Locked IsPermanent: ",
+              lock.isPermanent ? "true" : "false"
+            )
+          )
+        );
+        console.log(
+          string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Boost: ", lock.boost.toString()))
+        );
+        console.log("--------------------------------------------------");
+      }
+      console.log("====================================================");
+    }
+  }
+
+  function _logCumulativeAssetValues(address[] memory users, address[] memory lpTokens) internal view {
+    console.log("-----------------------------------------------------------------");
+    for (uint256 i = 0; i < users.length; i++) {
+      address user = users[i];
+      console.log("Cumulative Asset Values for User:", user);
+      for (uint256 j = 0; j < lpTokens.length; j++) {
+        console.log("Token:", lpTokens[j], "Value:", ve.s_userCumulativeAssetValues(user, lpTokens[j]));
+      }
+      console.log("====================================================");
+    }
+  }
+
+  function _logUnderlyingStake(address[] memory users) internal view {
+    console.log("-----------------------------------------------------------------");
+    for (uint256 i = 0; i < users.length; i++) {
+      address user = users[i];
+      console.log("Underlying Stakes For:", user);
+      address stakingWalletInstanceIonMode = veloIonModeStakingStrategy.userStakingWallet(user);
+      uint256 stakedBalanceIonMode = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceIonMode);
+
+      address stakingWalletInstanceWethUsdc = veloWethUsdcStakingStrategy.userStakingWallet(user);
+      uint256 stakedBalanceWethUsdc = veloWethUsdcStakingStrategy.balanceOf(stakingWalletInstanceWethUsdc);
+
+      console.log("Staked Balance Ion-Mode:", stakedBalanceIonMode);
+      console.log("Staked Balance Weth-Usdc:", stakedBalanceWethUsdc);
+      console.log("====================================================");
+    }
   }
 }
 

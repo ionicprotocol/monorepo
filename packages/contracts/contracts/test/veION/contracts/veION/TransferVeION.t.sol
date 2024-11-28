@@ -96,4 +96,44 @@ contract TrasferVeION is veIONTest {
 
     assertTrue(stakingWalletInstance == address(0), "Ralph should not have a staking wallet instance");
   }
+
+  function test_transfer_SplitThenTransfer() public fork(MODE_MAINNET) {
+    ve.toggleSplit(address(0), true);
+    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);
+    uint256 bobBalanceBefore = veloIonModeStakingStrategy.balanceOf(stakingWalletInstance);
+
+    vm.startPrank(alice);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+      lockInfoAlice.tokenAddress,
+      lockInfoAlice.tokenId,
+      REAL_LP_LOCK_AMOUNT / 2
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT / 2,
+      "Underlying stake for tokenId1 should be half of the original lock amount"
+    );
+
+    assertEq(
+      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      REAL_LP_LOCK_AMOUNT / 2,
+      "Underlying stake for tokenId2 should be half of the original lock amount"
+    );
+
+    ve.transferFrom(alice, bob, tokenId1);
+    vm.stopPrank();
+
+    stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);
+
+    assertEq(bobBalanceBefore, 0, "Bob should start with no balance");
+    assertTrue(stakingWalletInstance != address(0), "Bob should have a staking wallet");
+    assertEq(
+      veloIonModeStakingStrategy.balanceOf(stakingWalletInstance),
+      REAL_LP_LOCK_AMOUNT / 2,
+      "Bob's stake should include hers and what was transferred to it"
+    );
+  }
 }

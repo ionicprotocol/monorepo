@@ -309,7 +309,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
       }
 
       if (s_underlyingStake[_from][vars.asset] != 0) {
-        s_underlyingStake[_to][vars.asset] = s_underlyingStake[_from][vars.asset];
+        s_underlyingStake[_to][vars.asset] += s_underlyingStake[_from][vars.asset];
         s_underlyingStake[_from][vars.asset] = 0;
       }
     }
@@ -345,6 +345,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     splitLocked.amount = _splitAmount;
     _tokenId2 = _createSplitVE(owner, splitLocked, _lpType, _tokenAddress);
     _tokenId1 = _from;
+
+    if (s_underlyingStake[_from][_tokenAddress] != 0) {
+      s_underlyingStake[_from][_tokenAddress] -= _splitAmount;
+      s_underlyingStake[_tokenId2][_tokenAddress] = _splitAmount;
+    }
 
     emit SplitCompleted(_from, _tokenId1, _tokenId2, _splitAmount, _tokenAddress);
   }
@@ -514,7 +519,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
         for (uint256 j = 0; j < delegatees.length; j++) {
           amounts[j] = type(uint256).max;
         }
-        removeDelegatees(tokenId, delegatees, asset, amounts);
+
+        if (delegatees.length != 0) {
+          removeDelegatees(tokenId, delegatees, asset, amounts);
+        }
 
         uint256 amountStaked = s_underlyingStake[tokenId][asset];
         if (amountStaked != 0) {
