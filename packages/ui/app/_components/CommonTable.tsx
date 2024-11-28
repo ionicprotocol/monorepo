@@ -149,6 +149,7 @@ function CommonTable<T extends object>({
     <ResultHandler
       isLoading={isLoading}
       center
+      height={80}
     >
       <Table className="w-full border-separate border-spacing-y-3">
         <TableHeader>

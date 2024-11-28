@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -21,6 +21,7 @@ import ManageDialog from '../_components/dialogs/manage';
 import Swap from '../_components/dialogs/manage/Swap';
 import APRCell from '../_components/markets/APRCell';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
+import MarketSearch from '../_components/markets/MarketSearch';
 import StakingTile from '../_components/markets/StakingTile';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
@@ -59,9 +60,15 @@ export default function Market() {
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
+  const [filteredMarketData, setFilteredMarketData] = useState<MarketRowData[]>(
+    []
+  );
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
+  useEffect(() => {
+    setFilteredMarketData(marketData);
+  }, [marketData]);
 
   const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
@@ -265,15 +272,23 @@ export default function Market() {
         </div>
 
         <div className="bg-grayone w-full lg:px-[1%] xl:px-[3%] rounded-xl pt-3 pb-7">
-          <div className="w-full flex-wrap flex justify-between items-center">
-            <PoolToggle
-              chain={+chain}
-              pool={selectedPool}
-            />
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 items-center gap-4  pt-2">
+            <div className="w-full flex justify-center sm:justify-start">
+              <PoolToggle
+                chain={+chain}
+                pool={selectedPool}
+              />
+            </div>
+            <div className="flex justify-center">
+              <MarketSearch
+                data={marketData}
+                onSearch={setFilteredMarketData}
+              />
+            </div>
           </div>
 
           <CommonTable
-            data={marketData}
+            data={filteredMarketData}
             columns={columns}
             isLoading={isLoading}
           />
