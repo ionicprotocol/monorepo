@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -70,6 +70,7 @@ export default function Stake() {
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
   const chain = querychain ? querychain : String(chainId);
+  const previousChain = useRef<string>();
 
   const getDefaultToken = (chain: string) => {
     return chain === String(mode.id) ? 'mode' : 'eth';
@@ -103,29 +104,26 @@ export default function Stake() {
     const currentChain = querychain ?? String(chainId);
     let shouldUpdate = false;
 
-    // If on Mode chain, ALWAYS set token to 'mode'
-    if (currentChain === String(mode.id)) {
-      if (params.get('token') !== 'mode') {
-        params.set('token', 'mode');
-        shouldUpdate = true;
-      }
-    }
-    // For other chains
-    else {
-      // Get available tokens for current chain
-      const availableTokens = tokenArrOfChain[+currentChain] || ['eth', 'weth'];
-      const currentToken = params.get('token');
+    const isChainChange = previousChain.current !== currentChain;
+    previousChain.current = currentChain;
 
-      // If current token isn't available on this chain or no token is set
-      if (!currentToken || !availableTokens.includes(currentToken)) {
-        params.set('token', 'eth');
-        shouldUpdate = true;
-      }
+    const availableTokens = tokenArrOfChain[+currentChain] || ['eth', 'weth'];
+    const currentToken = params.get('token');
+
+    if (
+      (!currentToken ||
+        (isChainChange && !availableTokens.includes(currentToken))) &&
+      currentChain
+    ) {
+      const defaultToken = currentChain === String(mode.id) ? 'mode' : 'eth';
+      params.set('token', defaultToken);
+      shouldUpdate = true;
     }
 
     if (shouldUpdate) {
       router.push(`?${params.toString()}`, { scroll: false });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, querychain, router, searchParams]);
 
