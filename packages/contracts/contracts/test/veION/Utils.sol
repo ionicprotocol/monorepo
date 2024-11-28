@@ -5,12 +5,12 @@ import "../config/BaseTest.t.sol";
 import "../../veION/veION.sol";
 import "../../veION/interfaces/IveION.sol";
 import "../../veION/stake/IStakeStrategy.sol";
-import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
+import "../../veION/stake/velo/VeloAeroStakingStrategy.sol";
 import "../../veION/stake/IStakeStrategy.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { AddressesProvider } from "../../ionic/AddressesProvider.sol";
-import "../../veION/stake/velo/VeloIonModeStakingStrategy.sol";
-import "../../veION/stake/velo/VelodromeStakingWallet.sol";
+import "../../veION/stake/velo/VeloAeroStakingStrategy.sol";
+import "../../veION/stake/velo/VeloAeroStakingWallet.sol";
 import "../../veION/stake/velo/IVeloIonModeStaking.sol";
 import "./harness/veIONHarness.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -29,15 +29,15 @@ contract veIONTest is BaseTest {
   MockERC20 optimismBalancer8020IonEth;
   IveION.LpTokenType veloLpType;
   IveION.LpTokenType balancerLpType;
-  VelodromeStakingWallet veloStakingWalletImplementation;
+  VeloAeroStakingWallet veloStakingWalletImplementation;
   veIONHarness harness;
 
   address ionMode5050LP;
   address ionWeth5050lPAero;
   address wethAero5050LPAero;
   address veloGauge;
-  VeloIonModeStakingStrategy veloIonModeStakingStrategy;
-  VeloIonModeStakingStrategy veloWethUsdcStakingStrategy;
+  VeloAeroStakingStrategy veloIonModeStakingStrategy;
+  VeloAeroStakingStrategy veloWethUsdcStakingStrategy;
   address stakingWalletInstance;
   uint256 stakingWalletInstanceBalance;
 
@@ -81,7 +81,7 @@ contract veIONTest is BaseTest {
     veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
 
-    veloStakingWalletImplementation = new VelodromeStakingWallet();
+    veloStakingWalletImplementation = new VeloAeroStakingWallet();
 
     ve.setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
     ve.setMinimumLockDuration(MINTIME);
@@ -99,9 +99,9 @@ contract veIONTest is BaseTest {
     wethUSDC5050LP = 0x283bA4E204DFcB6381BCBf2cb5d0e765A2B57bC2;
     wethUSDCGauge = 0x98d34C7b004688F35b67Aa30D4dF5E67113f6B3D;
 
-    veloStakingWalletImplementation = new VelodromeStakingWallet();
+    veloStakingWalletImplementation = new VeloAeroStakingWallet();
 
-    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy = new VeloAeroStakingStrategy();
     veloIonModeStakingStrategy.initialize(
       address(ve),
       ionMode5050LP,
@@ -109,7 +109,7 @@ contract veIONTest is BaseTest {
       address(veloStakingWalletImplementation)
     );
 
-    veloWethUsdcStakingStrategy = new VeloIonModeStakingStrategy();
+    veloWethUsdcStakingStrategy = new VeloAeroStakingStrategy();
     veloWethUsdcStakingStrategy.initialize(
       address(ve),
       wethUSDC5050LP,

@@ -16,7 +16,7 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
  * @dev The contract is designed to be used with the Velodrome ION-MODE-5050 LP token.
  * @dev The contract is authored by Jourdan Dunkley <jourdan@ionic.money>.
  */
-contract VelodromeStakingWallet is IStakeWallet, Initializable {
+contract VeloAeroStakingWallet is IStakeWallet, Initializable {
   using SafeERC20 for IERC20;
   IStakeStrategy public stakeStrategy;
 

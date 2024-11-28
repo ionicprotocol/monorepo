@@ -2,18 +2,18 @@
 pragma solidity >=0.8.0;
 
 import "../IStakeStrategy.sol";
-import "./VelodromeStakingWallet.sol";
+import "./VeloAeroStakingWallet.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 
 /**
- * @title VeloIonModeStakingStrategy
+ * @title VeloAeroStakingStrategy
  * @notice Staking interface for usage in veION when staking Velodrome ION-MODE-5050 LP.
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
-contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
+contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   using Clones for address;
 
   address public escrow;
@@ -49,19 +49,19 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     address veloWallet = userStakingWallet[_from];
     if (veloWallet == address(0)) {
       veloWallet = stakingWalletImplementation.clone();
-      VelodromeStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
+      VeloAeroStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_from] = veloWallet;
     }
 
     IERC20(stakingToken).approve(veloWallet, _amount);
-    VelodromeStakingWallet(veloWallet).stake(_from, _amount, _data);
+    VeloAeroStakingWallet(veloWallet).stake(_from, _amount, _data);
   }
 
   /**
    * @notice Claims rewards for the caller.
    */
   function claim(address _from) external onlyEscrow {
-    VelodromeStakingWallet veloWallet = VelodromeStakingWallet(userStakingWallet[_from]);
+    VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_from]);
     veloWallet.claim(_from);
   }
 
@@ -71,7 +71,7 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
    * @param _amount The amount of tokens to withdraw.
    */
   function withdraw(address _owner, address _withdrawTo, uint256 _amount) external onlyEscrow {
-    VelodromeStakingWallet veloWallet = VelodromeStakingWallet(userStakingWallet[_owner]);
+    VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_owner]);
     veloWallet.withdraw(_withdrawTo, _amount);
   }
 
@@ -86,13 +86,13 @@ contract VeloIonModeStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
     if (toWallet == address(0)) {
       toWallet = stakingWalletImplementation.clone();
-      VelodromeStakingWallet(toWallet).initialize(IStakeStrategy(address(this)));
+      VeloAeroStakingWallet(toWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_to] = toWallet;
     }
 
-    VelodromeStakingWallet(fromWallet).withdraw(address(this), _amount);
+    VeloAeroStakingWallet(fromWallet).withdraw(address(this), _amount);
     IERC20(stakingToken).approve(address(toWallet), _amount);
-    VelodromeStakingWallet(toWallet).stake(_to, _amount, "");
+    VeloAeroStakingWallet(toWallet).stake(_to, _amount, "");
   }
 
   /**

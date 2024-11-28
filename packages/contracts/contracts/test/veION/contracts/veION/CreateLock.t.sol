@@ -138,7 +138,7 @@ contract CreateLock is veIONTest {
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
-    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy = new VeloAeroStakingStrategy();
     veloIonModeStakingStrategy.initialize(
       address(ve),
       ionMode5050LP,
@@ -201,7 +201,7 @@ contract CreateLock is veIONTest {
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     address veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
 
-    veloIonModeStakingStrategy = new VeloIonModeStakingStrategy();
+    veloIonModeStakingStrategy = new VeloAeroStakingStrategy();
     veloIonModeStakingStrategy.initialize(
       address(ve),
       ionMode5050LP,
