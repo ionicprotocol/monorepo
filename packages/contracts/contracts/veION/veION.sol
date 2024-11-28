@@ -535,7 +535,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uint256 toTokenId,
     address lpToken,
     uint256[] memory amounts
-  ) public nonReentrant {
+  ) external nonReentrant {
     if (fromTokenIds.length != amounts.length) revert ArrayMismatch();
     for (uint256 i = 0; i < fromTokenIds.length; i++) {
       _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
