@@ -154,6 +154,39 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     assertEq(delegateesAfter.length, 0, "Expected 0 delegatees after transfer");
   }
 
+  function test_removeDelegatees_RemoveByTransferMultiLP() public {
+    LockInfoMultiple memory lockInfoUser1 = _createLockMultipleInternal(cindy);
+    LockInfoMultiple memory lockInfoUser2 = _createLockMultipleInternal(address(0x92365));
+
+    vm.startPrank(address(0x92365));
+    ve.lockPermanent(lockInfoUser2.tokenAddresses[0], lockInfoUser2.tokenId);
+    ve.lockPermanent(lockInfoUser2.tokenAddresses[1], lockInfoUser2.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(cindy);
+    ve.lockPermanent(lockInfoUser1.tokenAddresses[0], lockInfoUser1.tokenId);
+    ve.lockPermanent(lockInfoUser1.tokenAddresses[1], lockInfoUser1.tokenId);
+    vm.stopPrank();
+
+    vm.startPrank(cindy);
+    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.tokenAddresses[0], MINT_AMT / 5);
+    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.tokenAddresses[1], MINT_AMT / 5);
+    vm.stopPrank();
+
+    uint256[] memory delegateesBeforeTransferVelo = ve.getDelegatees(lockInfoUser1.tokenId, veloLpType);
+    assertEq(delegateesBeforeTransferVelo.length, 1, "Expected 1 delegatee before transfer for velo LP type");
+    uint256[] memory delegateesBeforeTransferBalancer = ve.getDelegatees(lockInfoUser1.tokenId, balancerLpType);
+    assertEq(delegateesBeforeTransferBalancer.length, 1, "Expected 1 delegatee before transfer for balancer LP type");
+
+    vm.prank(cindy);
+    ve.transferFrom(cindy, andy, lockInfoUser1.tokenId);
+
+    uint256[] memory delegateesAfterTransferVelo = ve.getDelegatees(lockInfoUser1.tokenId, veloLpType);
+    assertEq(delegateesAfterTransferVelo.length, 0, "Expected 0 delegatees after transfer for velo LP type");
+    uint256[] memory delegateesAfterTransferBalancer = ve.getDelegatees(lockInfoUser1.tokenId, balancerLpType);
+    assertEq(delegateesAfterTransferBalancer.length, 0, "Expected 0 delegatees after transfer for balancer LP type");
+  }
+
   function test_removeDelegatees_RevertIfUnmatchedArrays() public {
     uint256[] memory toTokenIds = new uint256[](2);
     toTokenIds[0] = tokenIdBob;
