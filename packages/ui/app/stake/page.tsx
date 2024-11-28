@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
   erc20Abi,
@@ -68,25 +68,39 @@ export default function Stake() {
   //---------------
   const chainId = useChainId();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
+
   const getDefaultToken = (chain: string) => {
-    return chain === '34443' ? 'mode' : 'eth';
+    return chain === String(mode.id) ? 'mode' : 'eth';
   };
 
   const selectedtoken =
     queryToken ?? getDefaultToken(querychain ?? String(chainId));
 
   useEffect(() => {
-    if (!queryToken && window) {
-      const url = new URL(window.location.href);
-      url.searchParams.set(
-        'token',
-        getDefaultToken(querychain ?? String(chainId))
-      );
-      window.history.pushState({}, '', url);
+    // Create new URLSearchParams instance
+    const params = new URLSearchParams(searchParams);
+    const currentChain = querychain ?? String(chainId);
+    let shouldUpdate = false;
+
+    // If chain is Mode, ensure token is 'mode'
+    if (currentChain === String(mode.id) && params.get('token') !== 'mode') {
+      params.set('token', 'mode');
+      shouldUpdate = true;
     }
-  }, [chainId, queryToken, querychain]);
+    // For other chains, set default token if none exists
+    else if (!params.get('token')) {
+      params.set('token', getDefaultToken(currentChain));
+      shouldUpdate = true;
+    }
+
+    // Only update if changes were made
+    if (shouldUpdate) {
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [chainId, querychain, router, searchParams]);
 
   const chain = querychain ? querychain : String(chainId);
   const stakingContractAddress = getStakingToContract(
