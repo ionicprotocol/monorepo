@@ -71,6 +71,15 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
   // ║                           External Functions                              ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  /**
+   * @notice Creates a new lock for multiple tokens and assigns it to a specified address
+   * @param _tokenAddress Array of token addresses to lock
+   * @param _tokenAmount Array of token amounts to lock
+   * @param _duration Array of lock durations
+   * @param _stakeUnderlying Array of booleans indicating whether to stake underlying tokens
+   * @param _to Address to assign the lock to
+   * @return The ID of the newly created veNFT
+   */
   function createLockFor(
     address[] memory _tokenAddress,
     uint256[] memory _tokenAmount,
@@ -81,6 +90,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, _to);
   }
 
+  /**
+   * @notice Creates a new lock for multiple tokens
+   * @param _tokenAddress Array of token addresses to lock
+   * @param _tokenAmount Array of token amounts to lock
+   * @param _duration Array of lock durations
+   * @param _stakeUnderlying Array of booleans indicating whether to stake underlying tokens
+   * @return The ID of the newly created veNFT
+   */
   function createLock(
     address[] calldata _tokenAddress,
     uint256[] calldata _tokenAmount,
@@ -90,6 +107,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, msg.sender);
   }
 
+  /**
+   * @notice Increases the amount of tokens locked for a specific veNFT
+   * @param _tokenAddress Address of the token to increase lock amount for
+   * @param _tokenId ID of the veNFT
+   * @param _tokenAmount Amount of tokens to add to the lock
+   * @param _stakeUnderlying Whether to stake the underlying tokens
+   */
   function increaseAmount(
     address _tokenAddress,
     uint256 _tokenId,
@@ -119,6 +143,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     );
   }
 
+  /**
+   * @notice Locks additional asset type for an existing veNFT
+   * @param _tokenAddress Address of the new token to lock
+   * @param _tokenAmount Amount of tokens to lock
+   * @param _tokenId ID of the veNFT
+   * @param _duration Duration of the lock
+   * @param _stakeUnderlying Whether to stake the underlying tokens
+   */
   function lockAdditionalAsset(
     address _tokenAddress,
     uint256 _tokenAmount,
@@ -153,6 +185,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     );
   }
 
+  /**
+   * @notice Increases the lock duration for a specific token in a veNFT
+   * @param _tokenAddress Address of the token
+   * @param _tokenId ID of the veNFT
+   * @param _lockDuration New lock duration to extend to
+   */
   function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
@@ -251,6 +289,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit Supply(supplyBefore, supplyBefore - oldLocked.amount);
   }
 
+  /**
+   * @notice Merges two veNFTs into one, combining their locked assets
+   * @param _from ID of the source veNFT
+   * @param _to ID of the destination veNFT
+   */
   function merge(uint256 _from, uint256 _to) external {
     if (_from == _to) revert SameNFT();
     if (s_voted[_from] || s_voted[_to]) revert AlreadyVoted();
@@ -300,6 +343,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit MergeCompleted(_from, _to, assetsLocked, assetsLocked.length);
   }
 
+  /**
+   * @notice Splits a veNFT into two separate veNFTs
+   * @param _tokenAddress Address of the token to split
+   * @param _from ID of the source veNFT
+   * @param _splitAmount Amount of tokens to split into new veNFT
+   * @return _tokenId1 ID of the original veNFT
+   * @return _tokenId2 ID of the new veNFT created from the split
+   */
   function split(
     address _tokenAddress,
     uint256 _from,
@@ -337,11 +388,21 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit SplitCompleted(_from, _tokenId1, _tokenId2, _splitAmount, _tokenAddress);
   }
 
+  /**
+   * @notice Enables or disables splitting capability for a specific account
+   * @param _account Address to toggle split permission for
+   * @param _isAllowed Whether splitting should be allowed
+   */
   function toggleSplit(address _account, bool _isAllowed) external onlyOwner {
     s_canSplit[_account] = _isAllowed;
     emit SplitToggle(_account, _isAllowed);
   }
 
+  /**
+   * @notice Converts a lock to a permanent lock that cannot be withdrawn
+   * @param _tokenAddress Address of the token
+   * @param _tokenId ID of the veNFT
+   */
   function lockPermanent(address _tokenAddress, uint256 _tokenId) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
@@ -361,6 +422,11 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit PermanentLockCreated(_tokenAddress, _tokenId, _newLocked.amount);
   }
 
+  /**
+   * @notice Removes permanent lock status from a veNFT
+   * @param _tokenAddress Address of the token
+   * @param _tokenId ID of the veNFT
+   */
   function unlockPermanent(address _tokenAddress, uint256 _tokenId) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
@@ -379,6 +445,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     emit PermanentLockRemoved(_tokenAddress, _tokenId, _newLocked.amount);
   }
 
+  /**
+   * @notice Delegates voting power from one veNFT to another
+   * @param fromTokenId ID of the source veNFT
+   * @param toTokenId ID of the destination veNFT
+   * @param lpToken Address of the LP token
+   * @param amount Amount of voting power to delegate
+   */
   function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external {
     LpTokenType lpType = s_lpType[lpToken];
     LockedBalance memory fromLocked = s_locked[fromTokenId][lpType];
@@ -448,6 +521,13 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
+  /**
+   * @notice Removes delegations from multiple source veNFTs to a single destination
+   * @param fromTokenIds Array of source veNFT IDs
+   * @param toTokenId Destination veNFT ID
+   * @param lpToken Address of the LP token
+   * @param amounts Array of amounts to remove from delegation
+   */
   function removeDelegators(
     uint256[] memory fromTokenIds,
     uint256 toTokenId,
@@ -460,6 +540,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, IveION {
     }
   }
 
+  /**
+   * @notice Claims accumulated emissions rewards for staked tokens
+   * @param _tokenAddress Address of the token to claim emissions for
+   */
   function claimEmissions(address _tokenAddress) external {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
