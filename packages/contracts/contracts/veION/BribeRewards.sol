@@ -309,7 +309,6 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return IVoter(voter).getAllLpRewardTokens();
   }
 
-  //TODO account for non 18 decimal assets, optimize looping for earned
   function _getTokenEthValueAt(
     uint256 amount,
     address lpToken,
