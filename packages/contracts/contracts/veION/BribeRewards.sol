@@ -68,7 +68,11 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     ve = _ve;
   }
 
-  /// @inheritdoc IBribeRewards
+  /// @notice Gets the index of the checkpoint that contains the balance at a specific timestamp
+  /// @param tokenId The ID of the veION token
+  /// @param lpToken The LP token address
+  /// @param timestamp The timestamp to query
+  /// @return The index of the checkpoint
   function getPriorBalanceIndex(uint256 tokenId, address lpToken, uint256 timestamp) public view returns (uint256) {
     uint256 nCheckpoints = numCheckpoints[tokenId][lpToken];
     if (nCheckpoints == 0) {
@@ -101,7 +105,10 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return lower;
   }
 
-  /// @inheritdoc IBribeRewards
+  /// @notice Gets the index of the supply checkpoint at a specific timestamp
+  /// @param timestamp The timestamp to query
+  /// @param lpToken The LP token address
+  /// @return The index of the checkpoint
   function getPriorSupplyIndex(uint256 timestamp, address lpToken) public view returns (uint256) {
     uint256 nCheckpoints = supplyNumCheckpoints[lpToken];
     if (nCheckpoints == 0) {
@@ -134,6 +141,10 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return lower;
   }
 
+  /// @notice Writes a new checkpoint for a token's balance
+  /// @param tokenId The ID of the veION token
+  /// @param lpToken The LP token address
+  /// @param balance The balance to record
   function _writeCheckpoint(uint256 tokenId, address lpToken, uint256 balance) internal {
     uint256 _nCheckPoints = numCheckpoints[tokenId][lpToken];
     uint256 _timestamp = block.timestamp;
@@ -150,6 +161,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     }
   }
 
+  /// @notice Writes a new checkpoint for total supply
+  /// @param lpToken The LP token address
   function _writeSupplyCheckpoint(address lpToken) internal {
     uint256 _nCheckPoints = supplyNumCheckpoints[lpToken];
     uint256 _timestamp = block.timestamp;
@@ -166,6 +179,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     }
   }
 
+  /// @notice Returns the total number of reward tokens
+  /// @return The length of the rewards array
   function rewardsListLength() external view returns (uint256) {
     return rewards.length;
   }
@@ -305,10 +320,17 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     emit RewardNotification(sender, token, epochStart, amount);
   }
 
+  /// @notice Gets all LP tokens that can receive rewards
+  /// @return Array of LP token addresses
   function getAllLpRewardTokens() public view returns (address[] memory) {
     return IVoter(voter).getAllLpRewardTokens();
   }
 
+  /// @notice Calculates the ETH value of a token amount at a specific epoch
+  /// @param amount The amount of tokens
+  /// @param lpToken The LP token address
+  /// @param epochTimestamp The timestamp of the epoch
+  /// @return The ETH value of the tokens
   function _getTokenEthValueAt(
     uint256 amount,
     address lpToken,
@@ -321,15 +343,26 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return ethValue;
   }
 
+  /// @notice Sets historical prices for LP tokens at specific epochs
+  /// @param epochTimestamp The timestamp of the epoch
+  /// @param lpToken The LP token address
+  /// @param price The price to set
   function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     historicalPrices[lpToken][epochStart] = price;
   }
 
+  /// @notice Sets the authorized address that can call _deposit() & _withdraw()
+  /// @param _authorized The address to authorize
   function setAuthorized(address _authorized) external onlyOwner {
     authorized = _authorized;
   }
 
+  /// @notice Gets a specific checkpoint for a token
+  /// @param tokenId The ID of the veION token
+  /// @param lpToken The LP token address
+  /// @param index The index of the checkpoint to retrieve
+  /// @return The checkpoint data
   function getCheckpoint(uint256 tokenId, address lpToken, uint256 index) external view returns (Checkpoint memory) {
     return checkpoints[tokenId][lpToken][index];
   }

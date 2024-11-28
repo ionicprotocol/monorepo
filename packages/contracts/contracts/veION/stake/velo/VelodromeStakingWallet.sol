@@ -9,28 +9,38 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
- * @title VeloIonModeStakingModeReward
+ * @title VelodromeStakingWallet
  * @notice Staking interface for usage in veION when staking Velodrome ION-MODE-5050 LP.
  * @dev This contract allows staking and claiming rewards with a specific staking strategy.
  * @dev The staking strategy is set during contract deployment and can only be called by the strategy.
  * @dev The contract is designed to be used with the Velodrome ION-MODE-5050 LP token.
- * @dev The contract is authored by Jourdan Dunkley <jourdan@ionic.money>.
+ * @author Jourdan Dunkley <jourdan@ionic.money>
  */
 contract VelodromeStakingWallet is IStakeWallet, Initializable {
   using SafeERC20 for IERC20;
   IStakeStrategy public stakeStrategy;
 
+  /**
+   * @dev Modifier to restrict function access to only the stake strategy contract
+   */
   modifier onlyStakeStrategy() {
     require(msg.sender == address(stakeStrategy), "Not authorized: Only stake strategy can call this function");
     _;
   }
 
+  /**
+   * @notice Initializes the contract with a staking strategy
+   * @dev Can only be called once due to initializer modifier
+   * @param _stakeStrategy The address of the staking strategy contract
+   */
   function initialize(IStakeStrategy _stakeStrategy) external initializer {
     stakeStrategy = _stakeStrategy;
   }
 
   /**
-   * @inheritdoc IStakeWallet
+   * @notice Stakes tokens into the Velodrome staking contract
+   * @dev Transfers tokens from sender to this contract and then stakes them
+   * @param _amount The amount of tokens to stake
    */
   function stake(address /* _from */, uint256 _amount, bytes memory /* _data */) external override onlyStakeStrategy {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
@@ -42,7 +52,9 @@ contract VelodromeStakingWallet is IStakeWallet, Initializable {
   }
 
   /**
-   * @notice Claims rewards for the caller.
+   * @notice Claims staking rewards from the Velodrome contract
+   * @dev Claims rewards and transfers them to the specified recipient
+   * @param _from The address that will receive the claimed rewards
    */
   function claim(address _from) external onlyStakeStrategy {
     IERC20 rewardToken = IERC20(stakeStrategy.rewardToken());
@@ -54,9 +66,10 @@ contract VelodromeStakingWallet is IStakeWallet, Initializable {
   }
 
   /**
-   * @notice Withdraws a specified amount of staked tokens.
-   * @param _withdrawTo The address of the user withdrawing the tokens.
-   * @param _amount The amount of tokens to withdraw.
+   * @notice Withdraws staked tokens from the Velodrome contract
+   * @dev Withdraws tokens and transfers them to the specified recipient
+   * @param _withdrawTo The address that will receive the withdrawn tokens
+   * @param _amount The amount of tokens to withdraw
    */
   function withdraw(address _withdrawTo, uint256 _amount) external onlyStakeStrategy {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
