@@ -101,18 +101,6 @@ export default function Navbar() {
           </Link>
           <Link
             className="relative mb-2 lg:mb-0"
-            href={'/points'}
-          >
-            <p
-              className={`${
-                pathname == '/points' ? 'text-accent' : null
-              } lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
-            >
-              Points
-            </p>
-          </Link>
-          <Link
-            className="relative mb-2 lg:mb-0"
             href={'/dashboard'}
           >
             <p

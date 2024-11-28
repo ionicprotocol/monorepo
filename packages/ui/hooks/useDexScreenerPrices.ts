@@ -25,8 +25,8 @@ const REWARD_TOKEN_CONFIGS = {
   },
   [mode.id]: {
     name: 'mode',
-    pairAddress: '0x8cfe2a02dfbabc56ae7e573170e35f88a38bea55', // MODE pair
-    tokenSymbol: 'MODE',
+    pairAddress: '0xc2026f3fb6fc51f4ecae40a88b4509cb6c143ed4', // MODE pair
+    tokenSymbol: 'xVELO',
     ionAddress: ModeReservesContractAddr.toLocaleLowerCase()
   }
 } as const;

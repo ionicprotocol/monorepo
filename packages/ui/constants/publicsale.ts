@@ -339,4 +339,4 @@ export const PublicSaleAbi = [
     stateMutability: 'nonpayable',
     type: 'function'
   }
-];
+] as const;

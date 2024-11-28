@@ -77,19 +77,12 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
 };
 
 export const chainsArr: Record<number, string> = {
-  34443: 'Mode',
-  8453: 'Base',
-  10: 'Optimism',
-  60808: 'Bob',
-  252: 'Frax'
-};
-
-export const scans: Record<number, string> = {
-  34443: 'https://explorer.mode.network/tx/',
-  8453: 'https://basescan.org/tx/',
-  10: 'https://optimistic.etherscan.io/tx/',
-  60808: 'https://explorer.gobob.xyz/tx/',
-  252: 'https://fraxscan.com/tx/'
+  [mode.id]: 'Mode',
+  [base.id]: 'Base',
+  [optimism.id]: 'Optimism',
+  [bob.id]: 'Bob',
+  [fraxtal.id]: 'Fraxtal',
+  [lisk.id]: 'Lisk'
 };
 
 export const FLYWHEEL_TYPE_MAP: Record<
@@ -99,11 +92,13 @@ export const FLYWHEEL_TYPE_MAP: Record<
   [mode.id]: {
     supply: [
       '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
-      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5'
+      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
+      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44'
     ],
     borrow: [
       '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
-      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834'
+      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834',
+      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5'
     ]
   },
   [base.id]: {
@@ -113,18 +108,24 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
       '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
       '0xc39441b305705AfD07de97237bC835a4501AbbEC',
-      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E'
+      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
+      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
+      '0x1d0a712aE0162431E0573A8a735D02a29805d124',
+      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
-      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9'
+      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
+      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
+      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424'
     ]
   },
   [optimism.id]: {
     supply: [
       '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
-      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162'
+      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
+      '0x05c3e910F7639457f92220605966e7f86A2ef966'
     ],
     borrow: []
   }
@@ -231,7 +232,9 @@ export const pools: Record<number, PoolParams> = {
           'RSR',
           'wstETH',
           'cbETH',
-          'USD+'
+          'USD+',
+          'fBOMB',
+          'KLIMA'
         ]
       }
     ]
@@ -305,7 +308,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['WETH']
+        assets: ['WETH', 'USDT', 'LSK']
       }
     ]
   }
