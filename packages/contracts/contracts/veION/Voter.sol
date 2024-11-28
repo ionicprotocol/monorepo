@@ -48,18 +48,14 @@ contract Voter is IVoter, OwnableUpgradeable {
   mapping(uint256 => mapping(address => uint256)) public usedWeights;
   /// @dev Nft => Timestamp of last vote (ensures single vote per epoch)
   mapping(uint256 => uint256) public lastVoted;
-  /// @dev Address => Gauge
-  mapping(address => bool) public isGauge;
   /// @dev Token => Whitelisted status
   mapping(address => bool) public isWhitelistedToken;
   /// @dev TokenId => Whitelisted status
   mapping(uint256 => bool) public isWhitelistedNFT;
-  /// @dev Gauge => Liveness status
+  /// @dev Reward Accumulator => Liveness status
   mapping(address => bool) public isAlive;
   /// @dev Accumulated distributions per vote
   uint256 internal index;
-  /// @dev Gauge => Amount claimable
-  mapping(address => uint256) public claimable;
   /// @dev Market => Market Side => Reward Accumulator
   mapping(address => mapping(MarketSide => address)) public marketToRewardAccumulators;
   /// @dev Market => Market Side => Supply Index

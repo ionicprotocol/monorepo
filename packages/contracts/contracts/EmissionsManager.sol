@@ -20,18 +20,19 @@ interface Oracle {
 contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   using SafeTransferLib for ERC20;
 
-  address poolLens;
-  address protocalAddress;
+  address public protocalAddress;
+  uint256 public collateralBp;
   PoolDirectory public fpd;
-  ERC20 rewardToken;
-  IveION veION;
-  mapping(address => bool) isBlacklisted;
-  mapping(address => bool) nonBlacklistable;
+  ERC20 public rewardToken;
+  IveION public veION;
+
   bytes public nonBlacklistableTargetBytecode;
-  uint256 collateralBp;
+  mapping(address => bool) public isBlacklisted;
+  mapping(address => bool) public nonBlacklistable;
+
   uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
 
-  modifier notMatchingBytecode(address _addr) {
+  modifier onlyBlacklistableBytecode(address _addr) {
     bytes memory code = _addr.code; 
     require(keccak256(code) != keccak256(nonBlacklistableTargetBytecode), "Non-blacklistable bytecode");
     _;
@@ -41,13 +42,15 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     PoolDirectory _fpd,
     address _protocalAddress,
     ERC20 _rewardToken,
-    uint256 _collateralBp
+    uint256 _collateralBp,
+    bytes memory _nonBlacklistableTargetBytecode
   ) public initializer {
     __Ownable2Step_init();
     protocalAddress = _protocalAddress;
     fpd = _fpd;
     rewardToken = _rewardToken;
     collateralBp = _collateralBp;
+    nonBlacklistableTargetBytecode = _nonBlacklistableTargetBytecode;
   }
 
   function setVeIon(IveION _veIon) external onlyOwner {
@@ -95,35 +98,33 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     } else return false;
   }
 
-  function reportUser(address _user) external notMatchingBytecode(_user) returns (bool) {
+  function reportUser(address _user) external onlyBlacklistableBytecode(_user) {
     require(!nonBlacklistable[_user], "Non-blacklistable user");
-    if (!_checkCollateralRatio(_user)) {
-      isBlacklisted[_user] = true;
-      blacklistUserAndClaimEmissions(_user);
-      return true;
-    } else return false;
+    require(!isBlacklisted[_user], "Already blacklisted");
+    require(!_checkCollateralRatio(_user), "LP balance above threshold");
+    isBlacklisted[_user] = true;
+    blacklistUserAndClaimEmissions(_user);
   }
 
-  function whitelistUser(address _user) external returns (bool) {
-    if (_checkCollateralRatio(_user)) {
-      isBlacklisted[_user] = false;
-      (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
-      for (uint256 i = 0; i < pools.length; i++) {
-        IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
-        ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
-        for (uint256 j = 0; j < cTokens.length; j++) {
-          address[] memory flywheelAddresses = comptroller.getAccruingFlywheels();
-          for (uint256 k = 0; k < flywheelAddresses.length; k++) {
-            IonicFlywheelCore flywheel = IonicFlywheelCore(flywheelAddresses[k]);
-            if (address(flywheel.rewardToken()) == address(rewardToken)) {
-              flywheel.whitelistUser(ERC20(address(cTokens[j])), _user);
-              flywheel.accrue(ERC20(address(cTokens[j])), _user);
-            }
+  function whitelistUser(address _user) external {
+    require(isBlacklisted[_user], "Already whitelisted");
+    require(_checkCollateralRatio(_user), "LP balance below threshold");
+    isBlacklisted[_user] = false;
+    (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
+    for (uint256 i = 0; i < pools.length; i++) {
+      IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
+      ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
+      for (uint256 j = 0; j < cTokens.length; j++) {
+        address[] memory flywheelAddresses = comptroller.getAccruingFlywheels();
+        for (uint256 k = 0; k < flywheelAddresses.length; k++) {
+          IonicFlywheelCore flywheel = IonicFlywheelCore(flywheelAddresses[k]);
+          if (address(flywheel.rewardToken()) == address(rewardToken)) {
+            flywheel.whitelistUser(ERC20(address(cTokens[j])), _user);
+            flywheel.accrue(ERC20(address(cTokens[j])), _user);
           }
         }
       }
-      return true;
-    } else return false;
+    }
   }
 
   function isUserBlacklisted(address _user) external view returns (bool) {
@@ -167,8 +168,8 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 balanceAfter = ERC20(rewardToken).balanceOf(address(this));
     uint256 totalClaimed = balanceAfter - balanceBefore;
     if (totalClaimed > 0) {
-      rewardToken.safeTransferFrom(address(this), msg.sender, (totalClaimed * 80) / 100);
-      rewardToken.safeTransferFrom(address(this), protocalAddress, (totalClaimed * 20) / 100);
+      rewardToken.safeTransfer(msg.sender, (totalClaimed * 80) / 100);
+      rewardToken.safeTransfer(protocalAddress, (totalClaimed * 20) / 100);
     }
   }
 }

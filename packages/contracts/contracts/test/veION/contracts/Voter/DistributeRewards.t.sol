@@ -3,8 +3,21 @@ pragma solidity >=0.8.0;
 import "./utils/VoterUtils.sol";
 import { UniswapLpTokenPriceOracle } from "../../../../oracles/default/UniswapLpTokenPriceOracle.sol";
 import { BasePriceOracle } from "../../../../oracles/BasePriceOracle.sol";
+import { PoolDirectory } from "../../../../PoolDirectory.sol";
+import { EmissionsManager } from "../../../../EmissionsManager.sol";
+import { IonicFlywheel } from "../../../../ionic/strategies/flywheel/IonicFlywheel.sol";
+import { ERC20 } from "solmate/tokens/ERC20.sol";
+import { IFlywheelBooster } from "../../../../ionic/strategies/flywheel/IFlywheelBooster.sol";
+import { IFlywheelRewards } from "../../../../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
+import { IIonicFlywheelBorrowBooster } from "../../../../ionic/strategies/flywheel/IIonicFlywheelBorrowBooster.sol";
+import { IonicFlywheelBorrowBooster } from "../../../../ionic/strategies/flywheel/IonicFlywheelBorrowBooster.sol";
+import { VeIonicFlywheelDynamicRewards } from "../../../../ionic/strategies/flywheel/rewards/VeIonicFlywheelDynamicRewards.sol";
+import { Comptroller } from "../../../../compound/Comptroller.sol";
+import {Auth, Authority} from "solmate/auth/Auth.sol";
+
 
 contract DistributeRewards is VoterTest {
+  address owner = 0x1155b614971f16758C92c4890eD338C9e3ede6b7;
   address ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
   address weth = 0x4200000000000000000000000000000000000006;
   address ionWhale = 0x7862Ba142511eEf11a5a8b179DB4F53AC115AB59;
@@ -12,6 +25,15 @@ contract DistributeRewards is VoterTest {
   IVoter.MarketSide[] sides;
   uint256[] weights;
   uint256 rewardAmount = 1_000_000 * 1e18;
+
+  PoolDirectory poolDirectory = PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f);
+  IonicFlywheel flywheel;
+  IFlywheelRewards flywheelRewards;
+  address protocalAddress = address(0x123);
+  bytes bytecode = hex"deadbeef";
+  IIonicFlywheelBorrowBooster flywheelBooster;
+  uint32 constant ONE_WEEK = 1 weeks;
+  Comptroller comptroller = Comptroller(0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13);
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -36,8 +58,6 @@ contract DistributeRewards is VoterTest {
     sides[3] = IVoter.MarketSide.Borrow;
     weights[3] = 100;
 
-    ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
-    weth = 0x4200000000000000000000000000000000000006;
     UniswapLpTokenPriceOracle uniswapLpTokenPriceOracleIonWeth = new UniswapLpTokenPriceOracle(address(weth));
     UniswapLpTokenPriceOracle uniswapLpTokenPriceOracleWethAero = new UniswapLpTokenPriceOracle(address(weth));
     address[] memory underlyings = new address[](2);
@@ -50,6 +70,30 @@ contract DistributeRewards is VoterTest {
 
     vm.prank(mpo.admin());
     mpo.add(underlyings, oracles);
+
+    vm.startPrank(owner);
+    EmissionsManager emissionsManager = new EmissionsManager();
+    emissionsManager.initialize(poolDirectory, protocalAddress, ERC20(ion), 2500, bytecode);
+
+    flywheelBooster = new IonicFlywheelBorrowBooster();
+
+    flywheel = new IonicFlywheel();
+    flywheel.initialize(
+      ERC20(ion),
+      IFlywheelRewards(address(0)),
+      IFlywheelBooster(address(flywheelBooster)),
+      owner
+    );
+
+    flywheelRewards = new VeIonicFlywheelDynamicRewards(flywheel, ONE_WEEK);
+    flywheel.setFlywheelRewards(flywheelRewards);
+
+    flywheel.setEmissionsManager(emissionsManager);
+    flywheel.updateFeeSettings(0, protocalAddress);
+    vm.stopPrank();
+
+    vm.prank(mpo.admin());
+    comptroller._addRewardsDistributor(address(flywheel));    
   }
 
   function test_distributeRewards_RewardsCanBeDistributed() public fork(BASE_MAINNET) {

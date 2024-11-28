@@ -54,11 +54,6 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     _;
   }
 
-  constructor() {
-    // prevents the misusage of the implementation contract
-    _disableInitializers();
-  }
-
   function initialize(
     ERC20 _rewardToken,
     IFlywheelRewards _flywheelRewards,
