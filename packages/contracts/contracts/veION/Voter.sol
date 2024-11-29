@@ -15,69 +15,101 @@ import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts
 import { OwnableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
 
+/**
+ * @title Voter Contract
+ * @notice This contract allows veION holders to vote for various markets
+ * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
+ */
 contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
-  /// @notice The ve token that governs these contracts
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           State Variables                                 ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  ///@notice The ve token that governs these contracts
   address public ve;
-  /// @notice Base token of ve contract
+  ///@notice Base token of ve contract
   address internal rewardToken;
-  /// @notice Standard OZ IGovernor using ve for vote weights.
+  ///@notice Standard OZ IGovernor using ve for vote weights
   address public governor;
-  /// @notice Custom Epoch Governor using ve for vote weights.
+  ///@notice Custom Epoch Governor using ve for vote weights
   address public epochGovernor;
-
-  /// @dev Total Voting Weights
+  ///@notice Master Price Oracle instance
+  MasterPriceOracle public mpo;
+  ///@notice List of LP tokens
+  address[] public lpTokens;
+  ///@notice Total Voting Weights for each address
   mapping(address => uint256) public totalWeight;
-  /// @dev Most number of markets one voter can vote for at once
+  ///@notice Maximum number of markets one voter can vote for at once
   uint256 public maxVotingNum;
+  ///@notice Minimum value for maxVotingNum
   uint256 internal constant MIN_MAXVOTINGNUM = 10;
-
-  /// @dev All markets viable for incentives
+  ///@notice All markets viable for incentives
   Market[] public markets;
-  /// @dev Reward Accumulator => Bribes Voting Reward
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                                Mappings                                   ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  ///@notice Mapping from Reward Accumulator to Bribes Voting Reward
   mapping(address => address) public rewardAccumulatorToBribe;
-  /// @dev Market => Market Side => LP Asset => weights
+  ///@notice Mapping from Market to Market Side to LP Asset to weights
   mapping(address => mapping(MarketSide => mapping(address => uint256))) public weights;
-  /// @dev NFT => Pool => LP Asset => Votes
+  ///@notice Mapping from NFT to Pool to LP Asset to Votes
   mapping(uint256 => mapping(address => mapping(MarketSide => mapping(address => uint256)))) public votes;
-  /// @dev NFT => List of markets voted for by NFT
+  ///@notice Mapping from NFT to List of markets voted for by NFT
   mapping(uint256 => mapping(address => address[])) public marketVote;
-  /// @dev NFT => List of market vote sides voted for by NFT
+  ///@notice Mapping from NFT to List of market vote sides voted for by NFT
   mapping(uint256 => mapping(address => MarketSide[])) public marketVoteSide;
-  /// @dev NFT => Total voting weight of NFT
+  ///@notice Mapping from NFT to Total voting weight of NFT
   mapping(uint256 => mapping(address => uint256)) public usedWeights;
-  /// @dev Nft => Timestamp of last vote (ensures single vote per epoch)
+  ///@notice Mapping from NFT to Timestamp of last vote (ensures single vote per epoch)
   mapping(uint256 => uint256) public lastVoted;
-  /// @dev Token => Whitelisted status
+  ///@notice Mapping from Token to Whitelisted status
   mapping(address => bool) public isWhitelistedToken;
-  /// @dev TokenId => Whitelisted status
+  ///@notice Mapping from TokenId to Whitelisted status
   mapping(uint256 => bool) public isWhitelistedNFT;
-  /// @dev Reward Accumulator => Liveness status
+  ///@notice Mapping from Reward Accumulator to Liveness status
   mapping(address => bool) public isAlive;
-  /// @dev Accumulated distributions per vote
+  ///@notice Accumulated distributions per vote
   uint256 internal index;
-  /// @dev Market => Market Side => Reward Accumulator
+  ///@notice Mapping from Market to Market Side to Reward Accumulator
   mapping(address => mapping(MarketSide => address)) public marketToRewardAccumulators;
-  /// @dev Market => Market Side => Supply Index
+  ///@notice Mapping from Market to Market Side to Supply Index
   mapping(address => uint256) public supplyIndex;
 
-  MasterPriceOracle public mpo;
-
-  address[] public lpTokens;
-
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                               Modifiers                                   ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  /**
+   * @notice Modifier to ensure that the function is called only in a new epoch since the last vote.
+   * @dev Reverts if the current epoch start time is less than or equal to the last voted timestamp for the given token ID.
+   *      Also reverts if the current time is within the vote distribution window.
+   * @param _tokenId The ID of the veNFT to check the last voted timestamp.
+   */
   modifier onlyNewEpoch(uint256 _tokenId) {
-    // ensure new epoch since last vote
     if (IonicTimeLibrary.epochStart(block.timestamp) <= lastVoted[_tokenId]) revert AlreadyVotedOrDeposited();
     if (block.timestamp <= IonicTimeLibrary.epochVoteStart(block.timestamp)) revert DistributeWindow();
     _;
   }
 
+  /**
+   * @notice Modifier to ensure that the function is called only by the governance address.
+   * @dev Reverts if the caller is not the current governor.
+   */
   modifier onlyGovernance() {
     if (msg.sender != governor) revert NotGovernor();
     _;
   }
 
-  /// @dev requires initialization with at least rewardToken
+  /**
+   * @notice Initializes the Voter contract with the specified parameters.
+   * @dev Requires initialization with at least one reward token.
+   * @param _tokens An array of token addresses to be whitelisted.
+   * @param _mpo The MasterPriceOracle contract address.
+   * @param _rewardToken The address of the reward token.
+   * @param _ve The address of the veION contract.
+   * @custom:reverts TokensArrayEmpty if the _tokens array is empty.
+   */
   function initialize(
     address[] calldata _tokens,
     MasterPriceOracle _mpo,
@@ -180,6 +212,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // ║                           Admin External Functions                        ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  /// @inheritdoc IVoter
   function distributeRewards() external onlyGovernance {
     if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
@@ -211,6 +244,16 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // ║                           Internal Functions                              ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  /**
+   * @notice Internal function to handle voting logic for a given token ID and voting asset.
+   * @param _tokenId The ID of the token used for voting.
+   * @param _votingAsset The address of the asset being used for voting.
+   * @param _votingAssetBalance The balance of the voting asset.
+   * @param _marketVote An array of market addresses to vote for.
+   * @param _marketVoteSide An array of market sides corresponding to the markets.
+   * @param _weights An array of weights for each market.
+   * @param totalVoteWeight The total weight of the vote.
+   */
   function _vote(
     uint256 _tokenId,
     address _votingAsset,
@@ -257,7 +300,12 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     usedWeights[_tokenId][_votingAsset] = uint256(vars.usedWeight);
   }
 
-  //can you only vote for one particular side or any amount of sides for a market
+  /**
+   * @notice Internal function to update voting balances for a given token ID and voting asset.
+   * @param _tokenId The ID of the token whose voting balance is being updated.
+   * @param _votingAsset The address of the asset being used for voting.
+   * @param _votingAssetBalance The balance of the voting asset.
+   */
   function _poke(uint256 _tokenId, address _votingAsset, uint256 _votingAssetBalance) internal {
     address[] memory _marketVote = marketVote[_tokenId][_votingAsset];
     MarketSide[] memory _marketVoteSide = marketVoteSide[_tokenId][_votingAsset];
@@ -279,6 +327,11 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
+  /**
+   * @notice Internal function to reset voting state for a given token ID and voting asset.
+   * @param _tokenId The ID of the token whose voting state is being reset.
+   * @param _votingAsset The address of the asset being used for voting.
+   */
   function _reset(uint256 _tokenId, address _votingAsset) internal {
     address[] storage _marketVote = marketVote[_tokenId][_votingAsset];
     MarketSide[] storage _marketVoteSide = marketVoteSide[_tokenId][_votingAsset];
@@ -314,22 +367,43 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     IveION(ve).voting(_tokenId, false);
   }
 
+  /**
+   * @notice Internal function to whitelist or unwhitelist a token for use in bribes.
+   * @param _token The address of the token to be whitelisted or unwhitelisted.
+   * @param _bool Boolean indicating whether to whitelist (true) or unwhitelist (false) the token.
+   */
   function _whitelistToken(address _token, bool _bool) internal {
     isWhitelistedToken[_token] = _bool;
     emit WhitelistToken(msg.sender, _token, _bool);
   }
 
+  /**
+   * @notice Internal function to calculate the ETH value of a given amount of LP tokens.
+   * @param amount The amount of LP tokens.
+   * @param lpToken The address of the LP token.
+   * @return The ETH value of the given amount of LP tokens.
+   */
   function _getTokenEthValue(uint256 amount, address lpToken) internal view returns (uint256) {
     uint256 tokenPriceInEth = mpo.price(lpToken); // Fetch price of 1 lpToken in ETH
     uint256 ethValue = amount * tokenPriceInEth;
     return ethValue;
   }
 
+  /**
+   * @notice Internal function to calculate the total ETH value of all LP tokens in the markets.
+   * @return _totalLPValueETH The total ETH value of all LP tokens.
+   */
   function _calculateTotalLPValue() internal view returns (uint256 _totalLPValueETH) {
     for (uint256 i = 0; i < markets.length; i++)
       _totalLPValueETH += _calculateMarketLPValue(markets[i].marketAddress, markets[i].side);
   }
 
+  /**
+   * @notice Internal function to calculate the ETH value of LP tokens for a specific market.
+   * @param _market The address of the market.
+   * @param _marketSide The side of the market.
+   * @return _marketLPValueETH The ETH value of LP tokens for the specified market.
+   */
   function _calculateMarketLPValue(
     address _market,
     MarketSide _marketSide
@@ -341,6 +415,12 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
+  /**
+   * @notice Internal function to check if a market exists.
+   * @param _marketAddress The address of the market.
+   * @param _marketSide The side of the market.
+   * @return True if the market exists, false otherwise.
+   */
   function _marketExists(address _marketAddress, MarketSide _marketSide) internal view returns (bool) {
     for (uint256 j = 0; j < markets.length; j++) {
       if (markets[j].marketAddress == _marketAddress && markets[j].side == _marketSide) {
@@ -350,6 +430,12 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     return false;
   }
 
+  /**
+   * @notice Internal function to get the index of an LP token in a list of voting LP tokens.
+   * @param _votingLpTokens An array of voting LP token addresses.
+   * @param _lpToken The address of the LP token to find.
+   * @return _index The index of the LP token in the array, or max uint256 if not found.
+   */
   function _getIndexOfLp(address[] memory _votingLpTokens, address _lpToken) internal pure returns (uint256 _index) {
     for (uint256 i = 0; i < _votingLpTokens.length; i++) {
       if (_votingLpTokens[i] == _lpToken) return i;
@@ -361,10 +447,12 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // ║                           Setter Functions                                ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  /// @inheritdoc IVoter
   function setLpTokens(address[] memory _lpTokens) external onlyOwner {
     lpTokens = _lpTokens;
   }
 
+  /// @inheritdoc IVoter
   function setMpo(address _mpo) external onlyOwner {
     mpo = MasterPriceOracle(_mpo);
   }
@@ -381,6 +469,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     epochGovernor = _epochGovernor;
   }
 
+  /// @inheritdoc IVoter
   function addMarkets(Market[] calldata _markets) external onlyGovernance {
     for (uint256 i = 0; i < _markets.length; i++) {
       Market memory newMarket = _markets[i];
@@ -389,6 +478,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
+  /// @inheritdoc IVoter
   function setMarketRewardAccumulators(
     address[] calldata _markets,
     MarketSide[] calldata _marketSides,
@@ -403,6 +493,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
+  /// @inheritdoc IVoter
   function setBribes(address[] calldata _rewardAccumulators, address[] calldata _bribes) external onlyGovernance {
     uint256 _length = _bribes.length;
     if (_rewardAccumulators.length != _length) revert MismatchedArrayLengths();
@@ -411,12 +502,14 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
   }
 
+  /// @inheritdoc IVoter
   function setMaxVotingNum(uint256 _maxVotingNum) external onlyGovernance {
     if (_maxVotingNum < MIN_MAXVOTINGNUM) revert MaximumVotingNumberTooLow();
     if (_maxVotingNum == maxVotingNum) revert SameValue();
     maxVotingNum = _maxVotingNum;
   }
 
+  /// @inheritdoc IVoter
   function toggleRewardAccumulatorAlive(
     address _market,
     MarketSide _marketSide,
@@ -431,30 +524,37 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // ║                           Pure/View Functions                             ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
 
+  /// @inheritdoc IVoter
   function epochStart(uint256 _timestamp) external pure returns (uint256) {
     return IonicTimeLibrary.epochStart(_timestamp);
   }
 
+  /// @inheritdoc IVoter
   function epochNext(uint256 _timestamp) external pure returns (uint256) {
     return IonicTimeLibrary.epochNext(_timestamp);
   }
 
+  /// @inheritdoc IVoter
   function epochVoteStart(uint256 _timestamp) external pure returns (uint256) {
     return IonicTimeLibrary.epochVoteStart(_timestamp);
   }
 
+  /// @inheritdoc IVoter
   function epochVoteEnd(uint256 _timestamp) external pure returns (uint256) {
     return IonicTimeLibrary.epochVoteEnd(_timestamp);
   }
 
+  /// @inheritdoc IVoter
   function marketsLength() external view returns (uint256) {
     return markets.length;
   }
 
+  /// @inheritdoc IVoter
   function getAllLpRewardTokens() external view returns (address[] memory) {
     return lpTokens;
   }
 
+  /// @inheritdoc IVoter
   function getVoteDetails(uint256 _tokenId, address _lpAsset) external view returns (VoteDetails memory) {
     uint256 length = marketVote[_tokenId][_lpAsset].length;
     address[] memory _marketVotes = new address[](length);

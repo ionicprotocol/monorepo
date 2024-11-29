@@ -83,4 +83,28 @@ interface IStakeStrategy {
    * @param to The new owner of the staking wallet.
    */
   function transferStakingWallet(address from, address to, uint256 _amount) external;
+
+  /**
+   * @notice Sets the escrow address.
+   * @param _escrow The address of the new escrow.
+   */
+  function setEscrow(address _escrow) external;
+
+  /**
+   * @notice Sets the staking token address.
+   * @param _stakingToken The address of the new staking token.
+   */
+  function setStakingToken(address _stakingToken) external;
+
+  /**
+   * @notice Sets the staking contract address.
+   * @param _stakingContract The address of the new staking contract.
+   */
+  function setStakingContract(address _stakingContract) external;
+
+  /**
+   * @notice Sets the staking wallet implementation address.
+   * @param _stakingWalletImplementation The address of the new staking wallet implementation.
+   */
+  function setStakingWalletImplementation(address _stakingWalletImplementation) external;
 }

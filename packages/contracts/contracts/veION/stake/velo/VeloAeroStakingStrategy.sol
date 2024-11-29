@@ -10,23 +10,37 @@ import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/cont
 
 /**
  * @title VeloAeroStakingStrategy
- * @notice Staking interface for usage in veION when staking Velodrome ION-MODE-5050 LP.
+ * @notice Staking interface for usage in veION when staking Velodrome/Aerodrome style LP.
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
 contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   using Clones for address;
 
+  /// @notice Address of the escrow responsible for managing staking operations
   address public escrow;
+  /// @notice Address of the token being staked
   address public stakingToken;
+  /// @notice Address of the contract where staking operations are executed
   address public stakingContract;
+  /// @notice Address of the implementation for staking wallets
   address public stakingWalletImplementation;
+  /// @notice Mapping of user addresses to their respective staking wallet addresses
   mapping(address => address) public userStakingWallet;
 
+  /// @dev Modifier to restrict function access to only the escrow address
   modifier onlyEscrow() {
     require(msg.sender == escrow, "Not authorized: Only escrow can call this function");
     _;
   }
 
+  /**
+   * @notice Initializes the staking strategy contract with necessary parameters
+   * @dev This function can only be called once due to the initializer modifier
+   * @param _escrow The address of the escrow responsible for staking operations
+   * @param _stakingToken The address of the token to be staked
+   * @param _stakingContract The address of the contract handling staking
+   * @param _stakingWalletImplementation The address of the staking wallet implementation
+   */
   function initialize(
     address _escrow,
     address _stakingToken,
@@ -40,9 +54,7 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     stakingWalletImplementation = _stakingWalletImplementation;
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function stake(address _from, uint256 _amount, bytes memory _data) external override onlyEscrow {
     IERC20(stakingToken).transferFrom(msg.sender, address(this), _amount);
 
@@ -57,29 +69,19 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     VeloAeroStakingWallet(veloWallet).stake(_from, _amount, _data);
   }
 
-  /**
-   * @notice Claims rewards for the caller.
-   */
+  /// @inheritdoc IStakeStrategy
   function claim(address _from) external onlyEscrow {
     VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_from]);
     veloWallet.claim(_from);
   }
 
-  /**
-   * @notice Withdraws staked tokens for the caller.
-   * @param _owner The address of the user withdrawing the tokens.
-   * @param _amount The amount of tokens to withdraw.
-   */
+  /// @inheritdoc IStakeStrategy
   function withdraw(address _owner, address _withdrawTo, uint256 _amount) external onlyEscrow {
     VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_owner]);
     veloWallet.withdraw(_withdrawTo, _amount);
   }
 
-  /**
-   * @notice Transfers the staking wallet from one owner to another.
-   * @param _from The current owner of the staking wallet.
-   * @param _to The new owner of the staking wallet.
-   */
+  /// @inheritdoc IStakeStrategy
   function transferStakingWallet(address _from, address _to, uint256 _amount) external onlyEscrow {
     address fromWallet = userStakingWallet[_from];
     address toWallet = userStakingWallet[_to];
@@ -95,56 +97,50 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     VeloAeroStakingWallet(toWallet).stake(_to, _amount, "");
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function rewardRate() external view override returns (uint256) {
     return IVeloIonModeStaking(stakingContract).rewardRate();
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function periodFinish() external view override returns (uint256) {
     return IVeloIonModeStaking(stakingContract).periodFinish();
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function balanceOf(address account) public view override returns (uint256) {
     return IVeloIonModeStaking(stakingContract).balanceOf(account);
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function totalSupply() external view override returns (uint256) {
     return IVeloIonModeStaking(stakingContract).totalSupply();
   }
 
-  /**
-   * @inheritdoc IStakeStrategy
-   */
+  /// @inheritdoc IStakeStrategy
   function rewardToken() public view returns (address) {
     return IVeloIonModeStaking(stakingContract).rewardToken();
   }
 
+  /// @inheritdoc IStakeStrategy
   function setEscrow(address _escrow) external onlyOwner {
     require(_escrow != address(0), "Invalid address");
     escrow = _escrow;
   }
 
+  /// @inheritdoc IStakeStrategy
   function setStakingToken(address _stakingToken) external onlyOwner {
     require(_stakingToken != address(0), "Invalid address");
     stakingToken = _stakingToken;
   }
 
+  /// @inheritdoc IStakeStrategy
   function setStakingContract(address _stakingContract) external onlyOwner {
     require(_stakingContract != address(0), "Invalid address");
     stakingContract = _stakingContract;
   }
 
+  /// @inheritdoc IStakeStrategy
   function setStakingWalletImplementation(address _stakingWalletImplementation) external onlyOwner {
     require(_stakingWalletImplementation != address(0), "Invalid address");
     stakingWalletImplementation = _stakingWalletImplementation;

@@ -2,6 +2,18 @@
 pragma solidity ^0.8.10;
 
 interface IBribeRewards {
+  /// @notice A checkpoint for marking balance
+  struct Checkpoint {
+    uint256 timestamp;
+    uint256 balanceOf;
+  }
+
+  /// @notice A checkpoint for marking supply
+  struct SupplyCheckpoint {
+    uint256 timestamp;
+    uint256 supply;
+  }
+
   error InvalidReward();
   error Unauthorized();
   error InvalidGauge();

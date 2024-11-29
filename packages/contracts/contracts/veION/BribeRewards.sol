@@ -13,54 +13,67 @@ import { IveION } from "./interfaces/IveION.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 
-/// @title BribeRewards
-/// @notice Base reward contract for distribution of rewards
+/**
+ * @title Voter Contract
+ * @notice This contract allows veION holders to vote for various markets
+ * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
+ */
 contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgradeable {
   using SafeERC20 for IERC20;
 
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           State Variables                                 ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  /// @notice Duration of the reward period in seconds
   uint256 public constant DURATION = 7 days;
-
+  /// @notice Address of the voter contract
   address public voter;
+  /// @notice Address of the veION contract
   address public ve;
   /// @dev Address which has permission to externally call _deposit() & _withdraw()
   address public authorized;
-
-  mapping(address => uint256) public totalSupply;
-  mapping(uint256 => mapping(address => uint256)) public balanceOf;
-  mapping(address => mapping(uint256 => uint256)) public tokenRewardsPerEpoch;
-  mapping(address => mapping(uint256 => uint256)) public lastEarn;
-
+  /// @notice List of reward tokens
   address[] public rewards;
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                                Mappings                                   ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  /// @notice Mapping to check if an address is a reward token
   mapping(address => bool) public isReward;
-
-  /// @notice A checkpoint for marking balance
-  struct Checkpoint {
-    uint256 timestamp;
-    uint256 balanceOf;
-  }
-
-  /// @notice A checkpoint for marking supply
-  struct SupplyCheckpoint {
-    uint256 timestamp;
-    uint256 supply;
-  }
-
+  /// @notice Total supply of LP tokens for each reward token
+  mapping(address => uint256) public totalSupply;
+  /// @notice Balance of LP tokens for each tokenId and reward token
+  mapping(uint256 => mapping(address => uint256)) public balanceOf;
+  /// @notice Rewards per epoch for each reward token
+  mapping(address => mapping(uint256 => uint256)) public tokenRewardsPerEpoch;
+  /// @notice Last earned timestamp for each reward token and tokenId
+  mapping(address => mapping(uint256 => uint256)) public lastEarn;
   /// @notice A record of balance checkpoints for each account, by index
   mapping(uint256 => mapping(address => mapping(uint256 => Checkpoint))) public checkpoints;
   /// @notice The number of checkpoints for each account
   mapping(uint256 => mapping(address => uint256)) public numCheckpoints;
   /// @notice A record of balance checkpoints for each token, by index
   mapping(uint256 => mapping(address => SupplyCheckpoint)) public supplyCheckpoints;
-  /// @notice The number of checkpoints
+  /// @notice The number of supply checkpoints for each token
   mapping(address => uint256) public supplyNumCheckpoints;
-
+  /// @notice Historical prices for each reward token and epoch
   mapping(address => mapping(uint256 => uint256)) public historicalPrices;
 
+  /**
+   * @notice Modifier to restrict access to only the voter contract
+   * @dev Ensures that the caller is the voter contract
+   */
   modifier onlyVoter() {
     require(msg.sender == voter, "Caller is not the voter");
     _;
   }
 
+  /**
+   * @notice Initializes the BribeRewards contract with the voter and veION addresses
+   * @dev This function is called only once during contract deployment
+   * @param _voter The address of the voter contract
+   * @param _ve The address of the veION contract
+   */
   function initialize(address _voter, address _ve) public initializer {
     __ReentrancyGuard_init();
     __Ownable_init();
@@ -68,83 +81,85 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     ve = _ve;
   }
 
-  /// @notice Gets the index of the checkpoint that contains the balance at a specific timestamp
-  /// @param tokenId The ID of the veION token
-  /// @param lpToken The LP token address
-  /// @param timestamp The timestamp to query
-  /// @return The index of the checkpoint
-  function getPriorBalanceIndex(uint256 tokenId, address lpToken, uint256 timestamp) public view returns (uint256) {
-    uint256 nCheckpoints = numCheckpoints[tokenId][lpToken];
-    if (nCheckpoints == 0) {
-      return 0;
-    }
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           External Functions                              ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
 
-    // First check most recent balance
-    if (checkpoints[tokenId][lpToken][nCheckpoints - 1].timestamp <= timestamp) {
-      return (nCheckpoints - 1);
-    }
+  /// @inheritdoc IBribeRewards
+  function deposit(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
+    address sender = msg.sender;
 
-    // Next check implicit zero balance
-    if (checkpoints[tokenId][lpToken][0].timestamp > timestamp) {
-      return 0;
-    }
+    totalSupply[lpToken] += amount;
+    balanceOf[tokenId][lpToken] += amount;
 
-    uint256 lower = 0;
-    uint256 upper = nCheckpoints - 1;
-    while (upper > lower) {
-      uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-      Checkpoint memory cp = checkpoints[tokenId][lpToken][center];
-      if (cp.timestamp == timestamp) {
-        return center;
-      } else if (cp.timestamp < timestamp) {
-        lower = center;
-      } else {
-        upper = center - 1;
-      }
-    }
-    return lower;
+    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
+    _writeSupplyCheckpoint(lpToken);
+
+    emit Deposit(sender, tokenId, amount);
   }
 
-  /// @notice Gets the index of the supply checkpoint at a specific timestamp
-  /// @param timestamp The timestamp to query
-  /// @param lpToken The LP token address
-  /// @return The index of the checkpoint
-  function getPriorSupplyIndex(uint256 timestamp, address lpToken) public view returns (uint256) {
-    uint256 nCheckpoints = supplyNumCheckpoints[lpToken];
-    if (nCheckpoints == 0) {
-      return 0;
-    }
+  /// @inheritdoc IBribeRewards
+  function withdraw(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
+    address sender = msg.sender;
 
-    // First check most recent balance
-    if (supplyCheckpoints[nCheckpoints - 1][lpToken].timestamp <= timestamp) {
-      return (nCheckpoints - 1);
-    }
+    totalSupply[lpToken] -= amount;
+    balanceOf[tokenId][lpToken] -= amount;
 
-    // Next check implicit zero balance
-    if (supplyCheckpoints[0][lpToken].timestamp > timestamp) {
-      return 0;
-    }
+    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
+    _writeSupplyCheckpoint(lpToken);
 
-    uint256 lower = 0;
-    uint256 upper = nCheckpoints - 1;
-    while (upper > lower) {
-      uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-      SupplyCheckpoint memory cp = supplyCheckpoints[center][lpToken];
-      if (cp.timestamp == timestamp) {
-        return center;
-      } else if (cp.timestamp < timestamp) {
-        lower = center;
-      } else {
-        upper = center - 1;
-      }
-    }
-    return lower;
+    emit Withdraw(sender, tokenId, amount);
   }
 
-  /// @notice Writes a new checkpoint for a token's balance
-  /// @param tokenId The ID of the veION token
-  /// @param lpToken The LP token address
-  /// @param balance The balance to record
+  /**
+   * @inheritdoc IBribeRewards
+   * @notice This function can accept any token, regardless of its whitelisting status.
+   * @dev If we were to check the whitelisting status, it could prevent tokens that were initially whitelisted and later de-whitelisted from having their rewards claimed, leading to unclaimable rewards.
+   */
+  function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant onlyVoter {
+    address sender = msg.sender;
+    if (ERC721Upgradeable(ve).ownerOf(tokenId) != sender && sender != voter) revert Unauthorized();
+
+    address _owner = ERC721Upgradeable(ve).ownerOf(tokenId);
+    _getReward(_owner, tokenId, tokens);
+  }
+
+  /// @inheritdoc IBribeRewards
+  function notifyRewardAmount(address token, uint256 amount) external override nonReentrant {
+    address sender = msg.sender;
+
+    if (!isReward[token]) {
+      if (!IVoter(voter).isWhitelistedToken(token)) revert TokenNotWhitelisted();
+      isReward[token] = true;
+      rewards.push(token);
+    }
+
+    _notifyRewardAmount(sender, token, amount);
+  }
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           Internal Functions                              ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
+
+  /// @dev used with all getReward implementations
+  function _getReward(address recipient, uint256 tokenId, address[] memory tokens) internal {
+    // check if token whitelisted
+    uint256 _length = tokens.length;
+    for (uint256 i = 0; i < _length; i++) {
+      uint256 _reward = earned(tokens[i], tokenId);
+      lastEarn[tokens[i]][tokenId] = block.timestamp;
+      if (_reward > 0) IERC20(tokens[i]).safeTransfer(recipient, _reward);
+
+      emit RewardsClaimed(recipient, tokens[i], _reward);
+    }
+  }
+
+  /**
+   * @notice Writes a new checkpoint for a token's balance
+   * @param tokenId The ID of the veION token
+   * @param lpToken The LP token address
+   * @param balance The balance to record
+   */
   function _writeCheckpoint(uint256 tokenId, address lpToken, uint256 balance) internal {
     uint256 _nCheckPoints = numCheckpoints[tokenId][lpToken];
     uint256 _timestamp = block.timestamp;
@@ -178,6 +193,40 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
       supplyNumCheckpoints[lpToken] = _nCheckPoints + 1;
     }
   }
+
+  /// @dev used within all notifyRewardAmount implementations
+  function _notifyRewardAmount(address sender, address token, uint256 amount) internal {
+    if (amount == 0) revert AmountCannotBeZero();
+    IERC20(token).safeTransferFrom(sender, address(this), amount);
+
+    uint256 epochStart = IonicTimeLibrary.epochStart(block.timestamp);
+    tokenRewardsPerEpoch[token][epochStart] += amount;
+
+    emit RewardNotification(sender, token, epochStart, amount);
+  }
+
+  /**
+   * @notice Calculates the ETH value of a token amount at a specific epoch
+   * @param amount The amount of tokens
+   * @param lpToken The LP token address
+   * @param epochTimestamp The timestamp of the epoch
+   * @return The ETH value of the tokens
+   */
+  function _getTokenEthValueAt(
+    uint256 amount,
+    address lpToken,
+    uint256 epochTimestamp
+  ) internal view returns (uint256) {
+    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
+    if (historicalPrices[lpToken][epochStart] == 0) revert HistoricalPriceNotSet(lpToken, epochStart);
+    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochStart];
+    uint256 ethValue = (amount * _priceAtTimestamp) / 1e18;
+    return ethValue;
+  }
+
+  // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // ║                           Pure/View Functions                             ║
+  // ╚═══════════════════════════════════════════════════════════════════════════╝
 
   /// @notice Returns the total number of reward tokens
   /// @return The length of the rewards array
@@ -244,109 +293,18 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     return vars.totalReward;
   }
 
-  /// @inheritdoc IBribeRewards
-  function deposit(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
-    address sender = msg.sender;
-
-    totalSupply[lpToken] += amount;
-    balanceOf[tokenId][lpToken] += amount;
-
-    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
-    _writeSupplyCheckpoint(lpToken);
-
-    emit Deposit(sender, tokenId, amount);
-  }
-
-  /// @inheritdoc IBribeRewards
-  function withdraw(address lpToken, uint256 amount, uint256 tokenId) external onlyVoter {
-    address sender = msg.sender;
-
-    totalSupply[lpToken] -= amount;
-    balanceOf[tokenId][lpToken] -= amount;
-
-    _writeCheckpoint(tokenId, lpToken, balanceOf[tokenId][lpToken]);
-    _writeSupplyCheckpoint(lpToken);
-
-    emit Withdraw(sender, tokenId, amount);
-  }
-
-  /**
-   * @inheritdoc IBribeRewards
-   * @notice This function can accept any token, regardless of its whitelisting status.
-   * @dev If we were to check the whitelisting status, it could prevent tokens that were initially whitelisted and later de-whitelisted from having their rewards claimed, leading to unclaimable rewards.
-   */
-  function getReward(uint256 tokenId, address[] memory tokens) external nonReentrant onlyVoter {
-    address sender = msg.sender;
-    if (ERC721Upgradeable(ve).ownerOf(tokenId) != sender && sender != voter) revert Unauthorized();
-
-    address _owner = ERC721Upgradeable(ve).ownerOf(tokenId);
-    _getReward(_owner, tokenId, tokens);
-  }
-
-  /// @dev used with all getReward implementations
-  function _getReward(address recipient, uint256 tokenId, address[] memory tokens) internal {
-    // check if token whitelisted
-    uint256 _length = tokens.length;
-    for (uint256 i = 0; i < _length; i++) {
-      uint256 _reward = earned(tokens[i], tokenId);
-      lastEarn[tokens[i]][tokenId] = block.timestamp;
-      if (_reward > 0) IERC20(tokens[i]).safeTransfer(recipient, _reward);
-
-      emit RewardsClaimed(recipient, tokens[i], _reward);
-    }
-  }
-
-  /// @inheritdoc IBribeRewards
-  function notifyRewardAmount(address token, uint256 amount) external override nonReentrant {
-    address sender = msg.sender;
-
-    if (!isReward[token]) {
-      if (!IVoter(voter).isWhitelistedToken(token)) revert TokenNotWhitelisted();
-      isReward[token] = true;
-      rewards.push(token);
-    }
-
-    _notifyRewardAmount(sender, token, amount);
-  }
-
-  /// @dev used within all notifyRewardAmount implementations
-  function _notifyRewardAmount(address sender, address token, uint256 amount) internal {
-    if (amount == 0) revert AmountCannotBeZero();
-    IERC20(token).safeTransferFrom(sender, address(this), amount);
-
-    uint256 epochStart = IonicTimeLibrary.epochStart(block.timestamp);
-    tokenRewardsPerEpoch[token][epochStart] += amount;
-
-    emit RewardNotification(sender, token, epochStart, amount);
-  }
-
   /// @notice Gets all LP tokens that can receive rewards
   /// @return Array of LP token addresses
   function getAllLpRewardTokens() public view returns (address[] memory) {
     return IVoter(voter).getAllLpRewardTokens();
   }
 
-  /// @notice Calculates the ETH value of a token amount at a specific epoch
-  /// @param amount The amount of tokens
-  /// @param lpToken The LP token address
-  /// @param epochTimestamp The timestamp of the epoch
-  /// @return The ETH value of the tokens
-  function _getTokenEthValueAt(
-    uint256 amount,
-    address lpToken,
-    uint256 epochTimestamp
-  ) internal view returns (uint256) {
-    uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
-    if (historicalPrices[lpToken][epochStart] == 0) revert HistoricalPriceNotSet(lpToken, epochStart);
-    uint256 _priceAtTimestamp = historicalPrices[lpToken][epochStart];
-    uint256 ethValue = (amount * _priceAtTimestamp) / 1e18;
-    return ethValue;
-  }
-
-  /// @notice Sets historical prices for LP tokens at specific epochs
-  /// @param epochTimestamp The timestamp of the epoch
-  /// @param lpToken The LP token address
-  /// @param price The price to set
+  /**
+   * @notice Sets historical prices for LP tokens at specific epochs
+   * @param epochTimestamp The timestamp of the epoch
+   * @param lpToken The LP token address
+   * @param price The price to set
+   */
   function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     historicalPrices[lpToken][epochStart] = price;
@@ -358,12 +316,80 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     authorized = _authorized;
   }
 
-  /// @notice Gets a specific checkpoint for a token
-  /// @param tokenId The ID of the veION token
-  /// @param lpToken The LP token address
-  /// @param index The index of the checkpoint to retrieve
-  /// @return The checkpoint data
+  /**
+   * @notice Gets a specific checkpoint for a token
+   * @param tokenId The ID of the veION token
+   * @param lpToken The LP token address
+   * @param index The index of the checkpoint to retrieve
+   * @return The checkpoint data
+   */
   function getCheckpoint(uint256 tokenId, address lpToken, uint256 index) external view returns (Checkpoint memory) {
     return checkpoints[tokenId][lpToken][index];
+  }
+
+  /// @inheritdoc IBribeRewards
+  function getPriorBalanceIndex(uint256 tokenId, address lpToken, uint256 timestamp) public view returns (uint256) {
+    uint256 nCheckpoints = numCheckpoints[tokenId][lpToken];
+    if (nCheckpoints == 0) {
+      return 0;
+    }
+
+    // First check most recent balance
+    if (checkpoints[tokenId][lpToken][nCheckpoints - 1].timestamp <= timestamp) {
+      return (nCheckpoints - 1);
+    }
+
+    // Next check implicit zero balance
+    if (checkpoints[tokenId][lpToken][0].timestamp > timestamp) {
+      return 0;
+    }
+
+    uint256 lower = 0;
+    uint256 upper = nCheckpoints - 1;
+    while (upper > lower) {
+      uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
+      Checkpoint memory cp = checkpoints[tokenId][lpToken][center];
+      if (cp.timestamp == timestamp) {
+        return center;
+      } else if (cp.timestamp < timestamp) {
+        lower = center;
+      } else {
+        upper = center - 1;
+      }
+    }
+    return lower;
+  }
+
+  /// @inheritdoc IBribeRewards
+  function getPriorSupplyIndex(uint256 timestamp, address lpToken) public view returns (uint256) {
+    uint256 nCheckpoints = supplyNumCheckpoints[lpToken];
+    if (nCheckpoints == 0) {
+      return 0;
+    }
+
+    // First check most recent balance
+    if (supplyCheckpoints[nCheckpoints - 1][lpToken].timestamp <= timestamp) {
+      return (nCheckpoints - 1);
+    }
+
+    // Next check implicit zero balance
+    if (supplyCheckpoints[0][lpToken].timestamp > timestamp) {
+      return 0;
+    }
+
+    uint256 lower = 0;
+    uint256 upper = nCheckpoints - 1;
+    while (upper > lower) {
+      uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
+      SupplyCheckpoint memory cp = supplyCheckpoints[center][lpToken];
+      if (cp.timestamp == timestamp) {
+        return center;
+      } else if (cp.timestamp < timestamp) {
+        lower = center;
+      } else {
+        upper = center - 1;
+      }
+    }
+    return lower;
   }
 }

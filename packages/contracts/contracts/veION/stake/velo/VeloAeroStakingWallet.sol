@@ -10,19 +10,17 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
  * @title VelodromeStakingWallet
- * @notice Staking interface for usage in veION when staking Velodrome ION-MODE-5050 LP.
+ * @notice Staking interface for usage in veION when staking Velodrome/Aerodrome style LP.
  * @dev This contract allows staking and claiming rewards with a specific staking strategy.
  * @dev The staking strategy is set during contract deployment and can only be called by the strategy.
- * @dev The contract is designed to be used with the Velodrome ION-MODE-5050 LP token.
+ * @dev The contract is designed to be used with the Velodrome/Aerodrome style LP.
  * @author Jourdan Dunkley <jourdan@ionic.money>
  */
 contract VeloAeroStakingWallet is IStakeWallet, Initializable {
   using SafeERC20 for IERC20;
   IStakeStrategy public stakeStrategy;
 
-  /**
-   * @dev Modifier to restrict function access to only the stake strategy contract
-   */
+  /// @dev Modifier to restrict function access to only the stake strategy contract
   modifier onlyStakeStrategy() {
     require(msg.sender == address(stakeStrategy), "Not authorized: Only stake strategy can call this function");
     _;
@@ -37,11 +35,7 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     stakeStrategy = _stakeStrategy;
   }
 
-  /**
-   * @notice Stakes tokens into the Velodrome staking contract
-   * @dev Transfers tokens from sender to this contract and then stakes them
-   * @param _amount The amount of tokens to stake
-   */
+  /// @inheritdoc IStakeWallet
   function stake(address /* _from */, uint256 _amount, bytes memory /* _data */) external override onlyStakeStrategy {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
@@ -51,11 +45,7 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     stakingContract.deposit(_amount);
   }
 
-  /**
-   * @notice Claims staking rewards from the Velodrome contract
-   * @dev Claims rewards and transfers them to the specified recipient
-   * @param _from The address that will receive the claimed rewards
-   */
+  /// @inheritdoc IStakeWallet
   function claim(address _from) external onlyStakeStrategy {
     IERC20 rewardToken = IERC20(stakeStrategy.rewardToken());
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
@@ -65,12 +55,7 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     IERC20(rewardToken).safeTransfer(_from, rewardAmount);
   }
 
-  /**
-   * @notice Withdraws staked tokens from the Velodrome contract
-   * @dev Withdraws tokens and transfers them to the specified recipient
-   * @param _withdrawTo The address that will receive the withdrawn tokens
-   * @param _amount The amount of tokens to withdraw
-   */
+  /// @inheritdoc IStakeWallet
   function withdraw(address _withdrawTo, uint256 _amount) external onlyStakeStrategy {
     IERC20 stakingToken = IERC20(stakeStrategy.stakingToken());
     IVeloIonModeStaking stakingContract = IVeloIonModeStaking(stakeStrategy.stakingContract());
