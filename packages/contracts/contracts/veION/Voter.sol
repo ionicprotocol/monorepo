@@ -13,9 +13,9 @@ import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 import { OwnableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "forge-std/console.sol";
+import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
 
-contract Voter is IVoter, OwnableUpgradeable {
+contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
   /// @notice The ve token that governs these contracts
   address public ve;
@@ -85,6 +85,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     address _ve
   ) external initializer {
     __Ownable_init();
+    __ReentrancyGuard_init();
     uint256 _length = _tokens.length;
     if (_length == 0) revert TokensArrayEmpty();
     for (uint256 i = 0; i < _length; i++) {
@@ -106,7 +107,7 @@ contract Voter is IVoter, OwnableUpgradeable {
     address[] calldata _marketVote,
     MarketSide[] calldata _marketVoteSide,
     uint256[] calldata _weights
-  ) external onlyNewEpoch(_tokenId) {
+  ) external onlyNewEpoch(_tokenId) nonReentrant {
     VoteLocalVars memory vars;
     vars.sender = msg.sender;
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != vars.sender) revert NotOwner();
@@ -124,7 +125,9 @@ contract Voter is IVoter, OwnableUpgradeable {
     for (uint256 i = 0; i < _marketVote.length; i++) {
       totalVoteWeight += _weights[i];
     }
-    reset(_tokenId);
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      _reset(_tokenId, lpTokens[i]);
+    }
 
     lastVoted[_tokenId] = vars.timestamp;
     (vars.votingLPs, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(_tokenId);
@@ -142,7 +145,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function poke(uint256 _tokenId) external {
+  function poke(uint256 _tokenId) external nonReentrant {
     if (block.timestamp <= IonicTimeLibrary.epochVoteStart(block.timestamp)) revert DistributeWindow();
     (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
       .balanceOfNFT(_tokenId);
@@ -157,7 +160,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function reset(uint256 _tokenId) public onlyNewEpoch(_tokenId) {
+  function reset(uint256 _tokenId) public onlyNewEpoch(_tokenId) nonReentrant {
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != msg.sender) revert NotOwner();
     for (uint256 i = 0; i < lpTokens.length; i++) {
       _reset(_tokenId, lpTokens[i]);
@@ -165,7 +168,7 @@ contract Voter is IVoter, OwnableUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external {
+  function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external nonReentrant {
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     uint256 _length = _bribes.length;
     for (uint256 i = 0; i < _length; i++) {

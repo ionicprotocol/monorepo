@@ -10,7 +10,6 @@ import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
 import { BalanceLogicLibrary } from "./libraries/BalanceLogicLibrary.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
-import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { IVoter } from "./interfaces/IVoter.sol";
 import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
@@ -19,8 +18,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   using EnumerableSet for EnumerableSet.UintSet;
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for IERC20;
-  using SafeCast for uint256;
-  using SafeCast for int256;
 
   // Constants
   uint256 internal constant WEEK = 1 weeks;
