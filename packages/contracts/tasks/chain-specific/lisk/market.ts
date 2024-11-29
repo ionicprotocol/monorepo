@@ -5,7 +5,7 @@ import { COMPTROLLER_MAIN } from ".";
 import { lisk } from "@ionicprotocol/chains";
 
 task("markets:deploy:lisk:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.LSK];
+  const assetsToDeploy: string[] = [assetSymbols.WBTC];
   for (const asset of lisk.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -41,7 +41,7 @@ task("markets:deploy:lisk:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:set-caps:lisk:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.WETH, assetSymbols.USDT, assetSymbols.LSK];
+  const assetsToDeploy: string[] = [assetSymbols.USDC, assetSymbols.WBTC];
   for (const asset of lisk.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
