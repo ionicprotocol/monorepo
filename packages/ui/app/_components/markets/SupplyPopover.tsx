@@ -119,7 +119,7 @@ export default function SupplyPopover({
             %
           </span>
         </div>
-        {(merklAprForToken || asset === 'dMBTC') && (
+        {merklAprForToken && (
           <div className="flex items-center mt-1">
             <img
               src="/images/op-logo-red.svg"
