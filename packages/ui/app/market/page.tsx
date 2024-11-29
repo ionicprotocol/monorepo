@@ -86,7 +86,7 @@ export default function Market() {
               selectedSymbol: row.original.asset
             }
           }}
-          className="flex gap-3 items-center"
+          className="flex gap-3 items-center pl-6"
         >
           <Image
             src={row.original.logo}
@@ -98,8 +98,12 @@ export default function Market() {
           <div className="flex flex-col">
             <span className="text-sm">{row.original.asset}</span>
             <div className="flex flex-col text-xs text-white/40 font-light">
-              <span>Supplied: {row.original.supply.total.split(' ')[0]}</span>
-              <span>Borrowed: {row.original.borrow.total.split(' ')[0]}</span>
+              <span>
+                Supplied: ${row.original.supply.totalUSD.split(' ')[0]}
+              </span>
+              <span>
+                Borrowed: ${row.original.borrow.totalUSD.split(' ')[0]}
+              </span>
             </div>
           </div>
         </Link>
@@ -182,7 +186,7 @@ export default function Market() {
       header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex gap-2 w-full">
+        <div className="flex gap-2 w-full pr-6">
           <button
             className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 ${
               row.original.loopPossible ? 'w-1/2' : 'w-full'
