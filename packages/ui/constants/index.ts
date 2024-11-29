@@ -308,7 +308,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Market',
-        assets: ['WETH', 'USDT', 'LSK']
+        assets: ['WETH', 'USDC', 'USDT', 'WBTC', 'LSK']
       }
     ]
   }
