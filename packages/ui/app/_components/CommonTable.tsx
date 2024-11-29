@@ -47,9 +47,12 @@ export const sortingFunctions = {
 
 type SortingType = keyof typeof sortingFunctions;
 
-export type EnhancedColumnDef<T> = Omit<ColumnDef<T>, 'sortingFn'> & {
+export type EnhancedColumnDef<T> = Omit<
+  ColumnDef<T, unknown>,
+  'header' | 'sortingFn'
+> & {
   id: string;
-  header: string;
+  header: ReactNode | string;
   sortingFn?: SortingType | ((rowA: any, rowB: any) => number);
   enableSorting?: boolean;
   accessorFn?: (row: T) => any;

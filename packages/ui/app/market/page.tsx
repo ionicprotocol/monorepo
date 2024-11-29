@@ -15,6 +15,7 @@ import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import CommonTable from '../_components/CommonTable';
 import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
 import Swap from '../_components/dialogs/manage/Swap';
@@ -68,7 +69,7 @@ export default function Market() {
   const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
       id: 'asset',
-      header: 'ASSETS',
+      header: <div className="pl-6">ASSETS</div>,
       sortingFn: 'alphabetical',
       cell: ({ row }: MarketCellProps) => (
         <Link
@@ -269,16 +270,20 @@ export default function Market() {
             ]}
           />
         </div>
+        <div className="bg-grayone w-full rounded-xl py-4 px-4 lg:px-[1%] xl:px-[3%]">
+          <FilterBar
+            chain={+chain}
+            pool={selectedPool}
+            marketData={marketData}
+            onSearch={setFilteredMarketData}
+          />
 
-        <FilterBar
-          chain={+chain}
-          pool={selectedPool}
-          marketData={marketData}
-          onSearch={setFilteredMarketData}
-          filteredData={filteredMarketData}
-          columns={columns}
-          isLoading={isLoading}
-        />
+          <CommonTable
+            data={filteredMarketData}
+            columns={columns}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
 
       {selectedMarketData && poolData && (
