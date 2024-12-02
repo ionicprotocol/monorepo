@@ -44,7 +44,6 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     currentUtilizationPercentage,
     handleUtilization,
     hfpStatus,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     normalizedHealthFactor,
@@ -59,7 +58,8 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     chainId
   );
   const { currentSdk, address } = useMultiIonic();
-  const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
     [selectedMarketData]
@@ -299,11 +299,13 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
       </div>
 
       {transactionSteps.length > 0 ? (
-        <TransactionStepsHandler
-          chainId={chainId}
-          resetTransactionSteps={resetTransactionSteps}
-          transactionSteps={transactionSteps}
-        />
+        <div className="flex justify-center">
+          <TransactionStepsHandler
+            chainId={chainId}
+            resetTransactionSteps={resetTransactionSteps}
+            transactionSteps={transactionSteps}
+          />
+        </div>
       ) : (
         <Button
           className="w-full bg-accent"

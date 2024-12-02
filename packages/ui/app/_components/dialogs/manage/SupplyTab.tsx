@@ -53,7 +53,6 @@ const SupplyTab = ({
     currentUtilizationPercentage,
     handleUtilization,
     enableCollateral,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     amountAsBInt,
@@ -71,7 +70,9 @@ const SupplyTab = ({
 
   const isDisabled = !amount || amountAsBInt === 0n;
   const { currentSdk, address } = useMultiIonic();
-  const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
 
   const { isPolling } = useBalancePolling({
     address,
@@ -346,11 +347,13 @@ const SupplyTab = ({
       </div>
 
       {transactionSteps.length > 0 ? (
-        <TransactionStepsHandler
-          chainId={chainId}
-          resetTransactionSteps={resetTransactionSteps}
-          transactionSteps={transactionSteps}
-        />
+        <div className="flex justify-center">
+          <TransactionStepsHandler
+            chainId={chainId}
+            resetTransactionSteps={resetTransactionSteps}
+            transactionSteps={transactionSteps}
+          />
+        </div>
       ) : (
         <Button
           className="w-full bg-accent"

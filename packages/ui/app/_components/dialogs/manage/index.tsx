@@ -68,6 +68,7 @@ const ManageDialog = ({
   isBorrowDisabled = false,
   activeTab = 'supply'
 }: IPopup) => {
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
   const pricePerSingleAsset = useMemo<number>(
@@ -133,27 +134,18 @@ const ManageDialog = ({
       ),
     [selectedMarketData.totalBorrow, selectedMarketData.underlyingDecimals]
   );
+
   const {
     data: maxSupplyAmount,
     isLoading: isLoadingMaxSupply,
     refetch: refetchMaxSupplyAmount
   } = useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
-
   const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
     useMaxRepayAmount(selectedMarketData, chainId);
   const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
-
-  // const setBorrow = useStore((state) => state.setBorrowAmount);
-
   const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
     useMaxWithdrawAmount(selectedMarketData, chainId);
-
-  const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
-
-  /**
-   * Fade in animation
-   */
 
   const TabsWithContext = ({
     activeTab,

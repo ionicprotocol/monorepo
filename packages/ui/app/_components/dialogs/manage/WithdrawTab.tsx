@@ -49,7 +49,6 @@ const WithdrawTab = ({
     currentUtilizationPercentage,
     handleUtilization,
     hfpStatus,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     normalizedHealthFactor,
@@ -76,7 +75,9 @@ const WithdrawTab = ({
     predicted: normalizedPredictedHealthFactor ?? '0'
   };
   const { currentSdk, address } = useMultiIonic();
-  const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
 
   const { isPolling } = useBalancePolling({
     address,
@@ -195,8 +196,6 @@ const WithdrawTab = ({
         handleUtilization={handleUtilization}
       />
 
-      {/* <SliderComponent /> */}
-
       <StatusAlerts
         status={hfpStatus}
         availableStates={[
@@ -267,11 +266,13 @@ const WithdrawTab = ({
       </div>
 
       {transactionSteps.length > 0 ? (
-        <TransactionStepsHandler
-          chainId={chainId}
-          resetTransactionSteps={resetTransactionSteps}
-          transactionSteps={transactionSteps}
-        />
+        <div className="flex justify-center">
+          <TransactionStepsHandler
+            chainId={chainId}
+            resetTransactionSteps={resetTransactionSteps}
+            transactionSteps={transactionSteps}
+          />
+        </div>
       ) : (
         <Button
           className="w-full bg-accent"

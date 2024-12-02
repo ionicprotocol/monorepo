@@ -47,7 +47,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     currentUtilizationPercentage,
     handleUtilization,
     hfpStatus,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     normalizedHealthFactor,
@@ -111,7 +110,8 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     borrowLimits.min &&
     parseFloat(amount) < parseFloat(borrowLimits.min);
 
-  const { addStepsForAction, upsertTransactionStep } = useTransactionSteps();
+  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
+    useTransactionSteps();
 
   const borrowAmount = async () => {
     if (
@@ -303,11 +303,13 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
       </div>
 
       {transactionSteps.length > 0 ? (
-        <TransactionStepsHandler
-          chainId={chainId}
-          resetTransactionSteps={resetTransactionSteps}
-          transactionSteps={transactionSteps}
-        />
+        <div className="flex justify-center">
+          <TransactionStepsHandler
+            chainId={chainId}
+            resetTransactionSteps={resetTransactionSteps}
+            transactionSteps={transactionSteps}
+          />
+        </div>
       ) : (
         <Button
           className="w-full bg-accent"
