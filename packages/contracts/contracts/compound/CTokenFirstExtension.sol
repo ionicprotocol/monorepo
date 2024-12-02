@@ -9,13 +9,16 @@ import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
-import { Multicall } from "../utils/Multicall.sol";
+import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import { Multicall } from "../utils/Multicall.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
+import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
 contract CTokenFirstExtension is
+  CTokenOracleProtected,
   CErc20FirstExtensionBase,
   TokenErrorReporter,
   Exponential,
@@ -147,7 +150,10 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens to transfer
    * @return Whether or not the transfer succeeded
    */
-  function transfer(address dst, uint256 amount) public override nonReentrant(false) isAuthorized returns (bool) {
+  function transfer(
+    address dst,
+    uint256 amount
+  ) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     return transferTokens(msg.sender, msg.sender, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -162,7 +168,7 @@ contract CTokenFirstExtension is
     address src,
     address dst,
     uint256 amount
-  ) public override nonReentrant(false) isAuthorized returns (bool) {
+  ) public override nonReentrant(false) isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     return transferTokens(msg.sender, src, dst, amount) == uint256(Error.NO_ERROR);
   }
 
@@ -174,7 +180,10 @@ contract CTokenFirstExtension is
    * @param amount The number of tokens that are approved (-1 means infinite)
    * @return Whether or not the approval succeeded
    */
-  function approve(address spender, uint256 amount) public override isAuthorized returns (bool) {
+  function approve(
+    address spender,
+    uint256 amount
+  ) public override isAuthorized onlyOracleApprovedAllowEOA returns (bool) {
     address src = msg.sender;
     transferAllowances[src][spender] = amount;
     emit Approval(src, spender, amount);
@@ -229,7 +238,9 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new reserve factor
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setReserveFactor(uint256 newReserveFactorMantissa) public override nonReentrant(false) returns (uint256) {
+  function _setReserveFactor(
+    uint256 newReserveFactorMantissa
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     // Check caller is admin
     if (!hasAdminRights()) {
@@ -259,7 +270,9 @@ contract CTokenFirstExtension is
    * @dev Admin function to accrue interest and set a new admin fee
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _setAdminFee(uint256 newAdminFeeMantissa) public override nonReentrant(false) returns (uint256) {
+  function _setAdminFee(
+    uint256 newAdminFeeMantissa
+  ) public override nonReentrant(false) returns (uint256) {
     accrueInterest();
     // Verify market's block number equals current block number
     if (accrualBlockNumber != block.number) {
@@ -638,7 +651,7 @@ contract CTokenFirstExtension is
     return balance;
   }
 
-  function flash(uint256 amount, bytes calldata data) public override isAuthorized {
+  function flash(uint256 amount, bytes calldata data) public override isAuthorized onlyOracleApprovedAllowEOA {
     accrueInterest();
 
     totalBorrows += amount;
