@@ -75,7 +75,8 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
     '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
   },
   [lisk.id]: {
-    '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION'
+    '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION',
+    '0x523F183ECbBf9144403D937B444d8486aD752453': 'LSK'
   }
 };
 
@@ -133,7 +134,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
     borrow: []
   },
   [lisk.id]: {
-    supply: ['0x523F183ECbBf9144403D937B444d8486aD752453'],
+    supply: [
+      '0x523F183ECbBf9144403D937B444d8486aD752453',
+      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7'
+    ],
     borrow: []
   }
 };
