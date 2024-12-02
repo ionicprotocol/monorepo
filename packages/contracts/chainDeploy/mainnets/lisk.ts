@@ -3,7 +3,8 @@ import { lisk } from "@ionicprotocol/chains";
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { Address } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
+import { assetSymbols, ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
+import { addUnderlyingsToMpo } from "../helpers/oracles/utils";
 
 const assets = lisk.assets;
 const PRICES_CONTRACT = "0x07F544813E9Fb63D57a92f28FbD3FF0f7136F5cE";
@@ -56,6 +57,16 @@ export const deploy = async ({
     chainlinkAssets
   });
 
+  const ion = assets.find((asset) => asset.symbol === assetSymbols.ION)?.underlying;
+  if (!ion) {
+    throw new Error("ION not found");
+  }
+  const mpo = await viem.getContractAt(
+    "MasterPriceOracle",
+    (await deployments.get("MasterPriceOracle")).address as Address
+  );
+  const simplePriceOracle = await deployments.get("SimplePriceOracle");
+  await addUnderlyingsToMpo(mpo as any, [ion], simplePriceOracle.address as Address, deployer, publicClient);
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
     from: deployer,

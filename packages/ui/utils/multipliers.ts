@@ -1,4 +1,4 @@
-import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 
 export type Multipliers = {
   eigenlayer?: boolean;
@@ -818,6 +818,50 @@ export const multipliers: Record<
           underlyingAPR: 3.46,
           turtle: false,
           ionAPR: false
+        }
+      }
+    }
+  },
+  [lisk.id]: {
+    '0': {
+      WETH: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      USDC: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      USDT: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      WBTC: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      LSK: {
+        supply: {
+          ionic: 0,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
         }
       }
     }
