@@ -76,7 +76,7 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   },
   [lisk.id]: {
     '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION',
-    '0x523F183ECbBf9144403D937B444d8486aD752453': 'LSK'
+    '0xac485391EB2d7D88253a7F1eF18C37f4242D1A24': 'LSK'
   }
 };
 
