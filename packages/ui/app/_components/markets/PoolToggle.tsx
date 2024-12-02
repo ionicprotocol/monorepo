@@ -13,8 +13,8 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
   const poolsData = pools[+chain].pools;
 
   return (
-    <div className="h-9 rounded-lg bg-darktwo border border-white/10 p-0.5">
-      <div className="flex items-center h-full gap-1">
+    <div className="h-9 w-fit rounded-lg bg-darktwo border border-white/10 p-0.5">
+      <div className="inline-flex items-center h-full gap-1">
         {poolsData.map((poolx, idx) => {
           const isActive = pool === poolx.id;
           const isMain = poolx.name.toLowerCase().includes('main');
@@ -24,7 +24,7 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
               key={idx}
               href={`${pathname}?chain=${chain}${poolx.id ? `&pool=${poolx.id}` : ''}`}
               className={`
-                flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
+                inline-flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
                 ${
                   isActive
                     ? `${pools[+chain].bg} ${pools[+chain].text}`
