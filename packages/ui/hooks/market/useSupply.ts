@@ -12,7 +12,12 @@ import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
 
 import type { Address } from 'viem';
 
-export const useSupply = ({ maxAmount }: { maxAmount: bigint }) => {
+interface UseSupplyProps {
+  maxAmount: bigint;
+  enableCollateral: boolean;
+}
+
+export const useSupply = ({ maxAmount, enableCollateral }: UseSupplyProps) => {
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
 
@@ -23,7 +28,6 @@ export const useSupply = ({ maxAmount }: { maxAmount: bigint }) => {
   const {
     selectedMarketData,
     amount,
-    enableCollateral,
     amountAsBInt,
     comptrollerAddress,
     chainId
@@ -89,8 +93,6 @@ export const useSupply = ({ maxAmount }: { maxAmount: bigint }) => {
             hash: tx,
             confirmations: 2
           });
-
-          // wait for 5 seconds to resolve timing issue
           await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
@@ -138,7 +140,6 @@ export const useSupply = ({ maxAmount }: { maxAmount: bigint }) => {
 
         if (errorCode) {
           console.error(errorCode);
-
           throw new Error('Error during supplying!');
         }
 
@@ -151,10 +152,7 @@ export const useSupply = ({ maxAmount }: { maxAmount: bigint }) => {
         });
 
         if (tx) {
-          await currentSdk.publicClient.waitForTransactionReceipt({
-            hash: tx
-          });
-
+          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
           setTxHash(tx);
           setIsWaitingForIndexing(true);
 

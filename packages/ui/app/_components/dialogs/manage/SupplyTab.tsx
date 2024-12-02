@@ -52,15 +52,6 @@ const SupplyTab = ({
   } = useManageDialogContext();
 
   const {
-    isWaitingForIndexing,
-    supplyAmount,
-    transactionSteps: supplyTxSteps,
-    isPolling
-  } = useSupply({
-    maxAmount
-  });
-
-  const {
     enableCollateral,
     handleCollateralToggle,
     transactionSteps: collateralTxSteps
@@ -68,6 +59,16 @@ const SupplyTab = ({
     selectedMarketData,
     comptrollerAddress,
     onSuccess: refetchUsedQueries
+  });
+
+  const {
+    isWaitingForIndexing,
+    supplyAmount,
+    transactionSteps: supplyTxSteps,
+    isPolling
+  } = useSupply({
+    maxAmount,
+    enableCollateral
   });
 
   // Combine both sets of transaction steps
