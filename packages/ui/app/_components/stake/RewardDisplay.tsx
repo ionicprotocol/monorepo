@@ -98,13 +98,15 @@ export default function RewardDisplay({
 
   return (
     <div className="flex items-center w-full mt-3 text-xs gap-2">
-      <Image
-        alt={`${config.rewardToken.name} logo`}
-        className="mx-1"
-        src={config.rewardToken.logo}
-        width={24}
-        height={24}
-      />
+      <div className="w-6 h-6 relative flex-shrink-0">
+        <Image
+          alt={`${config.rewardToken.name} logo`}
+          src={config.rewardToken.logo}
+          fill
+          className="object-contain"
+          sizes="24px"
+        />
+      </div>
       <span>{config.rewardToken.name} APR</span>
       <span className={`text-accent ${isUnstaking && 'text-red-500'} ml-auto`}>
         {apr}
