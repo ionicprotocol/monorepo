@@ -26,7 +26,7 @@ export default function FilterBar({
   onSearch
 }: FilterBarProps) {
   return (
-    <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4">
+    <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4 pr-3.5">
       <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
         <PoolToggle
           chain={chain}

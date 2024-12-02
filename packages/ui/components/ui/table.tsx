@@ -14,7 +14,7 @@ const Table = React.forwardRef<
         ref={ref}
         className={cn(
           'w-full caption-bottom text-sm border-separate',
-          compact ? 'border-spacing-y-2' : 'border-spacing-y-3',
+          compact ? 'border-spacing-y-2' : 'border-spacing-y-4',
           'border-spacing-x-0',
           className
         )}
@@ -39,21 +39,13 @@ TableHeader.displayName = 'TableHeader';
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => {
-  const { compact } = React.useContext(TableContext);
-
-  return (
-    <tbody
-      ref={ref}
-      className={cn(
-        'border-separate',
-        compact ? 'border-spacing-y-2' : 'border-spacing-y-3',
-        className
-      )}
-      {...props}
-    />
-  );
-});
+>(({ className, ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={cn(className)}
+    {...props}
+  />
+));
 TableBody.displayName = 'TableBody';
 
 const TableFooter = React.forwardRef<
@@ -68,29 +60,58 @@ const TableFooter = React.forwardRef<
 ));
 TableFooter.displayName = 'TableFooter';
 
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement> & {
-    transparent?: boolean;
-  }
->(({ className, transparent = false, ...props }, ref) => {
-  const { compact } = React.useContext(TableContext);
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  transparent?: boolean;
+  badge?: {
+    text: string;
+    className?: string;
+  };
+  borderClassName?: string;
+}
 
-  return (
-    <tr
-      ref={ref}
-      className={cn(
-        transparent
-          ? '[&:not(:has(th))]:hover:bg-transparent [&:not(:has(th))]:bg-transparent'
-          : '[&:not(:has(th))]:hover:bg-graylite [&:not(:has(th))]:bg-grayUnselect',
-        compact ? 'h-8' : 'h-12',
-        'transition-all duration-200 ease-linear rounded-xl',
-        className
-      )}
-      {...props}
-    />
-  );
-});
+const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
+  (
+    { className, transparent = false, badge, borderClassName, ...props },
+    ref
+  ) => {
+    const { compact } = React.useContext(TableContext);
+
+    return (
+      <tr
+        ref={ref}
+        className={cn(
+          transparent
+            ? '[&:not(:has(th))]:hover:bg-transparent [&:not(:has(th))]:bg-transparent'
+            : '[&:not(:has(th))]:hover:bg-graylite [&:not(:has(th))]:bg-grayUnselect',
+          compact ? 'h-8' : 'h-12',
+          'transition-all duration-200 ease-linear relative w-full rounded-xl',
+          className
+        )}
+        style={{
+          boxShadow: borderClassName
+            ? `inset 0 0 0 1px var(--${borderClassName}-color)`
+            : undefined
+        }}
+        {...props}
+      >
+        {props.children}
+        {badge && (
+          <div className="absolute -top-3 -right-3 z-20">
+            <span
+              className={cn(
+                'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
+                badge.className,
+                borderClassName
+              )}
+            >
+              {badge.text}
+            </span>
+          </div>
+        )}
+      </tr>
+    );
+  }
+);
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,

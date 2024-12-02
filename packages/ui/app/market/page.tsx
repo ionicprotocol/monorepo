@@ -10,6 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
+import { pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
@@ -59,6 +60,7 @@ export default function Market() {
   const [filteredMarketData, setFilteredMarketData] = useState<MarketRowData[]>(
     []
   );
+  console.log('filteredMarketData', filteredMarketData);
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
@@ -282,6 +284,14 @@ export default function Market() {
             data={filteredMarketData}
             columns={columns}
             isLoading={isLoading}
+            getRowStyle={(row) => ({
+              badge: row.original.membership
+                ? { text: 'Collateral' }
+                : undefined,
+              borderClassName: row.original.membership
+                ? pools[+chain]?.border
+                : undefined
+            })}
           />
         </div>
       </div>

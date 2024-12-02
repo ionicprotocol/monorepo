@@ -27,7 +27,6 @@ import {
 
 import ResultHandler from './ResultHandler';
 
-// Sorting functions
 export const sortingFunctions = {
   numerical: (a: any, b: any) => {
     if (typeof a === 'number' && typeof b === 'number') {
@@ -58,11 +57,21 @@ export type EnhancedColumnDef<T> = Omit<
   accessorFn?: (row: T) => any;
 };
 
-interface CommonTableProps<T> {
+interface RowBadge {
+  text: string;
+  className?: string;
+}
+
+interface RowStyle {
+  badge?: RowBadge;
+  borderClassName?: string;
+}
+
+interface CommonTableProps<T extends object> {
   data: T[];
   columns: EnhancedColumnDef<T>[];
   isLoading?: boolean;
-  renderRow?: (row: Row<T>) => ReactNode;
+  getRowStyle?: (row: Row<T>) => RowStyle;
 }
 
 const SortableHeader = ({
@@ -75,30 +84,21 @@ const SortableHeader = ({
   const isSortable = column.getCanSort();
   const sorted = column.getIsSorted();
 
+  const getSortIcon = () => {
+    if (!isSortable) return null;
+    if (sorted === 'asc') return <ArrowUpIcon className="w-4 h-4" />;
+    if (sorted === 'desc') return <ArrowDownIcon className="w-4 h-4" />;
+    return <CaretSortIcon className="w-4 h-4 text-white/40" />;
+  };
+
   return (
     <button
-      className={`flex items-center gap-2 hover:text-white ${!isSortable ? 'cursor-default' : ''}`}
-      onClick={() => {
-        if (isSortable) {
-          const nextSortingOrder =
-            sorted === false ? 'asc' : sorted === 'asc' ? 'desc' : false;
-          column.toggleSorting(nextSortingOrder === 'desc', false);
-        }
-      }}
+      className={`flex items-center gap-2 ${!isSortable ? 'cursor-default' : 'hover:text-white'}`}
+      onClick={() => isSortable && column.toggleSorting(sorted === 'asc')}
       disabled={!isSortable}
     >
       {children}
-      {isSortable && (
-        <span className="ml-1">
-          {sorted === 'asc' ? (
-            <ArrowUpIcon className="w-4 h-4" />
-          ) : sorted === 'desc' ? (
-            <ArrowDownIcon className="w-4 h-4" />
-          ) : (
-            <CaretSortIcon className="w-4 h-4 text-white/40" />
-          )}
-        </span>
-      )}
+      {getSortIcon()}
     </button>
   );
 };
@@ -107,15 +107,13 @@ function CommonTable<T extends object>({
   data,
   columns,
   isLoading: externalIsLoading = false,
-  renderRow
+  getRowStyle
 }: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Consider the table as loading if it hasn't initialized yet or if external loading state is true
   const isLoading = !hasInitialized || externalIsLoading;
 
-  // Once we get data for the first time, mark as initialized
   if (!hasInitialized && data.length > 0) {
     setHasInitialized(true);
   }
@@ -154,12 +152,12 @@ function CommonTable<T extends object>({
       center
       height={80}
     >
-      <Table className="w-full border-separate border-spacing-y-3">
+      <Table className="pr-3.5 pl-[1px]">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow
               key={headerGroup.id}
-              className="border-none hover:bg-transparent"
+              transparent
             >
               {headerGroup.headers.map((header) => (
                 <TableHead
@@ -188,13 +186,14 @@ function CommonTable<T extends object>({
               </TableCell>
             </TableRow>
           ) : (
-            table.getRowModel().rows.map((row) =>
-              renderRow ? (
-                renderRow(row)
-              ) : (
+            table.getRowModel().rows.map((row) => {
+              const rowStyle = getRowStyle ? getRowStyle(row) : {};
+
+              return (
                 <TableRow
                   key={row.id}
-                  className="hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl [&>td:first-child]:rounded-l-xl [&>td:last-child]:rounded-r-xl border-none"
+                  badge={rowStyle.badge}
+                  borderClassName={rowStyle.borderClassName}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -205,8 +204,8 @@ function CommonTable<T extends object>({
                     </TableCell>
                   ))}
                 </TableRow>
-              )
-            )
+              );
+            })
           )}
         </TableBody>
       </Table>
