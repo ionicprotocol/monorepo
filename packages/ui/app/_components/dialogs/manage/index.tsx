@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -71,6 +71,38 @@ const ManageDialog = ({
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
+
+  // Store active tab in localStorage to persist across tab switches
+  const [currentActiveTab, setCurrentActiveTab] = useState<ActiveTab>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('lastActiveTab');
+      return (stored as ActiveTab) || activeTab;
+    }
+    return activeTab;
+  });
+
+  // Update localStorage when tab changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lastActiveTab', currentActiveTab);
+    }
+  }, [currentActiveTab]);
+
+  // Component visibility state
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Handle visibility change
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const pricePerSingleAsset = useMemo<number>(
     () =>
       parseFloat(formatEther(selectedMarketData.underlyingPrice)) *
@@ -148,19 +180,25 @@ const ManageDialog = ({
     useMaxWithdrawAmount(selectedMarketData, chainId);
 
   const TabsWithContext = ({
-    activeTab,
     isBorrowDisabled
   }: {
-    activeTab: ActiveTab;
     isBorrowDisabled: boolean;
   }) => {
     const { setActive } = useManageDialogContext();
 
+    // Handle tab change with persistence
+    const handleTabChange = (value: string) => {
+      const newTab = value as ActiveTab;
+      setCurrentActiveTab(newTab);
+      setActive(newTab);
+    };
+
     return (
       <div className="tabs-container">
         <Tabs
-          defaultValue={activeTab}
-          onValueChange={(value) => setActive(value as ActiveTab)}
+          defaultValue={currentActiveTab}
+          onValueChange={handleTabChange}
+          value={currentActiveTab}
         >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="supply">Supply</TabsTrigger>
@@ -243,7 +281,7 @@ const ManageDialog = ({
       selectedMarketData={selectedMarketData}
     >
       <Dialog
-        open={isOpen}
+        open={isOpen && isVisible}
         onOpenChange={setIsOpen}
       >
         <DialogContent
@@ -262,10 +300,7 @@ const ManageDialog = ({
           </div>
 
           <AnimateHeight>
-            <TabsWithContext
-              activeTab={activeTab}
-              isBorrowDisabled={isBorrowDisabled}
-            />
+            <TabsWithContext isBorrowDisabled={isBorrowDisabled} />
           </AnimateHeight>
         </DialogContent>
       </Dialog>

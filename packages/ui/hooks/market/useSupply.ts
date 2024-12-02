@@ -1,37 +1,81 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
+import { type Address, formatUnits, parseUnits } from 'viem';
 
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
 
-import type { Address } from 'viem';
-
 interface UseSupplyProps {
   maxAmount: bigint;
   enableCollateral: boolean;
+  selectedMarketData: MarketData;
+  comptrollerAddress: Address;
+  chainId: number;
 }
 
-export const useSupply = ({ maxAmount, enableCollateral }: UseSupplyProps) => {
+export const useSupply = ({
+  maxAmount,
+  enableCollateral,
+  selectedMarketData,
+  comptrollerAddress,
+  chainId
+}: UseSupplyProps) => {
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+  const [amount, setAmount] = useState<string>('0');
+  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
 
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
 
-  const {
-    selectedMarketData,
-    amount,
-    amountAsBInt,
-    comptrollerAddress,
-    chainId
-  } = useManageDialogContext();
+  const amountAsBInt = useMemo(
+    () =>
+      parseUnits(
+        amount?.toString() ?? '0',
+        selectedMarketData.underlyingDecimals
+      ),
+    [amount, selectedMarketData.underlyingDecimals]
+  );
+
+  const handleUtilization = useCallback(
+    (newUtilizationPercentage: number) => {
+      const maxAmountNumber = Number(
+        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
+      );
+
+      const calculatedAmount = (
+        (newUtilizationPercentage / 100) *
+        maxAmountNumber
+      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
+
+      setAmount(calculatedAmount);
+      setUtilizationPercentage(newUtilizationPercentage);
+    },
+    [maxAmount, selectedMarketData.underlyingDecimals]
+  );
+
+  // Update utilization percentage when amount changes
+  useEffect(() => {
+    if (amount === '0' || !amount) {
+      setUtilizationPercentage(0);
+      return;
+    }
+
+    if (maxAmount === 0n) {
+      setUtilizationPercentage(0);
+      return;
+    }
+
+    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
+    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
+  }, [amountAsBInt, maxAmount, amount]);
 
   const supplyAmount = async () => {
     if (
@@ -201,6 +245,8 @@ export const useSupply = ({ maxAmount, enableCollateral }: UseSupplyProps) => {
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
       refetchMaxSupply();
+      setAmount('0');
+      setUtilizationPercentage(0);
       toast.success(
         `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -211,6 +257,11 @@ export const useSupply = ({ maxAmount, enableCollateral }: UseSupplyProps) => {
     isWaitingForIndexing,
     supplyAmount,
     transactionSteps,
-    isPolling
+    isPolling,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
   };
 };

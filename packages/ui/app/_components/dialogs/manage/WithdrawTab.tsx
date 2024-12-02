@@ -12,6 +12,8 @@ import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+import { useHealth } from '@ui/hooks/market/useHealth';
+import { useEffect } from 'react';
 
 interface WithdrawTabProps {
   maxAmount: bigint;
@@ -31,25 +33,40 @@ const WithdrawTab = ({
 }: WithdrawTabProps) => {
   const {
     selectedMarketData,
-    amount,
-    setAmount,
-    currentUtilizationPercentage,
-    handleUtilization,
-    hfpStatus,
     resetTransactionSteps,
     chainId,
-    normalizedHealthFactor,
-    normalizedPredictedHealthFactor,
-    amountAsBInt,
-    isLoadingPredictedHealthFactor,
     updatedValues,
-    isLoadingUpdatedAssets
+    isLoadingUpdatedAssets,
+    comptrollerAddress,
+    setPredictionAmount
   } = useManageDialogContext();
 
-  const { isWaitingForIndexing, withdrawAmount, transactionSteps, isPolling } =
-    useWithdraw({
-      maxAmount
-    });
+  const {
+    isWaitingForIndexing,
+    withdrawAmount,
+    transactionSteps,
+    isPolling,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
+  } = useWithdraw({
+    maxAmount,
+    selectedMarketData,
+    chainId
+  });
+
+  const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
+    {
+      comptrollerAddress,
+      cToken: selectedMarketData.cToken,
+      activeTab: 'withdraw',
+      amount: amountAsBInt,
+      exchangeRate: selectedMarketData.exchangeRate,
+      decimals: selectedMarketData.underlyingDecimals
+    }
+  );
 
   const isDisabled =
     !amount ||
@@ -58,21 +75,20 @@ const WithdrawTab = ({
     hfpStatus === HFPStatus.CRITICAL ||
     hfpStatus === HFPStatus.UNKNOWN;
 
-  const healthFactor = {
-    current: normalizedHealthFactor ?? '0',
-    predicted: normalizedPredictedHealthFactor ?? '0'
-  };
+  useEffect(() => {
+    setPredictionAmount(amountAsBInt);
+  }, [amountAsBInt]);
 
   return (
     <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
-        handleInput={setAmount}
+        handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         symbol={selectedMarketData.underlyingSymbol}
         hintText="Max Withdraw"
-        currentUtilizationPercentage={currentUtilizationPercentage}
+        currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
       />
 

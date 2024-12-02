@@ -1,37 +1,16 @@
 'use client';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState
-} from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  type Address,
-  formatEther,
-  formatUnits,
-  maxUint256,
-  parseEther,
-  parseUnits
-} from 'viem';
+import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
-import {
-  useHealthFactor,
-  useHealthFactorPrediction
-} from '@ui/hooks/pools/useHealthFactor';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -54,20 +33,12 @@ export enum HFPStatus {
 interface PopupContextType {
   active: ActiveTab;
   setActive: (tab: ActiveTab) => void;
-  amount?: string;
-  setAmount: (value: string | undefined) => void;
-  currentUtilizationPercentage: number;
-  handleUtilization: (utilizationPercentage: number) => void;
-  hfpStatus: HFPStatus;
-  normalizedHealthFactor: string | undefined;
-  normalizedPredictedHealthFactor: string | undefined;
   isMounted: boolean;
   initiateCloseAnimation: () => void;
   resetTransactionSteps: () => void;
   refetchUsedQueries: () => Promise<void>;
   selectedMarketData: MarketData;
   chainId: number;
-  amountAsBInt: bigint;
   comptrollerAddress: Address;
   minBorrowAmount?: {
     minBorrowAsset: bigint | undefined;
@@ -93,10 +64,8 @@ interface PopupContextType {
     updatedSupplyAPY: number | undefined;
     updatedTotalBorrows: number | undefined;
   };
-  isLoadingPredictedHealthFactor: boolean;
   isLoadingUpdatedAssets: boolean;
-
-  // Add any other shared variables or functions here
+  setPredictionAmount: (amount: bigint) => void;
 }
 
 const formatBalance = (value: bigint | undefined, decimals: number): string => {
@@ -115,14 +84,8 @@ export const ManageDialogProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ selectedMarketData, comptrollerAddress, closePopup, children }) => {
   const { upsertTransactionStep } = useTransactionSteps();
-  const { currentSdk, address } = useMultiIonic();
+  const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
-
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
   const [active, setActive] = useState<ActiveTab>('supply');
   const operationMap = useMemo<Record<ActiveTab, FundOperation>>(
     () => ({
@@ -133,35 +96,16 @@ export const ManageDialogProvider: React.FC<{
     }),
     []
   );
-
-  const resetTabState = useCallback(() => {
-    setAmount('0');
-    setCurrentUtilizationPercentage(0);
-    upsertTransactionStep(undefined);
-  }, [upsertTransactionStep]);
+  const [predictionAmount, setPredictionAmount] = useState<bigint>(0n);
 
   useEffect(() => {
-    resetTabState();
+    upsertTransactionStep(undefined);
     setCurrentFundOperation(operationMap[active]);
-  }, [active, resetTabState, operationMap]);
-
-  const [amount, setAmount] = useReducer(
-    (_: string | undefined, value: string | undefined): string | undefined =>
-      value,
-    '0'
-  );
+  }, [active, operationMap]);
 
   const { data: maxRepayAmount } = useMaxRepayAmount(
     selectedMarketData,
     chainId
-  );
-  const amountAsBInt = useMemo<bigint>(
-    () =>
-      parseUnits(
-        amount?.toString() ?? '0',
-        selectedMarketData.underlyingDecimals
-      ),
-    [amount, selectedMarketData.underlyingDecimals]
   );
   const { data: maxBorrowAmount } = useMaxBorrowAmount(
     selectedMarketData,
@@ -174,101 +118,21 @@ export const ManageDialogProvider: React.FC<{
     chainId
   );
 
-  const { data: healthFactor } = useHealthFactor(comptrollerAddress, chainId);
-  const {
-    data: _predictedHealthFactor,
-    isLoading: isLoadingPredictedHealthFactor
-  } = useHealthFactorPrediction(
-    comptrollerAddress,
-    address ?? ('' as Address),
-    selectedMarketData.cToken,
-    active === 'withdraw'
-      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
-      : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === 'borrow'
-      ? amountAsBInt
-      : parseUnits('0', selectedMarketData.underlyingDecimals),
-    active === 'repay'
-      ? (amountAsBInt * BigInt(1e18)) / selectedMarketData.exchangeRate
-      : parseUnits('0', selectedMarketData.underlyingDecimals)
-  );
-
-  const [currentUtilizationPercentage, setCurrentUtilizationPercentage] =
-    useState<number>(0);
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
 
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
     useUpdatedUserAssets({
-      amount: amountAsBInt,
+      amount: predictionAmount,
       assets: [selectedMarketData],
       index: 0,
       mode: currentFundOperation,
       poolChainId: chainId
     });
+
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
-  const { data: maxWithdrawAmount } = useMaxWithdrawAmount(
-    selectedMarketData,
-    chainId
-  );
 
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const predictedHealthFactor = useMemo<bigint | undefined>(() => {
-    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
-      return maxUint256;
-    }
-
-    if (amountAsBInt === 0n) {
-      return parseEther(healthFactor ?? '0');
-    }
-
-    return _predictedHealthFactor;
-  }, [_predictedHealthFactor, updatedAsset, amountAsBInt, healthFactor]);
-
-  const hfpStatus = useMemo<HFPStatus>(() => {
-    // If we're loading but have a previous health factor, keep using it
-    if (isLoadingPredictedHealthFactor && healthFactor) {
-      return healthFactor === '-1'
-        ? HFPStatus.NORMAL
-        : Number(healthFactor) <= 1.1
-          ? HFPStatus.CRITICAL
-          : Number(healthFactor) <= 1.2
-            ? HFPStatus.WARNING
-            : HFPStatus.NORMAL;
-    }
-
-    if (!predictedHealthFactor && !healthFactor) {
-      return HFPStatus.UNKNOWN;
-    }
-
-    if (predictedHealthFactor === maxUint256) {
-      return HFPStatus.NORMAL;
-    }
-
-    if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
-      return HFPStatus.NORMAL;
-    }
-
-    const predictedHealthFactorNumber = Number(
-      formatEther(predictedHealthFactor ?? 0n)
-    );
-
-    if (predictedHealthFactorNumber <= 1.1) {
-      return HFPStatus.CRITICAL;
-    }
-
-    if (predictedHealthFactorNumber <= 1.2) {
-      return HFPStatus.WARNING;
-    }
-
-    return HFPStatus.NORMAL;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    predictedHealthFactor,
-    updatedAsset,
-    healthFactor,
-    isLoadingPredictedHealthFactor
-  ]);
 
   const queryClient = useQueryClient();
 
@@ -296,103 +160,8 @@ export const ManageDialogProvider: React.FC<{
   /**
    * Update utilization percentage when amount changes
    */
-  useEffect(() => {
-    if (amount === '0' || !amount) {
-      setCurrentUtilizationPercentage(0);
-      return;
-    }
-
-    let maxAmount: bigint;
-    switch (active) {
-      case 'supply':
-        maxAmount = maxSupplyAmount?.bigNumber ?? 0n;
-        break;
-      case 'withdraw':
-        maxAmount = maxWithdrawAmount ?? 0n;
-        break;
-      case 'borrow':
-        maxAmount = maxBorrowAmount?.bigNumber ?? 0n;
-        break;
-      case 'repay':
-        maxAmount = maxRepayAmount ?? 0n;
-        break;
-      default:
-        maxAmount = 0n;
-    }
-
-    if (maxAmount === 0n) {
-      setCurrentUtilizationPercentage(0);
-      return;
-    }
-
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setCurrentUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [
-    active,
-    amountAsBInt,
-    maxSupplyAmount?.bigNumber,
-    maxWithdrawAmount,
-    maxBorrowAmount?.bigNumber,
-    maxRepayAmount,
-    amount
-  ]);
 
   const initiateCloseAnimation = () => setIsMounted(false);
-
-  const handleUtilization = useCallback(
-    (utilizationPercentage: number) => {
-      let maxAmountNumber = 0;
-      switch (active) {
-        case 'supply':
-          maxAmountNumber = Number(
-            formatUnits(
-              maxSupplyAmount?.bigNumber ?? 0n,
-              selectedMarketData.underlyingDecimals
-            )
-          );
-          break;
-        case 'withdraw':
-          maxAmountNumber = Number(
-            formatUnits(
-              maxWithdrawAmount ?? 0n,
-              selectedMarketData.underlyingDecimals
-            )
-          );
-          break;
-        case 'borrow':
-          maxAmountNumber = Number(
-            formatUnits(
-              maxBorrowAmount?.bigNumber ?? 0n,
-              selectedMarketData.underlyingDecimals
-            )
-          );
-          break;
-        case 'repay':
-          maxAmountNumber = Number(
-            formatUnits(
-              maxRepayAmount ?? 0n,
-              selectedMarketData.underlyingDecimals
-            )
-          );
-          break;
-        default:
-          break;
-      }
-
-      const calculatedAmount = (
-        (utilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-      setAmount(calculatedAmount);
-      // Don't set utilization here - let the effect handle it
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      active,
-      maxSupplyAmount?.bigNumber,
-      selectedMarketData.underlyingDecimals /* add other dependencies */
-    ]
-  );
 
   const resetTransactionSteps = () => {
     refetchUsedQueries();
@@ -503,45 +272,23 @@ export const ManageDialogProvider: React.FC<{
     };
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
 
-  const normalizedHealthFactor = useMemo(() => {
-    return healthFactor
-      ? healthFactor === '-1'
-        ? '∞'
-        : Number(healthFactor).toFixed(2)
-      : undefined;
-  }, [healthFactor]);
-
-  const normalizedPredictedHealthFactor = useMemo(() => {
-    return predictedHealthFactor === maxUint256
-      ? '∞'
-      : Number(formatEther(predictedHealthFactor ?? 0n)).toFixed(2);
-  }, [predictedHealthFactor]);
-
   return (
     <ManageDialogContext.Provider
       value={{
         active,
         setActive,
-        amount,
-        setAmount,
-        currentUtilizationPercentage,
-        handleUtilization,
-        hfpStatus,
-        normalizedHealthFactor,
-        normalizedPredictedHealthFactor,
         isMounted,
         initiateCloseAnimation,
         resetTransactionSteps,
         refetchUsedQueries,
         selectedMarketData,
         chainId,
-        amountAsBInt,
         comptrollerAddress,
         minBorrowAmount,
         maxBorrowAmount,
-        isLoadingPredictedHealthFactor,
         isLoadingUpdatedAssets,
-        updatedValues
+        updatedValues,
+        setPredictionAmount
       }}
     >
       {children}

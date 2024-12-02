@@ -14,6 +14,8 @@ import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+import { useHealth } from '@ui/hooks/market/useHealth';
+import { useEffect } from 'react';
 
 interface BorrowTabProps {
   maxAmount: bigint;
@@ -29,19 +31,14 @@ interface BorrowTabProps {
 const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   const {
     selectedMarketData,
-    amount,
-    setAmount,
-    currentUtilizationPercentage,
-    handleUtilization,
-    hfpStatus,
     resetTransactionSteps,
     chainId,
-    normalizedHealthFactor,
-    normalizedPredictedHealthFactor,
-    amountAsBInt,
-    isLoadingPredictedHealthFactor,
     isLoadingUpdatedAssets,
-    updatedValues
+    updatedValues,
+    comptrollerAddress,
+    minBorrowAmount,
+    maxBorrowAmount,
+    setPredictionAmount
   } = useManageDialogContext();
 
   const {
@@ -50,8 +47,30 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     transactionSteps,
     isPolling,
     borrowLimits,
-    isUnderMinBorrow
-  } = useBorrow();
+    isUnderMinBorrow,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
+  } = useBorrow({
+    selectedMarketData,
+    chainId,
+    comptrollerAddress,
+    minBorrowAmount,
+    maxBorrowAmount
+  });
+
+  const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
+    {
+      comptrollerAddress,
+      cToken: selectedMarketData.cToken,
+      activeTab: 'borrow',
+      amount: amountAsBInt,
+      exchangeRate: selectedMarketData.exchangeRate,
+      decimals: selectedMarketData.underlyingDecimals
+    }
+  );
 
   const isDisabled =
     !amount ||
@@ -60,20 +79,19 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     hfpStatus === HFPStatus.CRITICAL ||
     hfpStatus === HFPStatus.UNKNOWN;
 
-  const healthFactor = {
-    current: normalizedHealthFactor ?? '0',
-    predicted: normalizedPredictedHealthFactor ?? '0'
-  };
+  useEffect(() => {
+    setPredictionAmount(amountAsBInt);
+  }, [amountAsBInt]);
 
   return (
     <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
-        handleInput={setAmount}
+        handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={currentUtilizationPercentage}
+        currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
       />
 

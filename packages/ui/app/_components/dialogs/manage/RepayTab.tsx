@@ -12,6 +12,8 @@ import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+import { useHealth } from '@ui/hooks/market/useHealth';
+import { useEffect } from 'react';
 
 interface RepayTabProps {
   maxAmount: bigint;
@@ -27,18 +29,12 @@ interface RepayTabProps {
 const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   const {
     selectedMarketData,
-    amount,
-    setAmount,
-    currentUtilizationPercentage,
-    handleUtilization,
-    hfpStatus,
     resetTransactionSteps,
     chainId,
-    normalizedHealthFactor,
-    normalizedPredictedHealthFactor,
-    amountAsBInt,
     isLoadingUpdatedAssets,
-    updatedValues
+    updatedValues,
+    comptrollerAddress,
+    setPredictionAmount
   } = useManageDialogContext();
 
   const {
@@ -46,23 +42,40 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     repayAmount,
     transactionSteps,
     isPolling,
-    currentBorrowAmountAsFloat
-  } = useRepay();
+    currentBorrowAmountAsFloat,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
+  } = useRepay({
+    maxAmount,
+    selectedMarketData,
+    chainId
+  });
 
-  const healthFactor = {
-    current: normalizedHealthFactor ?? '0',
-    predicted: normalizedPredictedHealthFactor ?? '0'
-  };
+  const { healthFactor, hfpStatus } = useHealth({
+    comptrollerAddress,
+    cToken: selectedMarketData.cToken,
+    activeTab: 'repay',
+    amount: amountAsBInt,
+    exchangeRate: selectedMarketData.exchangeRate,
+    decimals: selectedMarketData.underlyingDecimals
+  });
+
+  useEffect(() => {
+    setPredictionAmount(amountAsBInt);
+  }, [amountAsBInt]);
 
   return (
     <div className="space-y-4 pt-4">
       <Amount
         amount={amount}
-        handleInput={setAmount}
+        handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={currentUtilizationPercentage}
+        currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
       />
 

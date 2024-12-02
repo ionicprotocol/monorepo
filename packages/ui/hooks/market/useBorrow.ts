@@ -1,35 +1,83 @@
-import { useState } from 'react';
+// useBorrow.ts
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
-import { formatUnits } from 'viem';
+import { type Address, formatUnits, parseUnits } from 'viem';
 
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxBorrowAmount } from '../useMaxBorrowAmount';
 
-import type { Address } from 'viem';
+interface UseBorrowProps {
+  selectedMarketData: MarketData;
+  chainId: number;
+  comptrollerAddress: Address;
+  minBorrowAmount?: {
+    minBorrowAsset: bigint | undefined;
+    minBorrowNative: bigint | undefined;
+    minBorrowUSD: number | undefined;
+  };
+  maxBorrowAmount?: {
+    bigNumber: bigint;
+    number: number;
+  } | null;
+}
 
-export const useBorrow = () => {
+export const useBorrow = ({
+  selectedMarketData,
+  chainId,
+  comptrollerAddress,
+  minBorrowAmount,
+  maxBorrowAmount
+}: UseBorrowProps) => {
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+  const [amount, setAmount] = useState<string>('0');
+  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
 
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
 
-  const {
-    selectedMarketData,
-    amount,
-    amountAsBInt,
-    chainId,
-    minBorrowAmount,
-    maxBorrowAmount,
-    comptrollerAddress
-  } = useManageDialogContext();
+  const amountAsBInt = useMemo(
+    () =>
+      parseUnits(
+        amount?.toString() ?? '0',
+        selectedMarketData.underlyingDecimals
+      ),
+    [amount, selectedMarketData.underlyingDecimals]
+  );
+
+  const handleUtilization = useCallback(
+    (newUtilizationPercentage: number) => {
+      const maxAmountNumber = maxBorrowAmount?.number ?? 0;
+
+      const calculatedAmount = (
+        (newUtilizationPercentage / 100) *
+        maxAmountNumber
+      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
+
+      setAmount(calculatedAmount);
+      setUtilizationPercentage(newUtilizationPercentage);
+    },
+    [maxBorrowAmount?.number, selectedMarketData.underlyingDecimals]
+  );
+
+  // Update utilization percentage when amount changes
+  useEffect(() => {
+    if (amount === '0' || !amount || !maxBorrowAmount?.bigNumber) {
+      setUtilizationPercentage(0);
+      return;
+    }
+
+    const utilization =
+      (Number(amountAsBInt) * 100) / Number(maxBorrowAmount.bigNumber);
+    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
+  }, [amountAsBInt, maxBorrowAmount?.bigNumber, amount]);
 
   const { refetch: refetchMaxBorrow } = useMaxBorrowAmount(
     selectedMarketData,
@@ -140,6 +188,8 @@ export const useBorrow = () => {
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
       refetchMaxBorrow();
+      setAmount('0');
+      setUtilizationPercentage(0);
       toast.success(
         `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -152,6 +202,11 @@ export const useBorrow = () => {
     transactionSteps,
     isPolling,
     borrowLimits,
-    isUnderMinBorrow
+    isUnderMinBorrow,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
   };
 };

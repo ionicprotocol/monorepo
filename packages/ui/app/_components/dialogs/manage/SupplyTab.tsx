@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { formatUnits } from 'viem';
 
@@ -38,17 +38,13 @@ const SupplyTab = ({
 }: SupplyTabProps) => {
   const {
     selectedMarketData,
-    amount,
-    setAmount,
-    currentUtilizationPercentage,
-    handleUtilization,
     resetTransactionSteps,
     chainId,
-    amountAsBInt,
     comptrollerAddress,
     updatedValues,
     isLoadingUpdatedAssets,
-    refetchUsedQueries
+    refetchUsedQueries,
+    setPredictionAmount
   } = useManageDialogContext();
 
   const {
@@ -65,13 +61,24 @@ const SupplyTab = ({
     isWaitingForIndexing,
     supplyAmount,
     transactionSteps: supplyTxSteps,
-    isPolling
+    isPolling,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt
   } = useSupply({
     maxAmount,
-    enableCollateral
+    enableCollateral,
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
   });
 
-  // Combine both sets of transaction steps
+  useEffect(() => {
+    setPredictionAmount(amountAsBInt);
+  }, [amountAsBInt]);
+
   const combinedTransactionSteps = useMemo(() => {
     return [...supplyTxSteps, ...collateralTxSteps];
   }, [supplyTxSteps, collateralTxSteps]);
@@ -92,11 +99,11 @@ const SupplyTab = ({
 
       <Amount
         amount={amount}
-        handleInput={setAmount}
+        handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
         max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
         symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={currentUtilizationPercentage}
+        currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
       />
 
