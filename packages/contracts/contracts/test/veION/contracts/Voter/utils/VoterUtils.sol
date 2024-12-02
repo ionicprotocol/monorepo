@@ -5,6 +5,7 @@ import "../../../Utils.sol";
 import "../../../../../veION/Voter.sol";
 import "../mocks/MockBribeRewards.sol";
 import { IVoter } from "../../../../../veION/interfaces/IVoter.sol";
+import { RewardAccumulator } from "../../../../../veION/RewardAccumulator.sol";
 
 contract VoterTest is veIONTest {
   Voter voter;
@@ -53,16 +54,18 @@ contract VoterTest is veIONTest {
     address[] memory rewardAccumulators = new address[](4);
     marketAddresses[0] = ethMarket;
     marketSides[0] = IVoter.MarketSide.Supply;
-    rewardAccumulators[0] = address(0x1111111111111111111111111111111111111111);
     marketAddresses[1] = ethMarket;
     marketSides[1] = IVoter.MarketSide.Borrow;
-    rewardAccumulators[1] = address(0x2222222222222222222222222222222222222222);
     marketAddresses[2] = btcMarket;
     marketSides[2] = IVoter.MarketSide.Supply;
-    rewardAccumulators[2] = address(0x3333333333333333333333333333333333333333);
     marketAddresses[3] = btcMarket;
     marketSides[3] = IVoter.MarketSide.Borrow;
-    rewardAccumulators[3] = address(0x4444444444444444444444444444444444444444);
+
+    for (uint i = 0; i < 4; i++) {
+      RewardAccumulator newRewardAccumulator = new RewardAccumulator();
+      rewardAccumulators[i] = address(newRewardAccumulator);
+    }
+
     voter.setMarketRewardAccumulators(marketAddresses, marketSides, rewardAccumulators);
 
     bribeEthSupply = new MockBribeRewards();
@@ -128,16 +131,18 @@ contract VoterTest is veIONTest {
     address[] memory rewardAccumulators = new address[](4);
     marketAddresses[0] = ethMarket;
     marketSides[0] = IVoter.MarketSide.Supply;
-    rewardAccumulators[0] = address(0x1111111111111111111111111111111111111111);
     marketAddresses[1] = ethMarket;
     marketSides[1] = IVoter.MarketSide.Borrow;
-    rewardAccumulators[1] = address(0x2222222222222222222222222222222222222222);
     marketAddresses[2] = btcMarket;
     marketSides[2] = IVoter.MarketSide.Supply;
-    rewardAccumulators[2] = address(0x3333333333333333333333333333333333333333);
     marketAddresses[3] = btcMarket;
     marketSides[3] = IVoter.MarketSide.Borrow;
-    rewardAccumulators[3] = address(0x4444444444444444444444444444444444444444);
+    
+    for (uint i = 0; i < 4; i++) {
+      RewardAccumulator newRewardAccumulator = new RewardAccumulator();
+      rewardAccumulators[i] = address(newRewardAccumulator);
+    }
+
     voter.setMarketRewardAccumulators(marketAddresses, marketSides, rewardAccumulators);
 
     bribeEthSupply = new MockBribeRewards();

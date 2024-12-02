@@ -22,7 +22,7 @@ contract VeIonicFlywheelDynamicRewards is FlywheelDynamicRewards {
         owner = msg.sender;
     }
 
-    function setGauges(address[] memory _strategies, address[] memory _rewardAccumulators) external onlyOwner {
+    function setRewardAccumulators(address[] memory _strategies, address[] memory _rewardAccumulators) external onlyOwner {
         uint256 _length = _strategies.length;
         require(_rewardAccumulators.length == _length, "parameters");
         for (uint256 i = 0; i < _length; i++) {
