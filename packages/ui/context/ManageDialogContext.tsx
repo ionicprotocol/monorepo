@@ -10,7 +10,6 @@ import {
 } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import {
   type Address,
   formatEther,
@@ -21,9 +20,7 @@ import {
 } from 'viem';
 import { useChainId } from 'wagmi';
 
-import type { TransactionStep } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
-import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import {
@@ -36,7 +33,6 @@ import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import { FundOperationMode } from '@ionicprotocol/types';
@@ -63,13 +59,10 @@ interface PopupContextType {
   currentUtilizationPercentage: number;
   handleUtilization: (utilizationPercentage: number) => void;
   hfpStatus: HFPStatus;
-  enableCollateral: boolean;
-  handleCollateralToggle: () => Promise<void>;
   normalizedHealthFactor: string | undefined;
   normalizedPredictedHealthFactor: string | undefined;
   isMounted: boolean;
   initiateCloseAnimation: () => void;
-  transactionSteps: TransactionStep[];
   resetTransactionSteps: () => void;
   refetchUsedQueries: () => Promise<void>;
   selectedMarketData: MarketData;
@@ -121,8 +114,7 @@ export const ManageDialogProvider: React.FC<{
   closePopup: () => void;
   children: React.ReactNode;
 }> = ({ selectedMarketData, comptrollerAddress, closePopup, children }) => {
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
+  const { upsertTransactionStep } = useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
   const chainId = useChainId();
 
@@ -205,6 +197,7 @@ export const ManageDialogProvider: React.FC<{
     useState<number>(0);
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
+
   const { data: updatedAssets, isLoading: isLoadingUpdatedAssets } =
     useUpdatedUserAssets({
       amount: amountAsBInt,
@@ -219,9 +212,6 @@ export const ManageDialogProvider: React.FC<{
     chainId
   );
 
-  const [enableCollateral, setEnableCollateral] = useState<boolean>(
-    selectedMarketData.membership && selectedMarketData.supplyBalance > 0n
-  );
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const predictedHealthFactor = useMemo<bigint | undefined>(() => {
     if (updatedAsset && updatedAsset?.supplyBalanceFiat < 0.01) {
@@ -429,153 +419,6 @@ export const ManageDialogProvider: React.FC<{
     });
   };
 
-  const handleCollateralToggle = async () => {
-    if (!transactionSteps.length) {
-      if (currentSdk && selectedMarketData.supplyBalance > 0n) {
-        const currentTransactionStep = 0;
-
-        try {
-          let tx;
-
-          switch (enableCollateral) {
-            case true: {
-              const comptrollerContract = currentSdk.createComptroller(
-                comptrollerAddress,
-                currentSdk.publicClient
-              );
-
-              const exitCode = (
-                await comptrollerContract.simulate.exitMarket(
-                  [selectedMarketData.cToken],
-                  { account: currentSdk.walletClient!.account!.address }
-                )
-              ).result;
-
-              if (exitCode !== 0n) {
-                toast.error(errorCodeToMessage(Number(exitCode)));
-
-                return;
-              }
-
-              addStepsForAction([
-                {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
-                  success: false
-                }
-              ]);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
-                  success: false
-                }
-              });
-
-              tx = await comptrollerContract.write.exitMarket(
-                [selectedMarketData.cToken],
-                {
-                  account: currentSdk.walletClient!.account!.address,
-                  chain: currentSdk.publicClient.chain
-                }
-              );
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  txHash: tx
-                }
-              });
-
-              await currentSdk.publicClient.waitForTransactionReceipt({
-                hash: tx
-              });
-
-              setEnableCollateral(false);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  success: true
-                }
-              });
-
-              break;
-            }
-
-            case false: {
-              addStepsForAction([
-                {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
-                  success: false
-                }
-              ]);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
-                  success: false
-                }
-              });
-
-              tx = await currentSdk.enterMarkets(
-                selectedMarketData.cToken,
-                comptrollerAddress
-              );
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  txHash: tx
-                }
-              });
-
-              await currentSdk.publicClient.waitForTransactionReceipt({
-                hash: tx
-              });
-
-              setEnableCollateral(true);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  success: true
-                }
-              });
-
-              break;
-            }
-          }
-
-          refetchUsedQueries();
-
-          return;
-        } catch (error) {
-          console.error(error);
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              error: true
-            }
-          });
-        }
-      }
-
-      setEnableCollateral(!enableCollateral);
-    }
-  };
-
   const updatedValues = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);
 
@@ -684,13 +527,10 @@ export const ManageDialogProvider: React.FC<{
         currentUtilizationPercentage,
         handleUtilization,
         hfpStatus,
-        enableCollateral,
-        handleCollateralToggle,
         normalizedHealthFactor,
         normalizedPredictedHealthFactor,
         isMounted,
         initiateCloseAnimation,
-        transactionSteps,
         resetTransactionSteps,
         refetchUsedQueries,
         selectedMarketData,

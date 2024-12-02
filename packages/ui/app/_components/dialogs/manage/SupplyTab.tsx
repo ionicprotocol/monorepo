@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
@@ -8,6 +10,7 @@ import {
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import { useCollateralToggle } from '@ui/hooks/market/useCollateralToggle';
 import { useSupply } from '@ui/hooks/market/useSupply';
 
 import Amount from './Amount';
@@ -39,21 +42,41 @@ const SupplyTab = ({
     setAmount,
     currentUtilizationPercentage,
     handleUtilization,
-    enableCollateral,
     resetTransactionSteps,
     chainId,
     amountAsBInt,
-    handleCollateralToggle,
+    comptrollerAddress,
     updatedValues,
-    isLoadingUpdatedAssets
+    isLoadingUpdatedAssets,
+    refetchUsedQueries
   } = useManageDialogContext();
 
-  const { isWaitingForIndexing, supplyAmount, transactionSteps, isPolling } =
-    useSupply({
-      maxAmount
-    });
+  const {
+    isWaitingForIndexing,
+    supplyAmount,
+    transactionSteps: supplyTxSteps,
+    isPolling
+  } = useSupply({
+    maxAmount
+  });
+
+  const {
+    enableCollateral,
+    handleCollateralToggle,
+    transactionSteps: collateralTxSteps
+  } = useCollateralToggle({
+    selectedMarketData,
+    comptrollerAddress,
+    onSuccess: refetchUsedQueries
+  });
+
+  // Combine both sets of transaction steps
+  const combinedTransactionSteps = useMemo(() => {
+    return [...supplyTxSteps, ...collateralTxSteps];
+  }, [supplyTxSteps, collateralTxSteps]);
 
   const isDisabled = !amount || amountAsBInt === 0n;
+  const hasActiveTransactions = combinedTransactionSteps.length > 0;
 
   return (
     <div className="space-y-4 pt-2">
@@ -77,7 +100,6 @@ const SupplyTab = ({
       />
 
       <div className="grid grid-cols-2 gap-x-8">
-        {/* Left Column - Market Stats */}
         <div className="space-y-4 content-center">
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-gray-400 uppercase">
@@ -112,7 +134,6 @@ const SupplyTab = ({
           </div>
         </div>
 
-        {/* Right Column - Donut Chart Stats */}
         {totalStats && (
           <MemoizedUtilizationStats
             label="Total Supplied"
@@ -136,16 +157,14 @@ const SupplyTab = ({
                 checked={enableCollateral}
                 onCheckedChange={handleCollateralToggle}
                 disabled={
-                  transactionSteps.length > 0 ||
-                  !selectedMarketData.supplyBalance
+                  hasActiveTransactions || !selectedMarketData.supplyBalance
                 }
               />
             </div>
           </TooltipTrigger>
-          {(transactionSteps.length > 0 ||
-            !selectedMarketData.supplyBalance) && (
+          {(hasActiveTransactions || !selectedMarketData.supplyBalance) && (
             <TooltipContent side="top">
-              {transactionSteps.length > 0
+              {hasActiveTransactions
                 ? 'Cannot modify collateral during an active transaction'
                 : 'You need to supply assets first before enabling as collateral'}
             </TooltipContent>
@@ -153,12 +172,12 @@ const SupplyTab = ({
         </Tooltip>
       </div>
 
-      {transactionSteps.length > 0 ? (
+      {hasActiveTransactions ? (
         <div className="flex justify-center">
           <TransactionStepsHandler
             chainId={chainId}
             resetTransactionSteps={resetTransactionSteps}
-            transactionSteps={transactionSteps}
+            transactionSteps={combinedTransactionSteps}
           />
         </div>
       ) : (
