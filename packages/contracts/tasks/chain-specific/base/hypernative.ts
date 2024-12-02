@@ -1,6 +1,9 @@
 import { task } from "hardhat/config";
 import { Address } from "viem";
 import { USDC_MARKET } from ".";
+import { configureAddress } from "../../../chainDeploy/helpers/liquidators/ionicLiquidator";
+
+const HYPERNATIVE_ORACLE = "0x98fEFA40BE865394903fDe4B2A8B352a5F28202e";
 
 task("markets:upgrade-and-setup:hypernative", "Upgrades all markets and sets addresses provider on them").setAction(
   async (_, { viem, deployments, run, getNamedAccounts }) => {
@@ -18,5 +21,17 @@ task("markets:upgrade-and-setup:hypernative", "Upgrades all markets and sets add
       marketAddress: market,
       implementationAddress: latestImpl
     });
+  }
+);
+
+task("hypernative:set-address", "Set the address for the hypernative oracle").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const ap = await viem.getContractAt(
+      "AddressesProvider",
+      (await deployments.get("AddressesProvider")).address as Address
+    );
+    const publicClient = await viem.getPublicClient();
+    await configureAddress(ap, publicClient, deployer, "HYPERNATIVE_ORACLE", HYPERNATIVE_ORACLE);
   }
 );
