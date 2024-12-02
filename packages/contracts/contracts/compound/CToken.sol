@@ -9,9 +9,12 @@ import { EIP20Interface } from "./EIP20Interface.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { ComptrollerV3Storage } from "./ComptrollerStorage.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
+import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
+
 import { DiamondExtension, LibDiamond } from "../ionic/DiamondExtension.sol";
 import { PoolLens } from "../PoolLens.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
+import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 
 /**
  * @title Compound's CErc20 Contract
@@ -19,7 +22,7 @@ import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
  * @dev This contract should not to be deployed on its own; instead, deploy `CErc20Delegator` (proxy contract) and `CErc20Delegate` (logic/implementation contract).
  * @author Compound
  */
-abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
+abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, TokenErrorReporter, Exponential, DiamondExtension {
   modifier isAuthorized() {
     require(
       IFeeDistributor(ionicAdmin).canCall(address(comptroller), msg.sender, address(this), msg.sig),
@@ -69,7 +72,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param mintAmount The amount of the underlying asset to supply
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function mint(uint256 mintAmount) external override isAuthorized returns (uint256) {
+  function mint(uint256 mintAmount) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     (uint256 err, ) = mintInternal(mintAmount);
     return err;
   }
@@ -80,7 +83,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param redeemTokens The number of cTokens to redeem into underlying
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function redeem(uint256 redeemTokens) external override isAuthorized returns (uint256) {
+  function redeem(uint256 redeemTokens) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     return redeemInternal(redeemTokens);
   }
 
@@ -90,7 +93,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param redeemAmount The amount of underlying to redeem
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function redeemUnderlying(uint256 redeemAmount) external override isAuthorized returns (uint256) {
+  function redeemUnderlying(uint256 redeemAmount) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     return redeemUnderlyingInternal(redeemAmount);
   }
 
@@ -99,7 +102,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param borrowAmount The amount of the underlying asset to borrow
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function borrow(uint256 borrowAmount) external override isAuthorized returns (uint256) {
+  function borrow(uint256 borrowAmount) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     return borrowInternal(borrowAmount);
   }
 
@@ -108,7 +111,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param repayAmount The amount to repay
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function repayBorrow(uint256 repayAmount) external override isAuthorized returns (uint256) {
+  function repayBorrow(uint256 repayAmount) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     (uint256 err, ) = repayBorrowInternal(repayAmount);
     return err;
   }
@@ -119,7 +122,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param repayAmount The amount to repay
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function repayBorrowBehalf(address borrower, uint256 repayAmount) external override isAuthorized returns (uint256) {
+  function repayBorrowBehalf(address borrower, uint256 repayAmount) external override isAuthorized onlyOracleApprovedAllowEOA returns (uint256) {
     (uint256 err, ) = repayBorrowBehalfInternal(borrower, repayAmount);
     return err;
   }
@@ -136,7 +139,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
     address borrower,
     uint256 repayAmount,
     address cTokenCollateral
-  ) external override isAuthorized isMinHFThresholdExceeded(borrower) returns (uint256) {
+  ) external override isAuthorized onlyOracleApprovedAllowEOA isMinHFThresholdExceeded(borrower) returns (uint256) {
     (uint256 err, ) = liquidateBorrowInternal(borrower, repayAmount, cTokenCollateral);
     return err;
   }
@@ -162,7 +165,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
     address liquidator,
     address borrower,
     uint256 seizeTokens
-  ) external override nonReentrant(true) returns (uint256) {
+  ) external override nonReentrant(true) onlyOracleApprovedAllowEOA returns (uint256) {
     return seizeInternal(msg.sender, liquidator, borrower, seizeTokens);
   }
 
@@ -181,7 +184,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param withdrawAmount Amount of fees to withdraw
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) returns (uint256) {
+  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
     asCTokenExtension().accrueInterest();
 
     if (accrualBlockNumber != block.number) {
@@ -214,7 +217,7 @@ abstract contract CErc20 is CTokenSecondExtensionBase, TokenErrorReporter, Expon
    * @param withdrawAmount Amount of fees to withdraw
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
    */
-  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) returns (uint256) {
+  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
     asCTokenExtension().accrueInterest();
 
     if (accrualBlockNumber != block.number) {

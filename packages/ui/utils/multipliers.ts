@@ -50,6 +50,21 @@ export const multipliers: Record<
           op: true
         }
       },
+      dMBTC: {
+        borrow: {
+          ionAPR: false,
+          turtle: false,
+          ionic: 0
+        },
+        market: 'dmBTC_market',
+        supply: {
+          ionic: 0,
+          underlyingAPR: 10,
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
       STONE: {
         borrow: {
           ionic: 0,
