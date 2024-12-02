@@ -1,29 +1,19 @@
-import { useState } from 'react';
-
 import { Info } from 'lucide-react';
-import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
-import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useBalancePolling } from '@ui/hooks/useBalancePolling';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useBorrow } from '@ui/hooks/market/useBorrow';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-
-import type { Address } from 'viem';
 
 interface BorrowTabProps {
   maxAmount: bigint;
@@ -37,9 +27,6 @@ interface BorrowTabProps {
 }
 
 const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
-  const [txHash, setTxHash] = useState<Address>();
-  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
-
   const {
     selectedMarketData,
     amount,
@@ -52,35 +39,19 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     normalizedHealthFactor,
     normalizedPredictedHealthFactor,
     amountAsBInt,
-    minBorrowAmount,
-    maxBorrowAmount,
     isLoadingPredictedHealthFactor,
     isLoadingUpdatedAssets,
-    updatedValues,
-    comptrollerAddress
+    updatedValues
   } = useManageDialogContext();
 
-  const { refetch: refetchMaxBorrow } = useMaxBorrowAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
-  const { currentSdk, address } = useMultiIonic();
-
-  const { isPolling } = useBalancePolling({
-    address,
-    chainId,
-    txHash,
-    enabled: isWaitingForIndexing,
-    onSuccess: () => {
-      setIsWaitingForIndexing(false);
-      setTxHash(undefined);
-      refetchMaxBorrow();
-      toast.success(
-        `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
-      );
-    }
-  });
+  const {
+    isWaitingForIndexing,
+    borrowAmount,
+    transactionSteps,
+    isPolling,
+    borrowLimits,
+    isUnderMinBorrow
+  } = useBorrow();
 
   const isDisabled =
     !amount ||
@@ -94,104 +65,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     predicted: normalizedPredictedHealthFactor ?? '0'
   };
 
-  const borrowLimits = {
-    min: formatUnits(
-      minBorrowAmount?.minBorrowAsset ?? 0n,
-      selectedMarketData.underlyingDecimals
-    ),
-    max:
-      maxBorrowAmount?.number?.toFixed(
-        parseInt(selectedMarketData.underlyingDecimals.toString())
-      ) ?? '0.00'
-  };
-
-  const isUnderMinBorrow =
-    amount &&
-    borrowLimits.min &&
-    parseFloat(amount) < parseFloat(borrowLimits.min);
-
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
-
-  const borrowAmount = async () => {
-    if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt > 0n &&
-      minBorrowAmount &&
-      amountAsBInt >= (minBorrowAmount.minBorrowAsset ?? 0n) &&
-      maxBorrowAmount &&
-      amountAsBInt <= maxBorrowAmount.bigNumber
-    ) {
-      const currentTransactionStep = 0;
-      addStepsForAction([
-        {
-          error: false,
-          message: INFO_MESSAGES.BORROW.BORROWING,
-          success: false
-        }
-      ]);
-
-      try {
-        const { tx, errorCode } = await currentSdk.borrow(
-          selectedMarketData.cToken,
-          amountAsBInt
-        );
-
-        if (errorCode) {
-          console.error(errorCode);
-
-          throw new Error('Error during borrowing!');
-        }
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
-          }
-        });
-
-        if (tx) {
-          await currentSdk.publicClient.waitForTransactionReceipt({
-            hash: tx
-          });
-
-          setTxHash(tx);
-          setIsWaitingForIndexing(true);
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              success: true
-            }
-          });
-
-          toast.success(
-            `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        setIsWaitingForIndexing(false);
-        setTxHash(undefined);
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
-          }
-        });
-
-        toast.error('Error while borrowing!');
-      }
-    }
-  };
-
   return (
     <div className="space-y-4 pt-4">
       <Amount
@@ -203,8 +76,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         currentUtilizationPercentage={currentUtilizationPercentage}
         handleUtilization={handleUtilization}
       />
-
-      {/* <SliderComponent /> */}
 
       {isUnderMinBorrow && (
         <Alert
@@ -231,7 +102,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
       />
 
       <div className="grid grid-cols-2 gap-x-8">
-        {/* Left Column */}
         <div className="space-y-4 content-center">
           <div className="flex justify-between text-xs text-gray-400">
             <span>MIN BORROW</span>
@@ -289,7 +159,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           </div>
         </div>
 
-        {/* Right Column */}
         {totalStats && (
           <MemoizedUtilizationStats
             label="Total Supplied"

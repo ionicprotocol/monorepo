@@ -1,27 +1,17 @@
-import { useState } from 'react';
-
-import toast from 'react-hot-toast';
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
-import { INFO_MESSAGES } from '@ui/constants';
 import {
   HFPStatus,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useBalancePolling } from '@ui/hooks/useBalancePolling';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+import { useWithdraw } from '@ui/hooks/market/useWithdraw';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
-import TransactionStepsHandler, {
-  useTransactionSteps
-} from './TransactionStepsHandler';
+import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-
-import type { Address } from 'viem';
 
 interface WithdrawTabProps {
   maxAmount: bigint;
@@ -39,9 +29,6 @@ const WithdrawTab = ({
   isLoadingMax,
   totalStats
 }: WithdrawTabProps) => {
-  const [txHash, setTxHash] = useState<Address>();
-  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
-
   const {
     selectedMarketData,
     amount,
@@ -58,10 +45,11 @@ const WithdrawTab = ({
     updatedValues,
     isLoadingUpdatedAssets
   } = useManageDialogContext();
-  const { refetch: refetchMaxWithdraw } = useMaxWithdrawAmount(
-    selectedMarketData,
-    chainId
-  );
+
+  const { isWaitingForIndexing, withdrawAmount, transactionSteps, isPolling } =
+    useWithdraw({
+      maxAmount
+    });
 
   const isDisabled =
     !amount ||
@@ -73,114 +61,6 @@ const WithdrawTab = ({
   const healthFactor = {
     current: normalizedHealthFactor ?? '0',
     predicted: normalizedPredictedHealthFactor ?? '0'
-  };
-  const { currentSdk, address } = useMultiIonic();
-
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
-
-  const { isPolling } = useBalancePolling({
-    address,
-    chainId,
-    txHash,
-    enabled: isWaitingForIndexing,
-    onSuccess: () => {
-      setIsWaitingForIndexing(false);
-      setTxHash(undefined);
-      refetchMaxWithdraw();
-      toast.success(
-        `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
-      );
-    }
-  });
-
-  const withdrawAmount = async () => {
-    if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt > 0n &&
-      maxAmount
-    ) {
-      const currentTransactionStep = 0;
-      addStepsForAction([
-        {
-          error: false,
-          message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
-          success: false
-        }
-      ]);
-
-      try {
-        const amountToWithdraw = amountAsBInt;
-
-        console.warn(
-          'Withdraw params:',
-          selectedMarketData.cToken,
-          amountToWithdraw.toString()
-        );
-        let isMax = false;
-        if (amountToWithdraw === maxAmount) {
-          isMax = true;
-        }
-
-        const { tx, errorCode } = await currentSdk.withdraw(
-          selectedMarketData.cToken,
-          amountToWithdraw,
-          isMax
-        );
-
-        if (errorCode) {
-          console.error(errorCode);
-
-          throw new Error('Error during withdrawing!');
-        }
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
-          }
-        });
-
-        if (tx) {
-          await currentSdk.publicClient.waitForTransactionReceipt({
-            hash: tx
-          });
-
-          setTxHash(tx);
-          setIsWaitingForIndexing(true);
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              success: true
-            }
-          });
-
-          toast.success(
-            `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        setIsWaitingForIndexing(false);
-        setTxHash(undefined);
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
-          }
-        });
-
-        toast.error('Error while withdrawing!');
-      }
-    }
   };
 
   return (
