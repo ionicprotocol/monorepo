@@ -794,14 +794,9 @@ export default function Stake() {
               })}{' '}
               ION/{selectedtoken.toUpperCase()}
             </h1>
-            {/* tu */}
             <h1 className="mt-1">
-              You will {step3Toggle === 'Unstake' && 'not'} get{' '}
-              {+chain === mode.id || +chain === optimism.id
-                ? '$VELO'
-                : +chain === base.id
-                  ? '$AERO'
-                  : ''}
+              You will {step3Toggle === 'Unstake' && 'not'} receive{' '}
+              {+chain === base.id ? 'AERO' : 'xVELO'}
             </h1>
 
             {/* breakdowns */}
