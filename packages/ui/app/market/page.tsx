@@ -60,7 +60,6 @@ export default function Market() {
   const [filteredMarketData, setFilteredMarketData] = useState<MarketRowData[]>(
     []
   );
-  console.log('filteredMarketData', filteredMarketData);
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
