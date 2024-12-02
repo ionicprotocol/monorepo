@@ -4,8 +4,6 @@ import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
 import Link from 'next/link';
 
-import { useStore } from 'ui/store/Store';
-
 import {
   FLYWHEEL_TYPE_MAP,
   pools,
@@ -15,12 +13,12 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
+import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import BorrowPopover from './BorrowPopover';
 import SupplyPopover from './SupplyPopover';
-import { getAssetName } from '../../util/utils';
 import { PopupMode } from '../popup/page';
 
 import type { Address } from 'viem';
@@ -237,9 +235,7 @@ const PoolRows = ({
             className={`w-10 md:w-7`}
             src={logo}
           />
-          <h3 className={` text-lg md:text-sm `}>
-            {getAssetName(asset, dropdownSelectedChain)}
-          </h3>
+          <h3 className={` text-lg md:text-sm `}>{asset}</h3>
         </div>
         <h3
           className={` col-span-2 flex md:block justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
@@ -343,7 +339,7 @@ const PoolRows = ({
         <span className="text-white/40 font-semibold text-[11px] text-center md:hidden ">
           COLLATERAL FACTOR:
         </span>
-        {collateralFactor}%
+        {Math.round(collateralFactor)}%
       </h3>
       <div
         className={` col-span-4 mx-auto flex items-center justify-center h-full gap-2 text-xs md:text-[10px]  font-semibold  px-2 lg:px-10 w-full`}

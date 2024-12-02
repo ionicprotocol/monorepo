@@ -61,4 +61,12 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 };

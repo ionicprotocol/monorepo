@@ -11,7 +11,8 @@ import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 // import { useWatchContractEvent } from 'wagmi';
 
-import { chainsArr, pools, scans } from '@ui/constants/index';
+import { chainsArr, pools } from '@ui/constants/index';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
 // import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
 
@@ -167,7 +168,7 @@ function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.approvalHash ?? temp.approvalHash}`}
+                href={`${getScanUrlByChainId(+mock?.fromChain ?? temp.fromChain)}${mock?.approvalHash ?? temp.approvalHash}`}
                 className={`text-xs text-white/50 `}
               >
                 {mock?.approvalHash ?? temp.approvalHash}
@@ -179,7 +180,7 @@ function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.hash ?? temp.hash}`}
+                href={`${getScanUrlByChainId(+mock?.fromChain ?? temp.fromChain)}${mock?.hash ?? temp.hash}`}
                 className={`text-xs text-white/50  `}
               >
                 {mock?.hash ?? temp.hash}
@@ -201,7 +202,7 @@ function TxPopup({
 
           <a
             target="_blank"
-            href={`https://layerzeroscan.com/tx/${mock?.hash ?? temp.hash}`}
+            href={`https://explorer.hyperlane.xyz/?search=${mock?.hash ?? temp.hash}`}
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
           >
             TRACK

@@ -8,10 +8,10 @@
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "staging": "NODE_ENV=staging node build/server.js",
-    "dev": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/run.ts",
+    "dev": "HTTPS=true NODE_ENV=development ts-node src/run.ts",
     "test": "NODE_ENV=test nyc ./node_modules/.bin/mocha --require ts-node/register ./src/test/**/**/**/**/*.test.ts",
     "build": "rimraf build && tsc -p tsconfig.json",
-    "dev-pyth": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/runPythLiquidator.ts"
+    "dev-pyth": "HTTPS=true NODE_ENV=development ts-node src/runPythLiquidator.ts"
   },
   "repository": {
     "type": "git",

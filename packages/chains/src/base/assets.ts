@@ -2,6 +2,7 @@ import {
   assetSymbols,
   ChainlinkFeedBaseCurrency,
   ChainlinkSpecificParams,
+  DiaSpecificParams,
   OracleTypes,
   PythSpecificParams,
   SupportedAsset,
@@ -35,6 +36,10 @@ export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
 export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
 export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
+export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
+export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
+export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
+export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -140,7 +145,9 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
     },
     initialCf: "0.70",
-    extraDocs: defaultDocs("https://basescan.org", weETH)
+    extraDocs: defaultDocs("https://basescan.org", weETH),
+    initialSupplyCap: parseEther(String(1_500)).toString(),
+    initialBorrowCap: parseEther(String(1_200)).toString()
   },
   {
     symbol: assetSymbols.eUSD,
@@ -246,8 +253,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(250_000)).toString(),
-    initialBorrowCap: parseEther(String(120_000)).toString(),
+    initialSupplyCap: parseEther(String(2_500_000)).toString(),
+    initialBorrowCap: parseEther(String(2_000_000)).toString(),
     initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
@@ -333,6 +340,64 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(1000)).toString(),
     initialSupplyCap: parseEther(String(2000)).toString(),
     initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.uSUI,
+    underlying: uSUI,
+    name: "Sui (Universal)",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uSUI),
+    initialBorrowCap: parseEther(String(150_000)).toString(),
+    initialSupplyCap: parseEther(String(250_000)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sUSDz,
+    underlying: sUSDz,
+    name: "Staked USDz",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xD89c7fFB39C44b17EAecd8717a75A36c19C07582",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialBorrowCap: parseEther(String(215_000)).toString(),
+    initialSupplyCap: parseEther(String(270_000)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.fBOMB,
+    underlying: fBOMB,
+    name: "Fantom Bomb",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xFB1267A29C0aa19daae4a483ea895862A69e4AA5", // redstone: https://app.redstone.finance/app/feeds/?search=fbomb&page=1&sortBy=popularity&sortDesc=false&perPage=32
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", fBOMB),
+    initialCf: "0.50",
+    initialSupplyCap: parseEther(String(20_000_000)).toString(),
+    initialBorrowCap: parseEther(String(15_000_000)).toString()
+  },
+  {
+    symbol: assetSymbols.KLIMA,
+    underlying: KLIMA,
+    name: "Klima DAO",
+    decimals: 9,
+    oracle: OracleTypes.DiaPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x12df07B05E9DABE78bD04B90206E31F6f64D75bB",
+      key: "KLIMA/USD"
+    } as DiaSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", KLIMA),
+    initialSupplyCap: parseUnits(String(1_500_000), 9).toString(),
+    initialBorrowCap: parseUnits(String(1_200_000), 9).toString(),
+    initialCf: "0.55"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

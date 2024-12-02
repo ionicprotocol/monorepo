@@ -49,11 +49,23 @@ variable "discord_success_webhook_url" {
 variable "discord_failure_webhook_url" {
   type = string
 }
+variable "lifi_api_key" {
+  type = string
+}
 variable "per_discord_webhook_url" {
   type = string
 }
 
 variable "liquidation_sendgrid_api_key" {
+  type = string
+}
+variable "optimism_mainnet_rpcs" {
+  type = string
+}
+variable "lisk_mainnet_rpcs" {
+  type = string
+}
+variable "fraxtal_mainnet_rpcs" {
   type = string
 }
 
@@ -73,8 +85,29 @@ variable "uptime_pyth_updater_api" {
   type = string
 }
 
+variable "task_definition_family_optimism" {
+  description = "Family name for the Optimism task definition"
+  type        = string
+}
 
+variable "task_definition_family_base" {
+  description = "Family name for the Base task definition"
+  type        = string
+}
 
+variable "task_definition_family_mode" {
+  description = "Family name for the Mode task definition"
+  type        = string
+}
+variable "task_definition_family_lisk" {
+  description = "Family name for the Lisk task definition"
+  type        = string
+}
+
+variable "task_definition_family_fraxtal" {
+  description = "Family name for the Fraxtal task definition"
+  type        = string
+}
 
 
 variable "ecr_repository_name" {

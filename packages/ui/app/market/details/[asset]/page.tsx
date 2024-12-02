@@ -15,16 +15,12 @@ import {
 } from 'chart.js';
 import { createClient } from '@supabase/supabase-js';
 // import { Link } from '@tanstack/react-router'
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { mode } from 'viem/chains';
 import { useBalance, useAccount } from 'wagmi';
-// import { useGetMaxBorrow } from 'ui/app/util/utils';
-//-------------------Interfaces------------
-interface IProp {
-  params: { asset: string };
-}
+// import { useGetMaxBorrow } from '@ui/app/util/utils';
 
 //------misc---------
 ChartJS.register(
@@ -42,14 +38,12 @@ ChartJS.register(
 //-------------------------components-----------
 
 import {
-  chartdata,
-  chartdata2,
   chartoptions,
-  chartoptions2,
   getChartData,
   donutoptions,
-  getDonutData
-} from '../../../_constants/mock';
+  getDonutData,
+  chartoptions2
+} from '../../../_constants/market-details-chart';
 
 // const data = [
 //   { name: 'Group A', value: 400 },
@@ -59,11 +53,10 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
-import Popup, { PopupMode } from 'ui/app/_components/popup/page';
-import { extractAndConvertStringTOValue } from '@ui/utils/stringToValue';
+import Popup, { PopupMode } from '@ui/app/_components/popup/page';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import Swap from 'ui/app/_components/popup/Swap';
-import { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import Swap from '@ui/app/_components/popup/Swap';
+import { MarketData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import millify from 'millify';
@@ -71,7 +64,10 @@ import { Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
-import BorrowAmount from 'ui/app/_components/markets/BorrowAmount';
+import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
+import { useAssetChartData } from '@ui/hooks/useAssetChartData';
+import ChartWithDateRange from '@ui/app/_components/markets/ChartWithDateRange';
+import ResultHandler from '@ui/app/_components/ResultHandler';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -86,13 +82,12 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
 );
 
-const Asset = ({ params }: IProp) => {
+const Asset = () => {
   const router = useRouter();
   const { address: acc, isConnected } = useAccount();
   const { data: balance } = useBalance({
     address: acc
   });
-  // console.log(data);
   const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
 
@@ -126,10 +121,11 @@ const Asset = ({ params }: IProp) => {
     [poolData, cTokenAddress]
   );
 
-  // const { data: borrowAPYs } = useBorrowAPYs(assetData ? [assetData] : []);
-  // const borrowAPR = assetData?.cToken ? borrowAPYs?.[assetData?.cToken] : 0;
-  // const { data: supplyAPYs } = useSupplyAPYs(assetData ? [assetData] : []);
-  // console.log(supplyAPYs);
+  // Then use it in the hook
+  const { data: irmData, isLoading } = useAssetChartData(
+    selectedMarketData,
+    Number(chain)
+  );
 
   // const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
   const totalSupplied = assetData?.totalSupplyNative
@@ -195,7 +191,10 @@ const Asset = ({ params }: IProp) => {
           )
             return;
           borrowOBJAtY.push({
-            apy: Number(val.borrowApy.toFixed(4)),
+            apy:
+              typeof val.borrowApy === 'number'
+                ? Number(val.borrowApy.toFixed(4))
+                : 0,
             createdAt: extractTime(val.created_at).dateStr
           });
         });
@@ -309,16 +308,6 @@ const Asset = ({ params }: IProp) => {
     () => pricePerSingleAsset * supplyCapAsNumber,
     [pricePerSingleAsset, supplyCapAsNumber]
   );
-  const totalSupplyAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          selectedMarketData?.totalSupply || 0n,
-          selectedMarketData?.underlyingDecimals || 0
-        )
-      ),
-    [selectedMarketData?.totalSupply, selectedMarketData?.underlyingDecimals]
-  );
 
   const { address } = useAccount();
   const { data: availableToSupply } = useBalance({
@@ -329,14 +318,8 @@ const Asset = ({ params }: IProp) => {
     }
   });
 
-  // const gotMaxBorrowAmount = useMemo<string>(()=>{
-  //   console.log(selectedMarketData)
-  //   return formatUnits(
-  //   maxBorrowAmount?.bigNumber.toBigInt() || BigInt(0),
-  //   selectedMarketData?.underlyingDecimals.toNumber() || 0
-  // )},[selectedMarketData, comptrollerAddress , chain])
+  const { asset } = useParams<{ asset: string }>();
 
-  // const getBorrowAmount = useStore((state) => state.borrowAmount);
   return (
     <div className={` pb-10 relative `}>
       <div
@@ -354,11 +337,11 @@ const Asset = ({ params }: IProp) => {
             />
           </button>
           <img
-            alt={params.asset}
+            alt={asset}
             className={`w-8`}
-            src={`/img/symbols/32/color/${params.asset?.toLowerCase()}.png`}
+            src={`/img/symbols/32/color/${asset?.toLowerCase()}.png`}
           />
-          <h1 className={`font-semibold`}>{params.asset}</h1>
+          <h1 className={`font-semibold`}>{asset}</h1>
           {/* <img
             alt="linkto"
             className={`w-4`}
@@ -430,130 +413,79 @@ const Asset = ({ params }: IProp) => {
             </div>
           </div>
 
-          <div className={`w-full flex items-center justify-start gap-5`}>
-            <div className={` w-14 h-14`}>
-              <Doughnut
-                data={getDonutData(
-                  Math.round(
-                    info === INFO.BORROW
-                      ? (selectedMarketData?.totalBorrowFiat as number)
-                      : (selectedMarketData?.totalSupplyFiat as number)
-                  ),
-                  Math.round(
-                    info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
-                  )
-                )}
-                options={donutoptions}
-                updateMode="resize"
-              />
-            </div>
+          <ChartWithDateRange
+            graph={graph}
+            info={info}
+            INFO={INFO}
+            headerContent={
+              <div className={`w-full flex items-center justify-start gap-5`}>
+                <div className={` w-14 h-14`}>
+                  <Doughnut
+                    data={getDonutData(
+                      Math.round(
+                        info === INFO.BORROW
+                          ? (selectedMarketData?.totalBorrowFiat as number)
+                          : (selectedMarketData?.totalSupplyFiat as number)
+                      ),
+                      Math.round(
+                        info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
+                      )
+                    )}
+                    options={donutoptions}
+                    updateMode="resize"
+                  />
+                </div>
 
-            <div className={`w-[40%] flex gap-5 items-start justify-start `}>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60 text-[10px]`}>
-                  TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
-                </p>
-                <p className={`font-semibold`}>
-                  {info === INFO.BORROW ? totalBorrows : totalSupplied}{' '}
-                  {selectedSymbol}
-                </p>
-                <p className={`font-semibold text-[8px] text-white/30`}>
-                  $
-                  {millify(
-                    Math.round(
-                      info === INFO.BORROW
-                        ? (selectedMarketData?.totalBorrowFiat as number)
-                        : (selectedMarketData?.totalSupplyFiat as number)
-                    )
-                  )}{' '}
-                  of $
-                  {millify(
-                    Math.round(
-                      info === INFO.BORROW ? borrowCapAsFiat : supplyCapAsFiat
-                    )
-                  )}
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1`}
-              >
-                <p className={`text-white/60 text-[10px]`}>APR</p>
-                <p className={`font-semibold`}>
-                  {info === INFO.BORROW
-                    ? Number(borrowAPR).toLocaleString('en-US', {
-                        maximumFractionDigits: 1
-                      })
-                    : Number(availableAPR).toLocaleString('en-US', {
-                        maximumFractionDigits: 1
-                      })}
-                  %
-                </p>
-                {/* this neeeds to be changed */}
-              </div>
-            </div>
-            {/* <div className={`w-[40%] flex gap-5 items-start justify-start`}>
-              <div
-                className={`flex flex-col  items-center justify-center gap-y-1`}
-              >
-                <img
-                  alt={assetdetails.asset}
-                  className={`h-6`}
-                  src={`/img/logo/${assetdetails.asset}.png `}
-                />
-                <p className={`text-white/60 text-[8px] text-center`}>
-                  COLLATERAL ASSET
-                </p>
-                <p className={`font-semibold text-sm`}>{assetdetails.asset}</p>
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center gap-y-1 w-full `}
-              >
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Lending Supply</p>
-                  <p className={`font-semibold`}>${assetdetails.lendingT}</p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Available APR</p>
-                  <p className={`font-semibold`}>{assetdetails.lAPR}% </p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Total Borrows</p>
-                  <p className={`font-semibold`}>${assetdetails.borrowingT}</p>
-                </div>
-                <div
-                  className={`text-white/60 w-full flex items-center justify-between text-[10px]`}
-                >
-                  <p>Borrowing APR</p>
-                  <p className={`font-semibold`}>{assetdetails.bAPR}% </p>
+                <div className={`flex gap-5 items-start justify-start `}>
+                  <div
+                    className={`flex flex-col items-start justify-center gap-y-1`}
+                  >
+                    <p className={`text-white/60 text-[10px]`}>
+                      TOTAL {info === INFO.BORROW ? 'Borrowed' : 'Supplied'}
+                    </p>
+                    <p className={`font-semibold`}>
+                      {info === INFO.BORROW ? totalBorrows : totalSupplied}{' '}
+                      {selectedSymbol}
+                    </p>
+                    <p className={`font-semibold text-[8px] text-white/30`}>
+                      $
+                      {millify(
+                        Math.round(
+                          info === INFO.BORROW
+                            ? (selectedMarketData?.totalBorrowFiat as number)
+                            : (selectedMarketData?.totalSupplyFiat as number)
+                        )
+                      )}{' '}
+                      of $
+                      {millify(
+                        Math.round(
+                          info === INFO.BORROW
+                            ? borrowCapAsFiat
+                            : supplyCapAsFiat
+                        )
+                      )}
+                    </p>
+                    {/* this neeeds to be changed */}
+                  </div>
+                  <div
+                    className={`flex flex-col items-start justify-center gap-y-1`}
+                  >
+                    <p className={`text-white/60 text-[10px]`}>APR</p>
+                    <p className={`font-semibold`}>
+                      {info === INFO.BORROW
+                        ? Number(borrowAPR).toLocaleString('en-US', {
+                            maximumFractionDigits: 1
+                          })
+                        : Number(availableAPR).toLocaleString('en-US', {
+                            maximumFractionDigits: 1
+                          })}
+                      %
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div> */}
-          </div>
-
-          <div className={`relative w-full h-28`}>
-            <Line
-              data={getChartData(
-                graph.valAtX,
-                info === INFO.BORROW ? graph.borrowAtY : graph.supplyAtY
-              )}
-              options={chartoptions}
-              updateMode="resize"
-            />
-            {/* <div
-              className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
-            >
-              <span>Comming Soon</span>
-            </div> */}
-          </div>
+            }
+          />
         </div>
         <div
           className={` rounded-xl  md:col-span-2 md:row-span-2 row-start-3 col-span-6 min-h-[40vh] bg-grayone flex flex-col  items-start p-[3%] justify-start`}
@@ -688,23 +620,44 @@ const Asset = ({ params }: IProp) => {
             </div>
           </div>
           <div
-            className={`text-white/60 w-full flex flex-col items-start  text-xs `}
+            className={`text-white/60 w-full flex flex-col items-start text-xs`}
           >
             <p>Utilisation Rate</p>
-            <p className={`font-semibold text-lg text-white`}>--</p>
+            <p className={`font-semibold text-lg text-white`}>
+              {selectedMarketData?.utilization.toFixed(2)}%
+            </p>
           </div>
-          <div className={`relative w-full h-28`}>
-            <Line
-              data={chartdata2}
-              options={chartoptions2}
-              updateMode="resize"
-            />
-            <div
-              className={`w-full h-full flex items-center justify-center absolute top-0 right-0 backdrop-blur-sm bg-black/5 text-white/60  `}
-            >
-              <span>Coming Soon</span>
+          <ResultHandler
+            isLoading={isLoading}
+            center
+          >
+            <div className={`relative w-full h-48`}>
+              {irmData?.formattedData?.datasets &&
+              irmData.formattedData.datasets.length > 0 ? (
+                <Line
+                  data={irmData.formattedData}
+                  options={{
+                    ...chartoptions2,
+                    maintainAspectRatio: false,
+                    aspectRatio: 2,
+                    layout: {
+                      padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 10,
+                        left: 10
+                      }
+                    }
+                  }}
+                  updateMode="resize"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-white/60">
+                  No chart data available
+                </div>
+              )}
             </div>
-          </div>
+          </ResultHandler>
         </div>
       </div>
       {popupMode && selectedMarketData && poolData && (

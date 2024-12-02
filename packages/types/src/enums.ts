@@ -169,7 +169,8 @@ export enum assetSymbols {
   // mode
   WETH = "WETH",
   ezETH = "ezETH",
-  weETH = "weETH.mode",
+  weETH = "weETH",
+  "weETH.mode" = "weETH.mode",
   wrsETH = "wrsETH",
   ETH = "ETH",
   USDC = "USDC",
@@ -203,6 +204,10 @@ export enum assetSymbols {
   wUSDplus = "wUSD+",
   USDz = "USDz",
   uSOL = "uSOL",
+  uSUI = "uSUI",
+  sUSDz = "sUSDz",
+  fBOMB = "fBOMB",
+  KLIMA = "KLIMA",
 
   // optimism
   OP = "OP",
@@ -218,6 +223,9 @@ export enum assetSymbols {
   sFRAX = "sFRAX",
   frxBTC = "frxBTC",
   insfrxETH = "insfrxETH",
+
+  // lisk
+  LSK = "LSK",
 
   // legacy
   DAI = "DAI",

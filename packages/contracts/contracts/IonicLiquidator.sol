@@ -197,6 +197,69 @@ contract IonicLiquidator is OwnableUpgradeable, ILiquidator, IUniswapV2Callee, I
     return seizedOutputAmount;
   }
 
+  function safeLiquidateWithAggregator(
+    address borrower,
+    uint256 repayAmount,
+    ICErc20 cErc20,
+    ICErc20 cTokenCollateral,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) external {
+    // Transfer tokens in, approve to cErc20, and liquidate borrow
+    require(repayAmount > 0, "Repay amount (transaction value) must be greater than 0.");
+    cErc20.flash(
+      repayAmount,
+      abi.encode(borrower, cErc20, cTokenCollateral, aggregatorTarget, aggregatorData, msg.sender)
+    );
+  }
+
+  function receiveFlashLoan(address _underlyingBorrow, uint256 amount, bytes calldata data) external {
+    (
+      address borrower,
+      ICErc20 cErc20,
+      ICErc20 cTokenCollateral,
+      address aggregatorTarget,
+      bytes memory aggregatorData,
+      address liquidator
+    ) = abi.decode(data, (address, ICErc20, ICErc20, address, bytes, address));
+    IERC20Upgradeable underlyingBorrow = IERC20Upgradeable(_underlyingBorrow);
+    underlyingBorrow.approve(address(cErc20), amount);
+    require(cErc20.liquidateBorrow(borrower, amount, address(cTokenCollateral)) == 0, "Liquidation failed.");
+
+    // Redeem seized cTokens for underlying asset
+    IERC20Upgradeable underlyingCollateral = IERC20Upgradeable(cTokenCollateral.underlying());
+    {
+      uint256 seizedCTokenAmount = cTokenCollateral.balanceOf(address(this));
+      require(seizedCTokenAmount > 0, "No cTokens seized.");
+      uint256 redeemResult = cTokenCollateral.redeem(seizedCTokenAmount);
+      require(redeemResult == 0, "Error calling redeeming seized cToken: error code not equal to 0");
+      uint256 underlyingCollateralRedeemed = underlyingCollateral.balanceOf(address(this));
+
+      // Call the aggregator
+      underlyingCollateral.approve(aggregatorTarget, underlyingCollateralRedeemed);
+      (bool success, ) = aggregatorTarget.call(aggregatorData);
+      require(success, "Aggregator call failed");
+    }
+
+    // receive profits
+    {
+      uint256 receivedAmount = underlyingBorrow.balanceOf(address(this));
+      require(receivedAmount >= amount, "Not received enough collateral after swap.");
+      uint256 profitBorrow = receivedAmount - amount;
+      if (profitBorrow > 0) {
+        underlyingBorrow.safeTransfer(liquidator, profitBorrow);
+      }
+
+      uint256 profitCollateral = underlyingCollateral.balanceOf(address(this));
+      if (profitCollateral > 0) {
+        underlyingCollateral.safeTransfer(liquidator, profitCollateral);
+      }
+    }
+
+    // pay back flashloan
+    underlyingBorrow.approve(address(cErc20), amount);
+  }
+
   /**
    * @notice Safely liquidate an unhealthy loan, confirming that at least `minProfitAmount` in NATIVE profit is seized.
    * @param vars @see LiquidateToTokensWithFlashSwapVars.

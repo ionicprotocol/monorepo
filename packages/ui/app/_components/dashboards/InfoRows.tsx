@@ -6,21 +6,26 @@ import dynamic from 'next/dynamic';
 
 import { useChainId } from 'wagmi';
 
-import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
+import {
+  FLYWHEEL_TYPE_MAP,
+  NO_COLLATERAL_SWAP,
+  pools
+} from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { multipliers } from '@ui/utils/multipliers';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import { getAssetName } from '../../util/utils';
-const Rewards = dynamic(() => import('../markets/Rewards'), {
+const Rewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
 import BorrowPopover from '../markets/BorrowPopover';
 import SupplyPopover from '../markets/SupplyPopover';
 import { PopupMode } from '../popup/page';
 
-import type { FlywheelReward } from 'types/dist';
 import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export enum InfoMode {
   SUPPLY = 0,
@@ -66,6 +71,8 @@ const InfoRows = ({
 }: InfoRowsProps) => {
   const walletChain = useChainId();
   const { data: merklApr } = useMerklApr();
+  const { getSdk } = useMultiIonic();
+  const sdk = getSdk(+selectedChain);
 
   const merklAprForToken = merklApr?.find(
     (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
@@ -128,9 +135,7 @@ const InfoRows = ({
           className="w-10 md:w-7"
           src={logo}
         />
-        <h3 className={`  text-lg md:text-sm  `}>
-          {getAssetName(asset, selectedChain)}
-        </h3>
+        <h3 className={`  text-lg md:text-sm  `}>{asset}</h3>
       </div>
       <h3
         className={` flex justify-between md:justify-center px-2 md:px-0 items-center mb-2 md:mb-0`}
@@ -228,32 +233,37 @@ const InfoRows = ({
           {mode === InfoMode.SUPPLY ? 'Withdraw / Add Collateral' : 'Repay'}
         </button>
 
-        <button
-          className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3`}
-          onClick={async () => {
-            const result = await handleSwitchOriginChain(
-              selectedChain,
-              walletChain
-            );
-            if (result) {
-              if (mode === InfoMode.SUPPLY) {
-                // Router.push()
-                //toggle the mode
-                setSelectedSymbol(asset);
-                setCollateralSwapFromAsset?.();
-                toggler?.();
+        {!NO_COLLATERAL_SWAP[selectedChain]?.[pool]?.includes(asset) && (
+          <button
+            className={`w-full uppercase ${pools[+selectedChain].text} ${pools[+selectedChain].bg} rounded-lg text-black py-1.5 px-3 disabled:opacity-50`}
+            onClick={async () => {
+              const result = await handleSwitchOriginChain(
+                selectedChain,
+                walletChain
+              );
+              if (result) {
+                if (mode === InfoMode.SUPPLY) {
+                  // Router.push()
+                  //toggle the mode
+                  setSelectedSymbol(asset);
+                  setCollateralSwapFromAsset?.();
+                  toggler?.();
+                }
+                if (mode === InfoMode.BORROW) {
+                  // Router.push()
+                  // toggle the mode
+                  setSelectedSymbol(asset);
+                  setPopupMode(PopupMode.BORROW);
+                }
               }
-              if (mode === InfoMode.BORROW) {
-                // Router.push()
-                // toggle the mode
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
-              }
+            }}
+            disabled={
+              !sdk?.chainDeployment[`CollateralSwap-${comptrollerAddress}`]
             }
-          }}
-        >
-          {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
-        </button>
+          >
+            {mode === InfoMode.SUPPLY ? 'COLLATERAL SWAP' : 'Borrow More'}
+          </button>
+        )}
       </div>
     </div>
   );
