@@ -15,6 +15,7 @@ export const USDT = "0x05D032ac25d322df992303dCa074EE7392C117b9";
 export const LSK = "0xac485391EB2d7D88253a7F1eF18C37f4242D1A24";
 export const USDC = "0xF242275d3a6527d877f2c927a82D9b057609cc71";
 export const WBTC = "0x03C7054BCB39f7b2e5B2c7AcB37583e32D70Cfa3";
+export const ION = "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013";
 
 export const assets: SupportedAsset[] = [
   {
@@ -87,6 +88,13 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseUnits("0.1", 8).toString(),
     initialSupplyCap: parseUnits("0.1", 8).toString(),
     initialCf: "0.5"
+  },
+  {
+    symbol: assetSymbols.ION,
+    underlying: ION,
+    name: "Ion",
+    decimals: 18,
+    oracle: OracleTypes.SimplePriceOracle
   }
 ];
 
