@@ -37,11 +37,6 @@ const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
   ssr: false
 });
 
-export enum PopupMode {
-  MANAGE = 1,
-  LOOP = 2
-}
-
 export type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 
 export enum HFPStatus {
@@ -71,37 +66,8 @@ const ManageDialog = ({
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const chainId = useChainId();
   const { data: usdPrice } = useUsdPrice(chainId.toString());
-
-  // Store active tab in localStorage to persist across tab switches
-  const [currentActiveTab, setCurrentActiveTab] = useState<ActiveTab>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('lastActiveTab');
-      return (stored as ActiveTab) || activeTab;
-    }
-    return activeTab;
-  });
-
-  // Update localStorage when tab changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('lastActiveTab', currentActiveTab);
-    }
-  }, [currentActiveTab]);
-
-  // Component visibility state
-  const [isVisible, setIsVisible] = useState(true);
-
-  // Handle visibility change
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsVisible(!document.hidden);
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+  const [currentActiveTab, setCurrentActiveTab] =
+    useState<ActiveTab>(activeTab);
 
   const pricePerSingleAsset = useMemo<number>(
     () =>
@@ -281,7 +247,7 @@ const ManageDialog = ({
       selectedMarketData={selectedMarketData}
     >
       <Dialog
-        open={isOpen && isVisible}
+        open={isOpen}
         onOpenChange={setIsOpen}
       >
         <DialogContent
