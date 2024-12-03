@@ -92,6 +92,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function _checkCollateralRatio(address _user) internal view returns (bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
+    if(userCollateralValue == 0) return true;
     uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
     if ((userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp) {
       return true;
