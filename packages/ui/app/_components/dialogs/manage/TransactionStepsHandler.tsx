@@ -6,6 +6,8 @@ import { useReducer } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
 
 import { getScanUrlByChainId } from '@ui/utils/networkData';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@ui/components/ui/button';
 
 export type TransactionStep = {
   error: boolean;
@@ -130,12 +132,13 @@ function TransactionStepsHandler({
         transactionSteps.length ||
         transactionSteps.find((step) => step.error) !== undefined) && (
         <div className="text-center">
-          <button
-            className="mt-4 btn-green uppercase"
+          <Button
             onClick={resetTransactionSteps}
+            className="mt-4 bg-accent hover:bg-accent/80 font-light py-0 px-3 rounded-lg transition-colors duration-200 flex items-center gap-2 uppercase text-[12px]"
           >
-            CONTINUE
-          </button>
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </Button>
         </div>
       )}
     </div>
