@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
+import { useCallback, useState, useEffect, useMemo } from 'react';
+import { type Address, formatUnits, parseUnits, PublicClient } from 'viem';
 import { toast } from 'react-hot-toast';
-import { type Address, formatUnits, parseUnits } from 'viem';
-
+import { getContract } from 'viem';
+import { icErc20Abi } from '@ionicprotocol/sdk';
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import type { MarketData } from '@ui/types/TokensDataMap';
-
+import { MarketData } from '@ui/types/TokensDataMap';
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface UseSupplyProps {
   maxAmount: bigint;
@@ -26,6 +25,7 @@ export const useSupply = ({
   comptrollerAddress,
   chainId
 }: UseSupplyProps) => {
+  const { address, currentSdk } = useMultiIonic();
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
@@ -33,7 +33,6 @@ export const useSupply = ({
 
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
-  const { currentSdk, address } = useMultiIonic();
 
   const amountAsBInt = useMemo(
     () =>
@@ -49,7 +48,6 @@ export const useSupply = ({
       const maxAmountNumber = Number(
         formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
       );
-
       const calculatedAmount = (
         (newUtilizationPercentage / 100) *
         maxAmountNumber
@@ -61,84 +59,118 @@ export const useSupply = ({
     [maxAmount, selectedMarketData.underlyingDecimals]
   );
 
-  // Update utilization percentage when amount changes
   useEffect(() => {
-    if (amount === '0' || !amount) {
+    if (amount === '0' || !amount || maxAmount === 0n) {
       setUtilizationPercentage(0);
       return;
     }
-
-    if (maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
-    }
-
     const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
     setUtilizationPercentage(Math.min(Math.round(utilization), 100));
   }, [amountAsBInt, maxAmount, amount]);
 
-  const supplyAmount = async () => {
+  const supplyAmount = useCallback(async () => {
     if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt > 0n &&
-      amountAsBInt <= maxAmount
-    ) {
-      let currentTransactionStep = 0;
-      addStepsForAction([
-        {
-          error: false,
-          message: INFO_MESSAGES.SUPPLY.APPROVE,
-          success: false
-        },
-        ...(enableCollateral && !selectedMarketData.membership
-          ? [
-              {
-                error: false,
-                message: INFO_MESSAGES.SUPPLY.COLLATERAL,
-                success: false
-              }
-            ]
-          : []),
-        {
-          error: false,
-          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
-          success: false
-        }
+      !currentSdk ||
+      !address ||
+      !amount ||
+      amountAsBInt <= 0n ||
+      amountAsBInt > maxAmount
+    )
+      return;
+
+    let currentTransactionStep = 0;
+    addStepsForAction([
+      {
+        error: false,
+        message: INFO_MESSAGES.SUPPLY.APPROVE,
+        success: false
+      },
+      ...(enableCollateral && !selectedMarketData.membership
+        ? [
+            {
+              error: false,
+              message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+              success: false
+            }
+          ]
+        : []),
+      {
+        error: false,
+        message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+        success: false
+      }
+    ]);
+
+    try {
+      // Use the publicClient in your function call
+      const token = currentSdk.getEIP20TokenInstance(
+        selectedMarketData.underlyingToken,
+        currentSdk.publicClient as any
+      );
+
+      const cToken = getContract({
+        address: selectedMarketData.cToken,
+        abi: icErc20Abi,
+        client: currentSdk.walletClient!
+      });
+
+      // Check and handle allowance
+      const currentAllowance = await token.read.allowance([
+        address,
+        selectedMarketData.cToken
       ]);
 
-      try {
-        const token = currentSdk.getEIP20TokenInstance(
+      if (currentAllowance < amountAsBInt) {
+        const approveTx = await currentSdk.approve(
+          selectedMarketData.cToken,
           selectedMarketData.underlyingToken,
-          currentSdk.publicClient as any
+          amountAsBInt
         );
-        const hasApprovedEnough =
-          (await token.read.allowance([address, selectedMarketData.cToken])) >=
-          amountAsBInt;
 
-        if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(
-            selectedMarketData.cToken,
-            selectedMarketData.underlyingToken,
-            (amountAsBInt * 105n) / 100n
-          );
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: approveTx
+          }
+        });
 
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx
-            }
-          });
+        await currentSdk.publicClient.waitForTransactionReceipt({
+          hash: approveTx,
+          confirmations: 2
+        });
 
-          await currentSdk.publicClient.waitForTransactionReceipt({
-            hash: tx,
-            confirmations: 2
-          });
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
         }
+      });
+
+      currentTransactionStep++;
+
+      // Handle collateral if needed
+      if (enableCollateral && !selectedMarketData.membership) {
+        const enterMarketsTx = await currentSdk.enterMarkets(
+          selectedMarketData.cToken,
+          comptrollerAddress
+        );
+
+        upsertTransactionStep({
+          index: currentTransactionStep,
+          transactionStep: {
+            ...transactionSteps[currentTransactionStep],
+            txHash: enterMarketsTx
+          }
+        });
+
+        await currentSdk.publicClient.waitForTransactionReceipt({
+          hash: enterMarketsTx
+        });
 
         upsertTransactionStep({
           index: currentTransactionStep,
@@ -149,86 +181,85 @@ export const useSupply = ({
         });
 
         currentTransactionStep++;
-
-        if (enableCollateral && !selectedMarketData.membership) {
-          const tx = await currentSdk.enterMarkets(
-            selectedMarketData.cToken,
-            comptrollerAddress
-          );
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx
-            }
-          });
-
-          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              success: true
-            }
-          });
-
-          currentTransactionStep++;
-        }
-
-        const { tx, errorCode } = await currentSdk.mint(
-          selectedMarketData.cToken,
-          amountAsBInt
-        );
-
-        if (errorCode) {
-          console.error(errorCode);
-          throw new Error('Error during supplying!');
-        }
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
-          }
-        });
-
-        if (tx) {
-          await currentSdk.publicClient.waitForTransactionReceipt({ hash: tx });
-          setTxHash(tx);
-          setIsWaitingForIndexing(true);
-
-          upsertTransactionStep({
-            index: currentTransactionStep,
-            transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              success: true
-            }
-          });
-
-          toast.success(
-            `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        setIsWaitingForIndexing(false);
-        setTxHash(undefined);
-
-        upsertTransactionStep({
-          index: currentTransactionStep,
-          transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
-          }
-        });
-
-        toast.error('Error while supplying!');
       }
+
+      // Verify final allowance
+      const finalAllowance = await token.read.allowance([
+        address,
+        selectedMarketData.cToken
+      ]);
+      if (finalAllowance < amountAsBInt) {
+        throw new Error('Insufficient allowance after approval');
+      }
+
+      // Execute mint
+      const gasLimit = await cToken.estimateGas.mint([amountAsBInt], {
+        account: address
+      });
+
+      if (!currentSdk || !currentSdk.walletClient) {
+        console.error('SDK or wallet client is not initialized');
+        return;
+      }
+
+      const tx = await cToken.write.mint([amountAsBInt], {
+        gas: gasLimit,
+        account: address,
+        chain: currentSdk.walletClient.chain
+      });
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          txHash: tx
+        }
+      });
+
+      await currentSdk.publicClient.waitForTransactionReceipt({
+        hash: tx,
+        confirmations: 1
+      });
+
+      setTxHash(tx);
+      setIsWaitingForIndexing(true);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          success: true
+        }
+      });
+
+      toast.success(
+        `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
+      );
+    } catch (error) {
+      console.error('Supply error:', error);
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+
+      upsertTransactionStep({
+        index: currentTransactionStep,
+        transactionStep: {
+          ...transactionSteps[currentTransactionStep],
+          error: true
+        }
+      });
+
+      toast.error('Error while supplying!');
     }
-  };
+  }, [
+    currentSdk,
+    address,
+    amount,
+    amountAsBInt,
+    maxAmount,
+    selectedMarketData,
+    enableCollateral,
+    comptrollerAddress
+  ]);
 
   const { refetch: refetchMaxSupply } = useMaxSupplyAmount(
     selectedMarketData,
@@ -253,6 +284,18 @@ export const useSupply = ({
     }
   });
 
+  async function resetAllowance(selectedMarketData: MarketData) {
+    const tx = await currentSdk?.approve(
+      selectedMarketData.cToken,
+      selectedMarketData.underlyingToken,
+      0n // Set allowance to 0
+    );
+
+    if (tx) {
+      await currentSdk?.publicClient.waitForTransactionReceipt({ hash: tx });
+    }
+  }
+
   return {
     isWaitingForIndexing,
     supplyAmount,
@@ -262,6 +305,7 @@ export const useSupply = ({
     setAmount,
     utilizationPercentage,
     handleUtilization,
-    amountAsBInt
+    amountAsBInt,
+    resetAllowance
   };
 };
