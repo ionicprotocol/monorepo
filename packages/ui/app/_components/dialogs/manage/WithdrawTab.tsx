@@ -171,7 +171,7 @@ const WithdrawTab = ({
         </div>
       ) : (
         <Button
-          className="w-full bg-accent"
+          className="w-full bg-accent hover:bg-accent/80"
           disabled={isDisabled}
           onClick={withdrawAmount}
         >

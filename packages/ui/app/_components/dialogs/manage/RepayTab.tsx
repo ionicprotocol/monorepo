@@ -158,7 +158,7 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
         </div>
       ) : (
         <Button
-          className="w-full bg-accent"
+          className="w-full bg-accent hover:bg-accent/80"
           disabled={
             !amount || amountAsBInt === 0n || !currentBorrowAmountAsFloat
           }

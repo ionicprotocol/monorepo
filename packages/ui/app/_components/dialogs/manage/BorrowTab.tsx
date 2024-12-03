@@ -199,7 +199,7 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         </div>
       ) : (
         <Button
-          className="w-full bg-accent"
+          className="w-full bg-accent hover:bg-accent/80"
           disabled={isDisabled || !!isUnderMinBorrow || isWaitingForIndexing}
           onClick={borrowAmount}
         >

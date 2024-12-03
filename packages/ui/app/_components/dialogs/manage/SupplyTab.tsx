@@ -90,7 +90,7 @@ const SupplyTab = ({
     <div className="space-y-4 pt-2">
       <div className="flex justify-between">
         <Button
-          className="w-full text-xs uppercase bg-accent"
+          className="w-full text-xs uppercase bg-accent hover:bg-accent/80"
           onClick={() => setSwapWidgetOpen(true)}
         >
           Get {selectedMarketData.underlyingSymbol}
@@ -190,7 +190,7 @@ const SupplyTab = ({
         </div>
       ) : (
         <Button
-          className="w-full bg-accent"
+          className="w-full bg-accent hover:bg-accent/80"
           disabled={isDisabled || isWaitingForIndexing}
           onClick={supplyAmount}
         >
