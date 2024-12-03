@@ -109,7 +109,7 @@ const SupplyTab = ({
 
       <div className="grid grid-cols-2 gap-x-8">
         <div className="space-y-4 content-center">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <div className="flex justify-between text-xs text-gray-400 uppercase">
               <span>Market Supply Balance</span>
               <div className="flex items-center">
