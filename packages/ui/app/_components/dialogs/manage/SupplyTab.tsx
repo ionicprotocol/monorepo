@@ -139,6 +139,32 @@ const SupplyTab = ({
                 </ResultHandler>
               </div>
             </div>
+
+            <div className="flex justify-between text-xs text-gray-400 uppercase">
+              <span>Enable Collateral</span>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Switch
+                      checked={enableCollateral}
+                      onCheckedChange={handleCollateralToggle}
+                      disabled={
+                        hasActiveTransactions ||
+                        !selectedMarketData.supplyBalance
+                      }
+                    />
+                  </div>
+                </TooltipTrigger>
+                {(hasActiveTransactions ||
+                  !selectedMarketData.supplyBalance) && (
+                  <TooltipContent side="top">
+                    {hasActiveTransactions
+                      ? 'Cannot modify collateral during an active transaction'
+                      : 'You need to supply assets first before enabling as collateral'}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </div>
           </div>
         </div>
 
@@ -152,32 +178,6 @@ const SupplyTab = ({
             maxInFiat={totalStats.capFiat}
           />
         )}
-      </div>
-
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-400 uppercase">
-          Enable Collateral
-        </span>
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>
-            <div>
-              <Switch
-                checked={enableCollateral}
-                onCheckedChange={handleCollateralToggle}
-                disabled={
-                  hasActiveTransactions || !selectedMarketData.supplyBalance
-                }
-              />
-            </div>
-          </TooltipTrigger>
-          {(hasActiveTransactions || !selectedMarketData.supplyBalance) && (
-            <TooltipContent side="top">
-              {hasActiveTransactions
-                ? 'Cannot modify collateral during an active transaction'
-                : 'You need to supply assets first before enabling as collateral'}
-            </TooltipContent>
-          )}
-        </Tooltip>
       </div>
 
       {hasActiveTransactions ? (
