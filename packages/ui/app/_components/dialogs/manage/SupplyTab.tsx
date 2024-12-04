@@ -9,7 +9,10 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
+import {
+  TransactionType,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useCollateralToggle } from '@ui/hooks/market/useCollateralToggle';
 import { useSupply } from '@ui/hooks/market/useSupply';
 
@@ -45,7 +48,8 @@ const SupplyTab = ({
     updatedValues,
     isLoadingUpdatedAssets,
     refetchUsedQueries,
-    setPredictionAmount
+    setPredictionAmount,
+    getStepsForTypes
   } = useManageDialogContext();
 
   const {
@@ -77,13 +81,12 @@ const SupplyTab = ({
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amountAsBInt]);
 
-  console.log('collateralTxSteps', collateralTxSteps);
-  console.log('supplyTxSteps', supplyTxSteps);
   const combinedTransactionSteps = useMemo(() => {
-    return [...supplyTxSteps, ...collateralTxSteps];
-  }, [supplyTxSteps, collateralTxSteps]);
+    return getStepsForTypes(TransactionType.SUPPLY, TransactionType.COLLATERAL);
+  }, [getStepsForTypes]);
 
   const isDisabled = !amount || amountAsBInt === 0n;
   const hasActiveTransactions = combinedTransactionSteps.length > 0;

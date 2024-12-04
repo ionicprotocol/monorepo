@@ -1,3 +1,5 @@
+import { useEffect, useMemo } from 'react';
+
 import { Info } from 'lucide-react';
 import { formatUnits } from 'viem';
 
@@ -5,17 +7,17 @@ import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import {
   HFPStatus,
+  TransactionType,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useBorrow } from '@ui/hooks/market/useBorrow';
+import { useHealth } from '@ui/hooks/market/useHealth';
 
 import Amount from './Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useHealth } from '@ui/hooks/market/useHealth';
-import { useEffect } from 'react';
 
 interface BorrowTabProps {
   maxAmount: bigint;
@@ -31,13 +33,13 @@ interface BorrowTabProps {
 const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   const {
     selectedMarketData,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     isLoadingUpdatedAssets,
     updatedValues,
     comptrollerAddress,
-    setPredictionAmount
+    setPredictionAmount,
+    getStepsForTypes
   } = useManageDialogContext();
 
   const {
@@ -77,7 +79,12 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amountAsBInt]);
+
+  const transactionSteps = useMemo(() => {
+    return getStepsForTypes(TransactionType.BORROW);
+  }, [getStepsForTypes]);
 
   return (
     <div className="space-y-4 pt-4">

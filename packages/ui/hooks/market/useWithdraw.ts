@@ -4,14 +4,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
+import {
+  TransactionType,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxWithdrawAmount } from '../useMaxWithdrawAmount';
-import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 
 interface UseWithdrawProps {
   maxAmount: bigint;
@@ -29,8 +31,7 @@ export const useWithdraw = ({
   const [amount, setAmount] = useState<string>('0');
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
 
-  const { transactionSteps, addStepsForAction, upsertTransactionStep } =
-    useManageDialogContext();
+  const { addStepsForType, upsertStepForType } = useManageDialogContext();
 
   const { currentSdk, address } = useMultiIonic();
 
@@ -82,16 +83,9 @@ export const useWithdraw = ({
   }, [amountAsBInt, maxAmount, amount]);
 
   const withdrawAmount = async () => {
-    if (
-      !transactionSteps.length &&
-      currentSdk &&
-      address &&
-      amount &&
-      amountAsBInt > 0n &&
-      maxAmount
-    ) {
+    if (currentSdk && address && amount && amountAsBInt > 0n && maxAmount) {
       const currentTransactionStep = 0;
-      addStepsForAction([
+      addStepsForType(TransactionType.WITHDRAW, [
         {
           error: false,
           message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
@@ -114,11 +108,13 @@ export const useWithdraw = ({
           throw new Error('Error during withdrawing!');
         }
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.WITHDRAW, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
+            error: false,
+            message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
+            txHash: tx,
+            success: false
           }
         });
 
@@ -130,10 +126,12 @@ export const useWithdraw = ({
           setTxHash(tx);
           setIsWaitingForIndexing(true);
 
-          upsertTransactionStep({
+          upsertStepForType(TransactionType.WITHDRAW, {
             index: currentTransactionStep,
             transactionStep: {
-              ...transactionSteps[currentTransactionStep],
+              error: false,
+              message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
+              txHash: tx,
               success: true
             }
           });
@@ -147,11 +145,12 @@ export const useWithdraw = ({
         setIsWaitingForIndexing(false);
         setTxHash(undefined);
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.WITHDRAW, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
+            error: true,
+            message: INFO_MESSAGES.WITHDRAW.WITHDRAWING,
+            success: false
           }
         });
 
@@ -180,7 +179,6 @@ export const useWithdraw = ({
   return {
     isWaitingForIndexing,
     withdrawAmount,
-    transactionSteps,
     isPolling,
     amount,
     setAmount,

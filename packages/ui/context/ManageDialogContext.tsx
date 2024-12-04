@@ -37,6 +37,22 @@ export enum HFPStatus {
   WARNING = 'WARNING'
 }
 
+export enum TransactionType {
+  SUPPLY = 'SUPPLY',
+  COLLATERAL = 'COLLATERAL',
+  BORROW = 'BORROW',
+  REPAY = 'REPAY',
+  WITHDRAW = 'WITHDRAW'
+}
+
+interface TransactionStepsState {
+  [TransactionType.SUPPLY]: TransactionStep[];
+  [TransactionType.COLLATERAL]: TransactionStep[];
+  [TransactionType.BORROW]: TransactionStep[];
+  [TransactionType.REPAY]: TransactionStep[];
+  [TransactionType.WITHDRAW]: TransactionStep[];
+}
+
 interface ManageDialogContextType {
   active: ActiveTab;
   setActive: (tab: ActiveTab) => void;
@@ -59,9 +75,10 @@ interface ManageDialogContextType {
   };
   isLoadingUpdatedAssets: boolean;
   setPredictionAmount: (amount: bigint) => void;
-  transactionSteps: TransactionStep[];
-  addStepsForAction: (steps: TransactionStep[]) => void;
-  upsertTransactionStep: (
+  transactionSteps: TransactionStepsState;
+  addStepsForType: (type: TransactionType, steps: TransactionStep[]) => void;
+  upsertStepForType: (
+    type: TransactionType,
     update:
       | {
           index: number;
@@ -69,6 +86,7 @@ interface ManageDialogContextType {
         }
       | undefined
   ) => void;
+  getStepsForTypes: (...types: TransactionType[]) => TransactionStep[];
 }
 
 const formatBalance = (value: bigint | undefined, decimals: number): string => {
@@ -99,9 +117,14 @@ export const ManageDialogProvider: React.FC<{
     []
   );
   const [predictionAmount, setPredictionAmount] = useState<bigint>(0n);
-  const [transactionSteps, setTransactionSteps] = useState<TransactionStep[]>(
-    []
-  );
+  const [transactionSteps, setTransactionSteps] =
+    useState<TransactionStepsState>({
+      [TransactionType.SUPPLY]: [],
+      [TransactionType.COLLATERAL]: [],
+      [TransactionType.BORROW]: [],
+      [TransactionType.REPAY]: [],
+      [TransactionType.WITHDRAW]: []
+    });
 
   useEffect(() => {
     setCurrentFundOperation(operationMap[active]);
@@ -226,19 +249,23 @@ export const ManageDialogProvider: React.FC<{
     };
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
 
-  const upsertTransactionStep = useCallback(
+  const upsertStepForType = useCallback(
     (
+      type: TransactionType,
       updatedStep:
         | { index: number; transactionStep: TransactionStep }
         | undefined
     ) => {
       if (!updatedStep) {
-        setTransactionSteps([]);
+        setTransactionSteps((prev) => ({
+          ...prev,
+          [type]: []
+        }));
         return;
       }
 
-      setTransactionSteps((prevState) => {
-        const currentSteps = prevState.slice();
+      setTransactionSteps((prev) => {
+        const currentSteps = prev[type].slice();
         currentSteps[updatedStep.index] = {
           ...currentSteps[updatedStep.index],
           ...updatedStep.transactionStep
@@ -256,24 +283,42 @@ export const ManageDialogProvider: React.FC<{
           }
         }
 
-        return currentSteps;
+        return {
+          ...prev,
+          [type]: currentSteps
+        };
       });
     },
     []
   );
 
-  const addStepsForAction = useCallback(
-    (steps: TransactionStep[]) => {
+  const addStepsForType = useCallback(
+    (type: TransactionType, steps: TransactionStep[]) => {
       steps.forEach((step, i) =>
-        upsertTransactionStep({ index: i, transactionStep: step })
+        upsertStepForType(type, { index: i, transactionStep: step })
       );
     },
-    [upsertTransactionStep]
+    [upsertStepForType]
+  );
+
+  const getStepsForTypes = useCallback(
+    (...types: TransactionType[]) => {
+      return types.reduce<TransactionStep[]>((acc, type) => {
+        return [...acc, ...transactionSteps[type]];
+      }, []);
+    },
+    [transactionSteps]
   );
 
   const resetTransactionSteps = useCallback(() => {
     refetchUsedQueries();
-    setTransactionSteps([]); // Clear steps directly
+    setTransactionSteps({
+      [TransactionType.SUPPLY]: [],
+      [TransactionType.COLLATERAL]: [],
+      [TransactionType.BORROW]: [],
+      [TransactionType.REPAY]: [],
+      [TransactionType.WITHDRAW]: []
+    });
   }, [refetchUsedQueries]);
 
   return (
@@ -290,8 +335,9 @@ export const ManageDialogProvider: React.FC<{
         updatedValues,
         setPredictionAmount,
         transactionSteps,
-        addStepsForAction,
-        upsertTransactionStep
+        addStepsForType,
+        upsertStepForType,
+        getStepsForTypes
       }}
     >
       {children}

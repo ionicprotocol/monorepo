@@ -1,10 +1,14 @@
+import { useEffect, useMemo } from 'react';
+
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
 import {
   HFPStatus,
+  TransactionType,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
+import { useHealth } from '@ui/hooks/market/useHealth';
 import { useWithdraw } from '@ui/hooks/market/useWithdraw';
 
 import Amount from './Amount';
@@ -12,8 +16,6 @@ import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useHealth } from '@ui/hooks/market/useHealth';
-import { useEffect } from 'react';
 
 interface WithdrawTabProps {
   maxAmount: bigint;
@@ -33,13 +35,13 @@ const WithdrawTab = ({
 }: WithdrawTabProps) => {
   const {
     selectedMarketData,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     updatedValues,
     isLoadingUpdatedAssets,
     comptrollerAddress,
-    setPredictionAmount
+    setPredictionAmount,
+    getStepsForTypes // Add this from context
   } = useManageDialogContext();
 
   const {
@@ -77,7 +79,12 @@ const WithdrawTab = ({
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amountAsBInt]);
+
+  const transactionSteps = useMemo(() => {
+    return getStepsForTypes(TransactionType.WITHDRAW);
+  }, [getStepsForTypes]);
 
   return (
     <div className="space-y-4 pt-4">

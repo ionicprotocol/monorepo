@@ -1,14 +1,22 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { type Address, formatUnits, parseUnits, PublicClient } from 'viem';
+
 import { toast } from 'react-hot-toast';
+import { type Address, formatUnits, parseUnits } from 'viem';
 import { getContract } from 'viem';
-import { icErc20Abi } from '@ionicprotocol/sdk';
+
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
-import { MarketData } from '@ui/types/TokensDataMap';
+import {
+  TransactionType,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { MarketData } from '@ui/types/TokensDataMap';
+
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseSupplyProps {
   maxAmount: bigint;
@@ -30,6 +38,7 @@ export const useSupply = ({
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
+  const { addStepsForType, upsertStepForType } = useManageDialogContext();
 
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
@@ -79,21 +88,14 @@ export const useSupply = ({
       return;
 
     let currentTransactionStep = 0;
-    addStepsForAction([
+
+    // Add steps for both supply and collateral if needed
+    addStepsForType(TransactionType.SUPPLY, [
       {
         error: false,
         message: INFO_MESSAGES.SUPPLY.APPROVE,
         success: false
       },
-      ...(enableCollateral && !selectedMarketData.membership
-        ? [
-            {
-              error: false,
-              message: INFO_MESSAGES.SUPPLY.COLLATERAL,
-              success: false
-            }
-          ]
-        : []),
       {
         error: false,
         message: INFO_MESSAGES.SUPPLY.SUPPLYING,
@@ -101,8 +103,17 @@ export const useSupply = ({
       }
     ]);
 
+    if (enableCollateral && !selectedMarketData.membership) {
+      addStepsForType(TransactionType.COLLATERAL, [
+        {
+          error: false,
+          message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+          success: false
+        }
+      ]);
+    }
+
     try {
-      // Use the publicClient in your function call
       const token = currentSdk.getEIP20TokenInstance(
         selectedMarketData.underlyingToken,
         currentSdk.publicClient as any
@@ -127,11 +138,13 @@ export const useSupply = ({
           amountAsBInt
         );
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.SUPPLY, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: approveTx
+            error: false,
+            message: INFO_MESSAGES.SUPPLY.APPROVE,
+            txHash: approveTx,
+            success: false
           }
         });
 
@@ -143,10 +156,11 @@ export const useSupply = ({
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
 
-      upsertTransactionStep({
+      upsertStepForType(TransactionType.SUPPLY, {
         index: currentTransactionStep,
         transactionStep: {
-          ...transactionSteps[currentTransactionStep],
+          error: false,
+          message: INFO_MESSAGES.SUPPLY.APPROVE,
           success: true
         }
       });
@@ -160,11 +174,13 @@ export const useSupply = ({
           comptrollerAddress
         );
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
+        upsertStepForType(TransactionType.COLLATERAL, {
+          index: 0,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: enterMarketsTx
+            error: false,
+            message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+            txHash: enterMarketsTx,
+            success: false
           }
         });
 
@@ -172,15 +188,14 @@ export const useSupply = ({
           hash: enterMarketsTx
         });
 
-        upsertTransactionStep({
-          index: currentTransactionStep,
+        upsertStepForType(TransactionType.COLLATERAL, {
+          index: 0,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
+            error: false,
+            message: INFO_MESSAGES.SUPPLY.COLLATERAL,
             success: true
           }
         });
-
-        currentTransactionStep++;
       }
 
       // Verify final allowance
@@ -208,11 +223,13 @@ export const useSupply = ({
         chain: currentSdk.walletClient.chain
       });
 
-      upsertTransactionStep({
+      upsertStepForType(TransactionType.SUPPLY, {
         index: currentTransactionStep,
         transactionStep: {
-          ...transactionSteps[currentTransactionStep],
-          txHash: tx
+          error: false,
+          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+          txHash: tx,
+          success: false
         }
       });
 
@@ -224,10 +241,12 @@ export const useSupply = ({
       setTxHash(tx);
       setIsWaitingForIndexing(true);
 
-      upsertTransactionStep({
+      upsertStepForType(TransactionType.SUPPLY, {
         index: currentTransactionStep,
         transactionStep: {
-          ...transactionSteps[currentTransactionStep],
+          error: false,
+          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+          txHash: tx,
           success: true
         }
       });
@@ -240,13 +259,26 @@ export const useSupply = ({
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
 
-      upsertTransactionStep({
+      // Mark all remaining steps as error
+      upsertStepForType(TransactionType.SUPPLY, {
         index: currentTransactionStep,
         transactionStep: {
-          ...transactionSteps[currentTransactionStep],
-          error: true
+          error: true,
+          message: INFO_MESSAGES.SUPPLY.SUPPLYING,
+          success: false
         }
       });
+
+      if (enableCollateral && !selectedMarketData.membership) {
+        upsertStepForType(TransactionType.COLLATERAL, {
+          index: 0,
+          transactionStep: {
+            error: true,
+            message: INFO_MESSAGES.SUPPLY.COLLATERAL,
+            success: false
+          }
+        });
+      }
 
       toast.error('Error while supplying!');
     }
@@ -258,7 +290,9 @@ export const useSupply = ({
     maxAmount,
     selectedMarketData,
     enableCollateral,
-    comptrollerAddress
+    comptrollerAddress,
+    addStepsForType,
+    upsertStepForType
   ]);
 
   const { refetch: refetchMaxSupply } = useMaxSupplyAmount(

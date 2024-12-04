@@ -1,10 +1,14 @@
+import { useEffect, useMemo } from 'react';
+
 import { formatUnits } from 'viem';
 
 import { Button } from '@ui/components/ui/button';
 import {
   HFPStatus,
+  TransactionType,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
+import { useHealth } from '@ui/hooks/market/useHealth';
 import { useRepay } from '@ui/hooks/market/useRepay';
 
 import Amount from './Amount';
@@ -12,8 +16,6 @@ import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useHealth } from '@ui/hooks/market/useHealth';
-import { useEffect } from 'react';
 
 interface RepayTabProps {
   maxAmount: bigint;
@@ -29,13 +31,13 @@ interface RepayTabProps {
 const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   const {
     selectedMarketData,
-    transactionSteps,
     resetTransactionSteps,
     chainId,
     isLoadingUpdatedAssets,
     updatedValues,
     comptrollerAddress,
-    setPredictionAmount
+    setPredictionAmount,
+    getStepsForTypes
   } = useManageDialogContext();
 
   const {
@@ -65,7 +67,12 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amountAsBInt]);
+
+  const transactionSteps = useMemo(() => {
+    return getStepsForTypes(TransactionType.REPAY);
+  }, [getStepsForTypes]);
 
   return (
     <div className="space-y-4 pt-4">

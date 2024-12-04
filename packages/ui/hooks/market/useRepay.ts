@@ -3,8 +3,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
+import {
+  useManageDialogContext,
+  TransactionType
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -26,9 +29,7 @@ export const useRepay = ({
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
-
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
+  const { addStepsForType, upsertStepForType } = useManageDialogContext();
   const { currentSdk, address } = useMultiIonic();
 
   const amountAsBInt = useMemo(
@@ -57,7 +58,6 @@ export const useRepay = ({
     [maxAmount, selectedMarketData.underlyingDecimals]
   );
 
-  // Update utilization percentage when amount changes
   useEffect(() => {
     if (amount === '0' || !amount) {
       setUtilizationPercentage(0);
@@ -85,7 +85,6 @@ export const useRepay = ({
 
   const repayAmount = async () => {
     if (
-      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -93,7 +92,7 @@ export const useRepay = ({
       currentBorrowAmountAsFloat
     ) {
       let currentTransactionStep = 0;
-      addStepsForAction([
+      addStepsForType(TransactionType.REPAY, [
         {
           error: false,
           message: INFO_MESSAGES.REPAY.APPROVE,
@@ -122,11 +121,13 @@ export const useRepay = ({
             (amountAsBInt * 105n) / 100n
           );
 
-          upsertTransactionStep({
+          upsertStepForType(TransactionType.REPAY, {
             index: currentTransactionStep,
             transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              txHash: tx
+              error: false,
+              message: INFO_MESSAGES.REPAY.APPROVE,
+              txHash: tx,
+              success: false
             }
           });
 
@@ -137,10 +138,11 @@ export const useRepay = ({
           await new Promise((resolve) => setTimeout(resolve, 5000));
         }
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.REPAY, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
+            error: false,
+            message: INFO_MESSAGES.REPAY.APPROVE,
             success: true
           }
         });
@@ -160,11 +162,13 @@ export const useRepay = ({
           throw new Error('Error during repaying!');
         }
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.REPAY, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
+            error: false,
+            message: INFO_MESSAGES.REPAY.REPAYING,
+            txHash: tx,
+            success: false
           }
         });
 
@@ -173,10 +177,12 @@ export const useRepay = ({
           setTxHash(tx);
           setIsWaitingForIndexing(true);
 
-          upsertTransactionStep({
+          upsertStepForType(TransactionType.REPAY, {
             index: currentTransactionStep,
             transactionStep: {
-              ...transactionSteps[currentTransactionStep],
+              error: false,
+              message: INFO_MESSAGES.REPAY.REPAYING,
+              txHash: tx,
               success: true
             }
           });
@@ -190,11 +196,15 @@ export const useRepay = ({
         setIsWaitingForIndexing(false);
         setTxHash(undefined);
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.REPAY, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
+            error: true,
+            message:
+              currentTransactionStep === 0
+                ? INFO_MESSAGES.REPAY.APPROVE
+                : INFO_MESSAGES.REPAY.REPAYING,
+            success: false
           }
         });
 
@@ -221,7 +231,6 @@ export const useRepay = ({
   return {
     isWaitingForIndexing,
     repayAmount,
-    transactionSteps,
     isPolling,
     currentBorrowAmountAsFloat,
     amount,

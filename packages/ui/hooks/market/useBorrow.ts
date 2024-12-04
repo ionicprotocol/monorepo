@@ -6,12 +6,16 @@ import { type Address, formatUnits, parseUnits } from 'viem';
 
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
+import {
+  TransactionType,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
-import { useMaxBorrowAmount } from '../useMaxBorrowAmount';
 import { useBorrowMinimum } from '../useBorrowMinimum';
+import { useMaxBorrowAmount } from '../useMaxBorrowAmount';
 
 interface UseBorrowProps {
   selectedMarketData: MarketData;
@@ -32,6 +36,8 @@ export const useBorrow = ({
     selectedMarketData,
     chainId
   );
+  const { addStepsForType, upsertStepForType } = useManageDialogContext();
+
   const { refetch: refetchMaxBorrow, data: maxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
 
@@ -93,7 +99,6 @@ export const useBorrow = ({
 
   const borrowAmount = async () => {
     if (
-      !transactionSteps.length &&
       currentSdk &&
       address &&
       amount &&
@@ -104,7 +109,7 @@ export const useBorrow = ({
       amountAsBInt <= maxBorrowAmount.bigNumber
     ) {
       const currentTransactionStep = 0;
-      addStepsForAction([
+      addStepsForType(TransactionType.BORROW, [
         {
           error: false,
           message: INFO_MESSAGES.BORROW.BORROWING,
@@ -119,15 +124,16 @@ export const useBorrow = ({
         );
 
         if (errorCode) {
-          console.error(errorCode);
           throw new Error('Error during borrowing!');
         }
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.BORROW, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            txHash: tx
+            error: false,
+            message: INFO_MESSAGES.BORROW.BORROWING,
+            txHash: tx,
+            success: false
           }
         });
 
@@ -139,10 +145,12 @@ export const useBorrow = ({
           setTxHash(tx);
           setIsWaitingForIndexing(true);
 
-          upsertTransactionStep({
+          upsertStepForType(TransactionType.BORROW, {
             index: currentTransactionStep,
             transactionStep: {
-              ...transactionSteps[currentTransactionStep],
+              error: false,
+              message: INFO_MESSAGES.BORROW.BORROWING,
+              txHash: tx,
               success: true
             }
           });
@@ -156,11 +164,12 @@ export const useBorrow = ({
         setIsWaitingForIndexing(false);
         setTxHash(undefined);
 
-        upsertTransactionStep({
+        upsertStepForType(TransactionType.BORROW, {
           index: currentTransactionStep,
           transactionStep: {
-            ...transactionSteps[currentTransactionStep],
-            error: true
+            error: true,
+            message: INFO_MESSAGES.BORROW.BORROWING,
+            success: false
           }
         });
 
@@ -189,7 +198,6 @@ export const useBorrow = ({
   return {
     isWaitingForIndexing,
     borrowAmount,
-    transactionSteps,
     isPolling,
     borrowLimits,
     isUnderMinBorrow,
