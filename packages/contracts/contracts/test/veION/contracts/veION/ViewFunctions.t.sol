@@ -54,9 +54,6 @@ contract ViewFunctions is veIONTest {
     assertEq(totalValue, 0, "Initial total ETH value should be zero");
   }
 
-  //TODO
-  function test_getTotalEthValueOfTokensFork() public {}
-
   function test_getAssetsLocked() public {
     uint256 tokenId = 1;
     address[] memory assets = ve.getAssetsLocked(tokenId);
