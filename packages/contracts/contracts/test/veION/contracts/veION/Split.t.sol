@@ -94,7 +94,7 @@ contract Split is veIONTest {
     assertEq(balancerLocked2.amount, 0, "Second split lock amount should be half of the original");
   }
 
-  function test_split_UnderlyingStakeAlsoSplit() public fork(MODE_MAINNET) {
+  function test_split_UnderlyingStakeAlsoSplit() public forkAtBlock(MODE_MAINNET, 16559826) {
     ve.toggleSplit(address(0), true);
     ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 

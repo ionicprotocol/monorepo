@@ -100,7 +100,7 @@ contract Withdraw is veIONTest {
     );
   }
 
-  function test_withdraw_UserStakedUnderlying() public fork(MODE_MAINNET) {
+  function test_withdraw_UserStakedUnderlying() public forkAtBlock(MODE_MAINNET, 16559826) {
     TestVars memory vars;
 
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
@@ -175,7 +175,10 @@ contract Withdraw is veIONTest {
     assertEq(rewardBalance, rewardEarned, "User should have claimed some reward");
   }
 
-  function test_withdraw_WithdrawCorrectUnderlyingStakingAfterSplitAndTransfer() public fork(MODE_MAINNET) {
+  function test_withdraw_WithdrawCorrectUnderlyingStakingAfterSplitAndTransfer()
+    public
+    forkAtBlock(MODE_MAINNET, 16559826)
+  {
     ve.toggleSplit(address(0), true);
     ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 
@@ -275,7 +278,7 @@ contract Withdraw is veIONTest {
 
   function test_withdraw_WithdrawCorrectUnderlyingStakingAfterSplitThenTransferToUserWithUnderlyingStake()
     public
-    fork(MODE_MAINNET)
+    forkAtBlock(MODE_MAINNET, 16559826)
   {
     ve.toggleSplit(address(0), true);
     ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
@@ -337,7 +340,7 @@ contract Withdraw is veIONTest {
     );
   }
 
-  function test_withdraw_MultiLpSplitTransferThenWithdraw() public fork(MODE_MAINNET) {
+  function test_withdraw_MultiLpSplitTransferThenWithdraw() public forkAtBlock(MODE_MAINNET, 16559826) {
     ve.setMinimumLockAmount(address(ionWeth5050lPAero), 1);
     ve.setMinimumLockAmount(address(wethUSDC5050LP), 1);
     ve.toggleSplit(address(0), true);

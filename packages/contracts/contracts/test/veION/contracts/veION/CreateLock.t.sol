@@ -132,7 +132,7 @@ contract CreateLock is veIONTest {
     }
   }
 
-  function test_createLock_StakeUnderlyingLP() public fork(MODE_MAINNET) {
+  function test_createLock_StakeUnderlyingLP() public forkAtBlock(MODE_MAINNET, 16559826) {
     TestVars memory vars;
 
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
@@ -195,7 +195,7 @@ contract CreateLock is veIONTest {
     assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
   }
 
-  function test_createLock_StakeUnderlyingLPAndClaimRewards() public fork(MODE_MAINNET) {
+  function test_createLock_StakeUnderlyingLPAndClaimRewards() public forkAtBlock(MODE_MAINNET, 16559826) {
     TestVars memory vars;
 
     address ionMode5050 = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;

@@ -24,7 +24,10 @@ contract TrasferVeION is veIONTest {
     lockInfoRalph = _createLockInternalRealLP(ralph, false);
   }
 
-  function test_transfer_UnderlyingStakeShouldBeTransferredToReceipientWithNoStake() public fork(MODE_MAINNET) {
+  function test_transfer_UnderlyingStakeShouldBeTransferredToReceipientWithNoStake()
+    public
+    forkAtBlock(MODE_MAINNET, 16559826)
+  {
     uint256 aliceCumulativeValueBefore = ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
     uint256 bobCumulativeValueBefore = ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
 
@@ -74,7 +77,10 @@ contract TrasferVeION is veIONTest {
     assertEq(bobOwnedTokenIds[1], lockInfoAlice.tokenId, "Bob should own the transferred token ID");
   }
 
-  function test_transfer_UnderlyingStakeShouldBeTransferredToRecipientWithStake() public fork(MODE_MAINNET) {
+  function test_transfer_UnderlyingStakeShouldBeTransferredToRecipientWithStake()
+    public
+    forkAtBlock(MODE_MAINNET, 16559826)
+  {
     vm.prank(alice);
     ve.transferFrom(alice, cindy, lockInfoAlice.tokenId);
 
@@ -88,7 +94,7 @@ contract TrasferVeION is veIONTest {
     );
   }
 
-  function test_transfer_NoUnderlyingStakeInFrom() public fork(MODE_MAINNET) {
+  function test_transfer_NoUnderlyingStakeInFrom() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.prank(bob);
     ve.transferFrom(bob, ralph, lockInfoBob.tokenId);
 
@@ -97,7 +103,7 @@ contract TrasferVeION is veIONTest {
     assertTrue(stakingWalletInstance == address(0), "Ralph should not have a staking wallet instance");
   }
 
-  function test_transfer_SplitThenTransfer() public fork(MODE_MAINNET) {
+  function test_transfer_SplitThenTransfer() public forkAtBlock(MODE_MAINNET, 16559826) {
     ve.toggleSplit(address(0), true);
     ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 

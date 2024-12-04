@@ -87,12 +87,12 @@ contract DistributeRewards is VoterTest {
 
     vm.prank(mpo.admin());
     mpo.add(underlyings, oracles);
-    
+
     vm.startPrank(owner);
     emissionsManager = new EmissionsManager();
     emissionsManager.initialize(poolDirectory, protocalAddress, ERC20(ion), 2500, bytecode);
     emissionsManager.setVeIon(ve);
-  
+
     // Deploy borrow flywheels
     flywheelBooster = new IonicFlywheelBorrowBooster();
     flywheelBorrow = new IonicFlywheelBorrow();
@@ -105,12 +105,7 @@ contract DistributeRewards is VoterTest {
 
     // Deploy supply flywheels
     flywheelSupply = new IonicFlywheel();
-    flywheelSupply.initialize(
-      ERC20(ion),
-      IFlywheelRewards(address(0)),
-      IFlywheelBooster(address(0)),
-      owner
-    );
+    flywheelSupply.initialize(ERC20(ion), IFlywheelRewards(address(0)), IFlywheelBooster(address(0)), owner);
 
     flywheelRewardsBorrow = new VeIonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelBorrow)), ONE_WEEK);
     flywheelBorrow.setFlywheelRewards(IFlywheelRewards(address(flywheelRewardsBorrow)));
@@ -126,7 +121,7 @@ contract DistributeRewards is VoterTest {
     uniqMarkets = new address[](2);
     uniqMarkets[0] = markets[0];
     uniqMarkets[1] = markets[2];
-  
+
     supplyRewardAccumulators = new address[](2);
     borrowRewardAccumulators = new address[](2);
 
@@ -150,11 +145,11 @@ contract DistributeRewards is VoterTest {
 
     vm.startPrank(comptroller.admin());
     comptroller._addRewardsDistributor(address(flywheelBorrow));
-    comptroller._addRewardsDistributor(address(flywheelSupply));   
+    comptroller._addRewardsDistributor(address(flywheelSupply));
     vm.stopPrank();
   }
 
-  function test_distributeRewards_RewardsCanBeDistributed() public fork(BASE_MAINNET) {
+  function test_distributeRewards_RewardsCanBeDistributed() public forkAtBlock(BASE_MAINNET, 23248915) {
     vm.prank(baseUser);
     voter.vote(baseTokenIdSingleLp, markets, sides, weights);
     uint256 ionPrice = mpo.price(ion);
@@ -182,7 +177,7 @@ contract DistributeRewards is VoterTest {
     }
   }
 
-  function test_distributeRewards_MultiLPAndVoters() public fork(BASE_MAINNET) {
+  function test_distributeRewards_MultiLPAndVoters() public forkAtBlock(BASE_MAINNET, 23248915) {
     address[] memory voters = new address[](20);
     uint256[] memory tokenIds = new uint256[](20);
     uint256 totalWeight = 0;
@@ -223,7 +218,7 @@ contract DistributeRewards is VoterTest {
       uint256 ionBalance = IERC20(ion).balanceOf(rewardAccumulator);
       console.log("ION Balance for Reward Accumulator", rewardAccumulator, ":", ionBalance);
 
-      uint256 expectedBalance = rewardAmount * weights[i] / totalWeight;
+      uint256 expectedBalance = (rewardAmount * weights[i]) / totalWeight;
       //assertEq(ionBalance, expectedBalance, "Each reward accumulator should have a quarter of the tokens");
     }
 
@@ -262,37 +257,40 @@ contract DistributeRewards is VoterTest {
       uint256 expectedBalance = rewardAmount / 4;
       assertEq(ionBalance, expectedBalance, "Each reward accumulator should have a quarter of the tokens");
     }
-  
-  _lockSingleLPFork(baseUser, REAL_LP_LOCK_AMOUNT);
 
-  vm.prank(baseWETHWhale);
-  IERC20(weth).transfer(address(baseUser), ONE);
+    _lockSingleLPFork(baseUser, REAL_LP_LOCK_AMOUNT);
 
-  uint256 ionBalanceBefore = IERC20(ion).balanceOf(address(baseUser));
+    vm.prank(baseWETHWhale);
+    IERC20(weth).transfer(address(baseUser), ONE);
 
+    uint256 ionBalanceBefore = IERC20(ion).balanceOf(address(baseUser));
 
-  vm.startPrank(baseUser);
-  IERC20(weth).approve(ethMarket, ONE);
-  address [] memory marketToEnter; 
-  marketToEnter = new address[](2);
-  marketToEnter[0] = ethMarket;
-  marketToEnter[1] = btcMarket;
+    vm.startPrank(baseUser);
+    IERC20(weth).approve(ethMarket, ONE);
+    address[] memory marketToEnter;
+    marketToEnter = new address[](2);
+    marketToEnter[0] = ethMarket;
+    marketToEnter[1] = btcMarket;
 
-  comptroller.enterMarkets(marketToEnter);
-  CErc20RewardsDelegate(ethMarket).mint(1e15);
+    comptroller.enterMarkets(marketToEnter);
+    CErc20RewardsDelegate(ethMarket).mint(1e15);
 
-  vm.stopPrank();
-  vm.warp(voter.epochNext(block.timestamp));
+    vm.stopPrank();
+    vm.warp(voter.epochNext(block.timestamp));
 
-  vm.startPrank(baseUser);
-  flywheelSupply.accrue(ERC20(ethMarket), address(baseUser));
+    vm.startPrank(baseUser);
+    flywheelSupply.accrue(ERC20(ethMarket), address(baseUser));
 
-  flywheelSupply.claimRewards(address(baseUser));
-  uint256 ionBalanceAfter = IERC20(ion).balanceOf(address(baseUser));
-  uint256 rewardClaimed = ionBalanceAfter - ionBalanceBefore;
-  uint256 ionwethBalanceAfter = IERC20(ethMarket).balanceOf(address(baseUser));
-  uint256 ionwethTotalBalanceAfter = IERC20(ethMarket).totalSupply();
-  assertEq(ionwethTotalBalanceAfter/ionwethBalanceAfter, rewardAmount / 4 / rewardClaimed, "User should get his fair share of rewards");
-  vm.stopPrank();
+    flywheelSupply.claimRewards(address(baseUser));
+    uint256 ionBalanceAfter = IERC20(ion).balanceOf(address(baseUser));
+    uint256 rewardClaimed = ionBalanceAfter - ionBalanceBefore;
+    uint256 ionwethBalanceAfter = IERC20(ethMarket).balanceOf(address(baseUser));
+    uint256 ionwethTotalBalanceAfter = IERC20(ethMarket).totalSupply();
+    assertEq(
+      ionwethTotalBalanceAfter / ionwethBalanceAfter,
+      rewardAmount / 4 / rewardClaimed,
+      "User should get his fair share of rewards"
+    );
+    vm.stopPrank();
   }
 }

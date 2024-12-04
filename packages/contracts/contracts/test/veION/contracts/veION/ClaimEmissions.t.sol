@@ -22,7 +22,7 @@ contract ClaimEmissions is veIONTest {
     emit log("setUp function override is running");
   }
 
-  function test_claimEmissions_UserCanClaimEmissionsFromUnderlyingStake() public fork(MODE_MAINNET) {
+  function test_claimEmissions_UserCanClaimEmissionsFromUnderlyingStake() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.warp(block.timestamp + 1 weeks);
     uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
 
@@ -32,7 +32,7 @@ contract ClaimEmissions is veIONTest {
     assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
   }
 
-  function test_claimEmissions_NoEmissionsToClaim() public fork(MODE_MAINNET) {
+  function test_claimEmissions_NoEmissionsToClaim() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.warp(block.timestamp + 1 weeks);
 
     vm.prank(bob);
@@ -40,7 +40,7 @@ contract ClaimEmissions is veIONTest {
     ve.claimEmissions(address(ionMode5050LP));
   }
 
-  function test_claimEmissions_WithdrawThenClaim() public fork(MODE_MAINNET) {
+  function test_claimEmissions_WithdrawThenClaim() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.startPrank(alice);
     ve.withdraw(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId);
     ve.claimEmissions(address(ionMode5050LP));
