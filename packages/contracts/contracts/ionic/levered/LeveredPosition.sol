@@ -59,9 +59,14 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
                           Mutable Functions
   ----------------------------------------------------------------*/
 
-  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public {
+  function fundPosition(
+    IERC20Upgradeable fundingAsset,
+    uint256 amount,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) public {
     fundingAsset.safeTransferFrom(msg.sender, address(this), amount);
-    _supplyCollateral(fundingAsset);
+    _supplyCollateral(fundingAsset, aggregatorTarget, aggregatorData);
 
     if (!pool.checkMembership(address(this), collateralMarket)) {
       address[] memory cTokens = new address[](1);
@@ -70,14 +75,17 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function closePosition() public returns (uint256) {
-    return closePosition(msg.sender);
+  function closePosition(address aggregatorTarget, bytes memory aggregatorData) public returns (uint256) {
+    return closePosition(msg.sender, aggregatorTarget, aggregatorData);
   }
 
-  function closePosition(address withdrawTo) public returns (uint256 withdrawAmount) {
+  function closePosition(address withdrawTo, address aggregatorTarget, bytes memory aggregatorData)
+    public
+    returns (uint256 withdrawAmount)
+  {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
-    _leverDown(1e18);
+    _leverDown(1e18, aggregatorTarget, aggregatorData);
 
     // calling accrue and exit allows to redeem the full underlying balance
     collateralMarket.accrueInterest();
@@ -89,8 +97,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (errorCode != 0) revert RedeemFailed(errorCode);
 
     if (stableAsset.balanceOf(address(this)) > 0) {
-      // convert all overborrowed leftovers/profits to the collateral asset
-      convertAllTo(stableAsset, collateralAsset);
+      // // convert all overborrowed leftovers/profits to the collateral asset
+      // convertAllTo(stableAsset, collateralAsset, address(0), aggregatorData);
+      // transfer the stable asset to the owner
+      stableAsset.safeTransfer(positionOwner, stableAsset.balanceOf(address(this)));
     }
 
     // withdraw the redeemed collateral
@@ -98,35 +108,40 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     collateralAsset.safeTransfer(withdrawTo, withdrawAmount);
   }
 
-  function adjustLeverageRatio(uint256 targetRatioMantissa) public returns (uint256) {
+  function adjustLeverageRatio(uint256 targetRatioMantissa, address aggregatorTarget, bytes memory aggregatorData)
+    public
+    returns (uint256)
+  {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     // anything under 1x means removing the leverage
-    if (targetRatioMantissa <= 1e18) _leverDown(1e18);
+    if (targetRatioMantissa <= 1e18) _leverDown(1e18, aggregatorTarget, aggregatorData);
 
-    if (getCurrentLeverageRatio() < targetRatioMantissa) _leverUp(targetRatioMantissa);
-    else _leverDown(targetRatioMantissa);
+    if (getCurrentLeverageRatio() < targetRatioMantissa) _leverUp(targetRatioMantissa, aggregatorTarget, aggregatorData);
+    else _leverDown(targetRatioMantissa, aggregatorTarget, aggregatorData);
 
     // return the de facto achieved ratio
     return getCurrentLeverageRatio();
   }
 
-  function receiveFlashLoan(
-    address assetAddress,
-    uint256 borrowedAmount,
-    bytes calldata data
-  ) external override {
+  function receiveFlashLoan(address assetAddress, uint256 borrowedAmount, bytes calldata data) external override {
     if (msg.sender == address(collateralMarket)) {
       // increasing the leverage ratio
-      uint256 stableBorrowAmount = abi.decode(data, (uint256));
-      _leverUpPostFL(stableBorrowAmount);
+      (uint256 stableBorrowAmount, address aggregatorTarget, bytes memory aggregatorData) = abi.decode(
+        data,
+        (uint256, address, bytes)
+      );
+      _leverUpPostFL(stableBorrowAmount, aggregatorTarget, aggregatorData);
       uint256 positionCollateralBalance = collateralAsset.balanceOf(address(this));
       if (positionCollateralBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(collateralAsset), positionCollateralBalance, borrowedAmount);
     } else if (msg.sender == address(stableMarket)) {
       // decreasing the leverage ratio
-      uint256 amountToRedeem = abi.decode(data, (uint256));
-      _leverDownPostFL(borrowedAmount, amountToRedeem);
+      (uint256 amountToRedeem, address aggregatorTarget, bytes memory aggregatorData) = abi.decode(
+        data,
+        (uint256, address, bytes)
+      );
+      _leverDownPostFL(borrowedAmount, amountToRedeem, aggregatorTarget, aggregatorData);
       uint256 positionStableBalance = stableAsset.balanceOf(address(this));
       if (positionStableBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(stableAsset), positionStableBalance, borrowedAmount);
@@ -379,11 +394,15 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
                             Internal Functions
   ----------------------------------------------------------------*/
 
-  function _supplyCollateral(IERC20Upgradeable fundingAsset) internal returns (uint256 amountToSupply) {
+  function _supplyCollateral(
+    IERC20Upgradeable fundingAsset,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) internal returns (uint256 amountToSupply) {
     // in case the funding is with a different asset
     if (address(collateralAsset) != address(fundingAsset)) {
       // swap for collateral asset
-      convertAllTo(fundingAsset, collateralAsset);
+      convertAllTo(fundingAsset, collateralAsset, aggregatorTarget, aggregatorData);
     }
 
     // supply the collateral
@@ -394,7 +413,11 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   // @dev flash loan the needed amount, then borrow stables and swap them for the amount needed to repay the FL
-  function _leverUp(uint256 targetRatio) internal {
+  function _leverUp(
+    uint256 targetRatio,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) internal {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
@@ -406,7 +429,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
       stableAssetPrice
     );
 
-    collateralMarket.flash(flashLoanCollateralAmount, abi.encode(stableToBorrow));
+    collateralMarket.flash(
+      flashLoanCollateralAmount,
+      abi.encode(stableToBorrow, aggregatorTarget, aggregatorData)
+    );
     // the execution will first receive a callback to receiveFlashLoan()
     // then it continues from here
 
@@ -419,20 +445,24 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   // @dev supply the flash loaned collateral and then borrow stables with it
-  function _leverUpPostFL(uint256 stableToBorrow) internal {
+  function _leverUpPostFL(
+    uint256 stableToBorrow,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) internal {
     // supply the flash loaned collateral
-    _supplyCollateral(collateralAsset);
+    _supplyCollateral(collateralAsset, address(0), "");
 
     // borrow stables that will be swapped to repay the FL
     uint256 errorCode = stableMarket.borrow(stableToBorrow);
     if (errorCode != 0) revert BorrowStableFailed(errorCode);
 
     // swap for the FL asset
-    convertAllTo(stableAsset, collateralAsset);
+    convertAllTo(stableAsset, collateralAsset, aggregatorTarget, aggregatorData);
   }
 
   // @dev redeems the supplied collateral by first repaying the debt with which it was levered
-  function _leverDown(uint256 targetRatio) internal {
+  function _leverDown(uint256 targetRatio, address aggregatorTarget, bytes memory aggregatorData) internal {
     uint256 amountToRedeem;
     uint256 borrowsToRepay;
 
@@ -462,7 +492,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
 
     if (borrowsToRepay > 0) {
-      ICErc20(address(stableMarket)).flash(borrowsToRepay, abi.encode(amountToRedeem));
+      ICErc20(address(stableMarket)).flash(
+        borrowsToRepay,
+        abi.encode(amountToRedeem, aggregatorTarget, aggregatorData)
+      );
       // the execution will first receive a callback to receiveFlashLoan()
       // then it continues from here
     }
@@ -480,7 +513,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function _leverDownPostFL(uint256 _flashLoanedCollateral, uint256 _amountToRedeem) internal {
+  function _leverDownPostFL(
+    uint256 _flashLoanedCollateral,
+    uint256 _amountToRedeem,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) internal {
     // repay the borrows
     uint256 borrowBalance = stableMarket.borrowBalanceCurrent(address(this));
     uint256 repayAmount = _flashLoanedCollateral < borrowBalance ? _flashLoanedCollateral : borrowBalance;
@@ -493,25 +531,34 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (errorCode != 0) revert RedeemCollateralFailed(errorCode);
 
     // swap for the FL asset
-    convertAllTo(collateralAsset, stableAsset);
+    convertAllTo(collateralAsset, stableAsset, aggregatorTarget, aggregatorData);
   }
 
-  function convertAllTo(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    private
-    returns (uint256 outputAmount)
-  {
+  function convertAllTo(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) private returns (uint256 outputAmount) {
     uint256 inputAmount = inputToken.balanceOf(address(this));
-    (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
-      .getRedemptionStrategies(inputToken, outputToken);
+    if (aggregatorTarget != address(0)) {
+      inputToken.approve(aggregatorTarget, inputAmount);
+      (bool success, ) = aggregatorTarget.call(aggregatorData);
+      require(success, "Aggregator call failed");
+      outputAmount = outputToken.balanceOf(address(this));
+    } else {
+      (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
+        .getRedemptionStrategies(inputToken, outputToken);
 
-    if (redemptionStrategies.length == 0) revert ConvertFundsFailed();
+      if (redemptionStrategies.length == 0) revert ConvertFundsFailed();
 
-    for (uint256 i = 0; i < redemptionStrategies.length; i++) {
-      IRedemptionStrategy redemptionStrategy = redemptionStrategies[i];
-      bytes memory strategyData = strategiesData[i];
-      (outputToken, outputAmount) = convertCustomFunds(inputToken, inputAmount, redemptionStrategy, strategyData);
-      inputAmount = outputAmount;
-      inputToken = outputToken;
+      for (uint256 i = 0; i < redemptionStrategies.length; i++) {
+        IRedemptionStrategy redemptionStrategy = redemptionStrategies[i];
+        bytes memory strategyData = strategiesData[i];
+        (outputToken, outputAmount) = convertCustomFunds(inputToken, inputAmount, redemptionStrategy, strategyData);
+        inputAmount = outputAmount;
+        inputToken = outputToken;
+      }
     }
   }
 

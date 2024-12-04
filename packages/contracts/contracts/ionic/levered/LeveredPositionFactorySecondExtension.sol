@@ -62,12 +62,14 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount
+    uint256 _fundingAmount,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData
   ) public returns (LeveredPosition) {
     LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
     _fundingAsset.approve(address(position), _fundingAmount);
-    position.fundPosition(_fundingAsset, _fundingAmount);
+    position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
     return position;
   }
 
@@ -76,11 +78,22 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
-    uint256 _leverageRatio
+    uint256 _leverageRatio,
+    address _fundingAssetSwapAggregatorTarget,
+    bytes memory _fundingAssetSwapAggregatorData,
+    address _adjustLeverageRatioAggregatorTarget,
+    bytes memory _adjustLeverageRatioAggregatorData
   ) external returns (LeveredPosition) {
-    LeveredPosition position = createAndFundPosition(_collateralMarket, _stableMarket, _fundingAsset, _fundingAmount);
+    LeveredPosition position = createAndFundPosition(
+      _collateralMarket,
+      _stableMarket,
+      _fundingAsset,
+      _fundingAmount,
+      _fundingAssetSwapAggregatorTarget,
+      _fundingAssetSwapAggregatorData
+    );
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(_leverageRatio);
+      position.adjustLeverageRatio(_leverageRatio, _adjustLeverageRatioAggregatorTarget, _adjustLeverageRatioAggregatorData);
     }
     return position;
   }

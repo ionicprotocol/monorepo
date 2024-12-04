@@ -913,6 +913,16 @@ contract DevTesting is BaseTest {
     emit log_named_uint("profit borrow", IERC20Upgradeable(ICErc20(cErc20).underlying()).balanceOf(address(this)));
   }
 
+  function test_leveredPosition() public debuggingOnly forkAtBlock(BASE_MAINNET, 20569373) {
+    ILeveredPositionFactory factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
+    ICErc20 collateralAsset = ICErc20(0x84341B650598002d427570298564d6701733c805); // weEth
+    ICErc20 stableAsset = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
+    LeveredPosition position = factory.createPosition(collateralAsset, stableAsset);
+    (uint256 supplyDelta, uint256 borrowDelta) = position.getSupplyAmountDelta(2 ether);
+    emit log_named_uint("supplyDelta", supplyDelta);
+    emit log_named_uint("borrowDelta", borrowDelta);
+  }
+
   function _functionCall(
     address target,
     bytes memory data,
