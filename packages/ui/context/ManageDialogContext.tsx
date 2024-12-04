@@ -12,10 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import {
-  TransactionStep,
-  useTransactionSteps
-} from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import type { TransactionStep } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -101,9 +98,8 @@ const ManageDialogContext = createContext<ManageDialogContextType | undefined>(
 export const ManageDialogProvider: React.FC<{
   selectedMarketData: MarketData;
   comptrollerAddress: Address;
-  closePopup: () => void;
   children: React.ReactNode;
-}> = ({ selectedMarketData, comptrollerAddress, closePopup, children }) => {
+}> = ({ selectedMarketData, comptrollerAddress, children }) => {
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [active, setActive] = useState<ActiveTab>('supply');
@@ -146,24 +142,26 @@ export const ManageDialogProvider: React.FC<{
 
   const queryClient = useQueryClient();
 
-  const refetchUsedQueries = async () => {
-    queryClient.invalidateQueries({ queryKey: ['useFusePoolData'] });
-    queryClient.invalidateQueries({ queryKey: ['useBorrowMinimum'] });
-    queryClient.invalidateQueries({ queryKey: ['useUsdPrice'] });
-    queryClient.invalidateQueries({ queryKey: ['useAllUsdPrices'] });
-    queryClient.invalidateQueries({ queryKey: ['useTotalSupplyAPYs'] });
-    queryClient.invalidateQueries({ queryKey: ['useUpdatedUserAssets'] });
-    queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });
-    queryClient.invalidateQueries({ queryKey: ['useMaxWithdrawAmount'] });
-    queryClient.invalidateQueries({ queryKey: ['useMaxBorrowAmount'] });
-    queryClient.invalidateQueries({ queryKey: ['useMaxRepayAmount'] });
-    queryClient.invalidateQueries({
-      queryKey: ['useSupplyCapsDataForPool']
+  const refetchUsedQueries = useCallback(async () => {
+    const queryKeys = [
+      'useFusePoolData',
+      'useBorrowMinimum',
+      'useUsdPrice',
+      'useAllUsdPrices',
+      'useTotalSupplyAPYs',
+      'useUpdatedUserAssets',
+      'useMaxSupplyAmount',
+      'useMaxWithdrawAmount',
+      'useMaxBorrowAmount',
+      'useMaxRepayAmount',
+      'useSupplyCapsDataForPool',
+      'useBorrowCapsDataForAsset'
+    ];
+
+    queryKeys.forEach((key) => {
+      queryClient.invalidateQueries({ queryKey: [key] });
     });
-    queryClient.invalidateQueries({
-      queryKey: ['useBorrowCapsDataForAsset']
-    });
-  };
+  }, [queryClient]);
 
   const updatedValues = useMemo(() => {
     const blocksPerMinute = getBlockTimePerMinuteByChainId(chainId);

@@ -1,37 +1,17 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 
-import { type Address, formatEther, formatUnits } from 'viem';
+import { type Address } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { Dialog, DialogContent } from '@ui/components/ui/dialog';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
-} from '@ui/components/ui/tabs';
-import {
-  ManageDialogProvider,
-  useManageDialogContext
-} from '@ui/context/ManageDialogContext';
-import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
-import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
+import { ManageDialogProvider } from '@ui/context/ManageDialogContext';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import BorrowTab from './BorrowTab';
-import RepayTab from './RepayTab';
-import SupplyTab from './SupplyTab';
-import WithdrawTab from './WithdrawTab';
-import AnimateHeight from '../../AnimateHeight';
+import DialogWrapper from './DialogWrapper';
+import ManageDialogTabs from './ManageDialogTabs';
 
 const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
   ssr: false
@@ -46,7 +26,7 @@ export enum HFPStatus {
   WARNING = 'WARNING'
 }
 
-interface IPopup {
+interface ManageDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   comptrollerAddress: Address;
@@ -62,214 +42,37 @@ const ManageDialog = ({
   comptrollerAddress,
   isBorrowDisabled = false,
   activeTab = 'supply'
-}: IPopup) => {
+}: ManageDialogProps) => {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const chainId = useChainId();
-  const { data: usdPrice } = useUsdPrice(chainId.toString());
   const [currentActiveTab, setCurrentActiveTab] =
     useState<ActiveTab>(activeTab);
-
-  const pricePerSingleAsset = useMemo<number>(
-    () =>
-      parseFloat(formatEther(selectedMarketData.underlyingPrice)) *
-      (usdPrice ?? 0),
-    [selectedMarketData, usdPrice]
-  );
-  const { data: supplyCap } = useSupplyCapsDataForAsset(
+  const { refetch: refetchMaxSupplyAmount } = useMaxSupplyAmount(
+    selectedMarketData,
     comptrollerAddress,
-    selectedMarketData.cToken,
     chainId
   );
-  const supplyCapAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          supplyCap?.supplyCaps ?? 0n,
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [supplyCap, selectedMarketData.underlyingDecimals]
-  );
-  const supplyCapAsFiat = useMemo<number>(
-    () => pricePerSingleAsset * supplyCapAsNumber,
-    [pricePerSingleAsset, supplyCapAsNumber]
-  );
-  const totalSupplyAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          selectedMarketData.totalSupply,
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [selectedMarketData.totalSupply, selectedMarketData.underlyingDecimals]
-  );
-  const { data: borrowCap } = useBorrowCapsDataForAsset(
-    selectedMarketData.cToken,
-    chainId
-  );
-  const borrowCapAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          borrowCap?.totalBorrowCap ?? 0n,
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [borrowCap, selectedMarketData.underlyingDecimals]
-  );
-  const borrowCapAsFiat = useMemo<number>(
-    () => pricePerSingleAsset * borrowCapAsNumber,
-    [pricePerSingleAsset, borrowCapAsNumber]
-  );
-  const totalBorrowAsNumber = useMemo<number>(
-    () =>
-      parseFloat(
-        formatUnits(
-          selectedMarketData.totalBorrow,
-          selectedMarketData.underlyingDecimals
-        )
-      ),
-    [selectedMarketData.totalBorrow, selectedMarketData.underlyingDecimals]
-  );
-
-  const {
-    data: maxSupplyAmount,
-    isLoading: isLoadingMaxSupply,
-    refetch: refetchMaxSupplyAmount
-  } = useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
-  const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
-    useMaxRepayAmount(selectedMarketData, chainId);
-  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
-    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
-  const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
-    useMaxWithdrawAmount(selectedMarketData, chainId);
-
-  const TabsWithContext = ({
-    isBorrowDisabled
-  }: {
-    isBorrowDisabled: boolean;
-  }) => {
-    const { setActive } = useManageDialogContext();
-
-    // Handle tab change with persistence
-    const handleTabChange = (value: string) => {
-      const newTab = value as ActiveTab;
-      setCurrentActiveTab(newTab);
-      setActive(newTab);
-    };
-
-    return (
-      <div className="tabs-container">
-        <Tabs
-          defaultValue={currentActiveTab}
-          onValueChange={handleTabChange}
-          value={currentActiveTab}
-        >
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="supply">Supply</TabsTrigger>
-            <TabsTrigger
-              value="borrow"
-              disabled={isBorrowDisabled}
-            >
-              Borrow
-            </TabsTrigger>
-            <TabsTrigger
-              value="repay"
-              disabled={isBorrowDisabled}
-            >
-              Repay
-            </TabsTrigger>
-            <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
-          </TabsList>
-
-          <TabsContent
-            value="supply"
-            className="mt-2"
-          >
-            <SupplyTab
-              maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
-              isLoadingMax={isLoadingMaxSupply}
-              totalStats={{
-                capAmount: supplyCapAsNumber,
-                totalAmount: totalSupplyAsNumber,
-                capFiat: supplyCapAsFiat,
-                totalFiat: selectedMarketData.totalSupplyFiat
-              }}
-              setSwapWidgetOpen={setSwapWidgetOpen}
-            />
-          </TabsContent>
-          <TabsContent value="borrow">
-            <BorrowTab
-              maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
-              isLoadingMax={isLoadingMaxBorrowAmount}
-              totalStats={{
-                capAmount: borrowCapAsNumber,
-                totalAmount: totalBorrowAsNumber,
-                capFiat: borrowCapAsFiat,
-                totalFiat: selectedMarketData.totalBorrowFiat
-              }}
-            />
-          </TabsContent>
-          <TabsContent value="repay">
-            <RepayTab
-              maxAmount={maxRepayAmount ?? 0n}
-              isLoadingMax={isLoadingMaxRepayAmount}
-              totalStats={{
-                capAmount: borrowCapAsNumber,
-                totalAmount: totalBorrowAsNumber,
-                capFiat: borrowCapAsFiat,
-                totalFiat: selectedMarketData.totalBorrowFiat
-              }}
-            />
-          </TabsContent>
-          <TabsContent value="withdraw">
-            <WithdrawTab
-              maxAmount={maxWithdrawAmount ?? 0n}
-              isLoadingMax={isLoadingMaxWithdrawAmount}
-              totalStats={{
-                capAmount: supplyCapAsNumber,
-                totalAmount: totalSupplyAsNumber,
-                capFiat: supplyCapAsFiat,
-                totalFiat: selectedMarketData.totalSupplyFiat
-              }}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
-    );
-  };
 
   return (
     <ManageDialogProvider
       comptrollerAddress={comptrollerAddress}
-      closePopup={() => setIsOpen(false)}
       selectedMarketData={selectedMarketData}
     >
-      <Dialog
-        open={isOpen}
-        onOpenChange={setIsOpen}
+      <DialogWrapper
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        setCurrentActiveTab={setCurrentActiveTab}
       >
-        <DialogContent
-          maxWidth="800px"
-          className="bg-grayUnselect"
-          fullWidth
-        >
-          <div className="flex w-20 mx-auto relative text-center">
-            <Image
-              alt="modlogo"
-              className="mx-auto"
-              height={32}
-              src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
-              width={32}
-            />
-          </div>
-
-          <AnimateHeight>
-            <TabsWithContext isBorrowDisabled={isBorrowDisabled} />
-          </AnimateHeight>
-        </DialogContent>
-      </Dialog>
+        <ManageDialogTabs
+          selectedMarketData={selectedMarketData}
+          comptrollerAddress={comptrollerAddress}
+          isBorrowDisabled={isBorrowDisabled}
+          currentActiveTab={currentActiveTab}
+          setCurrentActiveTab={setCurrentActiveTab}
+          setSwapWidgetOpen={setSwapWidgetOpen}
+          chainId={chainId}
+        />
+      </DialogWrapper>
 
       <SwapWidget
         close={() => setSwapWidgetOpen(false)}

@@ -42,7 +42,6 @@ const SupplyTab = ({
   const {
     selectedMarketData,
     resetTransactionSteps,
-    transactionSteps: supplyTxSteps,
     chainId,
     comptrollerAddress,
     updatedValues,
@@ -52,11 +51,7 @@ const SupplyTab = ({
     getStepsForTypes
   } = useManageDialogContext();
 
-  const {
-    enableCollateral,
-    handleCollateralToggle,
-    transactionSteps: collateralTxSteps
-  } = useCollateralToggle({
+  const { enableCollateral, handleCollateralToggle } = useCollateralToggle({
     selectedMarketData,
     comptrollerAddress,
     onSuccess: refetchUsedQueries
