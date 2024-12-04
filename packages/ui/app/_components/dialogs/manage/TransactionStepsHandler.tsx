@@ -86,6 +86,11 @@ function TransactionStepsHandler({
   resetTransactionSteps,
   chainId
 }: TransactionStepsHandlerProps) {
+  const isComplete =
+    transactionSteps.filter((step) => step.success).length ===
+      transactionSteps.length ||
+    transactionSteps.find((step) => step.error) !== undefined;
+
   return (
     <div className="w-full">
       {transactionSteps.map((transactionStep, i) => (
@@ -131,9 +136,7 @@ function TransactionStepsHandler({
         </div>
       ))}
 
-      {(transactionSteps.filter((step) => step.success).length ===
-        transactionSteps.length ||
-        transactionSteps.find((step) => step.error) !== undefined) && (
+      {isComplete && (
         <div className="text-center">
           <Button
             onClick={resetTransactionSteps}

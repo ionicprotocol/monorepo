@@ -39,6 +39,7 @@ const SupplyTab = ({
   const {
     selectedMarketData,
     resetTransactionSteps,
+    transactionSteps: supplyTxSteps,
     chainId,
     comptrollerAddress,
     updatedValues,
@@ -60,7 +61,6 @@ const SupplyTab = ({
   const {
     isWaitingForIndexing,
     supplyAmount,
-    transactionSteps: supplyTxSteps,
     isPolling,
     amount,
     setAmount,
@@ -79,6 +79,8 @@ const SupplyTab = ({
     setPredictionAmount(amountAsBInt);
   }, [amountAsBInt]);
 
+  console.log('collateralTxSteps', collateralTxSteps);
+  console.log('supplyTxSteps', supplyTxSteps);
   const combinedTransactionSteps = useMemo(() => {
     return [...supplyTxSteps, ...collateralTxSteps];
   }, [supplyTxSteps, collateralTxSteps]);

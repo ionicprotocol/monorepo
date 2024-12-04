@@ -31,6 +31,7 @@ interface BorrowTabProps {
 const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   const {
     selectedMarketData,
+    transactionSteps,
     resetTransactionSteps,
     chainId,
     isLoadingUpdatedAssets,
@@ -42,7 +43,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   const {
     isWaitingForIndexing,
     borrowAmount,
-    transactionSteps,
     isPolling,
     borrowLimits,
     isUnderMinBorrow,

@@ -11,6 +11,7 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxWithdrawAmount } from '../useMaxWithdrawAmount';
+import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 
 interface UseWithdrawProps {
   maxAmount: bigint;
@@ -28,8 +29,9 @@ export const useWithdraw = ({
   const [amount, setAmount] = useState<string>('0');
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
 
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
+  const { transactionSteps, addStepsForAction, upsertTransactionStep } =
+    useManageDialogContext();
+
   const { currentSdk, address } = useMultiIonic();
 
   const amountAsBInt = useMemo(

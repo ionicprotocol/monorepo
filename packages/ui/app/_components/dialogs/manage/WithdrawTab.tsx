@@ -33,6 +33,7 @@ const WithdrawTab = ({
 }: WithdrawTabProps) => {
   const {
     selectedMarketData,
+    transactionSteps,
     resetTransactionSteps,
     chainId,
     updatedValues,
@@ -44,7 +45,6 @@ const WithdrawTab = ({
   const {
     isWaitingForIndexing,
     withdrawAmount,
-    transactionSteps,
     isPolling,
     amount,
     setAmount,

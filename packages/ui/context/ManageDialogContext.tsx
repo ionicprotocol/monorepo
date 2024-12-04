@@ -1,16 +1,23 @@
 'use client';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import {
+  TransactionStep,
+  useTransactionSteps
+} from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
-import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -30,7 +37,7 @@ export enum HFPStatus {
   WARNING = 'WARNING'
 }
 
-interface PopupContextType {
+interface ManageDialogContextType {
   active: ActiveTab;
   setActive: (tab: ActiveTab) => void;
   resetTransactionSteps: () => void;
@@ -52,6 +59,16 @@ interface PopupContextType {
   };
   isLoadingUpdatedAssets: boolean;
   setPredictionAmount: (amount: bigint) => void;
+  transactionSteps: TransactionStep[];
+  addStepsForAction: (steps: TransactionStep[]) => void;
+  upsertTransactionStep: (
+    update:
+      | {
+          index: number;
+          transactionStep: TransactionStep;
+        }
+      | undefined
+  ) => void;
 }
 
 const formatBalance = (value: bigint | undefined, decimals: number): string => {
@@ -59,7 +76,7 @@ const formatBalance = (value: bigint | undefined, decimals: number): string => {
   return formatted === 0 ? '0' : formatted.toFixed(2);
 };
 
-const ManageDialogContext = createContext<PopupContextType | undefined>(
+const ManageDialogContext = createContext<ManageDialogContextType | undefined>(
   undefined
 );
 
@@ -69,7 +86,6 @@ export const ManageDialogProvider: React.FC<{
   closePopup: () => void;
   children: React.ReactNode;
 }> = ({ selectedMarketData, comptrollerAddress, closePopup, children }) => {
-  const { upsertTransactionStep } = useTransactionSteps();
   const { currentSdk } = useMultiIonic();
   const chainId = useChainId();
   const [active, setActive] = useState<ActiveTab>('supply');
@@ -83,9 +99,11 @@ export const ManageDialogProvider: React.FC<{
     []
   );
   const [predictionAmount, setPredictionAmount] = useState<bigint>(0n);
+  const [transactionSteps, setTransactionSteps] = useState<TransactionStep[]>(
+    []
+  );
 
   useEffect(() => {
-    upsertTransactionStep(undefined);
     setCurrentFundOperation(operationMap[active]);
   }, [active, operationMap]);
 
@@ -104,11 +122,6 @@ export const ManageDialogProvider: React.FC<{
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
 
   const queryClient = useQueryClient();
-
-  const resetTransactionSteps = () => {
-    refetchUsedQueries();
-    upsertTransactionStep(undefined);
-  };
 
   const refetchUsedQueries = async () => {
     queryClient.invalidateQueries({ queryKey: ['useFusePoolData'] });
@@ -213,6 +226,56 @@ export const ManageDialogProvider: React.FC<{
     };
   }, [chainId, updatedAsset, selectedMarketData, updatedAssets, currentSdk]);
 
+  const upsertTransactionStep = useCallback(
+    (
+      updatedStep:
+        | { index: number; transactionStep: TransactionStep }
+        | undefined
+    ) => {
+      if (!updatedStep) {
+        setTransactionSteps([]);
+        return;
+      }
+
+      setTransactionSteps((prevState) => {
+        const currentSteps = prevState.slice();
+        currentSteps[updatedStep.index] = {
+          ...currentSteps[updatedStep.index],
+          ...updatedStep.transactionStep
+        };
+
+        if (
+          updatedStep.transactionStep.error &&
+          updatedStep.index + 1 < currentSteps.length
+        ) {
+          for (let i = updatedStep.index + 1; i < currentSteps.length; i++) {
+            currentSteps[i] = {
+              ...currentSteps[i],
+              error: true
+            };
+          }
+        }
+
+        return currentSteps;
+      });
+    },
+    []
+  );
+
+  const addStepsForAction = useCallback(
+    (steps: TransactionStep[]) => {
+      steps.forEach((step, i) =>
+        upsertTransactionStep({ index: i, transactionStep: step })
+      );
+    },
+    [upsertTransactionStep]
+  );
+
+  const resetTransactionSteps = useCallback(() => {
+    refetchUsedQueries();
+    setTransactionSteps([]); // Clear steps directly
+  }, [refetchUsedQueries]);
+
   return (
     <ManageDialogContext.Provider
       value={{
@@ -225,7 +288,10 @@ export const ManageDialogProvider: React.FC<{
         comptrollerAddress,
         isLoadingUpdatedAssets,
         updatedValues,
-        setPredictionAmount
+        setPredictionAmount,
+        transactionSteps,
+        addStepsForAction,
+        upsertTransactionStep
       }}
     >
       {children}
@@ -233,7 +299,7 @@ export const ManageDialogProvider: React.FC<{
   );
 };
 
-export const useManageDialogContext = (): PopupContextType => {
+export const useManageDialogContext = (): ManageDialogContextType => {
   const context = useContext(ManageDialogContext);
   if (!context) {
     throw new Error(

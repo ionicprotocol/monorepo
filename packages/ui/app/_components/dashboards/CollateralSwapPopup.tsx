@@ -168,9 +168,7 @@ export default function CollateralSwapPopup({
   };
 
   const resetTransactionSteps = () => {
-    // refetchUsedQueries();
     upsertTransactionStep(undefined);
-    // initiateCloseAnimation();
   };
   const { isConnected } = useAccount();
 

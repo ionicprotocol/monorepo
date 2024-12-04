@@ -29,6 +29,7 @@ interface RepayTabProps {
 const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   const {
     selectedMarketData,
+    transactionSteps,
     resetTransactionSteps,
     chainId,
     isLoadingUpdatedAssets,
@@ -40,7 +41,6 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
   const {
     isWaitingForIndexing,
     repayAmount,
-    transactionSteps,
     isPolling,
     currentBorrowAmountAsFloat,
     amount,
