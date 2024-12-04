@@ -87,9 +87,12 @@ function TransactionStepsHandler({
   chainId
 }: TransactionStepsHandlerProps) {
   return (
-    <div className="mx-auto text-sm">
+    <div className="w-full">
       {transactionSteps.map((transactionStep, i) => (
-        <div key={`transaction-step-${i}`}>
+        <div
+          key={`transaction-step-${i}`}
+          className="flex flex-col items-center mt-2 justify-center"
+        >
           <div
             className={`flex align-center mt-2 ${
               !transactionStep.error && !transactionStep.success && 'text-white'
@@ -134,7 +137,7 @@ function TransactionStepsHandler({
         <div className="text-center">
           <Button
             onClick={resetTransactionSteps}
-            className="mt-4 bg-accent hover:bg-accent/80 font-light py-0 px-3 rounded-lg transition-colors duration-200 flex items-center gap-2 uppercase text-[12px]"
+            className="mt-4 bg-accent hover:bg-accent/80 font-light py-0 px-3 transition-colors duration-200 flex items-center gap-2 uppercase text-[12px] w-full"
           >
             Continue
             <ArrowRight className="w-4 h-4" />

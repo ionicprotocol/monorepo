@@ -11,33 +11,29 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import { useBalancePolling } from '../useBalancePolling';
 import { useMaxBorrowAmount } from '../useMaxBorrowAmount';
+import { useBorrowMinimum } from '../useBorrowMinimum';
 
 interface UseBorrowProps {
   selectedMarketData: MarketData;
   chainId: number;
   comptrollerAddress: Address;
-  minBorrowAmount?: {
-    minBorrowAsset: bigint | undefined;
-    minBorrowNative: bigint | undefined;
-    minBorrowUSD: number | undefined;
-  };
-  maxBorrowAmount?: {
-    bigNumber: bigint;
-    number: number;
-  } | null;
 }
 
 export const useBorrow = ({
   selectedMarketData,
   chainId,
-  comptrollerAddress,
-  minBorrowAmount,
-  maxBorrowAmount
+  comptrollerAddress
 }: UseBorrowProps) => {
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
+  const { data: minBorrowAmount } = useBorrowMinimum(
+    selectedMarketData,
+    chainId
+  );
+  const { refetch: refetchMaxBorrow, data: maxBorrowAmount } =
+    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
 
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
@@ -78,12 +74,6 @@ export const useBorrow = ({
       (Number(amountAsBInt) * 100) / Number(maxBorrowAmount.bigNumber);
     setUtilizationPercentage(Math.min(Math.round(utilization), 100));
   }, [amountAsBInt, maxBorrowAmount?.bigNumber, amount]);
-
-  const { refetch: refetchMaxBorrow } = useMaxBorrowAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
 
   const borrowLimits = {
     min: formatUnits(

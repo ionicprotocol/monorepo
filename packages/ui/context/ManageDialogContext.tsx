@@ -33,25 +33,11 @@ export enum HFPStatus {
 interface PopupContextType {
   active: ActiveTab;
   setActive: (tab: ActiveTab) => void;
-  isMounted: boolean;
-  initiateCloseAnimation: () => void;
   resetTransactionSteps: () => void;
   refetchUsedQueries: () => Promise<void>;
   selectedMarketData: MarketData;
   chainId: number;
   comptrollerAddress: Address;
-  minBorrowAmount?: {
-    minBorrowAsset: bigint | undefined;
-    minBorrowNative: bigint | undefined;
-    minBorrowUSD: number | undefined;
-  };
-  maxBorrowAmount?:
-    | {
-        bigNumber: bigint;
-        number: number;
-      }
-    | null
-    | undefined;
   updatedValues: {
     borrowAPR: number | undefined;
     borrowBalanceFrom: string;
@@ -103,21 +89,6 @@ export const ManageDialogProvider: React.FC<{
     setCurrentFundOperation(operationMap[active]);
   }, [active, operationMap]);
 
-  const { data: maxRepayAmount } = useMaxRepayAmount(
-    selectedMarketData,
-    chainId
-  );
-  const { data: maxBorrowAmount } = useMaxBorrowAmount(
-    selectedMarketData,
-    comptrollerAddress,
-    chainId
-  );
-
-  const { data: minBorrowAmount } = useBorrowMinimum(
-    selectedMarketData,
-    chainId
-  );
-
   const [currentFundOperation, setCurrentFundOperation] =
     useState<FundOperationMode>(FundOperationMode.SUPPLY);
 
@@ -132,41 +103,11 @@ export const ManageDialogProvider: React.FC<{
 
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
 
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-
   const queryClient = useQueryClient();
-
-  /**
-   * Fade in animation
-   */
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    let closeTimer: ReturnType<typeof setTimeout>;
-
-    if (!isMounted) {
-      closeTimer = setTimeout(() => {
-        closePopup();
-      }, 301);
-    }
-
-    return () => {
-      clearTimeout(closeTimer);
-    };
-  }, [isMounted, closePopup]);
-
-  /**
-   * Update utilization percentage when amount changes
-   */
-
-  const initiateCloseAnimation = () => setIsMounted(false);
 
   const resetTransactionSteps = () => {
     refetchUsedQueries();
     upsertTransactionStep(undefined);
-    initiateCloseAnimation();
   };
 
   const refetchUsedQueries = async () => {
@@ -277,15 +218,11 @@ export const ManageDialogProvider: React.FC<{
       value={{
         active,
         setActive,
-        isMounted,
-        initiateCloseAnimation,
         resetTransactionSteps,
         refetchUsedQueries,
         selectedMarketData,
         chainId,
         comptrollerAddress,
-        minBorrowAmount,
-        maxBorrowAmount,
         isLoadingUpdatedAssets,
         updatedValues,
         setPredictionAmount

@@ -36,8 +36,6 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     isLoadingUpdatedAssets,
     updatedValues,
     comptrollerAddress,
-    minBorrowAmount,
-    maxBorrowAmount,
     setPredictionAmount
   } = useManageDialogContext();
 
@@ -56,9 +54,7 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
   } = useBorrow({
     selectedMarketData,
     chainId,
-    comptrollerAddress,
-    minBorrowAmount,
-    maxBorrowAmount
+    comptrollerAddress
   });
 
   const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
