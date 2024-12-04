@@ -55,8 +55,8 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
     extraDocs: wrappedAssetDocs(SupportedChains.lisk),
-    initialBorrowCap: parseEther("47000").toString(),
-    initialSupplyCap: parseEther("47000").toString(),
+    initialBorrowCap: parseEther("100000").toString(),
+    initialSupplyCap: parseEther("100000").toString(),
     initialCf: "0.5"
   },
   {
@@ -70,8 +70,8 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
     extraDocs: wrappedAssetDocs(SupportedChains.lisk),
-    initialBorrowCap: parseUnits("25000", 6).toString(),
-    initialSupplyCap: parseUnits("25000", 6).toString(),
+    initialBorrowCap: parseUnits("100000", 6).toString(),
+    initialSupplyCap: parseUnits("100000", 6).toString(),
     initialCf: "0.5"
   },
   {
@@ -85,8 +85,8 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
     extraDocs: wrappedAssetDocs(SupportedChains.lisk),
-    initialBorrowCap: parseUnits("0.1", 8).toString(),
-    initialSupplyCap: parseUnits("0.1", 8).toString(),
+    initialBorrowCap: parseUnits("1", 8).toString(),
+    initialSupplyCap: parseUnits("1", 8).toString(),
     initialCf: "0.5"
   },
   {
