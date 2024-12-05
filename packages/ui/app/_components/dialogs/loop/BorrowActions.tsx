@@ -94,7 +94,6 @@ function BorrowActions({
             <div className="w-full">
               <div className="relative h-[20px] mb-2 text-xs md:text-sm">
                 {[
-                  '0x',
                   '1x',
                   '2x',
                   '3x',
@@ -118,7 +117,7 @@ function BorrowActions({
                     onClick={() =>
                       setCurrentLeverage(i > maxLoop ? maxLoop + 1 : i + 1)
                     }
-                    style={{ left: `${(i / 10) * 100}%` }}
+                    style={{ left: `${(i / 9) * 100}%` }}
                   >
                     {label}
                   </span>
@@ -127,8 +126,8 @@ function BorrowActions({
 
               <Range
                 currentValue={currentLeverage - 1}
-                max={10}
-                min={0}
+                max={9}
+                min={1}
                 setCurrentValue={(val: number) =>
                   setCurrentLeverage(val > maxLoop ? maxLoop + 1 : val + 1)
                 }
@@ -137,7 +136,6 @@ function BorrowActions({
 
               <div className="flex justify-between pt-2 text-white/50 text-xs">
                 <span>{'<'} Repay</span>
-
                 <span>Borrow {'>'}</span>
               </div>
             </div>
