@@ -2,6 +2,7 @@ import {
   useState,
   useMemo,
   useRef,
+  useEffect,
   type SetStateAction,
   type Dispatch
 } from 'react';
@@ -16,6 +17,7 @@ import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
 import { Input } from '@ui/components/ui/input';
 
+import { PrecisionSlider } from './PrecisionSlider';
 import TokenSelector from './stake/TokenSelector';
 
 import { icErc20Abi } from '@ionicprotocol/sdk';
@@ -40,6 +42,9 @@ interface IMaxDeposit {
   useUnderlyingBalance?: boolean;
   footerText?: string;
   decimals?: number;
+  // Added slider props
+  useSlider?: boolean;
+  sliderStep?: number;
 }
 
 function MaxDeposit({
@@ -56,9 +61,13 @@ function MaxDeposit({
   setMaxTokenForUtilization,
   useUnderlyingBalance = false,
   footerText,
-  decimals: propDecimals
+  decimals: propDecimals,
+  // Added slider props with defaults
+  useSlider = false,
+  sliderStep = 1
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
+  const [utilizationPercentage, setUtilizationPercentage] = useState(0);
   const { address } = useAccount();
 
   // For regular token balance
@@ -120,6 +129,15 @@ function MaxDeposit({
     setMaxTokenForUtilization
   ]);
 
+  // Added effect to update utilization percentage
+  useEffect(() => {
+    if (bal && amount) {
+      const percentage =
+        (Number(amount) / Number(formatUnits(bal.value, bal.decimals))) * 100;
+      setUtilizationPercentage(percentage);
+    }
+  }, [amount, bal]);
+
   function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
     if (
       bal &&
@@ -138,6 +156,14 @@ function MaxDeposit({
       value: bal.value,
       decimals: bal.decimals
     });
+  }
+
+  // Added slider handler
+  function handleSliderChange(value: number) {
+    if (!handleInput || !bal) return;
+    const maxValue = Number(formatUnits(bal.value, bal.decimals));
+    const newAmount = (value / 100) * maxValue;
+    handleInput(newAmount.toString());
   }
 
   const newRef = useRef<HTMLDivElement>(null);
@@ -235,6 +261,39 @@ function MaxDeposit({
             )}
           </div>
         </div>
+        {useSlider && (
+          <div className="mt-4 space-y-2">
+            <PrecisionSlider
+              value={utilizationPercentage}
+              onChange={handleSliderChange}
+              max={100}
+              min={0}
+              step={sliderStep}
+            />
+            <div className="w-full flex justify-between text-xs text-white/60">
+              <span
+                className={utilizationPercentage >= 25 ? 'text-accent' : ''}
+              >
+                25%
+              </span>
+              <span
+                className={utilizationPercentage >= 50 ? 'text-accent' : ''}
+              >
+                50%
+              </span>
+              <span
+                className={utilizationPercentage >= 75 ? 'text-accent' : ''}
+              >
+                75%
+              </span>
+              <span
+                className={utilizationPercentage >= 100 ? 'text-accent' : ''}
+              >
+                100%
+              </span>
+            </div>
+          </div>
+        )}
         {footerText && (
           <div className="flex w-full mt-2 items-center justify-between text-[11px] text-white/40">
             <span>{footerText}</span>

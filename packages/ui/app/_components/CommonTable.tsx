@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
+import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 
 import ResultHandler from './ResultHandler';
 
@@ -45,6 +46,11 @@ export const sortingFunctions = {
 };
 
 type SortingType = keyof typeof sortingFunctions;
+
+export interface MarketCellProps {
+  row: Row<any>;
+  getValue: () => any;
+}
 
 export type EnhancedColumnDef<T> = Omit<
   ColumnDef<T, unknown>,

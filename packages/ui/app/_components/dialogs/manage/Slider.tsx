@@ -58,7 +58,7 @@ const SliderComponent = ({
         />
         <div className={`w-full absolute bg-graylite h-1 top-0 z-10`} />
         <div
-          className={`h-4 w-4 ${getColor()} rounded-full z-20 absolute -top-1.5 -translate-x-1/2`}
+          className={`h-4 w-4 ${getColor()} rounded-full z-20 absolute -top-1.5 -translate-x-1/4`}
           style={{ left: `${currentUtilizationPercentage}%` }}
         />
 
