@@ -107,7 +107,7 @@ const SupplyTab = ({
         handleUtilization={handleUtilization}
       />
 
-      <div className="grid grid-cols-2 gap-x-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">
         <div className="space-y-4 content-center">
           <div className="space-y-4">
             <div className="flex justify-between text-xs text-gray-400 uppercase">
