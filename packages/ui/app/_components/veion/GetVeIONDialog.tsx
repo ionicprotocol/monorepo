@@ -20,9 +20,9 @@ import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
+import MaxDeposit from '../MaxDeposit';
 import NetworkDropdown from '../NetworkDropdown';
 import { usePrecisionSlider } from '../PrecisionSlider';
-import MaxDeposit from '../stake/MaxDeposit';
 
 interface GetVeIONDialogProps {
   isOpen: boolean;
@@ -101,8 +101,7 @@ export default function GetVeIONDialog({
                 headerText="LOCK AMOUNT"
                 max={veIonBalance}
                 amount={amount}
-                tokenName="ion"
-                pairedToken="weth"
+                tokenName="ion/weth"
                 token={getToken(currentChain)}
                 handleInput={(val?: string) => setAmount(val || '0')}
                 chain={currentChain}

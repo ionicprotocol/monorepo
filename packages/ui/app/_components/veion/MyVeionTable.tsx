@@ -12,7 +12,7 @@ import CommonTable from '../CommonTable';
 import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { EnhancedColumnDef, MarketCellProps } from '../CommonTable';
 
 type BaseVeionData = {
   id: string;
@@ -62,12 +62,13 @@ function MyVeionTable({ data }: MyVeionTableProps) {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const columns: ColumnDef<MyVeionData>[] = [
+  const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
-      accessorKey: 'id',
-      header: 'ID',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+      id: 'id',
+      header: <div className="pl-6">ID</div>,
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
+        <div className="flex items-center gap-2 pl-6">
           <div
             className="w-2 h-2 rounded-full"
             style={{ backgroundColor: getRandomColor() }}
@@ -79,9 +80,10 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       )
     },
     {
-      accessorKey: 'tokensLocked',
+      id: 'tokensLocked',
       header: 'TOKENS LOCKED',
-      cell: ({ row }) => (
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <div className="flex items-center gap-3">
           <TokenPair
             token1="ion"
@@ -100,10 +102,12 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       )
     },
     {
-      accessorKey: 'lockedBLP.amount',
+      id: 'lockedBLPAmount',
+      accessorFn: (row: MyVeionData) => row.lockedBLP.amount,
       header: 'LP',
-      cell: ({ row }) => (
-        <div className="flex flex-col">
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
+        <div className="flex flex-col items-start">
           <div className="text-xs font-semibold text-white/80">
             {row.original.lockedBLP.amount}
           </div>
@@ -112,16 +116,18 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       )
     },
     {
-      accessorKey: 'lockExpires.date',
+      id: 'lockExpiresDate',
+      accessorFn: (row: MyVeionData) => row.lockExpires.date,
       header: 'LOCK EXPIRES',
-      cell: ({ row }) => (
+      cell: ({ row }: MarketCellProps) => (
         <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
       )
     },
     {
-      accessorKey: 'votingPower',
+      id: 'votingPower',
       header: 'VOTING POWER',
-      cell: ({ row }) => (
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
             {row.getValue('votingPower')}
@@ -134,10 +140,11 @@ function MyVeionTable({ data }: MyVeionTableProps) {
     },
     {
       id: 'actions',
-      cell: ({ row }) => {
+      header: 'ACTIONS',
+      cell: ({ row }: MarketCellProps) => {
         const data = row.original;
         return data.enableClaim ? (
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pr-6">
             <TableActionButton onClick={() => setIsClaimOpen(true)}>
               Claim LP
             </TableActionButton>
@@ -146,7 +153,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
             </TableActionButton>
           </div>
         ) : (
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pr-6">
             <Link
               href={`/veion/governance/vote?chain=${currentChain}&id=${data.id}`}
             >
@@ -190,7 +197,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
 
       <CommonTable
         data={data}
-        columns={columns}
+        columns={myVeionColumns}
         isLoading={false}
       />
     </div>

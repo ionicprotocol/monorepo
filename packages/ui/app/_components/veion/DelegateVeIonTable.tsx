@@ -9,7 +9,7 @@ import CommonTable from '../CommonTable';
 import { TableActionButton } from '../TableActionButton';
 import TokenPair from '../TokenPair';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { EnhancedColumnDef, MarketCellProps } from '../CommonTable';
 
 // Types
 type BaseVeionData = {
@@ -99,12 +99,14 @@ function DelegateVeionTable({
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const columns: ColumnDef<DelegateVeionData>[] = [
+  // Delegate VeION Table Configuration
+  const delegateVeionColumns: EnhancedColumnDef<DelegateVeionData>[] = [
     {
-      accessorKey: 'id',
-      header: 'ID',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
+      id: 'id',
+      header: <div className="pl-6">ID</div>,
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
+        <div className="flex items-center gap-2 pl-6">
           <div
             className="w-2 h-2 rounded-full"
             style={{ backgroundColor: getRandomColor() }}
@@ -116,9 +118,10 @@ function DelegateVeionTable({
       )
     },
     {
-      accessorKey: 'tokensLocked',
+      id: 'tokensLocked',
       header: 'TOKENS LOCKED',
-      cell: ({ row }) => (
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <div className="flex items-center gap-3">
           <TokenPair
             token1="ion"
@@ -137,10 +140,12 @@ function DelegateVeionTable({
       )
     },
     {
-      accessorKey: 'lockedBLP.amount',
+      id: 'lockedBLPAmount',
+      accessorFn: (row: DelegateVeionData) => row.lockedBLP.amount,
       header: 'LP',
-      cell: ({ row }) => (
-        <div className="flex flex-col">
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
+        <div className="flex flex-col items-start">
           <div className="text-xs font-semibold text-white/80">
             {row.original.lockedBLP.amount}
           </div>
@@ -149,16 +154,18 @@ function DelegateVeionTable({
       )
     },
     {
-      accessorKey: 'lockExpires.date',
+      id: 'lockExpiresDate',
+      accessorFn: (row: DelegateVeionData) => row.lockExpires.date,
       header: 'LOCK EXPIRES',
-      cell: ({ row }) => (
+      cell: ({ row }: MarketCellProps) => (
         <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
       )
     },
     {
-      accessorKey: 'votingPower',
+      id: 'votingPower',
       header: 'VOTING POWER',
-      cell: ({ row }) => (
+      sortingFn: 'numerical',
+      cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
             {row.getValue('votingPower')}
@@ -170,22 +177,24 @@ function DelegateVeionTable({
       )
     },
     {
-      accessorKey: 'delegatedTo',
+      id: 'delegatedTo',
       header: 'DELEGATED TO',
-      cell: ({ row }) => (
-        <div className="text-xs font-semibold text-white/80">
+      sortingFn: 'alphabetical',
+      cell: ({ row }: MarketCellProps) => (
+        <div className="text-xs font-semibold text-white/80 pl-6">
           {row.getValue('delegatedTo') || '-'}
         </div>
       )
     },
     {
       id: 'actions',
-      cell: ({ row }) => {
+      header: 'ACTIONS',
+      cell: ({ row }: MarketCellProps) => {
         const data = row.original;
         const isProcessing = processingId === data.id;
 
         return (
-          <div className="flex justify-end">
+          <div className="flex justify-end pr-6">
             {data.readyToDelegate ? (
               <TableActionButton
                 width="100px"
@@ -213,7 +222,7 @@ function DelegateVeionTable({
     <div>
       <CommonTable
         data={data}
-        columns={columns}
+        columns={delegateVeionColumns}
         isLoading={false}
       />
     </div>

@@ -17,7 +17,7 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
 import BuyIonSection from './BuyIonSection';
-import MaxDeposit from '../stake/MaxDeposit';
+import MaxDeposit from '../MaxDeposit';
 
 const Widget = dynamic(() => import('../stake/Widget'), {
   ssr: false
@@ -112,7 +112,6 @@ export default function AddLiquidityDialog({
               handleInput={handleIonInput}
               chain={currentChain}
               useSlider
-              size={16}
             />
 
             <MaxDeposit
@@ -122,7 +121,6 @@ export default function AddLiquidityDialog({
               tokenName="eth"
               chain={currentChain}
               useSlider
-              size={16}
             />
 
             <Button

@@ -22,7 +22,7 @@ import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { EnhancedColumnDef } from '../CommonTable';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -84,10 +84,10 @@ function EmissionsManagement({
     }
   };
 
-  const columns = useMemo<ColumnDef<VoteMarket>[]>(
+  const columns = useMemo<EnhancedColumnDef<VoteMarket>[]>(
     () => [
       {
-        accessorKey: 'asset',
+        id: 'asset',
         header: 'ASSET',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ function EmissionsManagement({
         )
       },
       {
-        accessorKey: 'totalVotes',
+        id: 'totalVotes',
         header: 'TOTAL VOTES',
         cell: ({ row }) => {
           const totalVotes = row.original.totalVotes;
@@ -122,7 +122,7 @@ function EmissionsManagement({
         }
       },
       {
-        accessorKey: 'myVotes',
+        id: 'myVotes',
         header: 'MY VOTES',
         cell: ({ row }) => {
           const myVotes = row.original.myVotes;
@@ -139,7 +139,7 @@ function EmissionsManagement({
         }
       },
       {
-        accessorKey: 'supply',
+        id: 'supply',
         header: 'SUPPLY %',
         cell: ({ row }) => (
           <VoteInput
@@ -150,7 +150,7 @@ function EmissionsManagement({
         )
       },
       {
-        accessorKey: 'borrow',
+        id: 'borrow',
         header: 'BORROW %',
         cell: ({ row }) => (
           <VoteInput
@@ -161,7 +161,7 @@ function EmissionsManagement({
         )
       },
       {
-        accessorKey: 'autoVote',
+        id: 'autoVote',
         header: 'AUTO VOTE',
         cell: ({ row }) => (
           <Checkbox

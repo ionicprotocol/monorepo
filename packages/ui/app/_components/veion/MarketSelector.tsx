@@ -27,8 +27,8 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { getToken } from '@ui/utils/getStakingTokens';
 
+import MaxDeposit from '../MaxDeposit';
 import NetworkDropdown from '../NetworkDropdown';
-import MaxDeposit from '../stake/MaxDeposit';
 
 const sides = [
   { id: 'lend', name: 'Lend' },
@@ -148,8 +148,7 @@ const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
           headerText="LOCK AMOUNT"
           max={veIonBalance}
           amount={amount}
-          tokenName="ion"
-          pairedToken="weth"
+          tokenName="ion/weth"
           token={getToken(currentChain)}
           handleInput={(val?: string) => setAmount(val || '0')}
           chain={currentChain}

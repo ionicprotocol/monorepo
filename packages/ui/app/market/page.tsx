@@ -27,18 +27,15 @@ import StakingTile from '../_components/markets/StakingTile';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
 
-import type { EnhancedColumnDef } from '../_components/CommonTable';
-import type { Row } from '@tanstack/react-table';
+import type {
+  EnhancedColumnDef,
+  MarketCellProps
+} from '../_components/CommonTable';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
   { ssr: false }
 );
-
-interface MarketCellProps {
-  row: Row<MarketRowData>;
-  getValue: () => any;
-}
 
 export default function Market() {
   const searchParams = useSearchParams();

@@ -8,8 +8,8 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
+import MaxDeposit from '../../MaxDeposit';
 import { usePrecisionSlider, PrecisionSlider } from '../../PrecisionSlider';
-import MaxDeposit from '../../stake/MaxDeposit';
 
 type IncreaseLockedAmountProps = {
   chain: string;

@@ -13,8 +13,8 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
+import MaxDeposit from '../MaxDeposit';
 import NetworkDropdown from '../NetworkDropdown';
-import MaxDeposit from '../stake/MaxDeposit';
 
 interface MigrateIonDialogProps {
   isOpen: boolean;
@@ -79,8 +79,7 @@ export default function MigrateIonDialog({
           <MaxDeposit
             amount={amount}
             handleInput={(val?: string) => setAmount(val || '0')}
-            tokenName="ion"
-            pairedToken="weth"
+            tokenName="ion/weth"
             chain={currentChain}
             max={veIonBalance}
             headerText="Available LP"
