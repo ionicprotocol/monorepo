@@ -107,24 +107,20 @@ export default function Stake() {
     const isChainChange = previousChain.current !== currentChain;
     previousChain.current = currentChain;
 
-    const availableTokens = tokenArrOfChain[+currentChain] || ['eth', 'weth'];
     const currentToken = params.get('token');
 
-    if (
-      (!currentToken ||
-        (isChainChange && !availableTokens.includes(currentToken))) &&
-      currentChain
-    ) {
+    if ((!currentToken && currentChain) || (isChainChange && currentChain)) {
       const defaultToken = currentChain === String(mode.id) ? 'mode' : 'eth';
-      params.set('token', defaultToken);
-      shouldUpdate = true;
+
+      if (currentToken !== defaultToken) {
+        params.set('token', defaultToken);
+        shouldUpdate = true;
+      }
     }
 
     if (shouldUpdate) {
       router.push(`?${params.toString()}`, { scroll: false });
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId, querychain, router, searchParams]);
 
   const { address, isConnected } = useAccount();
@@ -794,14 +790,9 @@ export default function Stake() {
               })}{' '}
               ION/{selectedtoken.toUpperCase()}
             </h1>
-            {/* tu */}
             <h1 className="mt-1">
-              You will {step3Toggle === 'Unstake' && 'not'} get{' '}
-              {+chain === mode.id || +chain === optimism.id
-                ? '$VELO'
-                : +chain === base.id
-                  ? '$AERO'
-                  : ''}
+              You will {step3Toggle === 'Unstake' && 'not'} receive{' '}
+              {+chain === base.id ? 'AERO' : 'xVELO'}
             </h1>
 
             {/* breakdowns */}
