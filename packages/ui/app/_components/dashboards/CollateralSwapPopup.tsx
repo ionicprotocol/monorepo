@@ -30,10 +30,10 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/app/_components/popup/Slider';
+import SliderComponent from '@ui/app/_components/dialogs/manage/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '@ui/app/_components/popup/TransactionStepsHandler';
+} from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import {
   donutoptions,
   getDonutData
@@ -168,9 +168,7 @@ export default function CollateralSwapPopup({
   };
 
   const resetTransactionSteps = () => {
-    // refetchUsedQueries();
     upsertTransactionStep(undefined);
-    // initiateCloseAnimation();
   };
   const { isConnected } = useAccount();
 
