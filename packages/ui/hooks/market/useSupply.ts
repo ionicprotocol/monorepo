@@ -40,8 +40,7 @@ export const useSupply = ({
   const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
 
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
+  const { transactionSteps } = useTransactionSteps();
 
   const amountAsBInt = useMemo(
     () =>
