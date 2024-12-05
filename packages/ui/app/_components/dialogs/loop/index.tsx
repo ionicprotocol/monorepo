@@ -125,7 +125,7 @@ export default function Loop({
         : undefined,
       chainId
     );
-  const [currentLeverage, setCurrentLeverage] = useState<number>(1);
+  const [currentLeverage, setCurrentLeverage] = useState<number>(2);
   const { data: borrowApr } = useGetPositionBorrowApr({
     amount: amountAsBInt,
     borrowMarket: selectedBorrowAsset?.cToken ?? ('' as Address),

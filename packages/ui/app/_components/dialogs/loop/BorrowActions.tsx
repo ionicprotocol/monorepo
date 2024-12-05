@@ -4,10 +4,10 @@ import React from 'react';
 import { type Address } from 'viem';
 import { useChainId } from 'wagmi';
 
+import { Slider } from '@ui/components/ui/slider';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import Range from '../../Range';
 import ResultHandler from '../../ResultHandler';
 import Amount from '../manage/Amount';
 
@@ -49,7 +49,13 @@ function BorrowActions({
     chainId,
     true
   );
-  const maxLoop = 2;
+  const maxAllowedLoop = 3;
+
+  const marks = Array.from({ length: 8 }, (_, i) => ({
+    value: i + 2,
+    label: `${i + 2}x`,
+    isDisabled: i + 2 > maxAllowedLoop
+  }));
 
   return (
     <ResultHandler isLoading={isLoadingMarketData}>
@@ -87,54 +93,34 @@ function BorrowActions({
             <div className="mr-6 text-sm">
               LOOP
               <div className="text-lg font-bold">
-                {(currentLeverage - 1).toFixed(1)}
+                {currentLeverage.toFixed(1)}x
               </div>
             </div>
 
-            <div className="w-full">
-              <div className="relative h-[20px] mb-2 text-xs md:text-sm">
-                {[
-                  '1x',
-                  '2x',
-                  '3x',
-                  '4x',
-                  '5x',
-                  '6x',
-                  '7x',
-                  '8x',
-                  '9x',
-                  '10x'
-                ].map((label, i) => (
-                  <span
-                    className={`absolute top-0 cursor-pointer translate-x-[-50%] ${
-                      currentPositionLeverage &&
-                      currentPositionLeverage === i + 1 &&
-                      'text-lime'
-                    } ${i > maxLoop && 'text-white/20'} ${
-                      currentLeverage === i + 1 && '!text-accent'
-                    } `}
-                    key={`label-${label}`}
-                    onClick={() =>
-                      setCurrentLeverage(i > maxLoop ? maxLoop + 1 : i + 1)
-                    }
-                    style={{ left: `${(i / 9) * 100}%` }}
-                  >
-                    {label}
-                  </span>
-                ))}
-              </div>
-
-              <Range
-                currentValue={currentLeverage - 1}
+            <div className="w-full space-y-4">
+              <Slider
+                defaultValue={[2]}
                 max={9}
-                min={1}
-                setCurrentValue={(val: number) =>
-                  setCurrentLeverage(val > maxLoop ? maxLoop + 1 : val + 1)
-                }
+                min={2}
                 step={1}
+                marks={marks}
+                value={[currentLeverage]}
+                currentPosition={currentPositionLeverage}
+                onMarkClick={(value) => {
+                  if (value >= 2 && value <= maxAllowedLoop) {
+                    setCurrentLeverage(value);
+                  }
+                }}
+                onValueChange={(value) => {
+                  const newValue = value[0];
+                  if (newValue >= 2 && newValue <= maxAllowedLoop) {
+                    setCurrentLeverage(newValue);
+                  }
+                }}
+                className="w-full"
               />
 
-              <div className="flex justify-between pt-2 text-white/50 text-xs">
+              <div className="flex justify-between text-white/50 text-xs">
                 <span>{'<'} Repay</span>
                 <span>Borrow {'>'}</span>
               </div>
