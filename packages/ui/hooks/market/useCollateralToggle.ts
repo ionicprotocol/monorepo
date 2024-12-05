@@ -4,6 +4,10 @@ import { toast } from 'react-hot-toast';
 
 import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
+import {
+  TransactionType,
+  useManageDialogContext
+} from '@ui/context/ManageDialogContext';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
@@ -26,8 +30,8 @@ export const useCollateralToggle = ({
   );
 
   const { currentSdk } = useMultiIonic();
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
+  const { addStepsForType, upsertStepForType } = useManageDialogContext();
+  const { transactionSteps } = useTransactionSteps();
 
   const handleCollateralToggle = async () => {
     if (!transactionSteps.length) {
@@ -37,122 +41,104 @@ export const useCollateralToggle = ({
         try {
           let tx;
 
-          switch (enableCollateral) {
-            case true: {
-              const comptrollerContract = currentSdk.createComptroller(
-                comptrollerAddress,
-                currentSdk.publicClient
-              );
+          if (enableCollateral) {
+            const comptrollerContract = currentSdk.createComptroller(
+              comptrollerAddress,
+              currentSdk.publicClient
+            );
 
-              const exitCode = (
-                await comptrollerContract.simulate.exitMarket(
-                  [selectedMarketData.cToken],
-                  { account: currentSdk.walletClient!.account!.address }
-                )
-              ).result;
-
-              if (exitCode !== 0n) {
-                toast.error(errorCodeToMessage(Number(exitCode)));
-                return;
-              }
-
-              addStepsForAction([
-                {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
-                  success: false
-                }
-              ]);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.DISABLE,
-                  success: false
-                }
-              });
-
-              tx = await comptrollerContract.write.exitMarket(
+            const exitCode = (
+              await comptrollerContract.simulate.exitMarket(
                 [selectedMarketData.cToken],
-                {
-                  account: currentSdk.walletClient!.account!.address,
-                  chain: currentSdk.publicClient.chain
-                }
-              );
+                { account: currentSdk.walletClient!.account!.address }
+              )
+            ).result;
 
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  txHash: tx
-                }
-              });
-
-              await currentSdk.publicClient.waitForTransactionReceipt({
-                hash: tx
-              });
-
-              setEnableCollateral(false);
-
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  success: true
-                }
-              });
-
-              break;
+            if (exitCode !== 0n) {
+              toast.error(errorCodeToMessage(Number(exitCode)));
+              return;
             }
 
-            case false: {
-              addStepsForAction([
-                {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
-                  success: false
-                }
-              ]);
+            addStepsForType(TransactionType.COLLATERAL, [
+              {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                success: false
+              }
+            ]);
 
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  error: false,
-                  message: INFO_MESSAGES.COLLATERAL.ENABLE,
-                  success: false
-                }
-              });
+            tx = await comptrollerContract.write.exitMarket(
+              [selectedMarketData.cToken],
+              {
+                account: currentSdk.walletClient!.account!.address,
+                chain: currentSdk.publicClient.chain
+              }
+            );
 
-              tx = await currentSdk.enterMarkets(
-                selectedMarketData.cToken,
-                comptrollerAddress
-              );
+            upsertStepForType(TransactionType.COLLATERAL, {
+              index: currentTransactionStep,
+              transactionStep: {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                txHash: tx,
+                success: false
+              }
+            });
 
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  txHash: tx
-                }
-              });
+            await currentSdk.publicClient.waitForTransactionReceipt({
+              hash: tx
+            });
 
-              await currentSdk.publicClient.waitForTransactionReceipt({
-                hash: tx
-              });
+            setEnableCollateral(false);
 
-              setEnableCollateral(true);
+            upsertStepForType(TransactionType.COLLATERAL, {
+              index: currentTransactionStep,
+              transactionStep: {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.DISABLE,
+                txHash: tx,
+                success: true
+              }
+            });
+          } else {
+            addStepsForType(TransactionType.COLLATERAL, [
+              {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                success: false
+              }
+            ]);
 
-              upsertTransactionStep({
-                index: currentTransactionStep,
-                transactionStep: {
-                  ...transactionSteps[currentTransactionStep],
-                  success: true
-                }
-              });
+            tx = await currentSdk.enterMarkets(
+              selectedMarketData.cToken,
+              comptrollerAddress
+            );
 
-              break;
-            }
+            upsertStepForType(TransactionType.COLLATERAL, {
+              index: currentTransactionStep,
+              transactionStep: {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                txHash: tx,
+                success: false
+              }
+            });
+
+            await currentSdk.publicClient.waitForTransactionReceipt({
+              hash: tx
+            });
+
+            setEnableCollateral(true);
+
+            upsertStepForType(TransactionType.COLLATERAL, {
+              index: currentTransactionStep,
+              transactionStep: {
+                error: false,
+                message: INFO_MESSAGES.COLLATERAL.ENABLE,
+                txHash: tx,
+                success: true
+              }
+            });
           }
 
           await onSuccess();
@@ -160,13 +146,22 @@ export const useCollateralToggle = ({
         } catch (error) {
           console.error(error);
 
-          upsertTransactionStep({
+          upsertStepForType(TransactionType.COLLATERAL, {
             index: currentTransactionStep,
             transactionStep: {
-              ...transactionSteps[currentTransactionStep],
-              error: true
+              error: true,
+              message: enableCollateral
+                ? INFO_MESSAGES.COLLATERAL.DISABLE
+                : INFO_MESSAGES.COLLATERAL.ENABLE,
+              success: false
             }
           });
+
+          toast.error(
+            `Error while ${
+              enableCollateral ? 'disabling' : 'enabling'
+            } collateral!`
+          );
         }
       }
 
