@@ -8,6 +8,13 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --gasbot-primary: #38fe89;
+  --border-mode-color: #dffd04;
+  --border-lime-color: #dffe00;
+  --border-base-color: rgb(37 99 235);
+  --border-optimism-color: #df1515;
+  --border-bob-color: #e56016;
+  --border-fraxtal-color: #504F57;
+  --border-lisk-color: #4071f4;
 }
 
 .popover-hint {

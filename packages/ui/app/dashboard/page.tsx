@@ -33,12 +33,12 @@ import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
 import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
+import Loop from '../_components/dialogs/loop';
+import ManageDialog from '../_components/dialogs/manage';
 import NetworkSelector from '../_components/markets/NetworkSelector';
-import Loop from '../_components/popup/Loop';
-import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { PopupMode } from '../_components/popup/page';
+import type { ActiveTab } from '../_components/dialogs/manage';
 
 import type {
   FlywheelReward,
@@ -58,7 +58,8 @@ export default function Dashboard() {
   const chain = querychain ? querychain : 34443;
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
-  const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [activeTab, setActiveTab] = useState<ActiveTab>();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
   const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
     useState<MarketData>();
   const walletChain = useChainId();
@@ -173,7 +174,7 @@ export default function Dashboard() {
   );
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
-  const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
     +chain
@@ -238,7 +239,6 @@ export default function Dashboard() {
     toggle: swapToggle
   } = useOutsideClick();
 
-  // console.log(suppliedAssets);
   return (
     <>
       {swapOpen && marketData?.comptroller && (
@@ -554,7 +554,8 @@ export default function Dashboard() {
                         })) as FlywheelReward[]) ?? []
                       }
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setActiveTab={setActiveTab}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
                       toggler={async () => {
@@ -656,7 +657,8 @@ export default function Dashboard() {
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
+                      setActiveTab={setActiveTab}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
                       utilization="0.00%"
@@ -718,7 +720,7 @@ export default function Dashboard() {
                         usdPrice={usdPrice ?? undefined}
                         setSelectedLoopBorrowData={setSelectedLoopBorrowData}
                         setSelectedSymbol={setSelectedSymbol}
-                        setLoopOpen={setLoopOpen}
+                        setLoopOpen={setIsLoopDialogOpen}
                         chain={+chain}
                       />
                     );
@@ -737,21 +739,20 @@ export default function Dashboard() {
       {selectedMarketData && (
         <Loop
           borrowableAssets={loopData ? loopData[selectedMarketData.cToken] : []}
-          closeLoop={() => {
-            setLoopOpen(false);
-          }}
+          isOpen={isLoopDialogOpen}
+          setIsOpen={setIsLoopDialogOpen}
           comptrollerAddress={marketData?.comptroller ?? ('' as Address)}
           currentBorrowAsset={selectedLoopBorrowData}
-          isOpen={loopOpen}
           selectedCollateralAsset={selectedMarketData}
         />
       )}
 
-      {popupMode && selectedMarketData && marketData && (
-        <Popup
-          closePopup={() => setPopupMode(undefined)}
+      {selectedMarketData && marketData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={marketData.comptroller}
-          mode={popupMode}
+          activeTab={activeTab}
           selectedMarketData={selectedMarketData}
         />
       )}

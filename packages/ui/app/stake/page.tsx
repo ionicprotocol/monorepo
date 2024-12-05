@@ -38,8 +38,8 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import SliderComponent from '../_components/dialogs/manage/Slider';
 import MaxDeposit from '../_components/MaxDeposit';
-import SliderComponent from '../_components/popup/Slider';
 import ResultHandler from '../_components/ResultHandler';
 import ClaimRewards from '../_components/stake/ClaimRewards';
 import RewardDisplay from '../_components/stake/RewardDisplay';
