@@ -6,12 +6,11 @@ import { useStore } from '@ui/store/Store';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import WrapEthSwaps from './WrapEthSwaps';
-import { PopupMode } from '../popup/page';
 import ResultHandler from '../ResultHandler';
 
 interface Iprop {
   selectedChain: number;
-  setPopupMode: Dispatch<SetStateAction<PopupMode | undefined>>;
+  setIsManageDialogOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedSymbol: Dispatch<SetStateAction<string | undefined>>;
   isLoadingPoolData: boolean;
   dropdownSelectedChain: string;
@@ -23,7 +22,7 @@ interface Iprop {
 
 export default function FeaturedMarketTile({
   selectedChain,
-  setPopupMode,
+  setIsManageDialogOpen,
   setSelectedSymbol,
   isLoadingPoolData = true,
   dropdownSelectedChain,
@@ -32,17 +31,6 @@ export default function FeaturedMarketTile({
   setWrapWidgetOpen,
   wrapWidgetOpen
 }: Iprop) {
-  // const {
-  //   asset,
-  //   borrowAPR,
-  //   rewardsAPR,
-  //   dropdownSelectedChain,
-  //   selectedPoolId,
-  //   cToken,
-  //   pool,
-  //   rewards,
-  //   loopPossible
-  // } = useStore((state) => state.featuredBorrow);
   const featuredSupply = useStore((state) => state.featuredSupply);
   const featuredSupply2 = useStore((state) => state.featuredSupply2);
 
@@ -88,15 +76,6 @@ export default function FeaturedMarketTile({
                   }) ?? '-'}
                   %
                 </span>
-                {/* <SupplyPopover
-                  asset={featuredSupply.asset}
-                  supplyAPR={featuredSupply.supplyAPR}
-                  rewards={featuredSupply.rewards}
-                  dropdownSelectedChain={featuredSupply.dropdownSelectedChain}
-                  selectedPoolId={featuredSupply.selectedPoolId}
-                  cToken={featuredSupply.cToken}
-                  pool={featuredSupply.pool}
-                /> */}
               </div>
             </div>
             <button
@@ -108,7 +87,7 @@ export default function FeaturedMarketTile({
                 );
                 if (result) {
                   setSelectedSymbol(featuredSupply.asset);
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
                 }
               }}
             >
@@ -144,15 +123,6 @@ export default function FeaturedMarketTile({
                   }) ?? '-'}
                   %
                 </span>
-                {/* <SupplyPopover
-                  asset={featuredSupply2.asset}
-                  supplyAPR={featuredSupply2.supplyAPR}
-                  rewards={featuredSupply2.rewards}
-                  dropdownSelectedChain={featuredSupply2.dropdownSelectedChain}
-                  selectedPoolId={featuredSupply2.selectedPoolId}
-                  cToken={featuredSupply2.cToken}
-                  pool={featuredSupply2.pool}
-                /> */}
               </div>
             </div>
             <button
@@ -164,27 +134,12 @@ export default function FeaturedMarketTile({
                 );
                 if (result) {
                   setSelectedSymbol(featuredSupply2.asset);
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
                 }
               }}
             >
               Supply / Withdraw
             </button>
-            {/* <button
-            className={`rounded-md ${pools[dropdownSelectedChain].bg} ${pools[dropdownSelectedChain].text} text-xs w-[80%] col-span-2  py-2  lg:py-1.5 text-center px-1  uppercase truncate flex items-center justify-center mx-auto`}
-            onClick={async () => {
-              const result = await handleSwitchOriginChain(
-                dropdownSelectedChain,
-                selectedChain
-              );
-              if (result) {
-                setSelectedSymbol(asset);
-                setPopupMode(PopupMode.BORROW);
-              }
-            }}
-          >
-            Borrow / Repay {loopPossible && '/ Loop'}
-          </button> */}
           </div>
         )}
       </ResultHandler>

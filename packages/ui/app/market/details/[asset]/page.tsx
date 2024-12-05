@@ -38,8 +38,6 @@ ChartJS.register(
 //-------------------------components-----------
 
 import {
-  chartoptions,
-  getChartData,
   donutoptions,
   getDonutData,
   chartoptions2
@@ -53,9 +51,9 @@ import {
 // ];
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
-import Popup, { PopupMode } from '@ui/app/_components/popup/page';
+
+import Swap from '@ui/app/_components/dialogs/manage/Swap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import Swap from '@ui/app/_components/popup/Swap';
 import { type MarketData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
@@ -65,6 +63,7 @@ import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAs
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
+import ManageDialog from '@ui/app/_components/dialogs/manage';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
 import ChartWithDateRange from '@ui/app/_components/markets/ChartWithDateRange';
 import ResultHandler from '@ui/app/_components/ResultHandler';
@@ -76,6 +75,7 @@ interface IGraph {
   supplyAtY: number[];
   valAtX: string[];
 }
+type ActiveTab = 'borrow' | 'repay' | 'supply' | 'withdraw';
 
 const supabase = createClient(
   'https://uoagtjstsdrjypxlkuzr.supabase.co/',
@@ -90,6 +90,8 @@ const Asset = () => {
   });
   const [info, setInfo] = useState<number>(INFO.BORROW);
   const searchParams = useSearchParams();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>();
 
   //URL passed Data ----------------------------
   const dropdownSelectedChain = searchParams.get('dropdownSelectedChain');
@@ -103,7 +105,6 @@ const Asset = () => {
   const availableAPR = searchParams.get('supplyAPR');
   //--------------------------------------------------------
 
-  const [popupMode, setPopupMode] = useState<PopupMode>();
   const [swapOpen, setSwapOpen] = useState<boolean>(false);
   // const [selectedPool, setSelectedPool] = useState(pool ? pool : pools[0].id);
   const [selectedMarketData, setSelectedMarketData] = useState<
@@ -529,7 +530,8 @@ const Asset = () => {
                   Number(selectedChain)
                 );
                 if (result) {
-                  setPopupMode(PopupMode.SUPPLY);
+                  setIsManageDialogOpen(true);
+                  setActiveTab('supply');
                 }
               }}
             >
@@ -571,7 +573,8 @@ const Asset = () => {
                   Number(selectedChain)
                 );
                 if (result) {
-                  setPopupMode(PopupMode.BORROW);
+                  setIsManageDialogOpen(true);
+                  setActiveTab('borrow');
                 }
               }}
             >
@@ -661,13 +664,13 @@ const Asset = () => {
           </ResultHandler>
         </div>
       </div>
-      {popupMode && selectedMarketData && poolData && (
-        <Popup
-          closePopup={() => setPopupMode(undefined)}
+      {selectedMarketData && poolData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={comptrollerAddress as Address}
-          loopMarkets={loopMarkets}
-          mode={popupMode}
           selectedMarketData={selectedMarketData}
+          activeTab={activeTab}
         />
       )}
 

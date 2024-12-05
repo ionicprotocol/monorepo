@@ -143,9 +143,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     }
   });
 
-task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provider on them")
-  .addFlag("forceUpgrade", "If the pool upgrade should be forced")
-  .setAction(async ({ forceUpgrade }, { viem, getChainId, deployments, run, getNamedAccounts }) => {
+task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provider on them").setAction(
+  async (_, { viem, deployments, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
     const walletClient = await viem.getWalletClient(deployer as Address);
@@ -197,7 +196,8 @@ task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provi
         console.error(`error while upgrading the pool`, e);
       }
     }
-  });
+  }
+);
 
 task("markets:set-ap", "Sets addresses provider on all markets").setAction(
   async ({}, { viem, getChainId, deployments, run, getNamedAccounts }) => {

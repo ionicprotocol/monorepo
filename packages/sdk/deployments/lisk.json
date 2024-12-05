@@ -71,8 +71,32 @@
     "GlobalPauser": {
       "address": "0xC3cEc17c135d3C5d6BadC284AFF08f396447DaaC"
     },
+    "IonicFlywheelDynamicRewards_ION_v3": {
+      "address": "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5"
+    },
+    "IonicFlywheelDynamicRewards_LSK_v3": {
+      "address": "0xB828A7e95ae1097E3c3d0efB3c3544Ce6bcD77A1"
+    },
     "IonicFlywheelLensRouter": {
       "address": "0x1E2812B4dEcA77B5dD7Af9f2D6ec40102bcffD02"
+    },
+    "IonicFlywheel_ION": {
+      "address": "0x523F183ECbBf9144403D937B444d8486aD752453"
+    },
+    "IonicFlywheel_ION_Implementation": {
+      "address": "0x0fd037036AaC154DC2A5b22De2F0E650A374121f"
+    },
+    "IonicFlywheel_ION_Proxy": {
+      "address": "0x523F183ECbBf9144403D937B444d8486aD752453"
+    },
+    "IonicFlywheel_LSK": {
+      "address": "0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7"
+    },
+    "IonicFlywheel_LSK_Implementation": {
+      "address": "0xD83ba0673090ba85f190e320a1C280AC816ba3aD"
+    },
+    "IonicFlywheel_LSK_Proxy": {
+      "address": "0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7"
     },
     "IonicUniV3Liquidator": {
       "address": "0x50766FD9C93e65124f0160C8f301caC6f399B572"

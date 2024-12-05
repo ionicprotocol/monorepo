@@ -8,6 +8,7 @@ import { ComptrollerFirstExtension } from "../compound/ComptrollerFirstExtension
 import { CTokenFirstExtension } from "../compound/CTokenFirstExtension.sol";
 import { Unitroller } from "../compound/Unitroller.sol";
 import { CErc20Delegate } from "../compound/CErc20Delegate.sol";
+import { CErc20Delegator } from "../compound/CErc20Delegator.sol";
 import { CErc20PluginDelegate } from "../compound/CErc20PluginDelegate.sol";
 import { CErc20PluginRewardsDelegate } from "../compound/CErc20PluginRewardsDelegate.sol";
 import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
@@ -54,8 +55,6 @@ abstract contract UpgradesBaseTest is BaseTest {
   }
 
   function _upgradeMarketWithExtension(ICErc20 market) internal {
-    address implBefore = market.implementation();
-
     // instantiate the new implementation
     CErc20Delegate newImpl;
     bytes memory becomeImplData = "";
@@ -83,6 +82,7 @@ abstract contract UpgradesBaseTest is BaseTest {
     ffd._setCErc20DelegateExtensions(address(newImpl), cErc20DelegateExtensions);
     vm.stopPrank();
 
+    vm.stopPrank();
     // upgrade to the new delegate
     vm.prank(address(ffd));
     market._setImplementationSafe(address(newImpl), becomeImplData);
