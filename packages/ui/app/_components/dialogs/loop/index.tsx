@@ -588,7 +588,7 @@ export default function Loop({
       >
         <DialogContent
           maxWidth="800px"
-          className="bg-grayUnselect"
+          className="bg-grayUnselect max-h-[90vh] overflow-y-auto"
           fullWidth
         >
           <DialogHeader>
