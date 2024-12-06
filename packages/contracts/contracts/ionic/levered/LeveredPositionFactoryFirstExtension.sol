@@ -55,9 +55,13 @@ contract LeveredPositionFactoryFirstExtension is
     return _removeClosedPosition(closedPosition, msg.sender);
   }
 
-  function closeAndRemoveUserPosition(LeveredPosition position) external onlyOwner returns (bool) {
+  function closeAndRemoveUserPosition(
+    LeveredPosition position,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) external onlyOwner returns (bool) {
     address positionOwner = position.positionOwner();
-    position.closePosition(positionOwner);
+    position.closePosition(positionOwner, aggregatorTarget, aggregatorData);
     return _removeClosedPosition(address(position), positionOwner);
   }
 
