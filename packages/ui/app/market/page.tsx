@@ -10,7 +10,8 @@ import { useChainId } from 'wagmi';
 
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import { useSupplyVaults } from '@ui/hooks/market/useSupplyVault';
+import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
+import { useSupplyVaults } from '@ui/hooks/market/useSupplyVaults';
 
 import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
@@ -19,6 +20,7 @@ import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import FilterBar from '../_components/markets/FilterBar';
 import PoolsTable from '../_components/markets/PoolsTable';
 import StakingTile from '../_components/markets/StakingTile';
+import SupplyVaultDialog from '../_components/markets/SupplyVaultDialog';
 import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
@@ -41,6 +43,7 @@ export default function Market() {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [selectedVaultData, setSelectedVaultData] = useState<VaultRowData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
@@ -55,6 +58,22 @@ export default function Market() {
   useEffect(() => {
     setFilteredMarketData(marketData);
   }, [marketData]);
+
+  useEffect(() => {
+    if (selectedPool === 'vault' && selectedSymbol && vaultData.length > 0) {
+      const vault = vaultData.find((v) => v.asset === selectedSymbol);
+      if (vault) {
+        setSelectedVaultData((prev) => {
+          if (prev?.vaultAddress !== vault.vaultAddress) {
+            return vault;
+          }
+          return prev;
+        });
+      }
+    } else {
+      setSelectedVaultData(undefined);
+    }
+  }, [selectedSymbol, selectedPool, vaultData]);
 
   return (
     <>
@@ -128,15 +147,25 @@ export default function Market() {
         </div>
       </div>
 
-      {selectedMarketData && poolData && (
-        <ManageDialog
-          isOpen={isManageDialogOpen}
-          setIsOpen={setIsManageDialogOpen}
-          isBorrowDisabled={isBorrowDisabled}
-          comptrollerAddress={poolData.comptroller}
-          selectedMarketData={selectedMarketData}
-        />
-      )}
+      {selectedPool === 'vault'
+        ? selectedVaultData && (
+            <SupplyVaultDialog
+              isOpen={isManageDialogOpen}
+              setIsOpen={setIsManageDialogOpen}
+              selectedVaultData={selectedVaultData}
+              chainId={chainId}
+            />
+          )
+        : selectedMarketData &&
+          poolData && (
+            <ManageDialog
+              isOpen={isManageDialogOpen}
+              setIsOpen={setIsManageDialogOpen}
+              isBorrowDisabled={isBorrowDisabled}
+              comptrollerAddress={poolData.comptroller}
+              selectedMarketData={selectedMarketData}
+            />
+          )}
 
       {loopProps && (
         <Loop

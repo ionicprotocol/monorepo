@@ -1,4 +1,4 @@
-'use client';
+import { useState, useEffect } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,8 +15,8 @@ import CommonTable from '../../_components/CommonTable';
 
 import type { EnhancedColumnDef } from '../../_components/CommonTable';
 
-// Add types for vault-specific data
-interface VaultRowData {
+// Types
+export interface VaultRowData {
   asset: string;
   logo: string;
   strategy: {
@@ -42,9 +42,11 @@ interface VaultRowData {
     tokens: string;
     usd: string;
   };
+  vaultAddress: string;
 }
 
-function SupplyVaultTable({
+// Table Component
+export default function SupplyVaultTable({
   marketData,
   isLoading,
   setIsManageDialogOpen,
@@ -67,7 +69,7 @@ function SupplyVaultTable({
       id: 'asset',
       header: <div className="pl-6">ASSETS</div>,
       sortingFn: 'alphabetical',
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <Link
           href={{
             pathname: `/market/vault/${row.original.asset}`,
@@ -94,7 +96,7 @@ function SupplyVaultTable({
     {
       id: 'strategy',
       header: 'STRATEGY',
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <div className="flex flex-col gap-1">
           <span className="text-sm">{row.original.strategy.description}</span>
           <div className="flex flex-wrap gap-1">
@@ -115,17 +117,13 @@ function SupplyVaultTable({
       header: 'APR',
       sortingFn: 'numerical',
       accessorFn: (row) => row.apr.total,
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
-        <span className="font-medium">
-          {row.original.apr.total.toFixed(2)}%
-        </span>
-      )
+      cell: ({ row }) => <span>{row.original.apr.total.toFixed(2)}%</span>
     },
     {
       id: 'totalSupply',
       header: 'TOTAL SUPPLY',
       sortingFn: 'numerical',
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <div className="flex flex-col">
           <span>{row.original.totalSupply.tokens}</span>
           <span className="text-xs text-white/40">
@@ -138,7 +136,7 @@ function SupplyVaultTable({
       id: 'utilisation',
       header: 'UTILISATION RATE',
       sortingFn: 'numerical',
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <div className="w-16 bg-white/10 rounded-full h-2">
             <div
@@ -154,7 +152,7 @@ function SupplyVaultTable({
       id: 'userPosition',
       header: 'YOUR POSITION',
       sortingFn: 'numerical',
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <div className="flex flex-col">
           <span>{row.original.userPosition.tokens}</span>
           <span className="text-xs text-white/40">
@@ -167,7 +165,7 @@ function SupplyVaultTable({
       id: 'actions',
       header: 'ACTIONS',
       enableSorting: false,
-      cell: ({ row }: { row: { original: VaultRowData } }) => (
+      cell: ({ row }) => (
         <div className="flex gap-2 w-full pr-6">
           <button
             className={`rounded-md ${pools[+chain].bg} text-black py-2.5 px-4 w-full capitalize truncate disabled:opacity-50`}
@@ -195,5 +193,3 @@ function SupplyVaultTable({
     />
   );
 }
-
-export default SupplyVaultTable;

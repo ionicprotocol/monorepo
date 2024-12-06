@@ -1,152 +1,171 @@
-// hooks/market/useSupplyVaults.ts
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
-export interface VaultRowData {
-  asset: string;
-  logo: string;
-  strategy: {
-    description: string;
-    distribution: Array<{
-      poolName: string;
-      percentage: number;
-    }>;
-  };
-  apr: {
-    total: number;
-    breakdown: Array<{
-      source: string;
-      value: number;
-    }>;
-  };
-  totalSupply: {
-    tokens: string;
-    usd: string;
-  };
-  utilisation: number;
-  userPosition: {
-    tokens: string;
-    usd: string;
-  };
+import { toast } from 'react-hot-toast';
+import { type Address, formatUnits, parseUnits } from 'viem';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import { useBalancePolling } from '../useBalancePolling';
+
+interface UseSupplyVaultProps {
+  maxAmount: bigint;
+  underlyingDecimals: number;
+  underlyingToken: Address;
+  underlyingSymbol: string;
+  vaultAddress: Address;
+  chainId: number;
 }
 
-interface UseSupplyVaultsReturn {
-  vaultData: VaultRowData[];
-  isLoading: boolean;
-  error: Error | null;
-}
+export const useSupplyVault = ({
+  maxAmount,
+  underlyingDecimals,
+  underlyingToken,
+  underlyingSymbol,
+  vaultAddress,
+  chainId
+}: UseSupplyVaultProps) => {
+  const [txHash, setTxHash] = useState<Address>();
+  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
+  const [amount, setAmount] = useState<string>('0');
+  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isSupplying, setIsSupplying] = useState(false);
+  const { address, currentSdk } = useMultiIonic();
 
-export function useSupplyVaults(
-  chain: string,
-  address?: string
-): UseSupplyVaultsReturn {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const amountAsBInt = useMemo(
+    () => parseUnits(amount?.toString() ?? '0', underlyingDecimals),
+    [amount, underlyingDecimals]
+  );
 
-  const mockVaultData: VaultRowData[] = [
-    {
-      asset: 'USDC',
-      logo: '/img/symbols/32/color/usdc.png',
-      strategy: {
-        description: 'Multi-pool lending optimization',
-        distribution: [
-          { poolName: 'Main Pool', percentage: 60 },
-          { poolName: 'Native Pool', percentage: 40 }
-        ]
-      },
-      apr: {
-        total: 12.5,
-        breakdown: [
-          { source: 'Lending APR', value: 8.2 },
-          { source: 'Rewards', value: 4.3 }
-        ]
-      },
-      totalSupply: {
-        tokens: '2.5M USDC',
-        usd: '2,500,000'
-      },
-      utilisation: 85,
-      userPosition: {
-        tokens: '1,000 USDC',
-        usd: '1,000'
-      }
+  const handleUtilization = useCallback(
+    (newUtilizationPercentage: number) => {
+      const maxAmountNumber = Number(
+        formatUnits(maxAmount ?? 0n, underlyingDecimals)
+      );
+      const calculatedAmount = (
+        (newUtilizationPercentage / 100) *
+        maxAmountNumber
+      ).toFixed(parseInt(underlyingDecimals.toString()));
+
+      setAmount(calculatedAmount);
+      setUtilizationPercentage(newUtilizationPercentage);
     },
-    {
-      asset: 'WETH',
-      logo: '/img/symbols/32/color/weth.png',
-      strategy: {
-        description: 'Cross-chain yield aggregation',
-        distribution: [
-          { poolName: 'Main Pool', percentage: 45 },
-          { poolName: 'Native Pool', percentage: 55 }
-        ]
-      },
-      apr: {
-        total: 8.7,
-        breakdown: [
-          { source: 'Lending APR', value: 5.5 },
-          { source: 'Rewards', value: 3.2 }
-        ]
-      },
-      totalSupply: {
-        tokens: '1.2K WETH',
-        usd: '3,000,000'
-      },
-      utilisation: 72,
-      userPosition: {
-        tokens: '5 WETH',
-        usd: '12,500'
-      }
-    },
-    {
-      asset: 'WBTC',
-      logo: '/img/symbols/32/color/wbtc.png',
-      strategy: {
-        description: 'Bitcoin-backed lending strategy',
-        distribution: [
-          { poolName: 'Main Pool', percentage: 70 },
-          { poolName: 'Native Pool', percentage: 30 }
-        ]
-      },
-      apr: {
-        total: 6.8,
-        breakdown: [
-          { source: 'Lending APR', value: 4.8 },
-          { source: 'Rewards', value: 2.0 }
-        ]
-      },
-      totalSupply: {
-        tokens: '180 WBTC',
-        usd: '7,200,000'
-      },
-      utilisation: 65,
-      userPosition: {
-        tokens: '0.5 WBTC',
-        usd: '20,000'
-      }
+    [maxAmount, underlyingDecimals]
+  );
+
+  const approveAmount = useCallback(async () => {
+    if (
+      !currentSdk ||
+      !address ||
+      amountAsBInt <= 0n ||
+      amountAsBInt > maxAmount
+    )
+      return;
+
+    setIsApproving(true);
+    try {
+      const token = currentSdk.getEIP20TokenInstance(
+        underlyingToken,
+        currentSdk.publicClient as any
+      );
+
+      const tx = await currentSdk.approve(
+        vaultAddress,
+        underlyingToken,
+        amountAsBInt
+      );
+
+      await currentSdk.publicClient.waitForTransactionReceipt({
+        hash: tx,
+        confirmations: 2
+      });
+
+      toast.success('Approval successful!');
+    } catch (error) {
+      console.error('Approval error:', error);
+      toast.error('Error while approving!');
+    } finally {
+      setIsApproving(false);
     }
-  ];
+  }, [
+    currentSdk,
+    address,
+    amountAsBInt,
+    maxAmount,
+    underlyingToken,
+    vaultAddress
+  ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+  const supplyAmount = useCallback(async () => {
+    if (
+      !currentSdk ||
+      !address ||
+      amountAsBInt <= 0n ||
+      amountAsBInt > maxAmount
+    )
+      return;
 
-        setIsLoading(false);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err : new Error('Failed to fetch vault data')
-        );
-        setIsLoading(false);
-      }
-    };
+    setIsSupplying(true);
+    try {
+      const tx = await currentSdk.walletClient!.sendTransaction({
+        to: vaultAddress,
+        data: '0x',
+        value: 0n,
+        account: address,
+        chain: currentSdk?.walletClient?.chain
+      });
 
-    fetchData();
-  }, [chain, address]);
+      setTxHash(tx);
+      setIsWaitingForIndexing(true);
+
+      await currentSdk.publicClient.waitForTransactionReceipt({
+        hash: tx,
+        confirmations: 1
+      });
+
+      toast.success(`Supplied ${amount} ${underlyingSymbol} to vault`);
+    } catch (error) {
+      console.error('Supply error:', error);
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      toast.error('Error while supplying to vault!');
+    } finally {
+      setIsSupplying(false);
+    }
+  }, [
+    currentSdk,
+    address,
+    amountAsBInt,
+    maxAmount,
+    vaultAddress,
+    amount,
+    underlyingSymbol
+  ]);
+
+  const { isPolling } = useBalancePolling({
+    address,
+    chainId,
+    txHash,
+    enabled: isWaitingForIndexing,
+    onSuccess: () => {
+      setIsWaitingForIndexing(false);
+      setTxHash(undefined);
+      setAmount('0');
+      setUtilizationPercentage(0);
+    }
+  });
 
   return {
-    vaultData: mockVaultData,
-    isLoading,
-    error
+    isWaitingForIndexing,
+    approveAmount,
+    supplyAmount,
+    isPolling,
+    amount,
+    setAmount,
+    utilizationPercentage,
+    handleUtilization,
+    amountAsBInt,
+    isApproving,
+    isSupplying
   };
-}
+};
