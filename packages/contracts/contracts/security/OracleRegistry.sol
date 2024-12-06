@@ -16,13 +16,10 @@ contract OracleRegistry is Ownable2Step {
   constructor() Ownable2Step() {}
 
   function oracleRegister(address _account) public {
-    address oracleAddress = _getAddressBySlot(HYPERNATIVE_ORACLE_STORAGE_SLOT);
+    address oracleAddress = hypernativeOracle();
+    bool isStrictMode = hypernativeOracleIsStrictMode();
     IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (hypernativeOracleIsStrictMode()) {
-      oracle.registerStrict(_account);
-    } else {
-      oracle.register(_account);
-    }
+    oracle.register(_account, isStrictMode);
   }
 
   function setOracle(address _oracle) public onlyOwner {

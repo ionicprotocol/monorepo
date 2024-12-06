@@ -17,33 +17,30 @@ import { InterestRateModel } from "../compound/InterestRateModel.sol";
 import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernativeOracle.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";
 contract MockOraclePasses is IHypernativeOracle {
-  function isBlacklistedContext(address _account, address _origin) external pure returns (bool) {
-    return false;
-  }
-  function isTimeExceeded(address _account) external pure returns (bool) {
-    return true;
-  }
-  function isBlacklistedAccount(address _account) external pure returns (bool) {
-    return false;
-  }
-  function register(address _account) external {}
-  function registerStrict(address _account) external {}
+  function register(address account, bool isStrictMode) external pure {}
+
+  function validateForbiddenAccountInteraction(address sender) external pure {}
+
+  function validateForbiddenContextInteraction(address origin, address sender) external pure {}
+
+  function validateBlacklistedAccountInteraction(address sender) external pure {}
 }
 
 contract MockOracleFails is IHypernativeOracle {
-  function isBlacklistedContext(address _account, address _origin) external pure returns (bool) {
-    return true;
+  error InteractionNotAllowed();
+  function register(address account, bool isStrictMode) external pure {}
+
+  function validateForbiddenAccountInteraction(address sender) external pure {
+    revert InteractionNotAllowed();
   }
 
-  function isTimeExceeded(address _account) external pure returns (bool) {
-    return true;
+  function validateForbiddenContextInteraction(address origin, address sender) external pure {
+    revert InteractionNotAllowed(); 
   }
 
-  function isBlacklistedAccount(address _account) external pure returns (bool) {
-    return false;
+  function validateBlacklistedAccountInteraction(address sender) external pure {
+    revert InteractionNotAllowed();
   }
-  function register(address _account) external {}
-  function registerStrict(address _account) external {}
 }
 
 contract OracleProtectedTest is UpgradesBaseTest {
