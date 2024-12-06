@@ -202,14 +202,13 @@ abstract contract LeveredPositionTest is MarketsTest {
     super.afterForkSetUp();
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
-    registry = factory.liquidatorsRegistry();
     {
-      // upgrade the registry
-      LiquidatorsRegistryExtension newExt1 = new LiquidatorsRegistryExtension();
-      LiquidatorsRegistrySecondExtension newExt2 = new LiquidatorsRegistrySecondExtension();
+      // upgrade the factory
+      LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
+      LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
 
-      vm.startPrank(registry.owner());
-      DiamondBase asBase = DiamondBase(address(registry));
+      vm.startPrank(factory.owner());
+      DiamondBase asBase = DiamondBase(address(factory));
       address[] memory oldExts = asBase._listExtensions();
 
       if (oldExts.length == 1) {
@@ -221,7 +220,7 @@ abstract contract LeveredPositionTest is MarketsTest {
       }
       vm.stopPrank();
     }
-
+    registry = factory.liquidatorsRegistry();
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
 
@@ -1031,7 +1030,7 @@ contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
 
     address wethMarket = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
     address USDCMarket = 0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038;
-    address wethWhale = 0x7380511493DD4c2f1dD75E9CCe5bD52C787D4B51;
+    address wethWhale = 0x9c29a8eC901DBec4fFf165cD57D4f9E03D4838f7;
     address USDCWhale = 0x34b83A3759ba4c9F99c339604181bf6bBdED4C79;
 
     ICErc20[] memory cTokens = new ICErc20[](1);
@@ -1064,7 +1063,7 @@ contract ModeWethUSDTLeveredPositionTest is LeveredPositionTest {
 
     address wethMarket = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
     address USDTMarket = 0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3;
-    address wethWhale = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
+    address wethWhale = 0x9c29a8eC901DBec4fFf165cD57D4f9E03D4838f7;
     address USDTWhale = 0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3;
 
     ICErc20[] memory cTokens = new ICErc20[](1);
