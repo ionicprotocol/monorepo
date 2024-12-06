@@ -10,6 +10,7 @@ import { useChainId } from 'wagmi';
 
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
+import { useSupplyVaults } from '@ui/hooks/market/useSupplyVault';
 
 import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
@@ -18,6 +19,7 @@ import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import FilterBar from '../_components/markets/FilterBar';
 import PoolsTable from '../_components/markets/PoolsTable';
 import StakingTile from '../_components/markets/StakingTile';
+import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
 
@@ -48,6 +50,7 @@ export default function Market() {
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
+  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaults(chain);
 
   useEffect(() => {
     setFilteredMarketData(marketData);
@@ -105,14 +108,23 @@ export default function Market() {
             onSearch={setFilteredMarketData}
           />
 
-          <PoolsTable
-            marketData={filteredMarketData}
-            isLoading={isLoading}
-            setIsManageDialogOpen={setIsManageDialogOpen}
-            setIsLoopDialogOpen={setIsLoopDialogOpen}
-            setIsBorrowDisabled={setIsBorrowDisabled}
-            setSelectedSymbol={setSelectedSymbol}
-          />
+          {selectedPool === 'vault' ? (
+            <SupplyVaultTable
+              marketData={vaultData}
+              isLoading={isLoadingVaults}
+              setIsManageDialogOpen={setIsManageDialogOpen}
+              setSelectedSymbol={setSelectedSymbol}
+            />
+          ) : (
+            <PoolsTable
+              marketData={filteredMarketData}
+              isLoading={isLoading}
+              setIsManageDialogOpen={setIsManageDialogOpen}
+              setIsLoopDialogOpen={setIsLoopDialogOpen}
+              setIsBorrowDisabled={setIsBorrowDisabled}
+              setSelectedSymbol={setSelectedSymbol}
+            />
+          )}
         </div>
       </div>
 
