@@ -9,28 +9,46 @@ contract CTokenOracleProtected is CErc20Storage {
 
   modifier onlyOracleApproved() {
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
+
     if (oracleAddress == address(0)) {
       _;
       return;
     }
+
     IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (oracle.isBlacklistedContext(msg.sender, tx.origin) || !oracle.isTimeExceeded(msg.sender)) {
-      revert InteractionNotAllowed();
-    }
+    oracle.validateForbiddenContextInteraction(tx.origin, msg.sender);
     _;
   }
 
   modifier onlyOracleApprovedAllowEOA() {
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
+
+    if (oracleAddress == address(0)) {
+      _;
+      return;
+    }
+    IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
+    oracle.validateBlacklistedAccountInteraction(msg.sender);
+    if (tx.origin == msg.sender) {
+      _;
+      return;
+    }
+
+    oracle.validateForbiddenContextInteraction(tx.origin, msg.sender);
+    _;
+  }
+
+  modifier onlyNotBlacklistedEOA() {
+    address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
+
     if (oracleAddress == address(0)) {
       _;
       return;
     }
 
     IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    if (oracle.isBlacklistedAccount(msg.sender) || msg.sender != tx.origin) {
-      revert InteractionNotAllowed();
-    }
+    require(msg.sender == tx.origin, "OracleProtected: caller is not EOA");
+    oracle.validateBlacklistedAccountInteraction(msg.sender);
     _;
   }
 }
