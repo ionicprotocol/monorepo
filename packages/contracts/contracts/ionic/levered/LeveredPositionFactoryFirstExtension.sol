@@ -32,7 +32,8 @@ contract LeveredPositionFactoryFirstExtension is
     uint8 fnsCount = 10;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
-    functionSelectors[--fnsCount] = this.closeAndRemoveUserPosition.selector;
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address)")));
     functionSelectors[--fnsCount] = this.getMinBorrowNative.selector;
     functionSelectors[--fnsCount] = this.getRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this.getBorrowableMarketsByCollateral.selector;
@@ -58,10 +59,17 @@ contract LeveredPositionFactoryFirstExtension is
   function closeAndRemoveUserPosition(
     LeveredPosition position,
     address aggregatorTarget,
-    bytes memory aggregatorData
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
   ) external onlyOwner returns (bool) {
     address positionOwner = position.positionOwner();
-    position.closePosition(positionOwner, aggregatorTarget, aggregatorData);
+    position.closePosition(positionOwner, aggregatorTarget, aggregatorData, expectedSlippage);
+    return _removeClosedPosition(address(position), positionOwner);
+  }
+
+  function closeAndRemoveUserPosition(LeveredPosition position) external onlyOwner returns (bool) {
+    address positionOwner = position.positionOwner();
+    position.closePosition(positionOwner);
     return _removeClosedPosition(address(position), positionOwner);
   }
 

@@ -31,7 +31,8 @@ contract LeveredPositionFactorySecondExtension is
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.createPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPosition.selector;
-    functionSelectors[--fnsCount] = this.createAndFundPositionAtRatio.selector;
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("createAndFundPositionAtRatio(address,address,uint256,uint256)")));
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("createAndFundPositionAtRatio(address,address,uint256,uint256,address,bytes,address,bytes)")));
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
   }
@@ -64,7 +65,8 @@ contract LeveredPositionFactorySecondExtension is
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
     address _aggregatorTarget,
-    bytes memory _aggregatorData
+    bytes memory _aggregatorData,
+    uint256 expectedSlippage
   ) public returns (LeveredPosition) {
     LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
@@ -78,22 +80,45 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
+    uint256 _leverageRatio
+  ) external returns (LeveredPosition) {
+    return createAndFundPositionAtRatio(
+      _collateralMarket,
+      _stableMarket,
+      _fundingAsset,
+      _fundingAmount,
+      _leverageRatio,
+      address(0),
+      "",
+      address(0),
+      "",
+      0
+    );
+  }
+
+  function createAndFundPositionAtRatio(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
     uint256 _leverageRatio,
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
-  ) external returns (LeveredPosition) {
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
+  ) public returns (LeveredPosition) {
     LeveredPosition position = createAndFundPosition(
       _collateralMarket,
       _stableMarket,
       _fundingAsset,
       _fundingAmount,
       _fundingAssetSwapAggregatorTarget,
-      _fundingAssetSwapAggregatorData
+      _fundingAssetSwapAggregatorData,
+      _expectedSlippage
     );
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(_leverageRatio, _adjustLeverageRatioAggregatorTarget, _adjustLeverageRatioAggregatorData);
+      position.adjustLeverageRatio(_leverageRatio, _adjustLeverageRatioAggregatorTarget, _adjustLeverageRatioAggregatorData, _expectedSlippage);
     }
     return position;
   }

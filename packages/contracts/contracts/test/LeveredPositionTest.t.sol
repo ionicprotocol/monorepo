@@ -121,7 +121,8 @@ contract LeveredPositionLensTest is BaseTest {
       address(0),
       abi.encode(address(0)),
       address(0),
-      abi.encode(address(0))
+      abi.encode(address(0)),
+      100 // slippage = 1%
     );
     emit log_named_address("position", address(position));
 
@@ -137,7 +138,7 @@ contract LeveredPositionLensTest is BaseTest {
     // vm.startPrank(USER);
 
     vm.roll(10673509);
-    position.adjustLeverageRatio(3000000000000000000, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(3000000000000000000);
 
     // vm.roll(10852409);
     // position.adjustLeverageRatio(3000000000000000000);
@@ -202,26 +203,28 @@ abstract contract LeveredPositionTest is MarketsTest {
     super.afterForkSetUp();
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
-    {
-      // upgrade the factory
-      LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
-      LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
-
-      vm.startPrank(factory.owner());
-      DiamondBase asBase = DiamondBase(address(factory));
-      address[] memory oldExts = asBase._listExtensions();
-
-      if (oldExts.length == 1) {
-        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-        asBase._registerExtension(newExt2, DiamondExtension(address(0)));
-      } else if (oldExts.length == 2) {
-        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-        asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
-      }
-      vm.stopPrank();
-    }
+    upgradeFactory();
     registry = factory.liquidatorsRegistry();
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
+  }
+
+  function upgradeFactory() internal {
+    // upgrade the factory
+    LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
+    LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+
+    vm.startPrank(factory.owner());
+    DiamondBase asBase = DiamondBase(address(factory));
+    address[] memory oldExts = asBase._listExtensions();
+
+    if (oldExts.length == 1) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(address(0)));
+    } else if (oldExts.length == 2) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+    }
+    vm.stopPrank();
   }
 
   function upgradeRegistry() internal {
@@ -336,6 +339,16 @@ abstract contract LeveredPositionTest is MarketsTest {
     address _positionOwner,
     uint256 _depositAmount
   ) internal returns (LeveredPosition _position, uint256 _maxRatio, uint256 _minRatio) {
+    return _openLeveredPosition(_positionOwner, _depositAmount, address(0), abi.encode(), 0);
+  }
+
+  function _openLeveredPosition(
+    address _positionOwner,
+    uint256 _depositAmount,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData,
+    uint256 _expectedSlippage
+  ) internal returns (LeveredPosition _position, uint256 _maxRatio, uint256 _minRatio) {
     IERC20Upgradeable collateralToken = IERC20Upgradeable(collateralMarket.underlying());
     collateralToken.transfer(_positionOwner, _depositAmount);
 
@@ -346,8 +359,9 @@ abstract contract LeveredPositionTest is MarketsTest {
       stableMarket,
       collateralToken,
       _depositAmount,
-      address(0),
-      abi.encode(address(0))
+      _aggregatorTarget,
+      _aggregatorData,
+      _expectedSlippage
     );
     vm.stopPrank();
 
@@ -383,7 +397,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     uint256 currentLeverageRatio = position.getCurrentLeverageRatio();
     emit log_named_uint("current ratio", currentLeverageRatio);
 
-    uint256 leverageRatioRealized = position.adjustLeverageRatio(targetLeverageRatio, address(0), abi.encode(address(0)));
+    uint256 leverageRatioRealized = position.adjustLeverageRatio(targetLeverageRatio);
     emit log_named_uint("equity amount", position.getEquityAmount());
     assertApproxEqRel(leverageRatioRealized, targetLeverageRatio, 4e16, "target ratio not matching");
   }
@@ -393,11 +407,11 @@ abstract contract LeveredPositionTest is MarketsTest {
 
     // attempting to adjust to minLevRatio - 0.01 should fail
     vm.expectRevert(abi.encodeWithSelector(LeveredPosition.BorrowStableFailed.selector, 0x3fa));
-    position.adjustLeverageRatio((minLevRatio + 1e18) / 2, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio((minLevRatio + 1e18) / 2);
     // just testing
-    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(maxLevRatio);
     // but adjusting to the minLevRatio + 0.01 should succeed
-    position.adjustLeverageRatio(minLevRatio + 0.01e18, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(minLevRatio + 0.01e18);
   }
 
   function testMaxLeverageRatio() public whenForking {
@@ -405,7 +419,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     uint256 rate = lens.getBorrowRateAtRatio(collateralMarket, stableMarket, _equityAmount, maxLevRatio);
     emit log_named_uint("borrow rate at max ratio", rate);
 
-    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(maxLevRatio);
     assertApproxEqRel(position.getCurrentLeverageRatio(), maxLevRatio, 4e16, "target max ratio not matching");
   }
 
@@ -446,7 +460,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     IERC20Upgradeable collateralAsset = IERC20Upgradeable(collateralMarket.underlying());
     uint256 startingEquity = position.getEquityAmount();
 
-    uint256 leverageRatioRealized = position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    uint256 leverageRatioRealized = position.adjustLeverageRatio(maxLevRatio);
     assertApproxEqRel(leverageRatioRealized, maxLevRatio, 4e16, "target ratio not matching");
 
     // decrease the ratio in 10 equal steps
@@ -454,11 +468,11 @@ abstract contract LeveredPositionTest is MarketsTest {
     while (leverageRatioRealized > 1e18) {
       uint256 targetLeverDownRatio = leverageRatioRealized - ratioDiffStep;
       if (targetLeverDownRatio < minLevRatio) targetLeverDownRatio = 1e18;
-      leverageRatioRealized = position.adjustLeverageRatio(targetLeverDownRatio, address(0), abi.encode(address(0)));
+      leverageRatioRealized = position.adjustLeverageRatio(targetLeverDownRatio);
       assertApproxEqRel(leverageRatioRealized, targetLeverDownRatio, 3e16, "target lever down ratio not matching");
     }
 
-    uint256 withdrawAmount = position.closePosition(address(0), abi.encode(address(0)));
+    uint256 withdrawAmount = position.closePosition();
     emit log_named_uint("withdraw amount", withdrawAmount);
     assertApproxEqRel(startingEquity, withdrawAmount, 5e16, "!withdraw amount");
 
@@ -535,7 +549,8 @@ contract StkBnbWBnbLeveredPositionTest is LeveredPositionTest {
       collateralToken,
       depositAmount,
       address(0),
-      abi.encode(address(0))
+      abi.encode(address(0)),
+      0
     );
   }
 }
@@ -631,7 +646,8 @@ contract BombWbnbLeveredPositionTest is LeveredPositionTest {
       address(0),
       abi.encode(address(0)),
       address(0),
-      abi.encode(address(0))
+      abi.encode(address(0)),
+      0
     );
 
     maxLevRatio = position.getMaxLeverageRatio();
@@ -1021,7 +1037,7 @@ contract DavosUsdcDusdLeveredPositionTest is LeveredPositionTest {
 }
 
 contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(MODE_MAINNET) {}
+  function setUp() public forkAtBlock(MODE_MAINNET, 16762096) {}
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();

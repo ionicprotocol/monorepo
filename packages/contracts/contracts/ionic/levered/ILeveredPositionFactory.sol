@@ -42,8 +42,11 @@ interface ILeveredPositionFactoryFirstExtension {
   function closeAndRemoveUserPosition(
     LeveredPosition position,
     address aggregatorTarget,
-    bytes memory aggregatorData
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
   ) external returns (bool);
+
+  function closeAndRemoveUserPosition(LeveredPosition position) external returns (bool);
 
   function getPositionsByAccount(address account) external view returns (address[] memory, bool[] memory);
 
@@ -67,7 +70,8 @@ interface ILeveredPositionFactorySecondExtension {
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
     address aggregatorTarget,
-    bytes memory aggregatorData
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
   ) external returns (LeveredPosition);
 
   function createAndFundPositionAtRatio(
@@ -79,7 +83,16 @@ interface ILeveredPositionFactorySecondExtension {
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
+  ) external returns (LeveredPosition);
+
+  function createAndFundPositionAtRatio(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    uint256 _leverageRatio
   ) external returns (LeveredPosition);
 }
 

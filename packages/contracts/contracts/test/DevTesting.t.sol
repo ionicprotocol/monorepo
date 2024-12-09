@@ -835,46 +835,6 @@ contract DevTesting is BaseTest {
     vm.stopPrank();
   }
 
-  function test_claimRewardFromLeveredPosition() public debuggingOnly fork(BASE_MAINNET) {
-    LeveredPosition position = LeveredPosition(
-      0x3a0eA2C577b0e0f2CAaEcC2b8fF8fF1850267ba2 // 20 days old
-    );
-    ILeveredPositionFactory factory = position.factory();
-
-    vm.prank(address(factory));
-    LeveredPosition dummy = new LeveredPosition(
-      msg.sender,
-      ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3),
-      ICErc20(0xa900A17a49Bc4D442bA7F72c39FA2108865671f0)
-    );
-    emit log_named_address("dummy", address(dummy));
-
-    vm.startPrank(factory.owner());
-    DiamondBase(address(factory))._registerExtension(
-      new LeveredPositionFactoryFirstExtension(),
-      DiamondExtension(0x115455f15ef67e298F012F225B606D3c4Daa1d60)
-    );
-    factory._setPositionsExtension(LeveredPosition.claimRewardsFromRouter.selector, address(dummy));
-    vm.stopPrank();
-
-    {
-      // mock the usdz call
-      vm.mockCall(
-        0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938,
-        abi.encodeWithSelector(IERC20Upgradeable.balanceOf.selector),
-        abi.encode(53307671999615298341926)
-      );
-    }
-
-    vm.startPrank(0xC13110d04f22ed464Cb72A620fF8163585358Ff9);
-    (address[] memory rewardTokens, uint256[] memory rewards) = position.claimRewardsFromRouter(
-      0xB1402333b12fc066C3D7F55d37944D5e281a3e8B
-    );
-    emit log_named_uint("reward tokens", rewardTokens.length);
-    emit log_named_uint("rewards", rewards.length);
-    vm.stopPrank();
-  }
-
   function test_liquidateWithAggregator() public debuggingOnly forkAtBlock(MODE_MAINNET, 15435970) {
     IonicUniV3Liquidator liquidator = IonicUniV3Liquidator(payable(0x50F13EC4B68c9522260d3ccd4F19826679B3Ce5C));
     emit log_named_address("liquidator", address(liquidator));
@@ -913,21 +873,29 @@ contract DevTesting is BaseTest {
     emit log_named_uint("profit borrow", IERC20Upgradeable(ICErc20(cErc20).underlying()).balanceOf(address(this)));
   }
 
+  function upgradeFactory(ILeveredPositionFactory factory) internal {
+    LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
+    LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+
+    vm.startPrank(factory.owner());
+    DiamondBase asBase = DiamondBase(address(factory));
+    address[] memory oldExts = asBase._listExtensions();
+
+    if (oldExts.length == 1) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(address(0)));
+    } else if (oldExts.length == 2) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+    }
+    vm.stopPrank();
+  }
+
   function test_leveredPosition_aggregator() public debuggingOnly forkAtBlock(BASE_MAINNET, 23251823) {
     address USER = 0x1155b614971f16758C92c4890eD338C9e3ede6b7;
     ILeveredPositionFactory factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
-    vm.startPrank(factory.owner());
-    LeveredPositionFactoryFirstExtension extension = new LeveredPositionFactoryFirstExtension();
-    LeveredPositionFactorySecondExtension secondExtension = new LeveredPositionFactorySecondExtension();
-    LeveredPositionFactory(address(factory))._registerExtension(
-      extension,
-      DiamondExtension(0xB31B7dA23D8D777b3d7CC09cCE54F55254603604)
-    );
-    LeveredPositionFactory(address(factory))._registerExtension(
-      secondExtension,
-      DiamondExtension(0xdf1AD62bf8008791ADC98f6f6F3D326dCFaA5790)
-    );
-    vm.stopPrank();
+    upgradeFactory(factory);
+
     ICErc20 collateralAsset = ICErc20(0x84341B650598002d427570298564d6701733c805); // weEth
     ICErc20 stableAsset = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
     vm.startPrank(USER);
@@ -947,7 +915,7 @@ contract DevTesting is BaseTest {
 
     address aggregatorTarget = 0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE;
     bytes memory aggregatorData = hex"4666fc80ddffa5afc347e458f2a79169fdd926c8080f864ee743d9da68bec9471aeef95a00000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000d2a6330d610d9d0a13c0c0ac437906000838eb8500000000000000000000000000000000000000000000000000554a9fe78263a3000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000086c6966692d617069000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a30783030303030303030303030303030303030303030303030303030303030303030303030303030303000000000000000000000000000000000000000000000000000000000000000000000f2614a233c7c3e7f08b1f887ba133a13f1eb2c55000000000000000000000000f2614a233c7c3e7f08b1f887ba133a13f1eb2c55000000000000000000000000420000000000000000000000000000000000000600000000000000000000000004c0599ae5a44757c0af6f9ec3b93da8976c150a0000000000000000000000000000000000000000000000000067C2EC2D07866100000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001442646478b00000000000000000000000042000000000000000000000000000000000000060000000000000000000000000000000000000000000000000067C2EC2D07866100000000000000000000000004c0599ae5a44757c0af6f9ec3b93da8976c150a00000000000000000000000000000000000000000000000000554a9fe78263a20000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004202420000000000000000000000000000000000000601ffff01302976a386fbb375033be3ac1e4112f76cf42ef7001231deb6f5749ef6ce6943a275a1d3e7486f4eae00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-    position.adjustLeverageRatio(2 ether, aggregatorTarget, aggregatorData);
+    position.adjustLeverageRatio(2 ether, aggregatorTarget, aggregatorData, 100);
     
     vm.stopPrank();
   }
