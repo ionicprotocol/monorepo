@@ -1,12 +1,23 @@
 // tabs/SupplyTab.tsx
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
+
+import Image from 'next/image';
+
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
-import { Button } from '@ui/components/ui/button';
+
+import { SupplySteps } from '@ui/app/_components/SupplySteps';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from '@ui/components/ui/card';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
+
 import Amount from '../../../Amount';
 
 interface SupplyTabProps {
@@ -88,28 +99,44 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
-        <Button
-          onClick={approveAmount}
-          disabled={isApproving || Number(amount) <= 0}
-          className="w-full bg-accent hover:bg-accent/90 text-black"
-        >
-          {isApproving
-            ? 'Approving...'
-            : `Approve ${selectedVaultData.underlyingSymbol}`}
-        </Button>
-        <Button
-          onClick={supplyAmount}
-          disabled={isSupplying || Number(amount) <= 0 || isWaitingForIndexing}
-          className="w-full bg-accent hover:bg-accent/90 text-black"
-        >
-          {isWaitingForIndexing
-            ? 'Updating Balances...'
-            : isSupplying
-              ? 'Supplying...'
-              : `Supply ${selectedVaultData.underlyingSymbol}`}
-        </Button>
-      </div>
+      <Card className="bg-darkthree border-none">
+        <CardHeader>
+          <CardTitle className="text-lg">Strategy Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex justify-between">
+            <span>SUPPLY ASSET</span>
+            <div className="flex items-center gap-2">
+              <Image
+                src={`/img/symbols/32/color/${selectedVaultData.asset.toLowerCase()}.png`}
+                alt={selectedVaultData.asset}
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+              <span>{selectedVaultData.underlyingSymbol}</span>
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <span>APR</span>
+            <span>4.49%</span>
+          </div>
+          <div className="flex justify-between">
+            <span>TOTAL SUPPLY</span>
+            <span>$582,462.04</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <SupplySteps
+        symbol={selectedVaultData.underlyingSymbol}
+        isApproving={isApproving}
+        isSupplying={isSupplying}
+        isWaitingForIndexing={isWaitingForIndexing}
+        onApprove={approveAmount}
+        onSupply={supplyAmount}
+        disabled={Number(amount) <= 0}
+      />
     </div>
   );
 }

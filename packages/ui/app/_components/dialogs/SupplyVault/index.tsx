@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import Image from 'next/image';
+
 import { ArrowLeft } from 'lucide-react';
-import { formatUnits } from 'viem';
-import { useBalance } from 'wagmi';
-import { Button } from '@ui/components/ui/button';
+
 import {
   Card,
   CardContent,
@@ -23,8 +23,9 @@ import {
   TabsTrigger
 } from '@ui/components/ui/tabs';
 import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
-import { WithdrawTab } from './tabs/WithdrawTab';
+
 import { SupplyTab } from './tabs/SupplyTab';
+import { WithdrawTab } from './tabs/WithdrawTab';
 
 interface SupplyVaultDialogProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export default function SupplyVaultDialog({
     >
       <DialogContent
         maxWidth="800px"
-        className="bg-grayUnselect"
+        className="bg-grayone"
         fullWidth
       >
         <DialogHeader>
@@ -96,35 +97,6 @@ export default function SupplyVaultDialog({
               />
             </TabsContent>
           </Tabs>
-
-          <Card className="bg-darkthree border-none">
-            <CardHeader>
-              <CardTitle className="text-lg">Strategy Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span>SUPPLY ASSET</span>
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={`/img/symbols/32/color/${selectedVaultData.asset.toLowerCase()}.png`}
-                    alt={selectedVaultData.asset}
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                  <span>{selectedVaultData.underlyingSymbol}</span>
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <span>APR</span>
-                <span>4.49%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>TOTAL SUPPLY</span>
-                <span>$582,462.04</span>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </DialogContent>
     </Dialog>
