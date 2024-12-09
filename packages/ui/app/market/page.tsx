@@ -20,10 +20,10 @@ import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import FilterBar from '../_components/markets/FilterBar';
 import PoolsTable from '../_components/markets/PoolsTable';
 import StakingTile from '../_components/markets/StakingTile';
-import SupplyVaultDialog from '../_components/markets/SupplyVaultDialog';
 import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
+import SupplyVaultDialog from '../_components/dialogs/SupplyVault';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
