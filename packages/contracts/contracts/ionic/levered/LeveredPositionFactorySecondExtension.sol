@@ -82,7 +82,8 @@ contract LeveredPositionFactorySecondExtension is
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _assumedSlippage
   ) external returns (LeveredPosition) {
     LeveredPosition position = createAndFundPosition(
       _collateralMarket,
@@ -93,7 +94,12 @@ contract LeveredPositionFactorySecondExtension is
       _fundingAssetSwapAggregatorData
     );
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(_leverageRatio, _adjustLeverageRatioAggregatorTarget, _adjustLeverageRatioAggregatorData);
+      position.adjustLeverageRatio(
+        _leverageRatio,
+        _adjustLeverageRatioAggregatorTarget,
+        _adjustLeverageRatioAggregatorData,
+        _assumedSlippage
+      );
     }
     return position;
   }

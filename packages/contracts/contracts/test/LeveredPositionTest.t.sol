@@ -121,7 +121,8 @@ contract LeveredPositionLensTest is BaseTest {
       address(0),
       abi.encode(address(0)),
       address(0),
-      abi.encode(address(0))
+      abi.encode(address(0)),
+      0
     );
     emit log_named_address("position", address(position));
 
@@ -137,7 +138,7 @@ contract LeveredPositionLensTest is BaseTest {
     // vm.startPrank(USER);
 
     vm.roll(10673509);
-    position.adjustLeverageRatio(3000000000000000000, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(3000000000000000000, address(0), abi.encode(address(0)), 0);
 
     // vm.roll(10852409);
     // position.adjustLeverageRatio(3000000000000000000);
@@ -351,9 +352,9 @@ abstract contract LeveredPositionTest is MarketsTest {
     );
     vm.stopPrank();
 
-    _maxRatio = _position.getMaxLeverageRatio();
+    _maxRatio = _position.getMaxLeverageRatio(0);
     emit log_named_uint("max ratio", _maxRatio);
-    _minRatio = _position.getMinLeverageRatio();
+    _minRatio = _position.getMinLeverageRatio(0);
     emit log_named_uint("min ratio", _minRatio);
 
     assertGt(_maxRatio, _minRatio, "max ratio <= min ratio");
@@ -373,7 +374,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     vm.assume(minLevRatio < targetLeverageRatio);
 
     uint256 borrowedAssetPrice = stableMarket.comptroller().oracle().getUnderlyingPrice(stableMarket);
-    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio);
+    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio, 0);
     emit log_named_uint("borrows delta val", (bd * borrowedAssetPrice) / 1e18);
     emit log_named_uint("min borrow value", ffd.getMinBorrowEth(stableMarket));
 
@@ -383,7 +384,12 @@ abstract contract LeveredPositionTest is MarketsTest {
     uint256 currentLeverageRatio = position.getCurrentLeverageRatio();
     emit log_named_uint("current ratio", currentLeverageRatio);
 
-    uint256 leverageRatioRealized = position.adjustLeverageRatio(targetLeverageRatio, address(0), abi.encode(address(0)));
+    uint256 leverageRatioRealized = position.adjustLeverageRatio(
+      targetLeverageRatio,
+      address(0),
+      abi.encode(address(0)),
+      0
+    );
     emit log_named_uint("equity amount", position.getEquityAmount());
     assertApproxEqRel(leverageRatioRealized, targetLeverageRatio, 4e16, "target ratio not matching");
   }
@@ -393,11 +399,11 @@ abstract contract LeveredPositionTest is MarketsTest {
 
     // attempting to adjust to minLevRatio - 0.01 should fail
     vm.expectRevert(abi.encodeWithSelector(LeveredPosition.BorrowStableFailed.selector, 0x3fa));
-    position.adjustLeverageRatio((minLevRatio + 1e18) / 2, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio((minLevRatio + 1e18) / 2, address(0), abi.encode(address(0)), 0);
     // just testing
-    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)), 0);
     // but adjusting to the minLevRatio + 0.01 should succeed
-    position.adjustLeverageRatio(minLevRatio + 0.01e18, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(minLevRatio + 0.01e18, address(0), abi.encode(address(0)), 0);
   }
 
   function testMaxLeverageRatio() public whenForking {
@@ -405,7 +411,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     uint256 rate = lens.getBorrowRateAtRatio(collateralMarket, stableMarket, _equityAmount, maxLevRatio);
     emit log_named_uint("borrow rate at max ratio", rate);
 
-    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)), 0);
     assertApproxEqRel(position.getCurrentLeverageRatio(), maxLevRatio, 4e16, "target max ratio not matching");
   }
 
@@ -446,7 +452,12 @@ abstract contract LeveredPositionTest is MarketsTest {
     IERC20Upgradeable collateralAsset = IERC20Upgradeable(collateralMarket.underlying());
     uint256 startingEquity = position.getEquityAmount();
 
-    uint256 leverageRatioRealized = position.adjustLeverageRatio(maxLevRatio, address(0), abi.encode(address(0)));
+    uint256 leverageRatioRealized = position.adjustLeverageRatio(
+      maxLevRatio,
+      address(0),
+      abi.encode(address(0)),
+      0
+    );
     assertApproxEqRel(leverageRatioRealized, maxLevRatio, 4e16, "target ratio not matching");
 
     // decrease the ratio in 10 equal steps
@@ -454,11 +465,11 @@ abstract contract LeveredPositionTest is MarketsTest {
     while (leverageRatioRealized > 1e18) {
       uint256 targetLeverDownRatio = leverageRatioRealized - ratioDiffStep;
       if (targetLeverDownRatio < minLevRatio) targetLeverDownRatio = 1e18;
-      leverageRatioRealized = position.adjustLeverageRatio(targetLeverDownRatio, address(0), abi.encode(address(0)));
+      leverageRatioRealized = position.adjustLeverageRatio(targetLeverDownRatio, address(0), abi.encode(address(0)), 0);
       assertApproxEqRel(leverageRatioRealized, targetLeverDownRatio, 3e16, "target lever down ratio not matching");
     }
 
-    uint256 withdrawAmount = position.closePosition(address(0), abi.encode(address(0)));
+    uint256 withdrawAmount = position.closePosition(address(0), abi.encode(address(0)), 0);
     emit log_named_uint("withdraw amount", withdrawAmount);
     assertApproxEqRel(startingEquity, withdrawAmount, 5e16, "!withdraw amount");
 
@@ -631,11 +642,12 @@ contract BombWbnbLeveredPositionTest is LeveredPositionTest {
       address(0),
       abi.encode(address(0)),
       address(0),
-      abi.encode(address(0))
+      abi.encode(address(0)),
+      0
     );
 
-    maxLevRatio = position.getMaxLeverageRatio();
-    minLevRatio = position.getMinLeverageRatio();
+    maxLevRatio = position.getMaxLeverageRatio(0);
+    minLevRatio = position.getMinLeverageRatio(0);
 
     vm.label(address(position), "Levered Position");
   }

@@ -17,6 +17,8 @@ interface ILeveredPositionFactoryStorage {
   function blocksPerYear() external view returns (uint256);
 
   function owner() external view returns (address);
+
+  function whitelistedSwapRouters(address swapRouter) external view returns (bool);
 }
 
 interface ILeveredPositionFactoryBase {
@@ -42,7 +44,8 @@ interface ILeveredPositionFactoryFirstExtension {
   function closeAndRemoveUserPosition(
     LeveredPosition position,
     address aggregatorTarget,
-    bytes memory aggregatorData
+    bytes memory aggregatorData,
+    uint256 assumedSlippage
   ) external returns (bool);
 
   function getPositionsByAccount(address account) external view returns (address[] memory, bool[] memory);
@@ -79,7 +82,8 @@ interface ILeveredPositionFactorySecondExtension {
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _assumedSlippage
   ) external returns (LeveredPosition);
 }
 
