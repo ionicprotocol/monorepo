@@ -1,11 +1,8 @@
 import { useEffect, useMemo } from 'react';
-
 import Image from 'next/image';
-
 import { ArrowLeft } from 'lucide-react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
-
 import { Button } from '@ui/components/ui/button';
 import {
   Card,
@@ -21,8 +18,8 @@ import {
 } from '@ui/components/ui/dialog';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
-
 import Amount from '../Amount';
 
 interface SupplyVaultDialogProps {
@@ -50,7 +47,20 @@ export default function SupplyVaultDialog({
   );
 
   const { data: balanceData } = useBalance(balanceQueryParams);
-  const maxAmount = balanceData?.value ?? 0n;
+  const walletBalance = balanceData?.value ?? 0n;
+
+  const { data: maxSupplyAmount, isLoading: isLoadingMax } = useMaxSupplyAmount(
+    selectedVaultData,
+    selectedVaultData.vaultAddress as `0x${string}`,
+    chainId
+  );
+
+  const maxAmount = useMemo(() => {
+    if (!maxSupplyAmount?.bigNumber) return walletBalance;
+    return walletBalance < maxSupplyAmount.bigNumber
+      ? walletBalance
+      : maxSupplyAmount.bigNumber;
+  }, [walletBalance, maxSupplyAmount?.bigNumber]);
 
   const {
     amount,
@@ -104,8 +114,11 @@ export default function SupplyVaultDialog({
           <Amount
             amount={amount}
             handleInput={(val?: string) => setAmount(val ?? '')}
-            isLoading={isPolling}
-            max={formatUnits(maxAmount, selectedVaultData.underlyingDecimals)}
+            isLoading={isLoadingMax || isPolling}
+            max={formatUnits(
+              maxSupplyAmount?.bigNumber ?? 0n,
+              selectedVaultData.underlyingDecimals
+            )}
             symbol={selectedVaultData.underlyingSymbol}
             currentUtilizationPercentage={utilizationPercentage}
             handleUtilization={handleUtilization}
