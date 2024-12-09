@@ -11,7 +11,7 @@ import {
 import { useHealth } from '@ui/hooks/market/useHealth';
 import { useWithdraw } from '@ui/hooks/market/useWithdraw';
 
-import Amount from './Amount';
+import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';

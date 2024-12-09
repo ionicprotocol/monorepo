@@ -1,4 +1,5 @@
-import { useCallback, useState, useMemo } from 'react';
+// useSupplyVault.ts
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
@@ -53,6 +54,17 @@ export const useSupplyVault = ({
     [maxAmount, underlyingDecimals]
   );
 
+  // Update utilization percentage when amount changes
+  useEffect(() => {
+    if (amount === '0' || !amount || !maxAmount) {
+      setUtilizationPercentage(0);
+      return;
+    }
+
+    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
+    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
+  }, [amountAsBInt, maxAmount, amount]);
+
   const approveAmount = useCallback(async () => {
     if (
       !currentSdk ||
@@ -64,11 +76,6 @@ export const useSupplyVault = ({
 
     setIsApproving(true);
     try {
-      const token = currentSdk.getEIP20TokenInstance(
-        underlyingToken,
-        currentSdk.publicClient as any
-      );
-
       const tx = await currentSdk.approve(
         vaultAddress,
         underlyingToken,

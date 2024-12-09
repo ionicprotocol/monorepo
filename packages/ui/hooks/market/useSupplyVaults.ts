@@ -32,7 +32,7 @@ export interface VaultRowData {
   vaultAddress: string;
   underlyingToken: Hex;
   underlyingDecimals: number;
-  underlyingSymbol?: string;
+  underlyingSymbol: string;
 }
 
 interface UseSupplyVaultsReturn {
@@ -77,7 +77,8 @@ export function useSupplyVaults(
       },
       vaultAddress: '0x1234567890123456789012345678901234567890' as Address,
       underlyingDecimals: 18,
-      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
+      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
+      underlyingSymbol: 'USDC'
     },
     {
       asset: 'WETH',
@@ -107,7 +108,8 @@ export function useSupplyVaults(
       },
       vaultAddress: '0x2345678901234567890123456789012345678901' as Address,
       underlyingDecimals: 18,
-      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
+      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
+      underlyingSymbol: 'WETH'
     },
     {
       asset: 'WBTC',
@@ -137,7 +139,8 @@ export function useSupplyVaults(
       },
       vaultAddress: '0x3456789012345678901234567890123456789012' as Address,
       underlyingDecimals: 18,
-      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
+      underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
+      underlyingSymbol: 'WBTC'
     }
   ];
 

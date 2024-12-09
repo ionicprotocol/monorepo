@@ -16,7 +16,7 @@ import {
 import { useCollateralToggle } from '@ui/hooks/market/useCollateralToggle';
 import { useSupply } from '@ui/hooks/market/useSupply';
 
-import Amount from './Amount';
+import Amount from '../../Amount';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';

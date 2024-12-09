@@ -13,7 +13,7 @@ import {
 import { useBorrow } from '@ui/hooks/market/useBorrow';
 import { useHealth } from '@ui/hooks/market/useHealth';
 
-import Amount from './Amount';
+import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
