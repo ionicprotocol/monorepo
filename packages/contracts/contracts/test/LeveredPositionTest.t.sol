@@ -117,12 +117,7 @@ contract LeveredPositionLensTest is BaseTest {
       ICErc20(0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038),
       IERC20Upgradeable(0x4200000000000000000000000000000000000006),
       16754252276537996590,
-      3000000000000000000,
-      address(0),
-      abi.encode(address(0)),
-      address(0),
-      abi.encode(address(0)),
-      100 // slippage = 1%
+      3000000000000000000
     );
     emit log_named_address("position", address(position));
 
@@ -365,9 +360,9 @@ abstract contract LeveredPositionTest is MarketsTest {
     );
     vm.stopPrank();
 
-    _maxRatio = _position.getMaxLeverageRatio();
+    _maxRatio = _position.getMaxLeverageRatio(0);
     emit log_named_uint("max ratio", _maxRatio);
-    _minRatio = _position.getMinLeverageRatio();
+    _minRatio = _position.getMinLeverageRatio(0);
     emit log_named_uint("min ratio", _minRatio);
 
     assertGt(_maxRatio, _minRatio, "max ratio <= min ratio");
@@ -387,7 +382,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     vm.assume(minLevRatio < targetLeverageRatio);
 
     uint256 borrowedAssetPrice = stableMarket.comptroller().oracle().getUnderlyingPrice(stableMarket);
-    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio);
+    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio, 0);
     emit log_named_uint("borrows delta val", (bd * borrowedAssetPrice) / 1e18);
     emit log_named_uint("min borrow value", ffd.getMinBorrowEth(stableMarket));
 
@@ -650,8 +645,8 @@ contract BombWbnbLeveredPositionTest is LeveredPositionTest {
       0
     );
 
-    maxLevRatio = position.getMaxLeverageRatio();
-    minLevRatio = position.getMinLeverageRatio();
+    maxLevRatio = position.getMaxLeverageRatio(0);
+    minLevRatio = position.getMinLeverageRatio(0);
 
     vm.label(address(position), "Levered Position");
   }

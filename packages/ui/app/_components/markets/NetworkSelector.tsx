@@ -20,6 +20,7 @@ interface INetworkSelector {
   enabledChains?: number[];
   upcomingChains?: string[];
 }
+
 const NETWORK_ORDER = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Lisk', 'BoB'];
 
 function NetworkSelector({
@@ -33,7 +34,6 @@ function NetworkSelector({
   const setDropChain = useStore((state) => state.setDropChain);
 
   const orderedNetworks = NETWORK_ORDER.map((networkName) =>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
   ).filter(
     (entry): entry is [string, any] =>
@@ -43,12 +43,10 @@ function NetworkSelector({
 
   const getUrlWithParams = (chainId: string) => {
     const params = new URLSearchParams(searchParams.toString());
+    // Always reset pool to 0 when changing chains unless nopool is true
     params.set('chain', chainId);
-    if (!nopool && !params.has('pool')) {
+    if (!nopool) {
       params.set('pool', '0');
-    }
-    if (nopool && params.has('pool')) {
-      params.delete('pool');
     }
     return `${pathname}?${params.toString()}`;
   };

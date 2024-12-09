@@ -118,7 +118,12 @@ contract LeveredPositionFactorySecondExtension is
       _expectedSlippage
     );
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(_leverageRatio, _adjustLeverageRatioAggregatorTarget, _adjustLeverageRatioAggregatorData, _expectedSlippage);
+      position.adjustLeverageRatio(
+        _leverageRatio,
+        _adjustLeverageRatioAggregatorTarget,
+        _adjustLeverageRatioAggregatorData,
+        _expectedSlippage
+      );
     }
     return position;
   }

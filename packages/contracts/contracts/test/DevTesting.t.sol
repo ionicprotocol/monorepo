@@ -909,7 +909,7 @@ contract DevTesting is BaseTest {
       address(0),
       abi.encode(address(0))
     );
-    (uint256 supplyDelta, uint256 borrowDelta) = position.getSupplyAmountDelta(2 ether);
+    (uint256 supplyDelta, uint256 borrowDelta) = position.getSupplyAmountDelta(2 ether, 0);
     emit log_named_uint("supplyDelta", supplyDelta);
     emit log_named_uint("borrowDelta", borrowDelta);
 

@@ -1,9 +1,30 @@
 // import type { Dispatch, SetStateAction } from 'react';
 import { create } from 'zustand';
 
-import type { BorrowPopoverProps } from '@ui/app/_components/markets/BorrowPopover';
-import type { SupplyPopoverProps } from '@ui/app/_components/markets/SupplyPopover';
-// import type { PopupMode } from '@ui/app/_components/popup/page';
+import type { Address } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
+
+type SupplyPopoverProps = {
+  asset: string;
+  cToken: Address;
+  dropdownSelectedChain: number;
+  pool: Address;
+  selectedPoolId: string;
+  supplyAPR?: number;
+  rewards?: FlywheelReward[];
+};
+
+type BorrowPopoverProps = {
+  dropdownSelectedChain: number;
+  borrowAPR?: number;
+  rewardsAPR?: number;
+  selectedPoolId: string;
+  asset: string;
+  cToken: Address;
+  pool: Address;
+  rewards?: FlywheelReward[];
+};
 
 interface IFeaturedBorrow extends BorrowPopoverProps {
   // asset: string;

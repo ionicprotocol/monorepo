@@ -5,6 +5,7 @@ import { useReducer } from 'react';
 
 import { ThreeCircles } from 'react-loader-spinner';
 
+import { Button } from '@ui/components/ui/button';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export type TransactionStep = {
@@ -84,10 +85,18 @@ function TransactionStepsHandler({
   resetTransactionSteps,
   chainId
 }: TransactionStepsHandlerProps) {
+  const isComplete =
+    transactionSteps.filter((step) => step.success).length ===
+      transactionSteps.length ||
+    transactionSteps.find((step) => step.error) !== undefined;
+
   return (
-    <div className="mx-auto text-sm">
+    <div className="w-full">
       {transactionSteps.map((transactionStep, i) => (
-        <div key={`transaction-step-${i}`}>
+        <div
+          key={`transaction-step-${i}`}
+          className="flex flex-col items-center mt-2 justify-center"
+        >
           <div
             className={`flex align-center mt-2 ${
               !transactionStep.error && !transactionStep.success && 'text-white'
@@ -126,16 +135,14 @@ function TransactionStepsHandler({
         </div>
       ))}
 
-      {(transactionSteps.filter((step) => step.success).length ===
-        transactionSteps.length ||
-        transactionSteps.find((step) => step.error) !== undefined) && (
+      {isComplete && (
         <div className="text-center">
-          <button
-            className="mt-4 btn-green uppercase"
+          <Button
             onClick={resetTransactionSteps}
+            className="mt-4 bg-accent hover:bg-accent/80 font-medium py-0 px-3 transition-colors duration-200 flex items-center gap-2 uppercase text-[12px] w-full"
           >
-            CONTINUE
-          </button>
+            Continue
+          </Button>
         </div>
       )}
     </div>
