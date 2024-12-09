@@ -6,8 +6,14 @@ import { IHypernativeOracle } from "../external/hypernative/interfaces/IHypernat
 
 contract CTokenOracleProtected is CErc20Storage {
   error InteractionNotAllowed();
+  error CallerIsNotEOA();
 
   modifier onlyOracleApproved() {
+    if (address(ap) == address(0)) {
+      _;
+      return;
+    }
+
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
@@ -21,12 +27,18 @@ contract CTokenOracleProtected is CErc20Storage {
   }
 
   modifier onlyOracleApprovedAllowEOA() {
+    if (address(ap) == address(0)) {
+      _;
+      return;
+    }
+
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
       _;
       return;
     }
+
     IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
     oracle.validateBlacklistedAccountInteraction(msg.sender);
     if (tx.origin == msg.sender) {
@@ -39,6 +51,11 @@ contract CTokenOracleProtected is CErc20Storage {
   }
 
   modifier onlyNotBlacklistedEOA() {
+    if (address(ap) == address(0)) {
+      _;
+      return;
+    }
+
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
@@ -47,7 +64,9 @@ contract CTokenOracleProtected is CErc20Storage {
     }
 
     IHypernativeOracle oracle = IHypernativeOracle(oracleAddress);
-    require(msg.sender == tx.origin, "OracleProtected: caller is not EOA");
+    if (msg.sender != tx.origin) {
+      revert CallerIsNotEOA();
+    }
     oracle.validateBlacklistedAccountInteraction(msg.sender);
     _;
   }
