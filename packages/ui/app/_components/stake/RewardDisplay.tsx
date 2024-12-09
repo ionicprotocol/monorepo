@@ -84,12 +84,14 @@ export default function RewardDisplay({
   const config =
     chainConfig.tokenConfigs?.[selectedToken] || chainConfig.defaultConfig;
 
+  // Always call the hook at the top level
   const { apr } = useSugarAPR({
     sugarAddress: config.sugarAddress,
     poolIndex: config.poolIndex,
     chainId,
     selectedToken,
     isMode: chainId === mode.id
+    // Add enabled flag to control when the hook should actually fetch data
   });
 
   if (!chainConfig) return null;

@@ -20,7 +20,7 @@ export default function StakingTile({ chain }: Iprop) {
         {+chain === mode.id || +chain === base.id ? (
           <RewardDisplay
             chainId={+chain}
-            selectedToken={+chain === mode.id ? 'eth' : undefined}
+            selectedToken={+chain === mode.id ? 'mode' : undefined}
           />
         ) : (
           <span className="text-sm text-center text-white/50 mx-auto ">

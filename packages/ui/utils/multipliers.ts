@@ -13,6 +13,7 @@ export type Multipliers = {
   underlyingAPR?: number;
   op?: boolean;
   anzen?: number;
+  nektar?: boolean;
 };
 
 export const multipliers: Record<

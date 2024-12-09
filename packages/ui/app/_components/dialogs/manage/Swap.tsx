@@ -22,8 +22,8 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from './TransactionStepsHandler';
-import ConnectButton from '../ConnectButton';
-import ResultHandler from '../ResultHandler';
+import ConnectButton from '../../ConnectButton';
+import ResultHandler from '../../ResultHandler';
 
 import type { GetBalanceData } from 'wagmi/query';
 
