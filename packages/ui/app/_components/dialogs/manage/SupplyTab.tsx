@@ -15,28 +15,26 @@ import {
 } from '@ui/context/ManageDialogContext';
 import { useCollateralToggle } from '@ui/hooks/market/useCollateralToggle';
 import { useSupply } from '@ui/hooks/market/useSupply';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
-import Amount from '../../Amount';
 import TransactionStepsHandler from './TransactionStepsHandler';
+import Amount from '../../Amount';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface SupplyTabProps {
-  maxAmount: bigint;
-  isLoadingMax: boolean;
-  totalStats?: {
-    capAmount: number;
-    totalAmount: number;
-    capFiat: number;
-    totalFiat: number;
-  };
+  capAmount: number;
+  totalAmount: number;
+  capFiat: number;
+  totalFiat: number;
   setSwapWidgetOpen: (open: boolean) => void;
 }
 
 const SupplyTab = ({
-  maxAmount,
-  isLoadingMax,
-  totalStats,
+  capAmount,
+  totalAmount,
+  capFiat,
+  totalFiat,
   setSwapWidgetOpen
 }: SupplyTabProps) => {
   const {
@@ -50,6 +48,12 @@ const SupplyTab = ({
     setPredictionAmount,
     getStepsForTypes
   } = useManageDialogContext();
+
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxSupplyAmount(
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
+  );
 
   const { enableCollateral, handleCollateralToggle } = useCollateralToggle({
     selectedMarketData,
@@ -67,7 +71,7 @@ const SupplyTab = ({
     handleUtilization,
     amountAsBInt
   } = useSupply({
-    maxAmount,
+    maxAmount: maxAmount?.bigNumber ?? 0n,
     enableCollateral,
     selectedMarketData,
     comptrollerAddress,
@@ -101,7 +105,10 @@ const SupplyTab = ({
         amount={amount}
         handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
-        max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
+        max={formatUnits(
+          maxAmount?.bigNumber ?? 0n,
+          selectedMarketData.underlyingDecimals
+        )}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
@@ -168,16 +175,14 @@ const SupplyTab = ({
           </div>
         </div>
 
-        {totalStats && (
-          <MemoizedUtilizationStats
-            label="Total Supplied"
-            value={totalStats.totalAmount}
-            max={totalStats.capAmount}
-            symbol={selectedMarketData.underlyingSymbol}
-            valueInFiat={totalStats.totalFiat}
-            maxInFiat={totalStats.capFiat}
-          />
-        )}
+        <MemoizedUtilizationStats
+          label="Total Supplied"
+          value={totalAmount}
+          max={capAmount}
+          symbol={selectedMarketData.underlyingSymbol}
+          valueInFiat={totalFiat}
+          maxInFiat={capFiat}
+        />
       </div>
 
       {hasActiveTransactions ? (

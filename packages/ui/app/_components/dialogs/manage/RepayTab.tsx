@@ -10,25 +10,28 @@ import {
 } from '@ui/context/ManageDialogContext';
 import { useHealth } from '@ui/hooks/market/useHealth';
 import { useRepay } from '@ui/hooks/market/useRepay';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
-import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
+import Amount from '../../Amount';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 interface RepayTabProps {
-  maxAmount: bigint;
-  isLoadingMax: boolean;
-  totalStats?: {
-    capAmount: number;
-    totalAmount: number;
-    capFiat: number;
-    totalFiat: number;
-  };
+  capAmount: number;
+  totalAmount: number;
+  capFiat: number;
+  totalFiat: number;
 }
 
-const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
+const RepayTab = ({
+  capAmount,
+  totalAmount,
+  capFiat,
+  totalFiat
+}: RepayTabProps) => {
   const {
     selectedMarketData,
     resetTransactionSteps,
@@ -39,6 +42,11 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     setPredictionAmount,
     getStepsForTypes
   } = useManageDialogContext();
+
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxRepayAmount(
+    selectedMarketData,
+    chainId
+  );
 
   const {
     isWaitingForIndexing,
@@ -51,7 +59,7 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
     handleUtilization,
     amountAsBInt
   } = useRepay({
-    maxAmount,
+    maxAmount: maxAmount ?? 0n,
     selectedMarketData,
     chainId
   });
@@ -80,7 +88,10 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
         amount={amount}
         handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
-        max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
+        max={formatUnits(
+          maxAmount ?? 0n,
+          selectedMarketData.underlyingDecimals
+        )}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
@@ -143,16 +154,14 @@ const RepayTab = ({ maxAmount, isLoadingMax, totalStats }: RepayTabProps) => {
           </div>
         </div>
 
-        {totalStats && (
-          <MemoizedUtilizationStats
-            label="Total Supplied"
-            value={totalStats.totalAmount}
-            max={totalStats.capAmount}
-            symbol={selectedMarketData.underlyingSymbol}
-            valueInFiat={totalStats.totalFiat}
-            maxInFiat={totalStats.capFiat}
-          />
-        )}
+        <MemoizedUtilizationStats
+          label="Total Supplied"
+          value={totalAmount}
+          max={capAmount}
+          symbol={selectedMarketData.underlyingSymbol}
+          valueInFiat={totalFiat}
+          maxInFiat={capFiat}
+        />
       </div>
 
       {transactionSteps.length > 0 ? (

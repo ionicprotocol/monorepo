@@ -10,28 +10,26 @@ import {
 } from '@ui/context/ManageDialogContext';
 import { useHealth } from '@ui/hooks/market/useHealth';
 import { useWithdraw } from '@ui/hooks/market/useWithdraw';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 
-import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
+import Amount from '../../Amount';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
 
 interface WithdrawTabProps {
-  maxAmount: bigint;
-  isLoadingMax: boolean;
-  totalStats?: {
-    capAmount: number;
-    totalAmount: number;
-    capFiat: number;
-    totalFiat: number;
-  };
+  capAmount: number;
+  totalAmount: number;
+  capFiat: number;
+  totalFiat: number;
 }
 
 const WithdrawTab = ({
-  maxAmount,
-  isLoadingMax,
-  totalStats
+  capAmount,
+  totalAmount,
+  capFiat,
+  totalFiat
 }: WithdrawTabProps) => {
   const {
     selectedMarketData,
@@ -44,6 +42,11 @@ const WithdrawTab = ({
     getStepsForTypes // Add this from context
   } = useManageDialogContext();
 
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
+    selectedMarketData,
+    chainId
+  );
+
   const {
     isWaitingForIndexing,
     withdrawAmount,
@@ -54,7 +57,7 @@ const WithdrawTab = ({
     handleUtilization,
     amountAsBInt
   } = useWithdraw({
-    maxAmount,
+    maxAmount: maxAmount ?? 0n,
     selectedMarketData,
     chainId
   });
@@ -92,7 +95,10 @@ const WithdrawTab = ({
         amount={amount}
         handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
-        max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
+        max={formatUnits(
+          maxAmount ?? 0n,
+          selectedMarketData.underlyingDecimals
+        )}
         symbol={selectedMarketData.underlyingSymbol}
         hintText="Max Withdraw"
         currentUtilizationPercentage={utilizationPercentage}
@@ -156,16 +162,14 @@ const WithdrawTab = ({
           </div>
         </div>
 
-        {totalStats && (
-          <MemoizedUtilizationStats
-            label="Total Supplied"
-            value={totalStats.totalAmount}
-            max={totalStats.capAmount}
-            symbol={selectedMarketData.underlyingSymbol}
-            valueInFiat={totalStats.totalFiat}
-            maxInFiat={totalStats.capFiat}
-          />
-        )}
+        <MemoizedUtilizationStats
+          label="Total Supplied"
+          value={totalAmount}
+          max={capAmount}
+          symbol={selectedMarketData.underlyingSymbol}
+          valueInFiat={totalFiat}
+          maxInFiat={capFiat}
+        />
       </div>
 
       {transactionSteps.length > 0 ? (
