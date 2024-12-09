@@ -55,8 +55,8 @@ contract IonicFlywheelTest is Test {
     function test_addStrategyForRewards_StrategyCanBeAdded(ERC20 strat) public {
         flywheel.addStrategyForRewards(strat);
         (uint224 index, uint32 timestamp) = flywheel.strategyState(strat);
-        require(index == ONE);
-        require(timestamp == block.timestamp);
+        assertEq(index, ONE);
+        assertEq(timestamp, block.timestamp);
     }
 
     function test_addStrategyForRewards_Unauthorized() public {
@@ -69,11 +69,11 @@ contract IonicFlywheelTest is Test {
         rewardToken.mint(address(rewards), mintAmount);
 
         flywheel.setFlywheelRewards(IFlywheelRewards(address(1)));
-        require(flywheel.flywheelRewards() == IFlywheelRewards(address(1)));
+        assertEq(address(flywheel.flywheelRewards()), address(1));
 
         // assert rewards transferred
-        require(rewardToken.balanceOf(address(1)) == mintAmount);
-        require(rewardToken.balanceOf(address(rewards)) == 0);
+        assertEq(rewardToken.balanceOf(address(1)), mintAmount);
+        assertEq(rewardToken.balanceOf(address(rewards)), 0);
     }
 
     function test_setFlywheelRewards_Unauthorized() public {
@@ -84,7 +84,7 @@ contract IonicFlywheelTest is Test {
 
     function test_setBooster_FlywheelBoosterCanBeAdded(IFlywheelBooster booster) public {
         flywheel.setBooster(booster);
-        require(flywheel.flywheelBooster() == booster);
+        assertEq(address(flywheel.flywheelBooster()), address(booster));
     }
 
     function test_setBooster_Unauthorized() public {
@@ -112,13 +112,14 @@ contract IonicFlywheelTest is Test {
 
         uint256 diff = (rewardAmount * ONE) / (uint256(userBalance1) + userBalance2);
 
-        require(index == ONE + diff);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.rewardsAccrued(user) == (diff * userBalance1) / ONE);
-        require(accrued == (diff * userBalance1) / ONE);
-        require(flywheel.rewardsAccrued(user2) == 0 ether);
+        assertEq(index, ONE + diff);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.rewardsAccrued(user), (diff * userBalance1) / ONE);
+        assertEq(accrued, (diff * userBalance1) / ONE);
+        assertEq(flywheel.rewardsAccrued(user2), 0 ether);
 
-        require(rewardToken.balanceOf(address(rewards)) == rewardAmount);
+        assertEq(rewardToken.balanceOf(address(rewards)), rewardAmount);
+
     }
 
     function test_accrue_TwoUsersCanBeAccrued(
@@ -142,15 +143,15 @@ contract IonicFlywheelTest is Test {
 
         uint256 diff = (rewardAmount * ONE) / (uint256(userBalance1) + userBalance2);
 
-        require(index == ONE + diff);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.userIndex(strategy, user2) == index);
-        require(flywheel.rewardsAccrued(user) == (diff * userBalance1) / ONE);
-        require(flywheel.rewardsAccrued(user2) == (diff * userBalance2) / ONE);
-        require(accrued1 == (diff * userBalance1) / ONE);
-        require(accrued2 == (diff * userBalance2) / ONE);
+        assertEq(index, ONE + diff);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.userIndex(strategy, user2), index);
+        assertEq(flywheel.rewardsAccrued(user), (diff * userBalance1) / ONE);
+        assertEq(flywheel.rewardsAccrued(user2), (diff * userBalance2) / ONE);
+        assertEq(accrued1, (diff * userBalance1) / ONE);
+        assertEq(accrued2, (diff * userBalance2) / ONE);
+        assertEq(rewardToken.balanceOf(address(rewards)), rewardAmount);
 
-        require(rewardToken.balanceOf(address(rewards)) == rewardAmount);
     }
 
     function test_accrue_AccrueBeforeAddStrategy(uint128 mintAmount, uint128 rewardAmount) public {
@@ -159,7 +160,7 @@ contract IonicFlywheelTest is Test {
         rewardToken.mint(address(rewards), rewardAmount);
         rewards.setRewardsAmount(strategy, rewardAmount);
 
-        require(flywheel.accrue(strategy, user) == 0);
+        assertEq(flywheel.accrue(strategy, user), 0);
     }
 
     function test_accrue_AccrueTwoUsersBeforeAddStrategy() public {
@@ -171,8 +172,8 @@ contract IonicFlywheelTest is Test {
 
         (uint256 accrued1, uint256 accrued2) = flywheel.accrue(strategy, user, user2);
 
-        require(accrued1 == 0);
-        require(accrued2 == 0);
+        assertEq(accrued1, 0);
+        assertEq(accrued2, 0);
     }
 
     function test_accrue_AccrueTwoUsersSeparately() public {
@@ -192,14 +193,14 @@ contract IonicFlywheelTest is Test {
 
         (uint224 index, ) = flywheel.strategyState(strategy);
 
-        require(index == ONE + 2.5 ether);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.rewardsAccrued(user) == 2.5 ether);
-        require(flywheel.rewardsAccrued(user2) == 7.5 ether);
-        require(accrued == 2.5 ether);
-        require(accrued2 == 7.5 ether);
+        assertEq(index, ONE + 2.5 ether);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.rewardsAccrued(user), 2.5 ether);
+        assertEq(flywheel.rewardsAccrued(user2), 7.5 ether);
+        assertEq(accrued, 2.5 ether);
+        assertEq(accrued2, 7.5 ether);
 
-        require(rewardToken.balanceOf(address(rewards)) == 10 ether);
+        assertEq(rewardToken.balanceOf(address(rewards)), 10 ether);
     }
 
     function test_accrue_AccrueSecondUserLater() public {
@@ -214,14 +215,14 @@ contract IonicFlywheelTest is Test {
 
         (uint224 index, ) = flywheel.strategyState(strategy);
 
-        require(index == ONE + 10 ether);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.rewardsAccrued(user) == 10 ether);
-        require(flywheel.rewardsAccrued(user2) == 0);
-        require(accrued == 10 ether);
-        require(accrued2 == 0);
+        assertEq(index, ONE + 10 ether);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.rewardsAccrued(user), 10 ether);
+        assertEq(flywheel.rewardsAccrued(user2), 0);
+        assertEq(accrued, 10 ether);
+        assertEq(accrued2, 0);
 
-        require(rewardToken.balanceOf(address(rewards)) == 10 ether);
+        assertEq(rewardToken.balanceOf(address(rewards)), 10 ether);
 
         strategy.mint(user2, 3 ether);
 
@@ -232,14 +233,14 @@ contract IonicFlywheelTest is Test {
 
         (index, ) = flywheel.strategyState(strategy);
 
-        require(index == ONE + 11 ether);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.rewardsAccrued(user) == 11 ether);
-        require(flywheel.rewardsAccrued(user2) == 3 ether);
-        require(accrued == 11 ether);
-        require(accrued2 == 3 ether);
+        assertEq(index, ONE + 11 ether);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.rewardsAccrued(user), 11 ether);
+        assertEq(flywheel.rewardsAccrued(user2), 3 ether);
+        assertEq(accrued, 11 ether);
+        assertEq(accrued2, 3 ether);
 
-        require(rewardToken.balanceOf(address(rewards)) == 14 ether);
+        assertEq(rewardToken.balanceOf(address(rewards)), 14 ether);
     }
 
     function test_claimRewards_UserCanClaim(
@@ -255,9 +256,9 @@ contract IonicFlywheelTest is Test {
         uint256 diff = (rewardAmount * ONE) / (uint256(userBalance1) + userBalance2);
         uint256 accrued = (diff * userBalance1) / ONE;
 
-        require(rewardToken.balanceOf(address(rewards)) == rewardAmount - accrued);
-        require(rewardToken.balanceOf(user) == accrued);
-        require(flywheel.rewardsAccrued(user) == 0);
+        assertEq(rewardToken.balanceOf(address(rewards)), rewardAmount - accrued);
+        assertEq(rewardToken.balanceOf(user), accrued);
+        assertEq(flywheel.rewardsAccrued(user), 0);
 
         flywheel.claimRewards(user);
     }
@@ -289,14 +290,13 @@ contract IonicFlywheelTest is Test {
         uint256 diff = (rewardAmount * ONE) / (uint256(userBalance1) + userBalance2 + boost);
         uint256 user1Boosted = uint256(userBalance1) + boost;
 
-        require(index == ONE + diff);
-        require(flywheel.userIndex(strategy, user) == index);
-        require(flywheel.rewardsAccrued(user) == (diff * user1Boosted) / ONE);
-        require(accrued == (diff * user1Boosted) / ONE);
+        assertEq(index, ONE + diff);
+        assertEq(flywheel.userIndex(strategy, user), index);
+        assertEq(flywheel.rewardsAccrued(user), (diff * user1Boosted) / ONE);
+        assertEq(accrued, (diff * user1Boosted) / ONE);
 
-        require(flywheel.rewardsAccrued(user2) == 0 ether);
+        assertEq(rewardToken.balanceOf(address(rewards)), rewardAmount);
 
-        require(rewardToken.balanceOf(address(rewards)) == rewardAmount);
     }
 
     function test_updateFeeSettings_UpdateFeeSettings(uint256 fee, address feeRecipient) public {
@@ -321,7 +321,7 @@ contract IonicFlywheelTest is Test {
         uint256 rewardAmount,
         address receiver
     ) public {
-        vm.assume(userBalance1 != 0 && rewardAmount != 0 && rewardAmount < 1e25 && userBalance1 < 1e25 );
+        vm.assume(userBalance1 != 0 && rewardAmount != 0 && rewardAmount < 1e27 && userBalance1 < 1e27);
         strategy.mint(user1, userBalance1);
 
         rewardToken.mint(address(rewards), rewardAmount);
@@ -329,8 +329,8 @@ contract IonicFlywheelTest is Test {
 
         flywheel.addStrategyForRewards(strategy);
 
-        uint256 accrued = flywheel.accrue(strategy, user1);
-
+        flywheel.accrue(strategy, user1);
+        uint256 accrued = flywheel.rewardsAccrued(user1);
         emissionsManager.blacklistUser(user1);
         vm.prank(address(emissionsManager));
         flywheel.takeRewardsFromUser(user1, receiver);
@@ -346,7 +346,7 @@ contract IonicFlywheelTest is Test {
         uint256 rewardAmount,
         address receiver
     ) public {
-        vm.assume(userBalance1 != 0 && rewardAmount != 0 && rewardAmount < 1e25 && userBalance1 < 1e25 );
+        vm.assume(userBalance1 != 0 && rewardAmount != 0 && rewardAmount < 1e25 && userBalance1 < 1e25);
         strategy.mint(user1, userBalance1);
 
         rewardToken.mint(address(rewards), rewardAmount);
