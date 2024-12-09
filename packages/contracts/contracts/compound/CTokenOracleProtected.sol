@@ -9,11 +9,6 @@ contract CTokenOracleProtected is CErc20Storage {
   error CallerIsNotEOA();
 
   modifier onlyOracleApproved() {
-    if (address(ap) == address(0)) {
-      _;
-      return;
-    }
-
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
@@ -27,11 +22,6 @@ contract CTokenOracleProtected is CErc20Storage {
   }
 
   modifier onlyOracleApprovedAllowEOA() {
-    if (address(ap) == address(0)) {
-      _;
-      return;
-    }
-
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
@@ -51,11 +41,6 @@ contract CTokenOracleProtected is CErc20Storage {
   }
 
   modifier onlyNotBlacklistedEOA() {
-    if (address(ap) == address(0)) {
-      _;
-      return;
-    }
-
     address oracleAddress = ap.getAddress("HYPERNATIVE_ORACLE");
 
     if (oracleAddress == address(0)) {
