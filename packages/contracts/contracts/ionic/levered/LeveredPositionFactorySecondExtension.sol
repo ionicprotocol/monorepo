@@ -27,7 +27,7 @@ contract LeveredPositionFactorySecondExtension is
   error PairNotWhitelisted();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 3;
+    uint8 fnsCount = 4;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.createPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPosition.selector;

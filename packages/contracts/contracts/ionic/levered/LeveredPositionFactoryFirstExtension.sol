@@ -29,7 +29,7 @@ contract LeveredPositionFactoryFirstExtension is
   error PositionNotClosed();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 11;
+    uint8 fnsCount = 12;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
     functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
