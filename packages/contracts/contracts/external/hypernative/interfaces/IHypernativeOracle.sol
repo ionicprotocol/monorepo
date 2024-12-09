@@ -2,9 +2,8 @@
 pragma solidity ^0.8.22;
 
 interface IHypernativeOracle {
-    function register(address account) external;
-    function registerStrict(address account) external;
-    function isBlacklistedAccount(address account) external view returns (bool);
-    function isBlacklistedContext(address sender, address origin) external view returns (bool);
-    function isTimeExceeded(address account) external view returns (bool);
+    function register(address account, bool isStrictMode) external;
+    function validateForbiddenAccountInteraction(address sender) external view;
+    function validateForbiddenContextInteraction(address origin, address sender) external view;
+    function validateBlacklistedAccountInteraction(address sender) external;
 }
