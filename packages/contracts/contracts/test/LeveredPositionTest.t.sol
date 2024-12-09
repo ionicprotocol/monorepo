@@ -198,27 +198,28 @@ abstract contract LeveredPositionTest is MarketsTest {
     super.afterForkSetUp();
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
+    upgradeFactory();
     registry = factory.liquidatorsRegistry();
-    {
-      // upgrade the registry
-      LiquidatorsRegistryExtension newExt1 = new LiquidatorsRegistryExtension();
-      LiquidatorsRegistrySecondExtension newExt2 = new LiquidatorsRegistrySecondExtension();
-
-      vm.startPrank(registry.owner());
-      DiamondBase asBase = DiamondBase(address(registry));
-      address[] memory oldExts = asBase._listExtensions();
-
-      if (oldExts.length == 1) {
-        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-        asBase._registerExtension(newExt2, DiamondExtension(address(0)));
-      } else if (oldExts.length == 2) {
-        asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
-        asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
-      }
-      vm.stopPrank();
-    }
-
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
+  }
+
+  function upgradeFactory() internal {
+    // upgrade the factory
+    LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
+    LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+
+    vm.startPrank(factory.owner());
+    DiamondBase asBase = DiamondBase(address(factory));
+    address[] memory oldExts = asBase._listExtensions();
+
+    if (oldExts.length == 1) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(address(0)));
+    } else if (oldExts.length == 2) {
+      asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
+      asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+    }
+    vm.stopPrank();
   }
 
   function upgradeRegistry() internal {
@@ -333,17 +334,35 @@ abstract contract LeveredPositionTest is MarketsTest {
     address _positionOwner,
     uint256 _depositAmount
   ) internal returns (LeveredPosition _position, uint256 _maxRatio, uint256 _minRatio) {
+    return _openLeveredPosition(_positionOwner, _depositAmount, address(0), "", 0);
+  }
+
+  function _openLeveredPosition(
+    address _positionOwner,
+    uint256 _depositAmount,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData,
+    uint256 _expectedSlippage
+  ) internal returns (LeveredPosition _position, uint256 _maxRatio, uint256 _minRatio) {
     IERC20Upgradeable collateralToken = IERC20Upgradeable(collateralMarket.underlying());
     collateralToken.transfer(_positionOwner, _depositAmount);
 
     vm.startPrank(_positionOwner);
     collateralToken.approve(address(factory), _depositAmount);
-    _position = factory.createAndFundPosition(collateralMarket, stableMarket, collateralToken, _depositAmount);
+    _position = factory.createAndFundPosition(
+      collateralMarket,
+      stableMarket,
+      collateralToken,
+      _depositAmount,
+      _aggregatorTarget,
+      _aggregatorData,
+      _expectedSlippage
+    );
     vm.stopPrank();
 
-    _maxRatio = _position.getMaxLeverageRatio();
+    _maxRatio = _position.getMaxLeverageRatio(0);
     emit log_named_uint("max ratio", _maxRatio);
-    _minRatio = _position.getMinLeverageRatio();
+    _minRatio = _position.getMinLeverageRatio(0);
     emit log_named_uint("min ratio", _minRatio);
 
     assertGt(_maxRatio, _minRatio, "max ratio <= min ratio");
@@ -363,7 +382,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     vm.assume(minLevRatio < targetLeverageRatio);
 
     uint256 borrowedAssetPrice = stableMarket.comptroller().oracle().getUnderlyingPrice(stableMarket);
-    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio);
+    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio, 0);
     emit log_named_uint("borrows delta val", (bd * borrowedAssetPrice) / 1e18);
     emit log_named_uint("min borrow value", ffd.getMinBorrowEth(stableMarket));
 
@@ -378,7 +397,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     assertApproxEqRel(leverageRatioRealized, targetLeverageRatio, 4e16, "target ratio not matching");
   }
 
-  function testMinMaxLeverageRatio() public whenForking {
+  function testMinMaxLeverageRatio() public virtual whenForking {
     assertGt(maxLevRatio, minLevRatio, "max ratio <= min ratio");
 
     // attempting to adjust to minLevRatio - 0.01 should fail
@@ -498,509 +517,8 @@ contract WmaticMaticXLeveredPositionTest is LeveredPositionTest {
   }
 }
 
-contract StkBnbWBnbLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(BSC_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 2e18;
-
-    address stkBnbMarket = 0xAcfbf93d8fD1A9869bAb2328669dDba33296a421;
-    address wbnbMarket = 0x3Af258d24EBdC03127ED6cEb8e58cA90835fbca5;
-    address stkBnbWhale = 0x84b78452A97C5afDa1400943333F691448069A29; // algebra pool
-    address wbnbWhale = 0x84b78452A97C5afDa1400943333F691448069A29; // algebra pool
-
-    AlgebraSwapLiquidator liquidator = new AlgebraSwapLiquidator();
-    _configurePairAndLiquidator(stkBnbMarket, wbnbMarket, liquidator);
-    _fundMarketAndSelf(ICErc20(stkBnbMarket), stkBnbWhale);
-    _fundMarketAndSelf(ICErc20(wbnbMarket), wbnbWhale);
-
-    IERC20Upgradeable collateralToken = IERC20Upgradeable(collateralMarket.underlying());
-    collateralToken.transfer(address(this), depositAmount);
-    collateralToken.approve(address(factory), depositAmount);
-    position = factory.createAndFundPosition(collateralMarket, stableMarket, collateralToken, depositAmount);
-  }
-}
-
-interface TwoBrl {
-  function minter() external view returns (address);
-
-  function mint(address payable _to, uint256 _value) external returns (bool);
-}
-
-contract Jbrl2BrlLeveredPositionTest is LeveredPositionTest {
-  IonicComptroller pool;
-  ComptrollerFirstExtension asExtension;
-
-  function setUp() public fork(BSC_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 1000e18;
-
-    address twoBrlMarket = 0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba; // 2brl as collateral
-    address jBrlMarket = 0x82A3103bc306293227B756f7554AfAeE82F8ab7a; // jbrl as borrowable
-    address payable twoBrlWhale = payable(address(177)); // empty account
-    address jBrlWhale = 0xA0695f78AF837F570bcc50f53e58Cda300798B65; // solidly pair BRZ-JBRL
-
-    TwoBrl twoBrl = TwoBrl(ICErc20(twoBrlMarket).underlying());
-    vm.prank(twoBrl.minter());
-    twoBrl.mint(twoBrlWhale, depositAmount * 100);
-
-    _configurePair(twoBrlMarket, jBrlMarket);
-    _fundMarketAndSelf(ICErc20(twoBrlMarket), twoBrlWhale);
-    _fundMarketAndSelf(ICErc20(jBrlMarket), jBrlWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract BombWbnbLeveredPositionTest is LeveredPositionTest {
-  uint256 depositAmount = 100e18;
-  address whale = 0xe7B7dF67C1fe053f1C6B965826d3bFF19603c482;
-  address wbnbWhale = 0x57E30beb8054B248CE301FeabfD0c74677Fa40f0;
-  uint256 ratioOnCreation = 1.0e18;
-  uint256 minBorrowNative = 1e17;
-
-  function setUp() public fork(BSC_CHAPEL) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    upgradeRegistry();
-
-    vm.mockCall(
-      address(ffd),
-      abi.encodeWithSelector(IFeeDistributor.minBorrowEth.selector),
-      abi.encode(minBorrowNative)
-    );
-
-    address xMarket = 0x9B6E1039103812E0dcC1100a158e4a68014b2571; // BOMB
-    address yMarket = 0x9dD00920f5B74A31177cbaB834AB0904703c31B1; // WBNB
-
-    collateralMarket = ICErc20(xMarket);
-    stableMarket = ICErc20(yMarket);
-
-    //upgradePoolAndMarkets();
-
-    IERC20Upgradeable collateralToken = IERC20Upgradeable(collateralMarket.underlying());
-    IERC20Upgradeable stableToken = IERC20Upgradeable(stableMarket.underlying());
-    // call amountOutAndSlippageOfSwap to cache the slippage
-    {
-      vm.startPrank(whale);
-      collateralToken.approve(address(registry), 1e36);
-      registry.amountOutAndSlippageOfSwap(collateralToken, 1e18, stableToken);
-      collateralToken.transfer(address(this), depositAmount);
-      vm.stopPrank();
-
-      vm.startPrank(wbnbWhale);
-      stableToken.approve(address(registry), 1e36);
-      registry.amountOutAndSlippageOfSwap(stableToken, 1e18, collateralToken);
-      vm.stopPrank();
-    }
-
-    vm.prank(whale);
-    collateralToken.transfer(address(this), depositAmount);
-
-    collateralToken.approve(address(factory), depositAmount);
-    position = factory.createAndFundPositionAtRatio(
-      collateralMarket,
-      stableMarket,
-      collateralToken,
-      depositAmount,
-      ratioOnCreation
-    );
-
-    maxLevRatio = position.getMaxLeverageRatio();
-    minLevRatio = position.getMinLeverageRatio();
-
-    vm.label(address(position), "Levered Position");
-  }
-}
-
-contract PearlWUsdrWUsdrUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 0.000002e18;
-
-    address lpTokenMarket = 0x06F61E22ef144f1cC4550D40ffbF681CB1C3aCAF;
-    address wusdrMarket = 0x26EA46e975778662f98dAa0E7a12858dA9139262;
-    address lpTokenWhale = 0x03Fa7A2628D63985bDFe07B95d4026663ED96065;
-    address wUsdrWhale = 0x8711a1a52c34EDe8E61eF40496ab2618a8F6EA4B;
-
-    _configurePair(lpTokenMarket, wusdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(wusdrMarket), wUsdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrWUsdrUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 0.000002e18;
-
-    address lpTokenMarket = 0x06F61E22ef144f1cC4550D40ffbF681CB1C3aCAF;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0x03Fa7A2628D63985bDFe07B95d4026663ED96065;
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdcUsdrLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 800e9;
-
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address usdcMarket = 0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa;
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    IRedemptionStrategy liquidator = new SolidlySwapLiquidator();
-    _configurePairAndLiquidator(usdrMarket, usdcMarket, liquidator);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdcUsdcUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 10e9;
-
-    // LP token underlying 0xD17cb0f162f133e339C0BbFc18c36c357E681D6b
-    address lpTokenMarket = 0x83DF24fE1B1eBF38048B91ffc4a8De0bAa88b891;
-    address usdcMarket = 0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa;
-    address lpTokenWhale = 0x97Bd59A8202F8263C2eC39cf6cF6B438D0B45876; // Thena Gauge
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    _configurePair(lpTokenMarket, usdcMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrUsdcUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 10e9;
-
-    // LP token underlying 0xD17cb0f162f133e339C0BbFc18c36c357E681D6b
-    address lpTokenMarket = 0x83DF24fE1B1eBF38048B91ffc4a8De0bAa88b891;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0x97Bd59A8202F8263C2eC39cf6cF6B438D0B45876; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrDaiUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 2e18;
-
-    // LP token underlying 0xBD02973b441Aa83c8EecEA158b98B5984bb1036E
-    address lpTokenMarket = 0xBcE30B4D78cEb9a75A1Aa62156529c3592b3F08b;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0x85Fa2331040933A02b154579fAbE6A6a5A765279; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrTngblUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 0.02e18;
-
-    // LP token underlying 0x0Edc235693C20943780b76D79DD763236E94C751
-    address lpTokenMarket = 0x2E870Aeee3D9d1eA29Ec93d2c0A99A4e0D5EB697;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0xdaeF32cA8D699015fcFB2884F6902fFCebE51c5b; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrWbtcUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 0.000000071325342755e18;
-
-    // LP token underlying 0xb95E1C22dd965FafE926b2A793e9D6757b6613F4
-    address lpTokenMarket = 0xffc8c8d747E52fAfbf973c64Bab10d38A6902c46;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0x39976f6328ebA2a3C860b7DE5cF2c1bB41581FB8; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrWethUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 0.004081e18;
-
-    // LP token underlying 0x343D9a8D2Bc6A62390aEc764bb5b900C4B039127
-    address lpTokenMarket = 0x343D9a8D2Bc6A62390aEc764bb5b900C4B039127;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0x7D02A8b758791A03319102f81bF61E220F73e43D; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdrMaticUsdrLpLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 0.05e18;
-
-    // LP token underlying vAMM-WMATIC/USDR
-    address lpTokenMarket = 0xfacEdA4f9731797102f040380aD5e234c92d1942;
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address lpTokenWhale = 0xdA0AfBeEEBef6dA2F060237D35cab759b99B13B6; // Thena Gauge
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-
-    _configurePair(lpTokenMarket, usdrMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroCashAUsdcCashLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 300e18;
-
-    // LP token underlying xCASH-USDC
-    address lpTokenMarket = 0x1D2A7078a404ab970f951d5A6dbECD9e24838FB6;
-    address cashMarket = 0xf69207CFDe6228A1e15A34F2b0c4fDe0845D9eBa;
-    address lpTokenWhale = 0x35a499c15b4dDCf7e98628D415346B9795CCa80d;
-    address cashWhale = 0x88C522E526E5Eea8d636fd6805cA7fEB488780D0;
-
-    _configurePair(lpTokenMarket, cashMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(cashMarket), cashWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroUsdcAUsdcCashLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 700e18;
-
-    // LP token underlying xCASH-USDC
-    address lpTokenMarket = 0x1D2A7078a404ab970f951d5A6dbECD9e24838FB6;
-    address usdcMarket = 0x38EbA94210bCEf3F9231E1764EE230abC14D1cbc;
-    address lpTokenWhale = 0x35a499c15b4dDCf7e98628D415346B9795CCa80d;
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    _configurePair(lpTokenMarket, usdcMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroUsdcAUsdcWethLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 1e18;
-
-    // LP token underlying xUSDC-WETH05
-    address lpTokenMarket = 0xC7cA03A0bE1dBAc350E5BfE5050fC5af6406490E;
-    address usdcMarket = 0x38EbA94210bCEf3F9231E1764EE230abC14D1cbc;
-    address lpTokenWhale = 0x38e481367E0c50f4166AD2A1C9fde0E3c662CFBa;
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    _configurePair(lpTokenMarket, usdcMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroCashUsdcLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 300e18;
-
-    address cashMarket = 0xf69207CFDe6228A1e15A34F2b0c4fDe0845D9eBa;
-    address usdcMarket = 0x38EbA94210bCEf3F9231E1764EE230abC14D1cbc;
-    address cashWhale = 0x88C522E526E5Eea8d636fd6805cA7fEB488780D0;
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    _configurePair(cashMarket, usdcMarket);
-    _fundMarketAndSelf(ICErc20(cashMarket), cashWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroCashAUsdcWethLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 1e18;
-
-    // LP token underlying xUSDC-WETH05
-    address lpTokenMarket = 0xC7cA03A0bE1dBAc350E5BfE5050fC5af6406490E;
-    address cashMarket = 0xf69207CFDe6228A1e15A34F2b0c4fDe0845D9eBa;
-    address lpTokenWhale = 0x38e481367E0c50f4166AD2A1C9fde0E3c662CFBa;
-    address cashWhale = 0x88C522E526E5Eea8d636fd6805cA7fEB488780D0;
-
-    _configurePair(lpTokenMarket, cashMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(cashMarket), cashWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract RetroWethAWbtcWethLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 1e18;
-
-    // LP token underlying xWBTC-WETH05
-    address lpTokenMarket = 0xCB1a06eff3459078c26516ae3a1dB44A61D2DbCA;
-    address wethMarket = 0x2469B23354cb7cA50b798663Ec5812Bf28d15e9e;
-    address lpTokenWhale = 0x38e481367E0c50f4166AD2A1C9fde0E3c662CFBa;
-    address wethWhale = 0x1eED63EfBA5f81D95bfe37d82C8E736b974F477b;
-
-    _configurePair(lpTokenMarket, wethMarket);
-    _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
-    _fundMarketAndSelf(ICErc20(wethMarket), wethWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract DavosUsdcDusdLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-
-    uint256 depositAmount = 500e18;
-
-    address dusdMarket = 0xE70d09dA78900A0429ee70b35200F70A30d7d2B9;
-    address usdcMarket = 0x14787e50578d8c606C3d57bDbA53dD65Fd665449;
-    address dusdWhale = 0xE69a1876bdACfa7A7a4F6D531BE2FDE843D2165C;
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    _configurePair(dusdMarket, usdcMarket);
-    _fundMarketAndSelf(ICErc20(dusdMarket), dusdWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
 contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(MODE_MAINNET) {}
+  function setUp() public forkAtBlock(MODE_MAINNET, 16795000) {}
 
   function afterForkSetUp() internal override {
     super.afterForkSetUp();
@@ -1009,7 +527,7 @@ contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
 
     address wethMarket = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
     address USDCMarket = 0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038;
-    address wethWhale = 0x7380511493DD4c2f1dD75E9CCe5bD52C787D4B51;
+    address wethWhale = 0x9c29a8eC901DBec4fFf165cD57D4f9E03D4838f7;
     address USDCWhale = 0x34b83A3759ba4c9F99c339604181bf6bBdED4C79;
 
     ICErc20[] memory cTokens = new ICErc20[](1);
@@ -1028,7 +546,37 @@ contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
     _fundMarketAndSelf(ICErc20(wethMarket), wethWhale);
     _fundMarketAndSelf(ICErc20(USDCMarket), USDCWhale);
 
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
+    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(
+      address(this),
+      depositAmount
+    );
+  }
+
+  function testMinMaxLeverageRatio() public override whenForking {
+    assertGt(maxLevRatio, minLevRatio, "max ratio <= min ratio");
+
+    // attempting to adjust to minLevRatio - 0.01 should fail
+    vm.expectRevert(abi.encodeWithSelector(LeveredPosition.BorrowStableFailed.selector, 0x3fa));
+    position.adjustLeverageRatio(
+        (minLevRatio + 1e18) / 2,
+        0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE,
+        hex"4666fc80e81749a3acc73ea5c8524315073eba53fa73d7f5e8f42161d58bd91e8b2d8f2800000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000f3ff620e014ad62103d4dc6776033773c51109a900000000000000000000000000000000000000000000000001257f654efa4bb7000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000086c6966692d617069000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a307830303030303030303030303030303030303030303030303030303030303030303030303030303030000000000000000000000000000000000000000000000000000000000000000000006352a56caadc4f1e25cd6c75970fa768a3304e640000000000000000000000006352a56caadc4f1e25cd6c75970fa768a3304e64000000000000000000000000d988097fb8612cc24eec14542bc03424c656005f00000000000000000000000042000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000012E0150500000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000096490411a32000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000d988097fb8612cc24eec14542bc03424c656005f0000000000000000000000004200000000000000000000000000000000000006000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c0000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae0000000000000000000000000000000000000000000000000000000012E0150500000000000000000000000000000000000000000000000001257f654efa4bb700000000000000000000000000000000000000000000000001461bc5e5f9a9760000000000000000000000000000000000000000000000000000000000000002000000000000000000000000933a06c631ed8b5e4f3848c91a1cfc45e5c7eab3000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000052000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000104e5b07cdb0000000000000000000000003adf15f77f2911f84b0fe9dbdff43ef60d40012c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001261d51a000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000002ed988097fb8612cc24eec14542bc03424c656005f00006442000000000000000000000000000000000000060000260000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000104e5b07cdb000000000000000000000000f2e9c024f1c0b7a2a4ea11243c2d86a7b38dd72f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000281b456000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000002ed988097fb8612cc24eec14542bc03424c656005f0001f4420000000000000000000000000000000000000600002300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000648a6a1e850000000000000000000000004200000000000000000000000000000000000006000000000000000000000000922164bbbd36acf9e854acbbf32facc949fcaeef00000000000000000000000000000000000000000000000001461bc5e5f9a97600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a49f865422000000000000000000000000420000000000000000000000000000000000000600000000000000000000000000000001000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000064d1660f9900000000000000000000000042000000000000000000000000000000000000060000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        100 // 1% expected slippage
+    );
+    // just testing
+    position.adjustLeverageRatio(
+        maxLevRatio,
+        0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE,
+        hex"4666fc80e81749a3acc73ea5c8524315073eba53fa73d7f5e8f42161d58bd91e8b2d8f2800000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000f3ff620e014ad62103d4dc6776033773c51109a900000000000000000000000000000000000000000000000001257f654efa4bb7000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000086c6966692d617069000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a307830303030303030303030303030303030303030303030303030303030303030303030303030303030000000000000000000000000000000000000000000000000000000000000000000006352a56caadc4f1e25cd6c75970fa768a3304e640000000000000000000000006352a56caadc4f1e25cd6c75970fa768a3304e64000000000000000000000000d988097fb8612cc24eec14542bc03424c656005f00000000000000000000000042000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000012E0150500000000000000000000000000000000000000000000000000000000000000e00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000096490411a32000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000d988097fb8612cc24eec14542bc03424c656005f0000000000000000000000004200000000000000000000000000000000000006000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c0000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae0000000000000000000000000000000000000000000000000000000012E0150500000000000000000000000000000000000000000000000001257f654efa4bb700000000000000000000000000000000000000000000000001461bc5e5f9a9760000000000000000000000000000000000000000000000000000000000000002000000000000000000000000933a06c631ed8b5e4f3848c91a1cfc45e5c7eab3000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000002400000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000052000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000104e5b07cdb0000000000000000000000003adf15f77f2911f84b0fe9dbdff43ef60d40012c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001261d51a000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000002ed988097fb8612cc24eec14542bc03424c656005f00006442000000000000000000000000000000000000060000260000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000104e5b07cdb000000000000000000000000f2e9c024f1c0b7a2a4ea11243c2d86a7b38dd72f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000281b456000000000000000000000000ba6c1933235feca781fe896562895adb59dedb8c00000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000002ed988097fb8612cc24eec14542bc03424c656005f0001f4420000000000000000000000000000000000000600002300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000648a6a1e850000000000000000000000004200000000000000000000000000000000000006000000000000000000000000922164bbbd36acf9e854acbbf32facc949fcaeef00000000000000000000000000000000000000000000000001461bc5e5f9a97600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a49f865422000000000000000000000000420000000000000000000000000000000000000600000000000000000000000000000001000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000064d1660f9900000000000000000000000042000000000000000000000000000000000000060000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        100 // 1% expected slippage
+    );
+    // but adjusting to the minLevRatio + 0.01 should succeed
+    position.adjustLeverageRatio(
+        minLevRatio + 0.01e18,
+        address(0),
+        "",
+        100 // 1% expected slippage
+    );
   }
 }
 
@@ -1042,7 +590,7 @@ contract ModeWethUSDTLeveredPositionTest is LeveredPositionTest {
 
     address wethMarket = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
     address USDTMarket = 0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3;
-    address wethWhale = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
+    address wethWhale = 0x9c29a8eC901DBec4fFf165cD57D4f9E03D4838f7;
     address USDTWhale = 0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3;
 
     ICErc20[] memory cTokens = new ICErc20[](1);

@@ -17,6 +17,8 @@ interface ILeveredPositionFactoryStorage {
   function blocksPerYear() external view returns (uint256);
 
   function owner() external view returns (address);
+
+  function whitelistedSwapRouters(address swapRouter) external view returns (bool);
 }
 
 interface ILeveredPositionFactoryBase {
@@ -38,6 +40,13 @@ interface ILeveredPositionFactoryFirstExtension {
   function getMinBorrowNative() external view returns (uint256);
 
   function removeClosedPosition(address closedPosition) external returns (bool removed);
+
+  function closeAndRemoveUserPosition(
+    LeveredPosition position,
+    address aggregatorTarget,
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
+  ) external returns (bool);
 
   function closeAndRemoveUserPosition(LeveredPosition position) external returns (bool);
 
@@ -61,7 +70,23 @@ interface ILeveredPositionFactorySecondExtension {
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount
+    uint256 _fundingAmount,
+    address aggregatorTarget,
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
+  ) external returns (LeveredPosition);
+
+  function createAndFundPositionAtRatio(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    uint256 _leverageRatio,
+    address _fundingAssetSwapAggregatorTarget,
+    bytes memory _fundingAssetSwapAggregatorData,
+    address _adjustLeverageRatioAggregatorTarget,
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
   ) external returns (LeveredPosition);
 
   function createAndFundPositionAtRatio(

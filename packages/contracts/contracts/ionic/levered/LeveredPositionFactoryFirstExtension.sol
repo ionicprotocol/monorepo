@@ -29,10 +29,11 @@ contract LeveredPositionFactoryFirstExtension is
   error PositionNotClosed();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 10;
+    uint8 fnsCount = 12;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
-    functionSelectors[--fnsCount] = this.closeAndRemoveUserPosition.selector;
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address)")));
     functionSelectors[--fnsCount] = this.getMinBorrowNative.selector;
     functionSelectors[--fnsCount] = this.getRedemptionStrategies.selector;
     functionSelectors[--fnsCount] = this.getBorrowableMarketsByCollateral.selector;
@@ -41,6 +42,7 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getPositionsByAccount.selector;
     functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
     functionSelectors[--fnsCount] = this._setPositionsExtension.selector;
+    functionSelectors[--fnsCount] = this.whitelistedSwapRouters.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -53,6 +55,17 @@ contract LeveredPositionFactoryFirstExtension is
   // @return true if removed, otherwise false
   function removeClosedPosition(address closedPosition) external returns (bool) {
     return _removeClosedPosition(closedPosition, msg.sender);
+  }
+
+  function closeAndRemoveUserPosition(
+    LeveredPosition position,
+    address aggregatorTarget,
+    bytes memory aggregatorData,
+    uint256 expectedSlippage
+  ) external onlyOwner returns (bool) {
+    address positionOwner = position.positionOwner();
+    position.closePosition(positionOwner, aggregatorTarget, aggregatorData, expectedSlippage);
+    return _removeClosedPosition(address(position), positionOwner);
   }
 
   function closeAndRemoveUserPosition(LeveredPosition position) external onlyOwner returns (bool) {
@@ -113,5 +126,9 @@ contract LeveredPositionFactoryFirstExtension is
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address) {
     return _positionsExtensions[msgSig];
+  }
+
+  function whitelistedSwapRouters(address swapRouter) external view returns (bool) {
+    return _whitelistedSwapRouters[swapRouter];
   }
 }
