@@ -40,6 +40,7 @@ export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
 export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
 export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
 export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
+export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
 
 export const assets: SupportedAsset[] = [
   {
@@ -398,6 +399,20 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseUnits(String(1_500_000), 9).toString(),
     initialBorrowCap: parseUnits(String(1_200_000), 9).toString(),
     initialCf: "0.55"
+  },
+  {
+    symbol: assetSymbols.uXRP,
+    underlying: uXRP,
+    name: "Wrapped XRP",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0xec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uXRP),
+    initialBorrowCap: parseEther(String(245_000)).toString(),
+    initialSupplyCap: parseEther(String(200_000)).toString(),
+    initialCf: "0.65"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

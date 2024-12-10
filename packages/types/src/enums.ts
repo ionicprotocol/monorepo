@@ -209,6 +209,7 @@ export enum assetSymbols {
   sUSDz = "sUSDz",
   fBOMB = "fBOMB",
   KLIMA = "KLIMA",
+  uXRP = "uXRP",
 
   // optimism
   OP = "OP",

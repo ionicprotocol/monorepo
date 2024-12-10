@@ -232,6 +232,7 @@ export const pools: Record<number, PoolParams> = {
           'wUSDM',
           'uSOL',
           'uSUI',
+          'uXRP',
           'EURC',
           'cbBTC',
           'eUSD',
