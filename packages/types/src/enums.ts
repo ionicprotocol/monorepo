@@ -65,7 +65,8 @@ export enum OracleTypes {
   RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle",
   RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle",
   AerodromePriceOracle = "AerodromePriceOracle",
-  VelodromePriceOracle = "VelodromePriceOracle"
+  VelodromePriceOracle = "VelodromePriceOracle",
+  eOracle = "eOracle"
 }
 
 export enum IrmTypes {
