@@ -18,7 +18,7 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
-  { 
+  {
     // price feed for XRP
     priceId: '0xec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8',
     configRefreshRateInSeconds: 3600,
