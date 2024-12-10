@@ -19,6 +19,8 @@ interface ILeveredPositionFactoryStorage {
   function owner() external view returns (address);
 
   function whitelistedSwapRouters(address swapRouter) external view returns (bool);
+
+  function configureWhitelistedSwapRouters(address swapRouter) external returns (bool);
 }
 
 interface ILeveredPositionFactoryBase {
@@ -60,7 +62,13 @@ interface ILeveredPositionFactoryFirstExtension {
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address);
 
+  function getAllWhitelistedSwapRouters() external view returns (address[] memory);
+
+  function isSwapRoutersWhitelisted(address swapRouter) external view returns (bool);
+
   function _setPositionsExtension(bytes4 msgSig, address extension) external;
+
+  function _setWhitelistedSwapRouters(address[] memory newSet) external;
 }
 
 interface ILeveredPositionFactorySecondExtension {

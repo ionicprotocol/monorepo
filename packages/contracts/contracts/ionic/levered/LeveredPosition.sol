@@ -36,6 +36,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   error RepayBorrowFailed(uint256 errorCode);
   error RedeemCollateralFailed(uint256 errorCode);
   error ExtNotFound(bytes4 _functionSelector);
+  error RouterNotWhitelisted();
 
   constructor(
     address _positionOwner,
@@ -578,6 +579,9 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   ) private returns (uint256 outputAmount) {
     uint256 inputAmount = inputToken.balanceOf(address(this));
     if (aggregatorTarget != address(0)) {
+      bool isRouterWhitelisted = factory.isSwapRoutersWhitelisted(aggregatorTarget);
+      if (!isRouterWhitelisted) revert RouterNotWhitelisted();
+
       uint256 balanceBefore = outputToken.balanceOf(address(this));
       inputToken.approve(aggregatorTarget, inputAmount);
       (bool success, ) = aggregatorTarget.call(aggregatorData);

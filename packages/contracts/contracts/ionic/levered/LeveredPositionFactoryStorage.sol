@@ -24,5 +24,5 @@ abstract contract LeveredPositionFactoryStorage is SafeOwnable {
   uint256 public blocksPerYear;
 
   mapping(bytes4 => address) internal _positionsExtensions;
-  mapping(address => bool) internal _whitelistedSwapRouters;
+  EnumerableSet.AddressSet internal _whitelistedSwapRouters;
 }

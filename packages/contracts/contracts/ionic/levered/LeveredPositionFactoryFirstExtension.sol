@@ -29,7 +29,7 @@ contract LeveredPositionFactoryFirstExtension is
   error PositionNotClosed();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 12;
+    uint8 fnsCount = 14;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
     functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
@@ -42,7 +42,9 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getPositionsByAccount.selector;
     functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
     functionSelectors[--fnsCount] = this._setPositionsExtension.selector;
-    functionSelectors[--fnsCount] = this.whitelistedSwapRouters.selector;
+    functionSelectors[--fnsCount] = this.getAllWhitelistedSwapRouters.selector;
+    functionSelectors[--fnsCount] = this.isSwapRoutersWhitelisted.selector;
+    functionSelectors[--fnsCount] = this._setWhitelistedSwapRouters.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -87,6 +89,17 @@ contract LeveredPositionFactoryFirstExtension is
     _positionsExtensions[msgSig] = extension;
   }
 
+  function _setWhitelistedSwapRouters(address[] memory newSet) external onlyOwner {
+    address[] memory currentSet = _whitelistedSwapRouters.values();
+    for (uint256 i = 0; i < currentSet.length; i++) {
+      _whitelistedSwapRouters.remove(currentSet[i]);
+    }
+
+    for (uint256 i = 0; i < newSet.length; i++) {
+      _whitelistedSwapRouters.add(newSet[i]);
+    }
+  }
+
   /*----------------------------------------------------------------
                             View Functions
   ----------------------------------------------------------------*/
@@ -128,7 +141,11 @@ contract LeveredPositionFactoryFirstExtension is
     return _positionsExtensions[msgSig];
   }
 
-  function whitelistedSwapRouters(address swapRouter) external view returns (bool) {
-    return _whitelistedSwapRouters[swapRouter];
+  function isSwapRoutersWhitelisted(address swapRouter) external view returns (bool) {
+    return _whitelistedSwapRouters.contains(swapRouter);
+  }
+
+  function getAllWhitelistedSwapRouters() external view returns (address[] memory) {
+    return _whitelistedSwapRouters.values();
   }
 }
