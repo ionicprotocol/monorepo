@@ -160,7 +160,6 @@ export const multipliers: Record<
           ionic: 0,
           renzo: 2,
           underlyingAPR: 3.25,
-          turtle: true,
           ionAPR: false,
           flywheel: false
         }
