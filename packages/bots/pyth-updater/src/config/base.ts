@@ -11,4 +11,18 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
+  {
+    // price feed for SUI
+    priceId: '0x23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
+  { 
+    // price feed for XRP
+    priceId: '0xec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
 ];
