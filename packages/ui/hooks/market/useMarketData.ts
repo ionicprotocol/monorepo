@@ -81,7 +81,6 @@ export const useMarketData = (
   const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
     assets ?? []
   );
-  console.log('fraxtalAprs', fraxtalAprs);
 
   const { data: rewards } = useRewards({
     chainId: +chain,
@@ -215,6 +214,7 @@ export const useMarketData = (
       .filter(Boolean) as MarketRowData[];
 
     return transformedData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     assets,
     chain,
@@ -224,6 +224,7 @@ export const useMarketData = (
     supplyRates,
     borrowRates,
     loopMarkets,
+    // fraxtalAprs,
     poolData?.comptroller,
     borrowCapsData
   ]);
