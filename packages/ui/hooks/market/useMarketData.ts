@@ -1,4 +1,3 @@
-// hooks/useMarketData.ts
 import { useEffect, useMemo } from 'react';
 
 import { type Address, formatEther, formatUnits } from 'viem';
@@ -10,6 +9,7 @@ import {
 } from '@ui/constants/index';
 import { useBorrowCapsForAssets } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useMerklApr } from '@ui/hooks/useMerklApr';
@@ -49,6 +49,7 @@ export type MarketRowData = MarketData & {
   borrowAPRTotal: number | undefined;
   isBorrowDisabled: boolean;
   underlyingSymbol: string;
+  nativeAssetYield: number | undefined;
 };
 
 export const useMarketData = (
@@ -76,6 +77,11 @@ export const useMarketData = (
     poolData?.assets.map((asset) => asset.cToken) ?? [],
     +chain
   );
+
+  const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
+    assets ?? []
+  );
+  console.log('fraxtalAprs', fraxtalAprs);
 
   const { data: rewards } = useRewards({
     chainId: +chain,
@@ -119,7 +125,7 @@ export const useMarketData = (
           )
           .map((reward) => ({
             ...reward,
-            apy: (reward.apy ?? 0) * 100
+            apy: 5
           }));
 
         const borrowRewards = rewards?.[asset.cToken]
@@ -185,6 +191,7 @@ export const useMarketData = (
             ? borrowRates[asset.cToken] * 100
             : 0,
           collateralFactor: Number(formatEther(asset.collateralFactor)) * 100,
+          nativeAssetYield: fraxtalAprs?.[asset.cToken]?.nativeAssetYield,
           membership: asset.membership,
           cTokenAddress: asset.cToken,
           comptrollerAddress: poolData?.comptroller,

@@ -33,6 +33,7 @@ export type APRCellProps = {
   pool: Address;
   selectedPoolId: string;
   rewards?: FlywheelReward[];
+  nativeAssetYield?: number;
 };
 
 export default function APRCell({
@@ -44,7 +45,8 @@ export default function APRCell({
   dropdownSelectedChain,
   pool,
   selectedPoolId,
-  rewards
+  rewards,
+  nativeAssetYield
 }: APRCellProps) {
   const isMainModeMarket =
     dropdownSelectedChain === 34443 &&
@@ -58,6 +60,12 @@ export default function APRCell({
 
   const config =
     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
+
+  const effectiveNativeYield =
+    nativeAssetYield !== undefined
+      ? nativeAssetYield * 100
+      : config?.underlyingAPR;
+
   const showRewardsBadge = useRewardsBadge(
     dropdownSelectedChain,
     selectedPoolId,
@@ -65,6 +73,8 @@ export default function APRCell({
     type,
     rewards
   );
+  // console.log('asset', asset);
+  // console.log('showRewardsBadge', showRewardsBadge);
 
   const showOPRewards = merklAprForToken || asset === 'dMBTC';
 
@@ -76,17 +86,6 @@ export default function APRCell({
     return (
       (type === 'supply' ? '+' : '') +
       baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
-    );
-  };
-
-  const formatTotalAPR = () => {
-    const numericValue = aprTotal ?? 0;
-    const prefix = type === 'supply' || numericValue > 0 ? '+' : '';
-    return (
-      prefix +
-      numericValue.toLocaleString('en-US', {
-        maximumFractionDigits: type === 'supply' ? 2 : 1
-      })
     );
   };
 
@@ -102,6 +101,22 @@ export default function APRCell({
       <span className="text-sm">{text}</span>
     </div>
   );
+
+  const formatTotalAPR = () => {
+    let total = aprTotal ?? 0;
+    // Add native yield to total if it exists
+    if (effectiveNativeYield) {
+      total += effectiveNativeYield;
+    }
+
+    const prefix = type === 'supply' || total > 0 ? '+' : '';
+    return (
+      prefix +
+      total.toLocaleString('en-US', {
+        maximumFractionDigits: type === 'supply' ? 2 : 1
+      })
+    );
+  };
 
   const getRewardIcons = () => {
     const icons: string[] = [];
@@ -138,7 +153,7 @@ export default function APRCell({
               + ION APR
             </span>
 
-            {showRewardsBadge && (
+            {(showRewardsBadge || nativeAssetYield !== undefined) && (
               <div
                 className={cn(
                   'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1',
@@ -206,10 +221,10 @@ export default function APRCell({
             </Link>
           )}
 
-          {config?.underlyingAPR && (
+          {effectiveNativeYield !== undefined && (
             <p className="py-0.5 text-xs">
               Native Asset Yield: +
-              {config.underlyingAPR.toLocaleString('en-US', {
+              {effectiveNativeYield.toLocaleString('en-US', {
                 maximumFractionDigits: 2
               })}
               %
