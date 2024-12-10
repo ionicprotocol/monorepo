@@ -360,9 +360,9 @@ abstract contract LeveredPositionTest is MarketsTest {
     );
     vm.stopPrank();
 
-    _maxRatio = _position.getMaxLeverageRatio(0);
+    _maxRatio = _position.getMaxLeverageRatio();
     emit log_named_uint("max ratio", _maxRatio);
-    _minRatio = _position.getMinLeverageRatio(0);
+    _minRatio = _position.getMinLeverageRatio();
     emit log_named_uint("min ratio", _minRatio);
 
     assertGt(_maxRatio, _minRatio, "max ratio <= min ratio");

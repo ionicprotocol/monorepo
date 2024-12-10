@@ -17,10 +17,6 @@ interface ILeveredPositionFactoryStorage {
   function blocksPerYear() external view returns (uint256);
 
   function owner() external view returns (address);
-
-  function whitelistedSwapRouters(address swapRouter) external view returns (bool);
-
-  function configureWhitelistedSwapRouters(address swapRouter) external returns (bool);
 }
 
 interface ILeveredPositionFactoryBase {
