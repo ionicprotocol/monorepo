@@ -169,7 +169,7 @@ export default function APRCell({
                   pools[dropdownSelectedChain].bg
                 )}
               >
-                <span>+ Native APR</span>
+                <span>+ Rewards</span>
                 <RewardIcons rewards={getRewardIcons()} />
               </div>
             )}
