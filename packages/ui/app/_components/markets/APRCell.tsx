@@ -15,9 +15,10 @@ import { multipliers } from '@ui/utils/multipliers';
 
 import { RewardIcons } from './RewardsIcon';
 
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { useMerklData } from '@ui/hooks/useMerklData';
 
 const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
   ssr: false
@@ -34,6 +35,7 @@ export type APRCellProps = {
   selectedPoolId: string;
   rewards?: FlywheelReward[];
   nativeAssetYield?: number;
+  underlyingToken: Hex;
 };
 
 export default function APRCell({
@@ -46,17 +48,13 @@ export default function APRCell({
   pool,
   selectedPoolId,
   rewards,
-  nativeAssetYield
+  nativeAssetYield,
+  underlyingToken
 }: APRCellProps) {
-  const isMainModeMarket =
-    dropdownSelectedChain === 34443 &&
-    (asset === 'USDC' || asset === 'WETH') &&
-    selectedPoolId === '0';
-
-  const { data: merklApr } = useMerklApr();
+  const { data: merklApr } = useMerklData();
   const merklAprForToken = merklApr?.find(
-    (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
-  )?.[cToken];
+    (a) => Object.keys(a)[0].toLowerCase() === underlyingToken.toLowerCase()
+  )?.[underlyingToken];
 
   const config =
     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
@@ -72,8 +70,6 @@ export default function APRCell({
     nativeAssetYield !== undefined
       ? nativeAssetYield * 100
       : config?.underlyingAPR;
-
-  const showOPRewards = merklAprForToken || asset === 'dMBTC';
 
   const formatBaseAPR = () => {
     if (type === 'borrow' && baseAPR > 0)
@@ -123,7 +119,7 @@ export default function APRCell({
       icons.push(asset.toLowerCase());
     }
 
-    if (showOPRewards) icons.push('op');
+    if (config?.op) icons.push('op');
     if (config?.ionic) icons.push('ionic');
     if (config?.etherfi) icons.push('etherfi');
     if (config?.kelp) icons.push('kelp');
@@ -174,7 +170,7 @@ export default function APRCell({
               </div>
             )}
 
-            {(config?.turtle || config?.kelp) && !isMainModeMarket && (
+            {(config?.turtle || config?.kelp) && (
               <span className="text-darkone rounded-md w-max md:ml-0 text-center">
                 <a
                   className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[3px] md:px-1 lg:px-1.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -216,8 +212,7 @@ export default function APRCell({
           <div className="flex items-center justify-between py-0.5">
             <span>Base APR: {formatBaseAPR()}%</span>
           </div>
-
-          {showOPRewards && (
+          {config?.op && (
             <Link
               href="https://app.merkl.xyz/?chain=34443"
               target="_blank"
@@ -239,7 +234,6 @@ export default function APRCell({
               </span>
             </Link>
           )}
-
           {effectiveNativeYield !== undefined && (
             <p className="py-0.5 text-xs">
               Native Asset Yield: +
@@ -249,7 +243,6 @@ export default function APRCell({
               %
             </p>
           )}
-
           {config?.flywheel && (
             <div className="py-0.5">
               <FlyWheelRewards
@@ -261,7 +254,6 @@ export default function APRCell({
               />
             </div>
           )}
-
           {(config?.ionic ?? 0) > 0 && (
             <>
               <RewardRow
@@ -274,21 +266,18 @@ export default function APRCell({
               />
             </>
           )}
-
           {config?.turtle && asset === 'STONE' && (
             <RewardRow
               icon="/img/symbols/32/color/stone.png"
               text="+ Stone Turtle Points"
             />
           )}
-
           {config?.etherfi && (
             <RewardRow
               icon="/images/etherfi.png"
               text={`+ ${config.etherfi}x ether.fi Points`}
             />
           )}
-
           {config?.kelp && (
             <>
               <RewardRow
@@ -301,21 +290,18 @@ export default function APRCell({
               />
             </>
           )}
-
           {config?.eigenlayer && (
             <RewardRow
               icon="/images/eigen.png"
               text="+ EigenLayer Points"
             />
           )}
-
           {config?.spice && (
             <RewardRow
               icon="/img/symbols/32/color/bob.png"
               text="+ Spice Points"
             />
           )}
-
           {type === 'supply' && (
             <>
               {(config?.anzen ?? 0) > 0 && (

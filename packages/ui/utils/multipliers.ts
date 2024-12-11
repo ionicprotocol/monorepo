@@ -38,8 +38,7 @@ export const multipliers: Record<
         borrow: {
           ionic: 0,
           turtle: false,
-          ionAPR: false,
-          op: true
+          ionAPR: false
         },
         market: 'm_btc_market',
         multiplier: 66000,
@@ -84,18 +83,16 @@ export const multipliers: Record<
       USDC: {
         borrow: {
           ionic: 0,
-          turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          op: true
         },
         decimals: 6,
         market: 'usdc_market',
         supply: {
           ionic: 0,
-          turtle: false,
           ionAPR: true,
-          flywheel: true,
-          op: true
+          flywheel: true
         }
       },
       USDT: {
@@ -133,18 +130,16 @@ export const multipliers: Record<
       WETH: {
         borrow: {
           ionic: 0,
-          turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          op: true
         },
         market: 'weth_market',
         multiplier: 3000,
         supply: {
           ionic: 0,
-          turtle: false,
           ionAPR: true,
-          flywheel: true,
-          op: true
+          flywheel: true
         }
       },
       ezETH: {
@@ -262,8 +257,7 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: false,
-          flywheel: false,
-          op: true
+          flywheel: false
         }
       },
       USDC: {
