@@ -13,18 +13,18 @@ contract Withdrawals is veIONTest {
 
     modeVelodrome5050IonMode.mint(address(0x1241), 20_000_000 ether);
     vm.prank(user);
-    ve.withdraw(lockInput.tokenAddress, lockInput.tokenId);
+    ve.withdraw(lockInput.lpType, lockInput.tokenId);
   }
 
   function test_withdrawProtocolFees_SuccessfulWithdrawal() public {
     address recipient = address(0x5678);
     address tokenAddress = lockInput.tokenAddress;
     uint256 initialRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
-    uint256 initialProtocolFees = ve.s_protocolFees(ve.s_lpType(tokenAddress));
+    uint256 initialProtocolFees = ve.s_protocolFees(ve.s_addressToLpType(tokenAddress));
 
     ve.withdrawProtocolFees(tokenAddress, recipient);
 
-    uint256 protocolFees = ve.s_protocolFees(ve.s_lpType(tokenAddress));
+    uint256 protocolFees = ve.s_protocolFees(ve.s_addressToLpType(tokenAddress));
     assertEq(protocolFees, 0, "Protocol fees should be zero after withdrawal");
 
     uint256 finalRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
@@ -48,11 +48,11 @@ contract Withdrawals is veIONTest {
     address recipient = address(0x5678);
     address tokenAddress = lockInput.tokenAddress;
     uint256 initialRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);
-    uint256 initialDistributedFees = ve.s_distributedFees(ve.s_lpType(tokenAddress));
+    uint256 initialDistributedFees = ve.s_distributedFees(ve.s_addressToLpType(tokenAddress));
 
     ve.withdrawDistributedFees(tokenAddress, recipient);
 
-    uint256 distributedFees = ve.s_distributedFees(ve.s_lpType(tokenAddress));
+    uint256 distributedFees = ve.s_distributedFees(ve.s_addressToLpType(tokenAddress));
     assertEq(distributedFees, 0, "Distributed fees should be zero after withdrawal");
 
     uint256 finalRecipientBalance = IERC20(tokenAddress).balanceOf(recipient);

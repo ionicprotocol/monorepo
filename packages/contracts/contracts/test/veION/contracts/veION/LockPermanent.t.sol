@@ -17,14 +17,14 @@ contract LockPermanent is veIONTest {
 
   function test_lockPermanent_UserCanLockPermanent() public {
     vm.prank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
 
     IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, veloLpType);
 
     uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, veloLpType);
     IveION.UserPoint memory userPoint = ve.getUserPoint(
       lockInput.tokenId,
-      ve.s_lpType(lockInput.tokenAddress),
+      ve.s_addressToLpType(lockInput.tokenAddress),
       userEpoch
     );
     assertEq(
@@ -48,14 +48,14 @@ contract LockPermanent is veIONTest {
   function test_lockPermanent_RevertIfNotOwner() public {
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
   }
 
   function test_lockPermanent_RevertIfPermanentLock() public {
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
     vm.stopPrank();
   }
 
@@ -63,12 +63,12 @@ contract LockPermanent is veIONTest {
     vm.warp(block.timestamp + lockInput.duration);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
   }
 
   function test_lockPermanent_RevertIfNoLockFound() public {
     vm.prank(user);
     vm.expectRevert("ERC721: invalid token ID");
-    ve.lockPermanent(address(modeVelodrome5050IonMode), 933);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, 933);
   }
 }

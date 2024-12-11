@@ -187,7 +187,7 @@ interface IveION {
 
   /**
    * @notice Creates a new lock for multiple tokens and assigns it to a specified address
-   * @param _tokenAddress Array of token addresses to lock
+   * @param _lpTypes Array of lp types to lock
    * @param _tokenAmount Array of token amounts to lock
    * @param _duration Array of lock durations
    * @param _stakeUnderlying Array of booleans indicating whether to stake underlying tokens
@@ -195,7 +195,7 @@ interface IveION {
    * @return The ID of the newly created veNFT
    */
   function createLockFor(
-    address[] memory _tokenAddress,
+    LpTokenType[] memory _lpTypes,
     uint256[] memory _tokenAmount,
     uint256[] memory _duration,
     bool[] memory _stakeUnderlying,
@@ -204,14 +204,14 @@ interface IveION {
 
   /**
    * @notice Creates a new lock for multiple tokens
-   * @param _tokenAddress Array of token addresses to lock
+   * @param _lpTypes Array of lp types to lock
    * @param _tokenAmount Array of token amounts to lock
    * @param _duration Array of lock durations
    * @param _stakeUnderlying Array of booleans indicating whether to stake underlying tokens
    * @return The ID of the newly created veNFT
    */
   function createLock(
-    address[] calldata _tokenAddress,
+    LpTokenType[] memory _lpTypes,
     uint256[] calldata _tokenAmount,
     uint256[] calldata _duration,
     bool[] memory _stakeUnderlying
@@ -219,28 +219,23 @@ interface IveION {
 
   /**
    * @notice Increases the amount of tokens locked for a specific veNFT
-   * @param _tokenAddress Address of the token to increase lock amount for
+   * @param _lpType Type of lp token to increase lock amount for
    * @param _tokenId ID of the veNFT
    * @param _tokenAmount Amount of tokens to add to the lock
    * @param _stakeUnderlying Whether to stake the underlying tokens
    */
-  function increaseAmount(
-    address _tokenAddress,
-    uint256 _tokenId,
-    uint256 _tokenAmount,
-    bool _stakeUnderlying
-  ) external;
+  function increaseAmount(LpTokenType _lpType, uint256 _tokenId, uint256 _tokenAmount, bool _stakeUnderlying) external;
 
   /**
    * @notice Locks additional asset type for an existing veNFT
-   * @param _tokenAddress Address of the new token to lock
+   * @param _lpType Type of the new lp token to lock
    * @param _tokenAmount Amount of tokens to lock
    * @param _tokenId ID of the veNFT
    * @param _duration Duration of the lock
    * @param _stakeUnderlying Whether to stake the underlying tokens
    */
   function lockAdditionalAsset(
-    address _tokenAddress,
+    LpTokenType _lpType,
     uint256 _tokenAmount,
     uint256 _tokenId,
     uint256 _duration,
@@ -249,18 +244,18 @@ interface IveION {
 
   /**
    * @notice Increases the lock duration for a specific token in a veNFT
-   * @param _tokenAddress Address of the token
+   * @param _lpType Lp token to increase lock time for
    * @param _tokenId ID of the veNFT
    * @param _lockDuration New lock duration to extend to
    */
-  function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external;
+  function increaseUnlockTime(LpTokenType _lpType, uint256 _tokenId, uint256 _lockDuration) external;
 
   /**
    * @notice Withdraws underlying assets from the veNFT. If the unlock time has not passed, a penalty fee is applied.
-   * @param _tokenAddress Address of the token to withdraw
+   * @param _lpType Lp token type to withdraw
    * @param _tokenId Token ID of the veNFT to withdraw from
    */
-  function withdraw(address _tokenAddress, uint256 _tokenId) external;
+  function withdraw(LpTokenType _lpType, uint256 _tokenId) external;
 
   /**
    * @notice Merges two veNFTs into one, combining their locked assets
@@ -271,14 +266,14 @@ interface IveION {
 
   /**
    * @notice Splits a veNFT into two separate veNFTs
-   * @param _tokenAddress Address of the token to split
+   * @param _lpType Lp token type to split
    * @param _from ID of the source veNFT
    * @param _splitAmount Amount of tokens to split into new veNFT
    * @return _tokenId1 ID of the original veNFT
    * @return _tokenId2 ID of the new veNFT created from the split
    */
   function split(
-    address _tokenAddress,
+    LpTokenType _lpType,
     uint256 _from,
     uint256 _splitAmount
   ) external returns (uint256 _tokenId1, uint256 _tokenId2);
@@ -292,38 +287,38 @@ interface IveION {
 
   /**
    * @notice Converts a lock to a permanent lock that cannot be withdrawn
-   * @param _tokenAddress Address of the token
+   * @param _lpType Lp token type to lock
    * @param _tokenId ID of the veNFT
    */
-  function lockPermanent(address _tokenAddress, uint256 _tokenId) external;
+  function lockPermanent(LpTokenType _lpType, uint256 _tokenId) external;
 
   /**
    * @notice Removes permanent lock status from a veNFT
-   * @param _tokenAddress Address of the token
+   * @param _lpType Lp token type to unlock
    * @param _tokenId ID of the veNFT
    */
-  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external;
+  function unlockPermanent(LpTokenType _lpType, uint256 _tokenId) external;
 
   /**
    * @notice Delegates voting power from one veNFT to another
    * @param fromTokenId ID of the source veNFT
    * @param toTokenId ID of the destination veNFT
-   * @param lpToken Address of the LP token
+   * @param lpType Lp token type to delegate
    * @param amount Amount of voting power to delegate
    */
-  function delegate(uint256 fromTokenId, uint256 toTokenId, address lpToken, uint256 amount) external;
+  function delegate(uint256 fromTokenId, uint256 toTokenId, LpTokenType lpType, uint256 amount) external;
 
   /**
    * @notice Removes delegatees from a specific veNFT
    * @param fromTokenId ID of the veNFT from which delegatees are removed
    * @param toTokenIds Array of veNFT IDs that are delegatees to be removed
-   * @param lpToken Address of the LP token associated with the delegation
+   * @param lpType Lp token type to remove delegation
    * @param amounts Array of amounts of voting power to remove from each delegatee
    */
   function removeDelegatees(
     uint256 fromTokenId,
     uint256[] memory toTokenIds,
-    address lpToken,
+    LpTokenType lpType,
     uint256[] memory amounts
   ) external;
 
@@ -331,28 +326,21 @@ interface IveION {
    * @notice Removes delegators from a specific veNFT
    * @param fromTokenIds Array of veNFT IDs that are delegators to be removed
    * @param toTokenId ID of the veNFT from which delegators are removed
-   * @param lpToken Address of the LP token associated with the delegation
+   * @param lpType Lp token type to remove delegation
    * @param amounts Array of amounts of voting power to remove from each delegator
    */
   function removeDelegators(
     uint256[] memory fromTokenIds,
     uint256 toTokenId,
-    address lpToken,
+    LpTokenType lpType,
     uint256[] memory amounts
   ) external;
 
   /**
    * @notice Claims accumulated emissions rewards for staked tokens
-   * @param _tokenAddress Address of the token to claim emissions for
+   * @param lpType Type of lp token to claim emissions for
    */
-  function claimEmissions(address _tokenAddress) external;
-
-  /**
-   * @notice Whitelists tokens for locking
-   * @param _tokens Array of token addresses to whitelist
-   * @param _isWhitelisted Array of booleans indicating whitelist status
-   */
-  function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external;
+  function claimEmissions(LpTokenType lpType) external;
 
   /**
    * @notice Updates voting status for a veNFT
@@ -514,6 +502,15 @@ interface IveION {
   function balanceOfNFT(
     uint256 _tokenId
   ) external view returns (address[] memory _assets, uint256[] memory _balances, uint256[] memory _boosts);
+
+  struct WithdrawalFactors {
+    uint256 daysLocked;
+    uint256 daysLeft;
+    uint256 timeFactor;
+    uint256 veLPLocked;
+    uint256 LPInCirculation;
+    uint256 ratioFactor;
+  }
 }
 
 /// @title IAeroVotingEscrow Interface

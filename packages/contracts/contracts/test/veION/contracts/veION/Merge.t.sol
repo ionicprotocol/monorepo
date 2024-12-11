@@ -143,8 +143,8 @@ contract Merge is veIONTest {
     uint256 amount = MINT_AMT;
     modeVelodrome5050IonMode.mint(user, amount);
 
-    address[] memory tokenAddresses = new address[](1);
-    tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     uint256[] memory tokenAmounts = new uint256[](1);
     tokenAmounts[0] = amount;
     uint256[] memory durations = new uint256[](1);
@@ -152,7 +152,7 @@ contract Merge is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
 
     vm.warp(block.timestamp + 54 weeks);
@@ -168,7 +168,7 @@ contract Merge is veIONTest {
 
   function test_merge_RevertIfFromPermanentOrToPermanent() public {
     vm.prank(user);
-    ve.lockPermanent(lockInput_1.tokenAddress, lockInput_1.tokenId);
+    ve.lockPermanent(lockInput_1.lpType, lockInput_1.tokenId);
 
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
@@ -184,8 +184,8 @@ contract Merge is veIONTest {
     uint256 amount = MINT_AMT;
     modeVelodrome5050IonMode.mint(user, amount);
 
-    address[] memory tokenAddresses = new address[](1);
-    tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     uint256[] memory tokenAmounts = new uint256[](1);
     tokenAmounts[0] = amount;
     uint256[] memory durations = new uint256[](1);
@@ -196,7 +196,7 @@ contract Merge is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, new bool[](1));
 
     IveION.LockedBalance memory locked2 = ve.getUserLock(tokenId, veloLpType);
     uint256 expectedEnd = locked2.end;
@@ -216,8 +216,8 @@ contract Merge is veIONTest {
     uint256 amount = MINT_AMT;
     modeBalancer8020IonEth.mint(user, amount);
 
-    address[] memory tokenAddresses = new address[](1);
-    tokenAddresses[0] = address(modeBalancer8020IonEth);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
+    lpTypes[0] = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
     uint256[] memory tokenAmounts = new uint256[](1);
     tokenAmounts[0] = amount;
     uint256[] memory durations = new uint256[](1);
@@ -233,7 +233,7 @@ contract Merge is veIONTest {
 
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), amount);
-    uint256 secondTokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 secondTokenId = ve.createLock(lpTypes, tokenAmounts, durations, new bool[](1));
     IveION.LockedBalance memory locked2 = ve.getUserLock(secondTokenId, veloLpType);
     emit log_named_uint("locked2 start time", locked2.start);
     emit log_named_uint("locked2 end time", locked2.end);

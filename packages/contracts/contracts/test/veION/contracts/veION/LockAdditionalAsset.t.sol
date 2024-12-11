@@ -24,7 +24,13 @@ contract LockAdditionalAsset is veIONTest {
 
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     vm.prank(user);
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
 
     IveION.LockedBalance memory lockedBalancer = ve.getUserLock(lockInput.tokenId, balancerLpType);
     uint256 expectedEndTimeBalancer = ((block.timestamp + 26 weeks) / WEEK) * WEEK;
@@ -50,7 +56,13 @@ contract LockAdditionalAsset is veIONTest {
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.prank(randomUser);
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
   }
 
   function test_lockAdditionalAsset_RevertIfZeroAmount() public {
@@ -60,7 +72,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -73,7 +91,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -84,7 +108,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("DuplicateAsset()"));
-    ve.lockAdditionalAsset(address(modeVelodrome5050IonMode), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -95,7 +125,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("MinimumNotMet()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -106,7 +142,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("LockDurationTooLong()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 150 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      150 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -117,7 +159,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("LockDurationTooShort()"));
-    ve.lockAdditionalAsset(address(modeBalancer8020IonEth), additionalAmount, lockInput.tokenId, 25 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Mode_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      25 weeks,
+      false
+    );
     vm.stopPrank();
   }
 
@@ -129,7 +177,13 @@ contract LockAdditionalAsset is veIONTest {
     vm.startPrank(user);
     randomToken.approve(address(ve), lockInput.tokenAmount);
     vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
-    ve.lockAdditionalAsset(address(randomToken), additionalAmount, lockInput.tokenId, 26 weeks, false);
+    ve.lockAdditionalAsset(
+      IveION.LpTokenType.Optimism_Balancer_8020_ION_ETH,
+      additionalAmount,
+      lockInput.tokenId,
+      26 weeks,
+      false
+    );
     vm.stopPrank();
   }
 }

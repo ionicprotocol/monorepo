@@ -18,21 +18,21 @@ contract veIONFuzzing is veIONTest {
     vm.prank(user);
     modeVelodrome5050IonMode.approve(address(ve), _amount);
 
-    address[] memory tokenAddresses = new address[](1);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
     uint256[] memory tokenAmounts = new uint256[](1);
     uint256[] memory durations = new uint256[](1);
     bool[] memory stakeUnderlying = new bool[](1);
-    tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     tokenAmounts[0] = _amount;
     durations[0] = _duration;
     stakeUnderlying[0] = false;
 
     vm.startPrank(user);
     MockERC20(modeVelodrome5050IonMode).approve(address(ve), _amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
-    IveION.LockedBalance memory lock = ve.getUserLock(tokenId, ve.s_lpType(tokenAddresses[0]));
+    IveION.LockedBalance memory lock = ve.getUserLock(tokenId, veloLpType);
 
     uint256 maxBoost = 2e18;
     assertGe(maxBoost, lock.boost, "Boost should never be above the maximum");
@@ -47,18 +47,18 @@ contract veIONFuzzing is veIONTest {
     vm.prank(user);
     modeVelodrome5050IonMode.approve(address(ve), _amount);
 
-    address[] memory tokenAddresses = new address[](1);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
     uint256[] memory tokenAmounts = new uint256[](1);
     uint256[] memory durations = new uint256[](1);
     bool[] memory stakeUnderlying = new bool[](1);
-    tokenAddresses[0] = address(modeVelodrome5050IonMode);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
     tokenAmounts[0] = _amount;
     durations[0] = _duration;
     stakeUnderlying[0] = false;
 
     vm.startPrank(user);
     MockERC20(modeVelodrome5050IonMode).approve(address(ve), _amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
     (, uint256[] memory balances, ) = ve.balanceOfNFT(tokenId);

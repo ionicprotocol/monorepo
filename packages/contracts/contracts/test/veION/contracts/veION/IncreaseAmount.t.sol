@@ -21,12 +21,12 @@ contract IncreaseAmount is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
-    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
 
     IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
     uint256 calculated_end = ((block.timestamp + lockInput.duration) / WEEK) * WEEK; // Update end time
-    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddress));
+    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_addressToLpType(lockInput.tokenAddress));
     uint256[] memory ownerTokenIds = ve.getOwnedTokenIds(user);
     address[] memory assetsLocked = ve.getAssetsLocked(lockInput.tokenId);
 
@@ -35,7 +35,7 @@ contract IncreaseAmount is veIONTest {
     assertEq(calculated_end, actualLocked.end, "Unlock time mismatch");
     assertEq(false, actualLocked.isPermanent, "Lock should not be permanent");
     assertEq(
-      ve.s_supply(ve.s_lpType(lockInput.tokenAddress)),
+      ve.s_supply(ve.s_addressToLpType(lockInput.tokenAddress)),
       actualLocked.amount + lockInputMultiLP.tokenAmounts[0],
       "Supply mismatch"
     );
@@ -49,21 +49,21 @@ contract IncreaseAmount is veIONTest {
 
   function test_increaseAmountI_PermanentLock() public {
     vm.prank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId);
 
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeVelodrome5050IonMode.mint(user, additionalAmount);
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
-    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
 
     IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
-    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddress));
+    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_addressToLpType(lockInput.tokenAddress));
     IveION.UserPoint memory userPoint = ve.getUserPoint(
       lockInput.tokenId,
-      ve.s_lpType(lockInput.tokenAddress),
+      ve.s_addressToLpType(lockInput.tokenAddress),
       userEpoch
     );
 
@@ -83,14 +83,14 @@ contract IncreaseAmount is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), additionalAmount);
     vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
-    ve.increaseAmount(address(modeBalancer8020IonEth), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Balancer_8020_ION_ETH, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 
   function test_increaseAmountI_RevertIfAssetWhitelistedLockedAndWithdrawnByUser() public {
     vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
     vm.prank(user);
-    ve.withdraw(lockInputMultiLP.tokenAddresses[0], lockInputMultiLP.tokenId);
+    ve.withdraw(lockInputMultiLP.lpTypes[0], lockInputMultiLP.tokenId);
 
     uint256 additionalAmount = 500 * 10 ** 18; // 500 tokens
     modeBalancer8020IonEth.mint(user, additionalAmount);
@@ -98,7 +98,7 @@ contract IncreaseAmount is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), additionalAmount);
     vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
-    ve.increaseAmount(lockInputMultiLP.tokenAddresses[0], lockInputMultiLP.tokenId, additionalAmount, false);
+    ve.increaseAmount(lockInputMultiLP.lpTypes[0], lockInputMultiLP.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 
@@ -111,7 +111,7 @@ contract IncreaseAmount is veIONTest {
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
     vm.prank(otherUser);
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId, additionalAmount, false);
   }
 
   function test_increaseAmount_RevertIfValueIsZero() public {
@@ -120,7 +120,7 @@ contract IncreaseAmount is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
     vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
-    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 
@@ -133,7 +133,7 @@ contract IncreaseAmount is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
     vm.expectRevert("ERC721: invalid token ID");
-    ve.increaseAmount(address(modeVelodrome5050IonMode), nonexistentToken, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, nonexistentToken, additionalAmount, false);
     vm.stopPrank();
   }
 
@@ -146,7 +146,7 @@ contract IncreaseAmount is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
-    ve.increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 
@@ -157,8 +157,8 @@ contract IncreaseAmount is veIONTest {
 
     vm.startPrank(user);
     randomMockToken.approve(address(ve), additionalAmount);
-    vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
-    ve.increaseAmount(address(randomMockToken), lockInput.tokenId, additionalAmount, false);
+    vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
+    ve.increaseAmount(IveION.LpTokenType.Optimism_Balancer_8020_ION_ETH, lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
   }
 }

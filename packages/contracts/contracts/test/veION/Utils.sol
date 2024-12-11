@@ -73,7 +73,6 @@ contract veIONTest is BaseTest {
     for (uint i = 0; i < 2; i++) {
       isWhitelistedTokens[i] = true;
     }
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
 
     ve.setLpTokenType(address(modeVelodrome5050IonMode), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     ve.setLpTokenType(address(modeBalancer8020IonEth), IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
@@ -117,14 +116,6 @@ contract veIONTest is BaseTest {
       address(veloStakingWalletImplementation)
     );
 
-    address[] memory whitelistedTokens = new address[](2);
-    bool[] memory isWhitelistedTokens = new bool[](2);
-    whitelistedTokens[0] = ionMode5050LP;
-    isWhitelistedTokens[0] = true;
-    whitelistedTokens[1] = wethUSDC5050LP;
-    isWhitelistedTokens[1] = true;
-
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
     ve.setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     ve.setLpTokenType(wethUSDC5050LP, IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
 
@@ -157,7 +148,6 @@ contract veIONTest is BaseTest {
     whitelistedTokens[1] = wethAero5050LPAero;
     isWhitelistedTokens[1] = true;
 
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
     ve.setLpTokenType(ionWeth5050lPAero, IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH);
     ve.setLpTokenType(wethAero5050LPAero, IveION.LpTokenType.Base_Balancer_8020_ION_ETH);
 
@@ -172,18 +162,18 @@ contract veIONTest is BaseTest {
     vm.prank(whale);
     IERC20(ionWeth5050lPAero).transfer(_user, _amount);
 
-    address[] memory tokenAddresses = new address[](1);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
     uint256[] memory tokenAmounts = new uint256[](1);
     uint256[] memory durations = new uint256[](1);
     bool[] memory stakeUnderlying = new bool[](1);
-    tokenAddresses[0] = address(ionWeth5050lPAero);
+    lpTypes[0] = IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH;
     tokenAmounts[0] = _amount;
     durations[0] = 52 weeks;
     stakeUnderlying[0] = false;
 
     vm.startPrank(_user);
     IERC20(ionWeth5050lPAero).approve(address(ve), _amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
     return tokenId;
@@ -198,15 +188,15 @@ contract veIONTest is BaseTest {
     vm.prank(wethAEROWhale);
     IERC20(wethAero5050LPAero).transfer(_user, _amountWethAERO);
 
-    address[] memory tokenAddresses = new address[](2);
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](2);
     uint256[] memory tokenAmounts = new uint256[](2);
     uint256[] memory durations = new uint256[](2);
     bool[] memory stakeUnderlying = new bool[](2);
-    tokenAddresses[0] = address(ionWeth5050lPAero);
+    lpTypes[0] = IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH;
     tokenAmounts[0] = _amountIonWeth;
     durations[0] = 52 weeks;
     stakeUnderlying[0] = false;
-    tokenAddresses[1] = address(wethAero5050LPAero);
+    lpTypes[1] = IveION.LpTokenType.Base_Balancer_8020_ION_ETH;
     tokenAmounts[1] = _amountWethAERO;
     durations[1] = 52 weeks;
     stakeUnderlying[1] = false;
@@ -214,7 +204,7 @@ contract veIONTest is BaseTest {
     vm.startPrank(_user);
     IERC20(ionWeth5050lPAero).approve(address(ve), _amountIonWeth);
     IERC20(wethAero5050LPAero).approve(address(ve), _amountWethAERO);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
     return tokenId;
@@ -233,6 +223,9 @@ contract veIONTest is BaseTest {
     vars.tokenAddresses = new address[](1);
     vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
 
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+
     vars.tokenAmounts = new uint256[](1);
     vars.tokenAmounts[0] = vars.amount;
 
@@ -240,10 +233,10 @@ contract veIONTest is BaseTest {
     vars.durations[0] = 52 weeks;
 
     vm.startPrank(vars.user);
-    uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, new bool[](1));
+    uint256 tokenId = ve.createLock(lpTypes, vars.tokenAmounts, vars.durations, new bool[](1));
     vm.stopPrank();
 
-    return LockInfo(tokenId, vars.tokenAddresses[0], vars.tokenAmounts[0], vars.durations[0]);
+    return LockInfo(tokenId, lpTypes[0], vars.tokenAddresses[0], vars.tokenAmounts[0], vars.durations[0]);
   }
 
   function _createLockMultipleInternal(address user) internal returns (LockInfoMultiple memory) {
@@ -263,6 +256,10 @@ contract veIONTest is BaseTest {
     vars.tokenAddresses[0] = address(modeVelodrome5050IonMode);
     vars.tokenAddresses[1] = address(modeBalancer8020IonEth);
 
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](2);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    lpTypes[1] = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+
     vars.tokenAmounts = new uint256[](2);
     vars.tokenAmounts[0] = vars.amount;
     vars.tokenAmounts[1] = vars.amount;
@@ -272,10 +269,10 @@ contract veIONTest is BaseTest {
     vars.durations[1] = 52 weeks;
 
     vm.startPrank(vars.user);
-    vars.tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, new bool[](2));
+    vars.tokenId = ve.createLock(lpTypes, vars.tokenAmounts, vars.durations, new bool[](2));
     vm.stopPrank();
 
-    return LockInfoMultiple(vars.tokenId, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
+    return LockInfoMultiple(vars.tokenId, lpTypes, vars.tokenAddresses, vars.tokenAmounts, vars.durations);
   }
 
   function _createLockInternalRealLP(address _user, bool _stakeUnderlying) internal returns (LockInfo memory) {
@@ -286,6 +283,9 @@ contract veIONTest is BaseTest {
 
     address[] memory tokenAddresses = new address[](1);
     tokenAddresses[0] = address(ionMode5050LP);
+
+    IveION.LpTokenType[] memory lpTypes = new IveION.LpTokenType[](1);
+    lpTypes[0] = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
 
     uint256[] memory tokenAmounts = new uint256[](1);
     tokenAmounts[0] = amountStaked;
@@ -298,10 +298,10 @@ contract veIONTest is BaseTest {
 
     vm.startPrank(_user);
     IERC20(ionMode5050LP).approve(address(ve), amountStaked);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId = ve.createLock(lpTypes, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
-    return LockInfo(tokenId, tokenAddresses[0], tokenAmounts[0], durations[0]);
+    return LockInfo(tokenId, lpTypes[0], tokenAddresses[0], tokenAmounts[0], durations[0]);
   }
 
   function _generateRandomAddress(uint256 seed) internal pure returns (address) {
@@ -311,7 +311,7 @@ contract veIONTest is BaseTest {
   function _logTokens(uint256[] memory tokenIds, address[] memory lpTokens) internal view {
     for (uint256 i = 0; i < tokenIds.length; i++) {
       for (uint256 j = 0; j < lpTokens.length; j++) {
-        IveION.LockedBalance memory lock = ve.getUserLock(tokenIds[i], ve.s_lpType(lpTokens[j]));
+        IveION.LockedBalance memory lock = ve.getUserLock(tokenIds[i], ve.s_addressToLpType(lpTokens[j]));
         uint256 tokenId = i + 1;
         console.log(
           string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Token: ", lock.tokenAddress.toHexString()))
@@ -424,6 +424,7 @@ struct TestVars {
 
 struct LockInfo {
   uint256 tokenId;
+  IveION.LpTokenType lpType;
   address tokenAddress;
   uint256 tokenAmount;
   uint256 duration;
@@ -431,6 +432,7 @@ struct LockInfo {
 
 struct LockInfoMultiple {
   uint256 tokenId;
+  IveION.LpTokenType[] lpTypes;
   address[] tokenAddresses;
   uint256[] tokenAmounts;
   uint256[] durations;

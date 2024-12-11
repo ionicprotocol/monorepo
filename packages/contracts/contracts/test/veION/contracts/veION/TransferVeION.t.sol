@@ -112,7 +112,7 @@ contract TrasferVeION is veIONTest {
 
     vm.startPrank(alice);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
-      lockInfoAlice.tokenAddress,
+      lockInfoAlice.lpType,
       lockInfoAlice.tokenId,
       REAL_LP_LOCK_AMOUNT / 2
     );

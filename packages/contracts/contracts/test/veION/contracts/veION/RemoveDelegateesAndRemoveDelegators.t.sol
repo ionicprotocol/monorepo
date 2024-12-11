@@ -32,15 +32,15 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     );
 
     vm.startPrank(cindy);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdAlice);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdBob);
-    ve.delegate(tokenIdAlice, tokenIdBob, address(modeVelodrome5050IonMode), MINT_AMT);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, tokenIdAlice);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, tokenIdBob);
+    ve.delegate(tokenIdAlice, tokenIdBob, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, MINT_AMT);
     vm.stopPrank();
 
     vm.startPrank(andy);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdCandy);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), tokenIdRalph);
-    ve.delegate(tokenIdCandy, tokenIdRalph, address(modeVelodrome5050IonMode), MINT_AMT);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, tokenIdCandy);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, tokenIdRalph);
+    ve.delegate(tokenIdCandy, tokenIdRalph, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, MINT_AMT);
     vm.stopPrank();
   }
 
@@ -51,7 +51,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     amounts[0] = MINT_AMT;
 
     vm.prank(cindy);
-    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
 
     IveION.LockedBalance memory locked1 = ve.getUserLock(tokenIdAlice, veloLpType);
     IveION.LockedBalance memory locked2 = ve.getUserLock(tokenIdBob, veloLpType);
@@ -66,10 +66,10 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
       }
     }
 
-    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_addressToLpType(address(modeVelodrome5050IonMode)));
     IveION.UserPoint memory userPoint = ve.getUserPoint(
       tokenIdBob,
-      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      ve.s_addressToLpType(address(modeVelodrome5050IonMode)),
       userEpoch
     );
 
@@ -104,41 +104,41 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     console.log("Token ID User 7:", lockInfoUser7.tokenId);
 
     vm.startPrank(address(0x1234));
-    ve.lockPermanent(lockInfoUser1.tokenAddress, lockInfoUser1.tokenId);
+    ve.lockPermanent(lockInfoUser1.lpType, lockInfoUser1.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0x5678));
-    ve.lockPermanent(lockInfoUser2.tokenAddress, lockInfoUser2.tokenId);
+    ve.lockPermanent(lockInfoUser2.lpType, lockInfoUser2.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0x9ABC));
-    ve.lockPermanent(lockInfoUser3.tokenAddress, lockInfoUser3.tokenId);
+    ve.lockPermanent(lockInfoUser3.lpType, lockInfoUser3.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0xDEF0));
-    ve.lockPermanent(lockInfoUser4.tokenAddress, lockInfoUser4.tokenId);
+    ve.lockPermanent(lockInfoUser4.lpType, lockInfoUser4.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0x1111));
-    ve.lockPermanent(lockInfoUser5.tokenAddress, lockInfoUser5.tokenId);
+    ve.lockPermanent(lockInfoUser5.lpType, lockInfoUser5.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0x2222));
-    ve.lockPermanent(lockInfoUser6.tokenAddress, lockInfoUser6.tokenId);
+    ve.lockPermanent(lockInfoUser6.lpType, lockInfoUser6.tokenId);
     vm.stopPrank();
 
     vm.startPrank(address(0x3333));
-    ve.lockPermanent(lockInfoUser7.tokenAddress, lockInfoUser7.tokenId);
+    ve.lockPermanent(lockInfoUser7.lpType, lockInfoUser7.tokenId);
     vm.stopPrank();
 
     vm.startPrank(cindy);
-    ve.delegate(tokenIdBob, lockInfoUser1.tokenId, lockInfoUser1.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser2.tokenId, lockInfoUser2.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser3.tokenId, lockInfoUser3.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser4.tokenId, lockInfoUser4.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser5.tokenId, lockInfoUser5.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser6.tokenId, lockInfoUser6.tokenAddress, MINT_AMT / 7);
-    ve.delegate(tokenIdBob, lockInfoUser7.tokenId, lockInfoUser7.tokenAddress, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser1.tokenId, lockInfoUser1.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser2.tokenId, lockInfoUser2.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser3.tokenId, lockInfoUser3.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser4.tokenId, lockInfoUser4.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser5.tokenId, lockInfoUser5.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser6.tokenId, lockInfoUser6.lpType, MINT_AMT / 7);
+    ve.delegate(tokenIdBob, lockInfoUser7.tokenId, lockInfoUser7.lpType, MINT_AMT / 7);
     vm.stopPrank();
 
     uint256[] memory delegateesBefore = ve.getDelegatees(tokenIdBob, veloLpType);
@@ -159,18 +159,18 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     LockInfoMultiple memory lockInfoUser2 = _createLockMultipleInternal(address(0x92365));
 
     vm.startPrank(address(0x92365));
-    ve.lockPermanent(lockInfoUser2.tokenAddresses[0], lockInfoUser2.tokenId);
-    ve.lockPermanent(lockInfoUser2.tokenAddresses[1], lockInfoUser2.tokenId);
+    ve.lockPermanent(lockInfoUser2.lpTypes[0], lockInfoUser2.tokenId);
+    ve.lockPermanent(lockInfoUser2.lpTypes[1], lockInfoUser2.tokenId);
     vm.stopPrank();
 
     vm.startPrank(cindy);
-    ve.lockPermanent(lockInfoUser1.tokenAddresses[0], lockInfoUser1.tokenId);
-    ve.lockPermanent(lockInfoUser1.tokenAddresses[1], lockInfoUser1.tokenId);
+    ve.lockPermanent(lockInfoUser1.lpTypes[0], lockInfoUser1.tokenId);
+    ve.lockPermanent(lockInfoUser1.lpTypes[1], lockInfoUser1.tokenId);
     vm.stopPrank();
 
     vm.startPrank(cindy);
-    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.tokenAddresses[0], MINT_AMT / 5);
-    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.tokenAddresses[1], MINT_AMT / 5);
+    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.lpTypes[0], MINT_AMT / 5);
+    ve.delegate(lockInfoUser1.tokenId, lockInfoUser2.tokenId, lockInfoUser1.lpTypes[1], MINT_AMT / 5);
     vm.stopPrank();
 
     uint256[] memory delegateesBeforeTransferVelo = ve.getDelegatees(lockInfoUser1.tokenId, veloLpType);
@@ -196,7 +196,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(cindy);
     vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
-    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
 
   function test_removeDelegatees_RevertIfNotOwner() public {
@@ -207,7 +207,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(address(0x1413));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
 
   function test_removeDelegatees_RevertIfNoDelegation() public {
@@ -218,7 +218,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(cindy);
     vm.expectRevert(abi.encodeWithSignature("NoDelegationBetweenTokens(uint256,uint256)", tokenIdAlice, tokenIdCandy));
-    ve.removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(tokenIdAlice, toTokenIds, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
 
   function test_removeDelegators_UserCanRemoveDelegators() public {
@@ -228,7 +228,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     amounts[0] = MINT_AMT;
 
     vm.prank(cindy);
-    ve.removeDelegators(fromTokenIds, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegators(fromTokenIds, tokenIdBob, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
 
     IveION.LockedBalance memory locked1 = ve.getUserLock(tokenIdAlice, veloLpType);
     IveION.LockedBalance memory locked2 = ve.getUserLock(tokenIdBob, veloLpType);
@@ -253,10 +253,10 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
       }
     }
 
-    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_lpType(address(modeVelodrome5050IonMode)));
+    uint256 userEpoch = ve.s_userPointEpoch(tokenIdBob, ve.s_addressToLpType(address(modeVelodrome5050IonMode)));
     IveION.UserPoint memory userPoint = ve.getUserPoint(
       tokenIdBob,
-      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      ve.s_addressToLpType(address(modeVelodrome5050IonMode)),
       userEpoch
     );
 
@@ -283,7 +283,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(cindy);
     vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
-    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
   function test_removeDelegators_RevertIfNotOwner() public {
     uint256[] memory fromTokenIDs = new uint256[](1);
@@ -293,7 +293,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
 
   function test_removeDelegators_RevertIfNoDelegationBetweenTokens() public {
@@ -304,6 +304,6 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
 
     vm.prank(cindy);
     vm.expectRevert(abi.encodeWithSignature("NoDelegationBetweenTokens(uint256,uint256)", tokenIdCandy, tokenIdBob));
-    ve.removeDelegators(fromTokenIDs, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegators(fromTokenIDs, tokenIdBob, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, amounts);
   }
 }

@@ -29,7 +29,7 @@ contract Setters is veIONTest {
     address tokenAddress = address(0x456);
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
     ve.setLpTokenType(tokenAddress, lpType);
-    assertEq(uint256(ve.s_lpType(tokenAddress)), uint256(lpType), "LP token type should be updated");
+    assertEq(uint256(ve.s_addressToLpType(tokenAddress)), uint256(lpType), "LP token type should be updated");
   }
 
   function test_setStakeStrategy() public {
@@ -61,7 +61,11 @@ contract Setters is veIONTest {
     uint256 minimumAmount = 100;
     ve.setLpTokenType(tokenAddress, veloLpType);
     ve.setMinimumLockAmount(tokenAddress, minimumAmount);
-    assertEq(ve.s_minimumLockAmount(ve.s_lpType(tokenAddress)), minimumAmount, "Minimum lock amount should be updated");
+    assertEq(
+      ve.s_minimumLockAmount(ve.s_addressToLpType(tokenAddress)),
+      minimumAmount,
+      "Minimum lock amount should be updated"
+    );
   }
 
   function test_setMinimumLockDuration() public {

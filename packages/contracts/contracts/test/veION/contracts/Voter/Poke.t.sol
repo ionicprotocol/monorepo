@@ -207,7 +207,7 @@ contract Poke is VoterTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
-    ve.increaseAmount(address(modeVelodrome5050IonMode), voterTokenIdSingleLp, additionalAmount, false);
+    ve.increaseAmount(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp, additionalAmount, false);
     vm.stopPrank();
 
     voter.poke(voterTokenIdSingleLp);
@@ -246,7 +246,7 @@ contract Poke is VoterTest {
 
     uint256 additionalDuration = 70 weeks;
     vm.startPrank(user);
-    ve.increaseUnlockTime(address(modeVelodrome5050IonMode), voterTokenIdSingleLp, additionalDuration);
+    ve.increaseUnlockTime(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp, additionalDuration);
     vm.stopPrank();
 
     voter.poke(voterTokenIdSingleLp);
@@ -284,7 +284,7 @@ contract Poke is VoterTest {
     );
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
     vm.stopPrank();
 
     vm.warp(block.timestamp + 4 weeks);
@@ -324,8 +324,8 @@ contract Poke is VoterTest {
     );
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
-    ve.unlockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
+    ve.unlockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
     vm.stopPrank();
 
     vm.warp(block.timestamp + 4 weeks);
@@ -365,9 +365,9 @@ contract Poke is VoterTest {
     );
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
-    ve.delegate(voterTokenIdSingleLp, voterTokenIdMultiLp, address(modeVelodrome5050IonMode), 500 ether);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdMultiLp);
+    ve.delegate(voterTokenIdSingleLp, voterTokenIdMultiLp, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, 500 ether);
     vm.stopPrank();
 
     voter.poke(voterTokenIdSingleLp);
@@ -407,9 +407,14 @@ contract Poke is VoterTest {
     uint256 delegatedAmount = 500 ether;
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
-    ve.delegate(voterTokenIdMultiLp, voterTokenIdSingleLp, address(modeVelodrome5050IonMode), delegatedAmount);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdMultiLp);
+    ve.delegate(
+      voterTokenIdMultiLp,
+      voterTokenIdSingleLp,
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      delegatedAmount
+    );
     vm.stopPrank();
 
     voter.poke(voterTokenIdSingleLp);
@@ -449,14 +454,24 @@ contract Poke is VoterTest {
     uint256 delegatedAmount = 500 ether;
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
-    ve.delegate(voterTokenIdMultiLp, voterTokenIdSingleLp, address(modeVelodrome5050IonMode), delegatedAmount);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdMultiLp);
+    ve.delegate(
+      voterTokenIdMultiLp,
+      voterTokenIdSingleLp,
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      delegatedAmount
+    );
     uint256[] memory multiLpArray = new uint256[](1);
     multiLpArray[0] = voterTokenIdMultiLp;
     uint256[] memory delegatedAmountArray = new uint256[](1);
     delegatedAmountArray[0] = delegatedAmount;
-    ve.removeDelegators(multiLpArray, voterTokenIdSingleLp, address(modeVelodrome5050IonMode), delegatedAmountArray);
+    ve.removeDelegators(
+      multiLpArray,
+      voterTokenIdSingleLp,
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      delegatedAmountArray
+    );
     vm.stopPrank();
 
     voter.poke(voterTokenIdSingleLp);
@@ -495,15 +510,25 @@ contract Poke is VoterTest {
 
     uint256 delegateAmount = 1000 ether;
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdSingleLp);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
-    ve.delegate(voterTokenIdSingleLp, voterTokenIdMultiLp, address(modeVelodrome5050IonMode), delegateAmount);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdSingleLp);
+    ve.lockPermanent(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, voterTokenIdMultiLp);
+    ve.delegate(
+      voterTokenIdSingleLp,
+      voterTokenIdMultiLp,
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      delegateAmount
+    );
     voter.poke(voterTokenIdSingleLp);
     uint256[] memory singleLpArray = new uint256[](1);
     singleLpArray[0] = voterTokenIdMultiLp;
     uint256[] memory amountArray = new uint256[](1);
     amountArray[0] = delegateAmount;
-    ve.removeDelegatees(voterTokenIdSingleLp, singleLpArray, address(modeVelodrome5050IonMode), amountArray);
+    ve.removeDelegatees(
+      voterTokenIdSingleLp,
+      singleLpArray,
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
+      amountArray
+    );
     vm.stopPrank();
 
     IVoter.VoteDetails memory finalVoteDetails = voter.getVoteDetails(

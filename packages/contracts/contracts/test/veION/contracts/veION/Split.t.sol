@@ -42,7 +42,7 @@ contract Split is veIONTest {
     splitAmount = MINT_AMT - MINIMUM_LOCK_AMOUNT;
     vm.prank(user);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
-      address(modeVelodrome5050IonMode),
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
       lockInputMultiLP.tokenId,
       splitAmount
     );
@@ -78,7 +78,7 @@ contract Split is veIONTest {
   function test_split_UserCanSplitSomeLP() public {
     vm.prank(user);
     (uint256 tokenId1, uint256 tokenId2) = ve.split(
-      address(modeVelodrome5050IonMode),
+      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE,
       lockInputMultiLP.tokenId,
       splitAmount
     );
@@ -101,7 +101,7 @@ contract Split is veIONTest {
     uint256 splitAmt = 4e18;
 
     vm.startPrank(alice);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.lpType, lockInfoAlice.tokenId, splitAmt);
 
     assertEq(
       ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
@@ -122,53 +122,53 @@ contract Split is veIONTest {
     ve.voting(lockInputMultiLP.tokenId, true);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfSplitNotAllowedForUser() public {
     ve.toggleSplit(user, false);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("SplitNotAllowed()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_CanSplitNotAllowedForUserButAllowedGeneral() public {
     ve.toggleSplit(user, false);
     ve.toggleSplit(address(0), true);
     vm.prank(user);
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfNotOwner() public {
     vm.prank(address(0x9352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfLockExpired() public {
     vm.warp(block.timestamp + lockInputMultiLP.durations[0]);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfSplitTooSmall() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("SplitTooSmall()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, 0);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, 0);
   }
 
   function test_split_RevertIfAmountTooBig() public {
     splitAmount = MINT_AMT * 2;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfNotEnoughRemainingInOldToken() public {
     splitAmount = 995e18;
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("NotEnoughRemainingAfterSplit()"));
-    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
+    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
   }
 }
