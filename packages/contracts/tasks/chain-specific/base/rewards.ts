@@ -4,6 +4,7 @@ import {
   bsdETH_MARKET,
   cbBTC_MARKET,
   cbETH_MARKET,
+  COMPTROLLER,
   EURC_MARKET,
   eUSD,
   eUSD_MARKET,
@@ -29,6 +30,7 @@ import {
 import { Address, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 import { BORROW_DURATION, SUPPLY_DURATION } from "..";
+import { getCycleInfoForAllMarkets } from "../../flywheel/rewards";
 
 task("base:add-rewards:epoch1:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
@@ -608,5 +610,19 @@ task("base:approve-flywheel", "approve flywheel for market").setAction(
         `Approved flywheel ${fwRewards.address} to pull reward token ${rewardToken} from market ${market}: ${tx}`
       );
     }
+  }
+);
+
+task("flywheel:get_cycle_info:borrow:base", "get cycle info from flywheel").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_Borrow_ION_epoch5");
+    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
+  }
+);
+
+task("flywheel:get_cycle_info:supply:base", "get cycle info from flywheel").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_ION_epoch5");
+    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
   }
 );
