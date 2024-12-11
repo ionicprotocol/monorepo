@@ -148,7 +148,6 @@ export default function Market() {
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
-          nativeAssetYield={row.original.nativeAssetYield}
         />
       )
     },
