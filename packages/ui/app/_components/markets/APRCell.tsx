@@ -8,7 +8,6 @@ import {
   HoverCardContent
 } from '@ui/components/ui/hover-card';
 import { pools } from '@ui/constants';
-import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
 import { cn } from '@ui/lib/utils';
 import { multipliers } from '@ui/utils/multipliers';
@@ -115,7 +114,7 @@ export default function APRCell({
     const icons: string[] = [];
 
     // Add asset logo as the first icon if showing rewards badge or native yield
-    if (showRewardsBadge || nativeAssetYield !== undefined) {
+    if (effectiveNativeYield !== undefined) {
       icons.push(asset.toLowerCase());
     }
 
