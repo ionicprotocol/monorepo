@@ -13,7 +13,7 @@ import { IFlywheelBooster } from "../../../../ionic/strategies/flywheel/IFlywhee
 import { IFlywheelRewards } from "../../../../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
 import { IIonicFlywheelBorrowBooster } from "../../../../ionic/strategies/flywheel/IIonicFlywheelBorrowBooster.sol";
 import { IonicFlywheelBorrowBooster } from "../../../../ionic/strategies/flywheel/IonicFlywheelBorrowBooster.sol";
-import { VeIonicFlywheelDynamicRewards } from "../../../../ionic/strategies/flywheel/rewards/VeIonicFlywheelDynamicRewards.sol";
+import { IonicFlywheelDynamicRewards } from "../../../../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
 import { Comptroller } from "../../../../compound/Comptroller.sol";
 import { RewardAccumulator } from "../../../../veION/RewardAccumulator.sol";
 import { CErc20RewardsDelegate } from "../../../../compound/CErc20RewardsDelegate.sol";
@@ -43,8 +43,8 @@ contract DistributeRewards is VoterTest {
   PoolDirectory poolDirectory = PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f);
   IonicFlywheel flywheelSupply;
   IonicFlywheelBorrow flywheelBorrow;
-  VeIonicFlywheelDynamicRewards flywheelRewardsBorrow;
-  VeIonicFlywheelDynamicRewards flywheelRewardsSupply;
+  IonicFlywheelDynamicRewards flywheelRewardsBorrow;
+  IonicFlywheelDynamicRewards flywheelRewardsSupply;
   EmissionsManager emissionsManager;
   address protocalAddress = address(0x123);
   bytes bytecode = hex"deadbeef";
@@ -107,10 +107,10 @@ contract DistributeRewards is VoterTest {
     flywheelSupply = new IonicFlywheel();
     flywheelSupply.initialize(ERC20(ion), IFlywheelRewards(address(0)), IFlywheelBooster(address(0)), owner);
 
-    flywheelRewardsBorrow = new VeIonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelBorrow)), ONE_WEEK);
+    flywheelRewardsBorrow = new IonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelBorrow)), ONE_WEEK);
     flywheelBorrow.setFlywheelRewards(IFlywheelRewards(address(flywheelRewardsBorrow)));
 
-    flywheelRewardsSupply = new VeIonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelSupply)), ONE_WEEK);
+    flywheelRewardsSupply = new IonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelSupply)), ONE_WEEK);
     flywheelSupply.setFlywheelRewards(IFlywheelRewards(address(flywheelRewardsSupply)));
 
     flywheelSupply.setEmissionsManager(emissionsManager);
