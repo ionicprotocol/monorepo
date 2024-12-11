@@ -18,7 +18,7 @@ import { DiscordService } from './discord';
 
 const pythPriceOracleAbi = parseAbi([
   'function pyth() external view returns (address)',
-  'function getPythAddress() external view returns (address)'
+  'function getPythAddress() external view returns (address)',
 ]);
 
 export class Updater {
@@ -43,9 +43,10 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      this.pythNetworkAddress = await this.pythPriceOracle.read.pyth?.() || 
-                               await this.pythPriceOracle.read.getPythAddress?.();
-      
+      this.pythNetworkAddress =
+        (await this.pythPriceOracle.read.pyth?.()) ||
+        (await this.pythPriceOracle.read.getPythAddress?.());
+
       if (!this.pythNetworkAddress) {
         throw new Error('Could not get Pyth Network address');
       }
