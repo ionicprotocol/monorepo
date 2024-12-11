@@ -72,7 +72,7 @@ export const useMarketData = (
   const { data: borrowRates } = useBorrowAPYs(assets ?? [], +chain);
   const { data: supplyRates } = useSupplyAPYs(assets ?? [], +chain);
   const { data: merklApr } = useMerklApr();
-  const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
+  const { data: loopMarkets } = useLoopMarkets(
     poolData?.assets.map((asset) => asset.cToken) ?? [],
     +chain
   );
