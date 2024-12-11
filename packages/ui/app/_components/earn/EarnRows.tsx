@@ -228,7 +228,7 @@ export const EarnPopup = ({
           <img
             alt=""
             className="size-4 rounded mr-1"
-            src="/img/ionic-sq.png"
+            src="/img/ionic-green-on-black.png"
           />{' '}
           + {rewards[poolChain]?.points?.ionic}x Ionic Points
         </div> */}

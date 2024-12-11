@@ -6,7 +6,7 @@ type RewardIconsProps = {
 
 const iconMap = {
   op: '/images/op-logo-red.svg',
-  ionic: '/img/ionic-sq.png',
+  ionic: '/img/ionic-green-on-black.png',
   turtle: '/images/turtle-ionic.png',
   stone: '/img/symbols/32/color/stone.png',
   etherfi: '/images/etherfi.png',

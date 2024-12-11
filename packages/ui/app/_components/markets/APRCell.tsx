@@ -153,7 +153,7 @@ export default function APRCell({
             >
               + ION APR
               <Image
-                src="/img/ionic-sq.png"
+                src="/img/ionic-green-on-black.png"
                 alt="ION"
                 width={16}
                 height={16}
@@ -265,7 +265,7 @@ export default function APRCell({
           {(config?.ionic ?? 0) > 0 && (
             <>
               <RewardRow
-                icon="/img/ionic-sq.png"
+                icon="/img/ionic-green-on-black.png"
                 text={`+ ${config?.ionic}x Ionic Points`}
               />
               <RewardRow
