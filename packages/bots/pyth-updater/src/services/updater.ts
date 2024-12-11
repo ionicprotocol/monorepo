@@ -1,26 +1,25 @@
+
 import { IonicSdk } from '@ionicprotocol/sdk';
 import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
 import {
   Address,
+  Chain,
   getContract,
   GetContractReturnType,
+  HttpTransport,
+  LocalAccount,
   parseAbi,
   PublicClient,
   TransactionReceipt,
+  WalletClient,
+  WalletRpcSchema,
 } from 'viem';
-
 import config from '../config/service';
 import { pythAbi } from '../pythAbi';
 import { PythAssetConfig } from '../types';
 import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils';
-
 import { DiscordService } from './discord';
-
-const pythPriceOracleAbi = parseAbi([
-  'function pyth() external view returns (address)',
-  'function getPythAddress() external view returns (address)',
-]);
-
+const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -28,8 +27,11 @@ export class Updater {
   pythNetworkAddress: Address;
   connection: EvmPriceServiceConnection;
   assetConfigs: PythAssetConfig[] = [];
-  pythContract: GetContractReturnType<typeof pythAbi, PublicClient>;
-
+  // @ts-ignore
+  pythContract: GetContractReturnType<typeof pythAbi, PublicClient> = {} as GetContractReturnType<
+    typeof pythAbi,
+    WalletClient<HttpTransport, Chain, LocalAccount<string, Address>, WalletRpcSchema>
+  >;
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
@@ -40,30 +42,16 @@ export class Updater {
     }) as any;
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
-
   async init(assetConfigs: PythAssetConfig[]) {
-    try {
-      this.pythNetworkAddress =
-        (await this.pythPriceOracle.read.pyth?.()) ||
-        (await this.pythPriceOracle.read.getPythAddress?.());
-
-      if (!this.pythNetworkAddress) {
-        throw new Error('Could not get Pyth Network address');
-      }
-
-      this.assetConfigs = assetConfigs;
-      this.pythContract = getContract({
-        address: this.pythNetworkAddress,
-        abi: pythAbi,
-        client: this.sdk.walletClient as any,
-      }) as any;
-      return this;
-    } catch (error) {
-      this.sdk.logger.error(`Failed to initialize Updater: ${error}`);
-      throw error;
-    }
+    this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+    this.assetConfigs = assetConfigs;
+    this.pythContract = getContract({
+      address: this.pythNetworkAddress,
+      abi: pythAbi,
+      client: this.sdk.walletClient as any,
+    }) as any;
+    return this;
   }
-
   async updateFeeds(): Promise<TransactionReceipt | null> {
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
