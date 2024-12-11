@@ -12,9 +12,7 @@ const iconMap = {
   etherfi: '/images/etherfi.png',
   kelp: '/images/kelpmiles.png',
   eigen: '/images/eigen.png',
-  spice: '/img/symbols/32/color/bob.png',
-  anzen: '/img/symbols/32/color/usdz.png',
-  nektar: '/img/symbols/32/color/nektar.png'
+  spice: '/img/symbols/32/color/bob.png'
 };
 
 export const RewardIcons = ({ rewards }: RewardIconsProps) => {

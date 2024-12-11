@@ -12,8 +12,6 @@ export type Multipliers = {
   spice?: boolean;
   underlyingAPR?: number;
   op?: boolean;
-  anzen?: number;
-  nektar?: boolean;
 };
 
 export const multipliers: Record<
@@ -549,8 +547,7 @@ export const multipliers: Record<
           ionic: 0,
           turtle: false,
           ionAPR: false,
-          flywheel: false,
-          anzen: 20
+          flywheel: false
         }
       },
       EURC: {
@@ -609,8 +606,7 @@ export const multipliers: Record<
           turtle: false,
           ionAPR: false,
           flywheel: false,
-          underlyingAPR: 15,
-          anzen: 5
+          underlyingAPR: 15
         }
       },
       fBOMB: {

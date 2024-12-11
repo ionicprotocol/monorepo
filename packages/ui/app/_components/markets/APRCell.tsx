@@ -125,10 +125,6 @@ export default function APRCell({
     if (config?.kelp) icons.push('kelp');
     if (config?.eigenlayer) icons.push('eigen');
     if (config?.spice) icons.push('spice');
-    if (type === 'supply') {
-      if (config?.anzen) icons.push('anzen');
-      if (config?.nektar) icons.push('nektar');
-    }
 
     return icons;
   };
@@ -301,23 +297,6 @@ export default function APRCell({
               icon="/img/symbols/32/color/bob.png"
               text="+ Spice Points"
             />
-          )}
-          {type === 'supply' && (
-            <>
-              {(config?.anzen ?? 0) > 0 && (
-                <RewardRow
-                  icon="/img/symbols/32/color/usdz.png"
-                  text={`+ ${config?.anzen}x Anzen Points`}
-                />
-              )}
-
-              {config?.nektar && (
-                <RewardRow
-                  icon="/img/symbols/32/color/nektar.png"
-                  text="+ Nektar Points"
-                />
-              )}
-            </>
           )}
         </div>
       </HoverCardContent>
