@@ -118,6 +118,7 @@ export default function APRCell({
       icons.push(asset.toLowerCase());
     }
 
+    if (config?.lsk) icons.push('lsk');
     if (config?.op) icons.push('op');
     if (config?.etherfi) icons.push('etherfi');
     if (config?.kelp) icons.push('kelp');

@@ -11,6 +11,7 @@ export type Multipliers = {
   spice?: boolean;
   underlyingAPR?: number;
   op?: boolean;
+  lsk?: boolean;
 };
 
 export const multipliers: Record<
@@ -717,28 +718,32 @@ export const multipliers: Record<
         supply: {
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          lsk: true
         }
       },
       USDC: {
         supply: {
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          lsk: true
         }
       },
       USDT: {
         supply: {
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          lsk: true
         }
       },
       WBTC: {
         supply: {
           turtle: false,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          lsk: true
         }
       },
       LSK: {
