@@ -97,7 +97,7 @@ export default function APRCell({
     return (
       prefix +
       total.toLocaleString('en-US', {
-        maximumFractionDigits: type === 'supply' ? 2 : 1
+        maximumFractionDigits: 2
       })
     );
   };
