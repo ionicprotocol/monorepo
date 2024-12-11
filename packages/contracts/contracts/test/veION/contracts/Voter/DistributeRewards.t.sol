@@ -213,13 +213,18 @@ contract DistributeRewards is VoterTest {
     IERC20(ion).transfer(address(voter), rewardAmount);
     voter.distributeRewards();
 
+    uint256[] memory expectedBalances = new uint256[](4);
+    expectedBalances[0] = 276676147359650479260798;
+    expectedBalances[1] = 223767532575522266411076;
+    expectedBalances[2] = 245411929366342403014352;
+    expectedBalances[3] = 254144390698484851313772;
+
     for (uint256 i = 0; i < markets.length; i++) {
       address rewardAccumulator = voter.marketToRewardAccumulators(markets[i], sides[i]);
       uint256 ionBalance = IERC20(ion).balanceOf(rewardAccumulator);
       console.log("ION Balance for Reward Accumulator", rewardAccumulator, ":", ionBalance);
 
-      uint256 expectedBalance = (rewardAmount * weights[i]) / totalWeight;
-      //assertEq(ionBalance, expectedBalance, "Each reward accumulator should have a quarter of the tokens");
+      assertEq(ionBalance, expectedBalances[i], "Each reward accumulator should have roughly a quarter");
     }
 
     // Log the price of ION-WETH LP using mpo.price

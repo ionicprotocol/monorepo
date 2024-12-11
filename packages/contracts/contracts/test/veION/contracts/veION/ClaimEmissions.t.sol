@@ -41,9 +41,14 @@ contract ClaimEmissions is veIONTest {
   }
 
   function test_claimEmissions_WithdrawThenClaim() public forkAtBlock(MODE_MAINNET, 16559826) {
+    vm.warp(block.timestamp + 1 weeks);
+    uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
     vm.startPrank(alice);
     ve.withdraw(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId);
     ve.claimEmissions(address(ionMode5050LP));
     vm.stopPrank();
+
+    address rewardToken = veloIonModeStakingStrategy.rewardToken();
+    assertEq(IERC20(rewardToken).balanceOf(alice), reward, "Alice should have gotten no reward");
   }
 }

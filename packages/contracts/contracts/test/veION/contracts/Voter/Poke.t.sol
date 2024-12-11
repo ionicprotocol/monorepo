@@ -526,6 +526,8 @@ contract Poke is VoterTest {
       address(modeVelodrome5050IonMode)
     );
 
+    vm.warp(block.timestamp + 10 weeks);
+
     vm.startPrank(user);
     ve.transferFrom(user, address(0x2352), voterTokenIdSingleLp);
     voter.poke(voterTokenIdSingleLp);
@@ -545,5 +547,18 @@ contract Poke is VoterTest {
       console.log("Final Market Votes for market", i, ":", finalVoteDetails.votes[i]);
     }
     console.log("Final Used Weight:", finalVoteDetails.usedWeight);
+
+    for (uint256 i = 0; i < initialVoteDetails.votes.length; i++) {
+      assertGt(
+        initialVoteDetails.votes[i],
+        finalVoteDetails.votes[i],
+        "Initial votes should be greater than final votes"
+      );
+    }
+    assertGt(
+      initialVoteDetails.usedWeight,
+      finalVoteDetails.usedWeight,
+      "Initial used weight should be greater than final used weight"
+    );
   }
 }
