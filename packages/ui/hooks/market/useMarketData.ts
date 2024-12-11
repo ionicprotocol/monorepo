@@ -224,7 +224,7 @@ export const useMarketData = (
     supplyRates,
     borrowRates,
     loopMarkets,
-    // fraxtalAprs,
+    isLoadingFraxtalAprs,
     poolData?.comptroller,
     borrowCapsData
   ]);

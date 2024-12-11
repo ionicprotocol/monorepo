@@ -111,16 +111,20 @@ export default function APRCell({
         height={16}
         className="size-4 rounded"
       />
-      <span className="text-sm">{text}</span>
+      <span className="text-3xs">{text}</span>
     </div>
   );
 
   const getRewardIcons = () => {
     const icons: string[] = [];
 
+    // Add asset logo as the first icon if showing rewards badge or native yield
+    if (showRewardsBadge || nativeAssetYield !== undefined) {
+      icons.push(asset.toLowerCase());
+    }
+
     if (showOPRewards) icons.push('op');
     if (config?.ionic) icons.push('ionic');
-    // if (config?.turtle) icons.push('turtle');
     if (config?.etherfi) icons.push('etherfi');
     if (config?.kelp) icons.push('kelp');
     if (config?.eigenlayer) icons.push('eigen');
@@ -131,10 +135,6 @@ export default function APRCell({
     }
 
     return icons;
-  };
-
-  const getAssetLogo = (assetSymbol: string) => {
-    return `/img/symbols/32/color/${assetSymbol.toLowerCase()}.png`;
   };
 
   return (
@@ -151,6 +151,7 @@ export default function APRCell({
                   : 'bg-accent/50 text-green-900'
               )}
             >
+              + ION APR
               <Image
                 src="/img/ionic-sq.png"
                 alt="ION"
@@ -158,7 +159,6 @@ export default function APRCell({
                 height={16}
                 className="rounded-full"
               />
-              + ION APR
             </span>
 
             {(showRewardsBadge || nativeAssetYield !== undefined) && (
@@ -169,13 +169,6 @@ export default function APRCell({
                   pools[dropdownSelectedChain].bg
                 )}
               >
-                <Image
-                  src={getAssetLogo(asset)}
-                  alt={asset}
-                  width={16}
-                  height={16}
-                  className="rounded-full"
-                />
                 <span>+ Native APR</span>
                 <RewardIcons rewards={getRewardIcons()} />
               </div>
@@ -189,6 +182,7 @@ export default function APRCell({
                   target="_blank"
                   rel="noreferrer"
                 >
+                  + TURTLE{' '}
                   <Image
                     src={
                       asset === 'STONE'
@@ -198,10 +192,10 @@ export default function APRCell({
                           : '/images/turtle-ionic.png'
                     }
                     alt="Turtle"
+                    className="bg-black/20 rounded-full"
                     width={16}
                     height={16}
                   />
-                  + TURTLE{' '}
                   <Image
                     alt="external-link"
                     src="https://img.icons8.com/material-outlined/24/external-link.png"

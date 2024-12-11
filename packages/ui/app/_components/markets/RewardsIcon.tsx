@@ -18,12 +18,19 @@ const iconMap = {
 };
 
 export const RewardIcons = ({ rewards }: RewardIconsProps) => {
+  const getIconPath = (reward: string) => {
+    if (reward in iconMap) {
+      return iconMap[reward as keyof typeof iconMap];
+    }
+    return `/img/symbols/32/color/${reward.toLowerCase()}.png`;
+  };
+
   return (
     <div className="flex items-center">
       {rewards.map((reward, index) => (
         <div
-          key={reward}
-          className="rounded-full bg-black"
+          key={`${reward}-${index}`}
+          className="rounded-full bg-black/20"
           style={{
             marginLeft: index !== 0 ? '-6px' : '0',
             zIndex: rewards.length - index // Higher z-index for earlier icons
@@ -31,7 +38,7 @@ export const RewardIcons = ({ rewards }: RewardIconsProps) => {
         >
           <div className="size-4 flex items-center justify-center">
             <Image
-              src={iconMap[reward as keyof typeof iconMap]}
+              src={getIconPath(reward)}
               alt={reward}
               width={16}
               height={16}
