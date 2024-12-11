@@ -201,6 +201,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
   /// @inheritdoc IVoter
   function claimBribes(address[] memory _bribes, address[][] memory _tokens, uint256 _tokenId) external nonReentrant {
+    if (_bribes.length != _tokens.length) revert UnequalLengths();
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     uint256 _length = _bribes.length;
     for (uint256 i = 0; i < _length; i++) {
