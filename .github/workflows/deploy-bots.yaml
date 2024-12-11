@@ -362,6 +362,8 @@ jobs:
       # - name: run smoke tests for feed verifier
       #   working-directory: ./ops
       #   run: make feed-verifier-smoke-test
+
+      
      # - name: run smoke tests for price verifier
       #   working-directory: ./ops
       #   run: make price-verifier-smoke-test
