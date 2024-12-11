@@ -65,6 +65,16 @@ interface ILeveredPositionFactoryFirstExtension {
   function _setPositionsExtension(bytes4 msgSig, address extension) external;
 
   function _setWhitelistedSwapRouters(address[] memory newSet) external;
+
+  function calculateAdjustmentAmountDeltas(
+    bool ratioIncreases,
+    uint256 targetRatio,
+    uint256 collateralAssetPrice,
+    uint256 borrowedAssetPrice,
+    uint256 expectedSlippage,
+    uint256 positionSupplyAmount,
+    uint256 debtAmount
+  ) external pure returns (uint256 supplyDelta, uint256 borrowsDelta);
 }
 
 interface ILeveredPositionFactorySecondExtension {

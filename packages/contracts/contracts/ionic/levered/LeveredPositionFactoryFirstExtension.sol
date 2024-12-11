@@ -29,7 +29,7 @@ contract LeveredPositionFactoryFirstExtension is
   error PositionNotClosed();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 14;
+    uint8 fnsCount = 15;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
     functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
@@ -45,6 +45,7 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getAllWhitelistedSwapRouters.selector;
     functionSelectors[--fnsCount] = this.isSwapRoutersWhitelisted.selector;
     functionSelectors[--fnsCount] = this._setWhitelistedSwapRouters.selector;
+    functionSelectors[--fnsCount] = this.calculateAdjustmentAmountDeltas.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -103,6 +104,49 @@ contract LeveredPositionFactoryFirstExtension is
   /*----------------------------------------------------------------
                             View Functions
   ----------------------------------------------------------------*/
+
+  function calculateAdjustmentAmountDeltas(
+    bool ratioIncreases,
+    uint256 targetRatio,
+    uint256 collateralAssetPrice,
+    uint256 borrowedAssetPrice,
+    uint256 expectedSlippage,
+    uint256 positionSupplyAmount,
+    uint256 debtAmount
+  ) external pure returns (uint256 supplyDelta, uint256 borrowsDelta) {
+    uint256 slippageFactor = (1e18 * (10000 + expectedSlippage)) / 10000;
+
+    uint256 supplyValueDeltaAbs;
+    {
+      // s = supply value before
+      // b = borrow value before
+      // r = target ratio after
+      // c = borrow value coefficient to account for the slippage
+      int256 s = int256((collateralAssetPrice * positionSupplyAmount) / 1e18);
+      int256 b = int256((borrowedAssetPrice * debtAmount) / 1e18);
+      int256 r = int256(targetRatio);
+      int256 r1 = r - 1e18;
+      int256 c = int256(slippageFactor);
+
+      // some math magic here
+      // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
+
+      // x = supplyValueDelta
+      int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
+      supplyValueDeltaAbs = uint256((supplyValueDelta < 0) ? -supplyValueDelta : supplyValueDelta);
+    }
+
+    supplyDelta = (supplyValueDeltaAbs * 1e18) / collateralAssetPrice;
+    borrowsDelta = (supplyValueDeltaAbs * 1e18) / borrowedAssetPrice;
+
+    if (ratioIncreases) {
+      // stables to borrow = c * x
+      borrowsDelta = (borrowsDelta * slippageFactor) / 1e18;
+    } else {
+      // amount to redeem = c * x
+      supplyDelta = (supplyDelta * slippageFactor) / 1e18;
+    }
+  }
 
   function getMinBorrowNative() external view returns (uint256) {
     return feeDistributor.minBorrowEth();

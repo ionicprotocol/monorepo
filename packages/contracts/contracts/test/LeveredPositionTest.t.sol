@@ -382,7 +382,7 @@ abstract contract LeveredPositionTest is MarketsTest {
     vm.assume(minLevRatio < targetLeverageRatio);
 
     uint256 borrowedAssetPrice = stableMarket.comptroller().oracle().getUnderlyingPrice(stableMarket);
-    (uint256 sd, uint256 bd) = position.getSupplyAmountDelta(targetLeverageRatio, 0);
+    (uint256 sd, uint256 bd) = position.getAdjustmentAmountDeltas(targetLeverageRatio);
     emit log_named_uint("borrows delta val", (bd * borrowedAssetPrice) / 1e18);
     emit log_named_uint("min borrow value", ffd.getMinBorrowEth(stableMarket));
 

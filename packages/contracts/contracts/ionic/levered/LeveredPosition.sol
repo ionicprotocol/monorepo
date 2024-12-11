@@ -380,11 +380,11 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function getSupplyAmountDelta(uint256 targetRatio) public view returns (uint256, uint256) {
-    return getSupplyAmountDelta(targetRatio, 0);
+  function getAdjustmentAmountDeltas(uint256 targetRatio) public view returns (uint256, uint256) {
+    return getAdjustmentAmountDeltas(targetRatio, 0);
   }
 
-  function getSupplyAmountDelta(uint256 targetRatio, uint256 assumedSlippage) public view returns (uint256, uint256) {
+  function getAdjustmentAmountDeltas(uint256 targetRatio, uint256 assumedSlippage) public view returns (uint256, uint256) {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
@@ -392,7 +392,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     uint256 currentRatio = getCurrentLeverageRatio();
     bool up = targetRatio > currentRatio;
     if (assumedSlippage == 0) assumedSlippage = getAssumedSlippage(up);
-    return _getSupplyAmountDelta(
+    return _getAdjustmentAmountDeltas(
       up,
       targetRatio,
       collateralAssetPrice,
@@ -401,8 +401,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     );
   }
 
-  function _getSupplyAmountDelta(
-    bool up,
+  /*----------------------------------------------------------------
+                            Internal Functions
+  ----------------------------------------------------------------*/
+
+  function _getAdjustmentAmountDeltas(
+    bool ratioIncreases,
     uint256 targetRatio,
     uint256 collateralAssetPrice,
     uint256 borrowedAssetPrice,
@@ -410,43 +414,17 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   ) internal view returns (uint256 supplyDelta, uint256 borrowsDelta) {
     uint256 positionSupplyAmount = collateralMarket.balanceOfUnderlying(address(this));
     uint256 debtAmount = stableMarket.borrowBalanceCurrent(address(this));
-    uint256 slippageFactor = (1e18 * (10000 + expectedSlippage)) / 10000;
 
-    uint256 supplyValueDeltaAbs;
-    {
-      // s = supply value before
-      // b = borrow value before
-      // r = target ratio after
-      // c = borrow value coefficient to account for the slippage
-      int256 s = int256((collateralAssetPrice * positionSupplyAmount) / 1e18);
-      int256 b = int256((borrowedAssetPrice * debtAmount) / 1e18);
-      int256 r = int256(targetRatio);
-      int256 r1 = r - 1e18;
-      int256 c = int256(slippageFactor);
-
-      // some math magic here
-      // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
-
-      // x = supplyValueDelta
-      int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
-      supplyValueDeltaAbs = uint256((supplyValueDelta < 0) ? -supplyValueDelta : supplyValueDelta);
-    }
-
-    supplyDelta = (supplyValueDeltaAbs * 1e18) / collateralAssetPrice;
-    borrowsDelta = (supplyValueDeltaAbs * 1e18) / borrowedAssetPrice;
-
-    if (up) {
-      // stables to borrow = c * x
-      borrowsDelta = (borrowsDelta * slippageFactor) / 1e18;
-    } else {
-      // amount to redeem = c * x
-      supplyDelta = (supplyDelta * slippageFactor) / 1e18;
-    }
+    return factory.calculateAdjustmentAmountDeltas(
+      ratioIncreases,
+      targetRatio,
+      collateralAssetPrice,
+      borrowedAssetPrice,
+      expectedSlippage,
+      positionSupplyAmount,
+      debtAmount
+    );
   }
-
-  /*----------------------------------------------------------------
-                            Internal Functions
-  ----------------------------------------------------------------*/
 
   function _supplyCollateral(
     IERC20Upgradeable fundingAsset,
@@ -479,7 +457,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
     if (expectedSlippage == 0) expectedSlippage = getAssumedSlippage(true);
 
-    (uint256 flashLoanCollateralAmount, uint256 stableToBorrow) = _getSupplyAmountDelta(
+    (uint256 flashLoanCollateralAmount, uint256 stableToBorrow) = _getAdjustmentAmountDeltas(
       true,
       targetRatio,
       collateralAssetPrice,
@@ -546,14 +524,14 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
       if (amountToRedeemValueScaled % collateralAssetPrice > 0) amountToRedeem += 1;
     } else {
       // else derive the debt to be repaid from the amount to redeem
-      (amountToRedeem, borrowsToRepay) = _getSupplyAmountDelta(
+      (amountToRedeem, borrowsToRepay) = _getAdjustmentAmountDeltas(
         false,
         targetRatio,
         collateralAssetPrice,
         stableAssetPrice,
         expectedSlippage
       );
-      // the slippage is already accounted for in _getSupplyAmountDelta
+      // the slippage is already accounted for in _getAdjustmentAmountDeltas
     }
 
     if (borrowsToRepay > 0) {
