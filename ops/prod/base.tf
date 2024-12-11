@@ -45,3 +45,18 @@ module "base_mainnet_liquidator_ecs" {
   region                    = var.region
   liquidator_container_name = "${var.liquidator_container_name}-base"
 }
+module "base_mainnet_pyth_rpc_0" {
+  source              = "../modules/lambda"
+  ecr_repository_name = local.pyth_updater_ecr_repository_name
+  docker_image_tag    = var.bots_image_tag
+  container_family    = "pyth-updater-rpc-0"
+  environment         = "mainnet"
+  chain_id            = local.base_mainnet_chain_id
+  container_env_vars = merge(
+    local.pyth_updater_lambda_variables,
+    { WEB3_HTTP_PROVIDER_URLS = local.base_mainnet_rpcs }  # Directly use the string
+  )
+  schedule_expression = "rate(5 minutes)"
+  timeout             = 700
+  memory_size         = 512
+}
