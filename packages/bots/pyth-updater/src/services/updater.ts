@@ -1,52 +1,34 @@
-
 import { IonicSdk } from '@ionicprotocol/sdk';
 import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js';
 import {
   Address,
-  Chain,
   getContract,
   GetContractReturnType,
-  HttpTransport,
-  LocalAccount,
-  parseAbi,
   PublicClient,
   TransactionReceipt,
-  WalletClient,
-  WalletRpcSchema,
 } from 'viem';
+
 import config from '../config/service';
 import { pythAbi } from '../pythAbi';
 import { PythAssetConfig } from '../types';
 import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils';
+
 import { DiscordService } from './discord';
-const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
-  pythPriceOracle: GetContractReturnType<typeof pythPriceOracleAbi, PublicClient>;
-  pythNetworkAddress: Address;
   connection: EvmPriceServiceConnection;
   assetConfigs: PythAssetConfig[] = [];
-  // @ts-ignore
-  pythContract: GetContractReturnType<typeof pythAbi, PublicClient> = {} as GetContractReturnType<
-    typeof pythAbi,
-    WalletClient<HttpTransport, Chain, LocalAccount<string, Address>, WalletRpcSchema>
-  >;
+  pythContract: GetContractReturnType<typeof pythAbi, PublicClient>;
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
-    this.pythPriceOracle = getContract({
-      address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
-      abi: pythPriceOracleAbi,
-      client: this.sdk.publicClient as any,
-    }) as any;
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
   async init(assetConfigs: PythAssetConfig[]) {
-    this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
     this.assetConfigs = assetConfigs;
     this.pythContract = getContract({
-      address: this.pythNetworkAddress,
+      address: this.sdk.chainDeployment.Pyth.address as Address,
       abi: pythAbi,
       client: this.sdk.walletClient as any,
     }) as any;
