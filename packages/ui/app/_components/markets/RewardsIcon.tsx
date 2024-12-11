@@ -30,7 +30,7 @@ export const RewardIcons = ({ rewards }: RewardIconsProps) => {
       {rewards.map((reward, index) => (
         <div
           key={`${reward}-${index}`}
-          className="rounded-full bg-black/20"
+          className="rounded-full white"
           style={{
             marginLeft: index !== 0 ? '-6px' : '0',
             zIndex: rewards.length - index // Higher z-index for earlier icons

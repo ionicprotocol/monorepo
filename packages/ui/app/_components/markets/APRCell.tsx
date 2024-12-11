@@ -192,7 +192,7 @@ export default function APRCell({
                           : '/images/turtle-ionic.png'
                     }
                     alt="Turtle"
-                    className="bg-black/20 rounded-full"
+                    className="white rounded-full"
                     width={16}
                     height={16}
                   />
