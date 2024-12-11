@@ -148,7 +148,7 @@ export default function APRCell({
                 alt="ION"
                 width={16}
                 height={16}
-                className="rounded-full"
+                className={cn('rounded-full', !config?.ionAPR && 'opacity-50')}
               />
             </span>
 
