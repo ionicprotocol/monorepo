@@ -119,7 +119,6 @@ export default function APRCell({
     }
 
     if (config?.op) icons.push('op');
-    if (config?.ionic) icons.push('ionic');
     if (config?.etherfi) icons.push('etherfi');
     if (config?.kelp) icons.push('kelp');
     if (config?.eigenlayer) icons.push('eigen');
@@ -248,18 +247,6 @@ export default function APRCell({
                 rewards={rewards}
               />
             </div>
-          )}
-          {(config?.ionic ?? 0) > 0 && (
-            <>
-              <RewardRow
-                icon="/img/ionic-green-on-black.png"
-                text={`+ ${config?.ionic}x Ionic Points`}
-              />
-              <RewardRow
-                icon="/images/turtle-ionic.png"
-                text="+ Turtle Ionic Points"
-              />
-            </>
           )}
           {config?.turtle && asset === 'STONE' && (
             <RewardRow

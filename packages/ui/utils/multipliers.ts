@@ -3,7 +3,6 @@ import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
 export type Multipliers = {
   eigenlayer?: boolean;
   etherfi?: number;
-  ionic: number;
   kelp?: number;
   renzo?: number;
   flywheel?: boolean;
@@ -34,14 +33,12 @@ export const multipliers: Record<
     '0': {
       'M-BTC': {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         market: 'm_btc_market',
         multiplier: 66000,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true,
@@ -51,12 +48,10 @@ export const multipliers: Record<
       dMBTC: {
         borrow: {
           ionAPR: false,
-          turtle: false,
-          ionic: 0
+          turtle: false
         },
         market: 'dmBTC_market',
         supply: {
-          ionic: 0,
           underlyingAPR: 10,
           turtle: false,
           ionAPR: true,
@@ -65,14 +60,12 @@ export const multipliers: Record<
       },
       STONE: {
         borrow: {
-          ionic: 0,
           turtle: true,
           ionAPR: false
         },
         market: 'ststone_market',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           underlyingAPR: 2.94,
           turtle: true,
           ionAPR: false
@@ -80,7 +73,6 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 0,
           ionAPR: true,
           flywheel: true,
           op: true
@@ -88,14 +80,12 @@ export const multipliers: Record<
         decimals: 6,
         market: 'usdc_market',
         supply: {
-          ionic: 0,
           ionAPR: true,
           flywheel: true
         }
       },
       USDT: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -103,7 +93,6 @@ export const multipliers: Record<
         decimals: 6,
         market: 'usdt_market',
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -111,7 +100,6 @@ export const multipliers: Record<
       },
       WBTC: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
@@ -119,7 +107,6 @@ export const multipliers: Record<
         market: 'wbtc_market',
         multiplier: 66000,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -127,7 +114,6 @@ export const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 0,
           ionAPR: true,
           flywheel: true,
           op: true
@@ -135,7 +121,6 @@ export const multipliers: Record<
         market: 'weth_market',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           ionAPR: true,
           flywheel: true
         }
@@ -143,14 +128,12 @@ export const multipliers: Record<
       ezETH: {
         borrow: {
           turtle: false,
-          ionAPR: false,
-          ionic: 0
+          ionAPR: false
         },
         market: 'ezeth_market',
         multiplier: 3000,
         supply: {
           eigenlayer: true,
-          ionic: 0,
           renzo: 2,
           underlyingAPR: 3.25,
           ionAPR: false,
@@ -160,12 +143,10 @@ export const multipliers: Record<
       sUSDe: {
         borrow: {
           turtle: false,
-          ionAPR: false,
-          ionic: 0
+          ionAPR: false
         },
         multiplier: 0,
         supply: {
-          ionic: 0,
           underlyingAPR: 4.5,
           turtle: false,
           ionAPR: false
@@ -174,12 +155,10 @@ export const multipliers: Record<
       USDe: {
         borrow: {
           turtle: false,
-          ionAPR: false,
-          ionic: 0
+          ionAPR: false
         },
         multiplier: 0,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -187,12 +166,10 @@ export const multipliers: Record<
       msDAI: {
         borrow: {
           turtle: false,
-          ionAPR: false,
-          ionic: 0
+          ionAPR: false
         },
         multiplier: 0,
         supply: {
-          ionic: 0,
           underlyingAPR: 6,
           turtle: false,
           ionAPR: false
@@ -202,7 +179,6 @@ export const multipliers: Record<
         borrow: {
           eigenlayer: true,
           etherfi: 1,
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -212,7 +188,6 @@ export const multipliers: Record<
         supply: {
           eigenlayer: true,
           etherfi: 3,
-          ionic: 0,
           underlyingAPR: 2.99,
           turtle: false,
           ionAPR: true,
@@ -222,7 +197,6 @@ export const multipliers: Record<
       wrsETH: {
         borrow: {
           eigenlayer: true,
-          ionic: 0,
           kelp: 1,
           turtle: true,
           ionAPR: false
@@ -231,7 +205,6 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           eigenlayer: true,
-          ionic: 0,
           kelp: 2,
           underlyingAPR: 3.63,
           turtle: true,
@@ -243,7 +216,6 @@ export const multipliers: Record<
     1: {
       MODE: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false,
@@ -252,7 +224,6 @@ export const multipliers: Record<
         market: 'ionmode_modenative',
         multiplier: 0.035,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -260,14 +231,12 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         decimals: 6,
         market: 'ionusdc_modenative',
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -275,7 +244,6 @@ export const multipliers: Record<
       },
       USDT: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -283,7 +251,6 @@ export const multipliers: Record<
         decimals: 6,
         market: 'ionusdt_modenative',
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -291,14 +258,12 @@ export const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         market: 'ionweth_modenative',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -311,26 +276,22 @@ export const multipliers: Record<
       eUSD: {
         borrow: {
           flywheel: true,
-          ionic: 0,
           turtle: false,
           ionAPR: true
         },
         supply: {
           flywheel: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
       },
       bsdETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 2.6,
           turtle: false,
           ionAPR: false,
@@ -339,14 +300,12 @@ export const multipliers: Record<
       },
       hyUSD: {
         supply: {
-          ionic: 0,
           underlyingAPR: 3.5,
           turtle: false,
           ionAPR: false,
           flywheel: true
         },
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -354,7 +313,6 @@ export const multipliers: Record<
       },
       AERO: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -362,7 +320,6 @@ export const multipliers: Record<
         market: 'ionaero_base',
         multiplier: 1.15,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -370,14 +327,12 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         market: 'ionusdc_base',
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -386,7 +341,6 @@ export const multipliers: Record<
       },
       WETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -394,7 +348,6 @@ export const multipliers: Record<
         market: 'ionweth_base',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -402,7 +355,6 @@ export const multipliers: Record<
       },
       cbETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -410,7 +362,6 @@ export const multipliers: Record<
         market: 'ioncbeth_base',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -421,7 +372,6 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           eigenlayer: true,
-          ionic: 0,
           renzo: 2,
           underlyingAPR: 3.25,
           turtle: true,
@@ -429,20 +379,17 @@ export const multipliers: Record<
         },
         borrow: {
           turtle: false,
-          ionAPR: false,
-          ionic: 0
+          ionAPR: false
         }
       },
       weETH: {
         borrow: {
           etherfi: 1,
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           eigenlayer: true
         },
         supply: {
-          ionic: 0,
           etherfi: 3,
           underlyingAPR: 2.99,
           eigenlayer: true,
@@ -455,11 +402,9 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          ionic: 0,
           flywheel: false
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -467,14 +412,12 @@ export const multipliers: Record<
       },
       wstETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         market: 'ionwsteth_base',
         multiplier: 3000,
         supply: {
-          ionic: 0,
           underlyingAPR: 2.9,
           turtle: false,
           ionAPR: true,
@@ -483,12 +426,10 @@ export const multipliers: Record<
       },
       wsuperOETHb: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 15,
           turtle: false,
           ionAPR: false
@@ -496,13 +437,11 @@ export const multipliers: Record<
       },
       wUSDM: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 5,
           turtle: false,
           ionAPR: false,
@@ -511,12 +450,10 @@ export const multipliers: Record<
       },
       'USD+': {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -524,12 +461,10 @@ export const multipliers: Record<
       },
       'wUSD+': {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 10,
           turtle: false,
           ionAPR: true,
@@ -538,13 +473,11 @@ export const multipliers: Record<
       },
       USDz: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -552,7 +485,6 @@ export const multipliers: Record<
       },
       EURC: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -560,7 +492,6 @@ export const multipliers: Record<
       },
       cbBTC: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -568,13 +499,11 @@ export const multipliers: Record<
       },
       uSOL: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -582,13 +511,11 @@ export const multipliers: Record<
       },
       uSUI: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
@@ -596,13 +523,11 @@ export const multipliers: Record<
       },
       sUSDz: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false,
@@ -611,13 +536,11 @@ export const multipliers: Record<
       },
       fBOMB: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -625,13 +548,11 @@ export const multipliers: Record<
       },
       KLIMA: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           flywheel: false
         },
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -645,12 +566,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -659,12 +578,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -673,12 +590,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -687,12 +602,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -701,12 +614,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -715,12 +626,10 @@ export const multipliers: Record<
         borrow: {
           turtle: false,
           ionAPR: false,
-          spice: true,
-          ionic: 0
+          spice: true
         },
         supply: {
           spice: true,
-          ionic: 0,
           turtle: false,
           ionAPR: false
         }
@@ -731,7 +640,6 @@ export const multipliers: Record<
     '0': {
       WETH: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -739,7 +647,6 @@ export const multipliers: Record<
       },
       USDC: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -747,12 +654,10 @@ export const multipliers: Record<
       },
       wstETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 2.9,
           turtle: false,
           ionAPR: false
@@ -760,7 +665,6 @@ export const multipliers: Record<
       },
       wUSDM: {
         supply: {
-          ionic: 0,
           underlyingAPR: 5,
           turtle: false,
           ionAPR: true,
@@ -769,7 +673,6 @@ export const multipliers: Record<
       },
       SNX: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -778,13 +681,11 @@ export const multipliers: Record<
       weETH: {
         borrow: {
           etherfi: 1,
-          ionic: 0,
           turtle: false,
           ionAPR: false,
           eigenlayer: true
         },
         supply: {
-          ionic: 0,
           etherfi: 3,
           underlyingAPR: 2.99,
           eigenlayer: true,
@@ -799,12 +700,10 @@ export const multipliers: Record<
     '0': {
       wfrxETH: {
         borrow: {
-          ionic: 0,
           turtle: false,
           ionAPR: false
         },
         supply: {
-          ionic: 0,
           underlyingAPR: 3.46,
           turtle: false,
           ionAPR: false
@@ -816,7 +715,6 @@ export const multipliers: Record<
     '0': {
       WETH: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -824,7 +722,6 @@ export const multipliers: Record<
       },
       USDC: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -832,7 +729,6 @@ export const multipliers: Record<
       },
       USDT: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -840,7 +736,6 @@ export const multipliers: Record<
       },
       WBTC: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -848,7 +743,6 @@ export const multipliers: Record<
       },
       LSK: {
         supply: {
-          ionic: 0,
           turtle: false,
           ionAPR: true,
           flywheel: true
