@@ -926,12 +926,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveION
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
+    require(_boostAmount > 0, "Boost amount must be greater than zero");
     s_limitedBoost = _boostAmount;
     emit LimitedTimeBoostSet(_boostAmount);
   }
 
   /// @inheritdoc IveION
   function setVoter(address _voter) external onlyOwner {
+    require(address(_voter) != address(0), "Invalid address");
     s_voter = _voter;
     emit VoterSet(_voter);
   }
@@ -953,18 +955,21 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveION
   function setIonicPool(address _ionicPool) external onlyOwner {
+    require(address(_ionicPool) != address(0), "Invalid address");
     s_ionicPool = _ionicPool;
     emit IonicPoolSet(_ionicPool);
   }
 
   /// @inheritdoc IveION
   function setAeroVoting(address _aeroVoting) external onlyOwner {
+    require(address(_aeroVoting) != address(0), "Invalid address");
     s_aeroVoting = _aeroVoting;
     emit AeroVotingSet(_aeroVoting);
   }
 
   /// @inheritdoc IveION
   function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
+    require(_aeroVoterBoost > 0, "Aero Boost amount must be greater than zero");
     s_aeroVoterBoost = _aeroVoterBoost;
     emit AeroVoterBoostSet(_aeroVoterBoost);
   }

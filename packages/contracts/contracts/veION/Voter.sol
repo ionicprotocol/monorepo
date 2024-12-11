@@ -449,11 +449,13 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
   /// @inheritdoc IVoter
   function setLpTokens(address[] memory _lpTokens) external onlyOwner {
+    require(_lpTokens.length != 0, "LpTokens array cannot be empty");
     lpTokens = _lpTokens;
   }
 
   /// @inheritdoc IVoter
   function setMpo(address _mpo) external onlyOwner {
+    if (_mpo == address(0)) revert ZeroAddress();
     mpo = MasterPriceOracle(_mpo);
   }
 
