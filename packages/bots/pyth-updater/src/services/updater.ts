@@ -73,24 +73,28 @@ export class Updater {
         });
         this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
 
-        // Try to read storage slot 0 (common location for immutable addresses)
-        const storageValue = await this.sdk.publicClient.request({
-          method: 'eth_getStorageAt',
-          params: [
-            this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`,
-            '0x0',
-            'latest',
-          ],
-        });
-        this.sdk.logger.debug(`Storage slot 0: ${storageValue}`);
+        // Try multiple storage slots
+        for (let slot = 0; slot < 5; slot++) {
+          const storageValue = await this.sdk.publicClient.request({
+            method: 'eth_getStorageAt',
+            params: [
+              this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`,
+              `0x${slot.toString(16)}`,
+              'latest',
+            ],
+          });
+          this.sdk.logger.debug(`Storage slot ${slot}: ${storageValue}`);
 
-        // If we find a valid address in storage, use it
-        if (storageValue && storageValue.length === 42) {
-          this.pythNetworkAddress = storageValue as Address;
-          this.sdk.logger.debug(`Found Pyth address in storage: ${this.pythNetworkAddress}`);
-        } else {
-          throw new Error('Could not find Pyth address in storage');
+          // Check if this looks like an address (0x + 40 hex chars)
+          if (storageValue && /^0x[a-fA-F0-9]{40}$/.test(storageValue)) {
+            this.pythNetworkAddress = storageValue as Address;
+            this.sdk.logger.debug(
+              `Found potential Pyth address in slot ${slot}: ${this.pythNetworkAddress}`,
+            );
+            return this;
+          }
         }
+        throw new Error('Could not find valid Pyth address in first 5 storage slots');
       } catch (error) {
         this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
         this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
