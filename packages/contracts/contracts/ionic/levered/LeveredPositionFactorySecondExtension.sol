@@ -65,8 +65,7 @@ contract LeveredPositionFactorySecondExtension is
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
     address _aggregatorTarget,
-    bytes memory _aggregatorData,
-    uint256 expectedSlippage
+    bytes memory _aggregatorData
   ) public returns (LeveredPosition) {
     LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
@@ -114,8 +113,7 @@ contract LeveredPositionFactorySecondExtension is
       _fundingAsset,
       _fundingAmount,
       _fundingAssetSwapAggregatorTarget,
-      _fundingAssetSwapAggregatorData,
-      _expectedSlippage
+      _fundingAssetSwapAggregatorData
     );
     if (_leverageRatio > 1e18) {
       position.adjustLeverageRatio(

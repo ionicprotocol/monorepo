@@ -86,8 +86,7 @@ interface ILeveredPositionFactorySecondExtension {
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) external returns (LeveredPosition);
 
   function createAndFundPositionAtRatio(
