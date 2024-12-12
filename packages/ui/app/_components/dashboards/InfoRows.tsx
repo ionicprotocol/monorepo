@@ -158,7 +158,6 @@ const InfoRows = ({
         </span>
         <APRCell
           type={mode === InfoMode.SUPPLY ? 'supply' : 'borrow'}
-          aprTotal={totalApr}
           baseAPR={baseAPR}
           asset={asset}
           cToken={cToken}

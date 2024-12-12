@@ -5,8 +5,6 @@ import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import { multipliers } from '@ui/utils/multipliers';
 
-import { useMerklApr } from '../useMerklApr';
-
 import type { FlywheelReward } from '@ionicprotocol/types';
 
 const EXCLUDED_REWARD_KEYS = ['ionAPR', 'turtle', 'flywheel'] as const;
@@ -56,7 +54,6 @@ const hasAdditionalRewards = (
 
 export function useAPRCell({
   type,
-  aprTotal,
   baseAPR,
   asset,
   dropdownSelectedChain,
@@ -83,15 +80,18 @@ export function useAPRCell({
       hasNonIonRewards(rewards, dropdownSelectedChain) ||
       hasAdditionalRewards(config);
 
-    // Calculate total APR
-    let total = aprTotal ?? 0;
-    console.log('aprTotal', aprTotal);
-    console.log('effectiveNativeYield', effectiveNativeYield);
+    let total = type === 'borrow' ? -(baseAPR ?? 0) : baseAPR ?? 0;
+
+    const flywheelRewardsAPR =
+      rewards?.reduce((acc, reward) => {
+        return acc + (reward.apy || 0);
+      }, 0) ?? 0;
+    total += flywheelRewardsAPR;
+
     if (effectiveNativeYield) {
       total += effectiveNativeYield;
     }
 
-    console.log('merklAprForOP', merklAprForOP);
     if (config?.op && merklAprForOP) {
       total += merklAprForOP;
     }
@@ -183,7 +183,6 @@ export function useAPRCell({
     };
   }, [
     type,
-    aprTotal,
     baseAPR,
     asset,
     dropdownSelectedChain,

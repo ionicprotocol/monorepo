@@ -19,7 +19,6 @@ import type { FlywheelReward } from '@ionicprotocol/types';
 
 export type APRCellProps = {
   type: 'borrow' | 'supply';
-  aprTotal: number | undefined;
   baseAPR: number;
   asset: string;
   cToken: Address;
@@ -62,7 +61,6 @@ export default function APRCell(props: APRCellProps) {
   } = useAPRCell(props);
 
   const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
-  console.log('rewards', rewards);
 
   return (
     <HoverCard openDelay={50}>
