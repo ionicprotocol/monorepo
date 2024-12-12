@@ -73,29 +73,24 @@ export class Updater {
         });
         this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
 
-        // Try both methods with detailed error logging
-        try {
-          this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
-          this.sdk.logger.debug('Successfully called pyth()');
-        } catch (e) {
-          this.sdk.logger.error(`pyth() failed with error: ${e}`);
-          this.sdk.logger.debug(
-            `Available methods: ${Object.keys(this.pythPriceOracle.read).join(', ')}`,
-          );
+        // Try to read storage slot 0 (common location for immutable addresses)
+        const storageValue = await this.sdk.publicClient.request({
+          method: 'eth_getStorageAt',
+          params: [
+            this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`,
+            '0x0',
+            'latest',
+          ],
+        });
+        this.sdk.logger.debug(`Storage slot 0: ${storageValue}`);
 
-          try {
-            this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
-            this.sdk.logger.debug('Successfully called getPythAddress()');
-          } catch (e2) {
-            this.sdk.logger.debug(`getPythAddress() failed with error: ${e2}`);
-            throw new Error(
-              `Both pyth() and getPythAddress() methods failed. Contract might have different interface. ` +
-                `Address: ${this.pythPriceOracle.address}`,
-            );
-          }
+        // If we find a valid address in storage, use it
+        if (storageValue && storageValue.length === 42) {
+          this.pythNetworkAddress = storageValue as Address;
+          this.sdk.logger.debug(`Found Pyth address in storage: ${this.pythNetworkAddress}`);
+        } else {
+          throw new Error('Could not find Pyth address in storage');
         }
-
-        this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
       } catch (error) {
         this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
         this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
