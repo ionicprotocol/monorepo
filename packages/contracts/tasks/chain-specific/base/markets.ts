@@ -4,6 +4,7 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER } from ".";
 import { Address, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
+import { getMarketInfo } from "../../market";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
   const assetsToDeploy: string[] = [assetSymbols.uXRP];
@@ -92,4 +93,8 @@ task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem
       });
     }
   }
+});
+
+task("base:get-market-info", "get market info").setAction(async (_, { viem, run }) => {
+  await getMarketInfo(viem, COMPTROLLER);
 });

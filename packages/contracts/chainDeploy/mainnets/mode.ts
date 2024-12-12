@@ -130,6 +130,24 @@ export const deploy = async ({
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2Liquidator.address);
   await configureAddress(ap, publicClient, deployer, "IUniswapV2Router02", SWAPMODE_ROUTER);
 
+  const eOracleAssets = mode.assets
+    .filter((a) => a.oracle === OracleTypes.eOracle)
+    .map((a) => ({
+      symbol: a.symbol as assetSymbols,
+      aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0xf3035649cE73EDF8de7dD9B56f14910335819536" },
+    assets: mode.assets,
+    chainlinkAssets: eOracleAssets,
+    namePostfix: "eOracle"
+  });
+
   // await deployVelodromeOracle({
   //   viem,
   //   assets: velodromeAssets,
