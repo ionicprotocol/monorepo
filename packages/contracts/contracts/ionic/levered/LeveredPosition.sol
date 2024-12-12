@@ -101,8 +101,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     address aggregatorTarget,
     bytes memory aggregatorData,
     uint256 expectedSlippage
-  ) public returns (uint256 withdrawAmount)
-  {
+  ) public returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     _leverDown(1e18, aggregatorTarget, aggregatorData, expectedSlippage);
