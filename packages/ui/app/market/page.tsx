@@ -63,6 +63,7 @@ export default function Market() {
 
   const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
     useMarketData(selectedPool, chain, selectedSymbol);
+
   useEffect(() => {
     setFilteredMarketData(marketData);
   }, [marketData]);
@@ -127,6 +128,8 @@ export default function Market() {
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          nativeAssetYield={row.original.nativeAssetYield}
+          underlyingToken={row.original.underlyingToken}
         />
       )
     },
@@ -146,6 +149,7 @@ export default function Market() {
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          underlyingToken={row.original.underlyingToken}
         />
       )
     },

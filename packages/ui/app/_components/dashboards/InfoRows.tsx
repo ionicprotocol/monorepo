@@ -166,6 +166,8 @@ const InfoRows = ({
           pool={comptrollerAddress}
           selectedPoolId={pool}
           rewards={mode === InfoMode.SUPPLY ? supplyRewards : borrowRewards}
+          // fix this
+          underlyingToken="0x"
         />
       </h3>
       {hasFlywheelRewards ? (

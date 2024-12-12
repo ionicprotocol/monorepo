@@ -6,24 +6,29 @@ type RewardIconsProps = {
 
 const iconMap = {
   op: '/images/op-logo-red.svg',
-  ionic: '/img/ionic-sq.png',
   turtle: '/images/turtle-ionic.png',
   stone: '/img/symbols/32/color/stone.png',
   etherfi: '/images/etherfi.png',
   kelp: '/images/kelpmiles.png',
   eigen: '/images/eigen.png',
   spice: '/img/symbols/32/color/bob.png',
-  anzen: '/img/symbols/32/color/usdz.png',
-  nektar: '/img/symbols/32/color/nektar.png'
+  lsk: '/img/symbols/32/color/lsk.png'
 };
 
 export const RewardIcons = ({ rewards }: RewardIconsProps) => {
+  const getIconPath = (reward: string) => {
+    if (reward in iconMap) {
+      return iconMap[reward as keyof typeof iconMap];
+    }
+    return `/img/symbols/32/color/${reward.toLowerCase()}.png`;
+  };
+
   return (
     <div className="flex items-center">
       {rewards.map((reward, index) => (
         <div
-          key={reward}
-          className="rounded-full bg-black"
+          key={`${reward}-${index}`}
+          className="rounded-full white"
           style={{
             marginLeft: index !== 0 ? '-6px' : '0',
             zIndex: rewards.length - index // Higher z-index for earlier icons
@@ -31,7 +36,7 @@ export const RewardIcons = ({ rewards }: RewardIconsProps) => {
         >
           <div className="size-4 flex items-center justify-center">
             <Image
-              src={iconMap[reward as keyof typeof iconMap]}
+              src={getIconPath(reward)}
               alt={reward}
               width={16}
               height={16}
