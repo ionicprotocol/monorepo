@@ -2,7 +2,7 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import axios from 'axios';
 import { createPublicClient, createWalletClient, fallback, Hex, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mode } from 'viem/chains';
+import { mode, base } from 'viem/chains';
 
 import { chainIdToConfig } from './config';
 import config from './config/service';
@@ -25,17 +25,18 @@ export const handler = async (
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
   logger.info(`Started`);
+  const chain = config.chainId === mode.id ? mode : base;
   const account = privateKeyToAccount(config.adminPrivateKey as Hex);
   const client = createPublicClient({
-    chain: mode,
-    transport: fallback(config.rpcUrls.map((url) => http(url))),
+    chain,
+    transport: fallback(config.rpcUrls.map((url) => http(url))) as any,
   });
   const walletClient = createWalletClient({
     account,
-    chain: mode,
-    transport: fallback(config.rpcUrls.map((url) => http(url))),
+    chain,
+    transport: fallback(config.rpcUrls.map((url) => http(url))) as any,
   });
-  const sdk = setUpSdk(config.chainId, client, walletClient);
+  const sdk = setUpSdk(config.chainId, client as any, walletClient);
   const assetConfig = chainIdToConfig[config.chainId];
   const updater = await new Updater(sdk).init(assetConfig);
   sdk.logger.info(`Starting update loop bot on chain: ${config.chainId}`);
