@@ -48,21 +48,33 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      // Debug all environment variables (excluding sensitive data)
+      // Debug environment variables and actual configuration being used
       console.log('Environment Variables Debug:');
+      console.log('Environment Variables:');
       console.log('NODE_ENV:', process.env.NODE_ENV);
-      console.log('RPC_URL:', this.sdk.publicClient.transport.url?.replace(/\/.*@/, '/***@')); // Mask API keys if present
+      console.log('RPC_URL:', this.sdk.publicClient.transport.url?.replace(/\/.*@/, '/***@'));
       console.log('CHAIN_ID:', process.env.CHAIN_ID);
       console.log('PRICE_SERVICE_ENDPOINT:', process.env.PRICE_SERVICE_ENDPOINT);
 
-      // Check if chainDeployment is properly loaded
-      console.log('Chain Deployment Config:', {
-        chainId: this.sdk.chainDeployment?.chainId,
-        name: this.sdk.chainDeployment?.name,
-      });
+      console.log('\nActual Configuration Used:');
+      console.log('SDK Chain ID:', this.sdk.chainId);
+      console.log('SDK RPC URL:', this.sdk.publicClient.transport.url);
+      console.log('Price Service Endpoint:', config.priceServiceEndpoint);
+      console.log('PythPriceOracle Address:', this.sdk.chainDeployment.PythPriceOracle?.address);
+
+      // Log asset configs
+      console.log('\nAsset Configs:');
+      console.log(
+        assetConfigs.map((config) => ({
+          asset: config.asset,
+          priceId: config.priceId,
+        })),
+      );
 
       // Original initialization logic
       this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+      console.log('Pyth Network Address:', this.pythNetworkAddress);
+
       this.assetConfigs = assetConfigs;
       this.pythContract = getContract({
         address: this.pythNetworkAddress,
