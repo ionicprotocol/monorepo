@@ -1,11 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
+import Image from 'next/image';
+import Link from 'next/link';
 import type { EarnRow } from '@ui/utils/earnUtils';
 import { earnOpps } from '@ui/utils/earnUtils';
-
-import EarnRows from '../_components/earn/EarnRows';
+import CommonTable from '../_components/CommonTable';
+import type { EnhancedColumnDef } from '../_components/CommonTable';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@ui/components/ui/card';
 
 export default function Earn() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);
@@ -14,93 +21,137 @@ export default function Earn() {
     const populateVals = async () => {
       await Promise.all(
         rows.map(async (row) => {
-          //@ts-ignore
-          row.apr = await row.getApr();
-          //@ts-ignore
-          row.tvl = await row.getTvl();
+          row.apr = (await row.getApr?.()) ?? 0;
+          row.tvl = (await row.getTvl?.()) ?? 0;
         })
       );
       setRows([...rows]);
     };
     populateVals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <>
-      <h1 className="mb-4 text-center text-white/80 ">
-        ✨ Earn extra yield using the opportunities listed to make use of your
-        Ionic deposits! ✨
-      </h1>
-      <div className="flex flex-col items-start justify-start md:px-3 rounded-2xl bg-graylite dark:bg-grayone w-full  ">
-        <div
-          className={`w-full md:grid grid-cols-13  my-3  px-2  gap-x-1  text-white/40 font-semibold md:text-center items-start  text-xs hidden  `}
-        >
-          <h1 className="col-span-2 ">ASSETS</h1>
-          <h1 className="col-span-2">PROTOCOL</h1>
-          <h1 className="col-span-2">STRATEGY</h1>
-          <h1 className="col-span-1">NETWORK</h1>
-          <h1 className="col-span-2">APR</h1>
-          <h1 className="col-span-1">TVL</h1>
-          <h1 className="col-span-1"> </h1>
-          <h1 className="col-span-1"> </h1>
-        </div>
 
-        {/* this will get mapped out in future with the possible api data structure mentioned below */}
-        {rows.map(
-          (
-            {
-              apr,
-              asset,
-              network,
-              protocol,
-              tvl,
-              link,
-              poolChain,
-              tvlpool,
-              rewards,
-              live,
-              img,
-              strategy
-            },
-            idx
-          ) => (
-            <EarnRows
-              apr={apr}
-              asset={asset}
-              network={network}
-              protocol={protocol}
-              tvl={tvl}
-              tvlpool={tvlpool}
-              poolChain={poolChain}
-              link={link}
-              key={idx}
-              rewards={rewards}
-              live={live}
-              img={img}
-              strategy={strategy}
-            />
-          )
-        )}
-        {/* <CommingSoon
-          linktoProtocol={'https://www.tren.finance'}
-          additionalText={'Tren Finance'}
+  const columns: EnhancedColumnDef<EarnRow>[] = [
+    {
+      id: 'asset',
+      header: 'ASSETS',
+      cell: ({ row }) => (
+        <div className="flex gap-3 items-center">
+          <div className="flex -space-x-1">
+            {row.original.asset.map((coin, idx) => (
+              <img
+                key={idx}
+                src={`/img/symbols/32/color/${coin}.png`}
+                alt={coin}
+                className="w-7 h-7"
+              />
+            ))}
+          </div>
+          <div className="flex items-center gap-1">
+            {row.original.asset.map((val, idx) => (
+              <span key={idx}>
+                {idx !== 0 && '/'}
+                {val}
+              </span>
+            ))}
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'protocol',
+      header: 'PROTOCOL',
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <img
+            src={row.original.img}
+            alt={row.original.protocol}
+            className="w-5 h-5"
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = '/img/assets/info.png';
+            }}
+          />
+          <span>{row.original.protocol}</span>
+        </div>
+      )
+    },
+    {
+      id: 'strategy',
+      header: 'STRATEGY',
+      cell: ({ row }) => <span>{row.original.strategy}</span>
+    },
+    {
+      id: 'network',
+      header: 'NETWORK',
+      cell: ({ row }) => (
+        <img
+          src={`/img/logo/${row.original.network}.png`}
+          alt={row.original.network}
+          className="w-6 h-6"
         />
-        <CommingSoon
-          linktoProtocol={'https://peapods.finance'}
-          additionalText={'Peapods Finance'}
-        /> */}
-      </div>
-    </>
+      )
+    },
+    {
+      id: 'apr',
+      header: 'APR',
+      sortingFn: 'numerical',
+      cell: ({ row }) => (
+        <span>{row.original.apr > 0 ? `${row.original.apr}%` : '∞%'}</span>
+      )
+    },
+    {
+      id: 'tvl',
+      header: 'TVL',
+      sortingFn: 'numerical',
+      cell: ({ row }) => (
+        <span>
+          $
+          {row.original.tvl > 0
+            ? row.original.tvl.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+              })
+            : '-'}
+        </span>
+      )
+    },
+    {
+      id: 'actions',
+      header: '',
+      enableSorting: false,
+      cell: ({ row }) => (
+        <Link
+          href={row.original.link}
+          target="_blank"
+          className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 w-full inline-flex items-center justify-center gap-1.5 ${
+            !row.original.live && 'opacity-50'
+          }`}
+        >
+          {row.original.live ? 'Deposit' : 'Coming Soon'}
+          <img
+            alt="external-link"
+            className="w-3 h-3"
+            src="https://img.icons8.com/material-outlined/24/external-link.png"
+          />
+        </Link>
+      )
+    }
+  ];
+
+  return (
+    <Card className="bg-grayone">
+      <CardHeader>
+        <CardTitle className="text-center text-white/80">
+          ✨ Earn extra yield using the opportunities listed to make use of your
+          Ionic deposits! ✨
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <CommonTable
+          data={rows}
+          columns={columns}
+          isLoading={false}
+        />
+      </CardContent>
+    </Card>
   );
 }
-
-/*
- Attribute can be added to EarnRows --------
-  asset :  [ionUSDC, ionUSDT] - default //name of the asset  should be same as image name
-  protocol : 'Balancer' (default)
-  Network : "Imgname same to network" (default - mode)
-  apr : ''  def- 0
-  tvl : ''   def- 0
--------
-
-*/
