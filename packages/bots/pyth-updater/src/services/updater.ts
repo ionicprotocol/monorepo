@@ -73,7 +73,9 @@ export class Updater {
         console.log(`Current block number: ${blockNumber}`);
 
         console.log('Checking contract bytecode...');
-        const code = await this.sdk.publicClient.getBytecode({ address: proxyAddress });
+        const code = await this.sdk.publicClient.getBytecode({
+          address: '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address,
+        });
         console.log(`Contract bytecode length: ${code?.length ?? 0}`);
 
         if (!code) {
@@ -84,12 +86,11 @@ export class Updater {
             oracleAddress: this.sdk.chainDeployment.PythPriceOracle?.address,
           });
 
-          // Try to get the chain state to verify RPC connection
-          throw new Error(`No contract found at address ${proxyAddress}. Please verify:
-            1. The contract address is correct for Base network
-            2. The RPC endpoint is working and connected to Base
-            3. The contract has been deployed to this address`);
+          throw new Error(`No contract found at address ${proxyAddress}`);
         }
+
+        // Set the correct Pyth address
+        this.pythNetworkAddress = '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address;
       } catch (e: any) {
         console.error('Error details:', {
           message: e.message,
@@ -97,54 +98,6 @@ export class Updater {
           cause: e.cause,
         });
         throw e;
-      }
-
-      // Try to get implementation address
-      let implementationAddress: Address;
-      try {
-        implementationAddress = await this.pythPriceOracle.read.implementation();
-        this.sdk.logger.info(`Found implementation at: ${implementationAddress}`);
-      } catch (e: unknown) {
-        this.sdk.logger.debug(`Failed to get implementation address: ${(e as Error).message}`);
-        try {
-          implementationAddress = await this.pythPriceOracle.read.getImplementation();
-          this.sdk.logger.info(
-            `Found implementation using getImplementation: ${implementationAddress}`,
-          );
-        } catch (e: unknown) {
-          this.sdk.logger.debug(
-            `Failed to get implementation using getImplementation: ${(e as Error).message}`,
-          );
-        }
-      }
-
-      // Try all possible function names
-      const attempts = [
-        { name: 'pythAddress', fn: () => this.pythPriceOracle.read.pythAddress() },
-        { name: 'getPythAddress', fn: () => this.pythPriceOracle.read.getPythAddress() },
-        { name: 'PYTH', fn: () => this.pythPriceOracle.read.PYTH() },
-        { name: 'pyth', fn: () => this.pythPriceOracle.read.pyth() },
-        { name: 'getPyth', fn: () => this.pythPriceOracle.read.getPyth() },
-      ];
-
-      for (const attempt of attempts) {
-        try {
-          this.sdk.logger.debug(`Attempting to call ${attempt.name}()`);
-          this.pythNetworkAddress = await attempt.fn();
-          this.sdk.logger.info(
-            `Successfully got Pyth address using ${attempt.name}(): ${this.pythNetworkAddress}`,
-          );
-          break;
-        } catch (e: unknown) {
-          this.sdk.logger.debug(`${attempt.name}() failed: ${(e as Error).message}`);
-          if (attempt === attempts[attempts.length - 1]) {
-            throw new Error('Could not find Pyth address using any known function name');
-          }
-        }
-      }
-
-      if (!this.pythNetworkAddress) {
-        throw new Error('Failed to get Pyth network address');
       }
 
       this.assetConfigs = assetConfigs;
