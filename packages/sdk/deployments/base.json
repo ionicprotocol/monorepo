@@ -12,13 +12,13 @@
       "address": "0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c"
     },
     "AerodromeCLLiquidator": {
-      "address": "0xeBf9b0B82150d7B701Cb6Aa2fEd19DDF85e37b0c"
+      "address": "0x47F365445A79C70C083Bdd52bf4127c22131F6da"
     },
     "AerodromePriceOracle": {
       "address": "0xD4b0328cd84D978313446D15b0b7FcdCE97f6932"
     },
     "AerodromeV2Liquidator": {
-      "address": "0xD46b85409C43571145206B11D370A62AaeB22475"
+      "address": "0x669B16b4d12FC367944F038D8Ab9d5f4B9Ee2c71"
     },
     "AlgebraSwapLiquidator": {
       "address": "0x368E9E9c4226f5DcD496987d70b602Cc9ad56007"
@@ -55,6 +55,15 @@
     },
     "ChainlinkPriceOracleV2_Proxy": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
+    },
+    "ChainlinkPriceOracleV2_eOracle": {
+      "address": "0x37dBb29E2e12b9Da8008C9E3aCC95adD650d1F6A"
+    },
+    "ChainlinkPriceOracleV2_eOracle_Implementation": {
+      "address": "0x2FdBb9f259e5684276C1bF4E5f3ac6Ca64A7aB17"
+    },
+    "ChainlinkPriceOracleV2_eOracle_Proxy": {
+      "address": "0x37dBb29E2e12b9Da8008C9E3aCC95adD650d1F6A"
     },
     "CollateralSwap-0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13": {
       "address": "0xF9fc8e7C5dAf707f18f06E04916Ff315B01326Da"
