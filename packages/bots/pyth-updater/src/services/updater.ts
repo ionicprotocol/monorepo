@@ -58,7 +58,7 @@ export class Updater {
       this.sdk.logger.error(`Failed to get Pyth address: ${error}`);
       throw error;
     }
-    
+
     this.assetConfigs = assetConfigs;
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
