@@ -59,6 +59,14 @@ export class Updater {
       const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
       this.sdk.logger.info(`Attempting to get Pyth address from proxy at: ${proxyAddress}`);
 
+      // First verify the contract exists
+      const code = await this.sdk.publicClient.getBytecode({ address: proxyAddress });
+      if (!code) {
+        throw new Error(`No contract found at address ${proxyAddress}`);
+      }
+      this.sdk.logger.info('Contract bytecode found');
+
+      // Try to get implementation address
       let implementationAddress: Address;
       try {
         implementationAddress = await this.pythPriceOracle.read.implementation();
@@ -77,6 +85,7 @@ export class Updater {
         }
       }
 
+      // Try all possible function names
       const attempts = [
         { name: 'pythAddress', fn: () => this.pythPriceOracle.read.pythAddress() },
         { name: 'getPythAddress', fn: () => this.pythPriceOracle.read.getPythAddress() },
