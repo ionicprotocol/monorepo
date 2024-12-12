@@ -58,10 +58,21 @@ export class Updater {
     try {
       const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
 
-      // Log chain info
+      // Debug environment info
+      this.sdk.logger.info('Environment Debug Info:');
       this.sdk.logger.info(`Chain ID: ${this.sdk.chainId}`);
       this.sdk.logger.info(`RPC URL: ${this.sdk.publicClient.transport.url}`);
-      this.sdk.logger.info(`Attempting to get Pyth address from proxy at: ${proxyAddress}`);
+      this.sdk.logger.info(`Proxy Address: ${proxyAddress}`);
+      this.sdk.logger.info(`Node ENV: ${process.env.NODE_ENV}`);
+
+      // Verify RPC connection
+      try {
+        const blockNumber = await this.sdk.publicClient.getBlockNumber();
+        this.sdk.logger.info(`Current block number: ${blockNumber}`);
+      } catch (e) {
+        this.sdk.logger.error(`Failed to connect to RPC: ${e}`);
+        throw new Error('RPC connection failed - check endpoint configuration');
+      }
 
       // First verify the contract exists
       try {
