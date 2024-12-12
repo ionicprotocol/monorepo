@@ -55,25 +55,18 @@ export class Updater {
         `Initializing Pyth Oracle at ${this.sdk.chainDeployment.PythPriceOracle.address} on chain ${this.sdk.chainId}`,
       );
 
-      // Get and log the contract code and interface
+      // Verify contract existence
       const code = await this.sdk.publicClient.getBytecode({
         address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
       });
 
-      if (!code) {
+      if (!code || code.length === 0) {
         throw new Error('No contract code found at the specified address');
       }
       this.sdk.logger.debug(`Contract exists at address with bytecode length: ${code.length}`);
 
       try {
-        // Try to get function selectors
-        const functions = await this.sdk.publicClient.request({
-          method: 'eth_getCode',
-          params: [this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`, 'latest'],
-        });
-        this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
-
-        // Try multiple storage slots
+        // Log storage values to find the Pyth address
         for (let slot = 0; slot < 5; slot++) {
           const storageValue = await this.sdk.publicClient.request({
             method: 'eth_getStorageAt',
