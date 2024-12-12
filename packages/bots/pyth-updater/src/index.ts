@@ -2,7 +2,7 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import axios from 'axios';
 import { createPublicClient, createWalletClient, fallback, Hex, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { mode, base } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 
 import { chainIdToConfig } from './config';
 import config from './config/service';
