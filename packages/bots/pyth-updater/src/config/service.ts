@@ -10,7 +10,7 @@ const config = {
     : ['https://base-rpc.publicnode.com'], // Updated to handle multiple RPC URLs
   adminPrivateKey: process.env.PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY ?? '',
   adminAccount: process.env.PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT ?? '',
-  discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? 'https://discord.com/api/webhooks/1268928193004568576/iSeYQhg25xjiGS3raJ6bbgJlL_RtcrejYPwn1PXosWicCS34aYVv-LpoECC69vHiAJ2D',
+  discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? '',
   priceServiceEndpoint: 'https://hermes.pyth.network/',
 };
 
