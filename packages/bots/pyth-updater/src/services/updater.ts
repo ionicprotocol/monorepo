@@ -22,6 +22,8 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 import { DiscordService } from './discord';
 
 const pythPriceOracleAbi = parseAbi([
+  'function implementation() external view returns (address)',
+  'function getImplementation() external view returns (address)',
   'function PYTH() external view returns (address)',
   'function pyth() external view returns (address)',
   'function getPyth() external view returns (address)',
@@ -54,38 +56,54 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      this.sdk.logger.info(
-        `Attempting to get Pyth address from: ${this.sdk.chainDeployment.PythPriceOracle.address}`,
-      );
+      const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
+      this.sdk.logger.info(`Attempting to get Pyth address from proxy at: ${proxyAddress}`);
 
+      let implementationAddress: Address;
       try {
-        this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+        implementationAddress = await this.pythPriceOracle.read.implementation();
+        this.sdk.logger.info(`Found implementation at: ${implementationAddress}`);
       } catch (e: unknown) {
-        this.sdk.logger.debug(`PYTH() failed: ${(e as Error).message}`);
+        this.sdk.logger.debug(`Failed to get implementation address: ${(e as Error).message}`);
         try {
-          this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+          implementationAddress = await this.pythPriceOracle.read.getImplementation();
+          this.sdk.logger.info(
+            `Found implementation using getImplementation: ${implementationAddress}`,
+          );
         } catch (e: unknown) {
-          this.sdk.logger.debug(`pyth() failed: ${(e as Error).message}`);
-          try {
-            this.pythNetworkAddress = await this.pythPriceOracle.read.getPyth();
-          } catch (e: unknown) {
-            this.sdk.logger.debug(`getPyth() failed: ${(e as Error).message}`);
-            try {
-              this.pythNetworkAddress = await this.pythPriceOracle.read.pythAddress();
-            } catch (e: unknown) {
-              this.sdk.logger.debug(`pythAddress() failed: ${(e as Error).message}`);
-              try {
-                this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
-              } catch (e: unknown) {
-                this.sdk.logger.debug(`getPythAddress() failed: ${(e as Error).message}`);
-                throw new Error('Could not find Pyth address using any known function name');
-              }
-            }
+          this.sdk.logger.debug(
+            `Failed to get implementation using getImplementation: ${(e as Error).message}`,
+          );
+        }
+      }
+
+      const attempts = [
+        { name: 'pythAddress', fn: () => this.pythPriceOracle.read.pythAddress() },
+        { name: 'getPythAddress', fn: () => this.pythPriceOracle.read.getPythAddress() },
+        { name: 'PYTH', fn: () => this.pythPriceOracle.read.PYTH() },
+        { name: 'pyth', fn: () => this.pythPriceOracle.read.pyth() },
+        { name: 'getPyth', fn: () => this.pythPriceOracle.read.getPyth() },
+      ];
+
+      for (const attempt of attempts) {
+        try {
+          this.sdk.logger.debug(`Attempting to call ${attempt.name}()`);
+          this.pythNetworkAddress = await attempt.fn();
+          this.sdk.logger.info(
+            `Successfully got Pyth address using ${attempt.name}(): ${this.pythNetworkAddress}`,
+          );
+          break;
+        } catch (e: unknown) {
+          this.sdk.logger.debug(`${attempt.name}() failed: ${(e as Error).message}`);
+          if (attempt === attempts[attempts.length - 1]) {
+            throw new Error('Could not find Pyth address using any known function name');
           }
         }
       }
 
-      this.sdk.logger.info(`Successfully got Pyth address: ${this.pythNetworkAddress}`);
+      if (!this.pythNetworkAddress) {
+        throw new Error('Failed to get Pyth network address');
+      }
 
       this.assetConfigs = assetConfigs;
       this.pythContract = getContract({
