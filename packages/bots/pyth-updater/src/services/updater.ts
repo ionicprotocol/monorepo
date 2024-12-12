@@ -52,20 +52,34 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+      // Try different function names in sequence
+      try {
+        this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+      } catch {
+        try {
+          this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+        } catch {
+          try {
+            this.pythNetworkAddress = await this.pythPriceOracle.read.getPyth();
+          } catch (e) {
+            throw new Error('Could not find Pyth address using any known function name');
+          }
+        }
+      }
+
       this.sdk.logger.info(`Successfully got Pyth address: ${this.pythNetworkAddress}`);
+
+      this.assetConfigs = assetConfigs;
+      this.pythContract = getContract({
+        address: this.pythNetworkAddress,
+        abi: pythAbi,
+        client: this.sdk.walletClient as any,
+      }) as any;
+      return this;
     } catch (error) {
       this.sdk.logger.error(`Failed to get Pyth address: ${error}`);
       throw error;
     }
-
-    this.assetConfigs = assetConfigs;
-    this.pythContract = getContract({
-      address: this.pythNetworkAddress,
-      abi: pythAbi,
-      client: this.sdk.walletClient as any,
-    }) as any;
-    return this;
   }
 
   async updateFeeds(): Promise<TransactionReceipt | null> {
