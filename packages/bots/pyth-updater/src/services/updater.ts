@@ -76,13 +76,17 @@ export class Updater {
         this.sdk.logger.debug('Successfully called pyth()');
       } catch (e) {
         this.sdk.logger.debug(`pyth() failed with error: ${e}`);
+        this.sdk.logger.debug(`Contract address: ${this.pythPriceOracle.address}`);
+        this.sdk.logger.debug(`Available methods: ${Object.keys(this.pythPriceOracle.read).join(', ')}`);
+        
         try {
           this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
           this.sdk.logger.debug('Successfully called getPythAddress()');
         } catch (e2) {
           this.sdk.logger.debug(`getPythAddress() failed with error: ${e2}`);
           throw new Error(
-            'Both pyth() and getPythAddress() methods failed. Contract might have different interface.',
+            `Both pyth() and getPythAddress() methods failed. Contract might have different interface. ` +
+            `Address: ${this.pythPriceOracle.address}`
           );
         }
       }
