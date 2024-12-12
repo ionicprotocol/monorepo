@@ -21,7 +21,10 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 
 import { DiscordService } from './discord';
 
-const pythPriceOracleAbi = parseAbi(['function getPythAddress() external view returns (address)']);
+const pythPriceOracleAbi = parseAbi([
+  'function getPythAddress() external view returns (address)',
+  'function pyth() external view returns (address)',
+]);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -53,15 +56,14 @@ export class Updater {
         `Initializing Pyth Oracle at ${this.sdk.chainDeployment.PythPriceOracle.address} on chain ${this.sdk.chainId}`,
       );
 
-      // Verify contract exists
-      const code = await this.sdk.publicClient.getBytecode({
-        address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
-      });
-      if (!code) {
-        throw new Error('No contract code found at PythPriceOracle address');
+      // Try different function names based on the chain
+      try {
+        this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+      } catch {
+        // If pyth() fails, try getPythAddress()
+        this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
       }
 
-      this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
       this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
     } catch (error) {
       this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
