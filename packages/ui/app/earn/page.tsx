@@ -34,6 +34,7 @@ export default function Earn() {
     {
       id: 'asset',
       header: 'ASSETS',
+      sortingFn: 'alphabetical',
       cell: ({ row }) => (
         <div className="flex gap-3 items-center">
           <div className="flex -space-x-1">
@@ -60,6 +61,7 @@ export default function Earn() {
     {
       id: 'protocol',
       header: 'PROTOCOL',
+      sortingFn: 'alphabetical',
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <img
