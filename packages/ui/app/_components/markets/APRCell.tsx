@@ -8,20 +8,11 @@ import {
   HoverCardContent
 } from '@ui/components/ui/hover-card';
 import { pools } from '@ui/constants';
-import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
 import { cn } from '@ui/lib/utils';
-import { multipliers } from '@ui/utils/multipliers';
-
 import { RewardIcons } from './RewardsIcon';
-
-import type { Address, Hex } from 'viem';
-
-import type { FlywheelReward } from '@ionicprotocol/types';
-import { useMerklData } from '@ui/hooks/useMerklData';
-
-const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
-  ssr: false
-});
+import { useAPRCell } from '@ui/hooks/market/useAPRCell';
+import { FlywheelReward } from '@ionicprotocol/types';
+import { Address, Hex } from 'viem';
 
 export type APRCellProps = {
   type: 'borrow' | 'supply';
@@ -37,107 +28,48 @@ export type APRCellProps = {
   underlyingToken: Hex;
 };
 
-export default function APRCell({
-  type,
-  aprTotal,
-  baseAPR,
-  asset,
-  cToken,
-  dropdownSelectedChain,
-  pool,
-  selectedPoolId,
-  rewards,
-  nativeAssetYield,
-  underlyingToken
-}: APRCellProps) {
-  const { data: merklApr } = useMerklData();
-  const merklAprForToken = merklApr?.find(
-    (a) => Object.keys(a)[0].toLowerCase() === underlyingToken.toLowerCase()
-  )?.[underlyingToken];
+const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
+  ssr: false
+});
 
-  const config =
-    multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
-  const showRewardsBadge = useRewardsBadge(
-    dropdownSelectedChain,
-    selectedPoolId,
-    asset,
-    type,
-    rewards
-  );
+const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
+  <div className="flex items-center gap-2 py-0.5">
+    <Image
+      alt=""
+      src={icon}
+      width={16}
+      height={16}
+      className="size-4 rounded"
+    />
+    <span className="text-3xs">{text}</span>
+  </div>
+);
 
-  const effectiveNativeYield =
-    nativeAssetYield !== undefined
-      ? nativeAssetYield * 100
-      : config?.underlyingAPR;
+export default function APRCell(props: APRCellProps) {
+  const {
+    totalAPR,
+    baseAPRFormatted,
+    effectiveNativeYield,
+    showRewardsBadge,
+    showIonBadge,
+    config,
+    merklAprFormatted,
+    rewardIcons,
+    additionalRewards
+  } = useAPRCell(props);
 
-  const formatBaseAPR = () => {
-    if (type === 'borrow' && baseAPR > 0)
-      return (
-        '-' + baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
-      );
-    return (
-      (type === 'supply' ? '+' : '') +
-      baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })
-    );
-  };
-
-  const formatTotalAPR = () => {
-    let total = aprTotal ?? 0;
-    // Add native yield to total if it exists
-    if (effectiveNativeYield) {
-      total += effectiveNativeYield;
-    }
-
-    const prefix = type === 'supply' || total > 0 ? '+' : '';
-    return (
-      prefix +
-      total.toLocaleString('en-US', {
-        maximumFractionDigits: 2
-      })
-    );
-  };
-
-  const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
-    <div className="flex items-center gap-2 py-0.5">
-      <Image
-        alt=""
-        src={icon}
-        width={16}
-        height={16}
-        className="size-4 rounded"
-      />
-      <span className="text-3xs">{text}</span>
-    </div>
-  );
-
-  const getRewardIcons = () => {
-    const icons: string[] = [];
-
-    // Add asset logo as the first icon if showing rewards badge or native yield
-    if (effectiveNativeYield !== undefined) {
-      icons.push(asset.toLowerCase());
-    }
-
-    if (config?.lsk) icons.push('lsk');
-    if (config?.op) icons.push('op');
-    if (config?.etherfi) icons.push('etherfi');
-    if (config?.kelp) icons.push('kelp');
-    if (config?.eigenlayer) icons.push('eigen');
-    if (config?.spice) icons.push('spice');
-
-    return icons;
-  };
+  const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
 
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
         <div className="flex flex-col items-start cursor-pointer">
-          <span>{formatTotalAPR()}%</span>
+          <span>{totalAPR}%</span>
           <div className="flex flex-col items-start gap-1">
             <span
               className={cn(
                 'rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1',
-                config?.ionAPR
+                showIonBadge
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
               )}
@@ -148,11 +80,11 @@ export default function APRCell({
                 alt="ION"
                 width={16}
                 height={16}
-                className={cn('rounded-full', !config?.ionAPR && 'opacity-50')}
+                className={cn('rounded-full', !showIonBadge && 'opacity-50')}
               />
             </span>
 
-            {(showRewardsBadge || nativeAssetYield !== undefined) && (
+            {(showRewardsBadge || effectiveNativeYield !== undefined) && (
               <div
                 className={cn(
                   'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
@@ -161,7 +93,7 @@ export default function APRCell({
                 )}
               >
                 <span>+ Rewards</span>
-                <RewardIcons rewards={getRewardIcons()} />
+                <RewardIcons rewards={rewardIcons} />
               </div>
             )}
 
@@ -205,7 +137,7 @@ export default function APRCell({
       >
         <div className="flex flex-col space-y-1">
           <div className="flex items-center justify-between py-0.5">
-            <span>Base APR: {formatBaseAPR()}%</span>
+            <span>Base APR: {baseAPRFormatted}%</span>
           </div>
           {config?.op && (
             <Link
@@ -221,11 +153,7 @@ export default function APRCell({
                 className="size-4 mr-2"
               />
               <span className="text-xs">
-                + OP Rewards:{' '}
-                {merklAprForToken?.toLocaleString('en-US', {
-                  maximumFractionDigits: 2
-                })}
-                %
+                + OP Rewards: {merklAprFormatted}%
               </span>
             </Link>
           )}
@@ -249,42 +177,13 @@ export default function APRCell({
               />
             </div>
           )}
-          {config?.turtle && asset === 'STONE' && (
+          {additionalRewards.map((reward) => (
             <RewardRow
-              icon="/img/symbols/32/color/stone.png"
-              text="+ Stone Turtle Points"
+              key={reward.name}
+              icon={reward.icon}
+              text={reward.text ?? ''}
             />
-          )}
-          {config?.etherfi && (
-            <RewardRow
-              icon="/images/etherfi.png"
-              text={`+ ${config.etherfi}x ether.fi Points`}
-            />
-          )}
-          {config?.kelp && (
-            <>
-              <RewardRow
-                icon="/images/kelpmiles.png"
-                text={`+ ${config.kelp}x Kelp Miles`}
-              />
-              <RewardRow
-                icon="/images/turtle-kelp.png"
-                text="+ Turtle Kelp Points"
-              />
-            </>
-          )}
-          {config?.eigenlayer && (
-            <RewardRow
-              icon="/images/eigen.png"
-              text="+ EigenLayer Points"
-            />
-          )}
-          {config?.spice && (
-            <RewardRow
-              icon="/img/symbols/32/color/bob.png"
-              text="+ Spice Points"
-            />
-          )}
+          ))}
         </div>
       </HoverCardContent>
     </HoverCard>
