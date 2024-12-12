@@ -28,6 +28,30 @@ export interface IRewards {
 export const earnOpps: EarnRow[] = [
   {
     apr: 0,
+    asset: ['ion'],
+    getApr: () => Promise.resolve(0),
+    getTvl: () => Promise.resolve(0),
+    live: true,
+    rewards: {
+      [base.id]: {
+        points: {
+          ionic: 0,
+          turtle: 0
+        },
+        peaks: false,
+        turtle: false
+      }
+    },
+    link: 'https://oyster.synfutures.com/#/trade/base/ETH-ION-EMG-Perpetual',
+    network: 'base',
+    protocol: 'SynFutures',
+    strategy: 'Perps / Single Staking',
+    img: '/img/symbols/32/color/synfutures.png',
+    tvl: 0,
+    poolChain: base.id
+  },
+  {
+    apr: 0,
     asset: ['ionUSDC', 'ionUSDT'],
     getApr: async () => {
       try {
