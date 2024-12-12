@@ -63,19 +63,15 @@ export class Updater {
       console.log(`Network: ${this.sdk.chainDeployment.name}`);
       console.log(`Proxy Address: ${proxyAddress}`);
 
-      // Different handling based on network
+      // Use original proxy address for all networks except Base
       if (this.sdk.chainId === 8453) {
         // Base mainnet
         this.pythNetworkAddress = '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address;
         console.log('Using Base network Pyth address');
-      } else if (this.sdk.chainId === 34443) {
-        // Mode mainnet
-        // Use the original proxy address for Mode
-        this.pythNetworkAddress = proxyAddress;
-        console.log('Using Mode network Pyth address');
       } else {
-        console.log(`Using default address for chain ${this.sdk.chainId}`);
+        // For all other networks (including Mode), use the original proxy address
         this.pythNetworkAddress = proxyAddress;
+        console.log(`Using original proxy address for chain ${this.sdk.chainId}`);
       }
 
       // Verify contract exists
