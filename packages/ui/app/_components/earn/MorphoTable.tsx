@@ -2,25 +2,11 @@
 
 import Image from 'next/image';
 
-import { Button } from '@ui/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@ui/components/ui/dialog';
-import { Input } from '@ui/components/ui/input';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from '@ui/components/ui/tabs';
 import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
 import { morphoVaults } from '@ui/utils/morphoUtils';
 
+import { MorphoDialog } from './MorphoDialog';
 import CommonTable from '../CommonTable';
 
 import type { EnhancedColumnDef } from '../CommonTable';
@@ -124,44 +110,7 @@ export default function MorphoTable() {
       id: 'manage',
       header: 'MANAGE',
       enableSorting: false,
-      cell: ({ row }) => (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="w-full">Manage</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Manage {row.original.asset.join('/')} Vault
-              </DialogTitle>
-            </DialogHeader>
-            <Tabs defaultValue="supply">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="supply">Supply</TabsTrigger>
-                <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
-              </TabsList>
-              <TabsContent value="supply">
-                <div className="space-y-4">
-                  <Input
-                    type="number"
-                    placeholder="Amount"
-                  />
-                  <Button className="w-full">Supply</Button>
-                </div>
-              </TabsContent>
-              <TabsContent value="withdraw">
-                <div className="space-y-4">
-                  <Input
-                    type="number"
-                    placeholder="Amount"
-                  />
-                  <Button className="w-full">Withdraw</Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </DialogContent>
-        </Dialog>
-      )
+      cell: ({ row }) => <MorphoDialog asset={row.original.asset} />
     }
   ];
 
