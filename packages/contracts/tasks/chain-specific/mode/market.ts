@@ -5,6 +5,7 @@ import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 import { COMPTROLLER_MAIN, COMPTROLLER_NATIVE, dmBTC_MARKET, MODE_NATIVE_MARKET, MS_DAI_MARKET } from ".";
+import { getMarketInfo } from "../../market";
 
 const modeAssets = mode.assets;
 
@@ -236,3 +237,8 @@ task("prudentia:print-borrow-cap", "Prints supply cap")
       supplyCaps + " = " + formatUnits(supplyCaps, underlyingDecimals)
     );
   });
+
+task("mode:get-market-info", "get market info").setAction(async (_, { viem, run }) => {
+  await getMarketInfo(viem, COMPTROLLER_MAIN);
+});
+  

@@ -158,7 +158,6 @@ const InfoRows = ({
         </span>
         <APRCell
           type={mode === InfoMode.SUPPLY ? 'supply' : 'borrow'}
-          aprTotal={totalApr}
           baseAPR={baseAPR}
           asset={asset}
           cToken={cToken}
@@ -166,6 +165,8 @@ const InfoRows = ({
           pool={comptrollerAddress}
           selectedPoolId={pool}
           rewards={mode === InfoMode.SUPPLY ? supplyRewards : borrowRewards}
+          // fix this
+          underlyingToken="0x"
         />
       </h3>
       {hasFlywheelRewards ? (
