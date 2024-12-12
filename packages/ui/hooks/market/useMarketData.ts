@@ -124,7 +124,7 @@ export const useMarketData = (
           )
           .map((reward) => ({
             ...reward,
-            apy: 5
+            apy: (reward.apy ?? 0) * 100
           }));
 
         const borrowRewards = rewards?.[asset.cToken]
