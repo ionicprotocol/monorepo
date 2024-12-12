@@ -1,108 +1,31 @@
 import { base, mode } from 'viem/chains';
 
-export type EarnRow = {
-  apr: number;
-  asset: string[]; //name of the asset in uppercase array
-  getApr?: () => Promise<number>;
-  getTvl?: () => Promise<number>;
-  link: string;
-  network: string;
-  poolChain: number;
-  protocol: string;
-  tvl: number;
-  tvlpool?: string;
-  img: string;
-  strategy: string;
-  rewards: Record<number, IRewards>;
-  live?: boolean;
-};
-
-export interface IRewards {
-  peaks: boolean;
-  turtle: boolean;
-  velo?: string;
-  aero?: boolean;
-  points: Record<string, number>;
-}
+import type { EarnRow } from '@ui/types/Earn';
 
 export const earnOpps: EarnRow[] = [
   {
     apr: 0,
-    asset: ['ION', 'WETH'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: true,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 3,
-          turtle: 1
-        },
-        peaks: false,
-        velo: 'eth',
-        turtle: true
-      }
-    },
-    link: '/stake?chain=34443&token=weth',
-    network: 'mode',
-    poolChain: mode.id,
-    protocol: 'Velodrome',
-    strategy: 'Liquidty Pool',
-    img: '/img/symbols/32/color/velo.png',
-    tvl: 0,
-    tvlpool: '0xC6A394952c097004F83d2dfB61715d245A38735a'
-  },
-  {
-    apr: 0,
-    asset: ['ION', 'WETH'],
+    asset: ['ion'],
     getApr: () => Promise.resolve(0),
     getTvl: () => Promise.resolve(0),
     live: true,
     rewards: {
       [base.id]: {
         points: {
-          ionic: 3,
-          turtle: 1
+          ionic: 0,
+          turtle: 0
         },
         peaks: false,
-        aero: true,
-        turtle: true
+        turtle: false
       }
     },
-    link: '/stake?chain=8453',
+    link: 'https://oyster.synfutures.com/#/trade/base/ETH-ION-EMG-Perpetual',
     network: 'base',
-    poolChain: base.id,
-    protocol: 'Aerodrome Finance',
-    strategy: 'Liquidty Pool',
-    img: '/img/symbols/32/color/aero.png',
+    protocol: 'SynFutures',
+    strategy: 'Perps / Single Staking',
+    img: '/img/symbols/32/color/synfutures.png',
     tvl: 0,
-    tvlpool: '0x0FAc819628a7F612AbAc1CaD939768058cc0170c'
-  },
-  {
-    apr: 0,
-    asset: ['ION', 'MODE'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: true,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 3,
-          turtle: 1
-        },
-        peaks: false,
-        velo: 'mode',
-        turtle: true
-      }
-    },
-    link: '/stake?chain=34443&token=mode',
-    network: 'mode',
-    poolChain: mode.id,
-    protocol: 'Velodrome',
-    strategy: 'Liquidty Pool',
-    img: '/img/symbols/32/color/velo.png',
-    tvl: 0,
-    tvlpool: '0x690A74d2eC0175a69C0962B309E03021C0b5002E'
+    poolChain: base.id
   },
   {
     apr: 0,
@@ -199,102 +122,6 @@ export const earnOpps: EarnRow[] = [
     protocol: 'Lynx',
     strategy: 'Perps / Single Staking',
     img: '/img/symbols/32/color/lynx.png',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDC'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: true,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 3,
-          turtle: 1
-        },
-        peaks: true,
-        turtle: true
-      }
-    },
-    link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDC',
-    network: 'mode',
-    protocol: 'Davos',
-    strategy: 'CDP Stablecoin',
-    img: '/img/symbols/32/color/davos.png',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDT'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: true,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 3,
-          turtle: 1
-        },
-        peaks: true,
-        turtle: true
-      }
-    },
-    link: 'https://davos.xyz/app/loans/mint/?network=mode&token=ionUSDT',
-    network: 'mode',
-    protocol: 'Davos',
-    strategy: 'CDP Stablecoin',
-    img: '/img/symbols/32/color/davos.png',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDT'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: false,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 0,
-          turtle: 0
-        },
-        peaks: false,
-        turtle: false
-      }
-    },
-    link: 'https://www.tren.finance',
-    network: 'mode',
-    protocol: 'Tren',
-    strategy: 'CDP Stablecoin',
-    img: '/img/symbols/32/color/tren.png',
-    tvl: 0,
-    poolChain: mode.id
-  },
-  {
-    apr: 0,
-    asset: ['ionUSDT'],
-    getApr: () => Promise.resolve(0),
-    getTvl: () => Promise.resolve(0),
-    live: false,
-    rewards: {
-      [mode.id]: {
-        points: {
-          ionic: 0,
-          turtle: 0
-        },
-        peaks: false,
-        turtle: false
-      }
-    },
-    link: '#',
-    network: 'mode',
-    protocol: 'Otomato',
-    strategy: '-',
-    img: '/img/symbols/32/color/otomato.png',
     tvl: 0,
     poolChain: mode.id
   }
