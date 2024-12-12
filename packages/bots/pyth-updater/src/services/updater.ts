@@ -75,6 +75,13 @@ export class Updater {
           const blockNumber = await this.sdk.publicClient.getBlockNumber();
           this.sdk.logger.info(`Current block number: ${blockNumber}`);
 
+          // Check if we're using the correct chain deployment
+          this.sdk.logger.info(`Chain Deployment Config:`, {
+            chainId: this.sdk.chainDeployment.chainId,
+            deploymentName: this.sdk.chainDeployment.name,
+            oracleAddress: this.sdk.chainDeployment.PythPriceOracle?.address,
+          });
+
           throw new Error(`No contract found at address ${proxyAddress}. Please verify:
             1. The contract address is correct for Base network
             2. The RPC endpoint is working and connected to Base
