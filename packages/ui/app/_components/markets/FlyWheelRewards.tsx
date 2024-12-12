@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import { formatEther, type Address } from 'viem';
 import { useChainId } from 'wagmi';
@@ -44,12 +45,14 @@ const RewardRow = ({
       isStandalone && 'justify-center'
     )}
   >
-    <img
+    <Image
       alt=""
-      className="size-4 rounded"
       src={`/img/symbols/32/color/${symbol.toLowerCase()}.png`}
+      width={16}
+      height={16}
+      className="size-4 rounded"
     />
-    <span className="text-3xs font-light">{value}</span>
+    <span className="text-3xs">{value}</span>
   </div>
 );
 

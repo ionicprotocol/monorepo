@@ -8,16 +8,16 @@ import {
   HoverCardContent
 } from '@ui/components/ui/hover-card';
 import { pools } from '@ui/constants';
-import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useRewardsBadge } from '@ui/hooks/useRewardsBadge';
 import { cn } from '@ui/lib/utils';
 import { multipliers } from '@ui/utils/multipliers';
 
 import { RewardIcons } from './RewardsIcon';
 
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { useMerklData } from '@ui/hooks/useMerklData';
 
 const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
   ssr: false
@@ -33,6 +33,8 @@ export type APRCellProps = {
   pool: Address;
   selectedPoolId: string;
   rewards?: FlywheelReward[];
+  nativeAssetYield?: number;
+  underlyingToken: Hex;
 };
 
 export default function APRCell({
@@ -44,17 +46,14 @@ export default function APRCell({
   dropdownSelectedChain,
   pool,
   selectedPoolId,
-  rewards
+  rewards,
+  nativeAssetYield,
+  underlyingToken
 }: APRCellProps) {
-  const isMainModeMarket =
-    dropdownSelectedChain === 34443 &&
-    (asset === 'USDC' || asset === 'WETH') &&
-    selectedPoolId === '0';
-
-  const { data: merklApr } = useMerklApr();
+  const { data: merklApr } = useMerklData();
   const merklAprForToken = merklApr?.find(
-    (a) => Object.keys(a)[0].toLowerCase() === cToken.toLowerCase()
-  )?.[cToken];
+    (a) => Object.keys(a)[0].toLowerCase() === underlyingToken.toLowerCase()
+  )?.[underlyingToken];
 
   const config =
     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
@@ -66,7 +65,10 @@ export default function APRCell({
     rewards
   );
 
-  const showOPRewards = merklAprForToken || asset === 'dMBTC';
+  const effectiveNativeYield =
+    nativeAssetYield !== undefined
+      ? nativeAssetYield * 100
+      : config?.underlyingAPR;
 
   const formatBaseAPR = () => {
     if (type === 'borrow' && baseAPR > 0)
@@ -80,12 +82,17 @@ export default function APRCell({
   };
 
   const formatTotalAPR = () => {
-    const numericValue = aprTotal ?? 0;
-    const prefix = type === 'supply' || numericValue > 0 ? '+' : '';
+    let total = aprTotal ?? 0;
+    // Add native yield to total if it exists
+    if (effectiveNativeYield) {
+      total += effectiveNativeYield;
+    }
+
+    const prefix = type === 'supply' || total > 0 ? '+' : '';
     return (
       prefix +
-      numericValue.toLocaleString('en-US', {
-        maximumFractionDigits: type === 'supply' ? 2 : 1
+      total.toLocaleString('en-US', {
+        maximumFractionDigits: 2
       })
     );
   };
@@ -99,24 +106,24 @@ export default function APRCell({
         height={16}
         className="size-4 rounded"
       />
-      <span className="text-sm">{text}</span>
+      <span className="text-3xs">{text}</span>
     </div>
   );
 
   const getRewardIcons = () => {
     const icons: string[] = [];
 
-    if (showOPRewards) icons.push('op');
-    if (config?.ionic) icons.push('ionic');
-    if (config?.turtle) icons.push('turtle');
+    // Add asset logo as the first icon if showing rewards badge or native yield
+    if (effectiveNativeYield !== undefined) {
+      icons.push(asset.toLowerCase());
+    }
+
+    if (config?.lsk) icons.push('lsk');
+    if (config?.op) icons.push('op');
     if (config?.etherfi) icons.push('etherfi');
     if (config?.kelp) icons.push('kelp');
     if (config?.eigenlayer) icons.push('eigen');
     if (config?.spice) icons.push('spice');
-    if (type === 'supply') {
-      if (config?.anzen) icons.push('anzen');
-      if (config?.nektar) icons.push('nektar');
-    }
 
     return icons;
   };
@@ -129,20 +136,26 @@ export default function APRCell({
           <div className="flex flex-col items-start gap-1">
             <span
               className={cn(
-                'rounded-md w-max text-[10px] py-[3px] px-1.5',
+                'rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1',
                 config?.ionAPR
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
               )}
             >
               + ION APR
+              <Image
+                src="/img/ionic-green-on-black.png"
+                alt="ION"
+                width={16}
+                height={16}
+                className={cn('rounded-full', !config?.ionAPR && 'opacity-50')}
+              />
             </span>
 
-            {showRewardsBadge && (
+            {(showRewardsBadge || nativeAssetYield !== undefined) && (
               <div
                 className={cn(
-                  'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1',
-                  'font-light text-[10px]',
+                  'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
                   pools[dropdownSelectedChain].text,
                   pools[dropdownSelectedChain].bg
                 )}
@@ -152,7 +165,7 @@ export default function APRCell({
               </div>
             )}
 
-            {config?.turtle && !isMainModeMarket && (
+            {(config?.turtle || config?.kelp) && (
               <span className="text-darkone rounded-md w-max md:ml-0 text-center">
                 <a
                   className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[3px] md:px-1 lg:px-1.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -162,11 +175,23 @@ export default function APRCell({
                 >
                   + TURTLE{' '}
                   <Image
+                    src={
+                      asset === 'STONE'
+                        ? '/img/symbols/32/color/stone.png'
+                        : config?.kelp
+                          ? '/images/turtle-kelp.png'
+                          : '/images/turtle-ionic.png'
+                    }
+                    alt="Turtle"
+                    className="white rounded-full"
+                    width={16}
+                    height={16}
+                  />
+                  <Image
                     alt="external-link"
                     src="https://img.icons8.com/material-outlined/24/external-link.png"
-                    width={12}
-                    height={12}
-                    className="w-3 h-3"
+                    width={16}
+                    height={16}
                   />
                 </a>
               </span>
@@ -182,8 +207,7 @@ export default function APRCell({
           <div className="flex items-center justify-between py-0.5">
             <span>Base APR: {formatBaseAPR()}%</span>
           </div>
-
-          {showOPRewards && (
+          {config?.op && (
             <Link
               href="https://app.merkl.xyz/?chain=34443"
               target="_blank"
@@ -205,17 +229,15 @@ export default function APRCell({
               </span>
             </Link>
           )}
-
-          {config?.underlyingAPR && (
+          {effectiveNativeYield !== undefined && (
             <p className="py-0.5 text-xs">
               Native Asset Yield: +
-              {config.underlyingAPR.toLocaleString('en-US', {
+              {effectiveNativeYield.toLocaleString('en-US', {
                 maximumFractionDigits: 2
               })}
               %
             </p>
           )}
-
           {config?.flywheel && (
             <div className="py-0.5">
               <FlyWheelRewards
@@ -227,34 +249,18 @@ export default function APRCell({
               />
             </div>
           )}
-
-          {(config?.ionic ?? 0) > 0 && (
-            <>
-              <RewardRow
-                icon="/img/ionic-sq.png"
-                text={`+ ${config?.ionic}x Ionic Points`}
-              />
-              <RewardRow
-                icon="/images/turtle-ionic.png"
-                text="+ Turtle Ionic Points"
-              />
-            </>
-          )}
-
           {config?.turtle && asset === 'STONE' && (
             <RewardRow
               icon="/img/symbols/32/color/stone.png"
               text="+ Stone Turtle Points"
             />
           )}
-
           {config?.etherfi && (
             <RewardRow
               icon="/images/etherfi.png"
               text={`+ ${config.etherfi}x ether.fi Points`}
             />
           )}
-
           {config?.kelp && (
             <>
               <RewardRow
@@ -262,42 +268,22 @@ export default function APRCell({
                 text={`+ ${config.kelp}x Kelp Miles`}
               />
               <RewardRow
-                icon="/images/turtle-renzo.png"
+                icon="/images/turtle-kelp.png"
                 text="+ Turtle Kelp Points"
               />
             </>
           )}
-
           {config?.eigenlayer && (
             <RewardRow
               icon="/images/eigen.png"
               text="+ EigenLayer Points"
             />
           )}
-
           {config?.spice && (
             <RewardRow
               icon="/img/symbols/32/color/bob.png"
               text="+ Spice Points"
             />
-          )}
-
-          {type === 'supply' && (
-            <>
-              {(config?.anzen ?? 0) > 0 && (
-                <RewardRow
-                  icon="/img/symbols/32/color/usdz.png"
-                  text={`+ ${config?.anzen}x Anzen Points`}
-                />
-              )}
-
-              {config?.nektar && (
-                <RewardRow
-                  icon="/img/symbols/32/color/nektar.png"
-                  text="+ Nektar Points"
-                />
-              )}
-            </>
           )}
         </div>
       </HoverCardContent>
