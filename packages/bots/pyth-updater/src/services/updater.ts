@@ -21,7 +21,7 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 
 import { DiscordService } from './discord';
 
-const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
+const pythPriceOracleAbi = parseAbi(['function getPythAddress() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -48,7 +48,7 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+      this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
       this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
     } catch (error) {
       this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
