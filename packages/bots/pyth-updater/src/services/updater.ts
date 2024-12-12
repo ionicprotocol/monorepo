@@ -21,10 +21,7 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 
 import { DiscordService } from './discord';
 
-const pythPriceOracleAbi = parseAbi([
-  'function getPythAddress() external view returns (address)',
-  'function pyth() external view returns (address)',
-]);
+const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -50,113 +47,17 @@ export class Updater {
   }
 
   async init(assetConfigs: PythAssetConfig[]) {
-    try {
-      this.sdk.logger.info(
-        `Initializing Pyth Oracle at ${this.sdk.chainDeployment.PythPriceOracle.address} on chain ${this.sdk.chainId}`,
-      );
-
-      // Verify contract existence
-      const code = await this.sdk.publicClient.getBytecode({
-        address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
-      });
-
-      if (!code || code.length === 0) {
-        throw new Error('No contract code found at the specified address');
-      }
-      this.sdk.logger.debug(`Contract exists at address with bytecode length: ${code.length}`);
-
-      try {
-        // Log storage values to find the Pyth address
-        for (let slot = 0; slot < 5; slot++) {
-          const storageValue = await this.sdk.publicClient.request({
-            method: 'eth_getStorageAt',
-            params: [
-              this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`,
-              `0x${slot.toString(16)}`,
-              'latest',
-            ],
-          });
-          this.sdk.logger.debug(`Storage slot ${slot}: ${storageValue}`);
-
-          // Check if this looks like an address (0x + 40 hex chars)
-          if (storageValue && /^0x[a-fA-F0-9]{40}$/.test(storageValue)) {
-            this.pythNetworkAddress = storageValue as Address;
-            this.sdk.logger.debug(
-              `Found potential Pyth address in slot ${slot}: ${this.pythNetworkAddress}`,
-            );
-            return this;
-          }
-        }
-        throw new Error('Could not find valid Pyth address in first 5 storage slots');
-      } catch (error) {
-        this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
-        this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
-        this.sdk.logger.error(
-          `Oracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}`,
-        );
-        throw new Error(`Failed to initialize Pyth: ${error}`);
-      }
-
-      this.assetConfigs = assetConfigs;
-      this.pythContract = getContract({
-        address: this.pythNetworkAddress,
-        abi: pythAbi,
-        client: this.sdk.walletClient as any,
-      }) as any;
-      return this;
-    } catch (error) {
-      this.sdk.logger.error(`Failed to initialize updater: ${error}`);
-      throw new Error(`Failed to initialize updater: ${error}`);
-    }
+    this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+    this.assetConfigs = assetConfigs;
+    this.pythContract = getContract({
+      address: this.pythNetworkAddress,
+      abi: pythAbi,
+      client: this.sdk.walletClient as any,
+    }) as any;
+    return this;
   }
 
   async updateFeeds(): Promise<TransactionReceipt | null> {
-    // Add Lambda-specific environment debugging
-    this.sdk.logger.debug(
-      `Environment Info:
-      - Running in Lambda: ${!!process.env.AWS_LAMBDA_FUNCTION_NAME}
-      - Function Name: ${process.env.AWS_LAMBDA_FUNCTION_NAME || 'Not in Lambda'}
-      - Region: ${process.env.AWS_REGION}
-      - Memory: ${process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE}
-      `,
-    );
-
-    // Add detailed chain configuration debugging
-    this.sdk.logger.debug(
-      `Chain Configuration:
-      - SDK ChainId: ${this.sdk.chainId}
-      - WalletClient Chain: ${JSON.stringify(this.sdk.walletClient?.chain, null, 2)}
-      - PublicClient Chain: ${JSON.stringify(this.sdk.publicClient.chain, null, 2)}
-      - RPC URLs: ${process.env.BASE_MAINNET_RPC_URLS ? 'Configured' : 'Missing'}
-      - Network Details: ${JSON.stringify(
-        {
-          name: this.sdk.publicClient.chain?.name,
-          nativeCurrency: this.sdk.publicClient.chain?.nativeCurrency,
-        },
-        null,
-        2,
-      )}
-      `,
-    );
-
-    // Add wallet configuration debugging
-    this.sdk.logger.debug(
-      `Wallet Configuration:
-      - Account: ${this.sdk.walletClient?.account?.address}
-      - Connected: ${!!this.sdk.walletClient?.account}
-      - Transport Type: ${this.sdk.walletClient?.transport?.type}
-      `,
-    );
-
-    // Add Pyth contract debugging
-    this.sdk.logger.debug(
-      `Pyth Configuration:
-      - PythPriceOracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}
-      - Pyth Network Address: ${this.pythNetworkAddress}
-      - Price Service Endpoint: ${config.priceServiceEndpoint}
-      `,
-    );
-
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
       this.assetConfigs,
