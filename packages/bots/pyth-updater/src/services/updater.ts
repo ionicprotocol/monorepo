@@ -58,46 +58,34 @@ export class Updater {
     try {
       const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
 
-      // Debug environment info
       console.log('Environment Debug Info:');
       console.log(`Chain ID: ${this.sdk.chainId}`);
-      console.log(`RPC URL: ${this.sdk.publicClient.transport.url}`);
+      console.log(`Network: ${this.sdk.chainDeployment.name}`);
       console.log(`Proxy Address: ${proxyAddress}`);
-      console.log(`Node ENV: ${process.env.NODE_ENV}`);
 
-      // First verify the contract exists
-      try {
-        // Check RPC connection first
-        console.log('Checking RPC connection...');
-        const blockNumber = await this.sdk.publicClient.getBlockNumber();
-        console.log(`Current block number: ${blockNumber}`);
-
-        console.log('Checking contract bytecode...');
-        const code = await this.sdk.publicClient.getBytecode({
-          address: '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address,
-        });
-        console.log(`Contract bytecode length: ${code?.length ?? 0}`);
-
-        if (!code) {
-          // Check if we're using the correct chain deployment
-          console.log('Chain Deployment Config:', {
-            chainId: this.sdk.chainDeployment.chainId,
-            deploymentName: this.sdk.chainDeployment.name,
-            oracleAddress: this.sdk.chainDeployment.PythPriceOracle?.address,
-          });
-
-          throw new Error(`No contract found at address ${proxyAddress}`);
-        }
-
-        // Set the correct Pyth address
+      // Different handling based on network
+      if (this.sdk.chainId === 8453) {
+        // Base mainnet
         this.pythNetworkAddress = '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address;
-      } catch (e: any) {
-        console.error('Error details:', {
-          message: e.message,
-          stack: e.stack,
-          cause: e.cause,
-        });
-        throw e;
+        console.log('Using Base network Pyth address');
+      } else if (this.sdk.chainId === 34443) {
+        // Mode mainnet
+        // Use the original proxy address for Mode
+        this.pythNetworkAddress = proxyAddress;
+        console.log('Using Mode network Pyth address');
+      } else {
+        console.log(`Using default address for chain ${this.sdk.chainId}`);
+        this.pythNetworkAddress = proxyAddress;
+      }
+
+      // Verify contract exists
+      const code = await this.sdk.publicClient.getBytecode({
+        address: this.pythNetworkAddress,
+      });
+      console.log(`Contract bytecode length: ${code?.length ?? 0}`);
+
+      if (!code) {
+        throw new Error(`No contract found at address ${this.pythNetworkAddress}`);
       }
 
       this.assetConfigs = assetConfigs;
