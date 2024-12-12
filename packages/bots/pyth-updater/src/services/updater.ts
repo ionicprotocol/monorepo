@@ -25,6 +25,8 @@ const pythPriceOracleAbi = parseAbi([
   'function PYTH() external view returns (address)',
   'function pyth() external view returns (address)',
   'function getPyth() external view returns (address)',
+  'function pythAddress() external view returns (address)',
+  'function getPythAddress() external view returns (address)',
 ]);
 export class Updater {
   sdk: IonicSdk;
@@ -52,17 +54,33 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      // Try different function names in sequence
+      this.sdk.logger.info(
+        `Attempting to get Pyth address from: ${this.sdk.chainDeployment.PythPriceOracle.address}`,
+      );
+
       try {
         this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
-      } catch {
+      } catch (e: unknown) {
+        this.sdk.logger.debug(`PYTH() failed: ${(e as Error).message}`);
         try {
           this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
-        } catch {
+        } catch (e: unknown) {
+          this.sdk.logger.debug(`pyth() failed: ${(e as Error).message}`);
           try {
             this.pythNetworkAddress = await this.pythPriceOracle.read.getPyth();
-          } catch (e) {
-            throw new Error('Could not find Pyth address using any known function name');
+          } catch (e: unknown) {
+            this.sdk.logger.debug(`getPyth() failed: ${(e as Error).message}`);
+            try {
+              this.pythNetworkAddress = await this.pythPriceOracle.read.pythAddress();
+            } catch (e: unknown) {
+              this.sdk.logger.debug(`pythAddress() failed: ${(e as Error).message}`);
+              try {
+                this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
+              } catch (e: unknown) {
+                this.sdk.logger.debug(`getPythAddress() failed: ${(e as Error).message}`);
+                throw new Error('Could not find Pyth address using any known function name');
+              }
+            }
           }
         }
       }
