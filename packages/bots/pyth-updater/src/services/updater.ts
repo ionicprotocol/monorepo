@@ -63,51 +63,59 @@ export class Updater {
       if (!code) {
         throw new Error('No contract code found at the specified address');
       }
-
-      // Try to get function selectors to debug available methods
-      const functions = await this.sdk.publicClient.request({
-        method: 'eth_getCode',
-        params: [this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`, 'latest'],
-      });
-      this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
+      this.sdk.logger.debug(`Contract exists at address with bytecode length: ${code.length}`);
 
       try {
-        this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
-        this.sdk.logger.debug('Successfully called pyth()');
-      } catch (e) {
-        this.sdk.logger.debug(`pyth() failed with error: ${e}`);
-        this.sdk.logger.debug(`Contract address: ${this.pythPriceOracle.address}`);
-        this.sdk.logger.debug(
-          `Available methods: ${Object.keys(this.pythPriceOracle.read).join(', ')}`,
-        );
+        // Try to get function selectors
+        const functions = await this.sdk.publicClient.request({
+          method: 'eth_getCode',
+          params: [this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`, 'latest'],
+        });
+        this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
 
+        // Try both methods with detailed error logging
         try {
-          this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
-          this.sdk.logger.debug('Successfully called getPythAddress()');
-        } catch (e2) {
-          this.sdk.logger.debug(`getPythAddress() failed with error: ${e2}`);
-          throw new Error(
-            `Both pyth() and getPythAddress() methods failed. Contract might have different interface. ` +
-              `Address: ${this.pythPriceOracle.address}`,
+          this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+          this.sdk.logger.debug('Successfully called pyth()');
+        } catch (e) {
+          this.sdk.logger.error(`pyth() failed with error: ${e}`);
+          this.sdk.logger.debug(
+            `Available methods: ${Object.keys(this.pythPriceOracle.read).join(', ')}`,
           );
+
+          try {
+            this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
+            this.sdk.logger.debug('Successfully called getPythAddress()');
+          } catch (e2) {
+            this.sdk.logger.debug(`getPythAddress() failed with error: ${e2}`);
+            throw new Error(
+              `Both pyth() and getPythAddress() methods failed. Contract might have different interface. ` +
+                `Address: ${this.pythPriceOracle.address}`,
+            );
+          }
         }
+
+        this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
+      } catch (error) {
+        this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
+        this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
+        this.sdk.logger.error(
+          `Oracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}`,
+        );
+        throw new Error(`Failed to initialize Pyth: ${error}`);
       }
 
-      this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
+      this.assetConfigs = assetConfigs;
+      this.pythContract = getContract({
+        address: this.pythNetworkAddress,
+        abi: pythAbi,
+        client: this.sdk.walletClient as any,
+      }) as any;
+      return this;
     } catch (error) {
-      this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
-      this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
-      this.sdk.logger.error(`Oracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}`);
-      throw new Error(`Failed to initialize Pyth: ${error}`);
+      this.sdk.logger.error(`Failed to initialize updater: ${error}`);
+      throw new Error(`Failed to initialize updater: ${error}`);
     }
-
-    this.assetConfigs = assetConfigs;
-    this.pythContract = getContract({
-      address: this.pythNetworkAddress,
-      abi: pythAbi,
-      client: this.sdk.walletClient as any,
-    }) as any;
-    return this;
   }
 
   async updateFeeds(): Promise<TransactionReceipt | null> {
