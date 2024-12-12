@@ -18,7 +18,8 @@ export const run = async (): Promise<void> => {
   } else {
     throw new Error(`Unsupported chain ID: ${config.chainId}`);
   }
-
+console.log(config.rpcUrls);
+console.log("hghjhjk",chain);
   const client = createPublicClient({
     chain,
     transport: fallback(config.rpcUrls.map((url) => http(url))),
