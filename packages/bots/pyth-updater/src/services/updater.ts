@@ -20,6 +20,7 @@ import { PythAssetConfig } from '../types';
 import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils';
 
 import { DiscordService } from './discord';
+
 const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
@@ -33,6 +34,7 @@ export class Updater {
     typeof pythAbi,
     WalletClient<HttpTransport, Chain, LocalAccount<string, Address>, WalletRpcSchema>
   >;
+
   constructor(ionicSdk: IonicSdk) {
     this.sdk = ionicSdk;
     this.alert = new DiscordService(ionicSdk.chainId);
@@ -43,6 +45,7 @@ export class Updater {
     }) as any;
     this.connection = new EvmPriceServiceConnection(config.priceServiceEndpoint);
   }
+
   async init(assetConfigs: PythAssetConfig[]) {
     this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
     this.assetConfigs = assetConfigs;
@@ -53,7 +56,50 @@ export class Updater {
     }) as any;
     return this;
   }
+
   async updateFeeds(): Promise<TransactionReceipt | null> {
+    // Add Lambda-specific environment debugging
+    this.sdk.logger.debug(
+      `Environment Info:
+      - Running in Lambda: ${!!process.env.AWS_LAMBDA_FUNCTION_NAME}
+      - Function Name: ${process.env.AWS_LAMBDA_FUNCTION_NAME || 'Not in Lambda'}
+      - Region: ${process.env.AWS_REGION}
+      - Memory: ${process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE}
+      `
+    );
+
+    // Add detailed chain configuration debugging
+    this.sdk.logger.debug(
+      `Chain Configuration:
+      - SDK ChainId: ${this.sdk.chainId}
+      - WalletClient Chain: ${JSON.stringify(this.sdk.walletClient?.chain, null, 2)}
+      - PublicClient Chain: ${JSON.stringify(this.sdk.publicClient.chain, null, 2)}
+      - RPC URLs: ${process.env.BASE_MAINNET_RPC_URLS ? 'Configured' : 'Missing'}
+      - Network Details: ${JSON.stringify({
+        name: this.sdk.publicClient.chain?.name,
+        nativeCurrency: this.sdk.publicClient.chain?.nativeCurrency,
+      }, null, 2)}
+      `
+    );
+
+    // Add wallet configuration debugging
+    this.sdk.logger.debug(
+      `Wallet Configuration:
+      - Account: ${this.sdk.walletClient?.account?.address}
+      - Connected: ${!!this.sdk.walletClient?.account}
+      - Transport Type: ${this.sdk.walletClient?.transport?.type}
+      `
+    );
+
+    // Add Pyth contract debugging
+    this.sdk.logger.debug(
+      `Pyth Configuration:
+      - PythPriceOracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}
+      - Pyth Network Address: ${this.pythNetworkAddress}
+      - Price Service Endpoint: ${config.priceServiceEndpoint}
+      `
+    );
+
     const configWithCurrentPrices = await getCurrentPrices(
       this.sdk,
       this.assetConfigs,
