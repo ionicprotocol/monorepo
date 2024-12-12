@@ -48,10 +48,25 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
+      // Log chain and contract info before the call
+      this.sdk.logger.info(
+        `Initializing Pyth Oracle at ${this.sdk.chainDeployment.PythPriceOracle.address} on chain ${this.sdk.chainId}`,
+      );
+
+      // Verify contract exists
+      const code = await this.sdk.publicClient.getBytecode({
+        address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
+      });
+      if (!code) {
+        throw new Error('No contract code found at PythPriceOracle address');
+      }
+
       this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
       this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
     } catch (error) {
       this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
+      this.sdk.logger.error(`Chain ID: ${this.sdk.chainId}`);
+      this.sdk.logger.error(`Oracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}`);
       throw new Error(`Failed to initialize Pyth: ${error}`);
     }
 
