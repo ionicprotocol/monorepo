@@ -21,7 +21,7 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 
 import { DiscordService } from './discord';
 
-const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
+const pythPriceOracleAbi = parseAbi(['function pyth() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -47,7 +47,7 @@ export class Updater {
   }
 
   async init(assetConfigs: PythAssetConfig[]) {
-    this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
+    this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
     this.assetConfigs = assetConfigs;
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
