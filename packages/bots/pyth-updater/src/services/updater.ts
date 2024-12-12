@@ -65,15 +65,6 @@ export class Updater {
       this.sdk.logger.info(`Proxy Address: ${proxyAddress}`);
       this.sdk.logger.info(`Node ENV: ${process.env.NODE_ENV}`);
 
-      // Verify RPC connection
-      try {
-        const blockNumber = await this.sdk.publicClient.getBlockNumber();
-        this.sdk.logger.info(`Current block number: ${blockNumber}`);
-      } catch (e) {
-        this.sdk.logger.error(`Failed to connect to RPC: ${e}`);
-        throw new Error('RPC connection failed - check endpoint configuration');
-      }
-
       // First verify the contract exists
       try {
         const code = await this.sdk.publicClient.getBytecode({ address: proxyAddress });
