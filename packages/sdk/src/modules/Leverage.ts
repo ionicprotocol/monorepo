@@ -28,7 +28,9 @@ export interface ILeverage {
     collateralMarket: Address,
     borrowMarket: Address,
     fundingAsset: Address,
-    fundingAmount: bigint
+    fundingAmount: bigint,
+    aggregatorTarget: Address,
+    aggregatorData: Hex
   ): Promise<Hex>;
   createAndFundPositionAtRatio(
     collateralMarket: Address,
@@ -269,12 +271,14 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       collateralMarket: Address,
       borrowMarket: Address,
       fundingAsset: Address,
-      fundingAmount: bigint
+      fundingAmount: bigint,
+      aggregatorTarget: Address,
+      aggregatorData: Hex
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPosition(
-        [collateralMarket, borrowMarket, fundingAsset, fundingAmount],
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, aggregatorTarget, aggregatorData, 0n],
         {
           account: this.walletClient!.account!.address,
           chain: this.walletClient!.chain
