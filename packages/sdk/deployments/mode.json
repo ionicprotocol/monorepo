@@ -59,6 +59,15 @@
     "ChainlinkPriceOracleV2_Redstone_Proxy": {
       "address": "0xa1917C72E86E8e6Db08943e2E6d45CdB87653E0f"
     },
+    "ChainlinkPriceOracleV2_eOracle": {
+      "address": "0x3C0B7b92D52064F86317dAB8847AdE76Cced88Ad"
+    },
+    "ChainlinkPriceOracleV2_eOracle_Implementation": {
+      "address": "0x131AB6d2eDecCe872374ABC789753d4280EE95dc"
+    },
+    "ChainlinkPriceOracleV2_eOracle_Proxy": {
+      "address": "0x3C0B7b92D52064F86317dAB8847AdE76Cced88Ad"
+    },
     "CollateralSwap-0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a": {
       "address": "0xeE02b738D3285756b9c45FE21aF4A2d76ECB56F6"
     },
