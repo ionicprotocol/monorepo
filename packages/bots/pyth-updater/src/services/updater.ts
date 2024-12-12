@@ -59,36 +59,43 @@ export class Updater {
       const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
 
       // Debug environment info
-      this.sdk.logger.info('Environment Debug Info:');
-      this.sdk.logger.info(`Chain ID: ${this.sdk.chainId}`);
-      this.sdk.logger.info(`RPC URL: ${this.sdk.publicClient.transport.url}`);
-      this.sdk.logger.info(`Proxy Address: ${proxyAddress}`);
-      this.sdk.logger.info(`Node ENV: ${process.env.NODE_ENV}`);
+      console.log('Environment Debug Info:');
+      console.log(`Chain ID: ${this.sdk.chainId}`);
+      console.log(`RPC URL: ${this.sdk.publicClient.transport.url}`);
+      console.log(`Proxy Address: ${proxyAddress}`);
+      console.log(`Node ENV: ${process.env.NODE_ENV}`);
 
       // First verify the contract exists
       try {
+        // Check RPC connection first
+        console.log('Checking RPC connection...');
+        const blockNumber = await this.sdk.publicClient.getBlockNumber();
+        console.log(`Current block number: ${blockNumber}`);
+
+        console.log('Checking contract bytecode...');
         const code = await this.sdk.publicClient.getBytecode({ address: proxyAddress });
-        this.sdk.logger.info(`Contract bytecode length: ${code?.length ?? 0}`);
+        console.log(`Contract bytecode length: ${code?.length ?? 0}`);
 
         if (!code) {
-          // Try to get the chain state to verify RPC connection
-          const blockNumber = await this.sdk.publicClient.getBlockNumber();
-          this.sdk.logger.info(`Current block number: ${blockNumber}`);
-
           // Check if we're using the correct chain deployment
-          this.sdk.logger.info(`Chain Deployment Config:`, {
+          console.log('Chain Deployment Config:', {
             chainId: this.sdk.chainDeployment.chainId,
             deploymentName: this.sdk.chainDeployment.name,
             oracleAddress: this.sdk.chainDeployment.PythPriceOracle?.address,
           });
 
+          // Try to get the chain state to verify RPC connection
           throw new Error(`No contract found at address ${proxyAddress}. Please verify:
             1. The contract address is correct for Base network
             2. The RPC endpoint is working and connected to Base
             3. The contract has been deployed to this address`);
         }
-      } catch (e) {
-        this.sdk.logger.error(`Error checking contract bytecode: ${e}`);
+      } catch (e: any) {
+        console.error('Error details:', {
+          message: e.message,
+          stack: e.stack,
+          cause: e.cause,
+        });
         throw e;
       }
 
@@ -148,7 +155,7 @@ export class Updater {
       }) as any;
       return this;
     } catch (error) {
-      this.sdk.logger.error(`Failed to initialize: ${error}`);
+      console.error('Initialization failed:', error);
       throw error;
     }
   }
