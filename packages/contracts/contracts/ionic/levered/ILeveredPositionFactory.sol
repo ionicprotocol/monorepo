@@ -101,14 +101,6 @@ interface ILeveredPositionFactorySecondExtension {
     bytes memory _adjustLeverageRatioAggregatorData,
     uint256 _expectedSlippage
   ) external returns (LeveredPosition);
-
-  function createAndFundPositionAtRatio(
-    ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount,
-    uint256 _leverageRatio
-  ) external returns (LeveredPosition);
 }
 
 interface ILeveredPositionFactoryExtension is

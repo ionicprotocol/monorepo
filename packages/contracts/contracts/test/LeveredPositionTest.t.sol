@@ -117,7 +117,12 @@ contract LeveredPositionLensTest is BaseTest {
       ICErc20(0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038),
       IERC20Upgradeable(0x4200000000000000000000000000000000000006),
       16754252276537996590,
-      3000000000000000000
+      3000000000000000000,
+      address(0),
+      "",
+      address(0),
+      "",
+      0
     );
     emit log_named_address("position", address(position));
 
