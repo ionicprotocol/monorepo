@@ -55,7 +55,7 @@ export class Updater {
         `Initializing Pyth Oracle at ${this.sdk.chainDeployment.PythPriceOracle.address} on chain ${this.sdk.chainId}`,
       );
 
-      // Get the contract interface
+      // Get and log the contract code and interface
       const code = await this.sdk.publicClient.getBytecode({
         address: this.sdk.chainDeployment.PythPriceOracle.address as Address,
       });
@@ -64,15 +64,26 @@ export class Updater {
         throw new Error('No contract code found at the specified address');
       }
 
+      // Try to get function selectors to debug available methods
+      const functions = await this.sdk.publicClient.request({
+        method: 'eth_getCode',
+        params: [this.sdk.chainDeployment.PythPriceOracle.address as `0x${string}`, 'latest'],
+      });
+      this.sdk.logger.debug(`Contract bytecode: ${functions.slice(0, 100)}...`);
+
       try {
         this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+        this.sdk.logger.debug('Successfully called pyth()');
       } catch (e) {
-        this.sdk.logger.debug(`pyth() failed: ${e}`);
+        this.sdk.logger.debug(`pyth() failed with error: ${e}`);
         try {
           this.pythNetworkAddress = await this.pythPriceOracle.read.getPythAddress();
+          this.sdk.logger.debug('Successfully called getPythAddress()');
         } catch (e2) {
-          this.sdk.logger.debug(`getPythAddress() failed: ${e2}`);
-          throw new Error('Both pyth() and getPythAddress() methods failed');
+          this.sdk.logger.debug(`getPythAddress() failed with error: ${e2}`);
+          throw new Error(
+            'Both pyth() and getPythAddress() methods failed. Contract might have different interface.',
+          );
         }
       }
 
