@@ -21,15 +21,7 @@ import { getCurrentPrices, getLastPrices, priceFeedNeedsUpdate } from '../utils'
 
 import { DiscordService } from './discord';
 
-const pythPriceOracleAbi = parseAbi([
-  'function implementation() external view returns (address)',
-  'function getImplementation() external view returns (address)',
-  'function PYTH() external view returns (address)',
-  'function pyth() external view returns (address)',
-  'function getPyth() external view returns (address)',
-  'function pythAddress() external view returns (address)',
-  'function getPythAddress() external view returns (address)',
-]);
+const pythPriceOracleAbi = parseAbi(['function PYTH() external view returns (address)']);
 export class Updater {
   sdk: IonicSdk;
   alert: DiscordService;
@@ -56,34 +48,21 @@ export class Updater {
 
   async init(assetConfigs: PythAssetConfig[]) {
     try {
-      const proxyAddress = this.sdk.chainDeployment.PythPriceOracle.address as Address;
+      // Debug all environment variables (excluding sensitive data)
+      console.log('Environment Variables Debug:');
+      console.log('NODE_ENV:', process.env.NODE_ENV);
+      console.log('RPC_URL:', this.sdk.publicClient.transport.url?.replace(/\/.*@/, '/***@')); // Mask API keys if present
+      console.log('CHAIN_ID:', process.env.CHAIN_ID);
+      console.log('PRICE_SERVICE_ENDPOINT:', process.env.PRICE_SERVICE_ENDPOINT);
 
-      console.log('Environment Debug Info:');
-      console.log(`Chain ID: ${this.sdk.chainId}`);
-      console.log(`Network: ${this.sdk.chainDeployment.name}`);
-      console.log(`Proxy Address: ${proxyAddress}`);
-
-      // Use original proxy address for all networks except Base
-      if (this.sdk.chainId === 8453) {
-        // Base mainnet
-        this.pythNetworkAddress = '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a' as Address;
-        console.log('Using Base network Pyth address');
-      } else {
-        // For all other networks (including Mode), use the original proxy address
-        this.pythNetworkAddress = proxyAddress;
-        console.log(`Using original proxy address for chain ${this.sdk.chainId}`);
-      }
-
-      // Verify contract exists
-      const code = await this.sdk.publicClient.getBytecode({
-        address: this.pythNetworkAddress,
+      // Check if chainDeployment is properly loaded
+      console.log('Chain Deployment Config:', {
+        chainId: this.sdk.chainDeployment?.chainId,
+        name: this.sdk.chainDeployment?.name,
       });
-      console.log(`Contract bytecode length: ${code?.length ?? 0}`);
 
-      if (!code) {
-        throw new Error(`No contract found at address ${this.pythNetworkAddress}`);
-      }
-
+      // Original initialization logic
+      this.pythNetworkAddress = await this.pythPriceOracle.read.PYTH();
       this.assetConfigs = assetConfigs;
       this.pythContract = getContract({
         address: this.pythNetworkAddress,
