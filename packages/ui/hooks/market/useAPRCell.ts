@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
-import type { Address, Hex } from 'viem';
-import type { FlywheelReward } from '@ionicprotocol/types';
 
+import type { APRCellProps } from '@ui/app/_components/markets/APRCell';
 import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
-import { multipliers } from '@ui/utils/multipliers';
 import { useMerklData } from '@ui/hooks/useMerklData';
-import { APRCellProps } from '@ui/app/_components/markets/APRCell';
+import { multipliers } from '@ui/utils/multipliers';
+
+import { useMerklApr } from '../useMerklApr';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 const EXCLUDED_REWARD_KEYS = ['ionAPR', 'turtle', 'flywheel'] as const;
 
@@ -68,7 +70,7 @@ export function useAPRCell({
     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
 
   return useMemo(() => {
-    const merklAprForToken = merklApr?.find(
+    const merklAprForOP = merklApr?.find(
       (a) => Object.keys(a)[0].toLowerCase() === underlyingToken.toLowerCase()
     )?.[underlyingToken];
 
@@ -83,14 +85,21 @@ export function useAPRCell({
 
     // Calculate total APR
     let total = aprTotal ?? 0;
+    console.log('aprTotal', aprTotal);
+    console.log('effectiveNativeYield', effectiveNativeYield);
     if (effectiveNativeYield) {
       total += effectiveNativeYield;
     }
-    if (merklAprForToken) {
-      total += merklAprForToken;
+
+    console.log('merklAprForOP', merklAprForOP);
+    if (config?.op && merklAprForOP) {
+      total += merklAprForOP;
     }
 
-    // Format APRs
+    const merklAprFormatted = merklAprForOP?.toLocaleString('en-US', {
+      maximumFractionDigits: 2
+    });
+
     const prefix = type === 'supply' || total > 0 ? '+' : '';
     const totalAPR =
       prefix + total.toLocaleString('en-US', { maximumFractionDigits: 2 });
@@ -101,11 +110,6 @@ export function useAPRCell({
       baseAPRPrefix +
       baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
-    const merklAprFormatted = merklAprForToken?.toLocaleString('en-US', {
-      maximumFractionDigits: 2
-    });
-
-    // Get reward icons
     const rewardIcons: string[] = [];
     if (effectiveNativeYield !== undefined) {
       rewardIcons.push(asset.toLowerCase());
@@ -117,7 +121,6 @@ export function useAPRCell({
     if (config?.eigenlayer) rewardIcons.push('eigen');
     if (config?.spice) rewardIcons.push('spice');
 
-    // Additional rewards data
     const additionalRewards: RewardIcon[] = [];
 
     if (config?.turtle && asset === 'STONE') {
@@ -184,7 +187,6 @@ export function useAPRCell({
     baseAPR,
     asset,
     dropdownSelectedChain,
-    selectedPoolId,
     rewards,
     nativeAssetYield,
     underlyingToken,

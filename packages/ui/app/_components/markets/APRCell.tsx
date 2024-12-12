@@ -8,11 +8,14 @@ import {
   HoverCardContent
 } from '@ui/components/ui/hover-card';
 import { pools } from '@ui/constants';
-import { cn } from '@ui/lib/utils';
-import { RewardIcons } from './RewardsIcon';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
-import { FlywheelReward } from '@ionicprotocol/types';
-import { Address, Hex } from 'viem';
+import { cn } from '@ui/lib/utils';
+
+import { RewardIcons } from './RewardsIcon';
+
+import type { Address, Hex } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export type APRCellProps = {
   type: 'borrow' | 'supply';
@@ -59,6 +62,7 @@ export default function APRCell(props: APRCellProps) {
   } = useAPRCell(props);
 
   const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
+  console.log('rewards', rewards);
 
   return (
     <HoverCard openDelay={50}>
