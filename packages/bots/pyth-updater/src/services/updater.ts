@@ -47,7 +47,14 @@ export class Updater {
   }
 
   async init(assetConfigs: PythAssetConfig[]) {
-    this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+    try {
+      this.pythNetworkAddress = await this.pythPriceOracle.read.pyth();
+      this.sdk.logger.debug(`Successfully read Pyth address: ${this.pythNetworkAddress}`);
+    } catch (error) {
+      this.sdk.logger.error(`Failed to read Pyth address: ${error}`);
+      throw new Error(`Failed to initialize Pyth: ${error}`);
+    }
+
     this.assetConfigs = assetConfigs;
     this.pythContract = getContract({
       address: this.pythNetworkAddress,
