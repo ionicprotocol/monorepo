@@ -65,7 +65,7 @@ export class Updater {
       - Function Name: ${process.env.AWS_LAMBDA_FUNCTION_NAME || 'Not in Lambda'}
       - Region: ${process.env.AWS_REGION}
       - Memory: ${process.env.AWS_LAMBDA_FUNCTION_MEMORY_SIZE}
-      `
+      `,
     );
 
     // Add detailed chain configuration debugging
@@ -75,11 +75,15 @@ export class Updater {
       - WalletClient Chain: ${JSON.stringify(this.sdk.walletClient?.chain, null, 2)}
       - PublicClient Chain: ${JSON.stringify(this.sdk.publicClient.chain, null, 2)}
       - RPC URLs: ${process.env.BASE_MAINNET_RPC_URLS ? 'Configured' : 'Missing'}
-      - Network Details: ${JSON.stringify({
-        name: this.sdk.publicClient.chain?.name,
-        nativeCurrency: this.sdk.publicClient.chain?.nativeCurrency,
-      }, null, 2)}
-      `
+      - Network Details: ${JSON.stringify(
+        {
+          name: this.sdk.publicClient.chain?.name,
+          nativeCurrency: this.sdk.publicClient.chain?.nativeCurrency,
+        },
+        null,
+        2,
+      )}
+      `,
     );
 
     // Add wallet configuration debugging
@@ -88,7 +92,7 @@ export class Updater {
       - Account: ${this.sdk.walletClient?.account?.address}
       - Connected: ${!!this.sdk.walletClient?.account}
       - Transport Type: ${this.sdk.walletClient?.transport?.type}
-      `
+      `,
     );
 
     // Add Pyth contract debugging
@@ -97,7 +101,7 @@ export class Updater {
       - PythPriceOracle Address: ${this.sdk.chainDeployment.PythPriceOracle.address}
       - Pyth Network Address: ${this.pythNetworkAddress}
       - Price Service Endpoint: ${config.priceServiceEndpoint}
-      `
+      `,
     );
 
     const configWithCurrentPrices = await getCurrentPrices(
