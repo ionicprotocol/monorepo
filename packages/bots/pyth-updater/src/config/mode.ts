@@ -53,20 +53,6 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
-  {
-    // price feed for uSOL
-    priceId: '0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55',
-    configRefreshRateInSeconds: 3600,
-    validTimePeriodSeconds: 86400, // 24 hrs
-    deviationThresholdBps: 100, // 1%
-  },
-  {
-    // price feed for USDe
-    priceId: '0x6ec879b1e9963de5ee97e9c8710b742d6228252a5e2ca12d4ae81d7fe5ee8c5d',
-    configRefreshRateInSeconds: 3600,
-    validTimePeriodSeconds: 86400, // 24 hrs
-    deviationThresholdBps: 100, // 1%
-  },
   // {
   //   // price feed for UNI
   //   priceId: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',

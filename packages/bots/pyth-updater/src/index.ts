@@ -25,7 +25,14 @@ export const handler = async (
   logger.info(`Event: ${JSON.stringify(event)}`);
   logger.info(`Context: ${JSON.stringify(context)}`);
   logger.info(`Started`);
-  const chain = config.chainId === mode.id ? mode : base;
+  let chain;
+  if (config.chainId === mode.id) {
+    chain = mode;
+  } else if (config.chainId === base.id) {
+    chain = base;
+  } else {
+    throw new Error(`Unsupported chain ID: ${config.chainId}`);
+  }
   const account = privateKeyToAccount(config.adminPrivateKey as Hex);
   const client = createPublicClient({
     chain,
