@@ -1,29 +1,6 @@
 import { base, mode } from 'viem/chains';
 
-export type EarnRow = {
-  apr: number;
-  asset: string[]; //name of the asset in uppercase array
-  getApr?: () => Promise<number>;
-  getTvl?: () => Promise<number>;
-  link: string;
-  network: string;
-  poolChain: number;
-  protocol: string;
-  tvl: number;
-  tvlpool?: string;
-  img: string;
-  strategy: string;
-  rewards: Record<number, IRewards>;
-  live?: boolean;
-};
-
-export interface IRewards {
-  peaks: boolean;
-  turtle: boolean;
-  velo?: string;
-  aero?: boolean;
-  points: Record<string, number>;
-}
+import type { EarnRow } from '@ui/types/Earn';
 
 export const earnOpps: EarnRow[] = [
   {

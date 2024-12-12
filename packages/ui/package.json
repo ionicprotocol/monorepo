@@ -41,6 +41,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "graphql": "^16.9.0",
+    "graphql-request": "^7.1.2",
     "lucide-react": "^0.454.0",
     "mathjs": "^13.2.0",
     "millify": "^6.1.0",
