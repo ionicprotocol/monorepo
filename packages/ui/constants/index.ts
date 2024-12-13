@@ -77,6 +77,9 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [lisk.id]: {
     '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION',
     '0xac485391EB2d7D88253a7F1eF18C37f4242D1A24': 'LSK'
+  },
+  [fraxtal.id]: {
+    '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE': 'ION'
   }
 };
 
@@ -131,7 +134,7 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
       '0x05c3e910F7639457f92220605966e7f86A2ef966'
     ],
-    borrow: []
+    borrow: ['0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA']
   },
   [lisk.id]: {
     supply: [
@@ -139,6 +142,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7'
     ],
     borrow: []
+  },
+  [fraxtal.id]: {
+    supply: [],
+    borrow: ['0x63A1531a06F0Ac597a0DfA5A516a37073c3E1e0a']
   }
 };
 
