@@ -88,8 +88,8 @@ export const multipliers: Record<
       USDT: {
         borrow: {
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         decimals: 6,
         market: 'usdt_market',
