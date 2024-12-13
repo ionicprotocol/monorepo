@@ -12,7 +12,7 @@ import {
   parseEther,
   parseUnits
 } from 'viem';
-import { useBalance, useChainId } from 'wagmi';
+import { useBalance, useChainId, usePublicClient } from 'wagmi';
 
 import {
   Dialog,
@@ -67,6 +67,7 @@ export default function Loop({
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
+  const publicClient = usePublicClient();
   const amountAsBInt = useMemo<bigint>(
     () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
     [amount, selectedCollateralAsset]
