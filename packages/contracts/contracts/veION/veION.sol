@@ -103,6 +103,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   mapping(address => EnumerableSet.UintSet) internal s_ownerToTokenIds;
   /// @dev Maps user addresses and token addresses to cumulative asset values.
   mapping(address => mapping(address => uint256)) public s_userCumulativeAssetValues;
+  /// @dev Maps token Id and lp onto delegator permissioning.
+  mapping(uint256 => mapping(address => bool)) public s_delegatorsBlocked;
 
   /**
    * @notice Initializes the veION contract with the given AddressesProvider.
@@ -443,6 +445,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (amount > fromLocked.amount) revert AmountTooBig();
     if (!fromLocked.isPermanent) revert NotPermanentLock();
     if (!toLocked.isPermanent) revert NotPermanentLock();
+    if (s_delegatorsBlocked[toTokenId][lpToken]) revert NotAcceptingDelegators();
 
     fromLocked.amount -= amount;
     toLocked.delegateAmount += amount;
@@ -458,6 +461,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     s_locked[toTokenId][lpType] = toLocked;
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
+
+    if (s_voted[toTokenId]) IVoter(s_voter).poke(toTokenId);
+    if (s_voted[fromTokenId]) IVoter(s_voter).poke(fromTokenId);
 
     emit Delegated(fromTokenId, toTokenId, lpToken, amount);
   }
@@ -495,6 +501,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
 
+    if (s_voted[toTokenId]) IVoter(s_voter).poke(toTokenId);
+    if (s_voted[fromTokenId]) IVoter(s_voter).poke(fromTokenId);
+
     emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
   }
 
@@ -531,6 +540,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (_stakeStrategy.userStakingWallet(msg.sender) == address(0)) revert NoUnderlyingStake();
     _stakeStrategy.claim(msg.sender);
     emit EmissionsClaimed(msg.sender, _tokenAddress);
+  }
+
+  function allowDelegators(uint256 _tokenId, address _tokenAddress, bool _blocked) external nonReentrant {
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    s_delegatorsBlocked[_tokenId][_tokenAddress] = _blocked;
+    emit DelegatorsBlocked(_tokenId, _tokenAddress, _blocked);
   }
 
   /**

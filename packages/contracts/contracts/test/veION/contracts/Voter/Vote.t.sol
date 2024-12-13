@@ -287,6 +287,136 @@ contract Vote is VoterTest {
     console.log("Used Weight for Balancer:", voteDetailsBalancer.usedWeight);
   }
 
+  function test_vote_VoteThenDelegateShouldPokeAccordingly() public {
+    VoteLocalVars memory vars;
+
+    vars.marketVote = new address[](2);
+    vars.marketVoteSide = new IVoter.MarketSide[](2);
+    vars.weights = new uint256[](2);
+
+    vars.marketVote[0] = ethMarket;
+    vars.marketVoteSide[0] = IVoter.MarketSide.Supply;
+    vars.weights[0] = 100;
+
+    vars.marketVote[1] = btcMarket;
+    vars.marketVoteSide[1] = IVoter.MarketSide.Borrow;
+    vars.weights[1] = 200;
+
+    address user2 = address(0x23512);
+    LockInfo memory lockInfo2 = _createLockInternal(user2);
+
+    vm.prank(user);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
+    vm.prank(user2);
+    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInfo2.tokenId);
+
+    vm.prank(user);
+    voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
+
+    vm.prank(user2);
+    voter.vote(lockInfo2.tokenId, vars.marketVote, vars.marketVoteSide, vars.weights);
+
+    IVoter.VoteDetails memory voteDetails = voter.getVoteDetails(
+      voterTokenIdMultiLp,
+      address(modeVelodrome5050IonMode)
+    );
+    IVoter.VoteDetails memory voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
+
+    for (uint256 i; i < voteDetails.marketVotes.length; i++) {
+      console.log("Market Votes 1");
+      console.log("Market Vote", voteDetails.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails.marketVoteSides[i]));
+      console.log("Weight", voteDetails.votes[i]);
+      console.log("---------------------------------------");
+    }
+    console.log("======================================");
+    for (uint256 i; i < voteDetails2.marketVotes.length; i++) {
+      console.log("Market Votes 2");
+      console.log("Market Vote", voteDetails2.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails2.marketVoteSides[i]));
+      console.log("Weight", voteDetails2.votes[i]);
+      console.log("---------------------------------------");
+    }
+    console.log("============================================================================");
+
+    vm.prank(user);
+    ve.delegate(voterTokenIdMultiLp, lockInfo2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
+
+    voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
+    voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
+
+    for (uint256 i; i < voteDetails.marketVotes.length; i++) {
+      console.log("Market Votes 3");
+      console.log("Market Vote", voteDetails.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails.marketVoteSides[i]));
+      console.log("Weight", voteDetails.votes[i]);
+      console.log("---------------------------------------");
+    }
+    console.log("======================================");
+    for (uint256 i; i < voteDetails2.marketVotes.length; i++) {
+      console.log("Market Votes 4");
+      console.log("Market Vote", voteDetails2.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails2.marketVoteSides[i]));
+      console.log("Weight", voteDetails2.votes[i]);
+      console.log("---------------------------------------");
+    }
+
+    assertEq(voteDetails.votes[0], 333333333333333333333, "First market votes should be lower");
+    assertEq(voteDetails.votes[1], 666666666666666666666, "Second market votes should be lower");
+
+    assertEq(voteDetails2.votes[0], 1000000000000000000000, "First market votes should be higher");
+    assertEq(voteDetails2.votes[1], 2000000000000000000000, "Second market votes should be higher");
+
+    uint256[] memory toTokenIds = new uint256[](1);
+    toTokenIds[0] = lockInfo2.tokenId;
+
+    uint256[] memory amounts = new uint256[](1);
+    amounts[0] = type(uint256).max;
+
+    vm.prank(user);
+    ve.removeDelegatees(voterTokenIdMultiLp, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    // voter.poke(lockInfo2.tokenId);
+
+    voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
+    voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
+
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInfo2.tokenId);
+    for (uint256 i; i < assets.length; i++) {
+      console.log("Assets", assets[i]);
+      console.log("Balances", balances[i]);
+      console.log("Boosts", boosts[i]);
+    }
+
+    // (assets, balances, boosts) = ve.balanceOfNFT(voterTokenIdMultiLp);
+    // for (uint256 i; i < assets.length; i++) {
+    //   console.log("Assets", assets[i]);
+    //   console.log("Balances", balances[i]);
+    //   console.log("Boosts", boosts[i]);
+    // }
+
+    for (uint256 i; i < voteDetails.marketVotes.length; i++) {
+      console.log("Market Votes 5");
+      console.log("Market Vote", voteDetails.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails.marketVoteSides[i]));
+      console.log("Weight", voteDetails.votes[i]);
+      console.log("---------------------------------------");
+    }
+    console.log("======================================");
+    for (uint256 i; i < voteDetails2.marketVotes.length; i++) {
+      console.log("Market Votes 6");
+      console.log("Market Vote", voteDetails2.marketVotes[i]);
+      console.log("Market Vote Side", uint256(voteDetails2.marketVoteSides[i]));
+      console.log("Weight", voteDetails2.votes[i]);
+      console.log("---------------------------------------");
+    }
+
+    assertEq(voteDetails.votes[0], 666666666666666666666, "First market votes should be lower");
+    assertEq(voteDetails.votes[1], 1333333333333333333333, "Second market votes should be lower");
+
+    assertEq(voteDetails2.votes[0], 666666666666666666666, "First market votes should be higher");
+    assertEq(voteDetails2.votes[1], 1333333333333333333333, "Second market votes should be higher");
+  }
+
   function test_vote_RevertIfSameEpoch() public {
     VoteLocalVars memory vars;
 
@@ -477,25 +607,6 @@ contract Vote is VoterTest {
 
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("ZeroWeight()"));
-    voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
-  }
-
-  function test_vote_RevertIfZeroBalance() public {
-    VoteLocalVars memory vars;
-
-    vars.marketVote = new address[](1);
-    vars.marketVoteSide = new IVoter.MarketSide[](1);
-    vars.weights = new uint256[](1);
-
-    vars.marketVote[0] = ethMarket;
-    vars.marketVoteSide[0] = IVoter.MarketSide.Supply;
-    vars.weights[0] = 100; // Set weight to zero to trigger the revert
-
-    // Warp time 3 years (3 * 365 * 24 * 60 * 60 seconds)
-    vm.warp(block.timestamp + 3 * 365 * 86400);
-
-    vm.prank(user);
-    vm.expectRevert(abi.encodeWithSignature("ZeroBalance()"));
     voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
   }
 }

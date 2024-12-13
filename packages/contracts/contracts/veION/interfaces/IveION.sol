@@ -138,6 +138,7 @@ interface IveION {
   error NotEnoughRemainingAfterSplit();
   error NoDelegationBetweenTokens(uint256 _tokenId1, uint256 _tokenId2);
   error NoUnderlyingStake();
+  error NotAcceptingDelegators();
 
   event Deposit(
     address indexed provider,
@@ -184,6 +185,7 @@ interface IveION {
   event PermanentLockCreated(address indexed tokenAddress, uint256 indexed tokenId, uint256 amount);
   event PermanentLockRemoved(address indexed tokenAddress, uint256 indexed tokenId, uint256 amount);
   event Voted(uint256 _tokenId, bool _voting);
+  event DelegatorsBlocked(uint256 indexed _tokenId, address indexed _lpToken, bool _blocked);
 
   /**
    * @notice Creates a new lock for multiple tokens and assigns it to a specified address

@@ -56,6 +56,8 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   mapping(address => mapping(MarketSide => mapping(address => uint256))) public weights;
   ///@notice Mapping from NFT to Pool to LP Asset to Votes
   mapping(uint256 => mapping(address => mapping(MarketSide => mapping(address => uint256)))) public votes;
+  ///@notice Mapping from NFT to Pool to LP Asset to Base Weights
+  mapping(uint256 => mapping(address => mapping(MarketSide => mapping(address => uint256)))) public baseWeights;
   ///@notice Mapping from NFT to List of markets voted for by NFT
   mapping(uint256 => mapping(address => address[])) public marketVote;
   ///@notice Mapping from NFT to List of market vote sides voted for by NFT
@@ -182,11 +184,8 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     (address[] memory _votingLPs, uint256[] memory _votingLPBalances, uint256[] memory _boosts) = IveION(ve)
       .balanceOfNFT(_tokenId);
 
-    for (uint256 i = 0; i < lpTokens.length; i++) {
-      uint256 tokenIndex = _getIndexOfLp(_votingLPs, lpTokens[i]);
-      uint256 effectiveBalance = tokenIndex != type(uint256).max
-        ? (_votingLPBalances[tokenIndex] * _boosts[tokenIndex]) / 1e18
-        : 0;
+    for (uint256 i = 0; i < _votingLPs.length; i++) {
+      uint256 effectiveBalance = (_votingLPBalances[i] * _boosts[i]) / 1e18;
       _poke(_tokenId, lpTokens[i], effectiveBalance);
     }
   }
@@ -277,13 +276,13 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
       vars.marketWeight = (_weights[i] * _votingAssetBalance) / totalVoteWeight;
       if (votes[_tokenId][vars.market][vars.marketSide][_votingAsset] != 0) revert NonZeroVotes();
-      if (vars.marketWeight == 0) revert ZeroBalance();
 
       marketVote[_tokenId][_votingAsset].push(vars.market);
       marketVoteSide[_tokenId][_votingAsset].push(vars.marketSide);
 
       weights[vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
       votes[_tokenId][vars.market][vars.marketSide][_votingAsset] += vars.marketWeight;
+      baseWeights[_tokenId][vars.market][vars.marketSide][_votingAsset] = _weights[i];
       IBribeRewards(vars.bribes).deposit(_votingAsset, uint256(vars.marketWeight), _tokenId);
       vars.usedWeight += vars.marketWeight;
       vars.totalWeight += vars.marketWeight;
@@ -296,7 +295,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
         block.timestamp
       );
     }
-    if (vars.usedWeight > 0) IveION(ve).voting(_tokenId, true);
+    IveION(ve).voting(_tokenId, true);
     totalWeight[_votingAsset] += uint256(vars.totalWeight);
     usedWeights[_tokenId][_votingAsset] = uint256(vars.usedWeight);
   }
@@ -315,7 +314,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     uint256 totalVoteWeight = 0;
 
     for (uint256 i = 0; i < _marketCnt; i++) {
-      _weights[i] = votes[_tokenId][_marketVote[i]][_marketVoteSide[i]][_votingAsset];
+      _weights[i] = baseWeights[_tokenId][_marketVote[i]][_marketVoteSide[i]][_votingAsset];
     }
 
     for (uint256 i = 0; i < _marketVote.length; i++) {
@@ -323,9 +322,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     }
 
     _reset(_tokenId, _votingAsset);
-    if (_votingAssetBalance != 0) {
-      _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights, totalVoteWeight);
-    }
+    _vote(_tokenId, _votingAsset, _votingAssetBalance, _marketVote, _marketVoteSide, _weights, totalVoteWeight);
   }
 
   /**
@@ -429,19 +426,6 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
       }
     }
     return false;
-  }
-
-  /**
-   * @notice Internal function to get the index of an LP token in a list of voting LP tokens.
-   * @param _votingLpTokens An array of voting LP token addresses.
-   * @param _lpToken The address of the LP token to find.
-   * @return _index The index of the LP token in the array, or max uint256 if not found.
-   */
-  function _getIndexOfLp(address[] memory _votingLpTokens, address _lpToken) internal pure returns (uint256 _index) {
-    for (uint256 i = 0; i < _votingLpTokens.length; i++) {
-      if (_votingLpTokens[i] == _lpToken) return i;
-    }
-    return type(uint256).max;
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
