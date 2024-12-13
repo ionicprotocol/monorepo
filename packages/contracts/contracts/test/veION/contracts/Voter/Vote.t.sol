@@ -306,9 +306,9 @@ contract Vote is VoterTest {
     LockInfo memory lockInfo2 = _createLockInternal(user2);
 
     vm.prank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
+    ve.lockPermanent(veloLpType, voterTokenIdMultiLp);
     vm.prank(user2);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInfo2.tokenId);
+    ve.lockPermanent(veloLpType, lockInfo2.tokenId);
 
     vm.prank(user);
     voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
@@ -340,7 +340,7 @@ contract Vote is VoterTest {
     console.log("============================================================================");
 
     vm.prank(user);
-    ve.delegate(voterTokenIdMultiLp, lockInfo2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
+    ve.delegate(voterTokenIdMultiLp, lockInfo2.tokenId, veloLpType, MINT_AMT / 2);
 
     voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
     voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
@@ -374,7 +374,7 @@ contract Vote is VoterTest {
     amounts[0] = type(uint256).max;
 
     vm.prank(user);
-    ve.removeDelegatees(voterTokenIdMultiLp, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    ve.removeDelegatees(voterTokenIdMultiLp, toTokenIds, veloLpType, amounts);
     // voter.poke(lockInfo2.tokenId);
 
     voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
