@@ -69,7 +69,6 @@ export default function Market() {
     poolData,
     loopProps
   } = useMarketData(selectedPool, chain, selectedSymbol);
-  console.log('marketData', marketData);
 
   useEffect(() => {
     setFilteredMarketData(marketData);

@@ -5,7 +5,6 @@ import { useMerklData } from '@ui/hooks/useMerklData';
 import { multipliers } from '@ui/utils/multipliers';
 
 import {
-  calculateTotalAPR,
   hasAdditionalRewards,
   getAdditionalRewardIcons,
   getExtraRewardIcons,

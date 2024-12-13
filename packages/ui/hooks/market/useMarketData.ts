@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { type Address, formatEther, formatUnits } from 'viem';
 
@@ -85,22 +85,18 @@ export const useMarketData = (
     poolData?.assets.map((asset) => asset.cToken) ?? [],
     +chain
   );
-
   const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
     assets ?? []
   );
+  const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
 
   const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
     useBorrowCapsForAssets(cTokenAddresses, +chain);
-  const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
-  console.log('merklApr', merklApr);
 
-  const { data: rewards } = useRewards({
+  const { data: rewards, isFetched: isFetchedRewards } = useRewards({
     chainId: +chain,
     poolId: selectedPool
   });
-
-  // Get all cToken addresses for borrow caps query
 
   const formatNumber = (value: bigint | number, decimals: number): string => {
     const parsedValue =
@@ -296,7 +292,8 @@ export const useMarketData = (
       isLoadingMerklData ||
       isLoadingBorrowCaps ||
       isLoadingSupplyApys ||
-      isLoadingBorrowApys,
+      isLoadingBorrowApys ||
+      !isFetchedRewards,
     poolData,
     selectedMarketData,
     loopProps,
