@@ -44,10 +44,10 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   mapping(ERC20 => mapping(address => uint224)) internal _userIndex;
 
   /// @notice user blacklisted supply per strategy
-  mapping(ERC20 => mapping(address => uint256)) internal _userBlacklistedSupply;
+  mapping(ERC20 => mapping(address => uint256)) public userBlacklistedSupply;
 
   /// @notice blacklisted supply per strategy
-  mapping(ERC20 => uint256) internal _blacklistedSupply;
+  mapping(ERC20 => uint256) public blacklistedSupply;
 
   modifier onlyEmissionsManager() {
     require(address(emissionsManager) == msg.sender, "!emissionsManager");
@@ -153,7 +153,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       @notice take rewards for a given user
       @param user the user claiming rewards
       @param receiver the address that receives the rewards
-      @dev this function is public, and all rewards transfer to the user
+      @dev this function is public, and all rewards transfer to the receiver
     */
   function takeRewardsFromUser(address user, address receiver) external onlyEmissionsManager {
     uint256 accrued = rewardsAccrued(user);
@@ -169,42 +169,45 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
 
   /** 
       @notice set user balances to zero
-      @param user the user to be blacklisted
-      @dev this function is public, and all rewards transfer to the user
+      @param strategy strategy to whitelist user for
+      @param user the user to be whitelisted
+      @dev this function is public, and all user and strategy blacklisted supplies are reset
     */
   function whitelistUser(ERC20 strategy, address user) external onlyEmissionsManager {
-      _blacklistedSupply[strategy] -= _userBlacklistedSupply[strategy][user];
-      _userBlacklistedSupply[strategy][user] = 0;
+      blacklistedSupply[strategy] -= userBlacklistedSupply[strategy][user];
+      userBlacklistedSupply[strategy][user] = 0;
   }
 
   /** 
-      @notice set user balances to zero
+      @notice update user blacklisted balances
+      @param strategy strategy to update blacklisted balances
       @param user the user to be blacklisted
-      @dev this function is public, and all rewards transfer to the user
+      @dev this function is public
     */
   function updateBlacklistBalances(ERC20 strategy, address user) external onlyEmissionsManager {
     _updateBlacklistBalances(strategy, user);
   }
 
   /** 
-      @notice set user balances to zero
+      @notice update user blacklisted balances
+      @param strategy strategy to update blacklisted balances
       @param user the user to be blacklisted
-      @dev this function is public, and all rewards transfer to the user
+      @dev this function is private
     */
   function _updateBlacklistBalances(ERC20 strategy, address user) internal {
     if (emissionsManager.isUserBlacklisted(user)) {
-      uint256 _oldUserBlacklistedSupply = _userBlacklistedSupply[strategy][user]; 
+      uint256 _oldUserBlacklistedSupply = userBlacklistedSupply[strategy][user]; 
       uint256 supplierTokens = address(flywheelBooster) != address(0)
         ? flywheelBooster.boostedBalanceOf(ERC20(strategy), user)
         : ERC20(strategy).balanceOf(user);
 
       if (supplierTokens >= _oldUserBlacklistedSupply) {
-        _blacklistedSupply[strategy] += supplierTokens - _oldUserBlacklistedSupply;
-        _userBlacklistedSupply[strategy][user] = supplierTokens;
+        blacklistedSupply[strategy] += supplierTokens - _oldUserBlacklistedSupply;
+        userBlacklistedSupply[strategy][user] = supplierTokens;
       }
       else {
-        _blacklistedSupply[strategy] -= _oldUserBlacklistedSupply - supplierTokens;
-        _userBlacklistedSupply[strategy][user] = supplierTokens;
+        blacklistedSupply[strategy] -= _oldUserBlacklistedSupply - supplierTokens;
+        userBlacklistedSupply[strategy][user] = supplierTokens;
       }
     }
   }
@@ -327,8 +330,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     if (strategyRewardsAccrued > 0) {
       // use the booster or token supply to calculate reward index denominator
       uint256 supplyTokens = address(flywheelBooster) != address(0)
-        ? flywheelBooster.boostedTotalSupply(strategy) - _blacklistedSupply[strategy]
-        : strategy.totalSupply() - _blacklistedSupply[strategy];
+        ? flywheelBooster.boostedTotalSupply(strategy) - blacklistedSupply[strategy]
+        : strategy.totalSupply() - blacklistedSupply[strategy];
 
       // 100% = 100e16
       uint256 accruedFees = (strategyRewardsAccrued * performanceFee) / uint224(100e16);
@@ -372,8 +375,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     uint224 deltaIndex = strategyIndex - supplierIndex;
     // use the booster or token balance to calculate reward balance multiplier
     uint256 supplierTokens = address(flywheelBooster) != address(0)
-      ? flywheelBooster.boostedBalanceOf(strategy, user) - _userBlacklistedSupply[strategy][user]
-      : strategy.balanceOf(user) - _userBlacklistedSupply[strategy][user];
+      ? flywheelBooster.boostedBalanceOf(strategy, user) - userBlacklistedSupply[strategy][user]
+      : strategy.balanceOf(user) - userBlacklistedSupply[strategy][user];
 
     // accumulate rewards by multiplying user tokens by rewardsPerToken index and adding on unclaimed
     uint256 supplierDelta = (deltaIndex * supplierTokens) / (10**strategy.decimals());

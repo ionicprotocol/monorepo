@@ -136,7 +136,9 @@ contract Split is veIONTest {
     ve.toggleSplit(user, false);
     ve.toggleSplit(address(0), true);
     vm.prank(user);
-    ve.split(IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE, lockInputMultiLP.tokenId, splitAmount);
+    vm.expectEmit(false, false, false, false);
+    emit IveION.SplitCompleted(0, 0, 0, 0, address(0));
+    ve.split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 
   function test_split_RevertIfNotOwner() public {

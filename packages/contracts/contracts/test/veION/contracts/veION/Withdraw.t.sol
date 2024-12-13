@@ -405,6 +405,15 @@ contract Withdraw is veIONTest {
     ve.transferFrom(alice, ralph, tokenId3);
     vm.stopPrank();
 
+    address stakingWalletInstanceIonMode = veloIonModeStakingStrategy.userStakingWallet(users[1]);
+    address stakingWalletInstanceWethUsdc = veloWethUsdcStakingStrategy.userStakingWallet(users[1]);
+
+    uint256 stakedBalanceIonMode = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceIonMode);
+    uint256 stakedBalanceWethUsdc = veloWethUsdcStakingStrategy.balanceOf(stakingWalletInstanceWethUsdc);
+
+    assertEq(stakedBalanceIonMode, 7e18, "Underlying staked balance for bob updated ion-mode");
+    assertEq(stakedBalanceWethUsdc, 1e16, "Underlying staked balance for bob updated weth-usdc");
+
     console.log(
       "Stakes after alice sends 7e18 ion-mode and 1e16 weth-usdc token to bob, 3e18 ion-mode token to cindy, 1e16 weth-usdc token to ralph"
     );
@@ -424,6 +433,12 @@ contract Withdraw is veIONTest {
     console.log(
       "bob withdraws 7e18 ion-mode, 1e16 weth-usdc, cindy withdraws ion-mode 3e18, ralph withdraws 1e16 weth-usdc"
     );
+    stakedBalanceIonMode = veloIonModeStakingStrategy.balanceOf(stakingWalletInstanceIonMode);
+    stakedBalanceWethUsdc = veloWethUsdcStakingStrategy.balanceOf(stakingWalletInstanceWethUsdc);
+
+    assertEq(stakedBalanceIonMode, 0, "Underlying staked balance for bob updated ion-mode");
+    assertEq(stakedBalanceWethUsdc, 0, "Underlying staked balance for bob updated weth-usdc");
+
     _logUnderlyingStake(users);
     // _logCumulativeAssetValues(users, lpTokens);
     // _logTokens(tokenIds, lpTokens);

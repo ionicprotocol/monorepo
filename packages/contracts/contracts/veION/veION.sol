@@ -103,6 +103,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   mapping(address => EnumerableSet.UintSet) internal s_ownerToTokenIds;
   /// @dev Maps user addresses and token addresses to cumulative asset values.
   mapping(address => mapping(address => uint256)) public s_userCumulativeAssetValues;
+  /// @dev Maps token Id and lp onto delegator permissioning.
+  mapping(uint256 => mapping(address => bool)) public s_delegatorsBlocked;
 
   /**
    * @notice Initializes the veION contract with the given AddressesProvider.
@@ -434,6 +436,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (!fromLocked.isPermanent) revert NotPermanentLock();
     if (!toLocked.isPermanent) revert NotPermanentLock();
     if (lpToken == address(0)) revert TokenNotWhitelisted();
+    if (s_delegatorsBlocked[toTokenId][lpToken]) revert NotAcceptingDelegators();
 
     fromLocked.amount -= amount;
     toLocked.delegateAmount += amount;
@@ -449,6 +452,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     s_locked[toTokenId][lpType] = toLocked;
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
+
+    if (s_voted[toTokenId]) IVoter(s_voter).poke(toTokenId);
+    if (s_voted[fromTokenId]) IVoter(s_voter).poke(fromTokenId);
 
     emit Delegated(fromTokenId, toTokenId, lpToken, amount);
   }
@@ -485,6 +491,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     s_locked[fromTokenId][lpType] = fromLocked;
     _checkpoint(toTokenId, s_locked[toTokenId][lpType], lpType);
     _checkpoint(fromTokenId, s_locked[fromTokenId][lpType], lpType);
+
+    if (s_voted[toTokenId]) IVoter(s_voter).poke(toTokenId);
+    if (s_voted[fromTokenId]) IVoter(s_voter).poke(fromTokenId);
 
     emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
   }
@@ -529,6 +538,12 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (_stakeStrategy.userStakingWallet(msg.sender) == address(0)) revert NoUnderlyingStake();
     _stakeStrategy.claim(msg.sender);
     emit EmissionsClaimed(msg.sender, _tokenAddress);
+  }
+
+  function allowDelegators(uint256 _tokenId, address _tokenAddress, bool _blocked) external nonReentrant {
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    s_delegatorsBlocked[_tokenId][_tokenAddress] = _blocked;
+    emit DelegatorsBlocked(_tokenId, _tokenAddress, _blocked);
   }
 
   /**
@@ -918,12 +933,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveION
   function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
+    require(_boostAmount > 0, "Boost amount must be greater than zero");
     s_limitedBoost = _boostAmount;
     emit LimitedTimeBoostSet(_boostAmount);
   }
 
   /// @inheritdoc IveION
   function setVoter(address _voter) external onlyOwner {
+    require(address(_voter) != address(0), "Invalid address");
     s_voter = _voter;
     emit VoterSet(_voter);
   }
@@ -945,18 +962,21 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveION
   function setIonicPool(address _ionicPool) external onlyOwner {
+    require(address(_ionicPool) != address(0), "Invalid address");
     s_ionicPool = _ionicPool;
     emit IonicPoolSet(_ionicPool);
   }
 
   /// @inheritdoc IveION
   function setAeroVoting(address _aeroVoting) external onlyOwner {
+    require(address(_aeroVoting) != address(0), "Invalid address");
     s_aeroVoting = _aeroVoting;
     emit AeroVotingSet(_aeroVoting);
   }
 
   /// @inheritdoc IveION
   function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
+    require(_aeroVoterBoost > 0, "Aero Boost amount must be greater than zero");
     s_aeroVoterBoost = _aeroVoterBoost;
     emit AeroVoterBoostSet(_aeroVoterBoost);
   }

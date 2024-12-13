@@ -124,6 +124,8 @@ contract BribeRewardsTest is BaseTest {
     uint256 earnedAmount = bribeRewards.earned(address(bribeTokenA), tokenId);
     emit log("--------------------------------------END EARNED--------------------------------------");
     emit log_named_uint("Earned amount", earnedAmount);
+
+    assertEq(earnedAmount, 2000 ether, "Earned amount should be 2000 ether");
   }
 
   function test_earned_MultipleBribeRewardsSandbox() public {
@@ -271,6 +273,8 @@ contract BribeRewardsTest is BaseTest {
 
     uint256 earnedA = bribeRewards.earned(address(bribeTokenA), tokenId);
     emit log_named_uint("Earned rewards for bribeTokenA", earnedA);
+
+    assertEq(earnedA, 5999999999999999999996, "EarnedA assertion incorrect");
 
     uint256 priorBalanceIndex = bribeRewards.getPriorBalanceIndex(tokenId, lpTokenA, block.timestamp);
     emit log_named_uint("Prior Balance Index for current timestamp and lpTokenA", priorBalanceIndex);
