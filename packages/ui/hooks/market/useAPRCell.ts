@@ -20,7 +20,6 @@ export type RewardIcon = {
 };
 
 type APRCellData = {
-  totalAPR: string;
   baseAPRFormatted: string;
   effectiveNativeYield: number | undefined;
   showRewardsBadge: boolean;
@@ -57,22 +56,9 @@ export function useAPRCell({
         ? nativeAssetYield * 100
         : config?.underlyingAPR;
 
-    const total = calculateTotalAPR({
-      type,
-      baseAPR: baseAPR ?? 0,
-      rewards,
-      effectiveNativeYield,
-      merklAprForOP,
-      isOp: Boolean(config?.op)
-    });
-
     const merklAprFormatted = merklAprForOP?.toLocaleString('en-US', {
       maximumFractionDigits: 2
     });
-
-    const prefix = type === 'supply' || total > 0 ? '+' : '';
-    const totalAPR =
-      prefix + total.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
     const baseAPRPrefix =
       type === 'borrow' && baseAPR > 0 ? '-' : type === 'supply' ? '+' : '';
@@ -81,7 +67,6 @@ export function useAPRCell({
       baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
     return {
-      totalAPR,
       baseAPRFormatted,
       effectiveNativeYield,
       showRewardsBadge:
