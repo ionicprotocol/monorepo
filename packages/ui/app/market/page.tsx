@@ -61,8 +61,15 @@ export default function Market() {
     []
   );
 
-  const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
-    useMarketData(selectedPool, chain, selectedSymbol);
+  const {
+    marketData,
+    selectedMarketData,
+    featuredMarkets,
+    isLoading,
+    poolData,
+    loopProps
+  } = useMarketData(selectedPool, chain, selectedSymbol);
+  console.log('marketData', marketData);
 
   useEffect(() => {
     setFilteredMarketData(marketData);
@@ -129,6 +136,7 @@ export default function Market() {
           pool={row.original.comptrollerAddress}
           nativeAssetYield={row.original.nativeAssetYield}
           underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.supplyAPRTotal}
         />
       )
     },
@@ -148,6 +156,7 @@ export default function Market() {
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
           underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.borrowAPRTotal}
         />
       )
     },
@@ -253,6 +262,7 @@ export default function Market() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setSwapWidgetOpen={setSwapWidgetOpen}
             setWrapWidgetOpen={setWrapWidgetOpen}
+            featuredMarkets={featuredMarkets}
           />
           <StakingTile chain={+chain} />
         </div>

@@ -12,10 +12,8 @@ import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
-import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
@@ -62,9 +60,6 @@ export const useMarketData = (
   chain: number | string,
   selectedSymbol: string | undefined
 ) => {
-  const setFeaturedSupply = useStore((state) => state.setFeaturedSupply);
-  const setFeaturedSupply2 = useStore((state) => state.setFeaturedSupply2);
-
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
     +chain
@@ -258,56 +253,6 @@ export const useMarketData = (
     borrowCapsData
   ]);
 
-  useEffect(() => {
-    if (!marketData.length) return;
-
-    // Find and set featured supply assets based on shouldGetFeatured mapping
-    marketData.forEach((market) => {
-      // Check if this market is featured supply 1
-      if (
-        shouldGetFeatured.featuredSupply[+chain][
-          selectedPool
-        ]?.toLowerCase() === market.asset.toLowerCase()
-      ) {
-        setFeaturedSupply({
-          asset: market.asset,
-          supplyAPR: market.supplyAPR,
-          supplyAPRTotal: market.supplyAPRTotal,
-          rewards: market.supplyRewards,
-          dropdownSelectedChain: +chain,
-          selectedPoolId: selectedPool,
-          cToken: market.cTokenAddress,
-          pool: market.comptrollerAddress
-        });
-      }
-
-      // Check if this market is featured supply 2
-      if (
-        shouldGetFeatured.featuredSupply2[+chain][
-          selectedPool
-        ]?.toLowerCase() === market.asset.toLowerCase()
-      ) {
-        setFeaturedSupply2({
-          asset: market.asset,
-          supplyAPR: market.supplyAPR,
-          supplyAPRTotal: market.supplyAPRTotal,
-          rewards: market.supplyRewards,
-          dropdownSelectedChain: +chain,
-          selectedPoolId: selectedPool,
-          cToken: market.cTokenAddress,
-          pool: market.comptrollerAddress
-        });
-      }
-    });
-  }, [
-    marketData,
-    chain,
-    selectedPool,
-    setFeaturedSupply,
-    setFeaturedSupply2,
-    poolData?.comptroller
-  ]);
-
   const selectedMarketData = useMemo(() => {
     const found = assets?.find(
       (asset) => asset.underlyingSymbol === selectedSymbol
@@ -326,6 +271,19 @@ export const useMarketData = (
     };
   }, [selectedMarketData, poolData, loopMarkets]);
 
+  const featuredMarkets = useMemo(() => {
+    if (!marketData.length) return [];
+
+    const featuredSymbols = [
+      shouldGetFeatured.featuredSupply[+chain][selectedPool]?.toLowerCase(),
+      shouldGetFeatured.featuredSupply2[+chain][selectedPool]?.toLowerCase()
+    ];
+
+    return marketData.filter((market) =>
+      featuredSymbols.includes(market.asset.toLowerCase())
+    );
+  }, [marketData, chain, selectedPool]);
+
   return {
     marketData,
     isLoading:
@@ -338,6 +296,7 @@ export const useMarketData = (
       isLoadingBorrowApys,
     poolData,
     selectedMarketData,
-    loopProps
+    loopProps,
+    featuredMarkets
   };
 };
