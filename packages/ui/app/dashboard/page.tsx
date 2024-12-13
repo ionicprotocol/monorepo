@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -78,7 +78,13 @@ export default function Dashboard() {
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
       positions?.openPositions
-        ?.filter((p) => p?.address)
+        ?.filter(
+          (p): p is OpenPosition =>
+            !!p &&
+            !!p.address &&
+            typeof p.address === 'string' &&
+            p.address.startsWith('0x')
+        )
         ?.map((position) => position.address as `0x${string}`) ?? [],
       positions?.openPositions?.map((position) =>
         collateralsAPR &&
@@ -91,6 +97,21 @@ export default function Dashboard() {
       ) ?? [],
       positions?.openPositions?.map((p) => p?.chainId ?? chain) ?? []
     );
+
+  useEffect(() => {
+    if (positions?.openPositions) {
+      console.log(
+        'All position addresses:',
+        positions.openPositions.map((p) => p?.address)
+      );
+      const problematicPosition = positions.openPositions.find(
+        (p) => p?.address === '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'
+      );
+      if (problematicPosition) {
+        console.warn('Found problematic position:', problematicPosition);
+      }
+    }
+  }, [positions]);
 
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
@@ -839,46 +860,90 @@ export default function Dashboard() {
                     <h3 className={` `}>REWARDS</h3>
                   </div>
 
-                  {positions?.openPositions.map((position, i) => {
-                    const currentPositionInfo = positionsInfo
-                      ? positionsInfo[position.address]
-                      : undefined;
-
-                    debugDashboardState({
-                      positions,
-                      positionsInfo,
-                      marketData,
-                      chain,
-                      currentPositionData: {
-                        position,
-                        info: currentPositionInfo,
-                        leverage: positionLeverages?.[i]
+                  {positions?.openPositions
+                    ?.filter(Boolean)
+                    .map((position, i) => {
+                      if (
+                        !position ||
+                        !position.address ||
+                        typeof position.address !== 'string'
+                      ) {
+                        console.warn('Invalid position:', position);
+                        return null;
                       }
-                    });
 
-                    if (!currentPositionInfo) {
-                      console.warn(
-                        '🚨 Missing position info for address:',
-                        position?.address
+                      const isValidAddress =
+                        position?.address &&
+                        typeof position.address === 'string' &&
+                        position.address.startsWith('0x');
+
+                      console.log('Position debug:', {
+                        index: i,
+                        address: position?.address,
+                        isValidAddress,
+                        hasPositionsInfo: !!positionsInfo,
+                        positionsInfoKeys: Object.keys(positionsInfo || {}),
+                        addressInPositionsInfo: positionsInfo
+                          ? !!positionsInfo[position?.address]
+                          : false,
+                        // Log the exact address we're trying to access
+                        tryingToAccess: position?.address ?? 'undefined',
+                        // Log the type of address
+                        addressType: typeof position?.address,
+                        // Log if this is the problematic address
+                        isProblematicAddress:
+                          position?.address ===
+                          '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'
+                      });
+
+                      const currentPositionInfo =
+                        isValidAddress && positionsInfo
+                          ? positionsInfo[position.address]
+                          : undefined;
+
+                      debugDashboardState({
+                        positions,
+                        positionsInfo,
+                        marketData,
+                        chain,
+                        currentPositionData: {
+                          position,
+                          info: currentPositionInfo,
+                          leverage: positionLeverages?.[i]
+                        }
+                      });
+
+                      if (!isValidAddress) {
+                        console.warn(
+                          'Invalid position address format:',
+                          position?.address
+                        );
+                        return null;
+                      }
+
+                      if (!currentPositionInfo) {
+                        console.warn(
+                          'Missing position info for address:',
+                          position?.address
+                        );
+                        return <div key={`position-${i}`} />;
+                      }
+
+                      return (
+                        <LoopRow
+                          key={`position-${position.address}`}
+                          currentPositionInfo={currentPositionInfo}
+                          marketData={marketData ?? undefined}
+                          position={position}
+                          positionLeverage={positionLeverages?.[i] ?? undefined}
+                          usdPrice={usdPrice ?? undefined}
+                          setSelectedLoopBorrowData={setSelectedLoopBorrowData}
+                          setSelectedSymbol={setSelectedSymbol}
+                          setLoopOpen={setIsLoopDialogOpen}
+                          chain={+chain}
+                        />
                       );
-                      return <div key={`position-${i}`} />;
-                    }
-
-                    return (
-                      <LoopRow
-                        key={`position-${position.address}`}
-                        currentPositionInfo={currentPositionInfo}
-                        marketData={marketData ?? undefined}
-                        position={position}
-                        positionLeverage={positionLeverages?.[i] ?? undefined}
-                        usdPrice={usdPrice ?? undefined}
-                        setSelectedLoopBorrowData={setSelectedLoopBorrowData}
-                        setSelectedSymbol={setSelectedSymbol}
-                        setLoopOpen={setIsLoopDialogOpen}
-                        chain={+chain}
-                      />
-                    );
-                  })}
+                    })}
                 </>
               ) : (
                 <div className="text-center mx-auto py-2">
@@ -935,7 +1000,20 @@ const LoopRow = ({
   setLoopOpen,
   chain
 }: LoopRowProps) => {
-  if (!position?.collateral?.symbol || !position?.borrowable?.symbol) {
+  if (
+    !position ||
+    !position.address ||
+    !position.collateral?.symbol ||
+    !position.borrowable?.symbol ||
+    !currentPositionInfo
+  ) {
+    console.warn('Missing required data for LoopRow:', {
+      hasPosition: !!position,
+      address: position?.address,
+      collateralSymbol: position?.collateral?.symbol,
+      borrowableSymbol: position?.borrowable?.symbol,
+      hasCurrentPositionInfo: !!currentPositionInfo
+    });
     return null;
   }
 
