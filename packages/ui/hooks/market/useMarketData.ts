@@ -93,7 +93,7 @@ export const useMarketData = (
   const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
     useBorrowCapsForAssets(cTokenAddresses, +chain);
 
-  const { data: rewards, isFetched: isFetchedRewards } = useRewards({
+  const { data: rewards, isLoading: isLoadingRewards } = useRewards({
     chainId: +chain,
     poolId: selectedPool
   });
@@ -283,6 +283,9 @@ export const useMarketData = (
     );
   }, [marketData, chain, selectedPool]);
 
+  console.log('isLoadingRewards', isLoadingRewards);
+  console.log('isLoadingPoolData', isLoadingPoolData);
+
   return {
     marketData,
     isLoading:
@@ -293,7 +296,7 @@ export const useMarketData = (
       isLoadingBorrowCaps ||
       isLoadingSupplyApys ||
       isLoadingBorrowApys ||
-      !isFetchedRewards,
+      isLoadingRewards,
     poolData,
     selectedMarketData,
     loopProps,

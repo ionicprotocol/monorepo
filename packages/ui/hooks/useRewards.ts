@@ -146,18 +146,25 @@ export const fetchRewards = async (
 };
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
-  const { data: poolData } = useFusePoolData(poolId, Number(chainId));
-  const { data: flywheelRewards } = useFlywheelRewards(
-    poolData?.comptroller,
-    chainId
-  );
+  const {
+    data: poolData,
+    isLoading: isLoadingPoolData,
+    isError: isPoolError
+  } = useFusePoolData(poolId, Number(chainId));
 
-  return useQuery({
+  const {
+    data: flywheelRewards,
+    isLoading: isLoadingFlywheelRewards,
+    isError: isFlywheelError
+  } = useFlywheelRewards(poolData?.comptroller, chainId);
+
+  const rewardsQuery = useQuery({
     queryKey: [
       'useRewards',
       chainId,
-      poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
-      flywheelRewards
+      poolId,
+      poolData?.comptroller,
+      poolData?.assets?.length
     ],
 
     queryFn: async () => {
@@ -169,13 +176,31 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           flywheelRewards.flywheelRewardsWithoutAPY
         );
       }
-
       return {};
     },
 
     enabled: !!poolData && !!flywheelRewards,
-    staleTime: Number.POSITIVE_INFINITY
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: 1000
   });
+
+  const isLoading =
+    isLoadingPoolData ||
+    isLoadingFlywheelRewards ||
+    (rewardsQuery.isLoading && !rewardsQuery.isPaused);
+
+  return {
+    ...rewardsQuery,
+    isLoading,
+    isError: isPoolError || isFlywheelError || rewardsQuery.isError,
+    loadingStates: {
+      poolData: isLoadingPoolData,
+      flywheelRewards: isLoadingFlywheelRewards,
+      rewards: rewardsQuery.isLoading && !rewardsQuery.isPaused
+    }
+  };
 }
 
 export function useRewardsForMarket({
