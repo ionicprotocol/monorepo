@@ -4,6 +4,80 @@ import { mode } from 'viem/chains';
 
 import type { Address } from 'viem';
 
+interface MerklOpportunity {
+  action: 'supply' | 'borrow';
+  apr: number;
+  tvl: number;
+  platform: string;
+  name: string;
+  status: 'live' | 'inactive';
+  campaigns: {
+    active: Array<{
+      apr: number;
+      campaignParameters: {
+        underlyingToken: Address;
+        targetToken: Address;
+      };
+    }>;
+  };
+}
+
+interface MerklOpportunityResponse {
+  [key: `${number}_${string}`]: MerklOpportunity;
+}
+
+export interface TokenAprInfo {
+  token: Address;
+  type: 'supply' | 'borrow';
+  apr: number;
+}
+
+const mapZeroAddress = (address: Address): Address => {
+  if (address === '0x0000000000000000000000000000000000000000') {
+    return '0x4200000000000000000000000000000000000006' as Address;
+  }
+  return address;
+};
+
+export function useMerklData() {
+  return useQuery({
+    queryKey: ['merklApr'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get<MerklOpportunityResponse>(
+          `https://api.merkl.xyz/v3/opportunity?campaigns=true&chainId=${mode.id}&type=10&testTokens=true`
+        );
+        console.log('res', res);
+
+        return Object.entries(res.data).flatMap(
+          ([key, opportunity]): TokenAprInfo[] => {
+            if (!opportunity.campaigns.active.length) return [];
+
+            const campaign = opportunity.campaigns.active[0];
+            if (!campaign?.campaignParameters?.underlyingToken) return [];
+
+            const mappedToken = mapZeroAddress(
+              campaign.campaignParameters.underlyingToken as Address
+            );
+
+            return [
+              {
+                token: mappedToken,
+                type: opportunity.action === 'borrow' ? 'borrow' : 'supply',
+                apr: opportunity.apr || 0
+              }
+            ];
+          }
+        );
+      } catch (error) {
+        console.error('Error fetching Merkl data:', error);
+        return [];
+      }
+    },
+    refetchInterval: 5 * 60 * 1000
+  });
+}
+
 export interface MerklCampaign {
   apr: number;
   type: string;
@@ -29,88 +103,4 @@ export interface MerklAprData {
       [merkleKey: string]: MerklCampaign;
     };
   };
-}
-
-export interface TokenAprInfo {
-  token: Address;
-  type: 'supply' | 'borrow';
-  apr: number;
-}
-
-const getSimplifiedType = (
-  campaign: MerklCampaign
-): 'supply' | 'borrow' | null => {
-  // Check for special pool cases first
-  if (
-    campaign.typeInfo.poolTokens &&
-    Object.values(campaign.typeInfo.poolTokens).some(
-      (token) => token.symbol === 'M-BTC'
-    )
-  ) {
-    return 'supply';
-  }
-
-  // Check type and tags
-  if (campaign.type.includes('lending') || campaign.type === 'balancerPool') {
-    return 'supply';
-  }
-  if (campaign.type.includes('borrowing')) {
-    return 'borrow';
-  }
-
-  // Check protocol name in typeInfo
-  if (campaign.typeInfo.name?.toLowerCase().includes('debt')) {
-    return 'borrow';
-  }
-
-  return null;
-};
-
-export function useMerklData() {
-  return useQuery({
-    queryKey: ['merklApr'],
-    queryFn: async () => {
-      const res = await axios.get<MerklAprData>(
-        `https://api.merkl.xyz/v3/campaigns?chainIds=34443&types=1&live=true`
-      );
-
-      // Flatten all token-APR pairs into a single array with type information
-      return Object.entries(res.data[mode.id]).flatMap(
-        ([key, campaignGroup]) => {
-          const campaigns = Object.values(campaignGroup);
-
-          return campaigns.flatMap((campaign): TokenAprInfo[] => {
-            const { apr, typeInfo } = campaign;
-
-            const simplifiedType = getSimplifiedType(campaign);
-            if (!simplifiedType) return [];
-
-            // Handle pools with multiple tokens
-            if (typeInfo.poolTokens) {
-              return Object.entries(typeInfo.poolTokens).map(
-                ([tokenAddress, tokenInfo]) => ({
-                  token: tokenAddress as Address,
-                  type: simplifiedType,
-                  apr
-                })
-              );
-            }
-
-            // Handle single token cases (using underlying)
-            if (typeInfo.underlying) {
-              return [
-                {
-                  token: typeInfo.underlying,
-                  type: simplifiedType,
-                  apr
-                }
-              ];
-            }
-
-            return [];
-          });
-        }
-      );
-    }
-  });
 }

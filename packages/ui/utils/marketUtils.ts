@@ -8,7 +8,6 @@ type TotalAPRParams = {
   rewards?: FlywheelReward[];
   effectiveNativeYield?: number;
   merklAprForOP?: number;
-  isOp?: boolean;
 };
 
 const EXCLUDED_REWARD_KEYS = ['ionAPR', 'turtle', 'flywheel'] as const;
@@ -18,25 +17,17 @@ export const calculateTotalAPR = ({
   baseAPR = 0,
   rewards = [],
   effectiveNativeYield,
-  merklAprForOP,
-  isOp
+  merklAprForOP
 }: TotalAPRParams): number => {
   let total = type === 'borrow' ? -baseAPR : baseAPR ?? 0;
 
   const flywheelRewardsAPR =
-    rewards?.reduce((acc, reward) => {
-      return acc + (reward.apy || 0);
-    }, 0) ?? 0;
+    rewards?.reduce((acc, reward) => acc + (reward.apy || 0), 0) || 0;
 
   total += flywheelRewardsAPR;
 
-  if (effectiveNativeYield) {
-    total += effectiveNativeYield;
-  }
-
-  if (merklAprForOP && isOp) {
-    total += merklAprForOP;
-  }
+  if (effectiveNativeYield) total += effectiveNativeYield;
+  if (merklAprForOP) total += merklAprForOP;
 
   return total;
 };

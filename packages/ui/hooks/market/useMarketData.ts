@@ -92,7 +92,8 @@ export const useMarketData = (
 
   const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
     useBorrowCapsForAssets(cTokenAddresses, +chain);
-  const { data: merklAprz, isLoading: isLoadingMerklData } = useMerklData();
+  const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
+  console.log('merklApr', merklApr);
 
   const { data: rewards } = useRewards({
     chainId: +chain,
@@ -181,12 +182,13 @@ export const useMarketData = (
             nativeAssetYield !== undefined
               ? nativeAssetYield * 100
               : config?.supply?.underlyingAPR,
-          merklAprForOP: merklAprz?.find(
-            (info) =>
-              info.token?.toLowerCase() ===
-                asset.underlyingToken?.toLowerCase() && info.type === 'supply'
-          )?.apr,
-          isOp: config?.supply?.op
+          merklAprForOP: config?.supply?.op
+            ? merklApr?.find(
+                (info) =>
+                  info.token?.toLowerCase() ===
+                  asset.underlyingToken?.toLowerCase()
+              )?.apr
+            : undefined
         });
 
         const borrowAPRTotal = calculateTotalAPR({
@@ -199,12 +201,13 @@ export const useMarketData = (
             nativeAssetYield !== undefined
               ? nativeAssetYield * 100
               : config?.borrow?.underlyingAPR,
-          merklAprForOP: merklAprz?.find(
-            (info) =>
-              info.token?.toLowerCase() ===
-                asset.underlyingToken?.toLowerCase() && info.type === 'borrow'
-          )?.apr,
-          isOp: config?.borrow?.op
+          merklAprForOP: config?.borrow?.op
+            ? merklApr?.find(
+                (info) =>
+                  info.token?.toLowerCase() ===
+                  asset.underlyingToken?.toLowerCase()
+              )?.apr
+            : undefined
         });
 
         return {
