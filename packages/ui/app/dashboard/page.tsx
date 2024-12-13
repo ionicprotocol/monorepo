@@ -98,21 +98,6 @@ export default function Dashboard() {
       positions?.openPositions?.map((p) => p?.chainId ?? chain) ?? []
     );
 
-  useEffect(() => {
-    if (positions?.openPositions) {
-      console.log(
-        'All position addresses:',
-        positions.openPositions.map((p) => p?.address)
-      );
-      const problematicPosition = positions.openPositions.find(
-        (p) => p?.address === '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'
-      );
-      if (problematicPosition) {
-        console.warn('Found problematic position:', problematicPosition);
-      }
-    }
-  }, [positions]);
-
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
@@ -274,11 +259,38 @@ export default function Dashboard() {
     data: claimableRewardsAcrossAllChains,
     isLoading: isLoadingClaimableRewardsAcrossAllChains
   } = useAllClaimableRewards(allChains);
-  const totalRewardsAcrossAllChains =
-    claimableRewardsAcrossAllChains?.reduce(
-      (acc, reward) => acc + reward.amount,
-      0n
-    ) ?? 0n;
+
+  const totalRewardsAcrossAllChains = useMemo(() => {
+    // Early return if the entire rewards array is undefined
+    if (!claimableRewardsAcrossAllChains) return 0n;
+    if (!Array.isArray(claimableRewardsAcrossAllChains)) return 0n;
+    if (!claimableRewardsAcrossAllChains.length) return 0n;
+
+    try {
+      const validRewards = claimableRewardsAcrossAllChains.filter(
+        (
+          reward
+        ): reward is { amount: bigint; chainId: number; rewardToken: string } =>
+          reward !== null &&
+          reward !== undefined &&
+          'amount' in reward &&
+          'chainId' in reward &&
+          'rewardToken' in reward &&
+          typeof reward.amount === 'bigint'
+      );
+
+      // If no valid rewards after filtering, return early
+      if (!validRewards.length) return 0n;
+
+      return validRewards.reduce((acc, reward) => acc + reward.amount, 0n);
+    } catch (e) {
+      console.warn('Error calculating total rewards:', {
+        error: e,
+        rewards: claimableRewardsAcrossAllChains
+      });
+      return 0n;
+    }
+  }, [claimableRewardsAcrossAllChains]);
 
   const {
     componentRef: rewardRef,
@@ -290,113 +302,6 @@ export default function Dashboard() {
     isopen: swapOpen,
     toggle: swapToggle
   } = useOutsideClick();
-
-  const debugDashboardState = (debugData: {
-    positions?: any;
-    positionsInfo?: any;
-    marketData?: any;
-    chain?: any;
-    currentPositionData?: any;
-  }) => {
-    console.group('🔍 Dashboard Debug State');
-
-    // Position Data
-    console.group('📊 Positions Data');
-    console.log('Has Positions:', !!debugData.positions);
-    console.log(
-      'Open Positions Length:',
-      debugData.positions?.openPositions?.length
-    );
-    console.log(
-      'Open Positions:',
-      debugData.positions?.openPositions?.map((p: any) => ({
-        address: p?.address,
-        hasCollateral: !!p?.collateral,
-        collateralSymbol: p?.collateral?.symbol,
-        hasBorrowable: !!p?.borrowable,
-        borrowableSymbol: p?.borrowable?.symbol,
-        chainId: p?.chainId
-      }))
-    );
-    console.groupEnd();
-
-    // Positions Info
-    console.group('📈 Positions Info');
-    console.log('Has PositionsInfo:', !!debugData.positionsInfo);
-    console.log(
-      'PositionsInfo Keys:',
-      Object.keys(debugData.positionsInfo || {})
-    );
-    if (debugData.positionsInfo) {
-      Object.entries(debugData.positionsInfo).forEach(([key, value]) => {
-        console.log(`Position ${key}:`, {
-          hasPositionSupplyAmount: !!(value as any)?.positionSupplyAmount,
-          hasDebtAmount: !!(value as any)?.debtAmount,
-          positionSupplyAmount: (
-            value as any
-          )?.positionSupplyAmount?.toString(),
-          debtAmount: (value as any)?.debtAmount?.toString()
-        });
-      });
-    }
-    console.groupEnd();
-
-    // Market Data
-    console.group('🏦 Market Data');
-    console.log('Has MarketData:', !!debugData.marketData);
-    console.log('Comptroller:', debugData.marketData?.comptroller);
-    console.log('Assets Length:', debugData.marketData?.assets?.length);
-    console.log(
-      'Assets:',
-      debugData.marketData?.assets?.map((a: any) => ({
-        symbol: a?.underlyingSymbol,
-        cToken: a?.cToken,
-        hasPrice: !!a?.underlyingPrice
-      }))
-    );
-    console.groupEnd();
-
-    // Current Position Debug
-    if (debugData.currentPositionData) {
-      console.group('🎯 Current Position Data');
-      const { position, info, leverage } = debugData.currentPositionData;
-      console.log('Position Address:', position?.address);
-      console.log('Position Info Exists:', !!info);
-      console.log(
-        'Position Keys Match:',
-        position?.address === Object.keys(debugData.positionsInfo || {})?.[0]
-      );
-      console.log('Position Data:', {
-        collateralSymbol: position?.collateral?.symbol,
-        borrowableSymbol: position?.borrowable?.symbol,
-        hasDecimals: !!position?.collateral?.underlyingDecimals,
-        decimals: position?.collateral?.underlyingDecimals,
-        leverage: leverage
-      });
-      console.log('Info Data:', {
-        hasSupplyAmount: !!info?.positionSupplyAmount,
-        supplyAmount: info?.positionSupplyAmount?.toString(),
-        hasDebtAmount: !!info?.debtAmount,
-        debtAmount: info?.debtAmount?.toString()
-      });
-      console.groupEnd();
-    }
-
-    // Chain & Network
-    console.group('🌐 Network State');
-    console.log('Chain:', debugData.chain);
-    console.log(
-      'Expected Position Keys:',
-      debugData.positions?.openPositions?.map((p: any) => p?.address)
-    );
-    console.log(
-      'Actual Position Info Keys:',
-      Object.keys(debugData.positionsInfo || {})
-    );
-    console.groupEnd();
-
-    console.groupEnd();
-  };
 
   return (
     <>
@@ -877,41 +782,10 @@ export default function Dashboard() {
                         typeof position.address === 'string' &&
                         position.address.startsWith('0x');
 
-                      console.log('Position debug:', {
-                        index: i,
-                        address: position?.address,
-                        isValidAddress,
-                        hasPositionsInfo: !!positionsInfo,
-                        positionsInfoKeys: Object.keys(positionsInfo || {}),
-                        addressInPositionsInfo: positionsInfo
-                          ? !!positionsInfo[position?.address]
-                          : false,
-                        // Log the exact address we're trying to access
-                        tryingToAccess: position?.address ?? 'undefined',
-                        // Log the type of address
-                        addressType: typeof position?.address,
-                        // Log if this is the problematic address
-                        isProblematicAddress:
-                          position?.address ===
-                          '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE'
-                      });
-
                       const currentPositionInfo =
                         isValidAddress && positionsInfo
                           ? positionsInfo[position.address]
                           : undefined;
-
-                      debugDashboardState({
-                        positions,
-                        positionsInfo,
-                        marketData,
-                        chain,
-                        currentPositionData: {
-                          position,
-                          info: currentPositionInfo,
-                          leverage: positionLeverages?.[i]
-                        }
-                      });
 
                       if (!isValidAddress) {
                         console.warn(
