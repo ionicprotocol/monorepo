@@ -283,9 +283,6 @@ export const useMarketData = (
     );
   }, [marketData, chain, selectedPool]);
 
-  console.log('isLoadingRewards', isLoadingRewards);
-  console.log('isLoadingPoolData', isLoadingPoolData);
-
   return {
     marketData,
     isLoading:
