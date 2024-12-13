@@ -44,7 +44,7 @@ export class DiscordService {
           // Don't throw - just log the error and continue
           return;
         }
-        await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+        await new Promise((resolve) => setTimeout(resolve, this.retryDelay * attempt));
       }
     }
   }
