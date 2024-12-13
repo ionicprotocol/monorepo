@@ -77,17 +77,21 @@ export default function Dashboard() {
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
-      positions?.openPositions.map((position) => position.address) ?? [],
-      positions?.openPositions.map((position) =>
+      positions?.openPositions
+        ?.filter((p) => p?.address)
+        ?.map((position) => position.address as `0x${string}`) ?? [],
+      positions?.openPositions?.map((position) =>
         collateralsAPR &&
+        position?.collateral?.cToken &&
         collateralsAPR[position.collateral.cToken] !== undefined
           ? parseEther(
               collateralsAPR[position.collateral.cToken].totalApy.toFixed(18)
             )
           : null
-      ),
-      positions?.openPositions.map((p) => p.chainId) ?? []
+      ) ?? [],
+      positions?.openPositions?.map((p) => p?.chainId ?? chain) ?? []
     );
+
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
@@ -109,7 +113,17 @@ export default function Dashboard() {
     +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
-    if (marketData && assetsSupplyAprData && currentSdk) {
+    if (!marketData?.assets || !assetsSupplyAprData || !currentSdk) {
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
+    }
+
+    try {
       const blocksPerMinute = getBlockTimePerMinuteByChainId(+chain);
       let totalCollateral = 0;
       let avgCollateralApr = 0;
@@ -118,45 +132,61 @@ export default function Dashboard() {
       let memberships = 0;
 
       marketData.assets.forEach((asset) => {
-        if (asset.membership) {
-          totalCollateral += asset.supplyBalanceFiat;
-          avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
+        if (!asset) return;
 
+        if (asset.membership) {
+          totalCollateral += asset.supplyBalanceFiat ?? 0;
+          avgCollateralApr += assetsSupplyAprData[asset.cToken]?.apy ?? 0;
           memberships++;
         }
 
-        if (asset.borrowBalanceFiat) {
-          borrowApr += currentSdk.ratePerBlockToAPY(
-            asset.borrowRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.borrowBalanceFiat && asset.borrowRatePerBlock) {
+          try {
+            borrowApr += currentSdk.ratePerBlockToAPY(
+              asset.borrowRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating borrow APR:', e);
+          }
         }
 
-        if (asset.supplyBalanceFiat) {
-          supplyApr += currentSdk.ratePerBlockToAPY(
-            asset.supplyRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.supplyBalanceFiat && asset.supplyRatePerBlock) {
+          try {
+            supplyApr += currentSdk.ratePerBlockToAPY(
+              asset.supplyRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating supply APR:', e);
+          }
         }
       });
 
-      supplyApr = supplyApr / (suppliedAssets.length || 1);
-      borrowApr = borrowApr / (borrowedAssets.length || 1);
+      const finalSupplyApr = supplyApr / (suppliedAssets.length || 1);
+      const finalBorrowApr = borrowApr / (borrowedAssets.length || 1);
 
       return {
-        avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-        borrowApr: `${borrowApr.toFixed(2)}%`,
+        avgCollateralApr: `${(avgCollateralApr / (memberships || 1)).toFixed(2)}%`,
+        borrowApr: `${finalBorrowApr.toFixed(2)}%`,
         netAssetValue: `$${millify(
           (marketData?.totalSupplyBalanceFiat ?? 0) -
             (marketData?.totalBorrowBalanceFiat ?? 0),
           { precision: 2 }
         )}`,
-        supplyApr: `${supplyApr.toFixed(2)}%`,
+        supplyApr: `${finalSupplyApr.toFixed(2)}%`,
         totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
       };
+    } catch (e) {
+      console.warn('Error in APR calculations:', e);
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
     }
-
-    return {};
   }, [
     assetsSupplyAprData,
     borrowedAssets,
@@ -165,6 +195,7 @@ export default function Dashboard() {
     marketData,
     suppliedAssets
   ]);
+
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(
@@ -238,6 +269,113 @@ export default function Dashboard() {
     isopen: swapOpen,
     toggle: swapToggle
   } = useOutsideClick();
+
+  const debugDashboardState = (debugData: {
+    positions?: any;
+    positionsInfo?: any;
+    marketData?: any;
+    chain?: any;
+    currentPositionData?: any;
+  }) => {
+    console.group('🔍 Dashboard Debug State');
+
+    // Position Data
+    console.group('📊 Positions Data');
+    console.log('Has Positions:', !!debugData.positions);
+    console.log(
+      'Open Positions Length:',
+      debugData.positions?.openPositions?.length
+    );
+    console.log(
+      'Open Positions:',
+      debugData.positions?.openPositions?.map((p: any) => ({
+        address: p?.address,
+        hasCollateral: !!p?.collateral,
+        collateralSymbol: p?.collateral?.symbol,
+        hasBorrowable: !!p?.borrowable,
+        borrowableSymbol: p?.borrowable?.symbol,
+        chainId: p?.chainId
+      }))
+    );
+    console.groupEnd();
+
+    // Positions Info
+    console.group('📈 Positions Info');
+    console.log('Has PositionsInfo:', !!debugData.positionsInfo);
+    console.log(
+      'PositionsInfo Keys:',
+      Object.keys(debugData.positionsInfo || {})
+    );
+    if (debugData.positionsInfo) {
+      Object.entries(debugData.positionsInfo).forEach(([key, value]) => {
+        console.log(`Position ${key}:`, {
+          hasPositionSupplyAmount: !!(value as any)?.positionSupplyAmount,
+          hasDebtAmount: !!(value as any)?.debtAmount,
+          positionSupplyAmount: (
+            value as any
+          )?.positionSupplyAmount?.toString(),
+          debtAmount: (value as any)?.debtAmount?.toString()
+        });
+      });
+    }
+    console.groupEnd();
+
+    // Market Data
+    console.group('🏦 Market Data');
+    console.log('Has MarketData:', !!debugData.marketData);
+    console.log('Comptroller:', debugData.marketData?.comptroller);
+    console.log('Assets Length:', debugData.marketData?.assets?.length);
+    console.log(
+      'Assets:',
+      debugData.marketData?.assets?.map((a: any) => ({
+        symbol: a?.underlyingSymbol,
+        cToken: a?.cToken,
+        hasPrice: !!a?.underlyingPrice
+      }))
+    );
+    console.groupEnd();
+
+    // Current Position Debug
+    if (debugData.currentPositionData) {
+      console.group('🎯 Current Position Data');
+      const { position, info, leverage } = debugData.currentPositionData;
+      console.log('Position Address:', position?.address);
+      console.log('Position Info Exists:', !!info);
+      console.log(
+        'Position Keys Match:',
+        position?.address === Object.keys(debugData.positionsInfo || {})?.[0]
+      );
+      console.log('Position Data:', {
+        collateralSymbol: position?.collateral?.symbol,
+        borrowableSymbol: position?.borrowable?.symbol,
+        hasDecimals: !!position?.collateral?.underlyingDecimals,
+        decimals: position?.collateral?.underlyingDecimals,
+        leverage: leverage
+      });
+      console.log('Info Data:', {
+        hasSupplyAmount: !!info?.positionSupplyAmount,
+        supplyAmount: info?.positionSupplyAmount?.toString(),
+        hasDebtAmount: !!info?.debtAmount,
+        debtAmount: info?.debtAmount?.toString()
+      });
+      console.groupEnd();
+    }
+
+    // Chain & Network
+    console.group('🌐 Network State');
+    console.log('Chain:', debugData.chain);
+    console.log(
+      'Expected Position Keys:',
+      debugData.positions?.openPositions?.map((p: any) => p?.address)
+    );
+    console.log(
+      'Actual Position Info Keys:',
+      Object.keys(debugData.positionsInfo || {})
+    );
+    console.groupEnd();
+
+    console.groupEnd();
+  };
 
   return (
     <>
@@ -706,7 +844,23 @@ export default function Dashboard() {
                       ? positionsInfo[position.address]
                       : undefined;
 
+                    debugDashboardState({
+                      positions,
+                      positionsInfo,
+                      marketData,
+                      chain,
+                      currentPositionData: {
+                        position,
+                        info: currentPositionInfo,
+                        leverage: positionLeverages?.[i]
+                      }
+                    });
+
                     if (!currentPositionInfo) {
+                      console.warn(
+                        '🚨 Missing position info for address:',
+                        position?.address
+                      );
                       return <div key={`position-${i}`} />;
                     }
 
@@ -781,6 +935,10 @@ const LoopRow = ({
   setLoopOpen,
   chain
 }: LoopRowProps) => {
+  if (!position?.collateral?.symbol || !position?.borrowable?.symbol) {
+    return null;
+  }
+
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2 gap-x-1 lg:grid grid-cols-6 py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
@@ -875,7 +1033,7 @@ const LoopRow = ({
       </h3>
 
       <LoopRewards
-        positionAddress={position.address}
+        positionAddress={position.address ?? '0x'}
         poolChainId={chain}
         className="items-center justify-center"
       />
