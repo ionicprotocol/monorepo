@@ -111,3 +111,30 @@ task("lisk:send-ion:epoch6", "send ion to a market").setAction(async (_, { viem,
 
   await sendRewardsToMarkets(viem, ION, rewardsToSend, deployer as Address);
 });
+
+task("lisk:send-ion:epoch6:lsk", "send lsk to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+
+    const rewardsToSend: { market: Address; amount: string }[] = [
+      {
+        market: WETH_MARKET,
+        amount: "316"
+      },
+      {
+        market: USDC_MARKET,
+        amount: "316"
+      },
+      {
+        market: USDT_MARKET,
+        amount: "316"
+      },
+      {
+        market: WBTC_MARKET,
+        amount: "316"
+      }
+    ];
+
+    await sendRewardsToMarkets(viem, LSK, rewardsToSend, deployer as Address);
+  }
+);
