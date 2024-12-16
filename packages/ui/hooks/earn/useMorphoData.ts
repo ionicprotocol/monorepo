@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { request, gql } from 'graphql-request';
 
-import type { MorphoRow } from '@ui/types/Earn';
+import { morphoVaults } from '@ui/utils/morphoUtils';
 
 const MORPHO_API_URL = 'https://blue-api.morpho.org/graphql';
 
@@ -54,7 +54,7 @@ const fetchMorphoData = async (): Promise<MorphoResponse> => {
   return request(MORPHO_API_URL, VAULT_QUERY);
 };
 
-export const useMorphoData = (initialRows: MorphoRow[]) => {
+export const useMorphoData = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['morphoVaults'],
     queryFn: fetchMorphoData,
@@ -62,7 +62,7 @@ export const useMorphoData = (initialRows: MorphoRow[]) => {
     refetchInterval: 60000
   });
 
-  const rows = initialRows.map((row) => {
+  const rows = morphoVaults.map((row) => {
     const vaultSymbol = `ionic${row.asset[0]}`;
     const vaultData = data?.vaults.items.find(
       (vault) => vault.symbol === vaultSymbol

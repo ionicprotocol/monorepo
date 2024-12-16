@@ -4,7 +4,6 @@ import Image from 'next/image';
 
 import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
-import { morphoVaults } from '@ui/utils/morphoUtils';
 
 import { MorphoDialog } from './MorphoDialog';
 import CommonTable from '../CommonTable';
@@ -12,7 +11,7 @@ import CommonTable from '../CommonTable';
 import type { EnhancedColumnDef } from '../CommonTable';
 
 export default function MorphoTable() {
-  const { rows, isLoading } = useMorphoData(morphoVaults);
+  const { rows, isLoading } = useMorphoData();
 
   const columns: EnhancedColumnDef<MorphoRow>[] = [
     {

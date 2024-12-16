@@ -1,81 +1,22 @@
 import { useCallback } from 'react';
 
-import { AccrualPosition, Market } from '@morpho-org/blue-sdk';
-import '@morpho-org/blue-sdk-viem/lib/augment/Market';
-import '@morpho-org/blue-sdk-viem/lib/augment/MarketConfig';
-import '@morpho-org/blue-sdk-viem/lib/augment/Position';
-import { Time } from '@morpho-org/morpho-ts';
-import { useQuery } from '@tanstack/react-query';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, erc20Abi, http } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { morphoBaseAddresses, vaultAbi } from '@ui/utils/morphoUtils';
 
-import type { MarketId } from '@morpho-org/blue-sdk';
 import type { BigNumber } from 'ethers';
-
-// Market ID for WETH/USDC on Base
-const WETH_MARKET_ID =
-  '0xb323495f7e4148be5643a4ea4a8221eef163e4bccfdedc2a6f4696baacbc86cc' as MarketId;
-const USDC_MARKET_ID =
-  '0xa5cb8d928e666a5b632a5ba8c3b703b48fb19355ddbced1d7421bea50f498b99' as MarketId;
 
 export const useMorphoProtocol = () => {
   const { address, currentChain, walletClient } = useMultiIonic();
 
   const getClient = useCallback(() => {
     if (!currentChain) throw new Error('Chain not connected');
-
     return createPublicClient({
       chain: currentChain,
       transport: http(currentChain.rpcUrls.default.http[0])
     });
   }, [currentChain]);
-
-  // Fetch markets data
-  const { data: marketsData, isLoading: isMarketsLoading } = useQuery({
-    queryKey: ['morphoMarkets', currentChain?.id],
-    queryFn: async () => {
-      const client = getClient();
-      const ethMarket = await Market.fetch(WETH_MARKET_ID, client);
-      const usdcMarket = await Market.fetch(USDC_MARKET_ID, client);
-
-      return {
-        WETH: ethMarket,
-        USDC: usdcMarket
-      };
-    },
-    enabled: !!currentChain?.id,
-    staleTime: 30000,
-    retry: 2
-  });
-
-  // Fetch user positions
-  const { data: userPositions, isLoading: isPositionsLoading } = useQuery({
-    queryKey: ['morphoPositions', address, currentChain?.id],
-    queryFn: async () => {
-      if (!address) return null;
-      const client = getClient();
-
-      const ethPosition = await AccrualPosition.fetch(
-        address,
-        WETH_MARKET_ID,
-        client
-      );
-      const usdcPosition = await AccrualPosition.fetch(
-        address,
-        USDC_MARKET_ID,
-        client
-      );
-
-      return {
-        WETH: ethPosition,
-        USDC: usdcPosition
-      };
-    },
-    enabled: !!address && !!currentChain?.id,
-    staleTime: 30000,
-    retry: 2
-  });
 
   const supply = useCallback(
     async (asset: 'USDC' | 'WETH', amount: BigNumber) => {
@@ -84,39 +25,117 @@ export const useMorphoProtocol = () => {
       }
 
       try {
-        console.log('Starting supply process:', {
-          asset,
-          amount: amount.toString(),
-          address
+        const client = getClient();
+        const vaultAddress = morphoBaseAddresses.vaults[asset];
+        const tokenAddress = morphoBaseAddresses.tokens[asset];
+
+        const allowance = await client.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'allowance',
+          args: [address, vaultAddress]
         });
 
-        const client = getClient();
-        const marketId = asset === 'WETH' ? WETH_MARKET_ID : USDC_MARKET_ID;
+        const amountBigInt = amount.toBigInt();
 
-        // Get market and update with current timestamp
-        const market = await Market.fetch(marketId, client);
-        const accruedMarket = market.accrueInterest(Time.timestamp());
+        if (allowance < amountBigInt) {
+          const approvalTx = await walletClient.writeContract({
+            address: tokenAddress,
+            abi: erc20Abi,
+            functionName: 'approve',
+            args: [vaultAddress, amountBigInt],
+            chain: currentChain,
+            account: address
+          });
 
-        // Convert amount to shares
-        const shares = accruedMarket.toSupplyShares(amount.toBigInt());
+          await client.waitForTransactionReceipt({ hash: approvalTx });
+        }
 
-        console.log('Supply shares calculated:', shares.toString());
+        const depositTx = await walletClient.writeContract({
+          address: vaultAddress,
+          abi: vaultAbi,
+          functionName: 'deposit',
+          args: [amountBigInt, address],
+          chain: currentChain,
+          account: address
+        });
 
-        // TODO: Implement actual supply transaction using walletClient
-        // This will depend on the specific contract calls needed
+        const receipt = await client.waitForTransactionReceipt({
+          hash: depositTx
+        });
+        return receipt;
       } catch (error) {
-        console.error('Supply error:', error);
         throw error;
       }
     },
-    [address, walletClient, getClient]
+    [address, walletClient, getClient, currentChain]
+  );
+
+  const getMaxWithdraw = useCallback(
+    async (asset: 'USDC' | 'WETH') => {
+      if (!address) return BigInt(0);
+
+      try {
+        const client = getClient();
+        const vaultAddress = morphoBaseAddresses.vaults[asset];
+
+        const maxWithdraw = await client.readContract({
+          address: vaultAddress,
+          abi: vaultAbi,
+          functionName: 'maxWithdraw',
+          args: [address]
+        });
+
+        return maxWithdraw;
+      } catch (error) {
+        console.error('Error getting max withdraw:', error);
+        return BigInt(0);
+      }
+    },
+    [address, getClient]
+  );
+
+  const withdraw = useCallback(
+    async (asset: 'USDC' | 'WETH', amount: BigNumber) => {
+      if (!address || !walletClient) {
+        throw new Error('Wallet not connected');
+      }
+
+      try {
+        const client = getClient();
+        const vaultAddress = morphoBaseAddresses.vaults[asset];
+        const amountBigInt = amount.toBigInt();
+
+        const maxWithdraw = await getMaxWithdraw(asset);
+        if (amountBigInt > maxWithdraw) {
+          throw new Error('Withdrawal amount exceeds available balance');
+        }
+
+        const withdrawTx = await walletClient.writeContract({
+          address: vaultAddress,
+          abi: vaultAbi,
+          functionName: 'withdraw',
+          args: [amountBigInt, address, address],
+          chain: currentChain,
+          account: address
+        });
+
+        const receipt = await client.waitForTransactionReceipt({
+          hash: withdrawTx
+        });
+        return receipt;
+      } catch (error) {
+        throw error;
+      }
+    },
+    [address, walletClient, getClient, currentChain, getMaxWithdraw]
   );
 
   return {
     supply,
-    marketsData,
-    userPositions,
-    isLoading: isMarketsLoading || isPositionsLoading,
+    withdraw,
+    getMaxWithdraw,
+    isLoading: false,
     isConnected: !!address && !!walletClient
   };
 };

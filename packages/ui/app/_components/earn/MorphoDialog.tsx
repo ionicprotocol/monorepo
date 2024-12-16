@@ -1,7 +1,9 @@
-// components/MorphoDialog.tsx
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { utils } from 'ethers';
+import { base } from 'viem/chains';
+import { useChainId, useSwitchChain } from 'wagmi';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -20,6 +22,7 @@ import {
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 import MaxDeposit from '../MaxDeposit';
+import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
 
 interface MorphoDialogProps {
   asset: string[];
@@ -28,15 +31,29 @@ interface MorphoDialogProps {
 export function MorphoDialog({ asset }: MorphoDialogProps) {
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const { supply, withdraw, isLoading, isConnected } = useMorphoProtocol();
+  const { supply, withdraw, getMaxWithdraw, isLoading, isConnected } =
+    useMorphoProtocol();
+  const [maxWithdraw, setMaxWithdraw] = useState<bigint>(BigInt(0));
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const assetSymbol = asset[0] as 'USDC' | 'WETH';
 
-  // Token addresses for Base network
-  const tokenAddresses: { [key: string]: `0x${string}` } = {
-    WETH: '0x4200000000000000000000000000000000000006',
-    USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
-  };
+  const fetchMaxWithdraw = useCallback(async () => {
+    if (isConnected && !isLoading) {
+      const max = await getMaxWithdraw(assetSymbol);
+      setMaxWithdraw(max);
+    }
+  }, [isConnected, isLoading, assetSymbol, getMaxWithdraw]);
+
+  useEffect(() => {
+    fetchMaxWithdraw();
+  }, [fetchMaxWithdraw]);
+
+  const formattedMaxWithdraw = utils.formatUnits(
+    maxWithdraw,
+    assetSymbol === 'WETH' ? 18 : 6
+  );
 
   const handleInputChange = (value?: string) => {
     setAmount(value || '');
@@ -46,6 +63,16 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
     if (!isConnected) return;
 
     try {
+      if (chainId !== base.id) {
+        try {
+          await switchChain({ chainId: base.id });
+          return;
+        } catch (switchError) {
+          console.error('Failed to switch network:', switchError);
+          return;
+        }
+      }
+
       setIsProcessing(true);
       const parsedAmount = utils.parseUnits(
         amount,
@@ -53,6 +80,8 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
       );
       await supply(assetSymbol, parsedAmount);
       setAmount('');
+
+      await fetchMaxWithdraw();
     } catch (error) {
       console.error('Supply error:', error);
     } finally {
@@ -64,6 +93,16 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
     if (!isConnected) return;
 
     try {
+      if (chainId !== base.id) {
+        try {
+          await switchChain({ chainId: base.id });
+          return;
+        } catch (switchError) {
+          console.error('Failed to switch network:', switchError);
+          return;
+        }
+      }
+
       setIsProcessing(true);
       const parsedAmount = utils.parseUnits(
         amount,
@@ -71,6 +110,8 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
       );
       await withdraw(assetSymbol, parsedAmount);
       setAmount('');
+
+      await fetchMaxWithdraw();
     } catch (error) {
       console.error('Withdraw error:', error);
     } finally {
@@ -101,9 +142,9 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
                   <MaxDeposit
                     amount={amount}
                     tokenName={assetSymbol}
-                    token={tokenAddresses[assetSymbol]}
+                    token={morphoBaseAddresses.tokens[assetSymbol]}
                     handleInput={handleInputChange}
-                    chain={8453} // Base chain ID
+                    chain={base.id}
                     headerText="Supply Amount"
                     decimals={assetSymbol === 'WETH' ? 18 : 6}
                   />
@@ -116,7 +157,9 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
                       ? 'Connect Wallet'
                       : isProcessing
                         ? 'Processing...'
-                        : 'Supply'}
+                        : chainId !== base.id
+                          ? 'Switch to Base'
+                          : 'Supply'}
                   </Button>
                 </>
               )}
@@ -130,12 +173,13 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
                 <>
                   <MaxDeposit
                     amount={amount}
+                    max={formattedMaxWithdraw}
                     tokenName={assetSymbol}
-                    token={tokenAddresses[assetSymbol]}
+                    token={morphoBaseAddresses.tokens[assetSymbol]}
                     handleInput={handleInputChange}
-                    chain={8453}
+                    chain={base.id}
                     headerText="Withdraw Amount"
-                    useUnderlyingBalance={true}
+                    useUnderlyingBalance
                     decimals={assetSymbol === 'WETH' ? 18 : 6}
                   />
                   <Button
@@ -147,7 +191,9 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
                       ? 'Connect Wallet'
                       : isProcessing
                         ? 'Processing...'
-                        : 'Withdraw'}
+                        : chainId !== base.id
+                          ? 'Switch to Base'
+                          : 'Withdraw'}
                   </Button>
                 </>
               )}
