@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { type Address, formatEther, formatUnits } from 'viem';
 
@@ -12,13 +12,14 @@ import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useMerklApr } from '@ui/hooks/useMerklApr';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
-import { useStore } from '@ui/store/Store';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { useMerklData } from '../useMerklData';
+import { calculateTotalAPR } from '@ui/utils/marketUtils';
+import { multipliers } from '@ui/utils/multipliers';
 
 export type MarketRowData = MarketData & {
   asset: string;
@@ -50,6 +51,8 @@ export type MarketRowData = MarketData & {
   isBorrowDisabled: boolean;
   underlyingSymbol: string;
   nativeAssetYield: number | undefined;
+  supplyAPRTotalz: number;
+  borrowAPRTotalz: number;
 };
 
 export const useMarketData = (
@@ -61,43 +64,39 @@ export const useMarketData = (
     selectedPool,
     +chain
   );
-
-  const setFeaturedSupply = useStore((state) => state.setFeaturedSupply);
-  const setFeaturedSupply2 = useStore((state) => state.setFeaturedSupply2);
-
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]
   );
-
-  const { data: borrowRates } = useBorrowAPYs(assets ?? [], +chain);
-  const { data: supplyRates } = useSupplyAPYs(assets ?? [], +chain);
-  const { data: merklApr } = useMerklApr();
-  const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
-    poolData?.assets.map((asset) => asset.cToken) ?? [],
-    +chain
-  );
-
-  const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
-    assets ?? []
-  );
-
-  const { data: rewards } = useRewards({
-    chainId: +chain,
-    poolId: selectedPool
-  });
-
-  // Get all cToken addresses for borrow caps query
   const cTokenAddresses = useMemo(
     () => assets?.map((asset) => asset.cToken) ?? [],
     [assets]
   );
 
-  // Query borrow caps for all assets at once
-  const { data: borrowCapsData } = useBorrowCapsForAssets(
-    cTokenAddresses,
+  const { data: borrowRates, isLoading: isLoadingBorrowApys } = useBorrowAPYs(
+    assets ?? [],
     +chain
   );
+  const { data: supplyRates, isLoading: isLoadingSupplyApys } = useSupplyAPYs(
+    assets ?? [],
+    +chain
+  );
+  const { data: loopMarkets, isLoading: isLoadingLoopMarkets } = useLoopMarkets(
+    poolData?.assets.map((asset) => asset.cToken) ?? [],
+    +chain
+  );
+  const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
+    assets ?? []
+  );
+  const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
+
+  const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
+    useBorrowCapsForAssets(cTokenAddresses, +chain);
+
+  const { data: rewards, isLoading: isLoadingRewards } = useRewards({
+    chainId: +chain,
+    poolId: selectedPool
+  });
 
   const formatNumber = (value: bigint | number, decimals: number): string => {
     const parsedValue =
@@ -125,7 +124,7 @@ export const useMarketData = (
           .map((reward) => ({
             ...reward,
             apy: (reward.apy ?? 0) * 100
-          }));
+          })) as FlywheelReward[];
 
         const borrowRewards = rewards?.[asset.cToken]
           ?.filter((reward) =>
@@ -136,19 +135,7 @@ export const useMarketData = (
           .map((reward) => ({
             ...reward,
             apy: (reward.apy ?? 0) * 100
-          }));
-
-        const merklAprForToken = merklApr?.find(
-          (a) => Object.keys(a)[0].toLowerCase() === asset.cToken.toLowerCase()
-        )?.[asset.cToken];
-
-        const totalSupplyRewardsAPR =
-          (supplyRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ??
-            0) + (merklAprForToken ?? 0);
-
-        const totalBorrowRewardsAPR =
-          borrowRewards?.reduce((acc, reward) => acc + (reward.apy ?? 0), 0) ??
-          0;
+          })) as FlywheelReward[];
 
         // Get borrow caps for this specific asset from the bulk query result
         const assetBorrowCaps = borrowCapsData?.[asset.cToken];
@@ -177,6 +164,48 @@ export const useMarketData = (
           totalUSD: formatNumber(asset.totalBorrowFiat, 0)
         };
 
+        const nativeAssetYield = fraxtalAprs?.[asset.cToken]?.nativeAssetYield;
+        const config =
+          multipliers[+chain]?.[selectedPool]?.[asset.underlyingSymbol];
+
+        const supplyAPRTotal = calculateTotalAPR({
+          type: 'supply',
+          baseAPR: supplyRates?.[asset.cToken]
+            ? supplyRates[asset.cToken] * 100
+            : 0,
+          rewards: supplyRewards,
+          effectiveNativeYield:
+            nativeAssetYield !== undefined
+              ? nativeAssetYield * 100
+              : config?.supply?.underlyingAPR,
+          merklAprForOP: config?.supply?.op
+            ? merklApr?.find(
+                (info) =>
+                  info.token?.toLowerCase() ===
+                  asset.underlyingToken?.toLowerCase()
+              )?.apr
+            : undefined
+        });
+
+        const borrowAPRTotal = calculateTotalAPR({
+          type: 'borrow',
+          baseAPR: borrowRates?.[asset.cToken]
+            ? borrowRates[asset.cToken] * 100
+            : 0,
+          rewards: borrowRewards,
+          effectiveNativeYield:
+            nativeAssetYield !== undefined
+              ? nativeAssetYield * 100
+              : config?.borrow?.underlyingAPR,
+          merklAprForOP: config?.borrow?.op
+            ? merklApr?.find(
+                (info) =>
+                  info.token?.toLowerCase() ===
+                  asset.underlyingToken?.toLowerCase()
+              )?.apr
+            : undefined
+        });
+
         return {
           ...asset,
           asset: asset.underlyingSymbol,
@@ -190,7 +219,7 @@ export const useMarketData = (
             ? borrowRates[asset.cToken] * 100
             : 0,
           collateralFactor: Number(formatEther(asset.collateralFactor)) * 100,
-          nativeAssetYield: fraxtalAprs?.[asset.cToken]?.nativeAssetYield,
+          nativeAssetYield,
           membership: asset.membership,
           cTokenAddress: asset.cToken,
           comptrollerAddress: poolData?.comptroller,
@@ -200,83 +229,27 @@ export const useMarketData = (
             : false,
           supplyRewards,
           borrowRewards,
-          supplyAPRTotal: supplyRates?.[asset.cToken]
-            ? supplyRates[asset.cToken] * 100 + totalSupplyRewardsAPR
-            : undefined,
-          borrowAPRTotal: borrowRates?.[asset.cToken]
-            ? 0 - borrowRates[asset.cToken] * 100 + totalBorrowRewardsAPR
-            : undefined,
           isBorrowDisabled: assetBorrowCaps
             ? assetBorrowCaps.totalBorrowCap <= 1
-            : false
+            : false,
+          supplyAPRTotal,
+          borrowAPRTotal
         };
       })
       .filter(Boolean) as MarketRowData[];
 
     return transformedData;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     assets,
     chain,
     selectedPool,
     rewards,
-    merklApr,
     supplyRates,
     borrowRates,
     loopMarkets,
     isLoadingFraxtalAprs,
     poolData?.comptroller,
     borrowCapsData
-  ]);
-
-  useEffect(() => {
-    if (!marketData.length) return;
-
-    // Find and set featured supply assets based on shouldGetFeatured mapping
-    marketData.forEach((market) => {
-      // Check if this market is featured supply 1
-      if (
-        shouldGetFeatured.featuredSupply[+chain][
-          selectedPool
-        ]?.toLowerCase() === market.asset.toLowerCase()
-      ) {
-        setFeaturedSupply({
-          asset: market.asset,
-          supplyAPR: market.supplyAPR,
-          supplyAPRTotal: market.supplyAPRTotal,
-          rewards: market.supplyRewards,
-          dropdownSelectedChain: +chain,
-          selectedPoolId: selectedPool,
-          cToken: market.cTokenAddress,
-          pool: market.comptrollerAddress
-        });
-      }
-
-      // Check if this market is featured supply 2
-      if (
-        shouldGetFeatured.featuredSupply2[+chain][
-          selectedPool
-        ]?.toLowerCase() === market.asset.toLowerCase()
-      ) {
-        setFeaturedSupply2({
-          asset: market.asset,
-          supplyAPR: market.supplyAPR,
-          supplyAPRTotal: market.supplyAPRTotal,
-          rewards: market.supplyRewards,
-          dropdownSelectedChain: +chain,
-          selectedPoolId: selectedPool,
-          cToken: market.cTokenAddress,
-          pool: market.comptrollerAddress
-        });
-      }
-    });
-  }, [
-    marketData,
-    chain,
-    selectedPool,
-    setFeaturedSupply,
-    setFeaturedSupply2,
-    poolData?.comptroller
   ]);
 
   const selectedMarketData = useMemo(() => {
@@ -297,11 +270,33 @@ export const useMarketData = (
     };
   }, [selectedMarketData, poolData, loopMarkets]);
 
+  const featuredMarkets = useMemo(() => {
+    if (!marketData.length) return [];
+
+    const featuredSymbols = [
+      shouldGetFeatured.featuredSupply[+chain][selectedPool]?.toLowerCase(),
+      shouldGetFeatured.featuredSupply2[+chain][selectedPool]?.toLowerCase()
+    ];
+
+    return marketData.filter((market) =>
+      featuredSymbols.includes(market.asset.toLowerCase())
+    );
+  }, [marketData, chain, selectedPool]);
+
   return {
     marketData,
-    isLoading: isLoadingPoolData,
+    isLoading:
+      isLoadingPoolData ||
+      isLoadingLoopMarkets ||
+      isLoadingFraxtalAprs ||
+      isLoadingMerklData ||
+      isLoadingBorrowCaps ||
+      isLoadingSupplyApys ||
+      isLoadingBorrowApys ||
+      isLoadingRewards,
     poolData,
     selectedMarketData,
-    loopProps
+    loopProps,
+    featuredMarkets
   };
 };

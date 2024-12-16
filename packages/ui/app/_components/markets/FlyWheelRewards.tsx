@@ -102,7 +102,7 @@ const FlyWheelRewards = ({
         <RewardRow
           key={index}
           symbol={rewardsSymbols[reward?.token]}
-          value={`${rewardsSymbols[reward?.token]} Rewards APR: +${
+          value={`${rewardsSymbols[reward?.token]} Rewards APR: ${
             reward.apy?.toLocaleString('en-US', { maximumFractionDigits: 2 }) ??
             '-'
           }%`}
@@ -121,7 +121,7 @@ const FlyWheelRewards = ({
             <RewardRow
               key={index}
               symbol={rewardsSymbols[reward.rewardToken]}
-              value={`+ ${Number(formatEther(reward.amount)).toLocaleString(
+              value={`${Number(formatEther(reward.amount)).toLocaleString(
                 'en-US',
                 {
                   maximumFractionDigits: 1

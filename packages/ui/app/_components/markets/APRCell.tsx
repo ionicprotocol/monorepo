@@ -28,6 +28,7 @@ export type APRCellProps = {
   rewards?: FlywheelReward[];
   nativeAssetYield?: number;
   underlyingToken: Hex;
+  aprTotal?: number;
 };
 
 const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
@@ -49,7 +50,6 @@ const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
 
 export default function APRCell(props: APRCellProps) {
   const {
-    totalAPR,
     baseAPRFormatted,
     effectiveNativeYield,
     showRewardsBadge,
@@ -66,7 +66,7 @@ export default function APRCell(props: APRCellProps) {
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
         <div className="flex flex-col items-start cursor-pointer">
-          <span>{totalAPR}%</span>
+          <span>{props.aprTotal?.toFixed(2)}%</span>
           <div className="flex flex-col items-start gap-1">
             <span
               className={cn(
