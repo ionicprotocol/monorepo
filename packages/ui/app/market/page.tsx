@@ -61,8 +61,15 @@ export default function Market() {
     []
   );
 
-  const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
-    useMarketData(selectedPool, chain, selectedSymbol);
+  const {
+    marketData,
+    selectedMarketData,
+    featuredMarkets,
+    isLoading,
+    poolData,
+    loopProps
+  } = useMarketData(selectedPool, chain, selectedSymbol);
+
   useEffect(() => {
     setFilteredMarketData(marketData);
   }, [marketData]);
@@ -119,7 +126,6 @@ export default function Market() {
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="supply"
-          aprTotal={row.original.supplyAPRTotal ?? 0}
           baseAPR={row.original.supplyAPR}
           asset={row.original.asset}
           rewards={row.original.supplyRewards}
@@ -127,6 +133,9 @@ export default function Market() {
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          nativeAssetYield={row.original.nativeAssetYield}
+          underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.supplyAPRTotal}
         />
       )
     },
@@ -138,7 +147,6 @@ export default function Market() {
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="borrow"
-          aprTotal={row.original.borrowAPRTotal ?? 0}
           baseAPR={row.original.borrowAPR}
           asset={row.original.asset}
           rewards={row.original.borrowRewards}
@@ -146,6 +154,8 @@ export default function Market() {
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.borrowAPRTotal}
         />
       )
     },
@@ -251,6 +261,7 @@ export default function Market() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setSwapWidgetOpen={setSwapWidgetOpen}
             setWrapWidgetOpen={setWrapWidgetOpen}
+            featuredMarkets={featuredMarkets}
           />
           <StakingTile chain={+chain} />
         </div>

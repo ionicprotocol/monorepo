@@ -4,6 +4,7 @@ import {
   bsdETH_MARKET,
   cbBTC_MARKET,
   cbETH_MARKET,
+  COMPTROLLER,
   EURC_MARKET,
   eUSD,
   eUSD_MARKET,
@@ -26,9 +27,10 @@ import {
   wusdm_MARKET,
   wusdPlus_MARKET
 } from ".";
-import { Address, parseEther } from "viem";
+import { Address, formatEther, parseEther } from "viem";
 import { setupRewards } from "../../flywheel/setup";
 import { BORROW_DURATION, SUPPLY_DURATION } from "..";
+import { getCycleInfoForAllMarkets, sendRewardsToMarkets } from "../../flywheel/rewards";
 
 task("base:add-rewards:epoch1:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
@@ -610,3 +612,82 @@ task("base:approve-flywheel", "approve flywheel for market").setAction(
     }
   }
 );
+
+task("flywheel:get_cycle_info:borrow:base", "get cycle info from flywheel").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_Borrow_ION_epoch5");
+    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
+  }
+);
+
+task("flywheel:get_cycle_info:supply:base", "get cycle info from flywheel").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_ION_epoch5");
+    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
+  }
+);
+
+task("base:send-ion:epoch6", "send ion to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+
+  const rewardsToSend: { market: Address; amount: string }[] = [
+    {
+      market: eUSD_MARKET,
+      amount: "25000"
+    },
+    {
+      market: bsdETH_MARKET,
+      amount: "25000"
+    },
+    {
+      market: hyUSD_MARKET,
+      amount: "25000"
+    },
+    {
+      market: WETH_MARKET,
+      amount: "50000"
+    },
+    {
+      market: weETH_MARKET,
+      amount: "25000"
+    },
+    {
+      market: AERO_MARKET,
+      amount: "7500"
+    },
+    {
+      market: cbETH_MARKET,
+      amount: "5000"
+    },
+    {
+      market: wusdm_MARKET,
+      amount: "5000"
+    },
+    {
+      market: USDz_MARKET,
+      amount: "10000"
+    },
+    {
+      market: wusdPlus_MARKET,
+      amount: "10000"
+    },
+    {
+      market: uSOL_MARKET,
+      amount: "5000"
+    },
+    {
+      market: uSUI_MARKET,
+      amount: "5000"
+    },
+    {
+      market: sUSDz_MARKET,
+      amount: "5000"
+    },
+    {
+      market: cbBTC_MARKET,
+      amount: "5000"
+    }
+  ];
+
+  await sendRewardsToMarkets(viem, ION, rewardsToSend, deployer as Address);
+});

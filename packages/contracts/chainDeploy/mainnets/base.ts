@@ -2,11 +2,10 @@ import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle, dep
 import { base } from "@ionicprotocol/chains";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address, zeroAddress } from "viem";
-import { ChainlinkSpecificParams, OracleTypes, PythSpecificParams } from "../types";
+import { Address, Hex, zeroAddress } from "viem";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 import { deployDiaPriceOracle } from "../helpers/oracles/dia";
-import { DiaSpecificParams } from "@ionicprotocol/types";
+import { ChainlinkSpecificParams, DiaSpecificParams, OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
 
 const assets = base.assets;
 
@@ -55,7 +54,7 @@ export const deploy = async ({
     pythAssets: base.assets
       .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
       .map((asset) => ({
-        feed: (asset.oracleSpecificParams as PythSpecificParams).feed,
+        feed: (asset.oracleSpecificParams as PythSpecificParams).feed as Hex,
         underlying: asset.underlying
       })),
     nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
@@ -92,7 +91,7 @@ export const deploy = async ({
   const chainlinkAssets = assets
     .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
     .map((asset) => ({
-      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator,
+      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
       feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
       symbol: asset.symbol
     }));
@@ -104,6 +103,24 @@ export const deploy = async ({
     deployConfig,
     assets: base.assets,
     chainlinkAssets
+  });
+
+  const eOracleAssets = base.assets
+    .filter((asset) => asset.oracle === OracleTypes.eOracle)
+    .map((asset) => ({
+      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+      symbol: asset.symbol
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0x75DfcbeDF377f99898535AeE7Fa1Cd1D1e8E41b0" },
+    assets: base.assets,
+    chainlinkAssets: eOracleAssets,
+    namePostfix: "eOracle"
   });
 
   const diaAssets = base.assets
