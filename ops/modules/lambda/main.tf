@@ -49,7 +49,7 @@ resource "aws_lambda_function" "executable" {
   timeout       = var.timeout
   memory_size   = var.memory_size
   environment {
-    variables = merge(var.container_env_vars, { TARGET_target_chain_id = var.target_chain_id })
+    variables = merge(var.container_env_vars, { TARGET_CHAIN_ID = var.target_chain_id })
   }
 }
 
