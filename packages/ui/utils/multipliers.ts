@@ -506,8 +506,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       uSUI: {
@@ -518,8 +518,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       sUSDz: {
@@ -530,8 +530,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false,
+          ionAPR: true,
+          flywheel: true,
           underlyingAPR: 15
         }
       },
