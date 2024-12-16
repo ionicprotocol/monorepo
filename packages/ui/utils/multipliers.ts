@@ -295,8 +295,8 @@ export const multipliers: Record<
         supply: {
           underlyingAPR: 2.6,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       hyUSD: {
@@ -445,8 +445,8 @@ export const multipliers: Record<
         supply: {
           underlyingAPR: 5,
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       'USD+': {
