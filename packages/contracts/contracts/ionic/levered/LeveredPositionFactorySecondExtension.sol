@@ -25,15 +25,15 @@ contract LeveredPositionFactorySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   error PairNotWhitelisted();
+  error WrongFnsArrayLength();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 4;
+    uint8 fnsCount = 3;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.createPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPosition.selector;
-    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("createAndFundPositionAtRatio(address,address,uint256,uint256)")));
-    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("createAndFundPositionAtRatio(address,address,uint256,uint256,address,bytes,address,bytes)")));
-    require(fnsCount == 0, "use the correct array length");
+    functionSelectors[--fnsCount] = this.createAndFundPositionAtRatio.selector;
+    if(fnsCount != 0) revert WrongFnsArrayLength();
     return functionSelectors;
   }
 
@@ -79,34 +79,13 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
-    uint256 _leverageRatio
-  ) external returns (LeveredPosition) {
-    return createAndFundPositionAtRatio(
-      _collateralMarket,
-      _stableMarket,
-      _fundingAsset,
-      _fundingAmount,
-      _leverageRatio,
-      address(0),
-      "",
-      address(0),
-      "",
-      0
-    );
-  }
-
-  function createAndFundPositionAtRatio(
-    ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount,
     uint256 _leverageRatio,
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
     bytes memory _adjustLeverageRatioAggregatorData,
     uint256 _expectedSlippage
-  ) public returns (LeveredPosition) {
+  ) external returns (LeveredPosition) {
     LeveredPosition position = createAndFundPosition(
       _collateralMarket,
       _stableMarket,
