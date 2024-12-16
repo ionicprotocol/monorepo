@@ -4,59 +4,103 @@ import { mode } from 'viem/chains';
 
 import type { Address } from 'viem';
 
-export interface MerklAprData {
-  [chainId: number]: {
-    [key: `${number}-${Address}`]: {
-      [merkleKey: string]: {
-        apr: number;
-        typeInfo: {
-          underlying?: Address;
-          poolTokens?: {
-            [tokenAddress: string]: {
-              symbol: string;
-              decimals: number;
-              amountInPool: number;
-              price: number;
-            };
-          };
-        };
+interface MerklOpportunity {
+  action: 'supply' | 'borrow';
+  apr: number;
+  tvl: number;
+  platform: string;
+  name: string;
+  status: 'live' | 'inactive';
+  campaigns: {
+    active: Array<{
+      apr: number;
+      campaignParameters: {
+        underlyingToken: Address;
+        targetToken: Address;
       };
-    };
+    }>;
   };
 }
+
+interface MerklOpportunityResponse {
+  [key: `${number}_${string}`]: MerklOpportunity;
+}
+
+export interface TokenAprInfo {
+  token: Address;
+  type: 'supply' | 'borrow';
+  apr: number;
+}
+
+const mapZeroAddress = (address: Address): Address => {
+  if (address === '0x0000000000000000000000000000000000000000') {
+    return '0x4200000000000000000000000000000000000006' as Address;
+  }
+  return address;
+};
 
 export function useMerklData() {
   return useQuery({
     queryKey: ['merklApr'],
     queryFn: async () => {
-      const res = await axios.get<MerklAprData>(
-        `https://api.merkl.xyz/v3/campaigns?chainIds=34443&types=1&live=true`
-      );
+      try {
+        const res = await axios.get<MerklOpportunityResponse>(
+          `https://api.merkl.xyz/v3/opportunity?campaigns=true&chainId=${mode.id}&type=10&testTokens=true`
+        );
+        console.log('res', res);
 
-      // Flatten all token-APR pairs into a single array
-      return Object.entries(res.data[mode.id]).flatMap(([key, value]) => {
-        const campaignData = Object.values(value)[0];
-        const { apr, typeInfo } = campaignData;
+        return Object.entries(res.data).flatMap(
+          ([key, opportunity]): TokenAprInfo[] => {
+            if (!opportunity.campaigns.active.length) return [];
 
-        // Handle pools with multiple tokens
-        if (typeInfo.poolTokens) {
-          // Create separate entries for each token in the pool
-          return Object.keys(typeInfo.poolTokens).map((tokenAddress) => ({
-            [tokenAddress as Address]: apr
-          }));
-        }
+            const campaign = opportunity.campaigns.active[0];
+            if (!campaign?.campaignParameters?.underlyingToken) return [];
 
-        // Handle single token cases (using underlying)
-        if (typeInfo.underlying) {
-          return [
-            {
-              [typeInfo.underlying]: apr
-            }
-          ];
-        }
+            const mappedToken = mapZeroAddress(
+              campaign.campaignParameters.underlyingToken as Address
+            );
 
+            return [
+              {
+                token: mappedToken,
+                type: opportunity.action === 'borrow' ? 'borrow' : 'supply',
+                apr: opportunity.apr || 0
+              }
+            ];
+          }
+        );
+      } catch (error) {
+        console.error('Error fetching Merkl data:', error);
         return [];
-      });
-    }
+      }
+    },
+    refetchInterval: 5 * 60 * 1000
   });
+}
+
+export interface MerklCampaign {
+  apr: number;
+  type: string;
+  typeInfo: {
+    underlying?: Address;
+    protocol?: string;
+    name?: string;
+    poolTokens?: {
+      [tokenAddress: string]: {
+        symbol: string;
+        decimals: number;
+        amountInPool: number;
+        price: number;
+      };
+    };
+  };
+  tags?: string[];
+}
+
+export interface MerklAprData {
+  [chainId: number]: {
+    [key: `${number}-${Address}`]: {
+      [merkleKey: string]: MerklCampaign;
+    };
+  };
 }

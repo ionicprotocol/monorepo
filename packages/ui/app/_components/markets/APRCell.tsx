@@ -8,15 +8,17 @@ import {
   HoverCardContent
 } from '@ui/components/ui/hover-card';
 import { pools } from '@ui/constants';
-import { cn } from '@ui/lib/utils';
-import { RewardIcons } from './RewardsIcon';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
-import { FlywheelReward } from '@ionicprotocol/types';
-import { Address, Hex } from 'viem';
+import { cn } from '@ui/lib/utils';
+
+import { RewardIcons } from './RewardsIcon';
+
+import type { Address, Hex } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export type APRCellProps = {
   type: 'borrow' | 'supply';
-  aprTotal: number | undefined;
   baseAPR: number;
   asset: string;
   cToken: Address;
@@ -26,6 +28,7 @@ export type APRCellProps = {
   rewards?: FlywheelReward[];
   nativeAssetYield?: number;
   underlyingToken: Hex;
+  aprTotal?: number;
 };
 
 const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
@@ -47,7 +50,6 @@ const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
 
 export default function APRCell(props: APRCellProps) {
   const {
-    totalAPR,
     baseAPRFormatted,
     effectiveNativeYield,
     showRewardsBadge,
@@ -64,7 +66,7 @@ export default function APRCell(props: APRCellProps) {
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
         <div className="flex flex-col items-start cursor-pointer">
-          <span>{totalAPR}%</span>
+          <span>{props.aprTotal?.toFixed(2)}%</span>
           <div className="flex flex-col items-start gap-1">
             <span
               className={cn(

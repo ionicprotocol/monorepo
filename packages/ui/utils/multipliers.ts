@@ -88,8 +88,8 @@ export const multipliers: Record<
       USDT: {
         borrow: {
           turtle: false,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         decimals: 6,
         market: 'usdt_market',
@@ -506,8 +506,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       uSUI: {
@@ -518,8 +518,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       sUSDz: {
@@ -530,8 +530,8 @@ export const multipliers: Record<
         },
         supply: {
           turtle: false,
-          ionAPR: false,
-          flywheel: false,
+          ionAPR: true,
+          flywheel: true,
           underlyingAPR: 15
         }
       },
@@ -644,10 +644,20 @@ export const multipliers: Record<
           turtle: false,
           ionAPR: true,
           flywheel: true
+        },
+        borrow: {
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
         }
       },
       USDC: {
         supply: {
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        },
+        borrow: {
           turtle: false,
           ionAPR: true,
           flywheel: true
@@ -670,6 +680,11 @@ export const multipliers: Record<
           turtle: false,
           ionAPR: true,
           flywheel: true
+        },
+        borrow: {
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
         }
       },
       SNX: {
@@ -683,8 +698,9 @@ export const multipliers: Record<
         borrow: {
           etherfi: 1,
           turtle: false,
-          ionAPR: false,
-          eigenlayer: true
+          ionAPR: true,
+          eigenlayer: true,
+          flywheel: true
         },
         supply: {
           etherfi: 3,
@@ -708,6 +724,20 @@ export const multipliers: Record<
           underlyingAPR: 3.46,
           turtle: false,
           ionAPR: false
+        }
+      },
+      FRAX: {
+        supply: {
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      sfrxETH: {
+        supply: {
+          turtle: false,
+          ionAPR: true,
+          flywheel: true
         }
       }
     }
