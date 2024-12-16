@@ -62,6 +62,9 @@ export default function APRCell(props: APRCellProps) {
 
   const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
 
+  const showFlywheel =
+    config?.flywheel && (rewards || []).filter((r) => r.apy).length > 0;
+
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
@@ -168,7 +171,7 @@ export default function APRCell(props: APRCellProps) {
               %
             </p>
           )}
-          {config?.flywheel && (
+          {showFlywheel && (
             <div className="py-0.5">
               <FlyWheelRewards
                 cToken={cToken}

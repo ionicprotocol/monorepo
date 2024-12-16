@@ -15,11 +15,12 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
-
-import type { FlywheelReward } from '@ionicprotocol/types';
-import { useMerklData } from '../useMerklData';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
+
+import { useMerklData } from '../useMerklData';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export type MarketRowData = MarketData & {
   asset: string;
@@ -239,6 +240,7 @@ export const useMarketData = (
       .filter(Boolean) as MarketRowData[];
 
     return transformedData;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     assets,
     chain,
