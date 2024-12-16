@@ -33,19 +33,19 @@
       "address": "0x7DFDd5B55Fe37602B355F7a9Ed0fe00e30C163cb"
     },
     "CErc20Delegate": {
-      "address": "0xb43f921E7c8403Ae6b12Bd4E3CB8157fF2d57E58"
+      "address": "0x0C87ee2bE13473a1a2Af30408A76259183A39b53"
     },
     "CErc20PluginDelegate": {
-      "address": "0xFC5588d5ff535fC87665F646573B212B6F64cd79"
+      "address": "0x440c9E2aAE9b3b3E9B39E591ee43fF1e755D7901"
     },
     "CErc20PluginRewardsDelegate": {
       "address": "0x5FB0a996a2252B0541aa2815f23B8f46291A54Ae"
     },
     "CErc20RewardsDelegate": {
-      "address": "0xc2799B6b4DDFE0acbFc1C1B70c7b430ea64b3958"
+      "address": "0xbdA6802B3b809E1B4f31b1aF63922E06C2cF6b16"
     },
     "CTokenFirstExtension": {
-      "address": "0xA1e7978F4e9A4f68e3eC8f632C85C8d2E5f07faf"
+      "address": "0x4b646107Ff8ddE14204001A98d26CdD3f9Ccb000"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
@@ -351,7 +351,7 @@
       "address": "0xA90f1c28F8Bc9C92113e54d0b7d007647Ee216a4"
     },
     "OracleRegistry": {
-      "address": "0x618cb934e9121B035DeE92Bd2e084EAb83cD1eB3"
+      "address": "0x0b439d841C222A40279a7481044dDA80826679AB"
     },
     "PoolDirectory": {
       "address": "0xE1A3006be645a80F206311d9f18C866c204bA02f"
