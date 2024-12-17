@@ -1,15 +1,20 @@
+export interface TVLData {
+  tokenAmount: number;
+  usdValue: number;
+}
+
 export interface MorphoRow {
   asset: string[];
   protocol: string;
   strategy: string;
   network: string;
   apr: number;
-  tvl: number;
+  tvl: TVLData;
   img: string;
   link: string;
   live: boolean;
   getApr?: () => Promise<number>;
-  getTvl?: () => Promise<number>;
+  getTvl?: () => Promise<TVLData>;
 }
 
 export type EarnRow = {

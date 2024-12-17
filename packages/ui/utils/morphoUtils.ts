@@ -1,27 +1,23 @@
 // utils/morphoUtils.ts
 import type { MorphoRow } from '@ui/types/Earn';
 
-export const morphoVaults: MorphoRow[] = [
+export const morphoVaults: Omit<MorphoRow, 'apr' | 'tvl'>[] = [
   {
     asset: ['WETH'],
     protocol: 'Morpho',
-    strategy: 'Vault',
-    network: 'Base',
-    apr: 0,
-    tvl: 0,
-    img: '/img/protocols/morpho.png',
-    link: '#',
+    strategy: 'Supply',
+    network: 'base',
+    img: '/img/symbols/32/color/morpho.png',
+    link: 'https://morpho.org',
     live: true
   },
   {
     asset: ['USDC'],
     protocol: 'Morpho',
-    strategy: 'Vault',
-    network: 'Base',
-    apr: 0,
-    tvl: 0,
-    img: '/img/protocols/morpho.png',
-    link: '#',
+    strategy: 'Supply',
+    network: 'base',
+    img: '/img/symbols/32/color/morpho.png',
+    link: 'https://morpho.org',
     live: true
   }
 ];

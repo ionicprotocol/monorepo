@@ -13,6 +13,7 @@ import CommonTable from '../CommonTable';
 import type { EnhancedColumnDef } from '../CommonTable';
 import ActionButton from '../ActionButton';
 import { ExternalLink } from 'lucide-react';
+import { AssetIcons } from '../AssetIcons';
 
 export default function EarnTable() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);
@@ -38,16 +39,10 @@ export default function EarnTable() {
       cell: ({ row }) => (
         <div className="flex gap-3 items-center">
           <div className="flex -space-x-1">
-            {row.original.asset.map((coin, idx) => (
-              <Image
-                key={idx}
-                src={`/img/symbols/32/color/${coin}.png`}
-                alt={coin}
-                width={28}
-                height={28}
-                className="w-7 h-7"
-              />
-            ))}
+            <AssetIcons
+              rewards={row.original.asset}
+              size={28}
+            />
           </div>
           <div className="flex items-center gap-1">
             {row.original.asset.map((val, idx) => (

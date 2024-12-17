@@ -11,6 +11,7 @@ import CommonTable from '../CommonTable';
 import type { EnhancedColumnDef } from '../CommonTable';
 import { useState } from 'react';
 import ActionButton from '../ActionButton';
+import { AssetIcons } from '../AssetIcons';
 
 export default function MorphoTable() {
   const { rows, isLoading } = useMorphoData();
@@ -25,23 +26,19 @@ export default function MorphoTable() {
       cell: ({ row }) => (
         <div className="flex gap-3 items-center">
           <div className="flex -space-x-1">
-            {row.original.asset.map((coin, idx) => (
-              <Image
-                key={idx}
-                src={`/img/symbols/32/color/${coin}.png`}
-                alt={coin}
-                width={28}
-                height={28}
-                className="w-7 h-7"
-              />
-            ))}
+            <AssetIcons
+              rewards={row.original.asset}
+              size={28}
+            />
           </div>
           <div className="flex items-center gap-1">
             {row.original.asset.map((val, idx) => (
-              <span key={idx}>
-                {idx !== 0 && '/'}
-                {val}
-              </span>
+              <>
+                <span key={idx}>
+                  {idx !== 0 && '/'} {val}
+                </span>
+                <span className="w-7" />
+              </>
             ))}
           </div>
         </div>
@@ -91,7 +88,9 @@ export default function MorphoTable() {
       header: 'APR',
       sortingFn: 'numerical',
       cell: ({ row }) => (
-        <span>{row.original.apr > 0 ? `${row.original.apr}%` : '∞%'}</span>
+        <span>
+          {row.original.apr > 0 ? `${row.original.apr.toFixed(4)}%` : '∞%'}
+        </span>
       )
     },
     {
@@ -99,14 +98,20 @@ export default function MorphoTable() {
       header: 'TVL',
       sortingFn: 'numerical',
       cell: ({ row }) => (
-        <span>
-          $
-          {row.original.tvl > 0
-            ? row.original.tvl.toLocaleString(undefined, {
-                maximumFractionDigits: 2
-              })
-            : '-'}
-        </span>
+        <div className="flex flex-col items-start">
+          <span>
+            {row.original.tvl.tokenAmount.toLocaleString(undefined, {
+              maximumFractionDigits: 2
+            })}{' '}
+            {row.original.asset[0]}
+          </span>
+          <span className="text-xs text-white/40 font-light">
+            $
+            {row.original.tvl.usdValue.toLocaleString(undefined, {
+              maximumFractionDigits: 2
+            })}
+          </span>
+        </div>
       )
     },
     {
@@ -128,7 +133,7 @@ export default function MorphoTable() {
   return (
     <>
       <CommonTable
-        data={rows}
+        data={rows as MorphoRow[]}
         columns={columns}
         isLoading={isLoading}
       />
