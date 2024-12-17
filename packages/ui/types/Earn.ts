@@ -8,7 +8,7 @@ export interface MorphoRow {
   protocol: string;
   strategy: string;
   network: string;
-  apr: number;
+  apy: number;
   tvl: TVLData;
   img: string;
   link: string;

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 type RewardIconsProps = {
-  rewards: string[]; // Array of reward types like 'op', 'ionic', 'turtle', 'kelp', etc.
+  rewards: string[];
   size?: number;
 };
 
@@ -17,7 +17,6 @@ const iconMap = {
 };
 
 export const AssetIcons = ({ rewards, size = 16 }: RewardIconsProps) => {
-  console.log('size', size);
   const getIconPath = (reward: string) => {
     if (reward in iconMap) {
       return iconMap[reward as keyof typeof iconMap];

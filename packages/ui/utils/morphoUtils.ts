@@ -1,7 +1,7 @@
-// utils/morphoUtils.ts
 import type { MorphoRow } from '@ui/types/Earn';
+import { utils } from 'ethers';
 
-export const morphoVaults: Omit<MorphoRow, 'apr' | 'tvl'>[] = [
+export const morphoVaults: Omit<MorphoRow, 'apy' | 'tvl'>[] = [
   {
     asset: ['WETH'],
     protocol: 'Morpho',
@@ -70,3 +70,19 @@ export const vaultAbi = [
     stateMutability: 'view'
   }
 ] as const;
+
+export const formatTokenAmount = (
+  totalAssets: string,
+  symbol: string
+): number => {
+  try {
+    const decimals = symbol.includes('WETH') ? 18 : 6;
+    const formatted = utils.formatUnits(totalAssets, decimals);
+    const tokenAmount = parseFloat(formatted);
+
+    return tokenAmount;
+  } catch (error) {
+    console.error(`Error formatting TVL for ${symbol}:`, error);
+    return 0;
+  }
+};

@@ -89,12 +89,12 @@ export default function MorphoTable() {
       )
     },
     {
-      id: 'apr',
-      header: 'APR',
+      id: 'apy',
+      header: 'APY',
       sortingFn: 'numerical',
       cell: ({ row }) => (
         <span>
-          {row.original.apr > 0 ? `${row.original.apr.toFixed(4)}%` : '∞%'}
+          {row.original.apy > 0 ? `${row.original.apy.toFixed(2)}%` : '∞%'}
         </span>
       )
     },

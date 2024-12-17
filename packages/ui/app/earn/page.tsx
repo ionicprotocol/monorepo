@@ -1,4 +1,3 @@
-// app/earn/page.tsx
 'use client';
 
 import {
