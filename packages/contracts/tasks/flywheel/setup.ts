@@ -56,7 +56,7 @@ export const setupRewards = async (
           args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
       },
-      owner: multisig ?? deployer
+      owner: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2"
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
