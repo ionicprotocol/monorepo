@@ -1,6 +1,5 @@
-'use client';
-
 import * as React from 'react';
+import { useRef, useState } from 'react';
 
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
@@ -41,16 +40,29 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | null>(null);
+
+  return (
+    <TabsPrimitive.Content
+      ref={ref}
+      onAnimationStart={() => {
+        if (contentRef.current) {
+          setHeight(contentRef.current.scrollHeight);
+        }
+      }}
+      className={cn(
+        'transition-[height] duration-200 overflow-hidden',
+        className
+      )}
+      style={{ height: height ? `${height}px` : 'auto' }}
+      {...props}
+    >
+      <div ref={contentRef}>{props.children}</div>
+    </TabsPrimitive.Content>
+  );
+});
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };

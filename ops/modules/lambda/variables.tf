@@ -18,7 +18,7 @@ variable "container_family" {
   type        = string
 }
 
-variable "chain_id" {
+variable "target_chain_id" {
   description = "chain id to use"
 }
 

@@ -337,6 +337,8 @@ jobs:
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
       OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
+      LISK_MAINNET_RPC_URLS: ${{ secrets.LISK_MAINNET_RPC_URLS }}
+      FRAXTAL_MAINNET_RPC_URLS: ${{ secrets.FRAXTAL_MAINNET_RPC_URLS }}
 
     steps:
       - name: Checkout repository
@@ -361,7 +363,8 @@ jobs:
       #   working-directory: ./ops
       #   run: make feed-verifier-smoke-test
 
-      # - name: run smoke tests for price verifier
+
+     # - name: run smoke tests for price verifier
       #   working-directory: ./ops
       #   run: make price-verifier-smoke-test
 
@@ -394,6 +397,8 @@ jobs:
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
       OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
+      LISK_MAINNET_RPC_URLS: ${{ secrets.LISK_MAINNET_RPC_URLS }}
+      FRAXTAL_MAINNET_RPC_URLS: ${{ secrets.FRAXTAL_MAINNET_RPC_URLS }}
     steps:
       - name: Checkout
         uses: actions/checkout@master

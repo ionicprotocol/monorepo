@@ -29,8 +29,8 @@ import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
+import MaxDeposit from '../_components/MaxDeposit';
 import ResultHandler from '../_components/ResultHandler';
-import MaxDeposit from '../_components/stake/MaxDeposit';
 import FromTOChainSelector from '../_components/xION/FromToChainSelector';
 import ProgressSteps from '../_components/xION/ProgressSteps';
 import Quote from '../_components/xION/Quote';

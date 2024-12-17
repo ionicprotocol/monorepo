@@ -66,7 +66,8 @@ export enum OracleTypes {
   RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle",
   RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle",
   AerodromePriceOracle = "AerodromePriceOracle",
-  VelodromePriceOracle = "VelodromePriceOracle"
+  VelodromePriceOracle = "VelodromePriceOracle",
+  eOracle = "eOracle"
 }
 
 export enum IrmTypes {
@@ -209,6 +210,9 @@ export enum assetSymbols {
   sUSDz = "sUSDz",
   fBOMB = "fBOMB",
   KLIMA = "KLIMA",
+  uXRP = "uXRP",
+  ionicUSDC = "ionicUSDC",
+  ionicWETH = "ionicWETH",
 
   // optimism
   OP = "OP",

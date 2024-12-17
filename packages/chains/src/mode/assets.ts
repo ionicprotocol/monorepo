@@ -129,7 +129,11 @@ export const assets: SupportedAsset[] = [
     underlying: mBTC,
     name: "Merlin BTC",
     decimals: 18,
-    oracle: OracleTypes.PythPriceOracle,
+    oracle: OracleTypes.eOracle,
+    oracleSpecificParams: {
+      aggregator: "0x47F8B9002761a6E145eead0d6d9b364a3977FACe",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.mode.network", mBTC)
   },
   {

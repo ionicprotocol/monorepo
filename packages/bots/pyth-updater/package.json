@@ -34,7 +34,7 @@
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
     "ts-node-dev": "^2.0.0",
-    "viem": "^2.21.50"
+    "viem": "^2.21.55"
   },
   "devDependencies": {
     "eslint": "^8",

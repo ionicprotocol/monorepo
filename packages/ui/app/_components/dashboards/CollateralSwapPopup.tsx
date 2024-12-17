@@ -30,12 +30,14 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/app/_components/popup/Slider';
+import SliderComponent from '@ui/app/_components/dialogs/manage/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '@ui/app/_components/popup/TransactionStepsHandler';
-import type { IBal } from '@ui/app/_components/stake/MaxDeposit';
-import { donutoptions, getDonutData } from '@ui/app/_constants/mock';
+} from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import {
+  donutoptions,
+  getDonutData
+} from '@ui/app/_constants/market-details-chart';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
@@ -43,8 +45,10 @@ import { useDebounce } from '@ui/hooks/useDebounce';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import MaxDeposit from './MaxDeposit';
 import SwapTo from './SwapTo';
+import MaxDeposit from '../MaxDeposit';
+
+import type { IBal } from './SwapTo';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk/src';
 
@@ -164,9 +168,7 @@ export default function CollateralSwapPopup({
   };
 
   const resetTransactionSteps = () => {
-    // refetchUsedQueries();
     upsertTransactionStep(undefined);
-    // initiateCloseAnimation();
   };
   const { isConnected } = useAccount();
 
@@ -405,10 +407,8 @@ export default function CollateralSwapPopup({
               tokenName={swappedFromAsset.underlyingSymbol.toLowerCase()}
               token={swappedFromAsset.cToken}
               handleInput={(val?: string) => setSwapFromAmount(val as string)}
-              // max="0"
               chain={+chain}
               setMaxTokenForUtilization={setMaxTokens}
-              exchangeRate={swappedFromAsset.exchangeRate}
               footerText={'$' + (lifiQuote?.estimate?.fromAmountUSD ?? '0')}
               decimals={swappedFromAsset.underlyingDecimals}
             />

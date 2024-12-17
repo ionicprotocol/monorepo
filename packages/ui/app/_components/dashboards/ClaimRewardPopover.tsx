@@ -49,8 +49,21 @@ export default function ClaimRewardPopover({
   const totalRewards =
     rewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
 
-  const getSymbol = (chain: number, token: `0x${string}`) =>
-    REWARDS_TO_SYMBOL[chain][token];
+  const getSymbol = (chain: number, token: `0x${string}`): string => {
+    // Check if the chain exists in the mapping
+    if (!REWARDS_TO_SYMBOL[chain]) {
+      console.warn(`Chain ${chain} not found in REWARDS_TO_SYMBOL`);
+      return 'UNKNOWN';
+    }
+
+    // Check if the token exists for that chain
+    if (!REWARDS_TO_SYMBOL[chain][token]) {
+      console.warn(`Token ${token} not found for chain ${chain}`);
+      return 'UNKNOWN';
+    }
+
+    return REWARDS_TO_SYMBOL[chain][token];
+  };
 
   const router = useRouter();
 

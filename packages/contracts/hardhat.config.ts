@@ -6,13 +6,13 @@ import { HardhatUserConfig } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 
 import "./tasks";
+import { base, fraxtal, mode } from "viem/chains";
 
 dotenv();
 
 const accounts = [
   process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
 ];
-
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -22,8 +22,9 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: { default: 0 },
     multisig: {
-      34443: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
-      8453: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB"
+      [mode.id]: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
+      [base.id]: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB",
+      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2"
     }
   },
   solidity: {
@@ -66,6 +67,11 @@ const config: HardhatUserConfig = {
           apiKey: process.env.ETHERSCAN_API_KEY_BASE
         }
       }
+    },
+    virtual_base: {
+      url: process.env.OVERRIDE_RPC_URL_VIRTUAL_BASE,
+      chainId: 8453,
+      accounts
     },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",
@@ -141,6 +147,10 @@ const config: HardhatUserConfig = {
   sourcify: {
     enabled: true
   }
+  // tenderly: {
+  //   project: "ionic",
+  //   username: "ionicdev"
+  // }
 };
 
 export default config;

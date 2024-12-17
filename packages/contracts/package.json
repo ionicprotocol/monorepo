@@ -39,9 +39,10 @@
     "@nomicfoundation/hardhat-ignition-viem": "^0.15.8",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
-    "@nomicfoundation/hardhat-verify": "^2.0.12",
-    "@nomicfoundation/hardhat-viem": "^2.0.6",
-    "@nomicfoundation/ignition-core": "^0.15.8",
+    "@nomicfoundation/hardhat-verify": "^2.0.9",
+    "@nomicfoundation/hardhat-viem": "^2.0.5",
+    "@nomicfoundation/ignition-core": "^0.15.5",
+    "@tenderly/hardhat-tenderly": "^2.4.0",
     "@wagmi/cli": "^2.1.16",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
@@ -53,6 +54,6 @@
     "solidity-coverage": "^0.8.13",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
-    "viem": "^2.21.50"
+    "viem": "^2.21.55"
   }
 }

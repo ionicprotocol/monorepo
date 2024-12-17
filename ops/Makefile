@@ -82,6 +82,8 @@ prod-plan:
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
 	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPC_URLS} && \
 	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPC_URLS} && \
+	export TF_VAR_lisk_mainnet_rpcs=${LISK_MAINNET_RPC_URLS} && \
+	export TF_VAR_fraxtal_mainnet_rpcs=${FRAXTAL_MAINNET_RPC_URLS} && \
 	terraform init && \
 	terraform plan
 
@@ -109,6 +111,8 @@ prod-deploy:
 	export TF_VAR_uptime_pyth_updater_api=${UPTIME_PYTH_UPDATER_API} && \
 	export TF_VAR_base_mainnet_rpcs=${BASE_MAINNET_RPC_URLS} && \
 	export TF_VAR_mode_mainnet_rpcs=${MODE_MAINNET_RPC_URLS} && \
+	export TF_VAR_lisk_mainnet_rpcs=${LISK_MAINNET_RPC_URLS} && \
+	export TF_VAR_fraxtal_mainnet_rpcs=${FRAXTAL_MAINNET_RPC_URLS} && \
 	terraform init && \
 	terraform apply -auto-approve
 
