@@ -3,15 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { utils } from 'ethers';
 import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
-import { chainIdToConfig } from '@ionicprotocol/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@ui/components/ui/dialog';
 import {
   Tabs,
@@ -23,7 +21,6 @@ import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 import MaxDeposit from '../MaxDeposit';
 import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
-import ActionButton from '../ActionButton';
 import Image from 'next/image';
 import { ThreeCircles } from 'react-loader-spinner';
 
@@ -139,7 +136,7 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
     >
       <DialogContent
         maxWidth="500px"
-        className="bg-grayUnselect"
+        className="bg-grayUnselect p-4"
         fullWidth
       >
         <DialogHeader>
@@ -158,12 +155,16 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
         <Tabs
           defaultValue="supply"
           onValueChange={resetValues}
+          className="p-1"
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="supply">Supply</TabsTrigger>
             <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
           </TabsList>
-          <TabsContent value="supply">
+          <TabsContent
+            value="supply"
+            className="p-1"
+          >
             <div className="space-y-4">
               {isLoading ? (
                 <div>Loading...</div>
@@ -211,7 +212,10 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
               )}
             </div>
           </TabsContent>
-          <TabsContent value="withdraw">
+          <TabsContent
+            value="withdraw"
+            className="p-1"
+          >
             <div className="space-y-4">
               {isLoading ? (
                 <div>Loading...</div>
