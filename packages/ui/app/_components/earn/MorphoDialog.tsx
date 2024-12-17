@@ -24,6 +24,8 @@ import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 import MaxDeposit from '../MaxDeposit';
 import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
 import ActionButton from '../ActionButton';
+import Image from 'next/image';
+import { ThreeCircles } from 'react-loader-spinner';
 
 interface MorphoDialogProps {
   asset: string[];
@@ -122,16 +124,41 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
     }
   };
 
+  const resetValues = () => {
+    setAmount('');
+    setIsProcessing(false);
+  };
+
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={(val) => {
+        setIsOpen?.(val);
+        resetValues();
+      }}
     >
-      <DialogContent>
+      <DialogContent
+        maxWidth="500px"
+        className="bg-grayUnselect"
+        fullWidth
+      >
         <DialogHeader>
-          <DialogTitle>Manage {asset.join('/')} Vault</DialogTitle>
+          <DialogTitle>
+            <div className="flex w-20 mx-auto relative text-center">
+              <Image
+                alt="modlogo"
+                className="mx-auto"
+                height={32}
+                src={`/img/symbols/32/color/${asset[0]?.toLowerCase()}.png`}
+                width={32}
+              />
+            </div>
+          </DialogTitle>
         </DialogHeader>
-        <Tabs defaultValue="supply">
+        <Tabs
+          defaultValue="supply"
+          onValueChange={resetValues}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="supply">Supply</TabsTrigger>
             <TabsTrigger value="withdraw">Withdraw</TabsTrigger>
@@ -152,17 +179,33 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
                     decimals={assetSymbol === 'WETH' ? 18 : 6}
                   />
                   <Button
-                    className="w-full"
+                    className="w-full bg-accent hover:opacity-80"
                     onClick={handleSupply}
                     disabled={isProcessing || !amount || !isConnected}
                   >
-                    {!isConnected
-                      ? 'Connect Wallet'
-                      : isProcessing
-                        ? 'Processing...'
-                        : chainId !== base.id
-                          ? 'Switch to Base'
-                          : 'Supply'}
+                    {!isConnected ? (
+                      'Connect Wallet'
+                    ) : isProcessing ? (
+                      <>
+                        Processing
+                        <ThreeCircles
+                          ariaLabel="three-circles-loading"
+                          color="black"
+                          height={40}
+                          visible={true}
+                          width={40}
+                          wrapperStyle={{
+                            height: `${40}px`,
+                            alignItems: 'center',
+                            width: `${40}px`
+                          }}
+                        />
+                      </>
+                    ) : chainId !== base.id ? (
+                      'Switch to Base'
+                    ) : (
+                      'Supply'
+                    )}
                   </Button>
                 </>
               )}
@@ -186,17 +229,33 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
                     decimals={assetSymbol === 'WETH' ? 18 : 6}
                   />
                   <Button
-                    className="w-full"
+                    className="w-full bg-accent hover:opacity-80"
                     onClick={handleWithdraw}
                     disabled={isProcessing || !amount || !isConnected}
                   >
-                    {!isConnected
-                      ? 'Connect Wallet'
-                      : isProcessing
-                        ? 'Processing...'
-                        : chainId !== base.id
-                          ? 'Switch to Base'
-                          : 'Withdraw'}
+                    {!isConnected ? (
+                      'Connect Wallet'
+                    ) : isProcessing ? (
+                      <>
+                        Processing
+                        <ThreeCircles
+                          ariaLabel="three-circles-loading"
+                          color="black"
+                          height={40}
+                          visible={true}
+                          width={40}
+                          wrapperStyle={{
+                            height: `${40}px`,
+                            alignItems: 'center',
+                            width: `${40}px`
+                          }}
+                        />
+                      </>
+                    ) : chainId !== base.id ? (
+                      'Switch to Base'
+                    ) : (
+                      'Withdraw'
+                    )}
                   </Button>
                 </>
               )}
