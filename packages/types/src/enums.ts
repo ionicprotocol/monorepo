@@ -210,6 +210,8 @@ export enum assetSymbols {
   fBOMB = "fBOMB",
   KLIMA = "KLIMA",
   uXRP = "uXRP",
+  ionicUSDC = "ionicUSDC",
+  ionicWETH = "ionicWETH",
 
   // optimism
   OP = "OP",

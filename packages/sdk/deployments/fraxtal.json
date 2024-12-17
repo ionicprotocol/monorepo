@@ -179,6 +179,9 @@
     "UniswapV2LiquidatorFunder": {
       "address": "0xB08FAfc6E8280ce351CF22d2Db8ABd241E8A5E47"
     },
+    "VelodromePriceOracleFraxtal": {
+      "address": "0x5cA3fd2c285C4138185Ef1BdA7573D415020F3C8"
+    },
     "xERC20Hyperlane": {
       "address": "0x7F2aFd3Fa3f9CFFb66AaA2ccE0f7527B37C8bbfA"
     },

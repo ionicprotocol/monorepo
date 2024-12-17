@@ -41,6 +41,8 @@ export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
 export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
 export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
 export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
+export const ionicUSDC = "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440";
+export const ionicWETH = "0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707";
 
 export const assets: SupportedAsset[] = [
   {
@@ -413,6 +415,28 @@ export const assets: SupportedAsset[] = [
     initialBorrowCap: parseEther(String(245_000)).toString(),
     initialSupplyCap: parseEther(String(200_000)).toString(),
     initialCf: "0.65"
+  },
+  {
+    symbol: assetSymbols.ionicUSDC,
+    underlying: ionicUSDC,
+    name: "Ionic Ecosystem USDC",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", ionicUSDC),
+    initialSupplyCap: parseEther(String(10_000_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.ionicWETH,
+    underlying: ionicWETH,
+    name: "Ionic Ecosystem WETH",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", ionicWETH),
+    initialSupplyCap: parseEther(String(2_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

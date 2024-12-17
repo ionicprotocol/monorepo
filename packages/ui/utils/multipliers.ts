@@ -256,7 +256,7 @@ export const multipliers: Record<
         },
         supply: {
           flywheel: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       bsdETH: {
