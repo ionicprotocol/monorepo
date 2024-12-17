@@ -1,18 +1,28 @@
+'use client';
+
 import React, { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
+import { getQuote } from '@lifi/sdk';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
 import {
   type Address,
   formatEther,
   formatUnits,
+  Hex,
   parseEther,
-  parseUnits
+  parseUnits,
+  zeroAddress
 } from 'viem';
-import { useBalance, useChainId, usePublicClient } from 'wagmi';
+import {
+  useBalance,
+  useChainId,
+  usePublicClient,
+  useWalletClient
+} from 'wagmi';
 
 import {
   Dialog,
@@ -42,6 +52,7 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from '../manage/TransactionStepsHandler';
 
+import { iLeveredPositionFactoryAbi } from '@ionicprotocol/sdk';
 import type { OpenPosition } from '@ionicprotocol/types';
 
 const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
@@ -209,6 +220,7 @@ export default function Loop({
     usdPrice
   ]);
   const { currentSdk, address } = useMultiIonic();
+  const { data: walletClient } = useWalletClient();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { refetch: refetchBalance } = useBalance({
@@ -262,7 +274,13 @@ export default function Loop({
    * Handle position opening
    */
   const handleOpenPosition = async (): Promise<void> => {
-    if (!currentSdk || !address) {
+    if (
+      !currentSdk ||
+      !address ||
+      !publicClient ||
+      !walletClient ||
+      !selectedBorrowAsset
+    ) {
       return;
     }
 
@@ -319,13 +337,92 @@ export default function Loop({
 
       currentTransactionStep++;
 
-      const tx = await currentSdk.createAndFundPositionAtRatio(
-        selectedCollateralAsset.cToken,
-        selectedBorrowAsset?.cToken ?? ('' as Address),
-        selectedCollateralAsset.underlyingToken,
-        amountAsBInt,
-        parseEther(currentLeverage.toString())
-      );
+      // get initial quote to calculate slippage
+      const [, initialBorrowAmount] = await publicClient.readContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'calculateAdjustmentAmountDeltas',
+        args: [
+          true,
+          parseEther(currentLeverage.toString()),
+          selectedCollateralAsset.underlyingPrice,
+          selectedBorrowAsset!.underlyingPrice,
+          1n,
+          amountAsBInt,
+          0n
+        ]
+      });
+
+      const quote = await getQuote({
+        fromChain: chainId,
+        toChain: chainId,
+        fromToken: selectedBorrowAsset!.underlyingToken,
+        toToken: selectedCollateralAsset.underlyingToken,
+        fromAmount: initialBorrowAmount.toString(),
+        fromAddress: factory.address
+      });
+      const realSlippage =
+        quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
+          ? 1 -
+            Number(quote.estimate.toAmountUSD) /
+              Number(quote.estimate.fromAmountUSD)
+          : 0;
+      let slippageWithBufferInBps = 0;
+      if (realSlippage > 1) {
+        slippageWithBufferInBps = 10; // 10bps minimum
+      } else {
+        slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
+      }
+
+      const [, finalBorrowAmount] = await publicClient.readContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'calculateAdjustmentAmountDeltas',
+        args: [
+          true,
+          parseEther(currentLeverage.toString()),
+          selectedCollateralAsset.underlyingPrice,
+          selectedBorrowAsset!.underlyingPrice,
+          BigInt(Math.ceil(slippageWithBufferInBps)),
+          amountAsBInt,
+          0n
+        ]
+      });
+
+      const quoteFinal = await getQuote({
+        fromChain: chainId,
+        toChain: chainId,
+        fromToken: selectedBorrowAsset!.underlyingToken,
+        toToken: selectedCollateralAsset.underlyingToken,
+        fromAmount: finalBorrowAmount.toString(),
+        fromAddress: factory.address
+      });
+
+      const tx = await walletClient?.writeContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'createAndFundPositionAtRatio',
+        args: [
+          selectedCollateralAsset.cToken,
+          selectedBorrowAsset!.cToken,
+          selectedCollateralAsset.underlyingToken,
+          amountAsBInt,
+          parseEther(currentLeverage.toString()),
+          zeroAddress,
+          '0x',
+          quoteFinal.transactionRequest!.to! as Address,
+          quoteFinal.transactionRequest!.data! as Hex,
+          0n
+        ]
+      });
+
+      // const tx = await currentSdk.createAndFundPositionAtRatio(
+      //   selectedCollateralAsset.cToken,
+      //   selectedBorrowAsset?.cToken ?? ('' as Address),
+      //   selectedCollateralAsset.underlyingToken,
+      //   amountAsBInt,
+      //   parseEther(currentLeverage.toString())
+      // );
 
       upsertTransactionStep({
         index: currentTransactionStep,
