@@ -389,13 +389,23 @@ export default function Loop({
         ]
       });
 
+      const result = await publicClient.simulateContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'createPosition',
+        args: [selectedCollateralAsset.cToken, selectedBorrowAsset!.cToken]
+      });
+      if (!result.result) {
+        throw new Error('Error while creating position');
+      }
+
       const quoteFinal = await getQuote({
         fromChain: chainId,
         toChain: chainId,
         fromToken: selectedBorrowAsset!.underlyingToken,
         toToken: selectedCollateralAsset.underlyingToken,
         fromAmount: finalBorrowAmount.toString(),
-        fromAddress: factory.address
+        fromAddress: result.result
       });
 
       const tx = await walletClient?.writeContract({
