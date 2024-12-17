@@ -23,12 +23,15 @@ import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 import MaxDeposit from '../MaxDeposit';
 import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
+import ActionButton from '../ActionButton';
 
 interface MorphoDialogProps {
   asset: string[];
+  isOpen?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
 }
 
-export function MorphoDialog({ asset }: MorphoDialogProps) {
+export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { supply, withdraw, getMaxWithdraw, isLoading, isConnected } =
@@ -120,10 +123,10 @@ export function MorphoDialog({ asset }: MorphoDialogProps) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-full">Manage</Button>
-      </DialogTrigger>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Manage {asset.join('/')} Vault</DialogTitle>

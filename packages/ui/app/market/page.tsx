@@ -29,6 +29,7 @@ import TvlTile from '../_components/markets/TvlTile';
 
 import type { EnhancedColumnDef } from '../_components/CommonTable';
 import type { Row } from '@tanstack/react-table';
+import ActionButton from '../_components/ActionButton';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -199,11 +200,9 @@ export default function Market() {
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
         <div className="flex gap-2 w-full pr-6">
-          <button
-            className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 ${
-              row.original.loopPossible ? 'w-1/2' : 'w-full'
-            }`}
-            onClick={async () => {
+          <ActionButton
+            half={row.original.loopPossible}
+            action={async () => {
               const result = await handleSwitchOriginChain(+chain, chainId);
               if (result) {
                 setSelectedSymbol(row.original.asset);
@@ -214,23 +213,22 @@ export default function Market() {
               }
             }}
             disabled={!address}
-          >
-            Manage
-          </button>
+            label="Manage"
+          />
           {row.original.loopPossible && (
-            <button
-              className="rounded-md bg-lime text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 hover:bg-lime-400 w-1/2"
-              onClick={async () => {
+            <ActionButton
+              action={async () => {
                 const result = await handleSwitchOriginChain(+chain, chainId);
                 if (result) {
                   setSelectedSymbol(row.original.asset);
                   setIsLoopDialogOpen(true);
                 }
               }}
+              half
               disabled={!address}
-            >
-              Loop
-            </button>
+              label="Loop"
+              bg="bg-lime"
+            />
           )}
         </div>
       )

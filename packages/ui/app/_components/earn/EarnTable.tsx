@@ -11,6 +11,8 @@ import { earnOpps } from '@ui/utils/earnUtils';
 import CommonTable from '../CommonTable';
 
 import type { EnhancedColumnDef } from '../CommonTable';
+import ActionButton from '../ActionButton';
+import { ExternalLink } from 'lucide-react';
 
 export default function EarnTable() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);
@@ -125,22 +127,13 @@ export default function EarnTable() {
       header: '',
       enableSorting: false,
       cell: ({ row }) => (
-        <Link
+        <ActionButton
           href={row.original.link}
           target="_blank"
-          className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 w-full inline-flex items-center justify-center gap-1.5 ${
-            !row.original.live && 'opacity-50'
-          }`}
-        >
-          {row.original.live ? 'Deposit' : 'Coming Soon'}
-          <Image
-            alt="external-link"
-            className="w-3 h-3"
-            src="https://img.icons8.com/material-outlined/24/external-link.png"
-            width={12}
-            height={12}
-          />
-        </Link>
+          disabled={!row.original.live}
+          label={row.original.live ? 'Deposit' : 'Coming Soon'}
+          rightIcon={ExternalLink}
+        />
       )
     }
   ];

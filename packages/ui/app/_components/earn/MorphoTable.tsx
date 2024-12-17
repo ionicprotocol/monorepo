@@ -9,9 +9,13 @@ import { MorphoDialog } from './MorphoDialog';
 import CommonTable from '../CommonTable';
 
 import type { EnhancedColumnDef } from '../CommonTable';
+import { useState } from 'react';
+import ActionButton from '../ActionButton';
 
 export default function MorphoTable() {
   const { rows, isLoading } = useMorphoData();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [selectedAsset, setSelectedAsset] = useState<string[]>([]);
 
   const columns: EnhancedColumnDef<MorphoRow>[] = [
     {
@@ -109,15 +113,30 @@ export default function MorphoTable() {
       id: 'manage',
       header: 'MANAGE',
       enableSorting: false,
-      cell: ({ row }) => <MorphoDialog asset={row.original.asset} />
+      cell: ({ row }) => (
+        <ActionButton
+          label="Manage"
+          action={() => {
+            setIsManageDialogOpen(true);
+            setSelectedAsset(row.original.asset);
+          }}
+        />
+      )
     }
   ];
 
   return (
-    <CommonTable
-      data={rows}
-      columns={columns}
-      isLoading={isLoading}
-    />
+    <>
+      <CommonTable
+        data={rows}
+        columns={columns}
+        isLoading={isLoading}
+      />
+      <MorphoDialog
+        asset={selectedAsset}
+        isOpen={isManageDialogOpen}
+        setIsOpen={setIsManageDialogOpen}
+      />
+    </>
   );
 }
