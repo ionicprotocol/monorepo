@@ -12,6 +12,7 @@ import type { EnhancedColumnDef } from '../CommonTable';
 import { useState } from 'react';
 import ActionButton from '../ActionButton';
 import { AssetIcons } from '../AssetIcons';
+import Link from 'next/link';
 
 export default function MorphoTable() {
   const { rows, isLoading } = useMorphoData();
@@ -24,7 +25,11 @@ export default function MorphoTable() {
       header: 'ASSETS',
       sortingFn: 'alphabetical',
       cell: ({ row }) => (
-        <div className="flex gap-3 items-center">
+        <Link
+          href={row.original.link}
+          target="_blank"
+          className="flex gap-3 items-center hover:underline"
+        >
           <div className="flex -space-x-1">
             <AssetIcons
               rewards={row.original.asset}
@@ -41,7 +46,7 @@ export default function MorphoTable() {
               </>
             ))}
           </div>
-        </div>
+        </Link>
       )
     },
     {

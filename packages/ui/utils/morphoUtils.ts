@@ -8,7 +8,7 @@ export const morphoVaults: Omit<MorphoRow, 'apr' | 'tvl'>[] = [
     strategy: 'Supply',
     network: 'base',
     img: '/img/symbols/32/color/morpho.png',
-    link: 'https://morpho.org',
+    link: 'https://app.morpho.org/vault?vault=0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707&network=base',
     live: true
   },
   {
@@ -17,7 +17,7 @@ export const morphoVaults: Omit<MorphoRow, 'apr' | 'tvl'>[] = [
     strategy: 'Supply',
     network: 'base',
     img: '/img/symbols/32/color/morpho.png',
-    link: 'https://morpho.org',
+    link: 'https://app.morpho.org/vault?vault=0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21&network=base',
     live: true
   }
 ];
