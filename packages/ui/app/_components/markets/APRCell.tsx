@@ -11,7 +11,7 @@ import { pools } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
 import { cn } from '@ui/lib/utils';
 
-import { RewardIcons } from './RewardsIcon';
+import { AssetIcons } from '../AssetIcons';
 
 import type { Address, Hex } from 'viem';
 
@@ -98,7 +98,7 @@ export default function APRCell(props: APRCellProps) {
                 )}
               >
                 <span>+ Rewards</span>
-                <RewardIcons rewards={rewardIcons} />
+                <AssetIcons rewards={rewardIcons} />
               </div>
             )}
 

@@ -1,7 +1,8 @@
 import Image from 'next/image';
 
 type RewardIconsProps = {
-  rewards: string[]; // Array of reward types like 'op', 'ionic', 'turtle', 'kelp', etc.
+  rewards: string[];
+  size?: number;
 };
 
 const iconMap = {
@@ -15,7 +16,7 @@ const iconMap = {
   lsk: '/img/symbols/32/color/lsk.png'
 };
 
-export const RewardIcons = ({ rewards }: RewardIconsProps) => {
+export const AssetIcons = ({ rewards, size = 16 }: RewardIconsProps) => {
   const getIconPath = (reward: string) => {
     if (reward in iconMap) {
       return iconMap[reward as keyof typeof iconMap];
@@ -34,12 +35,12 @@ export const RewardIcons = ({ rewards }: RewardIconsProps) => {
             zIndex: rewards.length - index // Higher z-index for earlier icons
           }}
         >
-          <div className="size-4 flex items-center justify-center">
+          <div className="flex items-center justify-center">
             <Image
               src={getIconPath(reward)}
               alt={reward}
-              width={16}
-              height={16}
+              width={size}
+              height={size}
               className="rounded-full"
             />
           </div>
