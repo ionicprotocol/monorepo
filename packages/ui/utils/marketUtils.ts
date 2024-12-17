@@ -1,9 +1,10 @@
-import { FlywheelReward } from '@ionicprotocol/types';
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
-import { RewardIcon } from '@ui/hooks/market/useAPRCell';
+import type { RewardIcon } from '@ui/hooks/market/useAPRCell';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 type TotalAPRParams = {
-  type: 'supply' | 'borrow';
+  type: 'borrow' | 'supply';
   baseAPR: number;
   rewards?: FlywheelReward[];
   effectiveNativeYield?: number;
