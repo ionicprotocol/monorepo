@@ -158,6 +158,15 @@
     "IonicFlywheelBorrow_Borrow_hyUSD_epoch5_Proxy": {
       "address": "0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424"
     },
+    "IonicFlywheelBorrow_Borrow_hyUSD_epoch6": {
+      "address": "0xc06a3AFf1bE598976EC43e0988bE2e106807071a"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_epoch6_Implementation": {
+      "address": "0x1c4EbB8d0f73fB8ce5cB7C02274C97EC1f6cbaAC"
+    },
+    "IonicFlywheelBorrow_Borrow_hyUSD_epoch6_Proxy": {
+      "address": "0xc06a3AFf1bE598976EC43e0988bE2e106807071a"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION": {
       "address": "0x26947aC416bC52e17FF23e29CaAcb12564A1C87B"
     },
@@ -172,6 +181,9 @@
     },
     "IonicFlywheelDynamicRewards_Borrow_hyUSD_epoch5": {
       "address": "0xf54B185b32670fF169429c9e7A880e3b8FB29cc9"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_hyUSD_epoch6": {
+      "address": "0x9eac041752eE35C57671E146b81A0bb972f25351"
     },
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
@@ -188,11 +200,17 @@
     "IonicFlywheelDynamicRewards_eUSD_epoch5": {
       "address": "0x3419ff3D903850B03687Ae240Da7C5556252d6BD"
     },
+    "IonicFlywheelDynamicRewards_eUSD_epoch6": {
+      "address": "0x0058c1f8fb66e829D017179d4718432c41D5FBbC"
+    },
     "IonicFlywheelDynamicRewards_eUSD_v3": {
       "address": "0xC4AAe8D289877A193279dc8F52bdF2BAfB8A6d58"
     },
     "IonicFlywheelDynamicRewards_hyUSD_epoch5": {
       "address": "0x8A08FAc9Fd0eEc18aB9E5a442F039B9491911D67"
+    },
+    "IonicFlywheelDynamicRewards_hyUSD_epoch6": {
+      "address": "0x8451695548Ed22FdEE0E3e4C9a77068Ba7da4115"
     },
     "IonicFlywheelDynamicRewards_hyUSD_v3": {
       "address": "0x6C94DF5aA9d2a750780e71085bD1CA7bbB94145B"
@@ -254,6 +272,15 @@
     "IonicFlywheel_eUSD_epoch5_Proxy": {
       "address": "0x1d0a712aE0162431E0573A8a735D02a29805d124"
     },
+    "IonicFlywheel_eUSD_epoch6": {
+      "address": "0x1e00C933e092912d47153765Fa7c886632c1d083"
+    },
+    "IonicFlywheel_eUSD_epoch6_Implementation": {
+      "address": "0xbAb23b338ECa6A2d716Dfe015Af1F1daEC91E235"
+    },
+    "IonicFlywheel_eUSD_epoch6_Proxy": {
+      "address": "0x1e00C933e092912d47153765Fa7c886632c1d083"
+    },
     "IonicFlywheel_eUSD_v3": {
       "address": "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4"
     },
@@ -271,6 +298,15 @@
     },
     "IonicFlywheel_hyUSD_epoch5_Proxy": {
       "address": "0xAC717cd20a72470Cb764B518dE561E1fFF41cC22"
+    },
+    "IonicFlywheel_hyUSD_epoch6": {
+      "address": "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440"
+    },
+    "IonicFlywheel_hyUSD_epoch6_Implementation": {
+      "address": "0x7fa961f1B0baA48d3284D0CB7C1Dc4bC06e1d35d"
+    },
+    "IonicFlywheel_hyUSD_epoch6_Proxy": {
+      "address": "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440"
     },
     "IonicFlywheel_hyUSD_v3": {
       "address": "0xc39441b305705AfD07de97237bC835a4501AbbEC"
