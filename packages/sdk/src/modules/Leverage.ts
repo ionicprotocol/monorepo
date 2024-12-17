@@ -5,7 +5,7 @@ import {
   OpenPosition,
   PositionInfo
 } from "@ionicprotocol/types";
-import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "viem";
+import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther, zeroAddress } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
@@ -37,7 +37,12 @@ export interface ILeverage {
     borrowMarket: Address,
     fundingAsset: Address,
     fundingAmount: bigint,
-    leverageRatio: bigint
+    leverageRatio: bigint,
+    fundingTarget: Address,
+    fundingData: Hex,
+    aggregatorTarget: Address,
+    aggregatorData: Hex,
+    expectedSlippage: bigint
   ): Promise<Hex>;
   getRangeOfLeverageRatio(address: Address): Promise<[bigint, bigint]>;
   isPositionClosed(address: Address): Promise<boolean>;
@@ -278,7 +283,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPosition(
-        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, aggregatorTarget, aggregatorData, 0n],
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, aggregatorTarget, aggregatorData],
         {
           account: this.walletClient!.account!.address,
           chain: this.walletClient!.chain
@@ -291,12 +296,28 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       borrowMarket: Address,
       fundingAsset: Address,
       fundingAmount: bigint,
-      leverageRatio: bigint
+      leverageRatio: bigint,
+      fundingTarget: Address,
+      fundingData: Hex,
+      aggregatorTarget: Address,
+      aggregatorData: Hex,
+      expectedSlippage: bigint
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPositionAtRatio(
-        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, leverageRatio],
+        [
+          collateralMarket,
+          borrowMarket,
+          fundingAsset,
+          fundingAmount,
+          leverageRatio,
+          fundingTarget,
+          fundingData,
+          aggregatorTarget,
+          aggregatorData,
+          expectedSlippage
+        ],
         {
           account: this.walletClient!.account!.address,
           chain: this.walletClient!.chain

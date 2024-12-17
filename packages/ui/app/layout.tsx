@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Script from 'next/script';
 
+import { createConfig } from '@lifi/sdk';
 import { createAppKit } from '@reown/appkit';
 import {
   base,
@@ -43,6 +44,10 @@ export const wagmiAdapter = new WagmiAdapter({
   networks,
   projectId,
   ssr: true
+});
+
+createConfig({
+  integrator: 'ionic'
 });
 
 // Create the new web3 modal

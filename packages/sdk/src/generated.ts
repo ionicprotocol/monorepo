@@ -5004,6 +5004,7 @@ export const cErc20Abi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -5607,6 +5608,7 @@ export const cErc20DelegateAbi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -7249,6 +7251,7 @@ export const cErc20PluginDelegateAbi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -7739,6 +7742,7 @@ export const cErc20PluginRewardsDelegateAbi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -8552,6 +8556,7 @@ export const cErc20RewardsDelegateAbi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -9430,6 +9435,7 @@ export const cTokenFirstExtensionAbi = [
     ],
     name: 'Transfer',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -9872,6 +9878,7 @@ export const cTokenOracleProtectedAbi = [
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
   },
+  { type: 'error', inputs: [], name: 'CallerIsNotEOA' },
   { type: 'error', inputs: [], name: 'InteractionNotAllowed' },
 ] as const;
 
@@ -26618,41 +26625,37 @@ export const iHistoricalRatesAbi = [
 export const iHypernativeOracleAbi = [
   {
     type: 'function',
-    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
-    name: 'isBlacklistedAccount',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [
-      { name: 'sender', internalType: 'address', type: 'address' },
-      { name: 'origin', internalType: 'address', type: 'address' },
+      { name: 'account', internalType: 'address', type: 'address' },
+      { name: 'isStrictMode', internalType: 'bool', type: 'bool' },
     ],
-    name: 'isBlacklistedContext',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
-    name: 'isTimeExceeded',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
     name: 'register',
     outputs: [],
     stateMutability: 'nonpayable',
   },
   {
     type: 'function',
-    inputs: [{ name: 'account', internalType: 'address', type: 'address' }],
-    name: 'registerStrict',
+    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
+    name: 'validateBlacklistedAccountInteraction',
     outputs: [],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'sender', internalType: 'address', type: 'address' }],
+    name: 'validateForbiddenAccountInteraction',
+    outputs: [],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'origin', internalType: 'address', type: 'address' },
+      { name: 'sender', internalType: 'address', type: 'address' },
+    ],
+    name: 'validateForbiddenContextInteraction',
+    outputs: [],
+    stateMutability: 'view',
   },
 ] as const;
 
@@ -28532,6 +28535,24 @@ export const iLeveredPositionFactoryAbi = [
   {
     type: 'function',
     inputs: [
+      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
+      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
+      { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
+      { name: 'positionSupplyAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'debtAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'calculateAdjustmentAmountDeltas',
+    outputs: [
+      { name: 'supplyDelta', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowsDelta', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'position', internalType: 'contract LeveredPosition', type: 'address' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
@@ -28557,7 +28578,6 @@ export const iLeveredPositionFactoryAbi = [
       { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
-      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPosition',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -28576,19 +28596,6 @@ export const iLeveredPositionFactoryAbi = [
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createAndFundPositionAtRatio',
-    outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '_collateralMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_stableMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_fundingAsset', internalType: 'contract IERC20Upgradeable', type: 'address' },
-      { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
-      { name: '_leverageRatio', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionAtRatio',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -28762,6 +28769,24 @@ export const iLeveredPositionFactoryExtensionAbi = [
   {
     type: 'function',
     inputs: [
+      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
+      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
+      { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
+      { name: 'positionSupplyAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'debtAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'calculateAdjustmentAmountDeltas',
+    outputs: [
+      { name: 'supplyDelta', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowsDelta', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'position', internalType: 'contract LeveredPosition', type: 'address' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
@@ -28787,7 +28812,6 @@ export const iLeveredPositionFactoryExtensionAbi = [
       { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
-      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPosition',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -28806,19 +28830,6 @@ export const iLeveredPositionFactoryExtensionAbi = [
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createAndFundPositionAtRatio',
-    outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '_collateralMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_stableMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_fundingAsset', internalType: 'contract IERC20Upgradeable', type: 'address' },
-      { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
-      { name: '_leverageRatio', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionAtRatio',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -28940,6 +28951,24 @@ export const iLeveredPositionFactoryFirstExtensionAbi = [
   {
     type: 'function',
     inputs: [
+      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
+      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
+      { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
+      { name: 'positionSupplyAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'debtAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'calculateAdjustmentAmountDeltas',
+    outputs: [
+      { name: 'supplyDelta', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowsDelta', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'position', internalType: 'contract LeveredPosition', type: 'address' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
@@ -29051,7 +29080,6 @@ export const iLeveredPositionFactorySecondExtensionAbi = [
       { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
-      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPosition',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -29070,19 +29098,6 @@ export const iLeveredPositionFactorySecondExtensionAbi = [
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createAndFundPositionAtRatio',
-    outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '_collateralMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_stableMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_fundingAsset', internalType: 'contract IERC20Upgradeable', type: 'address' },
-      { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
-      { name: '_leverageRatio', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionAtRatio',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -41962,6 +41977,29 @@ export const leveredPositionAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
+      { name: 'assumedSlippage', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getAdjustmentAmountDeltas',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'targetRatio', internalType: 'uint256', type: 'uint256' }],
+    name: 'getAdjustmentAmountDeltas',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'getCurrentLeverageRatio',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -42000,29 +42038,6 @@ export const leveredPositionAbi = [
     inputs: [{ name: 'assumedSlippage', internalType: 'uint256', type: 'uint256' }],
     name: 'getMinLeverageRatio',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'targetRatio', internalType: 'uint256', type: 'uint256' }],
-    name: 'getSupplyAmountDelta',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
-      { name: 'assumedSlippage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'getSupplyAmountDelta',
-    outputs: [
-      { name: '', internalType: 'uint256', type: 'uint256' },
-      { name: '', internalType: 'uint256', type: 'uint256' },
-    ],
     stateMutability: 'view',
   },
   {
@@ -42085,6 +42100,7 @@ export const leveredPositionAbi = [
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
   },
+  { type: 'error', inputs: [], name: 'AggregatorCallFailed' },
   { type: 'error', inputs: [], name: 'AssetNotRescuable' },
   {
     type: 'error',
@@ -42092,6 +42108,7 @@ export const leveredPositionAbi = [
     name: 'BorrowStableFailed',
   },
   { type: 'error', inputs: [], name: 'ConvertFundsFailed' },
+  { type: 'error', inputs: [], name: 'DelegateCallToNonContract' },
   {
     type: 'error',
     inputs: [{ name: 'errorCode', internalType: 'uint256', type: 'uint256' }],
@@ -42102,6 +42119,9 @@ export const leveredPositionAbi = [
     inputs: [{ name: '_functionSelector', internalType: 'bytes4', type: 'bytes4' }],
     name: 'ExtNotFound',
   },
+  { type: 'error', inputs: [], name: 'FlashLoanSourceError' },
+  { type: 'error', inputs: [], name: 'LowLevelDelegateCallFailed' },
+  { type: 'error', inputs: [], name: 'MarketsPoolsDiffer' },
   { type: 'error', inputs: [], name: 'NotPositionOwner' },
   { type: 'error', inputs: [], name: 'OnlyFactoryOwner' },
   { type: 'error', inputs: [], name: 'OnlyWhenClosed' },
@@ -42328,6 +42348,24 @@ export const leveredPositionFactoryFirstExtensionAbi = [
   {
     type: 'function',
     inputs: [
+      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
+      { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
+      { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
+      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
+      { name: 'positionSupplyAmount', internalType: 'uint256', type: 'uint256' },
+      { name: 'debtAmount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'calculateAdjustmentAmountDeltas',
+    outputs: [
+      { name: 'supplyDelta', internalType: 'uint256', type: 'uint256' },
+      { name: 'borrowsDelta', internalType: 'uint256', type: 'uint256' },
+    ],
+    stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'position', internalType: 'contract LeveredPosition', type: 'address' },
       { name: 'aggregatorTarget', internalType: 'address', type: 'address' },
       { name: 'aggregatorData', internalType: 'bytes', type: 'bytes' },
@@ -42523,7 +42561,6 @@ export const leveredPositionFactorySecondExtensionAbi = [
       { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
       { name: '_aggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_aggregatorData', internalType: 'bytes', type: 'bytes' },
-      { name: 'expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPosition',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -42542,19 +42579,6 @@ export const leveredPositionFactorySecondExtensionAbi = [
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createAndFundPositionAtRatio',
-    outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [
-      { name: '_collateralMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_stableMarket', internalType: 'contract ICErc20', type: 'address' },
-      { name: '_fundingAsset', internalType: 'contract IERC20Upgradeable', type: 'address' },
-      { name: '_fundingAmount', internalType: 'uint256', type: 'uint256' },
-      { name: '_leverageRatio', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionAtRatio',
     outputs: [{ name: '', internalType: 'contract LeveredPosition', type: 'address' }],
@@ -42631,6 +42655,7 @@ export const leveredPositionFactorySecondExtensionAbi = [
     name: 'OwnershipTransferred',
   },
   { type: 'error', inputs: [], name: 'PairNotWhitelisted' },
+  { type: 'error', inputs: [], name: 'WrongFnsArrayLength' },
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48400,6 +48425,24 @@ export const pricesAbi = [
       { name: 'useSrcWrappers', internalType: 'bool', type: 'bool' },
     ],
     name: 'getRateToEth',
+    outputs: [{ name: 'weightedRate', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Prices_Fraxtal
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const pricesFraxtalAbi = [
+  {
+    type: 'function',
+    inputs: [
+      { name: 'srcToken', internalType: 'address', type: 'address' },
+      { name: 'dstToken', internalType: 'address', type: 'address' },
+      { name: 'useSrcWrappers', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'getRate',
     outputs: [{ name: 'weightedRate', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -54357,6 +54400,32 @@ export const upgradesBaseTestAbi = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const velodromePriceOracleAbi = [
+  {
+    type: 'constructor',
+    inputs: [{ name: '_prices', internalType: 'address', type: 'address' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'cToken', internalType: 'contract ICErc20', type: 'address' }],
+    name: 'getUnderlyingPrice',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'underlying', internalType: 'address', type: 'address' }],
+    name: 'price',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// VelodromePriceOracleFraxtal
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const velodromePriceOracleFraxtalAbi = [
   {
     type: 'constructor',
     inputs: [{ name: '_prices', internalType: 'address', type: 'address' }],
