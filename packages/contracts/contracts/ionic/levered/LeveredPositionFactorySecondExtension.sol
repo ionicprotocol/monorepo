@@ -25,6 +25,7 @@ contract LeveredPositionFactorySecondExtension is
   using EnumerableSet for EnumerableSet.AddressSet;
 
   error PairNotWhitelisted();
+  error WrongFnsArrayLength();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
     uint8 fnsCount = 3;
@@ -32,7 +33,7 @@ contract LeveredPositionFactorySecondExtension is
     functionSelectors[--fnsCount] = this.createPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPositionAtRatio.selector;
-    require(fnsCount == 0, "use the correct array length");
+    if(fnsCount != 0) revert WrongFnsArrayLength();
     return functionSelectors;
   }
 
@@ -62,12 +63,14 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount
+    uint256 _fundingAmount,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData
   ) public returns (LeveredPosition) {
     LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
     _fundingAsset.approve(address(position), _fundingAmount);
-    position.fundPosition(_fundingAsset, _fundingAmount);
+    position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
     return position;
   }
 
@@ -76,11 +79,28 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
-    uint256 _leverageRatio
+    uint256 _leverageRatio,
+    address _fundingAssetSwapAggregatorTarget,
+    bytes memory _fundingAssetSwapAggregatorData,
+    address _adjustLeverageRatioAggregatorTarget,
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
   ) external returns (LeveredPosition) {
-    LeveredPosition position = createAndFundPosition(_collateralMarket, _stableMarket, _fundingAsset, _fundingAmount);
+    LeveredPosition position = createAndFundPosition(
+      _collateralMarket,
+      _stableMarket,
+      _fundingAsset,
+      _fundingAmount,
+      _fundingAssetSwapAggregatorTarget,
+      _fundingAssetSwapAggregatorData
+    );
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(_leverageRatio);
+      position.adjustLeverageRatio(
+        _leverageRatio,
+        _adjustLeverageRatioAggregatorTarget,
+        _adjustLeverageRatioAggregatorData,
+        _expectedSlippage
+      );
     }
     return position;
   }

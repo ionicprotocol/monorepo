@@ -4,6 +4,8 @@ import { Address, Hash, zeroAddress } from "viem";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 
+const LIFI_SWAP_ROUTER = "0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE";
+
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
@@ -231,6 +233,25 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     console.error("Could not deploy:", error);
   }
 
+  const factory = await viem.getContractAt("ILeveredPositionFactory", leveredPositionFactory.address);
+  const isWhitelisted = await factory.read.isSwapRoutersWhitelisted([LIFI_SWAP_ROUTER]);
+  console.log("isWhitelisted: ", isWhitelisted);
+  if (!isWhitelisted) {
+    const owner = await factory.read.owner();
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: factory,
+        functionName: "_setWhitelistedSwapRouters",
+        args: [[LIFI_SWAP_ROUTER]],
+        description: "Whitelist LIFI Swap Router",
+        inputs: [{ internalType: "address[]", name: "swapRouters", type: "address[]" }]
+      });
+    } else {
+      tx = await factory.write._setWhitelistedSwapRouters([[LIFI_SWAP_ROUTER]]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("whitelisted the LIFI Swap Router in the LeveredPositionFactory", tx);
+    }
+  }
   //// AUTHORITIES REGISTRY
   try {
     await deployments.deploy("AuthoritiesRegistry", {

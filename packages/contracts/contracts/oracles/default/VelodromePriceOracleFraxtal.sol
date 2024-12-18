@@ -5,15 +5,15 @@ import "../BasePriceOracle.sol";
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-interface Prices {
+interface Prices_Fraxtal {
   function getRate(address srcToken, address dstToken, bool useSrcWrappers) external view returns (uint256 weightedRate);
 }
 
 contract VelodromePriceOracleFraxtal is BasePriceOracle {
-  Prices immutable prices;
+  Prices_Fraxtal immutable prices;
 
   constructor(address _prices) {
-    prices = Prices(_prices);
+    prices = Prices_Fraxtal(_prices);
   }
   /**
    * @notice Fetches the token/ETH price, with 18 decimals of precision.
