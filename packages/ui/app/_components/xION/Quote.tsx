@@ -77,7 +77,7 @@ export default function Quote({
           />
         </span>
       </div>
-      {args.amount && (
+      {args.amount ? (
         <>
           <div className={`flex items-center justify-between w-full  `}>
             <span className="text-white/50">Fees</span>
@@ -113,6 +113,8 @@ export default function Quote({
             </span>
           </div>
         </>
+      ) : (
+        <></>
       )}
     </div>
   );

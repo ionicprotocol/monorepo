@@ -51,9 +51,15 @@ export default function Market() {
     []
   );
 
-  const { marketData, isLoading, poolData, selectedMarketData, loopProps } =
-    useMarketData(selectedPool, chain, selectedSymbol);
   const { vaultData, isLoading: isLoadingVaults } = useSupplyVaults(chain);
+  const {
+    marketData,
+    selectedMarketData,
+    featuredMarkets,
+    isLoading,
+    poolData,
+    loopProps
+  } = useMarketData(selectedPool, chain, selectedSymbol);
 
   useEffect(() => {
     setFilteredMarketData(marketData);
@@ -99,6 +105,7 @@ export default function Market() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setSwapWidgetOpen={setSwapWidgetOpen}
             setWrapWidgetOpen={setWrapWidgetOpen}
+            featuredMarkets={featuredMarkets}
           />
           <StakingTile chain={+chain} />
         </div>

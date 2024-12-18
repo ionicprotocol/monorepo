@@ -5,6 +5,7 @@ import { setupRewards } from "../../flywheel/setup";
 import { parseEther } from "viem";
 import { SUPPLY_DURATION } from "..";
 import { ION, LSK, LSK_MARKET, USDC_MARKET, USDT_MARKET, WBTC_MARKET, WETH_MARKET } from ".";
+import { sendRewardsToMarkets } from "../../flywheel/rewards";
 
 task("lisk:add-rewards:epoch5:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
@@ -79,5 +80,61 @@ task("lisk:add-rewards:epoch5:supply:lsk", "add rewards to a market").setAction(
       viem,
       deployments
     );
+  }
+);
+
+task("lisk:send-ion:epoch6", "send ion to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+
+  const rewardsToSend: { market: Address; amount: string }[] = [
+    {
+      market: WETH_MARKET,
+      amount: "10000"
+    },
+    {
+      market: USDC_MARKET,
+      amount: "10000"
+    },
+    {
+      market: USDT_MARKET,
+      amount: "10000"
+    },
+    {
+      market: WBTC_MARKET,
+      amount: "10000"
+    },
+    {
+      market: LSK_MARKET,
+      amount: "10000"
+    }
+  ];
+
+  await sendRewardsToMarkets(viem, ION, rewardsToSend, deployer as Address);
+});
+
+task("lisk:send-ion:epoch6:lsk", "send lsk to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+
+    const rewardsToSend: { market: Address; amount: string }[] = [
+      {
+        market: WETH_MARKET,
+        amount: "316"
+      },
+      {
+        market: USDC_MARKET,
+        amount: "316"
+      },
+      {
+        market: USDT_MARKET,
+        amount: "316"
+      },
+      {
+        market: WBTC_MARKET,
+        amount: "316"
+      }
+    ];
+
+    await sendRewardsToMarkets(viem, LSK, rewardsToSend, deployer as Address);
   }
 );

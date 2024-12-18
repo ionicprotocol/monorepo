@@ -77,6 +77,9 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [lisk.id]: {
     '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION',
     '0xac485391EB2d7D88253a7F1eF18C37f4242D1A24': 'LSK'
+  },
+  [fraxtal.id]: {
+    '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE': 'ION'
   }
 };
 
@@ -115,14 +118,17 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
       '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
       '0x1d0a712aE0162431E0573A8a735D02a29805d124',
-      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22'
+      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
+      '0x1e00C933e092912d47153765Fa7c886632c1d083',
+      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
       '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
       '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
-      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424'
+      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
+      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a'
     ]
   },
   [optimism.id]: {
@@ -131,7 +137,7 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
       '0x05c3e910F7639457f92220605966e7f86A2ef966'
     ],
-    borrow: []
+    borrow: ['0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA']
   },
   [lisk.id]: {
     supply: [
@@ -139,6 +145,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7'
     ],
     borrow: []
+  },
+  [fraxtal.id]: {
+    supply: ['0xa54697FAF64721Ec6ddd13bC345bd733de17539D'],
+    borrow: ['0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF']
   }
 };
 
@@ -232,6 +242,7 @@ export const pools: Record<number, PoolParams> = {
           'wUSDM',
           'uSOL',
           'uSUI',
+          'uXRP',
           'EURC',
           'cbBTC',
           'eUSD',

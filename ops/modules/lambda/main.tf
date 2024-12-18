@@ -7,7 +7,7 @@ locals {
 }
 
 resource "aws_iam_role" "lambda" {
-  name = "${var.container_family}-${var.environment}-${var.chain_id}-lambda-role"
+  name = "${var.container_family}-${var.environment}-${var.target_chain_id}-lambda-role"
 
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -23,7 +23,7 @@ resource "aws_iam_role" "lambda" {
   })
 
   inline_policy {
-    name = "${var.container_family}-${var.environment}-${var.chain_id}-lambda-policies"
+    name = "${var.container_family}-${var.environment}-${var.target_chain_id}-lambda-policies"
     policy = jsonencode({
       "Version" : "2012-10-17",
       "Statement" : [
@@ -41,7 +41,7 @@ resource "aws_iam_role" "lambda" {
   }
 }
 resource "aws_lambda_function" "executable" {
-  function_name = "${var.container_family}-${var.environment}-${var.chain_id}"
+  function_name = "${var.container_family}-${var.environment}-${var.target_chain_id}"
   image_uri     = "${local.repository_url}:${var.docker_image_tag}"
   package_type  = "Image"
   role          = aws_iam_role.lambda.arn
@@ -49,7 +49,7 @@ resource "aws_lambda_function" "executable" {
   timeout       = var.timeout
   memory_size   = var.memory_size
   environment {
-    variables = merge(var.container_env_vars, { TARGET_CHAIN_ID = var.chain_id })
+    variables = merge(var.container_env_vars, { TARGET_CHAIN_ID = var.target_chain_id })
   }
 }
 
@@ -62,7 +62,7 @@ resource "aws_lambda_permission" "allow_events_bridge_to_run_lambda" {
 }
 
 resource "aws_cloudwatch_event_rule" "event_rule" {
-  name                = "${var.container_family}-${var.environment}-${var.chain_id}-event-rule"
+  name                = "${var.container_family}-${var.environment}-${var.target_chain_id}-event-rule"
   description         = "Fires every X minutes"
   schedule_expression = var.schedule_expression
 }

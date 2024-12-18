@@ -108,6 +108,7 @@ const BorrowTab = ({
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
+        hintText="Max Borrow"
       />
 
       {isUnderMinBorrow && (
