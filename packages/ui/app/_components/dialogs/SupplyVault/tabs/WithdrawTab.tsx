@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { Button } from '@ui/components/ui/button';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
+import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
 import Amount from '../../../Amount';
 import { useWithdrawVault } from '@ui/hooks/market/useWithdrawVault';
 

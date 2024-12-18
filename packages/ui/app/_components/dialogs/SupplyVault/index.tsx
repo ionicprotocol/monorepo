@@ -22,7 +22,7 @@ import {
   TabsList,
   TabsTrigger
 } from '@ui/components/ui/tabs';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
+import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
 
 import { SupplyTab } from './tabs/SupplyTab';
 import { WithdrawTab } from './tabs/WithdrawTab';

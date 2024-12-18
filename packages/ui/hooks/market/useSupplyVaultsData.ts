@@ -1,4 +1,4 @@
-// hooks/market/useSupplyVaults.ts
+// hooks/market/useSupplyVaultsData.ts
 import { useState, useEffect } from 'react';
 
 import type { Address, Hex } from 'viem';
@@ -42,7 +42,7 @@ interface UseSupplyVaultsReturn {
   error: Error | null;
 }
 
-export function useSupplyVaults(
+export function useSupplyVaultsData(
   chain: string,
   address?: string
 ): UseSupplyVaultsReturn {

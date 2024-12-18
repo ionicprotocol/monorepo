@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -10,20 +10,22 @@ import { useChainId } from 'wagmi';
 
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaults';
-import { useSupplyVaults } from '@ui/hooks/market/useSupplyVaults';
+import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
+import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 
 import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
 import Swap from '../_components/dialogs/manage/Swap';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
-import FilterBar from '../_components/markets/FilterBar';
 import PoolsTable from '../_components/markets/PoolsTable';
 import StakingTile from '../_components/markets/StakingTile';
 import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
 import SupplyVaultDialog from '../_components/dialogs/SupplyVault';
+import PoolToggle from '../_components/markets/PoolToggle';
+import { isAddress } from 'viem';
+import SearchInput from '../_components/markets/SearcInput';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -43,15 +45,17 @@ export default function Market() {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [isSupplyVaultDialogOpen, setIsSupplyVaultDialogOpen] =
+    useState<boolean>(false);
+
   const [selectedVaultData, setSelectedVaultData] = useState<VaultRowData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
-  const [filteredMarketData, setFilteredMarketData] = useState<MarketRowData[]>(
-    []
-  );
 
-  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaults(chain);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaultsData(chain);
   const {
     marketData,
     selectedMarketData,
@@ -61,25 +65,53 @@ export default function Market() {
     loopProps
   } = useMarketData(selectedPool, chain, selectedSymbol);
 
-  useEffect(() => {
-    setFilteredMarketData(marketData);
-  }, [marketData]);
+  const filteredData = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
 
-  useEffect(() => {
-    if (selectedPool === 'vault' && selectedSymbol && vaultData.length > 0) {
-      const vault = vaultData.find((v) => v.asset === selectedSymbol);
-      if (vault) {
-        setSelectedVaultData((prev) => {
-          if (prev?.vaultAddress !== vault.vaultAddress) {
-            return vault;
-          }
-          return prev;
-        });
-      }
-    } else {
-      setSelectedVaultData(undefined);
+    if (!term) {
+      return selectedPool === 'vault' ? vaultData : marketData;
     }
-  }, [selectedSymbol, selectedPool, vaultData]);
+
+    const isAddressSearch = isAddress(term);
+    const data = selectedPool === 'vault' ? vaultData : marketData;
+
+    return data.filter((item) => {
+      if (isAddressSearch) {
+        if (selectedPool === 'vault') {
+          const vault = item as VaultRowData;
+          return (
+            vault.vaultAddress.toLowerCase() === term ||
+            vault.underlyingToken.toLowerCase() === term ||
+            vault.cToken.toLowerCase() === term
+          );
+        } else {
+          const market = item as MarketRowData;
+          return (
+            market.cTokenAddress.toLowerCase() === term ||
+            market.underlyingToken.toLowerCase() === term
+          );
+        }
+      }
+
+      if (selectedPool === 'vault') {
+        const vault = item as VaultRowData;
+        return (
+          vault.asset.toLowerCase().includes(term) ||
+          vault.underlyingSymbol.toLowerCase().includes(term) ||
+          vault.strategy.description.toLowerCase().includes(term) ||
+          vault.strategy.distribution.some((d) =>
+            d.poolName.toLowerCase().includes(term)
+          )
+        );
+      } else {
+        const market = item as MarketRowData;
+        return (
+          market.asset.toLowerCase().includes(term) ||
+          market.underlyingSymbol.toLowerCase().includes(term)
+        );
+      }
+    });
+  }, [searchTerm, selectedPool, vaultData, marketData]);
 
   return (
     <>
@@ -127,23 +159,36 @@ export default function Market() {
           />
         </div>
         <div className="bg-grayone w-full rounded-xl py-4 px-4 lg:px-[1%] xl:px-[3%]">
-          <FilterBar
-            chain={+chain}
-            pool={selectedPool}
-            marketData={marketData}
-            onSearch={setFilteredMarketData}
-          />
+          <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4 pr-3.5">
+            <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
+              <PoolToggle
+                chain={+chain}
+                pool={selectedPool}
+              />
+            </div>
+            <div className="w-full">
+              <SearchInput
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder={`Search by ${
+                  selectedPool === 'vault'
+                    ? 'vault name, token, or strategy'
+                    : 'token or address'
+                }...`}
+              />
+            </div>
+          </div>
 
           {selectedPool === 'vault' ? (
             <SupplyVaultTable
-              marketData={vaultData}
+              marketData={filteredData as VaultRowData[]}
               isLoading={isLoadingVaults}
               setIsManageDialogOpen={setIsManageDialogOpen}
-              setSelectedSymbol={setSelectedSymbol}
+              setSelectedVaultData={setSelectedVaultData}
             />
           ) : (
             <PoolsTable
-              marketData={filteredMarketData}
+              marketData={filteredData as MarketRowData[]}
               isLoading={isLoading}
               setIsManageDialogOpen={setIsManageDialogOpen}
               setIsLoopDialogOpen={setIsLoopDialogOpen}
@@ -154,25 +199,24 @@ export default function Market() {
         </div>
       </div>
 
-      {selectedPool === 'vault'
-        ? selectedVaultData && (
-            <SupplyVaultDialog
-              isOpen={isManageDialogOpen}
-              setIsOpen={setIsManageDialogOpen}
-              selectedVaultData={selectedVaultData}
-              chainId={chainId}
-            />
-          )
-        : selectedMarketData &&
-          poolData && (
-            <ManageDialog
-              isOpen={isManageDialogOpen}
-              setIsOpen={setIsManageDialogOpen}
-              isBorrowDisabled={isBorrowDisabled}
-              comptrollerAddress={poolData.comptroller}
-              selectedMarketData={selectedMarketData}
-            />
-          )}
+      {selectedVaultData && (
+        <SupplyVaultDialog
+          isOpen={isSupplyVaultDialogOpen}
+          setIsOpen={setIsSupplyVaultDialogOpen}
+          selectedVaultData={selectedVaultData}
+          chainId={chainId}
+        />
+      )}
+
+      {poolData?.comptroller && selectedMarketData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
+          isBorrowDisabled={isBorrowDisabled}
+          comptrollerAddress={poolData?.comptroller}
+          selectedMarketData={selectedMarketData}
+        />
+      )}
 
       {loopProps && (
         <Loop

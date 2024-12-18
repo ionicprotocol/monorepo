@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -14,48 +12,20 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import CommonTable from '../../_components/CommonTable';
 
 import type { EnhancedColumnDef } from '../../_components/CommonTable';
+import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
 
-// Types
-export interface VaultRowData {
-  asset: string;
-  logo: string;
-  strategy: {
-    description: string;
-    distribution: Array<{
-      poolName: string;
-      percentage: number;
-    }>;
-  };
-  apr: {
-    total: number;
-    breakdown: Array<{
-      source: string;
-      value: number;
-    }>;
-  };
-  totalSupply: {
-    tokens: string;
-    usd: string;
-  };
-  utilisation: number;
-  userPosition: {
-    tokens: string;
-    usd: string;
-  };
-  vaultAddress: string;
-}
-
-// Table Component
 export default function SupplyVaultTable({
   marketData,
   isLoading,
   setIsManageDialogOpen,
-  setSelectedSymbol
+  setSelectedVaultData
 }: {
   marketData: VaultRowData[];
   isLoading: boolean;
   setIsManageDialogOpen: (value: boolean) => void;
-  setSelectedSymbol: (value: string) => void;
+  setSelectedVaultData: React.Dispatch<
+    React.SetStateAction<VaultRowData | undefined>
+  >;
 }) {
   const searchParams = useSearchParams();
   const chainId = useChainId();
@@ -172,7 +142,7 @@ export default function SupplyVaultTable({
             onClick={async () => {
               const result = await handleSwitchOriginChain(+chain, chainId);
               if (result) {
-                setSelectedSymbol(row.original.asset);
+                setSelectedVaultData(row.original);
                 setIsManageDialogOpen(true);
               }
             }}
