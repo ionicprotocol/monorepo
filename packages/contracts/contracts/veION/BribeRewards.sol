@@ -14,8 +14,8 @@ import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 
 /**
- * @title Voter Contract
- * @notice This contract allows veION holders to vote for various markets
+ * @title BribeRewards Contract
+ * @notice This contract allows veION to benefit from bribes when voting for various markets
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
 contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgradeable {
