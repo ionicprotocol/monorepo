@@ -287,12 +287,6 @@ interface IVoter {
   function governor() external view returns (address);
 
   /**
-   * @notice Get the address of the epoch governor.
-   * @return The address of the epoch governor.
-   */
-  function epochGovernor() external view returns (address);
-
-  /**
    * @notice Update voting balances in voting rewards contracts.
    * @param _tokenId ID of veNFT whose balance you wish to update.
    */
@@ -371,12 +365,6 @@ interface IVoter {
    * @param _governor Address of the new governor.
    */
   function setGovernor(address _governor) external;
-
-  /**
-   * @notice Set a new epoch-based governor.
-   * @param _epochGovernor Address of the new epoch governor.
-   */
-  function setEpochGovernor(address _epochGovernor) external;
 
   /**
    * @notice Add new markets.

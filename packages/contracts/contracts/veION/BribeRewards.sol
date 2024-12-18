@@ -30,8 +30,6 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   address public voter;
   /// @notice Address of the veION contract
   address public ve;
-  /// @dev Address which has permission to externally call _deposit() & _withdraw()
-  address public authorized;
   /// @notice List of reward tokens
   address[] public rewards;
 
@@ -308,12 +306,6 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
   function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     historicalPrices[lpToken][epochStart] = price;
-  }
-
-  /// @notice Sets the authorized address that can call _deposit() & _withdraw()
-  /// @param _authorized The address to authorize
-  function setAuthorized(address _authorized) external onlyOwner {
-    authorized = _authorized;
   }
 
   /**

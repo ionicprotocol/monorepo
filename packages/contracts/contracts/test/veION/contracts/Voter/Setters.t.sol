@@ -56,19 +56,6 @@ contract Setters is VoterTest {
     voter.setGovernor(address(0));
   }
 
-  function testSetEpochGovernor() public {
-    address newEpochGovernor = address(0xDEF);
-    voter.setEpochGovernor(newEpochGovernor);
-
-    assertEq(voter.epochGovernor(), newEpochGovernor, "Epoch Governor address mismatch");
-  }
-
-  function testSetEpochGovernorRevertZeroAddress() public {
-    // Test revert case: setting Epoch Governor to zero address
-    vm.expectRevert(abi.encodeWithSignature("ZeroAddress()"));
-    voter.setEpochGovernor(address(0));
-  }
-
   function testSetMaxVotingNum() public {
     uint256 newMaxVotingNum = 25;
     voter.setMaxVotingNum(newMaxVotingNum);

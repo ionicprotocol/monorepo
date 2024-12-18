@@ -32,8 +32,6 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   address internal rewardToken;
   ///@notice Standard OZ IGovernor using ve for vote weights
   address public governor;
-  ///@notice Custom Epoch Governor using ve for vote weights
-  address public epochGovernor;
   ///@notice Master Price Oracle instance
   MasterPriceOracle public mpo;
   ///@notice List of LP tokens
@@ -72,12 +70,8 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   mapping(uint256 => bool) public isWhitelistedNFT;
   ///@notice Mapping from Reward Accumulator to Liveness status
   mapping(address => bool) public isAlive;
-  ///@notice Accumulated distributions per vote
-  uint256 internal index;
   ///@notice Mapping from Market to Market Side to Reward Accumulator
   mapping(address => mapping(MarketSide => address)) public marketToRewardAccumulators;
-  ///@notice Mapping from Market to Market Side to Supply Index
-  mapping(address => uint256) public supplyIndex;
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                               Modifiers                                   ║
@@ -448,12 +442,6 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   function setGovernor(address _governor) public onlyOwner {
     if (_governor == address(0)) revert ZeroAddress();
     governor = _governor;
-  }
-
-  /// @inheritdoc IVoter
-  function setEpochGovernor(address _epochGovernor) public onlyGovernance {
-    if (_epochGovernor == address(0)) revert ZeroAddress();
-    epochGovernor = _epochGovernor;
   }
 
   /// @inheritdoc IVoter
