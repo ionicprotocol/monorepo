@@ -270,7 +270,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
     s_supply[_lpType] = supplyBefore - oldLocked.amount;
     _checkpoint(_tokenId, LockedBalance(address(0), 0, 0, 0, 0, false, 0), _lpType);
-    IERC20(_tokenAddress).safeTransfer(sender, value);
 
     // Check if all LP types for this token have zero balance
     bool shouldBurn = true;
@@ -285,6 +284,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
     if (shouldBurn) _burn(_tokenId);
 
+    IERC20(_tokenAddress).safeTransfer(sender, value);
     emit Withdraw(sender, _tokenId, value, block.timestamp);
     emit Supply(supplyBefore, supplyBefore - oldLocked.amount);
   }
