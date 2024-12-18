@@ -46,7 +46,7 @@ const ALL_VAULT_DATA: VaultRowData[] = [
     asset: 'WETH',
     logo: '/img/symbols/32/color/weth.png',
     strategy: {
-      description: 'Cross-chain yield aggregation',
+      description: 'Isolated pool',
       distribution: [
         { poolName: 'Main Pool', percentage: 45 },
         { poolName: 'Native Pool', percentage: 55 }

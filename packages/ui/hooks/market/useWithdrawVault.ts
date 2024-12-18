@@ -20,7 +20,6 @@ export const useWithdrawVault = ({
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const { address, currentSdk } = useMultiIonic();
 
@@ -32,33 +31,6 @@ export const useWithdrawVault = ({
       ),
     [amount, selectedVaultData.underlyingDecimals]
   );
-
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedVaultData.underlyingDecimals)
-      );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedVaultData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedVaultData.underlyingDecimals]
-  );
-
-  // Update utilization percentage when amount changes
-  useEffect(() => {
-    if (amount === '0' || !amount || !maxAmount) {
-      setUtilizationPercentage(0);
-      return;
-    }
-
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
 
   const withdrawAmount = useCallback(async () => {
     if (
@@ -120,7 +92,6 @@ export const useWithdrawVault = ({
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
       setAmount('0');
-      setUtilizationPercentage(0);
     }
   });
 
@@ -130,8 +101,6 @@ export const useWithdrawVault = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt,
     isWithdrawing
   };

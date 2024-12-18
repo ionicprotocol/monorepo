@@ -2,6 +2,7 @@ import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import type { RewardIcon } from '@ui/hooks/market/useAPRCell';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { base } from 'viem/chains';
 
 type TotalAPRParams = {
   type: 'borrow' | 'supply';
@@ -132,4 +133,19 @@ export const getExtraRewardIcons = (
   }
 
   return additionalRewards;
+};
+
+export type SupportedSupplyVaultChainId = keyof typeof supplyVaultAddresses;
+
+export const supplyVaultAddresses = {
+  [base.id]: {
+    tokens: {
+      WETH: '0x4200000000000000000000000000000000000006',
+      USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+    },
+    vaults: {
+      WETH: '0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707',
+      USDC: '0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21'
+    }
+  }
 };

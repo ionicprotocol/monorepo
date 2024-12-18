@@ -1,24 +1,17 @@
-// tabs/SupplyTab.tsx
-import { useMemo } from 'react';
-
-import Image from 'next/image';
-
+import { useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
-
-import { SupplySteps } from '@ui/app/_components/SupplySteps';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@ui/components/ui/card';
+import { ThreeCircles } from 'react-loader-spinner';
+import { Button } from '@ui/components/ui/button';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-
-import Amount from '../../../Amount';
+import MaxDeposit from '@ui/app/_components/MaxDeposit';
 import { VaultRowData } from '@ui/types/SupplyVaults';
+import {
+  supplyVaultAddresses,
+  SupportedSupplyVaultChainId
+} from '@ui/utils/marketUtils';
 
 interface SupplyTabProps {
   selectedVaultData: VaultRowData;
@@ -26,7 +19,8 @@ interface SupplyTabProps {
 }
 
 export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
-  const { address } = useMultiIonic();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { address, isConnected } = useMultiIonic();
 
   const balanceQueryParams = useMemo(
     () => ({
@@ -60,8 +54,6 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
     handleUtilization,
     approveAmount,
     supplyAmount,
-    isApproving,
-    isSupplying,
     isPolling,
     isWaitingForIndexing
   } = useSupplyVault({
@@ -73,19 +65,36 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
     chainId
   });
 
+  const handleSupplyProcess = async () => {
+    if (!isConnected) return;
+
+    try {
+      setIsProcessing(true);
+      await approveAmount();
+      await supplyAmount();
+    } catch (error) {
+      console.error('Supply error:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const tokenAddress =
+    supplyVaultAddresses[chainId as SupportedSupplyVaultChainId]?.tokens[
+      selectedVaultData.underlyingSymbol as 'WETH' | 'USDC'
+    ];
+
   return (
     <div className="space-y-4">
-      <Amount
+      <MaxDeposit
         amount={amount}
+        tokenName={selectedVaultData.underlyingSymbol}
+        token={tokenAddress as `0x${string}`}
         handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
-        max={formatUnits(
-          maxSupplyAmount?.bigNumber ?? 0n,
-          selectedVaultData.underlyingDecimals
-        )}
-        symbol={selectedVaultData.underlyingSymbol}
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
+        chain={chainId}
+        headerText="Supply Amount"
+        decimals={selectedVaultData.underlyingDecimals}
+        showUtilizationSlider
       />
 
       <div className="space-y-2">
@@ -99,44 +108,37 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
         </div>
       </div>
 
-      <Card className="bg-darkthree border-none">
-        <CardHeader>
-          <CardTitle className="text-lg">Strategy Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex justify-between">
-            <span>SUPPLY ASSET</span>
-            <div className="flex items-center gap-2">
-              <Image
-                src={`/img/symbols/32/color/${selectedVaultData.asset.toLowerCase()}.png`}
-                alt={selectedVaultData.asset}
-                width={20}
-                height={20}
-                className="w-5 h-5"
-              />
-              <span>{selectedVaultData.underlyingSymbol}</span>
-            </div>
-          </div>
-          <div className="flex justify-between">
-            <span>APR</span>
-            <span>4.49%</span>
-          </div>
-          <div className="flex justify-between">
-            <span>TOTAL SUPPLY</span>
-            <span>$582,462.04</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <SupplySteps
-        symbol={selectedVaultData.underlyingSymbol}
-        isApproving={isApproving}
-        isSupplying={isSupplying}
-        isWaitingForIndexing={isWaitingForIndexing}
-        onApprove={approveAmount}
-        onSupply={supplyAmount}
-        disabled={Number(amount) <= 0}
-      />
+      <Button
+        className="w-full bg-accent hover:opacity-80"
+        onClick={handleSupplyProcess}
+        disabled={
+          isProcessing || !amount || !isConnected || Number(amount) <= 0
+        }
+      >
+        {!isConnected ? (
+          'Connect Wallet'
+        ) : isProcessing ? (
+          <>
+            Processing
+            <ThreeCircles
+              ariaLabel="three-circles-loading"
+              color="black"
+              height={40}
+              visible={true}
+              width={40}
+              wrapperStyle={{
+                height: '40px',
+                alignItems: 'center',
+                width: '40px'
+              }}
+            />
+          </>
+        ) : isWaitingForIndexing ? (
+          'Updating Balances...'
+        ) : (
+          `Supply ${selectedVaultData.underlyingSymbol}`
+        )}
+      </Button>
     </div>
   );
 }
