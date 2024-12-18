@@ -9,10 +9,10 @@ import { getQuote } from '@lifi/sdk';
 import { useQueryClient } from '@tanstack/react-query';
 import millify from 'millify';
 import {
+  type Hex,
   type Address,
   formatEther,
   formatUnits,
-  Hex,
   parseEther,
   parseUnits,
   zeroAddress
@@ -422,7 +422,7 @@ export default function Loop({
           '0x',
           quoteFinal.transactionRequest!.to! as Address,
           quoteFinal.transactionRequest!.data! as Hex,
-          0n
+          BigInt(Math.ceil(slippageWithBufferInBps))
         ]
       });
 
