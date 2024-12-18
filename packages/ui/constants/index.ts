@@ -1,4 +1,12 @@
-import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
+import {
+  base,
+  bob,
+  fraxtal,
+  lisk,
+  mode,
+  optimism,
+  superseed
+} from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -331,6 +339,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Market',
         assets: ['WETH', 'USDC', 'USDT', 'WBTC', 'LSK']
+      }
+    ]
+  },
+  [superseed.id]: {
+    name: 'Superseed',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SUPERSEED.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
       }
     ]
   }

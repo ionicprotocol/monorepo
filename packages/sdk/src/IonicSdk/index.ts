@@ -128,17 +128,11 @@ export class IonicBase {
       IonicLiquidator:
         this.chainId === bob.id || this.chainId === lisk.id
           ? ({} as any)
-          : this.chainId === mode.id
-            ? getContract({
-                abi: ionicUniV3LiquidatorAbi,
-                address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
-                client: this.walletClient!
-              })
-            : getContract({
-                abi: ionicLiquidatorAbi,
-                address: this.chainDeployment.IonicLiquidator.address as Address,
-                client: this.walletClient!
-              }),
+          : getContract({
+              abi: ionicUniV3LiquidatorAbi,
+              address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
+              client: this.walletClient!
+            }),
       FeeDistributor: getContract({
         abi: feeDistributorAbi,
         address: this.chainDeployment.FeeDistributor.address as Address,
