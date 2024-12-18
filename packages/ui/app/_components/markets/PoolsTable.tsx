@@ -19,6 +19,7 @@ import type {
   EnhancedColumnDef,
   MarketCellProps
 } from '../../_components/CommonTable';
+import ActionButton from '../ActionButton';
 
 function PoolsTable({
   marketData,
@@ -96,7 +97,6 @@ function PoolsTable({
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="supply"
-          aprTotal={row.original.supplyAPRTotal ?? 0}
           baseAPR={row.original.supplyAPR}
           asset={row.original.asset}
           rewards={row.original.supplyRewards}
@@ -104,6 +104,9 @@ function PoolsTable({
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          nativeAssetYield={row.original.nativeAssetYield}
+          underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.supplyAPRTotal}
         />
       )
     },
@@ -115,7 +118,6 @@ function PoolsTable({
       cell: ({ row }: MarketCellProps) => (
         <APRCell
           type="borrow"
-          aprTotal={row.original.borrowAPRTotal ?? 0}
           baseAPR={row.original.borrowAPR}
           asset={row.original.asset}
           rewards={row.original.borrowRewards}
@@ -123,6 +125,8 @@ function PoolsTable({
           selectedPoolId={selectedPool}
           cToken={row.original.cTokenAddress}
           pool={row.original.comptrollerAddress}
+          underlyingToken={row.original.underlyingToken}
+          aprTotal={row.original.borrowAPRTotal}
         />
       )
     },
@@ -166,11 +170,9 @@ function PoolsTable({
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => (
         <div className="flex gap-2 w-full pr-6">
-          <button
-            className={`rounded-md bg-accent text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 ${
-              row.original.loopPossible ? 'w-1/2' : 'w-full'
-            }`}
-            onClick={async () => {
+          <ActionButton
+            half={row.original.loopPossible}
+            action={async () => {
               const result = await handleSwitchOriginChain(+chain, chainId);
               if (result) {
                 setSelectedSymbol(row.original.asset);
@@ -181,23 +183,22 @@ function PoolsTable({
               }
             }}
             disabled={!address}
-          >
-            Manage
-          </button>
+            label="Manage"
+          />
           {row.original.loopPossible && (
-            <button
-              className="rounded-md bg-lime text-black py-2.5 px-4 capitalize truncate disabled:opacity-50 hover:bg-lime-400 w-1/2"
-              onClick={async () => {
+            <ActionButton
+              action={async () => {
                 const result = await handleSwitchOriginChain(+chain, chainId);
                 if (result) {
                   setSelectedSymbol(row.original.asset);
                   setIsLoopDialogOpen(true);
                 }
               }}
+              half
               disabled={!address}
-            >
-              Loop
-            </button>
+              label="Loop"
+              bg="bg-lime"
+            />
           )}
         </div>
       )

@@ -72,10 +72,12 @@ export const useWithdrawVault = ({
     setIsWithdrawing(true);
     try {
       // Get the vault instance from SDK (will have to implement)
-      const vaultContract = currentSdk.getVaultInstance(
-        selectedVaultData.vaultAddress as `0x${string}`,
-        currentSdk.publicClient as any
-      );
+      // const vaultContract = currentSdk.getVaultInstance(
+      //   selectedVaultData.vaultAddress as `0x${string}`,
+      //   currentSdk.publicClient as any
+      // );
+
+      const vaultContract = {} as any;
 
       // Call withdraw function on the vault
       const tx = await currentSdk.walletClient!.sendTransaction({
