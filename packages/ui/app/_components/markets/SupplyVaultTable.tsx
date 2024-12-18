@@ -5,14 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import { pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../../_components/CommonTable';
 
 import type { EnhancedColumnDef } from '../../_components/CommonTable';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
+import { VaultRowData } from '@ui/types/SupplyVaults';
+import ActionButton from '../ActionButton';
 
 export default function SupplyVaultTable({
   marketData,
@@ -136,21 +136,18 @@ export default function SupplyVaultTable({
       header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex gap-2 w-full pr-6">
-          <button
-            className={`rounded-md ${pools[+chain].bg} text-black py-2.5 px-4 w-full capitalize truncate disabled:opacity-50`}
-            onClick={async () => {
-              const result = await handleSwitchOriginChain(+chain, chainId);
-              if (result) {
-                setSelectedVaultData(row.original);
-                setIsManageDialogOpen(true);
-              }
-            }}
-            disabled={!address}
-          >
-            Supply
-          </button>
-        </div>
+        <ActionButton
+          action={async () => {
+            const result = await handleSwitchOriginChain(+chain, chainId);
+            console.log('result', result);
+            if (result) {
+              setSelectedVaultData(row.original);
+              setIsManageDialogOpen(true);
+            }
+          }}
+          disabled={!address}
+          label="Manage"
+        />
       )
     }
   ];

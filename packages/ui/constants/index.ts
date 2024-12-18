@@ -172,6 +172,12 @@ type PoolParams = {
     name: string;
     assets: string[];
   }[];
+  vaults?: {
+    id: string;
+    name: string;
+    description: string;
+    assets: string[];
+  }[];
 };
 
 export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
@@ -258,6 +264,14 @@ export const pools: Record<number, PoolParams> = {
           'fBOMB',
           'KLIMA'
         ]
+      }
+    ],
+    vaults: [
+      {
+        id: 'vault',
+        name: 'Supply Vaults',
+        description: 'Optimized yield strategies',
+        assets: ['USDC', 'WETH']
       }
     ]
   },

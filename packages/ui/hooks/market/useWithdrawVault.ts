@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBalancePolling } from '../useBalancePolling';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
+import { VaultRowData } from '@ui/types/SupplyVaults';
 
 interface UseWithdrawVaultProps {
   maxAmount: bigint;

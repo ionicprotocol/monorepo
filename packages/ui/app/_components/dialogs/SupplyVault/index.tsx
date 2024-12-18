@@ -22,10 +22,10 @@ import {
   TabsList,
   TabsTrigger
 } from '@ui/components/ui/tabs';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
 
 import { SupplyTab } from './tabs/SupplyTab';
 import { WithdrawTab } from './tabs/WithdrawTab';
+import { VaultRowData } from '@ui/types/SupplyVaults';
 
 interface SupplyVaultDialogProps {
   isOpen: boolean;

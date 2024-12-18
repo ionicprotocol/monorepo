@@ -10,7 +10,7 @@ import { useChainId } from 'wagmi';
 
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
+import { VaultRowData } from '@ui/types/SupplyVaults';
 import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 
 import Loop from '../_components/dialogs/loop';
@@ -125,6 +125,13 @@ export default function Market() {
               poolData={poolData!}
               isLoadingLoopMarkets={false}
               selectedPool={selectedPool}
+              vaultData={{
+                totalSuppliedFiat: vaultData.reduce(
+                  (acc, v) => acc + parseFloat(v.totalSupply.usd),
+                  0
+                )
+              }}
+              isLoadingVaults={isLoadingVaults}
             />
           </div>
           <FeaturedMarketTile
@@ -183,7 +190,7 @@ export default function Market() {
             <SupplyVaultTable
               marketData={filteredData as VaultRowData[]}
               isLoading={isLoadingVaults}
-              setIsManageDialogOpen={setIsManageDialogOpen}
+              setIsManageDialogOpen={setIsSupplyVaultDialogOpen}
               setSelectedVaultData={setSelectedVaultData}
             />
           ) : (

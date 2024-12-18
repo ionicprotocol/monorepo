@@ -15,10 +15,10 @@ import {
 } from '@ui/components/ui/card';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
-import type { VaultRowData } from '@ui/hooks/market/useSupplyVaultsData';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
 import Amount from '../../../Amount';
+import { VaultRowData } from '@ui/types/SupplyVaults';
 
 interface SupplyTabProps {
   selectedVaultData: VaultRowData;
