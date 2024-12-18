@@ -67,7 +67,8 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
     address veloWallet = userStakingWallet[_from];
     if (veloWallet == address(0)) {
-      veloWallet = address(new BeaconProxy(address(veloAeroBeacon), ""));
+      BeaconProxy newWallet = new BeaconProxy(address(veloAeroBeacon), "");
+      veloWallet = address(newWallet);
       VeloAeroStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_from] = veloWallet;
     }
@@ -94,7 +95,8 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     address toWallet = userStakingWallet[_to];
 
     if (toWallet == address(0)) {
-      toWallet = address(new BeaconProxy(address(veloAeroBeacon), ""));
+      BeaconProxy newWallet = new BeaconProxy(address(veloAeroBeacon), "");
+      toWallet = address(newWallet);
       VeloAeroStakingWallet(toWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_to] = toWallet;
     }
