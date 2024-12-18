@@ -7,6 +7,8 @@ import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
+import { BeaconProxy } from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
+import { UpgradeableBeacon } from "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
 
 /**
  * @title VeloAeroStakingStrategy
@@ -24,6 +26,8 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   address public stakingContract;
   /// @notice Address of the implementation for staking wallets
   address public stakingWalletImplementation;
+  /// @notice Address of beacon contract that manages wallet proxies
+  UpgradeableBeacon public veloAeroBeacon;
   /// @notice Mapping of user addresses to their respective staking wallet addresses
   mapping(address => address) public userStakingWallet;
 
@@ -52,6 +56,9 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     stakingToken = _stakingToken;
     stakingContract = _stakingContract;
     stakingWalletImplementation = _stakingWalletImplementation;
+
+    veloAeroBeacon = new UpgradeableBeacon(_stakingWalletImplementation);
+    veloAeroBeacon.transferOwnership(msg.sender);
   }
 
   /// @inheritdoc IStakeStrategy
@@ -60,7 +67,7 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
     address veloWallet = userStakingWallet[_from];
     if (veloWallet == address(0)) {
-      veloWallet = stakingWalletImplementation.clone();
+      veloWallet = address(new BeaconProxy(address(veloAeroBeacon), ""));
       VeloAeroStakingWallet(veloWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_from] = veloWallet;
     }
@@ -87,7 +94,7 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     address toWallet = userStakingWallet[_to];
 
     if (toWallet == address(0)) {
-      toWallet = stakingWalletImplementation.clone();
+      toWallet = address(new BeaconProxy(address(veloAeroBeacon), ""));
       VeloAeroStakingWallet(toWallet).initialize(IStakeStrategy(address(this)));
       userStakingWallet[_to] = toWallet;
     }
@@ -144,5 +151,11 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   function setStakingWalletImplementation(address _stakingWalletImplementation) external onlyOwner {
     require(_stakingWalletImplementation != address(0), "Invalid address");
     stakingWalletImplementation = _stakingWalletImplementation;
+  }
+
+  /// @inheritdoc IStakeStrategy
+  function setUpgradeableBeacon(address _beacon) external onlyOwner {
+    require(_beacon != address(0), "Invalid address");
+    veloAeroBeacon = UpgradeableBeacon(_beacon);
   }
 }
