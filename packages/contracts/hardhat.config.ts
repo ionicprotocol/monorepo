@@ -6,7 +6,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 
 import "./tasks";
-import { base, fraxtal, mode } from "viem/chains";
+import { base, fraxtal, mode, superseed } from "viem/chains";
 
 dotenv();
 
@@ -24,7 +24,8 @@ const config: HardhatUserConfig = {
     multisig: {
       [mode.id]: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
       [base.id]: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB",
-      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2"
+      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
+      [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
