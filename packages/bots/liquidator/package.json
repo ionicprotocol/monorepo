@@ -34,7 +34,7 @@
     "dotenv": "^16.4.5",
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
-    "viem": "^2.21.55"
+    "viem": "^2.21.12"
   },
   "devDependencies": {
     "eslint": "^8",
@@ -43,6 +43,6 @@
     "prettier": "2.7.1",
     "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.5.3"
   }
 }
