@@ -26,16 +26,16 @@ export type MarketRowData = MarketData & {
   asset: string;
   logo: string;
   supply: {
-    balance: string;
-    balanceUSD: string;
-    total: string;
-    totalUSD: string;
+    balance: number;
+    balanceUSD: number;
+    total: number;
+    totalUSD: number;
   };
   borrow: {
-    balance: string;
-    balanceUSD: string;
-    total: string;
-    totalUSD: string;
+    balance: number;
+    balanceUSD: number;
+    total: number;
+    totalUSD: number;
   };
   supplyAPR: number;
   borrowAPR: number;
@@ -99,13 +99,13 @@ export const useMarketData = (
     poolId: selectedPool
   });
 
-  const formatNumber = (value: bigint | number, decimals: number): string => {
+  const formatNumber = (value: bigint | number, decimals: number): number => {
     const parsedValue =
       typeof value === 'bigint'
         ? parseFloat(formatUnits(value, decimals))
         : value;
 
-    return parsedValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    return Number(parsedValue.toFixed(2));
   };
 
   const marketData = useMemo(() => {
@@ -144,24 +144,24 @@ export const useMarketData = (
         const supply = {
           balance:
             typeof asset.supplyBalance === 'bigint'
-              ? `${formatNumber(asset.supplyBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-              : `0 ${asset.underlyingSymbol}`,
+              ? formatNumber(asset.supplyBalance, asset.underlyingDecimals)
+              : 0,
           balanceUSD: formatNumber(asset.supplyBalanceFiat, 0),
           total: asset.totalSupplyNative
-            ? `${formatNumber(asset.totalSupply, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-            : `0 ${asset.underlyingSymbol}`,
+            ? formatNumber(asset.totalSupply, asset.underlyingDecimals)
+            : 0,
           totalUSD: formatNumber(asset.totalSupplyFiat, 0)
         };
 
         const borrow = {
           balance:
             typeof asset.borrowBalance === 'bigint'
-              ? `${formatNumber(asset.borrowBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-              : `0 ${asset.underlyingSymbol}`,
+              ? formatNumber(asset.borrowBalance, asset.underlyingDecimals)
+              : 0,
           balanceUSD: formatNumber(asset.borrowBalanceFiat, 0),
           total: asset.totalBorrowNative
-            ? `${formatNumber(asset.totalBorrow, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-            : `0 ${asset.underlyingSymbol}`,
+            ? formatNumber(asset.totalBorrow, asset.underlyingDecimals)
+            : 0,
           totalUSD: formatNumber(asset.totalBorrowFiat, 0)
         };
 

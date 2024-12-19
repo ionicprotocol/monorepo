@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-
 import * as SliderPrimitive from '@radix-ui/react-slider';
-
 import { cn } from '@ui/lib/utils';
 
 type Mark = {
@@ -28,7 +26,20 @@ const Slider = React.forwardRef<
     ref
   ) => {
     const percentage = value ? value[0] : 0;
-    const getColor = () => (percentage <= 50 ? 'bg-accent' : 'bg-lime');
+
+    const getGradientStyle = () => {
+      return {
+        background: `linear-gradient(to right, #dffe00, #3bff89)`,
+        width: `${percentage}%`
+      };
+    };
+
+    const getThumbColor = () => {
+      if (percentage === 0) return '#dffe00';
+      if (percentage === 100) return '#3bff89';
+
+      return `color-mix(in srgb, #dffe00 ${100 - percentage}%, #3bff89 ${percentage}%)`;
+    };
 
     return (
       <div className="space-y-2">
@@ -74,14 +85,13 @@ const Slider = React.forwardRef<
         >
           <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-graylite">
             <SliderPrimitive.Range
-              className={cn('absolute h-full', getColor())}
+              className="absolute h-full"
+              style={getGradientStyle()}
             />
           </SliderPrimitive.Track>
           <SliderPrimitive.Thumb
-            className={cn(
-              'block h-4 w-4 rounded-full transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
-              getColor()
-            )}
+            className="block h-4 w-4 rounded-full border border-black/10 transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            style={{ backgroundColor: getThumbColor() }}
           />
         </SliderPrimitive.Root>
       </div>

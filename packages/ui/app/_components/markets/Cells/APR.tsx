@@ -11,7 +11,7 @@ import { pools } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
 import { cn } from '@ui/lib/utils';
 
-import { AssetIcons } from '../AssetIcons';
+import { AssetIcons } from '../../AssetIcons';
 
 import type { Address, Hex } from 'viem';
 
@@ -31,7 +31,7 @@ export type APRCellProps = {
   aprTotal?: number;
 };
 
-const FlyWheelRewards = dynamic(() => import('./FlyWheelRewards'), {
+const FlyWheelRewards = dynamic(() => import('../FlyWheelRewards'), {
   ssr: false
 });
 

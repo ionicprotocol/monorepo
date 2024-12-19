@@ -16,10 +16,6 @@ import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import BorrowTab from './BorrowTab';
@@ -48,17 +44,6 @@ const ManageDialogTabs = ({
   chainId: number;
 }) => {
   const { data: usdPrice } = useUsdPrice(chainId.toString());
-  const { data: maxSupplyAmount, isLoading: isLoadingMaxSupply } =
-    useMaxSupplyAmount(selectedMarketData, comptrollerAddress, chainId);
-
-  const { data: maxRepayAmount, isLoading: isLoadingMaxRepayAmount } =
-    useMaxRepayAmount(selectedMarketData, chainId);
-
-  const { data: maxBorrowAmount, isLoading: isLoadingMaxBorrowAmount } =
-    useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
-
-  const { data: maxWithdrawAmount, isLoading: isLoadingMaxWithdrawAmount } =
-    useMaxWithdrawAmount(selectedMarketData, chainId);
 
   // Memoize calculations
   const pricePerSingleAsset = useMemo(
@@ -170,51 +155,35 @@ const ManageDialogTabs = ({
           className="mt-2"
         >
           <SupplyTab
-            maxAmount={maxSupplyAmount?.bigNumber ?? 0n}
-            isLoadingMax={isLoadingMaxSupply}
-            totalStats={{
-              capAmount: supplyCapAsNumber,
-              totalAmount: totalSupplyAsNumber,
-              capFiat: supplyCapAsFiat,
-              totalFiat: selectedMarketData.totalSupplyFiat
-            }}
+            capAmount={supplyCapAsNumber}
+            totalAmount={totalSupplyAsNumber}
+            capFiat={supplyCapAsFiat}
+            totalFiat={selectedMarketData.totalSupplyFiat}
             setSwapWidgetOpen={setSwapWidgetOpen}
           />
         </TabsContent>
         <TabsContent value="borrow">
           <BorrowTab
-            maxAmount={maxBorrowAmount?.bigNumber ?? 0n}
-            isLoadingMax={isLoadingMaxBorrowAmount}
-            totalStats={{
-              capAmount: borrowCapAsNumber,
-              totalAmount: totalBorrowAsNumber,
-              capFiat: borrowCapAsFiat,
-              totalFiat: selectedMarketData.totalBorrowFiat
-            }}
+            capAmount={borrowCapAsNumber}
+            totalAmount={totalBorrowAsNumber}
+            capFiat={borrowCapAsFiat}
+            totalFiat={selectedMarketData.totalBorrowFiat}
           />
         </TabsContent>
         <TabsContent value="repay">
           <RepayTab
-            maxAmount={maxRepayAmount ?? 0n}
-            isLoadingMax={isLoadingMaxRepayAmount}
-            totalStats={{
-              capAmount: borrowCapAsNumber,
-              totalAmount: totalBorrowAsNumber,
-              capFiat: borrowCapAsFiat,
-              totalFiat: selectedMarketData.totalBorrowFiat
-            }}
+            capAmount={borrowCapAsNumber}
+            totalAmount={totalBorrowAsNumber}
+            capFiat={borrowCapAsFiat}
+            totalFiat={selectedMarketData.totalBorrowFiat}
           />
         </TabsContent>
         <TabsContent value="withdraw">
           <WithdrawTab
-            maxAmount={maxWithdrawAmount ?? 0n}
-            isLoadingMax={isLoadingMaxWithdrawAmount}
-            totalStats={{
-              capAmount: supplyCapAsNumber,
-              totalAmount: totalSupplyAsNumber,
-              capFiat: supplyCapAsFiat,
-              totalFiat: selectedMarketData.totalSupplyFiat
-            }}
+            capAmount={supplyCapAsNumber}
+            totalAmount={totalSupplyAsNumber}
+            capFiat={supplyCapAsFiat}
+            totalFiat={selectedMarketData.totalSupplyFiat}
           />
         </TabsContent>
       </Tabs>

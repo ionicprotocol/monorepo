@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import WrapEthSwaps from './WrapEthSwaps';
 import ResultHandler from '../ResultHandler';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -10,10 +10,6 @@ interface FeaturedMarketTileProps {
   setSelectedSymbol: (symbol: string | undefined) => void;
   isLoadingPoolData: boolean;
   dropdownSelectedChain: string;
-  setSwapWidgetOpen: Dispatch<SetStateAction<boolean>>;
-  swapWidgetOpen: boolean;
-  setWrapWidgetOpen: Dispatch<SetStateAction<boolean>>;
-  wrapWidgetOpen: boolean;
   featuredMarkets: MarketRowData[];
 }
 
@@ -23,12 +19,11 @@ const FeaturedMarketTile = ({
   setSelectedSymbol,
   isLoadingPoolData,
   dropdownSelectedChain,
-  setSwapWidgetOpen,
-  swapWidgetOpen,
-  setWrapWidgetOpen,
-  wrapWidgetOpen,
   featuredMarkets
 }: FeaturedMarketTileProps) => {
+  const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
+  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
+
   return (
     <div className="w-full col-span-3 h-full px-2 lg:px-[2%] xl:px-[3%] flex flex-col items-center justify-start gap-3 bg-grayone py-4 rounded-md">
       <span className="mr-auto text-xl font-semibold">Featured Markets</span>

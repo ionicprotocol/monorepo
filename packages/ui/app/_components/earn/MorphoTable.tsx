@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
 
-import { MorphoDialog } from './MorphoDialog';
+import { MorphoDialog } from '../dialogs/MorphoVault';
 import CommonTable from '../CommonTable';
 
 import type { EnhancedColumnDef } from '../CommonTable';
