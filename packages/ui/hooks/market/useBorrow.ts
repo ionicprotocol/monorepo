@@ -41,8 +41,6 @@ export const useBorrow = ({
   const { refetch: refetchMaxBorrow, data: maxBorrowAmount } =
     useMaxBorrowAmount(selectedMarketData, comptrollerAddress, chainId);
 
-  const { addStepsForAction, transactionSteps, upsertTransactionStep } =
-    useTransactionSteps();
   const { currentSdk, address } = useMultiIonic();
 
   const amountAsBInt = useMemo(
