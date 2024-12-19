@@ -21,7 +21,15 @@ interface INetworkSelector {
   upcomingChains?: string[];
 }
 
-const NETWORK_ORDER = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Lisk', 'BoB'];
+const ACTIVE_NETWORKS = [
+  'Mode',
+  'Base',
+  'Optimism',
+  'Fraxtal',
+  'Lisk',
+  'BoB',
+  'Worldchain'
+];
 
 function NetworkSelector({
   dropdownSelectedChain,
@@ -33,7 +41,7 @@ function NetworkSelector({
   const searchParams = useSearchParams();
   const setDropChain = useStore((state) => state.setDropChain);
 
-  const orderedNetworks = NETWORK_ORDER.map((networkName) =>
+  const orderedNetworks = ACTIVE_NETWORKS.map((networkName) =>
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
   ).filter(
     (entry): entry is [string, any] =>

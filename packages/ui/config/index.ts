@@ -9,6 +9,8 @@ type CONFIG = {
   isBobEnabled: boolean;
   isFraxtalEnabled: boolean;
   isLiskEnabled: boolean;
+  isSuperseedEnabled: boolean;
+  isWorldchainEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
@@ -36,6 +38,8 @@ const config: CONFIG = {
   isBobEnabled: true,
   isLiskEnabled: true,
   isFraxtalEnabled: true,
+  isSuperseedEnabled: true,
+  isWorldchainEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,

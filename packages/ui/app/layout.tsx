@@ -14,7 +14,9 @@ import {
   mode,
   bob,
   fraxtal,
-  lisk
+  lisk,
+  superseed,
+  worldchain
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -35,7 +37,16 @@ const metadata = {
   url: 'https://app.ionic.money'
 };
 
-export const networks = [base, mode, optimism, bob, fraxtal, lisk];
+export const networks = [
+  base,
+  mode,
+  optimism,
+  bob,
+  fraxtal,
+  lisk,
+  superseed,
+  worldchain
+];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
 
@@ -59,7 +70,8 @@ createAppKit({
   chainImages: {
     [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
     [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
-    [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg'
+    [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg',
+    [superseed.id]: 'https://icons.llamao.fi/icons/chains/rsz_superseed.jpg'
   }
 });
 
@@ -102,7 +114,7 @@ export default function RootLayout({
       `}
       </Script>
       <body className={'scrollbar-hide font-inter '}>
-        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
               <TooltipProvider>
