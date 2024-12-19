@@ -4,15 +4,16 @@ import {
   base as vBase,
   bob as vBob,
   fraxtal as vFraxtal,
+  ink as vInk,
   lisk as vLisk,
   mode as vMode,
-  optimism as vOptimism,
-  ink as vInk
+  optimism as vOptimism
 } from "viem/chains";
 
 import { default as base } from "./base";
 import { default as bob } from "./bob";
 import { default as fraxtal } from "./fraxtal";
+import { default as ink } from "./ink";
 import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
