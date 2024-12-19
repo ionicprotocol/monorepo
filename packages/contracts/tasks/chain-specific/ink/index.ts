@@ -1,3 +1,3 @@
 export * from "./market";
 
-export const COMPTROLLER_MAIN = "0x5E149502e2a65Be3b7C46F7767C9b16cB5765F48";
+export const COMPTROLLER_MAIN = "0x239593BCAad13561ba58Ba98bc5069aFfe2Ef20D";

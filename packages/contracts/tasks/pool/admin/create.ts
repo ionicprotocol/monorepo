@@ -98,7 +98,7 @@ task("pool:create:worldchain").setAction(async ({}, { run, deployments }) => {
 task("pool:create:ink").setAction(async ({}, { run, deployments }) => {
   const mpo = await deployments.get("MasterPriceOracle");
   await run("pool:create", {
-    name: "Ink Main Market",
+    name: "Ink Main Pool",
     creator: "deployer",
     priceOracle: mpo.address, // MPO
     closeFactor: "50",
