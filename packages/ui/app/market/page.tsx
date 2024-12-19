@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -13,16 +13,13 @@ import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 
-import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
-import Swap from '../_components/dialogs/manage/Swap';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import PoolsTable from '../_components/markets/PoolsTable';
 import StakingTile from '../_components/markets/StakingTile';
 import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
-import SupplyVaultDialog from '../_components/dialogs/SupplyVault';
 import PoolToggle from '../_components/markets/PoolToggle';
 import { isAddress } from 'viem';
 import SearchInput from '../_components/markets/SearcInput';
@@ -41,15 +38,8 @@ export default function Market() {
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
-  const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
-  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
-  const [isSupplyVaultDialogOpen, setIsSupplyVaultDialogOpen] =
-    useState<boolean>(false);
 
-  const [selectedVaultData, setSelectedVaultData] = useState<VaultRowData>();
-  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
 
@@ -61,8 +51,7 @@ export default function Market() {
     selectedMarketData,
     featuredMarkets,
     isLoading,
-    poolData,
-    loopProps
+    poolData
   } = useMarketData(selectedPool, chain, selectedSymbol);
 
   const filteredData = useMemo(() => {
@@ -139,11 +128,7 @@ export default function Market() {
             dropdownSelectedChain={chain}
             selectedChain={chainId}
             setSelectedSymbol={setSelectedSymbol}
-            swapWidgetOpen={swapWidgetOpen}
-            wrapWidgetOpen={wrapWidgetOpen}
             setIsManageDialogOpen={setIsManageDialogOpen}
-            setSwapWidgetOpen={setSwapWidgetOpen}
-            setWrapWidgetOpen={setWrapWidgetOpen}
             featuredMarkets={featuredMarkets}
           />
           <StakingTile chain={+chain} />
@@ -190,30 +175,19 @@ export default function Market() {
             <SupplyVaultTable
               marketData={filteredData as VaultRowData[]}
               isLoading={isLoadingVaults}
-              setIsManageDialogOpen={setIsSupplyVaultDialogOpen}
-              setSelectedVaultData={setSelectedVaultData}
             />
           ) : (
             <PoolsTable
               marketData={filteredData as MarketRowData[]}
               isLoading={isLoading}
               setIsManageDialogOpen={setIsManageDialogOpen}
-              setIsLoopDialogOpen={setIsLoopDialogOpen}
               setIsBorrowDisabled={setIsBorrowDisabled}
               setSelectedSymbol={setSelectedSymbol}
+              selectedSymbol={selectedSymbol}
             />
           )}
         </div>
       </div>
-
-      {selectedVaultData && (
-        <SupplyVaultDialog
-          isOpen={isSupplyVaultDialogOpen}
-          setIsOpen={setIsSupplyVaultDialogOpen}
-          selectedVaultData={selectedVaultData}
-          chainId={chainId}
-        />
-      )}
 
       {poolData?.comptroller && selectedMarketData && (
         <ManageDialog
@@ -222,22 +196,6 @@ export default function Market() {
           isBorrowDisabled={isBorrowDisabled}
           comptrollerAddress={poolData?.comptroller}
           selectedMarketData={selectedMarketData}
-        />
-      )}
-
-      {loopProps && (
-        <Loop
-          {...loopProps}
-          setIsOpen={setIsLoopDialogOpen}
-          isOpen={isLoopDialogOpen}
-        />
-      )}
-
-      {swapOpen && (
-        <Swap
-          close={() => setSwapOpen(false)}
-          dropdownSelectedChain={+chain}
-          selectedChain={chainId}
         />
       )}
     </>

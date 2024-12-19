@@ -13,23 +13,22 @@ import CommonTable from '../../_components/CommonTable';
 import type { EnhancedColumnDef } from '../../_components/CommonTable';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 import ActionButton from '../ActionButton';
+import { useState } from 'react';
+import SupplyVaultDialog from '../dialogs/SupplyVault';
 
 export default function SupplyVaultTable({
   marketData,
-  isLoading,
-  setIsManageDialogOpen,
-  setSelectedVaultData
+  isLoading
 }: {
   marketData: VaultRowData[];
   isLoading: boolean;
-  setIsManageDialogOpen: (value: boolean) => void;
-  setSelectedVaultData: React.Dispatch<
-    React.SetStateAction<VaultRowData | undefined>
-  >;
 }) {
+  const [isSupplyVaultDialogOpen, setIsSupplyVaultDialogOpen] =
+    useState<boolean>(false);
   const searchParams = useSearchParams();
   const chainId = useChainId();
   const { address } = useMultiIonic();
+  const [selectedVaultData, setSelectedVaultData] = useState<VaultRowData>();
 
   const querychain = searchParams.get('chain');
   const chain = querychain ? querychain : mode.id.toString();
@@ -142,7 +141,7 @@ export default function SupplyVaultTable({
             console.log('result', result);
             if (result) {
               setSelectedVaultData(row.original);
-              setIsManageDialogOpen(true);
+              setIsSupplyVaultDialogOpen(true);
             }
           }}
           disabled={!address}
@@ -153,10 +152,21 @@ export default function SupplyVaultTable({
   ];
 
   return (
-    <CommonTable
-      data={marketData}
-      columns={columns}
-      isLoading={isLoading}
-    />
+    <>
+      <CommonTable
+        data={marketData}
+        columns={columns}
+        isLoading={isLoading}
+      />
+
+      {selectedVaultData && (
+        <SupplyVaultDialog
+          isOpen={isSupplyVaultDialogOpen}
+          setIsOpen={setIsSupplyVaultDialogOpen}
+          selectedVaultData={selectedVaultData}
+          chainId={chainId}
+        />
+      )}
+    </>
   );
 }

@@ -9,7 +9,10 @@ import { useChainId } from 'wagmi';
 
 import { pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import {
+  useMarketData,
+  type MarketRowData
+} from '@ui/hooks/market/useMarketData';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../../_components/CommonTable';
@@ -20,30 +23,37 @@ import type {
   MarketCellProps
 } from '../../_components/CommonTable';
 import ActionButton from '../ActionButton';
+import Loop from '../dialogs/loop';
+import { useState } from 'react';
+import Swap from '../dialogs/manage/Swap';
 
 function PoolsTable({
   marketData,
   isLoading,
   setIsManageDialogOpen,
-  setIsLoopDialogOpen,
   setIsBorrowDisabled,
-  setSelectedSymbol
+  setSelectedSymbol,
+  selectedSymbol
 }: {
   marketData: MarketRowData[];
   isLoading: boolean;
   setIsManageDialogOpen: (value: boolean) => void;
-  setIsLoopDialogOpen: (value: boolean) => void;
   setIsBorrowDisabled: (value: boolean) => void;
   setSelectedSymbol: (value: string) => void;
+  selectedSymbol?: string;
 }) {
   const searchParams = useSearchParams();
   const chainId = useChainId();
   const { address } = useMultiIonic();
 
+  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
+  const [swapOpen, setSwapOpen] = useState<boolean>(false);
+
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
+  const { loopProps } = useMarketData(selectedPool, chain, selectedSymbol);
 
   const columns: EnhancedColumnDef<MarketRowData>[] = [
     {
@@ -206,17 +216,35 @@ function PoolsTable({
   ];
 
   return (
-    <CommonTable
-      data={marketData}
-      columns={columns}
-      isLoading={isLoading}
-      getRowStyle={(row) => ({
-        badge: row.original.membership ? { text: 'Collateral' } : undefined,
-        borderClassName: row.original.membership
-          ? pools[+chain]?.border
-          : undefined
-      })}
-    />
+    <>
+      <CommonTable
+        data={marketData}
+        columns={columns}
+        isLoading={isLoading}
+        getRowStyle={(row) => ({
+          badge: row.original.membership ? { text: 'Collateral' } : undefined,
+          borderClassName: row.original.membership
+            ? pools[+chain]?.border
+            : undefined
+        })}
+      />
+
+      {loopProps && (
+        <Loop
+          {...loopProps}
+          setIsOpen={setIsLoopDialogOpen}
+          isOpen={isLoopDialogOpen}
+        />
+      )}
+
+      {swapOpen && (
+        <Swap
+          close={() => setSwapOpen(false)}
+          dropdownSelectedChain={+chain}
+          selectedChain={chainId}
+        />
+      )}
+    </>
   );
 }
 
