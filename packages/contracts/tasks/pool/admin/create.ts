@@ -70,6 +70,30 @@ task("pool:create:bob:main").setAction(async ({}, { run, deployments }) => {
   });
 });
 
+task("pool:create:superseed").setAction(async ({}, { run, deployments }) => {
+  const mpo = await deployments.get("MasterPriceOracle");
+  await run("pool:create", {
+    name: "Superseed Main Market",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
+task("pool:create:worldchain").setAction(async ({}, { run, deployments }) => {
+  const mpo = await deployments.get("MasterPriceOracle");
+  await run("pool:create", {
+    name: "World Chain Main Market",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 task("pool:create", "Create pool if does not exist")
   .addParam("name", "Name of the pool to be created", undefined, types.string)
   .addParam("creator", "Named account from which to create the pool", "deployer", types.string)
@@ -98,6 +122,7 @@ task("pool:create", "Create pool if does not exist")
       }
     }
     const feeDistributorAddress = (await deployments.get("FeeDistributor")).address as Address;
+    console.log("🚀 ~ .setAction ~ feeDistributorAddress:", feeDistributorAddress);
 
     const deployTx = await poolDirectory.write.deployPool([
       taskArgs.name as string,
@@ -110,7 +135,7 @@ task("pool:create", "Create pool if does not exist")
     ]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
     const [event] = await poolDirectory.getEvents.PoolRegistered({ blockHash: receipt.blockHash });
-    console.log(`Pool registered: ${event}`);
+    console.log(`Pool registered: ${JSON.stringify(event, null, 2)}`);
     if (!event) {
       throw "Pool not found";
     }

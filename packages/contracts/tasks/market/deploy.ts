@@ -39,6 +39,16 @@ task("market:deploy", "deploy market")
     const collateralFactorBN = parseEther((config.collateralFactor / 100).toString());
 
     console.log("collateralFactorBN", collateralFactorBN.toString());
+    console.log("constructor params: ", [
+      config.underlying,
+      config.comptroller,
+      config.feeDistributor,
+      config.interestRateModel,
+      config.name,
+      config.symbol,
+      reserveFactorBN,
+      adminFeeBN
+    ]);
     const constructorData = encodeAbiParameters(
       parseAbiParameters("address,address,address,address,string,string,uint256,uint256"),
       [
@@ -52,6 +62,7 @@ task("market:deploy", "deploy market")
         adminFeeBN
       ]
     );
+    console.log("constructorData", constructorData);
 
     const owner = (await comptroller.read.admin()) as Address;
     // Test Transaction

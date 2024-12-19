@@ -1,6 +1,6 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from "aws-lambda";
 import axios from "axios";
-import { createPublicClient, createWalletClient, fallback, Hex, http } from "viem";
+import { createWalletClient, fallback, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mode } from "viem/chains";
 import { BotType } from "@ionicprotocol/sdk";
@@ -9,6 +9,7 @@ import config from "./config";
 import { liquidatePositions } from "./liquidatePositions";
 import { logger } from "./logger";
 import { setUpSdk } from "./utils";
+import { createIonicPublicClient } from "./utils/client";
 
 const HEARTBEAT_API_URL: any = process.env.UPTIME_LIQUIDATOR_API;
 
@@ -22,10 +23,7 @@ if (typeof HEARTBEAT_API_URL === "undefined") {
 
 export const account = privateKeyToAccount(config.adminPrivateKey as Hex);
 
-export const client = createPublicClient({
-  chain: mode,
-  transport: fallback(config.rpcUrls.map((url) => http(url))),
-});
+export const client = createIonicPublicClient(mode, config.rpcUrls);
 
 export const walletClient = createWalletClient({
   account,

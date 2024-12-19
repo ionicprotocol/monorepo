@@ -16,6 +16,7 @@ import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import ActionButton from '../_components/ActionButton';
 import CommonTable from '../_components/CommonTable';
 import Loop from '../_components/dialogs/loop';
 import ManageDialog from '../_components/dialogs/manage';
@@ -29,7 +30,6 @@ import TvlTile from '../_components/markets/TvlTile';
 
 import type { EnhancedColumnDef } from '../_components/CommonTable';
 import type { Row } from '@tanstack/react-table';
-import ActionButton from '../_components/ActionButton';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -275,8 +275,7 @@ export default function Market() {
               'FX',
               'Ink',
               'Kroma',
-              'Unichain',
-              'Worldchain'
+              'Unichain'
             ]}
           />
         </div>

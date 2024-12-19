@@ -25,11 +25,19 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://velodrome.finance/swap"
     },
     [SupportedChains.fraxtal]: {
-      swapName: "Fraxtal",
+      swapName: "Velodrome",
       swapAddress: "https://app.frax.finance/swap/main"
     },
     [SupportedChains.lisk]: {
-      swapName: "Lisk",
+      swapName: "Velodrome",
+      swapAddress: "https://velodrome.finance/swap"
+    },
+    [SupportedChains.superseed]: {
+      swapName: "Velodrome",
+      swapAddress: "https://velodrome.finance/swap"
+    },
+    [SupportedChains.worldchain]: {
+      swapName: "World Chain",
       swapAddress: "https://velodrome.finance/swap"
     }
   }[chainId];
