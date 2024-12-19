@@ -6,7 +6,10 @@ import {
   mode,
   optimism,
   fraxtal,
-  lisk
+  lisk,
+  superseed,
+  worldchain,
+  ink
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -36,6 +39,18 @@ export const supportedChainIdToConfig: {
   [lisk.chainId]: {
     enabled: config.isLiskEnabled,
     supported: config.isLiskEnabled
+  },
+  [superseed.chainId]: {
+    enabled: config.isSuperseedEnabled,
+    supported: config.isSuperseedEnabled
+  },
+  [worldchain.chainId]: {
+    enabled: config.isWorldchainEnabled,
+    supported: config.isWorldchainEnabled
+  },
+  [ink.chainId]: {
+    enabled: config.isInkEnabled,
+    supported: config.isInkEnabled
   }
 };
 

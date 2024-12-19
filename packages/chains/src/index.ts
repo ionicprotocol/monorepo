@@ -6,17 +6,33 @@ import {
   fraxtal as vFraxtal,
   lisk as vLisk,
   mode as vMode,
-  optimism as vOptimism
+  optimism as vOptimism,
+  superseed as vSuperseed,
+  worldchain as vWorldchain
 } from "viem/chains";
 
 import { default as base } from "./base";
 import { default as bob } from "./bob";
 import { default as fraxtal } from "./fraxtal";
+import { default as ink } from "./ink";
 import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
+import { default as superseed } from "./superseed";
+import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal };
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink };
+
+export const vInk: Chain = {
+  id: 57073,
+  name: "Ink",
+  nativeCurrency: {
+    name: "Ethereum",
+    symbol: "ETH",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: ["https://rpc-qnd.inkonchain.com", "https://rpc-gel.inkonchain.com"] } }
+};
 
 export const chainIdtoChain: { [chainId: number]: Chain } = {
   [mode.chainId]: vMode,
@@ -24,7 +40,10 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [optimism.chainId]: vOptimism,
   [bob.chainId]: vBob,
   [fraxtal.chainId]: vFraxtal,
-  [lisk.chainId]: vLisk
+  [lisk.chainId]: vLisk,
+  [ink.chainId]: vInk,
+  [superseed.chainId]: vSuperseed,
+  [worldchain.chainId]: vWorldchain
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -33,5 +52,8 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [optimism.chainId]: optimism,
   [bob.chainId]: bob,
   [fraxtal.chainId]: fraxtal,
-  [lisk.chainId]: lisk
+  [lisk.chainId]: lisk,
+  [ink.chainId]: ink,
+  [superseed.chainId]: superseed,
+  [worldchain.chainId]: worldchain
 };

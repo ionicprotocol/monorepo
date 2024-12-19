@@ -138,15 +138,14 @@ export default function Market() {
           <NetworkSelector
             dropdownSelectedChain={+chain}
             upcomingChains={[
+              'Superseed',
               'MetalL2',
               'Ozean',
               'Soneium',
               'Camp',
               'FX',
-              'Ink',
               'Kroma',
-              'Unichain',
-              'Worldchain'
+              'Unichain'
             ]}
           />
         </div>

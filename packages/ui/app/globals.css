@@ -154,6 +154,10 @@
   background: #4071f4;
 }
 
+.bg-ink {
+  background: #7040e0;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -184,6 +188,10 @@
 
 .border-lisk {
   border-color: #4071f4;
+}
+
+.border-ink {
+  border-color: #7040e0;
 }
 
 .text-xxs {

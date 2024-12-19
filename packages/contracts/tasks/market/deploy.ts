@@ -3,6 +3,7 @@ import { Address, encodeAbiParameters, parseAbiParameters, parseEther } from "vi
 
 import { MarketConfig } from "../../chainDeploy";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 task("market:deploy", "deploy market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
@@ -13,10 +14,14 @@ task("market:deploy", "deploy market")
   .addParam("name", "CToken name", undefined, types.string)
   .addOptionalParam("initialSupplyCap", "Initial supply cap", undefined, types.string)
   .addOptionalParam("initialBorrowCap", "Initial borrow cap", undefined, types.string)
-  .setAction(async (taskArgs, { viem, deployments, getNamedAccounts }) => {
+  .setAction(async (taskArgs, { viem, deployments, getNamedAccounts, getChainId }) => {
     const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const comptroller = await viem.getContractAt("IonicComptroller", taskArgs.comptroller as Address);
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const comptroller = await viem.getContractAt("IonicComptroller", taskArgs.comptroller as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
 
     const delegateType = 1;
     const implementationData = "0x00";
@@ -39,6 +44,16 @@ task("market:deploy", "deploy market")
     const collateralFactorBN = parseEther((config.collateralFactor / 100).toString());
 
     console.log("collateralFactorBN", collateralFactorBN.toString());
+    console.log("constructor params: ", [
+      config.underlying,
+      config.comptroller,
+      config.feeDistributor,
+      config.interestRateModel,
+      config.name,
+      config.symbol,
+      reserveFactorBN,
+      adminFeeBN
+    ]);
     const constructorData = encodeAbiParameters(
       parseAbiParameters("address,address,address,address,string,string,uint256,uint256"),
       [
@@ -52,6 +67,7 @@ task("market:deploy", "deploy market")
         adminFeeBN
       ]
     );
+    console.log("constructorData", constructorData);
 
     const owner = (await comptroller.read.admin()) as Address;
     // Test Transaction

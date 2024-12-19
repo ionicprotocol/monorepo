@@ -47,23 +47,6 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       chainId
     });
 
-    // await configureIonicLiquidator({
-    //   contractName: liquidatorContractName,
-    //   viem,
-    //   getNamedAccounts,
-    //   chainId,
-    //   deployments
-    // });
-
-    liquidatorContractName = await deployIonicLiquidator({
-      run,
-      viem,
-      getNamedAccounts,
-      deployments,
-      deployConfig: chainDeployParams,
-      chainId
-    });
-
     await configureIonicLiquidator({
       contractName: liquidatorContractName,
       viem,
@@ -71,6 +54,23 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       chainId,
       deployments
     });
+
+    // liquidatorContractName = await deployIonicLiquidator({
+    //   run,
+    //   viem,
+    //   getNamedAccounts,
+    //   deployments,
+    //   deployConfig: chainDeployParams,
+    //   chainId
+    // });
+
+    // await configureIonicLiquidator({
+    //   contractName: liquidatorContractName,
+    //   viem,
+    //   getNamedAccounts,
+    //   chainId,
+    //   deployments
+    // });
   }
 };
 
