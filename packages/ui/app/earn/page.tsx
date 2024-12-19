@@ -16,7 +16,8 @@ export default function Earn() {
       <Card className="bg-grayone">
         <CardHeader>
           <CardTitle className="text-center text-white/80 text-xl">
-            🏦 Morpho Vaults - Earn ION rewards while supplying to Morpho! 🏦
+            🏦 Morpho Vaults - Earn $ION and $MORPHO rewards while supplying to
+            Morpho! 🏦
           </CardTitle>
         </CardHeader>
         <CardContent>
