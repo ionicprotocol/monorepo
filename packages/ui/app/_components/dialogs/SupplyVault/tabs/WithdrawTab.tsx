@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { formatUnits } from 'viem';
 import { ThreeCircles } from 'react-loader-spinner';
 import { Button } from '@ui/components/ui/button';
+import { useAccount } from 'wagmi';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 import { useWithdrawVault } from '@ui/hooks/market/useWithdrawVault';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import MaxDeposit from '../../../MaxDeposit';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 
@@ -14,32 +13,30 @@ interface WithdrawTabProps {
 }
 
 export function WithdrawTab({ selectedVaultData, chainId }: WithdrawTabProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { isConnected } = useMultiIonic();
+  const { isConnected } = useAccount();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
     selectedVaultData as any,
     chainId
   );
 
-  const { isWaitingForIndexing, withdrawAmount, isPolling, amount, setAmount } =
+  const { withdrawAmount, amount, setAmount, isWithdrawing, isPending } =
     useWithdrawVault({
       maxAmount: maxAmount ?? 0n,
-      selectedVaultData,
-      chainId
+      selectedVaultData
     });
 
   const handleWithdrawProcess = async () => {
     if (!isConnected) return;
+    await withdrawAmount();
+  };
 
-    try {
-      setIsProcessing(true);
-      await withdrawAmount();
-    } catch (error) {
-      console.error('Withdraw error:', error);
-    } finally {
-      setIsProcessing(false);
-    }
+  const isProcessing = isWithdrawing || isPending;
+
+  const getButtonText = () => {
+    if (!isConnected) return 'Connect Wallet';
+    if (isProcessing) return 'Withdrawing...';
+    return `Withdraw ${selectedVaultData.underlyingSymbol}`;
   };
 
   return (
@@ -47,7 +44,7 @@ export function WithdrawTab({ selectedVaultData, chainId }: WithdrawTabProps) {
       <MaxDeposit
         amount={amount}
         handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+        isLoading={isLoadingMax}
         max={formatUnits(maxAmount ?? 0n, selectedVaultData.underlyingDecimals)}
         tokenName={selectedVaultData.underlyingSymbol}
         decimals={selectedVaultData.underlyingDecimals}
@@ -72,19 +69,13 @@ export function WithdrawTab({ selectedVaultData, chainId }: WithdrawTabProps) {
       <Button
         className="w-full bg-accent hover:opacity-80"
         disabled={
-          isProcessing ||
-          !amount ||
-          !isConnected ||
-          Number(amount) <= 0 ||
-          isWaitingForIndexing
+          isProcessing || !amount || !isConnected || Number(amount) <= 0
         }
         onClick={handleWithdrawProcess}
       >
-        {!isConnected ? (
-          'Connect Wallet'
-        ) : isProcessing ? (
-          <>
-            Processing
+        {isProcessing ? (
+          <div className="flex items-center justify-center gap-2">
+            {getButtonText()}
             <ThreeCircles
               ariaLabel="three-circles-loading"
               color="black"
@@ -97,11 +88,9 @@ export function WithdrawTab({ selectedVaultData, chainId }: WithdrawTabProps) {
                 width: '40px'
               }}
             />
-          </>
-        ) : isWaitingForIndexing ? (
-          'Updating Balances...'
+          </div>
         ) : (
-          `Withdraw ${selectedVaultData.underlyingSymbol}`
+          getButtonText()
         )}
       </Button>
     </div>

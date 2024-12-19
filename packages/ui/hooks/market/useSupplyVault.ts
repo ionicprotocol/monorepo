@@ -13,14 +13,12 @@ interface UseSupplyVaultProps {
   underlyingDecimals: number;
   underlyingToken: Address;
   underlyingSymbol: string;
-  chainId: number;
 }
 
 export const useSupplyVault = ({
   underlyingDecimals,
   underlyingToken,
-  underlyingSymbol,
-  chainId
+  underlyingSymbol
 }: UseSupplyVaultProps) => {
   const [amount, setAmount] = useState<string>('0');
   const { address } = useAccount();
@@ -31,7 +29,6 @@ export const useSupplyVault = ({
     [amount, underlyingDecimals]
   );
 
-  // Approval simulation and execution
   const { data: simulateApprove } = useSimulateContract({
     address: underlyingToken,
     abi: erc20Abi,
@@ -45,7 +42,6 @@ export const useSupplyVault = ({
   const { writeContract: writeApprove, isPending: isApproving } =
     useWriteContract();
 
-  // Deposit simulation and execution
   const { data: simulateDeposit } = useSimulateContract({
     address: VAULT_ADDRESSES.SECOND_EXTENSION,
     abi: VAULT_ABI,
@@ -59,7 +55,6 @@ export const useSupplyVault = ({
   const { writeContract: writeDeposit, isPending: isSupplying } =
     useWriteContract();
 
-  // Check allowance
   const { data: allowance } = useReadContract({
     address: underlyingToken,
     abi: erc20Abi,
@@ -88,7 +83,6 @@ export const useSupplyVault = ({
   const supplyAmount = useCallback(async () => {
     if (!address || amountAsBInt <= 0n || !simulateDeposit?.request) return;
 
-    // Check if approval is needed
     if (allowance && allowance < amountAsBInt) {
       toast.error('Please approve first');
       return;

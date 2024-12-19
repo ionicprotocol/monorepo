@@ -16,7 +16,7 @@ interface SupplyTabProps {
 }
 
 export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   const {
     amount,
@@ -30,8 +30,7 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
   } = useSupplyVault({
     underlyingDecimals: selectedVaultData.underlyingDecimals,
     underlyingToken: selectedVaultData.underlyingToken as `0x${string}`,
-    underlyingSymbol: selectedVaultData.underlyingSymbol as string,
-    chainId
+    underlyingSymbol: selectedVaultData.underlyingSymbol as string
   });
 
   const tokenAddress = useMemo(
