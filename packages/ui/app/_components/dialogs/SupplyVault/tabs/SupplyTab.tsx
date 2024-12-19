@@ -1,11 +1,8 @@
-import { useMemo, useState } from 'react';
-import { formatUnits } from 'viem';
-import { useBalance } from 'wagmi';
+import { useMemo } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
 import { Button } from '@ui/components/ui/button';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useAccount } from 'wagmi';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
-import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import MaxDeposit from '@ui/app/_components/MaxDeposit';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 import {
@@ -19,75 +16,58 @@ interface SupplyTabProps {
 }
 
 export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { address, isConnected } = useMultiIonic();
-
-  const balanceQueryParams = useMemo(
-    () => ({
-      address,
-      token: selectedVaultData.underlyingToken as `0x${string}`,
-      chainId
-    }),
-    [address, selectedVaultData.underlyingToken, chainId]
-  );
-
-  const { data: balanceData } = useBalance(balanceQueryParams);
-  const walletBalance = balanceData?.value ?? 0n;
-
-  const { data: maxSupplyAmount, isLoading: isLoadingMax } = useMaxSupplyAmount(
-    selectedVaultData,
-    selectedVaultData.vaultAddress as `0x${string}`,
-    chainId
-  );
-
-  const maxAmount = useMemo(() => {
-    if (!maxSupplyAmount?.bigNumber) return walletBalance;
-    return walletBalance < maxSupplyAmount.bigNumber
-      ? walletBalance
-      : maxSupplyAmount.bigNumber;
-  }, [walletBalance, maxSupplyAmount?.bigNumber]);
+  const { address, isConnected } = useAccount();
 
   const {
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     approveAmount,
     supplyAmount,
-    isPolling,
-    isWaitingForIndexing
+    isApproving,
+    isSupplying,
+    isPending,
+    needsApproval
   } = useSupplyVault({
-    maxAmount,
     underlyingDecimals: selectedVaultData.underlyingDecimals,
     underlyingToken: selectedVaultData.underlyingToken as `0x${string}`,
     underlyingSymbol: selectedVaultData.underlyingSymbol as string,
-    vaultAddress: selectedVaultData.vaultAddress as `0x${string}`,
     chainId
   });
+
+  const tokenAddress = useMemo(
+    () =>
+      supplyVaultAddresses[chainId as SupportedSupplyVaultChainId]?.tokens[
+        selectedVaultData.underlyingSymbol as 'WETH' | 'USDC'
+      ],
+    [chainId, selectedVaultData.underlyingSymbol]
+  );
 
   const handleSupplyProcess = async () => {
     if (!isConnected) return;
 
-    try {
-      setIsProcessing(true);
+    if (needsApproval) {
       await approveAmount();
+    } else {
       await supplyAmount();
-    } catch (error) {
-      console.error('Supply error:', error);
-    } finally {
-      setIsProcessing(false);
     }
   };
 
-  const tokenAddress =
-    supplyVaultAddresses[chainId as SupportedSupplyVaultChainId]?.tokens[
-      selectedVaultData.underlyingSymbol as 'WETH' | 'USDC'
-    ];
+  const isProcessing = isApproving || isSupplying || isPending;
+  const buttonDisabled =
+    isProcessing || !amount || !isConnected || Number(amount) <= 0;
+
+  const getButtonText = () => {
+    if (!isConnected) return 'Connect Wallet';
+    if (isProcessing) return needsApproval ? 'Approving...' : 'Supplying...';
+    if (needsApproval) return `Approve ${selectedVaultData.underlyingSymbol}`;
+    return `Supply ${selectedVaultData.underlyingSymbol}`;
+  };
 
   return (
     <div className="space-y-4">
       <MaxDeposit
         amount={amount}
+        isLoading={isProcessing}
         tokenName={selectedVaultData.underlyingSymbol}
         token={tokenAddress as `0x${string}`}
         handleInput={(val?: string) => setAmount(val ?? '')}
@@ -111,15 +91,11 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
       <Button
         className="w-full bg-accent hover:opacity-80"
         onClick={handleSupplyProcess}
-        disabled={
-          isProcessing || !amount || !isConnected || Number(amount) <= 0
-        }
+        disabled={buttonDisabled}
       >
-        {!isConnected ? (
-          'Connect Wallet'
-        ) : isProcessing ? (
-          <>
-            Processing
+        {isProcessing ? (
+          <div className="flex items-center justify-center gap-2">
+            {getButtonText()}
             <ThreeCircles
               ariaLabel="three-circles-loading"
               color="black"
@@ -132,11 +108,9 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
                 width: '40px'
               }}
             />
-          </>
-        ) : isWaitingForIndexing ? (
-          'Updating Balances...'
+          </div>
         ) : (
-          `Supply ${selectedVaultData.underlyingSymbol}`
+          getButtonText()
         )}
       </Button>
     </div>

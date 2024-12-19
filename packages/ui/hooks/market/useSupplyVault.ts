@@ -1,178 +1,129 @@
-// useSupplyVault.ts
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
+import { VAULT_ABI, VAULT_ADDRESSES } from '@ui/utils/marketUtils';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { type Address, formatUnits, parseUnits } from 'viem';
-
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-
-import { useBalancePolling } from '../useBalancePolling';
+import { type Address, parseUnits, erc20Abi } from 'viem';
+import {
+  useWriteContract,
+  useAccount,
+  useReadContract,
+  useSimulateContract
+} from 'wagmi';
 
 interface UseSupplyVaultProps {
-  maxAmount: bigint;
   underlyingDecimals: number;
   underlyingToken: Address;
   underlyingSymbol: string;
-  vaultAddress: Address;
   chainId: number;
 }
 
 export const useSupplyVault = ({
-  maxAmount,
   underlyingDecimals,
   underlyingToken,
   underlyingSymbol,
-  vaultAddress,
   chainId
 }: UseSupplyVaultProps) => {
-  const [txHash, setTxHash] = useState<Address>();
-  const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
-  const [isApproving, setIsApproving] = useState(false);
-  const [isSupplying, setIsSupplying] = useState(false);
-  const { address, currentSdk } = useMultiIonic();
+  const { address } = useAccount();
+  const [isPending, setIsPending] = useState(false);
 
   const amountAsBInt = useMemo(
     () => parseUnits(amount?.toString() ?? '0', underlyingDecimals),
     [amount, underlyingDecimals]
   );
 
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, underlyingDecimals)
-      );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, underlyingDecimals]
-  );
-
-  // Update utilization percentage when amount changes
-  useEffect(() => {
-    if (amount === '0' || !amount || !maxAmount) {
-      setUtilizationPercentage(0);
-      return;
+  // Approval simulation and execution
+  const { data: simulateApprove } = useSimulateContract({
+    address: underlyingToken,
+    abi: erc20Abi,
+    functionName: 'approve',
+    args: [VAULT_ADDRESSES.SECOND_EXTENSION, amountAsBInt],
+    query: {
+      enabled: Boolean(address && amountAsBInt > 0n)
     }
+  });
 
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
+  const { writeContract: writeApprove, isPending: isApproving } =
+    useWriteContract();
+
+  // Deposit simulation and execution
+  const { data: simulateDeposit } = useSimulateContract({
+    address: VAULT_ADDRESSES.SECOND_EXTENSION,
+    abi: VAULT_ABI,
+    functionName: 'deposit',
+    args: [amountAsBInt],
+    query: {
+      enabled: Boolean(address && amountAsBInt > 0n)
+    }
+  });
+
+  const { writeContract: writeDeposit, isPending: isSupplying } =
+    useWriteContract();
+
+  // Check allowance
+  const { data: allowance } = useReadContract({
+    address: underlyingToken,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args: [address!, VAULT_ADDRESSES.SECOND_EXTENSION],
+    query: {
+      enabled: Boolean(address)
+    }
+  });
 
   const approveAmount = useCallback(async () => {
-    if (
-      !currentSdk ||
-      !address ||
-      amountAsBInt <= 0n ||
-      amountAsBInt > maxAmount
-    )
-      return;
+    if (!address || amountAsBInt <= 0n || !simulateApprove?.request) return;
 
-    setIsApproving(true);
     try {
-      const tx = await currentSdk.approve(
-        vaultAddress,
-        underlyingToken,
-        amountAsBInt
-      );
-
-      await currentSdk.publicClient.waitForTransactionReceipt({
-        hash: tx,
-        confirmations: 2
-      });
-
+      setIsPending(true);
+      const hash = await writeApprove(simulateApprove.request);
       toast.success('Approval successful!');
     } catch (error) {
       console.error('Approval error:', error);
       toast.error('Error while approving!');
     } finally {
-      setIsApproving(false);
+      setIsPending(false);
     }
-  }, [
-    currentSdk,
-    address,
-    amountAsBInt,
-    maxAmount,
-    underlyingToken,
-    vaultAddress
-  ]);
+  }, [address, amountAsBInt, simulateApprove, writeApprove]);
 
   const supplyAmount = useCallback(async () => {
-    if (
-      !currentSdk ||
-      !address ||
-      amountAsBInt <= 0n ||
-      amountAsBInt > maxAmount
-    )
+    if (!address || amountAsBInt <= 0n || !simulateDeposit?.request) return;
+
+    // Check if approval is needed
+    if (allowance && allowance < amountAsBInt) {
+      toast.error('Please approve first');
       return;
+    }
 
-    setIsSupplying(true);
     try {
-      const tx = await currentSdk.walletClient!.sendTransaction({
-        to: vaultAddress,
-        data: '0x',
-        value: 0n,
-        account: address,
-        chain: currentSdk?.walletClient?.chain
-      });
-
-      setTxHash(tx);
-      setIsWaitingForIndexing(true);
-
-      await currentSdk.publicClient.waitForTransactionReceipt({
-        hash: tx,
-        confirmations: 1
-      });
-
+      setIsPending(true);
+      const hash = await writeDeposit(simulateDeposit.request);
       toast.success(`Supplied ${amount} ${underlyingSymbol} to vault`);
+      setAmount('0');
     } catch (error) {
       console.error('Supply error:', error);
-      setIsWaitingForIndexing(false);
-      setTxHash(undefined);
       toast.error('Error while supplying to vault!');
     } finally {
-      setIsSupplying(false);
+      setIsPending(false);
     }
   }, [
-    currentSdk,
     address,
     amountAsBInt,
-    maxAmount,
-    vaultAddress,
+    allowance,
+    simulateDeposit,
+    writeDeposit,
     amount,
     underlyingSymbol
   ]);
 
-  const { isPolling } = useBalancePolling({
-    address,
-    chainId,
-    txHash,
-    enabled: isWaitingForIndexing,
-    onSuccess: () => {
-      setIsWaitingForIndexing(false);
-      setTxHash(undefined);
-      setAmount('0');
-      setUtilizationPercentage(0);
-    }
-  });
-
   return {
-    isWaitingForIndexing,
     approveAmount,
     supplyAmount,
-    isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt,
     isApproving,
-    isSupplying
+    isSupplying,
+    isPending,
+    needsApproval: allowance ? allowance < amountAsBInt : true
   };
 };

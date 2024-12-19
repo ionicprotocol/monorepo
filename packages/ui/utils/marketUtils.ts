@@ -149,3 +149,33 @@ export const supplyVaultAddresses = {
     }
   }
 };
+
+export const VAULT_ADDRESSES = {
+  OPTIMIZED_APR_VAULT_BASE:
+    '0x1234567890123456789012345678901234567890' as const,
+  SECOND_EXTENSION: '0x0987654321098765432109876543210987654321' as const
+};
+
+export const VAULT_ABI = [
+  {
+    inputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    name: 'deposit',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    name: 'withdraw',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'asSecondExtension',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;
