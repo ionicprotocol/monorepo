@@ -6,7 +6,9 @@ import {
   fraxtal as vFraxtal,
   lisk as vLisk,
   mode as vMode,
-  optimism as vOptimism
+  optimism as vOptimism,
+  superseed as vSuperseed,
+  worldchain as vWorldchain
 } from "viem/chains";
 
 import { default as base } from "./base";
@@ -16,19 +18,9 @@ import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
 import { default as superseed } from "./superseed";
+import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal, superseed };
-
-const vSuperseed: Chain = {
-  id: 5330,
-  name: "Superseed",
-  nativeCurrency: {
-    name: "Ethereum",
-    symbol: "ETH",
-    decimals: 18
-  },
-  rpcUrls: { default: { http: ["https://rpc-superseed-mainnet-0.t.conduit.xyz"] } }
-};
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain };
 
 export const chainIdtoChain: { [chainId: number]: Chain } = {
   [mode.chainId]: vMode,
@@ -37,7 +29,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [bob.chainId]: vBob,
   [fraxtal.chainId]: vFraxtal,
   [lisk.chainId]: vLisk,
-  [superseed.chainId]: vSuperseed
+  [superseed.chainId]: vSuperseed,
+  [worldchain.chainId]: vWorldchain
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -47,5 +40,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bob.chainId]: bob,
   [fraxtal.chainId]: fraxtal,
   [lisk.chainId]: lisk,
-  [superseed.chainId]: superseed
+  [superseed.chainId]: superseed,
+  [worldchain.chainId]: worldchain
 };

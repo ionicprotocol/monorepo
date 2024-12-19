@@ -5,7 +5,8 @@ import {
   bob as vBob,
   fraxtal as vFraxtal,
   lisk as vLisk,
-  superseed as vSuperseed
+  superseed as vSuperseed,
+  worldchain as vWorldchain
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -20,7 +21,8 @@ import {
   bob,
   fraxtal,
   lisk,
-  superseed
+  superseed,
+  worldchain
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -101,6 +103,10 @@ export function getEnabledChains() {
     enabledChains.push(vSuperseed);
   }
 
+  if (config.isWorldchainEnabled) {
+    enabledChains.push(vWorldchain);
+  }
+
   return enabledChains;
 }
 
@@ -111,7 +117,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.bob]: bob.assets,
   [SupportedChains.fraxtal]: fraxtal.assets,
   [SupportedChains.lisk]: lisk.assets,
-  [SupportedChains.superseed]: superseed.assets
+  [SupportedChains.superseed]: superseed.assets,
+  [SupportedChains.worldchain]: worldchain.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -121,5 +128,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.bob]: bob.deployedPlugins,
   [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
   [SupportedChains.lisk]: lisk.deployedPlugins,
-  [SupportedChains.superseed]: superseed.deployedPlugins
+  [SupportedChains.superseed]: superseed.deployedPlugins,
+  [SupportedChains.worldchain]: worldchain.deployedPlugins
 };

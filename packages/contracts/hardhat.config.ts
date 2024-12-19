@@ -6,7 +6,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 
 import "./tasks";
-import { base, fraxtal, mode, superseed } from "viem/chains";
+import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
 
 dotenv();
 
@@ -25,7 +25,8 @@ const config: HardhatUserConfig = {
       [mode.id]: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
       [base.id]: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB",
       [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
-      [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -117,6 +118,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    worldchain: {
+      url: process.env.OVERRIDE_RPC_URL_WORLDCHAIN ?? "https://worldchain-mainnet.g.alchemy.com/public",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://api.worldscan.org/api?",
+          apiKey: process.env.ETHERSCAN_API_KEY_WORLDCHAIN
+        }
+      }
     }
   },
   etherscan: {
@@ -124,7 +135,8 @@ const config: HardhatUserConfig = {
       base: process.env.ETHERSCAN_API_KEY_BASE!,
       optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
       lisk: "empty",
-      superseed: "empty"
+      superseed: "empty",
+      worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!
     },
     customChains: [
       {
@@ -141,6 +153,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
           browserURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz"
+        }
+      },
+      {
+        network: "worldchain",
+        chainId: 480,
+        urls: {
+          apiURL: "https://api.worldscan.org/api",
+          browserURL: "https://api.worldscan.org"
         }
       }
     ]
