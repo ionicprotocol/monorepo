@@ -6,7 +6,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 
 import "./tasks";
-import { base, fraxtal, mode } from "viem/chains";
+import { base, fraxtal, mode, superseed } from "viem/chains";
 
 dotenv();
 
@@ -24,7 +24,8 @@ const config: HardhatUserConfig = {
     multisig: {
       [mode.id]: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
       [base.id]: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB",
-      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2"
+      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
+      [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -106,13 +107,24 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    superseed: {
+      url: process.env.OVERRIDE_RPC_URL_SUPERSEED ?? "https://rpc-superseed-mainnet-0.t.conduit.xyz",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
     apiKey: {
       base: process.env.ETHERSCAN_API_KEY_BASE!,
       optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
-      lisk: "empty"
+      lisk: "empty",
+      superseed: "empty"
     },
     customChains: [
       {
@@ -121,6 +133,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://blockscout.lisk.com/api",
           browserURL: "https://blockscout.lisk.com"
+        }
+      },
+      {
+        network: "superseed",
+        chainId: 5330,
+        urls: {
+          apiURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          browserURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz"
         }
       }
     ]
