@@ -42,6 +42,8 @@ export const useRepay = ({
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
   const { transactionSteps } = useTransactionSteps();
 
+  const INTEREST_BUFFER_MULTIPLIER = 1.01;
+
   const amountAsBInt = useMemo(
     () =>
       parseUnits(
@@ -50,6 +52,17 @@ export const useRepay = ({
       ),
     [amount, selectedMarketData.underlyingDecimals]
   );
+
+  const amountWithBufferAsBInt = useMemo(() => {
+    const amountAsNumber = Number(amount);
+    if (isNaN(amountAsNumber) || amountAsNumber === 0) return 0n;
+
+    const amountWithBuffer = amountAsNumber * INTEREST_BUFFER_MULTIPLIER;
+    return parseUnits(
+      amountWithBuffer.toString(),
+      selectedMarketData.underlyingDecimals
+    );
+  }, [amount, selectedMarketData.underlyingDecimals]);
 
   const handleUtilization = useCallback(
     (newUtilizationPercentage: number) => {
@@ -124,11 +137,12 @@ export const useRepay = ({
         selectedMarketData.cToken
       ]);
 
-      if (currentAllowance < amountAsBInt) {
+      // Use buffered amount for allowance check and approval
+      if (currentAllowance < amountWithBufferAsBInt) {
         const approveTx = await currentSdk.approve(
           selectedMarketData.cToken,
           selectedMarketData.underlyingToken,
-          amountAsBInt
+          amountWithBufferAsBInt // Using buffered amount for approval
         );
 
         upsertStepForType(TransactionType.REPAY, {
@@ -156,12 +170,12 @@ export const useRepay = ({
         amountAsBInt >= (selectedMarketData.borrowBalance ?? 0n);
       const repayAmount = isRepayingMax ? maxUint256 : amountAsBInt;
 
-      // Verify final allowance
+      // Verify final allowance against buffered amount
       const finalAllowance = await token.read.allowance([
         address,
         selectedMarketData.cToken
       ]);
-      if (finalAllowance < amountAsBInt) {
+      if (finalAllowance < amountWithBufferAsBInt) {
         throw new Error('Insufficient allowance after approval');
       }
 
@@ -244,6 +258,7 @@ export const useRepay = ({
     address,
     amount,
     amountAsBInt,
+    amountWithBufferAsBInt,
     currentBorrowAmountAsFloat,
     selectedMarketData,
     addStepsForType,
