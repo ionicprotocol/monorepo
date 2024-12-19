@@ -15,7 +15,8 @@ import {
   bob,
   fraxtal,
   lisk,
-  superseed
+  superseed,
+  worldchain
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -36,7 +37,16 @@ const metadata = {
   url: 'https://app.ionic.money'
 };
 
-export const networks = [base, mode, optimism, bob, fraxtal, lisk, superseed];
+export const networks = [
+  base,
+  mode,
+  optimism,
+  bob,
+  fraxtal,
+  lisk,
+  superseed,
+  worldchain
+];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
 

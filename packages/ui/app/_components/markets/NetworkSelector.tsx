@@ -28,7 +28,8 @@ const NETWORK_ORDER = [
   'Fraxtal',
   'Lisk',
   'BoB',
-  'Superseed'
+  'Superseed',
+  'Worldchain'
 ];
 
 function NetworkSelector({

@@ -7,7 +7,8 @@ import {
   optimism,
   fraxtal,
   lisk,
-  superseed
+  superseed,
+  worldchain
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -41,6 +42,10 @@ export const supportedChainIdToConfig: {
   [superseed.chainId]: {
     enabled: config.isSuperseedEnabled,
     supported: config.isSuperseedEnabled
+  },
+  [worldchain.chainId]: {
+    enabled: config.isWorldchainEnabled,
+    supported: config.isWorldchainEnabled
   }
 };
 
