@@ -64,23 +64,26 @@ contract MarketsTest is BaseTest {
   }
 
   function _prepareCTokenUpgrade(ICErc20 market) internal returns (address) {
+    return _prepareCTokenUpgrade(market, market.delegateType());
+  }
+
+  function _prepareCTokenUpgrade(ICErc20 market, uint8 delegateType) internal returns (address) {
     address implBefore = market.implementation();
     //emit log("implementation before");
     //emit log_address(implBefore);
 
     CErc20Delegate newImpl;
-    if (market.delegateType() == 1) {
+    if (delegateType == 1) {
       newImpl = cErc20Delegate;
-    } else if (market.delegateType() == 2) {
+    } else if (delegateType == 2) {
       newImpl = cErc20PluginDelegate;
-    } else if (market.delegateType() == 3) {
+    } else if (delegateType == 3) {
       newImpl = cErc20RewardsDelegate;
     } else {
       newImpl = cErc20PluginRewardsDelegate;
     }
 
     // set the new ctoken delegate as the latest
-    uint8 delegateType = market.delegateType();
     vm.prank(ffd.owner());
     ffd._setLatestCErc20Delegate(delegateType, address(newImpl), abi.encode(address(0)));
 

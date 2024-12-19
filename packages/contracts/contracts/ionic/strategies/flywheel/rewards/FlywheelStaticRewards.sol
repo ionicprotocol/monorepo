@@ -64,4 +64,14 @@ contract FlywheelStaticRewards is Auth, BaseFlywheelRewards {
 
         amount = rewards.rewardsPerSecond * elapsed;
     }
+
+    function getRewardsPerSecond(ERC20 strategy) external view override returns (uint256) {
+        RewardsInfo memory rewards = rewardsInfo[strategy];
+
+        if (rewards.rewardsEndTimestamp == 0 || rewards.rewardsEndTimestamp > block.timestamp) {
+            return 0;
+        } else {
+            return rewards.rewardsPerSecond;
+        }
+    }
 }
