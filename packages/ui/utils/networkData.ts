@@ -22,7 +22,9 @@ import {
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  ink,
+  vInk
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -107,6 +109,10 @@ export function getEnabledChains() {
     enabledChains.push(vWorldchain);
   }
 
+  if (config.isInkEnabled) {
+    enabledChains.push(vInk);
+  }
+
   return enabledChains;
 }
 
@@ -118,7 +124,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.fraxtal]: fraxtal.assets,
   [SupportedChains.lisk]: lisk.assets,
   [SupportedChains.superseed]: superseed.assets,
-  [SupportedChains.worldchain]: worldchain.assets
+  [SupportedChains.worldchain]: worldchain.assets,
+  [SupportedChains.ink]: ink.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -129,5 +136,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
   [SupportedChains.lisk]: lisk.deployedPlugins,
   [SupportedChains.superseed]: superseed.deployedPlugins,
-  [SupportedChains.worldchain]: worldchain.deployedPlugins
+  [SupportedChains.worldchain]: worldchain.deployedPlugins,
+  [SupportedChains.ink]: ink.deployedPlugins
 };

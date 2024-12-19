@@ -3,6 +3,7 @@ import { Address, Hash } from "viem";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { base, mode, optimism } from "viem/chains";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 const HYPERNATIVE: Record<number, Address> = {
   [mode.id]: "0xd9677b0eeafdce6bf322d9774bb65b1f42cf0404",
@@ -12,11 +13,12 @@ const HYPERNATIVE: Record<number, Address> = {
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   console.log("multisig: ", multisig);
 
-  const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
 
   if (!chainDeployConfig[chainId]) {
@@ -28,7 +30,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const poolDirectory = await viem.getContractAt(
     "PoolDirectory",
-    (await deployments.get("PoolDirectory")).address as Address
+    (await deployments.get("PoolDirectory")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const pauserDeployment = await deployments.deploy("GlobalPauser", {
     from: deployer,
@@ -37,7 +40,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     args: [poolDirectory.address]
   });
   console.log("pauserDeployment: ", pauserDeployment.address);
-  const pauser = await viem.getContractAt("GlobalPauser", pauserDeployment.address as Address);
+  const pauser = await viem.getContractAt("GlobalPauser", pauserDeployment.address as Address, {
+    client: { public: publicClient, wallet: walletClient }
+  });
 
   let tx: Hash;
   let isGuardian = await pauser.read.pauseGuardian([deployer as Address]);

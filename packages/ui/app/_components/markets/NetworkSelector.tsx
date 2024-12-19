@@ -26,6 +26,7 @@ const ACTIVE_NETWORKS = [
   'Base',
   'Optimism',
   'Fraxtal',
+  'Ink',
   'Lisk',
   'BoB',
   'Worldchain'

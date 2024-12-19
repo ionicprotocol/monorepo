@@ -3,11 +3,13 @@ import { Address, Hash, zeroAddress } from "viem";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
   const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
@@ -19,11 +21,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   let tx: Hash;
   const fuseFeeDistributor = await viem.getContractAt(
     "FeeDistributor",
-    (await deployments.get("FeeDistributor")).address as Address
+    (await deployments.get("FeeDistributor")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const liquidatorsRegistry = await viem.getContractAt(
     "LiquidatorsRegistry",
-    (await deployments.get("LiquidatorsRegistry")).address as Address
+    (await deployments.get("LiquidatorsRegistry")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   //// LEVERED POSITIONS FACTORY
@@ -60,7 +64,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const leveredPositionFactory = await viem.getContractAt(
     "LeveredPositionFactory",
-    (await deployments.get("LeveredPositionFactory")).address as Address
+    (await deployments.get("LeveredPositionFactory")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   const currentLPFExtensions = await leveredPositionFactory.read._listExtensions();
@@ -259,7 +264,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const authoritiesRegistry = await viem.getContractAt(
     "AuthoritiesRegistry",
-    (await deployments.get("AuthoritiesRegistry")).address as Address
+    (await deployments.get("AuthoritiesRegistry")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   const ffdAuthRegistry = await fuseFeeDistributor.read.authoritiesRegistry();
