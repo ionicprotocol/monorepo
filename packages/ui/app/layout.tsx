@@ -16,7 +16,8 @@ import {
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  AppKitNetwork
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -37,7 +38,25 @@ const metadata = {
   url: 'https://app.ionic.money'
 };
 
-export const networks = [
+export const ink: AppKitNetwork = {
+  id: 57073,
+  name: 'Ink',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-gel.inkonchain.com', 'https://rpc-qnd.inkonchain.com']
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: 'Ink Explorer',
+      url: 'https://explorer.inkonchain.com',
+      apiUrl: 'https://api.inkonchain.com'
+    }
+  }
+};
+
+export const networks: AppKitNetwork[] = [
   base,
   mode,
   optimism,
@@ -45,7 +64,8 @@ export const networks = [
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  ink
 ];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';

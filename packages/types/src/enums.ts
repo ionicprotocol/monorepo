@@ -5,6 +5,7 @@ export enum SupportedChains {
   bob = 60808,
   fraxtal = 252,
   lisk = 1135,
+  ink = 57073,
   superseed = 5330,
   worldchain = 480
 }

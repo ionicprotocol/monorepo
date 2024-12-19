@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 import { Address, Hash, parseUnits, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("pool", "Comptroller Address", undefined, types.string)
@@ -16,12 +17,18 @@ export default task("market:unsupport", "Unsupport a market")
 task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a market")
   .addParam("marketAddress", "Address of the market", undefined, types.string)
   .addParam("ltv", "The LTV as a floating point value between 0 and 1", undefined, types.string)
-  .setAction(async ({ marketAddress, ltv }, { viem, getNamedAccounts }) => {
+  .setAction(async ({ marketAddress, ltv }, { viem, getNamedAccounts, getChainId }) => {
     const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const market = await viem.getContractAt("ICErc20", marketAddress);
+    const chainId = await getChainId();
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[+chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[+chainId] });
+    const market = await viem.getContractAt("ICErc20", marketAddress, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const poolAddress = await market.read.comptroller();
-    const pool = await viem.getContractAt("IonicComptroller", poolAddress as Address);
+    const pool = await viem.getContractAt("IonicComptroller", poolAddress as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const ltvMantissa = parseUnits(ltv, 18);
     console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`);
 

@@ -5,6 +5,7 @@ import { deploy as deployMode, deployConfig as deployConfigMode } from "./mainne
 import { deploy as deployFrax, deployConfig as deployConfigFrax } from "./mainnets/fraxtal";
 import { deploy as deployOptimism, deployConfig as deployConfigOptimism } from "./mainnets/optimism";
 import { deploy as deployLisk, deployConfig as deployConfigLisk } from "./mainnets/lisk";
+import { deploy as deployInk, deployConfig as deployConfigInk } from "./mainnets/ink";
 import { deploy as deploySuperseed, deployConfig as deployConfigSuperseed } from "./mainnets/superseed";
 import { deploy as deployWorldchain, deployConfig as deployConfigWorldchain } from "./mainnets/worldchain";
 
@@ -15,6 +16,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   [fraxtal.id]: { config: deployConfigFrax, deployFunc: deployFrax },
   [optimism.id]: { config: deployConfigOptimism, deployFunc: deployOptimism },
   [lisk.id]: { config: deployConfigLisk, deployFunc: deployLisk },
+  57073: { config: deployConfigInk, deployFunc: deployInk },
   [superseed.id]: { config: deployConfigSuperseed, deployFunc: deploySuperseed },
   [worldchain.id]: { config: deployConfigWorldchain, deployFunc: deployWorldchain }
   // testnets

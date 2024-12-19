@@ -2,15 +2,18 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Address, encodeAbiParameters, Hash, parseAbiParameters, zeroAddress } from "viem";
 
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
-const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => {
+const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
-  const walletClient = await viem.getWalletClient(deployer as Address);
+  const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   const fuseFeeDistributor = await viem.getContractAt(
     "FeeDistributor",
-    (await deployments.get("FeeDistributor")).address as Address
+    (await deployments.get("FeeDistributor")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   let tx: Hash;
 

@@ -1,3 +1,4 @@
+import { chainIdtoChain } from "@ionicprotocol/chains";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Address } from "viem";
 
@@ -5,14 +6,16 @@ const lifiSwapTarget = "0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
-
   const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+
   console.log("chainId: ", chainId);
 
   const poolDirectory = await viem.getContractAt(
     "PoolDirectory",
-    (await deployments.get("PoolDirectory")).address as Address
+    (await deployments.get("PoolDirectory")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   const [, pools] = await poolDirectory.read.getActivePools();

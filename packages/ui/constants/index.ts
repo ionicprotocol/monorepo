@@ -13,6 +13,7 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
+import { ink } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -365,6 +366,21 @@ export const pools: Record<number, PoolParams> = {
     text: 'text-white',
     border: 'border-fraxtal',
     logo: '/img/logo/WORLDCHAIN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [ink.chainId]: {
+    name: 'Ink',
+    arrow: 'ffffff',
+    bg: 'bg-ink',
+    text: 'text-white',
+    border: 'border-ink',
+    logo: '/img/logo/INK.png',
     pools: [
       {
         id: '0',
