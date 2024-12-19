@@ -2,12 +2,13 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Address, Hash, zeroAddress } from "viem";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
-
   const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
   console.log("chainId: ", chainId);
 
   if (!chainDeployConfig[chainId]) {
@@ -28,12 +29,15 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   if (fplDeployment.transactionHash)
     await publicClient.waitForTransactionReceipt({ hash: fplDeployment.transactionHash as Hash });
   console.log("PoolLens: ", fplDeployment.address);
-  const fusePoolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address);
+  const fusePoolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address, {
+    client: { public: publicClient, wallet: walletClient }
+  });
   let directory = await fusePoolLens.read.directory();
   if (directory === zeroAddress) {
     const fusePoolDirectory = await viem.getContractAt(
       "PoolDirectory",
-      (await deployments.get("PoolDirectory")).address as Address
+      (await deployments.get("PoolDirectory")).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
     tx = await fusePoolLens.write.initialize([
       fusePoolDirectory.address,
@@ -63,13 +67,15 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const fusePoolLensSecondary = await viem.getContractAt(
     "PoolLensSecondary",
-    (await deployments.get("PoolLensSecondary")).address as Address
+    (await deployments.get("PoolLensSecondary")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   directory = await fusePoolLensSecondary.read.directory();
   if (directory === zeroAddress) {
     const fusePoolDirectory = await viem.getContractAt(
       "PoolDirectory",
-      (await deployments.get("PoolDirectory")).address as Address
+      (await deployments.get("PoolDirectory")).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
     tx = await fusePoolLensSecondary.write.initialize([fusePoolDirectory.address]);
     await publicClient.waitForTransactionReceipt({ hash: tx });

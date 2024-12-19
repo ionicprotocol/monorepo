@@ -1,3 +1,4 @@
+import { chainIdtoChain } from "@ionicprotocol/chains";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Address, fromBytes, pad, toBytes } from "viem";
 import { base, bob, fraxtal, lisk, mode, optimism } from "viem/chains";
@@ -39,9 +40,10 @@ const ionTokens: Record<number, Address> = {
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
-
   const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+
   console.log("chainId: ", chainId);
 
   const lzEndpoint = lzEndpoints[chainId];
@@ -63,7 +65,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     for (const [otherChainId, otherChainToken] of Object.entries(ionTokens).filter(
       ([otherChainId]) => +otherChainId !== chainId
     )) {
-      const xerc20LayerZero = await viem.getContractAt("xERC20LayerZero", xerc20LayerZeroDeployment.address as Address);
+      const xerc20LayerZero = await viem.getContractAt(
+        "xERC20LayerZero",
+        xerc20LayerZeroDeployment.address as Address,
+        { client: { public: publicClient, wallet: walletClient } }
+      );
       // this chain to destination
       const mappedTokenToDestination = await xerc20LayerZero.read.mappedTokens([thisChainToken, +otherChainId]);
       console.log(
@@ -102,7 +108,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     });
 
     const thisChainToken = ionTokens[chainId];
-    const xerc20Hyperlane = await viem.getContractAt("xERC20Hyperlane", xerc20HyperlaneDeployment.address as Address);
+    const xerc20Hyperlane = await viem.getContractAt("xERC20Hyperlane", xerc20HyperlaneDeployment.address as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     for (const [otherChainId, otherChainToken] of Object.entries(ionTokens).filter(
       ([otherChainId]) => +otherChainId !== chainId
     )) {

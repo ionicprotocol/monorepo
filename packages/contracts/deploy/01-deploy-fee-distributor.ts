@@ -11,6 +11,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const MIN_BORROW_USD = 0.1;
   const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const [walletClient] = await viem.getWalletClients({ chain: chainIdtoChain[chainId] });
 
   const { deployer, multisig } = await getNamedAccounts();
   console.log("deployer: ", deployer);
@@ -58,7 +59,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   }
   const fuseFeeDistributor = await viem.getContractAt(
     "FeeDistributor",
-    (await deployments.get("FeeDistributor")).address as Address
+    (await deployments.get("FeeDistributor")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const ffdFee = await fuseFeeDistributor.read.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);

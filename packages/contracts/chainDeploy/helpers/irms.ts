@@ -2,7 +2,7 @@ import { Address, Hash, parseEther } from "viem";
 import { mode } from "viem/chains";
 
 import { assetSymbols } from "@ionicprotocol/types";
-import { mode as iMode } from "@ionicprotocol/chains";
+import { chainIdtoChain, mode as iMode } from "@ionicprotocol/chains";
 import { IrmDeployFnParams } from "../types";
 
 import { underlying } from "./utils";
@@ -48,7 +48,7 @@ export const deployIRMs = async ({
   viem,
   chainId
 }: IrmDeployFnParams): Promise<void> => {
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
   const { deployer } = await getNamedAccounts();
   //// IRM MODELS|
   const jrm = await deployments.deploy("JumpRateModel", {
