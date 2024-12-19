@@ -276,8 +276,8 @@ export const useMarketData = (
     if (!marketData.length) return [];
 
     const featuredSymbols = [
-      shouldGetFeatured.featuredSupply[+chain][selectedPool]?.toLowerCase(),
-      shouldGetFeatured.featuredSupply2[+chain][selectedPool]?.toLowerCase()
+      shouldGetFeatured.featuredSupply[+chain]?.[selectedPool]?.toLowerCase(),
+      shouldGetFeatured.featuredSupply2[+chain]?.[selectedPool]?.toLowerCase()
     ];
 
     return marketData.filter((market) =>

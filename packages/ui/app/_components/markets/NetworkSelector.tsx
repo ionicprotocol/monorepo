@@ -21,7 +21,16 @@ interface INetworkSelector {
   upcomingChains?: string[];
 }
 
-const NETWORK_ORDER = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Lisk', 'BoB'];
+const NETWORK_ORDER = [
+  'Mode',
+  'Base',
+  'Optimism',
+  'Fraxtal',
+  'Lisk',
+  'BoB',
+  'Superseed',
+  'Worldchain'
+];
 
 function NetworkSelector({
   dropdownSelectedChain,
