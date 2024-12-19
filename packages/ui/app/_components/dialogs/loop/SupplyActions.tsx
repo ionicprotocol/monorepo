@@ -6,7 +6,7 @@ import { useChainId } from 'wagmi';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import Amount from '../manage/Amount';
+import Amount from '../../Amount';
 
 export type LoopProps = {
   borrowableAssets: Address[];
