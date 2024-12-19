@@ -43,8 +43,6 @@ function PoolsTable({
   setSelectedSymbol: (value: string) => void;
   selectedSymbol?: string;
 }) {
-  console.log('marketData', marketData);
-
   const searchParams = useSearchParams();
   const chainId = useChainId();
   const { address } = useMultiIonic();

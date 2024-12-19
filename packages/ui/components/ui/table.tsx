@@ -76,6 +76,40 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ) => {
     const { compact } = React.useContext(TableContext);
 
+    // Create a modified version of children that adds the badge to the last cell
+    const childrenWithBadge = React.Children.map(
+      props.children,
+      (child, index) => {
+        if (
+          React.isValidElement(child) &&
+          index === React.Children.count(props.children) - 1
+        ) {
+          return React.cloneElement(child, {
+            ...child.props,
+            children: (
+              <>
+                {child.props.children}
+                {badge && (
+                  <div className="absolute -top-3 -right-3 z-20">
+                    <span
+                      className={cn(
+                        'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
+                        badge.className,
+                        borderClassName
+                      )}
+                    >
+                      {badge.text}
+                    </span>
+                  </div>
+                )}
+              </>
+            )
+          });
+        }
+        return child;
+      }
+    );
+
     return (
       <tr
         ref={ref}
@@ -94,20 +128,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
         }}
         {...props}
       >
-        {props.children}
-        {badge && (
-          <div className="absolute -top-3 -right-3 z-20">
-            <span
-              className={cn(
-                'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
-                badge.className,
-                borderClassName
-              )}
-            >
-              {badge.text}
-            </span>
-          </div>
-        )}
+        {childrenWithBadge}
       </tr>
     );
   }
