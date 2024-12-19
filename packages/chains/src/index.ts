@@ -23,7 +23,7 @@ import { default as worldchain } from "./worldchain";
 
 export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink };
 
-const vInk: Chain = {
+export const vInk: Chain = {
   id: 57073,
   name: "Ink",
   nativeCurrency: {

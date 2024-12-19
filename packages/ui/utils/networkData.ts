@@ -22,7 +22,9 @@ import {
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  ink,
+  vInk
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -118,7 +120,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.fraxtal]: fraxtal.assets,
   [SupportedChains.lisk]: lisk.assets,
   [SupportedChains.superseed]: superseed.assets,
-  [SupportedChains.worldchain]: worldchain.assets
+  [SupportedChains.worldchain]: worldchain.assets,
+  [SupportedChains.ink]: ink.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
