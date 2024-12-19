@@ -26,6 +26,7 @@ const NETWORK_ORDER = [
   'Base',
   'Optimism',
   'Fraxtal',
+  'Ink',
   'Lisk',
   'BoB',
   'Superseed',

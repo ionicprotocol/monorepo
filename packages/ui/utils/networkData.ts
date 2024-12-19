@@ -109,6 +109,10 @@ export function getEnabledChains() {
     enabledChains.push(vWorldchain);
   }
 
+  if (config.isInkEnabled) {
+    enabledChains.push(vInk);
+  }
+
   return enabledChains;
 }
 
@@ -132,5 +136,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
   [SupportedChains.lisk]: lisk.deployedPlugins,
   [SupportedChains.superseed]: superseed.deployedPlugins,
-  [SupportedChains.worldchain]: worldchain.deployedPlugins
+  [SupportedChains.worldchain]: worldchain.deployedPlugins,
+  [SupportedChains.ink]: ink.deployedPlugins
 };

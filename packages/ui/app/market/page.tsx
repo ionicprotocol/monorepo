@@ -273,7 +273,6 @@ export default function Market() {
               'Soneium',
               'Camp',
               'FX',
-              'Ink',
               'Kroma',
               'Unichain'
             ]}
