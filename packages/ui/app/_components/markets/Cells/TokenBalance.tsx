@@ -15,23 +15,34 @@ const TokenBalance: React.FC<TokenBalanceProps> = ({
 }) => {
   const formatNumber = (num: number) => {
     if (num === 0) return '0';
+
     if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`;
+      const value = (num / 1000000).toFixed(2);
+      return `${value.replace(/\.?0+$/, '')}M`;
     }
+
     if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`;
+      const value = (num / 1000).toFixed(2);
+      return `${value.replace(/\.?0+$/, '')}K`;
     }
-    return num.toFixed(decimals);
+
+    // Convert to fixed decimal places and trim trailing zeros
+    const value = num.toFixed(decimals);
+    return value.replace(/\.?0+$/, '');
   };
 
   const formatUSD = (num: number) => {
     if (num === 0) return '$0';
-    return new Intl.NumberFormat('en-US', {
+
+    const formatted = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(num);
+
+    // Remove trailing zeros after decimal point while keeping at least 2 digits
+    return formatted.replace(/\.?0+$/, '');
   };
 
   return (

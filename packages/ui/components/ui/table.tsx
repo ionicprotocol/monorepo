@@ -90,7 +90,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
               <>
                 {child.props.children}
                 {badge && (
-                  <div className="absolute -top-3 -right-3 z-20">
+                  <div className="absolute -top-2 -right-3 z-20">
                     <span
                       className={cn(
                         'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
