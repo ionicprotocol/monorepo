@@ -28,13 +28,13 @@ const ALL_VAULT_DATA: VaultRowData[] = [
       ]
     },
     totalSupply: {
-      tokens: '2.5M USDC',
-      usd: '2,500,000'
+      tokens: 25000000,
+      usd: 25000000
     },
     utilisation: 85,
     userPosition: {
-      tokens: '1,000 USDC',
-      usd: '1,000'
+      tokens: 1000,
+      usd: 1000
     },
     vaultAddress: '0x1234567890123456789012345678901234567890' as Address,
     underlyingDecimals: 18,
@@ -60,13 +60,13 @@ const ALL_VAULT_DATA: VaultRowData[] = [
       ]
     },
     totalSupply: {
-      tokens: '1.2K WETH',
-      usd: '3,000,000'
+      tokens: 1200,
+      usd: 3000000
     },
     utilisation: 72,
     userPosition: {
-      tokens: '5 WETH',
-      usd: '12,500'
+      tokens: 5,
+      usd: 12500
     },
     vaultAddress: '0x2345678901234567890123456789012345678901' as Address,
     underlyingDecimals: 18,
@@ -92,13 +92,13 @@ const ALL_VAULT_DATA: VaultRowData[] = [
       ]
     },
     totalSupply: {
-      tokens: '180 WBTC',
-      usd: '7,200,000'
+      tokens: 180,
+      usd: 7200000
     },
     utilisation: 65,
     userPosition: {
-      tokens: '0.5 WBTC',
-      usd: '20,000'
+      tokens: 0.5,
+      usd: 20000
     },
     vaultAddress: '0x3456789012345678901234567890123456789012' as Address,
     underlyingDecimals: 18,

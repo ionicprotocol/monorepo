@@ -116,7 +116,7 @@ export default function Market() {
               selectedPool={selectedPool}
               vaultData={{
                 totalSuppliedFiat: vaultData.reduce(
-                  (acc, v) => acc + parseFloat(v.totalSupply.usd),
+                  (acc, v) => acc + v.totalSupply.usd,
                   0
                 )
               }}

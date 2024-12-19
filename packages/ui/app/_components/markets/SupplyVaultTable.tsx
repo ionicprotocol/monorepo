@@ -15,6 +15,7 @@ import { VaultRowData } from '@ui/types/SupplyVaults';
 import ActionButton from '../ActionButton';
 import { useState } from 'react';
 import SupplyVaultDialog from '../dialogs/SupplyVault';
+import TokenBalance from './Cells/TokenBalance';
 
 export default function SupplyVaultTable({
   marketData,
@@ -93,12 +94,11 @@ export default function SupplyVaultTable({
       header: 'TOTAL SUPPLY',
       sortingFn: 'numerical',
       cell: ({ row }) => (
-        <div className="flex flex-col">
-          <span>{row.original.totalSupply.tokens}</span>
-          <span className="text-xs text-white/40">
-            ${row.original.totalSupply.usd}
-          </span>
-        </div>
+        <TokenBalance
+          balance={row.original.totalSupply.tokens}
+          balanceUSD={row.original.totalSupply.usd}
+          tokenName={row.original.asset}
+        />
       )
     },
     {
@@ -122,12 +122,11 @@ export default function SupplyVaultTable({
       header: 'YOUR POSITION',
       sortingFn: 'numerical',
       cell: ({ row }) => (
-        <div className="flex flex-col">
-          <span>{row.original.userPosition.tokens}</span>
-          <span className="text-xs text-white/40">
-            ${row.original.userPosition.usd}
-          </span>
-        </div>
+        <TokenBalance
+          balance={row.original.userPosition.tokens}
+          balanceUSD={row.original.userPosition.usd}
+          tokenName={row.original.asset}
+        />
       )
     },
     {

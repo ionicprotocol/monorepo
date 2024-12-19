@@ -16,7 +16,7 @@ import {
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../../_components/CommonTable';
-import APRCell from '../../_components/markets/APRCell';
+import APR from './Cells/APR';
 
 import type {
   EnhancedColumnDef,
@@ -26,6 +26,7 @@ import ActionButton from '../ActionButton';
 import Loop from '../dialogs/loop';
 import { useState } from 'react';
 import Swap from '../dialogs/manage/Swap';
+import TokenBalance from './Cells/TokenBalance';
 
 function PoolsTable({
   marketData,
@@ -42,6 +43,8 @@ function PoolsTable({
   setSelectedSymbol: (value: string) => void;
   selectedSymbol?: string;
 }) {
+  console.log('marketData', marketData);
+
   const searchParams = useSearchParams();
   const chainId = useChainId();
   const { address } = useMultiIonic();
@@ -89,10 +92,10 @@ function PoolsTable({
             <span className="text-sm">{row.original.asset}</span>
             <div className="flex flex-col text-xs text-white/40 font-light">
               <span>
-                Supplied: ${row.original.supply.totalUSD.split(' ')[0]}
+                Supplied: ${row.original.supply.totalUSD.toLocaleString()}
               </span>
               <span>
-                Borrowed: ${row.original.borrow.totalUSD.split(' ')[0]}
+                Borrowed: ${row.original.borrow.totalUSD.toLocaleString()}
               </span>
             </div>
           </div>
@@ -105,7 +108,7 @@ function PoolsTable({
       sortingFn: 'numerical',
       accessorFn: (row) => row.supplyAPR,
       cell: ({ row }: MarketCellProps) => (
-        <APRCell
+        <APR
           type="supply"
           baseAPR={row.original.supplyAPR}
           asset={row.original.asset}
@@ -126,7 +129,7 @@ function PoolsTable({
       sortingFn: 'numerical',
       accessorFn: (row) => row.borrowAPR,
       cell: ({ row }: MarketCellProps) => (
-        <APRCell
+        <APR
           type="borrow"
           baseAPR={row.original.borrowAPR}
           asset={row.original.asset}
@@ -145,12 +148,11 @@ function PoolsTable({
       header: 'SUPPLY BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-start">
-          <span>{row.original.supply.balance}</span>
-          <span className="text-xs text-white/40 font-light">
-            ${row.original.supply.balanceUSD}
-          </span>
-        </div>
+        <TokenBalance
+          balance={row.original.supply.balance}
+          balanceUSD={row.original.supply.balanceUSD}
+          tokenName={row.original.asset}
+        />
       )
     },
     {
@@ -158,12 +160,11 @@ function PoolsTable({
       header: 'BORROW BALANCE',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-start">
-          <span>{row.original.borrow.balance}</span>
-          <span className="text-xs text-white/40 font-light">
-            ${row.original.borrow.balanceUSD}
-          </span>
-        </div>
+        <TokenBalance
+          balance={row.original.borrow.balance}
+          balanceUSD={row.original.borrow.balanceUSD}
+          tokenName={row.original.asset}
+        />
       )
     },
     {

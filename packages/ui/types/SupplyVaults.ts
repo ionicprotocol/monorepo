@@ -18,13 +18,13 @@ export interface VaultRowData {
     }>;
   };
   totalSupply: {
-    tokens: string;
-    usd: string;
+    tokens: number;
+    usd: number;
   };
   utilisation: number;
   userPosition: {
-    tokens: string;
-    usd: string;
+    tokens: number;
+    usd: number;
   };
   vaultAddress: string;
   underlyingToken: Hex;
