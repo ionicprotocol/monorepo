@@ -1,30 +1,19 @@
 import { Client, OpportunityParams } from "@pythnetwork/express-relay-evm-js";
 import { ionicLiquidatorAbi } from "@ionicprotocol/sdk";
-import {
-  createPublicClient,
-  createWalletClient,
-  encodeAbiParameters,
-  encodeFunctionData,
-  fallback,
-  Hex,
-  http,
-} from "viem";
+import { createWalletClient, encodeAbiParameters, encodeFunctionData, fallback, Hex, http } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
 import config from "./config";
 import { logger } from "./logger";
 import { setUpSdk } from "./utils";
+import { createIonicPublicClient } from "./utils/client";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 const account = privateKeyToAccount(config.adminPrivateKey as Hex);
-const publicClient = createPublicClient({
-  batch: { multicall: { wait: 16 } },
-  chain: mode,
-  transport: fallback(config.rpcUrls.map((url) => http(url))),
-});
+const publicClient = createIonicPublicClient(mode, config.rpcUrls);
 const walletClient = createWalletClient({
   account,
   chain: mode,
