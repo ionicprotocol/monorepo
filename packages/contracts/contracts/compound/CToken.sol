@@ -88,15 +88,19 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
 
   /**
    * @notice Simulate the effects of a redemption at the current block, given current on-chain conditions.
-   * @param redeemCTokensAmountIn Exact amount of `cTokens` to redeem
+   * @param redeemTokensIn Exact amount of `cTokens` to redeem
    * @return quantity of underlying returned in exchange for `cTokens`.
    */
-  function previewRedeem(uint256 redeemCTokensAmountIn) public view returns (uint256) {
-    return _previewRedeem(redeemCTokensAmountIn, asCTokenExtension().exchangeRateCurrent());
+  function previewRedeem(uint256 redeemTokensIn) public view returns (uint256) {
+    (, uint256 redeemAmount) = _previewRedeem(redeemTokensIn, asCTokenExtension().exchangeRateCurrent());
+    return redeemAmount;
   }
 
-  function _previewRedeem(uint256 redeemCTokensAmountIn, uint256 exchangeRateMantissa) internal view returns (uint256 redeemTokens) {
-    redeemTokens = divRoundUp(redeemCTokensAmountIn, exchangeRateMantissa);
+  function _previewRedeem(uint256 redeemTokensIn, uint256 exchangeRateMantissa) internal view returns (MathError, uint256) {
+    return mulScalarTruncate(
+      Exp({ mantissa: exchangeRateMantissa }),
+      redeemTokensIn
+    );
   }
 
 /**
@@ -531,7 +535,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
        *  redeemAmount = redeemAmountIn
        */
 
-      vars.redeemTokens = _previewRedeem(redeemAmountIn, vars.exchangeRateMantissa);
+      vars.redeemTokens = divRoundUp(redeemAmountIn, vars.exchangeRateMantissa);
 
       // don't allow dust tokens/assets to be left after
       if (totalSupply - vars.redeemTokens < 1000) vars.redeemTokens = totalSupply;

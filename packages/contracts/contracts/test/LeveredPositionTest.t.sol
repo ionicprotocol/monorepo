@@ -188,6 +188,34 @@ contract LeveredPositionFactoryTest is BaseTest {
   }
 }
 
+contract LeveredPositionsWithAggregatorTest is MarketsTest {
+
+  function test_aggregatorFundingAmountAtSwap() public debuggingOnly forkAtBlock(BASE_MAINNET, 23869636) {
+    ICErc20 collateralMarket = ICErc20(0x84341B650598002d427570298564d6701733c805); // weEth
+
+    uint256 fundingAmount = 46812493237034571;
+    _upgradeMarket(collateralMarket);
+
+    {
+      // mock the weeeth call
+      // 69556115648002101623
+      vm.mockCall(
+        0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A,
+        abi.encodeWithSelector(collateralMarket.balanceOf.selector, 0x84341B650598002d427570298564d6701733c805),
+        abi.encode(69556115648002101623)
+      );
+    }
+
+    uint256 actualRedeemedAssetsForSwap = collateralMarket.previewRedeem(
+      collateralMarket.previewDeposit(fundingAmount)
+    );
+
+    emit log_named_uint("initial funding amount", fundingAmount);
+    emit log_named_uint("actual redeemed amount for swap", actualRedeemedAssetsForSwap);
+
+  }
+}
+
 abstract contract LeveredPositionTest is MarketsTest {
   ICErc20 collateralMarket;
   ICErc20 stableMarket;
