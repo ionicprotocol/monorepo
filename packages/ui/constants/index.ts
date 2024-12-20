@@ -13,7 +13,7 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
-import { ink } from '@ionicprotocol/chains';
+import { ink, swellchain } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -388,6 +388,15 @@ export const pools: Record<number, PoolParams> = {
         assets: ['WETH']
       }
     ]
+  },
+  [swellchain.chainId]: {
+    name: 'Swell',
+    arrow: 'ffffff',
+    bg: 'bg-swell',
+    text: 'text-white',
+    border: 'border-swell',
+    logo: '/img/logo/SWELL.png',
+    pools: []
   }
 };
 
