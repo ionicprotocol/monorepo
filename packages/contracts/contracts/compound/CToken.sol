@@ -44,7 +44,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   }
 
   function _getExtensionFunctions() public pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 13;
+    uint8 fnsCount = 15;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.mint.selector;
     functionSelectors[--fnsCount] = this.redeem.selector;
@@ -59,6 +59,8 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
     functionSelectors[--fnsCount] = this.selfTransferIn.selector;
     functionSelectors[--fnsCount] = this._withdrawIonicFees.selector;
     functionSelectors[--fnsCount] = this._withdrawAdminFees.selector;
+    functionSelectors[--fnsCount] = this.previewDeposit.selector;
+    functionSelectors[--fnsCount] = this.previewRedeem.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -67,7 +69,38 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   /*** User Interface ***/
 
   /**
-   * @notice Sender supplies assets into the market and receives cTokens in exchange
+   * @notice Simulate the effects of a deposit at the current block, given current on-chain conditions.
+   * @param assets Exact amount of underlying `asset` token to deposit
+   * @return of the vault issued in exchange to the user for `assets`
+   */
+  function previewDeposit(uint256 assets) public view returns (uint256) {
+    (, uint256 mintedCTokens) = _previewDeposit(assets, asCTokenExtension().exchangeRateCurrent());
+    return mintedCTokens;
+  }
+
+  function _previewDeposit(uint256 assets, uint256 exchangeRateMantissa) internal view returns (MathError, uint256) {
+    // mintedCTokens is rounded down here - correct
+    return divScalarByExpTruncate(
+      assets,
+      Exp({ mantissa: exchangeRateMantissa })
+    );
+  }
+
+  /**
+   * @notice Simulate the effects of a redemption at the current block, given current on-chain conditions.
+   * @param redeemCTokensAmountIn Exact amount of `cTokens` to redeem
+   * @return quantity of underlying returned in exchange for `cTokens`.
+   */
+  function previewRedeem(uint256 redeemCTokensAmountIn) public view returns (uint256) {
+    return _previewRedeem(redeemCTokensAmountIn, asCTokenExtension().exchangeRateCurrent());
+  }
+
+  function _previewRedeem(uint256 redeemCTokensAmountIn, uint256 exchangeRateMantissa) internal view returns (uint256 redeemTokens) {
+    redeemTokens = divRoundUp(redeemCTokensAmountIn, exchangeRateMantissa);
+  }
+
+/**
+ * @notice Sender supplies assets into the market and receives cTokens in exchange
    * @dev Accrues interest whether or not the operation succeeds, unless reverted
    * @param mintAmount The amount of the underlying asset to supply
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
@@ -376,9 +409,9 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
      */
 
     // mintTokens is rounded down here - correct
-    (vars.mathErr, vars.mintTokens) = divScalarByExpTruncate(
+    (vars.mathErr, vars.mintTokens) = _previewDeposit(
       vars.actualMintAmount,
-      Exp({ mantissa: vars.exchangeRateMantissa })
+      vars.exchangeRateMantissa
     );
     require(vars.mathErr == MathError.NO_ERROR, "MINT_EXCHANGE_CALCULATION_FAILED");
     require(vars.mintTokens > 0, "MINT_ZERO_CTOKENS_REJECTED");
@@ -498,7 +531,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
        *  redeemAmount = redeemAmountIn
        */
 
-      vars.redeemTokens = divRoundUp(redeemAmountIn, vars.exchangeRateMantissa);
+      vars.redeemTokens = _previewRedeem(redeemAmountIn, vars.exchangeRateMantissa);
 
       // don't allow dust tokens/assets to be left after
       if (totalSupply - vars.redeemTokens < 1000) vars.redeemTokens = totalSupply;
