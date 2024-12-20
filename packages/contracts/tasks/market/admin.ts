@@ -175,7 +175,6 @@ task("market:mint-pause", "Pauses minting on a market")
       const market = await viem.getContractAt("ICErc20", marketAddress);
       const comptroller = await market.read.comptroller();
       const pool = await viem.getContractAt("IonicComptroller", comptroller);
-
       const currentPauseGuardian = await pool.read.pauseGuardian();
       if (currentPauseGuardian === zeroAddress) {
         tx = await pool.write._setPauseGuardian([deployer as Address]);
@@ -201,9 +200,8 @@ task("market:mint-pause", "Pauses minting on a market")
           });
         } else {
           tx = await pool.write._setMintPaused([market.address, taskArgs.paused]);
+          console.log(`Market mint pause tx ${tx}`);
         }
-
-        console.log(`Market mint pause tx ${tx}`);
       } else {
         console.log(`No need to set the minting pause to ${taskArgs.paused} as it is already set to that value`);
       }
@@ -253,9 +251,8 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
           });
         } else {
           tx = await pool.write._setBorrowPaused([market.address, taskArgs.paused]);
+          console.log(`Market borrow pause tx ${tx}`);
         }
-
-        console.log(`Market borrow pause tx ${tx}`);
       } else {
         console.log(`No need to set the borrow pause to ${taskArgs.paused} as it is already set to that value`);
       }
