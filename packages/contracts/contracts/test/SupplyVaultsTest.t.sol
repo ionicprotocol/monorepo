@@ -45,6 +45,17 @@ contract SupplyVaultsTest is BaseTest {
   function afterForkSetUp() internal virtual override {
     super.afterForkSetUp();
 
+    vm.mockCall(
+      0xA0D844742B4abbbc43d8931a6Edb00C56325aA18, // weeth market
+      abi.encodeWithSelector(wethNativeMarket.borrowBalanceCurrent.selector, address(0)),
+      abi.encode(0)
+    );
+    vm.mockCall(
+      0xA0D844742B4abbbc43d8931a6Edb00C56325aA18, // weeth market
+      abi.encodeWithSelector(wethNativeMarket.balanceOfUnderlying.selector, address(0)),
+      abi.encode(0)
+    );
+
     lenderSharesHint[0] = 0.5e17;
     lenderSharesHint[1] = 9.5e17;
 
