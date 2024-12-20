@@ -26,7 +26,7 @@ export interface VaultRowData {
     tokens: number;
     usd: number;
   };
-  vaultAddress: string;
+  vaultAddress: Hex;
   underlyingToken: Hex;
   underlyingDecimals: number;
   underlyingSymbol: string;

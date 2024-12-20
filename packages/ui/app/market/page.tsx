@@ -11,7 +11,7 @@ import { useChainId } from 'wagmi';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { VaultRowData } from '@ui/types/SupplyVaults';
-import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
+import { useSupplyVaultsRealData } from '@ui/hooks/market/useSupplyVaultsRealData';
 
 import ManageDialog from '../_components/dialogs/manage';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
@@ -45,7 +45,8 @@ export default function Market() {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaultsData(chain);
+  const { vaultData, isLoading: isLoadingVaults } =
+    useSupplyVaultsRealData(chain);
   const {
     marketData,
     selectedMarketData,
