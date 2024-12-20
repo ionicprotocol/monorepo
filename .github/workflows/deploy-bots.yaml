@@ -29,7 +29,6 @@ env:
   UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
   UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
 jobs:
-#comment for testing this workflow
   terraform-infra:
     runs-on: ubuntu-latest
     name: Deploy Infra to AWS
