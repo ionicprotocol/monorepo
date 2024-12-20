@@ -64,8 +64,8 @@ contract OptimizedAPRVaultFirstExtension is OptimizedAPRVaultExtension {
     if (address(asset_) == address(0)) revert AssetInvalid();
     __ERC4626_init(asset_);
 
-    _name = string(bytes.concat("Midas Optimized ", bytes(IERC20Metadata(address(asset_)).name()), " Vault"));
-    _symbol = string(bytes.concat("mo-", bytes(IERC20Metadata(address(asset_)).symbol())));
+    _name = string(bytes.concat("Ionic Optimized ", bytes(IERC20Metadata(address(asset_)).name()), " Vault"));
+    _symbol = string(bytes.concat("io-", bytes(IERC20Metadata(address(asset_)).symbol())));
     _decimals = IERC20Metadata(address(asset_)).decimals() + DECIMAL_OFFSET; // Asset decimals + decimal offset to combat inflation attacks
 
     depositLimit = depositLimit_;
