@@ -113,9 +113,14 @@ createAppKit({
     [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
     [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
     [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg',
-    [superseed.id]: '/logo/img/SUPERSEED.png',
-    [swellchain.id]: '/logo/img/SWELL.png',
-    [ink.id]: '/logo/img/INK.png'
+    [lisk.id]: 'https://icons.llamao.fi/icons/chains/rsz_lisk.jpg',
+    [superseed.id]:
+      'https://github.com/superseed-xyz/brand-kit/blob/main/logos-wordmarks/logos/large.png?raw=true',
+    [swellchain.id]:
+      'https://cdn.prod.website-files.com/63dc9bdf46999ffb2c2f407a/66cc343b8a5fd72920c56ae1_SWELL%20L2.svg',
+    [ink.id]: 'https://icons.llamao.fi/icons/chains/rsz_ink.jpg',
+    [worldchain.id]:
+      'https://worldscan.org/assets/world/images/svg/logos/token-secondary-light.svg?v=24.12.2.0'
   }
 });
 
