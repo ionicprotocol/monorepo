@@ -113,7 +113,9 @@ createAppKit({
     [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
     [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
     [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg',
-    [superseed.id]: 'https://icons.llamao.fi/icons/chains/rsz_superseed.jpg'
+    [superseed.id]: '/logo/img/SUPERSEED.png',
+    [swellchain.id]: '/logo/img/SWELL.png',
+    [ink.id]: '/logo/img/INK.png'
   }
 });
 

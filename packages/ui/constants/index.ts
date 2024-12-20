@@ -396,7 +396,13 @@ export const pools: Record<number, PoolParams> = {
     text: 'text-white',
     border: 'border-swell',
     logo: '/img/logo/SWELL.png',
-    pools: []
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
   }
 };
 
