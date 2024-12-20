@@ -5,24 +5,25 @@ import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
+import { isAddress } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import { VaultRowData } from '@ui/types/SupplyVaults';
+import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
+import { useAssetPrices } from '@ui/hooks/useAssetPrices';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 import ManageDialog from '../_components/dialogs/manage';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
 import PoolsTable from '../_components/markets/PoolsTable';
+import PoolToggle from '../_components/markets/PoolToggle';
+import SearchInput from '../_components/markets/SearcInput';
 import StakingTile from '../_components/markets/StakingTile';
 import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
 import TotalTvlTile from '../_components/markets/TotalTvlTile';
 import TvlTile from '../_components/markets/TvlTile';
-import PoolToggle from '../_components/markets/PoolToggle';
-import { isAddress } from 'viem';
-import SearchInput from '../_components/markets/SearcInput';
-import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -37,6 +38,12 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
+  console.log('chain', chain);
+
+  const { data } = useAssetPrices({
+    chainId: +chain
+  });
+  console.log('data', data);
 
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 
