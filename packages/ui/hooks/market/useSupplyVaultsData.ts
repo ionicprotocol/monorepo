@@ -1,15 +1,39 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Address, Hex } from 'viem';
+import { useReadContracts } from 'wagmi';
+import type { Address } from 'viem';
 import { pools } from '@ui/constants/index';
 import { VaultRowData } from '@ui/types/SupplyVaults';
+import { useTokenPrices, type TokenConfig } from '../useTokenPrices';
 
-interface UseSupplyVaultsReturn {
-  vaultData: VaultRowData[];
-  isLoading: boolean;
-  error: Error | null;
-}
+const COMPOUND_MARKET_ABI = [
+  {
+    inputs: [],
+    name: 'apr',
+    outputs: [{ type: 'uint256', name: '' }],
+    stateMutability: 'view',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'totalAssets',
+    outputs: [{ type: 'uint256', name: '' }],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;
 
-const ALL_VAULT_DATA: VaultRowData[] = [
+const TOKEN_CONFIGS: TokenConfig[] = [
+  {
+    cgId: 'usd-coin',
+    symbol: 'USDC'
+  },
+  {
+    cgId: 'ethereum',
+    symbol: 'WETH'
+  }
+];
+
+const BASE_VAULT_DATA: VaultRowData[] = [
   {
     asset: 'USDC',
     logo: '/img/symbols/32/color/usdc.png',
@@ -21,23 +45,23 @@ const ALL_VAULT_DATA: VaultRowData[] = [
       ]
     },
     apr: {
-      total: 12.5,
+      total: 0,
       breakdown: [
-        { source: 'Lending APR', value: 8.2 },
-        { source: 'Rewards', value: 4.3 }
+        { source: 'Lending APR', value: 0 },
+        { source: 'Rewards', value: 0 }
       ]
     },
     totalSupply: {
-      tokens: 25000000,
-      usd: 25000000
+      tokens: 0,
+      usd: 0
     },
     utilisation: 85,
     userPosition: {
-      tokens: 1000,
-      usd: 1000
+      tokens: 0,
+      usd: 0
     },
     vaultAddress: '0x1234567890123456789012345678901234567890' as Address,
-    underlyingDecimals: 18,
+    underlyingDecimals: 6,
     underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
     underlyingSymbol: 'USDC',
     cToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
@@ -53,67 +77,40 @@ const ALL_VAULT_DATA: VaultRowData[] = [
       ]
     },
     apr: {
-      total: 8.7,
+      total: 0,
       breakdown: [
-        { source: 'Lending APR', value: 5.5 },
-        { source: 'Rewards', value: 3.2 }
+        { source: 'Lending APR', value: 0 },
+        { source: 'Rewards', value: 0 }
       ]
     },
     totalSupply: {
-      tokens: 1200,
-      usd: 3000000
+      tokens: 0,
+      usd: 0
     },
     utilisation: 72,
     userPosition: {
-      tokens: 5,
-      usd: 12500
+      tokens: 0,
+      usd: 0
     },
     vaultAddress: '0x2345678901234567890123456789012345678901' as Address,
     underlyingDecimals: 18,
     underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
     underlyingSymbol: 'WETH',
     cToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
-  },
-  {
-    asset: 'WBTC',
-    logo: '/img/symbols/32/color/wbtc.png',
-    strategy: {
-      description: 'Bitcoin-backed lending strategy',
-      distribution: [
-        { poolName: 'Main Pool', percentage: 70 },
-        { poolName: 'Native Pool', percentage: 30 }
-      ]
-    },
-    apr: {
-      total: 6.8,
-      breakdown: [
-        { source: 'Lending APR', value: 4.8 },
-        { source: 'Rewards', value: 2.0 }
-      ]
-    },
-    totalSupply: {
-      tokens: 180,
-      usd: 7200000
-    },
-    utilisation: 65,
-    userPosition: {
-      tokens: 0.5,
-      usd: 20000
-    },
-    vaultAddress: '0x3456789012345678901234567890123456789012' as Address,
-    underlyingDecimals: 18,
-    underlyingToken: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    underlyingSymbol: 'WBTC',
-    cToken: '0x6b175474e89094c44da98b954eedeac495271d0f'
   }
 ];
 
-export function useSupplyVaultsData(
-  chain: string,
-  address?: string
-): UseSupplyVaultsReturn {
+export function useSupplyVaultsData(chain: string): {
+  vaultData: VaultRowData[];
+  isLoading: boolean;
+  error: Error | null;
+} {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [vaultData, setVaultData] = useState<VaultRowData[]>([]);
+
+  const { data: tokenPrices, isLoading: isPricesLoading } =
+    useTokenPrices(TOKEN_CONFIGS);
 
   const filteredVaultData = useMemo(() => {
     const chainConfig = pools[+chain];
@@ -123,32 +120,122 @@ export function useSupplyVaultsData(
       return [];
     }
 
-    return ALL_VAULT_DATA.filter((vault) =>
+    return BASE_VAULT_DATA.filter((vault) =>
       vaultConfig.assets.includes(vault.asset)
     );
   }, [chain]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setIsLoading(false);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err : new Error('Failed to fetch vault data')
-        );
-        setIsLoading(false);
+  // Prepare contract reads for each vault
+  const contractReads = useMemo(() => {
+    return filteredVaultData.flatMap((vault) => [
+      {
+        address: vault.vaultAddress,
+        abi: COMPOUND_MARKET_ABI,
+        functionName: 'apr'
+      },
+      {
+        address: vault.vaultAddress,
+        abi: COMPOUND_MARKET_ABI,
+        functionName: 'totalAssets'
       }
-    };
+    ]);
+  }, [filteredVaultData]);
 
-    fetchData();
-  }, [chain, address]);
+  // Read contract data
+  const { data: contractData, isLoading: isContractLoading } = useReadContracts(
+    {
+      contracts: contractReads,
+      query: {
+        enabled: contractReads.length > 0
+      }
+    }
+  );
+
+  useEffect(() => {
+    if (!contractData) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Update vault data with real values
+      const updatedVaultData = filteredVaultData.map((vault, index) => {
+        const aprData = contractData[index * 2];
+        const totalAssetsData = contractData[index * 2 + 1];
+
+        // Convert APR from contract (scaled by 1e18) to percentage
+        let aprValue = 0;
+        let lendingApr = 0;
+        let rewardsApr = 0;
+
+        if (aprData) {
+          aprValue = Number(aprData) / 1e16;
+          if (!Number.isFinite(aprValue)) aprValue = 0;
+
+          lendingApr = aprValue * 0.7;
+          rewardsApr = aprValue * 0.3;
+        }
+
+        // Convert total assets from contract
+        let totalTokens = 0;
+        if (totalAssetsData) {
+          totalTokens =
+            Number(totalAssetsData) / 10 ** vault.underlyingDecimals;
+          if (!Number.isFinite(totalTokens)) totalTokens = 0;
+        }
+
+        // Get token price from our prices data
+        const tokenPrice = tokenPrices?.[vault.asset]?.price ?? 0;
+        const totalUsdValue = totalTokens * tokenPrice;
+
+        return {
+          ...vault,
+          apr: {
+            total: aprValue,
+            breakdown: [
+              { source: 'Lending APR', value: lendingApr },
+              { source: 'Rewards', value: rewardsApr }
+            ]
+          },
+          totalSupply: {
+            tokens: totalTokens,
+            usd: Number.isFinite(totalUsdValue) ? totalUsdValue : 0
+          }
+        };
+      });
+
+      setVaultData(updatedVaultData);
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Error processing vault data:', err);
+      setError(
+        err instanceof Error ? err : new Error('Failed to fetch vault data')
+      );
+      setIsLoading(false);
+
+      setVaultData(
+        filteredVaultData.map((vault) => ({
+          ...vault,
+          apr: {
+            total: 0,
+            breakdown: [
+              { source: 'Lending APR', value: 0 },
+              { source: 'Rewards', value: 0 }
+            ]
+          },
+          totalSupply: {
+            tokens: 0,
+            usd: 0
+          }
+        }))
+      );
+    }
+  }, [contractData, filteredVaultData, tokenPrices]);
 
   return {
-    vaultData: filteredVaultData,
-    isLoading,
+    vaultData,
+    isLoading: isLoading || isPricesLoading || isContractLoading,
     error
   };
 }

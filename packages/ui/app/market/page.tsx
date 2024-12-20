@@ -11,7 +11,6 @@ import { useChainId } from 'wagmi';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { VaultRowData } from '@ui/types/SupplyVaults';
-import { useSupplyVaultsRealData } from '@ui/hooks/market/useSupplyVaultsRealData';
 
 import ManageDialog from '../_components/dialogs/manage';
 import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
@@ -23,6 +22,7 @@ import TvlTile from '../_components/markets/TvlTile';
 import PoolToggle from '../_components/markets/PoolToggle';
 import { isAddress } from 'viem';
 import SearchInput from '../_components/markets/SearcInput';
+import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 
 const NetworkSelector = dynamic(
   () => import('../_components/markets/NetworkSelector'),
@@ -45,8 +45,7 @@ export default function Market() {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { vaultData, isLoading: isLoadingVaults } =
-    useSupplyVaultsRealData(chain);
+  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaultsData(chain);
   const {
     marketData,
     selectedMarketData,

@@ -48,7 +48,7 @@ const RewardRow = ({ icon, text }: { icon: string; text: string }) => (
   </div>
 );
 
-export default function APRCell(props: APRCellProps) {
+export default function APR(props: APRCellProps) {
   const {
     baseAPRFormatted,
     effectiveNativeYield,
