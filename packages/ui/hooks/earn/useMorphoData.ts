@@ -1,47 +1,39 @@
 import { useQuery } from '@tanstack/react-query';
 import { request, gql } from 'graphql-request';
+
+import type { MorphoRow } from '@ui/types/Earn';
 import {
   morphoVaults,
   morphoBaseAddresses,
   formatTokenAmount
 } from '@ui/utils/morphoUtils';
-import type { MorphoRow } from '@ui/types/Earn';
 
 const MORPHO_API_URL = 'https://blue-api.morpho.org/graphql';
 
 const VAULT_QUERY = gql`
   query FetchVaultData($wethAddress: String!, $usdcAddress: String!) {
     wethVault: vaultByAddress(address: $wethAddress, chainId: 8453) {
-      dailyApys {
-        apy
-        netApy
-      }
       state {
         totalAssetsUsd
         totalAssets
+        netApy
       }
     }
     usdcVault: vaultByAddress(address: $usdcAddress, chainId: 8453) {
-      dailyApys {
-        apy
-        netApy
-      }
       state {
         totalAssetsUsd
         totalAssets
+        netApy
       }
     }
   }
 `;
 
 interface VaultData {
-  dailyApys: {
-    apy: number;
-    netApy: number;
-  };
   state: {
     totalAssetsUsd: number;
     totalAssets: number;
+    netApy: number;
   };
 }
 
@@ -76,11 +68,11 @@ export const useMorphoData = () => {
     }
 
     if (vaultInfo) {
-      const latestApy = vaultInfo.dailyApys || { apy: 0, netApy: 0 };
+      const latestApy = vaultInfo.state.netApy || 0;
 
       return {
         ...baseVault,
-        apy: latestApy.netApy * 100,
+        apy: latestApy * 100,
         tvl: {
           tokenAmount: formatTokenAmount(
             vaultInfo.state.totalAssets.toString(),
