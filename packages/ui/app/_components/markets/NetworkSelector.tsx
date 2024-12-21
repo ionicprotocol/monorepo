@@ -29,7 +29,8 @@ const ACTIVE_NETWORKS = [
   'Ink',
   'Lisk',
   'BoB',
-  'Worldchain'
+  'Worldchain',
+  'Swell'
 ];
 
 function NetworkSelector({

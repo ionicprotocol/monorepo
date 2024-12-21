@@ -9,7 +9,8 @@ task("flywheels:booster:update").setAction(async ({}, { viem, getChainId, deploy
   const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
   const poolDirectory = await viem.getContractAt(
     "PoolDirectory",
-    (await deployments.get("PoolDirectory")).address as Address
+    (await deployments.get("PoolDirectory")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const newBooster = await viem.getContractAt(
     "LooplessFlywheelBooster",
@@ -19,11 +20,15 @@ task("flywheels:booster:update").setAction(async ({}, { viem, getChainId, deploy
 
   const [ids, poolDatas] = await poolDirectory.read.getActivePools();
   for (const poolData of poolDatas) {
-    const pool = await viem.getContractAt("ComptrollerFirstExtension", poolData.comptroller);
+    const pool = await viem.getContractAt("ComptrollerFirstExtension", poolData.comptroller, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const fws = await pool.read.getAccruingFlywheels();
 
     for (const fw of fws) {
-      const flywheel = await viem.getContractAt("IonicFlywheel", fw);
+      const flywheel = await viem.getContractAt("IonicFlywheel", fw, {
+        client: { public: publicClient, wallet: walletClient }
+      });
       const currentBooster = await flywheel.read.flywheelBooster();
       if (currentBooster != zeroAddress && currentBooster != newBooster.address) {
         const tx = await flywheel.write.setBooster([newBooster.address]);

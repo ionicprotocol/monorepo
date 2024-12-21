@@ -139,6 +139,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    swellchain: {
+      url: process.env.OVERRIDE_RPC_URL_SWELLCHAIN ?? "https://rpc.ankr.com/swell",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer.swellnetwork.io/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -148,7 +158,8 @@ const config: HardhatUserConfig = {
       lisk: "empty",
       superseed: "empty",
       worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
-      ink: "empty"
+      ink: "empty",
+      swellchain: "empty"
     },
     customChains: [
       {
@@ -181,6 +192,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.inkonchain.com/api",
           browserURL: "https://explorer.inkonchain.com"
+        }
+      },
+      {
+        network: "swellchain",
+        chainId: 1923,
+        urls: {
+          apiURL: "https://explorer.swellnetwork.io/api",
+          browserURL: "https://explorer.swellnetwork.io"
         }
       }
     ]
