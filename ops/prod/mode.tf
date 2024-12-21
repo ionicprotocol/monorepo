@@ -1,5 +1,5 @@
 locals {
-  # Multiple Mode Mainnet RPC URLs (comma-separated environment variable)
+  # Multiple Mode Mainnet RPC URL (comma-separated environment variable)
   mode_mainnet_rpcs    = var.mode_mainnet_rpcs 
   mode_mainnet_chain_id = "34443"
 }
@@ -24,10 +24,11 @@ module "mode_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
-  task_definition_family     = var.task_definition_family
+  task_definition_family     = var.task_definition_family_mode
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag
   web3_http_provider_urls    = local.mode_mainnet_rpcs
+  uptime_liquidator_api      = var.uptime_liquidator_api
   target_chain_id            = local.mode_mainnet_chain_id
   ethereum_admin_account     = var.ethereum_admin_account
   ethereum_admin_private_key = var.ethereum_admin_private_key
@@ -36,6 +37,7 @@ module "mode_mainnet_liquidator_ecs" {
   liquidation_discord_webhook_url = var.liquidation_discord_webhook_url
   discord_success_webhook_url = var.discord_success_webhook_url
   discord_failure_webhook_url = var.discord_failure_webhook_url
+  lifi_api_key                = var.lifi_api_key
   subnet_ids                 = ["subnet-0cd439d262800846e"]
   security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region
@@ -47,7 +49,7 @@ module "mode_mainnet_pyth_rpc_0" {
   docker_image_tag    = var.bots_image_tag
   container_family    = "pyth-updater-rpc-0"
   environment         = "mainnet"
-  chain_id            = local.mode_mainnet_chain_id
+  target_chain_id     = local.mode_mainnet_chain_id
   container_env_vars = merge(
     local.pyth_updater_lambda_variables,
     { WEB3_HTTP_PROVIDER_URLS = local.mode_mainnet_rpcs }  # Directly use the string

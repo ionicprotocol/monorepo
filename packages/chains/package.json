@@ -26,7 +26,7 @@
   "dependencies": {
     "@ionicprotocol/types": "workspace:*",
     "utf-8-validate": "^6.0.4",
-    "viem": "^2.21.12"
+    "viem": "^2.21.55"
   },
   "devDependencies": {
     "eslint": "^8",

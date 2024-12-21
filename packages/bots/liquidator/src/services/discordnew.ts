@@ -60,24 +60,48 @@ export class DiscordService {
 
   async sendLiquidationSuccess(_successfulTxs: SimplifiedTransactionReceipt[], msg: string): Promise<void> {
     const baseMessage = this.createBaseMessage();
+
+    // Set a vibrant green color for success messages
     baseMessage.setColor(this.infoColor);
-    baseMessage.setDescription(`**__Successful Liquidations:__**\n${msg}`);
+
+    // Create an eye-catching success message with emojis and formatting
+    const formattedMessage = [
+      `**━━━━━━━━━━━━━━━━━━━━━━**`,
+      `🎯 **LIQUIDATION SUCCESSFUL** 🎯`,
+      `**━━━━━━━━━━━━━━━━━━━━━━**\n`,
+      `${msg}`,
+      `\n✨ *Transaction completed successfully* ✨`,
+    ].join("\n");
+
+    baseMessage.setDescription(formattedMessage);
+
+    // Send the beautified message
     await this.sendWithRetry(this.successHook, baseMessage);
   }
 
   async sendLiquidationFailure(pool: LiquidatablePool, errorMessage: string): Promise<void> {
     const baseMessage = this.createBaseMessage();
     baseMessage.setColor(this.errorColor);
-    baseMessage.setDescription(
-      `Failed Liquidation:\nBorrower: ${pool.liquidations[0].borrower}\nError: ${errorMessage}`
-    );
+
+    const formattedMessage = [
+      `**━━━━━━━━━━━━━━━━━━━━━━**`,
+      `❌ **LIQUIDATION FAILED** ❌`,
+      `**━━━━━━━━━━━━━━━━━━━━━━**\n`,
+      `🔍 **Details:**`,
+      `👤 **Borrower:** \`${pool.liquidations[0].borrower}\``,
+      `\n⚠️ **Error Message:**`,
+      `\`\`\`${errorMessage}\`\`\``,
+      `\n*Please check logs for more details*`,
+    ].join("\n");
+
+    baseMessage.setDescription(formattedMessage);
     await this.sendWithRetry(this.failureHook, baseMessage);
   }
 
   async sendLiquidationFetchingFailure(_erroredPools: any[], msg: string): Promise<void> {
     const baseMessage = this.createBaseMessage();
     baseMessage.setColor(this.warningColor);
-    baseMessage.setDescription(`Failed to fetch liquidations:\n${msg}`);
+    baseMessage.setDescription(`⚠️ Liquidation Fetching Failed:\n${msg}`);
     await this.sendWithRetry(this.failureHook, baseMessage);
   }
 }

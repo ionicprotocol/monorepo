@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import {
   erc20Abi,
@@ -38,13 +38,11 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import SliderComponent from '../_components/popup/Slider';
+import SliderComponent from '../_components/dialogs/manage/Slider';
+import MaxDeposit from '../_components/MaxDeposit';
 import ResultHandler from '../_components/ResultHandler';
-import BaseBreakdown from '../_components/stake/BaseBreakdown';
 import ClaimRewards from '../_components/stake/ClaimRewards';
-import MaxDeposit from '../_components/stake/MaxDeposit';
-import ModeBreakdown from '../_components/stake/ModeBreakdown';
-import OPBreakdown from '../_components/stake/OPBreakdown';
+import RewardDisplay from '../_components/stake/RewardDisplay';
 import Toggle from '../_components/Toggle';
 
 const NetworkSelector = dynamic(
@@ -67,11 +65,19 @@ export default function Stake() {
   const [step3Toggle, setstep3Toggle] = useState<string>('');
   //---------------
   const chainId = useChainId();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const queryToken = searchParams.get('token');
-  const selectedtoken = queryToken ?? 'eth';
   const chain = querychain ? querychain : String(chainId);
+  const previousChain = useRef<string>();
+
+  const getDefaultToken = (chain: string) => {
+    return chain === String(mode.id) ? 'mode' : 'eth';
+  };
+  const selectedtoken =
+    queryToken ?? getDefaultToken(querychain ?? String(chainId));
+
   const stakingContractAddress = getStakingToContract(
     +chain,
     selectedtoken as 'eth' | 'mode' | 'weth'
@@ -80,6 +86,42 @@ export default function Stake() {
     +chain,
     selectedtoken as 'eth' | 'mode' | 'weth'
   );
+
+  function resetAllInputs() {
+    setMaxDeposit({ ion: '', eth: '' });
+    setMaxWithdrawl({ ion: '', eth: '' });
+    setUtilization(0);
+    setMaxLp('');
+    setMaxUnstake('');
+  }
+
+  useEffect(() => {
+    resetAllInputs();
+  }, [step2Toggle, step3Toggle, chain]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    const currentChain = querychain ?? String(chainId);
+    let shouldUpdate = false;
+
+    const isChainChange = previousChain.current !== currentChain;
+    previousChain.current = currentChain;
+
+    const currentToken = params.get('token');
+
+    if ((!currentToken && currentChain) || (isChainChange && currentChain)) {
+      const defaultToken = currentChain === String(mode.id) ? 'mode' : 'eth';
+
+      if (currentToken !== defaultToken) {
+        params.set('token', defaultToken);
+        shouldUpdate = true;
+      }
+    }
+
+    if (shouldUpdate) {
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+  }, [chainId, querychain, router, searchParams]);
 
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -612,7 +654,7 @@ export default function Stake() {
                 <MaxDeposit
                   headerText={step2Toggle}
                   amount={maxDeposit.eth}
-                  tokenName={selectedtoken ?? 'eth'}
+                  tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
                   tokenSelector={true}
@@ -748,27 +790,21 @@ export default function Stake() {
               })}{' '}
               ION/{selectedtoken.toUpperCase()}
             </h1>
-            {/* tu */}
             <h1 className="mt-1">
-              You will {step3Toggle === 'Unstake' && 'not'} get{' '}
-              {+chain === mode.id || +chain === optimism.id
-                ? '$VELO'
-                : +chain === base.id
-                  ? '$AERO'
-                  : ''}
+              You will {step3Toggle === 'Unstake' && 'not'} receive{' '}
+              {+chain === base.id ? 'AERO' : 'xVELO'}
             </h1>
 
             {/* breakdowns */}
-            {+chain === mode.id && (
-              <ModeBreakdown
-                step3Toggle={step3Toggle}
+            {(+chain === mode.id ||
+              +chain === optimism.id ||
+              +chain === base.id) && (
+              <RewardDisplay
+                chainId={+chain}
+                isUnstaking={step3Toggle === 'Unstake'}
                 selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
               />
             )}
-            {+chain === optimism.id && (
-              <OPBreakdown step3Toggle={step3Toggle} />
-            )}
-            {+chain === base.id && <BaseBreakdown step3Toggle={step3Toggle} />}
             <div className="h-[2px] w-[95%] mx-auto bg-white/10 mt-auto" />
             <button
               disabled={

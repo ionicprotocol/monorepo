@@ -1,11 +1,11 @@
-import { IonicAsset, LiquidationStrategy } from "@ionicprotocol/types";
+import { LiquidationStrategy } from "@ionicprotocol/types";
 import { Address, formatEther, Hex, TransactionRequest } from "viem";
 
 import { IonicBase } from "../../IonicSdk";
 
 export const SCALE_FACTOR_ONE_18_WEI = 10n ** 18n;
-export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: IonicAsset) =>
-  10n ** BigInt(18n - BigInt(asset.underlyingDecimals));
+export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: { underlyingDecimals: bigint }) =>
+  10n ** BigInt(18n - asset.underlyingDecimals);
 
 export type ExtendedPoolAssetStructOutput = {
   cToken: Address;
@@ -73,8 +73,8 @@ export type PoolUserWithAssets = {
   assets: ExtendedPoolAssetStructOutput[];
   account: Address;
   health: bigint;
-  debt: Array<any>;
-  collateral: Array<any>;
+  debt: Array<ExtendedPoolAssetStructOutput>;
+  collateral: Array<ExtendedPoolAssetStructOutput>;
 };
 
 export type LiquidatablePool = {

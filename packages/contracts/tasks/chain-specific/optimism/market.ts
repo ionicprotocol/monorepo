@@ -4,8 +4,8 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { COMPTROLLER_MAIN } from ".";
 import { optimism } from "@ionicprotocol/chains";
 
-task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.wUSDM];
+task("markets:deploy:optimism:new", "deploy new optimism assets").setAction(async (_, { viem, run }) => {
+  const assetsToDeploy: string[] = [assetSymbols.weETH];
   for (const asset of optimism.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -13,6 +13,8 @@ task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_
     const name = `Ionic ${asset.name}`;
     const symbol = "ion" + asset.symbol;
     console.log(`Deploying ctoken ${name} with symbol ${symbol}`);
+    // wait 10 seconds
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     await run("market:deploy", {
       signer: "deployer",
       cf: "0",
@@ -39,8 +41,8 @@ task("markets:deploy:optimism:new", "deploy new mode assets").setAction(async (_
   }
 });
 
-task("market:set-cf:optimism:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.wUSDM)) {
+task("market:set-caps:optimism:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
+  for (const asset of optimism.assets.filter((asset) => asset.symbol === assetSymbols.weETH)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
@@ -51,5 +53,15 @@ task("market:set-cf:optimism:new", "Sets CF on a market").setAction(async (_, { 
         ltv: asset.initialCf
       });
     }
+
+    await run("market:set-supply-cap", {
+      market: cToken,
+      maxSupply: asset.initialSupplyCap
+    });
+
+    await run("market:set-borrow-cap", {
+      market: cToken,
+      maxBorrow: asset.initialBorrowCap
+    });
   }
 });

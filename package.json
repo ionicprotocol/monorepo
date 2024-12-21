@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "packageManager": "yarn@4.5.0",
+  "packageManager": "yarn@4.5.3",
   "private": true,
   "workspaces": [
     "packages/bots/liquidator",
@@ -15,7 +15,7 @@
     "packages/contracts"
   ],
   "resolutions": {
-    "viem": "^2.21.12",
+    "viem": "^2.21.55",
     "typescript": "^5.5.3"
   },
   "devDependencies": {

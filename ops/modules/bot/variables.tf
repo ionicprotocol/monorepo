@@ -35,6 +35,10 @@ variable "bots_image_tag" {
   type        = string
 }
 
+variable "uptime_liquidator_api" {
+  description = "Uptime liquidator API"
+  type        = string
+}
 variable "web3_http_provider_urls" {
   type        = string
   description = "List of Web3 HTTP Provider URLs"
@@ -87,5 +91,9 @@ variable "discord_failure_webhook_url" {
   type = string
 }
 variable "discord_success_webhook_url" {
+  type = string
+}
+
+variable "lifi_api_key" {
   type = string
 }

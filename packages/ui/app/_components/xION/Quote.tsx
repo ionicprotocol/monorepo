@@ -2,19 +2,16 @@
 
 import { useEffect } from 'react';
 
-import { Options } from '@layerzerolabs/lz-v2-utilities';
-import { xErc20LayerZeroAbi } from 'sdk/src';
-import { formatEther, type Hex, type Address } from 'viem';
+import { formatEther, type Address, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 
-import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
+import { getToken } from '@ui/utils/getStakingTokens';
 
-export const lzOptions = Options.newOptions()
-  .addExecutorLzReceiveOption(100_000, 0)
-  .toHex();
+import { xErc20HyperlaneAbi } from '@ionicprotocol/sdk';
 
 interface IQuotes {
   chain: number;
+  bridgeAddress: Address;
   getQuote: (data: string) => void;
   args?: {
     // fromChain?: number;
@@ -26,38 +23,31 @@ interface IQuotes {
 }
 export default function Quote({
   chain,
+  bridgeAddress,
   getQuote,
   args = {
     destinationChain: 34443,
     token: getToken(+chain),
     amount: BigInt(0),
-    toAddress: '0x26f52740670Ef678b254aa3559d823C29122E9c2' as Address
+    toAddress: zeroAddress
   }
 }: IQuotes) {
   // const ;
   const { data: quotation } = useReadContract({
-    abi: xErc20LayerZeroAbi,
-    address: BridgingContractAddress[+chain],
-    args: [
-      args.destinationChain,
-      args.token,
-      args.amount,
-      args.toAddress,
-      lzOptions as Hex,
-      false
-    ],
+    abi: xErc20HyperlaneAbi,
+    address: bridgeAddress,
+    args: [args.destinationChain, args.token, args.amount, args.toAddress],
     functionName: 'quote',
     chainId: +chain,
     query: {
       enabled: true,
       notifyOnChangeProps: ['data', 'error'],
-      refetchInterval: 10000,
-      initialData: [0n, 0n]
+      refetchInterval: 10000
     }
   });
 
   useEffect(() => {
-    if (quotation) getQuote(formatEther(quotation[0]));
+    if (quotation) getQuote(formatEther(quotation));
   }, [getQuote, quotation]);
   // console.log(quotation);
   // const calculations = {
@@ -87,7 +77,7 @@ export default function Quote({
           />
         </span>
       </div>
-      {args.amount && (
+      {args.amount ? (
         <>
           <div className={`flex items-center justify-between w-full  `}>
             <span className="text-white/50">Fees</span>
@@ -110,7 +100,7 @@ export default function Quote({
             <span className="text-white/50">Bridge Gas</span>
             <span className={`flex items-center justify-center gap-2`}>
               {quotation
-                ? Number(formatEther(quotation[0])).toLocaleString('en-US', {
+                ? Number(formatEther(quotation)).toLocaleString('en-US', {
                     maximumFractionDigits: 6
                   })
                 : '-'}{' '}
@@ -123,6 +113,8 @@ export default function Quote({
             </span>
           </div>
         </>
+      ) : (
+        <></>
       )}
     </div>
   );

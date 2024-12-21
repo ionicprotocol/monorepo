@@ -4,8 +4,7 @@ import Link from 'next/link';
 
 import { base, mode } from 'viem/chains';
 
-import BaseBreakdown from '../stake/BaseBreakdown';
-import ModeBreakdown from '../stake/ModeBreakdown';
+import RewardDisplay from '../stake/RewardDisplay';
 
 interface Iprop {
   chain: number;
@@ -18,22 +17,12 @@ export default function StakingTile({ chain }: Iprop) {
     >
       <h1 className={` mr-auto text-xl font-semibold`}>$ION Staking</h1>
       <div className={`w-full flex flex-col items-center justify-start `}>
-        {/* <div>
-          <span>APY</span>
-          <span>150%</span>
-        </div>
-        <div>
-          <span>Ionic Staked</span>
-          <span>32678.4</span>
-        </div> */}
-        {+chain === mode.id && (
-          <ModeBreakdown
-            step3Toggle="Stake"
-            selectedToken="eth"
+        {+chain === mode.id || +chain === base.id ? (
+          <RewardDisplay
+            chainId={+chain}
+            selectedToken={+chain === mode.id ? 'mode' : undefined}
           />
-        )}
-        {+chain === base.id && <BaseBreakdown step3Toggle={'Stake'} />}
-        {+chain !== mode.id && +chain !== base.id && (
+        ) : (
           <span className="text-sm text-center text-white/50 mx-auto ">
             Stake your IONs on Base/Mode
           </span>

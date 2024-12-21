@@ -8,8 +8,10 @@ import { ComptrollerFirstExtension } from "../compound/ComptrollerFirstExtension
 import { CTokenFirstExtension } from "../compound/CTokenFirstExtension.sol";
 import { Unitroller } from "../compound/Unitroller.sol";
 import { CErc20Delegate } from "../compound/CErc20Delegate.sol";
+import { CErc20Delegator } from "../compound/CErc20Delegator.sol";
 import { CErc20PluginDelegate } from "../compound/CErc20PluginDelegate.sol";
 import { CErc20PluginRewardsDelegate } from "../compound/CErc20PluginRewardsDelegate.sol";
+import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 
 import { BaseTest } from "./config/BaseTest.t.sol";
@@ -53,8 +55,6 @@ abstract contract UpgradesBaseTest is BaseTest {
   }
 
   function _upgradeMarketWithExtension(ICErc20 market) internal {
-    address implBefore = market.implementation();
-
     // instantiate the new implementation
     CErc20Delegate newImpl;
     bytes memory becomeImplData = "";
@@ -63,21 +63,26 @@ abstract contract UpgradesBaseTest is BaseTest {
     } else if (compareStrings("CErc20PluginDelegate", market.contractType())) {
       newImpl = new CErc20PluginDelegate();
       becomeImplData = abi.encode(address(0));
+    } else if (compareStrings("CErc20RewardsDelegate", market.contractType())) {
+      newImpl = new CErc20RewardsDelegate();
+      becomeImplData = abi.encode(address(0));
     } else {
       newImpl = new CErc20PluginRewardsDelegate();
       becomeImplData = abi.encode(address(0));
     }
 
     // set the new delegate as the latest
+    vm.startPrank(ffd.owner());
     ffd._setLatestCErc20Delegate(newImpl.delegateType(), address(newImpl), abi.encode(address(0)));
 
     // add the extension to the auto upgrade config
     DiamondExtension[] memory cErc20DelegateExtensions = new DiamondExtension[](2);
     cErc20DelegateExtensions[0] = marketExt;
     cErc20DelegateExtensions[1] = newImpl;
-    vm.prank(ffd.owner());
     ffd._setCErc20DelegateExtensions(address(newImpl), cErc20DelegateExtensions);
+    vm.stopPrank();
 
+    vm.stopPrank();
     // upgrade to the new delegate
     vm.prank(address(ffd));
     market._setImplementationSafe(address(newImpl), becomeImplData);

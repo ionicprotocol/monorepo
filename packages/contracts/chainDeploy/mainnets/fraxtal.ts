@@ -1,8 +1,9 @@
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { fraxtal } from "@ionicprotocol/chains";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address } from "viem";
+import { Address, zeroAddress, zeroHash } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
+import { deployVelodromeOracleFraxtal } from "../helpers/oracles/velodromeFraxtal";
 
 const assets = fraxtal.assets;
 
@@ -42,6 +43,7 @@ export const deploy = async ({
       feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
       symbol: asset.symbol
     }));
+  console.log("🚀 ~ chainlinkAssets:", chainlinkAssets);
   await deployChainlinkOracle({
     run,
     viem,
@@ -52,7 +54,16 @@ export const deploy = async ({
     chainlinkAssets
   });
 
-  //// Uniswap V3 Liquidator Funder
+  await deployVelodromeOracleFraxtal({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: fraxtal.assets.filter((asset) => asset.oracle === OracleTypes.VelodromePriceOracle),
+    pricesContract: "0xe58920a8c684CD3d6dCaC2a41b12998e4CB17EfE"
+  });
+
   const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
     from: deployer,
     args: [],
@@ -60,4 +71,12 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 };

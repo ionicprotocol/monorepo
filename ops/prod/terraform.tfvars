@@ -14,3 +14,8 @@ ecr_repository_name = "liquidator-pyth"
 ecs_service_name = "opportunity_bot_service"
 
 liquidator_service_name = "liquidator-service"
+task_definition_family_optimism = "liquidator-optimism"
+task_definition_family_base = "liquidator-base"
+task_definition_family_mode = "liquidator-mode"
+task_definition_family_lisk = "liquidator-lisk"
+task_definition_family_fraxtal = "liquidator-fraxtal"

@@ -12,7 +12,7 @@ import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
-import { useStore } from 'ui/store/Store';
+import { useStore } from '@ui/store/Store';
 
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
@@ -97,18 +97,6 @@ export default function Navbar() {
               className={`hover:text-accent lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer`}
             >
               Stake
-            </p>
-          </Link>
-          <Link
-            className="relative mb-2 lg:mb-0"
-            href={'/points'}
-          >
-            <p
-              className={`${
-                pathname == '/points' ? 'text-accent' : null
-              } lg:px-2 xl:px-4 text-center transition-all duration-200 ease-linear rounded-md cursor-pointer hover:text-accent`}
-            >
-              Points
             </p>
           </Link>
           <Link

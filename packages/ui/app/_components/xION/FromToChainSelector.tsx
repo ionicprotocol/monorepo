@@ -82,14 +82,14 @@ export default function FromTOChainSelector({
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/symbols/32/color/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase() || 'search'}.png`}
+            src={`/img/logo/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase() || 'search'}.png`}
             onError={({ currentTarget }) => {
               currentTarget.onerror = null;
               currentTarget.src = '/img/assets/search.png';
             }}
           />
           {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
-            'Select Token'}{' '}
+            'Select Chain'}{' '}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -123,7 +123,7 @@ export default function FromTOChainSelector({
                 <img
                   alt="logos"
                   className={`w-4 h-4 ml-auto`}
-                  src={`/img/symbols/32/color/${chainslist[1].toLowerCase()}.png`}
+                  src={`/img/logo/${chainslist?.[1]?.toLowerCase()}.png`}
                 />
               )}
             </Link>
