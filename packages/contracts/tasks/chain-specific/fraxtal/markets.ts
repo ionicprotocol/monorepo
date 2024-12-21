@@ -6,14 +6,12 @@ import { zeroAddress } from "viem";
 
 const assets = fraxtal.assets;
 
-task("markets:deploy:fraxtal:main", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [
-    //assetSymbols.WETH,
-    assetSymbols.wFRXETH,
-    assetSymbols.FRAX,
-    assetSymbols.FXS
-  ];
+task("markets:deploy:fraxtal:main", "deploy fraxtal market").setAction(async (_, { viem, run }) => {
+  const assetsToDeploy: string[] = [assetSymbols.sFRAX];
   for (const asset of assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+    console.log("Deploying market for ", asset.symbol, asset.name);
+    // Waiting for 5 seconds before deploying the market
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     await run("market:deploy", {
       signer: "deployer",
       cf: "0",
@@ -43,7 +41,8 @@ task("markets:deploy:fraxtal:main", "deploy base market").setAction(async (_, { 
 });
 
 task("markets:fraxtal:set-cf", "deploy base market").setAction(async (_, { viem, run }) => {
-  for (const asset of assets) {
+  const assetsToDeploy: string[] = [assetSymbols.sFRAX, assetSymbols.sfrxETH];
+  for (const asset of assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
@@ -57,7 +56,7 @@ task("markets:fraxtal:set-cf", "deploy base market").setAction(async (_, { viem,
 });
 
 task("markets:fraxtal:set-caps", "Set supply and borrow caps for markets").setAction(async (_, { viem, run }) => {
-  const asset = assets.find((asset) => asset.symbol === assetSymbols.WETH);
+  const asset = assets.find((asset) => asset.symbol === assetSymbols.insfrxETH);
   if (!asset) {
     throw new Error("Asset not found");
   }
@@ -74,6 +73,13 @@ task("markets:fraxtal:set-caps", "Set supply and borrow caps for markets").setAc
     await run("market:set-borrow-cap", {
       market: cToken,
       maxBorrow: asset.initialBorrowCap
+    });
+  }
+
+  if (asset.initialCf) {
+    await run("market:set:ltv", {
+      marketAddress: cToken,
+      ltv: asset.initialCf
     });
   }
 });

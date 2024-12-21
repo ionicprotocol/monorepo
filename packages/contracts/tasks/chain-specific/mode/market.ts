@@ -4,7 +4,8 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
-import { COMPTROLLER_MAIN, dmBTC_MARKET, MODE_NATIVE_MARKET, MS_DAI_MARKET } from ".";
+import { COMPTROLLER_MAIN, COMPTROLLER_NATIVE, dmBTC_MARKET, MODE_NATIVE_MARKET, MS_DAI_MARKET } from ".";
+import { getMarketInfo } from "../../market";
 
 const modeAssets = mode.assets;
 
@@ -43,25 +44,28 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
   }
 });
 
-task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { run }) => {
-  // const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.dMBTC);
-  // if (!asset) {
-  //   throw new Error("dMBTC not found in mode assets");
-  // }
-  // await run("market:set-borrow-cap", {
-  //   market: MODE_NATIVE_MARKET,
-  //   maxBorrow: parseEther(String(11_000_000)).toString()
-  // });
+task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
+  const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.MODE);
+  if (!asset) {
+    throw new Error("dMBTC not found in mode assets");
+  }
+  const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_NATIVE);
+  const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
 
-  await run("market:set-supply-cap", {
-    market: MODE_NATIVE_MARKET,
-    maxSupply: parseEther(String(25_000_000)).toString()
+  await run("market:set-borrow-cap", {
+    market: cToken,
+    maxBorrow: parseEther(String(30_000_000)).toString()
   });
 
-  // await run("market:set:ltv", {
-  //   marketAddress: dmBTC_MARKET,
-  //   ltv: asset.initialCf
-  // });
+  await run("market:set-supply-cap", {
+    market: cToken,
+    maxSupply: parseEther(String(24_000_000)).toString()
+  });
+
+  await run("market:set:ltv", {
+    marketAddress: cToken,
+    ltv: asset.initialCf
+  });
 });
 
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
@@ -233,3 +237,8 @@ task("prudentia:print-borrow-cap", "Prints supply cap")
       supplyCaps + " = " + formatUnits(supplyCaps, underlyingDecimals)
     );
   });
+
+task("mode:get-market-info", "get market info").setAction(async (_, { viem, run }) => {
+  await getMarketInfo(viem, COMPTROLLER_MAIN);
+});
+  

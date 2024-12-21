@@ -12,6 +12,11 @@ export type ChainlinkSpecificParams = {
 
 export type PythSpecificParams = { feed: string };
 
+export type DiaSpecificParams = {
+  feed: Address;
+  key: string;
+};
+
 export type VelodromeSpecificParams = {
   pricesContract: Address;
 };

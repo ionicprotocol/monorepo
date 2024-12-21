@@ -11,7 +11,8 @@ import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 // import { useWatchContractEvent } from 'wagmi';
 
-import { chainsArr, pools, scans } from '@ui/constants/index';
+import { chainsArr, pools } from '@ui/constants/index';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
 // import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
 
@@ -55,18 +56,6 @@ function TxPopup({
   // const [bridgeStatus, setBridgeStatus] = useState<
   //   'completed' | 'error' | 'pending' | 'unknown'
   // >('unknown');
-
-  const temp = {
-    hasHistory: false,
-    amount: BigInt(0),
-    hash: '0x1234567890abcdef1234567890abcdef12345678',
-    fromChain: '34443',
-    toChain: '8453',
-    approvalHash: '0x123456789',
-    bridgeStatus: 'unknown',
-    status: false,
-    bridgingBlock: '21212'
-  };
 
   //-------------------------- for future use
   // const [mock] = useLocalStorage('bridgeTx', '');
@@ -117,9 +106,7 @@ function TxPopup({
             <span className={`text-xs  min-w-max`}>Amount</span>
             <div className={`ml-auto flex gap-2`}>
               <span className={`text-xs text-white/50`}>
-                {Number(
-                  formatEther(mock?.amount ?? temp.amount)
-                ).toLocaleString('en-US', {
+                {Number(formatEther(mock.amount)).toLocaleString('en-US', {
                   maximumFractionDigits: 6
                 })}
               </span>
@@ -136,8 +123,8 @@ function TxPopup({
             <div className={`ml-auto flex gap-2`}>
               <span className={`text-xs text-white/50`}>
                 {(
-                  Number(formatEther(mock?.amount ?? temp.amount)) -
-                  Number(formatEther(mock?.amount ?? temp.amount)) * 0.01
+                  Number(formatEther(mock.amount)) -
+                  Number(formatEther(mock.amount)) * 0.01
                 ).toLocaleString('en-US', {
                   maximumFractionDigits: 3
                 })}
@@ -154,11 +141,11 @@ function TxPopup({
             <span className={`text-xs  min-w-max`}>Networks</span>
             <div className={`ml-auto flex items-center gap-2`}>
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock?.fromChain ?? temp.fromChain]}
+                {chainsArr[+mock.fromChain]}
               </span>
               {'->'}
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock?.toChain ?? temp.toChain]}
+                {chainsArr[+mock.toChain]}
               </span>
             </div>
           </div>
@@ -167,10 +154,10 @@ function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.approvalHash ?? temp.approvalHash}`}
+                href={`${getScanUrlByChainId(+mock.fromChain)}${mock.approvalHash}`}
                 className={`text-xs text-white/50 `}
               >
-                {mock?.approvalHash ?? temp.approvalHash}
+                {mock.approvalHash}
               </a>
             </div>
           </div>
@@ -179,10 +166,10 @@ function TxPopup({
             <div className={`ml-auto truncate`}>
               <a
                 target="_blank"
-                href={`${scans[+mock?.fromChain ?? temp.fromChain]}${mock?.hash ?? temp.hash}`}
+                href={`${getScanUrlByChainId(+mock.fromChain)}${mock.hash}`}
                 className={`text-xs text-white/50  `}
               >
-                {mock?.hash ?? temp.hash}
+                {mock.hash}
               </a>
             </div>
           </div>
@@ -201,7 +188,7 @@ function TxPopup({
 
           <a
             target="_blank"
-            href={`https://layerzeroscan.com/tx/${mock?.hash ?? temp.hash}`}
+            href={`https://explorer.hyperlane.xyz/?search=${mock.hash}`}
             className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center`}
           >
             TRACK

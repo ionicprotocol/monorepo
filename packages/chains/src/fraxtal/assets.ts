@@ -1,6 +1,7 @@
 import {
   assetSymbols,
   ChainlinkFeedBaseCurrency,
+  ChainlinkSpecificParams,
   OracleTypes,
   SupportedAsset,
   SupportedChains
@@ -16,6 +17,8 @@ export const FXS = "0xfc00000000000000000000000000000000000002";
 export const FRAX = "0xfc00000000000000000000000000000000000001";
 export const sFRAX = "0xfc00000000000000000000000000000000000008";
 export const frxBTC = "0xfc00000000000000000000000000000000000007";
+export const insfrxETH = "0xE162075a1C0Ac7e985253972bEcA5e83Da3BBaa4";
+export const ION = "0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE";
 
 export const assets: SupportedAsset[] = [
   {
@@ -88,6 +91,55 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(10)).toString(),
     initialBorrowCap: parseEther(String(8)).toString(),
     initialCf: "0.1"
+  },
+  {
+    symbol: assetSymbols.insfrxETH,
+    underlying: insfrxETH,
+    name: "Inception Restaked sfrxETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x4E0Fce6FF8384241c686C26cA3bcE3A16CDcDB55",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(1000)).toString(),
+    initialBorrowCap: parseEther(String(800)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sfrxETH,
+    underlying: sFRXETH,
+    name: "Staked Frax Ether",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x0c99C1a06C41F6D95aa698e7C458Bb0266a99021",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(3000)).toString(),
+    initialBorrowCap: parseEther(String(1800)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sFRAX,
+    underlying: sFRAX,
+    name: "Staked Frax",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x3fCD6d6a7641dB49D2F8A607eE186Ed90a9852ae",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    initialSupplyCap: parseEther(String(1_500_000)).toString(),
+    initialBorrowCap: parseEther(String(1_200_000)).toString(),
+    initialCf: "0.85"
+  },
+  {
+    symbol: assetSymbols.ION,
+    underlying: ION,
+    name: "Ion",
+    decimals: 18,
+    oracle: OracleTypes.VelodromePriceOracle
   }
 ];
 

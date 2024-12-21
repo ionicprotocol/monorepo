@@ -2,6 +2,7 @@ import {
   assetSymbols,
   ChainlinkFeedBaseCurrency,
   ChainlinkSpecificParams,
+  DiaSpecificParams,
   OracleTypes,
   PythSpecificParams,
   SupportedAsset,
@@ -35,6 +36,13 @@ export const USDplus = "0xB79DD08EA68A908A97220C76d19A6aA9cBDE4376";
 export const wUSDplus = "0xd95ca61CE9aAF2143E81Ef5462C0c2325172E028";
 export const USDz = "0x04D5ddf5f3a8939889F11E97f8c4BB48317F1938";
 export const uSOL = "0x9B8Df6E244526ab5F6e6400d331DB28C8fdDdb55";
+export const uSUI = "0xb0505e5a99abd03d94a1169e638B78EDfEd26ea4";
+export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
+export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
+export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
+export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
+export const ionicUSDC = "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440";
+export const ionicWETH = "0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707";
 
 export const assets: SupportedAsset[] = [
   {
@@ -50,9 +58,9 @@ export const assets: SupportedAsset[] = [
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.eOracle,
     oracleSpecificParams: {
-      aggregator: "0x7e860098F58bBFC8648a4311b374B1D669a2bc6B",
+      aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", USDC)
@@ -62,10 +70,10 @@ export const assets: SupportedAsset[] = [
     underlying: wstETH,
     name: "Wrapped Staked ETH",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.eOracle,
     oracleSpecificParams: {
-      aggregator: "0xa669E5272E60f78299F4824495cE01a3923f4380",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+      aggregator: "0xDB5d5dE97eD9125283ADa3560FE4f11e996041ab",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", wstETH)
   },
@@ -86,10 +94,10 @@ export const assets: SupportedAsset[] = [
     underlying: ezETH,
     name: "Renzo Restaked ETH",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.eOracle,
     oracleSpecificParams: {
-      aggregator: "0xC4300B7CF0646F0Fe4C5B2ACFCCC4dCA1346f5d8",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+      aggregator: "0xb1E7Db061e58Fa039c5C38a7f96e9476c2cfC78a",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://basescan.org", ezETH)
   },
@@ -134,13 +142,15 @@ export const assets: SupportedAsset[] = [
     underlying: weETH,
     name: "Wrapped eETH",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.eOracle,
     oracleSpecificParams: {
-      aggregator: "0xFC1415403EbB0c693f9a7844b92aD2Ff24775C65",
-      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+      aggregator: "0x15a3694998DDb14815536B8a5F74130CA8f5236A",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     initialCf: "0.70",
-    extraDocs: defaultDocs("https://basescan.org", weETH)
+    extraDocs: defaultDocs("https://basescan.org", weETH),
+    initialSupplyCap: parseEther(String(1_500)).toString(),
+    initialBorrowCap: parseEther(String(1_200)).toString()
   },
   {
     symbol: assetSymbols.eUSD,
@@ -246,8 +256,8 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(250_000)).toString(),
-    initialBorrowCap: parseEther(String(120_000)).toString(),
+    initialSupplyCap: parseEther(String(2_500_000)).toString(),
+    initialBorrowCap: parseEther(String(2_000_000)).toString(),
     initialCf: "0.82",
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
@@ -332,6 +342,100 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://basescan.org", uSOL),
     initialBorrowCap: parseEther(String(1000)).toString(),
     initialSupplyCap: parseEther(String(2000)).toString(),
+    initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.uSUI,
+    underlying: uSUI,
+    name: "Sui (Universal)",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uSUI),
+    initialBorrowCap: parseEther(String(150_000)).toString(),
+    initialSupplyCap: parseEther(String(250_000)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.sUSDz,
+    underlying: sUSDz,
+    name: "Staked USDz",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xD89c7fFB39C44b17EAecd8717a75A36c19C07582",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialBorrowCap: parseEther(String(215_000)).toString(),
+    initialSupplyCap: parseEther(String(270_000)).toString(),
+    initialCf: "0.70"
+  },
+  {
+    symbol: assetSymbols.fBOMB,
+    underlying: fBOMB,
+    name: "Fantom Bomb",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xFB1267A29C0aa19daae4a483ea895862A69e4AA5", // redstone: https://app.redstone.finance/app/feeds/?search=fbomb&page=1&sortBy=popularity&sortDesc=false&perPage=32
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", fBOMB),
+    initialCf: "0.50",
+    initialSupplyCap: parseEther(String(20_000_000)).toString(),
+    initialBorrowCap: parseEther(String(15_000_000)).toString()
+  },
+  {
+    symbol: assetSymbols.KLIMA,
+    underlying: KLIMA,
+    name: "Klima DAO",
+    decimals: 9,
+    oracle: OracleTypes.DiaPriceOracle,
+    oracleSpecificParams: {
+      feed: "0x12df07B05E9DABE78bD04B90206E31F6f64D75bB",
+      key: "KLIMA/USD"
+    } as DiaSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", KLIMA),
+    initialSupplyCap: parseUnits(String(1_500_000), 9).toString(),
+    initialBorrowCap: parseUnits(String(1_200_000), 9).toString(),
+    initialCf: "0.55"
+  },
+  {
+    symbol: assetSymbols.uXRP,
+    underlying: uXRP,
+    name: "Wrapped XRP",
+    decimals: 18,
+    oracle: OracleTypes.PythPriceOracle,
+    oracleSpecificParams: {
+      feed: "0xec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8"
+    } as PythSpecificParams,
+    extraDocs: defaultDocs("https://basescan.org", uXRP),
+    initialBorrowCap: parseEther(String(245_000)).toString(),
+    initialSupplyCap: parseEther(String(200_000)).toString(),
+    initialCf: "0.65"
+  },
+  {
+    symbol: assetSymbols.ionicUSDC,
+    underlying: ionicUSDC,
+    name: "Ionic Ecosystem USDC",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", ionicUSDC),
+    initialSupplyCap: parseEther(String(10_000_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.ionicWETH,
+    underlying: ionicWETH,
+    name: "Ionic Ecosystem WETH",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", ionicWETH),
+    initialSupplyCap: parseEther(String(2_000)).toString(),
+    initialBorrowCap: "1",
     initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED

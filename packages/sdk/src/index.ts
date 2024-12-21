@@ -25,5 +25,11 @@ export {
   type EncodedLiquidationTx,
   type LiquidatablePool,
   type PythLiquidatablePool,
-  type ErroredPool
+  type ErroredPool,
+  type ExtendedPoolAssetStructOutput,
+  type PoolUserStruct,
+  type PoolUserWithAssets,
+  type PublicPoolUserWithData,
+  SCALE_FACTOR_ONE_18_WEI,
+  SCALE_FACTOR_UNDERLYING_DECIMALS
 } from "./modules/liquidation/utils";

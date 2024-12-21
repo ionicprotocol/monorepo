@@ -6,10 +6,10 @@ type ResultHandlerProps = {
   center?: boolean;
   children: React.ReactNode;
   color?: string;
-  height?: string;
+  height?: number | string;
+  width?: number | string;
   isFetching?: boolean;
   isLoading: boolean;
-  width?: string;
 };
 
 export default function ResultHandler({

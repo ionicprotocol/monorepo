@@ -1,15 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
+import { useChainId } from 'wagmi';
 
-import { pools } from '@ui/constants/index';
+import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
@@ -25,18 +26,25 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
 import LoopRewards from '../_components/dashboards/LoopRewards';
+import Loop from '../_components/dialogs/loop';
+import ManageDialog from '../_components/dialogs/manage';
 import NetworkSelector from '../_components/markets/NetworkSelector';
-import Loop from '../_components/popup/Loop';
-import Popup from '../_components/popup/page';
 import ResultHandler from '../_components/ResultHandler';
 
-import type { PopupMode } from '../_components/popup/page';
-import type { FlywheelReward, OpenPosition, PositionInfo } from 'types/dist';
+import type { ActiveTab } from '../_components/dialogs/manage';
+
+import type {
+  FlywheelReward,
+  OpenPosition,
+  PositionInfo
+} from '@ionicprotocol/types';
 
 const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
   ssr: false
@@ -50,7 +58,11 @@ export default function Dashboard() {
   const chain = querychain ? querychain : 34443;
   const pool = querypool ? querypool : '0';
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
-  const [popupMode, setPopupMode] = useState<PopupMode>();
+  const [activeTab, setActiveTab] = useState<ActiveTab>();
+  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+  const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
+    useState<MarketData>();
+  const walletChain = useChainId();
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -65,17 +77,27 @@ export default function Dashboard() {
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
-      positions?.openPositions.map((position) => position.address) ?? [],
-      positions?.openPositions.map((position) =>
+      positions?.openPositions
+        ?.filter(
+          (p): p is OpenPosition =>
+            !!p &&
+            !!p.address &&
+            typeof p.address === 'string' &&
+            p.address.startsWith('0x')
+        )
+        ?.map((position) => position.address as `0x${string}`) ?? [],
+      positions?.openPositions?.map((position) =>
         collateralsAPR &&
+        position?.collateral?.cToken &&
         collateralsAPR[position.collateral.cToken] !== undefined
           ? parseEther(
               collateralsAPR[position.collateral.cToken].totalApy.toFixed(18)
             )
           : null
-      ),
-      positions?.openPositions.map((p) => p.chainId) ?? []
+      ) ?? [],
+      positions?.openPositions?.map((p) => p?.chainId ?? chain) ?? []
     );
+
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
@@ -97,7 +119,17 @@ export default function Dashboard() {
     +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
-    if (marketData && assetsSupplyAprData && currentSdk) {
+    if (!marketData?.assets || !assetsSupplyAprData || !currentSdk) {
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
+    }
+
+    try {
       const blocksPerMinute = getBlockTimePerMinuteByChainId(+chain);
       let totalCollateral = 0;
       let avgCollateralApr = 0;
@@ -106,45 +138,61 @@ export default function Dashboard() {
       let memberships = 0;
 
       marketData.assets.forEach((asset) => {
-        if (asset.membership) {
-          totalCollateral += asset.supplyBalanceFiat;
-          avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
+        if (!asset) return;
 
+        if (asset.membership) {
+          totalCollateral += asset.supplyBalanceFiat ?? 0;
+          avgCollateralApr += assetsSupplyAprData[asset.cToken]?.apy ?? 0;
           memberships++;
         }
 
-        if (asset.borrowBalanceFiat) {
-          borrowApr += currentSdk.ratePerBlockToAPY(
-            asset.borrowRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.borrowBalanceFiat && asset.borrowRatePerBlock) {
+          try {
+            borrowApr += currentSdk.ratePerBlockToAPY(
+              asset.borrowRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating borrow APR:', e);
+          }
         }
 
-        if (asset.supplyBalanceFiat) {
-          supplyApr += currentSdk.ratePerBlockToAPY(
-            asset.supplyRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.supplyBalanceFiat && asset.supplyRatePerBlock) {
+          try {
+            supplyApr += currentSdk.ratePerBlockToAPY(
+              asset.supplyRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating supply APR:', e);
+          }
         }
       });
 
-      supplyApr = supplyApr / (suppliedAssets.length || 1);
-      borrowApr = borrowApr / (borrowedAssets.length || 1);
+      const finalSupplyApr = supplyApr / (suppliedAssets.length || 1);
+      const finalBorrowApr = borrowApr / (borrowedAssets.length || 1);
 
       return {
-        avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-        borrowApr: `${borrowApr.toFixed(2)}%`,
+        avgCollateralApr: `${(avgCollateralApr / (memberships || 1)).toFixed(2)}%`,
+        borrowApr: `${finalBorrowApr.toFixed(2)}%`,
         netAssetValue: `$${millify(
           (marketData?.totalSupplyBalanceFiat ?? 0) -
             (marketData?.totalBorrowBalanceFiat ?? 0),
           { precision: 2 }
         )}`,
-        supplyApr: `${supplyApr.toFixed(2)}%`,
+        supplyApr: `${finalSupplyApr.toFixed(2)}%`,
         totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
       };
+    } catch (e) {
+      console.warn('Error in APR calculations:', e);
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
     }
-
-    return {};
   }, [
     assetsSupplyAprData,
     borrowedAssets,
@@ -153,6 +201,7 @@ export default function Dashboard() {
     marketData,
     suppliedAssets
   ]);
+
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(
@@ -162,7 +211,7 @@ export default function Dashboard() {
   );
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
-  const [loopOpen, setLoopOpen] = useState<boolean>(false);
+  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
   const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
     marketData?.comptroller,
     +chain
@@ -180,13 +229,6 @@ export default function Dashboard() {
 
     return healthData ?? '∞';
   }, [healthData, marketData]);
-  // for utilization:
-  // const { data: borrowCaps, isLoading: isLoadingBorrowCaps } =
-  //   useMaxBorrowAmounts(
-  //     marketData?.assets ?? [],
-  //     marketData?.comptroller ?? '',
-  //     +chain
-  //   );
 
   const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
   const healthColorClass = useMemo<string>(() => {
@@ -207,45 +249,6 @@ export default function Dashboard() {
     return 'text-error';
   }, [handledHealthData, healthData]);
 
-  // CURRENTLY UNUSED, NEED TO CHECK THIS
-  // const utilizations = useMemo<string[]>(() => {
-  //   if (borrowCaps && marketData) {
-  //     return borrowCaps.map((borrowCap, i) => {
-  //       const totalBorrow = marketData.assets[i].borrowBalance.add(
-  //         borrowCap?.bigNumber ?? '0'
-  //       );
-
-  //       return `${
-  //         totalBorrow.lte('0') ||
-  //         marketData.assets[i].borrowBalance.lte(0) ||
-  //         Number(
-  //           formatUnits(
-  //             marketData.assets[i].borrowBalance,
-  //             marketData.assets[i].underlyingDecimals
-  //           )
-  //         ) <= 0
-  //           ? '0.00'
-  //           : (
-  //               100 /
-  //               (Number(
-  //                 formatUnits(
-  //                   totalBorrow,
-  //                   marketData.assets[i].underlyingDecimals
-  //                 )
-  //               ) /
-  //                 Number(
-  //                   formatUnits(
-  //                     marketData.assets[i].borrowBalance,
-  //                     marketData.assets[i].underlyingDecimals
-  //                   )
-  //                 ))
-  //             ).toFixed(2)
-  //       }%`;
-  //     });
-  //   }
-  //   return marketData?.assets.map(() => '0.00%') ?? [];
-  // }, [borrowCaps, marketData]);
-
   const { data: rewards } = useRewards({
     chainId: +chain,
     poolId: pool
@@ -256,19 +259,69 @@ export default function Dashboard() {
     data: claimableRewardsAcrossAllChains,
     isLoading: isLoadingClaimableRewardsAcrossAllChains
   } = useAllClaimableRewards(allChains);
-  const totalRewardsAcrossAllChains =
-    claimableRewardsAcrossAllChains?.reduce(
-      (acc, reward) => acc + reward.amount,
-      0n
-    ) ?? 0n;
+
+  const totalRewardsAcrossAllChains = useMemo(() => {
+    // Early return if the entire rewards array is undefined
+    if (!claimableRewardsAcrossAllChains) return 0n;
+    if (!Array.isArray(claimableRewardsAcrossAllChains)) return 0n;
+    if (!claimableRewardsAcrossAllChains.length) return 0n;
+
+    try {
+      const validRewards = claimableRewardsAcrossAllChains.filter(
+        (
+          reward
+        ): reward is { amount: bigint; chainId: number; rewardToken: string } =>
+          reward !== null &&
+          reward !== undefined &&
+          'amount' in reward &&
+          'chainId' in reward &&
+          'rewardToken' in reward &&
+          typeof reward.amount === 'bigint'
+      );
+
+      // If no valid rewards after filtering, return early
+      if (!validRewards.length) return 0n;
+
+      return validRewards.reduce((acc, reward) => acc + reward.amount, 0n);
+    } catch (e) {
+      console.warn('Error calculating total rewards:', {
+        error: e,
+        rewards: claimableRewardsAcrossAllChains
+      });
+      return 0n;
+    }
+  }, [claimableRewardsAcrossAllChains]);
 
   const {
     componentRef: rewardRef,
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
+
   return (
     <>
+      {swapOpen && marketData?.comptroller && (
+        <CollateralSwapPopup
+          toggler={() => swapToggle()}
+          swapRef={swapRef}
+          swappedFromAsset={collateralSwapFromAsset!}
+          swappedToAssets={marketData?.assets.filter(
+            (asset) =>
+              asset?.underlyingToken !==
+                collateralSwapFromAsset?.underlyingToken &&
+              !NO_COLLATERAL_SWAP[+chain]?.[pool]?.includes(
+                asset?.underlyingSymbol ?? ''
+              )
+          )}
+          swapOpen={swapOpen}
+          comptroller={marketData?.comptroller}
+        />
+      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -428,7 +481,6 @@ export default function Dashboard() {
             </div>
             <div
               className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
-              // href={`/points`}
               onClick={() => rewardToggle()}
             >
               CLAIM ALL REWARDS
@@ -481,10 +533,7 @@ export default function Dashboard() {
             pool={pool || '0'}
             setOpen={setOpen}
           /> */}
-              <NetworkSelector
-                chain={chain as string}
-                dropdownSelectedChain={+chain}
-              />
+              <NetworkSelector dropdownSelectedChain={+chain} />
             </div>
           </div>
           {/* <div className={`w-full mt-2  col-span-5`}>
@@ -569,9 +618,22 @@ export default function Dashboard() {
                         })) as FlywheelReward[]) ?? []
                       }
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setActiveTab={setActiveTab}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
+                      toggler={async () => {
+                        const result = await handleSwitchOriginChain(
+                          +chain,
+                          walletChain
+                        );
+                        if (result) {
+                          swapToggle();
+                        }
+                      }}
+                      setCollateralSwapFromAsset={() =>
+                        setCollateralSwapFromAsset(asset)
+                      }
                       utilization="0.00%"
                     />
                   ))}
@@ -659,7 +721,8 @@ export default function Dashboard() {
                       membership={asset.membership}
                       mode={InfoMode.BORROW}
                       selectedChain={+chain}
-                      setPopupMode={setPopupMode}
+                      setIsManageDialogOpen={setIsManageDialogOpen}
+                      setActiveTab={setActiveTab}
                       setSelectedSymbol={setSelectedSymbol}
                       // utilization={utilizations[i]}
                       utilization="0.00%"
@@ -702,30 +765,59 @@ export default function Dashboard() {
                     <h3 className={` `}>REWARDS</h3>
                   </div>
 
-                  {positions?.openPositions.map((position, i) => {
-                    const currentPositionInfo = positionsInfo
-                      ? positionsInfo[position.address]
-                      : undefined;
+                  {positions?.openPositions
+                    ?.filter(Boolean)
+                    .map((position, i) => {
+                      if (
+                        !position ||
+                        !position.address ||
+                        typeof position.address !== 'string'
+                      ) {
+                        console.warn('Invalid position:', position);
+                        return null;
+                      }
 
-                    if (!currentPositionInfo) {
-                      return <div key={`position-${i}`} />;
-                    }
+                      const isValidAddress =
+                        position?.address &&
+                        typeof position.address === 'string' &&
+                        position.address.startsWith('0x');
 
-                    return (
-                      <LoopRow
-                        key={`position-${position.address}`}
-                        currentPositionInfo={currentPositionInfo}
-                        marketData={marketData ?? undefined}
-                        position={position}
-                        positionLeverage={positionLeverages?.[i] ?? undefined}
-                        usdPrice={usdPrice ?? undefined}
-                        setSelectedLoopBorrowData={setSelectedLoopBorrowData}
-                        setSelectedSymbol={setSelectedSymbol}
-                        setLoopOpen={setLoopOpen}
-                        chain={+chain}
-                      />
-                    );
-                  })}
+                      const currentPositionInfo =
+                        isValidAddress && positionsInfo
+                          ? positionsInfo[position.address]
+                          : undefined;
+
+                      if (!isValidAddress) {
+                        console.warn(
+                          'Invalid position address format:',
+                          position?.address
+                        );
+                        return null;
+                      }
+
+                      if (!currentPositionInfo) {
+                        console.warn(
+                          'Missing position info for address:',
+                          position?.address
+                        );
+                        return <div key={`position-${i}`} />;
+                      }
+
+                      return (
+                        <LoopRow
+                          key={`position-${position.address}`}
+                          currentPositionInfo={currentPositionInfo}
+                          marketData={marketData ?? undefined}
+                          position={position}
+                          positionLeverage={positionLeverages?.[i] ?? undefined}
+                          usdPrice={usdPrice ?? undefined}
+                          setSelectedLoopBorrowData={setSelectedLoopBorrowData}
+                          setSelectedSymbol={setSelectedSymbol}
+                          setLoopOpen={setIsLoopDialogOpen}
+                          chain={+chain}
+                        />
+                      );
+                    })}
                 </>
               ) : (
                 <div className="text-center mx-auto py-2">
@@ -740,21 +832,20 @@ export default function Dashboard() {
       {selectedMarketData && (
         <Loop
           borrowableAssets={loopData ? loopData[selectedMarketData.cToken] : []}
-          closeLoop={() => {
-            setLoopOpen(false);
-          }}
+          isOpen={isLoopDialogOpen}
+          setIsOpen={setIsLoopDialogOpen}
           comptrollerAddress={marketData?.comptroller ?? ('' as Address)}
           currentBorrowAsset={selectedLoopBorrowData}
-          isOpen={loopOpen}
           selectedCollateralAsset={selectedMarketData}
         />
       )}
 
-      {popupMode && selectedMarketData && marketData && (
-        <Popup
-          closePopup={() => setPopupMode(undefined)}
+      {selectedMarketData && marketData && (
+        <ManageDialog
+          isOpen={isManageDialogOpen}
+          setIsOpen={setIsManageDialogOpen}
           comptrollerAddress={marketData.comptroller}
-          mode={popupMode}
+          activeTab={activeTab}
           selectedMarketData={selectedMarketData}
         />
       )}
@@ -783,6 +874,23 @@ const LoopRow = ({
   setLoopOpen,
   chain
 }: LoopRowProps) => {
+  if (
+    !position ||
+    !position.address ||
+    !position.collateral?.symbol ||
+    !position.borrowable?.symbol ||
+    !currentPositionInfo
+  ) {
+    console.warn('Missing required data for LoopRow:', {
+      hasPosition: !!position,
+      address: position?.address,
+      collateralSymbol: position?.collateral?.symbol,
+      borrowableSymbol: position?.borrowable?.symbol,
+      hasCurrentPositionInfo: !!currentPositionInfo
+    });
+    return null;
+  }
+
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2 gap-x-1 lg:grid grid-cols-6 py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
@@ -877,7 +985,7 @@ const LoopRow = ({
       </h3>
 
       <LoopRewards
-        positionAddress={position.address}
+        positionAddress={position.address ?? '0x'}
         poolChainId={chain}
         className="items-center justify-center"
       />

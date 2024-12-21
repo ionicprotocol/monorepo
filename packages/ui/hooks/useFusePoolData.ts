@@ -22,6 +22,13 @@ export const useFusePoolData = (
       return undefined;
     }
   }, [usdPrices, poolChainId]);
+  console.log('🚀 ~ usdPrice ~ usdPrices:', usdPrices);
+  console.log('🚀 ~ usdPrice ~ poolChainId:', poolChainId);
+  console.log('🚀 ~ queryFn: ~ usdPrice:', usdPrice);
+  console.log('🚀 ~ queryFn: ~ sdk?.chainId:', sdk?.chainId);
+  console.log('🚀 ~ queryFn: ~ poolId:', poolId);
+  console.log('🚀 ~ queryFn: ~ address:', address);
+  console.log('🚀 ~ queryFn: ~ excludeNonBorrowable:', excludeNonBorrowable);
 
   return useQuery({
     queryKey: [
@@ -34,7 +41,7 @@ export const useFusePoolData = (
     ],
 
     queryFn: async () => {
-      if (usdPrice && sdk?.chainId && poolId) {
+      if (usdPrice && sdk?.chainId && typeof poolId !== 'undefined') {
         const response = await sdk.fetchPoolData(poolId, address).catch((e) => {
           console.warn(
             `Getting fuse pool data error: `,
