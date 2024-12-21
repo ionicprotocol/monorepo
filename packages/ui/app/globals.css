@@ -158,6 +158,10 @@
   background: #7040e0;
 }
 
+.bg-swell {
+  background: #3c50d6;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -192,6 +196,10 @@
 
 .border-ink {
   border-color: #7040e0;
+}
+
+.border-swell {
+  border-color: #3c50d6;
 }
 
 .text-xxs {

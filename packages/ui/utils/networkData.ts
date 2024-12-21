@@ -24,7 +24,9 @@ import {
   superseed,
   worldchain,
   ink,
-  vInk
+  vInk,
+  swellchain,
+  vSwellchain
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -113,6 +115,10 @@ export function getEnabledChains() {
     enabledChains.push(vInk);
   }
 
+  if (config.isSwellEnabled) {
+    enabledChains.push(vSwellchain);
+  }
+
   return enabledChains;
 }
 
@@ -125,7 +131,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.lisk]: lisk.assets,
   [SupportedChains.superseed]: superseed.assets,
   [SupportedChains.worldchain]: worldchain.assets,
-  [SupportedChains.ink]: ink.assets
+  [SupportedChains.ink]: ink.assets,
+  [SupportedChains.swell]: swellchain.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -137,5 +144,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.lisk]: lisk.deployedPlugins,
   [SupportedChains.superseed]: superseed.deployedPlugins,
   [SupportedChains.worldchain]: worldchain.deployedPlugins,
-  [SupportedChains.ink]: ink.deployedPlugins
+  [SupportedChains.ink]: ink.deployedPlugins,
+  [SupportedChains.swell]: swellchain.deployedPlugins
 };

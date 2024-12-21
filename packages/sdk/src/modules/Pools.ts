@@ -1,4 +1,15 @@
-import { base, bob, mode, optimism, fraxtal, lisk, superseed, worldchain, ink } from "@ionicprotocol/chains";
+import {
+  base,
+  bob,
+  mode,
+  optimism,
+  fraxtal,
+  lisk,
+  superseed,
+  worldchain,
+  ink,
+  swellchain
+} from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   IonicPoolData,
@@ -42,7 +53,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.lisk]: lisk.assets,
   [SupportedChains.superseed]: superseed.assets,
   [SupportedChains.worldchain]: worldchain.assets,
-  [SupportedChains.ink]: ink.assets
+  [SupportedChains.ink]: ink.assets,
+  [SupportedChains.swell]: swellchain.assets
 };
 
 export interface IIonicPools {
