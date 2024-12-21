@@ -52,7 +52,7 @@ abstract contract AbstractERC4626Test is WithPool {
   function testInitializedValues(string memory assetName, string memory assetSymbol) public virtual {
     assertEq(
       plugin.name(),
-      string(abi.encodePacked("Midas ", assetName, " Vault")),
+      string(abi.encodePacked("Ionic ", assetName, " Vault")),
       string(abi.encodePacked("!name ", testPreFix))
     );
     assertEq(

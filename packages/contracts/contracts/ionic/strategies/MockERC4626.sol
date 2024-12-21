@@ -24,7 +24,7 @@ contract MockERC4626 is ERC4626 {
   constructor(ERC20 _asset)
     ERC4626(
       _asset,
-      string(abi.encodePacked("Midas ", _asset.name(), " Vault")),
+      string(abi.encodePacked("Ionic ", _asset.name(), " Vault")),
       string(abi.encodePacked("mv", _asset.symbol()))
     )
   {}
