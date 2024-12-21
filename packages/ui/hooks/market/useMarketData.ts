@@ -59,7 +59,7 @@ export type MarketRowData = MarketData & {
 export const useMarketData = (
   selectedPool: string,
   chain: number | string,
-  selectedSymbol: string | undefined
+  selectedSymbol?: string | undefined
 ) => {
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,

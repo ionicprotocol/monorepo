@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react';
 
+import { useSearchParams } from 'next/navigation';
+
 import { formatUnits } from 'viem';
+import { mode } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import { Switch } from '@ui/components/ui/switch';
@@ -14,6 +17,7 @@ import {
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useCollateralToggle } from '@ui/hooks/market/useCollateralToggle';
+import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { useSupply } from '@ui/hooks/market/useSupply';
 
 import Amount from './Amount';
@@ -57,6 +61,29 @@ const SupplyTab = ({
     onSuccess: refetchUsedQueries
   });
 
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const querypool = searchParams.get('pool');
+  const selectedPool = querypool ?? '0';
+  const chain = querychain ? querychain : mode.id.toString();
+
+  const { marketData } = useMarketData(selectedPool, chain);
+
+  const getTooltipContent = () => {
+    if (hasActiveTransactions) {
+      return 'Cannot modify collateral during an active transaction';
+    }
+    if (!selectedMarketData.supplyBalance) {
+      return 'You need to supply assets first before enabling as collateral';
+    }
+    if (disableCollateral) {
+      return 'Unavailable until borrowing is enabled';
+    }
+    return null;
+  };
+
+  const disableCollateral = marketData.length === 1;
+
   const {
     isWaitingForIndexing,
     supplyAmount,
@@ -85,6 +112,10 @@ const SupplyTab = ({
 
   const isDisabled = !amount || amountAsBInt === 0n;
   const hasActiveTransactions = combinedTransactionSteps.length > 0;
+  const showTooltip =
+    hasActiveTransactions ||
+    !selectedMarketData.supplyBalance ||
+    disableCollateral;
 
   return (
     <div className="space-y-4 pt-2">
@@ -149,18 +180,16 @@ const SupplyTab = ({
                       checked={enableCollateral}
                       onCheckedChange={handleCollateralToggle}
                       disabled={
+                        disableCollateral ||
                         hasActiveTransactions ||
                         !selectedMarketData.supplyBalance
                       }
                     />
                   </div>
                 </TooltipTrigger>
-                {(hasActiveTransactions ||
-                  !selectedMarketData.supplyBalance) && (
+                {showTooltip && (
                   <TooltipContent side="top">
-                    {hasActiveTransactions
-                      ? 'Cannot modify collateral during an active transaction'
-                      : 'You need to supply assets first before enabling as collateral'}
+                    {getTooltipContent()}
                   </TooltipContent>
                 )}
               </Tooltip>
