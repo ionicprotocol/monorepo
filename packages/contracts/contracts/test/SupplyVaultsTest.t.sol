@@ -169,7 +169,10 @@ contract SupplyVaultsTest is BaseTest {
         else if (flywheels[j] == 0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062) {
           proxyAdmin = ProxyAdmin(0x4De2d8ef97D19def01f236b7a12e5Fb39c087b56);
         }
-        else if (flywheels[j] == 0x6AfCca37CC93DB6bed729d20ADF203290d465df5 || flywheels[j] == 0x4E854cde138495a3eB9CFe48e50F12dC352cD834) {
+        else if (flywheels[j] == 0x6AfCca37CC93DB6bed729d20ADF203290d465df5
+              || flywheels[j] == 0x4E854cde138495a3eB9CFe48e50F12dC352cD834
+              || flywheels[j] == 0xa80ff99c82d55dFE893867E25C5c77276DFb23C5
+              || flywheels[j] == 0x1A118B250ED0Ba690f03877AC46519A4b66f1D44) {
           proxyAdmin = ProxyAdmin(0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83);
         }
         else {
