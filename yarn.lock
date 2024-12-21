@@ -2466,7 +2466,6 @@ __metadata:
     typescript: "npm:^5.5.3"
     viem: "npm:^2.21.34"
     wagmi: "npm:^2.12.25"
-    zustand: "npm:^4.5.4"
   languageName: unknown
   linkType: soft
 
@@ -27637,7 +27636,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zustand@npm:^4.5.4, zustand@npm:^4.5.5":
+"zustand@npm:^4.5.5":
   version: 4.5.5
   resolution: "zustand@npm:4.5.5"
   dependencies:

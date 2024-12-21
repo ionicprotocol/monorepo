@@ -46,6 +46,8 @@ export interface MultiIonicContextData {
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
   walletClient?: WalletClient;
+  dropChain: string;
+  setDropChain: (val: string) => void;
 }
 
 export const MultiIonicContext = createContext<
@@ -76,6 +78,7 @@ export const MultiIonicProvider = (
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
+  const [dropChain, setDropChain] = useState<string>('34443');
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: IonicSdk[] = [];
@@ -204,7 +207,9 @@ export const MultiIonicProvider = (
       setAddress,
       setGlobalLoading,
       setIsSidebarCollapsed,
-      walletClient
+      walletClient,
+      dropChain,
+      setDropChain
     };
   }, [
     sdks,
@@ -222,7 +227,9 @@ export const MultiIonicProvider = (
     walletClient,
     setAddress,
     isSidebarCollapsed,
-    setIsSidebarCollapsed
+    setIsSidebarCollapsed,
+    dropChain,
+    setDropChain
   ]);
 
   return (

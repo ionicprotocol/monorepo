@@ -19,7 +19,7 @@ import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseSupplyProps {
-  maxAmount: bigint;
+  maxAmount: bigint | undefined;
   enableCollateral: boolean;
   selectedMarketData: MarketData;
   comptrollerAddress: Address;
@@ -27,7 +27,7 @@ interface UseSupplyProps {
 }
 
 export const useSupply = ({
-  maxAmount,
+  maxAmount = 0n,
   enableCollateral,
   selectedMarketData,
   comptrollerAddress,

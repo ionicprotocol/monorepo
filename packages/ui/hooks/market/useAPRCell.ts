@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { APRCellProps } from '@ui/app/_components/markets/APRCell';
+import type { APRCellProps } from '@ui/app/_components/markets/Cells/APR';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import { multipliers } from '@ui/utils/multipliers';
 
