@@ -234,10 +234,25 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
 
 task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
-  .setAction(async ({ name, flywheel }, { deployments, getNamedAccounts }) => {
+  .setAction(async ({ name }, { deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const booster = await deployments.deploy(`IonicFlywheelBorrowBooster_${name}`, {
       contract: "IonicFlywheelBorrowBooster",
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1
+    });
+
+    return booster;
+  });
+
+task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster for LM rewards")
+  .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
+  .setAction(async ({ name }, { deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const booster = await deployments.deploy(`IonicFlywheelSupplyBooster_${name}`, {
+      contract: "IonicFlywheelSupplyBooster",
       from: deployer,
       log: true,
       args: [],
