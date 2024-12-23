@@ -9,7 +9,8 @@ import {
   lisk,
   superseed,
   worldchain,
-  ink
+  ink,
+  swellchain
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -51,6 +52,10 @@ export const supportedChainIdToConfig: {
   [ink.chainId]: {
     enabled: config.isInkEnabled,
     supported: config.isInkEnabled
+  },
+  [swellchain.chainId]: {
+    enabled: config.isSwellEnabled,
+    supported: config.isSwellEnabled
   }
 };
 

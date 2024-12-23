@@ -17,7 +17,7 @@ import {
   lisk,
   superseed,
   worldchain,
-  AppKitNetwork
+  type AppKitNetwork
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -56,6 +56,27 @@ export const ink: AppKitNetwork = {
   }
 };
 
+export const swellchain: AppKitNetwork = {
+  id: 1923,
+  name: 'Swellchain',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://rpc.ankr.com/swell',
+        'https://swell-mainnet.alt.technology'
+      ]
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: 'Swell Explorer',
+      url: 'https://explorer.swellnetwork.io',
+      apiUrl: 'https://api.swellnetwork.io'
+    }
+  }
+};
+
 export const networks: AppKitNetwork[] = [
   base,
   mode,
@@ -65,7 +86,8 @@ export const networks: AppKitNetwork[] = [
   lisk,
   superseed,
   worldchain,
-  ink
+  ink,
+  swellchain
 ];
 
 export const projectId = '923645e96d6f05f650d266a32ea7295f';
@@ -91,7 +113,14 @@ createAppKit({
     [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
     [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
     [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg',
-    [superseed.id]: 'https://icons.llamao.fi/icons/chains/rsz_superseed.jpg'
+    [lisk.id]: 'https://icons.llamao.fi/icons/chains/rsz_lisk.jpg',
+    [superseed.id]:
+      'https://github.com/superseed-xyz/brand-kit/blob/main/logos-wordmarks/logos/large.png?raw=true',
+    [swellchain.id]:
+      'https://cdn.prod.website-files.com/63dc9bdf46999ffb2c2f407a/66cc343b8a5fd72920c56ae1_SWELL%20L2.svg',
+    [ink.id]: 'https://icons.llamao.fi/icons/chains/rsz_ink.jpg',
+    [worldchain.id]:
+      'https://worldscan.org/assets/world/images/svg/logos/token-secondary-light.svg?v=24.12.2.0'
   }
 });
 

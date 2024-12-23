@@ -19,9 +19,10 @@ import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
 import { default as superseed } from "./superseed";
+import { default as swellchain } from "./swellchain";
 import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink };
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain };
 
 export const vInk: Chain = {
   id: 57073,
@@ -34,6 +35,17 @@ export const vInk: Chain = {
   rpcUrls: { default: { http: ["https://rpc-qnd.inkonchain.com", "https://rpc-gel.inkonchain.com"] } }
 };
 
+export const vSwellchain: Chain = {
+  id: 1923,
+  name: "Swellchain",
+  nativeCurrency: {
+    name: "Ethereum",
+    symbol: "ETH",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: ["https://rpc.ankr.com/swell", "https://swell-mainnet.alt.technology"] } }
+};
+
 export const chainIdtoChain: { [chainId: number]: Chain } = {
   [mode.chainId]: vMode,
   [base.chainId]: vBase,
@@ -43,7 +55,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [lisk.chainId]: vLisk,
   [ink.chainId]: vInk,
   [superseed.chainId]: vSuperseed,
-  [worldchain.chainId]: vWorldchain
+  [worldchain.chainId]: vWorldchain,
+  [swellchain.chainId]: vSwellchain
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -55,5 +68,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [lisk.chainId]: lisk,
   [ink.chainId]: ink,
   [superseed.chainId]: superseed,
-  [worldchain.chainId]: worldchain
+  [worldchain.chainId]: worldchain,
+  [swellchain.chainId]: swellchain
 };
