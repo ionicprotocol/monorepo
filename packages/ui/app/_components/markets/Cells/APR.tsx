@@ -170,9 +170,7 @@ export default function APR(props: APRCellProps) {
                 />
                 <span className="text-xs text-gray-400">OP Rewards</span>
               </Link>
-              <span className="text-xs font-medium text-red-400">
-                +{merklAprFormatted}%
-              </span>
+              <span className="text-xs font-medium">+{merklAprFormatted}%</span>
             </div>
           )}
 
@@ -180,8 +178,8 @@ export default function APR(props: APRCellProps) {
             <div className="flex justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <Image
-                  src={`/img/symbols/32/color/${chainsArr[props.dropdownSelectedChain].toUpperCase()}.png`}
-                  alt="Native Asset"
+                  src={`/img/symbols/32/color/${asset.toLowerCase()}.png`}
+                  alt={asset}
                   width={16}
                   height={16}
                   className="w-4 h-4"
