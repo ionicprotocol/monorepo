@@ -4,7 +4,6 @@ pragma solidity ^0.8.10;
 import { IonicERC4626 } from "./IonicERC4626.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../../compound/ComptrollerInterface.sol";
-import { IGenericLender } from "../../external/angle/IGenericLender.sol";
 import { OptimizedVaultsRegistry } from "../vault/OptimizedVaultsRegistry.sol";
 import { OptimizedAPRVaultBase } from "../vault/OptimizedAPRVaultBase.sol";
 import { IonicFlywheel } from "./flywheel/IonicFlywheel.sol";
@@ -13,7 +12,7 @@ import { IonicFlywheelLensRouter } from "./flywheel/IonicFlywheelLensRouter.sol"
 import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
-contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
+contract CompoundMarketERC4626 is IonicERC4626 {
   ICErc20 public market;
   uint256 public blocksPerYear;
   OptimizedVaultsRegistry public registry;
@@ -77,7 +76,7 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
     return _rewardsApr() + market.supplyRatePerBlockAfterDeposit(amount) * blocksPerYear;
   }
 
-  function aprAfterWithdraw(uint256 amount) public view override returns (uint256) {
+  function aprAfterWithdraw(uint256 amount) public view returns (uint256) {
     return _rewardsApr() + market.supplyRatePerBlockAfterWithdraw(amount) * blocksPerYear;
   }
 
@@ -100,7 +99,7 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
   }
 
   /// @notice Returns an estimation of the current Annual Percentage Rate on the lender
-  function apr() public view override returns (uint256) {
+  function apr() public view returns (uint256) {
     return _rewardsApr() + market.supplyRatePerBlock() * blocksPerYear;
   }
 
@@ -123,14 +122,14 @@ contract CompoundMarketERC4626 is IonicERC4626, IGenericLender {
   /// @notice Withdraws a given amount from lender
   /// @param amount The amount the caller wants to withdraw
   /// @return Amount actually withdrawn
-  function withdraw(uint256 amount) public override returns (uint256) {
+  function withdraw(uint256 amount) public returns (uint256) {
     withdraw(amount, msg.sender, msg.sender);
     return amount;
   }
 
   /// @notice Withdraws as much as possible from the lending platform
   /// @return Whether everything was withdrawn or not
-  function withdrawAll() public override returns (bool) {
+  function withdrawAll() public returns (bool) {
     return withdraw(maxWithdraw(msg.sender), msg.sender, msg.sender) > 0;
   }
 
