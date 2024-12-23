@@ -247,11 +247,10 @@ task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM re
     return booster;
   });
 
-task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster for LM rewards")
-  .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
-  .setAction(async ({ name }, { deployments, getNamedAccounts }) => {
+task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster for LM rewards").setAction(
+  async ({}, { deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const booster = await deployments.deploy(`IonicFlywheelSupplyBooster_${name}`, {
+    const booster = await deployments.deploy(`IonicFlywheelSupplyBooster`, {
       contract: "IonicFlywheelSupplyBooster",
       from: deployer,
       log: true,
@@ -262,4 +261,5 @@ task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster 
     console.log(`Deployed booster: ${booster.address}`);
 
     return booster;
-  });
+  }
+);
