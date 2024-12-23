@@ -139,7 +139,7 @@ export default function APR(props: APRCellProps) {
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        className="flex flex-col gap-2 p-3 bg-gray-900 border border-gray-700 rounded-lg shadow-lg"
+        className="flex flex-col gap-2 p-3 bg-grayone border border-accent rounded-lg shadow-lg"
         align="center"
       >
         <div className="text-sm font-medium text-gray-300">APR Breakdown</div>
