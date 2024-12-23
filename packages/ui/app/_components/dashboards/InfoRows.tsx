@@ -176,7 +176,6 @@ const InfoRows = ({
           pool={comptrollerAddress}
           poolChainId={selectedChain}
           type={type}
-          isStandalone
         />
       ) : (
         <div />
