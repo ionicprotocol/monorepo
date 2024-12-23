@@ -275,15 +275,15 @@ export const pools: Record<number, PoolParams> = {
           'KLIMA'
         ]
       }
-    ],
-    vaults: [
-      {
-        id: 'vault',
-        name: 'Supply Vaults',
-        description: 'Optimized yield strategies',
-        assets: ['USDC', 'WETH']
-      }
     ]
+    // vaults: [
+    //   {
+    //     id: 'vault',
+    //     name: 'Supply Vaults',
+    //     description: 'Optimized yield strategies',
+    //     assets: ['USDC', 'WETH']
+    //   }
+    // ]
   },
   [optimism.id]: {
     name: 'Optimism',
