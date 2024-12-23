@@ -38,12 +38,12 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
-  console.log('chain', chain);
+  // console.log('chain', chain);
 
   const { data } = useAssetPrices({
     chainId: +chain
   });
-  console.log('data', data);
+  // console.log('data', data);
 
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 
