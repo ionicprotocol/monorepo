@@ -259,5 +259,7 @@ task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster 
       waitConfirmations: 1
     });
 
+    console.log(`Deployed booster: ${booster.address}`);
+
     return booster;
   });
