@@ -21,6 +21,7 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments }
   for (const pool of pools) {
     const flywheels: string[] = await pool.getAccruingFlywheels();
     for (const ionicFlywheelAddress of flywheels) {
+      console.log("Upgrading flywheel at: ", ionicFlywheelAddress);
       // upgrade IonicFlywheels
       let flywheelContractName = "IonicFlywheel";
       let flywheel = await viem.getContractAt(flywheelContractName, ionicFlywheelAddress as Address);
@@ -28,9 +29,11 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments }
 
       const ionicFlywheelBoosterAddress = (await deployments.get("IonicFlywheelSupplyBooster")).address as Address;
       if ((await flywheel.read.flywheelBooster()) == ZERO_ADDRESS) {
+        console.log("Supply Flywheel detected, setting booster");
         // Supply Flywheel
         flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
       } else {
+        console.log("Borrow Flywheel detected, skipping booster");
         // Borrow Flywheel
         flywheelContractName = "IonicFlywheelBorrow";
         flywheel = await viem.getContractAt(flywheelContractName, ionicFlywheelAddress as Address);

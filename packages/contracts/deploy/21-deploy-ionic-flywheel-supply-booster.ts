@@ -17,6 +17,6 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments }
   console.log("IonicFlywheelSupplyBooster deployed at: ", booster.address);
 };
 
-func.tags = ["upgrade", "ionic-flywheel-supply-booster-core"];
+func.tags = ["prod", "ionic-flywheel-supply-booster-core"];
 
 export default func;
