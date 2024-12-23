@@ -47,7 +47,6 @@ export function useMerklData() {
         const res = await axios.get<MerklOpportunityResponse>(
           `https://api.merkl.xyz/v3/opportunity?campaigns=true&chainId=${mode.id}&type=10&testTokens=true`
         );
-        console.log('res', res);
 
         return Object.entries(res.data).flatMap(
           ([key, opportunity]): TokenAprInfo[] => {

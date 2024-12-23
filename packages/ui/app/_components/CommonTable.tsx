@@ -46,6 +46,11 @@ export const sortingFunctions = {
 
 type SortingType = keyof typeof sortingFunctions;
 
+export interface MarketCellProps {
+  row: Row<any>;
+  getValue: () => any;
+}
+
 export type EnhancedColumnDef<T> = Omit<
   ColumnDef<T, unknown>,
   'header' | 'sortingFn'
