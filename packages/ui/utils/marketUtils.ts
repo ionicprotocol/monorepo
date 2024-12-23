@@ -1,8 +1,9 @@
+import { base } from 'viem/chains';
+
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import type { RewardIcon } from '@ui/hooks/market/useAPRCell';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import { base } from 'viem/chains';
 
 type TotalAPRParams = {
   type: 'borrow' | 'supply';
@@ -85,19 +86,27 @@ export const getExtraRewardIcons = (
 ): RewardIcon[] => {
   const additionalRewards: RewardIcon[] = [];
 
-  if (config?.turtle && asset === 'STONE') {
-    additionalRewards.push({
-      name: 'stone',
-      icon: '/img/symbols/32/color/stone.png',
-      text: '+ Stone Turtle Points'
-    });
-  }
-
   if (config?.etherfi) {
     additionalRewards.push({
       name: 'etherfi',
       icon: '/images/etherfi.png',
       text: `+ ${config.etherfi}x ether.fi Points`
+    });
+  }
+
+  if (config?.eigenlayer) {
+    additionalRewards.push({
+      name: 'eigen',
+      icon: '/images/eigen.png',
+      text: '+ EigenLayer Points'
+    });
+  }
+
+  if (config?.turtle && asset === 'STONE') {
+    additionalRewards.push({
+      name: 'stone',
+      icon: '/img/symbols/32/color/stone-turtle.svg',
+      text: '+ Stone Turtle Points'
     });
   }
 
@@ -114,14 +123,6 @@ export const getExtraRewardIcons = (
         text: '+ Turtle Kelp Points'
       }
     );
-  }
-
-  if (config?.eigenlayer) {
-    additionalRewards.push({
-      name: 'eigen',
-      icon: '/images/eigen.png',
-      text: '+ EigenLayer Points'
-    });
   }
 
   if (config?.spice) {

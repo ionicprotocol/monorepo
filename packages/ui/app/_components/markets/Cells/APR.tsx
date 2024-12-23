@@ -9,7 +9,7 @@ import {
   HoverCardTrigger,
   HoverCardContent
 } from '@ui/components/ui/hover-card';
-import { chainsArr, pools } from '@ui/constants';
+import { pools } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
 import { cn } from '@ui/lib/utils';
 
@@ -116,7 +116,7 @@ export default function APR(props: APRCellProps) {
                   <Image
                     src={
                       asset === 'STONE'
-                        ? '/img/symbols/32/color/stone.png'
+                        ? '/img/symbols/32/color/stone-turtle-dark.svg'
                         : config?.kelp
                           ? '/images/turtle-kelp.png'
                           : '/images/turtle-ionic.png'
@@ -224,7 +224,7 @@ export default function APR(props: APRCellProps) {
                 <Image
                   src={
                     asset === 'STONE'
-                      ? '/img/symbols/32/color/stone.png'
+                      ? '/img/symbols/32/color/stone-turtle.svg'
                       : config?.kelp
                         ? '/images/turtle-kelp.png'
                         : '/images/turtle-ionic.png'
