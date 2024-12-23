@@ -990,7 +990,7 @@ const LoopRow = ({
         className="items-center justify-center"
       />
 
-      <h3 className={`mb-2 lg:mb-0`}>
+      <h3 className={`ml-2 mb-2 lg:mb-0`}>
         <button
           className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
           onClick={() => {

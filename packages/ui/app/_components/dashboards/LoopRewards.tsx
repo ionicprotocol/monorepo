@@ -1,11 +1,12 @@
-'use client';
-
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 import toast from 'react-hot-toast';
 import { formatEther, type Address } from 'viem';
 import { useChainId, useWriteContract } from 'wagmi';
 
+import { Button } from '@ui/components/ui/button';
+import { Card } from '@ui/components/ui/card';
 import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -24,6 +25,7 @@ type LoopRewardsProps = {
   rewards?: FlywheelReward[];
   className?: string;
 };
+
 const LoopRewards = ({
   positionAddress,
   poolChainId,
@@ -69,54 +71,86 @@ const LoopRewards = ({
     return acc;
   }, [] as FlywheelClaimableRewards[]);
 
+  const hasClaimableRewards = combinedRewards?.some(
+    (reward) => Number(formatEther(reward.amount)) > 0
+  );
+
   return (
-    <>
-      {rewards?.map((rewards, index) => (
-        <div key={index}>
-          {REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.token]} Rewards APR: +
-          {rewards.apy
-            ? rewards.apy.toLocaleString('en-US', { maximumFractionDigits: 2 })
-            : '-'}
-          %
+    <div className="flex flex-col gap-1 w-full">
+      {/* APR Rewards */}
+      {rewards?.map((reward, index) => (
+        <div
+          key={index}
+          className="flex justify-between items-center gap-4"
+        >
+          <div className="flex items-center gap-2">
+            <Image
+              alt=""
+              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[reward?.token].toLowerCase()}.png`}
+              width={16}
+              height={16}
+              className="w-4 h-4 rounded"
+            />
+            <span className="text-xs text-gray-400">
+              {REWARDS_TO_SYMBOL[poolChainId]?.[reward?.token]} Rewards
+            </span>
+          </div>
+          <span className="text-xs font-medium text-green-400">
+            +
+            {reward.apy?.toLocaleString('en-US', {
+              maximumFractionDigits: 2
+            }) ?? '-'}
+            %
+          </span>
         </div>
       ))}
-      <div className="py-4">
-        {combinedRewards?.map((rewards, index) => (
-          <div
-            className={`flex ${className ?? 'none'}`}
-            key={index}
-          >
-            <img
-              alt=""
-              className="size-4 rounded mr-1"
-              src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[rewards?.rewardToken]?.toLowerCase()}.png`}
-            />{' '}
-            +{' '}
-            {Number(formatEther(rewards.amount)).toLocaleString('en-US', {
-              maximumFractionDigits: 1
-            })}{' '}
-            {REWARDS_TO_SYMBOL[poolChainId][rewards.rewardToken]}
-          </div>
-        ))}
-        {totalRewards > 0n && (
-          <div className="flex justify-center pt-1">
-            <button
-              className={`rounded-md bg-accent text-black py-1 px-3 uppercase truncate `}
+
+      {/* Claimable Rewards */}
+      {(totalRewards > 0n ||
+        (combinedRewards && combinedRewards.length > 0)) && (
+        <Card className="flex flex-col gap-1 bg-transparent border-none shadow-none p-0">
+          {combinedRewards?.map((reward, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-center gap-2"
+            >
+              <Image
+                alt=""
+                src={`/img/symbols/32/color/${REWARDS_TO_SYMBOL[poolChainId]?.[reward.rewardToken].toLowerCase()}.png`}
+                width={16}
+                height={16}
+                className="w-4 h-4 rounded"
+              />
+              <span className="text-xs font-medium text-white">
+                +{' '}
+                {Number(formatEther(reward.amount)).toLocaleString('en-US', {
+                  maximumFractionDigits: 1
+                })}{' '}
+                {REWARDS_TO_SYMBOL[poolChainId][reward.rewardToken]}
+              </span>
+            </div>
+          ))}
+
+          {totalRewards > 0n && (
+            <Button
+              variant="secondary"
+              className="uppercase font-medium bg-accent hover:bg-accent/90 text-black h-6 text-[10px] px-2 rounded-md mt-1 disabled:opacity-50"
               onClick={claimRewards}
+              disabled={isPending || !hasClaimableRewards}
             >
               <ResultHandler
                 isLoading={isPending}
-                height="20"
-                width="20"
-                color={'#000000'}
+                height="14"
+                width="14"
+                color="#000000"
               >
                 Claim Rewards
               </ResultHandler>
-            </button>
-          </div>
-        )}
-      </div>
-    </>
+            </Button>
+          )}
+        </Card>
+      )}
+    </div>
   );
 };
 

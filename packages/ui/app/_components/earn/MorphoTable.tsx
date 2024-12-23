@@ -9,10 +9,10 @@ import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
 
 import MorphoApyCell from './MorphoApyCell';
-import { MorphoDialog } from './MorphoDialog';
 import ActionButton from '../ActionButton';
 import { AssetIcons } from '../AssetIcons';
 import CommonTable from '../CommonTable';
+import { MorphoDialog } from '../dialogs/MorphoVault';
 
 import type { EnhancedColumnDef } from '../CommonTable';
 
