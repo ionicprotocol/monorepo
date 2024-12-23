@@ -13,6 +13,7 @@ const environment = {
   supabaseAssetTvlTableName: process.env.SUPABASE_ASSET_TVL_TABLE_NAME ?? '',
   supabaseAssetTotalApyTableName: process.env.SUPABASE_ASSET_TOTAL_APY_TABLE_NAME ?? '',
   supabaseAssettotalTvlTableName:process.env.SUPABASE_ASSET_TOTAL_TVL_TABLE_NAME ?? '',
+  supabaseAssetTotalTvlPoolName:process.env.SUPABASE_ASSET_TOTAL_TVL_POOL_TABLE_NAME ?? '',
   uptimeAssetPriceApi: process.env.UPTIME_ASSET_PRICE_API ?? '',
   uptimeTotalApyApi: process.env.UPTIME_TOTAL_APY_API ?? '',
   uptimeTotalHistoryApyApi: process.env.UPTIME_TOTAL_HISTORY_APY_API ?? '',
