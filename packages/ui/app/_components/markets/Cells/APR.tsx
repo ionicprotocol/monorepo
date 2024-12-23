@@ -142,7 +142,9 @@ export default function APR(props: APRCellProps) {
         className="flex flex-col gap-2 p-3 bg-grayone border border-accent rounded-lg shadow-lg"
         align="center"
       >
-        <div className="text-sm font-medium text-gray-300">APR Breakdown</div>
+        <div className="text-sm font-medium text-gray-300 text-left">
+          APR Breakdown
+        </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
