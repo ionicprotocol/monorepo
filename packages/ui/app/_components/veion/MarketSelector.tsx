@@ -152,7 +152,7 @@ const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
           token={getToken(currentChain)}
           handleInput={(val?: string) => setAmount(val || '0')}
           chain={currentChain}
-          useSlider
+          showUtilizationSlider
         />
 
         <Button

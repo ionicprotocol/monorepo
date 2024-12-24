@@ -83,7 +83,7 @@ export default function MigrateIonDialog({
             chain={currentChain}
             max={veIonBalance}
             headerText="Available LP"
-            useSlider
+            showUtilizationSlider
           />
 
           <Button

@@ -111,7 +111,7 @@ export default function AddLiquidityDialog({
               tokenName="ion"
               handleInput={handleIonInput}
               chain={currentChain}
-              useSlider
+              showUtilizationSlider
             />
 
             <MaxDeposit
@@ -120,7 +120,7 @@ export default function AddLiquidityDialog({
               amount={maxDeposit.eth}
               tokenName="eth"
               chain={currentChain}
-              useSlider
+              showUtilizationSlider
             />
 
             <Button

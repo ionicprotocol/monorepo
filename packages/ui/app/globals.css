@@ -140,10 +140,6 @@
   background: #ff007f;
 }
 
-.bg-lime {
-  background: #dffe00;
-}
-
 .bg-optimism {
   background: #df1515;
 }
@@ -158,6 +154,14 @@
 
 .bg-lisk {
   background: #4071f4;
+}
+
+.bg-ink {
+  background: #7040e0;
+}
+
+.bg-swell {
+  background: #3c50d6;
 }
 
 .text-lime {
@@ -190,6 +194,14 @@
 
 .border-lisk {
   border-color: #4071f4;
+}
+
+.border-ink {
+  border-color: #7040e0;
+}
+
+.border-swell {
+  border-color: #3c50d6;
 }
 
 .text-xxs {

@@ -4,7 +4,9 @@ import {
   optimism as vOptimism,
   bob as vBob,
   fraxtal as vFraxtal,
-  lisk as vLisk
+  lisk as vLisk,
+  superseed as vSuperseed,
+  worldchain as vWorldchain
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -18,7 +20,13 @@ import {
   optimism,
   bob,
   fraxtal,
-  lisk
+  lisk,
+  superseed,
+  worldchain,
+  ink,
+  vInk,
+  swellchain,
+  vSwellchain
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -95,6 +103,22 @@ export function getEnabledChains() {
     enabledChains.push(vLisk);
   }
 
+  if (config.isSuperseedEnabled) {
+    enabledChains.push(vSuperseed);
+  }
+
+  if (config.isWorldchainEnabled) {
+    enabledChains.push(vWorldchain);
+  }
+
+  if (config.isInkEnabled) {
+    enabledChains.push(vInk);
+  }
+
+  if (config.isSwellEnabled) {
+    enabledChains.push(vSwellchain);
+  }
+
   return enabledChains;
 }
 
@@ -104,7 +128,11 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.optimism]: optimism.assets,
   [SupportedChains.bob]: bob.assets,
   [SupportedChains.fraxtal]: fraxtal.assets,
-  [SupportedChains.lisk]: lisk.assets
+  [SupportedChains.lisk]: lisk.assets,
+  [SupportedChains.superseed]: superseed.assets,
+  [SupportedChains.worldchain]: worldchain.assets,
+  [SupportedChains.ink]: ink.assets,
+  [SupportedChains.swell]: swellchain.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -113,5 +141,9 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.optimism]: optimism.deployedPlugins,
   [SupportedChains.bob]: bob.deployedPlugins,
   [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
-  [SupportedChains.lisk]: lisk.deployedPlugins
+  [SupportedChains.lisk]: lisk.deployedPlugins,
+  [SupportedChains.superseed]: superseed.deployedPlugins,
+  [SupportedChains.worldchain]: worldchain.deployedPlugins,
+  [SupportedChains.ink]: ink.deployedPlugins,
+  [SupportedChains.swell]: swellchain.deployedPlugins
 };

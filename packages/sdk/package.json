@@ -67,6 +67,6 @@
     "bufferutil": "^4.0.8",
     "perf_hooks": "^0.0.1",
     "utf-8-validate": "^6.0.4",
-    "viem": "^2.21.12"
+    "viem": "^2.21.55"
   }
 }

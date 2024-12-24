@@ -18,6 +18,7 @@ export const FRAX = "0xfc00000000000000000000000000000000000001";
 export const sFRAX = "0xfc00000000000000000000000000000000000008";
 export const frxBTC = "0xfc00000000000000000000000000000000000007";
 export const insfrxETH = "0xE162075a1C0Ac7e985253972bEcA5e83Da3BBaa4";
+export const ION = "0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE";
 
 export const assets: SupportedAsset[] = [
   {
@@ -132,6 +133,13 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(1_500_000)).toString(),
     initialBorrowCap: parseEther(String(1_200_000)).toString(),
     initialCf: "0.85"
+  },
+  {
+    symbol: assetSymbols.ION,
+    underlying: ION,
+    name: "Ion",
+    decimals: 18,
+    oracle: OracleTypes.VelodromePriceOracle
   }
 ];
 

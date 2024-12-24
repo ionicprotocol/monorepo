@@ -17,6 +17,7 @@ const config: Config = {
       },
       colors: {
         accent: '#3bff89ff',
+        lime: '#dffe00',
         darkone: '#0a0a0aff',
         grayUnselect: '#2c2e33ff',
         graylite: '#34363dff',

@@ -3,7 +3,7 @@ import { Address } from "viem";
 import { USDC_MARKET } from ".";
 import { configureAddress } from "../../../chainDeploy/helpers/liquidators/ionicLiquidator";
 
-const HYPERNATIVE_ORACLE = "0x98fEFA40BE865394903fDe4B2A8B352a5F28202e";
+const HYPERNATIVE_ORACLE = "0xe753fdceacdd19eeebc3f2528e270ca27370dcf6";
 
 task("markets:upgrade-and-setup:hypernative", "Upgrades all markets and sets addresses provider on them").setAction(
   async (_, { viem, deployments, run, getNamedAccounts }) => {

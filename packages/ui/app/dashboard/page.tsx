@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -77,17 +77,27 @@ export default function Dashboard() {
   );
   const { data: positionsInfo, isLoading: isLoadingPositionsInfo } =
     usePositionsInfo(
-      positions?.openPositions.map((position) => position.address) ?? [],
-      positions?.openPositions.map((position) =>
+      positions?.openPositions
+        ?.filter(
+          (p): p is OpenPosition =>
+            !!p &&
+            !!p.address &&
+            typeof p.address === 'string' &&
+            p.address.startsWith('0x')
+        )
+        ?.map((position) => position.address as `0x${string}`) ?? [],
+      positions?.openPositions?.map((position) =>
         collateralsAPR &&
+        position?.collateral?.cToken &&
         collateralsAPR[position.collateral.cToken] !== undefined
           ? parseEther(
               collateralsAPR[position.collateral.cToken].totalApy.toFixed(18)
             )
           : null
-      ),
-      positions?.openPositions.map((p) => p.chainId) ?? []
+      ) ?? [],
+      positions?.openPositions?.map((p) => p?.chainId ?? chain) ?? []
     );
+
   const { data: positionLeverages, isLoading: isLoadingPositionLeverages } =
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
@@ -109,7 +119,17 @@ export default function Dashboard() {
     +chain
   );
   const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
-    if (marketData && assetsSupplyAprData && currentSdk) {
+    if (!marketData?.assets || !assetsSupplyAprData || !currentSdk) {
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
+    }
+
+    try {
       const blocksPerMinute = getBlockTimePerMinuteByChainId(+chain);
       let totalCollateral = 0;
       let avgCollateralApr = 0;
@@ -118,45 +138,61 @@ export default function Dashboard() {
       let memberships = 0;
 
       marketData.assets.forEach((asset) => {
-        if (asset.membership) {
-          totalCollateral += asset.supplyBalanceFiat;
-          avgCollateralApr += assetsSupplyAprData[asset.cToken].apy;
+        if (!asset) return;
 
+        if (asset.membership) {
+          totalCollateral += asset.supplyBalanceFiat ?? 0;
+          avgCollateralApr += assetsSupplyAprData[asset.cToken]?.apy ?? 0;
           memberships++;
         }
 
-        if (asset.borrowBalanceFiat) {
-          borrowApr += currentSdk.ratePerBlockToAPY(
-            asset.borrowRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.borrowBalanceFiat && asset.borrowRatePerBlock) {
+          try {
+            borrowApr += currentSdk.ratePerBlockToAPY(
+              asset.borrowRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating borrow APR:', e);
+          }
         }
 
-        if (asset.supplyBalanceFiat) {
-          supplyApr += currentSdk.ratePerBlockToAPY(
-            asset.supplyRatePerBlock,
-            blocksPerMinute
-          );
+        if (asset.supplyBalanceFiat && asset.supplyRatePerBlock) {
+          try {
+            supplyApr += currentSdk.ratePerBlockToAPY(
+              asset.supplyRatePerBlock,
+              blocksPerMinute
+            );
+          } catch (e) {
+            console.warn('Error calculating supply APR:', e);
+          }
         }
       });
 
-      supplyApr = supplyApr / (suppliedAssets.length || 1);
-      borrowApr = borrowApr / (borrowedAssets.length || 1);
+      const finalSupplyApr = supplyApr / (suppliedAssets.length || 1);
+      const finalBorrowApr = borrowApr / (borrowedAssets.length || 1);
 
       return {
-        avgCollateralApr: `${(avgCollateralApr / memberships).toFixed(2)}%`,
-        borrowApr: `${borrowApr.toFixed(2)}%`,
+        avgCollateralApr: `${(avgCollateralApr / (memberships || 1)).toFixed(2)}%`,
+        borrowApr: `${finalBorrowApr.toFixed(2)}%`,
         netAssetValue: `$${millify(
           (marketData?.totalSupplyBalanceFiat ?? 0) -
             (marketData?.totalBorrowBalanceFiat ?? 0),
           { precision: 2 }
         )}`,
-        supplyApr: `${supplyApr.toFixed(2)}%`,
+        supplyApr: `${finalSupplyApr.toFixed(2)}%`,
         totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
       };
+    } catch (e) {
+      console.warn('Error in APR calculations:', e);
+      return {
+        avgCollateralApr: '0.00%',
+        borrowApr: '0.00%',
+        netAssetValue: '$0.00',
+        supplyApr: '0.00%',
+        totalCollateral: '$0.00'
+      };
     }
-
-    return {};
   }, [
     assetsSupplyAprData,
     borrowedAssets,
@@ -165,6 +201,7 @@ export default function Dashboard() {
     marketData,
     suppliedAssets
   ]);
+
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
       marketData?.assets.find(
@@ -222,11 +259,38 @@ export default function Dashboard() {
     data: claimableRewardsAcrossAllChains,
     isLoading: isLoadingClaimableRewardsAcrossAllChains
   } = useAllClaimableRewards(allChains);
-  const totalRewardsAcrossAllChains =
-    claimableRewardsAcrossAllChains?.reduce(
-      (acc, reward) => acc + reward.amount,
-      0n
-    ) ?? 0n;
+
+  const totalRewardsAcrossAllChains = useMemo(() => {
+    // Early return if the entire rewards array is undefined
+    if (!claimableRewardsAcrossAllChains) return 0n;
+    if (!Array.isArray(claimableRewardsAcrossAllChains)) return 0n;
+    if (!claimableRewardsAcrossAllChains.length) return 0n;
+
+    try {
+      const validRewards = claimableRewardsAcrossAllChains.filter(
+        (
+          reward
+        ): reward is { amount: bigint; chainId: number; rewardToken: string } =>
+          reward !== null &&
+          reward !== undefined &&
+          'amount' in reward &&
+          'chainId' in reward &&
+          'rewardToken' in reward &&
+          typeof reward.amount === 'bigint'
+      );
+
+      // If no valid rewards after filtering, return early
+      if (!validRewards.length) return 0n;
+
+      return validRewards.reduce((acc, reward) => acc + reward.amount, 0n);
+    } catch (e) {
+      console.warn('Error calculating total rewards:', {
+        error: e,
+        rewards: claimableRewardsAcrossAllChains
+      });
+      return 0n;
+    }
+  }, [claimableRewardsAcrossAllChains]);
 
   const { isopen: claimDialogIsOpen, toggle: claimDialogToggle } =
     useOutsideClick();
@@ -697,30 +761,59 @@ export default function Dashboard() {
                     <h3 className={` `}>REWARDS</h3>
                   </div>
 
-                  {positions?.openPositions.map((position, i) => {
-                    const currentPositionInfo = positionsInfo
-                      ? positionsInfo[position.address]
-                      : undefined;
+                  {positions?.openPositions
+                    ?.filter(Boolean)
+                    .map((position, i) => {
+                      if (
+                        !position ||
+                        !position.address ||
+                        typeof position.address !== 'string'
+                      ) {
+                        console.warn('Invalid position:', position);
+                        return null;
+                      }
 
-                    if (!currentPositionInfo) {
-                      return <div key={`position-${i}`} />;
-                    }
+                      const isValidAddress =
+                        position?.address &&
+                        typeof position.address === 'string' &&
+                        position.address.startsWith('0x');
 
-                    return (
-                      <LoopRow
-                        key={`position-${position.address}`}
-                        currentPositionInfo={currentPositionInfo}
-                        marketData={marketData ?? undefined}
-                        position={position}
-                        positionLeverage={positionLeverages?.[i] ?? undefined}
-                        usdPrice={usdPrice ?? undefined}
-                        setSelectedLoopBorrowData={setSelectedLoopBorrowData}
-                        setSelectedSymbol={setSelectedSymbol}
-                        setLoopOpen={setIsLoopDialogOpen}
-                        chain={+chain}
-                      />
-                    );
-                  })}
+                      const currentPositionInfo =
+                        isValidAddress && positionsInfo
+                          ? positionsInfo[position.address]
+                          : undefined;
+
+                      if (!isValidAddress) {
+                        console.warn(
+                          'Invalid position address format:',
+                          position?.address
+                        );
+                        return null;
+                      }
+
+                      if (!currentPositionInfo) {
+                        console.warn(
+                          'Missing position info for address:',
+                          position?.address
+                        );
+                        return <div key={`position-${i}`} />;
+                      }
+
+                      return (
+                        <LoopRow
+                          key={`position-${position.address}`}
+                          currentPositionInfo={currentPositionInfo}
+                          marketData={marketData ?? undefined}
+                          position={position}
+                          positionLeverage={positionLeverages?.[i] ?? undefined}
+                          usdPrice={usdPrice ?? undefined}
+                          setSelectedLoopBorrowData={setSelectedLoopBorrowData}
+                          setSelectedSymbol={setSelectedSymbol}
+                          setLoopOpen={setIsLoopDialogOpen}
+                          chain={+chain}
+                        />
+                      );
+                    })}
                 </>
               ) : (
                 <div className="text-center mx-auto py-2">
@@ -777,6 +870,23 @@ const LoopRow = ({
   setLoopOpen,
   chain
 }: LoopRowProps) => {
+  if (
+    !position ||
+    !position.address ||
+    !position.collateral?.symbol ||
+    !position.borrowable?.symbol ||
+    !currentPositionInfo
+  ) {
+    console.warn('Missing required data for LoopRow:', {
+      hasPosition: !!position,
+      address: position?.address,
+      collateralSymbol: position?.collateral?.symbol,
+      borrowableSymbol: position?.borrowable?.symbol,
+      hasCurrentPositionInfo: !!currentPositionInfo
+    });
+    return null;
+  }
+
   return (
     <div
       className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2 gap-x-1 lg:grid grid-cols-6 py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
@@ -871,12 +981,12 @@ const LoopRow = ({
       </h3>
 
       <LoopRewards
-        positionAddress={position.address}
+        positionAddress={position.address ?? '0x'}
         poolChainId={chain}
         className="items-center justify-center"
       />
 
-      <h3 className={`mb-2 lg:mb-0`}>
+      <h3 className={`ml-2 mb-2 lg:mb-0`}>
         <button
           className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
           onClick={() => {

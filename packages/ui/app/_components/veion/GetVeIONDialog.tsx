@@ -105,7 +105,7 @@ export default function GetVeIONDialog({
                 token={getToken(currentChain)}
                 handleInput={(val?: string) => setAmount(val || '0')}
                 chain={currentChain}
-                useSlider
+                showUtilizationSlider
               />
 
               <Separator className="bg-white/10" />

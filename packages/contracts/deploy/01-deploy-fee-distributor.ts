@@ -1,5 +1,6 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { Address, formatUnits, parseEther, maxUint256, Hash } from "viem";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
@@ -9,7 +10,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   console.log("chainId: ", chainId);
 
   const MIN_BORROW_USD = 0.1;
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const [walletClient] = await viem.getWalletClients({ chain: chainIdtoChain[chainId] });
 
   const { deployer, multisig } = await getNamedAccounts();
   console.log("deployer: ", deployer);
@@ -57,7 +59,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   }
   const fuseFeeDistributor = await viem.getContractAt(
     "FeeDistributor",
-    (await deployments.get("FeeDistributor")).address as Address
+    (await deployments.get("FeeDistributor")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const ffdFee = await fuseFeeDistributor.read.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);

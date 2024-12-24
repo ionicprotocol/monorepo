@@ -3,7 +3,7 @@ import { fraxtal } from "@ionicprotocol/chains";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress, zeroHash } from "viem";
 import { ChainlinkSpecificParams, OracleTypes } from "../types";
-import { deployApi3Oracle } from "../helpers/oracles/api3";
+import { deployVelodromeOracleFraxtal } from "../helpers/oracles/velodromeFraxtal";
 
 const assets = fraxtal.assets;
 
@@ -52,6 +52,16 @@ export const deploy = async ({
     deployConfig,
     assets: fraxtal.assets,
     chainlinkAssets
+  });
+
+  await deployVelodromeOracleFraxtal({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: fraxtal.assets.filter((asset) => asset.oracle === OracleTypes.VelodromePriceOracle),
+    pricesContract: "0xe58920a8c684CD3d6dCaC2a41b12998e4CB17EfE"
   });
 
   const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {

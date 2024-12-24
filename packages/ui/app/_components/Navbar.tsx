@@ -12,11 +12,10 @@ import { http, createConfig, useChainId } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
-import { useStore } from '@ui/store/Store';
-
 import ConnectButton from './ConnectButton';
 import DynamicSubNav from './DynamicSubNav';
 import { BlackCreateWalletButton } from './navbar/BlackCreateWalletButton';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
@@ -42,7 +41,7 @@ export default function Navbar() {
   const [isActive, setIsActive] = useState<boolean>(false);
   const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
   const pathname = usePathname();
-  const dropChain = useStore((state) => state.dropChain);
+  const { dropChain } = useMultiIonic();
   const chainId = useChainId();
   // const signer = useEthersSigner();
 

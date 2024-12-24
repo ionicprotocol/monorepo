@@ -36,6 +36,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"  
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -362,6 +367,8 @@ jobs:
       # - name: run smoke tests for feed verifier
       #   working-directory: ./ops
       #   run: make feed-verifier-smoke-test
+
+
      # - name: run smoke tests for price verifier
       #   working-directory: ./ops
       #   run: make price-verifier-smoke-test
@@ -400,6 +407,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -19,7 +19,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 const FlyWheelRewards = dynamic(() => import('../markets/FlyWheelRewards'), {
   ssr: false
 });
-import APRCell from '../markets/APRCell';
+import APR from '../markets/Cells/APR';
 
 import type { Address } from 'viem';
 
@@ -156,7 +156,7 @@ const InfoRows = ({
         <span className="text-white/40 font-semibold mr-2 md:hidden text-left">
           {mode === InfoMode.SUPPLY ? 'SUPPLY' : 'BORROW'} APR:
         </span>
-        <APRCell
+        <APR
           type={mode === InfoMode.SUPPLY ? 'supply' : 'borrow'}
           aprTotal={totalApr}
           baseAPR={baseAPR}
@@ -166,6 +166,8 @@ const InfoRows = ({
           pool={comptrollerAddress}
           selectedPoolId={pool}
           rewards={mode === InfoMode.SUPPLY ? supplyRewards : borrowRewards}
+          // fix this
+          underlyingToken="0x"
         />
       </h3>
       {hasFlywheelRewards ? (
@@ -174,7 +176,6 @@ const InfoRows = ({
           pool={comptrollerAddress}
           poolChainId={selectedChain}
           type={type}
-          isStandalone
         />
       ) : (
         <div />

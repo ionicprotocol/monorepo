@@ -13,24 +13,27 @@ import {
 import { useBorrow } from '@ui/hooks/market/useBorrow';
 import { useHealth } from '@ui/hooks/market/useHealth';
 
-import Amount from './Amount';
+import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
 interface BorrowTabProps {
-  maxAmount: bigint;
-  isLoadingMax: boolean;
-  totalStats?: {
-    capAmount: number;
-    totalAmount: number;
-    capFiat: number;
-    totalFiat: number;
-  };
+  capAmount: number;
+  totalAmount: number;
+  capFiat: number;
+  totalFiat: number;
 }
 
-const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
+const BorrowTab = ({
+  capAmount,
+  totalAmount,
+  capFiat,
+  totalFiat
+}: BorrowTabProps) => {
   const {
     selectedMarketData,
     resetTransactionSteps,
@@ -41,6 +44,12 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
     setPredictionAmount,
     getStepsForTypes
   } = useManageDialogContext();
+
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxBorrowAmount(
+    selectedMarketData,
+    comptrollerAddress,
+    chainId
+  );
 
   const {
     isWaitingForIndexing,
@@ -92,10 +101,14 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
         amount={amount}
         handleInput={(val?: string) => setAmount(val ?? '')}
         isLoading={isLoadingMax || isPolling}
-        max={formatUnits(maxAmount, selectedMarketData.underlyingDecimals)}
+        max={formatUnits(
+          maxAmount?.bigNumber ?? 0n,
+          selectedMarketData.underlyingDecimals
+        )}
         symbol={selectedMarketData.underlyingSymbol}
         currentUtilizationPercentage={utilizationPercentage}
         handleUtilization={handleUtilization}
+        hintText="Max Borrow"
       />
 
       {isUnderMinBorrow && (
@@ -180,16 +193,14 @@ const BorrowTab = ({ maxAmount, isLoadingMax, totalStats }: BorrowTabProps) => {
           </div>
         </div>
 
-        {totalStats && (
-          <MemoizedUtilizationStats
-            label="Total Supplied"
-            value={totalStats.totalAmount}
-            max={totalStats.capAmount}
-            symbol={selectedMarketData.underlyingSymbol}
-            valueInFiat={totalStats.totalFiat}
-            maxInFiat={totalStats.capFiat}
-          />
-        )}
+        <MemoizedUtilizationStats
+          label="Total Supplied"
+          value={totalAmount}
+          max={capAmount}
+          symbol={selectedMarketData.underlyingSymbol}
+          valueInFiat={totalFiat}
+          maxInFiat={capFiat}
+        />
       </div>
 
       {transactionSteps.length > 0 ? (

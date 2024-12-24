@@ -2,23 +2,29 @@ import {
   useState,
   useMemo,
   useRef,
-  useEffect,
   type SetStateAction,
   type Dispatch
 } from 'react';
 
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 
 import { formatUnits, parseUnits, type Address } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
-import { Input } from '@ui/components/ui/input';
+import { Slider } from '@ui/components/ui/slider';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
+import { cn } from '@ui/lib/utils';
 
-import { PrecisionSlider } from './PrecisionSlider';
+import AmountInput from './AmountInput';
 import TokenSelector from './stake/TokenSelector';
+import TokenDisplay from './TokenDisplay';
 
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
@@ -32,7 +38,6 @@ interface IMaxDeposit {
   tokenName?: string;
   token?: Address;
   handleInput?: (val?: string) => void;
-  fetchOwn?: boolean;
   headerText?: string;
   max?: string;
   chain: number;
@@ -43,8 +48,11 @@ interface IMaxDeposit {
   footerText?: string;
   decimals?: number;
   // Added slider props
-  useSlider?: boolean;
-  sliderStep?: number;
+  readonly?: boolean;
+  isLoading?: boolean;
+  showUtilizationSlider?: boolean;
+  initialUtilization?: number;
+  onUtilizationChange?: (percentage: number) => void;
 }
 
 function MaxDeposit({
@@ -53,7 +61,6 @@ function MaxDeposit({
   tokenName = 'eth',
   token,
   handleInput,
-  fetchOwn = false,
   max,
   chain,
   tokenSelector = false,
@@ -62,15 +69,19 @@ function MaxDeposit({
   useUnderlyingBalance = false,
   footerText,
   decimals: propDecimals,
-  // Added slider props with defaults
-  useSlider = false,
-  sliderStep = 1
+  readonly,
+  isLoading,
+  showUtilizationSlider = false,
+  initialUtilization = 0,
+  onUtilizationChange
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
-  const [utilizationPercentage, setUtilizationPercentage] = useState(0);
+  const [utilizationPercentage, setUtilizationPercentage] =
+    useState(initialUtilization);
   const { address } = useAccount();
+  const [open, setOpen] = useState<boolean>(false);
+  const newRef = useRef<HTMLDivElement>(null);
 
-  // For regular token balance
   const hooktoken =
     token === '0x0000000000000000000000000000000000000000' ? undefined : token;
 
@@ -129,25 +140,6 @@ function MaxDeposit({
     setMaxTokenForUtilization
   ]);
 
-  // Added effect to update utilization percentage
-  useEffect(() => {
-    if (bal && amount) {
-      const percentage =
-        (Number(amount) / Number(formatUnits(bal.value, bal.decimals))) * 100;
-      setUtilizationPercentage(percentage);
-    }
-  }, [amount, bal]);
-
-  function handlInpData(e: React.ChangeEvent<HTMLInputElement>) {
-    if (
-      bal &&
-      Number(e.target.value) > Number(formatUnits(bal.value, bal.decimals))
-    )
-      return;
-    if (!handleInput) return;
-    handleInput(e.target.value);
-  }
-
   function handleMax() {
     if (!handleInput || !bal) return;
     const maxValue = formatUnits(bal.value, bal.decimals);
@@ -156,144 +148,174 @@ function MaxDeposit({
       value: bal.value,
       decimals: bal.decimals
     });
+    setUtilizationPercentage(100);
+    onUtilizationChange?.(100);
   }
 
-  // Added slider handler
-  function handleSliderChange(value: number) {
-    if (!handleInput || !bal) return;
+  function handleUtilizationChange(value: number[]) {
+    const percentage = value[0];
+    setUtilizationPercentage(percentage);
+
+    if (!bal || !handleInput) return;
+
     const maxValue = Number(formatUnits(bal.value, bal.decimals));
-    const newAmount = (value / 100) * maxValue;
-    handleInput(newAmount.toString());
+    const newAmount = ((maxValue * percentage) / 100).toString();
+    handleInput(newAmount);
+    onUtilizationChange?.(percentage);
   }
-
-  const newRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState<boolean>(false);
 
   const tokens = tokenName?.split('/') ?? ['eth'];
+  const formattedBalance = bal
+    ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString('en-US', {
+        maximumFractionDigits: 3
+      })
+    : max ?? '0';
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
       <CardContent className="p-0">
-        <div
-          className={`flex w-full mt-2 items-center justify-between text-[11px] text-white/40 ${
-            !fetchOwn ? 'flex' : 'hidden'
-          }`}
-        >
-          <span>{headerText}</span>
-          <div>
-            {tokenName?.toUpperCase() ?? ''} Balance:{' '}
-            {bal
-              ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString(
-                  'en-US',
-                  {
-                    maximumFractionDigits: 3
-                  }
-                )
-              : max ?? '0'}
-            {handleInput && (
+        <div className="w-full">
+          {/* Mobile Layout */}
+          <div className="flex md:hidden flex-col w-full gap-4">
+            <div className="flex justify-between items-end w-full">
+              <AmountInput
+                headerText={headerText}
+                handleInput={handleInput}
+                readonly={readonly}
+                amount={amount}
+                max={formattedBalance}
+                isLoading={isLoading}
+              />
+              <div className="flex flex-col items-end gap-1">
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
+                  onClick={handleMax}
+                >
+                  Balance: {formattedBalance}
+                </Button>
+                {tokenSelector ? (
+                  <TokenSelector
+                    newRef={newRef}
+                    open={open}
+                    setOpen={setOpen}
+                    tokenArr={tokenArr}
+                    selectedToken={tokenName}
+                  />
+                ) : (
+                  <TokenDisplay
+                    tokens={tokens}
+                    tokenName={tokenName}
+                  />
+                )}
+              </div>
+            </div>
+
+            {showUtilizationSlider && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      className={cn(
+                        'w-full',
+                        (!bal || bal.value === BigInt(0)) &&
+                          'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      <Slider
+                        value={[utilizationPercentage]}
+                        step={1}
+                        min={0}
+                        max={100}
+                        onValueChange={handleUtilizationChange}
+                        disabled={!bal || bal.value === BigInt(0)}
+                        className="w-full"
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  {(!bal || bal.value === BigInt(0)) && (
+                    <TooltipContent>
+                      <p>No balance available</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden md:flex items-center gap-8">
+            <AmountInput
+              headerText={headerText}
+              handleInput={handleInput}
+              readonly={readonly}
+              amount={amount}
+              max={formattedBalance}
+              isLoading={isLoading}
+            />
+
+            {showUtilizationSlider && (
+              <div className="flex-1">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          'w-full',
+                          (!bal || bal.value === BigInt(0)) &&
+                            'opacity-50 cursor-not-allowed'
+                        )}
+                      >
+                        <Slider
+                          value={[utilizationPercentage]}
+                          step={1}
+                          min={0}
+                          max={100}
+                          onValueChange={handleUtilizationChange}
+                          disabled={!bal || bal.value === BigInt(0)}
+                          className="w-full"
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    {(!bal || bal.value === BigInt(0)) && (
+                      <TooltipContent>
+                        <p>No balance available</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
+
+            {!showUtilizationSlider && <div className="flex-1" />}
+
+            <div className="flex flex-col items-end gap-1">
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-accent h-4 text-[10px] hover:bg-transparent pr-0"
+                className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
                 onClick={handleMax}
               >
-                MAX
+                Balance: {formattedBalance}
               </Button>
-            )}
-          </div>
-        </div>
-        <div className="flex max-w-full items-center gap-x-4">
-          <Input
-            className="focus:outline-none amount-field font-bold bg-transparent disabled:text-white/60 flex-1 min-w-0 border-0 p-0"
-            placeholder="0.0"
-            type="number"
-            value={
-              fetchOwn
-                ? bal &&
-                  parseFloat(
-                    formatUnits(bal.value, bal.decimals)
-                  ).toLocaleString('en-US', {
-                    maximumFractionDigits: 3
-                  })
-                : amount
-            }
-            onChange={handlInpData}
-            disabled={!handleInput}
-          />
-          <div className="flex-none flex items-center">
-            {tokenSelector ? (
-              <TokenSelector
-                newRef={newRef}
-                open={open}
-                setOpen={setOpen}
-                tokenArr={tokenArr}
-                selectedToken={tokenName}
-              />
-            ) : (
-              <div className="flex items-center">
-                <div className="relative flex items-center">
-                  {tokens.map((token, index) => (
-                    <div
-                      key={token}
-                      className="relative"
-                      style={{
-                        marginLeft: index > 0 ? '-0.5rem' : '0',
-                        zIndex: tokens.length - index
-                      }}
-                    >
-                      <Image
-                        src={`/img/symbols/32/color/${token.toLowerCase()}.png`}
-                        alt={`${token} logo`}
-                        width={18}
-                        height={18}
-                        className="rounded-full border border-black bg-black"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = '/img/logo/ION.png';
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <span className="ml-2">{tokenName?.toUpperCase()}</span>
-              </div>
-            )}
-          </div>
-        </div>
-        {useSlider && (
-          <div className="mt-4 space-y-2">
-            <PrecisionSlider
-              value={utilizationPercentage}
-              onChange={handleSliderChange}
-              max={100}
-              min={0}
-              step={sliderStep}
-            />
-            <div className="w-full flex justify-between text-xs text-white/60">
-              <span
-                className={utilizationPercentage >= 25 ? 'text-accent' : ''}
-              >
-                25%
-              </span>
-              <span
-                className={utilizationPercentage >= 50 ? 'text-accent' : ''}
-              >
-                50%
-              </span>
-              <span
-                className={utilizationPercentage >= 75 ? 'text-accent' : ''}
-              >
-                75%
-              </span>
-              <span
-                className={utilizationPercentage >= 100 ? 'text-accent' : ''}
-              >
-                100%
-              </span>
+              {tokenSelector ? (
+                <TokenSelector
+                  newRef={newRef}
+                  open={open}
+                  setOpen={setOpen}
+                  tokenArr={tokenArr}
+                  selectedToken={tokenName}
+                />
+              ) : (
+                <TokenDisplay
+                  tokens={tokens}
+                  tokenName={tokenName}
+                />
+              )}
             </div>
           </div>
-        )}
+        </div>
         {footerText && (
           <div className="flex w-full mt-2 items-center justify-between text-[11px] text-white/40">
             <span>{footerText}</span>
