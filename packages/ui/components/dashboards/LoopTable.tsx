@@ -145,7 +145,6 @@ function LoopTable({
         <LoopRewards
           positionAddress={row.original.position.address}
           poolChainId={chain}
-          className="items-center justify-center"
         />
       )
     },
