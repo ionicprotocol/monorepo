@@ -6,9 +6,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { base, optimism, mode } from 'viem/chains';
 
-import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
-import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import { InfoBlock, EmissionsManagement } from '@ui/app/_components/veion';
+import NetworkSelector from '@ui/components/markets/NetworkSelector';
+import FlatMap from '@ui/components/points_comp/FlatMap';
+import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
 import {
   Card,
   CardHeader,

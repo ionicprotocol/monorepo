@@ -1,14 +1,19 @@
 // useHealth.ts
 import { useMemo } from 'react';
-import { Address, formatEther, maxUint256, parseEther, parseUnits } from 'viem';
+
+import { formatEther, maxUint256, parseEther, parseUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { ActiveTab, HFPStatus } from '@ui/app/_components/dialogs/manage';
+import type { ActiveTab } from '@ui/components/dialogs/manage';
+import { HFPStatus } from '@ui/components/dialogs/manage';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
 import {
   useHealthFactor,
   useHealthFactorPrediction
 } from '../pools/useHealthFactor';
+
+import type { Address } from 'viem';
 
 interface UseHealthProps {
   comptrollerAddress: Address;

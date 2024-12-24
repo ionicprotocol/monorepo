@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -10,7 +10,14 @@ import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { useChainId } from 'wagmi';
 
-import UniversalClaimDialog from '@ui/app/_components/UniversalClaimDialog';
+import CollateralSwapPopup from '@ui/components/dashboards/CollateralSwapPopup';
+import InfoRows, { InfoMode } from '@ui/components/dashboards/InfoRows';
+import LoopRewards from '@ui/components/dashboards/LoopRewards';
+import Loop from '@ui/components/dialogs/loop';
+import ManageDialog from '@ui/components/dialogs/manage';
+import NetworkSelector from '@ui/components/markets/NetworkSelector';
+import ResultHandler from '@ui/components/ResultHandler';
+import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
@@ -30,15 +37,7 @@ import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
-import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import LoopRewards from '../_components/dashboards/LoopRewards';
-import Loop from '../_components/dialogs/loop';
-import ManageDialog from '../_components/dialogs/manage';
-import NetworkSelector from '../_components/markets/NetworkSelector';
-import ResultHandler from '../_components/ResultHandler';
-
-import type { ActiveTab } from '../_components/dialogs/manage';
+import type { ActiveTab } from '../../components/dialogs/manage';
 
 import type {
   FlywheelReward,
@@ -46,9 +45,12 @@ import type {
   PositionInfo
 } from '@ionicprotocol/types';
 
-const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
-  ssr: false
-});
+const PoolToggle = dynamic(
+  () => import('../../components/markets/PoolToggle'),
+  {
+    ssr: false
+  }
+);
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();

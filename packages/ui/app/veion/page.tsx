@@ -13,18 +13,17 @@ import { useChainId } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
-import { useVeIONContext } from '@ui/context/VeIonContext';
-
 import {
   GetVeIONDialog,
   LPRow,
   InfoCard,
   AddLiquidityDialog,
   MigrateIonDialog
-} from '../_components/veion';
+} from '@ui/components/veion';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('@ui/components/markets/NetworkSelector'),
   {
     ssr: false
   }

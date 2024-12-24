@@ -8,17 +8,17 @@ import { formatEther } from 'viem';
 import { base, optimism, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import NetworkSelector from '@ui/app/_components/markets/NetworkSelector';
-import FlatMap from '@ui/app/_components/points_comp/FlatMap';
-import ToggleLinks from '@ui/app/_components/ToggleLink';
-import UniversalClaimDialog from '@ui/app/_components/UniversalClaimDialog';
+import NetworkSelector from '@ui/components/markets/NetworkSelector';
+import FlatMap from '@ui/components/points_comp/FlatMap';
+import ToggleLinks from '@ui/components/ToggleLink';
+import { Button } from '@ui/components/ui/button';
+import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
+import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import {
   MyVeionTable,
   DelegateVeIonTable,
   GovernanceHeader
-} from '@ui/app/_components/veion';
-import { Button } from '@ui/components/ui/button';
-import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
+} from '@ui/components/veion';
 import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 

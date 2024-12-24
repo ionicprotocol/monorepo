@@ -5,26 +5,36 @@ import { useChainId, useSwitchChain } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { ThreeCircles } from 'react-loader-spinner';
 import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
-import MaxDeposit from '@ui/app/_components/MaxDeposit';
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
-interface SupplyTabProps {
+interface WithdrawTabProps {
   assetSymbol: 'USDC' | 'WETH';
   onSuccess: () => Promise<void>;
+  maxWithdraw: bigint;
 }
 
-export function SupplyTab({ assetSymbol, onSuccess }: SupplyTabProps) {
+export function WithdrawTab({
+  assetSymbol,
+  maxWithdraw,
+  onSuccess
+}: WithdrawTabProps) {
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-  const { supply, isLoading, isConnected } = useMorphoProtocol();
+  const { withdraw, isLoading, isConnected } = useMorphoProtocol();
+
+  const formattedMaxWithdraw = utils.formatUnits(
+    maxWithdraw,
+    assetSymbol === 'WETH' ? 18 : 6
+  );
 
   const handleInputChange = (value?: string) => {
     setAmount(value || '');
   };
 
-  const handleSupply = async () => {
+  const handleWithdraw = async () => {
     if (!isConnected) return;
 
     try {
@@ -43,11 +53,11 @@ export function SupplyTab({ assetSymbol, onSuccess }: SupplyTabProps) {
         amount,
         assetSymbol === 'WETH' ? 18 : 6
       );
-      await supply(assetSymbol, parsedAmount);
+      await withdraw(assetSymbol, parsedAmount);
       setAmount('');
       await onSuccess();
     } catch (error) {
-      console.error('Supply error:', error);
+      console.error('Withdraw error:', error);
     } finally {
       setIsProcessing(false);
     }
@@ -61,16 +71,18 @@ export function SupplyTab({ assetSymbol, onSuccess }: SupplyTabProps) {
         <>
           <MaxDeposit
             amount={amount}
+            max={formattedMaxWithdraw}
             tokenName={assetSymbol}
             token={morphoBaseAddresses.tokens[assetSymbol]}
             handleInput={handleInputChange}
             chain={base.id}
-            headerText="Supply Amount"
+            headerText="Withdraw Amount"
+            useUnderlyingBalance
             decimals={assetSymbol === 'WETH' ? 18 : 6}
           />
           <Button
             className="w-full bg-accent hover:opacity-80"
-            onClick={handleSupply}
+            onClick={handleWithdraw}
             disabled={isProcessing || !amount || !isConnected}
           >
             {!isConnected ? (
@@ -94,7 +106,7 @@ export function SupplyTab({ assetSymbol, onSuccess }: SupplyTabProps) {
             ) : chainId !== base.id ? (
               'Switch to Base'
             ) : (
-              'Supply'
+              'Withdraw'
             )}
           </Button>
         </>

@@ -19,7 +19,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import APR from './Cells/APR';
 import TokenBalance from './Cells/TokenBalance';
-import CommonTable from '../../_components/CommonTable';
+import CommonTable from '../../components/CommonTable';
 import ActionButton from '../ActionButton';
 import Loop from '../dialogs/loop';
 import Swap from '../dialogs/manage/Swap';
@@ -27,7 +27,7 @@ import Swap from '../dialogs/manage/Swap';
 import type {
   EnhancedColumnDef,
   MarketCellProps
-} from '../../_components/CommonTable';
+} from '../../components/CommonTable';
 
 function PoolsTable({
   marketData,

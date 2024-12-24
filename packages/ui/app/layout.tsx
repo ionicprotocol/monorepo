@@ -21,6 +21,7 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
+import Navbar from '@ui/components/Navbar';
 import { TooltipProvider } from '@ui/components/ui/tooltip';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 import {
@@ -31,7 +32,6 @@ import {
   swellchain
 } from '@ui/utils/NetworkChecker';
 
-import Navbar from './_components/Navbar';
 import './globals.css';
 
 const metadata = {

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import Image from 'next/image';
 
-import { MarketSelector, EpochInfo } from '@ui/app/_components/veion';
+import { MarketSelector, EpochInfo } from '@ui/components/veion';
 import { Card, CardContent } from '@ui/components/ui/card';
 
 export default function IncentivesPage() {

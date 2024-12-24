@@ -41,7 +41,7 @@ import {
   donutoptions,
   getDonutData,
   chartoptions2
-} from '../../../_constants/market-details-chart';
+} from '../../../../constants/market-details-chart';
 
 // const data = [
 //   { name: 'Group A', value: 400 },
@@ -52,7 +52,7 @@ import {
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
 
-import Swap from '@ui/app/_components/dialogs/manage/Swap';
+import Swap from '@ui/components/dialogs/manage/Swap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { type MarketData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -62,11 +62,11 @@ import { type Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
-import BorrowAmount from '@ui/app/_components/markets/BorrowAmount';
-import ManageDialog from '@ui/app/_components/dialogs/manage';
+import BorrowAmount from '@ui/components/markets/BorrowAmount';
+import ManageDialog from '@ui/components/dialogs/manage';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
-import ChartWithDateRange from '@ui/app/_components/markets/ChartWithDateRange';
-import ResultHandler from '@ui/app/_components/ResultHandler';
+import ChartWithDateRange from '@ui/components/markets/ChartWithDateRange';
+import ResultHandler from '@ui/components/ResultHandler';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 

@@ -5,10 +5,6 @@ import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Line } from 'react-chartjs-2';
 
-import {
-  getChartData,
-  chartoptions
-} from '@ui/app/_constants/market-details-chart';
 import { Button } from '@ui/components/ui/button';
 import { Calendar } from '@ui/components/ui/calendar';
 import {
@@ -23,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/components/ui/select';
+import { getChartData, chartoptions } from '@ui/constants/market-details-chart';
 import { cn } from '@ui/lib/utils';
 
 import type { DateRange } from 'react-day-picker';
