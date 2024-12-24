@@ -2,11 +2,12 @@ import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { Hash, zeroAddress } from "viem";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);

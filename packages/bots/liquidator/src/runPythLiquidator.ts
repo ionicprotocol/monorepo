@@ -8,6 +8,7 @@ import {
   fallback,
   Hex,
   http,
+  type PublicClientConfig,
 } from "viem";
 import { mode } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
@@ -26,11 +27,14 @@ const startTime = Math.floor(new Date().getTime() / 1000);
 };
 
 const account = privateKeyToAccount(config.adminPrivateKey as Hex);
-const publicClient = createPublicClient({
+const clientConfig: PublicClientConfig = {
   batch: { multicall: { wait: 16 } },
   chain: mode,
   transport: fallback(config.rpcUrls.map((url) => http(url))),
-});
+  cacheTime: 4_000,
+  pollingInterval: 4_000,
+};
+const publicClient = createPublicClient(clientConfig);
 const walletClient = createWalletClient({
   account,
   chain: mode,

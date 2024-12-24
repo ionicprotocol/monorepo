@@ -4,11 +4,13 @@ import { Address, Hash, zeroAddress } from "viem";
 import { chainDeployConfig } from "../chainDeploy";
 import { configureLiquidatorsRegistry } from "../chainDeploy/helpers/liquidators/registry";
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = parseInt(await getChainId());
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
@@ -18,7 +20,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const addressesProvider = await viem.getContractAt(
     "AddressesProvider",
-    (await deployments.get("AddressesProvider")).address as Address
+    (await deployments.get("AddressesProvider")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   //// LIQUIDATORS REGISTRY
@@ -52,7 +55,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const liquidatorsRegistry = await viem.getContractAt(
     "LiquidatorsRegistry",
-    (await deployments.get("LiquidatorsRegistry")).address as Address
+    (await deployments.get("LiquidatorsRegistry")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const currentLRExtensions = await liquidatorsRegistry.read._listExtensions();
   console.log("🚀 ~ constfunc:DeployFunction= ~ currentLRExtensions:", currentLRExtensions);

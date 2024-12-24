@@ -256,7 +256,7 @@ export const multipliers: Record<
         },
         supply: {
           flywheel: true,
-          ionAPR: false
+          ionAPR: true
         }
       },
       bsdETH: {
@@ -630,16 +630,43 @@ export const multipliers: Record<
         },
         supply: {
           underlyingAPR: 3.46,
-          ionAPR: false
+          ionAPR: true,
+          flywheel: true
         }
       },
       FRAX: {
+        borrow: {
+          ionAPR: true,
+          flywheel: true
+        },
         supply: {
           ionAPR: true,
           flywheel: true
         }
       },
       sfrxETH: {
+        borrow: {
+          ionAPR: true,
+          flywheel: true
+        },
+        supply: {
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      FXS: {
+        supply: {
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      insfrxETH: {
+        supply: {
+          ionAPR: true,
+          flywheel: true
+        }
+      },
+      sFRAX: {
         supply: {
           ionAPR: true,
           flywheel: true

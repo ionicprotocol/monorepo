@@ -6,7 +6,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import { config as dotenv } from "dotenv";
 
 import "./tasks";
-import { base, fraxtal, mode } from "viem/chains";
+import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
 
 dotenv();
 
@@ -24,7 +24,10 @@ const config: HardhatUserConfig = {
     multisig: {
       [mode.id]: "0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2",
       [base.id]: "0x9eC25b8063De13d478Ba8121b964A339A1BB0ebB",
-      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2"
+      [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
+      [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -106,13 +109,57 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    superseed: {
+      url: process.env.OVERRIDE_RPC_URL_SUPERSEED ?? "https://rpc-superseed-mainnet-0.t.conduit.xyz",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          apiKey: "empty"
+        }
+      }
+    },
+    worldchain: {
+      url: process.env.OVERRIDE_RPC_URL_WORLDCHAIN ?? "https://worldchain-mainnet.g.alchemy.com/public",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://api.worldscan.org/api?",
+          apiKey: process.env.ETHERSCAN_API_KEY_WORLDCHAIN
+        }
+      }
+    },
+    ink: {
+      url: process.env.OVERRIDE_RPC_URL_INK ?? "https://rpc-qnd.inkonchain.com",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer.inkonchain.com/api",
+          apiKey: "empty"
+        }
+      }
+    },
+    swellchain: {
+      url: process.env.OVERRIDE_RPC_URL_SWELLCHAIN ?? "https://rpc.ankr.com/swell",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer.swellnetwork.io/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
     apiKey: {
       base: process.env.ETHERSCAN_API_KEY_BASE!,
       optimisticEthereum: process.env.ETHERSCAN_API_KEY_OPTIMISM!,
-      lisk: "empty"
+      lisk: "empty",
+      superseed: "empty",
+      worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
+      ink: "empty",
+      swellchain: "empty"
     },
     customChains: [
       {
@@ -121,6 +168,38 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://blockscout.lisk.com/api",
           browserURL: "https://blockscout.lisk.com"
+        }
+      },
+      {
+        network: "superseed",
+        chainId: 5330,
+        urls: {
+          apiURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz/api",
+          browserURL: "https://explorer-superseed-mainnet-0.t.conduit.xyz"
+        }
+      },
+      {
+        network: "worldchain",
+        chainId: 480,
+        urls: {
+          apiURL: "https://api.worldscan.org/api",
+          browserURL: "https://api.worldscan.org"
+        }
+      },
+      {
+        network: "ink",
+        chainId: 57073,
+        urls: {
+          apiURL: "https://explorer.inkonchain.com/api",
+          browserURL: "https://explorer.inkonchain.com"
+        }
+      },
+      {
+        network: "swellchain",
+        chainId: 1923,
+        urls: {
+          apiURL: "https://explorer.swellnetwork.io/api",
+          browserURL: "https://explorer.swellnetwork.io"
         }
       }
     ]

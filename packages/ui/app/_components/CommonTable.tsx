@@ -46,6 +46,11 @@ export const sortingFunctions = {
 
 type SortingType = keyof typeof sortingFunctions;
 
+export interface MarketCellProps {
+  row: Row<any>;
+  getValue: () => any;
+}
+
 export type EnhancedColumnDef<T> = Omit<
   ColumnDef<T, unknown>,
   'header' | 'sortingFn'
@@ -83,13 +88,18 @@ const SortableHeader = ({
 }) => {
   const isSortable = column.getCanSort();
   const sorted = column.getIsSorted();
+  const hasSortingFunction = column.columnDef.sortingFn !== undefined;
 
   const getSortIcon = () => {
-    if (!isSortable) return null;
+    if (!isSortable || !hasSortingFunction) return null;
     if (sorted === 'asc') return <ArrowUpIcon className="w-4 h-4" />;
     if (sorted === 'desc') return <ArrowDownIcon className="w-4 h-4" />;
     return <CaretSortIcon className="w-4 h-4 text-white/40" />;
   };
+
+  if (!hasSortingFunction) {
+    return <div className="flex items-center gap-2">{children}</div>;
+  }
 
   return (
     <button
@@ -132,7 +142,7 @@ function CommonTable<T extends object>({
               return sortFn(rowA.getValue(col.id), rowB.getValue(col.id));
             }
           : col.sortingFn,
-      enableSorting: col.enableSorting !== false
+      enableSorting: col.enableSorting !== false && col.sortingFn !== undefined
     })
   );
 

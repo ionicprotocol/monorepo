@@ -29,9 +29,9 @@ export enum HFPStatus {
 interface ManageDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  isBorrowDisabled?: boolean;
   comptrollerAddress: Address;
   selectedMarketData: MarketData;
-  isBorrowDisabled?: boolean;
   activeTab?: ActiveTab;
 }
 

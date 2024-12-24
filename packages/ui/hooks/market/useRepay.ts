@@ -42,30 +42,71 @@ export const useRepay = ({
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
   const { transactionSteps } = useTransactionSteps();
 
-  const amountAsBInt = useMemo(
-    () =>
-      parseUnits(
-        amount?.toString() ?? '0',
+  const formatToFixedDecimals = (num: number, decimals: number): string => {
+    // Convert to string and remove scientific notation
+    let str = num.toFixed(decimals);
+
+    // Remove trailing zeros after decimal point
+    if (str.includes('.')) {
+      str = str.replace(/\.?0+$/, '');
+    }
+
+    // If the string is empty or just a decimal point, return '0'
+    if (!str || str === '.') return '0';
+
+    return str;
+  };
+
+  const INTEREST_BUFFER_MULTIPLIER = 1.01;
+
+  const amountWithBufferAsBInt = useMemo(() => {
+    try {
+      const amountAsNumber = Number(amount);
+      if (isNaN(amountAsNumber) || amountAsNumber === 0) return 0n;
+
+      const amountWithBuffer = amountAsNumber * INTEREST_BUFFER_MULTIPLIER;
+      const formattedAmount = formatToFixedDecimals(
+        amountWithBuffer,
         selectedMarketData.underlyingDecimals
-      ),
-    [amount, selectedMarketData.underlyingDecimals]
-  );
+      );
+
+      return parseUnits(formattedAmount, selectedMarketData.underlyingDecimals);
+    } catch (error) {
+      console.error('Error calculating buffer amount:', error);
+      return 0n;
+    }
+  }, [amount, selectedMarketData.underlyingDecimals]);
 
   const handleUtilization = useCallback(
     (newUtilizationPercentage: number) => {
       const maxAmountNumber = Number(
         formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
       );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
+      const calculatedAmount = formatToFixedDecimals(
+        (newUtilizationPercentage / 100) * maxAmountNumber,
+        selectedMarketData.underlyingDecimals
+      );
 
       setAmount(calculatedAmount);
       setUtilizationPercentage(newUtilizationPercentage);
     },
     [maxAmount, selectedMarketData.underlyingDecimals]
   );
+
+  const amountAsBInt = useMemo(() => {
+    try {
+      if (!amount || amount === '0') return 0n;
+      // Ensure the amount is properly formatted before parsing
+      const formattedAmount = formatToFixedDecimals(
+        Number(amount),
+        selectedMarketData.underlyingDecimals
+      );
+      return parseUnits(formattedAmount, selectedMarketData.underlyingDecimals);
+    } catch (error) {
+      console.error('Error parsing amount:', error);
+      return 0n;
+    }
+  }, [amount, selectedMarketData.underlyingDecimals]);
 
   useEffect(() => {
     if (amount === '0' || !amount || maxAmount === 0n) {
@@ -124,11 +165,12 @@ export const useRepay = ({
         selectedMarketData.cToken
       ]);
 
-      if (currentAllowance < amountAsBInt) {
+      // Use buffered amount for allowance check and approval
+      if (currentAllowance < amountWithBufferAsBInt) {
         const approveTx = await currentSdk.approve(
           selectedMarketData.cToken,
           selectedMarketData.underlyingToken,
-          amountAsBInt
+          amountWithBufferAsBInt // Using buffered amount for approval
         );
 
         upsertStepForType(TransactionType.REPAY, {
@@ -156,12 +198,12 @@ export const useRepay = ({
         amountAsBInt >= (selectedMarketData.borrowBalance ?? 0n);
       const repayAmount = isRepayingMax ? maxUint256 : amountAsBInt;
 
-      // Verify final allowance
+      // Verify final allowance against buffered amount
       const finalAllowance = await token.read.allowance([
         address,
         selectedMarketData.cToken
       ]);
-      if (finalAllowance < amountAsBInt) {
+      if (finalAllowance < amountWithBufferAsBInt) {
         throw new Error('Insufficient allowance after approval');
       }
 
@@ -244,6 +286,7 @@ export const useRepay = ({
     address,
     amount,
     amountAsBInt,
+    amountWithBufferAsBInt,
     currentBorrowAmountAsFloat,
     selectedMarketData,
     addStepsForType,

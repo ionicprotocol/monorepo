@@ -12,7 +12,7 @@ import {
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
 import { pools } from '@ui/constants/index';
-import { useStore } from '@ui/store/Store';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface INetworkSelector {
   dropdownSelectedChain: number;
@@ -21,7 +21,17 @@ interface INetworkSelector {
   upcomingChains?: string[];
 }
 
-const NETWORK_ORDER = ['Mode', 'Base', 'Optimism', 'Fraxtal', 'Lisk', 'BoB'];
+const ACTIVE_NETWORKS = [
+  'Mode',
+  'Base',
+  'Optimism',
+  'Fraxtal',
+  'Ink',
+  'Lisk',
+  'BoB',
+  'Worldchain',
+  'Swell'
+];
 
 function NetworkSelector({
   dropdownSelectedChain,
@@ -31,9 +41,9 @@ function NetworkSelector({
 }: INetworkSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const setDropChain = useStore((state) => state.setDropChain);
+  const { setDropChain } = useMultiIonic();
 
-  const orderedNetworks = NETWORK_ORDER.map((networkName) =>
+  const orderedNetworks = ACTIVE_NETWORKS.map((networkName) =>
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
   ).filter(
     (entry): entry is [string, any] =>

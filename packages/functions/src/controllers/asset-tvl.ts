@@ -108,11 +108,11 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       throw new Error(`Error saving asset TVL to database: ${error.message}`);
     }
 
-    return results; // Return the results array
+    return { results, totalAssets }; // Return both arrays
   } catch (err) {
     console.error('Error in updateAssetTvl:', err);
     await functionsAlert('Functions.asset-tvl: Generic Error', JSON.stringify(err));
-    return []; // Return an empty array in case of error
+    return { results: [], totalAssets: [] }; // Return empty arrays with correct structure
   }
 };
 

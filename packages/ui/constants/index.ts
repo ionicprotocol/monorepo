@@ -1,9 +1,19 @@
-import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
+import {
+  base,
+  bob,
+  fraxtal,
+  lisk,
+  mode,
+  optimism,
+  superseed,
+  worldchain
+} from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
+import { ink, swellchain } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -118,14 +128,17 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
       '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
       '0x1d0a712aE0162431E0573A8a735D02a29805d124',
-      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22'
+      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
+      '0x1e00C933e092912d47153765Fa7c886632c1d083',
+      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440'
       // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
       '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
       '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
-      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424'
+      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
+      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a'
     ]
   },
   [optimism.id]: {
@@ -144,8 +157,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
     borrow: []
   },
   [fraxtal.id]: {
-    supply: [],
-    borrow: ['0x63A1531a06F0Ac597a0DfA5A516a37073c3E1e0a']
+    supply: ['0xa54697FAF64721Ec6ddd13bC345bd733de17539D'],
+    borrow: ['0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF']
   }
 };
 
@@ -167,6 +180,12 @@ type PoolParams = {
   pools: {
     id: string;
     name: string;
+    assets: string[];
+  }[];
+  vaults?: {
+    id: string;
+    name: string;
+    description: string;
     assets: string[];
   }[];
 };
@@ -257,6 +276,14 @@ export const pools: Record<number, PoolParams> = {
         ]
       }
     ]
+    // vaults: [
+    //   {
+    //     id: 'vault',
+    //     name: 'Supply Vaults',
+    //     description: 'Optimized yield strategies',
+    //     assets: ['USDC', 'WETH']
+    //   }
+    // ]
   },
   [optimism.id]: {
     name: 'Optimism',
@@ -311,7 +338,7 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'sfrxETH', 'sFRAX', 'FXS']
       }
     ]
@@ -326,8 +353,68 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
+        name: 'Main Pool',
         assets: ['WETH', 'USDC', 'USDT', 'WBTC', 'LSK']
+      }
+    ]
+  },
+  [superseed.id]: {
+    name: 'Superseed',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SUPERSEED.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [worldchain.id]: {
+    name: 'Worldchain',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/WORLDCHAIN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [ink.chainId]: {
+    name: 'Ink',
+    arrow: 'ffffff',
+    bg: 'bg-ink',
+    text: 'text-white',
+    border: 'border-ink',
+    logo: '/img/logo/INK.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [swellchain.chainId]: {
+    name: 'Swell',
+    arrow: 'ffffff',
+    bg: 'bg-swell',
+    text: 'text-white',
+    border: 'border-swell',
+    logo: '/img/logo/SWELL.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
       }
     ]
   }
