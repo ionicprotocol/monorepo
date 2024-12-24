@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import ResultHandler from './_components/ResultHandler';
+import ResultHandler from '../components/ResultHandler';
 
 const Home = () => {
   const router = useRouter();

@@ -33,7 +33,9 @@ import {
   poolDirectoryAbi,
   poolLensAbi,
   poolLensSecondaryAbi,
-  unitrollerAbi
+  unitrollerAbi,
+  veIonAbi,
+  voterAbi
 } from "../generated";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -70,6 +72,17 @@ export interface Logger {
   warn(message?: string, ...optionalParams: any[]): void;
   error(message?: string, ...optionalParams: any[]): void;
   [x: string]: any;
+}
+
+interface Contracts {
+  veION: {
+    address: Address;
+    abi: any;
+  };
+  voter: {
+    address: Address;
+    abi: any;
+  };
 }
 
 export class IonicBase {
@@ -154,6 +167,19 @@ export class IonicBase {
         client: this.publicClient
       }),
       ...this._contracts
+    };
+  }
+
+  public get veIONContracts(): Contracts {
+    return {
+      veION: {
+        address: "0x0",
+        abi: veIonAbi
+      },
+      voter: {
+        address: "0x0",
+        abi: voterAbi
+      }
     };
   }
 

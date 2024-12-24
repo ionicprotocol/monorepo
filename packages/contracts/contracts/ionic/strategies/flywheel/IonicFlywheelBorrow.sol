@@ -12,6 +12,7 @@ contract IonicFlywheelBorrow is IonicFlywheelCore, IIonicFlywheel {
   function flywheelPreSupplierAction(address market, address supplier) external {}
 
   function flywheelPreBorrowerAction(address market, address borrower) external {
+    _updateBlacklistBalances(ERC20(market), borrower);
     accrue(ERC20(market), borrower);
   }
 

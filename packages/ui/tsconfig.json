@@ -22,7 +22,7 @@
     "baseUrl": ".",
     "paths": {
       "@ui/*": ["./*"],
-      "@/app/_components/*": ["app/_components/*"]
+      "@/app/components/*": ["app/components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

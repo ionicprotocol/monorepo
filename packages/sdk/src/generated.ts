@@ -40279,6 +40279,13 @@ export const ionicFlywheelAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'emissionsManager',
+    outputs: [{ name: '', internalType: 'contract IEmissionsManager', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'feeRecipient',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
@@ -40423,6 +40430,15 @@ export const ionicFlywheelAbi = [
   {
     type: 'function',
     inputs: [
+      { name: '_emissionsManager', internalType: 'contract IEmissionsManager', type: 'address' },
+    ],
+    name: 'setEmissionsManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'newFlywheelRewards', internalType: 'contract IFlywheelRewards', type: 'address' },
     ],
     name: 'setFlywheelRewards',
@@ -40441,8 +40457,28 @@ export const ionicFlywheelAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'receiver', internalType: 'address', type: 'address' },
+    ],
+    name: 'takeRewardsFromUser',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'updateBlacklistBalances',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -40464,6 +40500,16 @@ export const ionicFlywheelAbi = [
     ],
     name: 'userIndex',
     outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'whitelistUser',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -40633,6 +40679,13 @@ export const ionicFlywheelBorrowAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'emissionsManager',
+    outputs: [{ name: '', internalType: 'contract IEmissionsManager', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'feeRecipient',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
@@ -40777,6 +40830,15 @@ export const ionicFlywheelBorrowAbi = [
   {
     type: 'function',
     inputs: [
+      { name: '_emissionsManager', internalType: 'contract IEmissionsManager', type: 'address' },
+    ],
+    name: 'setEmissionsManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'newFlywheelRewards', internalType: 'contract IFlywheelRewards', type: 'address' },
     ],
     name: 'setFlywheelRewards',
@@ -40795,8 +40857,28 @@ export const ionicFlywheelBorrowAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'receiver', internalType: 'address', type: 'address' },
+    ],
+    name: 'takeRewardsFromUser',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'updateBlacklistBalances',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -40818,6 +40900,16 @@ export const ionicFlywheelBorrowAbi = [
     ],
     name: 'userIndex',
     outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'whitelistUser',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -41005,6 +41097,13 @@ export const ionicFlywheelCoreAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'emissionsManager',
+    outputs: [{ name: '', internalType: 'contract IEmissionsManager', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'feeRecipient',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
@@ -41094,6 +41193,15 @@ export const ionicFlywheelCoreAbi = [
   {
     type: 'function',
     inputs: [
+      { name: '_emissionsManager', internalType: 'contract IEmissionsManager', type: 'address' },
+    ],
+    name: 'setEmissionsManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'newFlywheelRewards', internalType: 'contract IFlywheelRewards', type: 'address' },
     ],
     name: 'setFlywheelRewards',
@@ -41112,8 +41220,28 @@ export const ionicFlywheelCoreAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'receiver', internalType: 'address', type: 'address' },
+    ],
+    name: 'takeRewardsFromUser',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'updateBlacklistBalances',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -41135,6 +41263,16 @@ export const ionicFlywheelCoreAbi = [
     ],
     name: 'userIndex',
     outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'whitelistUser',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
@@ -42289,6 +42427,13 @@ export const ionicReplacingFlywheelAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'emissionsManager',
+    outputs: [{ name: '', internalType: 'contract IEmissionsManager', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'feeRecipient',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
@@ -42449,6 +42594,15 @@ export const ionicReplacingFlywheelAbi = [
   {
     type: 'function',
     inputs: [
+      { name: '_emissionsManager', internalType: 'contract IEmissionsManager', type: 'address' },
+    ],
+    name: 'setEmissionsManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       { name: 'newFlywheelRewards', internalType: 'contract IFlywheelRewards', type: 'address' },
     ],
     name: 'setFlywheelRewards',
@@ -42467,8 +42621,28 @@ export const ionicReplacingFlywheelAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'user', internalType: 'address', type: 'address' },
+      { name: 'receiver', internalType: 'address', type: 'address' },
+    ],
+    name: 'takeRewardsFromUser',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'updateBlacklistBalances',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -42490,6 +42664,16 @@ export const ionicReplacingFlywheelAbi = [
     ],
     name: 'userIndex',
     outputs: [{ name: '', internalType: 'uint224', type: 'uint224' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'strategy', internalType: 'contract ERC20', type: 'address' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'whitelistUser',
+    outputs: [],
     stateMutability: 'nonpayable',
   },
   {
