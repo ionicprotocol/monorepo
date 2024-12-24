@@ -288,7 +288,7 @@ export default function Dashboard() {
                 ) *
                 ((usdPrice ?? 0) * collateralPrice)
             },
-            underlyingDecimals: position.collateral.underlyingDecimals
+            underlyingDecimals: Number(position.collateral.underlyingDecimals)
           },
           borrowable: {
             symbol: position.borrowable.symbol,
@@ -311,7 +311,7 @@ export default function Dashboard() {
                 ) *
                 ((usdPrice ?? 0) * borrowablePrice)
             },
-            underlyingDecimals: position.borrowable.underlyingDecimals
+            underlyingDecimals: Number(position.borrowable.underlyingDecimals)
           }
         },
         loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0) - 1

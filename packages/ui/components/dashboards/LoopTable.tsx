@@ -72,6 +72,7 @@ function LoopTable({
     {
       id: 'assets',
       header: <div className="pl-6">LOOPED ASSETS</div>,
+      width: '25%',
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image
@@ -152,8 +153,9 @@ function LoopTable({
       id: 'actions',
       header: 'ACTIONS',
       enableSorting: false,
+      width: '20%',
       cell: ({ row }) => (
-        <div className="ml-2 mb-2 lg:mb-0">
+        <div className="pr-6">
           <ActionButton
             action={() => {
               setSelectedLoopBorrowData(

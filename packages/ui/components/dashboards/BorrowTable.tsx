@@ -64,6 +64,7 @@ function BorrowTable({
     {
       id: 'asset',
       header: <div className="pl-6">BORROW ASSETS</div>,
+      width: '25%',
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image
@@ -110,22 +111,24 @@ function BorrowTable({
       id: 'rewards',
       header: 'REWARDS',
       cell: ({ row }) => (
-        <FlyWheelRewards
-          cToken={row.original.cToken}
-          pool={row.original.comptrollerAddress}
-          poolChainId={row.original.selectedChain}
-          type="borrow"
-        />
+        <div className="max-w-[200px]">
+          <FlyWheelRewards
+            cToken={row.original.cToken}
+            pool={row.original.comptrollerAddress}
+            poolChainId={row.original.selectedChain}
+            type="borrow"
+          />
+        </div>
       )
     },
     {
       id: 'actions',
       header: 'ACTIONS',
+      width: '20%',
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex gap-2 pr-6">
+        <div className="flex flex-col gap-2 pr-6">
           <ActionButton
-            half
             action={async () => {
               const result = await handleSwitchOriginChain(
                 row.original.selectedChain,
@@ -139,12 +142,12 @@ function BorrowTable({
             }}
             disabled={!address}
             label="Repay"
+            className="h-6"
           />
           {!NO_COLLATERAL_SWAP[row.original.selectedChain]?.[
             row.original.pool
           ]?.includes(row.original.asset) && (
             <ActionButton
-              half
               action={async () => {
                 const result = await handleSwitchOriginChain(
                   row.original.selectedChain,
@@ -164,6 +167,7 @@ function BorrowTable({
               }
               label="Borrow More"
               bg={pools[row.original.selectedChain].bg}
+              className="text-white h-6"
             />
           )}
         </div>

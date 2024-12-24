@@ -81,6 +81,7 @@ function SupplyTable({
     {
       id: 'asset',
       header: <div className="pl-6">SUPPLY ASSETS</div>,
+      width: '25%',
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image
@@ -127,17 +128,20 @@ function SupplyTable({
       id: 'rewards',
       header: 'REWARDS',
       cell: ({ row }) => (
-        <FlyWheelRewards
-          cToken={row.original.cToken}
-          pool={row.original.comptrollerAddress}
-          poolChainId={row.original.selectedChain}
-          type="supply"
-        />
+        <div className="max-w-[200px]">
+          <FlyWheelRewards
+            cToken={row.original.cToken}
+            pool={row.original.comptrollerAddress}
+            poolChainId={row.original.selectedChain}
+            type="supply"
+          />
+        </div>
       )
     },
     {
       id: 'actions',
       header: 'ACTIONS',
+      width: '20%',
       enableSorting: false,
       cell: ({ row }) => {
         const marketAsset = allMarketData?.find(
@@ -148,9 +152,8 @@ function SupplyTable({
         ]?.includes(row.original.asset);
 
         return (
-          <div className="flex gap-2 pr-6">
+          <div className="flex flex-col gap-2 pr-6">
             <ActionButton
-              half={canSwap}
               action={async () => {
                 const result = await handleSwitchOriginChain(
                   row.original.selectedChain,
@@ -164,6 +167,7 @@ function SupplyTable({
               }}
               disabled={!address}
               label="Manage"
+              className="h-6"
             />
             {canSwap && marketAsset && (
               <ActionButton
@@ -177,13 +181,13 @@ function SupplyTable({
                     swapToggle();
                   }
                 }}
-                half
                 disabled={
                   !address ||
                   !sdk?.chainDeployment[`CollateralSwap-${comptroller}`]
                 }
                 label="Collateral Swap"
                 bg={pools[row.original.selectedChain].bg}
+                className="text-white h-6"
               />
             )}
           </div>
