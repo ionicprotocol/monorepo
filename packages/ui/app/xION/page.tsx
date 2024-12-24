@@ -22,6 +22,11 @@ import {
   // useBlock
 } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import FromTOChainSelector from '@ui/components/xION/FromToChainSelector';
+import ProgressSteps from '@ui/components/xION/ProgressSteps';
+import Quote from '@ui/components/xION/Quote';
 import { ixErc20 } from '@ui/constants/bridge';
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -29,18 +34,13 @@ import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
-import MaxDeposit from '../components/MaxDeposit';
-import ResultHandler from '../components/ResultHandler';
-import FromTOChainSelector from '../components/xION/FromToChainSelector';
-import ProgressSteps from '../components/xION/ProgressSteps';
-import Quote from '../components/xION/Quote';
 // import TxPopup from '../components/xION/TxPopup';
 
 import type { Address } from 'viem';
 
 import { xErc20HyperlaneAbi } from '@ionicprotocol/sdk';
 
-const TxPopup = dynamic(() => import('../components/xION/TxPopup'), {
+const TxPopup = dynamic(() => import('@ui/components/xION/TxPopup'), {
   ssr: false
 });
 

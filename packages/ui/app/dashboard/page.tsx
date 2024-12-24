@@ -29,16 +29,16 @@ import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import ClaimRewardPopover from '../components/dashboards/ClaimRewardPopover';
-import CollateralSwapPopup from '../components/dashboards/CollateralSwapPopup';
-import InfoRows, { InfoMode } from '../components/dashboards/InfoRows';
-import LoopRewards from '../components/dashboards/LoopRewards';
-import Loop from '../components/dialogs/loop';
-import ManageDialog from '../components/dialogs/manage';
-import NetworkSelector from '../components/markets/NetworkSelector';
-import ResultHandler from '../components/ResultHandler';
+import ClaimRewardPopover from '../../components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../../components/dashboards/CollateralSwapPopup';
+import InfoRows, { InfoMode } from '../../components/dashboards/InfoRows';
+import LoopRewards from '../../components/dashboards/LoopRewards';
+import Loop from '../../components/dialogs/loop';
+import ManageDialog from '../../components/dialogs/manage';
+import NetworkSelector from '../../components/markets/NetworkSelector';
+import ResultHandler from '../../components/ResultHandler';
 
-import type { ActiveTab } from '../components/dialogs/manage';
+import type { ActiveTab } from '../../components/dialogs/manage';
 
 import type {
   FlywheelReward,
@@ -46,9 +46,12 @@ import type {
   PositionInfo
 } from '@ionicprotocol/types';
 
-const PoolToggle = dynamic(() => import('../components/markets/PoolToggle'), {
-  ssr: false
-});
+const PoolToggle = dynamic(
+  () => import('../../components/markets/PoolToggle'),
+  {
+    ssr: false
+  }
+);
 
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();

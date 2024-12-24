@@ -30,10 +30,10 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/app/components/dialogs/manage/Slider';
+import SliderComponent from '@ui/components/dialogs/manage/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '@ui/app/components/dialogs/manage/TransactionStepsHandler';
+} from '@ui/components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { donutoptions, getDonutData } from '@ui/constants/market-details-chart';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';

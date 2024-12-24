@@ -9,7 +9,7 @@ import {
   maxUint256
 } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,

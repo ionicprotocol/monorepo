@@ -15,18 +15,18 @@ import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 import { useAssetPrices } from '@ui/hooks/useAssetPrices';
 import type { VaultRowData } from '@ui/types/SupplyVaults';
 
-import ManageDialog from '../components/dialogs/manage';
-import FeaturedMarketTile from '../components/markets/FeaturedMarketTile';
-import PoolsTable from '../components/markets/PoolsTable';
-import PoolToggle from '../components/markets/PoolToggle';
-import SearchInput from '../components/markets/SearcInput';
-import StakingTile from '../components/markets/StakingTile';
-import SupplyVaultTable from '../components/markets/SupplyVaultTable';
-import TotalTvlTile from '../components/markets/TotalTvlTile';
-import TvlTile from '../components/markets/TvlTile';
+import ManageDialog from '../../components/dialogs/manage';
+import FeaturedMarketTile from '../../components/markets/FeaturedMarketTile';
+import PoolsTable from '../../components/markets/PoolsTable';
+import PoolToggle from '../../components/markets/PoolToggle';
+import SearchInput from '../../components/markets/SearcInput';
+import StakingTile from '../../components/markets/StakingTile';
+import SupplyVaultTable from '../../components/markets/SupplyVaultTable';
+import TotalTvlTile from '../../components/markets/TotalTvlTile';
+import TvlTile from '../../components/markets/TvlTile';
 
 const NetworkSelector = dynamic(
-  () => import('../components/markets/NetworkSelector'),
+  () => import('../../components/markets/NetworkSelector'),
   { ssr: false }
 );
 

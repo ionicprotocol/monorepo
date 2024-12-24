@@ -16,14 +16,14 @@ import {
 import { DROPDOWN } from '@ui/constants/index';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 
+import ClaimDialog from '../../components/claim/ClaimDialog';
+import ClaimPanel from '../../components/claim/ClaimPanel';
+import InfoPanel from '../../components/claim/InfoPanel';
 import { claimAbi, claimContractAddressSeason2 } from '../../constants/claim';
 import {
   PublicSaleAbi,
   PublicSaleContractAddress
 } from '../../constants/publicsale';
-import ClaimDialog from '../components/claim/ClaimDialog';
-import ClaimPanel from '../components/claim/ClaimPanel';
-import InfoPanel from '../components/claim/InfoPanel';
 
 export default function Claim() {
   const [loading, setLoading] = useState(false);

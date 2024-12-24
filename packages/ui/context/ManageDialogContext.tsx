@@ -12,7 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import type { TransactionStep } from '@ui/app/components/dialogs/manage/TransactionStepsHandler';
+import type { TransactionStep } from '@ui/components/dialogs/manage/TransactionStepsHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import type { MarketData } from '@ui/types/TokensDataMap';

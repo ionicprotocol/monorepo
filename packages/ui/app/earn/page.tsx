@@ -7,8 +7,8 @@ import {
   CardTitle
 } from '@ui/components/ui/card';
 
-import EarnTable from '../components/earn/EarnTable';
-import MorphoTable from '../components/earn/MorphoTable';
+import EarnTable from '../../components/earn/EarnTable';
+import MorphoTable from '../../components/earn/MorphoTable';
 
 export default function Earn() {
   return (
