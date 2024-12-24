@@ -11,7 +11,7 @@ import {
   SelectValue
 } from '@ui/components/ui/select';
 import { pools } from '@ui/constants/index';
-import { useStore } from '@ui/store/Store';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 interface NetworkDropdownProps {
   dropdownSelectedChain: number;
@@ -28,7 +28,7 @@ export default function NetworkDropdown({
 }: NetworkDropdownProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const setDropChain = useStore((state) => state.setDropChain);
+  const { setDropChain } = useMultiIonic();
 
   const handleValueChange = (value: string) => {
     const chainId = parseInt(value);
