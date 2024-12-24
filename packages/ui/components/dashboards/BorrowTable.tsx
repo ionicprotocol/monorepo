@@ -63,7 +63,7 @@ function BorrowTable({
   const columns: EnhancedColumnDef<BorrowRowData>[] = [
     {
       id: 'asset',
-      header: 'BORROW ASSETS',
+      header: <div className="pl-6">BORROW ASSETS</div>,
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image

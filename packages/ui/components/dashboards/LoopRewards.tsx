@@ -23,14 +23,12 @@ type LoopRewardsProps = {
   positionAddress: Address;
   poolChainId: number;
   rewards?: FlywheelReward[];
-  className?: string;
 };
 
 const LoopRewards = ({
   positionAddress,
   poolChainId,
-  rewards,
-  className
+  rewards
 }: LoopRewardsProps) => {
   const { writeContractAsync, isPending } = useWriteContract();
   const chainId = useChainId();

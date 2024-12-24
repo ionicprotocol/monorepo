@@ -80,7 +80,7 @@ function SupplyTable({
   const columns: EnhancedColumnDef<SupplyRowData>[] = [
     {
       id: 'asset',
-      header: 'SUPPLY ASSETS',
+      header: <div className="pl-6">SUPPLY ASSETS</div>,
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image

@@ -6,21 +6,19 @@ import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
-import millify from 'millify';
-import { type Address, formatEther, formatUnits, parseEther } from 'viem';
+import { formatEther, formatUnits, parseEther } from 'viem';
 
 import BorrowTable from '@ui/components/dashboards/BorrowTable';
 import type { BorrowRowData } from '@ui/components/dashboards/BorrowTable';
 import ClaimRewardPopover from '@ui/components/dashboards/ClaimRewardPopover';
 import InfoSection from '@ui/components/dashboards/InfoSection';
-import LoopRewards from '@ui/components/dashboards/LoopRewards';
+import type { LoopRowData } from '@ui/components/dashboards/LoopTable';
+import LoopTable from '@ui/components/dashboards/LoopTable';
 import type { SupplyRowData } from '@ui/components/dashboards/SupplyTable';
 import SupplyTable from '@ui/components/dashboards/SupplyTable';
-import Loop from '@ui/components/dialogs/loop';
 import ManageDialog from '@ui/components/dialogs/manage';
 import type { ActiveTab } from '@ui/components/dialogs/manage';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
-import ResultHandler from '@ui/components/ResultHandler';
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
@@ -32,15 +30,10 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
-import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import type {
-  FlywheelReward,
-  OpenPosition,
-  PositionInfo
-} from '@ionicprotocol/types';
+import type { FlywheelReward, OpenPosition } from '@ionicprotocol/types';
 
 const PoolToggle = dynamic(() => import('@ui/components/markets/PoolToggle'), {
   ssr: false
@@ -100,8 +93,6 @@ export default function Dashboard() {
     useCurrentLeverageRatios(
       positions?.openPositions.map((position) => position.address) ?? []
     );
-  const { data: assetsSupplyAprData, isLoading: isLoadingAssetsSupplyAprData } =
-    useTotalSupplyAPYs(marketData?.assets ?? [], +chain);
   const suppliedAssets = useMemo<MarketData[]>(
     () =>
       marketData?.assets.filter((asset) => asset.supplyBalanceFiat > 0) ?? [],
@@ -244,6 +235,90 @@ export default function Dashboard() {
     };
   });
 
+  const loopTableData: LoopRowData[] = (positions?.openPositions ?? [])
+    ?.filter(Boolean)
+    .map((position, i) => {
+      if (
+        !position ||
+        !position.address ||
+        !position.collateral?.symbol ||
+        !position.borrowable?.symbol ||
+        !positionsInfo?.[position.address]
+      ) {
+        return null;
+      }
+
+      const currentPositionInfo = positionsInfo[position.address];
+      const collateralPrice = Number(
+        formatEther(
+          marketData?.assets.find(
+            (asset) => asset.underlyingSymbol === position.collateral.symbol
+          )?.underlyingPrice ?? 0n
+        )
+      );
+      const borrowablePrice = Number(
+        formatEther(
+          marketData?.assets.find(
+            (asset) => asset.underlyingSymbol === position.borrowable.symbol
+          )?.underlyingPrice ?? 0n
+        )
+      );
+
+      return {
+        position: {
+          address: position.address,
+          collateral: {
+            symbol: position.collateral.symbol,
+            logo: `/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`,
+            amount: {
+              tokens: Number(
+                formatUnits(
+                  currentPositionInfo.positionSupplyAmount,
+                  Number(position.collateral.underlyingDecimals)
+                )
+              ).toLocaleString('en-US', {
+                maximumFractionDigits: 2
+              }),
+              usd:
+                Number(
+                  formatUnits(
+                    currentPositionInfo.positionSupplyAmount,
+                    Number(position.collateral.underlyingDecimals)
+                  )
+                ) *
+                ((usdPrice ?? 0) * collateralPrice)
+            },
+            underlyingDecimals: position.collateral.underlyingDecimals
+          },
+          borrowable: {
+            symbol: position.borrowable.symbol,
+            logo: `/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`,
+            amount: {
+              tokens: Number(
+                formatUnits(
+                  currentPositionInfo.debtAmount,
+                  position.borrowable.underlyingDecimals
+                )
+              ).toLocaleString('en-US', {
+                maximumFractionDigits: 2
+              }),
+              usd:
+                Number(
+                  formatUnits(
+                    currentPositionInfo.debtAmount,
+                    position.borrowable.underlyingDecimals
+                  )
+                ) *
+                ((usdPrice ?? 0) * borrowablePrice)
+            },
+            underlyingDecimals: position.borrowable.underlyingDecimals
+          }
+        },
+        loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0) - 1
+      };
+    })
+    .filter((data): data is LoopRowData => !!data);
+
   return (
     <>
       <ClaimRewardPopover
@@ -273,7 +348,7 @@ export default function Dashboard() {
           </div>
           <SupplyTable
             data={supplyTableData}
-            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+            isLoading={isLoadingMarketData}
             setIsManageDialogOpen={setIsManageDialogOpen}
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
@@ -290,7 +365,7 @@ export default function Dashboard() {
 
           <BorrowTable
             data={borrowTableData}
-            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+            isLoading={isLoadingMarketData}
             setIsManageDialogOpen={setIsManageDialogOpen}
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
@@ -303,102 +378,27 @@ export default function Dashboard() {
             <h1 className={`font-semibold`}>Your Loops</h1>
           </div>
 
-          <ResultHandler
-            center
+          <LoopTable
+            data={loopTableData}
             isLoading={
               isLoadingPositions ||
               isLoadingPositionsInfo ||
               isLoadingUSDPrice ||
               isLoadingPositionLeverages
             }
-          >
-            <>
-              {positions && positions.openPositions.length > 0 ? (
-                <>
-                  <div
-                    className={`w-full gap-x-1 grid  grid-cols-6  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-                  >
-                    <h3 className={` `}>LOOPED ASSETS</h3>
-                    <h3 className={` `}>LOOP VALUE</h3>
-                    <h3 className={` `}>BORROW</h3>
-                    <h3 className={` `}>LOOPS</h3>
-                    <h3 className={` `}>REWARDS</h3>
-                  </div>
-
-                  {positions?.openPositions
-                    ?.filter(Boolean)
-                    .map((position, i) => {
-                      if (
-                        !position ||
-                        !position.address ||
-                        typeof position.address !== 'string'
-                      ) {
-                        console.warn('Invalid position:', position);
-                        return null;
-                      }
-
-                      const isValidAddress =
-                        position?.address &&
-                        typeof position.address === 'string' &&
-                        position.address.startsWith('0x');
-
-                      const currentPositionInfo =
-                        isValidAddress && positionsInfo
-                          ? positionsInfo[position.address]
-                          : undefined;
-
-                      if (!isValidAddress) {
-                        console.warn(
-                          'Invalid position address format:',
-                          position?.address
-                        );
-                        return null;
-                      }
-
-                      if (!currentPositionInfo) {
-                        console.warn(
-                          'Missing position info for address:',
-                          position?.address
-                        );
-                        return <div key={`position-${i}`} />;
-                      }
-
-                      return (
-                        <LoopRow
-                          key={`position-${position.address}`}
-                          currentPositionInfo={currentPositionInfo}
-                          marketData={marketData ?? undefined}
-                          position={position}
-                          positionLeverage={positionLeverages?.[i] ?? undefined}
-                          usdPrice={usdPrice ?? undefined}
-                          setSelectedLoopBorrowData={setSelectedLoopBorrowData}
-                          setSelectedSymbol={setSelectedSymbol}
-                          setLoopOpen={setIsLoopDialogOpen}
-                          chain={+chain}
-                        />
-                      );
-                    })}
-                </>
-              ) : (
-                <div className="text-center mx-auto py-2">
-                  No assets looped!
-                </div>
-              )}
-            </>
-          </ResultHandler>
+            setSelectedSymbol={setSelectedSymbol}
+            setSelectedLoopBorrowData={setSelectedLoopBorrowData}
+            setLoopOpen={setIsLoopDialogOpen}
+            chain={+chain}
+            marketData={marketData?.assets}
+            loopOpen={isLoopDialogOpen}
+            loopData={loopData}
+            selectedMarketData={selectedMarketData}
+            comptroller={marketData?.comptroller}
+            selectedLoopBorrowData={selectedLoopBorrowData}
+          />
         </div>
       </div>
-
-      {selectedMarketData && (
-        <Loop
-          borrowableAssets={loopData ? loopData[selectedMarketData.cToken] : []}
-          isOpen={isLoopDialogOpen}
-          setIsOpen={setIsLoopDialogOpen}
-          comptrollerAddress={marketData?.comptroller ?? ('' as Address)}
-          currentBorrowAsset={selectedLoopBorrowData}
-          selectedCollateralAsset={selectedMarketData}
-        />
-      )}
 
       {selectedMarketData && marketData && (
         <ManageDialog
@@ -412,160 +412,3 @@ export default function Dashboard() {
     </>
   );
 }
-type LoopRowProps = {
-  position: OpenPosition;
-  currentPositionInfo: PositionInfo;
-  usdPrice?: number;
-  positionLeverage?: number;
-  marketData?: PoolData;
-  setSelectedLoopBorrowData: (asset?: MarketData) => void;
-  setSelectedSymbol: (symbol: string) => void;
-  setLoopOpen: (open: boolean) => void;
-  chain: number;
-};
-const LoopRow = ({
-  position,
-  currentPositionInfo,
-  usdPrice,
-  positionLeverage,
-  marketData,
-  setSelectedLoopBorrowData,
-  setSelectedSymbol,
-  setLoopOpen,
-  chain
-}: LoopRowProps) => {
-  if (
-    !position ||
-    !position.address ||
-    !position.collateral?.symbol ||
-    !position.borrowable?.symbol ||
-    !currentPositionInfo
-  ) {
-    console.warn('Missing required data for LoopRow:', {
-      hasPosition: !!position,
-      address: position?.address,
-      collateralSymbol: position?.collateral?.symbol,
-      borrowableSymbol: position?.borrowable?.symbol,
-      hasCurrentPositionInfo: !!currentPositionInfo
-    });
-    return null;
-  }
-
-  return (
-    <div
-      className={`w-full hover:bg-graylite transition-all duration-200 ease-linear bg-grayUnselect rounded-xl mb-3 px-2 gap-x-1 lg:grid grid-cols-6 py-4 text-xs text-white/80 font-semibold text-center items-center relative`}
-      key={`position-${position.address}`}
-    >
-      <div className={`  flex gap-2 items-center justify-center mb-2 lg:mb-0`}>
-        <img
-          alt={position.address}
-          className="h-7"
-          src={`/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`}
-        />
-        <h3 className={` `}>{position.collateral.symbol}</h3>
-        /
-        <img
-          alt={position.address}
-          className="h-7"
-          src={`/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`}
-        />
-        <h3 className={` `}>{position.borrowable.symbol}</h3>
-      </div>
-
-      <h3 className={`mb-2 lg:mb-0`}>
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          POSITION VALUE:
-        </span>
-        {Number(
-          formatUnits(
-            currentPositionInfo.positionSupplyAmount,
-            Number(position.collateral.underlyingDecimals)
-          )
-        ).toLocaleString('en-US', {
-          maximumFractionDigits: 2
-        })}{' '}
-        / $
-        {millify(
-          Number(
-            formatUnits(
-              currentPositionInfo.positionSupplyAmount,
-              Number(position.collateral.underlyingDecimals)
-            )
-          ) *
-            ((usdPrice ?? 0) *
-              Number(
-                formatEther(
-                  marketData?.assets.find(
-                    (asset) =>
-                      asset.underlyingSymbol === position.collateral.symbol
-                  )?.underlyingPrice ?? 0n
-                )
-              ))
-        )}
-      </h3>
-
-      <h3 className={`mb-2 lg:mb-0`}>
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          BORROW:
-        </span>
-        {Number(
-          formatUnits(
-            currentPositionInfo.debtAmount,
-            position.borrowable.underlyingDecimals
-          )
-        ).toLocaleString('en-US', {
-          maximumFractionDigits: 2
-        })}{' '}
-        / $
-        {millify(
-          Number(
-            formatUnits(
-              currentPositionInfo.debtAmount,
-              position.borrowable.underlyingDecimals
-            )
-          ) *
-            ((usdPrice ?? 0) *
-              Number(
-                formatEther(
-                  marketData?.assets.find(
-                    (asset) =>
-                      asset.underlyingSymbol === position.borrowable.symbol
-                  )?.underlyingPrice ?? 0n
-                )
-              ))
-        )}
-      </h3>
-
-      <h3 className={`mb-2 lg:mb-0`}>
-        <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-          LOOPS:
-        </span>
-
-        {(Math.ceil(positionLeverage ? positionLeverage : 0) - 1).toFixed(1)}
-      </h3>
-
-      <LoopRewards
-        positionAddress={position.address ?? '0x'}
-        poolChainId={chain}
-        className="items-center justify-center"
-      />
-
-      <h3 className={`ml-2 mb-2 lg:mb-0`}>
-        <button
-          className="w-full uppercase rounded-lg bg-accent text-black py-1.5 px-3"
-          onClick={() => {
-            setSelectedLoopBorrowData(
-              marketData?.assets.find(
-                (asset) => asset.underlyingSymbol === position.borrowable.symbol
-              )
-            );
-            setSelectedSymbol(position.collateral.symbol);
-            setLoopOpen(true);
-          }}
-        >
-          Adjust / Close
-        </button>
-      </h3>
-    </div>
-  );
-};
