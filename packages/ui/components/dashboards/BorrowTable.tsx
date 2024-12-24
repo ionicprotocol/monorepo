@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Image from 'next/image';
 
@@ -6,13 +6,10 @@ import { useChainId } from 'wagmi';
 
 import { NO_COLLATERAL_SWAP, pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useOutsideClick } from '@ui/hooks/useOutsideClick';
-import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import CommonTable from '../../components/CommonTable';
 import ActionButton from '../ActionButton';
-import CollateralSwapPopup from '../dashboards/CollateralSwapPopup';
 import APR from '../markets/Cells/APR';
 import TokenBalance from '../markets/Cells/TokenBalance';
 import FlyWheelRewards from '../markets/FlyWheelRewards';
@@ -22,7 +19,7 @@ import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-export interface SupplyRowData {
+export interface BorrowRowData {
   asset: string;
   logo: string;
   amount: {
@@ -42,45 +39,31 @@ export interface SupplyRowData {
   underlyingToken: string;
 }
 
-interface SupplyTableProps {
-  data: SupplyRowData[];
+interface BorrowTableProps {
+  data: BorrowRowData[];
   isLoading: boolean;
   setIsManageDialogOpen: (value: boolean) => void;
-  setActiveTab: (value: 'supply' | 'withdraw') => void;
+  setActiveTab: (value: 'borrow' | 'repay') => void;
   setSelectedSymbol: (value: string) => void;
-  allMarketData?: MarketData[];
-  comptroller?: Address;
-  pool: string;
   chain: number;
 }
 
-function SupplyTable({
+function BorrowTable({
   data,
   isLoading,
   setIsManageDialogOpen,
   setActiveTab,
   setSelectedSymbol,
-  allMarketData,
-  comptroller,
-  pool,
   chain
-}: SupplyTableProps) {
+}: BorrowTableProps) {
   const chainId = useChainId();
   const { address, getSdk } = useMultiIonic();
   const sdk = getSdk(chain);
 
-  // State for swap functionality
-  const [swapFromAsset, setSwapFromAsset] = useState<MarketData>();
-  const {
-    componentRef: swapRef,
-    isopen: swapOpen,
-    toggle: swapToggle
-  } = useOutsideClick();
-
-  const columns: EnhancedColumnDef<SupplyRowData>[] = [
+  const columns: EnhancedColumnDef<BorrowRowData>[] = [
     {
       id: 'asset',
-      header: 'SUPPLY ASSETS',
+      header: 'BORROW ASSETS',
       cell: ({ row }) => (
         <div className="flex gap-3 items-center pl-6">
           <Image
@@ -107,10 +90,10 @@ function SupplyTable({
     },
     {
       id: 'apr',
-      header: 'SUPPLY APR',
+      header: 'BORROW APR',
       cell: ({ row }) => (
         <APR
-          type="supply"
+          type="borrow"
           aprTotal={row.original.apr.total}
           baseAPR={row.original.apr.base}
           asset={row.original.asset}
@@ -131,7 +114,7 @@ function SupplyTable({
           cToken={row.original.cToken}
           pool={row.original.comptrollerAddress}
           poolChainId={row.original.selectedChain}
-          type="supply"
+          type="borrow"
         />
       )
     },
@@ -139,18 +122,29 @@ function SupplyTable({
       id: 'actions',
       header: 'ACTIONS',
       enableSorting: false,
-      cell: ({ row }) => {
-        const marketAsset = allMarketData?.find(
-          (asset) => asset.underlyingSymbol === row.original.asset
-        );
-        const canSwap = !NO_COLLATERAL_SWAP[row.original.selectedChain]?.[
-          pool
-        ]?.includes(row.original.asset);
-
-        return (
-          <div className="flex gap-2 pr-6">
+      cell: ({ row }) => (
+        <div className="flex gap-2 pr-6">
+          <ActionButton
+            half
+            action={async () => {
+              const result = await handleSwitchOriginChain(
+                row.original.selectedChain,
+                chainId
+              );
+              if (result) {
+                setSelectedSymbol(row.original.asset);
+                setIsManageDialogOpen(true);
+                setActiveTab('repay');
+              }
+            }}
+            disabled={!address}
+            label="Repay"
+          />
+          {!NO_COLLATERAL_SWAP[row.original.selectedChain]?.[
+            row.original.pool
+          ]?.includes(row.original.asset) && (
             <ActionButton
-              half={canSwap}
+              half
               action={async () => {
                 const result = await handleSwitchOriginChain(
                   row.original.selectedChain,
@@ -159,73 +153,37 @@ function SupplyTable({
                 if (result) {
                   setSelectedSymbol(row.original.asset);
                   setIsManageDialogOpen(true);
-                  setActiveTab('supply');
+                  setActiveTab('borrow');
                 }
               }}
-              disabled={!address}
-              label="Manage"
+              disabled={
+                !address ||
+                !sdk?.chainDeployment[
+                  `CollateralSwap-${row.original.comptrollerAddress}`
+                ]
+              }
+              label="Borrow More"
+              bg={pools[row.original.selectedChain].bg}
             />
-            {canSwap && marketAsset && (
-              <ActionButton
-                action={async () => {
-                  const result = await handleSwitchOriginChain(
-                    row.original.selectedChain,
-                    chainId
-                  );
-                  if (result) {
-                    setSwapFromAsset(marketAsset);
-                    swapToggle();
-                  }
-                }}
-                half
-                disabled={
-                  !address ||
-                  !sdk?.chainDeployment[`CollateralSwap-${comptroller}`]
-                }
-                label="Collateral Swap"
-                bg={pools[row.original.selectedChain].bg}
-              />
-            )}
-          </div>
-        );
-      }
+          )}
+        </div>
+      )
     }
   ];
 
   return (
-    <>
-      {swapOpen && comptroller && swapFromAsset && (
-        <CollateralSwapPopup
-          toggler={swapToggle}
-          swapRef={swapRef}
-          swappedFromAsset={swapFromAsset}
-          swappedToAssets={
-            allMarketData?.filter(
-              (asset) =>
-                asset?.underlyingToken !== swapFromAsset?.underlyingToken &&
-                !NO_COLLATERAL_SWAP[chainId]?.[pool]?.includes(
-                  asset?.underlyingSymbol ?? ''
-                )
-            ) ?? []
-          }
-          swapOpen={swapOpen}
-          comptroller={comptroller}
-        />
-      )}
-
-      <CommonTable
-        data={data}
-        columns={columns}
-        isLoading={isLoading}
-        getRowStyle={(row) => ({
-          badge: row.original.membership ? { text: 'Collateral' } : undefined,
-          borderClassName: row.original.membership
-            ? pools[row.original.selectedChain]?.border
-            : undefined
-        })}
-      />
-    </>
+    <CommonTable
+      data={data}
+      columns={columns}
+      isLoading={isLoading}
+      getRowStyle={(row) => ({
+        badge: row.original.membership ? { text: 'Collateral' } : undefined,
+        borderClassName: row.original.membership
+          ? pools[row.original.selectedChain]?.border
+          : undefined
+      })}
+    />
   );
 }
 
-export default SupplyTable;
+export default BorrowTable;

@@ -124,7 +124,7 @@ function CommonTable<T extends object>({
 
   const isLoading = !hasInitialized || externalIsLoading;
 
-  if (!hasInitialized && data.length > 0) {
+  if (!hasInitialized) {
     setHasInitialized(true);
   }
 

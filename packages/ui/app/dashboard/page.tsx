@@ -9,8 +9,9 @@ import { useSearchParams } from 'next/navigation';
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 
+import BorrowTable from '@ui/components/dashboards/BorrowTable';
+import type { BorrowRowData } from '@ui/components/dashboards/BorrowTable';
 import ClaimRewardPopover from '@ui/components/dashboards/ClaimRewardPopover';
-import InfoRows, { InfoMode } from '@ui/components/dashboards/InfoRows';
 import InfoSection from '@ui/components/dashboards/InfoSection';
 import LoopRewards from '@ui/components/dashboards/LoopRewards';
 import type { SupplyRowData } from '@ui/components/dashboards/SupplyTable';
@@ -138,6 +139,59 @@ export default function Dashboard() {
 
   const allChains: number[] = Object.keys(pools).map(Number);
 
+  const borrowTableData: BorrowRowData[] = borrowedAssets.map((asset) => {
+    const baseApr = Number(
+      currentSdk
+        ?.ratePerBlockToAPY(
+          asset?.borrowRatePerBlock ?? 0n,
+          getBlockTimePerMinuteByChainId(+chain)
+        )
+        .toFixed(2)
+    );
+
+    const rewardsData =
+      (rewards?.[asset?.cToken]?.map((r) => ({
+        ...r,
+        apy: typeof r.apy !== 'undefined' ? r.apy * 100 : undefined
+      })) as FlywheelReward[]) ?? [];
+
+    const borrowRewards = rewardsData?.filter((reward) =>
+      FLYWHEEL_TYPE_MAP[+chain]?.borrow?.includes(
+        (reward as FlywheelReward).flywheel
+      )
+    );
+
+    const totalRewardsApr = borrowRewards.reduce(
+      (acc, reward) => acc + (reward.apy ?? 0),
+      0
+    );
+
+    // For borrow APR, we subtract the base APR and add rewards
+    const totalApr = 0 - baseApr + totalRewardsApr;
+
+    return {
+      asset: asset.underlyingSymbol,
+      logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
+      amount: {
+        tokens: Number.parseFloat(
+          formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        usd: asset.borrowBalanceFiat
+      },
+      apr: {
+        base: baseApr,
+        rewards: borrowRewards,
+        total: totalApr
+      },
+      cToken: asset.cToken,
+      membership: asset.membership,
+      comptrollerAddress: marketData?.comptroller ?? '0x',
+      pool,
+      selectedChain: +chain,
+      underlyingToken: asset.underlyingToken
+    };
+  });
+
   const supplyTableData: SupplyRowData[] = suppliedAssets.map((asset) => {
     const baseApr = Number(
       currentSdk
@@ -226,6 +280,7 @@ export default function Dashboard() {
             allMarketData={marketData?.assets}
             comptroller={marketData?.comptroller}
             pool={pool}
+            chain={+chain}
           />
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
@@ -233,91 +288,14 @@ export default function Dashboard() {
             <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
           </div>
 
-          <ResultHandler
-            center
-            isLoading={
-              isLoadingMarketData || isLoadingAssetsSupplyAprData
-              // || isLoadingBorrowCaps
-            }
-          >
-            <>
-              {borrowedAssets.length > 0 ? (
-                <>
-                  <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-                  >
-                    <h3 className={` `}>BORROW ASSETS</h3>
-                    <h3 className={` `}>AMOUNT</h3>
-                    <h3 className={` `}>BORROW APR</h3>
-                    <h3 className={` `}>REWARDS</h3>
-                  </div>
-
-                  {borrowedAssets.map((asset) => (
-                    <InfoRows
-                      amount={`${
-                        asset.borrowBalanceFiat
-                          ? Number.parseFloat(
-                              formatUnits(
-                                asset.borrowBalance,
-                                asset.underlyingDecimals
-                              )
-                            ).toLocaleString('en-US', {
-                              maximumFractionDigits: 2
-                            })
-                          : '0'
-                      } ${
-                        asset.underlyingSymbol
-                      } / $${asset.borrowBalanceFiat.toLocaleString('en-US', {
-                        maximumFractionDigits: 2
-                      })}`}
-                      apr={`${
-                        currentSdk
-                          ?.ratePerBlockToAPY(
-                            asset?.borrowRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(+chain)
-                          )
-                          .toFixed(2) ?? '0.00'
-                      }`}
-                      asset={asset.underlyingSymbol}
-                      collateralApr={`${
-                        assetsSupplyAprData
-                          ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
-                          : ''
-                      }%`}
-                      cToken={asset.cToken}
-                      comptrollerAddress={
-                        marketData?.comptroller ?? ('' as Address)
-                      }
-                      pool={pool}
-                      rewards={
-                        (rewards?.[asset?.cToken]?.map((r) => ({
-                          ...r,
-                          apy:
-                            typeof r.apy !== 'undefined'
-                              ? r.apy * 100
-                              : undefined
-                        })) as FlywheelReward[]) ?? []
-                      }
-                      key={`supply-row-${asset.underlyingSymbol}`}
-                      logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
-                      membership={asset.membership}
-                      mode={InfoMode.BORROW}
-                      selectedChain={+chain}
-                      setIsManageDialogOpen={setIsManageDialogOpen}
-                      setActiveTab={setActiveTab}
-                      setSelectedSymbol={setSelectedSymbol}
-                      // utilization={utilizations[i]}
-                      utilization="0.00%"
-                    />
-                  ))}
-                </>
-              ) : (
-                <div className="text-center mx-auto py-2">
-                  No assets borrowed!
-                </div>
-              )}
-            </>
-          </ResultHandler>
+          <BorrowTable
+            data={borrowTableData}
+            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+            setIsManageDialogOpen={setIsManageDialogOpen}
+            setActiveTab={setActiveTab}
+            setSelectedSymbol={setSelectedSymbol}
+            chain={+chain}
+          />
         </div>
 
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
