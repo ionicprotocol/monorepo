@@ -263,3 +263,56 @@ task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster 
     return booster;
   }
 );
+
+task("flywheel:deploy-flywheel-implementation-supporting-supply-vaults", "Deploy flywheel implementation that supports Supply Vaults").setAction(
+  async ({}, { deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const flywheel = await deployments.deploy(`IonicFlywheel_SupplyVaults`, {
+      contract: "IonicFlywheel",
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1
+    });
+
+    console.log(`Deployed new flywheel implementation: ${flywheel.address}`);
+
+    return flywheel;
+  }
+);
+
+task("flywheel:deploy-flywheel-borrow-implementation-supporting-supply-vaults", "Deploy flywheel borrow implementation that supports Supply Vaults").setAction(
+  async ({}, { deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const flywheel = await deployments.deploy(`IonicFlywheelBorrow_SupplyVaults`, {
+      contract: "IonicFlywheelBorrow",
+      from: deployer,
+      log: true,
+      args: [],
+      waitConfirmations: 1
+    });
+
+    console.log(`Deployed new flywheel borrow implementation: ${flywheel.address}`);
+
+    return flywheel;
+  }
+);
+
+task("flywheel:deploy-flywheel-lens-router-supporting-supply-vaults", "Deploy flywheel lens router that supports Supply Vaults").setAction(
+  async ({}, { deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const poolDirectory = (await deployments.get("PoolDirectory")).address;
+
+    const flywheelLensRouter = await deployments.deploy(`IonicFlywheelLensRouter_SupplyVaults`, {
+      contract: "IonicFlywheelLensRouter",
+      from: deployer,
+      log: true,
+      args: [poolDirectory],
+      waitConfirmations: 1
+    });
+
+    console.log(`Deployed new flywheel lens router: ${flywheelLensRouter.address}`);
+
+    return flywheelLensRouter;
+  }
+);
