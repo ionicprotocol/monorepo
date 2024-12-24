@@ -10,35 +10,31 @@ import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
 import { useChainId } from 'wagmi';
 
+import ClaimRewardPopover from '@ui/components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '@ui/components/dashboards/CollateralSwapPopup';
+import InfoRows, { InfoMode } from '@ui/components/dashboards/InfoRows';
+import InfoSection from '@ui/components/dashboards/InfoSection';
+import LoopRewards from '@ui/components/dashboards/LoopRewards';
+import Loop from '@ui/components/dialogs/loop';
+import ManageDialog from '@ui/components/dialogs/manage';
+import type { ActiveTab } from '@ui/components/dialogs/manage';
+import NetworkSelector from '@ui/components/markets/NetworkSelector';
+import ResultHandler from '@ui/components/ResultHandler';
 import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useHealthFactor } from '@ui/hooks/pools/useHealthFactor';
-import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
-import { useUserNetApr } from '@ui/hooks/useUserNetApr';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-
-import ClaimRewardPopover from '@ui/components/dashboards/ClaimRewardPopover';
-import CollateralSwapPopup from '@ui/components/dashboards/CollateralSwapPopup';
-import InfoRows, { InfoMode } from '@ui/components/dashboards/InfoRows';
-import LoopRewards from '@ui/components/dashboards/LoopRewards';
-import Loop from '@ui/components/dialogs/loop';
-import ManageDialog from '@ui/components/dialogs/manage';
-import NetworkSelector from '@ui/components/markets/NetworkSelector';
-import ResultHandler from '@ui/components/ResultHandler';
-
-import type { ActiveTab } from '@ui/components/dialogs/manage';
 
 import type {
   FlywheelReward,
@@ -63,6 +59,11 @@ export default function Dashboard() {
   const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
     useState<MarketData>();
   const walletChain = useChainId();
+
+  const { data: rewards } = useRewards({
+    chainId: +chain,
+    poolId: pool
+  });
 
   const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
     pool ? pool : pools[+chain].pools[0].id,
@@ -118,89 +119,6 @@ export default function Dashboard() {
     marketData?.assets.map((asset) => asset.cToken) ?? [],
     +chain
   );
-  const { borrowApr, netAssetValue, supplyApr } = useMemo(() => {
-    if (!marketData?.assets || !assetsSupplyAprData || !currentSdk) {
-      return {
-        avgCollateralApr: '0.00%',
-        borrowApr: '0.00%',
-        netAssetValue: '$0.00',
-        supplyApr: '0.00%',
-        totalCollateral: '$0.00'
-      };
-    }
-
-    try {
-      const blocksPerMinute = getBlockTimePerMinuteByChainId(+chain);
-      let totalCollateral = 0;
-      let avgCollateralApr = 0;
-      let borrowApr = 0;
-      let supplyApr = 0;
-      let memberships = 0;
-
-      marketData.assets.forEach((asset) => {
-        if (!asset) return;
-
-        if (asset.membership) {
-          totalCollateral += asset.supplyBalanceFiat ?? 0;
-          avgCollateralApr += assetsSupplyAprData[asset.cToken]?.apy ?? 0;
-          memberships++;
-        }
-
-        if (asset.borrowBalanceFiat && asset.borrowRatePerBlock) {
-          try {
-            borrowApr += currentSdk.ratePerBlockToAPY(
-              asset.borrowRatePerBlock,
-              blocksPerMinute
-            );
-          } catch (e) {
-            console.warn('Error calculating borrow APR:', e);
-          }
-        }
-
-        if (asset.supplyBalanceFiat && asset.supplyRatePerBlock) {
-          try {
-            supplyApr += currentSdk.ratePerBlockToAPY(
-              asset.supplyRatePerBlock,
-              blocksPerMinute
-            );
-          } catch (e) {
-            console.warn('Error calculating supply APR:', e);
-          }
-        }
-      });
-
-      const finalSupplyApr = supplyApr / (suppliedAssets.length || 1);
-      const finalBorrowApr = borrowApr / (borrowedAssets.length || 1);
-
-      return {
-        avgCollateralApr: `${(avgCollateralApr / (memberships || 1)).toFixed(2)}%`,
-        borrowApr: `${finalBorrowApr.toFixed(2)}%`,
-        netAssetValue: `$${millify(
-          (marketData?.totalSupplyBalanceFiat ?? 0) -
-            (marketData?.totalBorrowBalanceFiat ?? 0),
-          { precision: 2 }
-        )}`,
-        supplyApr: `${finalSupplyApr.toFixed(2)}%`,
-        totalCollateral: `$${millify(totalCollateral, { precision: 2 })}`
-      };
-    } catch (e) {
-      console.warn('Error in APR calculations:', e);
-      return {
-        avgCollateralApr: '0.00%',
-        borrowApr: '0.00%',
-        netAssetValue: '$0.00',
-        supplyApr: '0.00%',
-        totalCollateral: '$0.00'
-      };
-    }
-  }, [
-    assetsSupplyAprData,
-    borrowedAssets,
-    currentSdk,
-    chain,
-    marketData,
-    suppliedAssets
-  ]);
 
   const selectedMarketData = useMemo<MarketData | undefined>(
     () =>
@@ -212,85 +130,9 @@ export default function Dashboard() {
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
-  const { data: healthData, isLoading: isLoadingHealthData } = useHealthFactor(
-    marketData?.comptroller,
-    +chain
-  );
   const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
     chain.toString()
   );
-  const handledHealthData = useMemo<string>(() => {
-    if (
-      marketData?.totalBorrowBalanceNative === 0 ||
-      Number.parseFloat(healthData ?? '0') < 0
-    ) {
-      return '∞';
-    }
-
-    return healthData ?? '∞';
-  }, [healthData, marketData]);
-
-  const { data: userNetApr, isLoading: isLoadingUserNetApr } = useUserNetApr();
-  const healthColorClass = useMemo<string>(() => {
-    const healthDataAsNumber = Number.parseFloat(healthData ?? '0');
-
-    if (isNaN(Number.parseFloat(handledHealthData))) {
-      return '';
-    }
-
-    if (healthDataAsNumber >= 3) {
-      return 'text-accent';
-    }
-
-    if (healthDataAsNumber >= 1.5) {
-      return 'text-lime';
-    }
-
-    return 'text-error';
-  }, [handledHealthData, healthData]);
-
-  const { data: rewards } = useRewards({
-    chainId: +chain,
-    poolId: pool
-  });
-
-  const allChains: number[] = Object.keys(pools).map(Number);
-  const {
-    data: claimableRewardsAcrossAllChains,
-    isLoading: isLoadingClaimableRewardsAcrossAllChains
-  } = useAllClaimableRewards(allChains);
-
-  const totalRewardsAcrossAllChains = useMemo(() => {
-    // Early return if the entire rewards array is undefined
-    if (!claimableRewardsAcrossAllChains) return 0n;
-    if (!Array.isArray(claimableRewardsAcrossAllChains)) return 0n;
-    if (!claimableRewardsAcrossAllChains.length) return 0n;
-
-    try {
-      const validRewards = claimableRewardsAcrossAllChains.filter(
-        (
-          reward
-        ): reward is { amount: bigint; chainId: number; rewardToken: string } =>
-          reward !== null &&
-          reward !== undefined &&
-          'amount' in reward &&
-          'chainId' in reward &&
-          'rewardToken' in reward &&
-          typeof reward.amount === 'bigint'
-      );
-
-      // If no valid rewards after filtering, return early
-      if (!validRewards.length) return 0n;
-
-      return validRewards.reduce((acc, reward) => acc + reward.amount, 0n);
-    } catch (e) {
-      console.warn('Error calculating total rewards:', {
-        error: e,
-        rewards: claimableRewardsAcrossAllChains
-      });
-      return 0n;
-    }
-  }, [claimableRewardsAcrossAllChains]);
 
   const {
     componentRef: rewardRef,
@@ -302,6 +144,8 @@ export default function Dashboard() {
     isopen: swapOpen,
     toggle: swapToggle
   } = useOutsideClick();
+
+  const allChains: number[] = Object.keys(pools).map(Number);
 
   return (
     <>
@@ -329,217 +173,16 @@ export default function Dashboard() {
         isOpen={rewardisopen}
         close={() => rewardToggle()}
       />
-      <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear">
-        <div
-          className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
-        >
-          <div
-            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6   col-span-3   flex flex-col items-center justify-start `}
-          >
-            <div className={`w-full flex justify-between  pb-6 items-center`}>
-              <span>NET ASSET VALUE</span>
-              <ResultHandler
-                height="24"
-                isLoading={!netAssetValue}
-                width="24"
-              >
-                <span> {netAssetValue}</span>
-              </ResultHandler>
-            </div>
-            <div className={`flex items-center justify-between w-full gap-x-3`}>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Total Supply</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={isLoadingMarketData}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>
-                    ${millify(marketData?.totalSupplyBalanceFiat ?? 0)}
-                  </p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Total Borrow</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={isLoadingMarketData}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>
-                    ${millify(marketData?.totalBorrowBalanceFiat ?? 0)}
-                  </p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Position Health</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={isLoadingHealthData}
-                  width="24"
-                >
-                  <div className="popover-container">
-                    <p className={`font-semibold ${healthColorClass}`}>
-                      {handledHealthData} <i className="popover-hint">i</i>
-                    </p>
-
-                    <div className="popover absolute w-[250px] right-0 md:right-auto top-full md:left-[50%] p-2 mt-1 md:ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
-                      Health Factor represents safety of your deposited
-                      collateral against the borrowed assets and its underlying
-                      value. If the health factor goes below 1, the liquidation
-                      of your collateral might be triggered.
-                    </div>
-                  </div>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-            </div>
-          </div>
-          <div
-            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-3 flex flex-col items-center justify-start `}
-          >
-            <div className={`w-full flex justify-between  pb-6 items-center`}>
-              <span>NET APR (All Pools)</span>
-              <ResultHandler
-                height="24"
-                isLoading={isLoadingUserNetApr}
-                width="24"
-              >
-                <div className="popover-container">
-                  <span>
-                    {Number(formatEther(userNetApr ?? 0n)).toFixed(2)}%{' '}
-                    <i className="popover-hint">i</i>
-                  </span>
-
-                  <div className="popover absolute w-[250px] top-full right-0 md:right-auto md:left-[50%] p-2 mt-1 md:ml-[-125px] border border-lime rounded-lg text-xs z-30 opacity-0 invisible bg-grayUnselect transition-all">
-                    Net APR is the difference between the average borrowing APR
-                    you are paying versus the average supply APR you are
-                    earning. This does not include the future value of Ionic
-                    points that you are earning!
-                  </div>
-                </div>
-              </ResultHandler>
-            </div>
-            <div className={`flex items-center justify-between w-full gap-x-3`}>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Avg. Borrowing APR</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={!borrowApr}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>{borrowApr}</p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-              <div
-                className={`flex flex-col items-start justify-center  gap-y-1`}
-              >
-                <p className={`text-white/60 text-xs`}>Avg. Supply APR</p>
-                <ResultHandler
-                  height="24"
-                  isLoading={!supplyApr}
-                  width="24"
-                >
-                  <p className={`font-semibold`}>{supplyApr}</p>
-                </ResultHandler>
-                {/* this neeeds to be changed */}
-              </div>
-            </div>
-          </div>
-          <div
-            className={`w-full mb-2 lg:mb-0 bg-grayone rounded-xl py-3 px-6 col-span-2 flex flex-col items-center justify-start `}
-          >
-            <div className={`w-full flex justify-between items-center mb-2`}>
-              <span>Claimable Rewards</span>
-              <ResultHandler
-                height="24"
-                isLoading={isLoadingClaimableRewardsAcrossAllChains}
-                width="24"
-              >
-                <span className={`flex items-center justify-center gap-1`}>
-                  {Math.round(
-                    +formatEther(totalRewardsAcrossAllChains)
-                  ).toLocaleString('en-us', {
-                    maximumFractionDigits: 0
-                  })}{' '}
-                  <span className={`text-[8px] text-white/50 hidden`}>
-                    (ION+hyUSD+eUSD)
-                  </span>
-                </span>
-              </ResultHandler>
-            </div>
-            <div
-              className={`w-full cursor-pointer rounded-md bg-accent text-black py-2 px-6 text-center text-xs mt-auto  `}
-              onClick={() => rewardToggle()}
-            >
-              CLAIM ALL REWARDS
-            </div>
-          </div>
-        </div>
-        {/* <div
-          className={`flex items-center justify-center text-sm gap-2 p-1 my-1`}
-        >
-          <button
-            className={`py-2 px-4 border rounded-xl   ${
-              poolMarket === '0' && selectedTab === 'MODE'
-                ? 'bg-lime text-black'
-                : ''
-            }`}
-            onClick={() => (setPoolMarket('0'), setSelectedTab('MODE'))}
-          >
-            Mode Main Market
-          </button>
-          <button
-            className={`py-2 px-4 border rounded-xl border-lime ${
-              poolMarket === '1' ? 'bg-lime text-black ' : ' '
-            }`}
-            onClick={() => setPoolMarket('1')}
-          >
-            Mode Native Market
-          </button>
-          <button
-            className={`py-2 px-4 border rounded-xl border-lime ${
-              poolMarket === '0' && selectedTab === 'BASE'
-                ? 'bg-lime text-black '
-                : ' '
-            }`}
-            onClick={() => (setPoolMarket('0'), setSelectedTab('BASE'))}
-          >
-            Base Market
-          </button>
-        </div> */}
-        <div
-          className={`lg:grid grid-cols-8 gap-x-3 my-2 w-full  font-semibold text-base `}
-        >
-          <div className={`col-span-4 flex flex-col`}>
-            <div className={`  `}>
-              {/* <Dropdown
-            chainId={chain as string}
-            dropdownSelectedChain={+chain}
-            newRef={newRef}
-            open={open}
-            options={pools}
-            pool={pool || '0'}
-            setOpen={setOpen}
-          /> */}
-              <NetworkSelector dropdownSelectedChain={+chain} />
-            </div>
-          </div>
-          {/* <div className={`w-full mt-2  col-span-5`}>
-            <ClaimAllBaseRewards chain={+chain} />
-          </div> */}
-        </div>
+      <div className="w-full flex flex-col items-start justify-start transition-all duration-200 ease-linear gap-3">
+        <InfoSection
+          marketData={marketData}
+          isLoadingMarketData={isLoadingMarketData}
+          rewardToggle={rewardToggle}
+          suppliedAssets={suppliedAssets}
+          borrowedAssets={borrowedAssets}
+          chain={+chain}
+        />
+        <NetworkSelector dropdownSelectedChain={+chain} />
         <div className={`bg-grayone  w-full px-6 py-3  rounded-xl`}>
           <PoolToggle
             chain={+chain}
