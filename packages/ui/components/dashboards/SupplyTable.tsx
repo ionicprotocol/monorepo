@@ -1,176 +1,187 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { formatUnits } from 'viem';
+import Image from 'next/image';
+
 import { useChainId } from 'wagmi';
 
-import { NO_COLLATERAL_SWAP } from '@ui/constants';
+import { NO_COLLATERAL_SWAP, pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import CommonTable from '../CommonTable';
+import CommonTable from '../../components/CommonTable';
+import ActionButton from '../ActionButton';
+import CollateralSwapPopup from '../dashboards/CollateralSwapPopup';
+import APR from '../markets/Cells/APR';
+import TokenBalance from '../markets/Cells/TokenBalance';
+import FlyWheelRewards from '../markets/FlyWheelRewards';
 
-import type { EnhancedColumnDef } from '../CommonTable';
+import type { EnhancedColumnDef } from '../../components/CommonTable';
+import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-interface SupplyTableProps {
-  suppliedAssets: MarketData[];
-  assetsSupplyAprData: Record<string, { apy: number; totalApy: number }>;
-  marketData?: {
-    comptroller: `0x${string}`;
-    assets: MarketData[];
+export interface SupplyRowData {
+  asset: string;
+  logo: string;
+  amount: {
+    tokens: string;
+    usd: number;
   };
-  rewards?: Record<string, FlywheelReward[]>;
-  chain: number;
+  apr: {
+    base: number;
+    rewards: FlywheelReward[];
+    total: number;
+  };
+  cToken: `0x${string}`;
+  membership: boolean;
+  comptrollerAddress: Address;
   pool: string;
-  setSelectedSymbol: (symbol: string) => void;
-  setActiveTab: (tab: 'borrow' | 'repay' | 'supply' | 'withdraw') => void;
-  setIsManageDialogOpen: (isOpen: boolean) => void;
-  setCollateralSwapFromAsset: (asset: MarketData) => void;
-  swapToggle: () => void;
-  isLoading: boolean;
+  selectedChain: number;
+  underlyingToken: string;
 }
 
-const SupplyTable = ({
-  suppliedAssets,
-  assetsSupplyAprData,
-  marketData,
-  rewards,
-  chain,
-  pool,
-  setSelectedSymbol,
-  setActiveTab,
-  setIsManageDialogOpen,
-  setCollateralSwapFromAsset,
-  swapToggle,
-  isLoading
-}: SupplyTableProps) => {
-  const walletChain = useChainId();
-  const { currentSdk } = useMultiIonic();
+interface SupplyTableProps {
+  data: SupplyRowData[];
+  isLoading: boolean;
+  setIsManageDialogOpen: (value: boolean) => void;
+  setActiveTab: (value: 'supply' | 'withdraw') => void;
+  setSelectedSymbol: (value: string) => void;
+  allMarketData?: MarketData[];
+  comptroller?: Address;
+  pool: string;
+}
 
-  const columns: EnhancedColumnDef<MarketData>[] = [
+function SupplyTable({
+  data,
+  isLoading,
+  setIsManageDialogOpen,
+  setActiveTab,
+  setSelectedSymbol,
+  allMarketData,
+  comptroller,
+  pool
+}: SupplyTableProps) {
+  const chainId = useChainId();
+  const { address, getSdk } = useMultiIonic();
+  const sdk = getSdk(chainId);
+
+  // State for swap functionality
+  const [swapFromAsset, setSwapFromAsset] = useState<MarketData>();
+  const {
+    componentRef: swapRef,
+    isopen: swapOpen,
+    toggle: swapToggle
+  } = useOutsideClick();
+
+  const columns: EnhancedColumnDef<SupplyRowData>[] = [
     {
       id: 'asset',
       header: 'SUPPLY ASSETS',
-      sortingFn: 'alphabetical',
-      cell: ({ row }) => {
-        const asset = row.original;
-        return (
-          <div className="flex gap-3 items-center pl-6">
-            <img
-              src={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
-              alt={asset.underlyingSymbol}
-              className="w-7 h-7"
-            />
-            <span>{asset.underlyingSymbol}</span>
-          </div>
-        );
-      }
+      cell: ({ row }) => (
+        <div className="flex gap-3 items-center pl-6">
+          <Image
+            src={row.original.logo}
+            alt={row.original.asset}
+            width={28}
+            height={28}
+            className="w-7 h-7"
+          />
+          <span>{row.original.asset}</span>
+        </div>
+      )
     },
     {
       id: 'amount',
       header: 'AMOUNT',
-      sortingFn: 'numerical',
-      cell: ({ row }) => {
-        const asset = row.original;
-        return (
-          <div className="text-right">
-            <div>
-              {asset.supplyBalanceNative
-                ? Number.parseFloat(
-                    formatUnits(asset.supplyBalance, asset.underlyingDecimals)
-                  ).toLocaleString('en-US', { maximumFractionDigits: 2 })
-                : '0'}{' '}
-              {asset.underlyingSymbol}
-            </div>
-            <div className="text-sm text-white/60">
-              $
-              {asset.supplyBalanceFiat.toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              })}
-            </div>
-          </div>
-        );
-      }
+      cell: ({ row }) => (
+        <TokenBalance
+          balance={parseFloat(row.original.amount.tokens)}
+          balanceUSD={row.original.amount.usd}
+          tokenName={row.original.asset}
+        />
+      )
     },
     {
-      id: 'supplyApr',
+      id: 'apr',
       header: 'SUPPLY APR',
-      sortingFn: 'numerical',
-      cell: ({ row }) => {
-        const asset = row.original;
-        const baseApr = currentSdk
-          ?.ratePerBlockToAPY(
-            asset.supplyRatePerBlock,
-            getBlockTimePerMinuteByChainId(chain)
-          )
-          .toFixed(2);
-
-        const rewardsApr = rewards?.[asset.cToken]?.map((r) => ({
-          ...r,
-          apy: typeof r.apy !== 'undefined' ? r.apy * 100 : undefined
-        }));
-
-        return (
-          <div className="text-right">
-            <div>{baseApr}%</div>
-            {rewardsApr && rewardsApr.length > 0 && (
-              <div className="text-sm text-white/60">
-                +
-                {rewardsApr
-                  .reduce((acc, r) => acc + (r.apy || 0), 0)
-                  .toFixed(2)}
-                % in rewards
-              </div>
-            )}
-          </div>
-        );
-      }
+      cell: ({ row }) => (
+        <APR
+          type="supply"
+          aprTotal={row.original.apr.total}
+          baseAPR={row.original.apr.base}
+          asset={row.original.asset}
+          rewards={row.original.apr.rewards}
+          dropdownSelectedChain={row.original.selectedChain}
+          selectedPoolId={row.original.pool}
+          cToken={row.original.cToken}
+          pool={row.original.comptrollerAddress}
+          underlyingToken={row.original.underlyingToken as `0x${string}`}
+        />
+      )
+    },
+    {
+      id: 'rewards',
+      header: 'REWARDS',
+      cell: ({ row }) => (
+        <FlyWheelRewards
+          cToken={row.original.cToken}
+          pool={row.original.comptrollerAddress}
+          poolChainId={row.original.selectedChain}
+          type="supply"
+        />
+      )
     },
     {
       id: 'actions',
       header: 'ACTIONS',
       enableSorting: false,
       cell: ({ row }) => {
-        const asset = row.original;
+        const marketAsset = allMarketData?.find(
+          (asset) => asset.underlyingSymbol === row.original.asset
+        );
+        const canSwap = !NO_COLLATERAL_SWAP[row.original.selectedChain]?.[
+          pool
+        ]?.includes(row.original.asset);
+
         return (
-          <div className="flex gap-2">
-            <button
-              className="w-1/2 rounded-md bg-accent text-black py-2 px-3"
-              onClick={async () => {
+          <div className="flex gap-2 pr-6">
+            <ActionButton
+              half={canSwap}
+              action={async () => {
                 const result = await handleSwitchOriginChain(
-                  chain,
-                  walletChain
+                  row.original.selectedChain,
+                  chainId
                 );
                 if (result) {
-                  setSelectedSymbol(asset.underlyingSymbol);
-                  setActiveTab('supply');
+                  setSelectedSymbol(row.original.asset);
                   setIsManageDialogOpen(true);
+                  setActiveTab('supply');
                 }
               }}
-            >
-              Manage
-            </button>
-            {!NO_COLLATERAL_SWAP[chain]?.[pool]?.includes(
-              asset.underlyingSymbol
-            ) && (
-              <button
-                className="w-1/2 rounded-md bg-lime text-black py-2 px-3"
-                onClick={async () => {
+              disabled={!address}
+              label="Manage"
+            />
+            {canSwap && marketAsset && (
+              <ActionButton
+                action={async () => {
                   const result = await handleSwitchOriginChain(
-                    chain,
-                    walletChain
+                    row.original.selectedChain,
+                    chainId
                   );
                   if (result) {
-                    setCollateralSwapFromAsset(asset);
+                    setSwapFromAsset(marketAsset);
                     swapToggle();
                   }
                 }}
-              >
-                Swap
-              </button>
+                half
+                disabled={
+                  !sdk?.chainDeployment[`CollateralSwap-${comptroller}`]
+                }
+                label="Collateral Swap"
+                bg={pools[row.original.selectedChain].bg}
+              />
             )}
           </div>
         );
@@ -179,22 +190,39 @@ const SupplyTable = ({
   ];
 
   return (
-    <div className="bg-grayone w-full px-6 py-3 rounded-xl">
-      <div className="w-full flex items-center justify-between py-3">
-        <h1 className="font-semibold">Your Collateral (Supply)</h1>
-      </div>
+    <>
+      {swapOpen && comptroller && swapFromAsset && (
+        <CollateralSwapPopup
+          toggler={swapToggle}
+          swapRef={swapRef}
+          swappedFromAsset={swapFromAsset}
+          swappedToAssets={
+            allMarketData?.filter(
+              (asset) =>
+                asset?.underlyingToken !== swapFromAsset?.underlyingToken &&
+                !NO_COLLATERAL_SWAP[chainId]?.[pool]?.includes(
+                  asset?.underlyingSymbol ?? ''
+                )
+            ) ?? []
+          }
+          swapOpen={swapOpen}
+          comptroller={comptroller}
+        />
+      )}
 
       <CommonTable
-        data={suppliedAssets}
+        data={data}
         columns={columns}
         isLoading={isLoading}
         getRowStyle={(row) => ({
           badge: row.original.membership ? { text: 'Collateral' } : undefined,
-          borderClassName: row.original.membership ? 'border-lime' : undefined
+          borderClassName: row.original.membership
+            ? pools[row.original.selectedChain]?.border
+            : undefined
         })}
       />
-    </div>
+    </>
   );
-};
+}
 
 export default SupplyTable;

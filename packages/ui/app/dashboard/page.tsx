@@ -8,19 +8,19 @@ import { useSearchParams } from 'next/navigation';
 
 import millify from 'millify';
 import { type Address, formatEther, formatUnits, parseEther } from 'viem';
-import { useChainId } from 'wagmi';
 
 import ClaimRewardPopover from '@ui/components/dashboards/ClaimRewardPopover';
-import CollateralSwapPopup from '@ui/components/dashboards/CollateralSwapPopup';
 import InfoRows, { InfoMode } from '@ui/components/dashboards/InfoRows';
 import InfoSection from '@ui/components/dashboards/InfoSection';
 import LoopRewards from '@ui/components/dashboards/LoopRewards';
+import type { SupplyRowData } from '@ui/components/dashboards/SupplyTable';
+import SupplyTable from '@ui/components/dashboards/SupplyTable';
 import Loop from '@ui/components/dialogs/loop';
 import ManageDialog from '@ui/components/dialogs/manage';
 import type { ActiveTab } from '@ui/components/dialogs/manage';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import ResultHandler from '@ui/components/ResultHandler';
-import { NO_COLLATERAL_SWAP, pools } from '@ui/constants/index';
+import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageRatio';
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
@@ -33,7 +33,6 @@ import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 import type {
@@ -56,9 +55,6 @@ export default function Dashboard() {
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [activeTab, setActiveTab] = useState<ActiveTab>();
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
-  const [collateralSwapFromAsset, setCollateralSwapFromAsset] =
-    useState<MarketData>();
-  const walletChain = useChainId();
 
   const { data: rewards } = useRewards({
     chainId: +chain,
@@ -139,33 +135,63 @@ export default function Dashboard() {
     isopen: rewardisopen,
     toggle: rewardToggle
   } = useOutsideClick();
-  const {
-    componentRef: swapRef,
-    isopen: swapOpen,
-    toggle: swapToggle
-  } = useOutsideClick();
 
   const allChains: number[] = Object.keys(pools).map(Number);
 
+  const supplyTableData: SupplyRowData[] = suppliedAssets.map((asset) => {
+    const baseApr = Number(
+      currentSdk
+        ?.ratePerBlockToAPY(
+          asset?.supplyRatePerBlock ?? 0n,
+          getBlockTimePerMinuteByChainId(+chain)
+        )
+        .toFixed(2)
+    );
+
+    const rewardsData =
+      (rewards?.[asset?.cToken]?.map((r) => ({
+        ...r,
+        apy: typeof r.apy !== 'undefined' ? r.apy * 100 : undefined
+      })) as FlywheelReward[]) ?? [];
+
+    const supplyRewards = rewardsData?.filter((reward) =>
+      FLYWHEEL_TYPE_MAP[+chain]?.supply?.includes(
+        (reward as FlywheelReward).flywheel
+      )
+    );
+
+    const totalRewardsApr = supplyRewards.reduce(
+      (acc, reward) => acc + (reward.apy ?? 0),
+      0
+    );
+
+    const totalApr = baseApr + totalRewardsApr;
+
+    return {
+      asset: asset.underlyingSymbol,
+      logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
+      amount: {
+        tokens: Number.parseFloat(
+          formatUnits(asset.supplyBalance, asset.underlyingDecimals)
+        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        usd: asset.supplyBalanceFiat
+      },
+      apr: {
+        base: baseApr,
+        rewards: supplyRewards,
+        total: totalApr
+      },
+      cToken: asset.cToken,
+      membership: asset.membership,
+      comptrollerAddress: marketData?.comptroller ?? '0x',
+      pool,
+      selectedChain: +chain,
+      underlyingToken: asset.underlyingToken
+    };
+  });
+
   return (
     <>
-      {swapOpen && marketData?.comptroller && (
-        <CollateralSwapPopup
-          toggler={() => swapToggle()}
-          swapRef={swapRef}
-          swappedFromAsset={collateralSwapFromAsset!}
-          swappedToAssets={marketData?.assets.filter(
-            (asset) =>
-              asset?.underlyingToken !==
-                collateralSwapFromAsset?.underlyingToken &&
-              !NO_COLLATERAL_SWAP[+chain]?.[pool]?.includes(
-                asset?.underlyingSymbol ?? ''
-              )
-          )}
-          swapOpen={swapOpen}
-          comptroller={marketData?.comptroller}
-        />
-      )}
       <ClaimRewardPopover
         chain={+chain}
         allchain={allChains}
@@ -191,103 +217,16 @@ export default function Dashboard() {
           <div className={` w-full flex items-center justify-between py-3 `}>
             <h1 className={`font-semibold`}>Your Collateral (Supply)</h1>
           </div>
-          <ResultHandler
-            center
-            isLoading={
-              isLoadingMarketData || isLoadingAssetsSupplyAprData
-              // || isLoadingBorrowCaps
-            }
-          >
-            <>
-              {suppliedAssets.length > 0 ? (
-                <>
-                  <div
-                    className={`w-full gap-x-1 hidden md:grid  grid-cols-5  py-4 text-[10px] text-white/40 font-semibold text-center  `}
-                  >
-                    <h3 className={` `}>SUPPLY ASSETS</h3>
-                    <h3 className={` `}>AMOUNT</h3>
-                    <h3 className={` `}>SUPPLY APR</h3>
-                    <h3 className={` `}>REWARDS</h3>
-                  </div>
-
-                  {suppliedAssets.map((asset) => (
-                    <InfoRows
-                      amount={`${
-                        asset.supplyBalanceNative
-                          ? Number.parseFloat(
-                              formatUnits(
-                                asset.supplyBalance,
-                                asset.underlyingDecimals
-                              )
-                            ).toLocaleString('en-US', {
-                              maximumFractionDigits: 2
-                            })
-                          : '0'
-                      } ${
-                        asset.underlyingSymbol
-                      } / $${asset.supplyBalanceFiat.toLocaleString('en-US', {
-                        maximumFractionDigits: 2
-                      })}`}
-                      apr={`${
-                        currentSdk
-                          ?.ratePerBlockToAPY(
-                            asset?.supplyRatePerBlock ?? 0n,
-                            getBlockTimePerMinuteByChainId(+chain)
-                          )
-                          .toFixed(2) ?? '0.00'
-                      }`}
-                      asset={asset.underlyingSymbol}
-                      collateralApr={`${
-                        assetsSupplyAprData
-                          ? assetsSupplyAprData[asset.cToken]?.apy.toFixed(2)
-                          : ''
-                      }%`}
-                      cToken={asset.cToken}
-                      key={`supply-row-${asset.underlyingSymbol}`}
-                      logo={`/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`}
-                      membership={asset.membership}
-                      mode={InfoMode.SUPPLY}
-                      comptrollerAddress={
-                        marketData?.comptroller ?? ('' as Address)
-                      }
-                      pool={pool}
-                      rewards={
-                        (rewards?.[asset?.cToken]?.map((r) => ({
-                          ...r,
-                          apy:
-                            typeof r.apy !== 'undefined'
-                              ? r.apy * 100
-                              : undefined
-                        })) as FlywheelReward[]) ?? []
-                      }
-                      selectedChain={+chain}
-                      setActiveTab={setActiveTab}
-                      setIsManageDialogOpen={setIsManageDialogOpen}
-                      setSelectedSymbol={setSelectedSymbol}
-                      // utilization={utilizations[i]}
-                      toggler={async () => {
-                        const result = await handleSwitchOriginChain(
-                          +chain,
-                          walletChain
-                        );
-                        if (result) {
-                          swapToggle();
-                        }
-                      }}
-                      setCollateralSwapFromAsset={() =>
-                        setCollateralSwapFromAsset(asset)
-                      }
-                      utilization="0.00%"
-                    />
-                  ))}
-                </>
-              ) : (
-                <div className="text-center mx-auto py-2">
-                  No assets supplied!
-                </div>
-              )}
-            </>
-          </ResultHandler>
+          <SupplyTable
+            data={supplyTableData}
+            isLoading={isLoadingMarketData || isLoadingAssetsSupplyAprData}
+            setIsManageDialogOpen={setIsManageDialogOpen}
+            setActiveTab={setActiveTab}
+            setSelectedSymbol={setSelectedSymbol}
+            allMarketData={marketData?.assets}
+            comptroller={marketData?.comptroller}
+            pool={pool}
+          />
         </div>
         <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
           <div className={` w-full flex items-center justify-between py-3 `}>

@@ -9,12 +9,6 @@ import { isAddress } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import type { MarketRowData } from '@ui/hooks/market/useMarketData';
-import { useMarketData } from '@ui/hooks/market/useMarketData';
-import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
-import { useAssetPrices } from '@ui/hooks/useAssetPrices';
-import type { VaultRowData } from '@ui/types/SupplyVaults';
-
 import ManageDialog from '@ui/components/dialogs/manage';
 import FeaturedMarketTile from '@ui/components/markets/FeaturedMarketTile';
 import PoolsTable from '@ui/components/markets/PoolsTable';
@@ -24,6 +18,11 @@ import StakingTile from '@ui/components/markets/StakingTile';
 import SupplyVaultTable from '@ui/components/markets/SupplyVaultTable';
 import TotalTvlTile from '@ui/components/markets/TotalTvlTile';
 import TvlTile from '@ui/components/markets/TvlTile';
+import { useMarketData } from '@ui/hooks/market/useMarketData';
+import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
+import { useAssetPrices } from '@ui/hooks/useAssetPrices';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 const NetworkSelector = dynamic(
   () => import('@ui/components/markets/NetworkSelector'),
