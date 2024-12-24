@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
@@ -29,16 +29,16 @@ import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-import ClaimRewardPopover from '../_components/dashboards/ClaimRewardPopover';
-import CollateralSwapPopup from '../_components/dashboards/CollateralSwapPopup';
-import InfoRows, { InfoMode } from '../_components/dashboards/InfoRows';
-import LoopRewards from '../_components/dashboards/LoopRewards';
-import Loop from '../_components/dialogs/loop';
-import ManageDialog from '../_components/dialogs/manage';
-import NetworkSelector from '../_components/markets/NetworkSelector';
-import ResultHandler from '../_components/ResultHandler';
+import ClaimRewardPopover from '../components/dashboards/ClaimRewardPopover';
+import CollateralSwapPopup from '../components/dashboards/CollateralSwapPopup';
+import InfoRows, { InfoMode } from '../components/dashboards/InfoRows';
+import LoopRewards from '../components/dashboards/LoopRewards';
+import Loop from '../components/dialogs/loop';
+import ManageDialog from '../components/dialogs/manage';
+import NetworkSelector from '../components/markets/NetworkSelector';
+import ResultHandler from '../components/ResultHandler';
 
-import type { ActiveTab } from '../_components/dialogs/manage';
+import type { ActiveTab } from '../components/dialogs/manage';
 
 import type {
   FlywheelReward,
@@ -46,7 +46,7 @@ import type {
   PositionInfo
 } from '@ionicprotocol/types';
 
-const PoolToggle = dynamic(() => import('../_components/markets/PoolToggle'), {
+const PoolToggle = dynamic(() => import('../components/markets/PoolToggle'), {
   ssr: false
 });
 

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Address, formatEther, maxUint256, parseEther, parseUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { ActiveTab, HFPStatus } from '@ui/app/_components/dialogs/manage';
+import { ActiveTab, HFPStatus } from '@ui/app/components/dialogs/manage';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import {
   useHealthFactor,

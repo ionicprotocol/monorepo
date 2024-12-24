@@ -5,7 +5,7 @@ import { useChainId, useSwitchChain } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { ThreeCircles } from 'react-loader-spinner';
 import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
-import MaxDeposit from '@ui/app/_components/MaxDeposit';
+import MaxDeposit from '@ui/app/components/MaxDeposit';
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 interface WithdrawTabProps {

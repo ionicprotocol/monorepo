@@ -38,21 +38,21 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import SliderComponent from '../_components/dialogs/manage/Slider';
-import MaxDeposit from '../_components/MaxDeposit';
-import ResultHandler from '../_components/ResultHandler';
-import ClaimRewards from '../_components/stake/ClaimRewards';
-import RewardDisplay from '../_components/stake/RewardDisplay';
-import Toggle from '../_components/Toggle';
+import SliderComponent from '../components/dialogs/manage/Slider';
+import MaxDeposit from '../components/MaxDeposit';
+import ResultHandler from '../components/ResultHandler';
+import ClaimRewards from '../components/stake/ClaimRewards';
+import RewardDisplay from '../components/stake/RewardDisplay';
+import Toggle from '../components/Toggle';
 
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('../components/markets/NetworkSelector'),
   {
     ssr: false
   }
 );
 
-const Widget = dynamic(() => import('../_components/stake/Widget'), {
+const Widget = dynamic(() => import('../components/stake/Widget'), {
   ssr: false
 });
 

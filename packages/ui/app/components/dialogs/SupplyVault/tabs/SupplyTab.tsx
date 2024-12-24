@@ -3,7 +3,7 @@ import { ThreeCircles } from 'react-loader-spinner';
 import { Button } from '@ui/components/ui/button';
 import { useAccount } from 'wagmi';
 import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
-import MaxDeposit from '@ui/app/_components/MaxDeposit';
+import MaxDeposit from '@ui/app/components/MaxDeposit';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 import {
   supplyVaultAddresses,

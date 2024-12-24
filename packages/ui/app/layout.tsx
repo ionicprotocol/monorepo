@@ -28,7 +28,7 @@ import { WagmiProvider } from 'wagmi';
 import { TooltipProvider } from '@ui/components/ui/tooltip';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 
-import Navbar from './_components/Navbar';
+import Navbar from './components/Navbar';
 import './globals.css';
 
 const metadata = {

@@ -21,9 +21,9 @@ import {
   PublicSaleAbi,
   PublicSaleContractAddress
 } from '../../constants/publicsale';
-import ClaimDialog from '../_components/claim/ClaimDialog';
-import ClaimPanel from '../_components/claim/ClaimPanel';
-import InfoPanel from '../_components/claim/InfoPanel';
+import ClaimDialog from '../components/claim/ClaimDialog';
+import ClaimPanel from '../components/claim/ClaimPanel';
+import InfoPanel from '../components/claim/InfoPanel';
 
 export default function Claim() {
   const [loading, setLoading] = useState(false);
