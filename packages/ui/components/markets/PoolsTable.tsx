@@ -105,7 +105,7 @@ function PoolsTable({
       id: 'supplyAPRTotal',
       header: 'SUPPLY APR',
       sortingFn: 'numerical',
-      accessorFn: (row) => row.supplyAPR,
+      accessorFn: (row) => row.supplyAPRTotal,
       cell: ({ row }: MarketCellProps) => (
         <APR
           type="supply"
@@ -126,7 +126,7 @@ function PoolsTable({
       id: 'borrowAPRTotal',
       header: 'BORROW APR',
       sortingFn: 'numerical',
-      accessorFn: (row) => row.borrowAPR,
+      accessorFn: (row) => row.borrowAPRTotal,
       cell: ({ row }: MarketCellProps) => (
         <APR
           type="borrow"
