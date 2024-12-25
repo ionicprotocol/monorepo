@@ -74,7 +74,7 @@ const LoopRewards = ({
   );
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-1 w-full max-w-[200px]">
       {/* APR Rewards */}
       {rewards?.map((reward, index) => (
         <div

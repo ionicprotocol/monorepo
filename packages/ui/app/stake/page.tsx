@@ -609,7 +609,7 @@ export default function Stake() {
                 Step 1. Buy
                 <img
                   alt="ion logo"
-                  className="w-6 h-6 inline-block mx-1"
+                  className="w-5 h-5 inline-block mx-1"
                   src="/img/symbols/32/color/ion.png"
                 />
                 ION Tokens

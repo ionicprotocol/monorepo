@@ -314,7 +314,7 @@ export default function Dashboard() {
             underlyingDecimals: Number(position.borrowable.underlyingDecimals)
           }
         },
-        loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0) - 1
+        loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
       };
     })
     .filter((data): data is LoopRowData => !!data);

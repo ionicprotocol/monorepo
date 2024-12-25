@@ -21,6 +21,7 @@ import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import TokenDisplay from '../TokenDisplay';
 
 export interface SupplyRowData {
   asset: string;
@@ -80,24 +81,20 @@ function SupplyTable({
   const columns: EnhancedColumnDef<SupplyRowData>[] = [
     {
       id: 'asset',
-      header: <div className="pl-6">SUPPLY ASSETS</div>,
-      width: '25%',
+      header: 'SUPPLY ASSETS',
+      width: '20%',
       cell: ({ row }) => (
-        <div className="flex gap-3 items-center pl-6">
-          <Image
-            src={row.original.logo}
-            alt={row.original.asset}
-            width={28}
-            height={28}
-            className="w-7 h-7"
-          />
-          <span>{row.original.asset}</span>
-        </div>
+        <TokenDisplay
+          tokens={[row.original.asset]}
+          tokenName={row.original.asset}
+          size={28}
+        />
       )
     },
     {
       id: 'amount',
       header: 'AMOUNT',
+      width: '20%',
       cell: ({ row }) => (
         <TokenBalance
           balance={parseFloat(row.original.amount.tokens)}
@@ -109,6 +106,7 @@ function SupplyTable({
     {
       id: 'apr',
       header: 'SUPPLY APR',
+      width: '20%',
       cell: ({ row }) => (
         <APR
           type="supply"
@@ -127,6 +125,7 @@ function SupplyTable({
     {
       id: 'rewards',
       header: 'REWARDS',
+      width: '20%',
       cell: ({ row }) => (
         <div className="max-w-[200px]">
           <FlyWheelRewards
@@ -134,6 +133,7 @@ function SupplyTable({
             pool={row.original.comptrollerAddress}
             poolChainId={row.original.selectedChain}
             type="supply"
+            standalone
           />
         </div>
       )
@@ -152,7 +152,7 @@ function SupplyTable({
         ]?.includes(row.original.asset);
 
         return (
-          <div className="flex flex-col gap-2 pr-6">
+          <div className="flex gap-2">
             <ActionButton
               action={async () => {
                 const result = await handleSwitchOriginChain(
@@ -167,7 +167,7 @@ function SupplyTable({
               }}
               disabled={!address}
               label="Manage"
-              className="h-6"
+              // className="h-6"
             />
             {canSwap && marketAsset && (
               <ActionButton
@@ -187,7 +187,7 @@ function SupplyTable({
                 }
                 label="Collateral Swap"
                 bg={pools[row.original.selectedChain].bg}
-                className="text-white h-6"
+                className="text-white"
               />
             )}
           </div>

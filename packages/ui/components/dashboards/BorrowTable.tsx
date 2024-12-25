@@ -18,6 +18,7 @@ import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import TokenDisplay from '../TokenDisplay';
 
 export interface BorrowRowData {
   asset: string;
@@ -63,24 +64,20 @@ function BorrowTable({
   const columns: EnhancedColumnDef<BorrowRowData>[] = [
     {
       id: 'asset',
-      header: <div className="pl-6">BORROW ASSETS</div>,
-      width: '25%',
+      header: 'BORROW ASSETS',
+      width: '20%',
       cell: ({ row }) => (
-        <div className="flex gap-3 items-center pl-6">
-          <Image
-            src={row.original.logo}
-            alt={row.original.asset}
-            width={28}
-            height={28}
-            className="w-7 h-7"
-          />
-          <span>{row.original.asset}</span>
-        </div>
+        <TokenDisplay
+          tokens={[row.original.asset]}
+          tokenName={row.original.asset}
+          size={28}
+        />
       )
     },
     {
       id: 'amount',
       header: 'AMOUNT',
+      width: '20%',
       cell: ({ row }) => (
         <TokenBalance
           balance={parseFloat(row.original.amount.tokens)}
@@ -92,6 +89,7 @@ function BorrowTable({
     {
       id: 'apr',
       header: 'BORROW APR',
+      width: '20%',
       cell: ({ row }) => (
         <APR
           type="borrow"
@@ -110,6 +108,7 @@ function BorrowTable({
     {
       id: 'rewards',
       header: 'REWARDS',
+      width: '20%',
       cell: ({ row }) => (
         <div className="max-w-[200px]">
           <FlyWheelRewards
@@ -117,6 +116,7 @@ function BorrowTable({
             pool={row.original.comptrollerAddress}
             poolChainId={row.original.selectedChain}
             type="borrow"
+            standalone
           />
         </div>
       )
@@ -127,50 +127,22 @@ function BorrowTable({
       width: '20%',
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex flex-col gap-2 pr-6">
-          <ActionButton
-            action={async () => {
-              const result = await handleSwitchOriginChain(
-                row.original.selectedChain,
-                chainId
-              );
-              if (result) {
-                setSelectedSymbol(row.original.asset);
-                setIsManageDialogOpen(true);
-                setActiveTab('repay');
-              }
-            }}
-            disabled={!address}
-            label="Repay"
-            className="h-6"
-          />
-          {!NO_COLLATERAL_SWAP[row.original.selectedChain]?.[
-            row.original.pool
-          ]?.includes(row.original.asset) && (
-            <ActionButton
-              action={async () => {
-                const result = await handleSwitchOriginChain(
-                  row.original.selectedChain,
-                  chainId
-                );
-                if (result) {
-                  setSelectedSymbol(row.original.asset);
-                  setIsManageDialogOpen(true);
-                  setActiveTab('borrow');
-                }
-              }}
-              disabled={
-                !address ||
-                !sdk?.chainDeployment[
-                  `CollateralSwap-${row.original.comptrollerAddress}`
-                ]
-              }
-              label="Borrow More"
-              bg={pools[row.original.selectedChain].bg}
-              className="text-white h-6"
-            />
-          )}
-        </div>
+        <ActionButton
+          action={async () => {
+            const result = await handleSwitchOriginChain(
+              row.original.selectedChain,
+              chainId
+            );
+            if (result) {
+              setSelectedSymbol(row.original.asset);
+              setIsManageDialogOpen(true);
+              setActiveTab('repay');
+            }
+          }}
+          disabled={!address}
+          label="Manage"
+          className="pr-6"
+        />
       )
     }
   ];

@@ -2,10 +2,12 @@ import Image from 'next/image';
 
 const TokenDisplay = ({
   tokens,
-  tokenName
+  tokenName,
+  size = 18
 }: {
   tokens: string[];
   tokenName?: string;
+  size?: number;
 }) => (
   <div className="flex items-center">
     <div className="relative flex items-center">
@@ -21,9 +23,10 @@ const TokenDisplay = ({
           <Image
             src={`/img/symbols/32/color/${token.toLowerCase()}.png`}
             alt={`${token} logo`}
-            width={18}
-            height={18}
-            className="rounded-full border border-black bg-black"
+            width={size}
+            height={size}
+            className="rounded-full"
+            style={{ minWidth: size, minHeight: size }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;

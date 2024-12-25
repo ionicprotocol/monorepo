@@ -13,6 +13,7 @@ import TokenBalance from '../markets/Cells/TokenBalance';
 
 import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address, Hex } from 'viem';
+import TokenDisplay from '../TokenDisplay';
 
 export interface LoopRowData {
   position: {
@@ -71,77 +72,62 @@ function LoopTable({
   const columns: EnhancedColumnDef<LoopRowData>[] = [
     {
       id: 'assets',
-      header: <div className="pl-6">LOOPED ASSETS</div>,
-      width: '25%',
+      header: 'LOOPED ASSETS',
+      width: '20%',
       cell: ({ row }) => (
-        <div className="flex gap-3 items-center pl-6">
-          <Image
-            src={row.original.position.collateral.logo}
-            alt={row.original.position.collateral.symbol}
-            width={28}
-            height={28}
-            className="h-7"
+        <div className="flex items-center gap-1">
+          <TokenDisplay
+            tokens={[
+              row.original.position.collateral.symbol,
+              row.original.position.borrowable.symbol
+            ]}
+            tokenName={`${row.original.position.collateral.symbol}/${row.original.position.borrowable.symbol}`}
+            size={28}
           />
-          <span>{row.original.position.collateral.symbol}</span>
-          /
-          <Image
-            src={row.original.position.borrowable.logo}
-            alt={row.original.position.borrowable.symbol}
-            width={28}
-            height={28}
-            className="h-7"
-          />
-          <span>{row.original.position.borrowable.symbol}</span>
+          ({row.original.loops.toFixed(1)}x)
         </div>
       )
     },
     {
       id: 'value',
       header: 'LOOP VALUE',
+      width: '20%',
       cell: ({ row }) => (
-        <div className="mb-2 lg:mb-0">
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-            POSITION VALUE:
-          </span>
-          <TokenBalance
-            balance={parseFloat(row.original.position.collateral.amount.tokens)}
-            balanceUSD={row.original.position.collateral.amount.usd}
-            tokenName={row.original.position.collateral.symbol}
-          />
-        </div>
+        <TokenBalance
+          balance={parseFloat(row.original.position.collateral.amount.tokens)}
+          balanceUSD={row.original.position.collateral.amount.usd}
+          tokenName={row.original.position.collateral.symbol}
+        />
       )
     },
     {
       id: 'borrow',
       header: 'BORROW',
+      width: '20%',
       cell: ({ row }) => (
-        <div className="mb-2 lg:mb-0">
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-            BORROW:
-          </span>
-          <TokenBalance
-            balance={parseFloat(row.original.position.borrowable.amount.tokens)}
-            balanceUSD={row.original.position.borrowable.amount.usd}
-            tokenName={row.original.position.borrowable.symbol}
-          />
-        </div>
+        <TokenBalance
+          balance={parseFloat(row.original.position.borrowable.amount.tokens)}
+          balanceUSD={row.original.position.borrowable.amount.usd}
+          tokenName={row.original.position.borrowable.symbol}
+        />
       )
     },
-    {
-      id: 'loops',
-      header: 'LOOPS',
-      cell: ({ row }) => (
-        <div className="mb-2 lg:mb-0">
-          <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
-            LOOPS:
-          </span>
-          <div>{row.original.loops.toFixed(1)}</div>
-        </div>
-      )
-    },
+    // {
+    //   id: 'loops',
+    //   header: 'LOOPS',
+    //   cell: ({ row }) => (
+    //     <div className="mb-2 lg:mb-0">
+    //       <span className="text-white/40 font-semibold mr-2 lg:hidden text-right">
+    //         LOOPS:
+    //       </span>
+    //       <div>{row.original.loops.toFixed(1)}</div>
+    //     </div>
+    //   )
+    // },
     {
       id: 'rewards',
       header: 'REWARDS',
+      width: '20%',
       cell: ({ row }) => (
         <LoopRewards
           positionAddress={row.original.position.address}
@@ -155,23 +141,21 @@ function LoopTable({
       enableSorting: false,
       width: '20%',
       cell: ({ row }) => (
-        <div className="pr-6">
-          <ActionButton
-            action={() => {
-              setSelectedLoopBorrowData(
-                marketData?.find(
-                  (asset) =>
-                    asset.underlyingSymbol ===
-                    row.original.position.borrowable.symbol
-                )
-              );
-              setSelectedSymbol(row.original.position.collateral.symbol);
-              setLoopOpen(true);
-            }}
-            label="Adjust / Close"
-            bg="bg-accent"
-          />
-        </div>
+        <ActionButton
+          action={() => {
+            setSelectedLoopBorrowData(
+              marketData?.find(
+                (asset) =>
+                  asset.underlyingSymbol ===
+                  row.original.position.borrowable.symbol
+              )
+            );
+            setSelectedSymbol(row.original.position.collateral.symbol);
+            setLoopOpen(true);
+          }}
+          label="Adjust / Close"
+          bg="bg-accent"
+        />
       )
     }
   ];
