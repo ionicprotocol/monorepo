@@ -8,9 +8,9 @@ import { useChainId } from 'wagmi';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import CommonTable from '../../_components/CommonTable';
+import CommonTable from '../../components/CommonTable';
 
-import type { EnhancedColumnDef } from '../../_components/CommonTable';
+import type { EnhancedColumnDef } from '../../components/CommonTable';
 import { VaultRowData } from '@ui/types/SupplyVaults';
 import ActionButton from '../ActionButton';
 import { useState } from 'react';

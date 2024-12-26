@@ -19,7 +19,7 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 // import { useEthersSigner } from '@ui/hooks/useEthersSigner';
 
-const SwapWidget = dynamic(() => import('../_components/markets/SwapWidget'), {
+const SwapWidget = dynamic(() => import('../components/markets/SwapWidget'), {
   ssr: false
 });
 

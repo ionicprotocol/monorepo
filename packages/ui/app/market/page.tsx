@@ -9,24 +9,23 @@ import { isAddress } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import ManageDialog from '@ui/components/dialogs/manage';
+import FeaturedMarketTile from '@ui/components/markets/FeaturedMarketTile';
+import PoolsTable from '@ui/components/markets/PoolsTable';
+import PoolToggle from '@ui/components/markets/PoolToggle';
+import SearchInput from '@ui/components/markets/SearcInput';
+import StakingTile from '@ui/components/markets/StakingTile';
+import SupplyVaultTable from '@ui/components/markets/SupplyVaultTable';
+import TotalTvlTile from '@ui/components/markets/TotalTvlTile';
+import TvlTile from '@ui/components/markets/TvlTile';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
+import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
 import { useAssetPrices } from '@ui/hooks/useAssetPrices';
 import type { VaultRowData } from '@ui/types/SupplyVaults';
 
-import ManageDialog from '../_components/dialogs/manage';
-import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
-import PoolsTable from '../_components/markets/PoolsTable';
-import PoolToggle from '../_components/markets/PoolToggle';
-import SearchInput from '../_components/markets/SearcInput';
-import StakingTile from '../_components/markets/StakingTile';
-import SupplyVaultTable from '../_components/markets/SupplyVaultTable';
-import TotalTvlTile from '../_components/markets/TotalTvlTile';
-import TvlTile from '../_components/markets/TvlTile';
-
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('@ui/components/markets/NetworkSelector'),
   { ssr: false }
 );
 
