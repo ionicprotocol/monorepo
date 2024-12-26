@@ -1,6 +1,10 @@
 import React from 'react';
-import type { LucideIcon } from 'lucide-react';
+
 import Link from 'next/link';
+
+import { cn } from '@ui/lib/utils';
+
+import type { LucideIcon } from 'lucide-react';
 
 interface ActionButtonProps {
   half?: boolean;
@@ -13,6 +17,7 @@ interface ActionButtonProps {
   rightIcon?: LucideIcon;
   iconSize?: number;
   target?: '_blank' | '_self';
+  className?: string;
 }
 
 const baseStyles = `rounded-md py-2.5 px-4 capitalize truncate 
@@ -29,9 +34,17 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   leftIcon: LeftIcon,
   rightIcon: RightIcon,
   iconSize = 12,
-  target
+  target,
+  className
 }) => {
-  const classes = `${baseStyles} ${bg} text-black ${half ? 'w-1/2' : 'w-full'}`;
+  const classes = cn(
+    baseStyles,
+    bg,
+    'text-black',
+    half ? 'w-1/2' : 'w-full',
+    className
+  );
+
   const content = (
     <>
       {LeftIcon && <LeftIcon size={iconSize} />}

@@ -57,6 +57,7 @@ export type EnhancedColumnDef<T> = Omit<
 > & {
   id: string;
   header: ReactNode | string;
+  width?: string;
   sortingFn?: SortingType | ((rowA: any, rowB: any) => number);
   enableSorting?: boolean;
   accessorFn?: (row: T) => any;
@@ -81,10 +82,12 @@ interface CommonTableProps<T extends object> {
 
 const SortableHeader = ({
   column,
-  children
+  children,
+  width
 }: {
   column: any;
   children: ReactNode;
+  width?: string;
 }) => {
   const isSortable = column.getCanSort();
   const sorted = column.getIsSorted();
@@ -98,7 +101,14 @@ const SortableHeader = ({
   };
 
   if (!hasSortingFunction) {
-    return <div className="flex items-center gap-2">{children}</div>;
+    return (
+      <div
+        className="flex items-center gap-2"
+        style={{ width }}
+      >
+        {children}
+      </div>
+    );
   }
 
   return (
@@ -106,6 +116,7 @@ const SortableHeader = ({
       className={`flex items-center gap-2 ${!isSortable ? 'cursor-default' : 'hover:text-white'}`}
       onClick={() => isSortable && column.toggleSorting(sorted === 'asc')}
       disabled={!isSortable}
+      style={{ width }}
     >
       {children}
       {getSortIcon()}
@@ -124,7 +135,7 @@ function CommonTable<T extends object>({
 
   const isLoading = !hasInitialized || externalIsLoading;
 
-  if (!hasInitialized && data.length > 0) {
+  if (!hasInitialized) {
     setHasInitialized(true);
   }
 
@@ -133,7 +144,12 @@ function CommonTable<T extends object>({
       ...col,
       accessorFn: col.accessorFn || ((row: T) => (row as any)[col.id]),
       header: ({ column }) => (
-        <SortableHeader column={column}>{col.header}</SortableHeader>
+        <SortableHeader
+          column={column}
+          width={col.width}
+        >
+          {col.header}
+        </SortableHeader>
       ),
       sortingFn:
         typeof col.sortingFn === 'string'
@@ -148,7 +164,7 @@ function CommonTable<T extends object>({
 
   const table = useReactTable({
     data,
-    columns: processedColumns,
+    columns: processedColumns as ColumnDef<T, unknown>[],
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -206,7 +222,13 @@ function CommonTable<T extends object>({
                   borderClassName={rowStyle.borderClassName}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: (cell.column.columnDef as EnhancedColumnDef<T>)
+                          .width
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
