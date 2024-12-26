@@ -89,7 +89,47 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           console.log(`Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`);
         }
+
+        console.log("Deploying new WithdrawableFlywheelStaticRewards to replace FlywheelDynamicRewards");
+        const flywheelRewardsReceipt = await deployments.deploy(`WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`, {
+          contract: "WithdrawableFlywheelStaticRewards",
+          from: deployer,
+          log: true,
+          args: [ionicFlywheelAddress, deployer, auth], // TODO: setup third paramather to Authority 
+          waitConfirmations: 1
+        });
+        const newFlywheelRewardsAddress = flywheelRewardsReceipt.address as Address;
+
+        console.log(`Deployed new flywheel lens router: ${newFlywheelRewardsAddress}`);
+        const flywheelRewardsAddress = await flywheel.read.flywheelRewards();
+        const oldFlywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", flywheelRewardsAddress as Address);
+        const newFlywheelRewards = await viem.getContractAt(
+          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`, 
+          newFlywheelRewardsAddress
+        );
+        const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
+        const markets = await flywheel.read.getAllStrategies() as any[];
+        for(const market of markets) {
+          const rewardsInfo = await oldFlywheelRewards.read.rewardsCycle([market]);        
+          const rewardPerSecond = Math.round(Number(rewardsInfo[2]) / (rewardsInfo[1] - rewardsInfo[0]));
+          console.log("Market", market, "Reward per second: ", rewardPerSecond);
+          if (rewardPerSecond != 0) {
+            // we have to accrue each market that has live rewards. The user is not important, since we just want to invoke
+            // accrueStrategy which is private function
+            flywheel.write.accrue(market, owner);
+            console.log("Setting rewards info to new flywheel static rewards for market: ", market);
+            newFlywheelRewards.write.setRewardsInfo([rewardPerSecond, rewardsInfo[1]]);
+          }
+          const strategy = await viem.getContractAt("CErc20RewardsDelegate", market as Address);
+          strategy.write.approve([ion, newFlywheelRewardsAddress]);
+        }
+        flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
+        // Accrue all markets after new flywheel rewards are set
+        for(const market of markets) {
+          flywheel.write.accrue(market, owner);
+        }
       }
     }
+
   }
 );
