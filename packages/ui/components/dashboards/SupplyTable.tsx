@@ -167,29 +167,25 @@ function SupplyTable({
               }}
               disabled={!address}
               label="Manage"
-              // className="h-6"
             />
-            {canSwap && marketAsset && (
-              <ActionButton
-                action={async () => {
-                  const result = await handleSwitchOriginChain(
-                    row.original.selectedChain,
-                    chainId
-                  );
-                  if (result) {
-                    setSwapFromAsset(marketAsset);
-                    swapToggle();
-                  }
-                }}
-                disabled={
-                  !address ||
-                  !sdk?.chainDeployment[`CollateralSwap-${comptroller}`]
-                }
-                label="Collateral Swap"
-                bg={pools[row.original.selectedChain].bg}
-                className="text-white"
-              />
-            )}
+            {canSwap &&
+              marketAsset &&
+              sdk?.chainDeployment[`CollateralSwap-${comptroller}`] && (
+                <ActionButton
+                  action={async () => {
+                    const result = await handleSwitchOriginChain(
+                      row.original.selectedChain,
+                      chainId
+                    );
+                    if (result) {
+                      setSwapFromAsset(marketAsset);
+                      swapToggle();
+                    }
+                  }}
+                  label="Collateral Swap"
+                  className={`${pools[row.original.selectedChain].bg} ${pools[row.original.selectedChain].text}`}
+                />
+              )}
           </div>
         );
       }
