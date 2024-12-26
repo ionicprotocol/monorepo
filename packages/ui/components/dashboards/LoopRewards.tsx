@@ -23,14 +23,12 @@ type LoopRewardsProps = {
   positionAddress: Address;
   poolChainId: number;
   rewards?: FlywheelReward[];
-  className?: string;
 };
 
 const LoopRewards = ({
   positionAddress,
   poolChainId,
-  rewards,
-  className
+  rewards
 }: LoopRewardsProps) => {
   const { writeContractAsync, isPending } = useWriteContract();
   const chainId = useChainId();
@@ -76,7 +74,7 @@ const LoopRewards = ({
   );
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-1 w-full max-w-[200px]">
       {/* APR Rewards */}
       {rewards?.map((reward, index) => (
         <div
