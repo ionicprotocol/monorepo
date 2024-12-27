@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-
 import { createClient } from '@supabase/supabase-js';
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 interface AssetPriceInfo {
   createdAt: number;
@@ -13,6 +13,8 @@ interface AssetPrice {
   chain_id: string;
   created_at: string;
   underlying_address: string;
+  symbol: string;
+  decimals: number;
   info: AssetPriceInfo;
 }
 
@@ -33,6 +35,38 @@ const supabaseKey =
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+function getTokenInfo(
+  chainId: number | string,
+  address: string
+): { symbol: string; decimals: number } | null {
+  const config = chainIdToConfig[+chainId];
+  if (!config) return null;
+
+  // Check if it's the wrapped native token
+  const nativeAddress =
+    config.specificParams?.metadata?.wrappedNativeCurrency?.address;
+  if (nativeAddress?.toLowerCase() === address.toLowerCase()) {
+    return {
+      symbol: config.specificParams.metadata.wrappedNativeCurrency.symbol,
+      decimals: config.specificParams.metadata.wrappedNativeCurrency.decimals
+    };
+  }
+
+  // Find in assets
+  const asset = config.assets.find(
+    (a) => a.underlying.toLowerCase() === address.toLowerCase()
+  );
+
+  if (asset) {
+    return {
+      symbol: asset.symbol,
+      decimals: asset.decimals
+    };
+  }
+
+  return null;
+}
+
 export const useAssetPrices = ({
   chainId,
   tokens
@@ -44,29 +78,64 @@ export const useAssetPrices = ({
   useEffect(() => {
     const fetchAssetPrice = async () => {
       try {
-        let query = supabase.from('asset-price').select('*');
-
-        // Add chain filter if provided
-        if (chainId !== undefined) {
-          query = query.eq('chain_id', chainId.toString());
+        if (!tokens || tokens.length === 0 || !chainId) {
+          setData([]);
+          return;
         }
 
-        // Add token filter if provided
-        if (tokens && tokens.length > 0) {
-          const lowerCaseTokens = tokens.map((token) => token.toLowerCase());
-          query = query.in('underlying_address', lowerCaseTokens);
-        }
+        const lowerCaseTokens = tokens.map((token) => token.toLowerCase());
 
-        // Order by created_at timestamp descending
-        query = query.order('created_at', { ascending: false });
+        // First, get the latest created_at timestamp for each token
+        const { data: latestTimestamps, error: timestampError } = await supabase
+          .from('asset-price')
+          .select('underlying_address, created_at')
+          .eq('chain_id', chainId.toString())
+          .in('underlying_address', lowerCaseTokens)
+          .order('created_at', { ascending: false });
 
-        const { data: assetPrice, error: supabaseError } = await query;
+        if (timestampError) throw timestampError;
 
-        if (supabaseError) {
-          throw new Error(supabaseError.message);
-        }
+        // Get only the latest timestamp for each token
+        const latestByToken = new Map<string, string>();
+        latestTimestamps?.forEach((row) => {
+          if (!latestByToken.has(row.underlying_address)) {
+            latestByToken.set(row.underlying_address, row.created_at);
+          }
+        });
 
-        setData(assetPrice);
+        // Then fetch the complete data for these specific timestamps
+        const promises = Array.from(latestByToken.entries()).map(
+          ([address, timestamp]) =>
+            supabase
+              .from('asset-price')
+              .select('*')
+              .eq('chain_id', chainId.toString())
+              .eq('underlying_address', address)
+              .eq('created_at', timestamp)
+              .single()
+        );
+
+        const results = await Promise.all(promises);
+        const finalData = results
+          .map((result) => {
+            if (!result.data) return null;
+
+            const tokenInfo = getTokenInfo(
+              chainId,
+              result.data.underlying_address
+            );
+            if (!tokenInfo) return null;
+
+            // Keep the original price, just add symbol and decimals
+            return {
+              ...result.data,
+              symbol: tokenInfo.symbol,
+              decimals: tokenInfo.decimals
+            };
+          })
+          .filter((data): data is AssetPrice => data !== null);
+
+        setData(finalData);
         setError(null);
       } catch (err) {
         console.error('Error fetching asset prices:', err);
@@ -99,24 +168,7 @@ export const useAssetPrices = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [chainId, tokens]); // Added dependencies to useEffect
+  }, [chainId, tokens]);
 
   return { data, error, isLoading };
 };
-
-// Usage example:
-/*
-// Fetch all prices for a specific chain
-const { data, error, isLoading } = useAssetPrices({ 
-  chainId: "34443"
-});
-
-// Fetch specific tokens for a specific chain
-const { data, error, isLoading } = useAssetPrices({ 
-  chainId: "34443",
-  tokens: [
-    "0x4200000000000000000000000000000000000006",
-    "0xd988097fb8612cc24eec14542bc03424c656005f"
-  ]
-});
-*/

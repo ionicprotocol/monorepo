@@ -65,6 +65,7 @@ export const useMarketData = (
     selectedPool,
     +chain
   );
+  console.log('poolData', poolData);
   const assets = useMemo<MarketData[] | undefined>(
     () => poolData?.assets,
     [poolData]

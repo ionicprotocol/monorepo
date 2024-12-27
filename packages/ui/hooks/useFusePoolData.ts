@@ -4,8 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useAssetPrices } from '@ui/hooks/useAssetPrices';
 import type { PoolData } from '@ui/types/TokensDataMap';
+
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 export const useFusePoolData = (
   poolId: string,
@@ -14,21 +16,30 @@ export const useFusePoolData = (
 ) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
-  const { data: usdPrices } = useAllUsdPrices();
+
+  // Get native token address from config
+  const nativeTokenAddress = useMemo(() => {
+    const config = chainIdToConfig[poolChainId];
+    return config?.specificParams?.metadata?.wrappedNativeCurrency?.address?.toLowerCase();
+  }, [poolChainId]);
+
+  // Only fetch price for native token
+  const { data: assetPrices, isLoading: isPricesLoading } = useAssetPrices({
+    chainId: poolChainId,
+    tokens: nativeTokenAddress ? [nativeTokenAddress] : []
+  });
+
+  // Get the USD price similar to how useAllUsdPrices worked
   const usdPrice = useMemo(() => {
-    if (usdPrices && poolChainId && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
-  // console.log('🚀 ~ usdPrice ~ usdPrices:', usdPrices);
-  // console.log('🚀 ~ usdPrice ~ poolChainId:', poolChainId);
-  // console.log('🚀 ~ queryFn: ~ usdPrice:', usdPrice);
-  // console.log('🚀 ~ queryFn: ~ sdk?.chainId:', sdk?.chainId);
-  // console.log('🚀 ~ queryFn: ~ poolId:', poolId);
-  // console.log('🚀 ~ queryFn: ~ address:', address);
-  // console.log('🚀 ~ queryFn: ~ excludeNonBorrowable:', excludeNonBorrowable);
+    if (!assetPrices || !nativeTokenAddress) return undefined;
+
+    // Find the latest price entry for native token
+    const nativePriceEntry = assetPrices.find(
+      (price) => price.underlying_address.toLowerCase() === nativeTokenAddress
+    );
+
+    return nativePriceEntry?.info.usdPrice;
+  }, [assetPrices, nativeTokenAddress]);
 
   return useQuery({
     queryKey: [
@@ -39,7 +50,6 @@ export const useFusePoolData = (
       usdPrice,
       excludeNonBorrowable
     ],
-
     queryFn: async () => {
       if (usdPrice && sdk?.chainId && typeof poolId !== 'undefined') {
         const response = await sdk.fetchPoolData(poolId, address).catch((e) => {
@@ -48,12 +58,13 @@ export const useFusePoolData = (
             { address, poolChainId, poolId },
             e
           );
-
           return null;
         });
+
         if (response === null) {
           return null;
         }
+
         const { assets } = response;
         const excludedAssetsIndexes: number[] = [];
 
@@ -95,6 +106,6 @@ export const useFusePoolData = (
         return null;
       }
     },
-    enabled: !!poolId && !!usdPrice && !!sdk
+    enabled: !!poolId && !!usdPrice && !!sdk && !isPricesLoading
   });
 };
