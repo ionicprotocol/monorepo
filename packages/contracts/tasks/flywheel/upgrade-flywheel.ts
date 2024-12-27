@@ -41,7 +41,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             );
           }
           console.log("Supply Flywheel detected, setting booster");
-          flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
+          await flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
         } else if (opSupplyFlywheels.includes(ionicFlywheelAddress)) {
           console.log("Supply Flywheel detected, skipping setting booster");
         } else {
@@ -307,11 +307,11 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           if (rewardsPerSecond != 0) {
             // we have to accrue each market that has live rewards. The user is not important, since we just want to invoke
             // accrueStrategy which is private function
-            flywheel.write.accrue([market, deployer as Address]);
+            await flywheel.write.accrue([market, deployer as Address]);
             const currentRewardPerSecond = await newFlywheelRewards.read.getRewardsPerSecond([market]);
             if (currentRewardPerSecond == 0) {
               console.log("Setting rewards info to new flywheel static rewards for market: ", market);
-              newFlywheelRewards.write.setRewardsInfo([
+              await newFlywheelRewards.write.setRewardsInfo([
                 market,
                 { rewardsPerSecond: BigInt(rewardsPerSecond), rewardsEndTimestamp: rewardsInfo[1] }
               ]);
@@ -326,10 +326,10 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           */
         }
-        flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
+        await flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
         // Accrue all markets after new flywheel rewards are set
         for (const market of markets) {
-          flywheel.write.accrue([market, deployer as Address]);
+          await flywheel.write.accrue([market, deployer as Address]);
         }
       }
     }
