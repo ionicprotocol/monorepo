@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@ionicprotocol/types";
 
-import deployments from "../../../sdk/deployments/swellchain.json";
+import deployments from "../../../sdk/deployments/ozeantest.json";
 
 import chainAddresses from "./addresses";
 import { assets } from "./assets";
@@ -14,7 +14,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.swell,
+  chainId: SupportedChains.ozeantest,
   chainAddresses,
   assets,
   irms,

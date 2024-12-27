@@ -47,14 +47,14 @@ export const vSwellchain: Chain = {
 };
 
 export const vOzeantest: Chain = {
-  id: 328247,
+  id: 7849306,
   name: "Ozean Testnet",
   nativeCurrency: {
     name: "USDX",
     symbol: "USDX",
     decimals: 18
   },
-  rpcUrls: { default: { http: ["https://ozean-l2.rpc.caldera.xyz/http"] } }
+  rpcUrls: { default: { http: ["https://ozean-testnet.rpc.caldera.xyz/http"] } }
 };
 
 export const chainIdtoChain: { [chainId: number]: Chain } = {

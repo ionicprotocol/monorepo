@@ -27,7 +27,8 @@ const config: HardhatUserConfig = {
       [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -151,7 +152,7 @@ const config: HardhatUserConfig = {
       }
     },
     ozeantest: {
-      url: "https://ozean-l2.rpc.caldera.xyz/http",
+      url: "https://ozean-testnet.rpc.caldera.xyz/http",
       accounts,
       verify: {
         etherscan: {
@@ -215,7 +216,7 @@ const config: HardhatUserConfig = {
       },
       {
         network: "ozeantest",
-        chainId: 328247,
+        chainId: 7849306,
         urls: {
           apiURL: "https://ozean-l2.explorer.caldera.xyz/api",
           browserURL: "https://ozean-l2.explorer.caldera.xyz"

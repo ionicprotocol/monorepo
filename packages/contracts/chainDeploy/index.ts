@@ -22,7 +22,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   [superseed.id]: { config: deployConfigSuperseed, deployFunc: deploySuperseed },
   [worldchain.id]: { config: deployConfigWorldchain, deployFunc: deployWorldchain },
   1923: { config: deployConfigSwellchain, deployFunc: deploySwellchain },
-  328247: { config: deployConfigOzeantest, deployFunc: deployOzeantest }
+  7849306: { config: deployConfigOzeantest, deployFunc: deployOzeantest }
   // testnets
   // local
 };

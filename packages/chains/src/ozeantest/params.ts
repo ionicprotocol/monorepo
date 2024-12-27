@@ -17,10 +17,10 @@ const specificParams: ChainParams = {
     },
     rpcUrls: {
       default: {
-        http: ["https://ozean-l2.rpc.caldera.xyz/http"]
+        http: ["https://ozean-testnet.rpc.caldera.xyz/http"]
       },
       public: {
-        http: ["https://ozean-l2.rpc.caldera.xyz/http"]
+        http: ["https://ozean-testnet.rpc.caldera.xyz/http"]
       }
     },
     nativeCurrency: {

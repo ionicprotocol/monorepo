@@ -9,7 +9,7 @@ export enum SupportedChains {
   superseed = 5330,
   worldchain = 480,
   swell = 1923,
-  ozeantest = 328247
+  ozeantest = 7849306
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
