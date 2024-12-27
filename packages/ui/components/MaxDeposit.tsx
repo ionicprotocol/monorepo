@@ -5,7 +5,9 @@ import {
   type SetStateAction,
   type Dispatch
 } from 'react';
+
 import dynamic from 'next/dynamic';
+
 import { formatUnits, parseUnits, type Address } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
 
@@ -20,10 +22,11 @@ import {
 } from '@ui/components/ui/tooltip';
 import { cn } from '@ui/lib/utils';
 
-import TokenSelector from './stake/TokenSelector';
-import { icErc20Abi } from '@ionicprotocol/sdk';
 import AmountInput from './AmountInput';
+import TokenSelector from './stake/TokenSelector';
 import TokenDisplay from './TokenDisplay';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 export interface IBal {
   decimals: number;

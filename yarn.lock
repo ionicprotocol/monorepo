@@ -2399,9 +2399,6 @@ __metadata:
     "@layerzerolabs/lz-v2-utilities": "npm:^2.3.40"
     "@lifi/sdk": "npm:^3.4.1"
     "@lifi/widget": "npm:^3.11.0"
-    "@morpho-org/blue-sdk": "npm:^1.12.7"
-    "@morpho-org/blue-sdk-viem": "npm:^1.12.7"
-    "@morpho-org/morpho-ts": "npm:^1.12.7"
     "@netlify/plugin-nextjs": "npm:^5.8.1"
     "@radix-ui/react-checkbox": "npm:^1.1.2"
     "@radix-ui/react-dialog": "npm:^1.1.2"
@@ -3001,35 +2998,6 @@ __metadata:
     semver: "npm:^7.5.4"
     uuid: "npm:^9.0.1"
   checksum: 10/7335e151a51be92e86868dc48b3ee78c376d4edd5d758d334176027247637ab22839d8f663bd02542c0a19b05ecec456bedab5f36436689cf3d953ca36d91781
-  languageName: node
-  linkType: hard
-
-"@morpho-org/blue-sdk-viem@npm:^1.12.7":
-  version: 1.12.7
-  resolution: "@morpho-org/blue-sdk-viem@npm:1.12.7"
-  peerDependencies:
-    "@morpho-org/blue-sdk": ^1.12.7
-    "@morpho-org/morpho-ts": ^1.12.7
-    viem: ^2.0.0
-  checksum: 10/247df3ca1482f7eadca532510b6df309b8b2f83a04b6fc7e072dc6ac8ea771050a1f05d1d537003316191b42d92c6da0e8007e7f52f617d0df3b59d58b34c85d
-  languageName: node
-  linkType: hard
-
-"@morpho-org/blue-sdk@npm:^1.12.7":
-  version: 1.12.7
-  resolution: "@morpho-org/blue-sdk@npm:1.12.7"
-  dependencies:
-    keccak256: "npm:^1.0.6"
-  peerDependencies:
-    "@morpho-org/morpho-ts": ^1.12.7
-  checksum: 10/3df0c7c570c1bd126ffe43cb6a91ef91f6aed776c69b77e5771dfc6b92f7f9e6c2501b818a3c4b0b7ff62e32e6fe15caf4321ba20a437eb71afba8ca93c490b8
-  languageName: node
-  linkType: hard
-
-"@morpho-org/morpho-ts@npm:^1.12.7":
-  version: 1.12.7
-  resolution: "@morpho-org/morpho-ts@npm:1.12.7"
-  checksum: 10/a4ea6fcc8a99ac079d7d9e39d04431e7d33f5f25706bc3508c4474397e7c0b48fa67d8559171a58bca1de8ffc887b7a71c76b3bb7feed5adff30db24df823dce
   languageName: node
   linkType: hard
 
@@ -18593,17 +18561,6 @@ __metadata:
   version: 4.0.0
   resolution: "jwt-decode@npm:4.0.0"
   checksum: 10/87b569e4a9a0067fb0d592bcf3b2ac3e638e49beee28620eeb07bef1b4470f4077dea68c15d191dd68e076846c3af8394be3bcaecffedc6e97433b221fdbbcf3
-  languageName: node
-  linkType: hard
-
-"keccak256@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "keccak256@npm:1.0.6"
-  dependencies:
-    bn.js: "npm:^5.2.0"
-    buffer: "npm:^6.0.3"
-    keccak: "npm:^3.0.2"
-  checksum: 10/c7370708a3c0bf81e5663e27f5fa716a7ca41c2b079fb6b13f23850159aae0ec9076156564aed413a0fef40754aa7add43ccc2023a2a20447d66e4e017f9b4c5
   languageName: node
   linkType: hard
 
