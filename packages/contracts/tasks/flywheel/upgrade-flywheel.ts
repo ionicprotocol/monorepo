@@ -64,7 +64,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           throw new Error(`Failed to get current implementation address for ${ionicFlywheelAddress}`);
         }
         currentImplementationAddress = `0x${currentImplementationAddress.slice(26)}`;
-        if (currentImplementationAddress != implementationAddress) {
+        if (currentImplementationAddress.toLowerCase() != implementationAddress.toLowerCase()) {
           console.log("Upgrading flywheel at: ", ionicFlywheelAddress);
           const owner = await poolDirectory.read.owner();
           if (owner.toLowerCase() !== deployer.toLowerCase()) {
