@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+// useAssetPrices.ts
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+
 import { createClient } from '@supabase/supabase-js';
-import { chainIdToConfig } from '@ionicprotocol/chains';
 
 interface AssetPriceInfo {
   createdAt: number;
@@ -35,38 +36,6 @@ const supabaseKey =
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-function getTokenInfo(
-  chainId: number | string,
-  address: string
-): { symbol: string; decimals: number } | null {
-  const config = chainIdToConfig[+chainId];
-  if (!config) return null;
-
-  // Check if it's the wrapped native token
-  const nativeAddress =
-    config.specificParams?.metadata?.wrappedNativeCurrency?.address;
-  if (nativeAddress?.toLowerCase() === address.toLowerCase()) {
-    return {
-      symbol: config.specificParams.metadata.wrappedNativeCurrency.symbol,
-      decimals: config.specificParams.metadata.wrappedNativeCurrency.decimals
-    };
-  }
-
-  // Find in assets
-  const asset = config.assets.find(
-    (a) => a.underlying.toLowerCase() === address.toLowerCase()
-  );
-
-  if (asset) {
-    return {
-      symbol: asset.symbol,
-      decimals: asset.decimals
-    };
-  }
-
-  return null;
-}
-
 export const useAssetPrices = ({
   chainId,
   tokens
@@ -75,80 +44,75 @@ export const useAssetPrices = ({
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchAssetPrice = async () => {
-      try {
-        if (!tokens || tokens.length === 0 || !chainId) {
-          setData([]);
-          return;
-        }
+  // Memoize tokens array to prevent unnecessary effect triggers
+  const memoizedTokens = useMemo(
+    () => tokens?.map((t) => t.toLowerCase()),
+    [tokens]
+  );
+  const chainIdString = useMemo(() => chainId?.toString(), [chainId]);
 
-        const lowerCaseTokens = tokens.map((token) => token.toLowerCase());
+  // Keep track of last update time to prevent too frequent updates
+  const lastUpdateTime = useRef<number>(0);
+  const updateInterval = 10000; // 10 seconds
 
-        // First, get the latest created_at timestamp for each token
-        const { data: latestTimestamps, error: timestampError } = await supabase
-          .from('asset-price')
-          .select('underlying_address, created_at')
-          .eq('chain_id', chainId.toString())
-          .in('underlying_address', lowerCaseTokens)
-          .order('created_at', { ascending: false });
+  const fetchAssetPrice = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastUpdateTime.current < updateInterval) {
+      return;
+    }
+    lastUpdateTime.current = now;
 
-        if (timestampError) throw timestampError;
-
-        // Get only the latest timestamp for each token
-        const latestByToken = new Map<string, string>();
-        latestTimestamps?.forEach((row) => {
-          if (!latestByToken.has(row.underlying_address)) {
-            latestByToken.set(row.underlying_address, row.created_at);
-          }
-        });
-
-        // Then fetch the complete data for these specific timestamps
-        const promises = Array.from(latestByToken.entries()).map(
-          ([address, timestamp]) =>
-            supabase
-              .from('asset-price')
-              .select('*')
-              .eq('chain_id', chainId.toString())
-              .eq('underlying_address', address)
-              .eq('created_at', timestamp)
-              .single()
-        );
-
-        const results = await Promise.all(promises);
-        const finalData = results
-          .map((result) => {
-            if (!result.data) return null;
-
-            const tokenInfo = getTokenInfo(
-              chainId,
-              result.data.underlying_address
-            );
-            if (!tokenInfo) return null;
-
-            // Keep the original price, just add symbol and decimals
-            return {
-              ...result.data,
-              symbol: tokenInfo.symbol,
-              decimals: tokenInfo.decimals
-            };
-          })
-          .filter((data): data is AssetPrice => data !== null);
-
-        setData(finalData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching asset prices:', err);
-        setError(err instanceof Error ? err : new Error('An error occurred'));
-        setData(null);
-      } finally {
-        setIsLoading(false);
+    try {
+      if (!memoizedTokens?.length || !chainIdString) {
+        setData([]);
+        return;
       }
-    };
 
+      const { data: latestTimestamps, error: timestampError } = await supabase
+        .from('asset-price')
+        .select('underlying_address, created_at')
+        .eq('chain_id', chainIdString)
+        .in('underlying_address', memoizedTokens)
+        .order('created_at', { ascending: false });
+
+      if (timestampError) throw timestampError;
+
+      const latestByToken = new Map<string, string>();
+      latestTimestamps?.forEach((row) => {
+        if (!latestByToken.has(row.underlying_address)) {
+          latestByToken.set(row.underlying_address, row.created_at);
+        }
+      });
+
+      const promises = Array.from(latestByToken.entries()).map(
+        ([address, timestamp]) =>
+          supabase
+            .from('asset-price')
+            .select('*')
+            .eq('chain_id', chainIdString)
+            .eq('underlying_address', address)
+            .eq('created_at', timestamp)
+            .single()
+      );
+
+      const results = await Promise.all(promises);
+      const finalData = results
+        .map((result) => result.data)
+        .filter((data): data is AssetPrice => data !== null);
+
+      setData(finalData);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching asset prices:', err);
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [chainIdString, memoizedTokens]);
+
+  useEffect(() => {
     fetchAssetPrice();
 
-    // Set up real-time subscription with filters
     const subscription = supabase
       .channel('asset-price-changes')
       .on(
@@ -157,9 +121,9 @@ export const useAssetPrices = ({
           event: '*',
           schema: 'public',
           table: 'asset-price',
-          filter: chainId ? `chain_id=eq.${chainId.toString()}` : undefined
+          filter: chainIdString ? `chain_id=eq.${chainIdString}` : undefined
         },
-        (payload) => {
+        () => {
           fetchAssetPrice();
         }
       )
@@ -168,7 +132,7 @@ export const useAssetPrices = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [chainId, tokens]);
+  }, [chainIdString, fetchAssetPrice]);
 
   return { data, error, isLoading };
 };
