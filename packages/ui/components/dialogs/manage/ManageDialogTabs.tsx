@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 
 import Image from 'next/image';
 
+import { DialogTitle } from '@radix-ui/react-dialog';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { type Address, formatEther, formatUnits } from 'viem';
 
 import { DialogContent, DialogHeader } from '@ui/components/ui/dialog';
@@ -197,6 +199,9 @@ const ManageDialogTabs = ({
       fullWidth
     >
       <DialogHeader className="flex w-20 mx-auto relative text-center">
+        <VisuallyHidden.Root>
+          <DialogTitle />
+        </VisuallyHidden.Root>
         <Image
           alt="modlogo"
           className="mx-auto"
