@@ -29,9 +29,8 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
       let comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller as Address);
       const flywheels = await comptroller.read.getAccruingFlywheels();
       for (const ionicFlywheelAddress of flywheels) {
-        let flywheelContractName = "IonicFlywheel";
         let implementationAddress = (await deployments.get("IonicFlywheel_SupplyVaults")).address;
-        let flywheel = await viem.getContractAt(flywheelContractName, ionicFlywheelAddress as Address);
+        let flywheel = await viem.getContractAt("IonicFlywheel", ionicFlywheelAddress as Address);
         const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
         const ionicFlywheelBoosterAddress = (await deployments.get("IonicFlywheelSupplyBooster")).address as Address;
@@ -53,8 +52,6 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           console.log("Borrow Flywheel detected, skipping setting booster");
 
-          flywheelContractName = "IonicFlywheelBorrow";
-          flywheel = await viem.getContractAt(flywheelContractName, ionicFlywheelAddress as Address);
           implementationAddress = (await deployments.get("IonicFlywheelBorrow_SupplyVaults")).address;
         }
 
@@ -63,6 +60,9 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           address: ionicFlywheelAddress,
           slot: IMPLEMENTATION_SLOT
         });
+        if (!currentImplementationAddress) {
+          throw new Error(`Failed to get current implementation address for ${ionicFlywheelAddress}`);
+        }
         currentImplementationAddress = `0x${currentImplementationAddress.slice(26)}`;
         if (currentImplementationAddress != implementationAddress) {
           console.log("Upgrading flywheel at: ", ionicFlywheelAddress);
@@ -270,12 +270,13 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             }
             console.log(`Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`);
           }
-        }
-        else {
+        } else {
           console.log("Flywheel is already upgraded to latest implementation");
         }
         console.log("Deploying new IonicFlywheelStaticRewards to replace FlywheelDynamicRewards");
-        let newFlywheelRewardsAddress = (await deployments.get(`IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`)).address as Address;
+        let newFlywheelRewardsAddress = (
+          await deployments.get(`IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`)
+        ).address as Address;
         if (newFlywheelRewardsAddress == ZERO_ADDRESS) {
           const flywheelRewardsReceipt = await deployments.deploy(
             `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
@@ -298,17 +299,20 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         );
         const newFlywheelRewards = await viem.getContractAt(`IonicFlywheelStaticRewards`, newFlywheelRewardsAddress);
         const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
-        const markets = (await flywheel.read.getAllStrategies()) as any[];
+        const markets = await flywheel.read.getAllStrategies();
         for (const market of markets) {
           const rewardsInfo = await oldFlywheelRewards.read.rewardsCycle([market]);
-          const rewardPerSecond = Math.round(Number(rewardsInfo[2]) / (rewardsInfo[1] - rewardsInfo[0]));
-          console.log("Market", market, "Reward per second: ", rewardPerSecond);
-          if (rewardPerSecond != 0) {
+          const rewardsPerSecond = Math.round(Number(rewardsInfo[2]) / (rewardsInfo[1] - rewardsInfo[0]));
+          console.log("Market", market, "Reward per second: ", rewardsPerSecond);
+          if (rewardsPerSecond != 0) {
             // we have to accrue each market that has live rewards. The user is not important, since we just want to invoke
             // accrueStrategy which is private function
-            flywheel.write.accrue(market, deployer);
+            flywheel.write.accrue([market, deployer as Address]);
             console.log("Setting rewards info to new flywheel static rewards for market: ", market);
-            newFlywheelRewards.write.setRewardsInfo(market, [rewardPerSecond, rewardsInfo[1]]);
+            newFlywheelRewards.write.setRewardsInfo([
+              market,
+              { rewardsPerSecond: BigInt(rewardsPerSecond), rewardsEndTimestamp: rewardsInfo[1] }
+            ]);
           }
           const strategy = await viem.getContractAt("CErc20RewardsDelegate", market as Address);
           strategy.write.approve([ion, newFlywheelRewardsAddress]);
@@ -316,7 +320,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
         // Accrue all markets after new flywheel rewards are set
         for (const market of markets) {
-          flywheel.write.accrue(market, deployer);
+          flywheel.write.accrue([market, deployer as Address]);
         }
       }
     }
