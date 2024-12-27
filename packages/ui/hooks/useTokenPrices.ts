@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+
 import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
 
 export interface TokenConfig {
