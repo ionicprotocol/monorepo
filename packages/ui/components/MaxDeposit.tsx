@@ -52,6 +52,7 @@ interface IMaxDeposit {
   showUtilizationSlider?: boolean;
   initialUtilization?: number;
   onUtilizationChange?: (percentage: number) => void;
+  hintText?: string;
 }
 
 function MaxDeposit({
@@ -72,7 +73,8 @@ function MaxDeposit({
   isLoading,
   showUtilizationSlider = false,
   initialUtilization = 0,
-  onUtilizationChange
+  onUtilizationChange,
+  hintText = 'Balance'
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const [utilizationPercentage, setUtilizationPercentage] =
@@ -188,11 +190,10 @@ function MaxDeposit({
               <div className="flex flex-col items-end gap-1">
                 <Button
                   variant="ghost"
-                  size="xs"
-                  className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
+                  className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
                   onClick={handleMax}
                 >
-                  Balance: {formattedBalance}
+                  {hintText}: {formattedBalance}
                 </Button>
                 {tokenSelector ? (
                   <TokenSelector
@@ -293,10 +294,10 @@ function MaxDeposit({
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
+                className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
                 onClick={handleMax}
               >
-                Balance: {formattedBalance}
+                {hintText}: {formattedBalance}
               </Button>
               {tokenSelector ? (
                 <TokenSelector

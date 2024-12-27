@@ -1,7 +1,7 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
 import { toast } from 'react-hot-toast';
-import { type Address, formatUnits, parseUnits } from 'viem';
+import { type Address, parseUnits } from 'viem';
 import { getContract } from 'viem';
 
 import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
@@ -37,7 +37,6 @@ export const useSupply = ({
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
 
   const { transactionSteps } = useTransactionSteps();
@@ -50,31 +49,6 @@ export const useSupply = ({
       ),
     [amount, selectedMarketData.underlyingDecimals]
   );
-
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
-      );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedMarketData.underlyingDecimals]
-  );
-
-  useEffect(() => {
-    if (amount === '0' || !amount || maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
-    }
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
 
   const supplyAmount = useCallback(async () => {
     if (
@@ -310,7 +284,6 @@ export const useSupply = ({
       setTxHash(undefined);
       refetchMaxSupply();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(
         `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -336,8 +309,6 @@ export const useSupply = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt,
     resetAllowance
   };

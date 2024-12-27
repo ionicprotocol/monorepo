@@ -23,6 +23,12 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import SliderComponent from '@ui/components/dialogs/manage/Slider';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import ClaimRewards from '@ui/components/stake/ClaimRewards';
+import RewardDisplay from '@ui/components/stake/RewardDisplay';
+import Toggle from '@ui/components/Toggle';
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
@@ -37,13 +43,6 @@ import {
   getToken
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-
-import SliderComponent from '@ui/components/dialogs/manage/Slider';
-import MaxDeposit from '@ui/components/MaxDeposit';
-import ResultHandler from '@ui/components/ResultHandler';
-import ClaimRewards from '@ui/components/stake/ClaimRewards';
-import RewardDisplay from '@ui/components/stake/RewardDisplay';
-import Toggle from '@ui/components/Toggle';
 
 const NetworkSelector = dynamic(
   () => import('@ui/components/markets/NetworkSelector'),

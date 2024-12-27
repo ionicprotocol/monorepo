@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 
 import { formatUnits } from 'viem';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
 import {
   HFPStatus,
@@ -14,7 +15,6 @@ import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
-import Amount from '../../Amount';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
 
@@ -39,7 +39,7 @@ const WithdrawTab = ({
     isLoadingUpdatedAssets,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes // Add this from context
+    getStepsForTypes
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
@@ -53,8 +53,6 @@ const WithdrawTab = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   } = useWithdraw({
     maxAmount: maxAmount ?? 0n,
@@ -91,18 +89,20 @@ const WithdrawTab = ({
 
   return (
     <div className="space-y-4 pt-4">
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+      <MaxDeposit
         max={formatUnits(
           maxAmount ?? 0n,
           selectedMarketData.underlyingDecimals
         )}
-        symbol={selectedMarketData.underlyingSymbol}
+        isLoading={isLoadingMax || isPolling}
+        amount={amount}
+        tokenName={selectedMarketData.underlyingSymbol}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Withdraw Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
         hintText="Max Withdraw"
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
       />
 
       <StatusAlerts
