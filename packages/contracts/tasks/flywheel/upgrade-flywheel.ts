@@ -308,14 +308,23 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             // we have to accrue each market that has live rewards. The user is not important, since we just want to invoke
             // accrueStrategy which is private function
             flywheel.write.accrue([market, deployer as Address]);
-            console.log("Setting rewards info to new flywheel static rewards for market: ", market);
-            newFlywheelRewards.write.setRewardsInfo([
-              market,
-              { rewardsPerSecond: BigInt(rewardsPerSecond), rewardsEndTimestamp: rewardsInfo[1] }
-            ]);
+            const currentRewardPerSecond = await newFlywheelRewards.read.getRewardsPerSecond([market]);
+            if (currentRewardPerSecond == 0) {
+              console.log("Setting rewards info to new flywheel static rewards for market: ", market);
+              newFlywheelRewards.write.setRewardsInfo([
+                market,
+                { rewardsPerSecond: BigInt(rewardsPerSecond), rewardsEndTimestamp: rewardsInfo[1] }
+              ]);
+            }
           }
+          /*
           const strategy = await viem.getContractAt("CErc20RewardsDelegate", market as Address);
-          strategy.write.approve([ion, newFlywheelRewardsAddress]);
+          const ionContract = await viem.getContractAt("ERC20", ion as Address);
+          const allowance = await ionContract.read.allowance([market, newFlywheelRewardsAddress]);
+          if (allowance == BigInt(0)) {
+            strategy.write.approve([ion, newFlywheelRewardsAddress]);
+          }
+          */
         }
         flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
         // Accrue all markets after new flywheel rewards are set
