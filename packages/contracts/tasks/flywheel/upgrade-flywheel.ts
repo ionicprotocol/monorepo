@@ -8,6 +8,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
     const deployments = hre.deployments;
     const publicClient = await viem.getPublicClient();
     const { deployer } = await hre.getNamedAccounts();
+    const walletClient = await viem.getWalletClient(deployer as Address);
 
     const poolDirectory = await viem.getContractAt(
       "PoolDirectory",
@@ -42,6 +43,8 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           console.log("Supply Flywheel detected, setting booster");
           flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
+        } else if (opSupplyFlywheels.includes(ionicFlywheelAddress)) {
+          console.log("Supply Flywheel detected, skipping setting booster");
         } else {
           if (!opBorrowFlywheels.includes(ionicFlywheelAddress)) {
             throw new Error(
@@ -57,31 +60,198 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
 
         console.log("Upgrading flywheel at: ", ionicFlywheelAddress);
         const owner = await poolDirectory.read.owner();
-        const implementationData = "0x";
         if (owner.toLowerCase() !== deployer.toLowerCase()) {
+          let defaultProxyAdmin = await viem.getContractAt(
+            "DefaultProxyAdmin",
+            (await deployments.get("DefaultProxyAdmin")).address as Address
+          );
+
           await prepareAndLogTransaction({
-            contractInstance: flywheel,
-            functionName: "_setImplementationSafe",
+            contractInstance: defaultProxyAdmin,
+            functionName: "defaultProxyAdmin",
             inputs: [
               {
                 internalType: "address",
-                name: "newImplementation",
+                name: "proxy",
                 type: "address"
               },
               {
-                internalType: "bytes",
-                name: "data",
-                type: "bytes"
+                internalType: "address",
+                name: "implementation",
+                type: "address"
               }
             ],
-            args: [implementationAddress, implementationData],
+            args: [ionicFlywheelAddress, implementationAddress],
             description: `Set implementation to ${implementationAddress}`
           });
         } else {
-          const setImplementationTx = await flywheel.write._setImplementationSafe([
-            implementationAddress as Address,
-            implementationData
-          ]);
+          const setImplementationTx = await walletClient.writeContract({
+            address: (await deployments.get("DefaultProxyAdmin")).address as Address,
+            abi: [
+              {
+                inputs: [
+                  {
+                    internalType: "address",
+                    name: "initialOwner",
+                    type: "address"
+                  }
+                ],
+                stateMutability: "nonpayable",
+                type: "constructor"
+              },
+              {
+                anonymous: false,
+                inputs: [
+                  {
+                    indexed: true,
+                    internalType: "address",
+                    name: "previousOwner",
+                    type: "address"
+                  },
+                  {
+                    indexed: true,
+                    internalType: "address",
+                    name: "newOwner",
+                    type: "address"
+                  }
+                ],
+                name: "OwnershipTransferred",
+                type: "event"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "contract TransparentUpgradeableProxy",
+                    name: "proxy",
+                    type: "address"
+                  },
+                  {
+                    internalType: "address",
+                    name: "newAdmin",
+                    type: "address"
+                  }
+                ],
+                name: "changeProxyAdmin",
+                outputs: [],
+                stateMutability: "nonpayable",
+                type: "function"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "contract TransparentUpgradeableProxy",
+                    name: "proxy",
+                    type: "address"
+                  }
+                ],
+                name: "getProxyAdmin",
+                outputs: [
+                  {
+                    internalType: "address",
+                    name: "",
+                    type: "address"
+                  }
+                ],
+                stateMutability: "view",
+                type: "function"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "contract TransparentUpgradeableProxy",
+                    name: "proxy",
+                    type: "address"
+                  }
+                ],
+                name: "getProxyImplementation",
+                outputs: [
+                  {
+                    internalType: "address",
+                    name: "",
+                    type: "address"
+                  }
+                ],
+                stateMutability: "view",
+                type: "function"
+              },
+              {
+                inputs: [],
+                name: "owner",
+                outputs: [
+                  {
+                    internalType: "address",
+                    name: "",
+                    type: "address"
+                  }
+                ],
+                stateMutability: "view",
+                type: "function"
+              },
+              {
+                inputs: [],
+                name: "renounceOwnership",
+                outputs: [],
+                stateMutability: "nonpayable",
+                type: "function"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "address",
+                    name: "newOwner",
+                    type: "address"
+                  }
+                ],
+                name: "transferOwnership",
+                outputs: [],
+                stateMutability: "nonpayable",
+                type: "function"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "contract TransparentUpgradeableProxy",
+                    name: "proxy",
+                    type: "address"
+                  },
+                  {
+                    internalType: "address",
+                    name: "implementation",
+                    type: "address"
+                  }
+                ],
+                name: "upgrade",
+                outputs: [],
+                stateMutability: "nonpayable",
+                type: "function"
+              },
+              {
+                inputs: [
+                  {
+                    internalType: "contract TransparentUpgradeableProxy",
+                    name: "proxy",
+                    type: "address"
+                  },
+                  {
+                    internalType: "address",
+                    name: "implementation",
+                    type: "address"
+                  },
+                  {
+                    internalType: "bytes",
+                    name: "data",
+                    type: "bytes"
+                  }
+                ],
+                name: "upgradeAndCall",
+                outputs: [],
+                stateMutability: "payable",
+                type: "function"
+              }
+            ] as const,
+            functionName: "upgrade",
+            args: [ionicFlywheelAddress, implementationAddress as Address]
+          });
           console.log("setImplementationTx: ", setImplementationTx);
 
           const receipt = await publicClient.waitForTransactionReceipt({
@@ -113,10 +283,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           "IonicFlywheelDynamicRewards",
           flywheelRewardsAddress as Address
         );
-        const newFlywheelRewards = await viem.getContractAt(
-          `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
-          newFlywheelRewardsAddress
-        );
+        const newFlywheelRewards = await viem.getContractAt(`IonicFlywheelStaticRewards`, newFlywheelRewardsAddress);
         const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
         const markets = (await flywheel.read.getAllStrategies()) as any[];
         for (const market of markets) {
