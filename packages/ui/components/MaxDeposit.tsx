@@ -168,7 +168,7 @@ function MaxDeposit({
   const tokens = tokenName?.split('/') ?? ['eth'];
   const formattedBalance = bal
     ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString('en-US', {
-        maximumFractionDigits: 3
+        maximumFractionDigits: 5
       })
     : max ?? '0';
 

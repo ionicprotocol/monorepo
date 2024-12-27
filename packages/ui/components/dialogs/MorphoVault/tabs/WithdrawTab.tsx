@@ -4,7 +4,6 @@ import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { ThreeCircles } from 'react-loader-spinner';
-import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
 import MaxDeposit from '@ui/components/MaxDeposit';
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
@@ -29,6 +28,7 @@ export function WithdrawTab({
     maxWithdraw,
     assetSymbol === 'WETH' ? 18 : 6
   );
+  console.log('formattedMaxWithdraw', formattedMaxWithdraw);
 
   const handleInputChange = (value?: string) => {
     setAmount(value || '');
@@ -73,12 +73,12 @@ export function WithdrawTab({
             amount={amount}
             max={formattedMaxWithdraw}
             tokenName={assetSymbol}
-            token={morphoBaseAddresses.tokens[assetSymbol]}
             handleInput={handleInputChange}
             chain={base.id}
             headerText="Withdraw Amount"
             useUnderlyingBalance
-            decimals={assetSymbol === 'WETH' ? 18 : 6}
+            showUtilizationSlider
+            hintText="Max Withdraw"
           />
           <Button
             className="w-full bg-accent hover:opacity-80"
