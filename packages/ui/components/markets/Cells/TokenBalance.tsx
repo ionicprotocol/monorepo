@@ -15,25 +15,38 @@ const TokenBalance: React.FC<TokenBalanceProps> = ({
 }) => {
   const formatNumber = (num: number) => {
     if (num === 0) return '0';
-    return millify(num, {
-      precision: 2,
-      lowercase: true,
-      space: true,
-      units: ['', 'k', 'm', 'b', 't']
+
+    if (Math.abs(num) < 0.01) {
+      return num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 8
+      });
+    }
+
+    return num.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     });
   };
 
   const formatUSD = (num: number) => {
     if (num === 0) return '$0';
-    return (
-      '$' +
-      millify(num, {
-        precision: 2,
-        lowercase: true,
-        space: true,
-        units: ['', 'k', 'm', 'b', 't']
-      })
-    );
+
+    if (Math.abs(num) < 0.01) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 8
+      }).format(num);
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(num);
   };
 
   return (
