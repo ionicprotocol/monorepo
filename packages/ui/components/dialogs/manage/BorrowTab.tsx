@@ -139,12 +139,12 @@ const BorrowTab = ({
         <div className="space-y-4 content-center">
           <div className="flex justify-between text-xs text-gray-400">
             <span>MIN BORROW</span>
-            <span>{borrowLimits.min}</span>
+            <span>{parseFloat(borrowLimits.min).toFixed(6)}</span>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400">
             <span>MAX BORROW</span>
-            <span>{borrowLimits.max}</span>
+            <span>{parseFloat(borrowLimits.max).toFixed(6)}</span>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400">

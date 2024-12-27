@@ -164,9 +164,7 @@ export default function Dashboard() {
       asset: asset.underlyingSymbol,
       logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
       amount: {
-        tokens: Number.parseFloat(
-          formatUnits(asset.borrowBalance, asset.underlyingDecimals)
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        tokens: formatUnits(asset.borrowBalance, asset.underlyingDecimals),
         usd: asset.borrowBalanceFiat
       },
       apr: {
@@ -216,9 +214,7 @@ export default function Dashboard() {
       asset: asset.underlyingSymbol,
       logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
       amount: {
-        tokens: Number.parseFloat(
-          formatUnits(asset.supplyBalance, asset.underlyingDecimals)
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        tokens: formatUnits(asset.supplyBalance, asset.underlyingDecimals),
         usd: asset.supplyBalanceFiat
       },
       apr: {
@@ -235,89 +231,82 @@ export default function Dashboard() {
     };
   });
 
-  const loopTableData: LoopRowData[] = (positions?.openPositions ?? [])
-    ?.filter(Boolean)
-    .map((position, i) => {
-      if (
-        !position ||
-        !position.address ||
-        !position.collateral?.symbol ||
-        !position.borrowable?.symbol ||
-        !positionsInfo?.[position.address]
-      ) {
-        return null;
-      }
+  const loopTableData = positions?.openPositions?.map((position, i) => {
+    if (
+      !position ||
+      !position.address ||
+      !position.collateral?.symbol ||
+      !position.borrowable?.symbol ||
+      !positionsInfo?.[position.address]
+    ) {
+      return null;
+    }
 
-      const currentPositionInfo = positionsInfo[position.address];
-      const collateralPrice = Number(
-        formatEther(
-          marketData?.assets.find(
-            (asset) => asset.underlyingSymbol === position.collateral.symbol
-          )?.underlyingPrice ?? 0n
-        )
-      );
-      const borrowablePrice = Number(
-        formatEther(
-          marketData?.assets.find(
-            (asset) => asset.underlyingSymbol === position.borrowable.symbol
-          )?.underlyingPrice ?? 0n
-        )
-      );
+    const currentPositionInfo = positionsInfo[position.address];
+    const collateralPrice = Number(
+      formatEther(
+        marketData?.assets.find(
+          (asset) => asset.underlyingSymbol === position.collateral.symbol
+        )?.underlyingPrice ?? 0n
+      )
+    );
+    const borrowablePrice = Number(
+      formatEther(
+        marketData?.assets.find(
+          (asset) => asset.underlyingSymbol === position.borrowable.symbol
+        )?.underlyingPrice ?? 0n
+      )
+    );
 
-      return {
-        position: {
-          address: position.address,
-          collateral: {
-            symbol: position.collateral.symbol,
-            logo: `/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`,
-            amount: {
-              tokens: Number(
+    return {
+      position: {
+        address: position.address,
+        collateral: {
+          symbol: position.collateral.symbol,
+          logo: `/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`,
+          amount: {
+            tokens: Number(
+              formatUnits(
+                currentPositionInfo.positionSupplyAmount,
+                Number(position.collateral.underlyingDecimals)
+              )
+            ),
+            usd:
+              Number(
                 formatUnits(
                   currentPositionInfo.positionSupplyAmount,
                   Number(position.collateral.underlyingDecimals)
                 )
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              }),
-              usd:
-                Number(
-                  formatUnits(
-                    currentPositionInfo.positionSupplyAmount,
-                    Number(position.collateral.underlyingDecimals)
-                  )
-                ) *
-                ((usdPrice ?? 0) * collateralPrice)
-            },
-            underlyingDecimals: Number(position.collateral.underlyingDecimals)
+              ) *
+              ((usdPrice ?? 0) * collateralPrice)
           },
-          borrowable: {
-            symbol: position.borrowable.symbol,
-            logo: `/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`,
-            amount: {
-              tokens: Number(
+          underlyingDecimals: Number(position.collateral.underlyingDecimals)
+        },
+        borrowable: {
+          symbol: position.borrowable.symbol,
+          logo: `/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`,
+          amount: {
+            tokens: Number(
+              formatUnits(
+                currentPositionInfo.debtAmount,
+                position.borrowable.underlyingDecimals
+              )
+            ),
+            usd:
+              Number(
                 formatUnits(
                   currentPositionInfo.debtAmount,
                   position.borrowable.underlyingDecimals
                 )
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              }),
-              usd:
-                Number(
-                  formatUnits(
-                    currentPositionInfo.debtAmount,
-                    position.borrowable.underlyingDecimals
-                  )
-                ) *
-                ((usdPrice ?? 0) * borrowablePrice)
-            },
-            underlyingDecimals: Number(position.borrowable.underlyingDecimals)
-          }
-        },
-        loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
-      };
-    })
-    .filter((data): data is LoopRowData => !!data);
+              ) *
+              ((usdPrice ?? 0) * borrowablePrice)
+          },
+          underlyingDecimals: Number(position.borrowable.underlyingDecimals)
+        }
+      },
+      loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
+    };
+  });
 
   return (
     <>
@@ -379,7 +368,7 @@ export default function Dashboard() {
           </div>
 
           <LoopTable
-            data={loopTableData}
+            data={(loopTableData || []) as LoopRowData[]}
             isLoading={
               isLoadingPositions ||
               isLoadingPositionsInfo ||

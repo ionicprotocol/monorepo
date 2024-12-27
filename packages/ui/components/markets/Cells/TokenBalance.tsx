@@ -1,3 +1,4 @@
+import { millify } from 'millify';
 import React from 'react';
 
 type TokenBalanceProps = {
@@ -10,39 +11,29 @@ type TokenBalanceProps = {
 const TokenBalance: React.FC<TokenBalanceProps> = ({
   balance,
   balanceUSD,
-  tokenName,
-  decimals = 4
+  tokenName
 }) => {
   const formatNumber = (num: number) => {
     if (num === 0) return '0';
-
-    if (num >= 1000000) {
-      const value = (num / 1000000).toFixed(2);
-      return `${value.replace(/\.?0+$/, '')}M`;
-    }
-
-    if (num >= 1000) {
-      const value = (num / 1000).toFixed(2);
-      return `${value.replace(/\.?0+$/, '')}K`;
-    }
-
-    // Convert to fixed decimal places and trim trailing zeros
-    const value = num.toFixed(decimals);
-    return value.replace(/\.?0+$/, '');
+    return millify(num, {
+      precision: 2,
+      lowercase: true,
+      space: true,
+      units: ['', 'k', 'm', 'b', 't']
+    });
   };
 
   const formatUSD = (num: number) => {
     if (num === 0) return '$0';
-
-    const formatted = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(num);
-
-    // Remove trailing zeros after decimal point while keeping at least 2 digits
-    return formatted.replace(/\.?0+$/, '');
+    return (
+      '$' +
+      millify(num, {
+        precision: 2,
+        lowercase: true,
+        space: true,
+        units: ['', 'k', 'm', 'b', 't']
+      })
+    );
   };
 
   return (

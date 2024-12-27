@@ -91,10 +91,10 @@ const RepayTab = ({
         tokenName={selectedMarketData.underlyingSymbol}
         handleInput={(val?: string) => setAmount(val ?? '')}
         chain={chainId}
-        headerText="Borrow Amount"
+        headerText="Repay Amount"
         decimals={selectedMarketData.underlyingDecimals}
         showUtilizationSlider
-        hintText="Max Borrow"
+        hintText="Max Repay"
       />
 
       <StatusAlerts
