@@ -23,18 +23,16 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
   try {
     // Call updateAssetTvl to get the TVL for each asset
     const results = await updateAssetTvl(chainId);
-
     // Log each asset's TVL
-    results.forEach((asset: { tvlNative: string }) => {
+    results.results.forEach((asset: { tvlNative: string }) => {
       // console.log(`Asset TVL (native): ${asset.tvlNative}`);
     });
-
     // Summing up the total TVL (native) in ETH
-    const totalMarketBorrow = results.reduce((total: number, asset: { borrowtotal : string }) => {
+    const totalMarketBorrow = results.results.reduce((total: number, asset: { borrowtotal: string }) => {
       return total + parseFloat(asset.borrowtotal);
     }, 0);
     // console.log("hereee",totalMarketBorrow)
-    const totalTvlNative = results.reduce((total: number, asset: { tvlNative: string }) => {
+    const totalTvlNative = results.results.reduce((total: number, asset: { tvlNative: string }) => {
       return total + parseFloat(asset.tvlNative);
     }, 0);
 

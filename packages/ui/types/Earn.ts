@@ -15,6 +15,11 @@ export interface MorphoRow {
   live: boolean;
   getApr?: () => Promise<number>;
   getTvl?: () => Promise<TVLData>;
+  rewards: {
+    morpho: number;
+    rate: number;
+    ION: number;
+  };
 }
 
 export type EarnRow = {

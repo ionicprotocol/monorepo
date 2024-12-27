@@ -7,8 +7,8 @@ import {
   CardTitle
 } from '@ui/components/ui/card';
 
-import EarnTable from '../_components/earn/EarnTable';
-import MorphoTable from '../_components/earn/MorphoTable';
+import EarnTable from '@ui/components/earn/EarnTable';
+import MorphoTable from '@ui/components/earn/MorphoTable';
 
 export default function Earn() {
   return (
@@ -16,7 +16,8 @@ export default function Earn() {
       <Card className="bg-grayone">
         <CardHeader>
           <CardTitle className="text-center text-white/80 text-xl">
-            🏦 Morpho Vaults - Earn ION rewards while supplying to Morpho! 🏦
+            🏦 Morpho Vaults - Earn $ION and $MORPHO rewards while supplying to
+            Morpho! 🏦
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { cn } from '@ui/lib/utils';
+import { EnhancedColumnDef } from '../CommonTable';
 
 const TableContext = React.createContext<{ compact?: boolean }>({});
 
@@ -76,6 +77,40 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ) => {
     const { compact } = React.useContext(TableContext);
 
+    // Create a modified version of children that adds the badge to the last cell
+    const childrenWithBadge = React.Children.map(
+      props.children,
+      (child, index) => {
+        if (
+          React.isValidElement(child) &&
+          index === React.Children.count(props.children) - 1
+        ) {
+          return React.cloneElement(child, {
+            ...child.props,
+            children: (
+              <>
+                {child.props.children}
+                {badge && (
+                  <div className="absolute -top-2 -right-3 z-20">
+                    <span
+                      className={cn(
+                        'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
+                        badge.className,
+                        borderClassName
+                      )}
+                    >
+                      {badge.text}
+                    </span>
+                  </div>
+                )}
+              </>
+            )
+          });
+        }
+        return child;
+      }
+    );
+
     return (
       <tr
         ref={ref}
@@ -94,20 +129,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
         }}
         {...props}
       >
-        {props.children}
-        {badge && (
-          <div className="absolute -top-3 -right-3 z-20">
-            <span
-              className={cn(
-                'py-1 px-3 text-xs text-white/80 font-semibold rounded-xl border bg-grayUnselect hover:bg-graylite transition-all duration-200 whitespace-nowrap',
-                badge.className,
-                borderClassName
-              )}
-            >
-              {badge.text}
-            </span>
-          </div>
-        )}
+        {childrenWithBadge}
       </tr>
     );
   }
@@ -115,23 +137,25 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
+  React.ThHTMLAttributes<HTMLTableCellElement> & { width?: string }
+>(({ className, width, ...props }, ref) => (
   <th
     ref={ref}
     className={cn(
       'h-8 px-4 text-left align-middle text-xs font-semibold text-white/60 whitespace-nowrap',
       className
     )}
+    style={{ width: width }} // Apply width here
     {...props}
   />
 ));
+
 TableHead.displayName = 'TableHead';
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => {
+>(({ className, style, ...props }, ref) => {
   const { compact } = React.useContext(TableContext);
 
   return (
@@ -142,6 +166,7 @@ const TableCell = React.forwardRef<
         compact ? 'py-2 px-4' : 'p-4',
         className
       )}
+      style={style}
       {...props}
     />
   );

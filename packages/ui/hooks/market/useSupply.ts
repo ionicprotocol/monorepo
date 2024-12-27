@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
 import { getContract } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,
@@ -19,7 +19,7 @@ import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseSupplyProps {
-  maxAmount: bigint;
+  maxAmount: bigint | undefined;
   enableCollateral: boolean;
   selectedMarketData: MarketData;
   comptrollerAddress: Address;
@@ -27,7 +27,7 @@ interface UseSupplyProps {
 }
 
 export const useSupply = ({
-  maxAmount,
+  maxAmount = 0n,
   enableCollateral,
   selectedMarketData,
   comptrollerAddress,

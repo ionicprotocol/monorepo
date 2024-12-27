@@ -22,13 +22,13 @@ export const useFusePoolData = (
       return undefined;
     }
   }, [usdPrices, poolChainId]);
-  console.log('🚀 ~ usdPrice ~ usdPrices:', usdPrices);
-  console.log('🚀 ~ usdPrice ~ poolChainId:', poolChainId);
-  console.log('🚀 ~ queryFn: ~ usdPrice:', usdPrice);
-  console.log('🚀 ~ queryFn: ~ sdk?.chainId:', sdk?.chainId);
-  console.log('🚀 ~ queryFn: ~ poolId:', poolId);
-  console.log('🚀 ~ queryFn: ~ address:', address);
-  console.log('🚀 ~ queryFn: ~ excludeNonBorrowable:', excludeNonBorrowable);
+  // console.log('🚀 ~ usdPrice ~ usdPrices:', usdPrices);
+  // console.log('🚀 ~ usdPrice ~ poolChainId:', poolChainId);
+  // console.log('🚀 ~ queryFn: ~ usdPrice:', usdPrice);
+  // console.log('🚀 ~ queryFn: ~ sdk?.chainId:', sdk?.chainId);
+  // console.log('🚀 ~ queryFn: ~ poolId:', poolId);
+  // console.log('🚀 ~ queryFn: ~ address:', address);
+  // console.log('🚀 ~ queryFn: ~ excludeNonBorrowable:', excludeNonBorrowable);
 
   return useQuery({
     queryKey: [

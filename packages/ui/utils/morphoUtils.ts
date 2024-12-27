@@ -1,7 +1,8 @@
-import type { MorphoRow } from '@ui/types/Earn';
 import { utils } from 'ethers';
 
-export const morphoVaults: Omit<MorphoRow, 'apy' | 'tvl'>[] = [
+import type { MorphoRow } from '@ui/types/Earn';
+
+export const morphoVaults: Omit<MorphoRow, 'apy' | 'rewards' | 'tvl'>[] = [
   {
     asset: ['WETH'],
     protocol: 'Morpho',

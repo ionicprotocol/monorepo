@@ -1,239 +1,112 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+import { isAddress } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import { pools } from '@ui/constants';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import ManageDialog from '@ui/components/dialogs/manage';
+import FeaturedMarketTile from '@ui/components/markets/FeaturedMarketTile';
+import PoolsTable from '@ui/components/markets/PoolsTable';
+import PoolToggle from '@ui/components/markets/PoolToggle';
+import SearchInput from '@ui/components/markets/SearcInput';
+import StakingTile from '@ui/components/markets/StakingTile';
+import SupplyVaultTable from '@ui/components/markets/SupplyVaultTable';
+import TotalTvlTile from '@ui/components/markets/TotalTvlTile';
+import TvlTile from '@ui/components/markets/TvlTile';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-
-import ActionButton from '../_components/ActionButton';
-import CommonTable from '../_components/CommonTable';
-import Loop from '../_components/dialogs/loop';
-import ManageDialog from '../_components/dialogs/manage';
-import Swap from '../_components/dialogs/manage/Swap';
-import APRCell from '../_components/markets/APRCell';
-import FeaturedMarketTile from '../_components/markets/FeaturedMarketTile';
-import FilterBar from '../_components/markets/FilterBar';
-import StakingTile from '../_components/markets/StakingTile';
-import TotalTvlTile from '../_components/markets/TotalTvlTile';
-import TvlTile from '../_components/markets/TvlTile';
-
-import type { EnhancedColumnDef } from '../_components/CommonTable';
-import type { Row } from '@tanstack/react-table';
+import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
+import { useAssetPrices } from '@ui/hooks/useAssetPrices';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('@ui/components/markets/NetworkSelector'),
   { ssr: false }
 );
-
-interface MarketCellProps {
-  row: Row<MarketRowData>;
-  getValue: () => any;
-}
 
 export default function Market() {
   const searchParams = useSearchParams();
   const chainId = useChainId();
-  const { address } = useMultiIonic();
 
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
+  // console.log('chain', chain);
 
-  const [swapOpen, setSwapOpen] = useState<boolean>(false);
-  const [swapWidgetOpen, setSwapWidgetOpen] = useState<boolean>(false);
-  const [wrapWidgetOpen, setWrapWidgetOpen] = useState<boolean>(false);
+  const { data } = useAssetPrices({
+    chainId: +chain
+  });
+  // console.log('data', data);
+
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
-  const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
+
   const [selectedSymbol, setSelectedSymbol] = useState<string>();
   const [isBorrowDisabled, setIsBorrowDisabled] = useState<boolean>(false);
-  const [filteredMarketData, setFilteredMarketData] = useState<MarketRowData[]>(
-    []
-  );
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { vaultData, isLoading: isLoadingVaults } = useSupplyVaultsData(chain);
   const {
     marketData,
     selectedMarketData,
     featuredMarkets,
     isLoading,
-    poolData,
-    loopProps
+    poolData
   } = useMarketData(selectedPool, chain, selectedSymbol);
 
-  useEffect(() => {
-    setFilteredMarketData(marketData);
-  }, [marketData]);
+  const filteredData = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
 
-  const columns: EnhancedColumnDef<MarketRowData>[] = [
-    {
-      id: 'asset',
-      header: <div className="pl-6">ASSETS</div>,
-      sortingFn: 'alphabetical',
-      cell: ({ row }: MarketCellProps) => (
-        <Link
-          href={{
-            pathname: `/market/details/${row.original.asset}`,
-            query: {
-              chain,
-              comptrollerAddress: row.original.comptrollerAddress,
-              cTokenAddress: row.original.cTokenAddress,
-              dropdownSelectedChain: chain,
-              pool: selectedPool,
-              borrowAPR: row.original.borrowAPR,
-              supplyAPR: row.original.supplyAPR,
-              selectedChain: chainId,
-              selectedSymbol: row.original.asset
-            }
-          }}
-          className="flex gap-3 items-center pl-6"
-        >
-          <Image
-            src={row.original.logo}
-            alt={row.original.asset}
-            width={28}
-            height={28}
-            className="w-7 h-7"
-          />
-          <div className="flex flex-col">
-            <span className="text-sm">{row.original.asset}</span>
-            <div className="flex flex-col text-xs text-white/40 font-light">
-              <span>
-                Supplied: ${row.original.supply.totalUSD.split(' ')[0]}
-              </span>
-              <span>
-                Borrowed: ${row.original.borrow.totalUSD.split(' ')[0]}
-              </span>
-            </div>
-          </div>
-        </Link>
-      )
-    },
-    {
-      id: 'supplyAPRTotal',
-      header: 'SUPPLY APR',
-      sortingFn: 'numerical',
-      accessorFn: (row) => row.supplyAPR,
-      cell: ({ row }: MarketCellProps) => (
-        <APRCell
-          type="supply"
-          baseAPR={row.original.supplyAPR}
-          asset={row.original.asset}
-          rewards={row.original.supplyRewards}
-          dropdownSelectedChain={+chain}
-          selectedPoolId={selectedPool}
-          cToken={row.original.cTokenAddress}
-          pool={row.original.comptrollerAddress}
-          nativeAssetYield={row.original.nativeAssetYield}
-          underlyingToken={row.original.underlyingToken}
-          aprTotal={row.original.supplyAPRTotal}
-        />
-      )
-    },
-    {
-      id: 'borrowAPRTotal',
-      header: 'BORROW APR',
-      sortingFn: 'numerical',
-      accessorFn: (row) => row.borrowAPR,
-      cell: ({ row }: MarketCellProps) => (
-        <APRCell
-          type="borrow"
-          baseAPR={row.original.borrowAPR}
-          asset={row.original.asset}
-          rewards={row.original.borrowRewards}
-          dropdownSelectedChain={+chain}
-          selectedPoolId={selectedPool}
-          cToken={row.original.cTokenAddress}
-          pool={row.original.comptrollerAddress}
-          underlyingToken={row.original.underlyingToken}
-          aprTotal={row.original.borrowAPRTotal}
-        />
-      )
-    },
-    {
-      id: 'supplyBalance',
-      header: 'SUPPLY BALANCE',
-      sortingFn: 'numerical',
-      cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-start">
-          <span>{row.original.supply.balance}</span>
-          <span className="text-xs text-white/40 font-light">
-            ${row.original.supply.balanceUSD}
-          </span>
-        </div>
-      )
-    },
-    {
-      id: 'borrowBalance',
-      header: 'BORROW BALANCE',
-      sortingFn: 'numerical',
-      cell: ({ row }: MarketCellProps) => (
-        <div className="flex flex-col items-start">
-          <span>{row.original.borrow.balance}</span>
-          <span className="text-xs text-white/40 font-light">
-            ${row.original.borrow.balanceUSD}
-          </span>
-        </div>
-      )
-    },
-    {
-      id: 'collateralFactor',
-      header: 'COLLATERAL FACTOR',
-      sortingFn: 'percentage',
-      cell: ({ row }: MarketCellProps) => (
-        <span>{row.original.collateralFactor}%</span>
-      )
-    },
-    {
-      id: 'actions',
-      header: 'ACTIONS',
-      enableSorting: false,
-      cell: ({ row }: MarketCellProps) => (
-        <div className="flex gap-2 w-full pr-6">
-          <ActionButton
-            half={row.original.loopPossible}
-            action={async () => {
-              const result = await handleSwitchOriginChain(+chain, chainId);
-              if (result) {
-                setSelectedSymbol(row.original.asset);
-                setIsManageDialogOpen(true);
-                if (row.original.isBorrowDisabled) {
-                  setIsBorrowDisabled(true);
-                }
-              }
-            }}
-            disabled={!address}
-            label="Manage"
-          />
-          {row.original.loopPossible && (
-            <ActionButton
-              action={async () => {
-                const result = await handleSwitchOriginChain(+chain, chainId);
-                if (result) {
-                  setSelectedSymbol(row.original.asset);
-                  setIsLoopDialogOpen(true);
-                }
-              }}
-              half
-              disabled={!address}
-              label="Loop"
-              bg="bg-lime"
-            />
-          )}
-        </div>
-      )
+    if (!term) {
+      return selectedPool === 'vault' ? vaultData : marketData;
     }
-  ];
+
+    const isAddressSearch = isAddress(term);
+    const data = selectedPool === 'vault' ? vaultData : marketData;
+
+    return data.filter((item) => {
+      if (isAddressSearch) {
+        if (selectedPool === 'vault') {
+          const vault = item as VaultRowData;
+          return (
+            vault.vaultAddress.toLowerCase() === term ||
+            vault.underlyingToken.toLowerCase() === term ||
+            vault.cToken.toLowerCase() === term
+          );
+        } else {
+          const market = item as MarketRowData;
+          return (
+            market.cTokenAddress.toLowerCase() === term ||
+            market.underlyingToken.toLowerCase() === term
+          );
+        }
+      }
+
+      if (selectedPool === 'vault') {
+        const vault = item as VaultRowData;
+        return (
+          vault.asset.toLowerCase().includes(term) ||
+          vault.underlyingSymbol.toLowerCase().includes(term) ||
+          vault.strategy.description.toLowerCase().includes(term) ||
+          vault.strategy.distribution.some((d) =>
+            d.poolName.toLowerCase().includes(term)
+          )
+        );
+      } else {
+        const market = item as MarketRowData;
+        return (
+          market.asset.toLowerCase().includes(term) ||
+          market.underlyingSymbol.toLowerCase().includes(term)
+        );
+      }
+    });
+  }, [searchTerm, selectedPool, vaultData, marketData]);
 
   return (
     <>
@@ -247,6 +120,13 @@ export default function Market() {
               poolData={poolData!}
               isLoadingLoopMarkets={false}
               selectedPool={selectedPool}
+              vaultData={{
+                totalSuppliedFiat: vaultData.reduce(
+                  (acc, v) => acc + v.totalSupply.usd,
+                  0
+                )
+              }}
+              isLoadingVaults={isLoadingVaults}
             />
           </div>
           <FeaturedMarketTile
@@ -254,11 +134,7 @@ export default function Market() {
             dropdownSelectedChain={chain}
             selectedChain={chainId}
             setSelectedSymbol={setSelectedSymbol}
-            swapWidgetOpen={swapWidgetOpen}
-            wrapWidgetOpen={wrapWidgetOpen}
             setIsManageDialogOpen={setIsManageDialogOpen}
-            setSwapWidgetOpen={setSwapWidgetOpen}
-            setWrapWidgetOpen={setWrapWidgetOpen}
             featuredMarkets={featuredMarkets}
           />
           <StakingTile chain={+chain} />
@@ -280,52 +156,51 @@ export default function Market() {
           />
         </div>
         <div className="bg-grayone w-full rounded-xl py-4 px-4 lg:px-[1%] xl:px-[3%]">
-          <FilterBar
-            chain={+chain}
-            pool={selectedPool}
-            marketData={marketData}
-            onSearch={setFilteredMarketData}
-          />
+          <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4 pr-3.5">
+            <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
+              <PoolToggle
+                chain={+chain}
+                pool={selectedPool}
+              />
+            </div>
+            <div className="w-full">
+              <SearchInput
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder={`Search by ${
+                  selectedPool === 'vault'
+                    ? 'vault name, token, or strategy'
+                    : 'token or address'
+                }...`}
+              />
+            </div>
+          </div>
 
-          <CommonTable
-            data={filteredMarketData}
-            columns={columns}
-            isLoading={isLoading}
-            getRowStyle={(row) => ({
-              badge: row.original.membership
-                ? { text: 'Collateral' }
-                : undefined,
-              borderClassName: row.original.membership
-                ? pools[+chain]?.border
-                : undefined
-            })}
-          />
+          {selectedPool === 'vault' ? (
+            <SupplyVaultTable
+              marketData={filteredData as VaultRowData[]}
+              isLoading={isLoadingVaults}
+            />
+          ) : (
+            <PoolsTable
+              marketData={filteredData as MarketRowData[]}
+              isLoading={isLoading}
+              setIsManageDialogOpen={setIsManageDialogOpen}
+              setIsBorrowDisabled={setIsBorrowDisabled}
+              setSelectedSymbol={setSelectedSymbol}
+              selectedSymbol={selectedSymbol}
+            />
+          )}
         </div>
       </div>
 
-      {selectedMarketData && poolData && (
+      {poolData?.comptroller && selectedMarketData && (
         <ManageDialog
           isOpen={isManageDialogOpen}
           setIsOpen={setIsManageDialogOpen}
           isBorrowDisabled={isBorrowDisabled}
-          comptrollerAddress={poolData.comptroller}
+          comptrollerAddress={poolData?.comptroller}
           selectedMarketData={selectedMarketData}
-        />
-      )}
-
-      {loopProps && (
-        <Loop
-          {...loopProps}
-          setIsOpen={setIsLoopDialogOpen}
-          isOpen={isLoopDialogOpen}
-        />
-      )}
-
-      {swapOpen && (
-        <Swap
-          close={() => setSwapOpen(false)}
-          dropdownSelectedChain={+chain}
-          selectedChain={chainId}
         />
       )}
     </>
