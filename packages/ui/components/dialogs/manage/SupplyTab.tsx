@@ -49,7 +49,8 @@ const SupplyTab = ({
     isLoadingUpdatedAssets,
     refetchUsedQueries,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxSupplyAmount(
@@ -150,7 +151,7 @@ const SupplyTab = ({
                 <span>{updatedValues.supplyBalanceFrom}</span>
                 <span className="mx-1">→</span>
                 <ResultHandler
-                  isLoading={isLoadingUpdatedAssets || isPolling}
+                  isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                   height={16}
                   width={16}
                 >
@@ -165,7 +166,7 @@ const SupplyTab = ({
                 <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
                 <span className="mx-1">→</span>
                 <ResultHandler
-                  isLoading={isLoadingUpdatedAssets}
+                  isLoading={isSliding || isLoadingUpdatedAssets}
                   height={16}
                   width={16}
                 >

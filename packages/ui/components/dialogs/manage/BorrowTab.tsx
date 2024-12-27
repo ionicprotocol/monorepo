@@ -41,7 +41,8 @@ const BorrowTab = ({
     updatedValues,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxBorrowAmount(
@@ -152,7 +153,7 @@ const BorrowTab = ({
               <span>{updatedValues.borrowBalanceFrom}</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
               >
@@ -169,7 +170,7 @@ const BorrowTab = ({
               <ResultHandler
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {updatedValues.updatedBorrowAPR?.toFixed(2)}%
               </ResultHandler>
@@ -184,7 +185,7 @@ const BorrowTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>

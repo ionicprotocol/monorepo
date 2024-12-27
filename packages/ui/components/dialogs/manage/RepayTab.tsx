@@ -39,7 +39,8 @@ const RepayTab = ({
     updatedValues,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxRepayAmount(
@@ -113,7 +114,7 @@ const RepayTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 <span className="text-accent">
                   {updatedValues.borrowBalanceTo}
@@ -128,7 +129,7 @@ const RepayTab = ({
               <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 width={16}
                 height={16}
               >
@@ -145,7 +146,7 @@ const RepayTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>

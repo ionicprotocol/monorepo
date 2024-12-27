@@ -39,7 +39,8 @@ const WithdrawTab = ({
     isLoadingUpdatedAssets,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
@@ -124,7 +125,7 @@ const WithdrawTab = ({
               <ResultHandler
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {updatedValues.supplyBalanceTo}
               </ResultHandler>
@@ -137,7 +138,7 @@ const WithdrawTab = ({
               <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
               >
@@ -154,7 +155,7 @@ const WithdrawTab = ({
               <ResultHandler
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>
