@@ -17,11 +17,11 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
     // Used as additional security check, because checking if booster is non-zero address won't be sufficinet
     // due to boosters that are going to be set for supply flywheels also
     const opSupplyFlywheels = [
-      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
-      '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
-      '0x05c3e910F7639457f92220605966e7f86A2ef966'
+      "0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162",
+      "0x6671AfE7c3aBd9Db195b3e58D348166c21405B88",
+      "0x05c3e910F7639457f92220605966e7f86A2ef966"
     ];
-    const opBorrowFlywheels = ['0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA'];
+    const opBorrowFlywheels = ["0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"];
 
     const pools = (await poolDirectory.read.getAllPools()) as any[];
     for (const pool of pools) {
@@ -32,17 +32,21 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         let implementationAddress = (await deployments.get("IonicFlywheel_SupplyVaults")).address;
         let flywheel = await viem.getContractAt(flywheelContractName, ionicFlywheelAddress as Address);
         const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-        
+
         const ionicFlywheelBoosterAddress = (await deployments.get("IonicFlywheelSupplyBooster")).address as Address;
         if ((await flywheel.read.flywheelBooster()) == ZERO_ADDRESS) {
           if (!opSupplyFlywheels.includes(ionicFlywheelAddress)) {
-            throw new Error(`Invalid flwheel: ${ionicFlywheelAddress}. Must be one of ${opSupplyFlywheels.join(", ")}.`);
+            throw new Error(
+              `Invalid flwheel: ${ionicFlywheelAddress}. Must be one of ${opSupplyFlywheels.join(", ")}.`
+            );
           }
           console.log("Supply Flywheel detected, setting booster");
           flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
         } else {
           if (!opBorrowFlywheels.includes(ionicFlywheelAddress)) {
-            throw new Error(`Invalid flwheel: ${ionicFlywheelAddress}. Must be one of ${opBorrowFlywheels.join(", ")}.`);
+            throw new Error(
+              `Invalid flwheel: ${ionicFlywheelAddress}. Must be one of ${opBorrowFlywheels.join(", ")}.`
+            );
           }
           console.log("Borrow Flywheel detected, skipping setting booster");
 
@@ -79,11 +83,11 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             implementationData
           ]);
           console.log("setImplementationTx: ", setImplementationTx);
-    
+
           const receipt = await publicClient.waitForTransactionReceipt({
             hash: setImplementationTx
           });
-    
+
           if (receipt.status !== "success") {
             throw `Failed set implementation to ${implementationAddress}`;
           }
@@ -91,26 +95,32 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         }
 
         console.log("Deploying new WithdrawableFlywheelStaticRewards to replace FlywheelDynamicRewards");
-        const flywheelRewardsReceipt = await deployments.deploy(`WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`, {
-          contract: "WithdrawableFlywheelStaticRewards",
-          from: deployer,
-          log: true,
-          args: [ionicFlywheelAddress, deployer, auth], // TODO: setup third paramather to Authority 
-          waitConfirmations: 1
-        });
+        const flywheelRewardsReceipt = await deployments.deploy(
+          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
+          {
+            contract: "WithdrawableFlywheelStaticRewards",
+            from: deployer,
+            log: true,
+            args: [ionicFlywheelAddress, deployer, auth], // TODO: setup third paramather to Authority
+            waitConfirmations: 1
+          }
+        );
         const newFlywheelRewardsAddress = flywheelRewardsReceipt.address as Address;
 
         console.log(`Deployed new flywheel lens router: ${newFlywheelRewardsAddress}`);
         const flywheelRewardsAddress = await flywheel.read.flywheelRewards();
-        const oldFlywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", flywheelRewardsAddress as Address);
+        const oldFlywheelRewards = await viem.getContractAt(
+          "IonicFlywheelDynamicRewards",
+          flywheelRewardsAddress as Address
+        );
         const newFlywheelRewards = await viem.getContractAt(
-          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`, 
+          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
           newFlywheelRewardsAddress
         );
         const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
-        const markets = await flywheel.read.getAllStrategies() as any[];
-        for(const market of markets) {
-          const rewardsInfo = await oldFlywheelRewards.read.rewardsCycle([market]);        
+        const markets = (await flywheel.read.getAllStrategies()) as any[];
+        for (const market of markets) {
+          const rewardsInfo = await oldFlywheelRewards.read.rewardsCycle([market]);
           const rewardPerSecond = Math.round(Number(rewardsInfo[2]) / (rewardsInfo[1] - rewardsInfo[0]));
           console.log("Market", market, "Reward per second: ", rewardPerSecond);
           if (rewardPerSecond != 0) {
@@ -125,11 +135,10 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         }
         flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
         // Accrue all markets after new flywheel rewards are set
-        for(const market of markets) {
+        for (const market of markets) {
           flywheel.write.accrue(market, owner);
         }
       }
     }
-
   }
 );
