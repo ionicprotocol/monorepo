@@ -149,6 +149,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    ozeantest: {
+      url: "https://ozean-l2.rpc.caldera.xyz/http",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://ozean-l2.explorer.caldera.xyz/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -159,7 +169,8 @@ const config: HardhatUserConfig = {
       superseed: "empty",
       worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
       ink: "empty",
-      swellchain: "empty"
+      swellchain: "empty",
+      ozeantest: "empty"
     },
     customChains: [
       {
@@ -200,6 +211,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.swellnetwork.io/api",
           browserURL: "https://explorer.swellnetwork.io"
+        }
+      },
+      {
+        network: "ozeantest",
+        chainId: 328247,
+        urls: {
+          apiURL: "https://ozean-l2.explorer.caldera.xyz/api",
+          browserURL: "https://ozean-l2.explorer.caldera.xyz"
         }
       }
     ]
