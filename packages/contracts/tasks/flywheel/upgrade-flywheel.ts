@@ -94,14 +94,14 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           console.log(`Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`);
         }
 
-        console.log("Deploying new WithdrawableFlywheelStaticRewards to replace FlywheelDynamicRewards");
+        console.log("Deploying new IonicFlywheelStaticRewards to replace FlywheelDynamicRewards");
         const flywheelRewardsReceipt = await deployments.deploy(
-          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
+          `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
           {
-            contract: "WithdrawableFlywheelStaticRewards",
+            contract: "IonicFlywheelStaticRewards",
             from: deployer,
             log: true,
-            args: [ionicFlywheelAddress, deployer, auth], // TODO: setup third paramather to Authority
+            args: [ionicFlywheelAddress],
             waitConfirmations: 1
           }
         );
@@ -114,7 +114,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           flywheelRewardsAddress as Address
         );
         const newFlywheelRewards = await viem.getContractAt(
-          `WithdrawableFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
+          `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
           newFlywheelRewardsAddress
         );
         const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
