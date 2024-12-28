@@ -304,6 +304,10 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           flywheelRewardsAddress as Address
         );
         const newFlywheelRewards = await viem.getContractAt(`IonicFlywheelStaticRewards`, newFlywheelRewardsAddress);
+        if (flywheelRewardsAddress === newFlywheelRewardsAddress) {
+          console.log("Flywheel rewards are already set to new flywheel static rewards");
+          continue;
+        }
         const ion = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC" as Address;
         const markets = await flywheel.read.getAllStrategies();
         for (const market of markets) {
