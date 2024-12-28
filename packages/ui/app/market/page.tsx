@@ -21,7 +21,6 @@ import TvlTile from '@ui/components/markets/TvlTile';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import type { MarketRowData } from '@ui/hooks/market/useMarketData';
 import { useSupplyVaultsData } from '@ui/hooks/market/useSupplyVaultsData';
-import { useAssetPrices } from '@ui/hooks/useAssetPrices';
 import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 const NetworkSelector = dynamic(
@@ -37,12 +36,6 @@ export default function Market() {
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
-  // console.log('chain', chain);
-
-  const { data } = useAssetPrices({
-    chainId: +chain
-  });
-  // console.log('data', data);
 
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 

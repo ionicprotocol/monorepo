@@ -68,7 +68,9 @@ export function SupplyTab({ assetSymbol, onSuccess }: SupplyTabProps) {
             handleInput={handleInputChange}
             chain={base.id}
             headerText="Supply Amount"
+            hintText="Balance"
             decimals={assetSymbol === 'WETH' ? 18 : 6}
+            showUtilizationSlider
           />
           <Button
             className="w-full bg-accent hover:opacity-80"

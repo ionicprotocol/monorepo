@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 
 import { formatUnits } from 'viem';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
 import {
   HFPStatus,
@@ -10,14 +11,12 @@ import {
 } from '@ui/context/ManageDialogContext';
 import { useHealth } from '@ui/hooks/market/useHealth';
 import { useRepay } from '@ui/hooks/market/useRepay';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
-import Amount from '../../Amount';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
 interface RepayTabProps {
   capAmount: number;
@@ -40,7 +39,8 @@ const RepayTab = ({
     updatedValues,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxRepayAmount(
@@ -55,11 +55,8 @@ const RepayTab = ({
     currentBorrowAmountAsFloat,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   } = useRepay({
-    maxAmount: maxAmount ?? 0n,
     selectedMarketData,
     chainId
   });
@@ -84,17 +81,20 @@ const RepayTab = ({
 
   return (
     <div className="space-y-4 pt-4">
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+      <MaxDeposit
         max={formatUnits(
           maxAmount ?? 0n,
           selectedMarketData.underlyingDecimals
         )}
-        symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
+        isLoading={isLoadingMax || isPolling}
+        amount={amount}
+        tokenName={selectedMarketData.underlyingSymbol}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Repay Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
+        hintText="Max Repay"
       />
 
       <StatusAlerts
@@ -114,7 +114,7 @@ const RepayTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 <span className="text-accent">
                   {updatedValues.borrowBalanceTo}
@@ -129,7 +129,7 @@ const RepayTab = ({
               <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 width={16}
                 height={16}
               >
@@ -146,7 +146,7 @@ const RepayTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>

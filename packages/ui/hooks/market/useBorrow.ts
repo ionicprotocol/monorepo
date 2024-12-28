@@ -1,5 +1,5 @@
 // useBorrow.ts
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
 import { type Address, formatUnits, parseUnits } from 'viem';
@@ -30,7 +30,6 @@ export const useBorrow = ({
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { data: minBorrowAmount } = useBorrowMinimum(
     selectedMarketData,
     chainId
@@ -51,32 +50,7 @@ export const useBorrow = ({
     [amount, selectedMarketData.underlyingDecimals]
   );
 
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = maxBorrowAmount?.number ?? 0;
-
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxBorrowAmount?.number, selectedMarketData.underlyingDecimals]
-  );
-
   // Update utilization percentage when amount changes
-  useEffect(() => {
-    if (amount === '0' || !amount || !maxBorrowAmount?.bigNumber) {
-      setUtilizationPercentage(0);
-      return;
-    }
-
-    const utilization =
-      (Number(amountAsBInt) * 100) / Number(maxBorrowAmount.bigNumber);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxBorrowAmount?.bigNumber, amount]);
 
   const borrowLimits = {
     min: formatUnits(
@@ -185,7 +159,6 @@ export const useBorrow = ({
       setTxHash(undefined);
       refetchMaxBorrow();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(
         `Borrowed ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -200,8 +173,6 @@ export const useBorrow = ({
     isUnderMinBorrow,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   };
 };

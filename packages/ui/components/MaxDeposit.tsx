@@ -5,7 +5,9 @@ import {
   type SetStateAction,
   type Dispatch
 } from 'react';
+
 import dynamic from 'next/dynamic';
+
 import { formatUnits, parseUnits, type Address } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
 
@@ -20,10 +22,11 @@ import {
 } from '@ui/components/ui/tooltip';
 import { cn } from '@ui/lib/utils';
 
-import TokenSelector from './stake/TokenSelector';
-import { icErc20Abi } from '@ionicprotocol/sdk';
 import AmountInput from './AmountInput';
+import TokenSelector from './stake/TokenSelector';
 import TokenDisplay from './TokenDisplay';
+
+import { icErc20Abi } from '@ionicprotocol/sdk';
 
 export interface IBal {
   decimals: number;
@@ -49,6 +52,7 @@ interface IMaxDeposit {
   showUtilizationSlider?: boolean;
   initialUtilization?: number;
   onUtilizationChange?: (percentage: number) => void;
+  hintText?: string;
 }
 
 function MaxDeposit({
@@ -69,7 +73,8 @@ function MaxDeposit({
   isLoading,
   showUtilizationSlider = false,
   initialUtilization = 0,
-  onUtilizationChange
+  onUtilizationChange,
+  hintText = 'Balance'
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
   const [utilizationPercentage, setUtilizationPercentage] =
@@ -163,7 +168,7 @@ function MaxDeposit({
   const tokens = tokenName?.split('/') ?? ['eth'];
   const formattedBalance = bal
     ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString('en-US', {
-        maximumFractionDigits: 3
+        maximumFractionDigits: 5
       })
     : max ?? '0';
 
@@ -185,11 +190,10 @@ function MaxDeposit({
               <div className="flex flex-col items-end gap-1">
                 <Button
                   variant="ghost"
-                  size="xs"
-                  className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
+                  className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
                   onClick={handleMax}
                 >
-                  Balance: {formattedBalance}
+                  {hintText}: {formattedBalance}
                 </Button>
                 {tokenSelector ? (
                   <TokenSelector
@@ -290,10 +294,10 @@ function MaxDeposit({
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-white/50 hover:text-white h-4 text-[10px] hover:bg-transparent px-0"
+                className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
                 onClick={handleMax}
               >
-                Balance: {formattedBalance}
+                {hintText}: {formattedBalance}
               </Button>
               {tokenSelector ? (
                 <TokenSelector

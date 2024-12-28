@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+// useAssetPrices.ts
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -13,6 +14,8 @@ interface AssetPrice {
   chain_id: string;
   created_at: string;
   underlying_address: string;
+  symbol: string;
+  decimals: number;
   info: AssetPriceInfo;
 }
 
@@ -41,45 +44,75 @@ export const useAssetPrices = ({
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchAssetPrice = async () => {
-      try {
-        let query = supabase.from('asset-price').select('*');
+  // Memoize tokens array to prevent unnecessary effect triggers
+  const memoizedTokens = useMemo(
+    () => tokens?.map((t) => t.toLowerCase()),
+    [tokens]
+  );
+  const chainIdString = useMemo(() => chainId?.toString(), [chainId]);
 
-        // Add chain filter if provided
-        if (chainId !== undefined) {
-          query = query.eq('chain_id', chainId.toString());
-        }
+  // Keep track of last update time to prevent too frequent updates
+  const lastUpdateTime = useRef<number>(0);
+  const updateInterval = 10000; // 10 seconds
 
-        // Add token filter if provided
-        if (tokens && tokens.length > 0) {
-          const lowerCaseTokens = tokens.map((token) => token.toLowerCase());
-          query = query.in('underlying_address', lowerCaseTokens);
-        }
+  const fetchAssetPrice = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastUpdateTime.current < updateInterval) {
+      return;
+    }
+    lastUpdateTime.current = now;
 
-        // Order by created_at timestamp descending
-        query = query.order('created_at', { ascending: false });
-
-        const { data: assetPrice, error: supabaseError } = await query;
-
-        if (supabaseError) {
-          throw new Error(supabaseError.message);
-        }
-
-        setData(assetPrice);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching asset prices:', err);
-        setError(err instanceof Error ? err : new Error('An error occurred'));
-        setData(null);
-      } finally {
-        setIsLoading(false);
+    try {
+      if (!memoizedTokens?.length || !chainIdString) {
+        setData([]);
+        return;
       }
-    };
 
+      const { data: latestTimestamps, error: timestampError } = await supabase
+        .from('asset-price')
+        .select('underlying_address, created_at')
+        .eq('chain_id', chainIdString)
+        .in('underlying_address', memoizedTokens)
+        .order('created_at', { ascending: false });
+
+      if (timestampError) throw timestampError;
+
+      const latestByToken = new Map<string, string>();
+      latestTimestamps?.forEach((row) => {
+        if (!latestByToken.has(row.underlying_address)) {
+          latestByToken.set(row.underlying_address, row.created_at);
+        }
+      });
+
+      const promises = Array.from(latestByToken.entries()).map(
+        ([address, timestamp]) =>
+          supabase
+            .from('asset-price')
+            .select('*')
+            .eq('chain_id', chainIdString)
+            .eq('underlying_address', address)
+            .eq('created_at', timestamp)
+            .single()
+      );
+
+      const results = await Promise.all(promises);
+      const finalData = results
+        .map((result) => result.data)
+        .filter((data): data is AssetPrice => data !== null);
+
+      setData(finalData);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching asset prices:', err);
+      setError(err instanceof Error ? err : new Error('An error occurred'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [chainIdString, memoizedTokens]);
+
+  useEffect(() => {
     fetchAssetPrice();
 
-    // Set up real-time subscription with filters
     const subscription = supabase
       .channel('asset-price-changes')
       .on(
@@ -88,9 +121,9 @@ export const useAssetPrices = ({
           event: '*',
           schema: 'public',
           table: 'asset-price',
-          filter: chainId ? `chain_id=eq.${chainId.toString()}` : undefined
+          filter: chainIdString ? `chain_id=eq.${chainIdString}` : undefined
         },
-        (payload) => {
+        () => {
           fetchAssetPrice();
         }
       )
@@ -99,24 +132,7 @@ export const useAssetPrices = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [chainId, tokens]); // Added dependencies to useEffect
+  }, [chainIdString, fetchAssetPrice]);
 
   return { data, error, isLoading };
 };
-
-// Usage example:
-/*
-// Fetch all prices for a specific chain
-const { data, error, isLoading } = useAssetPrices({ 
-  chainId: "34443"
-});
-
-// Fetch specific tokens for a specific chain
-const { data, error, isLoading } = useAssetPrices({ 
-  chainId: "34443",
-  tokens: [
-    "0x4200000000000000000000000000000000000006",
-    "0xd988097fb8612cc24eec14542bc03424c656005f"
-  ]
-});
-*/

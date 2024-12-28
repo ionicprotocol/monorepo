@@ -3,9 +3,11 @@ import { useMemo } from 'react';
 
 import Image from 'next/image';
 
+import { DialogTitle } from '@radix-ui/react-dialog';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { type Address, formatEther, formatUnits } from 'viem';
 
-import { DialogContent } from '@ui/components/ui/dialog';
+import { DialogContent, DialogHeader } from '@ui/components/ui/dialog';
 import {
   Tabs,
   TabsList,
@@ -196,7 +198,10 @@ const ManageDialogTabs = ({
       className="bg-grayUnselect"
       fullWidth
     >
-      <div className="flex w-20 mx-auto relative text-center">
+      <DialogHeader className="flex w-20 mx-auto relative text-center">
+        <VisuallyHidden.Root>
+          <DialogTitle />
+        </VisuallyHidden.Root>
         <Image
           alt="modlogo"
           className="mx-auto"
@@ -204,7 +209,7 @@ const ManageDialogTabs = ({
           src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
           width={32}
         />
-      </div>
+      </DialogHeader>
       <AnimateHeight>
         <TabsComponent />
       </AnimateHeight>
