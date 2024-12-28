@@ -274,10 +274,11 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           console.log("Flywheel is already upgraded to latest implementation");
         }
         console.log("Deploying new IonicFlywheelStaticRewards to replace FlywheelDynamicRewards");
-        let newFlywheelRewardsAddress = (
-          await deployments.get(`IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`)
-        ).address as Address;
-        if (newFlywheelRewardsAddress == ZERO_ADDRESS) {
+        let newFlywheelRewardsDeployment = await deployments.getOrNull(
+          `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`
+        );
+        let newFlywheelRewardsAddress = newFlywheelRewardsDeployment?.address as Address;
+        if (!newFlywheelRewardsAddress) {
           const flywheelRewardsReceipt = await deployments.deploy(
             `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`,
             {
@@ -289,6 +290,11 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             }
           );
           newFlywheelRewardsAddress = flywheelRewardsReceipt.address as Address;
+          if (flywheelRewardsReceipt.transactionHash) {
+            await publicClient.waitForTransactionReceipt({
+              hash: flywheelRewardsReceipt.transactionHash as Address
+            });
+          }
         }
 
         console.log(`Deployed new flywheel rewards: ${newFlywheelRewardsAddress}`);
@@ -307,14 +313,22 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           if (rewardsPerSecond != 0) {
             // we have to accrue each market that has live rewards. The user is not important, since we just want to invoke
             // accrueStrategy which is private function
-            await flywheel.write.accrue([market, deployer as Address]);
+            const accrueTx = await flywheel.write.accrue([market, deployer as Address]);
+            await publicClient.waitForTransactionReceipt({
+              hash: accrueTx
+            });
+            console.log("Accrued: ", accrueTx);
             const currentRewardPerSecond = await newFlywheelRewards.read.getRewardsPerSecond([market]);
-            if (currentRewardPerSecond == 0) {
+            if (currentRewardPerSecond === 0n) {
               console.log("Setting rewards info to new flywheel static rewards for market: ", market);
-              await newFlywheelRewards.write.setRewardsInfo([
+              const setRewardsInfoTx = await newFlywheelRewards.write.setRewardsInfo([
                 market,
                 { rewardsPerSecond: BigInt(rewardsPerSecond), rewardsEndTimestamp: rewardsInfo[1] }
               ]);
+              await publicClient.waitForTransactionReceipt({
+                hash: setRewardsInfoTx
+              });
+              console.log("Set rewards info: ", setRewardsInfoTx);
             }
           }
           /*
@@ -326,10 +340,18 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           */
         }
-        await flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
+        const setFlywheelRewardsTx = await flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
+        await publicClient.waitForTransactionReceipt({
+          hash: setFlywheelRewardsTx
+        });
+        console.log("Set flywheel rewards: ", setFlywheelRewardsTx);
         // Accrue all markets after new flywheel rewards are set
         for (const market of markets) {
-          await flywheel.write.accrue([market, deployer as Address]);
+          const accrueTx = await flywheel.write.accrue([market, deployer as Address]);
+          await publicClient.waitForTransactionReceipt({
+            hash: accrueTx
+          });
+          console.log("Accrued: ", accrueTx);
         }
       }
     }
