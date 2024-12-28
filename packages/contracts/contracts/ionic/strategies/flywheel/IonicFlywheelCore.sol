@@ -329,6 +329,6 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       ? flywheelBooster.boostedTotalSupply(strategy)
       : strategy.totalSupply();
     if (totalTokens == 0) return 0;
-    return (flywheelRewards.getRewardsPerSecond(strategy) * 1e18) / totalTokens;
+    return (flywheelRewards.getRewardsPerSecond(strategy) * (10 ** strategy.decimals())) / totalTokens;
   }
 }
