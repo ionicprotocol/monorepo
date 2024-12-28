@@ -1,23 +1,15 @@
-import { useMemo } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
+
+import { useUsdPrice } from './useUsdPrices';
 
 export const usePoolData = (poolId?: string, poolChainId?: number) => {
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && poolChainId && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
 
   return useQuery({
     queryKey: ['usePoolData', poolId, address, sdk?.chainId, usdPrice],

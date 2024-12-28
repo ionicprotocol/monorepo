@@ -174,7 +174,6 @@ export const ManageDialogProvider: React.FC<{
       'useFusePoolData',
       'useBorrowMinimum',
       'useUsdPrice',
-      'useAllUsdPrices',
       'useTotalSupplyAPYs',
       'useUpdatedUserAssets',
       'useMaxSupplyAmount',

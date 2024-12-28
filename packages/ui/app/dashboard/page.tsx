@@ -25,11 +25,11 @@ import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageR
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -118,9 +118,7 @@ export default function Dashboard() {
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
-  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
-    chain.toString()
-  );
+  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(chain);
 
   const {
     componentRef: rewardRef,
