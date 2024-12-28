@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { base } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 import {
   Dialog,
@@ -26,6 +24,7 @@ interface MorphoDialogProps {
 }
 
 export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
+  console.log('asset', asset);
   const [maxWithdraw, setMaxWithdraw] = useState<bigint>(BigInt(0));
   const { getMaxWithdraw, isLoading, isConnected } = useMorphoProtocol();
 
@@ -34,6 +33,7 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
   const fetchMaxWithdraw = useCallback(async () => {
     if (isConnected && !isLoading) {
       const max = await getMaxWithdraw(assetSymbol);
+      console.log('max', max);
       setMaxWithdraw(max);
     }
   }, [isConnected, isLoading, assetSymbol, getMaxWithdraw]);

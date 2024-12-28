@@ -9,11 +9,12 @@
 //   ssr: false
 // });
 
+import React from 'react';
+
 import { pools } from '@ui/constants/index';
 import type { PoolData } from '@ui/types/TokensDataMap';
 
 import ResultHandler from '../ResultHandler';
-import React from 'react';
 
 interface IProp {
   dropdownSelectedChain: string;
@@ -33,12 +34,11 @@ export default function TvlTile({
   isLoadingPoolData,
   isLoadingLoopMarkets,
   selectedPool,
-  vaultData,
-  isLoadingVaults
+  vaultData
+  // isLoadingVaults
 }: IProp) {
   const isVaultView = selectedPool === 'vault';
-  const isLoading =
-    isLoadingPoolData || isLoadingLoopMarkets || isLoadingVaults;
+  const isLoading = isLoadingPoolData || isLoadingLoopMarkets;
 
   return (
     <div className="w-full h-full col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex flex-wrap flex-col items-center justify-center md:justify-start bg-grayone py-4 rounded-md">

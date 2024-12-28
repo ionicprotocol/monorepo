@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { Info } from 'lucide-react';
 import { formatUnits } from 'viem';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import {
@@ -12,14 +13,12 @@ import {
 } from '@ui/context/ManageDialogContext';
 import { useBorrow } from '@ui/hooks/market/useBorrow';
 import { useHealth } from '@ui/hooks/market/useHealth';
+import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
-import Amount from '../../Amount';
 import StatusAlerts from './StatusAlerts';
 import TransactionStepsHandler from './TransactionStepsHandler';
 import ResultHandler from '../../ResultHandler';
 import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
 
 interface BorrowTabProps {
   capAmount: number;
@@ -42,7 +41,8 @@ const BorrowTab = ({
     updatedValues,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxBorrowAmount(
@@ -59,8 +59,6 @@ const BorrowTab = ({
     isUnderMinBorrow,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   } = useBorrow({
     selectedMarketData,
@@ -97,17 +95,19 @@ const BorrowTab = ({
 
   return (
     <div className="space-y-4 pt-4">
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+      <MaxDeposit
         max={formatUnits(
           maxAmount?.bigNumber ?? 0n,
           selectedMarketData.underlyingDecimals
         )}
-        symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
+        isLoading={isLoadingMax || isPolling}
+        amount={amount}
+        tokenName={selectedMarketData.underlyingSymbol}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Borrow Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
         hintText="Max Borrow"
       />
 
@@ -139,12 +139,12 @@ const BorrowTab = ({
         <div className="space-y-4 content-center">
           <div className="flex justify-between text-xs text-gray-400">
             <span>MIN BORROW</span>
-            <span>{borrowLimits.min}</span>
+            <span>{parseFloat(borrowLimits.min).toFixed(6)}</span>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400">
             <span>MAX BORROW</span>
-            <span>{borrowLimits.max}</span>
+            <span>{parseFloat(borrowLimits.max).toFixed(6)}</span>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400">
@@ -153,7 +153,7 @@ const BorrowTab = ({
               <span>{updatedValues.borrowBalanceFrom}</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
               >
@@ -170,7 +170,7 @@ const BorrowTab = ({
               <ResultHandler
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {updatedValues.updatedBorrowAPR?.toFixed(2)}%
               </ResultHandler>
@@ -185,7 +185,7 @@ const BorrowTab = ({
               <ResultHandler
                 width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>

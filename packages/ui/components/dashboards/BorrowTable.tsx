@@ -80,7 +80,7 @@ function BorrowTable({
       width: '20%',
       cell: ({ row }) => (
         <TokenBalance
-          balance={parseFloat(row.original.amount.tokens)}
+          balance={Number(row.original.amount.tokens)}
           balanceUSD={row.original.amount.usd}
           tokenName={row.original.asset}
         />

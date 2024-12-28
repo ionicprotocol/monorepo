@@ -8,29 +8,30 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import type { FundOperationMode } from '@ionicprotocol/types';
 
-// TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
 interface UseUpdatedUserAssetsResult<T> {
-  amount: bigint;
-  assets: Array<T> | undefined;
-  index: number;
   mode: FundOperationMode;
+  index: number;
+  assets: Array<T> | undefined;
+  amount: bigint;
   poolChainId: number;
+  enabled?: boolean;
 }
+
 const useUpdatedUserAssets = <T extends MarketData>({
   mode,
   index,
   assets,
   amount,
-  poolChainId
+  poolChainId,
+  enabled = false
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiIonic();
   const { data: usdPrices } = useAllUsdPrices();
   const usdPrice = useMemo(() => {
     if (usdPrices && usdPrices[poolChainId.toString()]) {
       return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
     }
+    return undefined;
   }, [usdPrices, poolChainId]);
 
   return useQuery({
@@ -44,40 +45,32 @@ const useUpdatedUserAssets = <T extends MarketData>({
       usdPrice,
       currentSdk?.chainId
     ],
-
     queryFn: async () => {
-      if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
+      if (!assets?.length || !usdPrice || !currentSdk) return [];
 
       const resAssets = await currentSdk
         .getUpdatedAssets(mode, index, assets, amount)
         .catch((e) => {
           console.warn(
-            `Updated assets error: `,
+            'Updated assets error: ',
             { amount, assets, index, mode },
             e
           );
-
           return [];
         });
-      const assetsWithPrice: MarketData[] = [];
-      if (resAssets && resAssets.length !== 0) {
-        resAssets.map((asset) => {
-          assetsWithPrice.push({
-            ...asset,
-            borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-            liquidityFiat: asset.liquidityNative * usdPrice,
-            netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
-            supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-            totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-            totalSupplyFiat: asset.totalSupplyNative * usdPrice
-          });
-        });
-      }
 
-      return assetsWithPrice;
+      return resAssets.map((asset) => ({
+        ...asset,
+        borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+        liquidityFiat: asset.liquidityNative * usdPrice,
+        netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
+        supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+        totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+        totalSupplyFiat: asset.totalSupplyNative * usdPrice
+      }));
     },
-
-    enabled: !!assets && !!usdPrice && !!currentSdk
+    enabled: !!assets && !!usdPrice && !!currentSdk && enabled,
+    staleTime: enabled ? 0 : undefined
   });
 };
 

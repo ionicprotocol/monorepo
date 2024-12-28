@@ -22,7 +22,7 @@ export interface LoopRowData {
       symbol: string;
       logo: string;
       amount: {
-        tokens: string;
+        tokens: number;
         usd: number;
       };
       underlyingDecimals: number;
@@ -31,7 +31,7 @@ export interface LoopRowData {
       symbol: string;
       logo: string;
       amount: {
-        tokens: string;
+        tokens: number;
         usd: number;
       };
       underlyingDecimals: number;
@@ -94,7 +94,7 @@ function LoopTable({
       width: '20%',
       cell: ({ row }) => (
         <TokenBalance
-          balance={parseFloat(row.original.position.collateral.amount.tokens)}
+          balance={row.original.position.collateral.amount.tokens}
           balanceUSD={row.original.position.collateral.amount.usd}
           tokenName={row.original.position.collateral.symbol}
         />
@@ -106,7 +106,7 @@ function LoopTable({
       width: '20%',
       cell: ({ row }) => (
         <TokenBalance
-          balance={parseFloat(row.original.position.borrowable.amount.tokens)}
+          balance={row.original.position.borrowable.amount.tokens}
           balanceUSD={row.original.position.borrowable.amount.usd}
           tokenName={row.original.position.borrowable.symbol}
         />
