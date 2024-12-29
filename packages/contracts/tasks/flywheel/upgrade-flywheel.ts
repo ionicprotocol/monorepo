@@ -29,7 +29,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
       let comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller as Address);
       const flywheels = await comptroller.read.getAccruingFlywheels();
       for (const ionicFlywheelAddress of flywheels) {
-        let implementationAddress = (await deployments.get("IonicFlywheel_SupplyVaults")).address;
+        let implementationAddress = (await deployments.get("IonicFlywheel_SupplyVaults_v1")).address;
         let flywheel = await viem.getContractAt("IonicFlywheel", ionicFlywheelAddress as Address);
         const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -41,7 +41,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             );
           }
           console.log("Supply Flywheel detected, setting booster");
-          await flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
+          //await flywheel.write.setBooster([ionicFlywheelBoosterAddress]);
         } else if (opSupplyFlywheels.includes(ionicFlywheelAddress)) {
           console.log("Supply Flywheel detected, skipping setting booster");
         } else {
@@ -52,7 +52,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
           }
           console.log("Borrow Flywheel detected, skipping setting booster");
 
-          implementationAddress = (await deployments.get("IonicFlywheelBorrow_SupplyVaults")).address;
+          implementationAddress = (await deployments.get("IonicFlywheelBorrow_SupplyVaults_v1")).address;
         }
 
         const IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
@@ -273,7 +273,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
         } else {
           console.log("Flywheel is already upgraded to latest implementation");
         }
-        console.log("Deploying new IonicFlywheelStaticRewards to replace FlywheelDynamicRewards");
+        /*console.log("Deploying new IonicFlywheelStaticRewards to replace FlywheelDynamicRewards");
         let newFlywheelRewardsDeployment = await deployments.getOrNull(
           `IonicFlywheelStaticRewards_SupplyVaults_${ionicFlywheelAddress}`
         );
@@ -335,14 +335,12 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
               console.log("Set rewards info: ", setRewardsInfoTx);
             }
           }
-          /*
           const strategy = await viem.getContractAt("CErc20RewardsDelegate", market as Address);
           const ionContract = await viem.getContractAt("ERC20", ion as Address);
           const allowance = await ionContract.read.allowance([market, newFlywheelRewardsAddress]);
           if (allowance == BigInt(0)) {
-            strategy.write.approve([ion, newFlywheelRewardsAddress]);
+            await strategy.write.approve([ion, newFlywheelRewardsAddress]);
           }
-          */
         }
         const setFlywheelRewardsTx = await flywheel.write.setFlywheelRewards([newFlywheelRewardsAddress]);
         await publicClient.waitForTransactionReceipt({
@@ -356,7 +354,7 @@ task("flywheel:upgrade-flywheels-to-support-supply-vaults", "Upgrades the flywhe
             hash: accrueTx
           });
           console.log("Accrued: ", accrueTx);
-        }
+        }*/
       }
     }
   }
