@@ -98,6 +98,9 @@
     "IonicFlywheelBorrow_SupplyVaults": {
       "address": "0xB7df7B185E16ea6FbA30Bb7265BD8F1a347bc36f"
     },
+    "IonicFlywheelBorrow_SupplyVaults_v1": {
+      "address": "0x4d6750DCaF056272492E0A7C8E580d4811B27180"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION_epoch5": {
       "address": "0xfdC02d776547F0DEC6c91F7eb0219112630430e3"
     },
@@ -160,6 +163,9 @@
     },
     "IonicFlywheel_SupplyVaults": {
       "address": "0x055e068b1579b15D01eB4aF633C4Db98Ed090e26"
+    },
+    "IonicFlywheel_SupplyVaults_v1": {
+      "address": "0x60172D6FBFE0f80076Bbd54413EfC13d732EF98f"
     },
     "IonicLiquidator": {
       "address": "0x6545D2030D95ad0c8eFFF95c47eD55c0f6F5ee73"
