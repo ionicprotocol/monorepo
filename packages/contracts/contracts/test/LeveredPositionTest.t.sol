@@ -212,7 +212,14 @@ contract LeveredPositionsWithAggregatorTest is MarketsTest {
 
     emit log_named_uint("initial funding amount", fundingAmount);
     emit log_named_uint("actual redeemed amount for swap", actualRedeemedAssetsForSwap);
+  }
 
+  function test_withdrawIonicFees() public debuggingOnly fork(BASE_MAINNET) {
+    ICErc20 wethMarket = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
+
+    _upgradeMarket(wethMarket);
+
+    require(wethMarket._withdrawIonicFees(1) == 0, "withdraw fees error");
   }
 }
 
