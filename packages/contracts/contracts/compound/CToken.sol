@@ -7,7 +7,6 @@ import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { EIP20Interface } from "./EIP20Interface.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
-import { ComptrollerV3Storage } from "./ComptrollerStorage.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 
@@ -44,7 +43,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   }
 
   function _getExtensionFunctions() public pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 15;
+    uint8 fnsCount = 13;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.mint.selector;
     functionSelectors[--fnsCount] = this.redeem.selector;
@@ -57,8 +56,6 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
     functionSelectors[--fnsCount] = this.seize.selector;
     functionSelectors[--fnsCount] = this.selfTransferOut.selector;
     functionSelectors[--fnsCount] = this.selfTransferIn.selector;
-    functionSelectors[--fnsCount] = this._withdrawIonicFees.selector;
-    functionSelectors[--fnsCount] = this._withdrawAdminFees.selector;
     functionSelectors[--fnsCount] = this.previewDeposit.selector;
     functionSelectors[--fnsCount] = this.previewRedeem.selector;
 
@@ -214,71 +211,6 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   function selfTransferIn(address from, uint256 amount) external override returns (uint256) {
     require(msg.sender == address(this), "!self");
     return doTransferIn(from, amount);
-  }
-
-  /**
-   * @notice Accrues interest and reduces Ionic fees by transferring to Ionic
-   * @param withdrawAmount Amount of fees to withdraw
-   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
-   */
-  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
-    asCTokenExtension().accrueInterest();
-
-    if (accrualBlockNumber != block.number) {
-      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_IONIC_FEES_FRESH_CHECK);
-    }
-
-    if (getCashInternal() < withdrawAmount) {
-      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_IONIC_FEES_CASH_NOT_AVAILABLE);
-    }
-
-    if (withdrawAmount > totalIonicFees) {
-      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_IONIC_FEES_VALIDATION);
-    }
-
-    /////////////////////////
-    // EFFECTS & INTERACTIONS
-    // (No safe failures beyond this point)
-
-    uint256 totalIonicFeesNew = totalIonicFees - withdrawAmount;
-    totalIonicFees = totalIonicFeesNew;
-
-    // doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
-    doTransferOut(address(ionicAdmin), withdrawAmount);
-
-    return uint256(Error.NO_ERROR);
-  }
-
-  /**
-   * @notice Accrues interest and reduces admin fees by transferring to admin
-   * @param withdrawAmount Amount of fees to withdraw
-   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
-   */
-  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
-    asCTokenExtension().accrueInterest();
-
-    if (accrualBlockNumber != block.number) {
-      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_ADMIN_FEES_FRESH_CHECK);
-    }
-
-    // Fail gracefully if protocol has insufficient underlying cash
-    if (getCashInternal() < withdrawAmount) {
-      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_ADMIN_FEES_CASH_NOT_AVAILABLE);
-    }
-
-    if (withdrawAmount > totalAdminFees) {
-      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_ADMIN_FEES_VALIDATION);
-    }
-
-    /////////////////////////
-    // EFFECTS & INTERACTIONS
-    // (No safe failures beyond this point)
-    totalAdminFees = totalAdminFees - withdrawAmount;
-
-    // doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
-    doTransferOut(ComptrollerV3Storage(address(comptroller)).admin(), withdrawAmount);
-
-    return uint256(Error.NO_ERROR);
   }
 
   /*** Safe Token ***/

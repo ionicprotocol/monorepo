@@ -307,6 +307,10 @@ interface CTokenFirstExtensionInterface {
   function borrowRatePerBlockAfterBorrow(uint256 borrowAmount) external view returns (uint256);
 
   function registerInSFS() external returns (uint256);
+
+  function _withdrawAdminFees(uint256 withdrawAmount) external returns (uint256);
+
+  function _withdrawIonicFees(uint256 withdrawAmount) external returns (uint256);
 }
 
 interface CTokenSecondExtensionInterface {
@@ -341,10 +345,6 @@ interface CTokenSecondExtensionInterface {
   function previewRedeem(uint256 redeemCTokensAmountIn) external view returns (uint256);
 
   /*** Admin Functions ***/
-
-  function _withdrawAdminFees(uint256 withdrawAmount) external returns (uint256);
-
-  function _withdrawIonicFees(uint256 withdrawAmount) external returns (uint256);
 
   function selfTransferOut(address to, uint256 amount) external;
 
