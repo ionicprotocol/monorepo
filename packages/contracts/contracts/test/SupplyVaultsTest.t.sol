@@ -325,6 +325,7 @@ contract SupplyVaultsTest is BaseTest {
           IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
           (uint32 start, uint32 end, uint192 cycleRewards) = flywheelRewards.rewardsCycle(ERC20(address(wethMainMarket)));
           // move to the next rewards cycle
+
           vm.warp(end + 1);
 
           // adjust the reward amount proportionally to the flywheel specific cycle length
@@ -713,7 +714,7 @@ contract SupplyVaultsTest is BaseTest {
     {
       // advance time to move away from the first cycle,
       // because the first cycle is initialized with 0 rewards
-      vm.warp(block.timestamp + 25 days);
+      vm.warp(block.timestamp + 25 hours);
       vm.roll(block.number + 1000);
     }
 
