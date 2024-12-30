@@ -158,33 +158,26 @@ contract LeveredPositionFactoryTest is BaseTest {
     lens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
 
-  function testChapelNetApy() public debuggingOnly fork(BSC_CHAPEL) {
-    ICErc20 _stableMarket = ICErc20(address(1)); // DAI
+  function testOptimismCreatedPosition() public debuggingOnly fork(OP_MAINNET) {
+    LeveredPosition _position = LeveredPosition(0xc852F70215C030Db7857eCA33736cc2493d68Ea8);
 
-    uint256 borrowRate = 5.2e16; // 5.2%
-    vm.mockCall(
-      address(_stableMarket),
-      abi.encodeWithSelector(_stableMarket.borrowRatePerBlock.selector),
-      abi.encode(borrowRate / factory.blocksPerYear())
-    );
+    {
+      // mock (0x5A7fACB970D094B6C7FF1df0eA68D99E6e73CBFF).balanceOf(0xC741af01903f39841228dE21d9DdD31Ba604Fec5) = 11890301619394252217
+      vm.mockCall(
+        0x5A7fACB970D094B6C7FF1df0eA68D99E6e73CBFF,
+        abi.encodeWithSelector(_position.collateralMarket().balanceOf.selector, 0xC741af01903f39841228dE21d9DdD31Ba604Fec5),
+        abi.encode(11890301619394252217)
+      );
+      vm.mockCall(
+        0x5A7fACB970D094B6C7FF1df0eA68D99E6e73CBFF,
+        abi.encodeWithSelector(_position.collateralMarket().decimals.selector),
+        abi.encode(18)
+      );
+    }
 
-    uint256 _borrowRate = _stableMarket.borrowRatePerBlock() * factory.blocksPerYear();
-    emit log_named_uint("_borrowRate", _borrowRate);
+    uint256 currentRatio = _position.getCurrentLeverageRatio();
 
-    int256 netApy = lens.getNetAPY(
-      2.7e16, // 2.7%
-      1e18, // supply amount
-      ICErc20(address(0)), // BOMB
-      _stableMarket,
-      2e18 // ratio
-    );
-
-    emit log_named_int("net apy", netApy);
-
-    // boosted APY = 2x 2.7% = 5.4 % of the equity
-    // borrow APR = 5.2%
-    // diff = 5.4 - 5.2 = 0.2%
-    assertApproxEqRel(netApy, 0.2e16, 1e12, "!net apy");
+    emit log_named_uint("current ratio", currentRatio);
   }
 }
 
