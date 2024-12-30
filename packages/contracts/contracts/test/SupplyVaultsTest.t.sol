@@ -10,6 +10,7 @@ import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/reward
 import { IonicFlywheelSupplyBooster } from "../ionic/strategies/flywheel/IonicFlywheelSupplyBooster.sol";
 import { IFlywheelRewards } from "../ionic/strategies/flywheel/rewards/IFlywheelRewards.sol";
 import { CErc20RewardsDelegate } from "../compound/CErc20RewardsDelegate.sol";
+import { IXERC20 } from "../bridge/interface/IXERC20.sol";
 
 import "./config/BaseTest.t.sol";
 
@@ -22,11 +23,12 @@ contract SupplyVaultsTest is BaseTest {
 
   uint256 blocksPerYear;
   address wethWhale = 0xC8F05Ad2Eb7fc894b822EDb9C07234149375C7A3;
-  address ionWhale = 0x0D0707963952f2fBA59dD06f2b425ace40b492Fe;
+  address ionWhale = 0x5F78d42C828A4EBc299d992FF692565cf8f711fb;
 
   ICErc20 wethNativeMarket = ICErc20(0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2);
   ICErc20 wethMainMarket = ICErc20(0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2);
   ERC20 ionToken = ERC20(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
+  IXERC20 ionTokenMintable = IXERC20(0x18470019bF0E94611f15852F7e93cf5D65BC34CA);
 
   ERC20 weth;
 
@@ -301,15 +303,15 @@ contract SupplyVaultsTest is BaseTest {
     //vm.warp(vm.getBlockTimestamp() + 2592001);
 
     IonicComptroller pool = wethMainMarket.comptroller();
-    uint256 rewardsAmountFor1PercentApr;
+    uint256 rewardsAmountFor05PercentApr;
     {
       uint256 wethMarketBorrowedAssets = wethMainMarket.totalBorrows();
       uint256 wethPrice = pool.oracle().getUnderlyingPrice(wethMainMarket);
-      uint256 rewardsValueFor1PercentApr = ((wethMarketBorrowedAssets * wethPrice) / 1e18) / 100;
-      console.log("rewardsValueFor1PercentApr for 1 year %e", rewardsValueFor1PercentApr);
+      uint256 rewardsValueFor05PercentApr = ((wethMarketBorrowedAssets * wethPrice) / 1e18) / 200;
+      console.log("rewardsValueFor05PercentApr for 1 year %e", rewardsValueFor05PercentApr);
       uint256 ionPrice = pool.oracle().price(address(ionToken));
-      rewardsAmountFor1PercentApr = (rewardsValueFor1PercentApr * 1e18) / ionPrice;
-      console.log("rewardsAmountFor1PercentApr for 1 year %e", rewardsAmountFor1PercentApr);
+      rewardsAmountFor05PercentApr = (rewardsValueFor05PercentApr * 1e18) / ionPrice;
+      console.log("rewardsAmountFor05PercentApr for 1 year %e", rewardsAmountFor05PercentApr);
     }
 
     // find the ION flywheel and add as much rewards
@@ -321,17 +323,17 @@ contract SupplyVaultsTest is BaseTest {
         ERC20 rewardToken = flywheel.rewardToken();
         if (rewardToken == ionToken) {
           IonicFlywheelDynamicRewards flywheelRewards = IonicFlywheelDynamicRewards(address(flywheel.flywheelRewards()));
-          (, , uint192 cycleRewards) = flywheelRewards.rewardsCycle(ERC20(address(wethMainMarket)));
+          (uint32 start, uint32 end, uint192 cycleRewards) = flywheelRewards.rewardsCycle(ERC20(address(wethMainMarket)));
           // move to the next rewards cycle
-          vm.warp(vm.getBlockTimestamp() + flywheelRewards.rewardsCycleLength() + 1);
+          vm.warp(end + 1);
 
           // adjust the reward amount proportionally to the flywheel specific cycle length
-          uint256 fwRewardsAmountFor1PercentAprIncrease = (rewardsAmountFor1PercentApr * flywheelRewards.rewardsCycleLength()) / 365.25 days;
-          //console.log("fwRewardsAmountFor1PercentAprIncrease %e", fwRewardsAmountFor1PercentAprIncrease);
+          uint256 fwRewardsAmountFor05PercentAprIncrease = (rewardsAmountFor05PercentApr * end - start) / 365.25 days;
+          console.log("fwRewardsAmountFor05PercentAprIncrease %e", fwRewardsAmountFor05PercentAprIncrease);
           // add as much as the last cycle rewards + more rewards for +1% APR
-          fwRewardsAmountFor1PercentAprIncrease = cycleRewards + fwRewardsAmountFor1PercentAprIncrease;
+          fwRewardsAmountFor05PercentAprIncrease = cycleRewards + fwRewardsAmountFor05PercentAprIncrease;
           vm.prank(ionWhale);
-          ionToken.transfer(address(wethMainMarket), fwRewardsAmountFor1PercentAprIncrease);
+          ionToken.transfer(address(wethMainMarket), fwRewardsAmountFor05PercentAprIncrease);
 
           // pull and account for the just transferred rewards in the market
           flywheel.accrue(ERC20(address(wethMainMarket)), address(0));
@@ -354,7 +356,7 @@ contract SupplyVaultsTest is BaseTest {
     }
 
     // APR after should be approx adapter2.allocation * adapter2AprIncrease
-    uint256 expectedAprIncrease = (uint256(allocation2) * 0.01e18) / 1e18;
+    uint256 expectedAprIncrease = (uint256(allocation2) * 0.005e18) / 1e18;
     console.log("expectedAprIncrease %e", expectedAprIncrease);
 
     assertApproxEqRel(expectedAprIncrease, aprAfter - aprBefore, 5e15);
