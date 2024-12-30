@@ -267,7 +267,7 @@ task("flywheel:deploy-flywheel-supply-booster", "Deploy flywheel supply booster 
 task("flywheel:deploy-flywheel-implementation-supporting-supply-vaults", "Deploy flywheel implementation that supports Supply Vaults").setAction(
   async ({}, { deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const flywheel = await deployments.deploy(`IonicFlywheel_SupplyVaults`, {
+    const flywheel = await deployments.deploy(`IonicFlywheel_SupplyVaults_v1`, {
       contract: "IonicFlywheel",
       from: deployer,
       log: true,
@@ -284,7 +284,7 @@ task("flywheel:deploy-flywheel-implementation-supporting-supply-vaults", "Deploy
 task("flywheel:deploy-flywheel-borrow-implementation-supporting-supply-vaults", "Deploy flywheel borrow implementation that supports Supply Vaults").setAction(
   async ({}, { deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const flywheel = await deployments.deploy(`IonicFlywheelBorrow_SupplyVaults`, {
+    const flywheel = await deployments.deploy(`IonicFlywheelBorrow_SupplyVaults_v1`, {
       contract: "IonicFlywheelBorrow",
       from: deployer,
       log: true,
