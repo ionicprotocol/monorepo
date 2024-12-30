@@ -4572,20 +4572,6 @@ export const cErc20Abi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -4705,6 +4691,20 @@ export const cErc20Abi = [
     inputs: [],
     name: 'name',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemTokensIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -5176,20 +5176,6 @@ export const cErc20DelegateAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -5309,6 +5295,20 @@ export const cErc20DelegateAbi = [
     inputs: [],
     name: 'name',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemTokensIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -6350,6 +6350,20 @@ export const cErc20FirstExtensionBaseAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawAdminFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawIonicFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -6803,20 +6817,6 @@ export const cErc20PluginDelegateAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -6943,6 +6943,20 @@ export const cErc20PluginDelegateAbi = [
     inputs: [],
     name: 'plugin',
     outputs: [{ name: '', internalType: 'contract IERC4626', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemTokensIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -7283,20 +7297,6 @@ export const cErc20PluginRewardsDelegateAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -7434,6 +7434,20 @@ export const cErc20PluginRewardsDelegateAbi = [
     inputs: [],
     name: 'plugin',
     outputs: [{ name: '', internalType: 'contract IERC4626', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemTokensIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -8113,20 +8127,6 @@ export const cErc20RewardsDelegateAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -8257,6 +8257,20 @@ export const cErc20RewardsDelegateAbi = [
     inputs: [],
     name: 'name',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemTokensIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -9030,6 +9044,20 @@ export const cTokenFirstExtensionAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawAdminFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawIonicFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -9572,6 +9600,20 @@ export const cTokenFirstExtensionInterfaceAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawAdminFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
+    name: '_withdrawIonicFees',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'accrueInterest',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -9896,20 +9938,6 @@ export const cTokenSecondExtensionBaseAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'accrualBlockNumber',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -10029,6 +10057,20 @@ export const cTokenSecondExtensionBaseAbi = [
     inputs: [],
     name: 'name',
     outputs: [{ name: '', internalType: 'string', type: 'string' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemCTokensAmountIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
@@ -10496,20 +10538,6 @@ export const cTokenSecondExtensionEventsAbi = [
 export const cTokenSecondExtensionInterfaceAbi = [
   {
     type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawAdminFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'withdrawAmount', internalType: 'uint256', type: 'uint256' }],
-    name: '_withdrawIonicFees',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
-  {
-    type: 'function',
     inputs: [{ name: 'borrowAmount', internalType: 'uint256', type: 'uint256' }],
     name: 'borrow',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -10539,6 +10567,20 @@ export const cTokenSecondExtensionInterfaceAbi = [
     name: 'mint',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemCTokensAmountIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -18010,6 +18052,7 @@ export const erc4626UpgradeableAbi = [
 
 export const executorOptionsAbi = [
   { type: 'error', inputs: [], name: 'Executor_InvalidLzComposeOption' },
+  { type: 'error', inputs: [], name: 'Executor_InvalidLzReadOption' },
   { type: 'error', inputs: [], name: 'Executor_InvalidLzReceiveOption' },
   { type: 'error', inputs: [], name: 'Executor_InvalidNativeDropOption' },
 ] as const;
@@ -22239,6 +22282,20 @@ export const icErc20Abi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemCTokensAmountIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'protocolSeizeShareMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -23022,6 +23079,20 @@ export const icErc20PluginAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemCTokensAmountIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'protocolSeizeShareMantissa',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -23527,6 +23598,20 @@ export const icErc20PluginRewardsAbi = [
     inputs: [],
     name: 'plugin',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'assets', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'redeemCTokensAmountIn', internalType: 'uint256', type: 'uint256' }],
+    name: 'previewRedeem',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
   {
