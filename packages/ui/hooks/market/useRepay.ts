@@ -1,15 +1,9 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
 import { toast } from 'react-hot-toast';
-import {
-  type Address,
-  formatUnits,
-  parseUnits,
-  getContract,
-  maxUint256
-} from 'viem';
+import { type Address, parseUnits, getContract, maxUint256 } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,
@@ -24,57 +18,67 @@ import { useMaxRepayAmount } from '../useMaxRepayAmount';
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseRepayProps {
-  maxAmount: bigint;
   selectedMarketData: MarketData;
   chainId: number;
 }
 
-export const useRepay = ({
-  maxAmount,
-  selectedMarketData,
-  chainId
-}: UseRepayProps) => {
+export const useRepay = ({ selectedMarketData, chainId }: UseRepayProps) => {
   const { address, currentSdk } = useMultiIonic();
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
   const { transactionSteps } = useTransactionSteps();
 
-  const amountAsBInt = useMemo(
-    () =>
-      parseUnits(
-        amount?.toString() ?? '0',
-        selectedMarketData.underlyingDecimals
-      ),
-    [amount, selectedMarketData.underlyingDecimals]
-  );
+  const formatToFixedDecimals = (num: number, decimals: number): string => {
+    // Convert to string and remove scientific notation
+    let str = num.toFixed(decimals);
 
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
-      );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedMarketData.underlyingDecimals]
-  );
-
-  useEffect(() => {
-    if (amount === '0' || !amount || maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
+    // Remove trailing zeros after decimal point
+    if (str.includes('.')) {
+      str = str.replace(/\.?0+$/, '');
     }
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
+
+    // If the string is empty or just a decimal point, return '0'
+    if (!str || str === '.') return '0';
+
+    return str;
+  };
+
+  const INTEREST_BUFFER_MULTIPLIER = 1.01;
+
+  const amountWithBufferAsBInt = useMemo(() => {
+    try {
+      const amountAsNumber = Number(amount);
+      if (isNaN(amountAsNumber) || amountAsNumber === 0) return 0n;
+
+      const amountWithBuffer = amountAsNumber * INTEREST_BUFFER_MULTIPLIER;
+      const formattedAmount = formatToFixedDecimals(
+        amountWithBuffer,
+        selectedMarketData.underlyingDecimals
+      );
+
+      return parseUnits(formattedAmount, selectedMarketData.underlyingDecimals);
+    } catch (error) {
+      console.error('Error calculating buffer amount:', error);
+      return 0n;
+    }
+  }, [amount, selectedMarketData.underlyingDecimals]);
+
+  const amountAsBInt = useMemo(() => {
+    try {
+      if (!amount || amount === '0') return 0n;
+      // Ensure the amount is properly formatted before parsing
+      const formattedAmount = formatToFixedDecimals(
+        Number(amount),
+        selectedMarketData.underlyingDecimals
+      );
+      return parseUnits(formattedAmount, selectedMarketData.underlyingDecimals);
+    } catch (error) {
+      console.error('Error parsing amount:', error);
+      return 0n;
+    }
+  }, [amount, selectedMarketData.underlyingDecimals]);
 
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
@@ -124,11 +128,12 @@ export const useRepay = ({
         selectedMarketData.cToken
       ]);
 
-      if (currentAllowance < amountAsBInt) {
+      // Use buffered amount for allowance check and approval
+      if (currentAllowance < amountWithBufferAsBInt) {
         const approveTx = await currentSdk.approve(
           selectedMarketData.cToken,
           selectedMarketData.underlyingToken,
-          amountAsBInt
+          amountWithBufferAsBInt // Using buffered amount for approval
         );
 
         upsertStepForType(TransactionType.REPAY, {
@@ -156,12 +161,12 @@ export const useRepay = ({
         amountAsBInt >= (selectedMarketData.borrowBalance ?? 0n);
       const repayAmount = isRepayingMax ? maxUint256 : amountAsBInt;
 
-      // Verify final allowance
+      // Verify final allowance against buffered amount
       const finalAllowance = await token.read.allowance([
         address,
         selectedMarketData.cToken
       ]);
-      if (finalAllowance < amountAsBInt) {
+      if (finalAllowance < amountWithBufferAsBInt) {
         throw new Error('Insufficient allowance after approval');
       }
 
@@ -244,6 +249,7 @@ export const useRepay = ({
     address,
     amount,
     amountAsBInt,
+    amountWithBufferAsBInt,
     currentBorrowAmountAsFloat,
     selectedMarketData,
     addStepsForType,
@@ -265,7 +271,6 @@ export const useRepay = ({
       setTxHash(undefined);
       refetchMaxRepay();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(`Repaid ${amount} ${selectedMarketData.underlyingSymbol}`);
     }
   });
@@ -278,8 +283,6 @@ export const useRepay = ({
     currentBorrowAmountAsFloat,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   };
 };

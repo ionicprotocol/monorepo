@@ -41,8 +41,8 @@ export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
 export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
 export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
 export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
-export const ionicUSDC = "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440";
-export const ionicWETH = "0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707";
+export const ionicUSDC = "0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e";
+export const ionicWETH = "0x5A32099837D89E3a794a44fb131CBbAD41f87a8C";
 
 export const assets: SupportedAsset[] = [
   {

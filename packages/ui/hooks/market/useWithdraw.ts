@@ -1,8 +1,8 @@
 // useWithdraw.ts
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { toast } from 'react-hot-toast';
-import { type Address, formatUnits, parseUnits } from 'viem';
+import { type Address, parseUnits } from 'viem';
 
 import { INFO_MESSAGES } from '@ui/constants';
 import {
@@ -29,7 +29,6 @@ export const useWithdraw = ({
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
 
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
 
@@ -48,39 +47,6 @@ export const useWithdraw = ({
     selectedMarketData,
     chainId
   );
-
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
-      );
-
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedMarketData.underlyingDecimals]
-  );
-
-  // Update utilization percentage when amount changes
-  useEffect(() => {
-    if (amount === '0' || !amount) {
-      setUtilizationPercentage(0);
-      return;
-    }
-
-    if (maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
-    }
-
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
 
   const withdrawAmount = async () => {
     if (currentSdk && address && amount && amountAsBInt > 0n && maxAmount) {
@@ -169,7 +135,6 @@ export const useWithdraw = ({
       setTxHash(undefined);
       refetchMaxWithdraw();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(
         `Withdrawn ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -182,8 +147,6 @@ export const useWithdraw = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   };
 };

@@ -2,15 +2,19 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { Address, encodeFunctionData, Hash, zeroAddress } from "viem";
 
 import { logTransaction, prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
-const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => {
+const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
+  const chainId = parseInt(await getChainId());
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const [walletClient] = await viem.getWalletClients({ chain: chainIdtoChain[chainId] });
 
   const oldComptroller = await deployments.getOrNull("Comptroller");
   const fuseFeeDistributor = await viem.getContractAt(
     "FeeDistributor",
-    (await deployments.get("FeeDistributor")).address as Address
+    (await deployments.get("FeeDistributor")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   let tx: Hash;
 
@@ -44,7 +48,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
 
   const comptroller = await viem.getContractAt(
     "Comptroller",
-    (await deployments.get("Comptroller")).address as Address
+    (await deployments.get("Comptroller")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   /// LATEST IMPLEMENTATIONS
@@ -83,14 +88,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
   } else {
     // on the first deploy to a chain
     if (multisig && (await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Set Latest Comptroller Implementation",
-        encodeFunctionData({
-          abi: fuseFeeDistributor.abi,
-          functionName: "_setLatestComptrollerImplementation",
-          args: [zeroAddress, comptroller.address]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: fuseFeeDistributor,
+        functionName: "_setLatestComptrollerImplementation",
+        args: [zeroAddress, comptroller.address],
+        description: "Set Latest Comptroller Implementation",
+        inputs: [
+          { internalType: "address", name: "oldImplementation", type: "address" },
+          { internalType: "address", name: "newImplementation", type: "address" }
+        ]
+      });
     } else {
       tx = await fuseFeeDistributor.write._setLatestComptrollerImplementation([zeroAddress, comptroller.address]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
@@ -105,17 +112,19 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => 
     comptrollerExtensions[2].toLowerCase() !== compPrudentiaExtension.address.toLowerCase()
   ) {
     if (multisig && (await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-      logTransaction(
-        "Set Comptroller Extensions",
-        encodeFunctionData({
-          abi: fuseFeeDistributor.abi,
-          functionName: "_setComptrollerExtensions",
-          args: [
-            comptroller.address,
-            [comptroller.address, compFirstExtension.address as Address, compPrudentiaExtension.address as Address]
-          ]
-        })
-      );
+      await prepareAndLogTransaction({
+        contractInstance: fuseFeeDistributor,
+        functionName: "_setComptrollerExtensions",
+        args: [
+          comptroller.address,
+          [comptroller.address, compFirstExtension.address as Address, compPrudentiaExtension.address as Address]
+        ],
+        description: "Set Comptroller Extensions",
+        inputs: [
+          { internalType: "address", name: "comptroller", type: "address" },
+          { internalType: "address[]", name: "extensions", type: "address[]" }
+        ]
+      });
     } else {
       tx = await fuseFeeDistributor.write._setComptrollerExtensions([
         comptroller.address,

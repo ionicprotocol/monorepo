@@ -23,6 +23,12 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import SliderComponent from '@ui/components/dialogs/manage/Slider';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import ClaimRewards from '@ui/components/stake/ClaimRewards';
+import RewardDisplay from '@ui/components/stake/RewardDisplay';
+import Toggle from '@ui/components/Toggle';
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
@@ -38,21 +44,14 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import SliderComponent from '../_components/dialogs/manage/Slider';
-import MaxDeposit from '../_components/MaxDeposit';
-import ResultHandler from '../_components/ResultHandler';
-import ClaimRewards from '../_components/stake/ClaimRewards';
-import RewardDisplay from '../_components/stake/RewardDisplay';
-import Toggle from '../_components/Toggle';
-
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('@ui/components/markets/NetworkSelector'),
   {
     ssr: false
   }
 );
 
-const Widget = dynamic(() => import('../_components/stake/Widget'), {
+const Widget = dynamic(() => import('@ui/components/stake/Widget'), {
   ssr: false
 });
 
@@ -609,7 +608,7 @@ export default function Stake() {
                 Step 1. Buy
                 <img
                   alt="ion logo"
-                  className="w-6 h-6 inline-block mx-1"
+                  className="w-5 h-5 inline-block mx-1"
                   src="/img/symbols/32/color/ion.png"
                 />
                 ION Tokens

@@ -1,3 +1,5 @@
+import { base } from 'viem/chains';
+
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import type { RewardIcon } from '@ui/hooks/market/useAPRCell';
 
@@ -84,19 +86,27 @@ export const getExtraRewardIcons = (
 ): RewardIcon[] => {
   const additionalRewards: RewardIcon[] = [];
 
-  if (config?.turtle && asset === 'STONE') {
-    additionalRewards.push({
-      name: 'stone',
-      icon: '/img/symbols/32/color/stone.png',
-      text: '+ Stone Turtle Points'
-    });
-  }
-
   if (config?.etherfi) {
     additionalRewards.push({
       name: 'etherfi',
       icon: '/images/etherfi.png',
       text: `+ ${config.etherfi}x ether.fi Points`
+    });
+  }
+
+  if (config?.eigenlayer) {
+    additionalRewards.push({
+      name: 'eigen',
+      icon: '/images/eigen.png',
+      text: '+ EigenLayer Points'
+    });
+  }
+
+  if (config?.turtle && asset === 'STONE') {
+    additionalRewards.push({
+      name: 'stone',
+      icon: '/img/symbols/32/color/stone-turtle.svg',
+      text: '+ Stone Turtle Points'
     });
   }
 
@@ -115,14 +125,6 @@ export const getExtraRewardIcons = (
     );
   }
 
-  if (config?.eigenlayer) {
-    additionalRewards.push({
-      name: 'eigen',
-      icon: '/images/eigen.png',
-      text: '+ EigenLayer Points'
-    });
-  }
-
   if (config?.spice) {
     additionalRewards.push({
       name: 'spice',
@@ -133,3 +135,48 @@ export const getExtraRewardIcons = (
 
   return additionalRewards;
 };
+
+export type SupportedSupplyVaultChainId = keyof typeof supplyVaultAddresses;
+
+export const supplyVaultAddresses = {
+  [base.id]: {
+    tokens: {
+      WETH: '0x4200000000000000000000000000000000000006',
+      USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+    },
+    vaults: {
+      WETH: '0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707',
+      USDC: '0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21'
+    }
+  }
+};
+
+export const VAULT_ADDRESSES = {
+  OPTIMIZED_APR_VAULT_BASE:
+    '0x1234567890123456789012345678901234567890' as const,
+  SECOND_EXTENSION: '0x0987654321098765432109876543210987654321' as const
+};
+
+export const VAULT_ABI = [
+  {
+    inputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    name: 'deposit',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    name: 'withdraw',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  },
+  {
+    inputs: [],
+    name: 'asSecondExtension',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;

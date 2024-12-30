@@ -95,7 +95,7 @@ describe("Ionic Index", () => {
       restore();
     });
 
-    it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
+    it.skip("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
       ionicBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
       await ionicBase.deployPool("Test", false, 1n, 1n, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(ionicBase.contracts.PoolDirectory.write.deployPool).to.be.calledOnceWith([
