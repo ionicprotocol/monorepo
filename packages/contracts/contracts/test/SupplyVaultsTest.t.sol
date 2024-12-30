@@ -443,8 +443,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(vm.getBlockTimestamp() + 365.25 days);
-    vm.roll(vm.getBlockNumber() + blocksPerYear);
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
 
     // test the shares before and after calling mint
     {
@@ -480,8 +480,8 @@ contract SupplyVaultsTest is BaseTest {
     asSecondExtension.harvest(lenderSharesHint);
 
     // advance time with a year
-    vm.warp(vm.getBlockTimestamp() + 365.25 days);
-    vm.roll(vm.getBlockNumber() + blocksPerYear);
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
 
     // test the shares before and after calling deposit
     {
@@ -527,8 +527,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(vm.getBlockTimestamp() + 365.25 days);
-    vm.roll(vm.getBlockNumber() + blocksPerYear);
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
 
     // test the balance before and after calling withdraw
     {
@@ -573,8 +573,8 @@ contract SupplyVaultsTest is BaseTest {
     vm.stopPrank();
 
     // advance time with a year
-    vm.warp(vm.getBlockTimestamp() + 365.25 days);
-    vm.roll(vm.getBlockNumber() + blocksPerYear);
+    vm.warp(block.timestamp + 365.25 days);
+    vm.roll(block.number + blocksPerYear);
 
     // test the balance before and after calling redeem
     {
@@ -632,7 +632,7 @@ contract SupplyVaultsTest is BaseTest {
     vm.expectRevert(NotPassedQuitPeriod.selector);
     secondExt.changeAdapters();
 
-    vm.warp(vm.getBlockTimestamp() + 3.01 days);
+    vm.warp(block.timestamp + 3.01 days);
     secondExt.changeAdapters();
   }
 
@@ -713,8 +713,8 @@ contract SupplyVaultsTest is BaseTest {
     {
       // advance time to move away from the first cycle,
       // because the first cycle is initialized with 0 rewards
-      vm.warp(vm.getBlockTimestamp() + 25 hours);
-      vm.roll(vm.getBlockNumber() + 1000);
+      vm.warp(block.timestamp + 25 days);
+      vm.roll(block.number + 1000);
     }
 
     // pull from the adapters the rewards for the new cycle
@@ -727,8 +727,8 @@ contract SupplyVaultsTest is BaseTest {
       flywheelION.accrue(ERC20(address(vault)), wethWhale);
 
       // advance time in the same cycle in order to accrue some rewards for it
-      vm.warp(vm.getBlockTimestamp() + 10 hours);
-      vm.roll(vm.getBlockNumber() + 1000);
+      vm.warp(block.timestamp + 10 hours);
+      vm.roll(block.number + 1000);
     }
 
     // harvest does nothing when the APR remains the same
