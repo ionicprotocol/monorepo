@@ -51,7 +51,6 @@ interface IMaxDeposit {
   isLoading?: boolean;
   showUtilizationSlider?: boolean;
   initialUtilization?: number;
-  onUtilizationChange?: (percentage: number) => void;
   hintText?: string;
 }
 
@@ -73,7 +72,6 @@ function MaxDeposit({
   isLoading,
   showUtilizationSlider = false,
   initialUtilization = 0,
-  onUtilizationChange,
   hintText = 'Balance'
 }: IMaxDeposit) {
   const [bal, setBal] = useState<IBal>();
@@ -141,6 +139,22 @@ function MaxDeposit({
     setMaxTokenForUtilization
   ]);
 
+  const formatBalanceWithPrecision = (
+    value: bigint,
+    decimals: number
+  ): string => {
+    const formatted = formatUnits(value, decimals);
+    const number = Number(formatted);
+
+    if (number > 0 && number < 0.00001) {
+      return formatted;
+    }
+
+    return number.toLocaleString('en-US', {
+      maximumFractionDigits: 5
+    });
+  };
+
   function handleMax() {
     if (!handleInput || !bal) return;
     const maxValue = formatUnits(bal.value, bal.decimals);
@@ -150,7 +164,6 @@ function MaxDeposit({
       decimals: bal.decimals
     });
     setUtilizationPercentage(100);
-    onUtilizationChange?.(100);
   }
 
   function handleUtilizationChange(value: number[]) {
@@ -159,18 +172,28 @@ function MaxDeposit({
 
     if (!bal || !handleInput) return;
 
-    const maxValue = Number(formatUnits(bal.value, bal.decimals));
-    const newAmount = ((maxValue * percentage) / 100).toString();
-    handleInput(newAmount);
-    onUtilizationChange?.(percentage);
+    try {
+      const maxValue = formatUnits(bal.value, bal.decimals);
+
+      const newAmount = (Number(maxValue) * (percentage / 100)).toString();
+
+      if (isNaN(Number(newAmount))) {
+        console.error('Invalid amount calculated');
+        return;
+      }
+
+      handleInput(newAmount);
+    } catch (error) {
+      console.error('Error in utilization calculation:', error);
+    }
   }
 
   const tokens = tokenName?.split('/') ?? ['eth'];
   const formattedBalance = bal
-    ? parseFloat(formatUnits(bal.value, bal.decimals)).toLocaleString('en-US', {
-        maximumFractionDigits: 5
-      })
+    ? formatBalanceWithPrecision(bal.value, bal.decimals)
     : max ?? '0';
+
+  const isMaxDisabled = !bal || bal.value === BigInt(0);
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
@@ -190,8 +213,12 @@ function MaxDeposit({
               <div className="flex flex-col items-end gap-1">
                 <Button
                   variant="ghost"
-                  className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
+                  className={cn(
+                    'text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light',
+                    isMaxDisabled && 'opacity-50 cursor-not-allowed'
+                  )}
                   onClick={handleMax}
+                  disabled={isMaxDisabled}
                 >
                   {hintText}: {formattedBalance}
                 </Button>
@@ -294,8 +321,12 @@ function MaxDeposit({
               <Button
                 variant="ghost"
                 size="xs"
-                className="text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light"
+                className={cn(
+                  'text-white/50 hover:text-white h-4 text-[12px] hover:bg-transparent px-0 font-light',
+                  isMaxDisabled && 'opacity-50 cursor-not-allowed'
+                )}
                 onClick={handleMax}
+                disabled={isMaxDisabled}
               >
                 {hintText}: {formattedBalance}
               </Button>
