@@ -52,7 +52,11 @@ import TransactionStepsHandler, {
   useTransactionSteps
 } from '../manage/TransactionStepsHandler';
 
-import { iLeveredPositionFactoryAbi } from '@ionicprotocol/sdk';
+import {
+  cErc20Abi,
+  icErc20Abi,
+  iLeveredPositionFactoryAbi
+} from '@ionicprotocol/sdk';
 import type { OpenPosition } from '@ionicprotocol/types';
 
 const SwapWidget = dynamic(() => import('../../markets/SwapWidget'), {
@@ -337,6 +341,21 @@ export default function Loop({
 
       currentTransactionStep++;
 
+      const previewDeposit = await publicClient.readContract({
+        abi: icErc20Abi,
+        address: selectedCollateralAsset.cToken,
+        functionName: 'previewDeposit',
+        args: [amountAsBInt]
+      });
+
+      const actualRedeemedAmountForAggregatorSwap =
+        await publicClient.readContract({
+          abi: icErc20Abi,
+          address: selectedCollateralAsset.cToken,
+          functionName: 'previewRedeem',
+          args: [previewDeposit]
+        });
+
       // get initial quote to calculate slippage
       const [, initialBorrowAmount] = await publicClient.readContract({
         abi: iLeveredPositionFactoryAbi,
@@ -348,7 +367,7 @@ export default function Loop({
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
           1n,
-          amountAsBInt,
+          actualRedeemedAmountForAggregatorSwap,
           0n
         ]
       });
@@ -384,7 +403,7 @@ export default function Loop({
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
           BigInt(Math.ceil(slippageWithBufferInBps)),
-          amountAsBInt,
+          actualRedeemedAmountForAggregatorSwap,
           0n
         ]
       });
