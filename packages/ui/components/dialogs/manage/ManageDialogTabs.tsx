@@ -17,7 +17,7 @@ import {
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
 import BorrowTab from './BorrowTab';
@@ -45,7 +45,7 @@ const ManageDialogTabs = ({
   setSwapWidgetOpen: (open: boolean) => void;
   chainId: number;
 }) => {
-  const { data: usdPrice } = useUsdPrice(chainId.toString());
+  const { data: usdPrice } = useUsdPrice(chainId);
 
   // Memoize calculations
   const pricePerSingleAsset = useMemo(

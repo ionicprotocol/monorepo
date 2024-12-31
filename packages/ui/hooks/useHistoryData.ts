@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { APY, PRICE, TVL } from '@ui/constants/index';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+
+import { useUsdPrice } from './useUsdPrices';
 
 import type { Address } from 'viem';
 
@@ -22,15 +21,7 @@ export function useHistoryData(
   chainId: number,
   milliSeconds: number
 ) {
-  const { data: usdPrices } = useAllUsdPrices();
-
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[chainId.toString()]) {
-      return usdPrices[chainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, chainId]);
+  const { data: usdPrice } = useUsdPrice(chainId);
 
   return useQuery({
     queryKey: [
@@ -74,7 +65,7 @@ export function useHistoryData(
             tvls.map((data: AssetTvl) => {
               info.push({
                 createdAt: data.createdAt,
-                tvl: data.tvlNative * usdPrice
+                tvl: data.tvlNative * (usdPrice || 0)
               });
             });
           } else if (mode === APY) {

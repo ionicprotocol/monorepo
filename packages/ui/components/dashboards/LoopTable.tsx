@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Image from 'next/image';
-
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -10,10 +8,10 @@ import ActionButton from '../ActionButton';
 import LoopRewards from '../dashboards/LoopRewards';
 import Loop from '../dialogs/loop';
 import TokenBalance from '../markets/Cells/TokenBalance';
+import TokenDisplay from '../TokenDisplay';
 
 import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address, Hex } from 'viem';
-import TokenDisplay from '../TokenDisplay';
 
 export interface LoopRowData {
   position: {
@@ -163,7 +161,7 @@ function LoopTable({
   return (
     <>
       <CommonTable
-        data={data}
+        data={data ?? []}
         columns={columns}
         isLoading={isLoading}
       />
