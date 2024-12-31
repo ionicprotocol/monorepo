@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 
@@ -7,8 +5,9 @@ import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import { useUsdPrice } from './useUsdPrices';
 
 import type { Address } from 'viem';
 
@@ -29,15 +28,8 @@ export const useBorrowCap = ({
   chainId,
   market
 }: UseBorrowCapParams) => {
-  const { data: usdPrices } = useAllUsdPrices();
+  const { data: usdPrice } = useUsdPrice(chainId);
   const { address } = useMultiIonic();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[chainId.toString()]) {
-      return usdPrices[chainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, chainId]);
 
   const sdk = useSdk(chainId);
   const { data: borrowCapsDataForAsset } = useBorrowCapsDataForAsset(
