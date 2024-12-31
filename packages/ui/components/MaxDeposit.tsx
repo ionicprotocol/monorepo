@@ -139,10 +139,7 @@ function MaxDeposit({
     setMaxTokenForUtilization
   ]);
 
-  const formatBalanceWithPrecision = (
-    value: bigint,
-    decimals: number
-  ): string => {
+  const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
     const formatted = formatUnits(value, decimals);
     const number = Number(formatted);
 
@@ -151,13 +148,21 @@ function MaxDeposit({
     }
 
     return number.toLocaleString('en-US', {
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
+      useGrouping: true
     });
+  };
+
+  const formatBalanceForCalculation = (
+    value: bigint,
+    decimals: number
+  ): string => {
+    return formatUnits(value, decimals);
   };
 
   function handleMax() {
     if (!handleInput || !bal) return;
-    const maxValue = formatUnits(bal.value, bal.decimals);
+    const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
     handleInput(maxValue);
     setMaxTokenForUtilization?.({
       value: bal.value,
@@ -173,8 +178,7 @@ function MaxDeposit({
     if (!bal || !handleInput) return;
 
     try {
-      const maxValue = formatUnits(bal.value, bal.decimals);
-
+      const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
       const newAmount = (Number(maxValue) * (percentage / 100)).toString();
 
       if (isNaN(Number(newAmount))) {
@@ -190,7 +194,7 @@ function MaxDeposit({
 
   const tokens = tokenName?.split('/') ?? ['eth'];
   const formattedBalance = bal
-    ? formatBalanceWithPrecision(bal.value, bal.decimals)
+    ? formatBalanceForDisplay(bal.value, bal.decimals)
     : max ?? '0';
 
   const isMaxDisabled = !bal || bal.value === BigInt(0);
@@ -207,7 +211,11 @@ function MaxDeposit({
                 handleInput={handleInput}
                 readonly={readonly}
                 amount={amount}
-                max={formattedBalance}
+                max={
+                  bal
+                    ? formatBalanceForCalculation(bal.value, bal.decimals)
+                    : max ?? '0'
+                }
                 isLoading={isLoading}
               />
               <div className="flex flex-col items-end gap-1">
@@ -278,7 +286,11 @@ function MaxDeposit({
               handleInput={handleInput}
               readonly={readonly}
               amount={amount}
-              max={formattedBalance}
+              max={
+                bal
+                  ? formatBalanceForCalculation(bal.value, bal.decimals)
+                  : max ?? '0'
+              }
               isLoading={isLoading}
             />
 
