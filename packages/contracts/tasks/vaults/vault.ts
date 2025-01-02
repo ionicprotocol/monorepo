@@ -47,19 +47,24 @@ task("optimized-vault:deploy")
 
     const asset = await viem.getContractAt("IERC20MetadataUpgradeable", assetAddress);
     const symbol = await asset.read.symbol();
-    // const optimizedVaultDep = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
-    //   contract: "OptimizedAPRVaultBase",
-    //   from: deployer,
-    //   log: true,
-    //   waitConfirmations: 1,
-    //   args: []
-    // });
-    // if (optimizedVaultDep.transactionHash) {
-    //   await publicClient.waitForTransactionReceipt({ hash: optimizedVaultDep.transactionHash as Address });
-    // }
-    // console.log("OptimizedAPRVault: ", optimizedVaultDep.address);
+    const optimizedVaultDep = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
+      contract: "OptimizedAPRVaultBase",
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: []
+    });
+    if (optimizedVaultDep.transactionHash) {
+      await publicClient.waitForTransactionReceipt({ hash: optimizedVaultDep.transactionHash as Address });
+    }
+    console.log("OptimizedAPRVault: ", optimizedVaultDep.address);
 
-    type Fee = { deposit: bigint; withdrawal: bigint; management: bigint; performance: bigint };
+    type Fee = { 
+      deposit: bigint;
+      withdrawal: bigint;
+      management: bigint;
+      performance: bigint
+    };
 
     const fees: Fee = {
       deposit: BigInt(0),
@@ -74,7 +79,7 @@ task("optimized-vault:deploy")
     let remainder = parseEther("1");
     const adapters = adaptersAddressesArray.map((adapterAddress: string, index: number) => {
       const config = {
-        adapter: adapterAddress,
+        adapter: adapterAddress as Address,
         allocation: parseEther("1") / BigInt(adaptersAddressesArray.length)
       };
 
@@ -86,7 +91,10 @@ task("optimized-vault:deploy")
     if (remainder > BigInt(0)) {
       adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation + remainder;
     }
-    type Adapter = { adapter: string; allocation: bigint };
+    type Adapter = { 
+      adapter: Address;
+      allocation: bigint 
+    };
     const tenAdapters: Adapter[] = adapters.concat(
       new Array(10 - adapters.length).fill({
         adapter: constants.AddressZero,
@@ -105,18 +113,19 @@ task("optimized-vault:deploy")
       "OptimizedVaultsRegistry",
       (await deployments.get("OptimizedVaultsRegistry")).address as Address
     );
-    // const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
-    //   from: deployer,
-    //   log: true,
-    //   waitConfirmations: 1,
-    //   args: []
-    // });
-    // const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
-    //   from: deployer,
-    //   log: true,
-    //   waitConfirmations: 1,
-    //   args: []
-    // });
+    const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: []
+    });
+    const vaultSecondExtDep = await deployments.deploy("OptimizedAPRVaultSecondExtension", {
+      from: deployer,
+      log: true,
+      waitConfirmations: 1,
+      args: []
+    });
+
     const values: [
       string,
       Adapter[], // Matches "tuple(address adapter, uint64 allocation)[10]"
@@ -127,16 +136,16 @@ task("optimized-vault:deploy")
       string, // Matches "address"
       string  // Matches "address"
     ] =  [
-      assetAddress,
+      assetAddress as Address,
       tenAdapters, // initial adapters
-      adapters.length, // adapters count
+      tenAdapters.length, // adapters count
       fees,
-      deployer, // fee recipient
+      deployer as Address, // fee recipient
       0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn, // deposit limit
-      registry.address,
-      flywheelLogic.address
+      registry.address as Address,
+      flywheelLogic.address as Address
     ];
-    console.log(values);
+    console.log('values generated', values);
 
     const initData = encodeAbiParameters(
       [
@@ -155,8 +164,7 @@ task("optimized-vault:deploy")
     console.log(`initializing with values ${JSON.stringify(values)}`);
 
     const optimizedVault = await viem.getContractAt("OptimizedAPRVaultBase", optimizedVaultDep.address as Address);
-
-    const tx = await optimizedVault.write.initialize([vaultFirstExtDep.address, vaultSecondExtDep.address], initData);
+    await optimizedVault.write.initialize([vaultFirstExtDep.address, vaultSecondExtDep.address], initData);
     console.log(`initialized the vault at ${optimizedVault.address}`);
 
     await run("optimized-vault:add", {
