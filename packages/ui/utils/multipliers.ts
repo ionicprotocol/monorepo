@@ -76,10 +76,7 @@ export const multipliers: Record<
         },
         decimals: 6,
         market: 'usdc_market',
-        supply: {
-          ionAPR: true,
-          flywheel: true
-        }
+        supply: {}
       },
       USDT: {
         borrow: {
@@ -300,7 +297,6 @@ export const multipliers: Record<
         },
         market: 'ionusdc_base',
         supply: {
-          ionAPR: true,
           flywheel: true
         },
         decimals: 6

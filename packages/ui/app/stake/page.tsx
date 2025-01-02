@@ -656,7 +656,7 @@ export default function Stake() {
                   tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
-                  tokenSelector={true}
+                  tokenSelector
                   tokenArr={tokenArrOfChain[+chain]}
                 />
               </>
