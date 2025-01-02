@@ -5,6 +5,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { ExternalLink } from 'lucide-react';
+
 import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
 
@@ -40,13 +42,11 @@ export default function MorphoTable() {
           </div>
           <div className="flex items-center gap-1">
             {row.original.asset.map((val, idx) => (
-              <>
-                <span key={idx}>
-                  {idx !== 0 && '/'} {val}
-                </span>
-                <span className="w-7" />
-              </>
+              <span key={idx}>
+                {idx !== 0 && '/'} {val}
+              </span>
             ))}
+            <ExternalLink className="w-3 h-3 text-gray-400" />
           </div>
         </Link>
       )
