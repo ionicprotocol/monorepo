@@ -358,7 +358,6 @@ export default function Dashboard() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
-            chain={+chain}
           />
         </div>
 
