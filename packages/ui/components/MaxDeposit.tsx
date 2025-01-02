@@ -64,7 +64,6 @@ function MaxDeposit({
   chain,
   tokenSelector = false,
   tokenArr,
-  setMaxTokenForUtilization,
   useUnderlyingBalance = false,
   footerText,
   decimals: propDecimals,
@@ -112,20 +111,13 @@ function MaxDeposit({
     if (max) {
       const value = parseUnits(max, decimals);
       setBal({ value, decimals });
-      setMaxTokenForUtilization?.({ value, decimals });
     } else if (max === '0') {
       setBal({ value: BigInt(0), decimals });
-      setMaxTokenForUtilization?.({ value: BigInt(0), decimals });
     } else if (useUnderlyingBalance) {
       const value = underlyingBalance ?? BigInt(0);
       setBal({ value, decimals });
-      setMaxTokenForUtilization?.({ value, decimals });
     } else if (!useUnderlyingBalance && regularBalance) {
       setBal({
-        value: regularBalance.value,
-        decimals: regularBalance.decimals
-      });
-      setMaxTokenForUtilization?.({
         value: regularBalance.value,
         decimals: regularBalance.decimals
       });
@@ -135,8 +127,7 @@ function MaxDeposit({
     regularBalance,
     underlyingBalance,
     useUnderlyingBalance,
-    propDecimals,
-    setMaxTokenForUtilization
+    propDecimals
   ]);
 
   const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
@@ -164,10 +155,6 @@ function MaxDeposit({
     if (!handleInput || !bal) return;
     const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
     handleInput(maxValue);
-    setMaxTokenForUtilization?.({
-      value: bal.value,
-      decimals: bal.decimals
-    });
     setUtilizationPercentage(100);
   }
 

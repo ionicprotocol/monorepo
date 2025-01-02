@@ -1,10 +1,12 @@
 import { useState } from 'react';
+
 import { utils } from 'ethers';
+import { ThreeCircles } from 'react-loader-spinner';
 import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
-import { Button } from '@ui/components/ui/button';
-import { ThreeCircles } from 'react-loader-spinner';
+
 import MaxDeposit from '@ui/components/MaxDeposit';
+import { Button } from '@ui/components/ui/button';
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 interface WithdrawTabProps {
@@ -28,7 +30,6 @@ export function WithdrawTab({
     maxWithdraw,
     assetSymbol === 'WETH' ? 18 : 6
   );
-  console.log('formattedMaxWithdraw', formattedMaxWithdraw);
 
   const handleInputChange = (value?: string) => {
     setAmount(value || '');

@@ -285,7 +285,6 @@ export default function XION() {
               token={getToken(+chain)}
               handleInput={(val?: string) => setDeposit(val ?? '')}
               chain={+chain}
-              // tokenSelector={true}
               tokenArr={['ion']}
             />
           </div>
