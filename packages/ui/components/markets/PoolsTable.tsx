@@ -21,6 +21,7 @@ import APR from './Cells/APR';
 import TokenBalance from './Cells/TokenBalance';
 import CommonTable from '../../components/CommonTable';
 import ActionButton from '../ActionButton';
+import { CopyButton } from '../CopyButton';
 import Loop from '../dialogs/loop';
 import Swap from '../dialogs/manage/Swap';
 
@@ -89,7 +90,14 @@ function PoolsTable({
             className="w-7 h-7"
           />
           <div className="flex flex-col">
-            <span className="text-sm font-medium">{row.original.asset}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{row.original.asset}</span>
+              <CopyButton
+                value={row.original.underlyingToken}
+                message={`${row.original.asset} token address copied to clipboard`}
+                tooltipMessage="Copy token address"
+              />
+            </div>
             <div className="flex flex-col text-xs text-white/40 font-light">
               <span>
                 Total Supplied: ${row.original.supply.totalUSD.toLocaleString()}
