@@ -1,18 +1,17 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
-
+import { Address } from "viem";
 
 export default task("deploy-optimized:all")
   .addParam("marketsAddresses", "Comma-separated addresses of the markets", undefined, types.string)
-  .setAction(async ({ marketsAddresses, hre }, { run, getNamedAccounts }) => {
-    const viem = hre.viem;
+  .setAction(async ({ marketsAddresses, hre }, { run, getNamedAccounts, viem, deployments }) => {
     const { deployer } = await getNamedAccounts();
 
     let asset;
     const markets = marketsAddresses.split(",");
     for (let i = 0; i < markets.length; i++) {
-      const cErc20 = (await viem.getContractAt("CTokenInterfaces.sol:ICErc20", markets[i]));
-      const marketUnderlying = await cErc20.callStatic.underlying();
+      const cErc20 = await viem.getContractAt("CTokenInterfaces.sol:ICErc20", markets[i]);
+      const marketUnderlying = await cErc20.read.underlying();
       if (!asset) asset = marketUnderlying;
       if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);
     }
@@ -24,10 +23,10 @@ export default task("deploy-optimized:all")
         marketAddress
       });
 
-      const adapter = (await viem.getContract(
-        `CompoundMarketERC4626_${marketAddress}`,
-        deployer
-      ));
+      const adapter = await viem.getContractAt(
+        `CompoundMarketERC4626`,
+        (await deployments.get(`CompoundMarketERC4626_${marketAddress}`)).address as Address
+      );
       adapters.push(adapter.address);
     }
 
