@@ -55,7 +55,8 @@ import TransactionStepsHandler, {
 import {
   cErc20Abi,
   icErc20Abi,
-  iLeveredPositionFactoryAbi
+  iLeveredPositionFactoryAbi,
+  leveredPositionAbi
 } from '@ionicprotocol/sdk';
 import type { OpenPosition } from '@ionicprotocol/types';
 
@@ -489,7 +490,11 @@ export default function Loop({
    * Handle leverage adjustment
    */
   const handleLeverageAdjustment = async (): Promise<void> => {
+    if (!publicClient || !walletClient || !currentSdk || !currentPosition) {
+      return;
+    }
     const currentTransactionStep = 0;
+    const factory = currentSdk.createLeveredPositionFactory();
 
     addStepsForAction([
       {
@@ -500,10 +505,93 @@ export default function Loop({
     ]);
 
     try {
-      const tx = await currentSdk?.adjustLeverageRatio(
-        currentPosition?.address ?? ('' as Address),
-        currentLeverage
-      );
+      const previewDeposit = await publicClient.readContract({
+        abi: icErc20Abi,
+        address: selectedCollateralAsset.cToken,
+        functionName: 'previewDeposit',
+        args: [amountAsBInt]
+      });
+
+      const actualRedeemedAmountForAggregatorSwap =
+        await publicClient.readContract({
+          abi: icErc20Abi,
+          address: selectedCollateralAsset.cToken,
+          functionName: 'previewRedeem',
+          args: [previewDeposit]
+        });
+
+      // get initial quote to calculate slippage
+      const [, initialBorrowAmount] = await publicClient.readContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'calculateAdjustmentAmountDeltas',
+        args: [
+          true,
+          parseEther(currentLeverage.toString()),
+          selectedCollateralAsset.underlyingPrice,
+          selectedBorrowAsset!.underlyingPrice,
+          1n,
+          actualRedeemedAmountForAggregatorSwap,
+          0n
+        ]
+      });
+
+      const quote = await getQuote({
+        fromChain: chainId,
+        toChain: chainId,
+        fromToken: selectedBorrowAsset!.underlyingToken,
+        toToken: selectedCollateralAsset.underlyingToken,
+        fromAmount: initialBorrowAmount.toString(),
+        fromAddress: factory.address
+      });
+      const realSlippage =
+        quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
+          ? 1 -
+            Number(quote.estimate.toAmountUSD) /
+              Number(quote.estimate.fromAmountUSD)
+          : 0;
+      let slippageWithBufferInBps = 0;
+      if (realSlippage > 1) {
+        slippageWithBufferInBps = 10; // 10bps minimum
+      } else {
+        slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
+      }
+
+      const [, finalBorrowAmount] = await publicClient.readContract({
+        abi: iLeveredPositionFactoryAbi,
+        address: factory.address,
+        functionName: 'calculateAdjustmentAmountDeltas',
+        args: [
+          true,
+          parseEther(currentLeverage.toString()),
+          selectedCollateralAsset.underlyingPrice,
+          selectedBorrowAsset!.underlyingPrice,
+          BigInt(Math.ceil(slippageWithBufferInBps)),
+          actualRedeemedAmountForAggregatorSwap,
+          0n
+        ]
+      });
+
+      const quoteFinal = await getQuote({
+        fromChain: chainId,
+        toChain: chainId,
+        fromToken: selectedBorrowAsset!.underlyingToken,
+        toToken: selectedCollateralAsset.underlyingToken,
+        fromAmount: finalBorrowAmount.toString(),
+        fromAddress: currentPosition.address
+      });
+
+      const tx = await walletClient?.writeContract({
+        abi: leveredPositionAbi,
+        address: currentPosition.address,
+        functionName: 'adjustLeverageRatio',
+        args: [
+          BigInt(currentLeverage),
+          quoteFinal.transactionRequest!.to! as Address,
+          quoteFinal.transactionRequest!.data! as Hex,
+          BigInt(Math.ceil(slippageWithBufferInBps))
+        ]
+      });
 
       if (!tx) {
         throw new Error('Error while adjusting leverage');
