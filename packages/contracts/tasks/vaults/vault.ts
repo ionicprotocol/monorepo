@@ -1,13 +1,13 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
-
+import { Address, parseEther } from "viem";
 
 export default task("optimized-vault:add")
   .addParam("vaultAddress", "Address of the vault to add", undefined, types.string)
   .setAction(async ({ vaultAddress, hre }, { getNamedAccounts }) => {
     const viem = hre.viem;
     const { deployer } = await getNamedAccounts();
-    const vaultsRegistry = (await viem.getContract("OptimizedVaultsRegistry", deployer));
+    const vaultsRegistry = await viem.getContract("OptimizedVaultsRegistry", deployer);
 
     const willAddTheVault = await vaultsRegistry.callStatic.addVault(vaultAddress);
     if (willAddTheVault) {
@@ -25,7 +25,7 @@ task("optimized-vault:remove")
   .setAction(async ({ vaultAddress, hre }, { getNamedAccounts }) => {
     const viem = hre.viem;
     const { deployer } = await getNamedAccounts();
-    const vaultsRegistry = (await viem.getContract("OptimizedVaultsRegistry", deployer));
+    const vaultsRegistry = await viem.getContract("OptimizedVaultsRegistry", deployer);
 
     const willRemoveTheVault = await vaultsRegistry.callStatic.removeVault(vaultAddress);
     if (willRemoveTheVault) {
@@ -41,12 +41,12 @@ task("optimized-vault:remove")
 task("optimized-vault:deploy")
   .addParam("assetAddress", "Address of the underlying asset token", undefined, types.string)
   .addParam("adaptersAddresses", "Comma-separated list of the addresses of the adapters", undefined, types.string)
-  .setAction(async ({ assetAddress, adaptersAddresses, hre }, { deployments, run, getNamedAccounts }) => {
-    const viem = hre.viem;
+  .setAction(async ({ assetAddress, adaptersAddresses }, { deployments, run, getNamedAccounts, viem }) => {
     const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
 
-    const asset = (await viem.getContractAt("IERC20MetadataUpgradeable", assetAddress));
-    const symbol = await asset.callStatic.symbol();
+    const asset = await viem.getContractAt("IERC20MetadataUpgradeable", assetAddress);
+    const symbol = await asset.read.symbol();
     const optimizedVaultDep = await deployments.deploy(`OptimizedAPRVault_${symbol}_${assetAddress}`, {
       contract: "OptimizedAPRVaultBase",
       from: deployer,
@@ -54,33 +54,35 @@ task("optimized-vault:deploy")
       waitConfirmations: 1,
       args: []
     });
-    if (optimizedVaultDep.transactionHash) await viem.provider.waitForTransaction(optimizedVaultDep.transactionHash);
+    if (optimizedVaultDep.transactionHash) {
+      await publicClient.waitForTransactionReceipt({ hash: optimizedVaultDep.transactionHash as Address });
+    }
     console.log("OptimizedAPRVault: ", optimizedVaultDep.address);
 
     const fees = {
       deposit: 0,
       withdrawal: 0,
       management: 0,
-      performance: viem.utils.parseEther("0.05") // 1e18 == 100%, 5e16 = 5%
+      performance: parseEther("0.05") // 1e18 == 100%, 5e16 = 5%
     };
 
     // start with an even allocations distribution
     const adaptersAddressesArray = adaptersAddresses.split(",");
 
-    let remainder = viem.constants.WeiPerEther;
+    let remainder = parseEther("1");
     const adapters = adaptersAddressesArray.map((adapterAddress: string, index: number) => {
       const config = {
         adapter: adapterAddress,
-        allocation: constants.WeiPerEther.div(adaptersAddressesArray.length)
+        allocation: parseEther("1") / BigInt(adaptersAddressesArray.length)
       };
 
-      remainder = remainder.sub(config.allocation);
+      remainder = remainder - config.allocation;
 
       return config;
     });
 
-    if (remainder.gt(viem.constants.Zero)) {
-      adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation.add(remainder);
+    if (remainder > BigInt(0)) {
+      adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation + remainder;
     }
 
     const tenAdapters = adapters.concat(
@@ -97,7 +99,10 @@ task("optimized-vault:deploy")
       waitConfirmations: 1,
       skipIfAlreadyDeployed: true
     });
-    const registry = await viem.getContract("OptimizedVaultsRegistry");
+    const registry = await viem.getContractAt(
+      "OptimizedVaultsRegistry",
+      (await deployments.get("OptimizedVaultsRegistry")).address as Address
+    );
     const vaultFirstExtDep = await deployments.deploy("OptimizedAPRVaultFirstExtension", {
       from: deployer,
       log: true,
@@ -136,11 +141,7 @@ task("optimized-vault:deploy")
 
     console.log(`initializing with values ${JSON.stringify(values)}`);
 
-    const optimizedVault = (await viem.getContractAt(
-      "OptimizedAPRVaultBase",
-      optimizedVaultDep.address,
-      deployer
-    ));
+    const optimizedVault = await viem.getContractAt("OptimizedAPRVaultBase", optimizedVaultDep.address, deployer);
 
     const tx = await optimizedVault.initialize([vaultFirstExtDep.address, vaultSecondExtDep.address], initData);
     await tx.wait();

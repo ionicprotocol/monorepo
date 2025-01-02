@@ -10,7 +10,7 @@ export default task("deploy-optimized:all")
     let asset;
     const markets = marketsAddresses.split(",");
     for (let i = 0; i < markets.length; i++) {
-      const cErc20 = await viem.getContractAt("CTokenInterfaces.sol:ICErc20", markets[i]);
+      const cErc20 = await viem.getContractAt("ICErc20", markets[i]);
       const marketUnderlying = await cErc20.read.underlying();
       if (!asset) asset = marketUnderlying;
       if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);

@@ -1,17 +1,20 @@
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
+import { Address } from "viem";
 
 export default task("optimized-adapters:deploy")
   .addParam("marketAddress", "Address of the market that the adapter will deposit to", undefined, types.string)
-  .setAction(async ({ marketAddress, hre }, { getChainId, deployments,  getNamedAccounts }) => {
-    const viem = hre.viem;
+  .setAction(async ({ marketAddress }, { getChainId, deployments, getNamedAccounts, viem }) => {
     const publicClient = await viem.getPublicClient();
     const { deployer } = await getNamedAccounts();
     const chainId = parseInt(await getChainId());
     const { config: deployConfig }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
 
-    const registry = await viem.getContract("OptimizedVaultsRegistry");
+    const registry = await viem.getContractAt(
+      "OptimizedVaultsRegistry",
+      (await deployments.get("OptimizedVaultsRegistry")).address as Address
+    );
 
     console.log(`Deploying or upgrading the ERC4626 for market ${marketAddress}`);
 
@@ -35,8 +38,9 @@ export default task("optimized-adapters:deploy")
       },
       waitConfirmations: 1
     });
-    if (marketERC4626Deployment.transactionHash)
-      await publicClient.waitForTransaction(marketERC4626Deployment.transactionHash);
+    if (marketERC4626Deployment.transactionHash) {
+      await publicClient.waitForTransactionReceipt({ hash: marketERC4626Deployment.transactionHash as Address });
+    }
     console.log("CompoundMarketERC4626: ", marketERC4626Deployment.address);
   });
 
