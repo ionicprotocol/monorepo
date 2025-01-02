@@ -57,11 +57,11 @@ export const vaultAbi = [
     stateMutability: 'nonpayable'
   },
   {
+    inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
     name: 'maxWithdraw',
-    type: 'function',
-    inputs: [{ name: 'owner', type: 'address' }],
-    outputs: [{ name: 'maxAssets', type: 'uint256' }],
-    stateMutability: 'view'
+    outputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
   },
   {
     name: 'balanceOf',
