@@ -5,15 +5,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ExternalLink } from 'lucide-react';
-
 import { useMorphoData } from '@ui/hooks/earn/useMorphoData';
 import type { MorphoRow } from '@ui/types/Earn';
+import { morphoBaseAddresses } from '@ui/utils/morphoUtils';
 
 import MorphoApyCell from './MorphoApyCell';
 import ActionButton from '../ActionButton';
 import { AssetIcons } from '../AssetIcons';
 import CommonTable from '../CommonTable';
+import { CopyButton } from '../CopyButton';
 import { MorphoDialog } from '../dialogs/MorphoVault';
 
 import type { EnhancedColumnDef } from '../CommonTable';
@@ -40,13 +40,22 @@ export default function MorphoTable() {
               size={28}
             />
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {row.original.asset.map((val, idx) => (
               <span key={idx}>
                 {idx !== 0 && '/'} {val}
               </span>
             ))}
-            <ExternalLink className="w-3 h-3 text-gray-400" />
+            <CopyButton
+              value={
+                morphoBaseAddresses.vaults[
+                  row.original
+                    .asset[0] as keyof typeof morphoBaseAddresses.vaults
+                ]
+              }
+              message={`${row.original.asset[0]} vault address copied to clipboard`}
+              tooltipMessage="Copy vault address"
+            />
           </div>
         </Link>
       )

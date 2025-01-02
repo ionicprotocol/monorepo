@@ -12,6 +12,7 @@ import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
 import Navbar from '@ui/components/Navbar';
+import { Toaster as ToastProvider } from '@ui/components/ui/toaster';
 import { TooltipProvider } from '@ui/components/ui/tooltip';
 import { wagmiAdapter, initializeWeb3 } from '@ui/config/web3';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
@@ -247,6 +248,7 @@ export default function RootLayout({
                         </div>
                       </div>
                     </footer>
+                    <ToastProvider />
                     <Toaster
                       toastOptions={{
                         error: {
