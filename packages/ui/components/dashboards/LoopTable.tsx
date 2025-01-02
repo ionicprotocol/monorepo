@@ -161,7 +161,7 @@ function LoopTable({
   return (
     <>
       <CommonTable
-        data={data ?? []}
+        data={data}
         columns={columns}
         isLoading={isLoading}
       />
