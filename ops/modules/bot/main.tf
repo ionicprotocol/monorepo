@@ -14,8 +14,8 @@ resource "aws_ecs_task_definition" "liquidator_bot_ecs_task" {
   network_mode            = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "2048"
-  memory = "4096"
+  cpu    = var.cpu
+  memory = var.memory
 
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
