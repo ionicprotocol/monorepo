@@ -159,7 +159,7 @@ task("optimized-vault:deploy")
           type: "tuple[]", // Array of tuples
           components: [
             { name: "adapter", type: "address" }, // Address field
-            { name: "allocation", type: "uint256" } // Uint256 field
+            { name: "allocation", type: "uint64" } // Uint256 field
           ]
         },
         { name: "adaptersCount_", type: "uint8" },
