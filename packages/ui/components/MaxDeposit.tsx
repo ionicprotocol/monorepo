@@ -166,14 +166,27 @@ function MaxDeposit({
 
     try {
       const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
-      const newAmount = (Number(maxValue) * (percentage / 100)).toString();
+      const calculatedAmount = Number(maxValue) * (percentage / 100);
 
-      if (isNaN(Number(newAmount))) {
+      // Format to the appropriate number of decimal places
+      let formattedAmount: string;
+      if (calculatedAmount < 0.00001) {
+        // For very small numbers, use more decimal places to maintain precision
+        formattedAmount = calculatedAmount.toFixed(bal.decimals);
+      } else {
+        // For normal numbers, use fewer decimal places
+        formattedAmount = calculatedAmount.toFixed(5);
+      }
+
+      // Remove trailing zeros after decimal point
+      formattedAmount = formattedAmount.replace(/\.?0+$/, '');
+
+      if (isNaN(Number(formattedAmount))) {
         console.error('Invalid amount calculated');
         return;
       }
 
-      handleInput(newAmount);
+      handleInput(formattedAmount);
     } catch (error) {
       console.error('Error in utilization calculation:', error);
     }

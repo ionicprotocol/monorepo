@@ -9,9 +9,10 @@ import type { BigNumber } from 'ethers';
 
 interface MorphoProtocolProps {
   asset: 'USDC' | 'WETH';
+  isLegacy?: boolean;
 }
 
-export const useMorphoProtocol = ({ asset }: MorphoProtocolProps) => {
+export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
   const { address, currentChain, walletClient } = useMultiIonic();
   const [maxWithdraw, setMaxWithdraw] = useState<bigint>(BigInt(0));
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +34,9 @@ export const useMorphoProtocol = ({ asset }: MorphoProtocolProps) => {
     try {
       setIsLoading(true);
       const client = getClient();
-      const vaultAddress = morphoBaseAddresses.vaults[asset];
+      const vaultAddress = isLegacy
+        ? morphoBaseAddresses.legacyVaults[asset]
+        : morphoBaseAddresses.vaults[asset];
 
       const max = await client.readContract({
         address: vaultAddress,
@@ -63,7 +66,9 @@ export const useMorphoProtocol = ({ asset }: MorphoProtocolProps) => {
 
       try {
         const client = getClient();
-        const vaultAddress = morphoBaseAddresses.vaults[asset];
+        const vaultAddress = isLegacy
+          ? morphoBaseAddresses.legacyVaults[asset]
+          : morphoBaseAddresses.vaults[asset];
         const tokenAddress = morphoBaseAddresses.tokens[asset];
 
         const allowance = await client.readContract({
@@ -110,14 +115,18 @@ export const useMorphoProtocol = ({ asset }: MorphoProtocolProps) => {
 
   const withdraw = useCallback(
     async (amount: BigNumber) => {
+      console.log('amount', amount);
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
 
       try {
         const client = getClient();
-        const vaultAddress = morphoBaseAddresses.vaults[asset];
+        const vaultAddress = isLegacy
+          ? morphoBaseAddresses.legacyVaults[asset]
+          : morphoBaseAddresses.vaults[asset];
         const amountBigInt = amount.toBigInt();
+        console.log('amountBigInt', amountBigInt);
 
         if (amountBigInt > maxWithdraw) {
           throw new Error('Withdrawal amount exceeds available balance');
