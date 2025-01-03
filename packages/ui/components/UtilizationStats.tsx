@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 
 import millify from 'millify';
 
-import MemoizedDonutChart from './dialogs/manage/DonutChart';
+import MemoizedDonutChart from './dialogs/ManageMarket/DonutChart';
 
 interface UtilizationStatsProps {
   label: string;

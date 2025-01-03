@@ -23,6 +23,27 @@ export const morphoVaults: Omit<MorphoRow, 'apy' | 'rewards' | 'tvl'>[] = [
   }
 ];
 
+export const legacyVaults: Omit<MorphoRow, 'apy' | 'rewards' | 'tvl'>[] = [
+  {
+    asset: ['WETH'],
+    protocol: 'Morpho',
+    strategy: 'Supply',
+    network: 'base',
+    img: '/img/symbols/32/color/morpho.png',
+    link: 'https://app.morpho.org/vault?vault=0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707&network=base',
+    live: true
+  },
+  {
+    asset: ['USDC'],
+    protocol: 'Morpho',
+    strategy: 'Supply',
+    network: 'base',
+    img: '/img/symbols/32/color/morpho.png',
+    link: 'https://app.morpho.org/vault?vault=0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21&network=base',
+    live: true
+  }
+];
+
 export const morphoBaseAddresses = {
   tokens: {
     WETH: '0x4200000000000000000000000000000000000006',
@@ -31,6 +52,10 @@ export const morphoBaseAddresses = {
   vaults: {
     WETH: '0x5A32099837D89E3a794a44fb131CBbAD41f87a8C',
     USDC: '0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e'
+  },
+  legacyVaults: {
+    WETH: '0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707',
+    USDC: '0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21'
   }
 } as const;
 
