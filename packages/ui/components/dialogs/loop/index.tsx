@@ -17,7 +17,12 @@ import {
   parseUnits,
   zeroAddress
 } from 'viem';
-import { useBalance, useChainId } from 'wagmi';
+import {
+  useBalance,
+  useChainId,
+  usePublicClient,
+  useWalletClient
+} from 'wagmi';
 
 import {
   Dialog,
@@ -48,7 +53,6 @@ import TransactionStepsHandler, {
 } from '../manage/TransactionStepsHandler';
 
 import {
-  cErc20Abi,
   icErc20Abi,
   iLeveredPositionFactoryAbi,
   leveredPositionAbi
@@ -220,6 +224,7 @@ export default function Loop({
   ]);
   const { currentSdk, address } = useMultiIonic();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
     useTransactionSteps();
   const { refetch: refetchBalance } = useBalance({
@@ -541,6 +546,13 @@ export default function Loop({
             0n
           ]
         });
+
+      console.log(
+        'DSDSHFKJDKFJKD',
+        upOrDown === 'up'
+          ? initialBorrowAmount.toString()
+          : initialSupplyAmount.toString()
+      );
 
       const quote = await getQuote({
         fromChain: chainId,
