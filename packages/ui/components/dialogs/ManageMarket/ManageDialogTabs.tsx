@@ -7,6 +7,7 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { type Address, formatEther, formatUnits } from 'viem';
 
+import AnimateHeight from '@ui/components/AnimateHeight';
 import { DialogContent, DialogHeader } from '@ui/components/ui/dialog';
 import {
   Tabs,
@@ -20,11 +21,10 @@ import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForP
 import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import BorrowTab from './BorrowTab';
-import RepayTab from './RepayTab';
-import SupplyTab from './SupplyTab';
-import WithdrawTab from './WithdrawTab';
-import AnimateHeight from '../../AnimateHeight';
+import BorrowTab from './tabs/BorrowTab';
+import RepayTab from './tabs/RepayTab';
+import SupplyTab from './tabs/SupplyTab';
+import WithdrawTab from './tabs/WithdrawTab';
 
 import type { ActiveTab } from '.';
 

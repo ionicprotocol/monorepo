@@ -23,7 +23,7 @@ import CommonTable from '../../components/CommonTable';
 import ActionButton from '../ActionButton';
 import { CopyButton } from '../CopyButton';
 import Loop from '../dialogs/loop';
-import Swap from '../dialogs/manage/Swap';
+import Swap from '../dialogs/ManageMarket/Swap';
 
 import type {
   EnhancedColumnDef,

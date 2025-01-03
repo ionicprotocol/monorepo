@@ -129,23 +129,27 @@ const getMorphoRewards = (allocation: AllocationData[]): number => {
   return reward?.supplyApr || 0;
 };
 
-const fetchMorphoData = async (): Promise<MorphoResponse> => {
+const fetchMorphoData = async (isLegacy: boolean): Promise<MorphoResponse> => {
   return request(MORPHO_API_URL, VAULT_QUERY, {
-    wethAddress: morphoBaseAddresses.vaults.WETH,
-    usdcAddress: morphoBaseAddresses.vaults.USDC
+    wethAddress: isLegacy
+      ? morphoBaseAddresses.legacyVaults.WETH
+      : morphoBaseAddresses.vaults.WETH,
+    usdcAddress: isLegacy
+      ? morphoBaseAddresses.legacyVaults.USDC
+      : morphoBaseAddresses.vaults.USDC
   });
 };
 
-export const useMorphoData = () => {
+export const useMorphoData = ({ isLegacy }: { isLegacy: boolean }) => {
   const { data: vaultData, isLoading } = useQuery({
-    queryKey: ['morphoVaults'],
-    queryFn: fetchMorphoData,
+    queryKey: ['morphoVaults', isLegacy],
+    queryFn: () => fetchMorphoData(isLegacy),
     staleTime: 30000,
     refetchInterval: 60000
   });
 
   const rows = morphoVaults.map((baseVault): MorphoRow => {
-    const asset = baseVault.asset[0];
+    const asset = baseVault.asset[0] as 'WETH' | 'USDC';
     let vaultInfo;
 
     if (asset === 'WETH' && vaultData?.wethVault) {
@@ -160,8 +164,13 @@ export const useMorphoData = () => {
         vaultInfo.state.rewards.find((r) => r.asset.name === 'ION')
           ?.supplyApr || 0;
 
+      const vaultAddress = isLegacy
+        ? morphoBaseAddresses.legacyVaults[asset]
+        : morphoBaseAddresses.vaults[asset];
+
       return {
         ...baseVault,
+        link: `https://app.morpho.org/vault?vault=${vaultAddress}&network=base`,
         apy: (vaultInfo.state.netApy || 0) * 100,
         rewards: {
           morpho: morphoRewards * 100,

@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { type Address, parseUnits } from 'viem';
 import { getContract } from 'viem';
 
-import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,
