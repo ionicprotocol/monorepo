@@ -141,7 +141,7 @@ task("optimized-vault:deploy")
         adapter: adapter.adapter,
         allocation: adapter.allocation
       })), // Adapters array
-      tenAdapters.length, // Count of adapters
+      1, // Count of adapters
       fees, // Fees
       deployer as Address, // Fee recipient
       0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn, // Deposit limit
