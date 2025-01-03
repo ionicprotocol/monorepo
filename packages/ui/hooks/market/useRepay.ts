@@ -1,15 +1,9 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
 import { toast } from 'react-hot-toast';
-import {
-  type Address,
-  formatUnits,
-  parseUnits,
-  getContract,
-  maxUint256
-} from 'viem';
+import { type Address, parseUnits, getContract, maxUint256 } from 'viem';
 
-import { useTransactionSteps } from '@ui/components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,
@@ -24,21 +18,15 @@ import { useMaxRepayAmount } from '../useMaxRepayAmount';
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseRepayProps {
-  maxAmount: bigint;
   selectedMarketData: MarketData;
   chainId: number;
 }
 
-export const useRepay = ({
-  maxAmount,
-  selectedMarketData,
-  chainId
-}: UseRepayProps) => {
+export const useRepay = ({ selectedMarketData, chainId }: UseRepayProps) => {
   const { address, currentSdk } = useMultiIonic();
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
   const { transactionSteps } = useTransactionSteps();
 
@@ -77,22 +65,6 @@ export const useRepay = ({
     }
   }, [amount, selectedMarketData.underlyingDecimals]);
 
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
-      );
-      const calculatedAmount = formatToFixedDecimals(
-        (newUtilizationPercentage / 100) * maxAmountNumber,
-        selectedMarketData.underlyingDecimals
-      );
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedMarketData.underlyingDecimals]
-  );
-
   const amountAsBInt = useMemo(() => {
     try {
       if (!amount || amount === '0') return 0n;
@@ -107,15 +79,6 @@ export const useRepay = ({
       return 0n;
     }
   }, [amount, selectedMarketData.underlyingDecimals]);
-
-  useEffect(() => {
-    if (amount === '0' || !amount || maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
-    }
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
 
   const currentBorrowAmountAsFloat = useMemo<number>(
     () => parseFloat(selectedMarketData.borrowBalance.toString()),
@@ -308,7 +271,6 @@ export const useRepay = ({
       setTxHash(undefined);
       refetchMaxRepay();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(`Repaid ${amount} ${selectedMarketData.underlyingSymbol}`);
     }
   });
@@ -321,8 +283,6 @@ export const useRepay = ({
     currentBorrowAmountAsFloat,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   };
 };

@@ -16,8 +16,8 @@ import type { LoopRowData } from '@ui/components/dashboards/LoopTable';
 import LoopTable from '@ui/components/dashboards/LoopTable';
 import type { SupplyRowData } from '@ui/components/dashboards/SupplyTable';
 import SupplyTable from '@ui/components/dashboards/SupplyTable';
-import ManageDialog from '@ui/components/dialogs/manage';
-import type { ActiveTab } from '@ui/components/dialogs/manage';
+import ManageDialog from '@ui/components/dialogs/ManageMarket';
+import type { ActiveTab } from '@ui/components/dialogs/ManageMarket';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -25,11 +25,11 @@ import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageR
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -118,9 +118,7 @@ export default function Dashboard() {
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
-  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
-    chain.toString()
-  );
+  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(chain);
 
   const {
     componentRef: rewardRef,
@@ -164,9 +162,7 @@ export default function Dashboard() {
       asset: asset.underlyingSymbol,
       logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
       amount: {
-        tokens: Number.parseFloat(
-          formatUnits(asset.borrowBalance, asset.underlyingDecimals)
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        tokens: formatUnits(asset.borrowBalance, asset.underlyingDecimals),
         usd: asset.borrowBalanceFiat
       },
       apr: {
@@ -216,9 +212,7 @@ export default function Dashboard() {
       asset: asset.underlyingSymbol,
       logo: `/img/symbols/32/color/${asset.underlyingSymbol.toLowerCase()}.png`,
       amount: {
-        tokens: Number.parseFloat(
-          formatUnits(asset.supplyBalance, asset.underlyingDecimals)
-        ).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+        tokens: formatUnits(asset.supplyBalance, asset.underlyingDecimals),
         usd: asset.supplyBalanceFiat
       },
       apr: {
@@ -235,9 +229,8 @@ export default function Dashboard() {
     };
   });
 
-  const loopTableData: LoopRowData[] = (positions?.openPositions ?? [])
-    ?.filter(Boolean)
-    .map((position, i) => {
+  const loopTableData = positions?.openPositions
+    ?.map((position, i) => {
       if (
         !position ||
         !position.address ||
@@ -276,9 +269,7 @@ export default function Dashboard() {
                   currentPositionInfo.positionSupplyAmount,
                   Number(position.collateral.underlyingDecimals)
                 )
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              }),
+              ),
               usd:
                 Number(
                   formatUnits(
@@ -299,9 +290,7 @@ export default function Dashboard() {
                   currentPositionInfo.debtAmount,
                   position.borrowable.underlyingDecimals
                 )
-              ).toLocaleString('en-US', {
-                maximumFractionDigits: 2
-              }),
+              ),
               usd:
                 Number(
                   formatUnits(
@@ -317,7 +306,7 @@ export default function Dashboard() {
         loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
       };
     })
-    .filter((data): data is LoopRowData => !!data);
+    .filter((position) => !!position);
 
   return (
     <>
@@ -369,7 +358,6 @@ export default function Dashboard() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
-            chain={+chain}
           />
         </div>
 
@@ -379,7 +367,7 @@ export default function Dashboard() {
           </div>
 
           <LoopTable
-            data={loopTableData}
+            data={loopTableData as LoopRowData[]}
             isLoading={
               isLoadingPositions ||
               isLoadingPositionsInfo ||

@@ -62,7 +62,7 @@ const config: HardhatUserConfig = {
       accounts
     },
     base: {
-      url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base.meowrpc.com",
+      url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base-rpc.publicnode.com",
       accounts,
       verify: {
         etherscan: {
@@ -70,11 +70,6 @@ const config: HardhatUserConfig = {
           apiKey: process.env.ETHERSCAN_API_KEY_BASE
         }
       }
-    },
-    virtual_base: {
-      url: process.env.OVERRIDE_RPC_URL_VIRTUAL_BASE,
-      chainId: 8453,
-      accounts
     },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",

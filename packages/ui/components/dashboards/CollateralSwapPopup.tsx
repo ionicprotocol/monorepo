@@ -30,10 +30,10 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/components/dialogs/manage/Slider';
+import SliderComponent from '@ui/components/dialogs/ManageMarket/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '@ui/components/dialogs/manage/TransactionStepsHandler';
+} from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants/index';
 import { donutoptions, getDonutData } from '@ui/constants/market-details-chart';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -109,14 +109,9 @@ export default function CollateralSwapPopup({
   swappedToAssets,
   comptroller
 }: IProp) {
-  const [utilization, setUtilization] = useState<number>(0);
   const [conversionRate, setConversionRate] = useState<string>('-');
   const [swapFromAmount, setSwapFromAmount] = useState<string>('');
   const [effectiveSlippage, setEffectiveSlippage] = useState<number>(0.01); // Default to 1%
-  const [maxTokens, setMaxTokens] = useState<IBal>({
-    value: BigInt(0),
-    decimals: swappedFromAsset.underlyingDecimals
-  });
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
@@ -233,16 +228,6 @@ export default function CollateralSwapPopup({
       );
     }
   }, [lifiQuote]);
-
-  useEffect(() => {
-    if (swapFromAmount) {
-      const percent =
-        (+swapFromAmount /
-          Number(formatUnits(maxTokens.value, maxTokens.decimals))) *
-        100;
-      setUtilization(Number(percent.toFixed(0)));
-    }
-  }, [maxTokens, swapFromAmount]);
 
   const { writeContractAsync, isPending } = useWriteContract();
   const { addStepsForAction, transactionSteps, upsertTransactionStep } =
@@ -405,9 +390,9 @@ export default function CollateralSwapPopup({
               token={swappedFromAsset.cToken}
               handleInput={(val?: string) => setSwapFromAmount(val as string)}
               chain={+chain}
-              setMaxTokenForUtilization={setMaxTokens}
               footerText={'$' + (lifiQuote?.estimate?.fromAmountUSD ?? '0')}
               decimals={swappedFromAsset.underlyingDecimals}
+              showUtilizationSlider
             />
 
             <SwapTo
@@ -420,7 +405,7 @@ export default function CollateralSwapPopup({
               tokenName={swappedToTokenQuery}
               token={swappedToAsset?.cToken}
               // handleInput={(val?: string) => setSwapToToken(val as string)}
-              tokenSelector={true}
+              tokenSelector
               tokenArr={
                 swappedToAssets &&
                 swappedToAssets
@@ -433,30 +418,6 @@ export default function CollateralSwapPopup({
               }
               footerText={'$' + (lifiQuote?.estimate?.toAmountUSD ?? '0')}
             />
-            <div className="my-6 w-full">
-              <SliderComponent
-                currentUtilizationPercentage={Number(utilization.toFixed(0))}
-                handleUtilization={(val?: number) => {
-                  if (!val && !isConnected) return;
-                  const percentval =
-                    (Number(val) / 100) *
-                    Number(
-                      maxTokens.value
-                        ? formatUnits(
-                            BigInt(maxTokens.value),
-                            maxTokens.decimals
-                          )
-                        : swapFromAmount
-                    );
-                  setSwapFromAmount(
-                    percentval.toLocaleString('en-US', {
-                      maximumFractionDigits: 3
-                    })
-                  );
-                  setUtilization(val ?? 0);
-                }}
-              />
-            </div>
           </div>
           <div className="h-[2px] w-full mx-auto bg-white/10 my-2.5" />
           <div className="text-xs flex items-center justify-between w-full">

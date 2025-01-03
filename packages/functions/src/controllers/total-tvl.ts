@@ -6,6 +6,7 @@ import axios from 'axios'; // Assuming axios is already installed for API reques
 import { Handler } from '@netlify/functions';
 
 // Function to get ETH to USD conversion rate from Coingecko API
+export const HEARTBEAT_API_URL = environment.uptimeTotalTvlApi;
 const getEthToUsdRate = async (): Promise<number> => {
   try {
     const response = await axios.get(
@@ -60,6 +61,7 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
     };
 
     // Insert the total TVL row into the database
+    await axios.get(HEARTBEAT_API_URL);
     const { error } = await supabase
       .from(environment.supabaseAssettotalTvlTableName) // New table name for total TVL
       .insert([totalTvlRow]);

@@ -7,6 +7,7 @@ import {
   pools,
   shouldGetFeatured
 } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsForAssets } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
@@ -18,9 +19,17 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
 
+import { useTokenBalances } from './useTokenBalances';
 import { useMerklData } from '../useMerklData';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+
+type TokenBalance = {
+  amount: number;
+  formatted: string;
+  amountUSD: number;
+  formattedUSD: string;
+};
 
 export type MarketRowData = MarketData & {
   asset: string;
@@ -52,8 +61,7 @@ export type MarketRowData = MarketData & {
   isBorrowDisabled: boolean;
   underlyingSymbol: string;
   nativeAssetYield: number | undefined;
-  supplyAPRTotalz: number;
-  borrowAPRTotalz: number;
+  tokenBalance: TokenBalance;
 };
 
 export const useMarketData = (
@@ -61,6 +69,7 @@ export const useMarketData = (
   chain: number | string,
   selectedSymbol?: string | undefined
 ) => {
+  const { address } = useMultiIonic();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
     +chain
@@ -97,6 +106,15 @@ export const useMarketData = (
   const { data: rewards, isLoading: isLoadingRewards } = useRewards({
     chainId: +chain,
     poolId: selectedPool
+  });
+
+  const { balanceMap } = useTokenBalances({
+    assets: assets?.map((asset) => ({
+      underlyingToken: asset.underlyingToken,
+      underlyingDecimals: asset.underlyingDecimals
+    })),
+    chainId: chain,
+    userAddress: address
   });
 
   const formatNumber = (value: bigint | number, decimals: number): number => {
@@ -234,7 +252,13 @@ export const useMarketData = (
             ? assetBorrowCaps.totalBorrowCap <= 1
             : false,
           supplyAPRTotal,
-          borrowAPRTotal
+          borrowAPRTotal,
+          tokenBalance: balanceMap[asset.underlyingToken.toLowerCase()] ?? {
+            amount: 0,
+            formatted: '0.00',
+            amountUSD: 0,
+            formattedUSD: '$0.00'
+          }
         };
       })
       .filter(Boolean) as MarketRowData[];
@@ -251,7 +275,8 @@ export const useMarketData = (
     loopMarkets,
     isLoadingFraxtalAprs,
     poolData?.comptroller,
-    borrowCapsData
+    borrowCapsData,
+    balanceMap
   ]);
 
   const selectedMarketData = useMemo(() => {

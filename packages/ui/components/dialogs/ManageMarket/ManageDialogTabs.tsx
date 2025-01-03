@@ -3,9 +3,12 @@ import { useMemo } from 'react';
 
 import Image from 'next/image';
 
+import { DialogTitle } from '@radix-ui/react-dialog';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { type Address, formatEther, formatUnits } from 'viem';
 
-import { DialogContent } from '@ui/components/ui/dialog';
+import AnimateHeight from '@ui/components/AnimateHeight';
+import { DialogContent, DialogHeader } from '@ui/components/ui/dialog';
 import {
   Tabs,
   TabsList,
@@ -15,14 +18,13 @@ import {
 import { useManageDialogContext } from '@ui/context/ManageDialogContext';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/ionic/useSupplyCapsDataForPool';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import BorrowTab from './BorrowTab';
-import RepayTab from './RepayTab';
-import SupplyTab from './SupplyTab';
-import WithdrawTab from './WithdrawTab';
-import AnimateHeight from '../../AnimateHeight';
+import BorrowTab from './tabs/BorrowTab';
+import RepayTab from './tabs/RepayTab';
+import SupplyTab from './tabs/SupplyTab';
+import WithdrawTab from './tabs/WithdrawTab';
 
 import type { ActiveTab } from '.';
 
@@ -43,7 +45,7 @@ const ManageDialogTabs = ({
   setSwapWidgetOpen: (open: boolean) => void;
   chainId: number;
 }) => {
-  const { data: usdPrice } = useUsdPrice(chainId.toString());
+  const { data: usdPrice } = useUsdPrice(chainId);
 
   // Memoize calculations
   const pricePerSingleAsset = useMemo(
@@ -196,7 +198,10 @@ const ManageDialogTabs = ({
       className="bg-grayUnselect"
       fullWidth
     >
-      <div className="flex w-20 mx-auto relative text-center">
+      <DialogHeader className="flex w-20 mx-auto relative text-center">
+        <VisuallyHidden.Root>
+          <DialogTitle />
+        </VisuallyHidden.Root>
         <Image
           alt="modlogo"
           className="mx-auto"
@@ -204,7 +209,7 @@ const ManageDialogTabs = ({
           src={`/img/symbols/32/color/${selectedMarketData?.underlyingSymbol.toLowerCase()}.png`}
           width={32}
         />
-      </div>
+      </DialogHeader>
       <AnimateHeight>
         <TabsComponent />
       </AnimateHeight>

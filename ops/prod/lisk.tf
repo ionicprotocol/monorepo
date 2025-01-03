@@ -9,6 +9,8 @@ module "lisk_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
+  cpu    = "1024"  # Custom CPU value
+  memory = "2048"  # Custom memory value
   task_definition_family     = var.task_definition_family_lisk
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag

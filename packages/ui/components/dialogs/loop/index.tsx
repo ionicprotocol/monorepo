@@ -12,7 +12,7 @@ import {
   parseEther,
   parseUnits
 } from 'viem';
-import { useBalance, useChainId, usePublicClient } from 'wagmi';
+import { useBalance, useChainId } from 'wagmi';
 
 import {
   Dialog,
@@ -28,8 +28,8 @@ import { useGetPositionBorrowApr } from '@ui/hooks/leverage/useGetPositionBorrow
 import { usePositionInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
@@ -40,7 +40,7 @@ import SupplyActions from './SupplyActions';
 import ResultHandler from '../../ResultHandler';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '../manage/TransactionStepsHandler';
+} from '../ManageMarket/TransactionStepsHandler';
 
 import type { OpenPosition } from '@ionicprotocol/types';
 
@@ -67,7 +67,6 @@ export default function Loop({
 }: LoopProps) {
   const chainId = useChainId();
   const [amount, setAmount] = useState<string>();
-  const publicClient = usePublicClient();
   const amountAsBInt = useMemo<bigint>(
     () => parseUnits(amount ?? '0', selectedCollateralAsset.underlyingDecimals),
     [amount, selectedCollateralAsset]

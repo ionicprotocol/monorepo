@@ -18,6 +18,8 @@ const environment = {
   uptimeTotalApyApi: process.env.UPTIME_TOTAL_APY_API ?? '',
   uptimeTotalHistoryApyApi: process.env.UPTIME_TOTAL_HISTORY_APY_API ?? '',
   uptimeTvlApi: process.env.UPTIME_TVL_API ?? '',
+  uptimeTotalTvlApi: process.env.UPTIME_TOTAL_TVL_API ?? '',
+  uptimeTvlTotalPoolApi: process.env.UPTIME_TVL_TOTAL_POOL_API ?? '',
 };
 
 export default environment;

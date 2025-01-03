@@ -2,9 +2,10 @@ import { useEffect, useMemo } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { formatUnits } from 'viem';
 import { mode } from 'viem/chains';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
 import { Button } from '@ui/components/ui/button';
 import { Switch } from '@ui/components/ui/switch';
 import {
@@ -12,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
+import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
   TransactionType,
   useManageDialogContext
@@ -21,10 +23,7 @@ import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { useSupply } from '@ui/hooks/market/useSupply';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
-import TransactionStepsHandler from './TransactionStepsHandler';
-import Amount from '../../Amount';
-import ResultHandler from '../../ResultHandler';
-import MemoizedUtilizationStats from '../../UtilizationStats';
+import TransactionStepsHandler from '../TransactionStepsHandler';
 
 interface SupplyTabProps {
   capAmount: number;
@@ -50,7 +49,8 @@ const SupplyTab = ({
     isLoadingUpdatedAssets,
     refetchUsedQueries,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
   const { data: maxAmount, isLoading: isLoadingMax } = useMaxSupplyAmount(
@@ -94,8 +94,6 @@ const SupplyTab = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
   } = useSupply({
     maxAmount: maxAmount?.bigNumber ?? 0n,
@@ -132,17 +130,16 @@ const SupplyTab = ({
         </Button>
       </div>
 
-      <Amount
+      <MaxDeposit
         amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
+        tokenName={selectedMarketData.underlyingSymbol}
         isLoading={isLoadingMax || isPolling}
-        max={formatUnits(
-          maxAmount?.bigNumber ?? 0n,
-          selectedMarketData.underlyingDecimals
-        )}
-        symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
+        token={selectedMarketData.underlyingToken}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Supply Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">
@@ -154,7 +151,7 @@ const SupplyTab = ({
                 <span>{updatedValues.supplyBalanceFrom}</span>
                 <span className="mx-1">→</span>
                 <ResultHandler
-                  isLoading={isLoadingUpdatedAssets || isPolling}
+                  isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                   height={16}
                   width={16}
                 >
@@ -169,7 +166,7 @@ const SupplyTab = ({
                 <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
                 <span className="mx-1">→</span>
                 <ResultHandler
-                  isLoading={isLoadingUpdatedAssets}
+                  isLoading={isSliding || isLoadingUpdatedAssets}
                   height={16}
                   width={16}
                 >
