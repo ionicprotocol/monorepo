@@ -252,7 +252,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
 
     if (strategyRewardsAccrued > 0) {
       // use the booster or token supply to calculate reward index denominator
-      uint256 supplyTokens = address(flywheelBooster) != address(0)
+      uint256 totalTokens = address(flywheelBooster) != address(0)
         ? flywheelBooster.boostedTotalSupply(strategy)
         : strategy.totalSupply();
 
@@ -264,8 +264,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
 
       uint224 deltaIndex;
 
-      if (supplyTokens != 0)
-        deltaIndex = ((strategyRewardsAccrued * (10**strategy.decimals())) / supplyTokens).safeCastTo224();
+      if (totalTokens != 0)
+        deltaIndex = ((strategyRewardsAccrued * (10**strategy.decimals())) / totalTokens).safeCastTo224();
 
       // accumulate rewards per token onto the index, multiplied by fixed-point factor
       rewardsState = RewardsState({
@@ -312,15 +312,23 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     return supplierAccrued;
   }
 
-  function rewardsAccrued(address user) public virtual returns (uint256) {
+  function rewardsAccrued(address user) public view virtual returns (uint256) {
     return _rewardsAccrued[user];
   }
 
-  function userIndex(ERC20 strategy, address user) public virtual returns (uint224) {
+  function userIndex(ERC20 strategy, address user) public view virtual returns (uint224) {
     return _userIndex[strategy][user];
   }
 
-  function strategyState(ERC20 strategy) public virtual returns (uint224 index, uint32 lastUpdatedTimestamp) {
+  function strategyState(ERC20 strategy) public view virtual returns (uint224 index, uint32 lastUpdatedTimestamp) {
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
+  }
+
+  function getRewardsPerSecondPerToken(ERC20 strategy) external view returns (uint256) {
+    uint256 totalTokens = address(flywheelBooster) != address(0)
+      ? flywheelBooster.boostedTotalSupply(strategy)
+      : strategy.totalSupply();
+    if (totalTokens == 0) return 0;
+    return (flywheelRewards.getRewardsPerSecond(strategy) * (10 ** strategy.decimals())) / totalTokens;
   }
 }

@@ -1,5 +1,5 @@
-// import "./adapters";
-// import "./vault";
-// import "./rewards";
-// import "./registry";
-// import "./deploy";
+import "./adapters";
+import "./vault";
+import "./rewards";
+import "./registry";
+import "./deploy";

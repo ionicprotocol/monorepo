@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.10;
 
-import { ICErc20 } from "../../../compound/CTokenInterfaces.sol";
-import "./IIonicFlywheelBorrowBooster.sol";
+import {ERC20} from "solmate/tokens/ERC20.sol";
 
-contract IonicFlywheelBorrowBooster is IIonicFlywheelBorrowBooster {
-  string public constant BOOSTER_TYPE = "FlywheelBorrowBooster";
+import { ICErc20 } from "../../../compound/CTokenInterfaces.sol";
+import "./IFlywheelBooster.sol";
+
+contract IonicFlywheelBorrowBooster is IFlywheelBooster {
+  string public constant BOOSTER_TYPE = "IonicFlywheelBorrowBooster";
 
   /**
       @notice calculate the boosted supply of a strategy.
       @param strategy the strategy to calculate boosted supply of
       @return the boosted supply
      */
-  function boostedTotalSupply(ICErc20 strategy) external view returns (uint256) {
-    return strategy.totalBorrows();
+  function boostedTotalSupply(ERC20 strategy) external view returns (uint256) {
+    ICErc20 asMarket = ICErc20(address(strategy));
+    return asMarket.totalBorrows();
   }
 
   /**
@@ -22,7 +25,8 @@ contract IonicFlywheelBorrowBooster is IIonicFlywheelBorrowBooster {
       @param user the user to calculate boosted balance of
       @return the boosted balance
      */
-  function boostedBalanceOf(ICErc20 strategy, address user) external view returns (uint256) {
-    return strategy.borrowBalanceCurrent(user);
+  function boostedBalanceOf(ERC20 strategy, address user) external view returns (uint256) {
+    ICErc20 asMarket = ICErc20(address(strategy));
+    return asMarket.borrowBalanceCurrent(user);
   }
 }

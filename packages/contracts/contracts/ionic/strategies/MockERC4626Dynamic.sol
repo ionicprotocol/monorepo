@@ -29,7 +29,7 @@ contract MockERC4626Dynamic is ERC4626 {
   constructor(ERC20 _asset, IonicFlywheelCore _flywheel)
     ERC4626(
       _asset,
-      string(abi.encodePacked("Midas ", _asset.name(), " Vault")),
+      string(abi.encodePacked("Ionic ", _asset.name(), " Vault")),
       string(abi.encodePacked("mv", _asset.symbol()))
     )
   {
