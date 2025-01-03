@@ -92,7 +92,7 @@ task("optimized-vault:deploy")
       adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation + remainder;
     }
     type Adapter = { 
-      adapter: Address;
+      adapter: `0x${string}`;
       allocation: bigint 
     };
     const tenAdapters: Adapter[] = adapters.concat(
@@ -127,36 +127,56 @@ task("optimized-vault:deploy")
     });
 
     const values: [
-      string,
-      Adapter[], // Matches "tuple(address adapter, uint64 allocation)[10]"
-      number, // Matches "uint8"
-      Fee, // Matches "tuple(uint64, ...)"
-      string, // Matches "address"
-      bigint, // Matches "uint256"
-      string, // Matches "address"
-      string  // Matches "address"
-    ] =  [
-      assetAddress as Address,
-      tenAdapters, // initial adapters
-      tenAdapters.length, // adapters count
-      fees,
-      deployer as Address, // fee recipient
-      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn, // deposit limit
-      registry.address as Address,
-      flywheelLogic.address as Address
+      `0x${string}`,                                // Matches "address"
+      { adapter: `0x${string}`, allocation: bigint }[], // Matches "tuple(address, uint256)[]"
+      number,                                      // Matches "uint8"
+      Fee,           // Matches "tuple(uint64, uint64, uint64, uint64)"
+      `0x${string}`,                               // Matches "address"
+      bigint,                                      // Matches "uint256"
+      `0x${string}`,                               // Matches "address"
+      `0x${string}`                                // Matches "address"
+    ] = [
+      assetAddress as `0x${string}`, // Asset address
+      tenAdapters.map(adapter => ({
+        adapter: adapter.adapter, 
+        allocation: adapter.allocation
+      })), // Adapters array
+      tenAdapters.length, // Count of adapters
+      fees, // Fees
+      deployer as `0x${string}`, // Fee recipient
+      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn, // Deposit limit
+      registry.address as `0x${string}`, // Registry address
+      flywheelLogic.address as `0x${string}` // Flywheel logic address
     ];
+    
     console.log('values generated', values);
 
     const initData = encodeAbiParameters(
       [
-        "address",
-        "tuple(address adapter, uint64 allocation)[10]",
-        "uint8",
-        "tuple(uint64 deposit, uint64 withdrawal, uint64 management, uint64 performance)",
-        "address",
-        "uint256",
-        "address",
-        "address"
+        { name: 'asset_', type: 'address' },
+        { 
+          name: 'adapters_', 
+          type: 'tuple[]', // Array of tuples
+          components: [
+            { name: 'adapter', type: 'address' }, // Address field
+            { name: 'allocation', type: 'uint256' } // Uint256 field
+          ]
+        },
+        { name: 'adaptersCount_', type: 'uint8' },
+        { 
+          name: 'fees_', 
+          type: 'tuple', 
+          components: [
+            { name: 'deposit', type: 'uint64' },
+            { name: 'withdrawal', type: 'uint64' },
+            { name: 'management', type: 'uint64' },
+            { name: 'performance', type: 'uint64' }
+          ]
+        },
+        { name: 'feeRecipient_', type: 'address' },
+        { name: 'depositLimit_', type: 'uint256' },
+        { name: 'registry_', type: 'address' },
+        { name: 'flywheelLogic_', type: 'address' }
       ],
       values
     );
@@ -164,7 +184,12 @@ task("optimized-vault:deploy")
     console.log(`initializing with values ${JSON.stringify(values)}`);
 
     const optimizedVault = await viem.getContractAt("OptimizedAPRVaultBase", optimizedVaultDep.address as Address);
-    await optimizedVault.write.initialize([vaultFirstExtDep.address, vaultSecondExtDep.address], initData);
+    await optimizedVault.write.initialize(
+      [
+        vaultFirstExtDep.address as `0x${string}`, 
+        vaultSecondExtDep.address as `0x${string}`
+      ],
+      initData);
     console.log(`initialized the vault at ${optimizedVault.address}`);
 
     await run("optimized-vault:add", {
