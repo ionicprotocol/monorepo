@@ -10,6 +10,7 @@ import { Exponential } from "./Exponential.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
+import { ComptrollerV3Storage } from "./ComptrollerStorage.sol";
 
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -34,7 +35,7 @@ contract CTokenFirstExtension is
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory) {
-    uint8 fnsCount = 25;
+    uint8 fnsCount = 27;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.transfer.selector;
     functionSelectors[--fnsCount] = this.transferFrom.selector;
@@ -61,6 +62,8 @@ contract CTokenFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountSnapshot.selector;
     functionSelectors[--fnsCount] = this.borrowBalanceCurrent.selector;
     functionSelectors[--fnsCount] = this.registerInSFS.selector;
+    functionSelectors[--fnsCount] = this._withdrawIonicFees.selector;
+    functionSelectors[--fnsCount] = this._withdrawAdminFees.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -711,5 +714,70 @@ contract CTokenFirstExtension is
     require(hasAdminRights() || msg.sender == address(comptroller), "!admin");
     SFSRegister sfsContract = SFSRegister(0x8680CEaBcb9b56913c519c069Add6Bc3494B7020);
     return sfsContract.register(0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2);
+  }
+
+  /**
+   * @notice Accrues interest and reduces Ionic fees by transferring to Ionic
+   * @param withdrawAmount Amount of fees to withdraw
+   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+   */
+  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
+    accrueInterest();
+
+    if (accrualBlockNumber != block.number) {
+      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_IONIC_FEES_FRESH_CHECK);
+    }
+
+    if (asCToken().getCash() < withdrawAmount) {
+      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_IONIC_FEES_CASH_NOT_AVAILABLE);
+    }
+
+    if (withdrawAmount > totalIonicFees) {
+      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_IONIC_FEES_VALIDATION);
+    }
+
+    /////////////////////////
+    // EFFECTS & INTERACTIONS
+    // (No safe failures beyond this point)
+
+    uint256 totalIonicFeesNew = totalIonicFees - withdrawAmount;
+    totalIonicFees = totalIonicFeesNew;
+
+    // selfTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
+    asCToken().selfTransferOut(address(ionicAdmin), withdrawAmount);
+
+    return uint256(Error.NO_ERROR);
+  }
+
+  /**
+   * @notice Accrues interest and reduces admin fees by transferring to admin
+   * @param withdrawAmount Amount of fees to withdraw
+   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
+   */
+  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
+    accrueInterest();
+
+    if (accrualBlockNumber != block.number) {
+      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_ADMIN_FEES_FRESH_CHECK);
+    }
+
+    // Fail gracefully if protocol has insufficient underlying cash
+    if (asCToken().getCash() < withdrawAmount) {
+      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_ADMIN_FEES_CASH_NOT_AVAILABLE);
+    }
+
+    if (withdrawAmount > totalAdminFees) {
+      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_ADMIN_FEES_VALIDATION);
+    }
+
+    /////////////////////////
+    // EFFECTS & INTERACTIONS
+    // (No safe failures beyond this point)
+    totalAdminFees = totalAdminFees - withdrawAmount;
+
+    // selfTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
+    asCToken().selfTransferOut(ComptrollerV3Storage(address(comptroller)).admin(), withdrawAmount);
+
+    return uint256(Error.NO_ERROR);
   }
 }

@@ -12,7 +12,7 @@
     "@ionicprotocol/sdk": "workspace:*",
     "@ionicprotocol/types": "workspace:*",
     "@layerzerolabs/lz-v2-utilities": "^2.3.40",
-    "@lifi/sdk": "^3.4.1",
+    "@lifi/sdk": "^3.4.3",
     "@lifi/widget": "^3.11.0",
     "@netlify/plugin-nextjs": "^5.8.1",
     "@radix-ui/react-checkbox": "^1.1.2",

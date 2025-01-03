@@ -60,7 +60,11 @@ export const configureLeveredPairs = async ({
     );
 
     // check if borrow market is already configured
-    if (configuredBorrowableMarkets.includes(borrow) && configuredCollateralMarkets.includes(collateral)) {
+    if (
+      whitelisted &&
+      configuredBorrowableMarkets.includes(borrow) &&
+      configuredCollateralMarkets.includes(collateral)
+    ) {
       console.log(
         `Borrow (market: ${borrow}, underlying: ${borrowToken}) is already configured for collateral (market: ${collateral}, underlying: ${collateralToken})`
       );

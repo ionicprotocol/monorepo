@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
 
-import { createConfig, getQuote, type QuoteRequest } from '@lifi/sdk';
+import { getQuote, type QuoteRequest } from '@lifi/sdk';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArcElement,
@@ -48,12 +48,6 @@ import MaxDeposit from '../MaxDeposit';
 import type { IBal } from './SwapTo';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk/src';
-
-createConfig({
-  integrator: 'ionic',
-  apiKey:
-    '7961bbe5-f199-4e58-9f08-006ede209dca.185a3a07-c467-4bac-ae68-182bff954c99'
-});
 
 interface IProp {
   params?: { tokenaddress: string };

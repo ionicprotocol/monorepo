@@ -18,25 +18,25 @@
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0x113573b6238972164F14093785f1F142F053936C"
+      "address": "0xD293538c9A02534009b1b9C65545499B2D742d32"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "CErc20Delegate": {
-      "address": "0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7"
+      "address": "0xC379536e159e8ea884011d4d83Ba0E2E6b06C12e"
     },
     "CErc20PluginDelegate": {
-      "address": "0xB828A7e95ae1097E3c3d0efB3c3544Ce6bcD77A1"
+      "address": "0xE7eed142421e21dc18d00d8c0b9487870021596A"
     },
     "CErc20PluginRewardsDelegate": {
       "address": "0xB4c0522F595eA2B407FE3e3D55B36291cC2b2Ced"
     },
     "CErc20RewardsDelegate": {
-      "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
+      "address": "0x04e0da52cB872541a5D74413815B0Eda7Aa7039B"
     },
     "CTokenFirstExtension": {
-      "address": "0xD83ba0673090ba85f190e320a1C280AC816ba3aD"
+      "address": "0x3165A22E023A1879Ed43FC6B604B35Ef609f1e1f"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x13fD2701C3017bCc375Ad14Dd8433c6d7a441794"
@@ -153,10 +153,10 @@
       "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x7a92a0599A450323e6456b0D9d4225B13C31A108"
+      "address": "0x163CD87d5A638a5811CD23ca85ddEBa9E0A72C08"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0x60519EABCC66A628a94764956eB02C059d405092"
+      "address": "0x7345985dc18EB0eC8B3B1543f3900114c18D930E"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
