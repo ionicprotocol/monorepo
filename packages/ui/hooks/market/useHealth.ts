@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { formatEther, maxUint256, parseEther, parseUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import type { ActiveTab } from '@ui/components/dialogs/manage';
-import { HFPStatus } from '@ui/components/dialogs/manage';
+import type { ActiveTab } from '@ui/components/dialogs/ManageMarket';
+import { HFPStatus } from '@ui/components/dialogs/ManageMarket';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 
 import {

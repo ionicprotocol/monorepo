@@ -14,15 +14,14 @@ import ActionButton from '../ActionButton';
 import { AssetIcons } from '../AssetIcons';
 import CommonTable from '../CommonTable';
 import { CopyButton } from '../CopyButton';
-import { MorphoDialog } from '../dialogs/MorphoVault';
+import { LegacyDialog } from '../dialogs/LegacyDialog';
 
 import type { EnhancedColumnDef } from '../CommonTable';
 
-export default function MorphoTable() {
-  const { rows, isLoading } = useMorphoData({
-    isLegacy: false
-  });
-  const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
+export default function LegacyTable() {
+  const { rows, isLoading } = useMorphoData({ isLegacy: true });
+  const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] =
+    useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<string[]>([]);
 
   const columns: EnhancedColumnDef<MorphoRow>[] = [
@@ -50,9 +49,9 @@ export default function MorphoTable() {
             ))}
             <CopyButton
               value={
-                morphoBaseAddresses.vaults[
+                morphoBaseAddresses.legacyVaults[
                   row.original
-                    .asset[0] as keyof typeof morphoBaseAddresses.vaults
+                    .asset[0] as keyof typeof morphoBaseAddresses.legacyVaults
                 ]
               }
               message={`${row.original.asset[0]} vault address copied to clipboard`}
@@ -135,9 +134,9 @@ export default function MorphoTable() {
       enableSorting: false,
       cell: ({ row }) => (
         <ActionButton
-          label="Manage"
+          label="Withdraw"
           action={() => {
-            setIsManageDialogOpen(true);
+            setIsWithdrawDialogOpen(true);
             setSelectedAsset(row.original.asset);
           }}
         />
@@ -152,10 +151,10 @@ export default function MorphoTable() {
         columns={columns}
         isLoading={isLoading}
       />
-      <MorphoDialog
+      <LegacyDialog
         asset={selectedAsset}
-        isOpen={isManageDialogOpen}
-        setIsOpen={setIsManageDialogOpen}
+        isOpen={isWithdrawDialogOpen}
+        setIsOpen={setIsWithdrawDialogOpen}
       />
     </>
   );

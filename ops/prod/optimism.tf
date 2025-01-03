@@ -23,6 +23,8 @@ module "optimism_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
+  cpu    = "256"  # Custom CPU value
+  memory = "512"  # Custom memory value
   task_definition_family     = var.task_definition_family_optimism
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag

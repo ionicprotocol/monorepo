@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
 import { Button } from '@ui/components/ui/button';
 import { Switch } from '@ui/components/ui/switch';
 import {
@@ -12,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
+import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
   TransactionType,
   useManageDialogContext
@@ -21,9 +23,7 @@ import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { useSupply } from '@ui/hooks/market/useSupply';
 import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 
-import TransactionStepsHandler from './TransactionStepsHandler';
-import ResultHandler from '../../ResultHandler';
-import MemoizedUtilizationStats from '../../UtilizationStats';
+import TransactionStepsHandler from '../TransactionStepsHandler';
 
 interface SupplyTabProps {
   capAmount: number;

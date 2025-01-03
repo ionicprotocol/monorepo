@@ -3,7 +3,9 @@ import { useEffect, useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
 import { Button } from '@ui/components/ui/button';
+import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
   HFPStatus,
   TransactionType,
@@ -13,10 +15,8 @@ import { useHealth } from '@ui/hooks/market/useHealth';
 import { useWithdraw } from '@ui/hooks/market/useWithdraw';
 import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 
-import StatusAlerts from './StatusAlerts';
-import TransactionStepsHandler from './TransactionStepsHandler';
-import ResultHandler from '../../ResultHandler';
-import MemoizedUtilizationStats from '../../UtilizationStats';
+import StatusAlerts from '../StatusAlerts';
+import TransactionStepsHandler from '../TransactionStepsHandler';
 
 interface WithdrawTabProps {
   capAmount: number;

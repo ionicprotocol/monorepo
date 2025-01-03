@@ -11,13 +11,13 @@ variable "task_definition_family" {
 variable "cpu" {
   description = "CPU units for the task definition"
   type        = string
-  default     = "4096"
+  default     = "2048"
 }
 
 variable "memory" {
   description = "Memory for the task definition"
   type        = string
-  default     = "8192"
+  default     = "4096"
 }
 
 variable "liquidator_container_name" {
