@@ -3,4 +3,3 @@ import "./vault";
 import "./rewards";
 import "./registry";
 import "./deploy";
-import "./test";

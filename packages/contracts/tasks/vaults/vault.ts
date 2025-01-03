@@ -91,9 +91,9 @@ task("optimized-vault:deploy")
     if (remainder > BigInt(0)) {
       adapters[adapters.length - 1].allocation = adapters[adapters.length - 1].allocation + remainder;
     }
-    type Adapter = { 
-      adapter: `0x${string}`;
-      allocation: bigint 
+    type Adapter = {
+      adapter: Address;
+      allocation: bigint;
     };
     const tenAdapters: Adapter[] = adapters.concat(
       new Array(10 - adapters.length).fill({
@@ -127,56 +127,56 @@ task("optimized-vault:deploy")
     });
 
     const values: [
-      `0x${string}`,                                // Matches "address"
-      { adapter: `0x${string}`, allocation: bigint }[], // Matches "tuple(address, uint256)[]"
-      number,                                      // Matches "uint8"
-      Fee,           // Matches "tuple(uint64, uint64, uint64, uint64)"
-      `0x${string}`,                               // Matches "address"
-      bigint,                                      // Matches "uint256"
-      `0x${string}`,                               // Matches "address"
-      `0x${string}`                                // Matches "address"
+      Address, // Matches "address"
+      { adapter: Address; allocation: bigint }[], // Matches "tuple(address, uint256)[]"
+      number, // Matches "uint8"
+      Fee, // Matches "tuple(uint64, uint64, uint64, uint64)"
+      Address, // Matches "address"
+      bigint, // Matches "uint256"
+      Address, // Matches "address"
+      Address // Matches "address"
     ] = [
-      assetAddress as `0x${string}`, // Asset address
-      tenAdapters.map(adapter => ({
-        adapter: adapter.adapter, 
+      assetAddress as Address, // Asset address
+      tenAdapters.map((adapter) => ({
+        adapter: adapter.adapter,
         allocation: adapter.allocation
       })), // Adapters array
       tenAdapters.length, // Count of adapters
       fees, // Fees
-      deployer as `0x${string}`, // Fee recipient
+      deployer as Address, // Fee recipient
       0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn, // Deposit limit
-      registry.address as `0x${string}`, // Registry address
-      flywheelLogic.address as `0x${string}` // Flywheel logic address
+      registry.address as Address, // Registry address
+      flywheelLogic.address as Address // Flywheel logic address
     ];
-    
-    console.log('values generated', values);
+
+    console.log("values generated", values);
 
     const initData = encodeAbiParameters(
       [
-        { name: 'asset_', type: 'address' },
-        { 
-          name: 'adapters_', 
-          type: 'tuple[]', // Array of tuples
+        { name: "asset_", type: "address" },
+        {
+          name: "adapters_",
+          type: "tuple[]", // Array of tuples
           components: [
-            { name: 'adapter', type: 'address' }, // Address field
-            { name: 'allocation', type: 'uint256' } // Uint256 field
+            { name: "adapter", type: "address" }, // Address field
+            { name: "allocation", type: "uint256" } // Uint256 field
           ]
         },
-        { name: 'adaptersCount_', type: 'uint8' },
-        { 
-          name: 'fees_', 
-          type: 'tuple', 
+        { name: "adaptersCount_", type: "uint8" },
+        {
+          name: "fees_",
+          type: "tuple",
           components: [
-            { name: 'deposit', type: 'uint64' },
-            { name: 'withdrawal', type: 'uint64' },
-            { name: 'management', type: 'uint64' },
-            { name: 'performance', type: 'uint64' }
+            { name: "deposit", type: "uint64" },
+            { name: "withdrawal", type: "uint64" },
+            { name: "management", type: "uint64" },
+            { name: "performance", type: "uint64" }
           ]
         },
-        { name: 'feeRecipient_', type: 'address' },
-        { name: 'depositLimit_', type: 'uint256' },
-        { name: 'registry_', type: 'address' },
-        { name: 'flywheelLogic_', type: 'address' }
+        { name: "feeRecipient_", type: "address" },
+        { name: "depositLimit_", type: "uint256" },
+        { name: "registry_", type: "address" },
+        { name: "flywheelLogic_", type: "address" }
       ],
       values
     );
@@ -184,12 +184,10 @@ task("optimized-vault:deploy")
     console.log(`initializing with values ${JSON.stringify(values)}`);
 
     const optimizedVault = await viem.getContractAt("OptimizedAPRVaultBase", optimizedVaultDep.address as Address);
-    await optimizedVault.write.initialize(
-      [
-        vaultFirstExtDep.address as `0x${string}`, 
-        vaultSecondExtDep.address as `0x${string}`
-      ],
-      initData);
+    await optimizedVault.write.initialize([
+      [vaultFirstExtDep.address, vaultSecondExtDep.address] as Address[],
+      initData
+    ]);
     console.log(`initialized the vault at ${optimizedVault.address}`);
 
     await run("optimized-vault:add", {
