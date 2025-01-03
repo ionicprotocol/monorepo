@@ -9,7 +9,7 @@ export const morphoVaults: Omit<MorphoRow, 'apy' | 'rewards' | 'tvl'>[] = [
     strategy: 'Supply',
     network: 'base',
     img: '/img/symbols/32/color/morpho.png',
-    link: 'https://app.morpho.org/vault?vault=0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707&network=base',
+    link: 'https://app.morpho.org/vault?vault=0x5A32099837D89E3a794a44fb131CBbAD41f87a8C&network=base',
     live: true
   },
   {
@@ -18,7 +18,7 @@ export const morphoVaults: Omit<MorphoRow, 'apy' | 'rewards' | 'tvl'>[] = [
     strategy: 'Supply',
     network: 'base',
     img: '/img/symbols/32/color/morpho.png',
-    link: 'https://app.morpho.org/vault?vault=0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21&network=base',
+    link: 'https://app.morpho.org/vault?vault=0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e&network=base',
     live: true
   }
 ];
@@ -29,8 +29,8 @@ export const morphoBaseAddresses = {
     USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
   },
   vaults: {
-    WETH: '0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707',
-    USDC: '0xCd347c1e7d600a9A3e403497562eDd0A7Bc3Ef21'
+    WETH: '0x5A32099837D89E3a794a44fb131CBbAD41f87a8C',
+    USDC: '0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e'
   }
 } as const;
 
@@ -57,11 +57,11 @@ export const vaultAbi = [
     stateMutability: 'nonpayable'
   },
   {
+    inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
     name: 'maxWithdraw',
-    type: 'function',
-    inputs: [{ name: 'owner', type: 'address' }],
-    outputs: [{ name: 'maxAssets', type: 'uint256' }],
-    stateMutability: 'view'
+    outputs: [{ internalType: 'uint256', name: 'assets', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function'
   },
   {
     name: 'balanceOf',

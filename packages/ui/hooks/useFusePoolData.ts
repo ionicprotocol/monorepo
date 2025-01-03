@@ -29,9 +29,9 @@ export const useFusePoolData = (
   });
 
   const usdPrice = useMemo(() => {
-    if (!assetPrices || !nativeTokenAddress) return undefined;
+    if (!assetPrices?.data || !nativeTokenAddress) return undefined;
 
-    const nativePriceEntry = assetPrices.find(
+    const nativePriceEntry = assetPrices.data.find(
       (price) => price.underlying_address.toLowerCase() === nativeTokenAddress
     );
 

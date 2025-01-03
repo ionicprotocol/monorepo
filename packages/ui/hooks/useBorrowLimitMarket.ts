@@ -1,12 +1,11 @@
-import { useMemo } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import { useUsdPrice } from './useUsdPrices';
 
 import type { Address } from 'viem';
 
@@ -17,14 +16,7 @@ export const useBorrowLimitMarket = (
   comptrollerAddress: Address,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
   const { data: borrowCaps } = useBorrowCap({
     chainId: poolChainId,
     comptroller: comptrollerAddress,

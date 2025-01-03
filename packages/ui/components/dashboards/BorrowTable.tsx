@@ -1,10 +1,8 @@
 import React from 'react';
 
-import Image from 'next/image';
-
 import { useChainId } from 'wagmi';
 
-import { NO_COLLATERAL_SWAP, pools } from '@ui/constants';
+import { pools } from '@ui/constants';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -13,12 +11,12 @@ import ActionButton from '../ActionButton';
 import APR from '../markets/Cells/APR';
 import TokenBalance from '../markets/Cells/TokenBalance';
 import FlyWheelRewards from '../markets/FlyWheelRewards';
+import TokenDisplay from '../TokenDisplay';
 
 import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import TokenDisplay from '../TokenDisplay';
 
 export interface BorrowRowData {
   asset: string;
@@ -46,7 +44,6 @@ interface BorrowTableProps {
   setIsManageDialogOpen: (value: boolean) => void;
   setActiveTab: (value: 'borrow' | 'repay') => void;
   setSelectedSymbol: (value: string) => void;
-  chain: number;
 }
 
 function BorrowTable({
@@ -54,12 +51,10 @@ function BorrowTable({
   isLoading,
   setIsManageDialogOpen,
   setActiveTab,
-  setSelectedSymbol,
-  chain
+  setSelectedSymbol
 }: BorrowTableProps) {
   const chainId = useChainId();
-  const { address, getSdk } = useMultiIonic();
-  const sdk = getSdk(chain);
+  const { address } = useMultiIonic();
 
   const columns: EnhancedColumnDef<BorrowRowData>[] = [
     {

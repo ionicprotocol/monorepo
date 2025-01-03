@@ -1,14 +1,13 @@
 'use client';
 
+import EarnTable from '@ui/components/earn/EarnTable';
+import MorphoTable from '@ui/components/earn/MorphoTable';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@ui/components/ui/card';
-
-import EarnTable from '@ui/components/earn/EarnTable';
-import MorphoTable from '@ui/components/earn/MorphoTable';
 
 export default function Earn() {
   return (
