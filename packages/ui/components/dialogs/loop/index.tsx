@@ -490,7 +490,13 @@ export default function Loop({
    * Handle leverage adjustment
    */
   const handleLeverageAdjustment = async (): Promise<void> => {
-    if (!publicClient || !walletClient || !currentSdk || !currentPosition) {
+    if (
+      !publicClient ||
+      !walletClient ||
+      !currentSdk ||
+      !currentPosition ||
+      !currentPositionLeverageRatio
+    ) {
       return;
     }
     const currentTransactionStep = 0;
@@ -503,6 +509,11 @@ export default function Loop({
         success: false
       }
     ]);
+
+    let upOrDown: 'down' | 'up' = 'up';
+    if (currentPositionLeverageRatio > currentLeverage) {
+      upOrDown = 'down';
+    }
 
     try {
       const previewDeposit = await publicClient.readContract({
@@ -521,27 +532,31 @@ export default function Loop({
         });
 
       // get initial quote to calculate slippage
-      const [, initialBorrowAmount] = await publicClient.readContract({
-        abi: iLeveredPositionFactoryAbi,
-        address: factory.address,
-        functionName: 'calculateAdjustmentAmountDeltas',
-        args: [
-          true,
-          parseEther(currentLeverage.toString()),
-          selectedCollateralAsset.underlyingPrice,
-          selectedBorrowAsset!.underlyingPrice,
-          1n,
-          actualRedeemedAmountForAggregatorSwap,
-          0n
-        ]
-      });
+      const [initialSupplyAmount, initialBorrowAmount] =
+        await publicClient.readContract({
+          abi: iLeveredPositionFactoryAbi,
+          address: factory.address,
+          functionName: 'calculateAdjustmentAmountDeltas',
+          args: [
+            true,
+            parseEther(currentLeverage.toString()),
+            selectedCollateralAsset.underlyingPrice,
+            selectedBorrowAsset!.underlyingPrice,
+            1n,
+            actualRedeemedAmountForAggregatorSwap,
+            0n
+          ]
+        });
 
       const quote = await getQuote({
         fromChain: chainId,
         toChain: chainId,
         fromToken: selectedBorrowAsset!.underlyingToken,
         toToken: selectedCollateralAsset.underlyingToken,
-        fromAmount: initialBorrowAmount.toString(),
+        fromAmount:
+          upOrDown === 'up'
+            ? initialBorrowAmount.toString()
+            : initialSupplyAmount.toString(),
         fromAddress: factory.address
       });
       const realSlippage =
@@ -557,27 +572,31 @@ export default function Loop({
         slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
       }
 
-      const [, finalBorrowAmount] = await publicClient.readContract({
-        abi: iLeveredPositionFactoryAbi,
-        address: factory.address,
-        functionName: 'calculateAdjustmentAmountDeltas',
-        args: [
-          true,
-          parseEther(currentLeverage.toString()),
-          selectedCollateralAsset.underlyingPrice,
-          selectedBorrowAsset!.underlyingPrice,
-          BigInt(Math.ceil(slippageWithBufferInBps)),
-          actualRedeemedAmountForAggregatorSwap,
-          0n
-        ]
-      });
+      const [finalSupplyAmount, finalBorrowAmount] =
+        await publicClient.readContract({
+          abi: iLeveredPositionFactoryAbi,
+          address: factory.address,
+          functionName: 'calculateAdjustmentAmountDeltas',
+          args: [
+            true,
+            parseEther(currentLeverage.toString()),
+            selectedCollateralAsset.underlyingPrice,
+            selectedBorrowAsset!.underlyingPrice,
+            BigInt(Math.ceil(slippageWithBufferInBps)),
+            actualRedeemedAmountForAggregatorSwap,
+            0n
+          ]
+        });
 
       const quoteFinal = await getQuote({
         fromChain: chainId,
         toChain: chainId,
         fromToken: selectedBorrowAsset!.underlyingToken,
         toToken: selectedCollateralAsset.underlyingToken,
-        fromAmount: finalBorrowAmount.toString(),
+        fromAmount:
+          upOrDown === 'up'
+            ? finalBorrowAmount.toString()
+            : finalSupplyAmount.toString(),
         fromAddress: currentPosition.address
       });
 
