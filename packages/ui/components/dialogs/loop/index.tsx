@@ -40,7 +40,7 @@ import SupplyActions from './SupplyActions';
 import ResultHandler from '../../ResultHandler';
 import TransactionStepsHandler, {
   useTransactionSteps
-} from '../manage/TransactionStepsHandler';
+} from '../ManageMarket/TransactionStepsHandler';
 
 import type { OpenPosition } from '@ionicprotocol/types';
 
