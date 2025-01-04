@@ -16,8 +16,8 @@ import type { LoopRowData } from '@ui/components/dashboards/LoopTable';
 import LoopTable from '@ui/components/dashboards/LoopTable';
 import type { SupplyRowData } from '@ui/components/dashboards/SupplyTable';
 import SupplyTable from '@ui/components/dashboards/SupplyTable';
-import ManageDialog from '@ui/components/dialogs/manage';
-import type { ActiveTab } from '@ui/components/dialogs/manage';
+import ManageDialog from '@ui/components/dialogs/ManageMarket';
+import type { ActiveTab } from '@ui/components/dialogs/ManageMarket';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import { FLYWHEEL_TYPE_MAP, pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -25,11 +25,11 @@ import { useCurrentLeverageRatios } from '@ui/hooks/leverage/useCurrentLeverageR
 import { usePositionsInfo } from '@ui/hooks/leverage/usePositionInfo';
 import { usePositionsQuery } from '@ui/hooks/leverage/usePositions';
 import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 import { useRewards } from '@ui/hooks/useRewards';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -118,9 +118,7 @@ export default function Dashboard() {
   const [selectedLoopBorrowData, setSelectedLoopBorrowData] =
     useState<MarketData>();
   const [isLoopDialogOpen, setIsLoopDialogOpen] = useState<boolean>(false);
-  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(
-    chain.toString()
-  );
+  const { data: usdPrice, isLoading: isLoadingUSDPrice } = useUsdPrice(chain);
 
   const {
     componentRef: rewardRef,
@@ -231,82 +229,84 @@ export default function Dashboard() {
     };
   });
 
-  const loopTableData = positions?.openPositions?.map((position, i) => {
-    if (
-      !position ||
-      !position.address ||
-      !position.collateral?.symbol ||
-      !position.borrowable?.symbol ||
-      !positionsInfo?.[position.address]
-    ) {
-      return null;
-    }
+  const loopTableData = positions?.openPositions
+    ?.map((position, i) => {
+      if (
+        !position ||
+        !position.address ||
+        !position.collateral?.symbol ||
+        !position.borrowable?.symbol ||
+        !positionsInfo?.[position.address]
+      ) {
+        return null;
+      }
 
-    const currentPositionInfo = positionsInfo[position.address];
-    const collateralPrice = Number(
-      formatEther(
-        marketData?.assets.find(
-          (asset) => asset.underlyingSymbol === position.collateral.symbol
-        )?.underlyingPrice ?? 0n
-      )
-    );
-    const borrowablePrice = Number(
-      formatEther(
-        marketData?.assets.find(
-          (asset) => asset.underlyingSymbol === position.borrowable.symbol
-        )?.underlyingPrice ?? 0n
-      )
-    );
+      const currentPositionInfo = positionsInfo[position.address];
+      const collateralPrice = Number(
+        formatEther(
+          marketData?.assets.find(
+            (asset) => asset.underlyingSymbol === position.collateral.symbol
+          )?.underlyingPrice ?? 0n
+        )
+      );
+      const borrowablePrice = Number(
+        formatEther(
+          marketData?.assets.find(
+            (asset) => asset.underlyingSymbol === position.borrowable.symbol
+          )?.underlyingPrice ?? 0n
+        )
+      );
 
-    return {
-      position: {
-        address: position.address,
-        collateral: {
-          symbol: position.collateral.symbol,
-          logo: `/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`,
-          amount: {
-            tokens: Number(
-              formatUnits(
-                currentPositionInfo.positionSupplyAmount,
-                Number(position.collateral.underlyingDecimals)
-              )
-            ),
-            usd:
-              Number(
+      return {
+        position: {
+          address: position.address,
+          collateral: {
+            symbol: position.collateral.symbol,
+            logo: `/img/symbols/32/color/${position.collateral.symbol.toLowerCase()}.png`,
+            amount: {
+              tokens: Number(
                 formatUnits(
                   currentPositionInfo.positionSupplyAmount,
                   Number(position.collateral.underlyingDecimals)
                 )
-              ) *
-              ((usdPrice ?? 0) * collateralPrice)
+              ),
+              usd:
+                Number(
+                  formatUnits(
+                    currentPositionInfo.positionSupplyAmount,
+                    Number(position.collateral.underlyingDecimals)
+                  )
+                ) *
+                ((usdPrice ?? 0) * collateralPrice)
+            },
+            underlyingDecimals: Number(position.collateral.underlyingDecimals)
           },
-          underlyingDecimals: Number(position.collateral.underlyingDecimals)
-        },
-        borrowable: {
-          symbol: position.borrowable.symbol,
-          logo: `/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`,
-          amount: {
-            tokens: Number(
-              formatUnits(
-                currentPositionInfo.debtAmount,
-                position.borrowable.underlyingDecimals
-              )
-            ),
-            usd:
-              Number(
+          borrowable: {
+            symbol: position.borrowable.symbol,
+            logo: `/img/symbols/32/color/${position.borrowable.symbol.toLowerCase()}.png`,
+            amount: {
+              tokens: Number(
                 formatUnits(
                   currentPositionInfo.debtAmount,
                   position.borrowable.underlyingDecimals
                 )
-              ) *
-              ((usdPrice ?? 0) * borrowablePrice)
-          },
-          underlyingDecimals: Number(position.borrowable.underlyingDecimals)
-        }
-      },
-      loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
-    };
-  });
+              ),
+              usd:
+                Number(
+                  formatUnits(
+                    currentPositionInfo.debtAmount,
+                    position.borrowable.underlyingDecimals
+                  )
+                ) *
+                ((usdPrice ?? 0) * borrowablePrice)
+            },
+            underlyingDecimals: Number(position.borrowable.underlyingDecimals)
+          }
+        },
+        loops: Math.ceil(positionLeverages?.[i] ? positionLeverages[i] : 0)
+      };
+    })
+    .filter((position) => !!position);
 
   return (
     <>
@@ -358,7 +358,6 @@ export default function Dashboard() {
             setIsManageDialogOpen={setIsManageDialogOpen}
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
-            chain={+chain}
           />
         </div>
 
@@ -368,7 +367,7 @@ export default function Dashboard() {
           </div>
 
           <LoopTable
-            data={(loopTableData || []) as LoopRowData[]}
+            data={loopTableData as LoopRowData[]}
             isLoading={
               isLoadingPositions ||
               isLoadingPositionsInfo ||

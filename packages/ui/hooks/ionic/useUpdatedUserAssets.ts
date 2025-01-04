@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import { useUsdPrice } from '../useUsdPrices';
 
 import type { FundOperationMode } from '@ionicprotocol/types';
 
@@ -26,13 +25,8 @@ const useUpdatedUserAssets = <T extends MarketData>({
   enabled = false
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiIonic();
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    }
-    return undefined;
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice, isLoading: isPriceLoading } =
+    useUsdPrice(poolChainId);
 
   return useQuery({
     queryKey: [
@@ -48,29 +42,35 @@ const useUpdatedUserAssets = <T extends MarketData>({
     queryFn: async () => {
       if (!assets?.length || !usdPrice || !currentSdk) return [];
 
-      const resAssets = await currentSdk
-        .getUpdatedAssets(mode, index, assets, amount)
-        .catch((e) => {
-          console.warn(
-            'Updated assets error: ',
-            { amount, assets, index, mode },
-            e
-          );
-          return [];
-        });
+      try {
+        const resAssets = await currentSdk.getUpdatedAssets(
+          mode,
+          index,
+          assets,
+          amount
+        );
 
-      return resAssets.map((asset) => ({
-        ...asset,
-        borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-        liquidityFiat: asset.liquidityNative * usdPrice,
-        netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
-        supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-        totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-        totalSupplyFiat: asset.totalSupplyNative * usdPrice
-      }));
+        return resAssets.map((asset) => ({
+          ...asset,
+          borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+          liquidityFiat: asset.liquidityNative * usdPrice,
+          netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
+          supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+          totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+          totalSupplyFiat: asset.totalSupplyNative * usdPrice
+        }));
+      } catch (e) {
+        console.warn(
+          'Updated assets error: ',
+          { amount, assets, index, mode },
+          e
+        );
+        return [];
+      }
     },
-    enabled: !!assets && !!usdPrice && !!currentSdk && enabled,
-    staleTime: enabled ? 0 : undefined
+    enabled: !!assets && !isPriceLoading && !!currentSdk && enabled,
+    staleTime: enabled ? 0 : undefined,
+    retry: false
   });
 };
 

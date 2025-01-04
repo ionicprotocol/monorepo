@@ -3,26 +3,28 @@ import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import type { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import type { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort } from '@ui/utils/sorts';
 
+import { useChainUsdPrices } from '../useUsdPrices';
+
 import type { IonicPoolData, SupportedChains } from '@ionicprotocol/types';
 
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();
-  const { data: prices } = useAllUsdPrices();
+  const { data: prices } = useChainUsdPrices(chainIds);
 
   const poolsQueries = useQueries({
     queries: chainIds.map((chainId) => {
+      const chainIdStr = chainId.toString();
       return {
-        enabled: !!chainId && !!prices && !!prices[chainId.toString()],
+        enabled: !!chainId && !!prices && !!prices[chainIdStr],
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
 
-          if (chainId && prices && prices[chainId.toString()] && sdk) {
+          if (chainId && prices && prices[chainIdStr] && sdk) {
             const chainPools: FusePoolsPerChain = {};
             const _allPools: IonicPoolData[] = [];
 
@@ -43,6 +45,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
               chainPools[sdk.chainId] = visiblePools;
               _allPools.push(...visiblePools);
 
+              const usdPrice = prices[chainIdStr].value;
               const allPools: PoolData[] = await Promise.all(
                 _allPools.map((pool) => {
                   const assetsWithPrice: MarketData[] = [];
@@ -52,48 +55,29 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
                     assets.map((asset) => {
                       assetsWithPrice.push({
                         ...asset,
-                        borrowBalanceFiat:
-                          asset.borrowBalanceNative *
-                          prices[pool.chainId.toString()].value,
-                        liquidityFiat:
-                          asset.liquidityNative *
-                          prices[pool.chainId.toString()].value,
+                        borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+                        liquidityFiat: asset.liquidityNative * usdPrice,
                         netSupplyBalanceFiat:
-                          asset.netSupplyBalanceNative *
-                          prices[pool.chainId.toString()].value,
-                        supplyBalanceFiat:
-                          asset.supplyBalanceNative *
-                          prices[pool.chainId.toString()].value,
-                        totalBorrowFiat:
-                          asset.totalBorrowNative *
-                          prices[pool.chainId.toString()].value,
-                        totalSupplyFiat:
-                          asset.totalSupplyNative *
-                          prices[pool.chainId.toString()].value
+                          asset.netSupplyBalanceNative * usdPrice,
+                        supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+                        totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+                        totalSupplyFiat: asset.totalSupplyNative * usdPrice
                       });
                     });
                   }
+
                   const adaptedIonicPoolData: PoolData = {
                     ...pool,
                     assets: assetsWithPrice,
                     totalAvailableLiquidityFiat:
-                      pool.totalAvailableLiquidityNative *
-                      prices[pool.chainId.toString()].value,
+                      pool.totalAvailableLiquidityNative * usdPrice,
                     totalBorrowBalanceFiat:
-                      pool.totalBorrowBalanceNative *
-                      prices[pool.chainId.toString()].value,
-                    totalBorrowedFiat:
-                      pool.totalBorrowedNative *
-                      prices[pool.chainId.toString()].value,
-                    totalLiquidityFiat:
-                      pool.totalLiquidityNative *
-                      prices[pool.chainId.toString()].value,
-                    totalSuppliedFiat:
-                      pool.totalSuppliedNative *
-                      prices[pool.chainId.toString()].value,
+                      pool.totalBorrowBalanceNative * usdPrice,
+                    totalBorrowedFiat: pool.totalBorrowedNative * usdPrice,
+                    totalLiquidityFiat: pool.totalLiquidityNative * usdPrice,
+                    totalSuppliedFiat: pool.totalSuppliedNative * usdPrice,
                     totalSupplyBalanceFiat:
-                      pool.totalSupplyBalanceNative *
-                      prices[pool.chainId.toString()].value
+                      pool.totalSupplyBalanceNative * usdPrice
                   };
 
                   return adaptedIonicPoolData;
@@ -103,7 +87,6 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
               return allPools;
             } catch (e) {
               console.warn(`Fetching pools error: `, { chainId }, e);
-
               return null;
             }
           } else {
@@ -116,7 +99,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
           address,
           prices && prices[chainId.toString()]
         ],
-        staleTime: Infinity
+        staleTime: 30000 // 30 seconds instead of Infinity for better price updates
       };
     })
   });

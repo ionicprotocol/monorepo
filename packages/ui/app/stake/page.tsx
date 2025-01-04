@@ -23,7 +23,7 @@ import {
   useWalletClient
 } from 'wagmi';
 
-import SliderComponent from '@ui/components/dialogs/manage/Slider';
+import SliderComponent from '@ui/components/dialogs/ManageMarket/Slider';
 import MaxDeposit from '@ui/components/MaxDeposit';
 import ResultHandler from '@ui/components/ResultHandler';
 import ClaimRewards from '@ui/components/stake/ClaimRewards';
@@ -656,7 +656,7 @@ export default function Stake() {
                   tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
                   chain={+chain}
-                  tokenSelector={true}
+                  tokenSelector
                   tokenArr={tokenArrOfChain[+chain]}
                 />
               </>

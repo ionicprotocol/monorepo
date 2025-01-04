@@ -9,7 +9,7 @@ import { isAddress } from 'viem';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
-import ManageDialog from '@ui/components/dialogs/manage';
+import ManageDialog from '@ui/components/dialogs/ManageMarket';
 import FeaturedMarketTile from '@ui/components/markets/FeaturedMarketTile';
 import PoolsTable from '@ui/components/markets/PoolsTable';
 import PoolToggle from '@ui/components/markets/PoolToggle';

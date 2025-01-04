@@ -342,10 +342,10 @@
       "address": "0x0Bd42a5226db7FCEb9D3e50539778A15C3665da8"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0xB31B7dA23D8D777b3d7CC09cCE54F55254603604"
+      "address": "0x96249CD3af5Fc439727065EB90a26380af3905e5"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xdf1AD62bf8008791ADC98f6f6F3D326dCFaA5790"
+      "address": "0x68BF9309B41Dc646A9CB24784E1dA6ca9d8eb747"
     },
     "LeveredPositionsLens": {
       "address": "0x257f7B42E6DC6223a657cA5039b80B51c0a8Bcfc"
