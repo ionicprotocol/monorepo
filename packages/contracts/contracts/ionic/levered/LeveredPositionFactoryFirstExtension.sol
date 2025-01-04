@@ -106,7 +106,6 @@ contract LeveredPositionFactoryFirstExtension is
   ----------------------------------------------------------------*/
 
   function calculateAdjustmentAmountDeltas(
-    bool ratioIncreases,
     uint256 targetRatio,
     uint256 collateralAssetPrice,
     uint256 borrowedAssetPrice,
@@ -117,31 +116,32 @@ contract LeveredPositionFactoryFirstExtension is
     uint256 slippageFactor = (1e18 * (10000 + expectedSlippage)) / 10000;
 
     uint256 valueDeltaAbs;
+    bool ratioIncreases;
     {
       // s = supply value before
       // b = borrow value before
       // r = target ratio after
       // c = borrow value coefficient to account for the slippage
-      int256 s = int256((collateralAssetPrice * positionSupplyAmount) / 1e18);
-      int256 b = int256((borrowedAssetPrice * debtAmount) / 1e18);
-      int256 r = int256(targetRatio);
-      int256 r1 = r - 1e18;
-      int256 c = int256(slippageFactor);
+      uint256 s = (collateralAssetPrice * positionSupplyAmount) / 1e18;
+      uint256 b = (borrowedAssetPrice * debtAmount) / 1e18;
+      uint256 r = targetRatio;
+      uint256 r1 = r - 1e18;
+      uint256 c = slippageFactor;
+
+      ratioIncreases = (s * 1e18) / (s - b) < targetRatio;
 
       if (ratioIncreases) {
         // some math magic here
         // x = supplyValueDelta
         // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
 
-        int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
-        valueDeltaAbs = uint256(supplyValueDelta);
+        valueDeltaAbs = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
       } else {
         // some math magic here
         // x = borrowsValueDelta
         // https://www.wolframalpha.com/input?i2d=true&i=Divide%5B%5C%2840%29s+-+c*x%5C%2841%29%2C%5C%2840%29s+-+c*x+-+%5C%2840%29b+-+x%5C%2841%29%5C%2841%29%5D+%3Dr%5C%2844%29++solve+for+x
 
-        int256 borrowsValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r1) - (1e18 * r));
-        valueDeltaAbs = uint256(borrowsValueDelta);
+        valueDeltaAbs = (((r1 * s) - (b * r)) * 1e18) / ((c * r1) - (1e18 * r));
       }
     }
 

@@ -363,11 +363,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
 
-    uint256 currentRatio = getCurrentLeverageRatio();
-    bool up = targetRatio > currentRatio;
-    if (assumedSlippage == 0) assumedSlippage = _getAssumedSlippage(up);
+    if (assumedSlippage == 0) assumedSlippage = _getAssumedSlippage(
+      getCurrentLeverageRatio() < targetRatio
+    );
     return _getAdjustmentAmountDeltas(
-      up,
       targetRatio,
       collateralAssetPrice,
       stableAssetPrice,
@@ -402,7 +401,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function _getAdjustmentAmountDeltas(
-    bool ratioIncreases,
     uint256 targetRatio,
     uint256 collateralAssetPrice,
     uint256 borrowedAssetPrice,
@@ -412,7 +410,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     uint256 debtAmount = stableMarket.borrowBalanceCurrent(address(this));
 
     return factory.calculateAdjustmentAmountDeltas(
-      ratioIncreases,
       targetRatio,
       collateralAssetPrice,
       borrowedAssetPrice,
@@ -462,7 +459,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(true);
 
     (uint256 flashLoanCollateralAmount, uint256 stableToBorrow) = _getAdjustmentAmountDeltas(
-      true,
       targetRatio,
       collateralAssetPrice,
       stableAssetPrice,
@@ -516,7 +512,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
     // else derive the debt to be repaid from the amount to redeem
     (uint256 amountToRedeem, uint256 borrowsToRepay) = _getAdjustmentAmountDeltas(
-      false,
       targetRatio,
       collateralAssetPrice,
       stableAssetPrice,

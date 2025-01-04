@@ -67,7 +67,6 @@ interface ILeveredPositionFactoryFirstExtension {
   function _setWhitelistedSwapRouters(address[] memory newSet) external;
 
   function calculateAdjustmentAmountDeltas(
-    bool ratioIncreases,
     uint256 targetRatio,
     uint256 collateralAssetPrice,
     uint256 borrowedAssetPrice,
