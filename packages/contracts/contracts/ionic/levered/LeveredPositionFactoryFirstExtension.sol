@@ -136,7 +136,8 @@ contract LeveredPositionFactoryFirstExtension is
       supplyValueDeltaAbs = uint256((supplyValueDelta < 0) ? -supplyValueDelta : supplyValueDelta);
     }
 
-    supplyDelta = (supplyValueDeltaAbs * 1e18) / collateralAssetPrice;
+    // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
+    supplyDelta = divRoundUp(supplyValueDeltaAbs, collateralAssetPrice);
     borrowsDelta = (supplyValueDeltaAbs * 1e18) / borrowedAssetPrice;
 
     if (ratioIncreases) {
@@ -146,6 +147,11 @@ contract LeveredPositionFactoryFirstExtension is
       // amount to redeem = c * x
       supplyDelta = (supplyDelta * slippageFactor) / 1e18;
     }
+  }
+
+  function divRoundUp(uint256 x, uint256 y) internal pure returns (uint256 res) {
+    res = (x * 1e18) / y;
+    if (x % y != 0) res += 1;
   }
 
   function getMinBorrowNative() external view returns (uint256) {

@@ -508,35 +508,21 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     bytes memory aggregatorData,
     uint256 expectedSlippage
   ) internal {
-    uint256 amountToRedeem;
-    uint256 borrowsToRepay;
-
     if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(false);
 
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
 
-    if (targetRatio <= 1e18) {
-      // if max levering down, then derive the amount to redeem from the debt to be repaid
-      borrowsToRepay = stableMarket.borrowBalanceCurrent(address(this));
-      uint256 borrowsToRepayValueScaled = borrowsToRepay * stableAssetPrice;
-      // accounting for swaps slippage
-      uint256 amountToRedeemValueScaled = (borrowsToRepayValueScaled * (10000 + expectedSlippage)) / 10000;
-      amountToRedeem = amountToRedeemValueScaled / collateralAssetPrice;
-      // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
-      if (amountToRedeemValueScaled % collateralAssetPrice > 0) amountToRedeem += 1;
-    } else {
-      // else derive the debt to be repaid from the amount to redeem
-      (amountToRedeem, borrowsToRepay) = _getAdjustmentAmountDeltas(
-        false,
-        targetRatio,
-        collateralAssetPrice,
-        stableAssetPrice,
-        expectedSlippage
-      );
-      // the slippage is already accounted for in _getAdjustmentAmountDeltas
-    }
+    // else derive the debt to be repaid from the amount to redeem
+    (uint256 amountToRedeem, uint256 borrowsToRepay) = _getAdjustmentAmountDeltas(
+      false,
+      targetRatio,
+      collateralAssetPrice,
+      stableAssetPrice,
+      expectedSlippage
+    );
+    // the slippage is already accounted for in _getAdjustmentAmountDeltas
 
     if (borrowsToRepay > 0) {
       ICErc20(address(stableMarket)).flash(
