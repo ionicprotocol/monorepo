@@ -116,7 +116,7 @@ contract LeveredPositionFactoryFirstExtension is
   ) external pure returns (uint256 supplyDelta, uint256 borrowsDelta) {
     uint256 slippageFactor = (1e18 * (10000 + expectedSlippage)) / 10000;
 
-    uint256 supplyValueDeltaAbs;
+    uint256 valueDeltaAbs;
     {
       // s = supply value before
       // b = borrow value before
@@ -128,23 +128,33 @@ contract LeveredPositionFactoryFirstExtension is
       int256 r1 = r - 1e18;
       int256 c = int256(slippageFactor);
 
-      // some math magic here
-      // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
+      if (ratioIncreases) {
+        // some math magic here
+        // x = supplyValueDelta
+        // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
 
-      // x = supplyValueDelta
-      int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
-      supplyValueDeltaAbs = uint256((supplyValueDelta < 0) ? -supplyValueDelta : supplyValueDelta);
+        int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
+        valueDeltaAbs = uint256(supplyValueDelta);
+      } else {
+        // some math magic here
+        // x = borrowsValueDelta
+        // https://www.wolframalpha.com/input?i2d=true&i=Divide%5B%5C%2840%29s+-+c*x%5C%2841%29%2C%5C%2840%29s+-+c*x+-+%5C%2840%29b+-+x%5C%2841%29%5C%2841%29%5D+%3Dr%5C%2844%29++solve+for+x
+
+        int256 borrowsValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r1) - (1e18 * r));
+        valueDeltaAbs = uint256(borrowsValueDelta);
+      }
     }
 
+
     // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
-    supplyDelta = divRoundUp(supplyValueDeltaAbs, collateralAssetPrice);
-    borrowsDelta = (supplyValueDeltaAbs * 1e18) / borrowedAssetPrice;
+    supplyDelta = divRoundUp(valueDeltaAbs, collateralAssetPrice);
+    borrowsDelta = (valueDeltaAbs * 1e18) / borrowedAssetPrice;
 
     if (ratioIncreases) {
-      // stables to borrow = c * x
+      // will swap the borrowed, stables to borrow = c * x
       borrowsDelta = (borrowsDelta * slippageFactor) / 1e18;
     } else {
-      // amount to redeem = c * x
+      // will swap the redeemed, amount to redeem = c * x
       supplyDelta = (supplyDelta * slippageFactor) / 1e18;
     }
   }
