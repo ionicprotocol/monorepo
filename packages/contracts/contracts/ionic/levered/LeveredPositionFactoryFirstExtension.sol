@@ -141,7 +141,7 @@ contract LeveredPositionFactoryFirstExtension is
         // x = borrowsValueDelta
         // https://www.wolframalpha.com/input?i2d=true&i=Divide%5B%5C%2840%29s+-+c*x%5C%2841%29%2C%5C%2840%29s+-+c*x+-+%5C%2840%29b+-+x%5C%2841%29%5C%2841%29%5D+%3Dr%5C%2844%29++solve+for+x
 
-        valueDeltaAbs = (((r1 * s) - (b * r)) * 1e18) / ((c * r1) - (1e18 * r));
+        valueDeltaAbs = (((b * r) - (r1 * s)) * 1e18) / ((1e18 * r) - (c * r1));
       }
     }
 
