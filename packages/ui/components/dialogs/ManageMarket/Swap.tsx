@@ -228,7 +228,6 @@ export default function Swap({
     queryClient.invalidateQueries({ queryKey: ['useFusePoolData'] });
     queryClient.invalidateQueries({ queryKey: ['useBorrowMinimum'] });
     queryClient.invalidateQueries({ queryKey: ['useUsdPrice'] });
-    queryClient.invalidateQueries({ queryKey: ['useAllUsdPrices'] });
     queryClient.invalidateQueries({ queryKey: ['useTotalSupplyAPYs'] });
     queryClient.invalidateQueries({ queryKey: ['useUpdatedUserAssets'] });
     queryClient.invalidateQueries({ queryKey: ['useMaxSupplyAmount'] });

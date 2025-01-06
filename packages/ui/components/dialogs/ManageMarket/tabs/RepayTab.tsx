@@ -2,83 +2,73 @@ import { useEffect, useMemo } from 'react';
 
 import { formatUnits } from 'viem';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
 import { Button } from '@ui/components/ui/button';
+import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
   HFPStatus,
   TransactionType,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
 import { useHealth } from '@ui/hooks/market/useHealth';
-import { useWithdraw } from '@ui/hooks/market/useWithdraw';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+import { useRepay } from '@ui/hooks/market/useRepay';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 
-import StatusAlerts from './StatusAlerts';
-import TransactionStepsHandler from './TransactionStepsHandler';
-import Amount from '../../Amount';
-import ResultHandler from '../../ResultHandler';
-import MemoizedUtilizationStats from '../../UtilizationStats';
+import StatusAlerts from '../StatusAlerts';
+import TransactionStepsHandler from '../TransactionStepsHandler';
 
-interface WithdrawTabProps {
+interface RepayTabProps {
   capAmount: number;
   totalAmount: number;
   capFiat: number;
   totalFiat: number;
 }
 
-const WithdrawTab = ({
+const RepayTab = ({
   capAmount,
   totalAmount,
   capFiat,
   totalFiat
-}: WithdrawTabProps) => {
+}: RepayTabProps) => {
   const {
     selectedMarketData,
     resetTransactionSteps,
     chainId,
-    updatedValues,
     isLoadingUpdatedAssets,
+    updatedValues,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes // Add this from context
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
-  const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxRepayAmount(
     selectedMarketData,
     chainId
   );
 
   const {
     isWaitingForIndexing,
-    withdrawAmount,
+    repayAmount,
     isPolling,
+    currentBorrowAmountAsFloat,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
-  } = useWithdraw({
-    maxAmount: maxAmount ?? 0n,
+  } = useRepay({
     selectedMarketData,
     chainId
   });
 
-  const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
-    {
-      comptrollerAddress,
-      cToken: selectedMarketData.cToken,
-      activeTab: 'withdraw',
-      amount: amountAsBInt,
-      exchangeRate: selectedMarketData.exchangeRate,
-      decimals: selectedMarketData.underlyingDecimals
-    }
-  );
-
-  const isDisabled =
-    !amount ||
-    amountAsBInt === 0n ||
-    isLoadingPredictedHealthFactor ||
-    hfpStatus === HFPStatus.CRITICAL ||
-    hfpStatus === HFPStatus.UNKNOWN;
+  const { healthFactor, hfpStatus } = useHealth({
+    comptrollerAddress,
+    cToken: selectedMarketData.cToken,
+    activeTab: 'repay',
+    amount: amountAsBInt,
+    exchangeRate: selectedMarketData.exchangeRate,
+    decimals: selectedMarketData.underlyingDecimals
+  });
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
@@ -86,62 +76,64 @@ const WithdrawTab = ({
   }, [amountAsBInt]);
 
   const transactionSteps = useMemo(() => {
-    return getStepsForTypes(TransactionType.WITHDRAW);
+    return getStepsForTypes(TransactionType.REPAY);
   }, [getStepsForTypes]);
 
   return (
     <div className="space-y-4 pt-4">
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+      <MaxDeposit
         max={formatUnits(
           maxAmount ?? 0n,
           selectedMarketData.underlyingDecimals
         )}
-        symbol={selectedMarketData.underlyingSymbol}
-        hintText="Max Withdraw"
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
+        isLoading={isLoadingMax || isPolling}
+        amount={amount}
+        tokenName={selectedMarketData.underlyingSymbol}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Repay Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
+        hintText="Max Repay"
       />
 
       <StatusAlerts
         status={hfpStatus}
-        availableStates={[
-          HFPStatus.CRITICAL,
-          HFPStatus.WARNING,
-          HFPStatus.UNKNOWN
-        ]}
+        availableStates={[HFPStatus.CRITICAL]}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">
         <div className="space-y-4 content-center">
-          <div className="flex justify-between text-xs text-gray-400 uppercase">
-            <span>Market Supply Balance</span>
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>CURRENTLY BORROWING</span>
             <div className="flex items-center">
-              <span>{updatedValues.supplyBalanceFrom}</span>
+              <span className="text-error">
+                {updatedValues.borrowBalanceFrom}
+              </span>
               <span className="mx-1">→</span>
               <ResultHandler
-                height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                height={16}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
-                {updatedValues.supplyBalanceTo}
+                <span className="text-accent">
+                  {updatedValues.borrowBalanceTo}
+                </span>
               </ResultHandler>
             </div>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400 uppercase">
-            <span>Market Supply APR</span>
+            <span>Market Borrow APR</span>
             <div className="flex items-center">
-              <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
+              <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
-                height={16}
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 width={16}
+                height={16}
               >
-                {updatedValues.updatedSupplyAPY?.toFixed(2)}%
+                {updatedValues.updatedBorrowAPR?.toFixed(2)}%
               </ResultHandler>
             </div>
           </div>
@@ -152,9 +144,9 @@ const WithdrawTab = ({
               <span>{healthFactor.current}</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
+                height={16}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>
@@ -183,16 +175,18 @@ const WithdrawTab = ({
       ) : (
         <Button
           className="w-full bg-accent hover:bg-accent/80"
-          disabled={isDisabled}
-          onClick={withdrawAmount}
+          disabled={
+            !amount || amountAsBInt === 0n || !currentBorrowAmountAsFloat
+          }
+          onClick={repayAmount}
         >
           {isWaitingForIndexing
             ? 'Updating Balances...'
-            : `Withdraw ${selectedMarketData.underlyingSymbol}`}
+            : `Repay ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>
   );
 };
 
-export default WithdrawTab;
+export default RepayTab;

@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Image from 'next/image';
-
 import type { LoopMarketData } from '@ui/hooks/useLoopMarkets';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
@@ -10,10 +8,10 @@ import ActionButton from '../ActionButton';
 import LoopRewards from '../dashboards/LoopRewards';
 import Loop from '../dialogs/loop';
 import TokenBalance from '../markets/Cells/TokenBalance';
+import TokenDisplay from '../TokenDisplay';
 
 import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address, Hex } from 'viem';
-import TokenDisplay from '../TokenDisplay';
 
 export interface LoopRowData {
   position: {
@@ -22,7 +20,7 @@ export interface LoopRowData {
       symbol: string;
       logo: string;
       amount: {
-        tokens: string;
+        tokens: number;
         usd: number;
       };
       underlyingDecimals: number;
@@ -31,7 +29,7 @@ export interface LoopRowData {
       symbol: string;
       logo: string;
       amount: {
-        tokens: string;
+        tokens: number;
         usd: number;
       };
       underlyingDecimals: number;
@@ -94,7 +92,7 @@ function LoopTable({
       width: '20%',
       cell: ({ row }) => (
         <TokenBalance
-          balance={parseFloat(row.original.position.collateral.amount.tokens)}
+          balance={row.original.position.collateral.amount.tokens}
           balanceUSD={row.original.position.collateral.amount.usd}
           tokenName={row.original.position.collateral.symbol}
         />
@@ -106,7 +104,7 @@ function LoopTable({
       width: '20%',
       cell: ({ row }) => (
         <TokenBalance
-          balance={parseFloat(row.original.position.borrowable.amount.tokens)}
+          balance={row.original.position.borrowable.amount.tokens}
           balanceUSD={row.original.position.borrowable.amount.usd}
           tokenName={row.original.position.borrowable.symbol}
         />
@@ -163,7 +161,7 @@ function LoopTable({
   return (
     <>
       <CommonTable
-        data={data}
+        data={data || []}
         columns={columns}
         isLoading={isLoading}
       />

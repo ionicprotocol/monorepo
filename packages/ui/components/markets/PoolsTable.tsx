@@ -21,8 +21,9 @@ import APR from './Cells/APR';
 import TokenBalance from './Cells/TokenBalance';
 import CommonTable from '../../components/CommonTable';
 import ActionButton from '../ActionButton';
+import { CopyButton } from '../CopyButton';
 import Loop from '../dialogs/loop';
-import Swap from '../dialogs/manage/Swap';
+import Swap from '../dialogs/ManageMarket/Swap';
 
 import type {
   EnhancedColumnDef,
@@ -62,6 +63,7 @@ function PoolsTable({
       id: 'asset',
       header: <div className="pl-6">ASSETS</div>,
       sortingFn: 'alphabetical',
+      width: '20%',
       cell: ({ row }: MarketCellProps) => (
         <Link
           href={{
@@ -88,13 +90,20 @@ function PoolsTable({
             className="w-7 h-7"
           />
           <div className="flex flex-col">
-            <span className="text-sm">{row.original.asset}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{row.original.asset}</span>
+              <CopyButton
+                value={row.original.underlyingToken}
+                message={`${row.original.asset} token address copied to clipboard`}
+                tooltipMessage="Copy token address"
+              />
+            </div>
             <div className="flex flex-col text-xs text-white/40 font-light">
               <span>
-                Supplied: ${row.original.supply.totalUSD.toLocaleString()}
+                Total Supplied: ${row.original.supply.totalUSD.toLocaleString()}
               </span>
               <span>
-                Borrowed: ${row.original.borrow.totalUSD.toLocaleString()}
+                Total Borrowed: ${row.original.borrow.totalUSD.toLocaleString()}
               </span>
             </div>
           </div>
@@ -143,8 +152,21 @@ function PoolsTable({
       )
     },
     {
+      header: 'WALLET',
+      id: 'walletBalance',
+      sortingFn: (a, b) =>
+        a.original.tokenBalance.amountUSD - b.original.tokenBalance.amountUSD,
+      cell: ({ row }: MarketCellProps) => (
+        <TokenBalance
+          balance={row.original.tokenBalance.amount}
+          balanceUSD={row.original.tokenBalance.amountUSD}
+          tokenName={row.original.asset}
+        />
+      )
+    },
+    {
       id: 'supplyBalance',
-      header: 'SUPPLY BALANCE',
+      header: 'SUPPLIED',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
         <TokenBalance
@@ -156,7 +178,7 @@ function PoolsTable({
     },
     {
       id: 'borrowBalance',
-      header: 'BORROW BALANCE',
+      header: 'BORROWED',
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
         <TokenBalance

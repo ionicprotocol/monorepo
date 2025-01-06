@@ -1,134 +1,36 @@
 'use client';
 
-// import NextNProgress from "nextjs-progressbar";
 import { Suspense } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import Script from 'next/script';
 
-import { createAppKit } from '@reown/appkit';
-import {
-  base,
-  optimism,
-  mode,
-  bob,
-  fraxtal,
-  lisk,
-  superseed,
-  worldchain,
-  type AppKitNetwork
-} from '@reown/appkit/networks';
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
 import Navbar from '@ui/components/Navbar';
+import { Toaster as ToastProvider } from '@ui/components/ui/toaster';
 import { TooltipProvider } from '@ui/components/ui/tooltip';
+import { wagmiAdapter, initializeWeb3 } from '@ui/config/web3';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
 
 import './globals.css';
 
-const metadata = {
-  description: 'Ionic Web3Modal Sign In',
-  icons: ['https://avatars.githubusercontent.com/u/37784886'],
-  name: 'Ionic Web3Modal',
-  url: 'https://app.ionic.money'
-};
+initializeWeb3();
 
-export const ink: AppKitNetwork = {
-  id: 57073,
-  name: 'Ink',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ['https://rpc-gel.inkonchain.com', 'https://rpc-qnd.inkonchain.com']
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30000,
+      retry: 3,
+      retryDelay: (attemptIndex) =>
+        Math.min(1000 * Math.pow(2, attemptIndex), 30000)
     }
-  },
-  blockExplorers: {
-    default: {
-      name: 'Ink Explorer',
-      url: 'https://explorer.inkonchain.com',
-      apiUrl: 'https://api.inkonchain.com'
-    }
-  }
-};
-
-export const swellchain: AppKitNetwork = {
-  id: 1923,
-  name: 'Swellchain',
-  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: [
-        'https://rpc.ankr.com/swell',
-        'https://swell-mainnet.alt.technology'
-      ]
-    }
-  },
-  blockExplorers: {
-    default: {
-      name: 'Swell Explorer',
-      url: 'https://explorer.swellnetwork.io',
-      apiUrl: 'https://api.swellnetwork.io'
-    }
-  }
-};
-
-export const networks: AppKitNetwork[] = [
-  base,
-  mode,
-  optimism,
-  bob,
-  fraxtal,
-  lisk,
-  superseed,
-  worldchain,
-  ink,
-  swellchain
-];
-
-export const projectId = '923645e96d6f05f650d266a32ea7295f';
-
-export const wagmiAdapter = new WagmiAdapter({
-  networks,
-  projectId,
-  ssr: true
-});
-
-// Create the new web3 modal
-createAppKit({
-  projectId,
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-accent': '#3bff89ff',
-    '--w3m-color-mix': '#0a0a0aff'
-  },
-  adapters: [wagmiAdapter],
-  networks: networks as any,
-  metadata,
-  chainImages: {
-    [mode.id]: 'https://icons.llamao.fi/icons/chains/rsz_mode.jpg',
-    [bob.id]: 'https://icons.llamao.fi/icons/chains/rsz_bob.jpg',
-    [fraxtal.id]: 'https://icons.llamao.fi/icons/chains/rsz_fraxtal.jpg',
-    [lisk.id]: 'https://icons.llamao.fi/icons/chains/rsz_lisk.jpg',
-    [superseed.id]:
-      'https://github.com/superseed-xyz/brand-kit/blob/main/logos-wordmarks/logos/large.png?raw=true',
-    [swellchain.id]:
-      'https://cdn.prod.website-files.com/63dc9bdf46999ffb2c2f407a/66cc343b8a5fd72920c56ae1_SWELL%20L2.svg',
-    [ink.id]: 'https://icons.llamao.fi/icons/chains/rsz_ink.jpg',
-    [worldchain.id]:
-      'https://worldscan.org/assets/world/images/svg/logos/token-secondary-light.svg?v=24.12.2.0'
   }
 });
-
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
-
-const queryClient = new QueryClient();
 
 export default function RootLayout({
   children
@@ -140,29 +42,13 @@ export default function RootLayout({
       className="dark"
       lang="en"
     >
-      <Script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-PBTG02B74E"
-      />
       <Script id="ga-tag">
         {`window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-PBTG02B74E');`}
       </Script>
-      <Script id="hotjar">
-        {`(function(h,o,t,j,a,r){
-          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-          h._hjSettings={hjid:5102778,hjsv:6};
-          a=o.getElementsByTagName('head')[0];
-          r=o.createElement('script');r.async=1;
-          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-          a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-      `}
-      </Script>
-      <body className={'scrollbar-hide font-inter '}>
+      <body className={'scrollbar-hide font-inter'}>
         <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
@@ -174,7 +60,6 @@ export default function RootLayout({
                     options={{ showSpinner: false }}
                     shallowRouting
                   />
-
                   <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[280px] min-h-screen w-[100vw]">
                     <Navbar />
                     <main>{children}</main>
@@ -363,7 +248,7 @@ export default function RootLayout({
                         </div>
                       </div>
                     </footer>
-
+                    <ToastProvider />
                     <Toaster
                       toastOptions={{
                         error: {

@@ -5,6 +5,7 @@ import { updateAssetTvl } from './asset-tvl';
 import axios from 'axios';
 import { Handler } from '@netlify/functions';
 
+export const HEARTBEAT_API_URL = environment.uptimeTvlTotalPoolApi;
 const getEthToUsdRate = async (): Promise<number> => {
   try {
     const response = await axios.get(
@@ -91,6 +92,7 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
 
     try {
       // Simple insert instead of upsert
+      await axios.get(HEARTBEAT_API_URL);
       const { error, data } = await supabase
         .from(environment.supabaseAssetTotalTvlPoolName)
         .insert(insertData);

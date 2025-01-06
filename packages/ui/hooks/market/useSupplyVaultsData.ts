@@ -1,9 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
+
 import { useReadContracts } from 'wagmi';
-import type { Address } from 'viem';
+
 import { pools } from '@ui/constants/index';
-import { VaultRowData } from '@ui/types/SupplyVaults';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
+
 import { useTokenPrices, type TokenConfig } from '../useTokenPrices';
+
+import type { Address } from 'viem';
 
 const COMPOUND_MARKET_ABI = [
   {

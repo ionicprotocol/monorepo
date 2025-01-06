@@ -1,78 +1,71 @@
 import { useEffect, useMemo } from 'react';
 
-import { Info } from 'lucide-react';
 import { formatUnits } from 'viem';
 
-import { Alert, AlertDescription } from '@ui/components/ui/alert';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
 import { Button } from '@ui/components/ui/button';
+import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
   HFPStatus,
   TransactionType,
   useManageDialogContext
 } from '@ui/context/ManageDialogContext';
-import { useBorrow } from '@ui/hooks/market/useBorrow';
 import { useHealth } from '@ui/hooks/market/useHealth';
+import { useWithdraw } from '@ui/hooks/market/useWithdraw';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
 
-import Amount from '../../Amount';
-import StatusAlerts from './StatusAlerts';
-import TransactionStepsHandler from './TransactionStepsHandler';
-import ResultHandler from '../../ResultHandler';
-import MemoizedUtilizationStats from '../../UtilizationStats';
-import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
-import { useMaxBorrowAmount } from '@ui/hooks/useMaxBorrowAmount';
+import StatusAlerts from '../StatusAlerts';
+import TransactionStepsHandler from '../TransactionStepsHandler';
 
-interface BorrowTabProps {
+interface WithdrawTabProps {
   capAmount: number;
   totalAmount: number;
   capFiat: number;
   totalFiat: number;
 }
 
-const BorrowTab = ({
+const WithdrawTab = ({
   capAmount,
   totalAmount,
   capFiat,
   totalFiat
-}: BorrowTabProps) => {
+}: WithdrawTabProps) => {
   const {
     selectedMarketData,
     resetTransactionSteps,
     chainId,
-    isLoadingUpdatedAssets,
     updatedValues,
+    isLoadingUpdatedAssets,
     comptrollerAddress,
     setPredictionAmount,
-    getStepsForTypes
+    getStepsForTypes,
+    isSliding
   } = useManageDialogContext();
 
-  const { data: maxAmount, isLoading: isLoadingMax } = useMaxBorrowAmount(
+  const { data: maxAmount, isLoading: isLoadingMax } = useMaxWithdrawAmount(
     selectedMarketData,
-    comptrollerAddress,
     chainId
   );
 
   const {
     isWaitingForIndexing,
-    borrowAmount,
+    withdrawAmount,
     isPolling,
-    borrowLimits,
-    isUnderMinBorrow,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt
-  } = useBorrow({
+  } = useWithdraw({
+    maxAmount: maxAmount ?? 0n,
     selectedMarketData,
-    chainId,
-    comptrollerAddress
+    chainId
   });
 
   const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
     {
       comptrollerAddress,
       cToken: selectedMarketData.cToken,
-      activeTab: 'borrow',
+      activeTab: 'withdraw',
       amount: amountAsBInt,
       exchangeRate: selectedMarketData.exchangeRate,
       decimals: selectedMarketData.underlyingDecimals
@@ -92,87 +85,64 @@ const BorrowTab = ({
   }, [amountAsBInt]);
 
   const transactionSteps = useMemo(() => {
-    return getStepsForTypes(TransactionType.BORROW);
+    return getStepsForTypes(TransactionType.WITHDRAW);
   }, [getStepsForTypes]);
 
   return (
     <div className="space-y-4 pt-4">
-      <Amount
-        amount={amount}
-        handleInput={(val?: string) => setAmount(val ?? '')}
-        isLoading={isLoadingMax || isPolling}
+      <MaxDeposit
         max={formatUnits(
-          maxAmount?.bigNumber ?? 0n,
+          maxAmount ?? 0n,
           selectedMarketData.underlyingDecimals
         )}
-        symbol={selectedMarketData.underlyingSymbol}
-        currentUtilizationPercentage={utilizationPercentage}
-        handleUtilization={handleUtilization}
-        hintText="Max Borrow"
+        isLoading={isLoadingMax || isPolling}
+        amount={amount}
+        tokenName={selectedMarketData.underlyingSymbol}
+        handleInput={(val?: string) => setAmount(val ?? '')}
+        chain={chainId}
+        headerText="Withdraw Amount"
+        decimals={selectedMarketData.underlyingDecimals}
+        showUtilizationSlider
+        hintText="Max Withdraw"
       />
-
-      {isUnderMinBorrow && (
-        <Alert
-          variant="default"
-          className="py-2 border-0 bg-opacity-90"
-        >
-          <div className="flex items-center">
-            <Info className="mr-2 h-4 w-4 text-white" />
-            <AlertDescription>
-              Amount must be greater than minimum borrow amount (
-              {borrowLimits.min} {selectedMarketData.underlyingSymbol})
-            </AlertDescription>
-          </div>
-        </Alert>
-      )}
 
       <StatusAlerts
         status={hfpStatus}
         availableStates={[
           HFPStatus.CRITICAL,
-          HFPStatus.UNKNOWN,
-          HFPStatus.WARNING
+          HFPStatus.WARNING,
+          HFPStatus.UNKNOWN
         ]}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">
         <div className="space-y-4 content-center">
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>MIN BORROW</span>
-            <span>{borrowLimits.min}</span>
-          </div>
-
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>MAX BORROW</span>
-            <span>{borrowLimits.max}</span>
-          </div>
-
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>CURRENTLY BORROWING</span>
+          <div className="flex justify-between text-xs text-gray-400 uppercase">
+            <span>Market Supply Balance</span>
             <div className="flex items-center">
-              <span>{updatedValues.borrowBalanceFrom}</span>
+              <span>{updatedValues.supplyBalanceFrom}</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                isLoading={isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
-                {updatedValues.borrowBalanceTo}
+                {updatedValues.supplyBalanceTo}
               </ResultHandler>
             </div>
           </div>
 
           <div className="flex justify-between text-xs text-gray-400 uppercase">
-            <span>Market Borrow APR</span>
+            <span>Market Supply APR</span>
             <div className="flex items-center">
-              <span>{updatedValues.borrowAPR?.toFixed(2)}%</span>
+              <span>{updatedValues.supplyAPY?.toFixed(2)}%</span>
               <span className="mx-1">→</span>
               <ResultHandler
+                isLoading={isSliding || isLoadingUpdatedAssets || isPolling}
                 height={16}
                 width={16}
-                isLoading={isLoadingUpdatedAssets}
               >
-                {updatedValues.updatedBorrowAPR?.toFixed(2)}%
+                {updatedValues.updatedSupplyAPY?.toFixed(2)}%
               </ResultHandler>
             </div>
           </div>
@@ -183,9 +153,9 @@ const BorrowTab = ({
               <span>{healthFactor.current}</span>
               <span className="mx-1">→</span>
               <ResultHandler
-                width={16}
                 height={16}
-                isLoading={isLoadingUpdatedAssets}
+                width={16}
+                isLoading={isSliding || isLoadingUpdatedAssets}
               >
                 {healthFactor.predicted}
               </ResultHandler>
@@ -214,16 +184,16 @@ const BorrowTab = ({
       ) : (
         <Button
           className="w-full bg-accent hover:bg-accent/80"
-          disabled={isDisabled || !!isUnderMinBorrow || isWaitingForIndexing}
-          onClick={borrowAmount}
+          disabled={isDisabled}
+          onClick={withdrawAmount}
         >
           {isWaitingForIndexing
             ? 'Updating Balances...'
-            : `Borrow ${selectedMarketData.underlyingSymbol}`}
+            : `Withdraw ${selectedMarketData.underlyingSymbol}`}
         </Button>
       )}
     </div>
   );
 };
 
-export default BorrowTab;
+export default WithdrawTab;
