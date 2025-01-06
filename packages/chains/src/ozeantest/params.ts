@@ -5,7 +5,7 @@ import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigInt(30 * 60 * 24 * 365), // 30 blocks per minute = 2 sec block time
-  cgId: "ethereum",
+  cgId: "usdc",
   metadata: {
     chainIdHex: "0x50237",
     name: "Ozean Testnet",
@@ -13,7 +13,7 @@ const specificParams: ChainParams = {
     uniswapV3Fees: {},
     img: "",
     blockExplorerUrls: {
-      default: { name: "ozeantestexplorer", url: "https://ozean-l2.explorer.caldera.xyz/" }
+      default: { name: "ozeantestexplorer", url: "https://ozean-testnet.explorer.caldera.xyz" }
     },
     rpcUrls: {
       default: {
@@ -24,8 +24,8 @@ const specificParams: ChainParams = {
       }
     },
     nativeCurrency: {
-      symbol: "ETH",
-      name: "ETH"
+      symbol: "USDX",
+      name: "USDX"
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WUSDX,

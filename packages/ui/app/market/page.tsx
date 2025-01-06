@@ -139,7 +139,6 @@ export default function Market() {
             upcomingChains={[
               'Superseed',
               'MetalL2',
-              'Ozean',
               'Soneium',
               'Camp',
               'FX',

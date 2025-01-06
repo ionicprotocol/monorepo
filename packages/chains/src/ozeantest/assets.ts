@@ -12,7 +12,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped USDX",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.worldchain),
+    extraDocs: wrappedAssetDocs(SupportedChains.ozeantest),
     initialBorrowCap: parseEther("100").toString(),
     initialSupplyCap: parseEther("100").toString(),
     initialCf: "0.5"

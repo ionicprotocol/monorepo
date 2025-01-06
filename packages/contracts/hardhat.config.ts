@@ -213,8 +213,8 @@ const config: HardhatUserConfig = {
         network: "ozeantest",
         chainId: 7849306,
         urls: {
-          apiURL: "https://ozean-l2.explorer.caldera.xyz/api",
-          browserURL: "https://ozean-l2.explorer.caldera.xyz"
+          apiURL: "https://ozean-testnet.explorer.caldera.xyz/api",
+          browserURL: "https://ozean-testnet.explorer.caldera.xyz"
         }
       }
     ]

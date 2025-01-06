@@ -26,7 +26,9 @@ import {
   ink,
   vInk,
   swellchain,
-  vSwellchain
+  vSwellchain,
+  ozeantest,
+  vOzeantest
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -119,6 +121,10 @@ export function getEnabledChains() {
     enabledChains.push(vSwellchain);
   }
 
+  if (config.isOzeantestEnabled) {
+    enabledChains.push(vOzeantest);
+  }
+
   return enabledChains;
 }
 
@@ -132,7 +138,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.superseed]: superseed.assets,
   [SupportedChains.worldchain]: worldchain.assets,
   [SupportedChains.ink]: ink.assets,
-  [SupportedChains.swell]: swellchain.assets
+  [SupportedChains.swell]: swellchain.assets,
+  [SupportedChains.ozeantest]: ozeantest.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -145,5 +152,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.superseed]: superseed.deployedPlugins,
   [SupportedChains.worldchain]: worldchain.deployedPlugins,
   [SupportedChains.ink]: ink.deployedPlugins,
-  [SupportedChains.swell]: swellchain.deployedPlugins
+  [SupportedChains.swell]: swellchain.deployedPlugins,
+  [SupportedChains.ozeantest]: ozeantest.deployedPlugins
 };

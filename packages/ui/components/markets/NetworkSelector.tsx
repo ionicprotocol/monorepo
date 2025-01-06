@@ -30,7 +30,8 @@ const ACTIVE_NETWORKS = [
   'Lisk',
   'BoB',
   'Worldchain',
-  'Swell'
+  'Swell',
+  'Ozean Testnet'
 ];
 
 function NetworkSelector({

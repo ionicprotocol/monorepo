@@ -55,6 +55,22 @@ export const swellchain: AppKitNetwork = {
   }
 };
 
+export const ozeantest: AppKitNetwork = {
+  id: 7849306,
+  name: 'Ozean Testnet',
+  nativeCurrency: { name: 'USDX', symbol: 'USDX', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://ozean-testnet.rpc.caldera.xyz/http'] }
+  },
+  blockExplorers: {
+    default: {
+      name: 'Ozean Testnet Explorer',
+      url: 'https://ozean-testnet.explorer.caldera.xyz',
+      apiUrl: 'https://ozean-testnet.explorer.caldera.xyz/api'
+    }
+  }
+};
+
 export const networks: AppKitNetwork[] = [
   base,
   mode,
@@ -65,7 +81,8 @@ export const networks: AppKitNetwork[] = [
   superseed,
   worldchain,
   ink,
-  swellchain
+  swellchain,
+  ozeantest
 ];
 
 export const metadata = {

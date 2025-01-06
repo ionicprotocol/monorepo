@@ -13,7 +13,7 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
-import { ink, swellchain } from '@ionicprotocol/chains';
+import { ink, ozeantest, swellchain } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -235,9 +235,9 @@ export const pools: Record<number, PoolParams> = {
     ]
   },
   [base.id]: {
-    hexcode: '#2467ed',
     name: 'Base',
     arrow: 'ffffff',
+    hexcode: '#2467ed',
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
@@ -415,6 +415,22 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: ['WETH']
+      }
+    ]
+  },
+  [ozeantest.chainId]: {
+    name: 'Ozean Testnet',
+    hexcode: '#2467ed',
+    bg: 'bg-blue-600',
+    accentbg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-base',
+    logo: '/img/logo/OZEAN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WUSDX']
       }
     ]
   }
