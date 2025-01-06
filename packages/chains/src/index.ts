@@ -22,7 +22,7 @@ import { default as ozeantest } from "./ozeantest";
 import { default as superseed } from "./superseed";
 import { default as swellchain } from "./swellchain";
 import { default as worldchain } from "./worldchain";
-export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain };
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain, ozeantest };
 
 export const vInk: Chain = {
   id: 57073,

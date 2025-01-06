@@ -151,7 +151,7 @@ const config: HardhatUserConfig = {
       accounts,
       verify: {
         etherscan: {
-          apiUrl: "https://ozean-l2.explorer.caldera.xyz/api",
+          apiUrl: "https://ozean-testnet.explorer.caldera.xyz/api",
           apiKey: "empty"
         }
       }
