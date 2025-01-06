@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from 'react';
 
+import { Info } from 'lucide-react';
 import { formatUnits } from 'viem';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
 import ResultHandler from '@ui/components/ResultHandler';
+import { Alert, AlertDescription } from '@ui/components/ui/alert';
 import { Button } from '@ui/components/ui/button';
 import MemoizedUtilizationStats from '@ui/components/UtilizationStats';
 import {
@@ -105,6 +107,19 @@ const WithdrawTab = ({
         showUtilizationSlider
         hintText="Max Withdraw"
       />
+
+      <Alert
+        variant="default"
+        className="py-2 border-0 bg-opacity-90"
+      >
+        <div className="flex items-center">
+          <Info className="mr-2 h-4 w-4 text-white" />
+          <AlertDescription>
+            Please repay all loans and disable collateral before attempting to
+            withdraw.
+          </AlertDescription>
+        </div>
+      </Alert>
 
       <StatusAlerts
         status={hfpStatus}
