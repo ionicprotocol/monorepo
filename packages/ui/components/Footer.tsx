@@ -124,14 +124,6 @@ const Footer = () => {
               GitHub
             </a>
             <a
-              href="https://status.ionic.money/"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              Status
-            </a>
-            <a
               href="https://linktr.ee/ionicmoney"
               target="_blank"
               rel="noreferrer"
@@ -146,6 +138,14 @@ const Footer = () => {
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               CoinGecko
+            </a>
+            <a
+              href="https://id.ionic.money/#/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              ID
             </a>
           </div>
         </div>
@@ -183,12 +183,12 @@ const Footer = () => {
               Dune
             </a>
             <a
-              href="https://id.ionic.money/#/"
+              href="https://status.ionic.money/"
               target="_blank"
               rel="noreferrer"
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              ID
+              Status
             </a>
           </div>
         </div>
