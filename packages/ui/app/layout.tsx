@@ -59,7 +59,7 @@ export default function RootLayout({
                     options={{ showSpinner: false }}
                     shallowRouting
                   />
-                  <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[280px] min-h-screen w-[100vw]">
+                  <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[300px] min-h-screen w-[100vw]">
                     <Navbar />
                     <main>{children}</main>
                     <Footer />
