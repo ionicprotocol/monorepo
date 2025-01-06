@@ -8,7 +8,8 @@ import {
   superseed,
   worldchain,
   ink,
-  swellchain
+  swellchain,
+  soneium
 } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -54,7 +55,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.superseed]: superseed.assets,
   [SupportedChains.worldchain]: worldchain.assets,
   [SupportedChains.ink]: ink.assets,
-  [SupportedChains.swell]: swellchain.assets
+  [SupportedChains.swell]: swellchain.assets,
+  [SupportedChains.soneium]: soneium.assets
 };
 
 export interface IIonicPools {

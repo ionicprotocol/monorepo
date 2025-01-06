@@ -27,7 +27,8 @@ const config: HardhatUserConfig = {
       [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      1868: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -144,6 +145,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    soneium: {
+      url: "https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://xckc3jvrzboyo8w4.blockscout.com/",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -154,7 +165,8 @@ const config: HardhatUserConfig = {
       superseed: "empty",
       worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
       ink: "empty",
-      swellchain: "empty"
+      swellchain: "empty",
+      soneium: "empty"
     },
     customChains: [
       {
@@ -195,6 +207,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.swellnetwork.io/api",
           browserURL: "https://explorer.swellnetwork.io"
+        }
+      },
+      {
+        network: "soneium",
+        chainId: 1868,
+        urls: {
+          apiURL: "https://xckc3jvrzboyo8w4.blockscout.com/api",
+          browserURL: "https://xckc3jvrzboyo8w4.blockscout.com/"
         }
       }
     ]
