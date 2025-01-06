@@ -51,6 +51,21 @@ export type ChainDeployConfig = {
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
   cgId: string;
+  veION: veIONConfig;
+  ION: Address;
+};
+
+export type veIONConfig = {
+  lpTokens: Address[];
+  lpTokenWhitelistStatuses: boolean[];
+  lpTokenTypes: number[];
+  minimumLockAmounts: bigint[];
+  minimumLockDuration: bigint;
+  maxEarlyWithdrawFee: bigint;
+  ionicAeroVeloPool?: Address;
+  aeroVoting?: Address;
+  aeroVotingBoost?: bigint;
+  veAERO?: Address;
 };
 
 export type DynamicFlywheelConfig = {
