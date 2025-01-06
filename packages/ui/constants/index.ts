@@ -419,6 +419,7 @@ export const pools: Record<number, PoolParams> = {
     ]
   },
   [ozeantest.chainId]: {
+    arrow: 'ffffff',
     name: 'Ozean Testnet',
     hexcode: '#2467ed',
     bg: 'bg-blue-600',
