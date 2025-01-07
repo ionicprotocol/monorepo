@@ -59,6 +59,28 @@ task("markets:deploy:camptest:new", "deploy new camptest assets").setAction(
   }
 );
 
+task("camptest:set-ap:new", "Sets AP on a market").setAction(
+  async (_, { viem, run, getNamedAccounts, deployments, getChainId }) => {
+    const { deployer } = await getNamedAccounts();
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const ap = await deployments.get("AddressesProvider");
+    const assetsToDeploy: string[] = [assetSymbols.WETH];
+    for (const asset of camptest.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
+        client: { public: publicClient, wallet: walletClient }
+      });
+      const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+      const asExt = await viem.getContractAt("CTokenFirstExtension", cToken, {
+        client: { public: publicClient, wallet: walletClient }
+      });
+      const tx = await asExt.write._setAddressesProvider([ap.address as Address]);
+      console.log("set addresses provider", tx);
+    }
+  }
+);
+
 task("camptest:set-caps:new", "one time setup").setAction(
   async (_, { viem, run, getNamedAccounts, deployments, getChainId }) => {
     const { deployer } = await getNamedAccounts();
