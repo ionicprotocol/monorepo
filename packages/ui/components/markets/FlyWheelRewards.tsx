@@ -16,6 +16,7 @@ import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import ResultHandler from '../ResultHandler';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { cn } from '@ui/lib/utils';
 
 type FlyWheelRewardsProps = {
   cToken: Address;
@@ -24,6 +25,7 @@ type FlyWheelRewardsProps = {
   type: 'borrow' | 'supply';
   rewards?: FlywheelReward[];
   maxButtonWidth?: string;
+  standalone?: boolean;
 };
 
 const FlyWheelRewards = ({
@@ -31,7 +33,8 @@ const FlyWheelRewards = ({
   pool,
   poolChainId,
   type,
-  rewards = []
+  rewards = [],
+  standalone = false
 }: FlyWheelRewardsProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const chainId = useChainId();
@@ -102,7 +105,10 @@ const FlyWheelRewards = ({
           {combinedRewards.map((reward, index) => (
             <div
               key={index}
-              className="flex justify-between items-center gap-4"
+              className={cn('flex items-center gap-2', {
+                'justify-between': !standalone,
+                'justify-center': standalone
+              })}
             >
               <div className="flex items-center gap-2">
                 <Image
@@ -112,11 +118,15 @@ const FlyWheelRewards = ({
                   height={16}
                   className="w-4 h-4 rounded"
                 />
-                <span className="text-xs text-gray-400">
-                  Available to Claim
-                </span>
+
+                {!standalone && (
+                  <span className="text-xs text-gray-400">
+                    Available to Claim
+                  </span>
+                )}
               </div>
               <span className="text-xs font-medium text-white">
+                {standalone && '+ '}
                 {Number(formatEther(reward.amount)).toLocaleString('en-US', {
                   maximumFractionDigits: 2
                 })}{' '}

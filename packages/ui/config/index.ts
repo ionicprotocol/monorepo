@@ -13,6 +13,8 @@ type CONFIG = {
   isWorldchainEnabled: boolean;
   isInkEnabled: boolean;
   isSwellEnabled: boolean;
+  isOzeantestEnabled: boolean;
+  isCampTestEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
@@ -44,6 +46,8 @@ const config: CONFIG = {
   isWorldchainEnabled: true,
   isInkEnabled: true,
   isSwellEnabled: true,
+  isOzeantestEnabled: true,
+  isCampTestEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,

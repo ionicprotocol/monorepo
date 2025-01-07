@@ -16,9 +16,9 @@ import {
 import { DROPDOWN } from '@ui/constants/index';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
 
-import ClaimDialog from '../../components/claim/ClaimDialog';
-import ClaimPanel from '../../components/claim/ClaimPanel';
-import InfoPanel from '../../components/claim/InfoPanel';
+import ClaimDialog from '@ui/components/claim/ClaimDialog';
+import ClaimPanel from '@ui/components/claim/ClaimPanel';
+import InfoPanel from '@ui/components/claim/InfoPanel';
 import { claimAbi, claimContractAddressSeason2 } from '../../constants/claim';
 import {
   PublicSaleAbi,

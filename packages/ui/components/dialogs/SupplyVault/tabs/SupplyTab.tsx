@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
+
 import { ThreeCircles } from 'react-loader-spinner';
-import { Button } from '@ui/components/ui/button';
 import { useAccount } from 'wagmi';
-import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
+
 import MaxDeposit from '@ui/components/MaxDeposit';
-import { VaultRowData } from '@ui/types/SupplyVaults';
-import {
-  supplyVaultAddresses,
-  SupportedSupplyVaultChainId
-} from '@ui/utils/marketUtils';
+import { Button } from '@ui/components/ui/button';
+import { useSupplyVault } from '@ui/hooks/market/useSupplyVault';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
+import type { SupportedSupplyVaultChainId } from '@ui/utils/marketUtils';
+import { supplyVaultAddresses } from '@ui/utils/marketUtils';
 
 interface SupplyTabProps {
   selectedVaultData: VaultRowData;
@@ -36,7 +36,7 @@ export function SupplyTab({ selectedVaultData, chainId }: SupplyTabProps) {
   const tokenAddress = useMemo(
     () =>
       supplyVaultAddresses[chainId as SupportedSupplyVaultChainId]?.tokens[
-        selectedVaultData.underlyingSymbol as 'WETH' | 'USDC'
+        selectedVaultData.underlyingSymbol as 'USDC' | 'WETH'
       ],
     [chainId, selectedVaultData.underlyingSymbol]
   );

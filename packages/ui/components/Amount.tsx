@@ -10,8 +10,8 @@ import {
 import { cn } from '@ui/lib/utils';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import ResultHandler from './ResultHandler';
 import AmountInput from './AmountInput';
+import ResultHandler from './ResultHandler';
 
 interface IAmount {
   amount?: string;

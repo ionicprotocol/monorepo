@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
 
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { type Address, zeroAddress } from 'viem';
 import { mode } from 'viem/chains';
 
-import { Dialog, DialogContent } from '@ui/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@ui/components/ui/dialog';
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
 
@@ -47,11 +53,11 @@ export default function SwapWidget({
     theme: {
       palette: {
         primary: {
-          main: `${pools[toChain]?.hexcode ?? pools[mode.id].hexcode}`
+          main: `${pools[mode.id].hexcode}`
         }
       },
       container: {
-        border: `1px solid ${pools[toChain]?.hexcode ?? pools[mode.id].hexcode}`,
+        border: `1px solid ${pools[mode.id].hexcode}`,
         borderRadius: '16px'
       }
     },
@@ -75,6 +81,11 @@ export default function SwapWidget({
         className="max-w-[480px] p-0 bg-transparent border-0"
         hideCloseButton
       >
+        <VisuallyHidden.Root>
+          <DialogHeader>
+            <DialogTitle />
+          </DialogHeader>
+        </VisuallyHidden.Root>
         <LiFiWidget
           integrator="ionic"
           config={widgetConfig}

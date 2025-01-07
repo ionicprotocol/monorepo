@@ -52,7 +52,7 @@ import {
 // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 import { INFO } from '@ui/constants/index';
 
-import Swap from '@ui/components/dialogs/manage/Swap';
+import Swap from '@ui/components/dialogs/ManageMarket/Swap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 import { type MarketData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -60,13 +60,13 @@ import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import millify from 'millify';
 import { type Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
-import { useUsdPrice } from '@ui/hooks/useAllUsdPrices';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/components/markets/BorrowAmount';
-import ManageDialog from '@ui/components/dialogs/manage';
+import ManageDialog from '@ui/components/dialogs/ManageMarket';
 import { useAssetChartData } from '@ui/hooks/useAssetChartData';
 import ChartWithDateRange from '@ui/components/markets/ChartWithDateRange';
 import ResultHandler from '@ui/components/ResultHandler';
+import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 // import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 // import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 
@@ -264,7 +264,7 @@ const Asset = () => {
     selectedMarketData?.cToken,
     Number(chain)
   );
-  const { data: usdPrice } = useUsdPrice(chain as string);
+  const { data: usdPrice } = useUsdPrice(chain ? +chain : mode.id);
 
   const pricePerSingleAsset = useMemo<number>(
     () =>

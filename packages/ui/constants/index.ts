@@ -13,7 +13,7 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
-import { ink, swellchain } from '@ionicprotocol/chains';
+import { camptest, ink, ozeantest, swellchain } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -235,9 +235,9 @@ export const pools: Record<number, PoolParams> = {
     ]
   },
   [base.id]: {
-    hexcode: '#2467ed',
     name: 'Base',
     arrow: 'ffffff',
+    hexcode: '#2467ed',
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
@@ -415,6 +415,32 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: ['WETH']
+      }
+    ]
+  },
+  [camptest.chainId]: {
+    name: 'Camp Testnet',
+    arrow: 'ffffff',
+    bg: 'bg-camp',
+    text: 'text-white',
+    border: 'border-camp',
+    logo: '/img/logo/CAMP.png',
+    pools: [{ id: '0', name: 'Main Pool', assets: ['WETH'] }]
+  },
+  [ozeantest.chainId]: {
+    arrow: 'ffffff',
+    name: 'Ozean Testnet',
+    hexcode: '#2467ed',
+    bg: 'bg-blue-600',
+    accentbg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-base',
+    logo: '/img/logo/OZEAN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WUSDX']
       }
     ]
   }
@@ -728,10 +754,10 @@ export const POOLS_COLUMNS = [
   TOTAL_BORROW,
   EXPANDER
 ];
-export const FEATURE_REQUESTS_URL =
-  'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API =
   'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
+export const FEATURE_REQUESTS_URL =
+  'https://midascapital.canny.io/feature-requests';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 export const HIGH_RISK_RATIO = 0.8;
 

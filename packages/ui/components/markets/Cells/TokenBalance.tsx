@@ -10,39 +10,49 @@ type TokenBalanceProps = {
 const TokenBalance: React.FC<TokenBalanceProps> = ({
   balance,
   balanceUSD,
-  tokenName,
-  decimals = 4
+  tokenName
 }) => {
   const formatNumber = (num: number) => {
     if (num === 0) return '0';
 
-    if (num >= 1000000) {
-      const value = (num / 1000000).toFixed(2);
-      return `${value.replace(/\.?0+$/, '')}M`;
+    if (Math.abs(num) < 0.01) {
+      // Find the first non-zero digit
+      const str = num.toFixed(10);
+      const firstNonZeroIndex = str.match(/[1-9]/)?.index || 0;
+
+      // Get position after decimal point
+      const decimalPosition = str.indexOf('.');
+      const digitsAfterDecimal = firstNonZeroIndex - decimalPosition;
+
+      // Show 2 more digits after the first non-zero digit
+      return num.toFixed(digitsAfterDecimal + 2);
     }
 
-    if (num >= 1000) {
-      const value = (num / 1000).toFixed(2);
-      return `${value.replace(/\.?0+$/, '')}K`;
-    }
-
-    // Convert to fixed decimal places and trim trailing zeros
-    const value = num.toFixed(decimals);
-    return value.replace(/\.?0+$/, '');
+    return num.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   };
 
   const formatUSD = (num: number) => {
     if (num === 0) return '$0';
 
-    const formatted = new Intl.NumberFormat('en-US', {
+    if (Math.abs(num) < 0.01) {
+      // Same logic as above but with currency formatting
+      const str = num.toFixed(10);
+      const firstNonZeroIndex = str.match(/[1-9]/)?.index || 0;
+      const decimalPosition = str.indexOf('.');
+      const digitsAfterDecimal = firstNonZeroIndex - decimalPosition;
+
+      return '$' + (+num.toFixed(digitsAfterDecimal + 2)).toString();
+    }
+
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(num);
-
-    // Remove trailing zeros after decimal point while keeping at least 2 digits
-    return formatted.replace(/\.?0+$/, '');
   };
 
   return (

@@ -1,14 +1,14 @@
 'use client';
 
+import EarnTable from '@ui/components/earn/EarnTable';
+import LegacyTable from '@ui/components/earn/LegacyTable';
+import MorphoTable from '@ui/components/earn/MorphoTable';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@ui/components/ui/card';
-
-import EarnTable from '../../components/earn/EarnTable';
-import MorphoTable from '../../components/earn/MorphoTable';
 
 export default function Earn() {
   return (
@@ -22,6 +22,18 @@ export default function Earn() {
         </CardHeader>
         <CardContent>
           <MorphoTable />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-grayone">
+        <CardHeader>
+          <CardTitle className="text-center text-white/80 text-xl">
+            🗄️ Legacy pools{' '}
+            <span className="text-red-400/80">(Withdraw Only)</span> 🗄️
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LegacyTable />
         </CardContent>
       </Card>
 

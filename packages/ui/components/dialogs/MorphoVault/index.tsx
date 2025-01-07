@@ -1,7 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
-import { base } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 import {
   Dialog,
@@ -15,7 +12,7 @@ import {
   TabsList,
   TabsTrigger
 } from '@ui/components/ui/tabs';
-import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
+
 import { SupplyTab } from './tabs/SupplyTab';
 import { WithdrawTab } from './tabs/WithdrawTab';
 
@@ -26,21 +23,7 @@ interface MorphoDialogProps {
 }
 
 export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
-  const [maxWithdraw, setMaxWithdraw] = useState<bigint>(BigInt(0));
-  const { getMaxWithdraw, isLoading, isConnected } = useMorphoProtocol();
-
   const assetSymbol = asset[0] as 'USDC' | 'WETH';
-
-  const fetchMaxWithdraw = useCallback(async () => {
-    if (isConnected && !isLoading) {
-      const max = await getMaxWithdraw(assetSymbol);
-      setMaxWithdraw(max);
-    }
-  }, [isConnected, isLoading, assetSymbol, getMaxWithdraw]);
-
-  useEffect(() => {
-    fetchMaxWithdraw();
-  }, [fetchMaxWithdraw]);
 
   return (
     <Dialog
@@ -79,20 +62,13 @@ export function MorphoDialog({ asset, isOpen, setIsOpen }: MorphoDialogProps) {
             value="supply"
             className="p-1"
           >
-            <SupplyTab
-              assetSymbol={assetSymbol}
-              onSuccess={fetchMaxWithdraw}
-            />
+            <SupplyTab assetSymbol={assetSymbol} />
           </TabsContent>
           <TabsContent
             value="withdraw"
             className="p-1"
           >
-            <WithdrawTab
-              assetSymbol={assetSymbol}
-              maxWithdraw={maxWithdraw}
-              onSuccess={fetchMaxWithdraw}
-            />
+            <WithdrawTab assetSymbol={assetSymbol} />
           </TabsContent>
         </Tabs>
       </DialogContent>

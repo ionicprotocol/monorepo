@@ -27,7 +27,9 @@ const config: HardhatUserConfig = {
       [fraxtal.id]: "0xf8Ec79Ac74b16242d17cC7258250fA3317E3C1b2",
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -62,7 +64,7 @@ const config: HardhatUserConfig = {
       accounts
     },
     base: {
-      url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base.meowrpc.com",
+      url: process.env.OVERRIDE_RPC_URL_BASE ?? "https://base-rpc.publicnode.com",
       accounts,
       verify: {
         etherscan: {
@@ -70,11 +72,6 @@ const config: HardhatUserConfig = {
           apiKey: process.env.ETHERSCAN_API_KEY_BASE
         }
       }
-    },
-    virtual_base: {
-      url: process.env.OVERRIDE_RPC_URL_VIRTUAL_BASE,
-      chainId: 8453,
-      accounts
     },
     optimism: {
       url: process.env.OVERRIDE_RPC_URL_OPTIMISM ?? "https://mainnet.optimism.io",
@@ -149,6 +146,26 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    camptest: {
+      url: "https://rpc-campnetwork.xyz",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://camp-network-testnet.blockscout.com/api",
+          apiKey: "empty"
+        }
+      }
+    },
+    ozeantest: {
+      url: "https://ozean-testnet.rpc.caldera.xyz/http",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://ozean-testnet.explorer.caldera.xyz/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -159,7 +176,9 @@ const config: HardhatUserConfig = {
       superseed: "empty",
       worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
       ink: "empty",
-      swellchain: "empty"
+      swellchain: "empty",
+      camptest: "empty",
+      ozeantest: "empty"
     },
     customChains: [
       {
@@ -200,6 +219,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.swellnetwork.io/api",
           browserURL: "https://explorer.swellnetwork.io"
+        }
+      },
+      {
+        network: "camptest",
+        chainId: 325000,
+        urls: {
+          apiURL: "https://camp-network-testnet.blockscout.com/api",
+          browserURL: "https://camp-network-testnet.blockscout.com"
+        }
+      },
+      {
+        network: "ozeantest",
+        chainId: 7849306,
+        urls: {
+          apiURL: "https://ozean-testnet.explorer.caldera.xyz/api",
+          browserURL: "https://ozean-testnet.explorer.caldera.xyz"
         }
       }
     ]
