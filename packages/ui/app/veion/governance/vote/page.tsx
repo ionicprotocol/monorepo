@@ -2,57 +2,36 @@
 
 import React, { useMemo, useState } from 'react';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { base, optimism, mode } from 'viem/chains';
 
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
-import FlatMap from '@ui/components/points_comp/FlatMap';
-import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent
 } from '@ui/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger
-} from '@ui/components/ui/select';
 import { Switch } from '@ui/components/ui/switch';
+import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
+import PositionTitle from '@ui/components/veion/PositionTitle';
 import { lockedData } from '@ui/constants/mock';
 import { EmissionsProvider } from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const Vote: React.FC = () => {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const initialId = searchParams.get('id') || lockedData[0].id;
 
   const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
   const [showAutoOnly, setShowAutoOnly] = useState<boolean>(false);
-  const [selectedProposal, setSelectedProposal] = useState(initialId);
   const { currentChain } = useVeIONContext();
 
   const selectedData = useMemo(
-    () => lockedData.find((item) => item.id === selectedProposal),
-    [selectedProposal]
+    () => lockedData.find((item) => item.id === initialId),
+    [initialId]
   );
-
-  const handleProposalChange = (value: string) => {
-    setSelectedProposal(value);
-
-    // Create new URLSearchParams object with current params
-    const params = new URLSearchParams(searchParams);
-    // Update the id parameter
-    params.set('id', value);
-
-    // Update the URL without refreshing the page
-    router.replace(`${pathname}?${params.toString()}`);
-  };
 
   const infoBlocksData = useMemo(
     () => [
@@ -60,14 +39,14 @@ const Vote: React.FC = () => {
         label: 'Tokens Locked',
         value: selectedData?.tokensLocked || '',
         icon: null,
-        infoContent: `This is the amount of ${selectedProposal} veION you have locked.`
+        infoContent: `This is the amount of #${initialId} veION you have locked.`
       },
       {
         label: 'Locked Until',
         value: selectedData?.lockExpires.date || '',
         secondaryValue: selectedData?.lockExpires.timeLeft || '',
         icon: null,
-        infoContent: `This is the date until your ${selectedProposal} veION is locked.`
+        infoContent: `This is the date until your #${initialId} veION is locked.`
       },
       {
         label: 'Voting Power',
@@ -76,51 +55,32 @@ const Vote: React.FC = () => {
         infoContent: 'This is your current voting power.'
       }
     ],
-    [selectedData, selectedProposal]
+    [selectedData, initialId]
   );
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
-      <Card className="w-full bg-grayone">
-        <CardHeader>
-          <div className="w-fit">
-            <Select
-              value={selectedProposal}
-              onValueChange={handleProposalChange}
-            >
-              <SelectTrigger className="border-0 outline-none p-0 bg-transparent hover:bg-transparent">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-2xl font-semibold">{selectedData?.id}</h2>
-                </div>
-              </SelectTrigger>
-              <SelectContent
-                className="bg-grayUnselect border-white/10 min-w-[200px] w-fit"
-                align="start"
-              >
-                {lockedData.map((option) => (
-                  <SelectItem
-                    key={option.id}
-                    value={option.id}
-                    className="focus:bg-accent/20 focus:text-white"
-                  >
-                    <span className="text-xl font-semibold">{option.id}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center gap-4">
-            {infoBlocksData.map((block) => (
-              <InfoBlock
-                key={block.label}
-                block={block}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {selectedData && (
+        <Card className="w-full bg-grayone">
+          <CardHeader>
+            <PositionTitle
+              chainId={selectedData.chainId}
+              position={selectedData.position}
+              size="lg"
+            />
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap items-center gap-4">
+              {infoBlocksData.map((block) => (
+                <InfoBlock
+                  key={block.label}
+                  block={block}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <NetworkSelector
         nopool={true}
@@ -164,9 +124,6 @@ const Vote: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="border-none">
-          <div className="my-3 w-full">
-            <FlatMap />
-          </div>
           <EmissionsProvider>
             <EmissionsManagement
               tokenId={0}

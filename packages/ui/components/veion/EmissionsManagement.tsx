@@ -1,17 +1,14 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+
+import { mode } from 'viem/chains';
+import { useChainId } from 'wagmi';
 
 import { Checkbox } from '@ui/components/ui/checkbox';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@ui/components/ui/select';
 import type { VoteMarket } from '@ui/context/EmissionsManagementContext';
 import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
@@ -21,6 +18,7 @@ import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
+import PoolToggle from '../markets/PoolToggle';
 
 import type { EnhancedColumnDef } from '../CommonTable';
 
@@ -39,10 +37,14 @@ function EmissionsManagement({
   const { markets, isLoading, error } = useEmissionsContext();
   const { toast } = useToast();
   const { submitVote, isVoting } = useVeIONVote(currentChain);
-  const [poolType, setPoolType] = useState<'0' | '1'>('0');
+  const searchParams = useSearchParams();
+  const querychain = searchParams.get('chain');
+  const querypool = searchParams.get('pool');
+  const selectedPool = querypool ?? '0';
+  const chain = querychain ? querychain : mode.id.toString();
 
   const filteredVotingData = useMemo(() => {
-    const baseData = markets[poolType] ?? [];
+    const baseData = markets[selectedPool] ?? [];
 
     return baseData.filter((market) => {
       // Filter for auto votes if showAutoOnly is true
@@ -63,7 +65,7 @@ function EmissionsManagement({
 
       return true;
     });
-  }, [markets, poolType, showAutoOnly, showPendingOnly]);
+  }, [markets, selectedPool, showAutoOnly, showPendingOnly]);
 
   const handleSubmitVotes = async () => {
     try {
@@ -186,20 +188,10 @@ function EmissionsManagement({
 
   return (
     <div className="relative pb-12">
-      <div className="mb-4">
-        <Select
-          value={poolType}
-          onValueChange={(value: '0' | '1') => setPoolType(value)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select pool type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="0">Regular Pool</SelectItem>
-            <SelectItem value="1">Native Pool</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <PoolToggle
+        chain={+chain}
+        pool={selectedPool}
+      />
 
       <CommonTable
         columns={columns}

@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { Globe, Diamond, Wallet } from 'lucide-react';
+
 import { pools } from '@ui/constants/index';
 
 const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {

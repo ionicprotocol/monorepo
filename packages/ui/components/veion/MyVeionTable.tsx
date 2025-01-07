@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import Image from 'next/image';
-
 import ActionButton from '@ui/components/ActionButton';
 import CommonTable from '@ui/components/CommonTable';
 import type {
@@ -9,11 +7,11 @@ import type {
   MarketCellProps
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
-import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import ExtendVeion from './ExtendVeion';
 import ManageDialog from './ManageDialog';
+import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 
@@ -57,32 +55,16 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
       id: 'id',
-      header: <div className="pl-6">CHAIN + ID</div>,
+      header: <div className="pl-6">ID</div>,
       sortingFn: 'numerical',
-      cell: ({ row }: MarketCellProps) => {
-        const chainId = row.original.chainId;
-        const chainName = getChainName(chainId);
-
-        return (
-          <div className="flex items-center gap-3 pl-6">
-            <div className="flex items-center gap-2">
-              <Image
-                alt={chainName}
-                className="w-6 h-6"
-                src={`/img/logo/${chainName.toUpperCase()}.png`}
-                width={24}
-                height={24}
-              />
-              <span className="text-xs font-medium text-white/60">
-                {chainName}
-              </span>
-            </div>
-            <div className="text-xs font-semibold text-white/80">
-              #{row.original.position}
-            </div>
-          </div>
-        );
-      }
+      cell: ({ row }: MarketCellProps) => (
+        <div className="pl-6">
+          <PositionTitle
+            chainId={row.original.chainId}
+            position={row.original.position}
+          />
+        </div>
+      )
     },
     {
       id: 'tokensLocked',

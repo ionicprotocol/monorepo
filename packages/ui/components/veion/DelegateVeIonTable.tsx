@@ -11,6 +11,7 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONDelegate } from '@ui/hooks/veion/useVeIONDelegate';
 
+import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 
 // Types
@@ -88,19 +89,6 @@ function DelegateVeionTable({
     }
   };
 
-  const getRandomColor = () => {
-    const colors = [
-      '#FF6B6B',
-      '#4ECDC4',
-      '#45B7D1',
-      '#96CEB4',
-      '#FFEEAD',
-      '#D4A5A5',
-      '#9B59B6'
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
   // Delegate VeION Table Configuration
   const delegateVeionColumns: EnhancedColumnDef<DelegateVeionData>[] = [
     {
@@ -108,14 +96,11 @@ function DelegateVeionTable({
       header: <div className="pl-6">ID</div>,
       sortingFn: 'numerical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="flex items-center gap-2 pl-6">
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: getRandomColor() }}
+        <div className="pl-6">
+          <PositionTitle
+            chainId={row.original.chainId}
+            position={row.original.position}
           />
-          <div className="text-xs font-semibold text-white/80">
-            {row.getValue('id')}
-          </div>
         </div>
       )
     },
