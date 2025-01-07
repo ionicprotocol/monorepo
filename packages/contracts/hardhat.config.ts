@@ -28,6 +28,7 @@ const config: HardhatUserConfig = {
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
       7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
@@ -146,6 +147,16 @@ const config: HardhatUserConfig = {
         }
       }
     },
+    camptest: {
+      url: "https://rpc-campnetwork.xyz",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://camp-network-testnet.blockscout.com/api",
+          apiKey: "empty"
+        }
+      }
+    },
     ozeantest: {
       url: "https://ozean-testnet.rpc.caldera.xyz/http",
       accounts,
@@ -166,6 +177,7 @@ const config: HardhatUserConfig = {
       worldchain: process.env.ETHERSCAN_API_KEY_WORLDCHAIN!,
       ink: "empty",
       swellchain: "empty",
+      camptest: "empty",
       ozeantest: "empty"
     },
     customChains: [
@@ -207,6 +219,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://explorer.swellnetwork.io/api",
           browserURL: "https://explorer.swellnetwork.io"
+        }
+      },
+      {
+        network: "camptest",
+        chainId: 325000,
+        urls: {
+          apiURL: "https://camp-network-testnet.blockscout.com/api",
+          browserURL: "https://camp-network-testnet.blockscout.com"
         }
       },
       {

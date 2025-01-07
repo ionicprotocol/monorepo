@@ -119,6 +119,18 @@ task("pool:create:swellchain").setAction(async ({}, { run, deployments }) => {
   });
 });
 
+task("pool:create:camptest").setAction(async ({}, { run, deployments }) => {
+  const mpo = await deployments.get("MasterPriceOracle");
+  await run("pool:create", {
+    name: "Camp Testnet Main Pool",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 task("pool:create:ozeantest").setAction(async ({}, { run, deployments }) => {
   const mpo = await deployments.get("MasterPriceOracle");
   await run("pool:create", {

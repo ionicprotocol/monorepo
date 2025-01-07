@@ -8,3 +8,4 @@ import "./pool";
 import "./market";
 import "./chain-specific";
 import "./oracle";
+import "./misc";

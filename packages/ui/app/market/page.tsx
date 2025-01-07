@@ -140,7 +140,6 @@ export default function Market() {
               'Superseed',
               'MetalL2',
               'Soneium',
-              'Camp',
               'FX',
               'Kroma',
               'Unichain'
