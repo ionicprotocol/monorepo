@@ -13,6 +13,7 @@ import {
 
 import { default as base } from "./base";
 import { default as bob } from "./bob";
+import { default as camptest } from "./camptest";
 import { default as fraxtal } from "./fraxtal";
 import { default as ink } from "./ink";
 import { default as lisk } from "./lisk";
@@ -22,7 +23,7 @@ import { default as superseed } from "./superseed";
 import { default as swellchain } from "./swellchain";
 import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain };
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain, camptest };
 
 export const vInk: Chain = {
   id: 57073,
@@ -46,6 +47,17 @@ export const vSwellchain: Chain = {
   rpcUrls: { default: { http: ["https://rpc.ankr.com/swell", "https://swell-mainnet.alt.technology"] } }
 };
 
+export const vCampTest: Chain = {
+  id: 325000,
+  name: "Camp Network Testnet V2",
+  nativeCurrency: {
+    name: "Ethereum",
+    symbol: "ETH",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: ["https://rpc-campnetwork.xyz"] } }
+};
+
 export const chainIdtoChain: { [chainId: number]: Chain } = {
   [mode.chainId]: vMode,
   [base.chainId]: vBase,
@@ -56,7 +68,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [ink.chainId]: vInk,
   [superseed.chainId]: vSuperseed,
   [worldchain.chainId]: vWorldchain,
-  [swellchain.chainId]: vSwellchain
+  [swellchain.chainId]: vSwellchain,
+  [camptest.chainId]: vCampTest
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -69,5 +82,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ink.chainId]: ink,
   [superseed.chainId]: superseed,
   [worldchain.chainId]: worldchain,
-  [swellchain.chainId]: swellchain
+  [swellchain.chainId]: swellchain,
+  [camptest.chainId]: camptest
 };
