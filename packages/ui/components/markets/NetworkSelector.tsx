@@ -31,7 +31,9 @@ const ACTIVE_NETWORKS = [
   'BoB',
   'Worldchain',
   'Swell',
-  'Soneium'
+  'Soneium',
+  'Ozean Testnet',
+  'Camp Testnet'
 ];
 
 function NetworkSelector({

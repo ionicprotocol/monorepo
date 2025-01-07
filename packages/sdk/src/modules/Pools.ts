@@ -9,6 +9,8 @@ import {
   worldchain,
   ink,
   swellchain,
+  camptest,
+  ozeantest,
   soneium
 } from "@ionicprotocol/chains";
 import {
@@ -56,7 +58,9 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.worldchain]: worldchain.assets,
   [SupportedChains.ink]: ink.assets,
   [SupportedChains.swell]: swellchain.assets,
-  [SupportedChains.soneium]: soneium.assets
+  [SupportedChains.soneium]: soneium.assets,
+  [SupportedChains.camptest]: camptest.assets,
+  [SupportedChains.ozeantest]: ozeantest.assets
 };
 
 export interface IIonicPools {

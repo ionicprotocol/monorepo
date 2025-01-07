@@ -10,7 +10,7 @@
     "forge:build": "forge build",
     "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol' --config .prettierrc",
     "lint": "prettier --list-different 'contracts/**/*.sol'",
-    "export:all": "yarn export:mode && yarn export:base && yarn export:bob && yarn export:optimism && yarn export:fraxtal && yarn export:lisk && yarn export:superseed && yarn export:worldchain && yarn export:ink && yarn export:swellchain && yarn export:soneium",
+    "export:all": "yarn export:mode && yarn export:base && yarn export:bob && yarn export:optimism && yarn export:fraxtal && yarn export:lisk && yarn export:superseed && yarn export:worldchain && yarn export:ink && yarn export:swellchain && yarn export:camptest && yarn export:ozeantest && yarn export:soneium",
     "export:mode": "hardhat export --network mode --export ../sdk/deployments/mode.json && node ./scripts/prune.js ../sdk/deployments/mode.json",
     "export:base": "hardhat export --network base --export ../sdk/deployments/base.json && node ./scripts/prune.js ../sdk/deployments/base.json",
     "export:bob": "hardhat export --network bob --export ../sdk/deployments/bob.json && node ./scripts/prune.js ../sdk/deployments/bob.json",
@@ -21,6 +21,8 @@
     "export:worldchain": "hardhat export --network worldchain --export ../sdk/deployments/worldchain.json && node ./scripts/prune.js ../sdk/deployments/worldchain.json",
     "export:ink": "hardhat export --network ink --export ../sdk/deployments/ink.json && node ./scripts/prune.js ../sdk/deployments/ink.json",
     "export:swellchain": "hardhat export --network swellchain --export ../sdk/deployments/swellchain.json && node ./scripts/prune.js ../sdk/deployments/swellchain.json",
+    "export:camptest": "hardhat export --network camptest --export ../sdk/deployments/camptest.json && node ./scripts/prune.js ../sdk/deployments/camptest.json",
+    "export:ozeantest": "hardhat export --network ozeantest --export ../sdk/deployments/ozeantest.json && node ./scripts/prune.js ../sdk/deployments/ozeantest.json",
     "export:soneium": "hardhat export --network soneium --export ../sdk/deployments/soneium.json && node ./scripts/prune.js ../sdk/deployments/soneium.json",
     "prune": "node ./scripts/prune.js ../sdk/deployments/*.json",
     "generate": "yarn forge:build && wagmi generate"

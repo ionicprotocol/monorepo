@@ -168,19 +168,19 @@ export const configureIonicLiquidator = async ({
   const healthFactorThreshold = parseEther("1");
   const expressRelay = chainIdToConfig[chainId].chainAddresses.EXPRESS_RELAY;
 
-  const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
-  await publicClient.waitForTransactionReceipt({ hash: lensTx });
-  console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
+  // const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
+  // await publicClient.waitForTransactionReceipt({ hash: lensTx });
+  // console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
 
-  if (expressRelay) {
-    const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
-    await publicClient.waitForTransactionReceipt({ hash: relayTx });
-    console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
-  }
+  // if (expressRelay) {
+  //   const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
+  //   await publicClient.waitForTransactionReceipt({ hash: relayTx });
+  //   console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
+  // }
 
-  const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
-  await publicClient.waitForTransactionReceipt({ hash: hfTx });
-  console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
+  // const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
+  // await publicClient.waitForTransactionReceipt({ hash: hfTx });
+  // console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
 };
 
 export const configureAddressesProviderAddresses = async ({

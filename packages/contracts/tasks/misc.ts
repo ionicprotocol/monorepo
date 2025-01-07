@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 import { Address, parseEther } from "viem";
 import { chainIdtoChain } from "@ionicprotocol/chains";
+
 task("misc:deposit-weth", "Deposits ETH into WETH")
   .addParam("amount", "Amount of ETH to deposit", "1", types.string)
   .setAction(async ({ amount }, { viem, getChainId, getNamedAccounts }) => {

@@ -9,7 +9,9 @@ export enum SupportedChains {
   superseed = 5330,
   worldchain = 480,
   swell = 1923,
-  soneium = 1868
+  soneium = 1868,
+  ozeantest = 7849306,
+  camptest = 325000
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -235,6 +237,9 @@ export enum assetSymbols {
 
   // lisk
   LSK = "LSK",
+
+  // ozean
+  WUSDX = "WUSDX",
 
   // legacy
   DAI = "DAI",
