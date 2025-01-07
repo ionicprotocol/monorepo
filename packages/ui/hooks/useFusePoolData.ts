@@ -6,9 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-import { useAssetPrices } from './useAssetPrices';
-
-import { chainIdToConfig } from '@ionicprotocol/chains';
+import { useUsdPrice } from './useUsdPrices';
 
 export const useFusePoolData = (
   poolId: string,
@@ -18,25 +16,7 @@ export const useFusePoolData = (
   const { address } = useMultiIonic();
   const sdk = useSdk(poolChainId);
 
-  const nativeTokenAddress = useMemo(() => {
-    const config = chainIdToConfig[poolChainId];
-    return config?.specificParams?.metadata?.wrappedNativeCurrency?.address?.toLowerCase();
-  }, [poolChainId]);
-
-  const { data: assetPrices, isLoading: isPricesLoading } = useAssetPrices({
-    chainId: poolChainId,
-    tokens: nativeTokenAddress ? [nativeTokenAddress] : undefined
-  });
-
-  const usdPrice = useMemo(() => {
-    if (!assetPrices?.data || !nativeTokenAddress) return undefined;
-
-    const nativePriceEntry = assetPrices.data.find(
-      (price) => price.underlying_address.toLowerCase() === nativeTokenAddress
-    );
-
-    return nativePriceEntry?.info.usdPrice;
-  }, [assetPrices, nativeTokenAddress]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
 
   const queryKey = useMemo(
     () => [
@@ -106,6 +86,6 @@ export const useFusePoolData = (
           : response.underlyingTokens
       };
     },
-    enabled: !!poolId && !!usdPrice && !!sdk && !isPricesLoading
+    enabled: !!poolId && !!usdPrice && !!sdk
   });
 };
