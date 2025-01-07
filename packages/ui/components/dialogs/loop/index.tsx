@@ -508,6 +508,14 @@ export default function Loop({
     ]);
 
     let upOrDown: 'down' | 'up' = 'up';
+    console.log(
+      '🚀 ~ handleLeverageAdjustment ~ currentPositionLeverageRatio:',
+      currentPositionLeverageRatio
+    );
+    console.log(
+      '🚀 ~ handleLeverageAdjustment ~ currentLeverage:',
+      currentLeverage
+    );
     if (currentPositionLeverageRatio > currentLeverage) {
       upOrDown = 'down';
     }
@@ -593,7 +601,7 @@ export default function Loop({
         address: currentPosition.address,
         functionName: 'adjustLeverageRatio',
         args: [
-          BigInt(currentLeverage),
+          parseEther(currentLeverage.toString()),
           quoteFinal.transactionRequest!.to! as Address,
           quoteFinal.transactionRequest!.data! as Hex,
           BigInt(Math.ceil(slippageWithBufferInBps))
