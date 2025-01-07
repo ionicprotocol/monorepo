@@ -340,7 +340,10 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       return await leveredPosition.read.isPositionClosed();
     }
 
-    async closeLeveredPosition(address: Address, withdrawTo?: Address) {
+    async closeLeveredPosition(
+      address: Address,
+      withdrawTo?: Address,
+    ) {
       const isPositionClosed = await this.isPositionClosed(address);
       const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
@@ -357,6 +360,48 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             account: this.walletClient!.account!.address,
             chain: this.walletClient!.chain
           });
+        }
+
+        return tx;
+      } else {
+        return null;
+      }
+    }
+
+    async closeLeveredPositionWithAggregator(
+      address: Address,
+      aggregatorTarget: Address,
+      aggregatorData: Hex,
+      expectedSlippage: bigint,
+      withdrawTo?: Address
+    ) {
+      const isPositionClosed = await this.isPositionClosed(address);
+      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
+
+      if (!isPositionClosed) {
+        let tx: Hex;
+
+        if (withdrawTo) {
+          tx = await leveredPosition.write.closePosition([
+              withdrawTo,
+              aggregatorTarget,
+              aggregatorData,
+              expectedSlippage
+            ],
+            {
+              account: this.walletClient!.account!.address,
+              chain: this.walletClient!.chain
+            });
+        } else {
+          tx = await leveredPosition.write.closePosition([
+              aggregatorTarget,
+              aggregatorData,
+              expectedSlippage
+            ],
+            {
+              account: this.walletClient!.account!.address,
+              chain: this.walletClient!.chain
+            });
         }
 
         return tx;
