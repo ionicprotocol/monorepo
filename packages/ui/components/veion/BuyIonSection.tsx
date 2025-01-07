@@ -1,18 +1,13 @@
 import Image from 'next/image';
 
-import { base, optimism, mode } from 'viem/chains';
-
 import { Button } from '@ui/components/ui/button';
 import { DialogHeader, DialogTitle } from '@ui/components/ui/dialog';
 
-import NetworkDropdown from '../NetworkDropdown';
-
 interface BuyIonSectionProps {
   onBuy: () => void;
-  currentChain: number;
 }
 
-function BuyIonSection({ onBuy, currentChain }: BuyIonSectionProps) {
+function BuyIonSection({ onBuy }: BuyIonSectionProps) {
   return (
     <div className="space-y-4">
       <DialogHeader className="flex flex-row items-center">
@@ -33,11 +28,6 @@ function BuyIonSection({ onBuy, currentChain }: BuyIonSectionProps) {
               <span className="text-2xl font-medium">ION Token</span>
             </div>
           </DialogTitle>
-          <NetworkDropdown
-            dropdownSelectedChain={currentChain}
-            nopool
-            enabledChains={[mode.id, base.id, optimism.id]}
-          />
         </div>
       </DialogHeader>
 

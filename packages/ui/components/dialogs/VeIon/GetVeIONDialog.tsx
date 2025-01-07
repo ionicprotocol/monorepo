@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
-import { base, optimism, mode } from 'viem/chains';
 import { useAccount } from 'wagmi';
 
+import CustomTooltip from '@ui/components/CustomTooltip';
+import { LockDurationPicker } from '@ui/components/LockDurationPicker';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import { usePrecisionSlider } from '@ui/components/PrecisionSlider';
 import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
@@ -13,16 +16,10 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import AutoLock from '@ui/components/veion/AutoLock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
-
-import AutoLock from './AutoLock';
-import CustomTooltip from '../CustomTooltip';
-import { LockDurationPicker } from '../LockDurationPicker';
-import MaxDeposit from '../MaxDeposit';
-import NetworkDropdown from '../NetworkDropdown';
-import { usePrecisionSlider } from '../PrecisionSlider';
 
 interface GetVeIONDialogProps {
   isOpen: boolean;
@@ -83,18 +80,11 @@ export default function GetVeIONDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect max-w-[580px]">
+      <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
         {!success ? (
           <>
             <DialogHeader>
-              <div className="flex items-center justify-between w-full">
-                <DialogTitle>Get veION</DialogTitle>
-                <NetworkDropdown
-                  dropdownSelectedChain={currentChain}
-                  nopool
-                  enabledChains={[mode.id, base.id, optimism.id]}
-                />
-              </div>
+              <DialogTitle>Get veION</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
               <MaxDeposit

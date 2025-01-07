@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Portal } from '@radix-ui/react-portal';
 import { useAccount } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
@@ -13,13 +14,11 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import BuyIonSection from '@ui/components/veion/BuyIonSection';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
-import BuyIonSection from './BuyIonSection';
-import MaxDeposit from '../MaxDeposit';
-
-const Widget = dynamic(() => import('../stake/Widget'), {
+const Widget = dynamic(() => import('@ui/components/stake/Widget'), {
   ssr: false
 });
 
@@ -91,11 +90,8 @@ export default function AddLiquidityDialog({
         open={isOpen}
         onOpenChange={(open) => !widgetPopup && onOpenChange(open)}
       >
-        <DialogContent className="bg-grayUnselect max-w-[580px]">
-          <BuyIonSection
-            onBuy={() => setWidgetPopup(true)}
-            currentChain={currentChain}
-          />
+        <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
+          <BuyIonSection onBuy={() => setWidgetPopup(true)} />
 
           <Separator className="bg-white/10" />
 

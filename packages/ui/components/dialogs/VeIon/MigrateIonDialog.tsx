@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
-import { base, optimism, mode } from 'viem/chains';
 import { useAccount } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
@@ -12,9 +12,6 @@ import {
 } from '@ui/components/ui/dialog';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-
-import MaxDeposit from '../MaxDeposit';
-import NetworkDropdown from '../NetworkDropdown';
 
 interface MigrateIonDialogProps {
   isOpen: boolean;
@@ -38,7 +35,7 @@ export default function MigrateIonDialog({
     setAmount('0');
   }, [currentChain]);
 
-  const handleWithdraw = async () => {
+  const handleMigrate = async () => {
     try {
       if (!isConnected) {
         console.warn('Wallet not connected');
@@ -63,16 +60,9 @@ export default function MigrateIonDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect max-w-[580px]">
+      <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
         <DialogHeader className="flex flex-row items-center">
-          <div className="flex items-center justify-between w-full">
-            <DialogTitle>Migrate ION Liquidity</DialogTitle>
-            <NetworkDropdown
-              dropdownSelectedChain={currentChain}
-              nopool
-              enabledChains={[mode.id, base.id, optimism.id]}
-            />
-          </div>
+          <DialogTitle>Migrate ION Liquidity</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -87,11 +77,11 @@ export default function MigrateIonDialog({
           />
 
           <Button
-            onClick={handleWithdraw}
+            onClick={handleMigrate}
             className="w-full bg-red-500 text-white hover:bg-red-600"
             disabled={!amount || Number(amount) === 0 || isLoading || isPending}
           >
-            {isLoading || isPending ? 'Withdrawing...' : 'Withdraw Liquidity'}
+            {isLoading || isPending ? 'Migrating...' : 'Migrate Liquidity'}
           </Button>
         </div>
       </DialogContent>

@@ -157,7 +157,6 @@ export default function Navbar() {
             href="/veion"
             label="veION"
             isNew
-            external
           />
 
           {!isConnected && (
