@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { base, mode, optimism } from 'viem/chains';
 
+import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
 import { BaseReservesContractAddr } from '@ui/constants/baselp';
 import { ModeReservesContractAddr } from '@ui/constants/lp';
 import { OPReservesContractAddr } from '@ui/constants/oplp';
@@ -75,14 +76,18 @@ export function useIonPrice({ chainId }: { chainId: number }) {
   });
 }
 
-export function useIonPrices() {
-  const chains = [8453, 34443, 10] as const;
+export function useIonPrices(specificChains?: number[]) {
+  // If no chains provided, use all available chains
+  const chains = specificChains || [8453, 34443, 10];
 
   return useQuery({
-    queryKey: ['ionPrices'],
+    queryKey: ['ionPrices', chains], // Add chains to queryKey for proper caching
     queryFn: async () => {
       const pricePromises = chains.map(async (chainId) => {
-        const config = REWARD_TOKEN_CONFIGS[chainId];
+        const config =
+          REWARD_TOKEN_CONFIGS[chainId as keyof typeof REWARD_TOKEN_CONFIGS];
+        if (!config) return { chainId, price: 0 };
+
         try {
           const res = await axios.get(
             `https://api.dexscreener.com/latest/dex/pairs/${config.name}/${config.ionAddress}`

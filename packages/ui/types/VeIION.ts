@@ -13,7 +13,7 @@ export interface LiquidityData {
   locked: number;
   isLoading: boolean;
 }
-export type ChainId = 10 | 8453 | 34443;
+export type ChainId = 0 | 10 | 8453 | 34443;
 
 export interface EmissionsData {
   lockedValue: {

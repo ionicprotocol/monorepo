@@ -51,7 +51,7 @@ const LPRow = ({ summary, detail }: { summary: Summary; detail: Detail }) => (
               ION/WETH
             </p>
             <Button
-              className={`${detail.buttonClass} bg-accent text-grayUnselect text-xs font-bold ml-6 rounded-xl`}
+              className={`${detail.buttonClass} bg-accent text-grayUnselect text-xs font-bold ml-6 hover:bg-accent/80 `}
               onClick={detail.onClick}
             >
               {detail.buttonText} <ArrowRight />

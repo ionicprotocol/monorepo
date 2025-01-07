@@ -25,14 +25,13 @@ import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards
 export default function Governance() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const chainId = useChainId();
   const [isUniversalClaimOpen, setIsUniversalClaimOpen] =
     useState<boolean>(false);
 
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
-  const chain = querychain ?? String(chainId);
   const view = queryview ?? 'My veION';
+  const chain = querychain ?? '0'; // Default to ALL_CHAINS_VALUE (0)
 
   const allChains = [8453, 34443, 10];
   const { data: claimableRewards, isLoading: isLoadingRewards } =
@@ -43,24 +42,23 @@ export default function Governance() {
   useEffect(() => {
     if (!querychain) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set('chain', String(chainId));
-
+      newSearchParams.set('chain', '0'); // Set to ALL_CHAINS_VALUE
       if (queryview) {
         newSearchParams.set('view', queryview);
       }
-
       router.replace(`/veion/governance?${newSearchParams.toString()}`);
     }
-  }, [chainId, querychain, queryview, router, searchParams]);
+  }, [querychain, queryview, router, searchParams]);
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
       <GovernanceHeader view={view} />
 
       <NetworkSelector
-        nopool={true}
+        nopool
         dropdownSelectedChain={+chain}
         enabledChains={[mode.id, base.id, optimism.id]}
+        showAll
       />
 
       <Card className="w-full bg-grayone">

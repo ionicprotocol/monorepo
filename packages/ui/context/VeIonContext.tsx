@@ -7,7 +7,7 @@ import { formatEther } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { getVeIonContract, isVeIonSupported } from '@ui/constants/veIon';
-import { useIonPrice } from '@ui/hooks/useDexScreenerPrices';
+import { useIonPrice, useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
 import { useTokenCalculations } from '@ui/hooks/useTokenCalculations';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
@@ -100,8 +100,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const veIonContract = getVeIonContract(currentChain);
   const isSupported = isVeIonSupported(currentChain);
 
-  const { data: ionPriceData } = useIonPrice({ chainId: currentChain });
-  const ionPrice = Number(ionPriceData?.pair?.priceUsd || 0);
+  const { data: ionPriceData } = useIonPrices([currentChain]);
+  const ionPrice = Number(ionPriceData?.[currentChain] || 0);
   const veIonPrice = ionPrice;
 
   // Update chain whenever URL params change

@@ -2,6 +2,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { formatUnits } from 'viem';
 import { useReadContract, useReadContracts } from 'wagmi';
 
+import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
 import { LpTokenType } from '@ui/types/VeIION';
 import type {
   ChainId,
@@ -12,7 +13,7 @@ import type {
   DelegateVeionData
 } from '@ui/types/VeIION';
 
-import { useIonPrice } from '../useDexScreenerPrices';
+import { useIonPrices } from '../useDexScreenerPrices';
 import { useReserves } from '../useReserves';
 
 import { veIonAbi } from '@ionicprotocol/sdk';
@@ -36,6 +37,18 @@ const CHAIN_CONFIGS: Record<
     // Mode
     lpTypes: [LpTokenType.MODE_ETH, LpTokenType.MODE_ION],
     nativeCurrency: 'MODE'
+  },
+  0: {
+    // All chains
+    lpTypes: [
+      LpTokenType.OP_ETH,
+      LpTokenType.OP_ION,
+      LpTokenType.BASE_ETH,
+      LpTokenType.BASE_ION,
+      LpTokenType.MODE_ETH,
+      LpTokenType.MODE_ION
+    ],
+    nativeCurrency: 'ETH'
   }
 };
 
@@ -298,8 +311,12 @@ export function useVeIONLocks({
 
   // Get reserves and price data
   const { reserves, isLoading: reservesLoading } = useReserves(chainId);
-  const { data: ionPriceData } = useIonPrice({ chainId });
-  const ionPrice = Number(ionPriceData?.pair?.priceUsd || 0);
+
+  // Use useIonPrices with either all chains or specific chain
+  const { data: ionPrices = {} } = useIonPrices(
+    chainId === ALL_CHAINS_VALUE ? undefined : [chainId]
+  );
+  const ionPrice = ionPrices[chainId] || 0;
 
   // Calculate total supply
   const totalSupply =

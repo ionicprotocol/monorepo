@@ -53,37 +53,28 @@ export default function VeIon() {
             width={32}
             height={32}
           />
-
-          <div className="flex gap-2">
-            <Link href="/veion/governance">
-              <Button
-                className="bg-accent text-black"
-                style={{ height: '36px' }}
-              >
-                Governance
-              </Button>
-            </Link>
-            <NetworkSelector
-              dropdownSelectedChain={+chain}
-              nopool={true}
-              enabledChains={[mode.id, base.id, optimism.id]}
-            />
-          </div>
         </div>
 
-        <div className="flex items-center gap-1 text-2xl">
-          Participate in{' '}
-          <Link
-            href="/veion/governance/vote"
-            className="text-accent flex items-center hover:underline"
-            target="_blank"
-          >
-            Emissions{' '}
-            <ExternalLink
-              className="ml-1"
-              size={24}
-            />
-          </Link>
+        <div className="flex justify-between gap-2">
+          <div className="flex items-center gap-1 text-2xl">
+            Participate in{' '}
+            <Link
+              href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion"
+              className="text-accent flex items-center hover:underline"
+              target="_blank"
+            >
+              Emissions{' '}
+              <ExternalLink
+                className="ml-1"
+                size={24}
+              />
+            </Link>
+          </div>
+          <NetworkSelector
+            dropdownSelectedChain={+chain}
+            nopool={true}
+            enabledChains={[mode.id, base.id, optimism.id]}
+          />
         </div>
       </CardHeader>
       <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
@@ -144,6 +135,12 @@ export default function VeIon() {
           />
         </div>
       </CardContent>
+
+      <Link href="/veion/governance">
+        <Button className="w-full bg-accent hover:bg-accent/80 mt-4">
+          My veION
+        </Button>
+      </Link>
 
       <GetVeIONDialog
         isOpen={isDialogOpen}
