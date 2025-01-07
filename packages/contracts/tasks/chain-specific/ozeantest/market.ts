@@ -91,7 +91,7 @@ task("market:set-cf:ozeantest:new", "Sets CF on a market").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    for (const asset of ozeantest.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+    for (const asset of ozeantest.assets.filter((asset) => asset.symbol === assetSymbols.WUSDX)) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
       });
