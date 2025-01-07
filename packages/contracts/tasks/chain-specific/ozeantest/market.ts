@@ -65,7 +65,7 @@ task("ozeantest:set-caps:new", "one time setup").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.WETH];
+    const assetsToDeploy: string[] = [assetSymbols.WUSDX];
     for (const asset of ozeantest.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
