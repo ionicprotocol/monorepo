@@ -13,7 +13,7 @@ import type { LucideProps } from 'lucide-react';
 interface StatusAlert {
   status: HFPStatus;
   message: string;
-  icon: React.ComponentType<LucideProps>; // Update the type here
+  icon: React.ComponentType<LucideProps>;
 }
 
 const alerts: Record<HFPStatus, StatusAlert> = {
