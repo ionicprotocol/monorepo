@@ -19,24 +19,27 @@ import { useReserves } from '../useReserves';
 import { veIonAbi } from '@ionicprotocol/sdk';
 
 // Chain configuration
-const CHAIN_CONFIGS: Record<
+export const VEION_CHAIN_CONFIGS: Record<
   ChainId,
-  { lpTypes: LpTokenType[]; nativeCurrency: string }
+  { lpTypes: LpTokenType[]; nativeCurrency: string; name?: string }
 > = {
   10: {
     // Optimism
     lpTypes: [LpTokenType.OP_ETH, LpTokenType.OP_ION],
-    nativeCurrency: 'ETH'
+    nativeCurrency: 'ETH',
+    name: 'Optimism'
   },
   8453: {
     // Base
     lpTypes: [LpTokenType.BASE_ETH, LpTokenType.BASE_ION],
-    nativeCurrency: 'ETH'
+    nativeCurrency: 'ETH',
+    name: 'Base'
   },
   34443: {
     // Mode
     lpTypes: [LpTokenType.MODE_ETH, LpTokenType.MODE_ION],
-    nativeCurrency: 'MODE'
+    nativeCurrency: 'MODE',
+    name: 'Mode'
   },
   0: {
     // All chains
@@ -48,7 +51,8 @@ const CHAIN_CONFIGS: Record<
       LpTokenType.MODE_ETH,
       LpTokenType.MODE_ION
     ],
-    nativeCurrency: 'ETH'
+    nativeCurrency: 'ETH',
+    name: 'All Chains'
   }
 };
 
@@ -151,7 +155,8 @@ class VeIONLock implements VeIONTableData {
       const total = ionAmount + tokenAmount;
       const ionPercent = (ionAmount / total) * 100;
       const tokenPercent = (tokenAmount / total) * 100;
-      const nativeCurrency = CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH';
+      const nativeCurrency =
+        VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH';
 
       this.tokensLocked = {
         ratio: `${ionPercent.toFixed(0)}% ION / ${tokenPercent.toFixed(0)}% ${nativeCurrency}`,
@@ -164,7 +169,7 @@ class VeIONLock implements VeIONTableData {
       this.tokensLocked = {
         ratio: 'Loading...',
         token1: 'ION',
-        token2: CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH',
+        token2: VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH',
         token1Percent: 0,
         token2Percent: 0
       };
@@ -269,7 +274,7 @@ export function useVeIONLocks({
   veIonContract: `0x${string}`;
   chainId: ChainId;
 }): VeIONLockData {
-  const chainConfig = CHAIN_CONFIGS[chainId];
+  const chainConfig = VEION_CHAIN_CONFIGS[chainId];
 
   // Get token IDs for current chain
   const { data: tokenIdsResult } = useReadContract({

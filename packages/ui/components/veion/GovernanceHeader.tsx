@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { ExternalLink } from 'lucide-react';
 
+import CustomTooltip from '@ui/components/CustomTooltip';
 import {
   Card,
   CardHeader,
@@ -12,9 +13,12 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Progress } from '@ui/components/ui/progress';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-
-import CustomTooltip from '../CustomTooltip';
 
 const GovernanceHeader = ({ view = 'MyVeion' }) => {
   const { ionBalance, isLoading, prices, emissions } = useVeIONContext();
@@ -35,6 +39,15 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
       infoContent: 'This is the amount of ION you have locked in the protocol.',
       icon: '/img/logo/ion.svg',
       usdValue: emissions.lockedValue.usdValue
+    },
+    {
+      label: 'Your Rewards',
+      value: emissions.totalDeposits.amount.toString(),
+      token: 'ION',
+      infoContent:
+        'This is the total amount of ION you have deposited in the protocol.',
+      icon: '/img/logo/ion.svg',
+      usdValue: emissions.totalDeposits.usdValue
     }
   ];
 
@@ -122,12 +135,22 @@ const EmissionsStatus = () => {
   return (
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 text-2xl font-semibold">
-          <h3>Emissions Status:</h3>
-          <span className={isActive ? 'text-green-400' : 'text-red-400'}>
-            {isActive ? 'Active' : 'Inactive'}
-          </span>
-        </div>
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2 text-2xl font-semibold">
+              <h3>Emissions Status:</h3>
+              <span className={isActive ? 'text-green-400' : 'text-red-400'}>
+                {isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-background p-2 rounded-md shadow-md">
+            <p className="text-sm">
+              To receive emissions, lenders/borrowers must have 2.5% of their
+              collateral worth of $ION locked as $veION.
+            </p>
+          </TooltipContent>
+        </Tooltip>
         <Link
           href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/tokenomics"
           className="text-green-400 hover:text-green-500 p-0 h-auto flex items-center"

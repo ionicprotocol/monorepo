@@ -1,3 +1,6 @@
+import { VEION_CHAIN_CONFIGS } from '@ui/hooks/veion/useVeIONLocks';
+import type { ChainId } from '@ui/types/VeIION';
+
 export type LockedData = {
   id: string;
   tokensLocked: string;
@@ -12,6 +15,8 @@ export type LockedData = {
   votingPower: string;
   network: string;
   enableClaim: boolean;
+  chainId: number;
+  position?: number;
 };
 
 export const lockedData: LockedData[] = [
@@ -27,8 +32,10 @@ export const lockedData: LockedData[] = [
       timeLeft: '100d : 12h : 45m'
     },
     votingPower: '5 veION',
-    network: 'Polygon',
-    enableClaim: true
+    network: 'Optimism',
+    enableClaim: true,
+    chainId: 10,
+    position: 1
   },
   {
     id: '2',
@@ -42,8 +49,10 @@ export const lockedData: LockedData[] = [
       timeLeft: '150d : 5h : 20m'
     },
     votingPower: '10.5 veION',
-    network: 'Polygon',
-    enableClaim: false
+    network: 'Base',
+    enableClaim: false,
+    chainId: 8453,
+    position: 1
   },
   {
     id: '3',
@@ -57,8 +66,10 @@ export const lockedData: LockedData[] = [
       timeLeft: '75d : 18h : 30m'
     },
     votingPower: '15.75 veION',
-    network: 'Polygon',
-    enableClaim: false
+    network: 'Mode',
+    enableClaim: false,
+    chainId: 34443,
+    position: 1
   },
   {
     id: '4',
@@ -72,8 +83,10 @@ export const lockedData: LockedData[] = [
       timeLeft: '200d : 8h : 15m'
     },
     votingPower: '25 veION',
-    network: 'Polygon',
-    enableClaim: false
+    network: 'Optimism',
+    enableClaim: false,
+    chainId: 10,
+    position: 2
   },
   {
     id: '5',
@@ -87,8 +100,10 @@ export const lockedData: LockedData[] = [
       timeLeft: '50d : 10h : 5m'
     },
     votingPower: '50 veION',
-    network: 'Polygon',
-    enableClaim: false
+    network: 'Base',
+    enableClaim: false,
+    chainId: 8453,
+    position: 2
   },
   {
     id: '6',
@@ -102,10 +117,16 @@ export const lockedData: LockedData[] = [
       timeLeft: '250d : 2h : 50m'
     },
     votingPower: '100 veION',
-    network: 'Polygon',
-    enableClaim: false
+    network: 'Mode',
+    enableClaim: false,
+    chainId: 34443,
+    position: 2
   }
 ];
+
+export const getChainName = (chainId: ChainId) => {
+  return VEION_CHAIN_CONFIGS[chainId]?.name || 'Unknown Chain';
+};
 
 export type LockedDataWithDelegate = {
   id: string;

@@ -6,7 +6,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 
 import { formatEther } from 'viem';
 import { base, optimism, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import FlatMap from '@ui/components/points_comp/FlatMap';
@@ -78,7 +77,7 @@ export default function Governance() {
           <div className="w-full flex justify-between items-center">
             <div className="bg-grayUnselect rounded-md mb-3 inline-block">
               <ToggleLinks
-                arrText={['My veION', 'Delegate veION']}
+                arrText={['My veION', 'Delegated veION']}
                 baseUrl="/veion/governance"
                 currentChain={chain}
               />

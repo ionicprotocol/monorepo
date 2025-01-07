@@ -1,15 +1,17 @@
 import { useState } from 'react';
 
+import ActionButton from '@ui/components/ActionButton';
+import CommonTable from '@ui/components/CommonTable';
+import type {
+  EnhancedColumnDef,
+  MarketCellProps
+} from '@ui/components/CommonTable';
+import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONDelegate } from '@ui/hooks/veion/useVeIONDelegate';
 
 import TimeRemaining from './TimeRemaining';
-import CommonTable from '../CommonTable';
-import { TableActionButton } from '../TableActionButton';
-import TokenPair from '../TokenPair';
-
-import type { EnhancedColumnDef, MarketCellProps } from '../CommonTable';
 
 // Types
 type BaseVeionData = {
@@ -189,28 +191,26 @@ function DelegateVeionTable({
     {
       id: 'actions',
       header: 'ACTIONS',
+      enableSorting: false,
       cell: ({ row }: MarketCellProps) => {
         const data = row.original;
         const isProcessing = processingId === data.id;
 
         return (
-          <div className="flex justify-end pr-6">
+          <div className="flex gap-2 w-full pr-6">
             {data.readyToDelegate ? (
-              <TableActionButton
-                width="100px"
-                onClick={() => handleUndelegate(data)}
+              <ActionButton
+                half={false}
+                action={() => handleUndelegate(data)}
                 disabled={isProcessing || isUndelegating}
-              >
-                {isProcessing ? 'Undelegating...' : 'Undelegate'}
-              </TableActionButton>
+                label={isProcessing ? 'Undelegating...' : 'Undelegate'}
+              />
             ) : (
-              <TableActionButton
-                variant="secondary"
-                width="100px"
+              <ActionButton
+                half={false}
                 disabled
-              >
-                {data.lockExpires.timeLeft}
-              </TableActionButton>
+                label={data.lockExpires.timeLeft}
+              />
             )}
           </div>
         );
@@ -224,6 +224,7 @@ function DelegateVeionTable({
         data={data}
         columns={delegateVeionColumns}
         isLoading={false}
+        hidePR
       />
     </div>
   );

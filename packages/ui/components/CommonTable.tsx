@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
-import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import { cn } from '@ui/lib/utils';
 
 import ResultHandler from './ResultHandler';
 
@@ -79,6 +79,7 @@ interface CommonTableProps<T extends object> {
   columns: EnhancedColumnDef<T>[];
   isLoading?: boolean;
   getRowStyle?: (row: Row<T>) => RowStyle;
+  hidePR?: boolean;
 }
 
 const SortableHeader = ({
@@ -129,6 +130,7 @@ function CommonTable<T extends object>({
   data,
   columns,
   isLoading: externalIsLoading = false,
+  hidePR = false,
   getRowStyle
 }: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -179,7 +181,7 @@ function CommonTable<T extends object>({
       center
       height={80}
     >
-      <Table className="pr-3.5 pl-[1px]">
+      <Table className={cn(hidePR ? '' : 'pr-3.5', 'pl-[1px]')}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow

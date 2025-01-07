@@ -1,18 +1,21 @@
 import { useState } from 'react';
 
-import Link from 'next/link';
+import Image from 'next/image';
 
+import ActionButton from '@ui/components/ActionButton';
+import CommonTable from '@ui/components/CommonTable';
+import type {
+  EnhancedColumnDef,
+  MarketCellProps
+} from '@ui/components/CommonTable';
+import TokenPair from '@ui/components/TokenPair';
+import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import ExtendVeion from './ExtendVeion';
 import ManageDialog from './ManageDialog';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
-import CommonTable from '../CommonTable';
-import { TableActionButton } from '../TableActionButton';
-import TokenPair from '../TokenPair';
-
-import type { EnhancedColumnDef, MarketCellProps } from '../CommonTable';
 
 type BaseVeionData = {
   id: string;
@@ -26,6 +29,8 @@ type BaseVeionData = {
     timeLeft: string;
   };
   votingPower: string;
+  chainId: number;
+  position?: number;
 };
 
 type MyVeionData = BaseVeionData & {
@@ -49,35 +54,35 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   // eslint-disable-next-line no-console
   console.log('myLocks', myLocks);
 
-  const getRandomColor = () => {
-    const colors = [
-      '#FF6B6B',
-      '#4ECDC4',
-      '#45B7D1',
-      '#96CEB4',
-      '#FFEEAD',
-      '#D4A5A5',
-      '#9B59B6'
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
       id: 'id',
-      header: <div className="pl-6">ID</div>,
+      header: <div className="pl-6">CHAIN + ID</div>,
       sortingFn: 'numerical',
-      cell: ({ row }: MarketCellProps) => (
-        <div className="flex items-center gap-2 pl-6">
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: getRandomColor() }}
-          />
-          <div className="text-xs font-semibold text-white/80">
-            {row.getValue('id')}
+      cell: ({ row }: MarketCellProps) => {
+        const chainId = row.original.chainId;
+        const chainName = getChainName(chainId);
+
+        return (
+          <div className="flex items-center gap-3 pl-6">
+            <div className="flex items-center gap-2">
+              <Image
+                alt={chainName}
+                className="w-6 h-6"
+                src={`/img/logo/${chainName.toUpperCase()}.png`}
+                width={24}
+                height={24}
+              />
+              <span className="text-xs font-medium text-white/60">
+                {chainName}
+              </span>
+            </div>
+            <div className="text-xs font-semibold text-white/80">
+              #{row.original.position}
+            </div>
           </div>
-        </div>
-      )
+        );
+      }
     },
     {
       id: 'tokensLocked',
@@ -141,30 +146,45 @@ function MyVeionTable({ data }: MyVeionTableProps) {
     {
       id: 'actions',
       header: 'ACTIONS',
+      enableSorting: false,
       cell: ({ row }: MarketCellProps) => {
         const data = row.original;
-        return data.enableClaim ? (
-          <div className="flex gap-2 justify-end pr-6">
-            <TableActionButton onClick={() => setIsClaimOpen(true)}>
-              Claim LP
-            </TableActionButton>
-            <TableActionButton onClick={() => setIsExtendOpen(true)}>
-              Extend
-            </TableActionButton>
-          </div>
-        ) : (
-          <div className="flex gap-2 justify-end pr-6">
-            <Link
-              href={`/veion/governance/vote?chain=${currentChain}&id=${data.id}`}
-            >
-              <TableActionButton variant="secondary">Vote</TableActionButton>
-            </Link>
-            <TableActionButton
-              variant="secondary"
-              onClick={() => setIsManageOpen(true)}
-            >
-              Manage
-            </TableActionButton>
+
+        return (
+          <div className="flex gap-2 w-full pr-6">
+            {data.enableClaim ? (
+              <>
+                <ActionButton
+                  half
+                  action={() => setIsClaimOpen(true)}
+                  label="Claim LP"
+                />
+                <ActionButton
+                  half
+                  action={() => setIsExtendOpen(true)}
+                  label="Extend"
+                />
+              </>
+            ) : (
+              <>
+                <ActionButton
+                  half
+                  action={async () => {
+                    window.location.href = `/veion/governance/vote?chain=${currentChain}&id=${data.id}`;
+                  }}
+                  label="Vote"
+                  bg="bg-white/10"
+                  className="text-white"
+                />
+                <ActionButton
+                  half
+                  action={() => setIsManageOpen(true)}
+                  label="Manage"
+                  bg="bg-white/10"
+                  className="text-white"
+                />
+              </>
+            )}
           </div>
         );
       }
@@ -177,7 +197,6 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       <VeionClaim
         isOpen={isClaimOpen}
         onOpenChange={setIsClaimOpen}
-        // placeholder values
         lpAmount="100"
         tokenId={1}
         tokenAddress="0x123"
@@ -185,7 +204,6 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       <ExtendVeion
         isOpen={isExtendOpen}
         onOpenChange={setIsExtendOpen}
-        // placeholder values
         maxToken={1000}
         tokenId={1}
         tokenAddress="0x123"
@@ -199,6 +217,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
         data={data}
         columns={myVeionColumns}
         isLoading={false}
+        hidePR
       />
     </div>
   );
