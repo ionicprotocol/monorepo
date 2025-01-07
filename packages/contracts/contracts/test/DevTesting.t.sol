@@ -114,10 +114,6 @@ contract DevTesting is BaseTest {
     levPosLens = LeveredPositionsLens(ap.getAddress("LeveredPositionsLens"));
   }
 
-  function testModePoolBorrowers() public debuggingOnly fork(MODE_MAINNET) {
-    emit log_named_array("borrowers", pool.getAllBorrowers());
-  }
-
   function testModeLiquidationShortfall() public debuggingOnly fork(MODE_MAINNET) {
     (uint256 err, uint256 collateralValue, uint256 liquidity, uint256 shortfall) = pool.getAccountLiquidity(
       0xa75F9C8246f7269279bE4c969e7Bc6Eb619cC204

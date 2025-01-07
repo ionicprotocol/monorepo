@@ -1,44 +1,40 @@
-// import { constants } from "ethers";
-// import { task, types } from "hardhat/config";
+import { constants } from "ethers";
+import { task, types } from "hardhat/config";
+import { Address } from "viem";
 
-// import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-// import { CompoundMarketERC4626 } from "../../typechain/CompoundMarketERC4626";
-// import { OptimizedAPRVaultFirstExtension } from "../../typechain/OptimizedAPRVaultFirstExtension";
-// import { OptimizedAPRVaultSecondExtension } from "../../typechain/OptimizedAPRVaultSecondExtension";
+export default task("deploy-optimized:all")
+  .addParam("marketsAddresses", "Comma-separated addresses of the markets", undefined, types.string)
+  .setAction(async ({ marketsAddresses, hre }, { run, getNamedAccounts, viem, deployments }) => {
+    const { deployer } = await getNamedAccounts();
 
-// export default task("deploy-optimized:all")
-//   .addParam("marketsAddresses", "Comma-separated addresses of the markets", undefined, types.string)
-//   .setAction(async ({ marketsAddresses }, { ethers, run, getNamedAccounts }) => {
-//     const { deployer } = await getNamedAccounts();
+    let asset;
+    const markets = marketsAddresses.split(",");
+    for (let i = 0; i < markets.length; i++) {
+      const cErc20 = await viem.getContractAt("ICErc20", markets[i]);
+      const marketUnderlying = await cErc20.read.underlying();
+      if (!asset) asset = marketUnderlying;
+      if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);
+    }
 
-//     let asset;
-//     const markets = marketsAddresses.split(",");
-//     for (let i = 0; i < markets.length; i++) {
-//       const cErc20 = (await ethers.getContractAt("CTokenInterfaces.sol:ICErc20", markets[i])) as CErc20Delegate;
-//       const marketUnderlying = await cErc20.callStatic.underlying();
-//       if (!asset) asset = marketUnderlying;
-//       if (asset != marketUnderlying) throw new Error(`The vault adapters should be for the same underlying`);
-//     }
+    const adapters = [];
+    for (let i = 0; i < markets.length; i++) {
+      const marketAddress = markets[i];
+      await run("optimized-adapters:deploy", {
+        marketAddress
+      });
 
-//     const adapters = [];
-//     for (let i = 0; i < markets.length; i++) {
-//       const marketAddress = markets[i];
-//       await run("optimized-adapters:deploy", {
-//         marketAddress
-//       });
+      const adapter = await viem.getContractAt(
+        `CompoundMarketERC4626`,
+        (await deployments.get(`CompoundMarketERC4626_${marketAddress}`)).address as Address
+      );
+      adapters.push(adapter.address);
+    }
 
-//       const adapter = (await ethers.getContract(
-//         `CompoundMarketERC4626_${marketAddress}`,
-//         deployer
-//       )) as CompoundMarketERC4626;
-//       adapters.push(adapter.address);
-//     }
-
-//     await run("optimized-vault:deploy", {
-//       assetAddress: asset,
-//       adaptersAddresses: adapters.join(",")
-//     });
-//   });
+    await run("optimized-vault:deploy", {
+      assetAddress: asset,
+      adaptersAddresses: adapters.join(",")
+    });
+  });
 
 // task("deploy-optimized:wbnb:chapel").setAction(async ({}, { run }) => {
 //   await run("deploy-optimized:all", {
@@ -63,31 +59,28 @@
 //   });
 // });
 
-// task("deploy-vault-flywheel")
-//   .addParam("vaultAddress", "Address of the vault", undefined, types.string)
-//   .addParam("rewardToken", "Address of the reward token to add a flywheel for", undefined, types.string)
-//   .setAction(async ({ vaultAddress, rewardToken }, { ethers, getNamedAccounts }) => {
-//     const { deployer } = await getNamedAccounts();
+task("deploy-vault-flywheel")
+  .addParam("vaultAddress", "Address of the vault", undefined, types.string)
+  .addParam("rewardToken", "Address of the reward token to add a flywheel for", undefined, types.string)
+  .setAction(async ({ vaultAddress, rewardToken }, { viem, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
 
-//     const vaultFirstExt = (await ethers.getContractAt(
-//       "OptimizedAPRVaultFirstExtension",
-//       vaultAddress,
-//       deployer
-//     )) as OptimizedAPRVaultFirstExtension;
-//     const vaultSecondExt = (await ethers.getContractAt(
-//       "OptimizedAPRVaultSecondExtension",
-//       vaultAddress,
-//       deployer
-//     )) as OptimizedAPRVaultSecondExtension;
-//     const flywheelForRewardToken = await vaultSecondExt.callStatic.flywheelForRewardToken(rewardToken);
-//     if (flywheelForRewardToken != constants.AddressZero) {
-//       console.log(
-//         `there is already a flywheel ${flywheelForRewardToken} for reward token ${rewardToken} in the vault at ${vaultAddress}`
-//       );
-//     } else {
-//       const tx = await vaultFirstExt.addRewardToken(rewardToken);
-//       console.log(`mining tx ${tx.hash}`);
-//       await tx.wait();
-//       console.log(`added a flywheel for reward token ${rewardToken} in the vault at ${vaultAddress}`);
-//     }
-//   });
+    const vaultFirstExt = (await viem.getContractAt(
+      "OptimizedAPRVaultFirstExtension",
+      vaultAddress as Address
+    ));
+    const vaultSecondExt = (await viem.getContractAt(
+      "OptimizedAPRVaultSecondExtension",
+      vaultAddress as Address
+    ));
+    const flywheelForRewardToken = await vaultSecondExt.read.flywheelForRewardToken(rewardToken);
+    if (flywheelForRewardToken != constants.AddressZero) {
+      console.log(
+        `there is already a flywheel ${flywheelForRewardToken} for reward token ${rewardToken} in the vault at ${vaultAddress}`
+      );
+    } else {
+      const tx = await vaultFirstExt.write.addRewardToken(rewardToken);
+      console.log(`mining tx ${tx}`);
+      console.log(`added a flywheel for reward token ${rewardToken} in the vault at ${vaultAddress}`);
+    }
+  });
