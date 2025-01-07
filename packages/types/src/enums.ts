@@ -8,7 +8,8 @@ export enum SupportedChains {
   ink = 57073,
   superseed = 5330,
   worldchain = 480,
-  swell = 1923
+  swell = 1923,
+  camptest = 325000
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)

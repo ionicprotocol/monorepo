@@ -55,6 +55,24 @@ export const swellchain: AppKitNetwork = {
   }
 };
 
+export const camptest: AppKitNetwork = {
+  id: 325000,
+  name: 'Camp Testnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-campnetwork.xyz']
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: 'Camp Testnet Explorer',
+      url: 'https://camp-network-testnet.blockscout.com',
+      apiUrl: 'https://camp-network-testnet.blockscout.com/api'
+    }
+  }
+};
+
 export const networks: AppKitNetwork[] = [
   base,
   mode,
@@ -65,7 +83,8 @@ export const networks: AppKitNetwork[] = [
   superseed,
   worldchain,
   ink,
-  swellchain
+  swellchain,
+  camptest
 ];
 
 export const metadata = {

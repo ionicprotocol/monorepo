@@ -13,7 +13,7 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
-import { ink, swellchain } from '@ionicprotocol/chains';
+import { camptest, ink, swellchain } from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -417,6 +417,15 @@ export const pools: Record<number, PoolParams> = {
         assets: ['WETH']
       }
     ]
+  },
+  [camptest.chainId]: {
+    name: 'Camp Testnet',
+    arrow: 'ffffff',
+    bg: 'bg-camp',
+    text: 'text-white',
+    border: 'border-camp',
+    logo: '/img/logo/CAMP.png',
+    pools: [{ id: '0', name: 'Main Pool', assets: ['WETH'] }]
   }
 };
 

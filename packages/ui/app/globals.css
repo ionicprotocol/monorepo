@@ -162,6 +162,10 @@
   background: #3c50d6;
 }
 
+.bg-camp {
+  background: #f66c09;
+}
+
 .text-lime {
   color: #dffe00;
 }
@@ -200,6 +204,10 @@
 
 .border-swell {
   border-color: #3c50d6;
+}
+
+.border-camp {
+  border-color: #f66c09;
 }
 
 .text-xxs {

@@ -141,7 +141,6 @@ export default function Market() {
               'MetalL2',
               'Ozean',
               'Soneium',
-              'Camp',
               'FX',
               'Kroma',
               'Unichain'

@@ -9,6 +9,7 @@ import { deploy as deployInk, deployConfig as deployConfigInk } from "./mainnets
 import { deploy as deploySuperseed, deployConfig as deployConfigSuperseed } from "./mainnets/superseed";
 import { deploy as deployWorldchain, deployConfig as deployConfigWorldchain } from "./mainnets/worldchain";
 import { deploy as deploySwellchain, deployConfig as deployConfigSwellchain } from "./mainnets/swellchain";
+import { deploy as deployCampTest, deployConfig as deployConfigCampTest } from "./testnets/camp";
 
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
   // mainnets
@@ -20,8 +21,10 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   57073: { config: deployConfigInk, deployFunc: deployInk },
   [superseed.id]: { config: deployConfigSuperseed, deployFunc: deploySuperseed },
   [worldchain.id]: { config: deployConfigWorldchain, deployFunc: deployWorldchain },
-  1923: { config: deployConfigSwellchain, deployFunc: deploySwellchain }
+  1923: { config: deployConfigSwellchain, deployFunc: deploySwellchain },
+
   // testnets
+  325000: { config: deployConfigCampTest, deployFunc: deployCampTest }
   // local
 };
 

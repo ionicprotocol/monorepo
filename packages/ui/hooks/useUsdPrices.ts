@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, useQueries } from '@tanstack/react-query';
+import axios from 'axios';
 
+import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
 import { getSupportedChainIds } from '@ui/utils/networkData';
+
+import { chainIdToConfig } from '@ionicprotocol/chains';
 
 const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co/';
 const supabaseKey =
@@ -14,26 +18,65 @@ interface Price {
   value: number;
 }
 
+async function fetchCoinGeckoPrice(chainId: string): Promise<Price | null> {
+  const config = chainIdToConfig[Number(chainId)];
+  if (!config?.specificParams.cgId) return null;
+
+  const cgId = config.specificParams.cgId;
+
+  try {
+    // Try CoinGecko first
+    const { data } = await axios.get(`${COINGECKO_API}${cgId}`);
+    if (data[cgId]?.usd) {
+      return { symbol: '$', value: data[cgId].usd };
+    }
+  } catch (e) {
+    try {
+      // Fallback to DefiLlama
+      const { data } = await axios.get(`${DEFI_LLAMA_API}coingecko:${cgId}`);
+      if (data.coins[`coingecko:${cgId}`]?.price) {
+        return { symbol: '$', value: data.coins[`coingecko:${cgId}`].price };
+      }
+    } catch (defiFallbackError) {
+      console.warn('DefiLlama fallback failed:', defiFallbackError);
+    }
+  }
+
+  // If all external APIs fail, return chain's native currency if available
+  if (config?.specificParams.metadata.nativeCurrency) {
+    return {
+      symbol: config.specificParams.metadata.nativeCurrency.symbol,
+      value: 1
+    };
+  }
+
+  return null;
+}
+
 async function fetchLatestPriceForChain(
   chainId: string
 ): Promise<Price | null> {
-  const { data: latestPrice, error } = await supabase
-    .from('asset-price')
-    .select('*')
-    .eq('chain_id', chainId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
+  // Try Supabase first
+  try {
+    const { data: latestPrice, error } = await supabase
+      .from('asset-price')
+      .select('*')
+      .eq('chain_id', chainId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
 
-  if (error) {
-    console.warn(`Error fetching price for chain ${chainId}:`, error);
-    return null;
+    if (!error && latestPrice) {
+      return { symbol: '$', value: latestPrice.info.usdPrice };
+    }
+  } catch (supabaseError) {
+    console.warn(`Supabase error for chain ${chainId}:`, supabaseError);
   }
 
-  return latestPrice ? { symbol: '$', value: latestPrice.info.usdPrice } : null;
+  // Fallback to CoinGecko if Supabase fails or returns no data
+  return fetchCoinGeckoPrice(chainId);
 }
 
-// Hook for getting prices for specific chains
 export function useChainUsdPrices(chainIds?: (number | string)[]) {
   const requestedChainIds = chainIds ?? getSupportedChainIds();
   const normalizedChainIds = requestedChainIds.map(String);
@@ -42,8 +85,8 @@ export function useChainUsdPrices(chainIds?: (number | string)[]) {
     queries: normalizedChainIds.map((chainId) => ({
       queryKey: ['usdPrice', chainId],
       queryFn: () => fetchLatestPriceForChain(chainId),
-      staleTime: 30000,
-      cacheTime: 60000,
+      staleTime: 30000, // 30 seconds
+      cacheTime: 60000, // 1 minute
       enabled: !!chainId
     })),
     combine: (results) => {
@@ -62,7 +105,6 @@ export function useChainUsdPrices(chainIds?: (number | string)[]) {
   });
 }
 
-// Hook for getting single chain price
 export function useUsdPrice(chainId?: number | string) {
   const normalizedChainId = chainId?.toString();
 

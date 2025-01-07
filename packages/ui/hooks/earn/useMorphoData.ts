@@ -149,7 +149,7 @@ export const useMorphoData = ({ isLegacy }: { isLegacy: boolean }) => {
   });
 
   const rows = morphoVaults.map((baseVault): MorphoRow => {
-    const asset = baseVault.asset[0] as 'WETH' | 'USDC';
+    const asset = baseVault.asset[0] as 'USDC' | 'WETH';
     let vaultInfo;
 
     if (asset === 'WETH' && vaultData?.wethVault) {
