@@ -19,11 +19,12 @@ import { default as ink } from "./ink";
 import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
+import { default as ozeantest } from "./ozeantest";
 import { default as superseed } from "./superseed";
 import { default as swellchain } from "./swellchain";
 import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain, camptest };
+export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain, camptest, ozeantest };
 
 export const vInk: Chain = {
   id: 57073,
@@ -45,6 +46,17 @@ export const vSwellchain: Chain = {
     decimals: 18
   },
   rpcUrls: { default: { http: ["https://rpc.ankr.com/swell", "https://swell-mainnet.alt.technology"] } }
+};
+
+export const vOzeantest: Chain = {
+  id: 7849306,
+  name: "Ozean Testnet",
+  nativeCurrency: {
+    name: "USDX",
+    symbol: "USDX",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: ["https://ozean-testnet.rpc.caldera.xyz/http"] } }
 };
 
 export const vCampTest: Chain = {
@@ -69,6 +81,7 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [superseed.chainId]: vSuperseed,
   [worldchain.chainId]: vWorldchain,
   [swellchain.chainId]: vSwellchain,
+  [ozeantest.chainId]: vOzeantest,
   [camptest.chainId]: vCampTest
 };
 
@@ -83,5 +96,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [superseed.chainId]: superseed,
   [worldchain.chainId]: worldchain,
   [swellchain.chainId]: swellchain,
+  [ozeantest.chainId]: ozeantest,
   [camptest.chainId]: camptest
 };
