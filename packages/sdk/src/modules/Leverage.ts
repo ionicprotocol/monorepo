@@ -5,7 +5,7 @@ import {
   OpenPosition,
   PositionInfo
 } from "@ionicprotocol/types";
-import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther, zeroAddress } from "viem";
+import { Address, erc20Abi, getContract, Hex, maxUint256, parseEther } from "viem";
 
 import { CreateContractsModule } from "./CreateContracts";
 import { ChainSupportedAssets } from "./Pools";
@@ -47,6 +47,13 @@ export interface ILeverage {
   getRangeOfLeverageRatio(address: Address): Promise<[bigint, bigint]>;
   isPositionClosed(address: Address): Promise<boolean>;
   closeLeveredPosition(address: Address, withdrawTo?: Address): Promise<Hex | null>;
+  closeLeveredPositionWithAggregator(
+    address: Address,
+    aggregatorTarget: Address,
+    aggregatorData: Hex,
+    expectedSlippage: bigint,
+    withdrawTo?: Address
+  ): Promise<Hex | null>;
   adjustLeverageRatio(address: Address, ratio: number): Promise<Hex>;
   fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint): Promise<Hex>;
   getNetAPY(
@@ -340,10 +347,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       return await leveredPosition.read.isPositionClosed();
     }
 
-    async closeLeveredPosition(
-      address: Address,
-      withdrawTo?: Address,
-    ) {
+    async closeLeveredPosition(address: Address, withdrawTo?: Address) {
       const isPositionClosed = await this.isPositionClosed(address);
       const leveredPosition = this.createLeveredPosition(address, this.publicClient);
 
@@ -382,26 +386,18 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
         let tx: Hex;
 
         if (withdrawTo) {
-          tx = await leveredPosition.write.closePosition([
-              withdrawTo,
-              aggregatorTarget,
-              aggregatorData,
-              expectedSlippage
-            ],
+          tx = await leveredPosition.write.closePosition(
+            [withdrawTo, aggregatorTarget, aggregatorData, expectedSlippage],
             {
               account: this.walletClient!.account!.address,
               chain: this.walletClient!.chain
-            });
+            }
+          );
         } else {
-          tx = await leveredPosition.write.closePosition([
-              aggregatorTarget,
-              aggregatorData,
-              expectedSlippage
-            ],
-            {
-              account: this.walletClient!.account!.address,
-              chain: this.walletClient!.chain
-            });
+          tx = await leveredPosition.write.closePosition([aggregatorTarget, aggregatorData, expectedSlippage], {
+            account: this.walletClient!.account!.address,
+            chain: this.walletClient!.chain
+          });
         }
 
         return tx;
