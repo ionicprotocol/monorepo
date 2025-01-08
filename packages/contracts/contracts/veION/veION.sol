@@ -549,15 +549,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   }
 
   /**
-   * @notice Overrides the _mint function from ERC721 to include additional logic for bridging.
-   * @param to Address to mint to.
-   * @param tokenId Token ID to mint.
-   */
-  function _mint(address to, uint256 tokenId) internal override {
-    super._mint(to, tokenId);
-  }
-
-  /**
    * @notice Overrides the _burn function from ERC721 to include additional logic for bridging.
    * @param tokenId Token ID to burn.
    */
@@ -816,7 +807,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   ) internal returns (uint256) {
     uint256 _tokenId = ++s_tokenId;
     uint256 _length = _tokenAddress.length;
-    _mint(_to, _tokenId);
+    _safeMint(_to, _tokenId);
 
     if (
       _tokenAddress.length != _tokenAmount.length ||
@@ -886,7 +877,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     address _tokenAddress
   ) private returns (uint256 _tokenId) {
     _tokenId = ++s_tokenId;
-    _mint(_to, _tokenId);
+    _safeMint(_to, _tokenId);
     s_locked[_tokenId][_lpType] = _newLocked;
     s_assetsLocked[_tokenId].add(_tokenAddress);
     _checkpoint(_tokenId, _newLocked, _lpType);
