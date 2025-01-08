@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -26,7 +24,13 @@ import {
   SelectContent,
   SelectItem
 } from '@ui/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
 import TokenBalance from '../markets/Cells/TokenBalance';
+import { Portal } from '@radix-ui/react-portal';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -34,6 +38,25 @@ interface EmissionsManagementTableProps {
 }
 
 type AssetTypeFilter = 'all' | 'supply' | 'borrow';
+
+const TooltipWrapper = ({
+  children,
+  content
+}: {
+  children: React.ReactNode;
+  content: string;
+}) => (
+  <Tooltip delayDuration={300}>
+    <TooltipTrigger asChild>
+      <div className="cursor-help">{children}</div>
+    </TooltipTrigger>
+    <Portal>
+      <TooltipContent className="max-w-xs">
+        <p>{content}</p>
+      </TooltipContent>
+    </Portal>
+  </Tooltip>
+);
 
 function EmissionsManagement({
   tokenId,
@@ -57,27 +80,21 @@ function EmissionsManagement({
     const term = searchTerm.trim().toLowerCase();
 
     return marketRows.filter((row) => {
-      // Filter by asset type
       if (assetTypeFilter === 'supply' && row.side !== MarketSide.Supply) {
         return false;
       }
       if (assetTypeFilter === 'borrow' && row.side !== MarketSide.Borrow) {
         return false;
       }
-
-      // Filter for pending votes if showPendingOnly is true
       if (showPendingOnly && row.voteValue !== '') {
         return false;
       }
-
-      // Filter based on searchTerm
       if (term) {
         return (
           row.asset.toLowerCase().includes(term) ||
           row.marketAddress.toLowerCase().includes(term)
         );
       }
-
       return true;
     });
   }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter]);
@@ -118,37 +135,59 @@ function EmissionsManagement({
       },
       {
         id: 'currentMarketAPR',
-        header: 'CURRENT MARKET APR',
+        header: (
+          <TooltipWrapper content="Current market APR including underlying asset APR">
+            <span>CURRENT MARKET APR</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.currentMarketAPR}</span>
       },
       {
         id: 'projectedMarketAPR',
-        header: 'PROJECTED MARKET APR',
+        header: (
+          <TooltipWrapper content="Projected market APR for the next Epoch considering votes distribution as of this moment including underlying asset APR">
+            <span>PROJECTED MARKET APR</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.projectedMarketAPR}</span>
       },
       {
         id: 'incentives',
-        header: 'INCENTIVES',
+        header: (
+          <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">
+            <span>INCENTIVES</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => (
-          <TokenBalance
-            balance={row.original.incentives.balance}
-            balanceUSD={row.original.incentives.balanceUSD}
-            tokenName={row.original.asset}
-          />
+          <div>
+            <TokenBalance
+              balance={row.original.incentives.balance}
+              balanceUSD={row.original.incentives.balanceUSD}
+              tokenName={row.original.asset}
+            />
+          </div>
         )
       },
       {
         id: 'veAPR',
-        header: 'veAPR',
+        header: (
+          <TooltipWrapper content="Current voting APR considering votes distribution as of this moment">
+            <span>veAPR</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.veAPR}</span>
       },
       {
         id: 'totalVotes',
-        header: 'TOTAL VOTES',
+        header: (
+          <TooltipWrapper content="Current votes distribution breakdown">
+            <span>TOTAL VOTES</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => {
           const totalVotes = row.original.totalVotes;
@@ -166,7 +205,11 @@ function EmissionsManagement({
       },
       {
         id: 'myVotes',
-        header: 'MY VOTES',
+        header: (
+          <TooltipWrapper content="Your vote distribution breakdown">
+            <span>MY VOTES</span>
+          </TooltipWrapper>
+        ),
         sortingFn: 'numerical',
         cell: ({ row }) => {
           const myVotes = row.original.myVotes;
@@ -181,17 +224,6 @@ function EmissionsManagement({
             </div>
           );
         }
-      },
-      {
-        id: 'vote',
-        header: 'VOTE',
-        cell: ({ row }) => (
-          <VoteInput
-            marketAddress={row.original.marketAddress}
-            side={row.original.side}
-            isDisabled={isVoting}
-          />
-        )
       }
     ],
     [isVoting]
@@ -200,7 +232,6 @@ function EmissionsManagement({
   const handleSubmitVotes = async () => {
     try {
       const success = await submitVote(tokenId);
-
       if (success) {
         toast({
           title: 'Success',
@@ -216,7 +247,6 @@ function EmissionsManagement({
     }
   };
 
-  // Show error state if there's an error
   if (error) {
     return (
       <div className="w-full min-h-[400px] flex items-center justify-center">
