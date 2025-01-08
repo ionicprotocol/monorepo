@@ -109,9 +109,17 @@ export default function Governance() {
           </div>
 
           {view === 'My veION' ? (
-            <MyVeionTable data={lockedData} />
+            <MyVeionTable
+              data={lockedData.filter(
+                (position) => +chain === 0 || position.chainId === +chain
+              )}
+            />
           ) : (
-            <DelegateVeIonTable data={lockedDataWithDelegate} />
+            <DelegateVeIonTable
+              data={lockedDataWithDelegate.filter(
+                (position) => +chain === 0 || position.chainId === +chain
+              )}
+            />
           )}
         </CardContent>
       </Card>
