@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 
 import { mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 import { Checkbox } from '@ui/components/ui/checkbox';
 import type { VoteMarket } from '@ui/context/EmissionsManagementContext';
@@ -21,6 +20,8 @@ import CommonTable from '../CommonTable';
 import PoolToggle from '../markets/PoolToggle';
 
 import type { EnhancedColumnDef } from '../CommonTable';
+import SearchInput from '../markets/SearcInput';
+import { CopyButton } from '../CopyButton';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -38,15 +39,16 @@ function EmissionsManagement({
   const { toast } = useToast();
   const { submitVote, isVoting } = useVeIONVote(currentChain);
   const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState('');
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
   const filteredVotingData = useMemo(() => {
-    const baseData = markets[selectedPool] ?? [];
+    const term = searchTerm.trim().toLowerCase();
 
-    return baseData.filter((market) => {
+    return markets.filter((market) => {
       // Filter for auto votes if showAutoOnly is true
       if (showAutoOnly && !market.autoVote) {
         return false;
@@ -63,9 +65,17 @@ function EmissionsManagement({
         }
       }
 
+      // Filter based on searchTerm
+      if (term) {
+        return (
+          market.asset.toLowerCase().includes(term) ||
+          market.marketAddress.toLowerCase().includes(term)
+        );
+      }
+
       return true;
     });
-  }, [markets, selectedPool, showAutoOnly, showPendingOnly]);
+  }, [markets, showAutoOnly, showPendingOnly, searchTerm]);
 
   const handleSubmitVotes = async () => {
     try {
@@ -100,9 +110,14 @@ function EmissionsManagement({
               height={24}
               className="rounded-full"
             />
-            <span className="text-xs font-semibold text-white/80">
+            <span className="text-sm font-medium text-white/80">
               {row.original.asset}
             </span>
+            <CopyButton
+              value={row.original.underlyingToken}
+              message={`${row.original.asset} token address copied to clipboard`}
+              tooltipMessage="Copy token address"
+            />
           </div>
         )
       },
@@ -188,15 +203,31 @@ function EmissionsManagement({
 
   return (
     <div className="relative pb-12">
-      <PoolToggle
-        chain={+chain}
-        pool={selectedPool}
-      />
+      <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
+          <PoolToggle
+            chain={+chain}
+            pool={selectedPool}
+          />
+        </div>
+        <div className="w-full">
+          <SearchInput
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder={`Search by ${
+              selectedPool === 'vault'
+                ? 'vault name, token, or strategy'
+                : 'token or address'
+            }...`}
+          />
+        </div>
+      </div>
 
       <CommonTable
         columns={columns}
         data={filteredVotingData}
         isLoading={isLoading}
+        hidePR
       />
 
       <EmissionsManagementFooter

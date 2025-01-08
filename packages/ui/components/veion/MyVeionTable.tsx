@@ -14,6 +14,7 @@ import ManageDialog from './ManageDialog';
 import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
+import { useRouter } from 'next/navigation';
 
 type BaseVeionData = {
   id: string;
@@ -43,8 +44,9 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
+
+  const router = useRouter();
   const {
-    currentChain,
     locks: { myLocks, isLoading }
   } = useVeIONContext();
   // eslint-disable-next-line no-console
@@ -151,9 +153,11 @@ function MyVeionTable({ data }: MyVeionTableProps) {
               <>
                 <ActionButton
                   half
-                  action={async () => {
-                    window.location.href = `/veion/governance/vote?chain=${currentChain}&id=${data.id}`;
-                  }}
+                  action={() =>
+                    router.push(
+                      `/veion/governance/vote?chain=${data.chainId}&id=${data.id}`
+                    )
+                  }
                   label="Vote"
                   bg="bg-white/10"
                   className="text-white"
