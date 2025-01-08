@@ -30,7 +30,6 @@ import TokenBalance from '../markets/Cells/TokenBalance';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
-  showAutoOnly: boolean;
   showPendingOnly: boolean;
 }
 
@@ -38,7 +37,6 @@ type AssetTypeFilter = 'all' | 'supply' | 'borrow';
 
 function EmissionsManagement({
   tokenId,
-  showAutoOnly,
   showPendingOnly
 }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
@@ -67,11 +65,6 @@ function EmissionsManagement({
         return false;
       }
 
-      // Filter for auto votes if showAutoOnly is true
-      if (showAutoOnly && !row.autoVote) {
-        return false;
-      }
-
       // Filter for pending votes if showPendingOnly is true
       if (showPendingOnly && row.voteValue !== '') {
         return false;
@@ -87,7 +80,7 @@ function EmissionsManagement({
 
       return true;
     });
-  }, [marketRows, showAutoOnly, showPendingOnly, searchTerm, assetTypeFilter]);
+  }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter]);
 
   const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(
     () => [
@@ -197,17 +190,6 @@ function EmissionsManagement({
             marketAddress={row.original.marketAddress}
             side={row.original.side}
             isDisabled={isVoting}
-          />
-        )
-      },
-      {
-        id: 'autoVote',
-        header: 'AUTO VOTE',
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.original.autoVote}
-            disabled={isVoting}
-            className="data-[state=checked]:bg-green-500"
           />
         )
       }

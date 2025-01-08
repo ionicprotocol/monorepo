@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Card } from '@ui/components/ui/card';
-import { Checkbox } from '@ui/components/ui/checkbox';
 import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import VoteConfirmationDialog from './VoteConfirmationDialog';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
@@ -15,7 +14,6 @@ function EmissionsManagementFooter({
   isVoting = false
 }: EmissionsManagementFooterProps) {
   const { votes, resetVotes, marketRows } = useEmissionsContext();
-  const [autoRepeat, setAutoRepeat] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const hasVotes = Object.keys(votes).length > 0;
 
@@ -28,7 +26,6 @@ function EmissionsManagementFooter({
           marketAddress: row.marketAddress,
           side: row.side,
           voteValue: row.voteValue,
-          autoVote: row.autoVote,
           asset: row.asset
         };
       }
@@ -40,7 +37,6 @@ function EmissionsManagementFooter({
         marketAddress: `0x${string}`;
         side: MarketSide;
         voteValue: string;
-        autoVote: boolean;
         asset: string;
       }
     >
@@ -48,7 +44,6 @@ function EmissionsManagementFooter({
 
   const handleFullReset = () => {
     resetVotes();
-    setAutoRepeat(false);
   };
 
   const handleVoteClick = () => {
@@ -65,21 +60,7 @@ function EmissionsManagementFooter({
   return (
     <>
       <Card className="fixed bottom-4 left-4 right-4 p-4 bg-[#35363D] border-t border-white/10 z-10">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Checkbox
-              id="auto-repeat"
-              checked={autoRepeat}
-              onCheckedChange={(checked) => setAutoRepeat(checked as boolean)}
-              disabled={isVoting}
-            />
-            <label
-              htmlFor="auto-repeat"
-              className={`text-sm text-white/80 cursor-pointer ${isVoting ? 'opacity-50' : ''}`}
-            >
-              Auto-repeat this voting choice each future period
-            </label>
-          </div>
+        <div className="flex justify-end w-full">
           <div className="flex items-center gap-4">
             <button
               onClick={handleFullReset}

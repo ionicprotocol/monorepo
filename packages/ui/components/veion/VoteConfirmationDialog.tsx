@@ -10,7 +10,8 @@ import {
   AlertDialogTitle
 } from '@ui/components/ui/alert-dialog';
 import { ScrollArea } from '@ui/components/ui/scroll-area';
-import { Check, X } from 'lucide-react';
+import { Info } from 'lucide-react';
+import Image from 'next/image';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 
 type VoteRecord = Record<
@@ -19,7 +20,6 @@ type VoteRecord = Record<
     marketAddress: `0x${string}`;
     side: MarketSide;
     voteValue: string;
-    autoVote: boolean;
     asset: string;
   }
 >;
@@ -44,7 +44,11 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
   return (
     <AlertDialog
       open={isOpen}
-      onOpenChange={onClose}
+      onOpenChange={(open) => {
+        if (!isVoting) {
+          onClose();
+        }
+      }}
     >
       <AlertDialogContent className="max-w-2xl">
         <AlertDialogHeader>
@@ -54,7 +58,15 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <ScrollArea className="h-96 rounded-md border border-white/10 my-4">
+        <div className="flex items-center gap-2 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+          <Info className="h-4 w-4 text-blue-500" />
+          <p className="text-sm text-blue-100">
+            Your choices will automatically apply to future epochs unless
+            modified
+          </p>
+        </div>
+
+        <ScrollArea className="h-96 rounded-md border border-white/10">
           <div className="p-4">
             <div className="space-y-4">
               {voteEntries.map(([key, vote]) => (
@@ -64,6 +76,13 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
                 >
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
+                      <Image
+                        src={`/img/symbols/32/color/${vote.asset.toLowerCase()}.png`}
+                        alt={vote.asset}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
                       <span className="text-sm font-medium text-white/90">
                         {vote.asset}
                       </span>
@@ -82,14 +101,6 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
                       <span className="text-sm font-medium text-white/90">
                         {vote.voteValue}%
                       </span>
-                      <div className="flex items-center gap-1 text-xs text-white/60">
-                        Auto Vote:
-                        {vote.autoVote ? (
-                          <Check className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <X className="w-4 h-4 text-red-500" />
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -99,7 +110,12 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
         </ScrollArea>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isVoting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            disabled={isVoting}
+            className="hover:bg-gray-900"
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={async (e) => {
               e.preventDefault();

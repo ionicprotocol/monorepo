@@ -28,7 +28,6 @@ type MarketMetrics = {
     percentage: string;
     value: string;
   };
-  autoVote: boolean;
   voteValue: string;
 };
 
@@ -53,7 +52,6 @@ export type VoteMarketRow = {
     percentage: string;
     value: string;
   };
-  autoVote: boolean;
   voteValue: string;
 };
 
@@ -124,7 +122,6 @@ export const EmissionsProvider: React.FC<{
                 percentage: (Math.random() * 50).toFixed(2) + '%',
                 value: (Math.random() * 10000).toFixed(0)
               },
-              autoVote: Math.random() > 0.5,
               voteValue: ''
             };
 
@@ -144,7 +141,6 @@ export const EmissionsProvider: React.FC<{
                 percentage: (Math.random() * 50).toFixed(2) + '%',
                 value: (Math.random() * 10000).toFixed(0)
               },
-              autoVote: Math.random() > 0.5,
               voteValue: ''
             };
 

@@ -25,8 +25,6 @@ const Vote: React.FC = () => {
   const initialId = searchParams.get('id') || lockedData[0].id;
 
   const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
-  const [showAutoOnly, setShowAutoOnly] = useState<boolean>(false);
-  const { currentChain } = useVeIONContext();
 
   const selectedData = useMemo(
     () => lockedData.find((item) => item.id === initialId),
@@ -99,19 +97,6 @@ const Vote: React.FC = () => {
           <div className="flex items-center space-x-2 mt-2 md:mt-0">
             <label
               htmlFor="pending-votes"
-              className="text-sm text-white/80"
-            >
-              Auto vote only
-            </label>
-            <Switch
-              id="pending-votes"
-              checked={showAutoOnly}
-              onCheckedChange={setShowAutoOnly}
-              className="data-[state=checked]:bg-green-500 "
-              aria-label="Toggle auto votes only"
-            />
-            <label
-              htmlFor="pending-votes"
               className="text-sm text-white/80 pl-4"
             >
               Pending votes only
@@ -129,7 +114,6 @@ const Vote: React.FC = () => {
           <EmissionsProvider>
             <EmissionsManagement
               tokenId={0}
-              showAutoOnly={showAutoOnly}
               showPendingOnly={showPendingOnly}
             />
           </EmissionsProvider>
