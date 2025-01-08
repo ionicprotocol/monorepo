@@ -26,6 +26,7 @@ import {
   SelectContent,
   SelectItem
 } from '@ui/components/ui/select';
+import TokenBalance from '../markets/Cells/TokenBalance';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -93,6 +94,7 @@ function EmissionsManagement({
       {
         id: 'asset',
         header: 'ASSET',
+        sortingFn: 'alphabetical',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Image
@@ -124,26 +126,37 @@ function EmissionsManagement({
       {
         id: 'currentMarketAPR',
         header: 'CURRENT MARKET APR',
+        sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.currentMarketAPR}</span>
       },
       {
         id: 'projectedMarketAPR',
         header: 'PROJECTED MARKET APR',
+        sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.projectedMarketAPR}</span>
       },
       {
         id: 'incentives',
         header: 'INCENTIVES',
-        cell: ({ row }) => <span>{row.original.incentives}</span>
+        sortingFn: 'numerical',
+        cell: ({ row }) => (
+          <TokenBalance
+            balance={row.original.incentives.balance}
+            balanceUSD={row.original.incentives.balanceUSD}
+            tokenName={row.original.asset}
+          />
+        )
       },
       {
         id: 'veAPR',
         header: 'veAPR',
+        sortingFn: 'numerical',
         cell: ({ row }) => <span>{row.original.veAPR}</span>
       },
       {
         id: 'totalVotes',
         header: 'TOTAL VOTES',
+        sortingFn: 'numerical',
         cell: ({ row }) => {
           const totalVotes = row.original.totalVotes;
           return (
@@ -161,6 +174,7 @@ function EmissionsManagement({
       {
         id: 'myVotes',
         header: 'MY VOTES',
+        sortingFn: 'numerical',
         cell: ({ row }) => {
           const myVotes = row.original.myVotes;
           return (

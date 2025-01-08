@@ -15,7 +15,10 @@ import { useVeIONContext } from './VeIonContext';
 type MarketMetrics = {
   currentMarketAPR: string;
   projectedMarketAPR: string;
-  incentives: string;
+  incentives: {
+    balance: number;
+    balanceUSD: number;
+  };
   veAPR: string;
   totalVotes: {
     percentage: string;
@@ -37,7 +40,10 @@ export type VoteMarketRow = {
   currentAmount: string;
   currentMarketAPR: string;
   projectedMarketAPR: string;
-  incentives: string;
+  incentives: {
+    balance: number;
+    balanceUSD: number;
+  };
   veAPR: string;
   totalVotes: {
     percentage: string;
@@ -59,23 +65,6 @@ type EmissionsContextType = {
   updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
   resetVotes: () => void;
   refreshVotingData: (nftId: string) => Promise<void>;
-};
-
-const defaultMetrics: MarketMetrics = {
-  currentMarketAPR: '0%',
-  projectedMarketAPR: '0%',
-  incentives: '$0',
-  veAPR: '0%',
-  totalVotes: {
-    percentage: '0%',
-    limit: '0'
-  },
-  myVotes: {
-    percentage: '0%',
-    value: '0'
-  },
-  autoVote: false,
-  voteValue: ''
 };
 
 export const EmissionsContext = createContext<EmissionsContextType>({
@@ -122,7 +111,10 @@ export const EmissionsProvider: React.FC<{
             const supplyMetrics: MarketMetrics = {
               currentMarketAPR: (Math.random() * 10).toFixed(2) + '%',
               projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
-              incentives: '$' + (Math.random() * 100000).toFixed(2),
+              incentives: {
+                balance: Math.random() * 1000000,
+                balanceUSD: Math.random() * 1000000
+              },
               veAPR: (Math.random() * 8).toFixed(2) + '%',
               totalVotes: {
                 percentage: (Math.random() * 100).toFixed(2) + '%',
@@ -139,7 +131,10 @@ export const EmissionsProvider: React.FC<{
             const borrowMetrics: MarketMetrics = {
               currentMarketAPR: (Math.random() * 15).toFixed(2) + '%',
               projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
-              incentives: '$' + (Math.random() * 100000).toFixed(2),
+              incentives: {
+                balance: Math.random() * 1000000,
+                balanceUSD: Math.random() * 1000000
+              },
               veAPR: (Math.random() * 8).toFixed(2) + '%',
               totalVotes: {
                 percentage: (Math.random() * 100).toFixed(2) + '%',

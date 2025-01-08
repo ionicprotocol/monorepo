@@ -7,7 +7,7 @@ import { cn } from '@ui/lib/utils';
 const sizes = {
   sm: 'gap-1.5 text-xs',
   md: 'gap-2 text-sm',
-  lg: 'gap-3 text-base'
+  lg: 'gap-2 text-base'
 } as const;
 
 const imageSizes = {
@@ -36,16 +36,14 @@ const PositionTitle = ({
 
   return (
     <div className={cn('flex items-center', sizes[size], className)}>
-      <div className="flex items-center">
-        <Image
-          alt={chainName}
-          className={`w-${imageSize / 4} h-${imageSize / 4}`}
-          src={`/img/logo/${chainName.toUpperCase()}.png`}
-          width={imageSize}
-          height={imageSize}
-        />
-        <span className="ml-2 font-medium text-white/60">{chainName}</span>
-      </div>
+      <Image
+        alt={chainName}
+        className={`w-${imageSize / 4} h-${imageSize / 4}`}
+        src={`/img/logo/${chainName.toUpperCase()}.png`}
+        width={imageSize}
+        height={imageSize}
+      />
+      <span className="font-medium text-white/60">{chainName}</span>
       <div className="font-semibold text-white/80">#{position}</div>
     </div>
   );

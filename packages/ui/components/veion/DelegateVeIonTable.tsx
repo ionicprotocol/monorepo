@@ -168,7 +168,7 @@ function DelegateVeionTable({
       header: 'DELEGATED TO',
       sortingFn: 'alphabetical',
       cell: ({ row }: MarketCellProps) => (
-        <div className="text-xs font-semibold text-white/80 pl-6">
+        <div className="text-xs font-semibold text-white/80">
           {row.getValue('delegatedTo') || '-'}
         </div>
       )

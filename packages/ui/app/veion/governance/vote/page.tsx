@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-
 import { useSearchParams } from 'next/navigation';
-
+import Link from 'next/link';
 import { base, optimism, mode } from 'viem/chains';
+import { ArrowLeft } from 'lucide-react';
 
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import {
@@ -49,7 +49,7 @@ const Vote: React.FC = () => {
         infoContent: `This is the date until your #${initialId} veION is locked.`
       },
       {
-        label: 'Voting Power',
+        label: 'My Total Voting power',
         value: selectedData?.votingPower || '',
         icon: '/img/logo/ion.svg',
         infoContent: 'This is your current voting power.'
@@ -63,11 +63,19 @@ const Vote: React.FC = () => {
       {selectedData && (
         <Card className="w-full bg-grayone">
           <CardHeader>
-            <PositionTitle
-              chainId={selectedData.chainId}
-              position={selectedData.position}
-              size="lg"
-            />
+            <div className="flex items-center gap-3">
+              <Link
+                href="/veion/governance"
+                className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-700/50 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-white/80" />
+              </Link>
+              <PositionTitle
+                chainId={selectedData.chainId}
+                position={selectedData.position}
+                size="lg"
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap items-center gap-4">
@@ -81,12 +89,6 @@ const Vote: React.FC = () => {
           </CardContent>
         </Card>
       )}
-
-      <NetworkSelector
-        nopool={true}
-        dropdownSelectedChain={+currentChain}
-        enabledChains={[mode.id, base.id, optimism.id]}
-      />
 
       <Card
         className="w-full"
