@@ -218,6 +218,8 @@ export enum assetSymbols {
   uXRP = "uXRP",
   ionicUSDC = "ionicUSDC",
   ionicWETH = "ionicWETH",
+  msETH = "msETH",
+  msUSD = "msUSD",
 
   // optimism
   OP = "OP",
