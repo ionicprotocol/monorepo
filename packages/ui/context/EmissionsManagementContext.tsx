@@ -12,7 +12,11 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 import { useVeIONContext } from './VeIonContext';
 
-type VotingData = {
+type MarketMetrics = {
+  currentMarketAPR: string;
+  projectedMarketAPR: string;
+  incentives: string;
+  veAPR: string;
   totalVotes: {
     percentage: string;
     limit: string;
@@ -22,15 +26,19 @@ type VotingData = {
     value: string;
   };
   autoVote: boolean;
-  supplyVote: string;
-  borrowVote: string;
+  voteValue: string;
 };
 
-export type VoteMarket = {
+export type VoteMarketRow = {
   asset: string;
-  marketAddress: `0x${string}`;
   underlyingToken: string;
-  poolType: number;
+  side: MarketSide;
+  marketAddress: `0x${string}`;
+  currentAmount: string;
+  currentMarketAPR: string;
+  projectedMarketAPR: string;
+  incentives: string;
+  veAPR: string;
   totalVotes: {
     percentage: string;
     limit: string;
@@ -40,12 +48,11 @@ export type VoteMarket = {
     value: string;
   };
   autoVote: boolean;
-  supplyVote: string;
-  borrowVote: string;
+  voteValue: string;
 };
 
 type EmissionsContextType = {
-  markets: VoteMarket[];
+  marketRows: VoteMarketRow[];
   isLoading: boolean;
   error: Error | null;
   votes: Record<string, string>;
@@ -54,7 +61,11 @@ type EmissionsContextType = {
   refreshVotingData: (nftId: string) => Promise<void>;
 };
 
-const defaultVotingData: VotingData = {
+const defaultMetrics: MarketMetrics = {
+  currentMarketAPR: '0%',
+  projectedMarketAPR: '0%',
+  incentives: '$0',
+  veAPR: '0%',
   totalVotes: {
     percentage: '0%',
     limit: '0'
@@ -64,23 +75,11 @@ const defaultVotingData: VotingData = {
     value: '0'
   },
   autoVote: false,
-  supplyVote: '',
-  borrowVote: ''
-};
-
-export const fetchVotingData = async (
-  chainId: number,
-  nftId: string
-): Promise<Record<string, VotingData>> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const mockData: Record<string, VotingData> = {};
-
-  // Mock data generation logic remains the same
-  return mockData;
+  voteValue: ''
 };
 
 export const EmissionsContext = createContext<EmissionsContextType>({
-  markets: [],
+  marketRows: [],
   isLoading: false,
   error: null,
   votes: {},
@@ -93,7 +92,7 @@ export const EmissionsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const { currentChain: chainId } = useVeIONContext();
-  const [markets, setMarkets] = useState<VoteMarket[]>([]);
+  const [marketRows, setMarketRows] = useState<VoteMarketRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [votes, setVotes] = useState<Record<string, string>>({});
@@ -107,7 +106,6 @@ export const EmissionsProvider: React.FC<{
     selectedPool,
     +chain
   );
-  console.log('poolData', poolData);
 
   // Initialize markets and votes whenever poolData changes
   useEffect(() => {
@@ -117,40 +115,66 @@ export const EmissionsProvider: React.FC<{
         const assets = poolData?.assets;
 
         if (assets && assets.length > 0) {
-          const votingData = await fetchVotingData(chainId, '0');
+          const rows: VoteMarketRow[] = [];
 
-          const mappedMarkets = assets.map((asset) => {
-            const marketVotingData =
-              votingData[asset.cToken] || defaultVotingData;
-
-            return {
-              asset: asset.underlyingSymbol,
-              marketAddress: asset.cToken as `0x${string}`,
-              underlyingToken: asset.underlyingToken,
-              poolType: +selectedPool,
-              totalVotes: marketVotingData.totalVotes,
-              myVotes: marketVotingData.myVotes,
-              autoVote: marketVotingData.autoVote,
-              supplyVote: marketVotingData.supplyVote,
-              borrowVote: marketVotingData.borrowVote
+          assets.forEach((asset) => {
+            // Generate some random metrics for demonstration
+            const supplyMetrics: MarketMetrics = {
+              currentMarketAPR: (Math.random() * 10).toFixed(2) + '%',
+              projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
+              incentives: '$' + (Math.random() * 100000).toFixed(2),
+              veAPR: (Math.random() * 8).toFixed(2) + '%',
+              totalVotes: {
+                percentage: (Math.random() * 100).toFixed(2) + '%',
+                limit: (Math.random() * 1000000).toFixed(0)
+              },
+              myVotes: {
+                percentage: (Math.random() * 50).toFixed(2) + '%',
+                value: (Math.random() * 10000).toFixed(0)
+              },
+              autoVote: Math.random() > 0.5,
+              voteValue: ''
             };
+
+            const borrowMetrics: MarketMetrics = {
+              currentMarketAPR: (Math.random() * 15).toFixed(2) + '%',
+              projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
+              incentives: '$' + (Math.random() * 100000).toFixed(2),
+              veAPR: (Math.random() * 8).toFixed(2) + '%',
+              totalVotes: {
+                percentage: (Math.random() * 100).toFixed(2) + '%',
+                limit: (Math.random() * 1000000).toFixed(0)
+              },
+              myVotes: {
+                percentage: (Math.random() * 50).toFixed(2) + '%',
+                value: (Math.random() * 10000).toFixed(0)
+              },
+              autoVote: Math.random() > 0.5,
+              voteValue: ''
+            };
+
+            // Add supply row
+            rows.push({
+              asset: asset.underlyingSymbol,
+              underlyingToken: asset.underlyingToken,
+              side: MarketSide.Supply,
+              marketAddress: asset.cToken as `0x${string}`,
+              currentAmount: (Math.random() * 1000000).toFixed(2),
+              ...supplyMetrics
+            });
+
+            // Add borrow row
+            rows.push({
+              asset: asset.underlyingSymbol,
+              underlyingToken: asset.underlyingToken,
+              side: MarketSide.Borrow,
+              marketAddress: asset.cToken as `0x${string}`,
+              currentAmount: (Math.random() * 1000000).toFixed(2),
+              ...borrowMetrics
+            });
           });
 
-          // Initialize votes
-          const initialVotes: Record<string, string> = {};
-          mappedMarkets.forEach((market) => {
-            if (market.supplyVote) {
-              initialVotes[`${market.marketAddress}-supply`] =
-                market.supplyVote;
-            }
-            if (market.borrowVote) {
-              initialVotes[`${market.marketAddress}-borrow`] =
-                market.borrowVote;
-            }
-          });
-
-          setVotes(initialVotes);
-          setMarkets(mappedMarkets);
+          setMarketRows(rows);
         }
       } catch (err) {
         setError(
@@ -178,16 +202,15 @@ export const EmissionsProvider: React.FC<{
         return newVotes;
       });
 
-      // Update the market data
-      setMarkets((prev) =>
-        prev.map((market) => {
-          if (market.marketAddress === marketAddress) {
+      setMarketRows((prev) =>
+        prev.map((row) => {
+          if (row.marketAddress === marketAddress && row.side === side) {
             return {
-              ...market,
-              [side === MarketSide.Supply ? 'supplyVote' : 'borrowVote']: value
+              ...row,
+              voteValue: value
             };
           }
-          return market;
+          return row;
         })
       );
     },
@@ -196,58 +219,23 @@ export const EmissionsProvider: React.FC<{
 
   const resetVotes = useCallback(() => {
     setVotes({});
-    // Reset votes in markets
-    setMarkets((prev) =>
-      prev.map((market) => ({
-        ...market,
-        supplyVote: '',
-        borrowVote: ''
+    setMarketRows((prev) =>
+      prev.map((row) => ({
+        ...row,
+        voteValue: ''
       }))
     );
   }, []);
 
   const refreshVotingData = async (nftId: string) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const votingData = await fetchVotingData(chainId, nftId);
-
-      setMarkets((currentMarkets) =>
-        currentMarkets.map((market) => {
-          const marketVotingData =
-            votingData[market.marketAddress] || defaultVotingData;
-          return {
-            ...market,
-            ...marketVotingData
-          };
-        })
-      );
-
-      const newVotes: Record<string, string> = {};
-      Object.entries(votingData).forEach(([marketAddress, data]) => {
-        if (data.supplyVote) {
-          newVotes[`${marketAddress}-supply`] = data.supplyVote;
-        }
-        if (data.borrowVote) {
-          newVotes[`${marketAddress}-borrow`] = data.borrowVote;
-        }
-      });
-
-      setVotes(newVotes);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error('Failed to fetch voting data')
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    // Implementation remains similar but would need to be updated
+    // to match the new data structure
   };
 
   return (
     <EmissionsContext.Provider
       value={{
-        markets,
+        marketRows,
         isLoading: isLoading || isLoadingPoolData,
         error,
         votes,

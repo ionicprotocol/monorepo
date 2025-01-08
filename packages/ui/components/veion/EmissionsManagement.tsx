@@ -1,27 +1,31 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-
 import { mode } from 'viem/chains';
-
 import { Checkbox } from '@ui/components/ui/checkbox';
-import type { VoteMarket } from '@ui/context/EmissionsManagementContext';
-import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
+import {
+  useEmissionsContext,
+  VoteMarketRow
+} from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
-
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
 import CommonTable from '../CommonTable';
 import PoolToggle from '../markets/PoolToggle';
-
 import type { EnhancedColumnDef } from '../CommonTable';
 import SearchInput from '../markets/SearcInput';
 import { CopyButton } from '../CopyButton';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@ui/components/ui/select';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -29,17 +33,22 @@ interface EmissionsManagementTableProps {
   showPendingOnly: boolean;
 }
 
+type AssetTypeFilter = 'all' | 'supply' | 'borrow';
+
 function EmissionsManagement({
   tokenId,
   showAutoOnly,
   showPendingOnly
 }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { markets, isLoading, error } = useEmissionsContext();
+  const { marketRows, isLoading, error } = useEmissionsContext();
   const { toast } = useToast();
   const { submitVote, isVoting } = useVeIONVote(currentChain);
-  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const [assetTypeFilter, setAssetTypeFilter] =
+    useState<AssetTypeFilter>('all');
+
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
@@ -48,55 +57,38 @@ function EmissionsManagement({
   const filteredVotingData = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
-    return markets.filter((market) => {
+    return marketRows.filter((row) => {
+      // Filter by asset type
+      if (assetTypeFilter === 'supply' && row.side !== MarketSide.Supply) {
+        return false;
+      }
+      if (assetTypeFilter === 'borrow' && row.side !== MarketSide.Borrow) {
+        return false;
+      }
+
       // Filter for auto votes if showAutoOnly is true
-      if (showAutoOnly && !market.autoVote) {
+      if (showAutoOnly && !row.autoVote) {
         return false;
       }
 
       // Filter for pending votes if showPendingOnly is true
-      if (showPendingOnly) {
-        const hasSupplyVote = market.supplyVote !== '';
-        const hasBorrowVote = market.borrowVote !== '';
-        if (!hasSupplyVote && !hasBorrowVote) {
-          return true;
-        } else {
-          return false;
-        }
+      if (showPendingOnly && row.voteValue !== '') {
+        return false;
       }
 
       // Filter based on searchTerm
       if (term) {
         return (
-          market.asset.toLowerCase().includes(term) ||
-          market.marketAddress.toLowerCase().includes(term)
+          row.asset.toLowerCase().includes(term) ||
+          row.marketAddress.toLowerCase().includes(term)
         );
       }
 
       return true;
     });
-  }, [markets, showAutoOnly, showPendingOnly, searchTerm]);
+  }, [marketRows, showAutoOnly, showPendingOnly, searchTerm, assetTypeFilter]);
 
-  const handleSubmitVotes = async () => {
-    try {
-      const success = await submitVote(tokenId);
-
-      if (success) {
-        toast({
-          title: 'Success',
-          description: 'Votes submitted successfully'
-        });
-      }
-    } catch (err: any) {
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive'
-      });
-    }
-  };
-
-  const columns = useMemo<EnhancedColumnDef<VoteMarket>[]>(
+  const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(
     () => [
       {
         id: 'asset',
@@ -104,22 +96,50 @@ function EmissionsManagement({
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Image
-              src={`/img/symbols/32/color/${row.original.asset.toLocaleLowerCase()}.png`}
+              src={`/img/symbols/32/color/${row.original.asset.toLowerCase()}.png`}
               alt={row.original.asset}
               width={24}
               height={24}
               className="rounded-full"
             />
-            <span className="text-sm font-medium text-white/80">
-              {row.original.asset}
-            </span>
-            <CopyButton
-              value={row.original.underlyingToken}
-              message={`${row.original.asset} token address copied to clipboard`}
-              tooltipMessage="Copy token address"
-            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-white/80">
+                  {row.original.asset}
+                </span>
+                <CopyButton
+                  value={row.original.underlyingToken}
+                  message={`${row.original.asset} token address copied to clipboard`}
+                  tooltipMessage="Copy token address"
+                />
+              </div>
+              <span className="text-xs text-white/60">
+                {row.original.side === MarketSide.Supply ? 'Supply' : 'Borrow'}:{' '}
+                {row.original.currentAmount}
+              </span>
+            </div>
           </div>
         )
+      },
+      {
+        id: 'currentMarketAPR',
+        header: 'CURRENT MARKET APR',
+        cell: ({ row }) => <span>{row.original.currentMarketAPR}</span>
+      },
+      {
+        id: 'projectedMarketAPR',
+        header: 'PROJECTED MARKET APR',
+        cell: ({ row }) => <span>{row.original.projectedMarketAPR}</span>
+      },
+      {
+        id: 'incentives',
+        header: 'INCENTIVES',
+        cell: ({ row }) => <span>{row.original.incentives}</span>
+      },
+      {
+        id: 'veAPR',
+        header: 'veAPR',
+        cell: ({ row }) => <span>{row.original.veAPR}</span>
       },
       {
         id: 'totalVotes',
@@ -156,23 +176,12 @@ function EmissionsManagement({
         }
       },
       {
-        id: 'supply',
-        header: 'SUPPLY %',
+        id: 'vote',
+        header: 'VOTE',
         cell: ({ row }) => (
           <VoteInput
             marketAddress={row.original.marketAddress}
-            side={MarketSide.Supply}
-            isDisabled={isVoting}
-          />
-        )
-      },
-      {
-        id: 'borrow',
-        header: 'BORROW %',
-        cell: ({ row }) => (
-          <VoteInput
-            marketAddress={row.original.marketAddress}
-            side={MarketSide.Borrow}
+            side={row.original.side}
             isDisabled={isVoting}
           />
         )
@@ -192,6 +201,25 @@ function EmissionsManagement({
     [isVoting]
   );
 
+  const handleSubmitVotes = async () => {
+    try {
+      const success = await submitVote(tokenId);
+
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Votes submitted successfully'
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
   // Show error state if there's an error
   if (error) {
     return (
@@ -210,6 +238,19 @@ function EmissionsManagement({
             pool={selectedPool}
           />
         </div>
+        <Select
+          value={assetTypeFilter}
+          onValueChange={(value: AssetTypeFilter) => setAssetTypeFilter(value)}
+        >
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Filter by type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Show all</SelectItem>
+            <SelectItem value="supply">Supply</SelectItem>
+            <SelectItem value="borrow">Borrow</SelectItem>
+          </SelectContent>
+        </Select>
         <div className="w-full">
           <SearchInput
             value={searchTerm}
