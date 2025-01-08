@@ -12,15 +12,22 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const chainId = parseInt(await getChainId());
   const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
-  const veParams: veIONConfig = chainDeployParams.veION;
 
-  console.log("chainId: ", chainId);
-  console.log("veParams:", veParams);
+  try {
+    console.log("Deploying UniswapLpTokenPriceOracle...");
 
-  let hash;
-  const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+    const deployment = await deployments.deploy("UniswapLpTokenPriceOracle", {
+      from: deployer,
+      args: [chainDeployParams.wtoken],
+      log: true
+    });
+
+    console.log(`UniswapLpTokenPriceOracle deployed at: ${deployment.address}`);
+  } catch (error) {
+    console.error("Error deploying UniswapLpTokenPriceOracle:", error);
+  }
 };
 
-func.tags = ["prod", "voter"];
+func.tags = ["prod", "veion", "lp-oracle"];
 
 export default func;

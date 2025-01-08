@@ -43,7 +43,7 @@
     "@wagmi/cli": "^2.1.15",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
-    "hardhat": "^2.22.6",
+    "hardhat": "^2.22.14",
     "hardhat-deploy": "^0.12.4",
     "hardhat-gas-reporter": "^2.2.1",
     "prettier": "^3.3.3",

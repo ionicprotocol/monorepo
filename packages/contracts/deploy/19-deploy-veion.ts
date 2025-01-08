@@ -223,8 +223,59 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       await publicClient.waitForTransactionReceipt({ hash });
     }
   }
+
+  let veloAeroStakingWallet;
+  try {
+    console.log("Deploying VeloAeroStakingWallet implementation...");
+
+    veloAeroStakingWallet = await deployments.deploy("VeloAeroStakingWallet", {
+      from: deployer,
+      log: true
+    });
+
+    console.log(`VeloAeroStakingWallet deployed at: ${veloAeroStakingWallet.address}`);
+  } catch (error) {
+    console.error("Error deploying VeloAeroStakingWallet:", error);
+  }
+
+  // ╔══════════════════════════════════════════╗
+  // ║          SET STAKING STRATEGY            ║
+  // ╚══════════════════════════════════════════╝
+  // Parameters for initialization
+  const stakingTokenAddress: Address = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+  const stakingContractAddress: Address = "0x9b42e5F8c45222b2715F804968251c747c588fd7"; // Replace with actual staking contract address
+  const stakingWalletImplementationAddress = veloAeroStakingWallet.address; // Replace with actual staking wallet implementation address
+  let stakeStrategy;
+  try {
+    stakeStrategy = await deployments.deploy("VeloAeroStakingStrategy", {
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [veION.address, stakingTokenAddress, stakingContractAddress, stakingWalletImplementationAddress]
+          }
+        },
+        owner: multisig
+      }
+    });
+
+    console.log(`VeloAeroStakingStrategy deployed at: ${stakeStrategy.address}`);
+  } catch (error) {
+    console.error("Error deploying VeloAeroStakingStrategy:", error);
+  }
+
+  try {
+    const txHash = await veION.write.setStakeStrategy([2, stakeStrategy.address], { from: deployer });
+    await publicClient.waitForTransactionReceipt({ hash: txHash });
+    console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
+  } catch (error) {
+    console.error("Error setting max voting number:", error);
+  }
 };
 
-func.tags = ["prod", "veion"];
+func.tags = ["prod", "veion", "veion-nft"];
 
 export default func;

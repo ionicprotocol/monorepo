@@ -66,6 +66,7 @@ export type veIONConfig = {
   aeroVoting?: Address;
   aeroVotingBoost?: bigint;
   veAERO?: Address;
+  maxVotingNum?: number[];
 };
 
 export type DynamicFlywheelConfig = {
