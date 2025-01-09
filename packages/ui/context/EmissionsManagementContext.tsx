@@ -6,38 +6,32 @@ import React, {
   useCallback
 } from 'react';
 
-import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useSearchParams } from 'next/navigation';
-import { mode } from 'viem/chains';
-import { useVeIONContext } from './VeIonContext';
 
-type MarketMetrics = {
-  currentMarketAPR: string;
-  projectedMarketAPR: string;
-  incentives: {
-    balance: number;
-    balanceUSD: number;
-  };
-  veAPR: string;
-  totalVotes: {
-    percentage: string;
-    limit: string;
-  };
-  myVotes: {
-    percentage: string;
-    value: string;
-  };
-  voteValue: string;
-};
+import { mode } from 'viem/chains';
+
+import { FLYWHEEL_TYPE_MAP } from '@ui/constants/index';
+import { EXCLUDED_MARKETS } from '@ui/constants/veIon';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
+import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useMerklData } from '@ui/hooks/useMerklData';
+import { useRewards } from '@ui/hooks/useRewards';
+import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
+import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+import { calculateTotalAPR } from '@ui/utils/marketUtils';
+import { multipliers } from '@ui/utils/multipliers';
+
+import type { Hex } from 'viem';
+
+import type { FlywheelReward } from '@ionicprotocol/types';
 
 export type VoteMarketRow = {
   asset: string;
-  underlyingToken: string;
+  underlyingToken: Hex;
   side: MarketSide;
   marketAddress: `0x${string}`;
   currentAmount: string;
-  currentMarketAPR: string;
   projectedMarketAPR: string;
   incentives: {
     balance: number;
@@ -53,6 +47,17 @@ export type VoteMarketRow = {
     value: string;
   };
   voteValue: string;
+  apr: {
+    supplyAPR?: number;
+    borrowAPR?: number;
+    supplyRewards?: FlywheelReward[];
+    borrowRewards?: FlywheelReward[];
+    nativeAssetYield?: number;
+    supplyAPRTotal?: number;
+    borrowAPRTotal?: number;
+    cTokenAddress: `0x${string}`;
+    comptrollerAddress: `0x${string}`;
+  };
 };
 
 type EmissionsContextType = {
@@ -78,7 +83,6 @@ export const EmissionsContext = createContext<EmissionsContextType>({
 export const EmissionsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const { currentChain: chainId } = useVeIONContext();
   const [marketRows, setMarketRows] = useState<VoteMarketRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -94,6 +98,24 @@ export const EmissionsProvider: React.FC<{
     +chain
   );
 
+  // Add APR-related hooks
+  const { data: supplyRates, isLoading: isLoadingSupplyApys } = useSupplyAPYs(
+    poolData?.assets ?? [],
+    +chain
+  );
+  const { data: borrowRates, isLoading: isLoadingBorrowApys } = useBorrowAPYs(
+    poolData?.assets ?? [],
+    +chain
+  );
+  const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
+    poolData?.assets ?? []
+  );
+  const { data: rewards, isLoading: isLoadingRewards } = useRewards({
+    chainId: +chain,
+    poolId: selectedPool
+  });
+  const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
+
   // Initialize markets and votes whenever poolData changes
   useEffect(() => {
     const initializeMarkets = async () => {
@@ -105,64 +127,140 @@ export const EmissionsProvider: React.FC<{
           const rows: VoteMarketRow[] = [];
 
           assets.forEach((asset) => {
-            // Generate some random metrics for demonstration
-            const supplyMetrics: MarketMetrics = {
-              currentMarketAPR: (Math.random() * 10).toFixed(2) + '%',
-              projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
-              incentives: {
-                balance: Math.random() * 1000000,
-                balanceUSD: Math.random() * 1000000
-              },
-              veAPR: (Math.random() * 8).toFixed(2) + '%',
-              totalVotes: {
-                percentage: (Math.random() * 100).toFixed(2) + '%',
-                limit: (Math.random() * 1000000).toFixed(0)
-              },
-              myVotes: {
-                percentage: (Math.random() * 50).toFixed(2) + '%',
-                value: (Math.random() * 10000).toFixed(0)
-              },
-              voteValue: ''
-            };
+            const supplyRewards = rewards?.[asset.cToken]
+              ?.filter((reward) =>
+                FLYWHEEL_TYPE_MAP[+chain]?.supply?.includes(
+                  (reward as FlywheelReward).flywheel
+                )
+              )
+              .map((reward) => ({
+                ...reward,
+                apy: (reward.apy ?? 0) * 100
+              })) as FlywheelReward[];
 
-            const borrowMetrics: MarketMetrics = {
-              currentMarketAPR: (Math.random() * 15).toFixed(2) + '%',
-              projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
-              incentives: {
-                balance: Math.random() * 1000000,
-                balanceUSD: Math.random() * 1000000
-              },
-              veAPR: (Math.random() * 8).toFixed(2) + '%',
-              totalVotes: {
-                percentage: (Math.random() * 100).toFixed(2) + '%',
-                limit: (Math.random() * 1000000).toFixed(0)
-              },
-              myVotes: {
-                percentage: (Math.random() * 50).toFixed(2) + '%',
-                value: (Math.random() * 10000).toFixed(0)
-              },
-              voteValue: ''
-            };
+            const borrowRewards = rewards?.[asset.cToken]
+              ?.filter((reward) =>
+                FLYWHEEL_TYPE_MAP[+chain]?.borrow?.includes(
+                  (reward as FlywheelReward).flywheel
+                )
+              )
+              .map((reward) => ({
+                ...reward,
+                apy: (reward.apy ?? 0) * 100
+              })) as FlywheelReward[];
 
-            // Add supply row
-            rows.push({
-              asset: asset.underlyingSymbol,
-              underlyingToken: asset.underlyingToken,
-              side: MarketSide.Supply,
-              marketAddress: asset.cToken as `0x${string}`,
-              currentAmount: (Math.random() * 1000000).toFixed(2),
-              ...supplyMetrics
+            const nativeAssetYield =
+              fraxtalAprs?.[asset.cToken]?.nativeAssetYield;
+            const config =
+              multipliers[+chain]?.[selectedPool]?.[asset.underlyingSymbol];
+
+            const supplyAPRTotal = calculateTotalAPR({
+              type: 'supply',
+              baseAPR: supplyRates?.[asset.cToken]
+                ? supplyRates[asset.cToken] * 100
+                : 0,
+              rewards: supplyRewards,
+              effectiveNativeYield:
+                nativeAssetYield !== undefined
+                  ? nativeAssetYield * 100
+                  : config?.supply?.underlyingAPR,
+              merklAprForOP: config?.supply?.op
+                ? merklApr?.find(
+                    (info) =>
+                      info.token?.toLowerCase() ===
+                      asset.underlyingToken?.toLowerCase()
+                  )?.apr
+                : undefined
             });
 
-            // Add borrow row
-            rows.push({
-              asset: asset.underlyingSymbol,
-              underlyingToken: asset.underlyingToken,
-              side: MarketSide.Borrow,
-              marketAddress: asset.cToken as `0x${string}`,
-              currentAmount: (Math.random() * 1000000).toFixed(2),
-              ...borrowMetrics
+            const borrowAPRTotal = calculateTotalAPR({
+              type: 'borrow',
+              baseAPR: borrowRates?.[asset.cToken]
+                ? borrowRates[asset.cToken] * 100
+                : 0,
+              rewards: borrowRewards,
+              effectiveNativeYield:
+                nativeAssetYield !== undefined
+                  ? nativeAssetYield * 100
+                  : config?.borrow?.underlyingAPR,
+              merklAprForOP: config?.borrow?.op
+                ? merklApr?.find(
+                    (info) =>
+                      info.token?.toLowerCase() ===
+                      asset.underlyingToken?.toLowerCase()
+                  )?.apr
+                : undefined
             });
+
+            if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.supply) {
+              rows.push({
+                asset: asset.underlyingSymbol,
+                underlyingToken: asset.underlyingToken,
+                side: MarketSide.Supply,
+                marketAddress: asset.cToken as `0x${string}`,
+                currentAmount: (Math.random() * 1000000).toFixed(2),
+                projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
+                incentives: {
+                  balance: Math.random() * 1000000,
+                  balanceUSD: Math.random() * 1000000
+                },
+                veAPR: (Math.random() * 8).toFixed(2) + '%',
+                totalVotes: {
+                  percentage: (Math.random() * 100).toFixed(2) + '%',
+                  limit: (Math.random() * 1000000).toFixed(0)
+                },
+                myVotes: {
+                  percentage: (Math.random() * 50).toFixed(2) + '%',
+                  value: (Math.random() * 10000).toFixed(0)
+                },
+                voteValue: '',
+                apr: {
+                  supplyAPR: supplyRates?.[asset.cToken]
+                    ? supplyRates[asset.cToken] * 100
+                    : 0,
+                  supplyRewards,
+                  nativeAssetYield,
+                  supplyAPRTotal,
+                  cTokenAddress: asset.cToken as `0x${string}`,
+                  comptrollerAddress: poolData.comptroller as `0x${string}`
+                }
+              });
+            }
+
+            if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.borrow) {
+              rows.push({
+                asset: asset.underlyingSymbol,
+                underlyingToken: asset.underlyingToken,
+                side: MarketSide.Borrow,
+                marketAddress: asset.cToken as `0x${string}`,
+                currentAmount: (Math.random() * 1000000).toFixed(2),
+                projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
+                incentives: {
+                  balance: Math.random() * 1000000,
+                  balanceUSD: Math.random() * 1000000
+                },
+                veAPR: (Math.random() * 8).toFixed(2) + '%',
+                totalVotes: {
+                  percentage: (Math.random() * 100).toFixed(2) + '%',
+                  limit: (Math.random() * 1000000).toFixed(0)
+                },
+                myVotes: {
+                  percentage: (Math.random() * 50).toFixed(2) + '%',
+                  value: (Math.random() * 10000).toFixed(0)
+                },
+                voteValue: '',
+                apr: {
+                  borrowAPR: borrowRates?.[asset.cToken]
+                    ? borrowRates[asset.cToken] * 100
+                    : 0,
+                  borrowRewards,
+                  nativeAssetYield,
+                  borrowAPRTotal,
+                  cTokenAddress: asset.cToken as `0x${string}`,
+                  comptrollerAddress: poolData.comptroller as `0x${string}`
+                }
+              });
+            }
           });
 
           setMarketRows(rows);
@@ -177,11 +275,21 @@ export const EmissionsProvider: React.FC<{
     };
 
     initializeMarkets();
-  }, [chainId, poolData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    poolData?.comptroller,
+    supplyRates,
+    borrowRates,
+    rewards,
+    isLoadingFraxtalAprs,
+    selectedPool
+  ]);
 
   const updateVote = useCallback(
     (marketAddress: string, side: MarketSide, value: string) => {
-      const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+      const key = `${marketAddress}-${
+        side === MarketSide.Supply ? 'supply' : 'borrow'
+      }`;
 
       setVotes((prev) => {
         const newVotes = { ...prev };
@@ -227,7 +335,14 @@ export const EmissionsProvider: React.FC<{
     <EmissionsContext.Provider
       value={{
         marketRows,
-        isLoading: isLoading || isLoadingPoolData,
+        isLoading:
+          isLoading ||
+          isLoadingPoolData ||
+          isLoadingSupplyApys ||
+          isLoadingBorrowApys ||
+          isLoadingFraxtalAprs ||
+          isLoadingRewards ||
+          isLoadingMerklData,
         error,
         votes,
         updateVote,

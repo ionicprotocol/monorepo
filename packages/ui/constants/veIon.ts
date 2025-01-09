@@ -1,4 +1,4 @@
-import type { ChainId } from '@ui/types/VeIION';
+import type { ChainId, MarketExclusionConfig } from '@ui/types/VeIION';
 
 export const VEION_CONTRACTS: Partial<Record<ChainId, `0x${string}`>> = {
   8453: '0x0000000000000000000000000000000000000000' as `0x${string}`, // Base
@@ -17,3 +17,28 @@ export function isVeIonSupported(chainId: number): boolean {
       '0x0000000000000000000000000000000000000000'
   );
 }
+
+// More explicit naming about what this configuration does
+export const EXCLUDED_MARKETS: MarketExclusionConfig = {
+  8453: {
+    ezETH: {
+      borrow: true
+    },
+    wsuperOETHb: {
+      borrow: true
+    },
+    msETH: {
+      supply: true,
+      borrow: true
+    },
+    msUSD: {
+      supply: true,
+      borrow: true
+    }
+  },
+  34443: {
+    ezETH: {
+      borrow: true
+    }
+  }
+};

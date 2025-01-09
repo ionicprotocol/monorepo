@@ -185,3 +185,16 @@ export const isVeIONTableData = (data: any): data is VeIONTableData => {
     typeof data.votingPower === 'object'
   );
 };
+
+type MarketSideConfig = {
+  supply?: boolean;
+  borrow?: boolean;
+};
+
+type ChainAssetConfig = {
+  [assetSymbol: string]: MarketSideConfig;
+};
+
+export type MarketExclusionConfig = {
+  [chainId: number]: ChainAssetConfig;
+};

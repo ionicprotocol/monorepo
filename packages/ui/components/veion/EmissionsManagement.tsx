@@ -6,6 +6,13 @@ import { useSearchParams } from 'next/navigation';
 import { Portal } from '@radix-ui/react-portal';
 import { mode } from 'viem/chains';
 
+import CommonTable from '@ui/components/CommonTable';
+import type { EnhancedColumnDef } from '@ui/components/CommonTable';
+import { CopyButton } from '@ui/components/CopyButton';
+import APR from '@ui/components/markets/Cells/APR';
+import TokenBalance from '@ui/components/markets/Cells/TokenBalance';
+import PoolToggle from '@ui/components/markets/PoolToggle';
+import SearchInput from '@ui/components/markets/SearcInput';
 import {
   Select,
   SelectTrigger,
@@ -26,13 +33,6 @@ import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
-import CommonTable from '../CommonTable';
-import { CopyButton } from '../CopyButton';
-import TokenBalance from '../markets/Cells/TokenBalance';
-import PoolToggle from '../markets/PoolToggle';
-import SearchInput from '../markets/SearcInput';
-
-import type { EnhancedColumnDef } from '../CommonTable';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -136,20 +136,46 @@ function EmissionsManagement({
         )
       },
       {
-        id: 'currentMarketAPR',
+        id: 'aprTotal',
         header: (
           <TooltipWrapper content="Current market APR including underlying asset APR">
-            <span>CURRENT MARKET APR</span>
+            <span>CURRENT APR</span>
           </TooltipWrapper>
         ),
         sortingFn: 'numerical',
-        cell: ({ row }) => <span>{row.original.currentMarketAPR}</span>
+        cell: ({ row }) => (
+          <APR
+            type={row.original.side === MarketSide.Supply ? 'supply' : 'borrow'}
+            baseAPR={
+              (row.original.side === MarketSide.Supply
+                ? row.original.apr.supplyAPR
+                : row.original.apr.borrowAPR) ?? 0
+            }
+            asset={row.original.asset}
+            rewards={
+              row.original.side === MarketSide.Supply
+                ? row.original.apr.supplyRewards
+                : row.original.apr.borrowRewards
+            }
+            dropdownSelectedChain={+chain}
+            selectedPoolId={selectedPool}
+            cToken={row.original.apr.cTokenAddress}
+            pool={row.original.apr.comptrollerAddress}
+            nativeAssetYield={row.original.apr.nativeAssetYield}
+            underlyingToken={row.original.underlyingToken}
+            aprTotal={
+              row.original.side === MarketSide.Supply
+                ? row.original.apr.supplyAPRTotal
+                : row.original.apr.borrowAPRTotal
+            }
+          />
+        )
       },
       {
         id: 'projectedMarketAPR',
         header: (
           <TooltipWrapper content="Projected market APR for the next Epoch considering votes distribution as of this moment including underlying asset APR">
-            <span>PROJECTED MARKET APR</span>
+            <span>PROJECTED APR</span>
           </TooltipWrapper>
         ),
         sortingFn: 'numerical',
@@ -239,7 +265,7 @@ function EmissionsManagement({
         )
       }
     ],
-    [isVoting]
+    [chain, isVoting, selectedPool]
   );
 
   const handleSubmitVotes = async () => {

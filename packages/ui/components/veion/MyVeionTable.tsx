@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import ActionButton from '@ui/components/ActionButton';
 import CommonTable from '@ui/components/CommonTable';
 import type {
@@ -14,7 +16,6 @@ import ManageDialog from './ManageDialog';
 import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
-import { useRouter } from 'next/navigation';
 
 type BaseVeionData = {
   id: string;
