@@ -385,12 +385,8 @@ export default function Loop({
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      let slippageWithBufferInBps = 0;
-      if (realSlippage > 1 || realSlippage < 0) {
-        slippageWithBufferInBps = 10; // 10bps minimum
-      } else {
-        slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
-      }
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      const slippageWithSmallerBuffer = realSlippage * 1.1;
 
       const [, finalBorrowAmount] = await publicClient.readContract({
         abi: iLeveredPositionFactoryAbi,
@@ -400,7 +396,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
-          BigInt(Math.ceil(slippageWithBufferInBps)),
+          slippageWithLargerBufferInBps,
           actualRedeemedAmountForAggregatorSwap,
           0n
         ]
@@ -422,7 +418,8 @@ export default function Loop({
         fromToken: selectedBorrowAsset!.underlyingToken,
         toToken: selectedCollateralAsset.underlyingToken,
         fromAmount: finalBorrowAmount.toString(),
-        fromAddress: result.result
+        fromAddress: result.result,
+        slippage: slippageWithSmallerBuffer
       });
 
       const tx = await walletClient?.writeContract({
@@ -439,7 +436,7 @@ export default function Loop({
           '0x',
           quoteFinal.transactionRequest!.to! as Address,
           quoteFinal.transactionRequest!.data! as Hex,
-          BigInt(Math.ceil(slippageWithBufferInBps))
+          slippageWithLargerBufferInBps
         ]
       });
 
@@ -560,12 +557,8 @@ export default function Loop({
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      let slippageWithBufferInBps = 0;
-      if (realSlippage < 1) {
-        slippageWithBufferInBps = 10; // 10bps minimum
-      } else {
-        slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
-      }
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      const slippageWithSmallerBuffer = realSlippage * 1.1;
 
       const [finalSupplyAmount, finalBorrowAmount] =
         await publicClient.readContract({
@@ -574,7 +567,7 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [
             parseEther(currentLeverage.toString()),
-            BigInt(Math.ceil(slippageWithBufferInBps))
+            slippageWithLargerBufferInBps
           ]
         });
 
@@ -593,7 +586,8 @@ export default function Loop({
           upOrDown === 'up'
             ? finalBorrowAmount.toString()
             : finalSupplyAmount.toString(),
-        fromAddress: currentPosition.address
+        fromAddress: currentPosition.address,
+        slippage: slippageWithSmallerBuffer
       });
 
       const tx = await walletClient?.writeContract({
@@ -604,7 +598,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           quoteFinal.transactionRequest!.to! as Address,
           quoteFinal.transactionRequest!.data! as Hex,
-          BigInt(Math.ceil(slippageWithBufferInBps))
+          slippageWithLargerBufferInBps
         ]
       });
 
@@ -777,25 +771,23 @@ export default function Loop({
         fromAmount: initialSupplyAmount.toString(),
         fromAddress: factory.address
       });
-
       const realSlippage =
         quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
           ? 1 -
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      let slippageWithBufferInBps = 0;
-      if (realSlippage < 1) {
-        slippageWithBufferInBps = 10; // 10bps minimum
-      } else {
-        slippageWithBufferInBps = realSlippage * 10000 * 1.1; // add 10% buffer
-      }
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      const slippageWithSmallerBuffer = realSlippage * 1.1;
 
       const [finalSupplyAmount] = await publicClient.readContract({
         abi: leveredPositionAbi,
         address: currentPosition.address,
         functionName: 'getAdjustmentAmountDeltas',
-        args: [parseEther('1'), BigInt(Math.ceil(slippageWithBufferInBps))]
+        args: [
+          parseEther('1'),
+          slippageWithLargerBufferInBps
+        ]
       });
 
       const quoteFinal = await getQuote({
@@ -804,14 +796,15 @@ export default function Loop({
         fromToken: selectedCollateralAsset.underlyingToken,
         toToken: selectedBorrowAsset!.underlyingToken,
         fromAmount: finalSupplyAmount.toString(),
-        fromAddress: currentPosition.address
+        fromAddress: currentPosition.address,
+        slippage: slippageWithSmallerBuffer
       });
 
       const tx = await currentSdk.closeLeveredPositionWithAggregator(
         currentPosition?.address ?? ('' as Address),
         quoteFinal.transactionRequest!.to! as Address,
         quoteFinal.transactionRequest!.data! as Hex,
-        BigInt(Math.ceil(slippageWithBufferInBps))
+        slippageWithLargerBufferInBps
       );
 
       if (!tx) {
