@@ -28620,7 +28620,6 @@ export const iLeveredPositionFactoryAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
       { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
       { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
       { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
@@ -28854,7 +28853,6 @@ export const iLeveredPositionFactoryExtensionAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
       { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
       { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
       { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
@@ -29036,7 +29034,6 @@ export const iLeveredPositionFactoryFirstExtensionAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
       { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
       { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
       { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
@@ -42433,7 +42430,6 @@ export const leveredPositionFactoryFirstExtensionAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'ratioIncreases', internalType: 'bool', type: 'bool' },
       { name: 'targetRatio', internalType: 'uint256', type: 'uint256' },
       { name: 'collateralAssetPrice', internalType: 'uint256', type: 'uint256' },
       { name: 'borrowedAssetPrice', internalType: 'uint256', type: 'uint256' },
