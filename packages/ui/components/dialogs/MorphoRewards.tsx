@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Loader2, Sparkles } from 'lucide-react';
-import { useAccount, useWalletClient } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import { AssetIcons } from '@ui/components/AssetIcons';
 import { Button } from '@ui/components/ui/button';
@@ -13,57 +13,28 @@ import {
   DialogDescription
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { useClaimAllRewards } from '@ui/hooks/earn/useClaimAllRewards';
 import { useMorphoRewards } from '@ui/hooks/earn/useMorphoRewards';
-import { useToast } from '@ui/hooks/use-toast';
 
 interface MorphoRewardsDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
 
-export function MorphoRewardsDialog({
-  isOpen,
-  setIsOpen
-}: MorphoRewardsDialogProps) {
+function MorphoRewardsDialog({ isOpen, setIsOpen }: MorphoRewardsDialogProps) {
   const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
   const { rewards, isLoading, totalUsdValue, canClaim } =
     useMorphoRewards(address);
-  const [isClaimLoading, setIsClaimLoading] = React.useState(false);
-  const { toast } = useToast();
+  const { claimAllRewards, isClaimLoading } = useClaimAllRewards();
 
   const handleClaimAll = async () => {
-    if (!walletClient || !address || isClaimLoading) return;
-
-    setIsClaimLoading(true);
-    try {
-      for (const reward of Object.values(rewards)) {
-        await walletClient.sendTransaction({
-          account: address,
-          to: reward.distributorAddress,
-          data: reward.txData as `0x${string}`
-        });
-      }
-
-      toast({
-        title: 'Success!',
-        description: 'Successfully claimed all rewards',
-        duration: 5000
-      });
-
+    const success = await claimAllRewards(rewards);
+    if (success) {
       setIsOpen(false);
-    } catch (error) {
-      console.error('Failed to claim rewards:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to claim rewards. Please try again.',
-        variant: 'destructive',
-        duration: 5000
-      });
-    } finally {
-      setIsClaimLoading(false);
     }
   };
+
+  const hasRewards = Object.keys(rewards).length > 0;
 
   const RewardRow = ({
     token,
@@ -105,23 +76,25 @@ export function MorphoRewardsDialog({
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <DialogContent className="sm:max-w-md bg-gradient-to-b from-zinc-900 to-zinc-950 border-zinc-800/50 shadow-xl">
+      <DialogContent className="max-w-md bg-gradient-to-b from-zinc-900 to-zinc-950 border-zinc-800/50 shadow-xl w-full">
         <DialogHeader className="space-y-4">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-emerald-400 bg-clip-text text-transparent">
               Claim Rewards
             </DialogTitle>
           </div>
-          <DialogDescription className="text-zinc-400">
-            Your earned MORPHO and ION rewards are ready to be claimed
-          </DialogDescription>
+          {hasRewards && (
+            <DialogDescription className="text-zinc-400">
+              Your earned MORPHO and ION rewards are ready to be claimed
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
           </div>
-        ) : Object.keys(rewards).length > 0 ? (
+        ) : hasRewards ? (
           <div className="space-y-6">
             <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 backdrop-blur-xl p-4">
               <div className="space-y-1">

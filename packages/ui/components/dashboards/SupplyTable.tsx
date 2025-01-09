@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import Image from 'next/image';
-
 import { useChainId } from 'wagmi';
 
 import { NO_COLLATERAL_SWAP, pools } from '@ui/constants';
@@ -16,12 +14,12 @@ import CollateralSwapPopup from '../dashboards/CollateralSwapPopup';
 import APR from '../markets/Cells/APR';
 import TokenBalance from '../markets/Cells/TokenBalance';
 import FlyWheelRewards from '../markets/FlyWheelRewards';
+import TokenDisplay from '../TokenDisplay';
 
 import type { EnhancedColumnDef } from '../../components/CommonTable';
 import type { Address } from 'viem';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import TokenDisplay from '../TokenDisplay';
 
 export interface SupplyRowData {
   asset: string;
@@ -214,6 +212,7 @@ function SupplyTable({
       )}
 
       <CommonTable
+        hidePR={false}
         data={data}
         columns={columns}
         isLoading={isLoading}
