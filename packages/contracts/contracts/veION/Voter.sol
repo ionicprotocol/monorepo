@@ -135,7 +135,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     address[] calldata _marketVote,
     MarketSide[] calldata _marketVoteSide,
     uint256[] calldata _weights
-  ) external onlyNewEpoch(_tokenId) nonReentrant {
+  ) external nonReentrant onlyNewEpoch(_tokenId) {
     VoteLocalVars memory vars;
     vars.sender = msg.sender;
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != vars.sender) revert NotOwner();
@@ -185,7 +185,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   }
 
   /// @inheritdoc IVoter
-  function reset(uint256 _tokenId) public onlyNewEpoch(_tokenId) nonReentrant {
+  function reset(uint256 _tokenId) public nonReentrant onlyNewEpoch(_tokenId) {
     if (ERC721Upgradeable(ve).ownerOf(_tokenId) != msg.sender) revert NotOwner();
     for (uint256 i = 0; i < lpTokens.length; i++) {
       _reset(_tokenId, lpTokens[i]);
