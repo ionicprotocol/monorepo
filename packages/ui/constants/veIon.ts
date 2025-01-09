@@ -34,6 +34,10 @@ export const EXCLUDED_MARKETS: MarketExclusionConfig = {
     msUSD: {
       supply: true,
       borrow: true
+    },
+    'wUSD+': {
+      supply: true,
+      borrow: true
     }
   },
   34443: {
