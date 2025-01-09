@@ -193,6 +193,8 @@ abstract contract BaseTest is Test {
       ap = AddressesProvider(0xb0033576a9E444Dd801d5B69e1b63DBC459A6115);
     } else if (chainid == BASE_MAINNET) {
       ap = AddressesProvider(0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c);
+    } else if (chainid == OP_MAINNET) {
+      ap = AddressesProvider(0xb0033576a9E444Dd801d5B69e1b63DBC459A6115);
     } else {
       dpa = new ProxyAdmin();
       AddressesProvider logic = new AddressesProvider();

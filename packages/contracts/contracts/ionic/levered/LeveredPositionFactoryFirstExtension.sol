@@ -24,7 +24,6 @@ contract LeveredPositionFactoryFirstExtension is
   using SafeERC20Upgradeable for IERC20Upgradeable;
   using EnumerableSet for EnumerableSet.AddressSet;
 
-  error PairNotWhitelisted();
   error NoSuchPosition();
   error PositionNotClosed();
 

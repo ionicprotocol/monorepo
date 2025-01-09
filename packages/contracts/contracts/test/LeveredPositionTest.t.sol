@@ -181,46 +181,6 @@ contract LeveredPositionFactoryTest is BaseTest {
   }
 }
 
-contract LeveredPositionsWithAggregatorTest is MarketsTest {
-
-  function test_aggregatorFundingAmountAtSwap() public debuggingOnly forkAtBlock(BASE_MAINNET, 23869636) {
-    ICErc20 collateralMarket = ICErc20(0x84341B650598002d427570298564d6701733c805); // weEth
-
-    uint256 fundingAmount = 46812493237034571;
-
-    {
-      // mock the weeeth call
-      // 69556115648002101623
-      vm.mockCall(
-        0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A,
-        abi.encodeWithSelector(collateralMarket.balanceOf.selector, 0x84341B650598002d427570298564d6701733c805),
-        abi.encode(69556115648002101623)
-      );
-    }
-
-    _test_aggregatorFundingAmountAtSwap(collateralMarket, fundingAmount);
-  }
-
-  function _test_aggregatorFundingAmountAtSwap(ICErc20 collateralMarket, uint256 fundingAmount) internal {
-    _upgradeMarket(collateralMarket);
-
-    uint256 actualRedeemedAssetsForSwap = collateralMarket.previewRedeem(
-      collateralMarket.previewDeposit(fundingAmount)
-    );
-
-    emit log_named_uint("initial funding amount", fundingAmount);
-    emit log_named_uint("actual redeemed amount for swap", actualRedeemedAssetsForSwap);
-  }
-
-  function test_withdrawIonicFees() public debuggingOnly fork(BASE_MAINNET) {
-    ICErc20 wethMarket = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
-
-    _upgradeMarket(wethMarket);
-
-    require(wethMarket._withdrawIonicFees(1) == 0, "withdraw fees error");
-  }
-}
-
 abstract contract LeveredPositionsFactoryBaseTest is BaseTest {
   ILeveredPositionFactory factory;
 
