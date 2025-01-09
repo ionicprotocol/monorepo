@@ -1,22 +1,11 @@
 import React, { useMemo, useState } from 'react';
+
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
+
+import { Portal } from '@radix-ui/react-portal';
 import { mode } from 'viem/chains';
-import { Checkbox } from '@ui/components/ui/checkbox';
-import {
-  useEmissionsContext,
-  VoteMarketRow
-} from '@ui/context/EmissionsManagementContext';
-import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useToast } from '@ui/hooks/use-toast';
-import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
-import EmissionsManagementFooter from './EmissionsManagementFooter';
-import VoteInput from './VoteInput';
-import CommonTable from '../CommonTable';
-import PoolToggle from '../markets/PoolToggle';
-import type { EnhancedColumnDef } from '../CommonTable';
-import SearchInput from '../markets/SearcInput';
-import { CopyButton } from '../CopyButton';
+
 import {
   Select,
   SelectTrigger,
@@ -29,15 +18,28 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
+import type { VoteMarketRow } from '@ui/context/EmissionsManagementContext';
+import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
+import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useToast } from '@ui/hooks/use-toast';
+import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
+
+import EmissionsManagementFooter from './EmissionsManagementFooter';
+import VoteInput from './VoteInput';
+import CommonTable from '../CommonTable';
+import { CopyButton } from '../CopyButton';
 import TokenBalance from '../markets/Cells/TokenBalance';
-import { Portal } from '@radix-ui/react-portal';
+import PoolToggle from '../markets/PoolToggle';
+import SearchInput from '../markets/SearcInput';
+
+import type { EnhancedColumnDef } from '../CommonTable';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
   showPendingOnly: boolean;
 }
 
-type AssetTypeFilter = 'all' | 'supply' | 'borrow';
+type AssetTypeFilter = 'all' | 'borrow' | 'supply';
 
 const TooltipWrapper = ({
   children,
@@ -224,6 +226,17 @@ function EmissionsManagement({
             </div>
           );
         }
+      },
+      {
+        id: 'vote',
+        header: 'VOTE',
+        cell: ({ row }) => (
+          <VoteInput
+            marketAddress={row.original.marketAddress}
+            side={row.original.side}
+            isDisabled={isVoting}
+          />
+        )
       }
     ],
     [isVoting]
