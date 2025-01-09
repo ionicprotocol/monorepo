@@ -75,7 +75,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
     return mintedCTokens;
   }
 
-  function _previewDeposit(uint256 assets, uint256 exchangeRateMantissa) internal view returns (MathError, uint256) {
+  function _previewDeposit(uint256 assets, uint256 exchangeRateMantissa) internal pure returns (MathError, uint256) {
     // mintedCTokens is rounded down here - correct
     return divScalarByExpTruncate(
       assets,
@@ -93,7 +93,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
     return redeemAmount;
   }
 
-  function _previewRedeem(uint256 redeemTokensIn, uint256 exchangeRateMantissa) internal view returns (MathError, uint256) {
+  function _previewRedeem(uint256 redeemTokensIn, uint256 exchangeRateMantissa) internal pure returns (MathError, uint256) {
     return mulScalarTruncate(
       Exp({ mantissa: exchangeRateMantissa }),
       redeemTokensIn
