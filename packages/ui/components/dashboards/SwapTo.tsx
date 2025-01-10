@@ -13,7 +13,6 @@ interface ISwapTo {
   tokenName?: string;
   token?: `0x${string}`;
   headerText?: string;
-  tokenSelector?: boolean;
   tokenArr?: string[];
   isLoading: boolean;
   footerText?: string;
@@ -28,7 +27,6 @@ function SwapTo({
   headerText = 'Deposit',
   amount,
   tokenName = 'eth',
-  tokenSelector = false,
   tokenArr,
   isLoading,
   footerText
@@ -71,29 +69,13 @@ function SwapTo({
         <div
           className={`ml-auto min-w-max px-0.5 flex items-center justify-end`}
         >
-          {tokenSelector ? (
-            <TokenSelector
-              newRef={newRef}
-              open={open}
-              setOpen={setOpen}
-              // chain={+chain}
-              tokenArr={tokenArr}
-            />
-          ) : (
-            <>
-              {' '}
-              <img
-                alt="ion logo"
-                className={`w-5 h-5 inline-block ml-2`}
-                src={`/img/symbols/32/color/${tokenName.toLowerCase()}.png`}
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null; // prevents looping
-                  currentTarget.src = '/img/logo/ION.png';
-                }}
-              />
-              <button className={` ml-2`}>{tokenName.toUpperCase()}</button>{' '}
-            </>
-          )}
+          <TokenSelector
+            newRef={newRef}
+            open={open}
+            setOpen={setOpen}
+            tokenArr={tokenArr}
+            selectedToken={tokenName}
+          />
         </div>
       </div>
       <div
