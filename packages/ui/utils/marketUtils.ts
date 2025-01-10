@@ -105,7 +105,7 @@ export const getExtraRewardIcons = (
   if (config?.turtle && asset === 'STONE') {
     additionalRewards.push({
       name: 'stone',
-      icon: '/img/symbols/32/color/stone-turtle.svg',
+      icon: '/img/symbols/32/color/stone-turtle.png',
       text: '+ Stone Turtle Points'
     });
   }
