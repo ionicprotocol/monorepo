@@ -66,6 +66,8 @@ contract LeveredPositionsWithAggregatorTest is MarketsTest {
     );
 
     emit log_named_uint("borrowsDelta", borrowsDelta);
+    // 1189385188652777
+    // 1189385507762529
     // debug why aggr tries to pull
     // 1164360136957453
     // available

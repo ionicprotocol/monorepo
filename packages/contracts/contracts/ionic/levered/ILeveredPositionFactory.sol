@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { LeveredPosition } from "./LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "./LeveredPositionWithAggregatorSwaps.sol";
 import { IFeeDistributor } from "../../compound/IFeeDistributor.sol";
 import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsRegistry.sol";
 
@@ -40,7 +41,7 @@ interface ILeveredPositionFactoryFirstExtension {
   function removeClosedPosition(address closedPosition) external returns (bool removed);
 
   function closeAndRemoveUserPosition(
-    LeveredPosition position,
+    LeveredPositionWithAggregatorSwaps position,
     address aggregatorTarget,
     bytes memory aggregatorData,
     uint256 expectedSlippage

@@ -67,7 +67,22 @@ contract LeveredPositionFactorySecondExtension is
     address _aggregatorTarget,
     bytes memory _aggregatorData
   ) public returns (LeveredPosition) {
-    LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
+    LeveredPositionWithAggregatorSwaps position = createPosition(_collateralMarket, _stableMarket);
+    _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
+    _fundingAsset.approve(address(position), _fundingAmount);
+    position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
+    return position;
+  }
+
+  function createAndFundPosition(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData
+  ) public returns (LeveredPosition) {
+    LeveredPositionWithAggregatorSwaps position = createPosition(_collateralMarket, _stableMarket);
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
     _fundingAsset.approve(address(position), _fundingAmount);
     position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
@@ -86,7 +101,7 @@ contract LeveredPositionFactorySecondExtension is
     bytes memory _adjustLeverageRatioAggregatorData,
     uint256 _expectedSlippage
   ) external returns (LeveredPosition) {
-    LeveredPosition position = createAndFundPosition(
+    LeveredPositionWithAggregatorSwaps position = createAndFundPosition(
       _collateralMarket,
       _stableMarket,
       _fundingAsset,
