@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -5,17 +7,15 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
+import CommonTable from '@ui/components/CommonTable';
+import type { EnhancedColumnDef } from '@ui/components/CommonTable';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import CommonTable from '../../components/CommonTable';
-
-import type { EnhancedColumnDef } from '../../components/CommonTable';
-import { VaultRowData } from '@ui/types/SupplyVaults';
-import ActionButton from '../ActionButton';
-import { useState } from 'react';
-import SupplyVaultDialog from '../dialogs/SupplyVault';
 import TokenBalance from './Cells/TokenBalance';
+import ActionButton from '../ActionButton';
+import SupplyVaultDialog from '../dialogs/SupplyVault';
 
 export default function SupplyVaultTable({
   marketData,
@@ -137,7 +137,6 @@ export default function SupplyVaultTable({
         <ActionButton
           action={async () => {
             const result = await handleSwitchOriginChain(+chain, chainId);
-            console.log('result', result);
             if (result) {
               setSelectedVaultData(row.original);
               setIsSupplyVaultDialogOpen(true);
