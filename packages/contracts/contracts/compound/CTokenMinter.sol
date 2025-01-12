@@ -24,7 +24,7 @@ contract CTokenMinter is Initializable, OwnableUpgradeable {
   }
 
   function mint(uint256 mintAmount) external onlyDuringMintWindow {
-    collateralMarket.mint(mintAmount);
+    // MINT LOGIC
   }
 
   function setMintWindow(uint256 _newStartTime, uint256 _newEndTime) external onlyOwner {
