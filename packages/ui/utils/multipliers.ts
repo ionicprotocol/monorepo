@@ -625,24 +625,24 @@ export const multipliers: Record<
     '0': {
       wfrxETH: {
         borrow: {
-          ionAPR: false,
-          fxtl: 2.5
+          ionAPR: false
         },
         supply: {
           underlyingAPR: 3.46,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 2.5
         }
       },
       FRAX: {
         borrow: {
           ionAPR: true,
-          flywheel: true,
-          fxtl: 2.5
+          flywheel: true
         },
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 2.5
         }
       },
       sfrxETH: {
