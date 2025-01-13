@@ -27,8 +27,15 @@ contract BribeRewardsTest is BaseTest {
   address user = address(0x789);
 
   function setUp() public {
-    bribeRewards = new BribeRewards();
-    bribeRewards.initialize(address(voter), ve);
+    bribeRewards = BribeRewards(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new BribeRewards()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(BribeRewards.initialize.selector, address(voter), ve)
+        )
+      )
+    );
 
     address[] memory mockLpTokens = new address[](2);
     mockLpTokens[0] = lpTokenA;

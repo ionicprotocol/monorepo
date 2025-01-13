@@ -37,6 +37,10 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     _;
   }
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   /**
    * @notice Initializes the staking strategy contract with necessary parameters
    * @dev This function can only be called once due to the initializer modifier

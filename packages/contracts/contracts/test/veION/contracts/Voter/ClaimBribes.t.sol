@@ -17,13 +17,28 @@ contract ClaimBribesTest is VoterTest {
 
   function setUp() public {
     _setUp();
-    realBribeEthSupply = new BribeRewards();
-    realBribeEthBorrow = new BribeRewards();
     bribeTokenA = new MockERC20("Bribe Token A", "BTA", 18);
     bribeTokenB = new MockERC20("Bribe Token B", "BTB", 18);
 
-    realBribeEthSupply.initialize(address(voter), address(ve));
-    realBribeEthBorrow.initialize(address(voter), address(ve));
+    realBribeEthSupply = BribeRewards(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new BribeRewards()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(BribeRewards.initialize.selector, address(voter), address(ve))
+        )
+      )
+    );
+
+    realBribeEthBorrow = BribeRewards(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new BribeRewards()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(BribeRewards.initialize.selector, address(voter), address(ve))
+        )
+      )
+    );
 
     address[] memory rewardAccumulatorsForBribes = new address[](2);
     address[] memory bribes = new address[](2);

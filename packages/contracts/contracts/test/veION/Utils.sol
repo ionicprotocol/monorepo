@@ -57,8 +57,15 @@ contract veIONTest is BaseTest {
   uint256 internal constant REAL_LP_LOCK_AMOUNT = 10e18;
 
   function _setUp() internal virtual {
-    ve = new veION();
-    ve.initialize(ap);
+    ve = veION(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new veION()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(veION.initialize.selector, address(ap))
+        )
+      )
+    );
     modeVelodrome5050IonMode = new MockERC20("Mode_Velodrome_5050_ION_MODE", "MV5050", 18);
     modeBalancer8020IonEth = new MockERC20("Mode_Balancer_8020_ION_ETH", "MB8020", 18);
 
@@ -90,8 +97,15 @@ contract veIONTest is BaseTest {
   }
 
   function _afterForkSetUpMode() internal {
-    ve = new veION();
-    ve.initialize(ap);
+    ve = veION(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new veION()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(veION.initialize.selector, address(ap))
+        )
+      )
+    );
 
     ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
@@ -101,20 +115,36 @@ contract veIONTest is BaseTest {
 
     veloStakingWalletImplementation = new VeloAeroStakingWallet();
 
-    veloIonModeStakingStrategy = new VeloAeroStakingStrategy();
-    veloIonModeStakingStrategy.initialize(
-      address(ve),
-      ionMode5050LP,
-      veloGauge,
-      address(veloStakingWalletImplementation)
+    veloIonModeStakingStrategy = VeloAeroStakingStrategy(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new VeloAeroStakingStrategy()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            VeloAeroStakingStrategy.initialize.selector,
+            address(ve),
+            ionMode5050LP,
+            veloGauge,
+            address(veloStakingWalletImplementation)
+          )
+        )
+      )
     );
 
-    veloWethUsdcStakingStrategy = new VeloAeroStakingStrategy();
-    veloWethUsdcStakingStrategy.initialize(
-      address(ve),
-      wethUSDC5050LP,
-      wethUSDCGauge,
-      address(veloStakingWalletImplementation)
+    veloWethUsdcStakingStrategy = VeloAeroStakingStrategy(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new VeloAeroStakingStrategy()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            VeloAeroStakingStrategy.initialize.selector,
+            address(ve),
+            wethUSDC5050LP,
+            wethUSDCGauge,
+            address(veloStakingWalletImplementation)
+          )
+        )
+      )
     );
 
     address[] memory whitelistedTokens = new address[](2);
@@ -142,8 +172,15 @@ contract veIONTest is BaseTest {
 
   function _afterForkSetUpBase() internal {
     baseUser = address(0x987);
-    ve = new veION();
-    ve.initialize(ap);
+    ve = veION(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new veION()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(veION.initialize.selector, address(ap))
+        )
+      )
+    );
 
     harness = new veIONHarness(MINTIME);
 

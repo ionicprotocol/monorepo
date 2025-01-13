@@ -26,6 +26,10 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     _;
   }
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   /**
    * @notice Initializes the contract with a staking strategy
    * @dev Can only be called once due to initializer modifier

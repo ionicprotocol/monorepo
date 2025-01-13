@@ -97,6 +97,10 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     _;
   }
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   /**
    * @notice Initializes the Voter contract with the specified parameters.
    * @dev Requires initialization with at least one reward token.

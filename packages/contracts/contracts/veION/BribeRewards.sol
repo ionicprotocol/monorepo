@@ -66,6 +66,10 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
     _;
   }
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   /**
    * @notice Initializes the BribeRewards contract with the voter and veION addresses
    * @dev This function is called only once during contract deployment

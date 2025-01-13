@@ -5,6 +5,9 @@ import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.s
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract RewardAccumulator is OwnableUpgradeable {
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
 
   function initialize() external initializer {
     __Ownable_init();

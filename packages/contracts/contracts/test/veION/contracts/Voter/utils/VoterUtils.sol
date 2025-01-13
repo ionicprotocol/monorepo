@@ -27,7 +27,6 @@ contract VoterTest is veIONTest {
 
   function _setUp() internal virtual override {
     super._setUp();
-    voter = new Voter();
     ethMarket = _generateRandomAddress(1);
     btcMarket = _generateRandomAddress(2);
 
@@ -40,7 +39,15 @@ contract VoterTest is veIONTest {
     address _rewardToken = address(mockIon);
     address _ve = address(ve);
 
-    voter.initialize(_tokens, _mpo, _rewardToken, _ve);
+    voter = Voter(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new Voter()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(Voter.initialize.selector, _tokens, _mpo, _rewardToken, _ve)
+        )
+      )
+    );
 
     IVoter.Market[] memory dummyMarkets = new IVoter.Market[](4);
     dummyMarkets[0] = IVoter.Market(ethMarket, IVoter.MarketSide.Supply);
@@ -116,8 +123,15 @@ contract VoterTest is veIONTest {
     mpo = MasterPriceOracle(0x1D89E5ba287E67AC0046D2218Be5fE1382cE47b4);
     IERC20 ion = IERC20(0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5);
 
-    voter = new Voter();
-    voter.initialize(_tokens, mpo, address(ion), address(ve));
+    voter = Voter(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new Voter()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(Voter.initialize.selector, _tokens, mpo, address(ion), address(ve))
+        )
+      )
+    );
 
     IVoter.Market[] memory markets = new IVoter.Market[](4);
     markets[0] = IVoter.Market(ethMarket, IVoter.MarketSide.Supply);
@@ -137,7 +151,7 @@ contract VoterTest is veIONTest {
     marketSides[2] = IVoter.MarketSide.Supply;
     marketAddresses[3] = btcMarket;
     marketSides[3] = IVoter.MarketSide.Borrow;
-    
+
     for (uint i = 0; i < 4; i++) {
       RewardAccumulator newRewardAccumulator = new RewardAccumulator();
       rewardAccumulators[i] = address(newRewardAccumulator);

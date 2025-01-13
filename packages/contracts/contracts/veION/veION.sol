@@ -106,6 +106,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   /// @dev Maps token Id and lp onto delegator permissioning.
   mapping(uint256 => mapping(address => bool)) public s_delegatorsBlocked;
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   /**
    * @notice Initializes the veION contract with the given AddressesProvider.
    * @dev This function is called only once during the contract deployment.

@@ -89,8 +89,23 @@ contract DistributeRewards is VoterTest {
     mpo.add(underlyings, oracles);
 
     vm.startPrank(owner);
-    emissionsManager = new EmissionsManager();
-    emissionsManager.initialize(poolDirectory, protocalAddress, ERC20(ion), 2500, bytecode);
+    emissionsManager = EmissionsManager(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new EmissionsManager()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            EmissionsManager.initialize.selector,
+            poolDirectory,
+            protocalAddress,
+            ERC20(ion),
+            2500,
+            bytecode
+          )
+        )
+      )
+    );
+
     emissionsManager.setVeIon(ve);
 
     // Deploy borrow flywheels

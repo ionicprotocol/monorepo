@@ -33,9 +33,13 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
 
   modifier onlyBlacklistableBytecode(address _addr) {
-    bytes memory code = _addr.code; 
+    bytes memory code = _addr.code;
     require(keccak256(code) != keccak256(nonBlacklistableTargetBytecode), "Non-blacklistable bytecode");
     _;
+  }
+
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
   }
 
   function initialize(
@@ -92,7 +96,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function _checkCollateralRatio(address _user) internal view returns (bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
-    if(userCollateralValue == 0) return true;
+    if (userCollateralValue == 0) return true;
     uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
     if ((userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp) {
       return true;
@@ -133,7 +137,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function isUserBlacklistable(address _user) external view returns (bool) {
-    if(nonBlacklistable[_user] || keccak256(_user.code) == keccak256(nonBlacklistableTargetBytecode)) {
+    if (nonBlacklistable[_user] || keccak256(_user.code) == keccak256(nonBlacklistableTargetBytecode)) {
       return false;
     }
     return !_checkCollateralRatio(_user);
