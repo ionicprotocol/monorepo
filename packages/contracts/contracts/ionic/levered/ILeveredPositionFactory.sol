@@ -94,6 +94,9 @@ interface ILeveredPositionFactorySecondExtension {
     uint256 _fundingAmount,
     uint256 _leverageRatio
   ) external returns (LeveredPosition);
+}
+
+interface ILeveredPositionFactoryThirdExtension {
 
   function createPositionWithAggregatorSwaps(
     ICErc20 _collateralMarket,
@@ -127,7 +130,8 @@ interface ILeveredPositionFactorySecondExtension {
 
 interface ILeveredPositionFactoryExtension is
   ILeveredPositionFactoryFirstExtension,
-  ILeveredPositionFactorySecondExtension
+  ILeveredPositionFactorySecondExtension,
+  ILeveredPositionFactoryThirdExtension
 {}
 
 interface ILeveredPositionFactory is
