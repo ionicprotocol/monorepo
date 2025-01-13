@@ -84,12 +84,34 @@ interface ILeveredPositionFactorySecondExtension {
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount,
-    address aggregatorTarget,
-    bytes memory aggregatorData
+    uint256 _fundingAmount
   ) external returns (LeveredPosition);
 
   function createAndFundPositionAtRatio(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    uint256 _leverageRatio
+  ) external returns (LeveredPosition);
+
+  function createPositionWithAggregatorSwaps(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    address _aggregatorTarget,
+    bytes memory _aggregatorData
+  ) external returns (LeveredPositionWithAggregatorSwaps);
+
+  function createAndFundPositionWithAggregatorSwaps(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) external returns (LeveredPositionWithAggregatorSwaps);
+
+  function createAndFundPositionWithAggregatorSwapsAtRatio(
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
@@ -100,7 +122,7 @@ interface ILeveredPositionFactorySecondExtension {
     address _adjustLeverageRatioAggregatorTarget,
     bytes memory _adjustLeverageRatioAggregatorData,
     uint256 _expectedSlippage
-  ) external returns (LeveredPosition);
+  ) external returns (LeveredPositionWithAggregatorSwaps);
 }
 
 interface ILeveredPositionFactoryExtension is

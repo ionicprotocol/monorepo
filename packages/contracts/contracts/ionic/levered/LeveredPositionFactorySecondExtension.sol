@@ -7,6 +7,7 @@ import { ILeveredPositionFactorySecondExtension } from "./ILeveredPositionFactor
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { LeveredPosition } from "./LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "./LeveredPositionWithAggregatorSwaps.sol";
 import { IComptroller, IPriceOracle } from "../../external/compound/IComptroller.sol";
 import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsRegistry.sol";
 import { AuthoritiesRegistry } from "../AuthoritiesRegistry.sol";
@@ -28,11 +29,15 @@ contract LeveredPositionFactorySecondExtension is
   error WrongFnsArrayLength();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 3;
+    uint8 fnsCount = 6;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.createPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPosition.selector;
     functionSelectors[--fnsCount] = this.createAndFundPositionAtRatio.selector;
+
+    functionSelectors[--fnsCount] = this.createPositionWithAggregatorSwaps.selector;
+    functionSelectors[--fnsCount] = this.createAndFundPositionWithAggregatorSwaps.selector;
+    functionSelectors[--fnsCount] = this.createAndFundPositionWithAggregatorSwapsAtRatio.selector;
     if(fnsCount != 0) revert WrongFnsArrayLength();
     return functionSelectors;
   }
@@ -59,18 +64,26 @@ contract LeveredPositionFactorySecondExtension is
     return position;
   }
 
-  function createAndFundPosition(
+  function createPositionWithAggregatorSwaps(
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
-    IERC20Upgradeable _fundingAsset,
-    uint256 _fundingAmount,
     address _aggregatorTarget,
     bytes memory _aggregatorData
-  ) public returns (LeveredPosition) {
-    LeveredPositionWithAggregatorSwaps position = createPosition(_collateralMarket, _stableMarket);
-    _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
-    _fundingAsset.approve(address(position), _fundingAmount);
-    position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
+  ) public returns (LeveredPositionWithAggregatorSwaps) {
+    if (!borrowableMarketsByCollateral[_collateralMarket].contains(address(_stableMarket))) revert PairNotWhitelisted();
+
+    LeveredPositionWithAggregatorSwaps position = new LeveredPositionWithAggregatorSwaps(msg.sender, _collateralMarket, _stableMarket);
+
+    accountsWithOpenPositions.add(msg.sender);
+    positionsByAccount[msg.sender].add(address(position));
+
+    AuthoritiesRegistry authoritiesRegistry = feeDistributor.authoritiesRegistry();
+    address poolAddress = address(_collateralMarket.comptroller());
+    PoolRolesAuthority poolAuth = authoritiesRegistry.poolsAuthorities(poolAddress);
+    if (address(poolAuth) != address(0)) {
+      authoritiesRegistry.setUserRole(poolAddress, address(position), poolAuth.LEVERED_POSITION_ROLE(), true);
+    }
+
     return position;
   }
 
@@ -78,18 +91,36 @@ contract LeveredPositionFactorySecondExtension is
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount
+  ) public returns (LeveredPosition) {
+    LeveredPosition position = createPosition(_collateralMarket, _stableMarket);
+    _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
+    _fundingAsset.approve(address(position), _fundingAmount);
+    position.fundPosition(_fundingAsset, _fundingAmount);
+    return position;
+  }
+
+  function createAndFundPositionWithAggregatorSwaps(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
     uint256 _fundingAmount,
     address _aggregatorTarget,
     bytes memory _aggregatorData
-  ) public returns (LeveredPosition) {
-    LeveredPositionWithAggregatorSwaps position = createPosition(_collateralMarket, _stableMarket);
+  ) public returns (LeveredPositionWithAggregatorSwaps) {
+    LeveredPositionWithAggregatorSwaps position = createPositionWithAggregatorSwaps(
+      _collateralMarket,
+      _stableMarket,
+      _aggregatorTarget,
+      _aggregatorData
+    );
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
     _fundingAsset.approve(address(position), _fundingAmount);
     position.fundPosition(_fundingAsset, _fundingAmount, _aggregatorTarget, _aggregatorData);
     return position;
   }
 
-  function createAndFundPositionAtRatio(
+  function createAndFundPositionWithAggregatorSwapsAtRatio(
     ICErc20 _collateralMarket,
     ICErc20 _stableMarket,
     IERC20Upgradeable _fundingAsset,
@@ -100,8 +131,8 @@ contract LeveredPositionFactorySecondExtension is
     address _adjustLeverageRatioAggregatorTarget,
     bytes memory _adjustLeverageRatioAggregatorData,
     uint256 _expectedSlippage
-  ) external returns (LeveredPosition) {
-    LeveredPositionWithAggregatorSwaps position = createAndFundPosition(
+  ) external returns (LeveredPositionWithAggregatorSwaps) {
+    LeveredPositionWithAggregatorSwaps position = createAndFundPositionWithAggregatorSwaps(
       _collateralMarket,
       _stableMarket,
       _fundingAsset,
@@ -115,6 +146,27 @@ contract LeveredPositionFactorySecondExtension is
         _adjustLeverageRatioAggregatorTarget,
         _adjustLeverageRatioAggregatorData,
         _expectedSlippage
+      );
+    }
+    return position;
+  }
+
+  function createAndFundPositionAtRatio(
+    ICErc20 _collateralMarket,
+    ICErc20 _stableMarket,
+    IERC20Upgradeable _fundingAsset,
+    uint256 _fundingAmount,
+    uint256 _leverageRatio
+  ) external returns (LeveredPosition) {
+    LeveredPosition position = createAndFundPosition(
+      _collateralMarket,
+      _stableMarket,
+      _fundingAsset,
+      _fundingAmount
+    );
+    if (_leverageRatio > 1e18) {
+      position.adjustLeverageRatio(
+        _leverageRatio
       );
     }
     return position;

@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { MarketsTest, BaseTest } from "./config/MarketsTest.t.sol";
 
-import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "../ionic/levered/LeveredPositionWithAggregatorSwaps.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 
 contract LeveredPositionsWithAggregatorTest is MarketsTest {
@@ -19,7 +19,7 @@ contract LeveredPositionsWithAggregatorTest is MarketsTest {
       target, callData, "raw call err"
     );
 
-    LeveredPosition position = LeveredPosition(0xf4d35ed90F9F7C501F291535736538dF210038F2);
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(0xf4d35ed90F9F7C501F291535736538dF210038F2);
     uint256 levRatio = position.getCurrentLeverageRatio();
     emit log_named_uint("leverage ratio", levRatio);
   }
@@ -55,7 +55,7 @@ contract LeveredPositionsWithAggregatorTest is MarketsTest {
   }
 
   function test_aggregatorAdjustWithDynamicData() public debuggingOnly forkAtBlock(OP_MAINNET, 130412661) {
-    LeveredPosition position = LeveredPosition(0xf4d35ed90F9F7C501F291535736538dF210038F2);
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(0xf4d35ed90F9F7C501F291535736538dF210038F2);
 
     uint256 levRatio = 3e18;
     uint256 expectedSlippage = 10;
@@ -86,7 +86,7 @@ contract LeveredPositionsWithAggregatorTest is MarketsTest {
   }
 
   function test_aggregatorAdjustSpecificPosition() public debuggingOnly forkAtBlock(OP_MAINNET, 130330738) {
-    LeveredPosition position = LeveredPosition(0x9C35288D6A100ec1ac2F1d9D99c60E24484dCAcA);
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(0x9C35288D6A100ec1ac2F1d9D99c60E24484dCAcA);
 
     {
       // mock the weeeth balanceof call

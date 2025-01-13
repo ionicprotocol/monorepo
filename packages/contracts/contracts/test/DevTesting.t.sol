@@ -27,7 +27,7 @@ import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPo
 import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
 import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
 import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
-import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "../ionic/levered/LeveredPositionWithAggregatorSwaps.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
@@ -900,7 +900,12 @@ contract DevTesting is BaseTest {
     ICErc20 stableAsset = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
     vm.startPrank(USER);
     IERC20Upgradeable fundingAsset = IERC20Upgradeable(collateralAsset.underlying());
-    LeveredPosition position = factory.createPosition(collateralAsset, stableAsset);
+    LeveredPositionWithAggregatorSwaps position = factory.createPositionWithAggregatorSwaps(
+      collateralAsset,
+      stableAsset,
+      address(0),
+      abi.encode(address(0))
+    );
     emit log_named_address("position", address(position));
     fundingAsset.approve(address(position), type(uint256).max);
     position.fundPosition(

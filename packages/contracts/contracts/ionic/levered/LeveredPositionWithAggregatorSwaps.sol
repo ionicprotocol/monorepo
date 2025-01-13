@@ -69,6 +69,18 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
     // TODO
   }
 
+  function _supplyCollateral(
+    IERC20Upgradeable fundingAsset,
+    address aggregatorTarget,
+    bytes memory aggregatorData
+  ) internal returns (uint256 amountToSupply) {
+    // in case the funding is with a different asset
+    if (address(collateralAsset) != address(fundingAsset)) {
+      // swap for collateral asset
+      amountToSupply = convertAllTo(fundingAsset, collateralAsset, aggregatorTarget, aggregatorData);
+    }
+  }
+
   function convertAllTo(
     IERC20Upgradeable inputToken,
     IERC20Upgradeable outputToken,

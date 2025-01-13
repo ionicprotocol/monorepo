@@ -5,6 +5,7 @@ import { MarketsTest, BaseTest } from "./config/MarketsTest.t.sol";
 import { DiamondBase, DiamondExtension } from "../ionic/DiamondExtension.sol";
 
 import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "../ionic/levered/LeveredPositionWithAggregatorSwaps.sol";
 import { LeveredPositionFactory, IFeeDistributor } from "../ionic/levered/LeveredPositionFactory.sol";
 import { JarvisLiquidatorFunder } from "../liquidators/JarvisLiquidatorFunder.sol";
 import { BalancerSwapLiquidator } from "../liquidators/BalancerSwapLiquidator.sol";
@@ -112,7 +113,7 @@ contract LeveredPositionLensTest is BaseTest {
     vm.prank(ap.owner());
     ap.setAddress("IUniswapV2Router02", 0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45);
     vm.startPrank(USER);
-    LeveredPosition position = factory.createAndFundPositionAtRatio(
+    LeveredPosition position = factory.createAndFundPositionWithAggregatorSwapsAtRatio(
       ICErc20(0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2),
       ICErc20(0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038),
       IERC20Upgradeable(0x4200000000000000000000000000000000000006),
@@ -369,7 +370,7 @@ abstract contract LeveredPositionTest is MarketsTest, LeveredPositionsFactoryBas
 
     vm.startPrank(_positionOwner);
     collateralToken.approve(address(factory), _depositAmount);
-    _position = factory.createAndFundPosition(
+    _position = factory.createAndFundPositionWithAggregatorSwaps(
       collateralMarket,
       stableMarket,
       collateralToken,
@@ -577,6 +578,7 @@ contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
 
   function testMinMaxLeverageRatio() public override whenForking {
     assertGt(maxLevRatio, minLevRatio, "max ratio <= min ratio");
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(address(position));
 
     // attempting to adjust to minLevRatio - 0.01 should fail
     vm.expectRevert(abi.encodeWithSelector(LeveredPosition.BorrowStableFailed.selector, 0x3fa));
@@ -603,6 +605,8 @@ contract ModeWethUSDCLeveredPositionTest is LeveredPositionTest {
   }
 
   function testClosePositionWithAggregator() public whenForking {
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(address(position));
+
     IERC20Upgradeable stableAsset = IERC20Upgradeable(stableMarket.underlying());
     IERC20Upgradeable collateralAsset = IERC20Upgradeable(collateralMarket.underlying());
     uint256 startingEquity = position.getEquityAmount();
@@ -664,6 +668,7 @@ contract ModeWethUSDTLeveredPositionTest is LeveredPositionTest {
 
   function testMinMaxLeverageRatio() public override whenForking {
     assertGt(maxLevRatio, minLevRatio, "max ratio <= min ratio");
+    LeveredPositionWithAggregatorSwaps position = LeveredPositionWithAggregatorSwaps(address(position));
 
     (uint256 supplyDeltaMinMinus001, uint256 borrowsDeltaMinMinus001) = position.getAdjustmentAmountDeltas(
       minLevRatio - 0.00001e18,
