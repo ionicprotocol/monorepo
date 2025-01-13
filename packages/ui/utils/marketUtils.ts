@@ -86,6 +86,30 @@ export const getExtraRewardIcons = (
 ): RewardIcon[] => {
   const additionalRewards: RewardIcon[] = [];
 
+  if (config?.fxtl) {
+    additionalRewards.push({
+      name: 'FXTL',
+      icon: '/img/symbols/32/color/frax.png',
+      text: `${config.fxtl}x FXTL/hour`
+    });
+  }
+
+  if (config?.totems) {
+    additionalRewards.push({
+      name: 'Totems',
+      icon: '/images/totem.svg',
+      text: `${config.totems}x Totems`
+    });
+  }
+
+  if (config?.inceptionTurtle) {
+    additionalRewards.push({
+      name: 'Inception Turtle',
+      icon: '/images/inception-turtle.svg',
+      text: 'Inception Turtle Points'
+    });
+  }
+
   if (config?.etherfi) {
     additionalRewards.push({
       name: 'etherfi',

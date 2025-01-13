@@ -12,6 +12,9 @@ export type Multipliers = {
   underlyingAPR?: number;
   op?: boolean;
   lsk?: boolean;
+  fxtl?: number;
+  totems?: number;
+  inceptionTurtle?: boolean;
 };
 
 export const multipliers: Record<
@@ -622,7 +625,8 @@ export const multipliers: Record<
     '0': {
       wfrxETH: {
         borrow: {
-          ionAPR: false
+          ionAPR: false,
+          fxtl: 2.5
         },
         supply: {
           underlyingAPR: 3.46,
@@ -633,7 +637,8 @@ export const multipliers: Record<
       FRAX: {
         borrow: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 2.5
         },
         supply: {
           ionAPR: true,
@@ -653,13 +658,16 @@ export const multipliers: Record<
       FXS: {
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 12.5
         }
       },
       insfrxETH: {
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          totems: 3,
+          inceptionTurtle: true
         }
       },
       sFRAX: {
