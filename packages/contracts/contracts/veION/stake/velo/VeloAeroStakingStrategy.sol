@@ -6,6 +6,7 @@ import "./VeloAeroStakingWallet.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import { BeaconProxy } from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
 import { UpgradeableBeacon } from "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
@@ -16,6 +17,7 @@ import { UpgradeableBeacon } from "@openzeppelin/contracts/proxy/beacon/Upgradea
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
 contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
+  using SafeERC20 for IERC20;
   using Clones for address;
 
   /// @notice Address of the escrow responsible for managing staking operations
@@ -67,7 +69,7 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
   /// @inheritdoc IStakeStrategy
   function stake(address _from, uint256 _amount, bytes memory _data) external override onlyEscrow {
-    IERC20(stakingToken).transferFrom(msg.sender, address(this), _amount);
+    IERC20(stakingToken).safeTransferFrom(msg.sender, address(this), _amount);
 
     address veloWallet = userStakingWallet[_from];
     if (veloWallet == address(0)) {
