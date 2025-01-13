@@ -26,8 +26,6 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   address public stakingToken;
   /// @notice Address of the contract where staking operations are executed
   address public stakingContract;
-  /// @notice Address of the implementation for staking wallets
-  address public stakingWalletImplementation;
   /// @notice Address of beacon contract that manages wallet proxies
   UpgradeableBeacon public veloAeroBeacon;
   /// @notice Mapping of user addresses to their respective staking wallet addresses
@@ -61,7 +59,6 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     escrow = _escrow;
     stakingToken = _stakingToken;
     stakingContract = _stakingContract;
-    stakingWalletImplementation = _stakingWalletImplementation;
 
     veloAeroBeacon = new UpgradeableBeacon(_stakingWalletImplementation);
     veloAeroBeacon.transferOwnership(msg.sender);
@@ -153,12 +150,6 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   function setStakingContract(address _stakingContract) external onlyOwner {
     require(_stakingContract != address(0), "Invalid address");
     stakingContract = _stakingContract;
-  }
-
-  /// @inheritdoc IStakeStrategy
-  function setStakingWalletImplementation(address _stakingWalletImplementation) external onlyOwner {
-    require(_stakingWalletImplementation != address(0), "Invalid address");
-    stakingWalletImplementation = _stakingWalletImplementation;
   }
 
   /// @inheritdoc IStakeStrategy

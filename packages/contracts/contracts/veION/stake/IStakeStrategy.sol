@@ -103,12 +103,6 @@ interface IStakeStrategy {
   function setStakingContract(address _stakingContract) external;
 
   /**
-   * @notice Sets the staking wallet implementation address.
-   * @param _stakingWalletImplementation The address of the new staking wallet implementation.
-   */
-  function setStakingWalletImplementation(address _stakingWalletImplementation) external;
-
-  /**
    * @notice Sets the address of the  beacon.
    * @param _beacon The address of the new beacon contract.
    */
