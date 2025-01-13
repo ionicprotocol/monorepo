@@ -7,7 +7,7 @@ import { IVoter } from "./interfaces/IVoter.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ReentrancyGuardUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
-import { OwnableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import { IonicTimeLibrary } from "./libraries/IonicTimeLibrary.sol";
 import { IveION } from "./interfaces/IveION.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
@@ -18,7 +18,7 @@ import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
  * @notice This contract allows veION to benefit from bribes when voting for various markets
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
-contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgradeable {
+contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, Ownable2StepUpgradeable {
   using SafeERC20 for IERC20;
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -78,7 +78,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, OwnableUpgra
    */
   function initialize(address _voter, address _ve) public initializer {
     __ReentrancyGuard_init();
-    __Ownable_init();
+    __Ownable2Step_init();
     voter = _voter;
     ve = _ve;
   }

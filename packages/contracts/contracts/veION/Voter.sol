@@ -12,7 +12,7 @@ import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 import { ERC721Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
-import { OwnableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/ReentrancyGuardUpgradeable.sol";
 
 /**
@@ -20,7 +20,7 @@ import { ReentrancyGuardUpgradeable } from "openzeppelin-contracts-upgradeable/c
  * @notice This contract allows veION holders to vote for various markets
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
-contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -116,7 +116,7 @@ contract Voter is IVoter, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     address _rewardToken,
     address _ve
   ) external initializer {
-    __Ownable_init();
+    __Ownable2Step_init();
     __ReentrancyGuard_init();
     uint256 _length = _tokens.length;
     if (_length == 0) revert TokensArrayEmpty();
