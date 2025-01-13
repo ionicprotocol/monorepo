@@ -49,6 +49,11 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 _collateralBp,
     bytes memory _nonBlacklistableTargetBytecode
   ) public initializer {
+    require(address(_fpd) != address(0), "Invalid PoolDirectory address");
+    require(_protocalAddress != address(0), "Invalid protocol address");
+    require(address(_rewardToken) != address(0), "Invalid reward token address");
+    require(_collateralBp < MAXIMUM_BASIS_POINTS, "Collateral basis points exceed maximum");
+
     __Ownable2Step_init();
     protocalAddress = _protocalAddress;
     fpd = _fpd;
@@ -58,6 +63,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function setVeIon(IveION _veIon) external onlyOwner {
+    require(address(_veIon) != address(0), "Invalid veION address");
     veION = _veIon;
   }
 
