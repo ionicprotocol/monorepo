@@ -83,11 +83,13 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   function _getUserTotalCollateral(address _user) internal view returns (uint256) {
     uint256 totalColateralInETH = 0;
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
-    for (uint256 i = 0; i < pools.length; i++) {
+    uint256 poolsLength = pools.length;
+    for (uint256 i = 0; i < poolsLength; i++) {
       IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
       BasePriceOracle oracle = comptroller.oracle();
       ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
-      for (uint256 j = 0; j < cTokens.length; j++) {
+      uint256 cTokensLength = cTokens.length;
+      for (uint256 j = 0; j < cTokensLength; j++) {
         uint256 supplyBalance = cTokens[j].balanceOfUnderlying(_user);
         uint256 collateralInETH = (supplyBalance * oracle.getUnderlyingPrice(cTokens[j])) / 1e18;
         totalColateralInETH += collateralInETH;
@@ -122,12 +124,15 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     require(_checkCollateralRatio(_user), "LP balance below threshold");
     isBlacklisted[_user] = false;
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
-    for (uint256 i = 0; i < pools.length; i++) {
+    uint256 poolsLength = pools.length;
+    for (uint256 i = 0; i < poolsLength; i++) {
       IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
       ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
-      for (uint256 j = 0; j < cTokens.length; j++) {
+      uint256 cTokensLength = cTokens.length;
+      for (uint256 j = 0; j < cTokensLength; j++) {
         address[] memory flywheelAddresses = comptroller.getAccruingFlywheels();
-        for (uint256 k = 0; k < flywheelAddresses.length; k++) {
+        uint256 flywheelAddressesLength = flywheelAddresses.length;
+        for (uint256 k = 0; k < flywheelAddressesLength; k++) {
           IonicFlywheelCore flywheel = IonicFlywheelCore(flywheelAddresses[k]);
           if (address(flywheel.rewardToken()) == address(rewardToken)) {
             flywheel.whitelistUser(ERC20(address(cTokens[j])), _user);
@@ -152,22 +157,26 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   function blacklistUserAndClaimEmissions(address user) internal {
     uint256 balanceBefore = ERC20(rewardToken).balanceOf(address(this));
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
-    for (uint256 i = 0; i < pools.length; i++) {
+    uint256 poolsLength = pools.length;
+    for (uint256 i = 0; i < poolsLength; i++) {
       IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
       ERC20[] memory markets;
       {
         ICErc20[] memory cerc20s = comptroller.getAllMarkets();
-        markets = new ERC20[](cerc20s.length);
-        for (uint256 j = 0; j < cerc20s.length; j++) {
+        uint256 cerc20sLength = cerc20s.length;
+        markets = new ERC20[](cerc20sLength);
+        for (uint256 j = 0; j < cerc20sLength; j++) {
           markets[j] = ERC20(address(cerc20s[j]));
         }
       }
 
       address[] memory flywheelAddresses = comptroller.getAccruingFlywheels();
-      for (uint256 k = 0; k < flywheelAddresses.length; k++) {
+      uint256 flywheelAddressesLength = flywheelAddresses.length;
+      for (uint256 k = 0; k < flywheelAddressesLength; k++) {
         IonicFlywheelCore flywheel = IonicFlywheelCore(flywheelAddresses[k]);
         if (address(flywheel.rewardToken()) == address(rewardToken)) {
-          for (uint256 m = 0; m < markets.length; m++) {
+          uint256 marketsLength = markets.length;
+          for (uint256 m = 0; m < marketsLength; m++) {
             flywheel.accrue(markets[m], user);
             flywheel.updateBlacklistBalances(markets[m], user);
           }

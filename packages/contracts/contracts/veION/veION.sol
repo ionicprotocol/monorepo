@@ -291,7 +291,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     // Check if all LP types for this token have zero balance
     bool shouldBurn = true;
     address[] memory lockedAssets = s_assetsLocked[_tokenId].values();
-    for (uint256 i = 0; i < lockedAssets.length; i++) {
+    uint256 lockedAssetsLength = lockedAssets.length;
+    for (uint256 i = 0; i < lockedAssetsLength; i++) {
       LpTokenType assetLpType = s_lpType[lockedAssets[i]];
       if (s_locked[_tokenId][assetLpType].amount > 0) {
         shouldBurn = false;
@@ -314,8 +315,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (ownerOf(_to) != _msgSender()) revert NotOwner();
 
     address[] memory assetsLocked = s_assetsLocked[_from].values();
-
-    for (uint256 i = 0; i < assetsLocked.length; i++) {
+    uint256 assetsLockedLength = assetsLocked.length;
+    for (uint256 i = 0; i < assetsLockedLength; i++) {
       address asset = assetsLocked[i];
       LpTokenType lpType = s_lpType[asset];
 
@@ -519,7 +520,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uint256[] memory amounts
   ) public nonReentrant {
     if (toTokenIds.length != amounts.length) revert ArrayMismatch();
-    for (uint256 i = 0; i < toTokenIds.length; i++) {
+    uint256 toTokenIdsLength = toTokenIds.length;
+    for (uint256 i = 0; i < toTokenIdsLength; i++) {
       _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i]);
     }
   }
@@ -532,7 +534,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uint256[] memory amounts
   ) external nonReentrant {
     if (fromTokenIds.length != amounts.length) revert ArrayMismatch();
-    for (uint256 i = 0; i < fromTokenIds.length; i++) {
+    uint256 fromTokenIdsLength = fromTokenIds.length;
+    for (uint256 i = 0; i < fromTokenIdsLength; i++) {
       _removeDelegation(fromTokenIds[i], toTokenId, lpToken, amounts[i]);
     }
   }
@@ -577,17 +580,19 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
     if (from != address(0) && to != address(0)) {
       address[] memory assetsLocked = s_assetsLocked[tokenId].values();
-      for (uint256 i = 0; i < assetsLocked.length; i++) {
+      uint256 assetsLockedLength = assetsLocked.length;
+      for (uint256 i = 0; i < assetsLockedLength; i++) {
         address asset = assetsLocked[i];
         LpTokenType _lpType = s_lpType[asset];
 
         uint256[] memory delegatees = s_delegatees[tokenId][_lpType].values();
         uint256[] memory amounts = new uint256[](delegatees.length);
-        for (uint256 j = 0; j < delegatees.length; j++) {
+        uint256 delegateesLength = delegatees.length;
+        for (uint256 j = 0; j < delegateesLength; j++) {
           amounts[j] = type(uint256).max;
         }
 
-        if (delegatees.length != 0) {
+        if (delegateesLength != 0) {
           removeDelegatees(tokenId, delegatees, asset, amounts);
         }
 
@@ -1025,8 +1030,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     _assets = new address[](assetsLocked.length);
     _balances = new uint256[](assetsLocked.length);
     _boosts = new uint256[](assetsLocked.length);
-
-    for (uint256 i = 0; i < assetsLocked.length; i++) {
+    uint256 assetsLockedLength = assetsLocked.length;
+    for (uint256 i = 0; i < assetsLockedLength; i++) {
       address asset = assetsLocked[i];
       LpTokenType lpType = s_lpType[asset];
       LockedBalance memory lockedBalance = s_locked[_tokenId][lpType];
@@ -1059,7 +1064,8 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue) {
     IVoter voter = IVoter(s_voter);
     address[] memory lpTokens = voter.getAllLpRewardTokens();
-    for (uint256 i = 0; i < lpTokens.length; i++) {
+    uint256 lpTokensLength = lpTokens.length;
+    for (uint256 i = 0; i < lpTokensLength; i++) {
       uint256 ethValue = (s_userCumulativeAssetValues[_owner][lpTokens[i]] * _getEthPrice(lpTokens[i])) / PRECISION;
       totalValue += ethValue;
     }

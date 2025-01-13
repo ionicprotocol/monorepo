@@ -254,8 +254,8 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, Ownable2Step
     EarnedVars memory vars;
     vars.totalReward = 0;
     address[] memory lpTokens = getAllLpRewardTokens();
-
-    for (uint256 j = 0; j < lpTokens.length; j++) {
+    uint256 lpTokensLength = lpTokens.length;
+    for (uint256 j = 0; j < lpTokensLength; j++) {
       address lpToken = lpTokens[j];
 
       if (numCheckpoints[tokenId][lpToken] == 0) {
@@ -276,7 +276,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, Ownable2Step
           vars.epochBalanceValue = _getTokenEthValueAt(cp0.balanceOf, lpToken, vars.currTs);
 
           vars.supplyValue = 0;
-          for (uint256 k = 0; k < lpTokens.length; k++) {
+          for (uint256 k = 0; k < lpTokensLength; k++) {
             address currentLpToken = lpTokens[k];
             uint256 supplyAmount = Math.max(
               supplyCheckpoints[getPriorSupplyIndex(vars.currTs + DURATION - 1, currentLpToken)][currentLpToken].supply,

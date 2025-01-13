@@ -262,8 +262,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     uint256 totalVoteWeight
   ) internal {
     VoteVars memory vars;
-
-    for (uint256 i = 0; i < _marketVote.length; i++) {
+    uint256 marketVoteLength = _marketVote.length;
+    for (uint256 i = 0; i < marketVoteLength; i++) {
       vars.market = _marketVote[i];
       vars.marketSide = _marketVoteSide[i];
       vars.rewardAccumulator = marketToRewardAccumulators[vars.market][vars.marketSide];
@@ -390,7 +390,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
    * @return _totalLPValueETH The total ETH value of all LP tokens.
    */
   function _calculateTotalLPValue() internal view returns (uint256 _totalLPValueETH) {
-    for (uint256 i = 0; i < markets.length; i++)
+    uint256 marketsLength = markets.length;
+    for (uint256 i = 0; i < marketsLength; i++)
       _totalLPValueETH += _calculateMarketLPValue(markets[i].marketAddress, markets[i].side);
   }
 
@@ -404,7 +405,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     address _market,
     MarketSide _marketSide
   ) internal view returns (uint256 _marketLPValueETH) {
-    for (uint256 i = 0; i < lpTokens.length; i++) {
+    uint256 lpTokensLength = lpTokens.length;
+    for (uint256 i = 0; i < lpTokensLength; i++) {
       uint256 _lpAmount = weights[_market][_marketSide][lpTokens[i]];
       uint256 tokenEthValue = _getTokenEthValue(_lpAmount, lpTokens[i]);
       _marketLPValueETH += tokenEthValue;
@@ -418,7 +420,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
    * @return True if the market exists, false otherwise.
    */
   function _marketExists(address _marketAddress, MarketSide _marketSide) internal view returns (bool) {
-    for (uint256 j = 0; j < markets.length; j++) {
+    uint256 marketsLength = markets.length;
+    for (uint256 j = 0; j < marketsLength; j++) {
       if (markets[j].marketAddress == _marketAddress && markets[j].side == _marketSide) {
         return true;
       }
