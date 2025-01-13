@@ -695,20 +695,6 @@ task("base:add-rewards:epoch6:supply:reserve", "add rewards to a market").setAct
   }
 );
 
-task("flywheel:get_cycle_info:borrow:base", "get cycle info from flywheel").setAction(
-  async (_, { viem, deployments, getNamedAccounts }) => {
-    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_Borrow_ION_epoch5");
-    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
-  }
-);
-
-task("flywheel:get_cycle_info:supply:base", "get cycle info from flywheel").setAction(
-  async (_, { viem, deployments, getNamedAccounts }) => {
-    const flywheelRewards = await deployments.get("IonicFlywheelDynamicRewards_ION_epoch5");
-    await getCycleInfoForAllMarkets(viem, COMPTROLLER, flywheelRewards.address as Address);
-  }
-);
-
 task("base:send-ion:epoch6", "send ion to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
