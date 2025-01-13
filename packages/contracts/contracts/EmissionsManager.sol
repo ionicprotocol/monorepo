@@ -20,7 +20,7 @@ interface Oracle {
 contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   using SafeTransferLib for ERC20;
 
-  address public protocalAddress;
+  address public protocolAddress;
   uint256 public collateralBp;
   PoolDirectory public fpd;
   ERC20 public rewardToken;
@@ -44,18 +44,18 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function initialize(
     PoolDirectory _fpd,
-    address _protocalAddress,
+    address _protocolAddress,
     ERC20 _rewardToken,
     uint256 _collateralBp,
     bytes memory _nonBlacklistableTargetBytecode
   ) public initializer {
     require(address(_fpd) != address(0), "Invalid PoolDirectory address");
-    require(_protocalAddress != address(0), "Invalid protocol address");
+    require(_protocolAddress != address(0), "Invalid protocol address");
     require(address(_rewardToken) != address(0), "Invalid reward token address");
     require(_collateralBp < MAXIMUM_BASIS_POINTS, "Collateral basis points exceed maximum");
 
     __Ownable2Step_init();
-    protocalAddress = _protocalAddress;
+    protocolAddress = _protocolAddress;
     fpd = _fpd;
     rewardToken = _rewardToken;
     collateralBp = _collateralBp;
@@ -189,7 +189,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 totalClaimed = balanceAfter - balanceBefore;
     if (totalClaimed > 0) {
       rewardToken.safeTransfer(msg.sender, (totalClaimed * 80) / 100);
-      rewardToken.safeTransfer(protocalAddress, (totalClaimed * 20) / 100);
+      rewardToken.safeTransfer(protocolAddress, (totalClaimed * 20) / 100);
     }
   }
 }

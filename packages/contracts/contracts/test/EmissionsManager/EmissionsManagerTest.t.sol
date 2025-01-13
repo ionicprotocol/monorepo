@@ -28,7 +28,7 @@ contract EmissionsManagerTest is BaseTest {
     address user = address(0x123);
     address reporter = address(0x124);
     address flywheelRewards = address(0x125);
-    address protocalAddress = address(0x456);
+    address protocolAddress = address(0x456);
     uint256 collateralBp = 250; // Example value
     bytes nonBlacklistableBytecode = hex"deadbeef";
 
@@ -60,7 +60,7 @@ contract EmissionsManagerTest is BaseTest {
 
         // Deploy the EmissionsManager
         emissionsManager = new EmissionsManager();
-        emissionsManager.initialize(PoolDirectory(address(poolDirectory)), protocalAddress, rewardToken, collateralBp, nonBlacklistableBytecode);
+        emissionsManager.initialize(PoolDirectory(address(poolDirectory)), protocolAddress, rewardToken, collateralBp, nonBlacklistableBytecode);
 
         mockVeION = new MockVeION();
         mockVeION.setMockTotalEthValueOfTokens(user, 1);
@@ -68,7 +68,7 @@ contract EmissionsManagerTest is BaseTest {
     }
 
     function test_Initialize() public {
-        assertEq(emissionsManager.protocalAddress(), protocalAddress, "Protocol address mismatch");
+        assertEq(emissionsManager.protocolAddress(), protocolAddress, "Protocol address mismatch");
 
         assertEq(emissionsManager.collateralBp(), collateralBp, "Collateral basis points mismatch");
 
@@ -125,7 +125,7 @@ contract EmissionsManagerTest is BaseTest {
         emissionsManager.reportUser(user);
         assertEq(rewardToken.balanceOf(flywheelRewards), 0);
         assertEq(rewardToken.balanceOf(reporter),8e17);
-        assertEq(rewardToken.balanceOf(protocalAddress),2e17);
+        assertEq(rewardToken.balanceOf(protocolAddress),2e17);
 
         assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
     }
