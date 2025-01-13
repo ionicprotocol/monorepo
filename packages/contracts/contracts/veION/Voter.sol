@@ -390,8 +390,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
    * @return _totalLPValueETH The total ETH value of all LP tokens.
    */
   function _calculateTotalLPValue() internal view returns (uint256 _totalLPValueETH) {
-    uint256 marketsLength = markets.length;
-    for (uint256 i = 0; i < marketsLength; i++)
+    uint256 marketLength = markets.length;
+    for (uint256 i = 0; i < marketLength; i++)
       _totalLPValueETH += _calculateMarketLPValue(markets[i].marketAddress, markets[i].side);
   }
 
@@ -420,8 +420,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
    * @return True if the market exists, false otherwise.
    */
   function _marketExists(address _marketAddress, MarketSide _marketSide) internal view returns (bool) {
-    uint256 marketsLength = markets.length;
-    for (uint256 j = 0; j < marketsLength; j++) {
+    uint256 marketLength = markets.length;
+    for (uint256 j = 0; j < marketLength; j++) {
       if (markets[j].marketAddress == _marketAddress && markets[j].side == _marketSide) {
         return true;
       }
