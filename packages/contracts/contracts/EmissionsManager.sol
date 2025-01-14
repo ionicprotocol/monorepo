@@ -31,6 +31,8 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   mapping(address => bool) public nonBlacklistable;
 
   uint256 public constant MAXIMUM_BASIS_POINTS = 10_000;
+  uint256 public constant BLACKLISTER_SHARE = 80;
+  uint256 public constant PROTOCOL_SHARE = 20;
 
   modifier onlyBlacklistableBytecode(address _addr) {
     bytes memory code = _addr.code;
@@ -194,8 +196,8 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 balanceAfter = ERC20(rewardToken).balanceOf(address(this));
     uint256 totalClaimed = balanceAfter - balanceBefore;
     if (totalClaimed > 0) {
-      rewardToken.safeTransfer(msg.sender, (totalClaimed * 80) / 100);
-      rewardToken.safeTransfer(protocolAddress, (totalClaimed * 20) / 100);
+      rewardToken.safeTransfer(msg.sender, (totalClaimed * BLACKLISTER_SHARE) / 100);
+      rewardToken.safeTransfer(protocolAddress, (totalClaimed * PROTOCOL_SHARE) / 100);
     }
   }
 }
