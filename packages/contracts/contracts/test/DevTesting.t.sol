@@ -25,6 +25,7 @@ import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegist
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
 import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
+import { LeveredPositionFactoryThirdExtension } from "../ionic/levered/LeveredPositionFactoryThirdExtension.sol";
 import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
 import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
 import { LeveredPositionWithAggregatorSwaps } from "../ionic/levered/LeveredPositionWithAggregatorSwaps.sol";
@@ -876,6 +877,7 @@ contract DevTesting is BaseTest {
   function upgradeFactory(ILeveredPositionFactory factory) internal {
     LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
     LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+    LeveredPositionFactoryThirdExtension newExt3 = new LeveredPositionFactoryThirdExtension();
 
     vm.startPrank(factory.owner());
     DiamondBase asBase = DiamondBase(address(factory));
@@ -887,6 +889,7 @@ contract DevTesting is BaseTest {
     } else if (oldExts.length == 2) {
       asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
       asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+      asBase._registerExtension(newExt3, DiamondExtension(address(0)));
     }
     vm.stopPrank();
   }
@@ -902,9 +905,7 @@ contract DevTesting is BaseTest {
     IERC20Upgradeable fundingAsset = IERC20Upgradeable(collateralAsset.underlying());
     LeveredPositionWithAggregatorSwaps position = factory.createPositionWithAggregatorSwaps(
       collateralAsset,
-      stableAsset,
-      address(0),
-      abi.encode(address(0))
+      stableAsset
     );
     emit log_named_address("position", address(position));
     fundingAsset.approve(address(position), type(uint256).max);

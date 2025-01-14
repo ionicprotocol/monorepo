@@ -100,9 +100,7 @@ interface ILeveredPositionFactoryThirdExtension {
 
   function createPositionWithAggregatorSwaps(
     ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    address _aggregatorTarget,
-    bytes memory _aggregatorData
+    ICErc20 _stableMarket
   ) external returns (LeveredPositionWithAggregatorSwaps);
 
   function createAndFundPositionWithAggregatorSwaps(

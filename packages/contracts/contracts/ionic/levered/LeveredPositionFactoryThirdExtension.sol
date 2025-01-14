@@ -44,9 +44,7 @@ contract LeveredPositionFactoryThirdExtension is
 
   function createPositionWithAggregatorSwaps(
     ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    address _aggregatorTarget,
-    bytes memory _aggregatorData
+    ICErc20 _stableMarket
   ) public returns (LeveredPositionWithAggregatorSwaps) {
     if (!borrowableMarketsByCollateral[_collateralMarket].contains(address(_stableMarket))) revert PairNotWhitelisted();
 
@@ -75,9 +73,7 @@ contract LeveredPositionFactoryThirdExtension is
   ) public returns (LeveredPositionWithAggregatorSwaps) {
     LeveredPositionWithAggregatorSwaps position = createPositionWithAggregatorSwaps(
       _collateralMarket,
-      _stableMarket,
-      _aggregatorTarget,
-      _aggregatorData
+      _stableMarket
     );
     _fundingAsset.safeTransferFrom(msg.sender, address(this), _fundingAmount);
     _fundingAsset.approve(address(position), _fundingAmount);
@@ -105,9 +101,12 @@ contract LeveredPositionFactoryThirdExtension is
       _fundingAssetSwapAggregatorTarget,
       _fundingAssetSwapAggregatorData
     );
+
+    (uint256 supplyDelta, uint256 borrowsDelta) = position.getAdjustmentAmountDeltas(_leverageRatio);
     if (_leverageRatio > 1e18) {
-      position.adjustLeverageRatio(
-        _leverageRatio,
+      position.increaseLeverageRatio(
+        supplyDelta,
+        borrowsDelta,
         _adjustLeverageRatioAggregatorTarget,
         _adjustLeverageRatioAggregatorData,
         _expectedSlippage

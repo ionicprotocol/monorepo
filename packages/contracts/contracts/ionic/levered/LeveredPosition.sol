@@ -419,7 +419,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   function _leverUp(
     uint256 targetRatio,
     uint256 expectedSlippage
-  ) internal {
+  ) private {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
@@ -451,7 +451,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   // @dev supply the flash loaned collateral and then borrow stables with it
   function _leverUpPostFL(
     uint256 stableToBorrow
-  ) internal {
+  ) private {
     // supply the flash loaned collateral
     _supplyCollateral(collateralAsset);
 
@@ -467,7 +467,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   function _leverDown(
     uint256 targetRatio,
     uint256 expectedSlippage
-  ) internal {
+  ) private {
     if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(false);
 
     BasePriceOracle oracle = pool.oracle();
@@ -508,7 +508,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   function _leverDownPostFL(
     uint256 _flashLoanedRepayAmount,
     uint256 _amountToRedeem
-  ) internal {
+  ) private {
     // repay the borrows
     uint256 borrowBalance = stableMarket.borrowBalanceCurrent(address(this));
     uint256 repayAmount = _flashLoanedRepayAmount < borrowBalance ? _flashLoanedRepayAmount : borrowBalance;

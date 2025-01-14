@@ -19,6 +19,7 @@ import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol"
 import { CurveLpTokenLiquidatorNoRegistry } from "../liquidators/CurveLpTokenLiquidatorNoRegistry.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
 import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
+import { LeveredPositionFactoryThirdExtension } from "../ionic/levered/LeveredPositionFactoryThirdExtension.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { LeveredPositionsLens } from "../ionic/levered/LeveredPositionsLens.sol";
 import { LiquidatorsRegistry } from "../liquidators/registry/LiquidatorsRegistry.sol";
@@ -189,6 +190,12 @@ abstract contract LeveredPositionsFactoryBaseTest is BaseTest {
     super.afterForkSetUp();
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
+    if (address(factory) == address(0)) {
+
+      // TODO
+      factory = ILeveredPositionFactory(0xdB72b56053CefBc40B6F69432C64E2A18B55861A);
+
+    }
     upgradeFactory();
   }
 
@@ -196,6 +203,7 @@ abstract contract LeveredPositionsFactoryBaseTest is BaseTest {
     // upgrade the factory
     LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
     LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+    LeveredPositionFactoryThirdExtension newExt3 = new LeveredPositionFactoryThirdExtension();
 
     vm.startPrank(factory.owner());
     DiamondBase asBase = DiamondBase(address(factory));
@@ -207,6 +215,7 @@ abstract contract LeveredPositionsFactoryBaseTest is BaseTest {
     } else if (oldExts.length == 2) {
       asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
       asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+      asBase._registerExtension(newExt3, DiamondExtension(address(0)));
     }
     factory._setWhitelistedSwapRouters(asArray(0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE));
     vm.stopPrank();
@@ -356,7 +365,7 @@ abstract contract LeveredPositionTest is MarketsTest, LeveredPositionsFactoryBas
     address _positionOwner,
     uint256 _depositAmount
   ) internal returns (LeveredPosition _position, uint256 _maxRatio, uint256 _minRatio) {
-    return _openLeveredPosition(_positionOwner, _depositAmount, address(0), "");
+    return _openLeveredPosition(_positionOwner, _depositAmount);
   }
 
   function _openLeveredPosition(
@@ -370,13 +379,11 @@ abstract contract LeveredPositionTest is MarketsTest, LeveredPositionsFactoryBas
 
     vm.startPrank(_positionOwner);
     collateralToken.approve(address(factory), _depositAmount);
-    _position = factory.createAndFundPositionWithAggregatorSwaps(
+    _position = factory.createAndFundPosition(
       collateralMarket,
       stableMarket,
       collateralToken,
-      _depositAmount,
-      _aggregatorTarget,
-      _aggregatorData
+      _depositAmount
     );
     vm.stopPrank();
 
