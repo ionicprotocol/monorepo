@@ -5,7 +5,6 @@ import "../IStakeStrategy.sol";
 import "./VeloAeroStakingWallet.sol";
 import "./IVeloIonModeStaking.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/proxy/Clones.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import { BeaconProxy } from "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
@@ -18,7 +17,6 @@ import { UpgradeableBeacon } from "@openzeppelin/contracts/proxy/beacon/Upgradea
  */
 contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   using SafeERC20 for IERC20;
-  using Clones for address;
 
   /// @notice Address of the escrow responsible for managing staking operations
   address public escrow;

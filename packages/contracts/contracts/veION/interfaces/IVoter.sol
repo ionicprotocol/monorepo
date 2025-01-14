@@ -12,26 +12,11 @@ interface IVoter {
   /// @notice Error thrown when an action is attempted outside the distribution window.
   error DistributeWindow();
 
-  /// @notice Error thrown when a factory path is not approved.
-  error FactoryPathNotApproved();
-
-  /// @notice Error thrown when a gauge is already killed.
-  error GaugeAlreadyKilled();
-
-  /// @notice Error thrown when a gauge is already revived.
-  error GaugeAlreadyRevived();
-
-  /// @notice Error thrown when a gauge already exists.
-  error GaugeExists();
-
   /// @notice Error thrown when a reward accumulator does not exist for a given pool.
   error RewardAccumulatorDoesNotExist(address _pool);
 
   /// @notice Error thrown when a reward accumulator is not alive.
   error RewardAccumulatorNotAlive(address _rewardAccumulator);
-
-  /// @notice Error thrown when a managed NFT is inactive.
-  error InactiveManagedNFT();
 
   /// @notice Error thrown when a market already exists.
   error MarketAlreadyExists();
@@ -45,12 +30,6 @@ interface IVoter {
   /// @notice Error thrown when there are non-zero votes.
   error NonZeroVotes();
 
-  /// @notice Error thrown when not all pools are included.
-  error NotAllPools();
-
-  /// @notice Error thrown when an address is not a pool.
-  error NotAPool();
-
   /// @notice Error thrown when the caller is not the owner.
   error NotOwner();
 
@@ -60,29 +39,17 @@ interface IVoter {
   /// @notice Error thrown when the caller is not the governor.
   error NotGovernor();
 
-  /// @notice Error thrown when the caller is not the minter.
-  error NotMinter();
-
   /// @notice Error thrown when an NFT is not whitelisted.
   error NotWhitelistedNFT();
 
-  /// @notice Error thrown when a token is not whitelisted.
-  error NotWhitelistedToken();
-
   /// @notice Error thrown when the same value is provided.
   error SameValue();
-
-  /// @notice Error thrown during a special voting window.
-  error SpecialVotingWindow();
 
   /// @notice Error thrown when there are too many pools.
   error TooManyPools();
 
   /// @notice Error thrown when array lengths are unequal.
   error UnequalLengths();
-
-  /// @notice Error thrown when there is a zero balance.
-  error ZeroBalance();
 
   /// @notice Error thrown when an address is zero.
   error ZeroAddress();

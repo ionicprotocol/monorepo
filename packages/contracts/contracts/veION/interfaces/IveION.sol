@@ -107,26 +107,19 @@ interface IveION {
     Optimism_Balancer_8020_ION_ETH
   }
 
-  error NotMinter();
   error LockDurationNotInFuture();
   error ZeroAmount();
   error LockDurationTooLong();
   error TokenNotWhitelisted();
-  error NotApprovedOrOwner();
   error NotOwner();
   error AlreadyVoted();
-  error NotNormalNFT();
   error PermanentLock();
-  error LockNotExpired();
   error NoLockFound();
   error LockExpired();
   error SameNFT();
-  error SplitNoOwner();
   error SplitNotAllowed();
   error AmountTooBig();
-  error NotTeam();
   error NotPermanentLock();
-  error ZeroAddress();
   error TokenHasDelegatees();
   error TokenHasDelegators();
   error NotVoter();
