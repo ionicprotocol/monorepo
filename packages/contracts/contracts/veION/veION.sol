@@ -364,14 +364,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uint256 _from,
     uint256 _splitAmount
   ) external nonReentrant returns (uint256 _tokenId1, uint256 _tokenId2) {
-    address owner = _ownerOf(_from);
+    address ownerFrom = _ownerOf(_from);
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_from][_lpType];
     uint256 minimumLockAmount = s_minimumLockAmount[_lpType];
 
     if (s_voted[_from]) revert AlreadyVoted();
-    if (!s_canSplit[owner] && !s_canSplit[address(0)]) revert SplitNotAllowed();
-    if (ownerOf(_from) != _msgSender()) revert NotOwner();
+    if (!s_canSplit[ownerFrom] && !s_canSplit[address(0)]) revert SplitNotAllowed();
+    if (ownerFrom != _msgSender()) revert NotOwner();
     if (oldLocked.end <= block.timestamp && !oldLocked.isPermanent) revert LockExpired();
     if (_splitAmount >= oldLocked.amount) revert AmountTooBig();
     if (_splitAmount < minimumLockAmount) revert SplitTooSmall();
@@ -385,7 +385,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
     LockedBalance memory splitLocked = oldLockedTemp;
     splitLocked.amount = _splitAmount;
-    _tokenId2 = _createSplitVE(owner, splitLocked, _lpType, _tokenAddress);
+    _tokenId2 = _createSplitVE(ownerFrom, splitLocked, _lpType, _tokenAddress);
     _tokenId1 = _from;
 
     if (s_underlyingStake[_from][_tokenAddress] != 0) {
