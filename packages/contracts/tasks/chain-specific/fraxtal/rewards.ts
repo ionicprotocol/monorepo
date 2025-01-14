@@ -94,7 +94,7 @@ task("fraxtal:add-rewards:epoch7:borrow", "add rewards to a market").setAction(
     const _market = await viem.getContractAt("EIP20Interface", market);
     const name = await _market.read.name();
 
-    const rewardAmount = (10_000).toString();
+    const rewardAmount = (5000).toString();
 
     console.log("setting rewards for token: ", name, rewardAmount);
     await new Promise((resolve) => setTimeout(resolve, 4000));
