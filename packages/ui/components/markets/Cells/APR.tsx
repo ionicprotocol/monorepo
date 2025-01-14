@@ -116,7 +116,7 @@ export default function APR(props: APRCellProps) {
                   <Image
                     src={
                       asset === 'STONE'
-                        ? '/img/symbols/32/color/stone-turtle-dark.svg'
+                        ? '/img/symbols/32/color/stone-turtle.png'
                         : config?.kelp
                           ? '/images/turtle-kelp.png'
                           : '/images/turtle-ionic.png'
@@ -224,7 +224,7 @@ export default function APR(props: APRCellProps) {
                 <Image
                   src={
                     asset === 'STONE'
-                      ? '/img/symbols/32/color/stone-turtle.svg'
+                      ? '/img/symbols/32/color/stone-turtle.png'
                       : config?.kelp
                         ? '/images/turtle-kelp.png'
                         : '/images/turtle-ionic.png'
