@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+pragma solidity 0.8.22;
 
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import { IBribeRewards } from "./interfaces/IBribeRewards.sol";

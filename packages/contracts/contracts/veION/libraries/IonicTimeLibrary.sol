@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+pragma solidity 0.8.22;
 
 library IonicTimeLibrary {
   uint256 internal constant WEEK = 7 days;
