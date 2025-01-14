@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 import { IveION } from "../interfaces/IveION.sol";
 
 library BalanceLogicLibrary {
-  uint256 internal constant WEEK = 1 weeks;
+  uint256 internal constant _WEEK = 1 weeks;
 
   /// @notice Get the current voting power for `_tokenId`
   /// @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility

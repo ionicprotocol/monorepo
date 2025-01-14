@@ -14,6 +14,19 @@ interface IBribeRewards {
     uint256 supply;
   }
 
+  struct EarnedVars {
+    uint256 totalReward;
+    uint256 reward;
+    uint256 supplyValue;
+    uint256 epochBalanceValue;
+    uint256 currTs;
+    uint256 index;
+    uint256 numEpochs;
+    uint256 overallBalance;
+    uint256 overallSupply;
+    uint256 historicalPrice;
+  }
+
   error InvalidReward();
   error Unauthorized();
   error InvalidGauge();

@@ -124,7 +124,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     require(!isBlacklisted[_user], "Already blacklisted");
     require(!_checkCollateralRatio(_user), "LP balance above threshold");
     isBlacklisted[_user] = true;
-    blacklistUserAndClaimEmissions(_user);
+    _blacklistUserAndClaimEmissions(_user);
   }
 
   function whitelistUser(address _user) external {
@@ -162,7 +162,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     return !_checkCollateralRatio(_user);
   }
 
-  function blacklistUserAndClaimEmissions(address user) internal {
+  function _blacklistUserAndClaimEmissions(address user) internal {
     uint256 balanceBefore = ERC20(rewardToken).balanceOf(address(this));
     (, PoolDirectory.Pool[] memory pools) = fpd.getActivePools();
     uint256 poolsLength = pools.length;

@@ -28,9 +28,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   // ║                                Constants                                  ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
   /// @notice Represents the duration of one week in seconds.
-  uint256 internal constant WEEK = 1 weeks;
+  uint256 internal constant _WEEK = 1 weeks;
   /// @notice Represents the maximum lock time in seconds (2 years).
-  uint256 internal constant MAXTIME = 2 * 365 * 86400;
+  uint256 internal constant _MAXTIME = 2 * 365 * 86400;
   /// @notice Precision used for calculations, set to 1e18.
   uint256 public constant PRECISION = 1e18;
 
@@ -189,14 +189,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   ) external nonReentrant {
     LpTokenType lpType = s_lpType[_tokenAddress];
     LockedBalance storage lockedBalance = s_locked[_tokenId][lpType];
-    uint256 unlockTime = ((block.timestamp + _duration) / WEEK) * WEEK;
+    uint256 unlockTime = ((block.timestamp + _duration) / _WEEK) * _WEEK;
 
     if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (_tokenAmount == 0) revert ZeroAmount();
     if (s_voted[_tokenId]) revert AlreadyVoted();
     if (!s_assetsLocked[_tokenId].add(_tokenAddress)) revert DuplicateAsset();
     if (_tokenAmount < s_minimumLockAmount[lpType]) revert MinimumNotMet();
-    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+    if (unlockTime > block.timestamp + _MAXTIME) revert LockDurationTooLong();
     if (_duration < s_minimumLockDuration) revert LockDurationTooShort();
 
     if (lockedBalance.isPermanent) s_permanentLockBalance[lpType] += _tokenAmount;
@@ -218,14 +218,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   function increaseUnlockTime(address _tokenAddress, uint256 _tokenId, uint256 _lockDuration) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     LockedBalance memory oldLocked = s_locked[_tokenId][_lpType];
-    uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
+    uint256 unlockTime = ((block.timestamp + _lockDuration) / _WEEK) * _WEEK; // Locktime is rounded down to weeks
 
     if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
     if (oldLocked.isPermanent) revert PermanentLock();
     if (oldLocked.end <= block.timestamp) revert LockExpired();
     if (oldLocked.amount <= 0) revert NoLockFound();
     if (unlockTime <= oldLocked.end) revert LockDurationNotInFuture();
-    if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+    if (unlockTime > block.timestamp + _MAXTIME) revert LockDurationTooLong();
 
     _depositFor(
       _tokenAddress,
@@ -414,7 +414,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     s_permanentLockBalance[_lpType] += _newLocked.amount;
     _newLocked.end = 0;
     _newLocked.isPermanent = true;
-    _newLocked.boost = _calculateBoost(MAXTIME);
+    _newLocked.boost = _calculateBoost(_MAXTIME);
 
     s_locked[_tokenId][_lpType] = _newLocked;
     _checkpoint(_tokenId, _newLocked, _lpType);
@@ -432,7 +432,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     if (s_delegators[_tokenId][_lpType].length() != 0) revert TokenHasDelegators();
 
     s_permanentLockBalance[_lpType] -= _newLocked.amount;
-    _newLocked.end = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
+    _newLocked.end = ((block.timestamp + _MAXTIME) / _WEEK) * _WEEK;
     _newLocked.isPermanent = false;
 
     s_locked[_tokenId][_lpType] = _newLocked;
@@ -784,7 +784,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uNew.permanentDelegate = _newLocked.isPermanent ? _newLocked.delegateAmount : 0;
 
     if (_newLocked.end > block.timestamp && _newLocked.amount > 0) {
-      uNew.slope = _newLocked.amount / MAXTIME;
+      uNew.slope = _newLocked.amount / _MAXTIME;
       uNew.bias = uNew.slope * (_newLocked.end - block.timestamp);
     }
 
@@ -827,14 +827,14 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
       revert ArrayMismatch();
     }
 
-    for (uint i = 0; i < _length; i++) {
+    for (uint256 i = 0; i < _length; i++) {
       LpTokenType _lpType = s_lpType[_tokenAddress[i]];
-      uint256 unlockTime = ((block.timestamp + _duration[i]) / WEEK) * WEEK;
+      uint256 unlockTime = ((block.timestamp + _duration[i]) / _WEEK) * _WEEK;
 
       if (!s_assetsLocked[_tokenId].add(_tokenAddress[i])) revert DuplicateAsset();
       if (_tokenAmount[i] == 0) revert ZeroAmount();
       if (_duration[i] < s_minimumLockDuration) revert LockDurationTooShort();
-      if (unlockTime > block.timestamp + MAXTIME) revert LockDurationTooLong();
+      if (unlockTime > block.timestamp + _MAXTIME) revert LockDurationTooLong();
       if (_tokenAmount[i] < s_minimumLockAmount[_lpType]) revert MinimumNotMet();
 
       _depositFor(
@@ -859,7 +859,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
    */
   function _calculateBoost(uint256 _duration) internal view returns (uint256) {
     uint256 minDuration = s_minimumLockDuration;
-    uint256 maxDuration = MAXTIME;
+    uint256 maxDuration = _MAXTIME;
     uint256 minBoost = 1e18;
     uint256 maxBoost = 2e18;
 
