@@ -6,14 +6,16 @@ import { IveION } from "../interfaces/IveION.sol";
 library BalanceLogicLibrary {
   uint256 internal constant _WEEK = 1 weeks;
 
-  /// @notice Get the current voting power for `_tokenId`
-  /// @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
-  ///      Fetches last user point prior to a certain timestamp, then walks forward to timestamp.
-  /// @param s_userPointEpoch State of all user point epochs
-  /// @param s_userPointHistory State of all user point history
-  /// @param _tokenId NFT for lock
-  /// @param _t Epoch time to return voting power at
-  /// @return User voting power
+  /// @notice Calculates the voting power for a given NFT at a specific time.
+  /// @dev This function is compatible with the ERC20 `balanceOf` interface for Aragon.
+  ///      It retrieves the last user point before a specified timestamp and computes the voting power at that time.
+  /// @param s_userPointEpoch Mapping of user point epochs for all tokens.
+  /// @param s_userPointHistory Mapping of user point history for all tokens.
+  /// @param _lpType The type of LP token associated with the NFT.
+  /// @param _tokenId The ID of the NFT for which to calculate voting power.
+  /// @param _t The epoch time at which to calculate the voting power.
+  /// @param _isPermanent A boolean indicating if the lock is permanent.
+  /// @return The calculated voting power of the user at the specified time.
   function balanceOfNFTAt(
     mapping(uint256 => mapping(IveION.LpTokenType => uint256)) storage s_userPointEpoch,
     mapping(uint256 => mapping(IveION.LpTokenType => IveION.UserPoint[1000000000])) storage s_userPointHistory,

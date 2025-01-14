@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
- * @title VelodromeStakingWallet
+ * @title VeloAeroStakingWallet
  * @notice Staking interface for usage in veION when staking Velodrome/Aerodrome style LP.
  * @dev This contract allows staking and claiming rewards with a specific staking strategy.
  * @dev The staking strategy is set during contract deployment and can only be called by the strategy.
