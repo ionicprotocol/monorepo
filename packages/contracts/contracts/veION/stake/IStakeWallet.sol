@@ -2,6 +2,15 @@
 pragma solidity >=0.8.0;
 
 interface IStakeWallet {
+  /// @notice Emitted when tokens are staked
+  event Staked(uint256 amount);
+
+  /// @notice Emitted when rewards are claimed
+  event Claimed(address indexed from, uint256 rewardAmount);
+
+  /// @notice Emitted when tokens are withdrawn
+  event Withdrawn(address indexed withdrawTo, uint256 amount);
+
   /**
    * @notice Stakes a specified amount of tokens according to the strategy.
    * @param amount The amount of tokens to stake.

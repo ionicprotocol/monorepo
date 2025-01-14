@@ -127,6 +127,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     rewardToken = _rewardToken;
     ve = _ve;
     governor = msg.sender;
+
+    emit Initialized(_tokens, address(_mpo), _rewardToken, _ve, governor);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -437,18 +439,21 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   function setLpTokens(address[] memory _lpTokens) external onlyOwner {
     require(_lpTokens.length != 0, "LpTokens array cannot be empty");
     lpTokens = _lpTokens;
+    emit LpTokensSet(_lpTokens);
   }
 
   /// @inheritdoc IVoter
   function setMpo(address _mpo) external onlyOwner {
     if (_mpo == address(0)) revert ZeroAddress();
     mpo = MasterPriceOracle(_mpo);
+    emit MpoSet(_mpo);
   }
 
   /// @inheritdoc IVoter
   function setGovernor(address _governor) public onlyOwner {
     if (_governor == address(0)) revert ZeroAddress();
     governor = _governor;
+    emit GovernorSet(_governor);
   }
 
   /// @inheritdoc IVoter
@@ -458,6 +463,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
       if (_marketExists(newMarket.marketAddress, newMarket.side)) revert MarketAlreadyExists();
       markets.push(newMarket);
     }
+    emit MarketsAdded(_markets);
   }
 
   /// @inheritdoc IVoter
@@ -473,6 +479,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
       marketToRewardAccumulators[_markets[i]][_marketSides[i]] = _rewardAccumulators[i];
       isAlive[_rewardAccumulators[i]] = true;
     }
+    emit MarketRewardAccumulatorsSet(_markets, _marketSides, _rewardAccumulators);
   }
 
   /// @inheritdoc IVoter
@@ -482,6 +489,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     for (uint256 i = 0; i < _length; i++) {
       rewardAccumulatorToBribe[_rewardAccumulators[i]] = _bribes[i];
     }
+    emit BribesSet(_rewardAccumulators, _bribes);
   }
 
   /// @inheritdoc IVoter
@@ -489,6 +497,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     if (_maxVotingNum < MIN_MAXVOTINGNUM) revert MaximumVotingNumberTooLow();
     if (_maxVotingNum == maxVotingNum) revert SameValue();
     maxVotingNum = _maxVotingNum;
+    emit MaxVotingNumSet(_maxVotingNum);
   }
 
   /// @inheritdoc IVoter
@@ -500,6 +509,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     address _rewardAccumulator = marketToRewardAccumulators[_market][_marketSide];
     if (_rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(_market);
     isAlive[_rewardAccumulator] = _isAlive;
+    emit RewardAccumulatorAliveToggled(_market, _marketSide, _isAlive);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗

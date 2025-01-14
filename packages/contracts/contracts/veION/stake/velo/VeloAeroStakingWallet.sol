@@ -47,6 +47,7 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     stakingToken.safeTransferFrom(msg.sender, address(this), _amount);
     stakingToken.approve(address(stakingContract), _amount);
     stakingContract.deposit(_amount);
+    emit Staked(_amount);
   }
 
   /// @inheritdoc IStakeWallet
@@ -57,6 +58,7 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
     stakingContract.getReward(address(this));
     uint256 rewardAmount = rewardToken.balanceOf(address(this));
     IERC20(rewardToken).safeTransfer(_from, rewardAmount);
+    emit Claimed(_from, rewardAmount);
   }
 
   /// @inheritdoc IStakeWallet
@@ -66,5 +68,6 @@ contract VeloAeroStakingWallet is IStakeWallet, Initializable {
 
     stakingContract.withdraw(_amount);
     stakingToken.safeTransfer(_withdrawTo, _amount);
+    emit Withdrawn(_withdrawTo, _amount);
   }
 }

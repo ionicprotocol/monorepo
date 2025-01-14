@@ -310,6 +310,7 @@ contract BribeRewards is IBribeRewards, ReentrancyGuardUpgradeable, Ownable2Step
   function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     historicalPrices[lpToken][epochStart] = price;
+    emit HistoricalPriceSet(epochTimestamp, lpToken, price);
   }
 
   /**

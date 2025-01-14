@@ -6,6 +6,38 @@ pragma solidity >=0.8.0;
  * @notice Interface for the VeloIonModeStakingModeReward contract.
  */
 interface IStakeStrategy {
+  /// @notice Emitted when the contract is initialized
+  event Initialized(
+    address indexed escrow,
+    address indexed stakingToken,
+    address indexed stakingContract,
+    address stakingWalletImplementation
+  );
+
+  /// @notice Emitted when tokens are staked
+  event Staked(address indexed from, uint256 amount, address indexed veloWallet);
+
+  /// @notice Emitted when rewards are claimed
+  event Claimed(address indexed from, address indexed veloWallet);
+
+  /// @notice Emitted when tokens are withdrawn
+  event Withdrawn(address indexed owner, address indexed withdrawTo, uint256 amount);
+
+  /// @notice Emitted when staking wallet is transferred
+  event StakingWalletTransferred(address indexed from, address indexed to, uint256 amount);
+
+  /// @notice Emitted when escrow is set
+  event EscrowSet(address indexed newEscrow);
+
+  /// @notice Emitted when staking token is set
+  event StakingTokenSet(address indexed newStakingToken);
+
+  /// @notice Emitted when staking contract is set
+  event StakingContractSet(address indexed newStakingContract);
+
+  /// @notice Emitted when upgradeable beacon is set
+  event UpgradeableBeaconSet(address indexed newBeacon);
+
   /**
    * @notice Stakes a specified amount of tokens from a given address.
    * @param _from The address from which tokens will be staked.

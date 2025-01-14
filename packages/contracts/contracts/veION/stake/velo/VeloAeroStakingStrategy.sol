@@ -62,6 +62,8 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
     veloAeroBeacon = new UpgradeableBeacon(_stakingWalletImplementation);
     veloAeroBeacon.transferOwnership(msg.sender);
+
+    emit Initialized(_escrow, _stakingToken, _stakingContract, _stakingWalletImplementation);
   }
 
   /// @inheritdoc IStakeStrategy
@@ -78,18 +80,21 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
 
     IERC20(stakingToken).approve(veloWallet, _amount);
     VeloAeroStakingWallet(veloWallet).stake(_from, _amount, _data);
+    emit Staked(_from, _amount, veloWallet);
   }
 
   /// @inheritdoc IStakeStrategy
   function claim(address _from) external onlyEscrow {
     VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_from]);
     veloWallet.claim(_from);
+    emit Claimed(_from, address(veloWallet));
   }
 
   /// @inheritdoc IStakeStrategy
   function withdraw(address _owner, address _withdrawTo, uint256 _amount) external onlyEscrow {
     VeloAeroStakingWallet veloWallet = VeloAeroStakingWallet(userStakingWallet[_owner]);
     veloWallet.withdraw(_withdrawTo, _amount);
+    emit Withdrawn(_owner, _withdrawTo, _amount);
   }
 
   /// @inheritdoc IStakeStrategy
@@ -107,6 +112,7 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
     VeloAeroStakingWallet(fromWallet).withdraw(address(this), _amount);
     IERC20(stakingToken).approve(address(toWallet), _amount);
     VeloAeroStakingWallet(toWallet).stake(_to, _amount, "");
+    emit StakingWalletTransferred(_from, _to, _amount);
   }
 
   /// @inheritdoc IStakeStrategy
@@ -138,23 +144,27 @@ contract VeloAeroStakingStrategy is IStakeStrategy, Ownable2StepUpgradeable {
   function setEscrow(address _escrow) external onlyOwner {
     require(_escrow != address(0), "Invalid address");
     escrow = _escrow;
+    emit EscrowSet(_escrow);
   }
 
   /// @inheritdoc IStakeStrategy
   function setStakingToken(address _stakingToken) external onlyOwner {
     require(_stakingToken != address(0), "Invalid address");
     stakingToken = _stakingToken;
+    emit StakingTokenSet(_stakingToken);
   }
 
   /// @inheritdoc IStakeStrategy
   function setStakingContract(address _stakingContract) external onlyOwner {
     require(_stakingContract != address(0), "Invalid address");
     stakingContract = _stakingContract;
+    emit StakingContractSet(_stakingContract);
   }
 
   /// @inheritdoc IStakeStrategy
   function setUpgradeableBeacon(address _beacon) external onlyOwner {
     require(_beacon != address(0), "Invalid address");
     veloAeroBeacon = UpgradeableBeacon(_beacon);
+    emit UpgradeableBeaconSet(_beacon);
   }
 }

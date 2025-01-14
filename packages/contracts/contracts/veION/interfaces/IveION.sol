@@ -186,6 +186,7 @@ interface IveION {
   event PermanentLockRemoved(address indexed tokenAddress, uint256 indexed tokenId, uint256 amount);
   event Voted(uint256 _tokenId, bool _voting);
   event DelegatorsBlocked(uint256 indexed _tokenId, address indexed _lpToken, bool _blocked);
+  event Initialized(address indexed addressesProvider);
 
   /**
    * @notice Creates a new lock for multiple tokens and assigns it to a specified address

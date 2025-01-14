@@ -121,6 +121,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     __ERC721_init("veION", "veION");
     __ReentrancyGuard_init();
     ap = _ap;
+    emit Initialized(address(_ap));
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗

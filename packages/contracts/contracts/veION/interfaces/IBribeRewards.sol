@@ -28,6 +28,7 @@ interface IBribeRewards {
   event Withdraw(address indexed user, uint256 indexed tokenId, uint256 amount);
   event RewardNotification(address indexed user, address indexed rewardToken, uint256 indexed epoch, uint256 amount);
   event RewardsClaimed(address indexed user, address indexed rewardToken, uint256 amount);
+  event HistoricalPriceSet(uint256 indexed epochTimestamp, address indexed lpToken, uint256 price);
 
   /// @notice Deposit an amount into the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.

@@ -221,6 +221,20 @@ interface IVoter {
    */
   event WhitelistNFT(address indexed whitelister, uint256 indexed tokenId, bool indexed _bool);
 
+  event LpTokensSet(address[] indexed lpTokens);
+  event MpoSet(address indexed mpo);
+  event GovernorSet(address indexed governor);
+  event MarketsAdded(Market[] markets);
+  event MarketRewardAccumulatorsSet(
+    address[] indexed markets,
+    MarketSide[] indexed marketSides,
+    address[] indexed rewardAccumulators
+  );
+  event BribesSet(address[] indexed rewardAccumulators, address[] indexed bribes);
+  event MaxVotingNumSet(uint256 indexed maxVotingNum);
+  event RewardAccumulatorAliveToggled(address indexed market, MarketSide indexed marketSide, bool isAlive);
+  event Initialized(address[] tokens, address mpo, address rewardToken, address ve, address governor);
+
   /**
    * @notice Get the weight of a market.
    * @param market Address of the market.

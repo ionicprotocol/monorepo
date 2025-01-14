@@ -60,24 +60,30 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     rewardToken = _rewardToken;
     collateralBp = _collateralBp;
     nonBlacklistableTargetBytecode = _nonBlacklistableTargetBytecode;
+
+    emit Initialized(_protocolAddress, address(_rewardToken), _collateralBp, _nonBlacklistableTargetBytecode);
   }
 
   function setVeIon(IveION _veIon) external onlyOwner {
     require(address(_veIon) != address(0), "Invalid veION address");
     veION = _veIon;
+    emit VeIonSet(address(_veIon));
   }
 
   function setCollateralBp(uint256 _collateralBp) external onlyOwner {
     require(_collateralBp < MAXIMUM_BASIS_POINTS, "Maximum limit exceeded");
     collateralBp = _collateralBp;
+    emit CollateralBpSet(_collateralBp);
   }
 
   function setNonBlacklistableAddress(address _user, bool _isNonBlacklistable) external onlyOwner {
     nonBlacklistable[_user] = _isNonBlacklistable;
+    emit NonBlacklistableAddressSet(_user, _isNonBlacklistable);
   }
 
   function setNonBlacklistableTargetBytecode(bytes memory _newBytecode) external onlyOwner {
     nonBlacklistableTargetBytecode = _newBytecode;
+    emit NonBlacklistableTargetBytecodeSet(_newBytecode);
   }
 
   function _getUserTotalCollateral(address _user) internal view returns (uint256) {
