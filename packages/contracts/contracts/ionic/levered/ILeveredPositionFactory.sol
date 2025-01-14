@@ -43,8 +43,7 @@ interface ILeveredPositionFactoryFirstExtension {
   function closeAndRemoveUserPosition(
     LeveredPositionWithAggregatorSwaps position,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) external returns (bool);
 
   function closeAndRemoveUserPosition(LeveredPosition position) external returns (bool);
@@ -121,8 +120,7 @@ interface ILeveredPositionFactoryThirdExtension {
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData,
-    uint256 _expectedSlippage
+    bytes memory _adjustLeverageRatioAggregatorData
   ) external returns (LeveredPositionWithAggregatorSwaps);
 }
 

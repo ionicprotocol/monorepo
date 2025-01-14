@@ -35,17 +35,15 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
 
   function closePosition(
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) public returns (uint256) {
-    return closePosition(msg.sender, aggregatorTarget, aggregatorData, expectedSlippage);
+    return closePosition(msg.sender, aggregatorTarget, aggregatorData);
   }
 
   function closePosition(
     address withdrawTo,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) public returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
     // TODO
@@ -54,23 +52,16 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
   function adjustLeverageRatio(
     uint256 targetRatioMantissa,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) public returns (uint256) {
     revert("unused");
-//    if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
-//
-//    // TODO
-//    // return the de facto achieved ratio
-//    return getCurrentLeverageRatio();
   }
 
   function increaseLeverageRatio(
     uint256 supplyDelta,
     uint256 borrowsDelta,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) public returns (uint256) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
@@ -96,12 +87,31 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
     uint256 supplyDelta,
     uint256 borrowsDelta,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) public returns (uint256) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
-    // TODO
+    if (borrowsDelta > 0) {
+      ICErc20(address(stableMarket)).flash(
+        borrowsDelta,
+        abi.encode(supplyDelta, aggregatorTarget, aggregatorData)
+      );
+      // the execution will first receive a callback to receiveFlashLoan()
+      // then it continues from here
+    }
+
+    // all the redeemed collateral is swapped for stables to repay the FL
+    uint256 stableLeftovers = stableAsset.balanceOf(address(this));
+    if (stableLeftovers > 0) {
+      uint256 borrowBalance = stableMarket.borrowBalanceCurrent(address(this));
+      if (borrowBalance > 0) {
+        // whatever is smaller
+        uint256 amountToRepay = borrowBalance > stableLeftovers ? stableLeftovers : borrowBalance;
+        stableAsset.approve(address(stableMarket), amountToRepay);
+        stableMarket.repayBorrow(amountToRepay);
+      }
+    }
+
     // return the de facto achieved ratio
     return getCurrentLeverageRatio();
   }
