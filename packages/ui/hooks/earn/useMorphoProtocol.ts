@@ -52,11 +52,11 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [address, asset, getClient]);
+  }, [address, asset, getClient, isLegacy]);
 
   useEffect(() => {
-    fetchMaxWithdraw();
-  }, [address, asset, fetchMaxWithdraw, getClient]);
+    if (asset) fetchMaxWithdraw();
+  }, [address, asset, fetchMaxWithdraw]);
 
   const supply = useCallback(
     async (amount: BigNumber) => {
@@ -110,12 +110,11 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
         throw error;
       }
     },
-    [address, walletClient, getClient, currentChain, asset]
+    [address, walletClient, getClient, isLegacy, asset, currentChain]
   );
 
   const withdraw = useCallback(
     async (amount: BigNumber) => {
-      console.log('amount', amount);
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
@@ -126,7 +125,6 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
           ? morphoBaseAddresses.legacyVaults[asset]
           : morphoBaseAddresses.vaults[asset];
         const amountBigInt = amount.toBigInt();
-        console.log('amountBigInt', amountBigInt);
 
         if (amountBigInt > maxWithdraw) {
           throw new Error('Withdrawal amount exceeds available balance');
@@ -155,6 +153,7 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
       address,
       walletClient,
       getClient,
+      isLegacy,
       asset,
       maxWithdraw,
       currentChain,
