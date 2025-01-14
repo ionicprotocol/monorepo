@@ -130,9 +130,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveION
   function createLockFor(
-    address[] memory _tokenAddress,
-    uint256[] memory _tokenAmount,
-    uint256[] memory _duration,
+    address[] calldata _tokenAddress,
+    uint256[] calldata _tokenAmount,
+    uint256[] calldata _duration,
     bool[] memory _stakeUnderlying,
     address _to
   ) external override nonReentrant returns (uint256) {
