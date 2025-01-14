@@ -66,7 +66,8 @@ contract LeveredPositionFactoryFirstExtension is
     bytes memory aggregatorData
   ) external onlyOwner returns (bool) {
     address positionOwner = position.positionOwner();
-    position.closePosition(positionOwner, aggregatorTarget, aggregatorData);
+    (uint256 supplyDelta, uint256 borrowsDelta) = position.getAdjustmentAmountDeltas(1e18);
+    position.closePosition(positionOwner, supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData);
     return _removeClosedPosition(address(position), positionOwner);
   }
 

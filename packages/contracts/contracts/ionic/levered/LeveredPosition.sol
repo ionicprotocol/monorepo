@@ -98,8 +98,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (errorCode != 0) revert RedeemFailed(errorCode);
 
     if (stableAsset.balanceOf(address(this)) > 0) {
-      // // convert all overborrowed leftovers/profits to the collateral asset
-      // convertAllTo(stableAsset, collateralAsset, address(0), aggregatorData);
       // transfer the stable asset to the owner
       stableAsset.safeTransfer(withdrawTo, stableAsset.balanceOf(address(this)));
     }

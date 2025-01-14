@@ -34,27 +34,46 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
   }
 
   function closePosition(
+    uint256 supplyDelta,
+    uint256 borrowsDelta,
     address aggregatorTarget,
     bytes memory aggregatorData
   ) public returns (uint256) {
-    return closePosition(msg.sender, aggregatorTarget, aggregatorData);
+    return closePosition(msg.sender, supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData);
   }
 
   function closePosition(
     address withdrawTo,
+    uint256 supplyDelta,
+    uint256 borrowsDelta,
     address aggregatorTarget,
     bytes memory aggregatorData
   ) public returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
-    // TODO
-  }
 
-  function adjustLeverageRatio(
-    uint256 targetRatioMantissa,
-    address aggregatorTarget,
-    bytes memory aggregatorData
-  ) public returns (uint256) {
-    revert("unused");
+    // make sure all the borrowed is repaid
+    uint256 totalBorrowedByPosition = stableMarket.borrowBalanceCurrent(address(this));
+    if (totalBorrowedByPosition > borrowsDelta) borrowsDelta = totalBorrowedByPosition;
+
+    decreaseLeverageRatio(supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData);
+
+    // calling accrue and exit allows to redeem the full underlying balance
+    collateralMarket.accrueInterest();
+    uint256 errorCode = pool.exitMarket(address(collateralMarket));
+    if (errorCode != 0) revert ExitFailed(errorCode);
+
+    // redeem all cTokens should leave no dust
+    errorCode = collateralMarket.redeem(collateralMarket.balanceOf(address(this)));
+    if (errorCode != 0) revert RedeemFailed(errorCode);
+
+    if (stableAsset.balanceOf(address(this)) > 0) {
+      // transfer the stable asset to the owner
+      stableAsset.safeTransfer(withdrawTo, stableAsset.balanceOf(address(this)));
+    }
+
+    // withdraw the redeemed collateral
+    withdrawAmount = collateralAsset.balanceOf(address(this));
+    collateralAsset.safeTransfer(withdrawTo, withdrawAmount);
   }
 
   function increaseLeverageRatio(
