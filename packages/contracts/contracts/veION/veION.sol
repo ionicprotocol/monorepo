@@ -146,7 +146,7 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     uint256[] calldata _duration,
     bool[] memory _stakeUnderlying
   ) external override nonReentrant returns (uint256) {
-    return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, msg.sender);
+    return _createLock(_tokenAddress, _tokenAmount, _duration, _stakeUnderlying, _msgSender());
   }
 
   /// @inheritdoc IveION
@@ -545,9 +545,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   function claimEmissions(address _tokenAddress) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
-    if (_stakeStrategy.userStakingWallet(msg.sender) == address(0)) revert NoUnderlyingStake();
-    _stakeStrategy.claim(msg.sender);
-    emit EmissionsClaimed(msg.sender, _tokenAddress);
+    if (_stakeStrategy.userStakingWallet(_msgSender()) == address(0)) revert NoUnderlyingStake();
+    _stakeStrategy.claim(_msgSender());
+    emit EmissionsClaimed(_msgSender(), _tokenAddress);
   }
 
   function allowDelegators(uint256 _tokenId, address _tokenAddress, bool _blocked) external nonReentrant {
