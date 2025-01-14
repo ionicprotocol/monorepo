@@ -164,7 +164,10 @@ export const FLYWHEEL_TYPE_MAP: Record<
     borrow: []
   },
   [fraxtal.id]: {
-    supply: ['0xa54697FAF64721Ec6ddd13bC345bd733de17539D'],
+    supply: [
+      '0xa54697FAF64721Ec6ddd13bC345bd733de17539D',
+      '0xD07cd8Df6CCdC9228EBcEd7FA236E1d59C272164'
+    ],
     borrow: ['0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF']
   }
 };
