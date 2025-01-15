@@ -81,6 +81,9 @@ const WithdrawTab = ({
     hfpStatus === HFPStatus.CRITICAL ||
     hfpStatus === HFPStatus.UNKNOWN;
 
+  console.log('hfpStatus', hfpStatus);
+  console.log('isLoadingPredictedHealthFactor', isLoadingPredictedHealthFactor);
+
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
     // eslint-disable-next-line react-hooks/exhaustive-deps

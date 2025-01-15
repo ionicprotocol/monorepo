@@ -69,6 +69,9 @@ export const useHealth = ({
     return _predictedHealthFactor;
   }, [_predictedHealthFactor, updatedAsset, amount, healthFactor]);
 
+  console.log('healthFactor', healthFactor);
+  console.log('predictedHealthFactor', predictedHealthFactor);
+
   const hfpStatus = useMemo<HFPStatus>(() => {
     // If we're loading but have a previous health factor, keep using it
     if (isLoadingPredictedHealthFactor && healthFactor) {
