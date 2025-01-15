@@ -2,6 +2,13 @@
 pragma solidity >=0.8.0;
 
 interface IEmissionsManager {
+  error InvalidPoolDirectoryAaddress();
+  error InvalidProtocolAddress();
+  error InvalidRewardTokenAddress();
+  error CollateralBasisPointsExceedMaximum();
+  error InvalidVeIONAddress();
+  error MaximumLimitExceeded();
+
   event Initialized(
     address indexed protocolAddress,
     address indexed rewardToken,

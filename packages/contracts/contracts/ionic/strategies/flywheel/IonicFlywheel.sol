@@ -38,7 +38,6 @@ contract IonicFlywheel is IonicFlywheelCore, IIonicFlywheel {
     _addStrategyForRewards(strategy);
   }
 
-  // TODO remove
   function marketState(ERC20 strategy) external view returns (uint224, uint32) {
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
   }

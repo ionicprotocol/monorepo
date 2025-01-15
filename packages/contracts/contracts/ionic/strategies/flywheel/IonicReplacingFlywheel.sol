@@ -10,7 +10,7 @@ contract IonicReplacingFlywheel is IonicFlywheel {
   IonicFlywheelCore public flywheelToReplace;
   mapping(address => bool) private rewardsTransferred;
 
-  function reinitialize(IonicFlywheelCore _flywheelToReplace) public onlyOwnerOrAdmin {
+  function reinitialize(IonicFlywheelCore _flywheelToReplace) public onlyOwner {
     flywheelToReplace = _flywheelToReplace;
   }
 

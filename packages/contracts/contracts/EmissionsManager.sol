@@ -51,10 +51,10 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 _collateralBp,
     bytes memory _nonBlacklistableTargetBytecode
   ) public initializer {
-    require(address(_fpd) != address(0), "Invalid PoolDirectory address");
-    require(_protocolAddress != address(0), "Invalid protocol address");
-    require(address(_rewardToken) != address(0), "Invalid reward token address");
-    require(_collateralBp < MAXIMUM_BASIS_POINTS, "Collateral basis points exceed maximum");
+    if (address(_fpd) == address(0)) revert InvalidPoolDirectoryAaddress();
+    if (_protocolAddress == address(0)) revert InvalidProtocolAddress();
+    if (address(_rewardToken) == address(0)) revert InvalidRewardTokenAddress();
+    if (_collateralBp >= MAXIMUM_BASIS_POINTS) revert CollateralBasisPointsExceedMaximum();
 
     __Ownable2Step_init();
     protocolAddress = _protocolAddress;
@@ -67,13 +67,13 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   }
 
   function setVeIon(IveION _veIon) external onlyOwner {
-    require(address(_veIon) != address(0), "Invalid veION address");
+    if(address(_veIon) == address(0)) revert InvalidVeIONAddress();
     veION = _veIon;
     emit VeIonSet(address(_veIon));
   }
 
   function setCollateralBp(uint256 _collateralBp) external onlyOwner {
-    require(_collateralBp < MAXIMUM_BASIS_POINTS, "Maximum limit exceeded");
+    if(_collateralBp >= MAXIMUM_BASIS_POINTS) revert MaximumLimitExceeded();
     collateralBp = _collateralBp;
     emit CollateralBpSet(_collateralBp);
   }
