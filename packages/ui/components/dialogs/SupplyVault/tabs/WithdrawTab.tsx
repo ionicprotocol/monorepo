@@ -1,11 +1,12 @@
-import { formatUnits } from 'viem';
 import { ThreeCircles } from 'react-loader-spinner';
-import { Button } from '@ui/components/ui/button';
+import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
-import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+
+import MaxDeposit from '@ui/components/MaxDeposit';
+import { Button } from '@ui/components/ui/button';
 import { useWithdrawVault } from '@ui/hooks/market/useWithdrawVault';
-import MaxDeposit from '../../../MaxDeposit';
-import { VaultRowData } from '@ui/types/SupplyVaults';
+import { useMaxWithdrawAmount } from '@ui/hooks/useMaxWithdrawAmount';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 interface WithdrawTabProps {
   selectedVaultData: VaultRowData;

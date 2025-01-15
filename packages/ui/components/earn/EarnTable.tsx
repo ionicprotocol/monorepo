@@ -3,17 +3,17 @@
 import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import Link from 'next/link';
+
+import { ExternalLink } from 'lucide-react';
 
 import type { EarnRow } from '@ui/types/Earn';
 import { earnOpps } from '@ui/utils/earnUtils';
 
+import ActionButton from '../ActionButton';
+import { AssetIcons } from '../AssetIcons';
 import CommonTable from '../CommonTable';
 
 import type { EnhancedColumnDef } from '../CommonTable';
-import ActionButton from '../ActionButton';
-import { ExternalLink } from 'lucide-react';
-import { AssetIcons } from '../AssetIcons';
 
 export default function EarnTable() {
   const [rows, setRows] = useState<EarnRow[]>(earnOpps);
