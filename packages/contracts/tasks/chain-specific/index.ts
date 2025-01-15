@@ -9,6 +9,7 @@ import "./superseed";
 import "./worldchain";
 import "./ink";
 import "./swellchain";
+import "./soneium";
 import "./ozeantest";
 import "./camptest";
 

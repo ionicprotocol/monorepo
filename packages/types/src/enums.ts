@@ -9,6 +9,7 @@ export enum SupportedChains {
   superseed = 5330,
   worldchain = 480,
   swell = 1923,
+  soneium = 1868,
   ozeantest = 7849306,
   camptest = 325000
 }
@@ -239,6 +240,9 @@ export enum assetSymbols {
 
   // ozean
   WUSDX = "WUSDX",
+
+  // soneium
+  ASTR = "ASTR",
 
   // legacy
   DAI = "DAI",
