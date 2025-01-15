@@ -129,6 +129,7 @@ export type ChainDeployFnParams = {
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
   deployments: HardhatRuntimeEnvironment["deployments"];
   run: RunTaskFunction;
+  chainId: number;
 };
 
 export type LiquidatorDeployFnParams = ChainDeployFnParams & {
