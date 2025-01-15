@@ -13,7 +13,6 @@ const accounts = [
   process.env.DEPLOYER || "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" // test account
 ];
 
-
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
@@ -56,6 +55,12 @@ const config: HardhatUserConfig = {
     artifacts: "./artifacts"
   },
   networks: {
+    hardhat: {
+      forking: {
+        url: process.env.MODE_RPC_URL || "https://mainnet.mode.network", // Mode RPC URL
+        blockNumber: process.env.MODE_BLOCK_NUMBER ? parseInt(process.env.MODE_BLOCK_NUMBER) : undefined // Optional
+      }
+    },
     local: {
       accounts,
       url: "http://localhost:8545",
