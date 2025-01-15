@@ -37,14 +37,14 @@ export const multipliers: Record<
     '0': {
       'M-BTC': {
         borrow: {
-          ionAPR: false
+          ionAPR: false,
+          op: true
         },
         market: 'm_btc_market',
         multiplier: 66000,
         supply: {
           ionAPR: true,
-          flywheel: true,
-          op: true
+          flywheel: true
         }
       },
       dMBTC: {
