@@ -32,6 +32,15 @@
     "CTokenFirstExtension": {
       "address": "0xbEDA60c0ac487e3081e539c8074894AE64e282Ab"
     },
+    "ChainlinkPriceOracleV2": {
+      "address": "0x05c7D746026EEf0210EdA49A98E4E4Ff357C9fA8"
+    },
+    "ChainlinkPriceOracleV2_Implementation": {
+      "address": "0x9c9CB0C521b05b368A11BC3B2AB6adb870D05f87"
+    },
+    "ChainlinkPriceOracleV2_Proxy": {
+      "address": "0x05c7D746026EEf0210EdA49A98E4E4Ff357C9fA8"
+    },
     "Comptroller": {
       "address": "0x9a0aF901CAE82f309F1047e1026F66A08C6FCEEC"
     },

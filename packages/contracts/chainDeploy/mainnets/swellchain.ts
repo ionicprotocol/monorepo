@@ -1,8 +1,10 @@
 import { swellchain } from "@ionicprotocol/chains";
 
-import { ChainDeployConfig } from "../helpers";
-import { Address } from "viem";
+import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
+import { Address, Hex } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { OracleTypes } from "@ionicprotocol/types";
+import { ChainlinkSpecificParams } from "@ionicprotocol/types";
 
 const assets = swellchain.assets;
 
@@ -30,9 +32,30 @@ export const deploy = async ({
   run,
   viem,
   getNamedAccounts,
-  deployments
+  deployments,
+  getChainId
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+  const chainId = parseInt(await getChainId());
+
+  // ChainlinkV2 Oracle
+  const chainlinkAssets = assets
+    .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((asset) => ({
+      aggregator: (asset.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (asset.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
+      symbol: asset.symbol
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: swellchain.assets,
+    chainlinkAssets,
+    chainId
+  });
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
