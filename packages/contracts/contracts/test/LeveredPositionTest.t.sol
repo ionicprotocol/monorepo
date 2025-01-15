@@ -189,11 +189,13 @@ abstract contract LeveredPositionsFactoryBaseTest is BaseTest {
     super.afterForkSetUp();
 
     factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
-    if (address(factory) == address(0)) {
-
-      // TODO
-      factory = ILeveredPositionFactory(0xdB72b56053CefBc40B6F69432C64E2A18B55861A);
-
+    // TODO remove when fixed on optimism
+    {
+      if (address(factory) == address(0)) {
+        vm.prank(ap.owner());
+        ap.setAddress("LeveredPositionFactory", 0xdB72b56053CefBc40B6F69432C64E2A18B55861A);
+      }
+      factory = ILeveredPositionFactory(ap.getAddress("LeveredPositionFactory"));
     }
     upgradeFactory();
   }
