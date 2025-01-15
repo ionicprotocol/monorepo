@@ -63,10 +63,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
                           Mutable Functions
   ----------------------------------------------------------------*/
 
-  function fundPosition(
-    IERC20Upgradeable fundingAsset,
-    uint256 amount
-  ) public {
+  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public {
     fundingAsset.safeTransferFrom(msg.sender, address(this), amount);
     _supplyCollateral(fundingAsset);
 
@@ -81,9 +78,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     return closePosition(msg.sender);
   }
 
-  function closePosition(
-    address withdrawTo
-  ) public returns (uint256 withdrawAmount) {
+  function closePosition(address withdrawTo) public returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     _leverDown(1e18, _getAssumedSlippage(false));
@@ -158,13 +153,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     IERC20Upgradeable(assetAddress).approve(msg.sender, borrowedAmount);
   }
 
-  function withdrawStableLeftovers(address withdrawTo) public returns (uint256) {
+  function withdrawStableLeftovers(address withdrawTo) public returns (uint256 stableLeftovers) {
     if (msg.sender != positionOwner) revert NotPositionOwner();
     if (!isPositionClosed()) revert OnlyWhenClosed();
 
-    uint256 stableLeftovers = stableAsset.balanceOf(address(this));
+    stableLeftovers = stableAsset.balanceOf(address(this));
     stableAsset.safeTransfer(withdrawTo, stableLeftovers);
-    return stableLeftovers;
   }
 
   function claimRewards() public {
@@ -399,7 +393,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
   function _supplyCollateral(
     IERC20Upgradeable fundingAsset
-  ) internal returns (uint256 amountToSupply) {
+  ) private returns (uint256 amountToSupply) {
     // in case the funding is with a different asset
     if (address(collateralAsset) != address(fundingAsset)) {
       // swap for collateral asset
