@@ -114,6 +114,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       # Avoids rate limits error on pulling from public ECR
+      #dummy commit
       - name: Login to Public ECR
         uses: docker/login-action@v2
         with:
