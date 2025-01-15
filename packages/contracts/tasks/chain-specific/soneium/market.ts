@@ -14,7 +14,7 @@ task("markets:deploy:soneium:new", "deploy new soneium assets").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.WETH];
+    const assetsToDeploy: string[] = [assetSymbols.ASTR];
     for (const asset of soneiumAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       if (!asset.name || !asset.symbol || !asset.underlying) {
         throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -91,7 +91,7 @@ task("market:set-cf:soneium:new", "Sets CF on a market").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    for (const asset of soneium.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+    for (const asset of soneium.assets.filter((asset) => asset.symbol === assetSymbols.ASTR)) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
       });

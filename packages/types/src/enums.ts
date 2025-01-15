@@ -241,6 +241,9 @@ export enum assetSymbols {
   // ozean
   WUSDX = "WUSDX",
 
+  // soneium
+  ASTR = "ASTR",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",

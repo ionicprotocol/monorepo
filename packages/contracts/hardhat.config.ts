@@ -173,7 +173,7 @@ const config: HardhatUserConfig = {
       accounts,
       verify: {
         etherscan: {
-          apiUrl: "https://xckc3jvrzboyo8w4.blockscout.com/",
+          apiUrl: "https://soneium.blockscout.com/",
           apiKey: "empty"
         }
       }
@@ -253,8 +253,8 @@ const config: HardhatUserConfig = {
         network: "soneium",
         chainId: 1868,
         urls: {
-          apiURL: "https://xckc3jvrzboyo8w4.blockscout.com/api",
-          browserURL: "https://xckc3jvrzboyo8w4.blockscout.com/"
+          apiURL: "https://soneium.blockscout.com/api",
+          browserURL: "https://soneium.blockscout.com/"
         }
       }
     ]

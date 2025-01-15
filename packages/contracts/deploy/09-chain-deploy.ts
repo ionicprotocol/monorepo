@@ -13,7 +13,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   //// CHAIN SPECIFIC DEPLOYMENT
   console.log("Running deployment for chain: ", chainId);
   if (deployFunc) {
-    await deployFunc({ run, viem, getNamedAccounts, deployments });
+    await deployFunc({ run, viem, getNamedAccounts, deployments, getChainId });
   }
 };
 

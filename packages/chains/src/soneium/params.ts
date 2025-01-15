@@ -13,14 +13,20 @@ const specificParams: ChainParams = {
     uniswapV3Fees: {},
     img: "https://worldcoin-company-website.cdn.prismic.io/worldcoin-company-website/ZxFd_IF3NbkBXsKH_World_logo-01-4-.svg?w=1024",
     blockExplorerUrls: {
-      default: { name: "soneiumexplorer", url: "https://xckc3jvrzboyo8w4.blockscout.com/" }
+      default: { name: "soneiumexplorer", url: "https://soneium.blockscout.com/" }
     },
     rpcUrls: {
       default: {
-        http: ["https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq"]
+        http: [
+          "https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq",
+          "https://rpc.soneium.org"
+        ]
       },
       public: {
-        http: ["https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq"]
+        http: [
+          "https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq",
+          "https://rpc.soneium.org"
+        ]
       }
     },
     nativeCurrency: {

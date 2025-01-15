@@ -1,8 +1,9 @@
 import { soneium } from "@ionicprotocol/chains";
 
-import { ChainDeployConfig } from "../helpers";
-import { Address } from "viem";
+import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
+import { Address, Hex } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
 
 const assets = soneium.assets;
 
@@ -30,9 +31,30 @@ export const deploy = async ({
   run,
   viem,
   getNamedAccounts,
-  deployments
+  deployments,
+  getChainId
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+  const chainId = parseInt(await getChainId());
+
+  const pythAssets = assets
+    .filter((a) => a.oracle === OracleTypes.PythPriceOracle)
+    .map((a) => ({
+      underlying: a.underlying,
+      feed: (a.oracleSpecificParams as PythSpecificParams).feed as Hex
+    }));
+  await deployPythPriceOracle({
+    viem,
+    getNamedAccounts,
+    deployments,
+    pythAddress: "0x2880aB155794e7179c9eE2e38200202908C17B43",
+    usdToken: soneium.chainAddresses.STABLE_TOKEN as Address,
+    pythAssets,
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+    deployConfig,
+    run,
+    chainId
+  });
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
