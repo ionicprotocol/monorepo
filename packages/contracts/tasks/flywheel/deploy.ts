@@ -232,6 +232,56 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
     return rewards;
   });
 
+
+task("flywheel:deploy-and-replace-withdrawable-dynamic-rewards", "Deploy withdrawable dynamic rewards flywheel for LM rewards")
+  .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
+  .addParam("flywheel", "flywheel to which to add the rewards contract", undefined, types.string)
+  .setAction(async ({ name, flywheel }, { viem, deployments, getNamedAccounts }) => {
+    const publicClient = await viem.getPublicClient();
+    const { deployer } = await getNamedAccounts();
+    let contractName;
+    const rewards = await deployments.deploy(`WithdrawableIonicFlywheelDynamicRewards_${name}_withdrawable`, {
+      contract: "WithdrawableIonicFlywheelDynamicRewards",
+      from: deployer,
+      log: true,
+      args: [
+        flywheel, // flywheel
+        2484000 // epoch duration
+      ],
+      waitConfirmations: 1
+    });
+
+    if (name.includes("Borrow")) {
+      contractName = "IonicFlywheelBorrow";
+    } else contractName = "IonicFlywheel";
+
+    const flywheelContract = await viem.getContractAt(
+      `${contractName}`,
+      (await deployments.get(`${contractName}_${name}`)).address as Address
+    );
+    const tx = await flywheelContract.write.setFlywheelRewards([rewards.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+
+    const rewardTokenAddress = await flywheelContract.read.rewardToken() as Address;
+
+    const ionicTokenContract = await viem.getContractAt(
+      "IonicToken",
+      rewardTokenAddress
+    );
+    const flywheelRewardsAddress = (await deployments.get(`WithdrawableIonicFlywheelDynamicRewards_${name}_withdrawable`)).address as Address;
+    const amount = await ionicTokenContract.read.balanceOf([flywheelRewardsAddress]);
+
+    const flywheelRewardsContract = await viem.getContractAt(
+      "WithdrawableIonicFlywheelDynamicRewards",
+      flywheelRewardsAddress
+    );
+    
+    const withdrawTx = await flywheelRewardsContract.write.withdraw([amount]);
+    await publicClient.waitForTransactionReceipt({ hash: withdrawTx });
+
+    return rewards;
+  });
+
 task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .setAction(async ({ name, flywheel }, { deployments, getNamedAccounts }) => {

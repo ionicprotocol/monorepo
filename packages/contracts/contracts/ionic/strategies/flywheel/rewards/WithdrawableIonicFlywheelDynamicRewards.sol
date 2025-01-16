@@ -5,7 +5,7 @@ import { FlywheelDynamicRewards } from "./FlywheelDynamicRewards.sol";
 import { IonicFlywheelCore } from "../IonicFlywheelCore.sol";
 import { SafeTransferLib, ERC20 } from "solmate/utils/SafeTransferLib.sol";
 
-contract IonicFlywheelDynamicRewards is FlywheelDynamicRewards {
+contract WithdrawableIonicFlywheelDynamicRewards is FlywheelDynamicRewards {
     using SafeTransferLib for ERC20;
 
     constructor(IonicFlywheelCore _flywheel, uint32 _cycleLength)
@@ -26,5 +26,10 @@ contract IonicFlywheelDynamicRewards is FlywheelDynamicRewards {
             );
         }
         return uint192(rewardAmount);
+    }
+
+    function withdraw(uint256 amount) external {
+        require(msg.sender == flywheel.owner());
+        rewardToken.safeTransfer(address(flywheel.owner()), amount);
     }
 }
