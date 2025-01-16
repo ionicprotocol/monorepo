@@ -244,6 +244,9 @@ export enum assetSymbols {
   // soneium
   ASTR = "ASTR",
 
+  // swell
+  rswETH = "rswETH",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",

@@ -131,6 +131,15 @@
     "PoolLensSecondary": {
       "address": "0x1D7669b6BDfdb83066dd7C0aDa4B630b25cBc28a"
     },
+    "PythPriceOracle": {
+      "address": "0x2fBC19FFF5E721D2c81b987f8D7e9BcF07487F93"
+    },
+    "PythPriceOracle_Implementation": {
+      "address": "0x9DEDC277b58c0E3CFDF6F594137f00A6AC4e16E2"
+    },
+    "PythPriceOracle_Proxy": {
+      "address": "0x2fBC19FFF5E721D2c81b987f8D7e9BcF07487F93"
+    },
     "SimplePriceOracle": {
       "address": "0x431C87E08e2636733a945D742d25Ba77577ED480"
     },
