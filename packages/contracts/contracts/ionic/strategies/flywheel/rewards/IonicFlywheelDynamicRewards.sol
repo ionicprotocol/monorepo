@@ -27,4 +27,9 @@ contract IonicFlywheelDynamicRewards is FlywheelDynamicRewards {
         }
         return uint192(rewardAmount);
     }
+
+    function withdraw(uint256 amount) external {
+        require(msg.sender == flywheel.owner());
+        rewardToken.safeTransfer(address(flywheel.owner()), amount);
+    }
 }
