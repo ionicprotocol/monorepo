@@ -10,7 +10,7 @@ import { ICErc20 } from "../../../compound/CTokenInterfaces.sol";
 import "../../../external/balancer/IBalancerPool.sol";
 import "../../../external/balancer/IBalancerVault.sol";
 import "../../../external/balancer/BNum.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 contract BalancerLpTokenPriceOracleTest is BaseTest, BNum {
   BalancerLpTokenPriceOracle oracle;

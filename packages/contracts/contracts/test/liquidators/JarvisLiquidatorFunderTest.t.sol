@@ -8,7 +8,7 @@ import { IonicLiquidator, ILiquidator } from "../../IonicLiquidator.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
 import { IUniswapV2Factory } from "../../external/uniswap/IUniswapV2Factory.sol";
 import { IComptroller } from "../../external/compound/IComptroller.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { ISynthereumLiquidityPool } from "../../external/jarvis/ISynthereumLiquidityPool.sol";
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { IFundsConversionStrategy } from "../../liquidators/IFundsConversionStrategy.sol";

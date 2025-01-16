@@ -13,8 +13,8 @@ import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { IRouter } from "../../external/solidly/IRouter.sol";
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { BaseTest } from "../config/BaseTest.t.sol";
 
@@ -60,11 +60,7 @@ contract UniswapLikeLpTokenLiquidatorTest is BaseTest {
     }
   }
 
-  function testUniswapLpTokenRedeem(
-    address whale,
-    address lpToken,
-    UniswapLikeLpTokenPriceOracle oracle
-  ) internal {
+  function testUniswapLpTokenRedeem(address whale, address lpToken, UniswapLikeLpTokenPriceOracle oracle) internal {
     setUpOracles(lpToken, oracle);
     IERC20Upgradeable lpTokenContract = IERC20Upgradeable(lpToken);
     IUniswapV2Pair pool = IUniswapV2Pair(lpToken);
@@ -231,7 +227,7 @@ contract UniswapLikeLpTokenLiquidatorTest is BaseTest {
 
   function valueOf(IERC20Upgradeable token, uint256 amount) internal view returns (uint256) {
     uint256 price = mpo.price(address(token));
-    uint256 decimalsScale = 10**ERC20Upgradeable(address(token)).decimals();
+    uint256 decimalsScale = 10 ** ERC20Upgradeable(address(token)).decimals();
     return (amount * price) / decimalsScale;
   }
 

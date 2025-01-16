@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { IPool } from "../../external/kyber/IPool.sol";
 import { IPoolOracle } from "../../external/kyber/IPoolOracle.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { BasePriceOracle } from "../BasePriceOracle.sol";
 import { ConcentratedLiquidityBasePriceOracle } from "./ConcentratedLiquidityBasePriceOracle.sol";
 
@@ -47,9 +47,9 @@ contract KyberSwapPriceOracle is ConcentratedLiquidityBasePriceOracle {
     uint256 tokenPriceScaled;
 
     if (baseTokenDecimals > tokenDecimals) {
-      tokenPriceScaled = tokenPrice / (10**(baseTokenDecimals - tokenDecimals));
+      tokenPriceScaled = tokenPrice / (10 ** (baseTokenDecimals - tokenDecimals));
     } else if (baseTokenDecimals < tokenDecimals) {
-      tokenPriceScaled = tokenPrice / (10**(tokenDecimals - baseTokenDecimals));
+      tokenPriceScaled = tokenPrice / (10 ** (tokenDecimals - baseTokenDecimals));
     } else {
       tokenPriceScaled = tokenPrice;
     }

@@ -6,7 +6,7 @@ import { GammaPoolAlgebraPriceOracle } from "../../../oracles/default/GammaPoolP
 import { GammaPoolUniswapV3PriceOracle } from "../../../oracles/default/GammaPoolPriceOracle.sol";
 import { MasterPriceOracle } from "../../../oracles/MasterPriceOracle.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { LiquidityAmounts } from "../../../external/uniswap/LiquidityAmounts.sol";
 import { IUniswapV3Pool } from "../../../external/uniswap/IUniswapV3Pool.sol";
@@ -121,11 +121,7 @@ contract GammaPoolPriceOracleTest is BaseTest {
     }
   }
 
-  function priceAtWithdraw(
-    address whale,
-    address vaultAddress,
-    uint256 withdrawAmount
-  ) internal returns (uint256) {
+  function priceAtWithdraw(address whale, address vaultAddress, uint256 withdrawAmount) internal returns (uint256) {
     address emptyAddress = address(900202020);
     IHypervisor vault = IHypervisor(vaultAddress);
     ERC20Upgradeable token0 = ERC20Upgradeable(vault.token0());
@@ -144,8 +140,8 @@ contract GammaPoolPriceOracleTest is BaseTest {
     uint256 price0 = mpo.price(address(token0));
     uint256 price1 = mpo.price(address(token1));
 
-    uint256 balance0Diff = (balance0After - balance0Before) * 10**(18 - uint256(token0.decimals()));
-    uint256 balance1Diff = (balance1After - balance1Before) * 10**(18 - uint256(token1.decimals()));
+    uint256 balance0Diff = (balance0After - balance0Before) * 10 ** (18 - uint256(token0.decimals()));
+    uint256 balance1Diff = (balance1After - balance1Before) * 10 ** (18 - uint256(token1.decimals()));
 
     return (balance0Diff * price0 + balance1Diff * price1) / 1e18;
   }

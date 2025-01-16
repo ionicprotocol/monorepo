@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { IRedemptionStrategy } from "../IRedemptionStrategy.sol";
 import { GammaLpTokenLiquidatorBase, GammaAlgebraLpTokenLiquidatorBase, GammaLpTokenWrapperBase } from "./GammaLpTokenLiquidatorBase.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 contract GammaAlgebraLpTokenLiquidator is
   GammaLpTokenLiquidatorBase,

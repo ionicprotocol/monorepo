@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../../external/balancer/IBalancerPool.sol";
 import "../../external/balancer/IBalancerVault.sol";
@@ -48,7 +48,7 @@ contract BalancerLpTokenPriceOracle is SafeOwnableUpgradeable, BasePriceOracle, 
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(ERC20Upgradeable(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(ERC20Upgradeable(underlying).decimals()));
   }
 
   /**
@@ -74,10 +74,10 @@ contract BalancerLpTokenPriceOracle is SafeOwnableUpgradeable, BasePriceOracle, 
     uint8 decimalsA = ERC20Upgradeable(tokenA).decimals();
     uint8 decimalsB = ERC20Upgradeable(tokenB).decimals();
 
-    if (decimalsA < 18) pxA = pxA * (10**(18 - uint256(decimalsA)));
-    if (decimalsA > 18) pxA = pxA / (10**(uint256(decimalsA) - 18));
-    if (decimalsB < 18) pxB = pxB * (10**(18 - uint256(decimalsB)));
-    if (decimalsB > 18) pxB = pxB / (10**(uint256(decimalsB) - 18));
+    if (decimalsA < 18) pxA = pxA * (10 ** (18 - uint256(decimalsA)));
+    if (decimalsA > 18) pxA = pxA / (10 ** (uint256(decimalsA) - 18));
+    if (decimalsB < 18) pxB = pxB * (10 ** (18 - uint256(decimalsB)));
+    if (decimalsB > 18) pxB = pxB / (10 ** (uint256(decimalsB) - 18));
     (uint256 fairResA, uint256 fairResB) = computeFairReserves(
       balances[0],
       balances[1],

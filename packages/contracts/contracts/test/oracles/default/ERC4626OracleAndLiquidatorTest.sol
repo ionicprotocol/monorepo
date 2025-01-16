@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { BaseTest } from "../../config/BaseTest.t.sol";
 import { ERC4626Oracle } from "../../../oracles/default/ERC4626Oracle.sol";
@@ -173,7 +173,7 @@ contract ERC4626OracleAndLiquidatorTest is BaseTest {
     uint256 redeemValue = (mpo.price(address(erc4626Vault)) * balance) / 1e18;
     // get the redeemed value of the output token
     uint256 redeemOutputTokenValue = (mpo.price(address(_outputToken)) * liquidatorBalance) /
-      10**ERC20Upgradeable(address(_outputToken)).decimals();
+      10 ** ERC20Upgradeable(address(_outputToken)).decimals();
     // ensure they are approximately equal
     assertApproxEqRel(redeemValue, redeemOutputTokenValue, 3e16, "!diff > 3%");
 

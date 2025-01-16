@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../../external/gelato/GUniPool.sol";
 
@@ -44,7 +44,7 @@ contract GelatoGUniPriceOracle is BasePriceOracle {
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(ERC20Upgradeable(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(ERC20Upgradeable(underlying).decimals()));
   }
 
   /**
@@ -65,10 +65,10 @@ contract GelatoGUniPriceOracle is BasePriceOracle {
     // Get conversion factors
     uint256 dec0 = uint256(ERC20Upgradeable(token0).decimals());
     require(dec0 <= 18, "G-UNI underlying token0 decimals greater than 18.");
-    uint256 to18Dec0 = 10**(18 - dec0);
+    uint256 to18Dec0 = 10 ** (18 - dec0);
     uint256 dec1 = uint256(ERC20Upgradeable(token1).decimals());
     require(dec1 <= 18, "G-UNI underlying token1 decimals greater than 18.");
-    uint256 to18Dec1 = 10**(18 - dec1);
+    uint256 to18Dec1 = 10 ** (18 - dec1);
 
     // Get square root of underlying token prices
     // token1/token0
@@ -79,7 +79,7 @@ contract GelatoGUniPriceOracle is BasePriceOracle {
     // = sqrt((p0 * 10^dec1) / (p1 * 10^dec0)) * 2^96
     // = sqrt((p0 * 10^dec1) / (p1 * 10^dec0)) * 2^48 * 2^48
     // = sqrt((p0 * 10^dec1 * 2^96) / (p1 * 10^dec0)) * 2^48
-    uint160 sqrtPriceX96 = toUint160(sqrt((p0 * (10**dec1) * (1 << 96)) / (p1 * (10**dec0))) << 48);
+    uint160 sqrtPriceX96 = toUint160(sqrt((p0 * (10 ** dec1) * (1 << 96)) / (p1 * (10 ** dec0))) << 48);
 
     // Get balances of the tokens in the pool given fair underlying token prices
     (uint256 r0, uint256 r1) = pool.getUnderlyingBalancesAtPrice(sqrtPriceX96);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { IUmbrellaFeeds } from "../../external/umbrella/IUmbrellaFeeds.sol";
 import { IRegistry } from "../../external/umbrella/IRegistry.sol";
@@ -117,7 +117,7 @@ contract UmbrellaPriceOracle is SafeOwnableUpgradeable, BasePriceOracle {
     uint256 underlyingDecimals = uint256(ERC20Upgradeable(underlying).decimals());
     return
       underlyingDecimals <= 18
-        ? uint256(oraclePrice) * (10**(18 - underlyingDecimals))
-        : uint256(oraclePrice) / (10**(underlyingDecimals - 18));
+        ? uint256(oraclePrice) * (10 ** (18 - underlyingDecimals))
+        : uint256(oraclePrice) / (10 ** (underlyingDecimals - 18));
   }
 }

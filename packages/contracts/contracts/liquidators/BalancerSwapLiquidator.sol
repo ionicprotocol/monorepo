@@ -5,7 +5,7 @@ import "./IRedemptionStrategy.sol";
 import "../external/balancer/IBalancerPool.sol";
 import "../external/balancer/IBalancerVault.sol";
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 contract BalancerSwapLiquidator is IRedemptionStrategy {
   function redeem(

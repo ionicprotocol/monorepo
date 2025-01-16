@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/utils/Create2Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/utils/Create2Upgradeable.sol";
 
 import { IonicComptroller } from "./compound/ComptrollerInterface.sol";
 import { BasePriceOracle } from "./oracles/BasePriceOracle.sol";
@@ -403,11 +403,9 @@ contract PoolDirectory is SafeOwnableUpgradeable {
    * @param account who is whitelisted in the returned verified whitelist-enabled pools.
    * @dev This function is not designed to be called in a transaction: it is too gas-intensive.
    */
-  function getVerifiedPoolsOfWhitelistedAccount(address account)
-    external
-    view
-    returns (uint256[] memory, Pool[] memory)
-  {
+  function getVerifiedPoolsOfWhitelistedAccount(
+    address account
+  ) external view returns (uint256[] memory, Pool[] memory) {
     uint256 arrayLength = 0;
     (, Pool[] memory activePools) = getActivePools();
     for (uint256 i = 0; i < activePools.length; i++) {

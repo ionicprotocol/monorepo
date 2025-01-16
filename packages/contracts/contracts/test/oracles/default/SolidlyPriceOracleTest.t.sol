@@ -7,7 +7,7 @@ import { IPair } from "../../../external/solidly/IPair.sol";
 import { MasterPriceOracle } from "../../../oracles/MasterPriceOracle.sol";
 import { BaseTest } from "../../config/BaseTest.t.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 struct PriceExpected {
   uint256 price;
@@ -147,10 +147,10 @@ contract SolidlyPriceOracleTest is BaseTest {
     }
   }
 
-  function getPriceFeed(address[] memory underlyings, SolidlyPriceOracle.AssetConfig[] memory configs)
-    internal
-    returns (uint256[] memory price)
-  {
+  function getPriceFeed(
+    address[] memory underlyings,
+    SolidlyPriceOracle.AssetConfig[] memory configs
+  ) internal returns (uint256[] memory price) {
     vm.prank(oracle.owner());
     oracle.setPoolFeeds(underlyings, configs);
     vm.roll(1);

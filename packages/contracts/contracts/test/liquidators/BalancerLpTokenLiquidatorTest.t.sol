@@ -9,7 +9,7 @@ import { ICErc20Compound as ICErc20 } from "../../external/compound/ICErc20.sol"
 import "../../external/balancer/IBalancerPool.sol";
 import "../../external/balancer/IBalancerVault.sol";
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 import { BaseTest } from "../config/BaseTest.t.sol";
 
@@ -26,11 +26,7 @@ contract BalancerLpTokenLiquidatorTest is BaseTest {
     wtoken = ap.getAddress("wtoken");
   }
 
-  function testRedeemLpToken(
-    address whaleAddress,
-    address inputTokenAddress,
-    address outputTokenAddress
-  ) internal {
+  function testRedeemLpToken(address whaleAddress, address inputTokenAddress, address outputTokenAddress) internal {
     return testBalancerLpTokenLiquidator(lpTokenLiquidator, 1e18, whaleAddress, inputTokenAddress, outputTokenAddress);
   }
 

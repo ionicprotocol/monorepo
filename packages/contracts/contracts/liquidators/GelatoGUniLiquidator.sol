@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../external/uniswap/IUniswapV2Router02.sol";
 import "../external/uniswap/IUniswapV2Pair.sol";
@@ -22,11 +22,7 @@ contract GelatoGUniLiquidator is IRedemptionStrategy {
   /**
    * @dev Internal function to approve unlimited tokens of `erc20Contract` to `to`.
    */
-  function safeApprove(
-    IERC20Upgradeable token,
-    address to,
-    uint256 minAmount
-  ) private {
+  function safeApprove(IERC20Upgradeable token, address to, uint256 minAmount) private {
     uint256 allowance = token.allowance(address(this), to);
 
     if (allowance < minAmount) {

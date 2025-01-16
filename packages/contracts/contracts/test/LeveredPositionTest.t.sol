@@ -29,7 +29,7 @@ import { ComptrollerFirstExtension } from "../compound/ComptrollerFirstExtension
 import { SafeOwnable } from "../ionic/SafeOwnable.sol";
 import { PoolRolesAuthority } from "../ionic/PoolRolesAuthority.sol";
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 contract LeveredPositionLensTest is BaseTest {

@@ -6,7 +6,7 @@ import { GammaAlgebraLpTokenLiquidator, GammaAlgebraLpTokenWrapper } from "../..
 import { GammaUniswapV3LpTokenLiquidator, GammaUniswapV3LpTokenWrapper } from "../../liquidators/gamma/GammaUniswapV3LpTokenLiquidator.sol";
 import { IHypervisor } from "../../external/gamma/IHypervisor.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 contract GammaLpTokenLiquidatorTest is BaseTest {
   GammaAlgebraLpTokenLiquidator public aLiquidator;

@@ -12,8 +12,8 @@ import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsReg
 import { AuthoritiesRegistry } from "../AuthoritiesRegistry.sol";
 import { PoolRolesAuthority } from "../PoolRolesAuthority.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract LeveredPositionFactoryFirstExtension is
@@ -76,19 +76,16 @@ contract LeveredPositionFactoryFirstExtension is
     return feeDistributor.minBorrowEth();
   }
 
-  function getRedemptionStrategies(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData)
-  {
+  function getRedemptionStrategies(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData) {
     return liquidatorsRegistry.getRedemptionStrategies(inputToken, outputToken);
   }
 
-  function getPositionsByAccount(address account)
-    external
-    view
-    returns (address[] memory positions, bool[] memory closed)
-  {
+  function getPositionsByAccount(
+    address account
+  ) external view returns (address[] memory positions, bool[] memory closed) {
     positions = positionsByAccount[account].values();
     closed = new bool[](positions.length);
     for (uint256 i = 0; i < positions.length; i++) {

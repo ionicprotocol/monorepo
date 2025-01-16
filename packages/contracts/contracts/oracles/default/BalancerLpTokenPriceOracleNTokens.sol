@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 import "../../external/balancer/IBalancerPool.sol";
 import "../../external/balancer/IBalancerVault.sol";
@@ -50,7 +50,7 @@ contract BalancerLpTokenPriceOracleNTokens is SafeOwnableUpgradeable, BasePriceO
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(ERC20Upgradeable(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(ERC20Upgradeable(underlying).decimals()));
   }
 
   /**
@@ -73,9 +73,9 @@ contract BalancerLpTokenPriceOracleNTokens is SafeOwnableUpgradeable, BasePriceO
       uint256 tokenPrice = masterPriceOracle.price(address(tokens[i]));
       uint256 decimals = ERC20Upgradeable(address(tokens[i])).decimals();
       if (decimals < 18) {
-        reserves[i] = reserves[i] * (10**(18 - decimals));
+        reserves[i] = reserves[i] * (10 ** (18 - decimals));
       } else if (decimals > 18) {
-        reserves[i] = reserves[i] / (10**(decimals - 18));
+        reserves[i] = reserves[i] / (10 ** (decimals - 18));
       } else {
         reserves[i] = reserves[i];
       }

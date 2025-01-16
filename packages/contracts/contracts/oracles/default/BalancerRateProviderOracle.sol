@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { EIP20Interface } from "../../compound/EIP20Interface.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { IRateProvider } from "../../external/balancer/IRateProvider.sol";
 
 import { SafeOwnableUpgradeable } from "../../ionic/SafeOwnableUpgradeable.sol";
@@ -50,7 +50,7 @@ contract BalancerRateProviderOracle is SafeOwnableUpgradeable, BasePriceOracle {
     // Get underlying token address
     address underlying = cToken.underlying();
     // check if the underlying is supported
-    return (_price(underlying) * 1e18) / (10**uint256(EIP20Interface(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(EIP20Interface(underlying).decimals()));
   }
 
   function price(address underlying) external view override returns (uint256) {
@@ -83,11 +83,7 @@ contract BalancerRateProviderOracle is SafeOwnableUpgradeable, BasePriceOracle {
    * @param _baseToken Base token for the underlying token.
    * @param _underlying Underlying token for which to add an oracle.
    */
-  function registerToken(
-    address _rateProvider,
-    address _baseToken,
-    address _underlying
-  ) external onlyOwner {
+  function registerToken(address _rateProvider, address _baseToken, address _underlying) external onlyOwner {
     bool skip = false;
     for (uint256 j = 0; j < underlyings.length; j++) {
       if (underlyings[j] == _underlying) {

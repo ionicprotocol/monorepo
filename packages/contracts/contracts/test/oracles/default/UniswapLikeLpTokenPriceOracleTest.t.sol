@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { MasterPriceOracle } from "../../../oracles/MasterPriceOracle.sol";
 import { BasePriceOracle } from "../../../oracles/BasePriceOracle.sol";
@@ -47,18 +47,14 @@ contract UniswapLikeLpTokenPriceOracleTest is BaseTest {
     return mpo.price(lpToken);
   }
 
-  function verifyLpPrice(
-    address lpToken,
-    uint256 price,
-    uint256 tolerance
-  ) internal {
+  function verifyLpPrice(address lpToken, uint256 price, uint256 tolerance) internal {
     uint256 priceToken0 = mpo.price(IPair(lpToken).token0());
     uint256 priceToken1 = mpo.price(IPair(lpToken).token1());
     uint256 token0Decimals = uint256(ERC20Upgradeable(IPair(lpToken).token0()).decimals());
     uint256 token1Decimals = uint256(ERC20Upgradeable(IPair(lpToken).token1()).decimals());
 
     assertApproxEqRel(
-      2 * sqrt(priceToken0 * (10**(18 - token0Decimals))) * sqrt(priceToken1 * (10**(18 - token1Decimals))),
+      2 * sqrt(priceToken0 * (10 ** (18 - token0Decimals))) * sqrt(priceToken1 * (10 ** (18 - token1Decimals))),
       price,
       tolerance
     );

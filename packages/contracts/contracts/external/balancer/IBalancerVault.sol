@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.0;
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 interface IAsset {}
 
@@ -64,19 +64,9 @@ interface IBalancerVault {
 
   function manageUserBalance(UserBalanceOp[] memory ops) external payable;
 
-  function getPoolTokens(bytes32 poolId)
-    external
-    view
-    returns (
-      IERC20Upgradeable[] memory tokens,
-      uint256[] memory balances,
-      uint256 lastChangeBlock
-    );
+  function getPoolTokens(
+    bytes32 poolId
+  ) external view returns (IERC20Upgradeable[] memory tokens, uint256[] memory balances, uint256 lastChangeBlock);
 
-  function exitPool(
-    bytes32 poolId,
-    address sender,
-    address payable recipient,
-    ExitPoolRequest memory request
-  ) external;
+  function exitPool(bytes32 poolId, address sender, address payable recipient, ExitPoolRequest memory request) external;
 }

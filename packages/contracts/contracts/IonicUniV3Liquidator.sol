@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "./liquidators/IRedemptionStrategy.sol";
 import "./liquidators/IFundsConversionStrategy.sol";
@@ -144,11 +144,9 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
     return seizedOutputAmount;
   }
 
-  function safeLiquidateToTokensWithFlashLoan(LiquidateToTokensWithFlashSwapVars calldata vars)
-    external
-    onlyLowHF(vars.borrower, vars.cTokenCollateral)
-    returns (uint256)
-  {
+  function safeLiquidateToTokensWithFlashLoan(
+    LiquidateToTokensWithFlashSwapVars calldata vars
+  ) external onlyLowHF(vars.borrower, vars.cTokenCollateral) returns (uint256) {
     // Input validation
     require(vars.repayAmount > 0, "Repay amount must be greater than 0.");
 
@@ -217,27 +215,15 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    * @dev Callback function for Uniswap flashloans.
    */
 
-  function supV3FlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) external {
+  function supV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external {
     uniswapV3FlashCallback(fee0, fee1, data);
   }
 
-  function algebraFlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) external {
+  function algebraFlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) external {
     uniswapV3FlashCallback(fee0, fee1, data);
   }
 
-  function uniswapV3FlashCallback(
-    uint256 fee0,
-    uint256 fee1,
-    bytes calldata data
-  ) public {
+  function uniswapV3FlashCallback(uint256 fee0, uint256 fee1, bytes calldata data) public {
     // Liquidate unhealthy borrow, exchange seized collateral, return flashloaned funds, and exchange profit
     // Decode params
     LiquidateToTokensWithFlashSwapVars memory vars = abi.decode(data[4:], (LiquidateToTokensWithFlashSwapVars));
@@ -396,10 +382,10 @@ contract IonicUniV3Liquidator is OwnableUpgradeable, ILiquidator, IUniswapV3Flas
    * Each whitelisted redemption strategy has to be checked to not be able to
    * call `selfdestruct` with the `delegatecall` call in `redeemCustomCollateral`
    */
-  function _whitelistRedemptionStrategies(IRedemptionStrategy[] calldata strategies, bool[] calldata whitelisted)
-    external
-    onlyOwner
-  {
+  function _whitelistRedemptionStrategies(
+    IRedemptionStrategy[] calldata strategies,
+    bool[] calldata whitelisted
+  ) external onlyOwner {
     require(
       strategies.length > 0 && strategies.length == whitelisted.length,
       "list of strategies empty or whitelist does not match its length"

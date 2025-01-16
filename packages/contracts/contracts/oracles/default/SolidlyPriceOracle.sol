@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { BasePriceOracle } from "../BasePriceOracle.sol";
 import { IPair } from "../../external/solidly/IPair.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../../ionic/SafeOwnableUpgradeable.sol";
 
@@ -81,7 +81,7 @@ contract SolidlyPriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(ERC20Upgradeable(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(ERC20Upgradeable(underlying).decimals()));
   }
 
   /**
@@ -100,7 +100,7 @@ contract SolidlyPriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
 
     // get how many baseTokens (WNATIVE or STABLE) are needed to get us 1 quote token
     // i.e: the ration X/WNATIVE or X/STABLE
-    uint256 baseTokensPerQuoteToken = pair.current(quoteToken, 10**uint256(ERC20Upgradeable(quoteToken).decimals()));
+    uint256 baseTokensPerQuoteToken = pair.current(quoteToken, 10 ** uint256(ERC20Upgradeable(quoteToken).decimals()));
     if (baseToken == WTOKEN) {
       // No need to scale either, because WNATIVE is always 1e18
       return baseTokensPerQuoteToken;
@@ -112,9 +112,9 @@ contract SolidlyPriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
       uint256 tokenPriceScaled;
 
       if (baseTokenDecimals > 18) {
-        tokenPriceScaled = baseTokensPerQuoteToken / (10**(baseTokenDecimals - 18));
+        tokenPriceScaled = baseTokensPerQuoteToken / (10 ** (baseTokenDecimals - 18));
       } else {
-        tokenPriceScaled = baseTokensPerQuoteToken * (10**(18 - baseTokenDecimals));
+        tokenPriceScaled = baseTokensPerQuoteToken * (10 ** (18 - baseTokenDecimals));
       }
 
       return (tokenPriceScaled * baseTokenNativePrice) / 1e18;

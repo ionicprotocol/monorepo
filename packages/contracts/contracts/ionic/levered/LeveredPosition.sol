@@ -12,8 +12,8 @@ import { IonicFlywheel } from "../../ionic/strategies/flywheel/IonicFlywheel.sol
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { LeveredPositionStorage } from "./LeveredPositionStorage.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -105,11 +105,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     return getCurrentLeverageRatio();
   }
 
-  function receiveFlashLoan(
-    address assetAddress,
-    uint256 borrowedAmount,
-    bytes calldata data
-  ) external override {
+  function receiveFlashLoan(address assetAddress, uint256 borrowedAmount, bytes calldata data) external override {
     if (msg.sender == address(collateralMarket)) {
       // increasing the leverage ratio
       uint256 stableBorrowAmount = abi.decode(data, (uint256));
@@ -472,10 +468,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     convertAllTo(collateralAsset, stableAsset);
   }
 
-  function convertAllTo(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    private
-    returns (uint256 outputAmount)
-  {
+  function convertAllTo(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) private returns (uint256 outputAmount) {
     uint256 inputAmount = inputToken.balanceOf(address(this));
     (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
       .getRedemptionStrategies(inputToken, outputToken);

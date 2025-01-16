@@ -9,7 +9,7 @@ import { MasterPriceOracle } from "../../../oracles/MasterPriceOracle.sol";
 import { BaseTest } from "../../config/BaseTest.t.sol";
 
 import { BasePriceOracle } from "../../../oracles/BasePriceOracle.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { ConcentratedLiquidityBasePriceOracle } from "../../../oracles/default/ConcentratedLiquidityBasePriceOracle.sol";
 
 import "../../../external/uniswap/TickMath.sol";
@@ -39,7 +39,7 @@ contract KyberSwapPriceOracleTest is BaseTest {
     address priceToken,
     uint160 sqrtPriceX96
   ) public pure returns (uint256 price_) {
-    price_ = FullMath.mulDiv(sqrtPriceX96, sqrtPriceX96, uint256(2**(96 * 2)) / 1e18);
+    price_ = FullMath.mulDiv(sqrtPriceX96, sqrtPriceX96, uint256(2 ** (96 * 2)) / 1e18);
     if (token0 != priceToken) price_ = 1e36 / price_;
   }
 
@@ -83,10 +83,10 @@ contract KyberSwapPriceOracleTest is BaseTest {
     assertApproxEqRel(prices[2], expPrices[2], 1e17, "!Price Error");
   }
 
-  function getPriceFeed(address[] memory underlyings, ConcentratedLiquidityBasePriceOracle.AssetConfig[] memory configs)
-    internal
-    returns (uint256[] memory price)
-  {
+  function getPriceFeed(
+    address[] memory underlyings,
+    ConcentratedLiquidityBasePriceOracle.AssetConfig[] memory configs
+  ) internal returns (uint256[] memory price) {
     vm.prank(oracle.owner());
     oracle.setPoolFeeds(underlyings, configs);
     vm.roll(1);

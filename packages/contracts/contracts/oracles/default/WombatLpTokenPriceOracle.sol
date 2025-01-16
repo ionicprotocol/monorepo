@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { MasterPriceOracle } from "../MasterPriceOracle.sol";
 
@@ -31,8 +31,8 @@ contract WombatLpTokenPriceOracle is BasePriceOracle {
 
     return
       assetDecimals <= 18
-        ? uint256(oraclePrice) * (10**(18 - assetDecimals))
-        : uint256(oraclePrice) / (10**(assetDecimals - 18));
+        ? uint256(oraclePrice) * (10 ** (18 - assetDecimals))
+        : uint256(oraclePrice) / (10 ** (assetDecimals - 18));
   }
 
   function _price(address asset) internal view returns (uint256) {

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import "./IRedemptionStrategy.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import "../external/saddle/ISwap.sol";
 import { SaddleLpPriceOracle } from "../oracles/default/SaddleLpPriceOracle.sol";
 import { WETH } from "solmate/tokens/WETH.sol";
