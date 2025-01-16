@@ -212,6 +212,9 @@
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x57913CfF75Acd553923E58D3EAFbCDDCCf7816d7"
     },
+    "IonicFlywheelDynamicRewards_eUSD": {
+      "address": "0x0e508a37b05d4dB60748bF0190D206AE99DcB7A7"
+    },
     "IonicFlywheelDynamicRewards_eUSD_epoch5": {
       "address": "0x3419ff3D903850B03687Ae240Da7C5556252d6BD"
     },
@@ -286,6 +289,15 @@
     },
     "IonicFlywheel_ION_v3_Proxy": {
       "address": "0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122"
+    },
+    "IonicFlywheel_eUSD": {
+      "address": "0xDB04Ab33184594Be006364e9bDb4263988c323df"
+    },
+    "IonicFlywheel_eUSD_Implementation": {
+      "address": "0xF03579032fd6231D5A6FCB80244F1c42ECC4a5b4"
+    },
+    "IonicFlywheel_eUSD_Proxy": {
+      "address": "0xDB04Ab33184594Be006364e9bDb4263988c323df"
     },
     "IonicFlywheel_eUSD_epoch5": {
       "address": "0x1d0a712aE0162431E0573A8a735D02a29805d124"

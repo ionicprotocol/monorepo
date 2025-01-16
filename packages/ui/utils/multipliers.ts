@@ -273,7 +273,7 @@ export const multipliers: Record<
       hyUSD: {
         supply: {
           underlyingAPR: 3.5,
-          ionAPR: false,
+          ionAPR: true,
           flywheel: true
         },
         borrow: {
