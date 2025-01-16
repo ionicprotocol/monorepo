@@ -11,7 +11,7 @@ import { deploy as deployWorldchain, deployConfig as deployConfigWorldchain } fr
 import { deploy as deploySwellchain, deployConfig as deployConfigSwellchain } from "./mainnets/swellchain";
 import { deploy as deployCampTest, deployConfig as deployConfigCampTest } from "./testnets/camp";
 import { deploy as deployOzeantest, deployConfig as deployConfigOzeantest } from "./testnets/ozean";
-
+import { deploy as deploySoneium, deployConfig as deployConfigSoneium } from "./mainnets/soneium";
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
   // mainnets
   [mode.id]: { config: deployConfigMode, deployFunc: deployMode },
@@ -23,6 +23,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   [superseed.id]: { config: deployConfigSuperseed, deployFunc: deploySuperseed },
   [worldchain.id]: { config: deployConfigWorldchain, deployFunc: deployWorldchain },
   1923: { config: deployConfigSwellchain, deployFunc: deploySwellchain },
+  1868: { config: deployConfigSoneium, deployFunc: deploySoneium },
   // testnets
   7849306: { config: deployConfigOzeantest, deployFunc: deployOzeantest },
   325000: { config: deployConfigCampTest, deployFunc: deployCampTest }
