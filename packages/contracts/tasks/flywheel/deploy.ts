@@ -282,6 +282,24 @@ task("flywheel:deploy-and-replace-withdrawable-dynamic-rewards", "Deploy withdra
     return rewards;
   });
 
+task("flywheel:batch-deploy-and-replace", "Batch deploy and replace withdrawable dynamic rewards flywheels")
+  .setAction(async (_, { run }) => {
+    const tasks = [
+      { name: "ION_epoch7", flywheel: "0xf42dBd423970fd6735a7CE2d850aA85897C79eeE" },
+      { name: "hyUSD_v3", flywheel: "0xc39441b305705AfD07de97237bC835a4501AbbEC" },
+      { name: "eUSD_v3", flywheel: "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4" },
+      { name: "Borrow_hyUSD", flywheel: "0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9" },
+      { name: "hyUSD_epoch5", flywheel: "0xAC717cd20a72470Cb764B518dE561E1fFF41cC22" },
+      { name: "eUSD_epoch5", flywheel: "0x1d0a712aE0162431E0573A8a735D02a29805d124" },
+      { name: "Borrow_hyUSD_epoch5", flywheel: "0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424" }
+    ];
+
+    for (const { name, flywheel } of tasks) {
+      console.log(`Running task for name: ${name}, flywheel: ${flywheel}`);
+      await run("flywheel:deploy-and-replace-withdrawable-dynamic-rewards", { name, flywheel });
+    }
+  });
+
 task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .setAction(async ({ name, flywheel }, { deployments, getNamedAccounts }) => {
