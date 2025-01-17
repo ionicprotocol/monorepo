@@ -36,8 +36,6 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   error RepayBorrowFailed(uint256 errorCode);
   error RedeemCollateralFailed(uint256 errorCode);
   error ExtNotFound(bytes4 _functionSelector);
-  error RouterNotWhitelisted();
-  error AggregatorCallFailed();
   error MarketsPoolsDiffer();
   error FlashLoanSourceError();
   error DelegateCallToNonContract();
@@ -66,17 +64,8 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   ----------------------------------------------------------------*/
 
   function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public {
-    fundPosition(fundingAsset, amount, address(0), "");
-  }
-
-  function fundPosition(
-    IERC20Upgradeable fundingAsset,
-    uint256 amount,
-    address aggregatorTarget,
-    bytes memory aggregatorData
-  ) public {
     fundingAsset.safeTransferFrom(msg.sender, address(this), amount);
-    _supplyCollateral(fundingAsset, aggregatorTarget, aggregatorData);
+    _supplyCollateral(fundingAsset);
 
     if (!pool.checkMembership(address(this), collateralMarket)) {
       address[] memory cTokens = new address[](1);
@@ -89,27 +78,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     return closePosition(msg.sender);
   }
 
-  function closePosition(
-    address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
-  ) public returns (uint256) {
-    return closePosition(msg.sender, aggregatorTarget, aggregatorData, expectedSlippage);
-  }
-
   function closePosition(address withdrawTo) public returns (uint256 withdrawAmount) {
-    return closePosition(withdrawTo, address(0), "", _getAssumedSlippage(false));
-  }
-
-  function closePosition(
-    address withdrawTo,
-    address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
-  ) public returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
-    _leverDown(1e18, aggregatorTarget, aggregatorData, expectedSlippage);
+    _leverDown(1e18, _getAssumedSlippage(false));
 
     // calling accrue and exit allows to redeem the full underlying balance
     collateralMarket.accrueInterest();
@@ -120,11 +92,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     errorCode = collateralMarket.redeem(collateralMarket.balanceOf(address(this)));
     if (errorCode != 0) revert RedeemFailed(errorCode);
 
-    if (stableAsset.balanceOf(address(this)) > 0) {
-      // // convert all overborrowed leftovers/profits to the collateral asset
-      // convertAllTo(stableAsset, collateralAsset, address(0), aggregatorData);
+    uint256 stableBalance = stableAsset.balanceOf(address(this));
+    if (stableBalance > 0) {
       // transfer the stable asset to the owner
-      stableAsset.safeTransfer(withdrawTo, stableAsset.balanceOf(address(this)));
+      stableAsset.safeTransfer(withdrawTo, stableBalance);
     }
 
     // withdraw the redeemed collateral
@@ -133,25 +104,16 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function adjustLeverageRatio(uint256 targetRatioMantissa) public returns (uint256){
-    return adjustLeverageRatio(targetRatioMantissa, address(0), "", 0);
-  }
-
-  function adjustLeverageRatio(
-    uint256 targetRatioMantissa,
-    address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
-  ) public returns (uint256) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     if (targetRatioMantissa <= 1e18) {
       // anything under 1x means removing the leverage
-      _leverDown(1e18, aggregatorTarget, aggregatorData, expectedSlippage);
+      _leverDown(1e18, 0);
     } else {
       if (getCurrentLeverageRatio() < targetRatioMantissa) {
-        _leverUp(targetRatioMantissa, aggregatorTarget, aggregatorData, expectedSlippage);
+        _leverUp(targetRatioMantissa, 0);
       } else {
-        _leverDown(targetRatioMantissa, aggregatorTarget, aggregatorData, expectedSlippage);
+        _leverDown(targetRatioMantissa, 0);
       }
     }
 
@@ -159,24 +121,28 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     return getCurrentLeverageRatio();
   }
 
-  function receiveFlashLoan(address assetAddress, uint256 borrowedAmount, bytes calldata data) external override {
+  function receiveFlashLoan(
+    address assetAddress,
+    uint256 borrowedAmount,
+    bytes calldata data
+  ) external virtual override {
     if (msg.sender == address(collateralMarket)) {
       // increasing the leverage ratio
-      (uint256 stableBorrowAmount, address aggregatorTarget, bytes memory aggregatorData) = abi.decode(
+      (uint256 stableBorrowAmount) = abi.decode(
         data,
-        (uint256, address, bytes)
+        (uint256)
       );
-      _leverUpPostFL(stableBorrowAmount, aggregatorTarget, aggregatorData);
+      _leverUpPostFL(stableBorrowAmount);
       uint256 positionCollateralBalance = collateralAsset.balanceOf(address(this));
       if (positionCollateralBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(collateralAsset), positionCollateralBalance, borrowedAmount);
     } else if (msg.sender == address(stableMarket)) {
       // decreasing the leverage ratio
-      (uint256 amountToRedeem, address aggregatorTarget, bytes memory aggregatorData) = abi.decode(
+      (uint256 amountToRedeem) = abi.decode(
         data,
-        (uint256, address, bytes)
+        (uint256)
       );
-      _leverDownPostFL(borrowedAmount, amountToRedeem, aggregatorTarget, aggregatorData);
+      _leverDownPostFL(borrowedAmount, amountToRedeem);
       uint256 positionStableBalance = stableAsset.balanceOf(address(this));
       if (positionStableBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(stableAsset), positionStableBalance, borrowedAmount);
@@ -188,13 +154,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     IERC20Upgradeable(assetAddress).approve(msg.sender, borrowedAmount);
   }
 
-  function withdrawStableLeftovers(address withdrawTo) public returns (uint256) {
+  function withdrawStableLeftovers(address withdrawTo) public returns (uint256 stableLeftovers) {
     if (msg.sender != positionOwner) revert NotPositionOwner();
     if (!isPositionClosed()) revert OnlyWhenClosed();
 
-    uint256 stableLeftovers = stableAsset.balanceOf(address(this));
+    stableLeftovers = stableAsset.balanceOf(address(this));
     stableAsset.safeTransfer(withdrawTo, stableLeftovers);
-    return stableLeftovers;
   }
 
   function claimRewards() public {
@@ -428,18 +393,17 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function _supplyCollateral(
-    IERC20Upgradeable fundingAsset,
-    address aggregatorTarget,
-    bytes memory aggregatorData
-  ) internal returns (uint256 amountToSupply) {
+    IERC20Upgradeable fundingAsset
+  ) private returns (uint256 amountToSupply) {
     // in case the funding is with a different asset
     if (address(collateralAsset) != address(fundingAsset)) {
       // swap for collateral asset
-      convertAllTo(fundingAsset, collateralAsset, aggregatorTarget, aggregatorData);
+      amountToSupply = convertAllTo(fundingAsset, collateralAsset);
+    } else {
+      amountToSupply = collateralAsset.balanceOf(address(this));
     }
 
     // supply the collateral
-    amountToSupply = collateralAsset.balanceOf(address(this));
     collateralAsset.approve(address(collateralMarket), amountToSupply);
     uint256 errorCode = collateralMarket.mint(amountToSupply);
     if (errorCode != 0) revert SupplyCollateralFailed(errorCode);
@@ -448,10 +412,8 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   // @dev flash loan the needed amount, then borrow stables and swap them for the amount needed to repay the FL
   function _leverUp(
     uint256 targetRatio,
-    address aggregatorTarget,
-    bytes memory aggregatorData,
     uint256 expectedSlippage
-  ) internal {
+  ) private {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
@@ -467,7 +429,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
     collateralMarket.flash(
       flashLoanCollateralAmount,
-      abi.encode(stableToBorrow, aggregatorTarget, aggregatorData)
+      abi.encode(stableToBorrow)
     );
     // the execution will first receive a callback to receiveFlashLoan()
     // then it continues from here
@@ -482,28 +444,24 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
 
   // @dev supply the flash loaned collateral and then borrow stables with it
   function _leverUpPostFL(
-    uint256 stableToBorrow,
-    address aggregatorTarget,
-    bytes memory aggregatorData
-  ) internal {
+    uint256 stableToBorrow
+  ) private {
     // supply the flash loaned collateral
-    _supplyCollateral(collateralAsset, address(0), "");
+    _supplyCollateral(collateralAsset);
 
     // borrow stables that will be swapped to repay the FL
     uint256 errorCode = stableMarket.borrow(stableToBorrow);
     if (errorCode != 0) revert BorrowStableFailed(errorCode);
 
     // swap for the FL asset
-    convertAllTo(stableAsset, collateralAsset, aggregatorTarget, aggregatorData);
+    convertAllTo(stableAsset, collateralAsset);
   }
 
   // @dev redeems the supplied collateral by first repaying the debt with which it was levered
   function _leverDown(
     uint256 targetRatio,
-    address aggregatorTarget,
-    bytes memory aggregatorData,
     uint256 expectedSlippage
-  ) internal {
+  ) private {
     if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(false);
 
     BasePriceOracle oracle = pool.oracle();
@@ -522,7 +480,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (borrowsToRepay > 0) {
       ICErc20(address(stableMarket)).flash(
         borrowsToRepay,
-        abi.encode(amountToRedeem, aggregatorTarget, aggregatorData)
+        abi.encode(amountToRedeem)
       );
       // the execution will first receive a callback to receiveFlashLoan()
       // then it continues from here
@@ -542,14 +500,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function _leverDownPostFL(
-    uint256 _flashLoanedCollateral,
-    uint256 _amountToRedeem,
-    address aggregatorTarget,
-    bytes memory aggregatorData
-  ) internal {
+    uint256 _flashLoanedRepayAmount,
+    uint256 _amountToRedeem
+  ) private {
     // repay the borrows
     uint256 borrowBalance = stableMarket.borrowBalanceCurrent(address(this));
-    uint256 repayAmount = _flashLoanedCollateral < borrowBalance ? _flashLoanedCollateral : borrowBalance;
+    uint256 repayAmount = _flashLoanedRepayAmount < borrowBalance ? _flashLoanedRepayAmount : borrowBalance;
     stableAsset.approve(address(stableMarket), repayAmount);
     uint256 errorCode = stableMarket.repayBorrow(repayAmount);
     if (errorCode != 0) revert RepayBorrowFailed(errorCode);
@@ -559,75 +515,62 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     if (errorCode != 0) revert RedeemCollateralFailed(errorCode);
 
     // swap for the FL asset
-    convertAllTo(collateralAsset, stableAsset, aggregatorTarget, aggregatorData);
+    convertAllTo(collateralAsset, stableAsset);
   }
 
   function convertAllTo(
     IERC20Upgradeable inputToken,
-    IERC20Upgradeable outputToken,
-    address aggregatorTarget,
-    bytes memory aggregatorData
+    IERC20Upgradeable outputToken
   ) private returns (uint256 outputAmount) {
     uint256 inputAmount = inputToken.balanceOf(address(this));
-//    if (aggregatorTarget != address(0)) {
-      bool isRouterWhitelisted = factory.isSwapRoutersWhitelisted(aggregatorTarget);
-      if (!isRouterWhitelisted) revert RouterNotWhitelisted();
+    (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
+    .getRedemptionStrategies(inputToken, outputToken);
 
-      uint256 balanceBefore = outputToken.balanceOf(address(this));
-      inputToken.approve(aggregatorTarget, inputAmount);
-      (bool success, ) = aggregatorTarget.call(aggregatorData);
-      if (!success) revert AggregatorCallFailed();
-      outputAmount = outputToken.balanceOf(address(this)) - balanceBefore;
-//    } else {
-//      (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
-//        .getRedemptionStrategies(inputToken, outputToken);
-//
-//      if (redemptionStrategies.length == 0) revert ConvertFundsFailed();
-//
-//      for (uint256 i = 0; i < redemptionStrategies.length; i++) {
-//        IRedemptionStrategy redemptionStrategy = redemptionStrategies[i];
-//        bytes memory strategyData = strategiesData[i];
-//        (outputToken, outputAmount) = convertCustomFunds(inputToken, inputAmount, redemptionStrategy, strategyData);
-//        inputAmount = outputAmount;
-//        inputToken = outputToken;
-//      }
-//    }
+    if (redemptionStrategies.length == 0) revert ConvertFundsFailed();
+
+    for (uint256 i = 0; i < redemptionStrategies.length; i++) {
+      IRedemptionStrategy redemptionStrategy = redemptionStrategies[i];
+      bytes memory strategyData = strategiesData[i];
+      (outputToken, outputAmount) = convertCustomFunds(inputToken, inputAmount, redemptionStrategy, strategyData);
+      inputAmount = outputAmount;
+      inputToken = outputToken;
+    }
   }
 
-//  function convertCustomFunds(
-//    IERC20Upgradeable inputToken,
-//    uint256 inputAmount,
-//    IRedemptionStrategy strategy,
-//    bytes memory strategyData
-//  ) private returns (IERC20Upgradeable, uint256) {
-//    bytes memory returndata = _functionDelegateCall(
-//      address(strategy),
-//      abi.encodeWithSelector(strategy.redeem.selector, inputToken, inputAmount, strategyData)
-//    );
-//    return abi.decode(returndata, (IERC20Upgradeable, uint256));
-//  }
-//
-//  function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {
-//    if(!AddressUpgradeable.isContract(target)) revert DelegateCallToNonContract();// "Address: delegate call to non-contract";
-//    (bool success, bytes memory returndata) = target.delegatecall(data);
-//    return _verifyCallResult(success, returndata);
-//  }
-//
-//  function _verifyCallResult(
-//    bool success,
-//    bytes memory returndata
-//  ) private pure returns (bytes memory) {
-//    if (success) {
-//      return returndata;
-//    } else {
-//      if (returndata.length > 0) {
-//        assembly {
-//          let returndata_size := mload(returndata)
-//          revert(add(32, returndata), returndata_size)
-//        }
-//      } else {
-//        revert LowLevelDelegateCallFailed();
-//      }
-//    }
-//  }
+  function convertCustomFunds(
+    IERC20Upgradeable inputToken,
+    uint256 inputAmount,
+    IRedemptionStrategy strategy,
+    bytes memory strategyData
+  ) private returns (IERC20Upgradeable, uint256) {
+    bytes memory returndata = _functionDelegateCall(
+      address(strategy),
+      abi.encodeWithSelector(strategy.redeem.selector, inputToken, inputAmount, strategyData)
+    );
+    return abi.decode(returndata, (IERC20Upgradeable, uint256));
+  }
+
+  function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {
+    if(!AddressUpgradeable.isContract(target)) revert DelegateCallToNonContract();// "Address: delegate call to non-contract";
+    (bool success, bytes memory returndata) = target.delegatecall(data);
+    return _verifyCallResult(success, returndata);
+  }
+
+  function _verifyCallResult(
+    bool success,
+    bytes memory returndata
+  ) private pure returns (bytes memory) {
+    if (success) {
+      return returndata;
+    } else {
+      if (returndata.length > 0) {
+        assembly {
+          let returndata_size := mload(returndata)
+          revert(add(32, returndata), returndata_size)
+        }
+      } else {
+        revert LowLevelDelegateCallFailed();
+      }
+    }
+  }
 }

@@ -379,13 +379,14 @@ export default function Loop({
         fromAmount: initialBorrowAmount.toString(),
         fromAddress: factory.address
       });
-      const realSlippage =
+      let realSlippage =
         quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
           ? 1 -
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      if (realSlippage < 0.001) realSlippage = 0.001;
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2 + 1));
       const slippageWithSmallerBuffer = realSlippage * 1.1;
 
       const [, finalBorrowAmount] = await publicClient.readContract({
@@ -551,14 +552,26 @@ export default function Loop({
             : initialSupplyAmount.toString(),
         fromAddress: factory.address
       });
-      const realSlippage =
+      let realSlippage =
         quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
           ? 1 -
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      if (realSlippage < 0.001) realSlippage = 0.001;
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.6 + 1));
+      const slippageWithEvenLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 2.5 + 1));
       const slippageWithSmallerBuffer = realSlippage * 1.1;
+
+      console.log(
+        'slippageWithLargerBufferInBps',
+        slippageWithLargerBufferInBps
+      );
+
+      console.log(
+        'slippageWithSmallerBuffer',
+        slippageWithSmallerBuffer * 10000
+      );
 
       const [finalSupplyAmount, finalBorrowAmount] =
         await publicClient.readContract({
@@ -570,6 +583,13 @@ export default function Loop({
             slippageWithLargerBufferInBps
           ]
         });
+
+      console.log(
+        'final swap amount',
+        upOrDown === 'up'
+          ? finalBorrowAmount.toString()
+          : finalSupplyAmount.toString()
+      );
 
       const quoteFinal = await getQuote({
         fromChain: chainId,
@@ -590,6 +610,11 @@ export default function Loop({
         slippage: slippageWithSmallerBuffer
       });
 
+      console.log(
+        'even larger buffer',
+        slippageWithEvenLargerBufferInBps
+      );
+
       const tx = await walletClient?.writeContract({
         abi: leveredPositionAbi,
         address: currentPosition.address,
@@ -598,7 +623,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           quoteFinal.transactionRequest!.to! as Address,
           quoteFinal.transactionRequest!.data! as Hex,
-          slippageWithLargerBufferInBps
+          slippageWithEvenLargerBufferInBps
         ]
       });
 
@@ -771,13 +796,14 @@ export default function Loop({
         fromAmount: initialSupplyAmount.toString(),
         fromAddress: factory.address
       });
-      const realSlippage =
+      let realSlippage =
         quote.estimate.toAmountUSD && quote.estimate.fromAmountUSD
           ? 1 -
             Number(quote.estimate.toAmountUSD) /
               Number(quote.estimate.fromAmountUSD)
           : 0;
-      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2));
+      if (realSlippage < 0.001) realSlippage = 0.001;
+      const slippageWithLargerBufferInBps = BigInt(Math.ceil(realSlippage * 10000 * 1.2 + 1));
       const slippageWithSmallerBuffer = realSlippage * 1.1;
 
       const [finalSupplyAmount] = await publicClient.readContract({

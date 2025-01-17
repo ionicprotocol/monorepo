@@ -7,6 +7,7 @@ import { ILeveredPositionFactoryFirstExtension } from "./ILeveredPositionFactory
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { LeveredPosition } from "./LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "./LeveredPositionWithAggregatorSwaps.sol";
 import { IComptroller, IPriceOracle } from "../../external/compound/IComptroller.sol";
 import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsRegistry.sol";
 import { AuthoritiesRegistry } from "../AuthoritiesRegistry.sol";
@@ -31,7 +32,7 @@ contract LeveredPositionFactoryFirstExtension is
     uint8 fnsCount = 15;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
-    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes,uint256)")));
+    functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address,address,bytes)")));
     functionSelectors[--fnsCount] = bytes4(keccak256(bytes("closeAndRemoveUserPosition(address)")));
     functionSelectors[--fnsCount] = this.getMinBorrowNative.selector;
     functionSelectors[--fnsCount] = this.getRedemptionStrategies.selector;
@@ -60,13 +61,17 @@ contract LeveredPositionFactoryFirstExtension is
   }
 
   function closeAndRemoveUserPosition(
-    LeveredPosition position,
+    LeveredPositionWithAggregatorSwaps position,
     address aggregatorTarget,
-    bytes memory aggregatorData,
-    uint256 expectedSlippage
+    bytes memory aggregatorData
   ) external onlyOwner returns (bool) {
     address positionOwner = position.positionOwner();
-    position.closePosition(positionOwner, aggregatorTarget, aggregatorData, expectedSlippage);
+    if (aggregatorTarget != address(0)) {
+      (uint256 supplyDelta, uint256 borrowsDelta) = position.getAdjustmentAmountDeltas(1e18);
+      position.closePosition(positionOwner, supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData);
+    } else {
+      position.closePosition(positionOwner);
+    }
     return _removeClosedPosition(address(position), positionOwner);
   }
 

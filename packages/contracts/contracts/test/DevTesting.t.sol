@@ -25,9 +25,10 @@ import { ILiquidatorsRegistry } from "../liquidators/registry/ILiquidatorsRegist
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
 import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
+import { LeveredPositionFactoryThirdExtension } from "../ionic/levered/LeveredPositionFactoryThirdExtension.sol";
 import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
 import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
-import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
+import { LeveredPositionWithAggregatorSwaps } from "../ionic/levered/LeveredPositionWithAggregatorSwaps.sol";
 import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
@@ -876,6 +877,7 @@ contract DevTesting is BaseTest {
   function upgradeFactory(ILeveredPositionFactory factory) internal {
     LeveredPositionFactoryFirstExtension newExt1 = new LeveredPositionFactoryFirstExtension();
     LeveredPositionFactorySecondExtension newExt2 = new LeveredPositionFactorySecondExtension();
+    LeveredPositionFactoryThirdExtension newExt3 = new LeveredPositionFactoryThirdExtension();
 
     vm.startPrank(factory.owner());
     DiamondBase asBase = DiamondBase(address(factory));
@@ -887,6 +889,7 @@ contract DevTesting is BaseTest {
     } else if (oldExts.length == 2) {
       asBase._registerExtension(newExt1, DiamondExtension(oldExts[0]));
       asBase._registerExtension(newExt2, DiamondExtension(oldExts[1]));
+      asBase._registerExtension(newExt3, DiamondExtension(address(0)));
     }
     vm.stopPrank();
   }
@@ -900,7 +903,10 @@ contract DevTesting is BaseTest {
     ICErc20 stableAsset = ICErc20(0x49420311B518f3d0c94e897592014de53831cfA3); // weth
     vm.startPrank(USER);
     IERC20Upgradeable fundingAsset = IERC20Upgradeable(collateralAsset.underlying());
-    LeveredPosition position = factory.createPosition(collateralAsset, stableAsset);
+    LeveredPositionWithAggregatorSwaps position = factory.createPositionWithAggregatorSwaps(
+      collateralAsset,
+      stableAsset
+    );
     emit log_named_address("position", address(position));
     fundingAsset.approve(address(position), type(uint256).max);
     position.fundPosition(
@@ -915,7 +921,7 @@ contract DevTesting is BaseTest {
 
     address aggregatorTarget = 0x1231DEB6f5749EF6cE6943a275A1D3E7486F4EaE;
     bytes memory aggregatorData = hex"4666fc80ddffa5afc347e458f2a79169fdd926c8080f864ee743d9da68bec9471aeef95a00000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000d2a6330d610d9d0a13c0c0ac437906000838eb8500000000000000000000000000000000000000000000000000554a9fe78263a3000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000086c6966692d617069000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002a30783030303030303030303030303030303030303030303030303030303030303030303030303030303000000000000000000000000000000000000000000000000000000000000000000000f2614a233c7c3e7f08b1f887ba133a13f1eb2c55000000000000000000000000f2614a233c7c3e7f08b1f887ba133a13f1eb2c55000000000000000000000000420000000000000000000000000000000000000600000000000000000000000004c0599ae5a44757c0af6f9ec3b93da8976c150a0000000000000000000000000000000000000000000000000067C2EC2D07866100000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000001442646478b00000000000000000000000042000000000000000000000000000000000000060000000000000000000000000000000000000000000000000067C2EC2D07866100000000000000000000000004c0599ae5a44757c0af6f9ec3b93da8976c150a00000000000000000000000000000000000000000000000000554a9fe78263a20000000000000000000000001231deb6f5749ef6ce6943a275a1d3e7486f4eae00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004202420000000000000000000000000000000000000601ffff01302976a386fbb375033be3ac1e4112f76cf42ef7001231deb6f5749ef6ce6943a275a1d3e7486f4eae00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-    position.adjustLeverageRatio(2 ether, aggregatorTarget, aggregatorData, 100);
+    position.increaseLeverageRatio(supplyDelta, borrowDelta, aggregatorTarget, aggregatorData);
 
     vm.stopPrank();
   }
