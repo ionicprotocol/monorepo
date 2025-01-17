@@ -31,3 +31,30 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
     await publicClient.waitForTransactionReceipt({ hash: tx });
     console.log("_removeFlywheel: ", tx);
   });
+
+  task("flywheel:batch-remove", "remove multiple rewards distributors from a pool")
+  .setAction(async (_, { run }) => {
+    const pool = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
+    const flywheels = [
+      "0xf42dBd423970fd6735a7CE2d850aA85897C79eeE",
+      "0xc39441b305705AfD07de97237bC835a4501AbbEC",
+      "0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4",
+      "0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9",
+      "0xAC717cd20a72470Cb764B518dE561E1fFF41cC22",
+      "0x1d0a712aE0162431E0573A8a735D02a29805d124",
+      "0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424",
+    ];
+
+    for (const flywheel of flywheels) {
+      console.log(`Removing flywheel: ${flywheel} from pool: ${pool}`);
+
+      await run("flywheel:remove", {
+        pool,
+        flywheel,
+      });
+
+      console.log(`Successfully removed flywheel: ${flywheel}`);
+    }
+
+    console.log("Batch removal complete.");
+  });
