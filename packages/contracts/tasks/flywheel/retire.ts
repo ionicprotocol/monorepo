@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 import { Address } from "viem";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 export default task("flywheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
   .addParam("flywheel", "address of flywheel", undefined, types.string)
@@ -16,7 +17,7 @@ export default task("flywheel:nonaccruing", "Sets a flywheel as non-accruing in 
 task("flywheel:remove", "remove a rewards distributor from a pool")
   .addParam("flywheel", "address of flywheel", undefined, types.string)
   .addParam("pool", "address of comptroller", undefined, types.string)
-  .setAction(async (taskArgs, { viem, getNamedAccounts }) => {
+  .setAction(async (taskArgs, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
     // extract the leftover rewards to the deployer
@@ -26,10 +27,26 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
     console.log("setFlywheelRewards: ", tx);
 
     const asComptrollerExtension = await viem.getContractAt("ComptrollerFirstExtension", taskArgs.pool);
-
-    tx = await asComptrollerExtension.write._removeFlywheel([taskArgs.flywheel]);
-    await publicClient.waitForTransactionReceipt({ hash: tx });
-    console.log("_removeFlywheel: ", tx);
+    const admin = await asComptrollerExtension.read.admin();
+    if (admin.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: asComptrollerExtension,
+        functionName: "_removeFlywheel",
+        args: [taskArgs.flywheel as Address],
+        description: "Remove flywheel",
+        inputs: [
+          {
+            internalType: "address",
+            name: "flywheelAddress",
+            type: "address"
+          }
+        ]
+      });
+    } else {
+      tx = await asComptrollerExtension.write._removeFlywheel([taskArgs.flywheel as Address]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("_removeFlywheel: ", tx);
+    }
   });
 
   task("flywheel:batch-remove", "remove multiple rewards distributors from a pool")
