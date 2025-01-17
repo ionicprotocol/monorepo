@@ -45,8 +45,8 @@ export const deployChainlinkOracle = async ({
           args: [deployConfig.stableToken, deployConfig.nativeTokenUsdChainlinkFeed]
         }
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig ?? deployer
+      proxyContract: "OpenZeppelinTransparentProxy"
+      // owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
