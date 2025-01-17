@@ -141,7 +141,7 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
 task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .addParam("rewardToken", "Reward token of flywheel", undefined, types.string)
-  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", undefined, types.string)
+  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", types.string)
   .addParam("strategies", "address of strategy for which to enable the flywheel", undefined, types.string)
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(
@@ -150,7 +150,7 @@ task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for 
       const publicClient = await viem.getPublicClient();
       let flywheelBooster;
       let contractName;
-      if (booster != "") {
+      if (!booster) {
         flywheelBooster = (await deployments.get(booster)).address as Address;
       } else flywheelBooster = zeroAddress;
 
@@ -218,7 +218,7 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
       ],
       waitConfirmations: 1
     });
-  
+
     if (name.includes("Borrow")) {
       contractName = "IonicFlywheelBorrow";
     } else contractName = "IonicFlywheel";
@@ -232,8 +232,10 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
     return rewards;
   });
 
-
-task("flywheel:deploy-and-replace-withdrawable-dynamic-rewards", "Deploy withdrawable dynamic rewards flywheel for LM rewards")
+task(
+  "flywheel:deploy-and-replace-withdrawable-dynamic-rewards",
+  "Deploy withdrawable dynamic rewards flywheel for LM rewards"
+)
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .addParam("flywheel", "flywheel to which to add the rewards contract", undefined, types.string)
   .setAction(async ({ name, flywheel }, { viem, deployments, getNamedAccounts }) => {
@@ -262,20 +264,19 @@ task("flywheel:deploy-and-replace-withdrawable-dynamic-rewards", "Deploy withdra
     const tx = await flywheelContract.write.setFlywheelRewards([rewards.address as Address]);
     await publicClient.waitForTransactionReceipt({ hash: tx });
 
-    const rewardTokenAddress = await flywheelContract.read.rewardToken() as Address;
+    const rewardTokenAddress = (await flywheelContract.read.rewardToken()) as Address;
 
-    const ionicTokenContract = await viem.getContractAt(
-      "IonicToken",
-      rewardTokenAddress
-    );
-    const flywheelRewardsAddress = (await deployments.get(`WithdrawableIonicFlywheelDynamicRewards_${name}_withdrawable`)).address as Address;
+    const ionicTokenContract = await viem.getContractAt("EIP20Interface", rewardTokenAddress);
+    const flywheelRewardsAddress = (
+      await deployments.get(`WithdrawableIonicFlywheelDynamicRewards_${name}_withdrawable`)
+    ).address as Address;
     const amount = await ionicTokenContract.read.balanceOf([flywheelRewardsAddress]);
 
     const flywheelRewardsContract = await viem.getContractAt(
       "WithdrawableIonicFlywheelDynamicRewards",
       flywheelRewardsAddress
     );
-    
+
     const withdrawTx = await flywheelRewardsContract.write.withdraw([amount]);
     await publicClient.waitForTransactionReceipt({ hash: withdrawTx });
 
