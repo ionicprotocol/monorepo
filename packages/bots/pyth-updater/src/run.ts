@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, fallback, Hex, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { base, mode } from 'viem/chains';
+import { base, mode, optimism } from 'viem/chains';
 
 import { chainIdToConfig } from './config';
 import config from './config/service';
@@ -15,6 +15,8 @@ export const run = async (): Promise<void> => {
     chain = mode;
   } else if (config.chainId === base.id) {
     chain = base;
+  } else if (config.chainId === optimism.id) {
+    chain = optimism;
   } else {
     throw new Error(`Unsupported chain ID: ${config.chainId}`);
   }
