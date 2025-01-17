@@ -22,10 +22,14 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
     const publicClient = await viem.getPublicClient();
     // extract the leftover rewards to the deployer
     const flywheel = await viem.getContractAt("IonicFlywheel", taskArgs.flywheel);
-    let tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
-    await publicClient.waitForTransactionReceipt({ hash: tx });
-    console.log("setFlywheelRewards: ", tx);
-
+    const flywheelRewards: Address = await flywheel.read.flywheelRewards();
+    if (flywheelRewards !== deployer) {
+      let tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("setFlywheelRewards: ", tx);
+    } else {
+      console.log("Skipping setting flywheel rewards");
+    }
     const asComptrollerExtension = await viem.getContractAt("ComptrollerFirstExtension", taskArgs.pool);
     const admin = await asComptrollerExtension.read.admin();
     if (admin.toLowerCase() !== deployer.toLowerCase()) {
