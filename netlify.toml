@@ -89,3 +89,6 @@ schedule = "@hourly"
 
 [functions."asset-price-and-rates-*"]
 schedule = "@hourly"
+
+[functions."asset-master-data-*"]
+schedule = "@hourly"
