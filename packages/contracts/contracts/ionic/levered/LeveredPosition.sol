@@ -92,9 +92,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     errorCode = collateralMarket.redeem(collateralMarket.balanceOf(address(this)));
     if (errorCode != 0) revert RedeemFailed(errorCode);
 
-    if (stableAsset.balanceOf(address(this)) > 0) {
+    uint256 stableBalance = stableAsset.balanceOf(address(this));
+    if (stableBalance > 0) {
       // transfer the stable asset to the owner
-      stableAsset.safeTransfer(withdrawTo, stableAsset.balanceOf(address(this)));
+      stableAsset.safeTransfer(withdrawTo, stableBalance);
     }
 
     // withdraw the redeemed collateral
@@ -397,11 +398,12 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     // in case the funding is with a different asset
     if (address(collateralAsset) != address(fundingAsset)) {
       // swap for collateral asset
-      convertAllTo(fundingAsset, collateralAsset);
+      amountToSupply = convertAllTo(fundingAsset, collateralAsset);
+    } else {
+      amountToSupply = collateralAsset.balanceOf(address(this));
     }
 
     // supply the collateral
-    amountToSupply = collateralAsset.balanceOf(address(this));
     collateralAsset.approve(address(collateralMarket), amountToSupply);
     uint256 errorCode = collateralMarket.mint(amountToSupply);
     if (errorCode != 0) revert SupplyCollateralFailed(errorCode);

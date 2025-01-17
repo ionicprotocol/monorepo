@@ -7,7 +7,6 @@ import { ILeveredPositionFactorySecondExtension } from "./ILeveredPositionFactor
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { LeveredPosition } from "./LeveredPosition.sol";
-import { LeveredPositionWithAggregatorSwaps } from "./LeveredPositionWithAggregatorSwaps.sol";
 import { IComptroller, IPriceOracle } from "../../external/compound/IComptroller.sol";
 import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsRegistry.sol";
 import { AuthoritiesRegistry } from "../AuthoritiesRegistry.sol";
