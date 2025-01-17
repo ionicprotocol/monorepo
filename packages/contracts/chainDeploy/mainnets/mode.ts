@@ -145,7 +145,8 @@ export const deploy = async ({
     deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0xf3035649cE73EDF8de7dD9B56f14910335819536" },
     assets: mode.assets,
     chainlinkAssets: eOracleAssets,
-    namePostfix: "eOracle"
+    namePostfix: "eOracle",
+    chainId: mode.chainId
   });
 
   // await deployVelodromeOracle({
@@ -171,15 +172,23 @@ export const deploy = async ({
   //   dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
   // });
 
-  // await deployChainlinkOracle({
-  //   run,
-  //   viem,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   assets: mode.assets,
-  //   chainlinkAssets
-  // });
+  const chainlinkAssets = mode.assets
+    .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((a) => ({
+      symbol: a.symbol as assetSymbols,
+      aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: mode.assets,
+    chainlinkAssets,
+    chainId: mode.chainId
+  });
 
   // await addRedstoneFallbacks({
   //   viem,
