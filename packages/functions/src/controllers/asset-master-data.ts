@@ -1,4 +1,3 @@
-
 import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
 import { Chain, createPublicClient, http, formatEther, getContract, formatUnits } from 'viem';
@@ -7,7 +6,16 @@ import { IonicSdk } from '@ionicprotocol/sdk';
 import axios from 'axios';
 import CTokenABI from '../abi/CToken.json';
 import FlywheelABI from '../abi/FlywheelCore.json';
+import FlywheelRewardsABI from '../abi/FlywheelCore.json';
 import { environment, supabase } from '../config';
+
+const FLYWHEEL_TYPE_MAP: Record<number, { supply?: string[], borrow?: string[] }> = {
+  [SupportedChains.mode]: {
+    supply: [],
+    borrow: []
+  }
+};
+
 interface AssetMasterData {
   // Key identifiers
   chain_id: SupportedChains;
@@ -158,103 +166,71 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
           let rewardApySupply = 0;
           let rewardApyBorrow = 0;
           try {
-            const comptroller = sdk.createComptroller(pool.comptroller);
-            const flywheels = await comptroller.read.getRewardsDistributors();
-            console.log('Flywheels:', flywheels);
-            for (const flywheelAddress of flywheels) {
-              console.log('Processing flywheel:', flywheelAddress);
-              const flywheel = getContract({
-                address: flywheelAddress,
-                abi: FlywheelABI,
-                client: publicClient
-              });
-              // Calculate APYs
-              const marketState = await flywheel.read.strategyState([asset.cToken]) as { index: bigint };
-              console.log('Market state:', marketState);
-              if (marketState && Array.isArray(marketState) && marketState[0] > 0n) {
-                try {
-                  // Get current block for delta calculation
-                  const currentBlock = await publicClient.getBlockNumber();
-                  const marketStartBlock = BigInt(marketState[1]); // Second element is the block number
-                  const blockDelta = currentBlock - marketStartBlock;
-                  
-                  if (blockDelta > 0n) {
-                    const cTokenContract = getContract({
-                      address: asset.cToken as `0x${string}`,
-                      abi: CTokenABI,
-                      client: publicClient
-                    });
+            const flywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(pool.comptroller);
+            
+            if (flywheelRewards) {
+              const marketRewards = flywheelRewards.find(r => r.market === asset.cToken);
+              if (marketRewards?.rewardsInfo) {
+                for (const reward of marketRewards.rewardsInfo) {
+                  if (reward.formattedAPR) {
+                    const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
                     
-                    const totalSupply = await cTokenContract.read.totalSupply() as bigint;
-                    console.log('Total supply:', totalSupply.toString());
-                    if (totalSupply > 0n) {
-                      // Calculate APY based on index growth over block delta
-                      const apyForMarket = Number(
-                        (marketState[0] * BigInt(config.specificParams.blocksPerYear) * BigInt(100)) / 
-                        (blockDelta * totalSupply)
-                      );
-                      
-                      console.log('Raw APY calculation:', {
-                        index: marketState[0].toString(),
-                        blockDelta: blockDelta.toString(),
-                        totalSupply: totalSupply.toString(),
-                        apyForMarket
-                      });
-                      // Default to supply rewards since isBorrowReward isn't in ABI
-                      rewardApySupply += apyForMarket;
+                    // Check if flywheel is in borrow list
+                    if (FLYWHEEL_TYPE_MAP[chainId]?.borrow?.includes(reward.flywheel)) {
+                      rewardApySupply += Math.min(apyForMarket * 100, 1000);
+                    } else {
+                      rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
                     }
+                    rewardTokens.add(reward.rewardToken.toLowerCase());
                   }
-                } catch (e) {
-                  console.error(`Error calculating rewards for ${asset.cToken}:`, e);
                 }
-                // Add reward token regardless of APY calculation
-                const rewardToken = await flywheel.read.rewardToken() as `0x${string}`;
-                rewardTokens.add(rewardToken.toLowerCase());
               }
             }
-            console.log('Final calculations:', {
-              rewardTokens: Array.from(rewardTokens),
-              rewardApySupply,
-              rewardApyBorrow
-            });
-            return {
-              chain_id: chainId,
-              ctoken_address: asset.cToken.toLowerCase(),
-              underlying_address: asset.underlyingToken.toLowerCase(),
-              pool_address: pool.comptroller.toLowerCase(),
-              underlying_name: asset.underlyingName || '',
-              underlying_symbol: asset.underlyingSymbol || '',
-              decimals: asset.underlyingDecimals,
-              underlying_price: underlyingPriceNum,
-              usd_price: usdPrice,
-              exchange_rate: exchangeRateNum,
-              total_supply: asset.totalSupply.toString(),
-              total_supply_usd: totalSupplyUSD,
-              total_borrow: asset.totalBorrow.toString(),
-              total_borrow_usd: totalBorrowUSD,
-              utilization_rate: utilizationRate,
-              supply_apy: supplyApy,
-              borrow_apy: borrowApy,
-              reward_apy: rewardApySupply + rewardApyBorrow,
-              total_apy: supplyApy + rewardApySupply,
-              is_listed: true,
-              collateral_factor: Number(formatEther(asset.collateralFactor)),
-              reserve_factor: Number(formatEther(asset.reserveFactor)),
-              borrow_cap: '0',
-              supply_cap: '0',
-              is_borrow_paused: asset.borrowGuardianPaused,
-              is_mint_paused: asset.mintGuardianPaused,
-              updated_at: new Date(),
-              block_number: Number(await publicClient.getBlockNumber()),
-              timestamp: new Date().toISOString(),
-              reward_apy_supply: rewardApySupply,
-              reward_apy_borrow: rewardApyBorrow,
-              reward_tokens: Array.from(rewardTokens),
-            };
           } catch (e) {
             console.error(`Error calculating rewards for ${asset.cToken}:`, e);
-            // Return with zero rewards as fallback
           }
+          const totalSupplyApy = supplyApy + rewardApySupply;
+          const totalBorrowApy = (-1 * borrowApy) + rewardApyBorrow;
+          const comptroller = sdk.createComptroller(pool.comptroller);
+          const [borrowCap, supplyCap] = await Promise.all([
+            comptroller.read.borrowCaps([asset.cToken]),
+            comptroller.read.supplyCaps([asset.cToken])
+          ]);
+          return {
+            chain_id: chainId,
+            ctoken_address: asset.cToken.toLowerCase(),
+            underlying_address: asset.underlyingToken.toLowerCase(),
+            pool_address: pool.comptroller.toLowerCase(),
+            underlying_name: asset.underlyingName || '',
+            underlying_symbol: asset.underlyingSymbol || '',
+            decimals: asset.underlyingDecimals,
+            underlying_price: underlyingPriceNum,
+            usd_price: usdPrice,
+            exchange_rate: exchangeRateNum,
+            total_supply: asset.totalSupply.toString(),
+            total_supply_usd: totalSupplyUSD,
+            total_borrow: asset.totalBorrow.toString(),
+            total_borrow_usd: totalBorrowUSD,
+            utilization_rate: utilizationRate,
+            supply_apy: supplyApy,
+            borrow_apy: borrowApy,
+            reward_apy: rewardApySupply + rewardApyBorrow,
+            reward_apy_supply: rewardApySupply,
+            reward_apy_borrow: rewardApyBorrow,
+            total_supply_apy: totalSupplyApy,
+            total_borrow_apy: totalBorrowApy,
+            is_listed: true,
+            collateral_factor: Number(formatEther(asset.collateralFactor)),
+            reserve_factor: Number(formatEther(asset.reserveFactor)),
+            borrow_cap: borrowCap.toString(),
+            supply_cap: supplyCap.toString(),
+            is_borrow_paused: asset.borrowGuardianPaused,
+            is_mint_paused: asset.mintGuardianPaused,
+            updated_at: new Date(),
+            block_number: Number(await publicClient.getBlockNumber()),
+            timestamp: new Date().toISOString(),
+            reward_tokens: Array.from(rewardTokens),
+          };
         } catch (e) {
           console.error(`Error processing asset ${asset.cToken}:`, e);
           return null;
