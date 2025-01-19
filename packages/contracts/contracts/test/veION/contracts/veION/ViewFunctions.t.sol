@@ -10,13 +10,13 @@ contract ViewFunctions is veIONTest {
   function test_getUserLock() public {
     uint256 tokenId = 1;
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
-    IveION.LockedBalance memory lock = ve.getUserLock(tokenId, lpType);
+    IveION.LockedBalance memory lock = IveION(ve).getUserLock(tokenId, lpType);
     assertEq(lock.amount, 0, "Initial lock amount should be zero");
   }
 
   function test_getOwnedTokenIds() public {
     address owner = address(this);
-    uint256[] memory tokenIds = ve.getOwnedTokenIds(owner);
+    uint256[] memory tokenIds = IveION(ve).getOwnedTokenIds(owner);
     assertEq(tokenIds.length, 0, "Owner should initially have no token IDs");
   }
 
@@ -27,50 +27,50 @@ contract ViewFunctions is veIONTest {
     mockLpTokens[1] = address(0x765);
 
     address voter = address(0x321);
-    ve.setVoter(voter);
+    IveION(ve).setVoter(voter);
 
     vm.mockCall(address(voter), abi.encodeWithSelector(IVoter.getAllLpRewardTokens.selector), abi.encode(mockLpTokens));
 
     address mockMasterPriceOracle = address(0x653);
     vm.mockCall(
       address(ap),
-      abi.encodeWithSelector(AddressesProvider.getAddress.selector, "MasterPriceOracle"),
+      abi.encodeWithSelector(IAddressesProvider.getAddress.selector, "MasterPriceOracle"),
       abi.encode(mockMasterPriceOracle)
     );
 
     vm.mockCall(
       address(mockMasterPriceOracle),
-      abi.encodeWithSelector(MasterPriceOracle.price.selector, mockLpTokens[0]),
+      abi.encodeWithSelector(IMasterPriceOracle.price.selector, mockLpTokens[0]),
       abi.encode(10e18)
     );
     vm.mockCall(
       address(mockMasterPriceOracle),
-      abi.encodeWithSelector(MasterPriceOracle.price.selector, mockLpTokens[1]),
+      abi.encodeWithSelector(IMasterPriceOracle.price.selector, mockLpTokens[1]),
       abi.encode(5e18)
     );
 
-    uint256 totalValue = ve.getTotalEthValueOfTokens(owner);
+    uint256 totalValue = IveION(ve).getTotalEthValueOfTokens(owner);
 
     assertEq(totalValue, 0, "Initial total ETH value should be zero");
   }
 
   function test_getAssetsLocked() public {
     uint256 tokenId = 1;
-    address[] memory assets = ve.getAssetsLocked(tokenId);
+    address[] memory assets = IveION(ve).getAssetsLocked(tokenId);
     assertEq(assets.length, 0, "Initially, no assets should be locked");
   }
 
   function test_getDelegatees() public {
     uint256 tokenId = 1;
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
-    uint256[] memory delegatees = ve.getDelegatees(tokenId, lpType);
+    uint256[] memory delegatees = IveION(ve).getDelegatees(tokenId, lpType);
     assertEq(delegatees.length, 0, "Initially, there should be no delegatees");
   }
 
   function test_getDelegators() public {
     uint256 tokenId = 1;
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
-    uint256[] memory delegators = ve.getDelegators(tokenId, lpType);
+    uint256[] memory delegators = IveION(ve).getDelegators(tokenId, lpType);
     assertEq(delegators.length, 0, "Initially, there should be no delegators");
   }
 
@@ -78,7 +78,7 @@ contract ViewFunctions is veIONTest {
     uint256 tokenId = 1;
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
     uint256 epoch = 0;
-    IveION.UserPoint memory userPoint = ve.getUserPoint(tokenId, lpType, epoch);
+    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(tokenId, lpType, epoch);
     assertEq(userPoint.bias, 0, "Initial user point bias should be zero");
   }
 }

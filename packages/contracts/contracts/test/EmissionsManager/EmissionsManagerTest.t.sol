@@ -15,201 +15,205 @@ import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "../../veION/interfaces/IveION.sol";
 
 contract EmissionsManagerTest is BaseTest {
-    MockPoolDirectory poolDirectory;
-    MockIonicComptroller comptroller;
-    MockICErc20 mockAsset;
-    MockVeION mockVeION;
-    MockOracle oracle;
-    MockIonicFlywheelCore ionicFlywheelCore;
+  MockPoolDirectory poolDirectory;
+  MockIonicComptroller comptroller;
+  MockICErc20 mockAsset;
+  MockVeION mockVeION;
+  MockOracle oracle;
+  MockIonicFlywheelCore ionicFlywheelCore;
 
-    EmissionsManager emissionsManager;
-    MockERC20 rewardToken;
+  EmissionsManager emissionsManager;
+  MockERC20 rewardToken;
 
-    address user = address(0x123);
-    address reporter = address(0x124);
-    address flywheelRewards = address(0x125);
-    address protocolAddress = address(0x456);
-    uint256 collateralBp = 250; // Example value
-    bytes nonBlacklistableBytecode = hex"deadbeef";
+  address user = address(0x123);
+  address reporter = address(0x124);
+  address flywheelRewards = address(0x125);
+  address protocolAddress = address(0x456);
+  uint256 collateralBp = 250; // Example value
+  bytes nonBlacklistableBytecode = hex"deadbeef";
 
-    function setUp() public {
+  function setUp() public {
+    mockAsset = new MockICErc20();
+    mockAsset.setBalanceOfUnderlying(user, 1e18);
 
-        mockAsset = new MockICErc20();
-        mockAsset.setBalanceOfUnderlying(user, 1e18);
+    oracle = new MockOracle();
+    oracle.setUnderlyingPrice(ICErc20(address(mockAsset)), 100);
 
-        oracle = new MockOracle();
-        oracle.setUnderlyingPrice(ICErc20(address(mockAsset)), 100);
-        
-        // Deploy a mock ERC20 reward token
-        //rewardToken = new MockERC20();
-        rewardToken = new MockERC20("ION", "ION", 18);
+    // Deploy a mock ERC20 reward token
+    //rewardToken = new MockERC20();
+    rewardToken = new MockERC20("ION", "ION", 18);
 
-        // Deploy the IonicFlywheelCore mock
-        ionicFlywheelCore = new MockIonicFlywheelCore();
-        ionicFlywheelCore.setRewardToken(address(rewardToken));
+    // Deploy the IonicFlywheelCore mock
+    ionicFlywheelCore = new MockIonicFlywheelCore();
+    ionicFlywheelCore.setRewardToken(address(rewardToken));
 
-        // Deploy the Comptroller mock
-        comptroller = new MockIonicComptroller();
-        comptroller.setAssetsIn(address(mockAsset));
-        comptroller.setOracle(address(oracle));
-        comptroller.setFlywheel(address(ionicFlywheelCore));
+    // Deploy the Comptroller mock
+    comptroller = new MockIonicComptroller();
+    comptroller.setAssetsIn(address(mockAsset));
+    comptroller.setOracle(address(oracle));
+    comptroller.setFlywheel(address(ionicFlywheelCore));
 
-        // Deploy the PoolDirectory mock
-        poolDirectory = new MockPoolDirectory();
-        poolDirectory.setActivePools(address(comptroller));
+    // Deploy the PoolDirectory mock
+    poolDirectory = new MockPoolDirectory();
+    poolDirectory.setActivePools(address(comptroller));
 
-        // Deploy the EmissionsManager
-        emissionsManager = new EmissionsManager();
-        emissionsManager.initialize(PoolDirectory(address(poolDirectory)), protocolAddress, rewardToken, collateralBp, nonBlacklistableBytecode);
+    // Deploy the EmissionsManager
+    emissionsManager = new EmissionsManager();
+    emissionsManager.initialize(
+      PoolDirectory(address(poolDirectory)),
+      protocolAddress,
+      rewardToken,
+      collateralBp,
+      nonBlacklistableBytecode
+    );
 
-        mockVeION = new MockVeION();
-        mockVeION.setMockTotalEthValueOfTokens(user, 1);
-        emissionsManager.setVeIon(IveION(address(mockVeION)));
-    }
+    mockVeION = new MockVeION();
+    mockVeION.setMockTotalEthValueOfTokens(user, 1);
+    emissionsManager.setVeIon(address(mockVeION));
+  }
 
-    function test_Initialize() public {
-        assertEq(emissionsManager.protocolAddress(), protocolAddress, "Protocol address mismatch");
+  function test_Initialize() public {
+    assertEq(emissionsManager.protocolAddress(), protocolAddress, "Protocol address mismatch");
 
-        assertEq(emissionsManager.collateralBp(), collateralBp, "Collateral basis points mismatch");
+    assertEq(emissionsManager.collateralBp(), collateralBp, "Collateral basis points mismatch");
 
-        assertEq(address(emissionsManager.rewardToken()), address(rewardToken), "Reward token mismatch");
-    }
+    assertEq(address(emissionsManager.rewardToken()), address(rewardToken), "Reward token mismatch");
+  }
 
-    function test_setVeIon_OwnerCanSetVeIonAddress() public {
-        IveION veIONMock = IveION(address(new MockVeION()));
+  function test_setVeIon_OwnerCanSetVeIonAddress() public {
+    IveION veIONMock = IveION(address(new MockVeION()));
 
-        emissionsManager.setVeIon(veIONMock);
+    emissionsManager.setVeIon(address(veIONMock));
 
-        assertEq(address(emissionsManager.veION()), address(veIONMock), "veION address mismatch");
-    }
+    assertEq(address(emissionsManager.veION()), address(veIONMock), "veION address mismatch");
+  }
 
-    function test_setCollateralBp_OwnerCanSetCollateralBp() public {
-        uint256 newCollateralBp = 2_500;
-        
-        emissionsManager.setCollateralBp(newCollateralBp);
+  function test_setCollateralBp_OwnerCanSetCollateralBp() public {
+    uint256 newCollateralBp = 2_500;
 
-        assertEq(emissionsManager.collateralBp(), newCollateralBp, "Collateral basis points not updated");
-    }
+    emissionsManager.setCollateralBp(newCollateralBp);
 
-    function test_setNonBlacklistableAddress_OwnerCanSetNonBlacklistableAddress() public {
-        emissionsManager.setNonBlacklistableAddress(user, true);
+    assertEq(emissionsManager.collateralBp(), newCollateralBp, "Collateral basis points not updated");
+  }
 
-        assertTrue(emissionsManager.nonBlacklistable(user), "User should be non-blacklistable");
+  function test_setNonBlacklistableAddress_OwnerCanSetNonBlacklistableAddress() public {
+    emissionsManager.setNonBlacklistableAddress(user, true);
 
-        emissionsManager.setNonBlacklistableAddress(user, false);
+    assertTrue(emissionsManager.nonBlacklistable(user), "User should be non-blacklistable");
 
-        assertFalse(emissionsManager.nonBlacklistable(user), "User should be blacklistable");
-    }
+    emissionsManager.setNonBlacklistableAddress(user, false);
 
-    function test_setNonBlacklistableTargetBytecode_OwnerCanSetNonBlacklistableTargetBytecode() public {
-        bytes memory bytecode = hex"deadbeef";
+    assertFalse(emissionsManager.nonBlacklistable(user), "User should be blacklistable");
+  }
 
-        emissionsManager.setNonBlacklistableTargetBytecode(bytecode);
+  function test_setNonBlacklistableTargetBytecode_OwnerCanSetNonBlacklistableTargetBytecode() public {
+    bytes memory bytecode = hex"deadbeef";
 
-        assertEq(emissionsManager.nonBlacklistableTargetBytecode(), bytecode, "Non-blacklistable target bytecode mismatch");
-    }
+    emissionsManager.setNonBlacklistableTargetBytecode(bytecode);
 
-    function test_reportUser_ReporterCanReportUser() public {
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
-        emissionsManager.setNonBlacklistableAddress(user, false);
-        assertEq(rewardToken.balanceOf(address(ionicFlywheelCore)), 0);
-        
-        ionicFlywheelCore.setFlywheelRewards(flywheelRewards);
-        rewardToken.mint(flywheelRewards, 1e18);
-        vm.prank(flywheelRewards);
-        rewardToken.approve(address(ionicFlywheelCore), 1e18);
+    assertEq(emissionsManager.nonBlacklistableTargetBytecode(), bytecode, "Non-blacklistable target bytecode mismatch");
+  }
 
-        assertEq(rewardToken.balanceOf(flywheelRewards), 1e18);
+  function test_reportUser_ReporterCanReportUser() public {
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
+    emissionsManager.setNonBlacklistableAddress(user, false);
+    assertEq(rewardToken.balanceOf(address(ionicFlywheelCore)), 0);
 
-        vm.prank(reporter);
-        emissionsManager.reportUser(user);
-        assertEq(rewardToken.balanceOf(flywheelRewards), 0);
-        assertEq(rewardToken.balanceOf(reporter),8e17);
-        assertEq(rewardToken.balanceOf(protocolAddress),2e17);
+    ionicFlywheelCore.setFlywheelRewards(flywheelRewards);
+    rewardToken.mint(flywheelRewards, 1e18);
+    vm.prank(flywheelRewards);
+    rewardToken.approve(address(ionicFlywheelCore), 1e18);
 
-        assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
-    }
+    assertEq(rewardToken.balanceOf(flywheelRewards), 1e18);
 
-    function test_reportUser_ReporterCantReportUserWithLPBalanceAboveThreshold() public {       
-        mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
-        vm.prank(reporter);
-        vm.expectRevert("LP balance above threshold");
-        emissionsManager.reportUser(user);
-    }
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
+    assertEq(rewardToken.balanceOf(flywheelRewards), 0);
+    assertEq(rewardToken.balanceOf(reporter), 8e17);
+    assertEq(rewardToken.balanceOf(protocolAddress), 2e17);
 
-    function test_reportUser_ReporterCantReportAlreadyBlacklistedUser() public {       
-        vm.prank(reporter);
-        emissionsManager.reportUser(user);
+    assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+  }
 
-        assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
-        vm.prank(reporter);
-        vm.expectRevert("Already blacklisted");
-        emissionsManager.reportUser(user);
-    }
+  function test_reportUser_ReporterCantReportUserWithLPBalanceAboveThreshold() public {
+    mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
+    vm.prank(reporter);
+    vm.expectRevert("LP balance above threshold");
+    emissionsManager.reportUser(user);
+  }
 
-    function test_reportUser_ReporterCantReportNonBlacklistableBytecode() public {        
-        emissionsManager.setNonBlacklistableTargetBytecode(address(mockAsset).code);
+  function test_reportUser_ReporterCantReportAlreadyBlacklistedUser() public {
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
 
-        vm.prank(reporter);
-        vm.expectRevert("Non-blacklistable bytecode");
-        emissionsManager.reportUser(address(mockAsset));
-    }
+    assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+    vm.prank(reporter);
+    vm.expectRevert("Already blacklisted");
+    emissionsManager.reportUser(user);
+  }
 
-    function test_reportUser_ReporterCantReportNonBlacklistableUser() public {
-        emissionsManager.setNonBlacklistableAddress(user, true);
-        
-        vm.prank(reporter);
-        vm.expectRevert("Non-blacklistable user");
-        emissionsManager.reportUser(user);
-    }
+  function test_reportUser_ReporterCantReportNonBlacklistableBytecode() public {
+    emissionsManager.setNonBlacklistableTargetBytecode(address(mockAsset).code);
 
-    function test_whitelistUser_ReporterCanWhitelistBlacklistedUser() public {
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
+    vm.prank(reporter);
+    vm.expectRevert("Non-blacklistable bytecode");
+    emissionsManager.reportUser(address(mockAsset));
+  }
 
-        emissionsManager.setNonBlacklistableAddress(user, false);
-        
-        vm.prank(reporter);
-        emissionsManager.reportUser(user);
+  function test_reportUser_ReporterCantReportNonBlacklistableUser() public {
+    emissionsManager.setNonBlacklistableAddress(user, true);
 
-        assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+    vm.prank(reporter);
+    vm.expectRevert("Non-blacklistable user");
+    emissionsManager.reportUser(user);
+  }
 
-        mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
-        emissionsManager.whitelistUser(user);
+  function test_whitelistUser_ReporterCanWhitelistBlacklistedUser() public {
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
 
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should be whitelisted");
+    emissionsManager.setNonBlacklistableAddress(user, false);
 
-    }
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
 
-    function test_whitelistUser_ReporterCantWhitelistUserWithLpBalanceBelowThreshold() public {
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
+    assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
 
-        emissionsManager.setNonBlacklistableAddress(user, false);
-        
-        vm.prank(reporter);
-        emissionsManager.reportUser(user);
+    mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
+    emissionsManager.whitelistUser(user);
 
-        assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should be whitelisted");
+  }
 
-        vm.expectRevert("LP balance below threshold");
-        emissionsManager.whitelistUser(user);
-    }
+  function test_whitelistUser_ReporterCantWhitelistUserWithLpBalanceBelowThreshold() public {
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
 
-    function test_whitelistUser_ReporterCantWhitelistAlreadyWhitelistedUser() public {
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
+    emissionsManager.setNonBlacklistableAddress(user, false);
 
-        emissionsManager.setNonBlacklistableAddress(user, false);
-        
-        vm.prank(reporter);
-        emissionsManager.reportUser(user);
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
 
-        assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+    assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
 
-        mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
-        emissionsManager.whitelistUser(user);
+    vm.expectRevert("LP balance below threshold");
+    emissionsManager.whitelistUser(user);
+  }
 
-        assertFalse(emissionsManager.isUserBlacklisted(user), "User should be whitelisted");
+  function test_whitelistUser_ReporterCantWhitelistAlreadyWhitelistedUser() public {
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should not be blacklisted initially");
 
-        vm.expectRevert("Already whitelisted");
-        emissionsManager.whitelistUser(user);
-    }
+    emissionsManager.setNonBlacklistableAddress(user, false);
+
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
+
+    assertTrue(emissionsManager.isUserBlacklisted(user), "User should be blacklisted");
+
+    mockVeION.setMockTotalEthValueOfTokens(user, 1e18);
+    emissionsManager.whitelistUser(user);
+
+    assertFalse(emissionsManager.isUserBlacklisted(user), "User should be whitelisted");
+
+    vm.expectRevert("Already whitelisted");
+    emissionsManager.whitelistUser(user);
+  }
 }

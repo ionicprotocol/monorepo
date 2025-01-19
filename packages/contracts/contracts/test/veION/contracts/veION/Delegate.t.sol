@@ -14,11 +14,11 @@ contract Delegate is veIONTest {
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
-    ve.setVoter(address(this));
+    IveION(ve).setVoter(address(this));
 
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
     vm.stopPrank();
 
     (tokenId1, tokenId2) = (lockInput.tokenId, lockInputMultiLP.tokenId);
@@ -26,14 +26,14 @@ contract Delegate is veIONTest {
 
   function test_delegation_UserCanDelegate() public {
     vm.prank(user);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
 
-    IveION.LockedBalance memory locked1 = ve.getUserLock(tokenId1, veloLpType);
-    IveION.LockedBalance memory locked2 = ve.getUserLock(tokenId2, veloLpType);
+    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
+    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
 
-    uint256 amountDelegated = ve.s_delegations(tokenId1, tokenId2, veloLpType);
+    uint256 amountDelegated = IveION(ve).s_delegations(tokenId1, tokenId2, veloLpType);
 
-    uint256[] memory delegatees = ve.getDelegatees(tokenId1, veloLpType);
+    uint256[] memory delegatees = IveION(ve).getDelegatees(tokenId1, veloLpType);
     bool foundDelegatee = false;
     for (uint256 i = 0; i < delegatees.length; i++) {
       if (delegatees[i] == tokenId2) {
@@ -42,7 +42,7 @@ contract Delegate is veIONTest {
       }
     }
 
-    uint256[] memory delegators = ve.getDelegators(tokenId2, veloLpType);
+    uint256[] memory delegators = IveION(ve).getDelegators(tokenId2, veloLpType);
     bool foundDelegator = false;
     for (uint256 i = 0; i < delegators.length; i++) {
       if (delegators[i] == tokenId1) {
@@ -51,17 +51,17 @@ contract Delegate is veIONTest {
       }
     }
 
-    uint256 userEpoch2 = ve.s_userPointEpoch(tokenId2, ve.s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint2 = ve.getUserPoint(
+    uint256 userEpoch2 = IveION(ve).s_userPointEpoch(tokenId2, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint2 = IveION(ve).getUserPoint(
       tokenId2,
-      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch2
     );
 
-    uint256 userEpoch1 = ve.s_userPointEpoch(tokenId1, ve.s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint1 = ve.getUserPoint(
+    uint256 userEpoch1 = IveION(ve).s_userPointEpoch(tokenId1, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
+    IveION.UserPoint memory userPoint1 = IveION(ve).getUserPoint(
       tokenId1,
-      ve.s_lpType(address(modeVelodrome5050IonMode)),
+      IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch1
     );
 
@@ -89,48 +89,48 @@ contract Delegate is veIONTest {
   function test_delegation_NoDuplicateDelegateesOrDelegators() public {
     uint256 smallDelegation = 10e18;
     vm.startPrank(user);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), smallDelegation);
     vm.stopPrank();
 
-    uint256[] memory delegatees = ve.getDelegatees(tokenId1, veloLpType);
+    uint256[] memory delegatees = IveION(ve).getDelegatees(tokenId1, veloLpType);
     assertEq(delegatees.length, 1, "Should only be one delegeatee despite several delegations");
 
-    uint256[] memory delegators = ve.getDelegators(tokenId2, veloLpType);
+    uint256[] memory delegators = IveION(ve).getDelegators(tokenId2, veloLpType);
     assertEq(delegators.length, 1, "Should only be one delegator despite several delegations");
 
-    uint256 amountDelegated = ve.s_delegations(tokenId1, tokenId2, veloLpType);
+    uint256 amountDelegated = IveION(ve).s_delegations(tokenId1, tokenId2, veloLpType);
     assertEq(amountDelegated, smallDelegation * 5, "Should accumulate");
   }
 
   function test_delegation_RevertIfNotOwner() public {
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
   }
 
   function test_delegation_RevertIfAmountTooBig() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AmountTooBig()"));
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT * 2);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT * 2);
   }
 
   function test_delegation_RevertIfNotPermanentLockFrom() public {
     vm.startPrank(user);
-    ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId1);
+    IveION(ve).unlockPermanent(address(modeVelodrome5050IonMode), tokenId1);
     vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
     vm.stopPrank();
   }
 
   function test_delegation_RevertIfNotPermanentLockTo() public {
     vm.startPrank(user);
-    ve.unlockPermanent(address(modeVelodrome5050IonMode), tokenId2);
+    IveION(ve).unlockPermanent(address(modeVelodrome5050IonMode), tokenId2);
     vm.expectRevert(abi.encodeWithSignature("NotPermanentLock()"));
-    ve.delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
+    IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
     vm.stopPrank();
   }
 }

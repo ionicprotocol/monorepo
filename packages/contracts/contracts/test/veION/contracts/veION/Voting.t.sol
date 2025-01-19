@@ -14,19 +14,19 @@ contract Voting is veIONTest {
 
   function test_voting_VotingCanBeSet() public {
     address voter = address(this);
-    ve.setVoter(voter);
+    IveION(ve).setVoter(voter);
     uint256 tokenId = lockInput.tokenId;
 
     vm.prank(voter);
-    ve.voting(tokenId, true);
+    IveION(ve).voting(tokenId, true);
 
-    bool isVoted = ve.s_voted(tokenId);
+    bool isVoted = IveION(ve).s_voted(tokenId);
     assertTrue(isVoted, "Token should be marked as voted");
 
     vm.prank(voter);
-    ve.voting(tokenId, false);
+    IveION(ve).voting(tokenId, false);
 
-    isVoted = ve.s_voted(tokenId);
+    isVoted = IveION(ve).s_voted(tokenId);
     assertFalse(isVoted, "Token should not be marked as voted");
   }
 }

@@ -21,7 +21,7 @@ contract Withdraw is veIONTest {
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
-    ve.setVoter(address(this));
+    IveION(ve).setVoter(address(this));
   }
 
   function afterForkSetUp() internal override {
@@ -40,35 +40,39 @@ contract Withdraw is veIONTest {
   function test_withdraw_UserCanWithdrawFinishedLock() public {
     vm.warp(block.timestamp + 52 weeks + 1);
 
-    uint256 supplyBefore = ve.s_supply(ve.s_lpType(lockInput.tokenAddress));
-    uint256 cumulativeLPAmountBefore = ve.s_userCumulativeAssetValues(user, address(modeVelodrome5050IonMode));
+    uint256 supplyBefore = IveION(ve).s_supply(IveION(ve).s_lpType(lockInput.tokenAddress));
+    uint256 cumulativeLPAmountBefore = IveION(ve).s_userCumulativeAssetValues(user, address(modeVelodrome5050IonMode));
     vm.prank(user);
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory locked = ve.getUserLock(lockInput.tokenId, veloLpType);
+    IveION.LockedBalance memory locked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
-    uint256 cumulativeLPAmountAfter = ve.s_userCumulativeAssetValues(user, address(modeVelodrome5050IonMode));
+    uint256 cumulativeLPAmountAfter = IveION(ve).s_userCumulativeAssetValues(user, address(modeVelodrome5050IonMode));
     uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(user);
-    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddress));
-    IveION.UserPoint memory userPoint = ve.getUserPoint(
+    uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddress));
+    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
-      ve.s_lpType(lockInput.tokenAddress),
+      IveION(ve).s_lpType(lockInput.tokenAddress),
       userEpoch
     );
-    uint256[] memory ownerTokenIds = ve.getOwnedTokenIds(user);
-    address[] memory assetsLocked = ve.getAssetsLocked(lockInput.tokenId);
+    uint256[] memory ownerTokenIds = IveION(ve).getOwnedTokenIds(user);
+    address[] memory assetsLocked = IveION(ve).getAssetsLocked(lockInput.tokenId);
 
     assertEq(locked.amount, 0, "Lock amount should be zero after withdrawal");
     assertEq(locked.end, 0, "Lock end time should be zero after withdrawal");
     assertEq(userBalanceAfterWithdraw, lockInput.tokenAmount, "User should receive the locked tokens back");
-    assertEq(ve.s_supply(ve.s_lpType(lockInput.tokenAddress)), supplyBefore - lockInput.tokenAmount, "Supply mismatch");
+    assertEq(
+      IveION(ve).s_supply(IveION(ve).s_lpType(lockInput.tokenAddress)),
+      supplyBefore - lockInput.tokenAmount,
+      "Supply mismatch"
+    );
     assertEq(userEpoch, 2, "User epoch mismatch");
     assertEq(userPoint.ts, block.timestamp, "User point timestamp mismatch");
     assertEq(userPoint.blk, block.number, "User point block number mismatch");
     assertEq(userPoint.bias, 0, "User point bias mismatch");
     assertEq(userPoint.slope, 0, "User point slope mismatch");
     assertEq(userPoint.permanent, 0, "User point permanent mismatch");
-    assertEq(ve.s_tokenId(), 2, "Token ID mismatch");
+    assertEq(IveION(ve).s_tokenId(), 2, "Token ID mismatch");
     assertEq(ownerTokenIds.length, 1, "Owner should have one token ID");
     assertEq(assetsLocked.length, 0, "Assets locked length mismatch");
     assertEq(
@@ -86,9 +90,9 @@ contract Withdraw is veIONTest {
     vm.warp(block.timestamp + 10 weeks);
 
     vm.prank(user);
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory actualLocked = ve.getUserLock(lockInput.tokenId, veloLpType);
+    IveION.LockedBalance memory actualLocked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
     uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(user);
     assertEq(actualLocked.amount, 0, "Lock amount should be zero after withdrawal");
@@ -122,15 +126,15 @@ contract Withdraw is veIONTest {
       )
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
+    IveION(ve).setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
     whitelistedTokens[0] = ionMode5050;
     isWhitelistedTokens[0] = true;
 
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    IveION(ve).setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     // Mint ModeVelodrome tokens to the user
     vars.user = address(0x5678);
     vars.amount = 10 ether;
@@ -157,7 +161,12 @@ contract Withdraw is veIONTest {
 
     // Create lock
     vm.prank(vars.user);
-    uint256 tokenId = ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+    uint256 tokenId = IveION(ve).createLock(
+      vars.tokenAddresses,
+      vars.tokenAmounts,
+      vars.durations,
+      vars.stakeUnderlying
+    );
 
     // Advance the blockchain by 1 week
     vm.warp(block.timestamp + 1 weeks);
@@ -167,7 +176,7 @@ contract Withdraw is veIONTest {
 
     // Withdraw the tokens
     vm.prank(vars.user);
-    ve.withdraw(address(ionMode5050), tokenId);
+    IveION(ve).withdraw(address(ionMode5050), tokenId);
 
     uint256 stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
     uint256 userBalance = IERC20(ionMode5050).balanceOf(vars.user);
@@ -187,50 +196,54 @@ contract Withdraw is veIONTest {
     public
     forkAtBlock(MODE_MAINNET, 16559826)
   {
-    ve.toggleSplit(address(0), true);
-    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+    IveION(ve).toggleSplit(address(0), true);
+    IveION(ve).setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 
     uint256 splitAmt = 4e18;
     uint256 originalTokenAmt = REAL_LP_LOCK_AMOUNT - 4e18;
 
     vm.startPrank(alice);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+    (uint256 tokenId1, uint256 tokenId2) = IveION(ve).split(
+      lockInfoAlice.tokenAddress,
+      lockInfoAlice.tokenId,
+      splitAmt
+    );
 
     assertEq(
-      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT,
       "Alice cumulative value should be the original locked amount"
     );
     assertEq(
-      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT,
       "Bob cumulative value should be the original locked amount"
     );
 
     assertEq(
-      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT - splitAmt,
       "Underlying stake for tokenId1 should be half of the original lock amount"
     );
 
     assertEq(
-      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
       splitAmt,
       "Underlying stake for tokenId2 should be half of the original lock amount"
     );
-    ve.transferFrom(alice, bob, tokenId1);
+    IveION(ve).transferFrom(alice, bob, tokenId1);
     vm.stopPrank();
 
     uint256 cumulativeAssetBalancePostTransferAlice = splitAmt;
     uint256 cumulativeAssetBalancePostTransferBob = REAL_LP_LOCK_AMOUNT + originalTokenAmt;
 
     assertEq(
-      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
       cumulativeAssetBalancePostTransferAlice,
       "Cumulative asset value for alice should drop post transfer"
     );
     assertEq(
-      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
       cumulativeAssetBalancePostTransferBob,
       "Cumulative asset value for bob should increase post transfer"
     );
@@ -255,18 +268,18 @@ contract Withdraw is veIONTest {
     vm.warp(block.timestamp + 52 weeks);
 
     vm.prank(bob);
-    ve.withdraw(lockInfoAlice.tokenAddress, tokenId1);
+    IveION(ve).withdraw(lockInfoAlice.tokenAddress, tokenId1);
 
     vm.prank(alice);
-    ve.withdraw(lockInfoAlice.tokenAddress, tokenId2);
+    IveION(ve).withdraw(lockInfoAlice.tokenAddress, tokenId2);
 
     assertEq(
-      ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress),
       cumulativeAssetBalancePostTransferAlice - splitAmt,
       "CumulativeAssetValue should be reduced post withdrawal for alice"
     );
     assertEq(
-      ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
+      IveION(ve).s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress),
       cumulativeAssetBalancePostTransferBob - originalTokenAmt,
       "CumulativeAssetValue should be reduced post withdrawal for bob"
     );
@@ -288,26 +301,30 @@ contract Withdraw is veIONTest {
     public
     forkAtBlock(MODE_MAINNET, 16559826)
   {
-    ve.toggleSplit(address(0), true);
-    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+    IveION(ve).toggleSplit(address(0), true);
+    IveION(ve).setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 
     uint256 splitAmt = 4e18;
 
     vm.startPrank(alice);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId, splitAmt);
+    (uint256 tokenId1, uint256 tokenId2) = IveION(ve).split(
+      lockInfoAlice.tokenAddress,
+      lockInfoAlice.tokenId,
+      splitAmt
+    );
 
     assertEq(
-      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT - splitAmt,
       "Underlying stake for tokenId1 should be half of the original lock amount"
     );
 
     assertEq(
-      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
       splitAmt,
       "Underlying stake for tokenId2 should be half of the original lock amount"
     );
-    ve.transferFrom(alice, cindy, tokenId1);
+    IveION(ve).transferFrom(alice, cindy, tokenId1);
     vm.stopPrank();
 
     address stakingWalletInstanceAlice = veloIonModeStakingStrategy.userStakingWallet(alice);
@@ -330,10 +347,10 @@ contract Withdraw is veIONTest {
     vm.warp(block.timestamp + 52 weeks);
 
     vm.prank(cindy);
-    ve.withdraw(lockInfoAlice.tokenAddress, tokenId1);
+    IveION(ve).withdraw(lockInfoAlice.tokenAddress, tokenId1);
 
     vm.prank(alice);
-    ve.withdraw(lockInfoAlice.tokenAddress, tokenId2);
+    IveION(ve).withdraw(lockInfoAlice.tokenAddress, tokenId2);
 
     assertEq(
       IERC20(lockInfoAlice.tokenAddress).balanceOf(cindy),
@@ -349,9 +366,9 @@ contract Withdraw is veIONTest {
   }
 
   function test_withdraw_MultiLpSplitTransferThenWithdraw() public forkAtBlock(MODE_MAINNET, 16559826) {
-    ve.setMinimumLockAmount(address(ionWeth5050lPAero), 1);
-    ve.setMinimumLockAmount(address(wethUSDC5050LP), 1);
-    ve.toggleSplit(address(0), true);
+    IveION(ve).setMinimumLockAmount(address(ionWeth5050lPAero), 1);
+    IveION(ve).setMinimumLockAmount(address(wethUSDC5050LP), 1);
+    IveION(ve).toggleSplit(address(0), true);
     uint256 wethUSDCAmt = 2e16;
 
     address[] memory lpTokens = new address[](2);
@@ -388,17 +405,17 @@ contract Withdraw is veIONTest {
     vm.startPrank(alice);
     IERC20(ionMode5050LP).approve(address(ve), REAL_LP_LOCK_AMOUNT);
     IERC20(wethUSDC5050LP).approve(address(ve), wethUSDCAmt);
-    uint256 tokenId1 = ve.createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
+    uint256 tokenId1 = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
     console.log("Stakes after alice locks multi lp");
     _logUnderlyingStake(users);
 
     vm.prank(alice);
-    (, uint256 tokenId2) = ve.split(ionMode5050LP, tokenId1, 3e18);
+    (, uint256 tokenId2) = IveION(ve).split(ionMode5050LP, tokenId1, 3e18);
 
     vm.prank(alice);
-    (, uint256 tokenId3) = ve.split(wethUSDC5050LP, tokenId1, 1e16);
+    (, uint256 tokenId3) = IveION(ve).split(wethUSDC5050LP, tokenId1, 1e16);
 
     console.log("Stakes after alice splits multi lp into one token with 3e18 ion-mode and 1e16 weth-usdc");
     _logUnderlyingStake(users);
@@ -409,9 +426,9 @@ contract Withdraw is veIONTest {
     tokenIds[2] = tokenId3;
 
     vm.startPrank(alice);
-    ve.transferFrom(alice, bob, tokenId1);
-    ve.transferFrom(alice, cindy, tokenId2);
-    ve.transferFrom(alice, ralph, tokenId3);
+    IveION(ve).transferFrom(alice, bob, tokenId1);
+    IveION(ve).transferFrom(alice, cindy, tokenId2);
+    IveION(ve).transferFrom(alice, ralph, tokenId3);
     vm.stopPrank();
 
     address stakingWalletInstanceIonMode = veloIonModeStakingStrategy.userStakingWallet(users[1]);
@@ -429,15 +446,15 @@ contract Withdraw is veIONTest {
     _logUnderlyingStake(users);
 
     vm.startPrank(bob);
-    ve.withdraw(address(ionMode5050LP), tokenId1);
-    ve.withdraw(address(wethUSDC5050LP), tokenId1);
+    IveION(ve).withdraw(address(ionMode5050LP), tokenId1);
+    IveION(ve).withdraw(address(wethUSDC5050LP), tokenId1);
     vm.stopPrank();
 
     vm.prank(cindy);
-    ve.withdraw(address(ionMode5050LP), tokenId2);
+    IveION(ve).withdraw(address(ionMode5050LP), tokenId2);
 
     vm.prank(ralph);
-    ve.withdraw(address(wethUSDC5050LP), tokenId3);
+    IveION(ve).withdraw(address(wethUSDC5050LP), tokenId3);
 
     console.log(
       "bob withdraws 7e18 ion-mode, 1e16 weth-usdc, cindy withdraws ion-mode 3e18, ralph withdraws 1e16 weth-usdc"
@@ -456,21 +473,21 @@ contract Withdraw is veIONTest {
   function test_withdraw_RevertIfNotOwner() public {
     vm.prank(address(0x3523));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
   function test_withdraw_RevertIfVoting() public {
-    ve.voting(lockInput.tokenId, true);
+    IveION(ve).voting(lockInput.tokenId, true);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("AlreadyVoted()"));
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
   function test_withdraw_RevertIfPermanentLock() public {
     vm.startPrank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
     vm.stopPrank();
   }
 
@@ -478,26 +495,26 @@ contract Withdraw is veIONTest {
     MockERC20 randomMockToken = new MockERC20("Random_Token", "RND", 18);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
-    ve.withdraw(address(randomMockToken), lockInput.tokenId);
+    IveION(ve).withdraw(address(randomMockToken), lockInput.tokenId);
   }
 
   function test_withdraw_TokenShouldStillExistIfRemainingLP() public {
     vm.prank(user);
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
-    address owner = ve.ownerOf(lockInputMultiLP.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    address owner = IveION(ve).ownerOf(lockInputMultiLP.tokenId);
     assertEq(owner, user, "User should still own their token");
   }
 
   function test_withdraw_TokenShouldBeBurntInAllLPRemoved() public {
     vm.startPrank(user);
-    ve.withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
-    ve.withdraw(address(modeBalancer8020IonEth), lockInputMultiLP.tokenId);
+    IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId);
+    IveION(ve).withdraw(address(modeBalancer8020IonEth), lockInputMultiLP.tokenId);
     vm.stopPrank();
 
     vm.expectRevert("ERC721: invalid token ID");
-    ve.ownerOf(lockInputMultiLP.tokenId);
+    IveION(ve).ownerOf(lockInputMultiLP.tokenId);
 
-    uint256[] memory ownerTokenIds = ve.getOwnedTokenIds(user);
+    uint256[] memory ownerTokenIds = IveION(ve).getOwnedTokenIds(user);
     bool tokenIdFound = false;
     for (uint256 i = 0; i < ownerTokenIds.length; i++) {
       if (ownerTokenIds[i] == lockInputMultiLP.tokenId) {
@@ -511,6 +528,6 @@ contract Withdraw is veIONTest {
   function test_withdraw_WithdrawAssetNotOwnedButWhitelisted() public {
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("NoLockFound()"));
-    ve.withdraw(address(modeBalancer8020IonEth), lockInput.tokenId);
+    IveION(ve).withdraw(address(modeBalancer8020IonEth), lockInput.tokenId);
   }
 }

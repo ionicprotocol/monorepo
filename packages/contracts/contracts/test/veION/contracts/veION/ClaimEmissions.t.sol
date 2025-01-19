@@ -27,7 +27,7 @@ contract ClaimEmissions is veIONTest {
     uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
 
     vm.prank(alice);
-    ve.claimEmissions(address(ionMode5050LP));
+    IveION(ve).claimEmissions(address(ionMode5050LP));
 
     assertTrue(reward > 0, "Reward should be greater than zero after 1 week");
   }
@@ -37,15 +37,15 @@ contract ClaimEmissions is veIONTest {
 
     vm.prank(bob);
     vm.expectRevert(abi.encodeWithSignature("NoUnderlyingStake()"));
-    ve.claimEmissions(address(ionMode5050LP));
+    IveION(ve).claimEmissions(address(ionMode5050LP));
   }
 
   function test_claimEmissions_WithdrawThenClaim() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.warp(block.timestamp + 1 weeks);
     uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
     vm.startPrank(alice);
-    ve.withdraw(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId);
-    ve.claimEmissions(address(ionMode5050LP));
+    IveION(ve).withdraw(lockInfoAlice.tokenAddress, lockInfoAlice.tokenId);
+    IveION(ve).claimEmissions(address(ionMode5050LP));
     vm.stopPrank();
 
     address rewardToken = veloIonModeStakingStrategy.rewardToken();

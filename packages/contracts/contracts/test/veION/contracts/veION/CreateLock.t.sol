@@ -16,31 +16,34 @@ contract CreateLock is veIONTest {
     vars.user = address(0x1234);
 
     LockInfo memory lockInput = _createLockInternal(vars.user);
-    IveION.LockedBalance memory actualLock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddress));
+    IveION.LockedBalance memory actualLock = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      IveION(ve).s_lpType(lockInput.tokenAddress)
+    );
 
     vars.lockedBalance_end_test = ((block.timestamp + lockInput.duration) / WEEK) * WEEK;
     vars.expectedSupply = lockInput.tokenAmount;
-    vars.userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddress));
-    IveION.UserPoint memory userPoint = ve.getUserPoint(
+    vars.userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddress));
+    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
-      ve.s_lpType(lockInput.tokenAddress),
+      IveION(ve).s_lpType(lockInput.tokenAddress),
       vars.userEpoch
     );
-    vars.ownerTokenIds = ve.getOwnedTokenIds(vars.user);
-    vars.assetsLocked = ve.getAssetsLocked(lockInput.tokenId);
+    vars.ownerTokenIds = IveION(ve).getOwnedTokenIds(vars.user);
+    vars.assetsLocked = IveION(ve).getAssetsLocked(lockInput.tokenId);
 
     assertEq(lockInput.tokenAddress, actualLock.tokenAddress, "Token address mismatch");
     assertEq(lockInput.tokenAmount, actualLock.amount, "Token amount mismatch");
     assertEq(vars.lockedBalance_end_test, actualLock.end, "Unlock time mismatch");
     assertEq(false, actualLock.isPermanent, "Lock should not be permanent");
-    assertEq(ve.s_supply(ve.s_lpType(lockInput.tokenAddress)), actualLock.amount, "Supply mismatch");
+    assertEq(IveION(ve).s_supply(IveION(ve).s_lpType(lockInput.tokenAddress)), actualLock.amount, "Supply mismatch");
     assertEq(vars.userEpoch, 1, "User epoch mismatch");
     assertEq(userPoint.ts, block.timestamp, "User point timestamp mismatch");
     assertEq(userPoint.blk, block.number, "User point block number mismatch");
     assertGt(userPoint.bias, 0, "User point bias mismatch");
     assertGt(userPoint.slope, 0, "User point slope mismatch");
     assertEq(userPoint.permanent, 0, "User point permanent mismatch");
-    assertEq(ve.s_tokenId(), lockInput.tokenId, "Token ID mismatch");
+    assertEq(IveION(ve).s_tokenId(), lockInput.tokenId, "Token ID mismatch");
     assertEq(vars.ownerTokenIds.length, 1, "Owner should have one token ID");
     assertEq(vars.ownerTokenIds[0], lockInput.tokenId, "Owner token ID mismatch");
     assertEq(vars.assetsLocked.length, 1, "Assets locked length mismatch");
@@ -63,10 +66,10 @@ contract CreateLock is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
 
-    IveION.LockedBalance memory actualLock = ve.getUserLock(tokenId, ve.s_lpType(tokenAddresses[0]));
+    IveION.LockedBalance memory actualLock = IveION(ve).getUserLock(tokenId, IveION(ve).s_lpType(tokenAddresses[0]));
 
     uint256 boost = actualLock.boost;
     assertEq(boost, 1e18, "Boost mismatch");
@@ -88,10 +91,10 @@ contract CreateLock is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
 
-    IveION.LockedBalance memory actualLock = ve.getUserLock(tokenId, ve.s_lpType(tokenAddresses[0]));
+    IveION.LockedBalance memory actualLock = IveION(ve).getUserLock(tokenId, IveION(ve).s_lpType(tokenAddresses[0]));
 
     uint256 boost = actualLock.boost;
     assertApproxEqAbs(boost, 2e18, 1e16, "Boost mismatch");
@@ -104,26 +107,34 @@ contract CreateLock is veIONTest {
     LockInfoMultiple memory lockInput = _createLockMultipleInternal(vars.user);
 
     for (uint256 i = 0; i < lockInput.tokenAddresses.length; i++) {
-      (address lb_tokenAddress, uint256 lb_amount, , , uint256 lb_end, , ) = ve.s_locked(
+      IveION.LockedBalance memory lb = IveION(ve).s_locked(
         lockInput.tokenId,
-        ve.s_lpType(lockInput.tokenAddresses[i])
+        IveION(ve).s_lpType(lockInput.tokenAddresses[i])
       );
       uint256 unlockTime = ((block.timestamp + lockInput.durations[i]) / WEEK) * WEEK;
 
-      assertEq(lb_tokenAddress, lockInput.tokenAddresses[i], "Token address mismatch");
-      assertEq(lb_amount, lockInput.tokenAmounts[i], "Token amount mismatch");
-      assertEq(lb_end, unlockTime, "Unlock time mismatch");
+      assertEq(lb.tokenAddress, lockInput.tokenAddresses[i], "Token address mismatch");
+      assertEq(lb.amount, lockInput.tokenAmounts[i], "Token amount mismatch");
+      assertEq(lb.end, unlockTime, "Unlock time mismatch");
     }
 
     vars.expectedSupply = MINT_AMT;
-    vars.userEpoch = ve.s_userPointEpoch(lockInput.tokenId, ve.s_lpType(lockInput.tokenAddresses[0]));
-    vars.ownerTokenIds = ve.getOwnedTokenIds(vars.user);
-    vars.assetsLocked = ve.getAssetsLocked(lockInput.tokenId);
+    vars.userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddresses[0]));
+    vars.ownerTokenIds = IveION(ve).getOwnedTokenIds(vars.user);
+    vars.assetsLocked = IveION(ve).getAssetsLocked(lockInput.tokenId);
 
-    assertEq(ve.s_supply(ve.s_lpType(lockInput.tokenAddresses[1])), vars.expectedSupply, "Supply mismatch");
-    assertEq(ve.s_supply(ve.s_lpType(lockInput.tokenAddresses[0])), vars.expectedSupply, "Supply mismatch");
+    assertEq(
+      IveION(ve).s_supply(IveION(ve).s_lpType(lockInput.tokenAddresses[1])),
+      vars.expectedSupply,
+      "Supply mismatch"
+    );
+    assertEq(
+      IveION(ve).s_supply(IveION(ve).s_lpType(lockInput.tokenAddresses[0])),
+      vars.expectedSupply,
+      "Supply mismatch"
+    );
     assertEq(vars.userEpoch, 1, "User epoch mismatch");
-    assertEq(ve.s_tokenId(), lockInput.tokenId, "Token ID mismatch");
+    assertEq(IveION(ve).s_tokenId(), lockInput.tokenId, "Token ID mismatch");
     assertEq(vars.ownerTokenIds.length, 1, "Owner should have one token ID");
     assertEq(vars.ownerTokenIds[0], lockInput.tokenId, "Owner token ID mismatch");
     assertEq(vars.assetsLocked.length, lockInput.tokenAddresses.length, "Assets locked length mismatch");
@@ -154,15 +165,15 @@ contract CreateLock is veIONTest {
       )
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
+    IveION(ve).setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
     whitelistedTokens[0] = ionMode5050;
     isWhitelistedTokens[0] = true;
 
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    IveION(ve).setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     // Mint ModeVelodrome tokens to the user
     vars.user = address(0x5678);
     vars.amount = 10 ether;
@@ -189,7 +200,7 @@ contract CreateLock is veIONTest {
 
     // Create lock
     vm.prank(vars.user);
-    ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+    IveION(ve).createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
 
     address stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(vars.user);
     uint256 stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
@@ -225,15 +236,15 @@ contract CreateLock is veIONTest {
       )
     );
 
-    ve.setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
+    IveION(ve).setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
 
     address[] memory whitelistedTokens = new address[](1);
     bool[] memory isWhitelistedTokens = new bool[](1);
     whitelistedTokens[0] = ionMode5050;
     isWhitelistedTokens[0] = true;
 
-    ve.whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    ve.setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
+    IveION(ve).setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     // Mint ModeVelodrome tokens to the user
     vars.user = address(0x5678);
     vars.amount = 10 ether;
@@ -260,7 +271,7 @@ contract CreateLock is veIONTest {
 
     // Create lock
     vm.prank(vars.user);
-    ve.createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
+    IveION(ve).createLock(vars.tokenAddresses, vars.tokenAmounts, vars.durations, vars.stakeUnderlying);
 
     vm.warp(block.timestamp + 1 weeks);
 
@@ -269,7 +280,7 @@ contract CreateLock is veIONTest {
     uint256 reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
 
     vm.prank(vars.user);
-    ve.claimEmissions(vars.tokenAddresses[0]);
+    IveION(ve).claimEmissions(vars.tokenAddresses[0]);
 
     stakingWalletInstanceBalance = IVeloIonModeStaking(veloGauge).balanceOf(stakingWalletInstance);
     reward = IVeloIonModeStaking(veloGauge).earned(stakingWalletInstance);
@@ -303,7 +314,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("ArrayMismatch()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -324,7 +335,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -345,7 +356,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("LockDurationTooShort()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -366,7 +377,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("LockDurationTooLong()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -387,7 +398,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("MinimumNotMet()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -411,7 +422,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     randomMockToken.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("TokenNotWhitelisted()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
   }
 
@@ -435,7 +446,7 @@ contract CreateLock is veIONTest {
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     vm.expectRevert(abi.encodeWithSignature("DuplicateAsset()"));
-    ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](2));
+    IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](2));
     vm.stopPrank();
   }
 }

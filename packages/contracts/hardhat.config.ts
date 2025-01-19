@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
     contracts: [{ artifacts: "./out" }]
   },
   paths: {
-    sources: "./contracts",
+    sources: "./contracts/veION",
     tests: "./contracts/test",
     artifacts: "./artifacts"
   },
@@ -59,7 +59,8 @@ const config: HardhatUserConfig = {
       forking: {
         url: process.env.MODE_RPC_URL || "https://mainnet.mode.network", // Mode RPC URL
         blockNumber: process.env.MODE_BLOCK_NUMBER ? parseInt(process.env.MODE_BLOCK_NUMBER) : undefined // Optional
-      }
+      },
+      chainId: 34443
     },
     local: {
       accounts,

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
 
-import { IveION } from "../interfaces/IveION.sol";
+import "../interfaces/IveIONStructsEnumsErrorsEvents.sol";
 
 library BalanceLogicLibrary {
   uint256 internal constant _WEEK = 1 weeks;
@@ -17,9 +17,10 @@ library BalanceLogicLibrary {
   /// @param _isPermanent A boolean indicating if the lock is permanent.
   /// @return The calculated voting power of the user at the specified time.
   function balanceOfNFTAt(
-    mapping(uint256 => mapping(IveION.LpTokenType => uint256)) storage s_userPointEpoch,
-    mapping(uint256 => mapping(IveION.LpTokenType => IveION.UserPoint[1000000000])) storage s_userPointHistory,
-    IveION.LpTokenType _lpType,
+    mapping(uint256 => mapping(IveIONStructsEnumsErrorsEvents.LpTokenType => uint256)) storage s_userPointEpoch,
+    mapping(uint256 => mapping(IveIONStructsEnumsErrorsEvents.LpTokenType => IveIONStructsEnumsErrorsEvents.UserPoint[1000000000]))
+      storage s_userPointHistory,
+    IveIONStructsEnumsErrorsEvents.LpTokenType _lpType,
     uint256 _tokenId,
     uint256 _t,
     bool _isPermanent
@@ -27,7 +28,7 @@ library BalanceLogicLibrary {
     uint256 _epoch = getPastUserPointIndex(s_userPointEpoch, s_userPointHistory, _lpType, _tokenId, _t);
     // epoch 0 is an empty point
     if (_epoch == 0) return 0;
-    IveION.UserPoint memory lastPoint = s_userPointHistory[_tokenId][_lpType][_epoch];
+    IveIONStructsEnumsErrorsEvents.UserPoint memory lastPoint = s_userPointHistory[_tokenId][_lpType][_epoch];
     if (_isPermanent) {
       return lastPoint.permanent + lastPoint.permanentDelegate;
     } else {
@@ -49,9 +50,10 @@ library BalanceLogicLibrary {
   /// @param _timestamp .
   /// @return User point index
   function getPastUserPointIndex(
-    mapping(uint256 => mapping(IveION.LpTokenType => uint256)) storage s_userPointEpoch,
-    mapping(uint256 => mapping(IveION.LpTokenType => IveION.UserPoint[1000000000])) storage s_userPointHistory,
-    IveION.LpTokenType _lpType,
+    mapping(uint256 => mapping(IveIONStructsEnumsErrorsEvents.LpTokenType => uint256)) storage s_userPointEpoch,
+    mapping(uint256 => mapping(IveIONStructsEnumsErrorsEvents.LpTokenType => IveIONStructsEnumsErrorsEvents.UserPoint[1000000000]))
+      storage s_userPointHistory,
+    IveIONStructsEnumsErrorsEvents.LpTokenType _lpType,
     uint256 _tokenId,
     uint256 _timestamp
   ) internal view returns (uint256) {
@@ -61,12 +63,11 @@ library BalanceLogicLibrary {
     if (s_userPointHistory[_tokenId][_lpType][_userEpoch].ts <= _timestamp) return (_userEpoch);
     // Next check implicit zero balance
     if (s_userPointHistory[_tokenId][_lpType][1].ts > _timestamp) return 0;
-
     uint256 lower = 0;
     uint256 upper = _userEpoch;
     while (upper > lower) {
       uint256 center = upper - (upper - lower) / 2; // ceil, avoiding overflow
-      IveION.UserPoint storage userPoint = s_userPointHistory[_tokenId][_lpType][center];
+      IveIONStructsEnumsErrorsEvents.UserPoint storage userPoint = s_userPointHistory[_tokenId][_lpType][center];
       if (userPoint.ts == _timestamp) {
         return center;
       } else if (userPoint.ts < _timestamp) {

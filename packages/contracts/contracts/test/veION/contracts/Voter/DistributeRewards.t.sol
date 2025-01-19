@@ -106,7 +106,7 @@ contract DistributeRewards is VoterTest {
       )
     );
 
-    emissionsManager.setVeIon(ve);
+    emissionsManager.setVeIon(address(ve));
 
     // Deploy borrow flywheels
     flywheelBooster = new IonicFlywheelBorrowBooster();

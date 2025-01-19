@@ -8,8 +8,8 @@ contract ToggleSplit is veIONTest {
   }
 
   function test_toggleSplit_CanToggleSpit() public {
-    ve.toggleSplit(address(0), true);
-    bool canSplit = ve.s_canSplit(address(0));
+    IveION(ve).toggleSplit(address(0), true);
+    bool canSplit = IveION(ve).s_canSplit(address(0));
     assertTrue(canSplit, "Splitting allowed");
   }
 }

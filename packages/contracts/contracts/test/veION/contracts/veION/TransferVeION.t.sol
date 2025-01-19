@@ -28,14 +28,14 @@ contract TrasferVeION is veIONTest {
     public
     forkAtBlock(MODE_MAINNET, 16559826)
   {
-    uint256 aliceCumulativeValueBefore = ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
-    uint256 bobCumulativeValueBefore = ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
+    uint256 aliceCumulativeValueBefore = IveION(ve).s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
+    uint256 bobCumulativeValueBefore = IveION(ve).s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
 
     address stakingWalletInstanceBefore = veloIonModeStakingStrategy.userStakingWallet(bob);
     assertTrue(stakingWalletInstanceBefore == address(0), "Bob should start off not having a staking wallet");
 
     vm.prank(alice);
-    ve.transferFrom(alice, bob, lockInfoAlice.tokenId);
+    IveION(ve).transferFrom(alice, bob, lockInfoAlice.tokenId);
 
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);
 
@@ -49,8 +49,8 @@ contract TrasferVeION is veIONTest {
       "Bob should have the tokens"
     );
 
-    uint256 aliceCumulativeValueAfter = ve.s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
-    uint256 bobCumulativeValueAfter = ve.s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
+    uint256 aliceCumulativeValueAfter = IveION(ve).s_userCumulativeAssetValues(alice, lockInfoAlice.tokenAddress);
+    uint256 bobCumulativeValueAfter = IveION(ve).s_userCumulativeAssetValues(bob, lockInfoAlice.tokenAddress);
 
     // Assert that Alice's cumulative value has decreased by the lock amount
     assertEq(
@@ -66,8 +66,8 @@ contract TrasferVeION is veIONTest {
       "Bob's cumulative value should increase by the lock amount"
     );
 
-    uint256[] memory aliceOwnedTokenIds = ve.getOwnedTokenIds(alice);
-    uint256[] memory bobOwnedTokenIds = ve.getOwnedTokenIds(bob);
+    uint256[] memory aliceOwnedTokenIds = IveION(ve).getOwnedTokenIds(alice);
+    uint256[] memory bobOwnedTokenIds = IveION(ve).getOwnedTokenIds(bob);
 
     // Assert that Alice no longer owns the token
     assertEq(aliceOwnedTokenIds.length, 0, "Alice should not own any tokens after transfer");
@@ -82,7 +82,7 @@ contract TrasferVeION is veIONTest {
     forkAtBlock(MODE_MAINNET, 16559826)
   {
     vm.prank(alice);
-    ve.transferFrom(alice, cindy, lockInfoAlice.tokenId);
+    IveION(ve).transferFrom(alice, cindy, lockInfoAlice.tokenId);
 
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(cindy);
 
@@ -96,7 +96,7 @@ contract TrasferVeION is veIONTest {
 
   function test_transfer_NoUnderlyingStakeInFrom() public forkAtBlock(MODE_MAINNET, 16559826) {
     vm.prank(bob);
-    ve.transferFrom(bob, ralph, lockInfoBob.tokenId);
+    IveION(ve).transferFrom(bob, ralph, lockInfoBob.tokenId);
 
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(ralph);
 
@@ -104,32 +104,32 @@ contract TrasferVeION is veIONTest {
   }
 
   function test_transfer_SplitThenTransfer() public forkAtBlock(MODE_MAINNET, 16559826) {
-    ve.toggleSplit(address(0), true);
-    ve.setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
+    IveION(ve).toggleSplit(address(0), true);
+    IveION(ve).setMinimumLockAmount(lockInfoAlice.tokenAddress, 1e18);
 
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);
     uint256 bobBalanceBefore = veloIonModeStakingStrategy.balanceOf(stakingWalletInstance);
 
     vm.startPrank(alice);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+    (uint256 tokenId1, uint256 tokenId2) = IveION(ve).split(
       lockInfoAlice.tokenAddress,
       lockInfoAlice.tokenId,
       REAL_LP_LOCK_AMOUNT / 2
     );
 
     assertEq(
-      ve.s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId1, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT / 2,
       "Underlying stake for tokenId1 should be half of the original lock amount"
     );
 
     assertEq(
-      ve.s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
+      IveION(ve).s_underlyingStake(tokenId2, lockInfoAlice.tokenAddress),
       REAL_LP_LOCK_AMOUNT / 2,
       "Underlying stake for tokenId2 should be half of the original lock amount"
     );
 
-    ve.transferFrom(alice, bob, tokenId1);
+    IveION(ve).transferFrom(alice, bob, tokenId1);
     vm.stopPrank();
 
     stakingWalletInstance = veloIonModeStakingStrategy.userStakingWallet(bob);

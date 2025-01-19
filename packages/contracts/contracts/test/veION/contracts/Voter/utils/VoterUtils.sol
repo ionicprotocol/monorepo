@@ -108,7 +108,7 @@ contract VoterTest is veIONTest {
     voterTokenIdSingleLp = voterLockInfoSingleLp.tokenId;
     voterTokenIdMultiLp = voterLockInfoMultiLp.tokenId;
 
-    ve.setVoter(address(voter));
+    IveION(ve).setVoter(address(voter));
   }
 
   function afterForkSetUp() internal virtual override {
@@ -182,7 +182,7 @@ contract VoterTest is veIONTest {
     lpTokens[1] = address(wethAero5050LPAero);
     voter.setLpTokens(lpTokens);
 
-    ve.setVoter(address(voter));
+    IveION(ve).setVoter(address(voter));
 
     baseTokenIdSingleLp = _lockSingleLPFork(baseUser, REAL_LP_LOCK_AMOUNT);
   }

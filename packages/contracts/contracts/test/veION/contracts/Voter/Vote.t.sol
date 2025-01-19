@@ -25,7 +25,7 @@ contract Vote is VoterTest {
     vm.prank(user);
     voter.vote(voterTokenIdSingleLp, _marketVote, _marketVoteSide, _weights);
 
-    (, uint256[] memory votingLPBalances, uint256[] memory boosts) = ve.balanceOfNFT(voterTokenIdSingleLp);
+    (, uint256[] memory votingLPBalances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(voterTokenIdSingleLp);
 
     IVoter.VoteDetails memory voteDetails = voter.getVoteDetails(
       voterTokenIdSingleLp,
@@ -101,7 +101,7 @@ contract Vote is VoterTest {
     vm.prank(user);
     voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
 
-    (, vars.votingLPBalances, vars.boosts) = ve.balanceOfNFT(voterTokenIdMultiLp);
+    (, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(voterTokenIdMultiLp);
 
     IVoter.VoteDetails memory voteDetailsVelo = voter.getVoteDetails(
       voterTokenIdMultiLp,
@@ -231,7 +231,7 @@ contract Vote is VoterTest {
     voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
     vm.stopPrank();
 
-    (, vars.votingLPBalances, vars.boosts) = ve.balanceOfNFT(voterTokenIdMultiLp);
+    (, vars.votingLPBalances, vars.boosts) = IveION(ve).balanceOfNFT(voterTokenIdMultiLp);
 
     IVoter.VoteDetails memory voteDetailsVelo = voter.getVoteDetails(
       voterTokenIdMultiLp,
@@ -306,9 +306,9 @@ contract Vote is VoterTest {
     LockInfo memory lockInfo2 = _createLockInternal(user2);
 
     vm.prank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), voterTokenIdMultiLp);
     vm.prank(user2);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInfo2.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInfo2.tokenId);
 
     vm.prank(user);
     voter.vote(voterTokenIdMultiLp, vars.marketVote, vars.marketVoteSide, vars.weights);
@@ -340,7 +340,7 @@ contract Vote is VoterTest {
     console.log("============================================================================");
 
     vm.prank(user);
-    ve.delegate(voterTokenIdMultiLp, lockInfo2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
+    IveION(ve).delegate(voterTokenIdMultiLp, lockInfo2.tokenId, address(modeVelodrome5050IonMode), MINT_AMT / 2);
 
     voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
     voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
@@ -374,20 +374,22 @@ contract Vote is VoterTest {
     amounts[0] = type(uint256).max;
 
     vm.prank(user);
-    ve.removeDelegatees(voterTokenIdMultiLp, toTokenIds, address(modeVelodrome5050IonMode), amounts);
+    IveION(ve).removeDelegatees(voterTokenIdMultiLp, toTokenIds, address(modeVelodrome5050IonMode), amounts);
     // voter.poke(lockInfo2.tokenId);
 
     voteDetails = voter.getVoteDetails(voterTokenIdMultiLp, address(modeVelodrome5050IonMode));
     voteDetails2 = voter.getVoteDetails(lockInfo2.tokenId, address(modeVelodrome5050IonMode));
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInfo2.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInfo2.tokenId
+    );
     for (uint256 i; i < assets.length; i++) {
       console.log("Assets", assets[i]);
       console.log("Balances", balances[i]);
       console.log("Boosts", boosts[i]);
     }
 
-    // (assets, balances, boosts) = ve.balanceOfNFT(voterTokenIdMultiLp);
+    // (assets, balances, boosts) = IveION(ve).balanceOfNFT(voterTokenIdMultiLp);
     // for (uint256 i; i < assets.length; i++) {
     //   console.log("Assets", assets[i]);
     //   console.log("Balances", balances[i]);

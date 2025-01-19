@@ -12,7 +12,7 @@ contract BalanceOfNFT is veIONTest {
     user = address(0x1234);
     lockInput = _createLockInternal(user);
     lockInputMultiLP = _createLockMultipleInternal(user);
-    ve.setVoter(address(this));
+    IveION(ve).setVoter(address(this));
   }
 
   function afterForkSetUp() internal override {
@@ -21,12 +21,14 @@ contract BalanceOfNFT is veIONTest {
   }
 
   function test_balanceOfNFT_GetsBalanceIfLockExists() public {
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     assertEq(assets.length, 1, "Assets array length should be 1");
     assertEq(balances.length, 1, "Balances array length should be 1");
 
-    IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, veloLpType);
+    IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
     console.log("Lock start time test:", lock.start);
     console.log("Lock end time test:", lock.end);
@@ -61,10 +63,10 @@ contract BalanceOfNFT is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
 
-    (, , uint256[] memory boosts) = ve.balanceOfNFT(tokenId);
+    (, , uint256[] memory boosts) = IveION(ve).balanceOfNFT(tokenId);
 
     assertEq(boosts[0], 1e18, "Boost should match the lock input");
   }
@@ -84,16 +86,16 @@ contract BalanceOfNFT is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
-    uint256 tokenId = ve.createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
+    uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
     vm.stopPrank();
 
-    (, , uint256[] memory boosts) = ve.balanceOfNFT(tokenId);
+    (, , uint256[] memory boosts) = IveION(ve).balanceOfNFT(tokenId);
 
     assertApproxEqRel(boosts[0], 2e18, 0.01e18, "Boost should match the lock input");
   }
 
   function test_balanceOfNFT_GetsBalanceForMultiLPLock() public {
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
       lockInputMultiLP.tokenId
     );
 
@@ -101,7 +103,10 @@ contract BalanceOfNFT is veIONTest {
     assertEq(balances.length, 2, "Balances array length should be 1");
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInputMultiLP.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(
+        lockInputMultiLP.tokenId,
+        IveION(ve).s_lpType(assets[i])
+      );
       assertEq(assets[i], lockInputMultiLP.tokenAddresses[i], "Asset address should match the lock input");
       assertApproxEqRel(
         balances[i],
@@ -120,10 +125,12 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceDecreasesLinearlyWithTime() public {
     vm.warp(block.timestamp + 26 weeks);
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(
         balances[i],
@@ -142,10 +149,12 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceEventuallyGoesToZero() public {
     vm.warp(block.timestamp + 52 weeks);
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], 0, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -159,13 +168,15 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOFNFT_ShouldGiveEventBasedBoost() public {
     uint256 limitedBoost = 0.5e18;
-    ve.toggleLimitedBoost(true);
-    ve.setLimitedTimeBoost(limitedBoost);
+    IveION(ve).toggleLimitedBoost(true);
+    IveION(ve).setLimitedTimeBoost(limitedBoost);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount / 2, 0.01e18, "Balance should approximately match the lock input");
       assertEq(
@@ -187,10 +198,10 @@ contract BalanceOfNFT is veIONTest {
     address ionicPoolAddress = address(0x456);
     address veAEROAddress = address(0x789);
 
-    ve.setAeroVoting(aeroVotingAddress);
-    ve.setAeroVoterBoost(aeroVoterBoost);
-    ve.setIonicPool(ionicPoolAddress);
-    ve.setVeAERO(veAEROAddress);
+    IveION(ve).setAeroVoting(aeroVotingAddress);
+    IveION(ve).setAeroVoterBoost(aeroVoterBoost);
+    IveION(ve).setIonicPool(ionicPoolAddress);
+    IveION(ve).setVeAERO(veAEROAddress);
 
     vm.mockCall(
       veAEROAddress,
@@ -216,10 +227,12 @@ contract BalanceOfNFT is veIONTest {
       abi.encode(1e18) // Mock that the weight of the ionicPool is 1e18
     );
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount / 2, 0.01e18, "Balance should approximately match the lock input");
       assertEq(
@@ -249,10 +262,10 @@ contract BalanceOfNFT is veIONTest {
     vars.poolVote[0] = vars.ionicPoolAddress;
     vars.weights[0] = 1e18; // 100% of the vote
 
-    ve.setAeroVoting(vars.aeroVotingAddress);
-    ve.setAeroVoterBoost(vars.aeroVoterBoost);
-    ve.setIonicPool(vars.ionicPoolAddress);
-    ve.setVeAERO(vars.veAEROAddress);
+    IveION(ve).setAeroVoting(vars.aeroVotingAddress);
+    IveION(ve).setAeroVoterBoost(vars.aeroVoterBoost);
+    IveION(ve).setIonicPool(vars.ionicPoolAddress);
+    IveION(ve).setVeAERO(vars.veAEROAddress);
 
     vars.aeroWhale = 0x6cDcb1C4A4D1C3C6d054b27AC5B77e89eAFb971d;
     vm.prank(vars.aeroWhale);
@@ -268,12 +281,12 @@ contract BalanceOfNFT is veIONTest {
 
     console.log("Pool weight", weight);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
       baseTokenIdSingleLp
     );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(baseTokenIdSingleLp, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(baseTokenIdSingleLp, IveION(ve).s_lpType(assets[i]));
       assertGt(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
       console.log("Lock", i);
       console.log("Asset:", assets[i]);
@@ -288,10 +301,10 @@ contract BalanceOfNFT is veIONTest {
     address ionicPoolAddress = address(0x456);
     address veAEROAddress = address(0x789);
 
-    ve.setAeroVoting(aeroVotingAddress);
-    ve.setAeroVoterBoost(aeroVoterBoost);
-    ve.setIonicPool(ionicPoolAddress);
-    ve.setVeAERO(veAEROAddress);
+    IveION(ve).setAeroVoting(aeroVotingAddress);
+    IveION(ve).setAeroVoterBoost(aeroVoterBoost);
+    IveION(ve).setIonicPool(ionicPoolAddress);
+    IveION(ve).setVeAERO(veAEROAddress);
 
     vm.mockCall(
       veAEROAddress,
@@ -305,10 +318,12 @@ contract BalanceOfNFT is veIONTest {
       abi.encode(1e18) // Mock that the weight of the ionicPool is 1e18
     );
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount / 2, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -322,11 +337,13 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_GetsBalanceForPermanentLock() public {
     vm.prank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(MAXTIME), "Boost should match the lock input");
@@ -340,13 +357,15 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceOfPermanentDoesNotDecay() public {
     vm.prank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
 
     vm.warp(block.timestamp + 10 * 365 * 86400);
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(MAXTIME), "Boost should match the lock input");
@@ -362,17 +381,24 @@ contract BalanceOfNFT is veIONTest {
     address delegator = address(0x2352);
     LockInfo memory delegatorInfo = _createLockInternal(delegator);
     vm.prank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
 
     vm.startPrank(delegator);
-    ve.lockPermanent(delegatorInfo.tokenAddress, delegatorInfo.tokenId);
-    ve.delegate(delegatorInfo.tokenId, lockInput.tokenId, delegatorInfo.tokenAddress, delegatorInfo.tokenAmount);
+    IveION(ve).lockPermanent(delegatorInfo.tokenAddress, delegatorInfo.tokenId);
+    IveION(ve).delegate(
+      delegatorInfo.tokenId,
+      lockInput.tokenId,
+      delegatorInfo.tokenAddress,
+      delegatorInfo.tokenAmount
+    );
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount * 2, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(MAXTIME), "Boost should match the lock input");
@@ -383,14 +409,16 @@ contract BalanceOfNFT is veIONTest {
     address delegatee = address(0x2352);
     LockInfo memory delegateeInfo = _createLockInternal(delegatee);
     vm.prank(delegatee);
-    ve.lockPermanent(delegateeInfo.tokenAddress, delegateeInfo.tokenId);
+    IveION(ve).lockPermanent(delegateeInfo.tokenAddress, delegateeInfo.tokenId);
 
     vm.startPrank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
-    ve.delegate(lockInput.tokenId, delegateeInfo.tokenId, lockInput.tokenAddress, lockInput.tokenAmount);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).delegate(lockInput.tokenId, delegateeInfo.tokenId, lockInput.tokenAddress, lockInput.tokenAmount);
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
@@ -405,13 +433,15 @@ contract BalanceOfNFT is veIONTest {
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), additionalAmount);
-    ve.increaseAmount(lockInput.tokenAddress, lockInput.tokenId, lockInput.tokenAmount, false);
+    IveION(ve).increaseAmount(lockInput.tokenAddress, lockInput.tokenId, lockInput.tokenAmount, false);
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(
         balances[i],
@@ -429,7 +459,7 @@ contract BalanceOfNFT is veIONTest {
 
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), additionalAmount);
-    ve.lockAdditionalAsset(
+    IveION(ve).lockAdditionalAsset(
       address(modeBalancer8020IonEth),
       additionalAmount,
       lockInput.tokenId,
@@ -438,10 +468,12 @@ contract BalanceOfNFT is veIONTest {
     );
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lock.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount / 2, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -450,12 +482,14 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceChangesAfterIncreaseUnlockTime() public {
     vm.prank(user);
-    ve.increaseUnlockTime(lockInput.tokenAddress, lockInput.tokenId, 2 * 365 * 86400);
+    IveION(ve).increaseUnlockTime(lockInput.tokenAddress, lockInput.tokenId, 2 * 365 * 86400);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lock.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], lock.amount, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -464,12 +498,14 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceChangesAfterWithdraw() public {
     vm.prank(user);
-    ve.withdraw(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).withdraw(lockInput.tokenAddress, lockInput.tokenId);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], lock.tokenAddress, "Asset address should match the lock input");
       assertApproxEqRel(balances[i], 0, 0.01e18, "Balance should approximately match the lock input");
       assertEq(boosts[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -478,21 +514,26 @@ contract BalanceOfNFT is veIONTest {
 
   function test_balanceOfNFT_BalanceChangesAfterMerge() public {
     vm.prank(user);
-    ve.merge(lockInput.tokenId, lockInputMultiLP.tokenId);
+    IveION(ve).merge(lockInput.tokenId, lockInputMultiLP.tokenId);
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets[i]));
       assertEq(assets[i], address(0), "Asset address should be 0");
       assertEq(balances[i], 0, "Balance should be 0");
       assertEq(boosts[i], 0, "Boost should match the lock input");
     }
 
-    (address[] memory assetsMultiLP, uint256[] memory balancesMultiLP, uint256[] memory boostsMultiLP) = ve
+    (address[] memory assetsMultiLP, uint256[] memory balancesMultiLP, uint256[] memory boostsMultiLP) = IveION(ve)
       .balanceOfNFT(lockInputMultiLP.tokenId);
 
-    IveION.LockedBalance memory lock = ve.getUserLock(lockInputMultiLP.tokenId, ve.s_lpType(assetsMultiLP[0]));
+    IveION.LockedBalance memory lock = IveION(ve).getUserLock(
+      lockInputMultiLP.tokenId,
+      IveION(ve).s_lpType(assetsMultiLP[0])
+    );
     assertEq(assetsMultiLP[0], lockInputMultiLP.tokenAddresses[0], "Asset address should match the lock input");
     assertApproxEqRel(
       balancesMultiLP[0],
@@ -508,26 +549,30 @@ contract BalanceOfNFT is veIONTest {
   }
 
   function test_balanceOfNFT_BalanceChangesAfterSplit() public {
-    ve.toggleSplit(address(0), true);
+    IveION(ve).toggleSplit(address(0), true);
     vm.prank(user);
-    (uint256 tokenId1, uint256 tokenId2) = ve.split(
+    (uint256 tokenId1, uint256 tokenId2) = IveION(ve).split(
       lockInput.tokenAddress,
       lockInput.tokenId,
       lockInput.tokenAmount / 2
     );
 
-    (address[] memory assets1, uint256[] memory balances1, uint256[] memory boosts1) = ve.balanceOfNFT(tokenId1);
-    (address[] memory assets2, uint256[] memory balances2, uint256[] memory boosts2) = ve.balanceOfNFT(tokenId2);
+    (address[] memory assets1, uint256[] memory balances1, uint256[] memory boosts1) = IveION(ve).balanceOfNFT(
+      tokenId1
+    );
+    (address[] memory assets2, uint256[] memory balances2, uint256[] memory boosts2) = IveION(ve).balanceOfNFT(
+      tokenId2
+    );
 
     for (uint256 i = 0; i < assets1.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets1[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets1[i]));
       assertEq(assets1[i], lock.tokenAddress, "Asset address should be 0");
       assertApproxEqRel(balances1[i], MINT_AMT / 4, 0.01e18, "Balance should be 0");
       assertEq(boosts1[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
     }
 
     for (uint256 i = 0; i < assets2.length; i++) {
-      IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, ve.s_lpType(assets2[i]));
+      IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, IveION(ve).s_lpType(assets2[i]));
       assertEq(assets2[i], lock.tokenAddress, "Asset address should be 0");
       assertApproxEqRel(balances2[i], MINT_AMT / 4, 0.01e18, "Balance should be 0");
       assertEq(boosts2[i], harness.exposed_calculateBoost(lock.end - lock.start), "Boost should match the lock input");
@@ -538,11 +583,13 @@ contract BalanceOfNFT is veIONTest {
     address delegatee = address(0x2352);
 
     vm.startPrank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
-    ve.unlockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).unlockPermanent(lockInput.tokenAddress, lockInput.tokenId);
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
@@ -555,19 +602,21 @@ contract BalanceOfNFT is veIONTest {
     address delegatee = address(0x2352);
     LockInfo memory delegateeInfo = _createLockInternal(delegatee);
     vm.prank(delegatee);
-    ve.lockPermanent(delegateeInfo.tokenAddress, delegateeInfo.tokenId);
+    IveION(ve).lockPermanent(delegateeInfo.tokenAddress, delegateeInfo.tokenId);
 
     vm.startPrank(user);
-    ve.lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
-    ve.delegate(lockInput.tokenId, delegateeInfo.tokenId, lockInput.tokenAddress, lockInput.tokenAmount);
+    IveION(ve).lockPermanent(lockInput.tokenAddress, lockInput.tokenId);
+    IveION(ve).delegate(lockInput.tokenId, delegateeInfo.tokenId, lockInput.tokenAddress, lockInput.tokenAmount);
     uint256[] memory toTokenIds = new uint256[](1);
     toTokenIds[0] = delegateeInfo.tokenId;
     uint256[] memory amounts = new uint256[](1);
     amounts[0] = lockInput.tokenAmount;
-    ve.removeDelegatees(lockInput.tokenId, toTokenIds, lockInput.tokenAddress, amounts);
+    IveION(ve).removeDelegatees(lockInput.tokenId, toTokenIds, lockInput.tokenAddress, amounts);
     vm.stopPrank();
 
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(lockInput.tokenId);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(
+      lockInput.tokenId
+    );
 
     for (uint256 i = 0; i < assets.length; i++) {
       assertEq(assets[i], lockInput.tokenAddress, "Asset address should match the lock input");
@@ -577,7 +626,7 @@ contract BalanceOfNFT is veIONTest {
   }
 
   function test_balanceOfNFT_NonExistentTokenId() public {
-    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = ve.balanceOfNFT(23526);
+    (address[] memory assets, uint256[] memory balances, uint256[] memory boosts) = IveION(ve).balanceOfNFT(23526);
     assertEq(assets.length, 0, "Assets array should be empty");
     assertEq(balances.length, 0, "Balances array should be empty");
     assertEq(boosts.length, 0, "Boosts array should be empty");

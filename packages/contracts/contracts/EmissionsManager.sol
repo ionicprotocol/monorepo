@@ -24,7 +24,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   uint256 public collateralBp;
   PoolDirectory public fpd;
   ERC20 public rewardToken;
-  IveION public veION;
+  address public veION;
 
   bytes public nonBlacklistableTargetBytecode;
   mapping(address => bool) public isBlacklisted;
@@ -66,7 +66,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     emit Initialized(_protocolAddress, address(_rewardToken), _collateralBp, _nonBlacklistableTargetBytecode);
   }
 
-  function setVeIon(IveION _veIon) external onlyOwner {
+  function setVeIon(address _veIon) external onlyOwner {
     require(address(_veIon) != address(0), "Invalid veION address");
     veION = _veIon;
     emit VeIonSet(address(_veIon));
@@ -113,7 +113,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   function _checkCollateralRatio(address _user) internal view returns (bool) {
     uint256 userCollateralValue = _getUserTotalCollateral(_user);
     if (userCollateralValue == 0) return true;
-    uint256 userLPValue = veION.getTotalEthValueOfTokens(_user);
+    uint256 userLPValue = IveION(veION).getTotalEthValueOfTokens(_user);
     if ((userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp) {
       return true;
     } else return false;

@@ -12,19 +12,19 @@ contract LockPermanent is veIONTest {
     user = address(0x1234);
     lockInputMultiLP = _createLockMultipleInternal(user);
     lockInput = _createLockInternal(user);
-    ve.setVoter(address(this));
+    IveION(ve).setVoter(address(this));
   }
 
   function test_lockPermanent_UserCanLockPermanent() public {
     vm.prank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory lock = ve.getUserLock(lockInput.tokenId, veloLpType);
+    IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
-    uint256 userEpoch = ve.s_userPointEpoch(lockInput.tokenId, veloLpType);
-    IveION.UserPoint memory userPoint = ve.getUserPoint(
+    uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, veloLpType);
+    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
-      ve.s_lpType(lockInput.tokenAddress),
+      IveION(ve).s_lpType(lockInput.tokenAddress),
       userEpoch
     );
     assertEq(
@@ -48,14 +48,14 @@ contract LockPermanent is veIONTest {
   function test_lockPermanent_RevertIfNotOwner() public {
     vm.prank(address(0x2352));
     vm.expectRevert(abi.encodeWithSignature("NotOwner()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
   function test_lockPermanent_RevertIfPermanentLock() public {
     vm.startPrank(user);
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
     vm.expectRevert(abi.encodeWithSignature("PermanentLock()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
     vm.stopPrank();
   }
 
@@ -63,12 +63,12 @@ contract LockPermanent is veIONTest {
     vm.warp(block.timestamp + lockInput.duration);
     vm.prank(user);
     vm.expectRevert(abi.encodeWithSignature("LockExpired()"));
-    ve.lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
   }
 
   function test_lockPermanent_RevertIfNoLockFound() public {
     vm.prank(user);
     vm.expectRevert("ERC721: invalid token ID");
-    ve.lockPermanent(address(modeVelodrome5050IonMode), 933);
+    IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), 933);
   }
 }
