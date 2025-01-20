@@ -23,6 +23,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
   uint256 public vaultShareHWM;
   uint256 public performanceFee;
   address public feeRecipient;
+  address public rewardsRecipient;
   IonicFlywheelLensRouter_4626 public flywheelLensRouter;
 
   /* ========== EVENTS ========== */
@@ -33,6 +34,8 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     address oldFeeRecipient,
     address newFeeRecipient
   );
+
+  event UpdatedRewardsRecipient(address oldRewardsRecipient, address newRewardsRecipient);
 
   /* ========== INITIALIZER ========== */
 
@@ -48,6 +51,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
 
     vaultShareHWM = 10**asset_.decimals();
     feeRecipient = msg.sender;
+    rewardsRecipient = msg.sender;
     flywheelLensRouter = IonicFlywheelLensRouter_4626(flywheelLensRouter_);
   }
 
@@ -139,6 +143,20 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
     _asset().safeTransfer(receiver, assets);
+  }
+
+  /* ========== REWARDS FUNCTIONS ========== */
+
+  function updateRewardsRecipient(address newRewardsRecipient) external onlyOwner {
+    emit UpdatedRewardsRecipient(rewardsRecipient, newRewardsRecipient);
+    rewardsRecipient = newRewardsRecipient;
+  }
+
+  function claimRewards() external {
+    (address[] memory tokens, uint256[] memory amounts) = flywheelLensRouter.claimAllRewardTokens(address(this));
+    for (uint256 i = 0; i < tokens.length; i++) {
+      _asset().safeTransfer(rewardsRecipient, amounts[i]);
+    }
   }
 
   /* ========== FEE FUNCTIONS ========== */
