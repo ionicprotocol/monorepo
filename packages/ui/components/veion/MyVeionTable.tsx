@@ -136,7 +136,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
         const data = row.original;
 
         return (
-          <div className="flex gap-2 w-full pr-6">
+          <div className="flex gap-2 w-full">
             {data.enableClaim ? (
               <>
                 <ActionButton

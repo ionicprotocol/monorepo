@@ -7,10 +7,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
 import { base, optimism, mode } from 'viem/chains';
 
+import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import FlatMap from '@ui/components/points_comp/FlatMap';
 import ToggleLinks from '@ui/components/ToggleLink';
-import { Button } from '@ui/components/ui/button';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import {
@@ -61,53 +61,56 @@ export default function Governance() {
       />
 
       <Card className="w-full bg-grayone">
-        <CardHeader>
-          <div className="flex w-full items-center justify-between mb-4">
-            <span className="text-lg font-semibold">5 veION</span>
-            <span className="text-xs flex flex-col text-right">
-              My Voting Power : 1134
-              <span className="text-white/50 text-xs">10% of all veION</span>
-            </span>
-          </div>
-          <div className="my-3 w-full">
-            <FlatMap />
-          </div>
-        </CardHeader>
-        <CardContent className="border-none">
-          <div className="w-full flex justify-between items-center">
-            <div className="bg-grayUnselect rounded-md mb-3 inline-block">
+        <CardHeader className="px-6 pt-6 pb-2">
+          <div className="flex w-full items-center justify-between">
+            <div className="bg-grayUnselect rounded-md">
               <ToggleLinks
                 arrText={['My veION', 'Delegated veION']}
                 baseUrl="/veion/governance"
                 currentChain={chain}
               />
             </div>
-            {view === 'My veION' && (
-              <>
-                <Button
-                  className="bg-accent text-black hover:bg-accent/90 rounded-xl px-4 py-2 text-sm font-medium"
-                  onClick={() => setIsUniversalClaimOpen(true)}
-                  disabled={isLoadingRewards || totalRewards === 0n}
-                >
-                  {isLoadingRewards ? (
-                    'Loading...'
-                  ) : (
-                    <>
-                      Claim Rewards (
-                      {Math.round(+formatEther(totalRewards)).toLocaleString()})
-                    </>
-                  )}
-                </Button>
-                <UniversalClaimDialog
-                  isOpen={isUniversalClaimOpen}
-                  onClose={() => setIsUniversalClaimOpen(false)}
-                  chainIds={allChains}
-                  mode="selective"
-                />
-              </>
-            )}
+            <div className="flex gap-4 items-center">
+              <div className="flex flex-col text-right min-w-[160px] justify-center">
+                <span className="text-xs whitespace-nowrap">
+                  My Voting Power : <span className="font-medium">1134</span>
+                </span>
+                <span className="text-white/50 text-xs whitespace-nowrap">
+                  10% of all veION
+                </span>
+              </div>
+              {view === 'My veION' && (
+                <>
+                  <ActionButton
+                    action={() => setIsUniversalClaimOpen(true)}
+                    disabled={isLoadingRewards || totalRewards === 0n}
+                    className="text-[12px] text-black"
+                    label={
+                      isLoadingRewards ? (
+                        'Loading...'
+                      ) : (
+                        <>
+                          Claim Rewards (
+                          {Math.round(
+                            +formatEther(totalRewards)
+                          ).toLocaleString()}
+                          )
+                        </>
+                      )
+                    }
+                  />
+                  <UniversalClaimDialog
+                    isOpen={isUniversalClaimOpen}
+                    onClose={() => setIsUniversalClaimOpen(false)}
+                    chainIds={allChains}
+                    mode="selective"
+                  />
+                </>
+              )}
+            </div>
           </div>
-
+        </CardHeader>
+        <CardContent className="border-none">
           {view === 'My veION' ? (
             <MyVeionTable
               data={lockedData.filter(

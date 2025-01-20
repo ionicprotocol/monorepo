@@ -53,10 +53,14 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
 
   return (
     <Card className="w-full bg-grayone">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>
           {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
         </CardTitle>
+        <div className="text-white/60 text-md flex items-center gap-1">
+          Current voting round ends:
+          <span className="text-white font-medium">2 days</span>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between gap-8">

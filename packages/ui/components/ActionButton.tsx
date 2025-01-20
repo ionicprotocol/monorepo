@@ -11,7 +11,7 @@ interface ActionButtonProps {
   action?: () => void;
   href?: string;
   disabled?: boolean;
-  label: string;
+  label: React.ReactNode | string;
   bg?: string;
   leftIcon?: LucideIcon;
   rightIcon?: LucideIcon;
@@ -20,9 +20,9 @@ interface ActionButtonProps {
   className?: string;
 }
 
-const baseStyles = `rounded-md py-2.5 px-4 capitalize truncate 
+const baseStyles = `h-9 rounded-md px-4 capitalize truncate 
   disabled:opacity-50 hover:opacity-80 
-  inline-flex items-center justify-center gap-2`;
+  inline-flex items-center justify-center gap-2 font-semibold`;
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   half,
