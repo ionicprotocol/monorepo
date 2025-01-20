@@ -5,8 +5,8 @@ import { useState } from 'react';
 
 import Image from 'next/image';
 
-import { MarketSelector, EpochInfo } from '@ui/components/veion';
 import { Card, CardContent } from '@ui/components/ui/card';
+import { MarketSelector, EpochInfo } from '@ui/components/veion';
 
 export default function IncentivesPage() {
   const [isAcknowledged, setIsAcknowledged] = useState(false);

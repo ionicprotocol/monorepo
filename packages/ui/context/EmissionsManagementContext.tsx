@@ -34,8 +34,12 @@ export type VoteMarketRow = {
   currentAmount: string;
   projectedMarketAPR: string;
   incentives: {
-    balance: number;
     balanceUSD: number;
+    tokens: {
+      tokenSymbol: string;
+      tokenAmount: number;
+      tokenAmountUSD: number;
+    }[];
   };
   veAPR: string;
   totalVotes: {
@@ -68,6 +72,39 @@ type EmissionsContextType = {
   updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
   resetVotes: () => void;
   refreshVotingData: (nftId: string) => Promise<void>;
+};
+
+const mockIncentives = () => {
+  // Available token options
+  const tokenOptions = [
+    { symbol: 'ION', priceRange: [10, 50] },
+    { symbol: 'USDC', priceRange: [0.99, 1.01] },
+    { symbol: 'FRAX', priceRange: [0.99, 1.01] },
+    { symbol: 'ETH', priceRange: [2000, 3000] }
+  ];
+
+  // Randomly select 1-3 unique tokens
+  const numTokens = Math.floor(Math.random() * 2) + 1; // 1 or 2 tokens
+  const selectedTokens = [...tokenOptions]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, numTokens);
+
+  const tokens = selectedTokens.map((token) => {
+    const tokenAmount = Math.random() * 1000;
+    const price =
+      token.priceRange[0] +
+      Math.random() * (token.priceRange[1] - token.priceRange[0]);
+    return {
+      tokenSymbol: token.symbol,
+      tokenAmount,
+      tokenAmountUSD: tokenAmount * price
+    };
+  });
+
+  return {
+    balanceUSD: tokens.reduce((sum, token) => sum + token.tokenAmountUSD, 0),
+    tokens
+  };
 };
 
 export const EmissionsContext = createContext<EmissionsContextType>({
@@ -200,10 +237,7 @@ export const EmissionsProvider: React.FC<{
                 marketAddress: asset.cToken as `0x${string}`,
                 currentAmount: (Math.random() * 1000000).toFixed(2),
                 projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
-                incentives: {
-                  balance: Math.random() * 1000000,
-                  balanceUSD: Math.random() * 1000000
-                },
+                incentives: mockIncentives(),
                 veAPR: (Math.random() * 8).toFixed(2) + '%',
                 totalVotes: {
                   percentage: (Math.random() * 100).toFixed(2) + '%',
@@ -235,10 +269,7 @@ export const EmissionsProvider: React.FC<{
                 marketAddress: asset.cToken as `0x${string}`,
                 currentAmount: (Math.random() * 1000000).toFixed(2),
                 projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
-                incentives: {
-                  balance: Math.random() * 1000000,
-                  balanceUSD: Math.random() * 1000000
-                },
+                incentives: mockIncentives(),
                 veAPR: (Math.random() * 8).toFixed(2) + '%',
                 totalVotes: {
                   percentage: (Math.random() * 100).toFixed(2) + '%',

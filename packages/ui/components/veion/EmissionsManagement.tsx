@@ -33,6 +33,7 @@ import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
+import BalanceBreakdown from '../markets/Cells/BalanceBreakdown';
 
 interface EmissionsManagementTableProps {
   tokenId: number;
@@ -190,13 +191,10 @@ function EmissionsManagement({
         ),
         sortingFn: 'numerical',
         cell: ({ row }) => (
-          <div>
-            <TokenBalance
-              balance={row.original.incentives.balance}
-              balanceUSD={row.original.incentives.balanceUSD}
-              tokenName={row.original.asset}
-            />
-          </div>
+          <BalanceBreakdown
+            balanceUSD={row.original.incentives.balanceUSD}
+            tokens={row.original.incentives.tokens}
+          />
         )
       },
       {
