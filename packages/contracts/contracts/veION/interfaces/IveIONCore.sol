@@ -114,11 +114,18 @@ interface IveIONCore {
   ) external;
 
   /**
-   * @notice Whitelists tokens for locking
-   * @param _tokens Array of token addresses to whitelist
-   * @param _isWhitelisted Array of booleans indicating whitelist status
+   * @notice Locks a token permanently.
+   * @param _tokenAddress The address of the token to lock.
+   * @param _tokenId The ID of the token to lock.
    */
-  function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external;
+  function lockPermanent(address _tokenAddress, uint256 _tokenId) external;
+
+  /**
+   * @notice Unlocks a permanently locked token.
+   * @param _tokenAddress The address of the token to unlock.
+   * @param _tokenId The ID of the token to unlock.
+   */
+  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external;
 
   /**
    * @notice Updates voting status for a veNFT
@@ -128,25 +135,12 @@ interface IveIONCore {
   function voting(uint256 _tokenId, bool _voting) external;
 
   /**
-   * @notice Withdraws protocol fees collected
-   * @param _tokenAddress Address of the token to withdraw fees for
-   * @param _recipient Address to receive the fees
-   */
-  function withdrawProtocolFees(address _tokenAddress, address _recipient) external;
-
-  /**
-   * @notice Withdraws distributed fees collected
-   * @param _tokenAddress Address of the token to withdraw fees for
-   * @param _recipient Address to receive the fees
-   */
-  function withdrawDistributedFees(address _tokenAddress, address _recipient) external;
-
-  /**
-   * @notice Sets the implementation address for the contract.
+   * @notice Sets the implementation addresses for the veION contract extensions.
    * @dev This function can only be called by authorized entities.
-   * @param _implementation The address of the new implementation contract.
+   * @param _veIONFirstExtension The address of the first extension contract.
+   * @param _veIONSecondExtension The address of the second extension contract.
    */
-  function setImplementation(address _implementation) external;
+  function setExtensions(address _veIONFirstExtension, address _veIONSecondExtension) external;
 }
 
 /// @title IAeroVotingEscrow Interface

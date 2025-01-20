@@ -185,5 +185,5 @@ interface IveIONStructsEnumsErrorsEvents {
   event Voted(uint256 _tokenId, bool _voting);
   event DelegatorsBlocked(uint256 indexed _tokenId, address indexed _lpToken, bool _blocked);
   event Initialized(address indexed addressesProvider);
-  event ImplementationSet(address indexed _implementation);
+  event ExtensionsSet(address indexed _firstExtension, address indexed _secondExtension);
 }

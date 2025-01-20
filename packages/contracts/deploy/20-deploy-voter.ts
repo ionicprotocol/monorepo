@@ -1,5 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, pad, toBytes, Hash, parseEther } from "viem";
+import { Address, fromBytes, pad, toBytes, Hash, parseEther, Hex } from "viem";
 import { base, bob, fraxtal, mode, optimism } from "viem/chains";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
@@ -38,7 +38,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         execute: {
           init: {
             methodName: "initialize",
-            args: [[chainDeployParams.ION], mpo, chainDeployParams.ION, veION]
+            args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
           }
         },
         owner: multisig
@@ -69,7 +69,12 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     hash = await voter.write.setLpTokens([veParams.lpTokens], {
       from: deployer
     });
-    await publicClient.waitForTransactionReceipt({ hash });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    if (receipt.status === "success") {
+      console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
+    } else {
+      console.error(`Transaction ${hash} failed: ${receipt.status}`);
+    }
   }
 
   const poolDirectory = await viem.getContractAt(
@@ -101,7 +106,12 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     hash = await voter.write.addMarkets([allMarkets], {
       from: deployer
     });
-    await publicClient.waitForTransactionReceipt({ hash });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    if (receipt.status === "success") {
+      console.log(`Successfully set markets for: ${allMarkets}`);
+    } else {
+      console.error(`Transaction ${hash} failed: ${receipt.status}`);
+    }
   } catch (error) {
     console.error(`Error adding markets`);
   }
@@ -140,7 +150,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       console.log(`Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}`);
 
       // Collect data for setMarketRewardAccumulators
-      rewardAccumulators.push(rewardAccumulatorDeployment.address);
+      rewardAccumulators.push(rewardAccumulatorDeployment.address as Hex);
       marketAddresses.push(market.marketAddress);
       marketSides.push(market.side);
     } catch (error) {
@@ -156,8 +166,10 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators], {
       from: deployer
     });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log("Successfully set market reward accumulators.");
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+    console.log(
+      `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
+    );
   } catch (error) {
     console.error("Error setting market reward accumulators:", error);
   }
@@ -191,7 +203,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       }
 
       console.log(`Deployed BribeRewards at: ${bribeDeployment.address}`);
-      bribes.push(bribeDeployment.address);
+      bribes.push(bribeDeployment.address as Hex);
     } catch (error) {
       console.error(`Error deploying BribeRewards for RewardAccumulator: ${rewardAccumulator}`, error);
     }
@@ -200,7 +212,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   try {
     const txHash = await voter.write.setBribes([rewardAccumulators, bribes], { from: deployer });
     await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log("Successfully set bribes for RewardAccumulators.");
+    console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
   } catch (error) {
     console.error("Error setting bribes in Voter contract:", error);
   }
@@ -209,18 +221,20 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║           SET MAX VOTING NUM             ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await voter.write.setMaxVotingNum([veParams.maxVotingNum], { from: deployer });
+    const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum)], { from: deployer });
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
   } catch (error) {
     console.error("Error setting max voting number:", error);
   }
 
+  const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
+
   // ╔══════════════════════════════════════════╗
   // ║           SET VOTER ON VEION             ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await veION.write.setVoter([voter.address], { from: deployer });
+    const txHash = await IveION.write.setVoter([voter.address], { from: deployer });
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set voter: ${voter.address}`);
   } catch (error) {

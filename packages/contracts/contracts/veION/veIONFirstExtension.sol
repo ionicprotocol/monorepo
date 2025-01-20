@@ -192,64 +192,12 @@ contract veIONFirstExtension is
   }
 
   /// @inheritdoc IveIONFirstExtension
-  function toggleSplit(address _account, bool _isAllowed) external onlyOwner {
-    s_canSplit[_account] = _isAllowed;
-    emit SplitToggle(_account, _isAllowed);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function lockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    if (_newLocked.isPermanent) revert PermanentLock();
-    if (_newLocked.end <= block.timestamp) revert LockExpired();
-    if (_newLocked.amount <= 0) revert NoLockFound();
-
-    s_permanentLockBalance[_lpType] += _newLocked.amount;
-    _newLocked.end = 0;
-    _newLocked.isPermanent = true;
-    _newLocked.boost = _calculateBoost(_MAXTIME);
-
-    s_locked[_tokenId][_lpType] = _newLocked;
-    _checkpoint(_tokenId, _newLocked, _lpType);
-
-    emit PermanentLockCreated(_tokenAddress, _tokenId, _newLocked.amount);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
-    LpTokenType _lpType = s_lpType[_tokenAddress];
-    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    if (!_newLocked.isPermanent) revert NotPermanentLock();
-    if (s_delegatees[_tokenId][_lpType].length() != 0) revert TokenHasDelegatees();
-    if (s_delegators[_tokenId][_lpType].length() != 0) revert TokenHasDelegators();
-
-    s_permanentLockBalance[_lpType] -= _newLocked.amount;
-    _newLocked.end = ((block.timestamp + _MAXTIME) / _WEEK) * _WEEK;
-    _newLocked.isPermanent = false;
-
-    s_locked[_tokenId][_lpType] = _newLocked;
-    _checkpoint(_tokenId, _newLocked, _lpType);
-
-    emit PermanentLockRemoved(_tokenAddress, _tokenId, _newLocked.amount);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
   function claimEmissions(address _tokenAddress) external nonReentrant {
     LpTokenType _lpType = s_lpType[_tokenAddress];
     IStakeStrategy _stakeStrategy = s_stakeStrategy[_lpType];
     if (_stakeStrategy.userStakingWallet(_msgSender()) == address(0)) revert NoUnderlyingStake();
     _stakeStrategy.claim(_msgSender());
     emit EmissionsClaimed(_msgSender(), _tokenAddress);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function allowDelegators(uint256 _tokenId, address _tokenAddress, bool _blocked) external nonReentrant {
-    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
-    s_delegatorsBlocked[_tokenId][_tokenAddress] = _blocked;
-    emit DelegatorsBlocked(_tokenId, _tokenAddress, _blocked);
   }
 
   /**
@@ -345,6 +293,7 @@ contract veIONFirstExtension is
     emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
   }
 
+  /// @inheritdoc IveIONFirstExtension
   function removeDelegatees(
     uint256 fromTokenId,
     uint256[] memory toTokenIds,
@@ -356,6 +305,13 @@ contract veIONFirstExtension is
     for (uint256 i = 0; i < toTokenIdsLength; i++) {
       _removeDelegation(fromTokenId, toTokenIds[i], lpToken, amounts[i]);
     }
+  }
+
+  /// @inheritdoc IveIONFirstExtension
+  function allowDelegators(uint256 _tokenId, address _tokenAddress, bool _blocked) external nonReentrant {
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    s_delegatorsBlocked[_tokenId][_tokenAddress] = _blocked;
+    emit DelegatorsBlocked(_tokenId, _tokenAddress, _blocked);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -489,96 +445,20 @@ contract veIONFirstExtension is
     return totalBoost;
   }
 
-  // ╔═══════════════════════════════════════════════════════════════════════════╗
-  // ║                           Setter Functions                                ║
-  // ╚═══════════════════════════════════════════════════════════════════════════╝
-
-  /// @inheritdoc IveIONFirstExtension
-  function toggleLimitedBoost(bool _isBoosted) external onlyOwner {
-    s_limitedBoostActive = _isBoosted;
-    emit LimitedBoostToggled(_isBoosted);
+  /**
+   * @notice Retrieves the ETH price of a given token.
+   * @dev Uses the MasterPriceOracle to fetch the price.
+   * @param _token The address of the token for which the ETH price is requested.
+   * @return The ETH price of the specified token.
+   */
+  function _getEthPrice(address _token) internal view returns (uint256) {
+    IMasterPriceOracle mpo = IMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    return mpo.price(_token);
   }
 
-  /// @inheritdoc IveIONFirstExtension
-  function setLimitedTimeBoost(uint256 _boostAmount) external onlyOwner {
-    if (_boostAmount <= 0) revert BoostAmountMustBeGreaterThanZero();
-    s_limitedBoost = _boostAmount;
-    emit LimitedTimeBoostSet(_boostAmount);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setVoter(address _voter) external onlyOwner {
-    if (address(_voter) == address(0)) revert InvalidAddress();
-    s_voter = _voter;
-    emit VoterSet(_voter);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setMinimumLockAmount(address _tokenAddress, uint256 _minimumAmount) external onlyOwner {
-    if (_minimumAmount <= 0) revert MinimumAmountMustBeGreaterThanZero();
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    s_minimumLockAmount[lpType] = _minimumAmount;
-    emit MinimumLockAmountSet(_tokenAddress, _minimumAmount);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setMinimumLockDuration(uint256 _minimumLockDuration) external onlyOwner {
-    if (_minimumLockDuration <= 0) revert MinimumLockDurationMustBeGreaterThanZero();
-    s_minimumLockDuration = _minimumLockDuration;
-    emit MinimumLockDurationSet(_minimumLockDuration);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setIonicPool(address _ionicPool) external onlyOwner {
-    if (address(_ionicPool) == address(0)) revert InvalidAddress();
-    s_ionicPool = _ionicPool;
-    emit IonicPoolSet(_ionicPool);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setAeroVoting(address _aeroVoting) external onlyOwner {
-    if (address(_aeroVoting) == address(0)) revert InvalidAddress();
-    s_aeroVoting = _aeroVoting;
-    emit AeroVotingSet(_aeroVoting);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setAeroVoterBoost(uint256 _aeroVoterBoost) external onlyOwner {
-    if (_aeroVoterBoost <= 0) revert AeroBoostAmountMustBeGreaterThanZero();
-    s_aeroVoterBoost = _aeroVoterBoost;
-    emit AeroVoterBoostSet(_aeroVoterBoost);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setMaxEarlyWithdrawFee(uint256 _maxEarlyWithdrawFee) external onlyOwner {
-    if (_maxEarlyWithdrawFee <= 0) revert MaxEarlyWithdrawFeeMustBeGreaterThanZero();
-    s_maxEarlyWithdrawFee = _maxEarlyWithdrawFee;
-    emit MaxEarlyWithdrawFeeSet(_maxEarlyWithdrawFee);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setLpTokenType(address _token, LpTokenType _type) external onlyOwner {
-    if (_token == address(0)) revert InvalidTokenAddress();
-    s_lpType[_token] = _type;
-    emit LpTokenTypeSet(_token, _type);
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function setStakeStrategy(LpTokenType _lpType, IStakeStrategy _strategy) external onlyOwner {
-    if (address(_strategy) == address(0)) revert InvalidStrategyAddress();
-    s_stakeStrategy[_lpType] = IStakeStrategy(_strategy);
-    emit StakeStrategySet(_lpType, address(_strategy));
-  }
-
-  function setVeAERO(address _veAERO) external onlyOwner {
-    if (_veAERO == address(0)) revert InvalidVeAEROAddress();
-    s_veAERO = _veAERO;
-    emit VeAEROSet(_veAERO);
-  }
-
-  // ╔═══════════════════════════════════════════════════════════════════════════╗
-  // ║                           View Functions                                  ║
-  // ╚═══════════════════════════════════════════════════════════════════════════╝
+  // // ╔═══════════════════════════════════════════════════════════════════════════╗
+  // // ║                           View Functions                                  ║
+  // // ╚═══════════════════════════════════════════════════════════════════════════╝
 
   /// @inheritdoc IveIONFirstExtension
   function balanceOfNFT(
@@ -610,16 +490,6 @@ contract veIONFirstExtension is
   }
 
   /// @inheritdoc IveIONFirstExtension
-  function getUserLock(uint256 _tokenId, LpTokenType _lpType) external view returns (LockedBalance memory) {
-    return s_locked[_tokenId][_lpType];
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function getOwnedTokenIds(address _owner) external view returns (uint256[] memory) {
-    return s_ownerToTokenIds[_owner].values();
-  }
-
-  /// @inheritdoc IveIONFirstExtension
   function getTotalEthValueOfTokens(address _owner) external view returns (uint256 totalValue) {
     IVoter voter = IVoter(s_voter);
     address[] memory lpTokens = voter.getAllLpRewardTokens();
@@ -631,37 +501,26 @@ contract veIONFirstExtension is
   }
 
   /**
-   * @notice Retrieves the ETH price of a given token.
-   * @dev Uses the MasterPriceOracle to fetch the price.
-   * @param _token The address of the token for which the ETH price is requested.
-   * @return The ETH price of the specified token.
+   * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other
+   * function in the contract matches the call data.
    */
-  function _getEthPrice(address _token) internal view returns (uint256) {
-    IMasterPriceOracle mpo = IMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
-    return mpo.price(_token);
-  }
+  fallback() external {
+    address impl = veIONSecondExtension;
+    require(impl != address(0), "Implementation not set");
 
-  /// @inheritdoc IveIONFirstExtension
-  function getAssetsLocked(uint256 _tokenId) external view returns (address[] memory) {
-    return s_assetsLocked[_tokenId].values();
-  }
+    assembly {
+      calldatacopy(0, 0, calldatasize())
 
-  /// @inheritdoc IveIONFirstExtension
-  function getDelegatees(uint256 _tokenId, LpTokenType _lpType) external view returns (uint256[] memory) {
-    return s_delegatees[_tokenId][_lpType].values();
-  }
+      let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
 
-  /// @inheritdoc IveIONFirstExtension
-  function getDelegators(uint256 _tokenId, LpTokenType _lpType) external view returns (uint256[] memory) {
-    return s_delegators[_tokenId][_lpType].values();
-  }
-
-  /// @inheritdoc IveIONFirstExtension
-  function getUserPoint(
-    uint256 _tokenId,
-    LpTokenType _lpType,
-    uint256 _epoch
-  ) external view returns (UserPoint memory) {
-    return s_userPointHistory[_tokenId][_lpType][_epoch];
+      returndatacopy(0, 0, returndatasize())
+      switch result
+      case 0 {
+        revert(0, returndatasize())
+      }
+      default {
+        return(0, returndatasize())
+      }
+    }
   }
 }

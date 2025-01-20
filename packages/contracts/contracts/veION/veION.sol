@@ -41,30 +41,6 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     emit Initialized(address(_ap));
   }
 
-  /**
-   * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other
-   * function in the contract matches the call data.
-   */
-  fallback() external {
-    address impl = veIONFirstExtension;
-    require(impl != address(0), "Implementation not set");
-
-    assembly {
-      calldatacopy(0, 0, calldatasize())
-
-      let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
-
-      returndatacopy(0, 0, returndatasize())
-      switch result
-      case 0 {
-        revert(0, returndatasize())
-      }
-      default {
-        return(0, returndatasize())
-      }
-    }
-  }
-
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                           External Functions                              ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -281,6 +257,45 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     }
   }
 
+  /// @inheritdoc IveIONCore
+  function lockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    if (_newLocked.isPermanent) revert PermanentLock();
+    if (_newLocked.end <= block.timestamp) revert LockExpired();
+    if (_newLocked.amount <= 0) revert NoLockFound();
+
+    s_permanentLockBalance[_lpType] += _newLocked.amount;
+    _newLocked.end = 0;
+    _newLocked.isPermanent = true;
+    _newLocked.boost = _calculateBoost(_MAXTIME);
+
+    s_locked[_tokenId][_lpType] = _newLocked;
+    _checkpoint(_tokenId, _newLocked, _lpType);
+
+    emit PermanentLockCreated(_tokenAddress, _tokenId, _newLocked.amount);
+  }
+
+  /// @inheritdoc IveIONCore
+  function unlockPermanent(address _tokenAddress, uint256 _tokenId) external nonReentrant {
+    LpTokenType _lpType = s_lpType[_tokenAddress];
+    LockedBalance memory _newLocked = s_locked[_tokenId][_lpType];
+    if (ownerOf(_tokenId) != _msgSender()) revert NotOwner();
+    if (!_newLocked.isPermanent) revert NotPermanentLock();
+    if (s_delegatees[_tokenId][_lpType].length() != 0) revert TokenHasDelegatees();
+    if (s_delegators[_tokenId][_lpType].length() != 0) revert TokenHasDelegators();
+
+    s_permanentLockBalance[_lpType] -= _newLocked.amount;
+    _newLocked.end = ((block.timestamp + _MAXTIME) / _WEEK) * _WEEK;
+    _newLocked.isPermanent = false;
+
+    s_locked[_tokenId][_lpType] = _newLocked;
+    _checkpoint(_tokenId, _newLocked, _lpType);
+
+    emit PermanentLockRemoved(_tokenAddress, _tokenId, _newLocked.amount);
+  }
+
   /**
    * @notice Overrides the _burn function from ERC721 to include additional logic for bridging.
    * @param tokenId Token ID to burn.
@@ -336,37 +351,10 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
   }
 
   /// @inheritdoc IveIONCore
-  function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
-    require(_tokens.length == _isWhitelisted.length, "Unequal Arrays");
-    for (uint256 i; i < _tokens.length; i++) s_whitelistedToken[_tokens[i]] = _isWhitelisted[i];
-    emit TokensWhitelisted(_tokens, _isWhitelisted);
-  }
-
-  /// @inheritdoc IveIONCore
   function voting(uint256 _tokenId, bool _voting) external {
     if (_msgSender() != s_voter) revert NotVoter();
     s_voted[_tokenId] = _voting;
     emit Voted(_tokenId, _voting);
-  }
-
-  /// @inheritdoc IveIONCore
-  function withdrawProtocolFees(address _tokenAddress, address _recipient) external onlyOwner {
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    uint256 protocolFees = s_protocolFees[lpType];
-    require(protocolFees > 0, "No protocol fees available");
-    s_protocolFees[lpType] = 0;
-    IERC20(_tokenAddress).safeTransfer(_recipient, protocolFees);
-    emit ProtocolFeesWithdrawn(_tokenAddress, _recipient, protocolFees);
-  }
-
-  /// @inheritdoc IveIONCore
-  function withdrawDistributedFees(address _tokenAddress, address _recipient) external onlyOwner {
-    LpTokenType lpType = s_lpType[_tokenAddress];
-    uint256 distributedFees = s_distributedFees[lpType];
-    require(distributedFees > 0, "No distributed fees available");
-    s_distributedFees[lpType] = 0;
-    IERC20(_tokenAddress).safeTransfer(_recipient, distributedFees);
-    emit DistributedFeesWithdrawn(_tokenAddress, _recipient, distributedFees);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -588,14 +576,35 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
     return (strategy, "");
   }
 
-  /**
-   * @notice Sets the implementation address for the contract.
-   * @dev This function can only be called by the owner.
-   * @param _veIONFirstExtension The address of the new implementation contract.
-   */
-  function setImplementation(address _veIONFirstExtension) external onlyOwner {
+  /// @inheritdoc IveIONCore
+  function setExtensions(address _veIONFirstExtension, address _veIONSecondExtension) external onlyOwner {
     require(_veIONFirstExtension != address(0), "Invalid implementation address");
     veIONFirstExtension = _veIONFirstExtension;
-    emit ImplementationSet(_veIONFirstExtension);
+    veIONSecondExtension = _veIONSecondExtension;
+    emit ExtensionsSet(_veIONFirstExtension, _veIONSecondExtension);
+  }
+
+  /**
+   * @dev Fallback function that delegates calls to the address returned by `_implementation()`. Will run if no other
+   * function in the contract matches the call data.
+   */
+  fallback() external {
+    address impl = veIONFirstExtension;
+    require(impl != address(0), "Implementation not set");
+
+    assembly {
+      calldatacopy(0, 0, calldatasize())
+
+      let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
+
+      returndatacopy(0, 0, returndatasize())
+      switch result
+      case 0 {
+        revert(0, returndatasize())
+      }
+      default {
+        return(0, returndatasize())
+      }
+    }
   }
 }

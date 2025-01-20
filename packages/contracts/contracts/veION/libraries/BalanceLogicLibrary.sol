@@ -24,7 +24,7 @@ library BalanceLogicLibrary {
     uint256 _tokenId,
     uint256 _t,
     bool _isPermanent
-  ) external view returns (uint256) {
+  ) internal view returns (uint256) {
     uint256 _epoch = getPastUserPointIndex(s_userPointEpoch, s_userPointHistory, _lpType, _tokenId, _t);
     // epoch 0 is an empty point
     if (_epoch == 0) return 0;

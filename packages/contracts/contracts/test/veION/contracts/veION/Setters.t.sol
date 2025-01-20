@@ -15,7 +15,7 @@ contract Setters is veIONTest {
 
   function test_setAeroVoting_revertIfInvalidAddress() public {
     address invalidAddress = address(0);
-    vm.expectRevert("Invalid address");
+    vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
     IveION(ve).setAeroVoting(invalidAddress);
   }
 
@@ -27,7 +27,7 @@ contract Setters is veIONTest {
 
   function test_setAeroVoterBoost_revertIfZeroBoost() public {
     uint256 zeroBoost = 0;
-    vm.expectRevert("Aero Boost amount must be greater than zero");
+    vm.expectRevert(abi.encodeWithSignature("AeroBoostAmountMustBeGreaterThanZero()"));
     IveION(ve).setAeroVoterBoost(zeroBoost);
   }
 
@@ -39,7 +39,7 @@ contract Setters is veIONTest {
 
   function test_setMaxEarlyWithdrawFee_revertIfZeroFee() public {
     uint256 zeroFee = 0;
-    vm.expectRevert("Max early withdraw fee must be greater than zero");
+    vm.expectRevert(abi.encodeWithSignature("MaxEarlyWithdrawFeeMustBeGreaterThanZero()"));
     IveION(ve).setMaxEarlyWithdrawFee(zeroFee);
   }
 
@@ -53,7 +53,7 @@ contract Setters is veIONTest {
   function test_setLpTokenType_revertIfInvalidTokenAddress() public {
     address invalidTokenAddress = address(0);
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
-    vm.expectRevert("Invalid token address");
+    vm.expectRevert(abi.encodeWithSignature("InvalidTokenAddress()"));
     IveION(ve).setLpTokenType(invalidTokenAddress, lpType);
   }
 
@@ -67,7 +67,7 @@ contract Setters is veIONTest {
   function test_setStakeStrategy_revertIfInvalidStrategyAddress() public {
     IveION.LpTokenType lpType = IveION.LpTokenType(1);
     IStakeStrategy invalidStrategy = IStakeStrategy(address(0));
-    vm.expectRevert("Invalid strategy address");
+    vm.expectRevert(abi.encodeWithSignature("InvalidStrategyAddress()"));
     IveION(ve).setStakeStrategy(lpType, invalidStrategy);
   }
 
@@ -90,7 +90,7 @@ contract Setters is veIONTest {
 
   function test_setVoter_revertIfInvalidAddress() public {
     address invalidVoter = address(0);
-    vm.expectRevert("Invalid address");
+    vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
     IveION(ve).setVoter(invalidVoter);
   }
 
@@ -114,7 +114,7 @@ contract Setters is veIONTest {
 
   function test_setMinimumLockDuration_revertIfZeroDuration() public {
     uint256 zeroDuration = 0;
-    vm.expectRevert("Minimum lock duration must be greater than zero");
+    vm.expectRevert(abi.encodeWithSignature("MinimumLockDurationMustBeGreaterThanZero()"));
     IveION(ve).setMinimumLockDuration(zeroDuration);
   }
 
@@ -126,7 +126,7 @@ contract Setters is veIONTest {
 
   function test_setIonicPool_revertIfInvalidAddress() public {
     address invalidIonicPool = address(0);
-    vm.expectRevert("Invalid address");
+    vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
     IveION(ve).setIonicPool(invalidIonicPool);
   }
 }

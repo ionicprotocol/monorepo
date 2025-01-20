@@ -60,13 +60,13 @@ export type veIONConfig = {
   lpTokenWhitelistStatuses: boolean[];
   lpTokenTypes: number[];
   minimumLockAmounts: bigint[];
-  minimumLockDuration: bigint;
+  minimumLockDuration: number;
   maxEarlyWithdrawFee: bigint;
   ionicAeroVeloPool?: Address;
   aeroVoting?: Address;
   aeroVotingBoost?: bigint;
   veAERO?: Address;
-  maxVotingNum?: number[];
+  maxVotingNum?: number;
 };
 
 export type DynamicFlywheelConfig = {

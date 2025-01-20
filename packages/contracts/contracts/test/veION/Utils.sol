@@ -4,6 +4,7 @@ import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
 import "../config/BaseTest.t.sol";
 import "../../veION/veION.sol";
 import "../../veION/veIONFirstExtension.sol";
+import "../../veION/veIONSecondExtension.sol";
 import "../../veION/interfaces/IveION.sol";
 // import "../../veION/interfaces/IveIONCore.sol";
 import "../../veION/stake/IStakeStrategy.sol";
@@ -24,6 +25,7 @@ contract veIONTest is BaseTest {
 
   address ve;
   address veFirstExtension;
+  address veSecondExtension;
   MockERC20 modeVelodrome5050IonMode;
   MockERC20 modeBalancer8020IonEth;
   MockERC20 baseAerodrome5050IonWstEth;
@@ -69,7 +71,8 @@ contract veIONTest is BaseTest {
     );
 
     veFirstExtension = address(new veIONFirstExtension());
-    IveIONCore(ve).setImplementation(veFirstExtension);
+    veSecondExtension = address(new veIONSecondExtension());
+    IveIONCore(ve).setExtensions(veFirstExtension, veSecondExtension);
 
     modeVelodrome5050IonMode = new MockERC20("Mode_Velodrome_5050_ION_MODE", "MV5050", 18);
     modeBalancer8020IonEth = new MockERC20("Mode_Balancer_8020_ION_ETH", "MB8020", 18);
@@ -111,7 +114,8 @@ contract veIONTest is BaseTest {
     );
 
     veFirstExtension = address(new veIONFirstExtension());
-    IveIONCore(ve).setImplementation(veFirstExtension);
+    veSecondExtension = address(new veIONSecondExtension());
+    IveIONCore(ve).setExtensions(veFirstExtension, veSecondExtension);
 
     ionMode5050LP = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
     veloGauge = 0x8EE410cC13948e7e684ebACb36b552e2c2A125fC;
@@ -187,7 +191,8 @@ contract veIONTest is BaseTest {
     );
 
     veFirstExtension = address(new veIONFirstExtension());
-    IveIONCore(ve).setImplementation(veFirstExtension);
+    veSecondExtension = address(new veIONSecondExtension());
+    IveIONCore(ve).setExtensions(veFirstExtension, veSecondExtension);
 
     harness = new veIONHarness(MINTIME);
 

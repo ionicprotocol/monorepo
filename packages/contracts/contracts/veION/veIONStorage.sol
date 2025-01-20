@@ -44,6 +44,8 @@ abstract contract veIONStorage is IveIONStructsEnumsErrorsEvents {
   IAddressesProvider public ap;
   /// @notice The address of the logic contract for the veION first extension.
   address public veIONFirstExtension;
+  /// @notice The address of the logic contract for the veION second extension.
+  address public veIONSecondExtension;
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                                Mappings                                   ║
