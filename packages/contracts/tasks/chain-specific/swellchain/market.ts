@@ -14,7 +14,7 @@ task("markets:deploy:swellchain:new", "deploy new swellchain assets").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.WETH];
+    const assetsToDeploy: string[] = [assetSymbols.weETH];
     for (const asset of swellchainAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       if (!asset.name || !asset.symbol || !asset.underlying) {
         throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -65,7 +65,7 @@ task("swellchain:set-caps:new", "one time setup").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.WETH];
+    const assetsToDeploy: string[] = [assetSymbols.weETH];
     for (const asset of swellchain.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
@@ -91,7 +91,8 @@ task("market:set-cf:swellchain:new", "Sets CF on a market").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    for (const asset of swellchain.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+    const assetsToDeploy: string[] = [assetSymbols.USDe, assetSymbols.rswETH, assetSymbols.weETH];
+    for (const asset of swellchain.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
       });

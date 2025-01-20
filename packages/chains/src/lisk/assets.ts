@@ -56,7 +56,7 @@ export const assets: SupportedAsset[] = [
     } as ChainlinkSpecificParams,
     extraDocs: wrappedAssetDocs(SupportedChains.lisk),
     initialBorrowCap: parseEther("100000").toString(),
-    initialSupplyCap: parseEther("100000").toString(),
+    initialSupplyCap: parseEther("250000").toString(),
     initialCf: "0.5"
   },
   {

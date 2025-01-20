@@ -399,7 +399,6 @@ export default function CollateralSwapPopup({
               tokenName={swappedToTokenQuery}
               token={swappedToAsset?.cToken}
               // handleInput={(val?: string) => setSwapToToken(val as string)}
-              tokenSelector
               tokenArr={
                 swappedToAssets &&
                 swappedToAssets

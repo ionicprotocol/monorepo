@@ -161,6 +161,7 @@ function LoopTable({
   return (
     <>
       <CommonTable
+        hidePR={false}
         data={data || []}
         columns={columns}
         isLoading={isLoading}

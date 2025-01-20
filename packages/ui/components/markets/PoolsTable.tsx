@@ -242,6 +242,7 @@ function PoolsTable({
       <CommonTable
         data={marketData}
         columns={columns}
+        hidePR={false}
         isLoading={isLoading}
         getRowStyle={(row) => ({
           badge: row.original.membership ? { text: 'Collateral' } : undefined,

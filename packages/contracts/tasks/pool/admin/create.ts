@@ -143,6 +143,18 @@ task("pool:create:ozeantest").setAction(async ({}, { run, deployments }) => {
   });
 });
 
+task("pool:create:soneium").setAction(async ({}, { run, deployments }) => {
+  const mpo = await deployments.get("MasterPriceOracle");
+  await run("pool:create", {
+    name: "Soneium Main Pool",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 task("pool:create", "Create pool if does not exist")
   .addParam("name", "Name of the pool to be created", undefined, types.string)
   .addParam("creator", "Named account from which to create the pool", "deployer", types.string)
