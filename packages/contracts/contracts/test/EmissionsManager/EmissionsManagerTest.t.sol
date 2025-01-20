@@ -57,19 +57,25 @@ contract EmissionsManagerTest is BaseTest {
     poolDirectory = new MockPoolDirectory();
     poolDirectory.setActivePools(address(comptroller));
 
-    // Deploy the EmissionsManager
-    emissionsManager = new EmissionsManager();
-    emissionsManager.initialize(
-      PoolDirectory(address(poolDirectory)),
-      protocolAddress,
-      rewardToken,
-      collateralBp,
-      nonBlacklistableBytecode
+    emissionsManager = EmissionsManager(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new EmissionsManager()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            emissionsManager.initialize.selector,
+            PoolDirectory(address(poolDirectory)),
+            protocolAddress,
+            rewardToken,
+            collateralBp,
+            nonBlacklistableBytecode
+          )
+        )
+      )
     );
-
     mockVeION = new MockVeION();
     mockVeION.setMockTotalEthValueOfTokens(user, 1);
-    emissionsManager.setVeIon(address(mockVeION));
+    emissionsManager.setVeIon(IveION(address(mockVeION)));
   }
 
   function test_Initialize() public {

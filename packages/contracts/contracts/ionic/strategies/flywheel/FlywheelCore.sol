@@ -14,7 +14,7 @@ import {IFlywheelBooster} from "./IFlywheelBooster.sol";
  @notice Flywheel is a general framework for managing token incentives.
          It takes reward streams to various *strategies* such as staking LP tokens and divides them among *users* of those strategies.
 
-         The Core contract maintaings three important pieces of state:
+         The Core contract maintains three important pieces of state:
          * the rewards index which determines how many rewards are owed per token per strategy. User indexes track how far behind the strategy they are to lazily calculate all catch-up rewards.
          * the accrued (unclaimed) rewards per user.
          * references to the booster and rewards module described below.

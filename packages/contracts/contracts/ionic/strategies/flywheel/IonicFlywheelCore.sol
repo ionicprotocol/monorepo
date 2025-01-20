@@ -8,9 +8,9 @@ import { SafeCastLib } from "solmate/utils/SafeCastLib.sol";
 import { IFlywheelRewards } from "./rewards/IFlywheelRewards.sol";
 import { IFlywheelBooster } from "./IFlywheelBooster.sol";
 import { IEmissionsManager } from "../../../IEmissionsManager.sol";
-import { SafeOwnableUpgradeable } from "../../../ionic/SafeOwnableUpgradeable.sol";
+import { Ownable2StepUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 
-contract IonicFlywheelCore is SafeOwnableUpgradeable {
+contract IonicFlywheelCore is Ownable2StepUpgradeable {
   using SafeTransferLib for ERC20;
   using SafeCastLib for uint256;
 
@@ -54,19 +54,21 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     _;
   }
 
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
+
   function initialize(
     ERC20 _rewardToken,
     IFlywheelRewards _flywheelRewards,
     IFlywheelBooster _flywheelBooster,
     address _owner
   ) public initializer {
-    __SafeOwnable_init(msg.sender);
+    __Ownable2Step_init();
 
     rewardToken = _rewardToken;
     flywheelRewards = _flywheelRewards;
     flywheelBooster = _flywheelBooster;
-
-    _transferOwnership(_owner);
 
     performanceFee = 10e16; // 10%
     feeRecipient = _owner;
