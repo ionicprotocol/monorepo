@@ -1,3 +1,4 @@
+
 import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
 import { Chain, createPublicClient, http, formatEther, getContract, formatUnits } from 'viem';
@@ -8,14 +9,12 @@ import CTokenABI from '../abi/CToken.json';
 import FlywheelABI from '../abi/FlywheelCore.json';
 import FlywheelRewardsABI from '../abi/FlywheelCore.json';
 import { environment, supabase } from '../config';
-
 const FLYWHEEL_TYPE_MAP: Record<number, { supply?: string[], borrow?: string[] }> = {
   [SupportedChains.mode]: {
     supply: [],
     borrow: []
   }
 };
-
 interface AssetMasterData {
   // Key identifiers
   chain_id: SupportedChains;
@@ -58,7 +57,6 @@ interface AssetMasterData {
   reward_apy_borrow: number;
   reward_tokens: string[];
 }
-
 const fetchTokenPrice = async (cgId: string): Promise<number> => {
   try {
     const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cgId}&vs_currencies=usd`);
@@ -175,8 +173,17 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
                   if (reward.formattedAPR) {
                     const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
                     
-                    // Check if flywheel is in borrow list
-                    if (FLYWHEEL_TYPE_MAP[chainId]?.borrow?.includes(reward.flywheel)) {
+                    // Get the flywheel booster address
+                    const flywheelContract = getContract({
+                      address: reward.flywheel as `0x${string}`,
+                      abi: FlywheelABI,
+                      client: publicClient
+                    });
+                    
+                    const boosterAddress = await flywheelContract.read.flywheelBooster();
+                    
+                    // If booster address is zero address, it's a supply reward
+                    if (boosterAddress === '0x0000000000000000000000000000000000000000') {
                       rewardApySupply += Math.min(apyForMarket * 100, 1000);
                     } else {
                       rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
