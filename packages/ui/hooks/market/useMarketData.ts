@@ -201,7 +201,8 @@ export const useMarketData = (
             ? merklApr?.find(
                 (info) =>
                   info.token?.toLowerCase() ===
-                  asset.underlyingToken?.toLowerCase()
+                    asset.underlyingToken?.toLowerCase() &&
+                  info.type === 'supply'
               )?.apr
             : undefined
         });
@@ -220,7 +221,8 @@ export const useMarketData = (
             ? merklApr?.find(
                 (info) =>
                   info.token?.toLowerCase() ===
-                  asset.underlyingToken?.toLowerCase()
+                    asset.underlyingToken?.toLowerCase() &&
+                  info.type === 'borrow'
               )?.apr
             : undefined
         });

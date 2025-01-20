@@ -333,7 +333,6 @@ function EmissionsManagement({
         columns={columns}
         data={filteredVotingData}
         isLoading={isLoading}
-        hidePR
       />
 
       <EmissionsManagementFooter

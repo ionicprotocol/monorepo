@@ -204,7 +204,6 @@ function MyVeionTable({ data }: MyVeionTableProps) {
         data={data}
         columns={myVeionColumns}
         isLoading={false}
-        hidePR
       />
     </div>
   );

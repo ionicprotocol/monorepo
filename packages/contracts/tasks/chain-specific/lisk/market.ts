@@ -41,7 +41,7 @@ task("markets:deploy:lisk:new", "deploy new mode assets").setAction(async (_, { 
 });
 
 task("market:set-caps:lisk:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.USDC, assetSymbols.WBTC, assetSymbols.LSK];
+  const assetsToDeploy: string[] = [assetSymbols.LSK];
   for (const asset of lisk.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);

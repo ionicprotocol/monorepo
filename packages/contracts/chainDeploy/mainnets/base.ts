@@ -1,5 +1,5 @@
 import { ChainDeployConfig, deployChainlinkOracle, deployErc4626PriceOracle, deployPythPriceOracle } from "../helpers";
-import { base } from "@ionicprotocol/chains";
+import { base, chainIdtoChain } from "@ionicprotocol/chains";
 import { deployAerodromeOracle } from "../helpers/oracles/aerodrome";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, Hex, zeroAddress } from "viem";
@@ -39,10 +39,12 @@ export const deploy = async ({
   run,
   viem,
   getNamedAccounts,
-  deployments
+  deployments,
+  getChainId
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
 
   //// Pyth Oracle
   await deployPythPriceOracle({
@@ -59,7 +61,8 @@ export const deploy = async ({
       })),
     nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
     pythAddress: "0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a",
-    usdToken: base.chainAddresses.STABLE_TOKEN as Address
+    usdToken: base.chainAddresses.STABLE_TOKEN as Address,
+    chainId
   });
 
   // //// ERC4626 Oracle
@@ -72,7 +75,8 @@ export const deploy = async ({
       .filter((asset) => asset.oracle === OracleTypes.ERC4626Oracle)
       .map((asset) => ({
         assetAddress: asset.underlying
-      }))
+      })),
+    chainId
   });
 
   // //// Aerodrome Oracle
@@ -84,7 +88,8 @@ export const deploy = async ({
     deployments,
     deployConfig,
     assets: aerodromeAssets,
-    pricesContract
+    pricesContract,
+    chainId
   });
 
   // ChainlinkV2 Oracle
@@ -102,7 +107,8 @@ export const deploy = async ({
     deployments,
     deployConfig,
     assets: base.assets,
-    chainlinkAssets
+    chainlinkAssets,
+    chainId
   });
 
   const eOracleAssets = base.assets
@@ -120,7 +126,8 @@ export const deploy = async ({
     deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0x75DfcbeDF377f99898535AeE7Fa1Cd1D1e8E41b0" },
     assets: base.assets,
     chainlinkAssets: eOracleAssets,
-    namePostfix: "eOracle"
+    namePostfix: "eOracle",
+    chainId
   });
 
   const diaAssets = base.assets
@@ -137,7 +144,8 @@ export const deploy = async ({
     getNamedAccounts,
     deployments,
     deployConfig,
-    diaAssets
+    diaAssets,
+    chainId
   });
 
   const ap = await viem.getContractAt(

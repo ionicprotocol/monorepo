@@ -28,7 +28,8 @@ const config: HardhatUserConfig = {
       [superseed.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       [worldchain.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      1868: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
@@ -166,6 +167,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    soneium: {
+      url: "https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://soneium.blockscout.com/",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -178,7 +189,8 @@ const config: HardhatUserConfig = {
       ink: "empty",
       swellchain: "empty",
       camptest: "empty",
-      ozeantest: "empty"
+      ozeantest: "empty",
+      soneium: "empty"
     },
     customChains: [
       {
@@ -235,6 +247,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://ozean-testnet.explorer.caldera.xyz/api",
           browserURL: "https://ozean-testnet.explorer.caldera.xyz"
+        }
+      },
+      {
+        network: "soneium",
+        chainId: 1868,
+        urls: {
+          apiURL: "https://soneium.blockscout.com/api",
+          browserURL: "https://soneium.blockscout.com/"
         }
       }
     ]

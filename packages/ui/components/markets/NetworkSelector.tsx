@@ -34,6 +34,7 @@ const ACTIVE_NETWORKS = [
   'BoB',
   'Worldchain',
   'Swell',
+  'Soneium',
   'Ozean Testnet',
   'Camp Testnet'
 ];

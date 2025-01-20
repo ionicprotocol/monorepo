@@ -130,7 +130,7 @@ function CommonTable<T extends object>({
   data,
   columns,
   isLoading: externalIsLoading = false,
-  hidePR = false,
+  hidePR = true,
   getRowStyle
 }: CommonTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);

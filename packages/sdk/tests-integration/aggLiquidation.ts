@@ -17,6 +17,7 @@ const run = async () => {
   });
 
   const publicClient = createPublicClient({ transport: http(), chain: mode });
+
   const borrower = "0xE4ca2a68a235Ab622273d7A3bcCfA84FD3Ad8F29";
   const cErc20 = "0xd70254C3baD29504789714A7c69d60Ec1127375C";
   const cTokenCollateral = "0xA0D844742B4abbbc43d8931a6Edb00C56325aA18";

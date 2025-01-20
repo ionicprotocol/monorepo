@@ -209,7 +209,6 @@ function DelegateVeionTable({
         data={data}
         columns={delegateVeionColumns}
         isLoading={false}
-        hidePR
       />
     </div>
   );

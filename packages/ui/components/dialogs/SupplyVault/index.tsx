@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import Image from 'next/image';
-
 import { ArrowLeft } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@ui/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -22,10 +14,10 @@ import {
   TabsList,
   TabsTrigger
 } from '@ui/components/ui/tabs';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
 
 import { SupplyTab } from './tabs/SupplyTab';
 import { WithdrawTab } from './tabs/WithdrawTab';
-import { VaultRowData } from '@ui/types/SupplyVaults';
 
 interface SupplyVaultDialogProps {
   isOpen: boolean;

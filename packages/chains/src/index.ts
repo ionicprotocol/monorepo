@@ -20,11 +20,26 @@ import { default as lisk } from "./lisk";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
 import { default as ozeantest } from "./ozeantest";
+import { default as soneium } from "./soneium";
 import { default as superseed } from "./superseed";
 import { default as swellchain } from "./swellchain";
 import { default as worldchain } from "./worldchain";
 
-export { base, bob, lisk, mode, optimism, fraxtal, superseed, worldchain, ink, swellchain, camptest, ozeantest };
+export {
+  base,
+  bob,
+  lisk,
+  mode,
+  optimism,
+  fraxtal,
+  superseed,
+  worldchain,
+  ink,
+  swellchain,
+  soneium,
+  camptest,
+  ozeantest
+};
 
 export const vInk: Chain = {
   id: 57073,
@@ -46,6 +61,17 @@ export const vSwellchain: Chain = {
     decimals: 18
   },
   rpcUrls: { default: { http: ["https://rpc.ankr.com/swell", "https://swell-mainnet.alt.technology"] } }
+};
+
+export const vSoneium: Chain = {
+  id: 1868,
+  name: "Soneium",
+  nativeCurrency: {
+    name: "Ethereum",
+    symbol: "ETH",
+    decimals: 18
+  },
+  rpcUrls: { default: { http: ["https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq"] } }
 };
 
 export const vOzeantest: Chain = {
@@ -82,7 +108,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [worldchain.chainId]: vWorldchain,
   [swellchain.chainId]: vSwellchain,
   [ozeantest.chainId]: vOzeantest,
-  [camptest.chainId]: vCampTest
+  [camptest.chainId]: vCampTest,
+  [soneium.chainId]: vSoneium
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -97,5 +124,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [worldchain.chainId]: worldchain,
   [swellchain.chainId]: swellchain,
   [ozeantest.chainId]: ozeantest,
-  [camptest.chainId]: camptest
+  [camptest.chainId]: camptest,
+  [soneium.chainId]: soneium
 };
