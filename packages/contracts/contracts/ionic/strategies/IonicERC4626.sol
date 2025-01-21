@@ -10,10 +10,6 @@ import { SafeERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contrac
 
 import { SafeOwnableUpgradeable } from "../../ionic/SafeOwnableUpgradeable.sol";
 
-interface IonicFlywheelLensRouter_4626 {
-  function claimAllRewardTokens(address user) external returns (address[] memory, uint256[] memory);
-}
-
 abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, ERC4626Upgradeable {
   using FixedPointMathLib for uint256;
   using SafeERC20Upgradeable for ERC20Upgradeable;
@@ -23,8 +19,6 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
   uint256 public vaultShareHWM;
   uint256 public performanceFee;
   address public feeRecipient;
-  address public rewardsRecipient;
-  IonicFlywheelLensRouter_4626 public flywheelLensRouter;
 
   /* ========== EVENTS ========== */
 
@@ -39,7 +33,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
 
   /* ========== INITIALIZER ========== */
 
-  function __IonicER4626_init(ERC20Upgradeable asset_, address flywheelLensRouter_) internal onlyInitializing {
+  function __IonicER4626_init(ERC20Upgradeable asset_) internal onlyInitializing {
     __SafeOwnable_init(msg.sender);
     __Pausable_init();
     __Context_init();
@@ -51,8 +45,6 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
 
     vaultShareHWM = 10**asset_.decimals();
     feeRecipient = msg.sender;
-    rewardsRecipient = msg.sender;
-    flywheelLensRouter = IonicFlywheelLensRouter_4626(flywheelLensRouter_);
   }
 
   function _asset() internal view returns (ERC20Upgradeable) {
@@ -143,20 +135,6 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
     _asset().safeTransfer(receiver, assets);
-  }
-
-  /* ========== REWARDS FUNCTIONS ========== */
-
-  function updateRewardsRecipient(address newRewardsRecipient) external onlyOwner {
-    emit UpdatedRewardsRecipient(rewardsRecipient, newRewardsRecipient);
-    rewardsRecipient = newRewardsRecipient;
-  }
-
-  function claimRewards() external {
-    (address[] memory tokens, uint256[] memory amounts) = flywheelLensRouter.claimAllRewardTokens(address(this));
-    for (uint256 i = 0; i < tokens.length; i++) {
-      _asset().safeTransfer(rewardsRecipient, amounts[i]);
-    }
   }
 
   /* ========== FEE FUNCTIONS ========== */
