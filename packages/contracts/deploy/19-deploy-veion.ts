@@ -306,65 +306,79 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
-  let veloAeroStakingWallet;
-  try {
-    console.log("Deploying VeloAeroStakingWallet implementation...");
-
-    veloAeroStakingWallet = await deployments.deploy("VeloAeroStakingWallet", {
-      from: deployer,
-      log: true
-    });
-
-    console.log(`VeloAeroStakingWallet deployed at: ${veloAeroStakingWallet.address}`);
-  } catch (error) {
-    console.error("Error deploying VeloAeroStakingWallet:", error);
-  }
-
-  veloAeroStakingWallet = await viem.getContractAt(
-    "VeloAeroStakingWallet",
-    (await deployments.get("VeloAeroStakingWallet")).address as Address
-  );
-
   // ╔══════════════════════════════════════════╗
-  // ║          SET STAKING STRATEGY            ║
+  // ║        SETUP UNDERLYING STAKING          ║
   // ╚══════════════════════════════════════════╝
-  // Parameters for initialization
-  const stakingTokenAddress: Address = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
-  const stakingContractAddress: Address = "0x9b42e5F8c45222b2715F804968251c747c588fd7"; // Replace with actual staking contract address
-  const stakingWalletImplementationAddress = veloAeroStakingWallet.address; // Replace with actual staking wallet implementation address
-  let stakeStrategy;
-  try {
-    stakeStrategy = await deployments.deploy("VeloAeroStakingStrategy", {
-      from: deployer,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [veION.address, stakingTokenAddress, stakingContractAddress, stakingWalletImplementationAddress]
-          }
-        },
-        owner: multisig
-      }
+  for (let i = 0; i < veParams.lpTokens.length; i++) {
+    let stakingWalletImplementation;
+    if (veParams.lpStakingStrategies[i] === undefined) {
+      continue;
+    }
+    const stakingWalletImplementationName = veParams.lpStakingWalletImplementations[i];
+    const stakingStrategyName = veParams.lpStakingStrategies[i];
+    const externalStakingContract = veParams.lpExternalStakingContracts[i];
+    const stakingTokenAddress = veParams.lpTokens[i];
+    const tokenType = veParams.lpTokenTypes[i];
+
+    try {
+      console.log(`Deploying ${stakingWalletImplementationName} implementation...`);
+
+      stakingWalletImplementation = await deployments.deploy(stakingWalletImplementationName, {
+        from: deployer,
+        log: true
+      });
+
+      console.log(`${stakingWalletImplementationName} deployed at: ${stakingWalletImplementation.address}`);
+    } catch (error) {
+      console.error(`Error deploying ${stakingWalletImplementationName}:`, error);
+    }
+
+    stakingWalletImplementation = await viem.getContractAt(
+      stakingWalletImplementationName,
+      (await deployments.get(stakingWalletImplementationName)).address as Address
+    );
+
+    // ╔══════════════════════════════════════════╗
+    // ║          SET STAKING STRATEGY            ║
+    // ╚══════════════════════════════════════════╝
+    let stakeStrategy;
+    try {
+      stakeStrategy = await deployments.deploy(stakingStrategyName, {
+        from: deployer,
+        log: true,
+        proxy: {
+          proxyContract: "OpenZeppelinTransparentProxy",
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [veION.address, stakingTokenAddress, externalStakingContract, stakingWalletImplementation.address]
+            }
+          },
+          owner: multisig
+        }
+      });
+
+      console.log(`${stakingStrategyName} deployed at: ${stakeStrategy.address}`);
+    } catch (error) {
+      console.error(`Error deploying ${stakingStrategyName}:`, error);
+    }
+
+    stakeStrategy = await viem.getContractAt(
+      stakingStrategyName,
+      (await deployments.get(stakingStrategyName)).address as Address
+    );
+
+    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy.address], {
+      from: deployer
     });
-
-    console.log(`VeloAeroStakingStrategy deployed at: ${stakeStrategy.address}`);
-  } catch (error) {
-    console.error("Error deploying VeloAeroStakingStrategy:", error);
-  }
-
-  stakeStrategy = await viem.getContractAt(
-    "VeloAeroStakingStrategy",
-    (await deployments.get("VeloAeroStakingStrategy")).address as Address
-  );
-
-  const txHash = await IveION.write.setStakeStrategy([2, stakeStrategy.address], { from: deployer });
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-  if (receipt.status === "success") {
-    console.log(`Successfully set staking strategy to : ${stakeStrategy.address} for token ${2}`);
-  } else {
-    console.error(`Transaction ${hash} failed: ${receipt.status}`);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+    if (receipt.status === "success") {
+      console.log(
+        `Successfully set staking strategy to : ${stakeStrategy.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
+      );
+    } else {
+      console.error(`Transaction ${hash} failed: ${receipt.status}`);
+    }
   }
 };
 

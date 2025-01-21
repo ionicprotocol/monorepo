@@ -57,6 +57,9 @@ export type ChainDeployConfig = {
 
 export type veIONConfig = {
   lpTokens: Address[];
+  lpStakingStrategies: string[];
+  lpStakingWalletImplementations: string[];
+  lpExternalStakingContracts: Address[];
   lpTokenWhitelistStatuses: boolean[];
   lpTokenTypes: number[];
   minimumLockAmounts: bigint[];

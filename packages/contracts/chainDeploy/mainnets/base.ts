@@ -29,6 +29,9 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenUsdChainlinkFeed: base.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address,
   veION: {
     lpTokens: ["0x0FAc819628a7F612AbAc1CaD939768058cc0170c"],
+    lpStakingStrategies: ["VeloAeroStakingStrategy"],
+    lpStakingWalletImplementations: ["VeloAeroStakingWallet"],
+    lpExternalStakingContracts: ["0x9b42e5F8c45222b2715F804968251c747c588fd7"],
     lpTokenWhitelistStatuses: [true],
     lpTokenTypes: [2],
     minimumLockAmounts: [parseEther("0.01")],
