@@ -106,21 +106,42 @@ contract DistributeRewards is VoterTest {
       )
     );
 
-    emissionsManager.setVeIon(address(ve));
+    emissionsManager.setVeIon(IveION(ve));
 
     // Deploy borrow flywheels
     flywheelBooster = new IonicFlywheelBorrowBooster();
-    flywheelBorrow = new IonicFlywheelBorrow();
-    flywheelBorrow.initialize(
-      ERC20(ion),
-      IFlywheelRewards(address(0)),
-      IFlywheelBooster(address(flywheelBooster)),
-      owner
-    );
 
+    flywheelBorrow = IonicFlywheelBorrow(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new IonicFlywheelBorrow()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            IonicFlywheelCore.initialize.selector,
+            ERC20(ion),
+            IFlywheelRewards(address(0)),
+            IFlywheelBooster(address(flywheelBooster)),
+            owner
+          )
+        )
+      )
+    );
     // Deploy supply flywheels
-    flywheelSupply = new IonicFlywheel();
-    flywheelSupply.initialize(ERC20(ion), IFlywheelRewards(address(0)), IFlywheelBooster(address(0)), owner);
+    flywheelSupply = IonicFlywheel(
+      address(
+        new TransparentUpgradeableProxy(
+          address(new IonicFlywheel()),
+          address(new ProxyAdmin()),
+          abi.encodeWithSelector(
+            IonicFlywheelCore.initialize.selector,
+            ERC20(ion),
+            IFlywheelRewards(address(0)),
+            IFlywheelBooster(address(0)),
+            owner
+          )
+        )
+      )
+    );
 
     flywheelRewardsBorrow = new IonicFlywheelDynamicRewards(IonicFlywheelCore(address(flywheelBorrow)), ONE_WEEK);
     flywheelBorrow.setFlywheelRewards(IFlywheelRewards(address(flywheelRewardsBorrow)));

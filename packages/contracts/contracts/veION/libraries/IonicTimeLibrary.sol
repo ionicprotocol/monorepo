@@ -28,7 +28,7 @@ library IonicTimeLibrary {
   /// @dev Returns end of voting window / beginning of unrestricted voting window
   function epochVoteEnd(uint256 timestamp) internal pure returns (uint256) {
     unchecked {
-      return timestamp - (timestamp % _WEEK) + _WEEK - 1 hours;
+      return timestamp - (timestamp % _WEEK) + _WEEK - 12 hours;
     }
   }
 }

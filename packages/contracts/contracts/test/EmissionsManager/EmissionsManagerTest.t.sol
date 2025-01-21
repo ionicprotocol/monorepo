@@ -89,7 +89,7 @@ contract EmissionsManagerTest is BaseTest {
   function test_setVeIon_OwnerCanSetVeIonAddress() public {
     IveION veIONMock = IveION(address(new MockVeION()));
 
-    emissionsManager.setVeIon(address(veIONMock));
+    emissionsManager.setVeIon(veIONMock);
 
     assertEq(address(emissionsManager.veION()), address(veIONMock), "veION address mismatch");
   }
