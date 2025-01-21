@@ -6,6 +6,7 @@ import { LeveredPosition } from "./LeveredPosition.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../../compound/ComptrollerInterface.sol";
 import { BasePriceOracle } from "../../oracles/BasePriceOracle.sol";
+import { Initializable } from "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
