@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export const useExtraPoolInfo = (
   comptrollerAddress?: Address,
@@ -74,7 +75,6 @@ export const useExtraPoolInfo = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
     staleTime: Infinity
   });

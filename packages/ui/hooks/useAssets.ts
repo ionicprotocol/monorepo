@@ -1,6 +1,7 @@
-import type { AssetReward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+
+import type { AssetReward } from '@ionicprotocol/types';
 
 export interface UseAssetsData {
   [asset: string]: AssetReward[];
@@ -20,14 +21,13 @@ export function useAssets(chainIds?: number[]) {
 
           assetsRewards = { ...res.data };
         } catch (e) {
-          console.error(`Unable to fetch assets of chain \`${chainIds}\``, e);
+          assetsRewards = {};
         }
       }
 
       return assetsRewards;
     },
 
-    gcTime: Infinity,
     enabled: !!chainIds && chainIds.length > 0,
     staleTime: Infinity
   });

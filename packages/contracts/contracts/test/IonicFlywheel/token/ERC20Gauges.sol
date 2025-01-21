@@ -7,7 +7,7 @@ import "solmate/tokens/ERC20.sol";
 import "solmate/utils/SafeCastLib.sol";
 import "../lib/EnumerableSet.sol";
 
-interface Errors {
+interface Errors_ERC20Gauges {
     /// @notice thrown when attempting to approve an EOA that must be a contract
     error NonContractError();
 }
@@ -512,7 +512,7 @@ abstract contract ERC20Gauges is ERC20, Auth {
 
     /// @notice set the canContractExceedMaxGauges flag for an account.
     function setContractExceedMaxGauges(address account, bool canExceedMax) external requiresAuth {
-        if (canExceedMax && account.code.length == 0) revert Errors.NonContractError(); // can only approve contracts
+        if (canExceedMax && account.code.length == 0) revert Errors_ERC20Gauges.NonContractError(); // can only approve contracts
 
         canContractExceedMaxGauges[account] = canExceedMax;
 

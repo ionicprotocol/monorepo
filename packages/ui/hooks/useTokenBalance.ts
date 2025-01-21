@@ -1,9 +1,11 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
 
 export const fetchTokenBalance = async (
   tokenAddress: Address,
@@ -56,8 +58,6 @@ export function useTokenBalance(
       }
     },
 
-    // gcTime: Infinity,
-    // staleTime: Infinity,
     enabled: !!tokenAddress && !!addressToCheck && !!sdk
   });
 }

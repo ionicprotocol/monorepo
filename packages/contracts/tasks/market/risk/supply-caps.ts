@@ -1,16 +1,24 @@
 import { task, types } from "hardhat/config";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
+import { Address } from "viem";
 
 export default task("market:set-supply-cap", "Sets supply cap on a market")
   .addParam("admin", "Deployer account", "deployer", types.string)
   .addParam("market", "The address of the CToken", undefined, types.string)
   .addParam("maxSupply", "Maximum amount of tokens that can be supplied", undefined, types.string)
-  .setAction(async ({ market, maxSupply }, { viem, getNamedAccounts }) => {
+  .setAction(async ({ market, maxSupply }, { viem, getNamedAccounts, getChainId }) => {
     const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const cToken = await viem.getContractAt("ICErc20", market);
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const cToken = await viem.getContractAt("ICErc20", market, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const comptroller = await cToken.read.comptroller();
-    const pool = await viem.getContractAt("IonicComptroller", comptroller);
+    const pool = await viem.getContractAt("IonicComptroller", comptroller, {
+      client: { public: publicClient, wallet: walletClient }
+    });
 
     const currentSupplyCap = await pool.read.supplyCaps([cToken.address]);
     console.log(`Current supply cap is ${currentSupplyCap}`);

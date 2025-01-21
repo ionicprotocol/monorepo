@@ -1,17 +1,17 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
-import type { FlywheelReward, Reward } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Address, formatUnits } from 'viem';
-
-// import type { RewardsResponse } from '../pages/api/rewards';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RewardsResponse = any;
+import { type Address, formatUnits } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelMarketRewardsInfo } from '@ionicprotocol/sdk/src/modules/Flywheel';
+import type { FlywheelReward, Reward } from '@ionicprotocol/types';
+// import type { RewardsResponse } from '../pages/api/rewards';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RewardsResponse = any;
 
 interface UseRewardsProps {
   chainId: number;
@@ -22,30 +22,28 @@ export interface UseRewardsData {
   [key: string]: Reward[];
 }
 
-export const fetchFlywheelRewards = async (comptroller: Address, sdk: IonicSdk) => {
-  let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
-  let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
+export const fetchFlywheelRewards = async (
+  comptroller: Address,
+  sdk: IonicSdk
+): Promise<{
+  flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[];
+  flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[];
+}> => {
+  try {
+    const [flywheelRewardsWithAPY = [], flywheelRewardsWithoutAPY = []] =
+      await Promise.all([
+        sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller),
+        sdk.getFlywheelMarketRewardsByPool(comptroller)
+      ]).catch((error) => {
+        console.error('Failed to fetch flywheel rewards:', error);
+        return [[], []];
+      });
 
-  [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-    sdk
-      .getFlywheelMarketRewardsByPoolWithAPR(comptroller)
-      .catch((exception) => {
-        console.error(
-          'Unable to get onchain Flywheel Rewards with APY',
-          exception
-        );
-        return [];
-      }),
-    sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
-      console.error(
-        'Unable to get onchain Flywheel Rewards without APY',
-        error
-      );
-      return [];
-    })
-  ]);
-
-  return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+    return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+  } catch (error) {
+    console.error('Fatal error fetching flywheel rewards:', error);
+    return { flywheelRewardsWithAPY: [], flywheelRewardsWithoutAPY: [] };
+  }
 };
 
 export function useFlywheelRewards(comptroller?: Address, chainId?: number) {
@@ -62,9 +60,7 @@ export function useFlywheelRewards(comptroller?: Address, chainId?: number) {
       return null;
     },
 
-    gcTime: Infinity,
-    enabled: !!comptroller && !!chainId,
-    staleTime: Infinity
+    enabled: !!comptroller && !!chainId
   });
 }
 
@@ -123,7 +119,7 @@ export const fetchRewards = async (
             ) {
               allRewards.push({
                 apy: info.formattedAPR
-                  ? parseFloat(formatUnits(info.formattedAPR, 18))
+                  ? Number.parseFloat(formatUnits(info.formattedAPR, 18))
                   : undefined,
                 flywheel: info.flywheel,
                 token: info.rewardToken,
@@ -145,18 +141,25 @@ export const fetchRewards = async (
 };
 
 export function useRewards({ poolId, chainId }: UseRewardsProps) {
-  const { data: poolData } = useFusePoolData(poolId, Number(chainId));
-  const { data: flywheelRewards } = useFlywheelRewards(
-    poolData?.comptroller,
-    chainId
-  );
+  const {
+    data: poolData,
+    isLoading: isLoadingPoolData,
+    isError: isPoolError
+  } = useFusePoolData(poolId, Number(chainId));
 
-  return useQuery({
+  const {
+    data: flywheelRewards,
+    isLoading: isLoadingFlywheelRewards,
+    isError: isFlywheelError
+  } = useFlywheelRewards(poolData?.comptroller, chainId);
+
+  const rewardsQuery = useQuery({
     queryKey: [
       'useRewards',
       chainId,
-      poolData?.assets.map((asset) => [asset.cToken, asset.plugin]),
-      flywheelRewards
+      poolId,
+      poolData?.comptroller,
+      poolData?.assets?.length
     ],
 
     queryFn: async () => {
@@ -168,14 +171,31 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           flywheelRewards.flywheelRewardsWithoutAPY
         );
       }
-
       return {};
     },
 
-    gcTime: Infinity,
     enabled: !!poolData && !!flywheelRewards,
-    staleTime: Infinity
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    retryDelay: 1000
   });
+
+  const isLoading =
+    isLoadingPoolData ||
+    isLoadingFlywheelRewards ||
+    (rewardsQuery.isLoading && !rewardsQuery.isPaused);
+
+  return {
+    ...rewardsQuery,
+    isLoading,
+    isError: isPoolError || isFlywheelError || rewardsQuery.isError,
+    loadingStates: {
+      poolData: isLoadingPoolData,
+      flywheelRewards: isLoadingFlywheelRewards,
+      rewards: rewardsQuery.isLoading && !rewardsQuery.isPaused
+    }
+  };
 }
 
 export function useRewardsForMarket({
@@ -205,8 +225,7 @@ export function useRewardsForMarket({
       return {};
     },
 
-    gcTime: Infinity,
     enabled: !!asset && !!poolAddress,
-    staleTime: Infinity
+    staleTime: Number.POSITIVE_INFINITY
   });
 }

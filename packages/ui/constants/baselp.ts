@@ -2,6 +2,7 @@ export const BaseLiquidityContractAdd =
   '0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43';
 export const BaseReservesContractAddr =
   '0x0FAc819628a7F612AbAc1CaD939768058cc0170c';
+export const BaseSugarAddress = '0x68c19e13618C41158fE4bAba1B8fb3A9c74bDb0A';
 export const BaseContractABI = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   { inputs: [], name: 'BelowMinimumK', type: 'error' },

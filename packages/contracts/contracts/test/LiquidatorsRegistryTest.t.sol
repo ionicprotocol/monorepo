@@ -244,14 +244,4 @@ contract LiquidatorsRegistryTest is BaseTest {
 
     _swap(tusdWhale, inputToken, inputAmount, outputToken, 5e16);
   }
-
-  function testUpdateLiquidator() public debuggingOnly fork(MODE_MAINNET) {
-    LiquidatorsRegistry registry = LiquidatorsRegistry(0xc71B968C6C23e2723Bae32957D815C9bE3ca1b34);
-    address multisig = 0x8Fba84867Ba458E7c6E2c024D2DE3d0b5C3ea1C2;
-    vm.prank(multisig);
-    registry._registerExtension(
-      DiamondExtension(0x3FA4BC2FCAc5515d5b758D4D580bbD626c93D621),
-      DiamondExtension(0xac409691b385Fdbb66752Ff2D97e50BC23fF2295)
-    );
-  }
 }

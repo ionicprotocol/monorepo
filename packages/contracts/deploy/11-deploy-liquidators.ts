@@ -6,6 +6,7 @@ import {
   deployIonicLiquidator,
   deployIonicUniV3Liquidator
 } from "../chainDeploy/helpers/liquidators/ionicLiquidator";
+import { bob, lisk } from "viem/chains";
 
 const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, getChainId }) => {
   const chainId = parseInt(await getChainId());
@@ -17,7 +18,9 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
 
   //// Liquidator
   let liquidatorContractName: string | undefined;
-  if (chainId === 34443) {
+  if (chainId === bob.id) {
+    // TODO
+  } else if (chainId === lisk.id) {
     liquidatorContractName = await deployIonicUniV3Liquidator({
       run,
       viem,
@@ -26,21 +29,7 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       deployConfig: chainDeployParams,
       chainId
     });
-  } else if (chainId === 60808) {
-    // TODO
-  } else {
-    liquidatorContractName = await deployIonicLiquidator({
-      run,
-      viem,
-      getNamedAccounts,
-      deployments,
-      deployConfig: chainDeployParams,
-      chainId
-    });
-  }
 
-  //// Configure Liquidator
-  if (liquidatorContractName) {
     await configureIonicLiquidator({
       contractName: liquidatorContractName,
       viem,
@@ -48,6 +37,40 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
       chainId,
       deployments
     });
+  } else {
+    liquidatorContractName = await deployIonicUniV3Liquidator({
+      run,
+      viem,
+      getNamedAccounts,
+      deployments,
+      deployConfig: chainDeployParams,
+      chainId
+    });
+
+    await configureIonicLiquidator({
+      contractName: liquidatorContractName,
+      viem,
+      getNamedAccounts,
+      chainId,
+      deployments
+    });
+
+    // liquidatorContractName = await deployIonicLiquidator({
+    //   run,
+    //   viem,
+    //   getNamedAccounts,
+    //   deployments,
+    //   deployConfig: chainDeployParams,
+    //   chainId
+    // });
+
+    // await configureIonicLiquidator({
+    //   contractName: liquidatorContractName,
+    //   viem,
+    //   getNamedAccounts,
+    //   chainId,
+    //   deployments
+    // });
   }
 };
 

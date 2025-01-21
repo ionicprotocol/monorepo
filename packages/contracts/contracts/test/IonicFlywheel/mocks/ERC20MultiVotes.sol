@@ -13,7 +13,7 @@ import "../interfaces/Errors.sol";
  @title ERC20 Multi-Delegation Voting contract
  @notice an ERC20 extension which allows delegations to multiple delegatees up to a user's balance on a given block.
  */
-abstract contract ERC20MultiVotes is ERC20, Auth {
+abstract contract ERC20MultiVotes_Mock is ERC20, Auth {
     using EnumerableSet for EnumerableSet.AddressSet;
     using SafeCastLib for *;
 

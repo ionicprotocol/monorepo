@@ -8,6 +8,14 @@ type CONFIG = {
   isOptimismEnabled: boolean;
   isBobEnabled: boolean;
   isFraxtalEnabled: boolean;
+  isLiskEnabled: boolean;
+  isSuperseedEnabled: boolean;
+  isWorldchainEnabled: boolean;
+  isInkEnabled: boolean;
+  isSwellEnabled: boolean;
+  isOzeantestEnabled: boolean;
+  isCampTestEnabled: boolean;
+  isSoneiumEnabled: boolean;
   isTestnetEnabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
@@ -33,7 +41,15 @@ const config: CONFIG = {
   isModeEnabled: true,
   isOptimismEnabled: true,
   isBobEnabled: true,
+  isLiskEnabled: true,
   isFraxtalEnabled: true,
+  isSuperseedEnabled: true,
+  isWorldchainEnabled: true,
+  isInkEnabled: true,
+  isSwellEnabled: true,
+  isOzeantestEnabled: true,
+  isCampTestEnabled: true,
+  isSoneiumEnabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,

@@ -1,6 +1,6 @@
-import type { SupportedChains } from '@ionicprotocol/types';
-import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { useQueries } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type {
@@ -8,13 +8,14 @@ import type {
   PositionsPerChainStatus
 } from '@ui/types/ComponentPropsType';
 
+import type { SupportedChains } from '@ionicprotocol/types';
+
 export const usePositionsPerChain = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiIonic();
 
   const positionQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
-        gcTime: Infinity,
         enabled: !!chainId && !!address,
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));

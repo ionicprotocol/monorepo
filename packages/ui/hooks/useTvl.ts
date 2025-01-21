@@ -1,12 +1,12 @@
-/* eslint-disable unused-imports/no-unused-imports */
 import { useQuery } from '@tanstack/react-query';
 import { formatEther } from 'viem';
+import { base, mode } from 'viem/chains';
 import { useReadContracts } from 'wagmi';
-// import { type UseReadContractsParameters } from 'wagmi';
 
 import { TradingAbi } from '@ui/constants/modetradingfees';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
-import { useIonPrice, useModePrice } from '@ui/hooks/useDexScreenerPrices';
+import { useIonPrice, useTokenPrice } from '@ui/hooks/useDexScreenerPrices';
+
+import { useUsdPrice } from './useUsdPrices';
 
 interface IuseTvl {
   poolAddress: `0x${string}`;
@@ -20,7 +20,6 @@ export const useTvl = ({
   assets = ['ION', 'WETH']
 }: IuseTvl) => {
   const { data: reserves, isPending } = useReadContracts({
-    // allowFailure: false,
     contracts: [
       {
         abi: TradingAbi,
@@ -38,14 +37,19 @@ export const useTvl = ({
       }
     ]
   }) as any;
-  const { data: ionData } = useIonPrice();
-  const { data: ethPriceData } = useAllUsdPrices();
-  const { data: modePriceData } = useModePrice();
+
+  const { data: ionData } = useIonPrice({
+    chainId: base.id
+  });
+
+  const { data: ethPrice } = useUsdPrice(poolChainId);
+  const { data: modePriceData } = useTokenPrice(mode.id);
 
   return useQuery({
-    queryKey: ['useTvl', ionData, ethPriceData, reserves, isPending],
+    queryKey: ['useTvl', ionData, ethPrice, reserves, isPending],
     queryFn: () => {
-      if (!ionData && !ethPriceData && isPending && !reserves) return;
+      if (!ionData && !ethPrice && isPending && !reserves) return;
+
       const token2resrv =
         Number(formatEther(reserves[1]?.result ?? BigInt(0))) ?? 0;
       const ionreserves =
@@ -54,13 +58,12 @@ export const useTvl = ({
       const token2 =
         assets[1] === 'MODE'
           ? Number(modePriceData?.pair.priceUsd) * token2resrv
-          : Number(ethPriceData?.[poolChainId].value) * token2resrv;
+          : Number(ethPrice) * token2resrv;
 
       const ion = Number(ionData?.pair.priceUsd) * ionreserves;
 
       return [ion, token2];
     },
-    gcTime: Infinity,
-    enabled: !!ionData && !!ethPriceData && !!reserves && !!ionData
+    enabled: !!ionData && !!ethPrice && !!reserves && !!ionData
   });
 };

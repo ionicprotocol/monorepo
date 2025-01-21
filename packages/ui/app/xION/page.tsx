@@ -1,12 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import { xErc20LayerZeroAbi } from 'sdk/src';
-import type { Address, Hex } from 'viem';
-import { erc20Abi, formatEther, parseEther, parseUnits } from 'viem';
+
+import {
+  erc20Abi,
+  formatEther,
+  parseEther,
+  parseUnits,
+  zeroAddress
+} from 'viem';
 import { mode } from 'viem/chains';
 import {
   useAccount,
@@ -16,22 +22,29 @@ import {
   // useBlock
 } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import FromTOChainSelector from '@ui/components/xION/FromToChainSelector';
+import ProgressSteps from '@ui/components/xION/ProgressSteps';
+import Quote from '@ui/components/xION/Quote';
+import { ixErc20 } from '@ui/constants/bridge';
+import { pools } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import { useOutsideClick } from '../../hooks/useOutsideClick';
-import ResultHandler from '../_components/ResultHandler';
-import MaxDeposit from '../_components/stake/MaxDeposit';
-import FromTOChainSelector from '../_components/xION/FromToChainSelector';
-import ProgressSteps from '../_components/xION/ProgressSteps';
-import Quote, { lzOptions } from '../_components/xION/Quote';
-// import TxPopup from '../_components/xION/TxPopup';
-const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
+// import TxPopup from '../components/xION/TxPopup';
+
+import type { Address } from 'viem';
+
+import { xErc20HyperlaneAbi } from '@ionicprotocol/sdk';
+
+const TxPopup = dynamic(() => import('@ui/components/xION/TxPopup'), {
   ssr: false
 });
 
-import { ixErc20 } from '@ui/constants/bridge';
-import { pools } from '@ui/constants/index';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
-import { BridgingContractAddress, getToken } from '@ui/utils/getStakingTokens';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 export default function XION() {
   const chainId = useChainId();
@@ -39,22 +52,52 @@ export default function XION() {
   const querychain = searchParams.get('chain');
   const toChain = searchParams.get('toChain');
   const chain = querychain ?? String(chainId);
+  const { getSdk } = useMultiIonic();
+  const sdk = getSdk(+chain);
+  const [toBridgeAddress, setToBridgeAddress] = useState<Address>(zeroAddress);
+  useEffect(() => {
+    if (toChain) {
+      const toSdk = getSdk(+toChain);
+      if (toSdk?.chainDeployment?.xERC20Hyperlane?.address) {
+        setToBridgeAddress(
+          toSdk.chainDeployment.xERC20Hyperlane?.address as Address
+        );
+      }
+    }
+  }, [getSdk, toChain]);
+  const fromBridgeAddress: Address =
+    (sdk?.chainDeployment?.xERC20Hyperlane?.address as Address) ?? zeroAddress;
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const [destinationAddress, setDestinationAddress] = useState<
+    Address | undefined
+  >(address);
+  const { data: allowance } = useReadContract({
+    abi: erc20Abi,
+    address: getToken(+chain),
+    functionName: 'allowance',
+    args: [address ?? zeroAddress, fromBridgeAddress]
+  });
   const { data: sourceLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+chain),
     functionName: 'bridges',
-    args: [BridgingContractAddress[+chain]],
+    args: [fromBridgeAddress],
     chainId: +chain
   });
   const { data: destinationLimits } = useReadContract({
     abi: ixErc20,
     address: getToken(+(toChain ?? mode.id)),
     functionName: 'bridges',
-    args: [BridgingContractAddress[+(toChain ?? mode.id)]],
+    args: [toBridgeAddress ?? zeroAddress],
     chainId: +(toChain ?? mode.id)
   });
+
+  useEffect(() => {
+    if (!destinationAddress) {
+      setDestinationAddress(address);
+    }
+  }, [address, destinationAddress]);
 
   const {
     componentRef: fromRef,
@@ -104,8 +147,13 @@ export default function XION() {
     bridgeStatus: 'unknown'
   });
 
-  // console.log(bridgeArgs);
-  // const [, setInit] = useLocalStorage('bridgeTx', '');
+  useEffect(() => {
+    if (address && allowance && allowance >= parseEther(deposit)) {
+      setProgress(2);
+    } else {
+      setProgress(0);
+    }
+  }, [allowance, deposit, address]);
 
   async function approval(amount: bigint) {
     try {
@@ -118,11 +166,12 @@ export default function XION() {
       if (amount <= BigInt(0)) return;
       setLoading((p) => ({ ...p, approvalStatus: true }));
       setProgress(1);
+
       const approval = await writeContractAsync({
         abi: erc20Abi,
         account: address,
         address: getToken(+chain),
-        args: [BridgingContractAddress[+chain], amount],
+        args: [fromBridgeAddress, amount],
         functionName: 'approve'
       });
 
@@ -161,15 +210,9 @@ export default function XION() {
       setLoading((p) => ({ ...p, bridgingStatus: true }));
 
       const bridging = await writeContractAsync({
-        abi: xErc20LayerZeroAbi,
-        address: BridgingContractAddress[+chain],
-        args: [
-          args.token,
-          args.amount,
-          args.toAddress,
-          args.destinationChain,
-          lzOptions as Hex
-        ],
+        abi: xErc20HyperlaneAbi,
+        address: fromBridgeAddress,
+        args: [args.token, args.amount, args.toAddress, args.destinationChain],
         functionName: 'send',
         chainId: +chain,
         value: args.nativeEth
@@ -205,7 +248,7 @@ export default function XION() {
       bridgeToggle();
       setProgress(0);
     } catch (err) {
-      console.error('Error claiming rewards: ', err);
+      console.error('Bridging Error: ', err);
       setLoading((p) => ({ ...p, bridgingStatus: false }));
       setProgress(2);
     }
@@ -220,7 +263,7 @@ export default function XION() {
       />
       <div className="bg-grayone  p-6 rounded-xl xl:max-w-[45%] sm:w-[75%] md:w-[60%]  w-[95%] mx-auto my-20">
         <div className={`mb-2 flex items-center justify-between`}>
-          <h2 className="text-lg ">Bridge</h2>
+          <h2 className="text-lg ">$ION Cross-Chain Bridge</h2>
           <h2 className="text-xs text-white/50 ">
             Track Bridge{' '}
             <img
@@ -242,7 +285,6 @@ export default function XION() {
               token={getToken(+chain)}
               handleInput={(val?: string) => setDeposit(val ?? '')}
               chain={+chain}
-              // tokenSelector={true}
               tokenArr={['ion']}
             />
           </div>
@@ -269,14 +311,25 @@ export default function XION() {
             />
           </div>
         </div>
+        <div className="mb-4">
+          <p className="text-xs text-white/50 mb-1">TO ADDRESS</p>
+          <input
+            type="text"
+            value={destinationAddress}
+            onChange={(e) => setDestinationAddress(e.target.value as Address)}
+            placeholder="Enter address"
+            className="text-sm w-full bg-gray-800 text-white border border-gray-700 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <div className="h-[2px] w-[100%] mx-auto bg-white/10 my-5" />
         <Quote
           chain={+chain}
+          bridgeAddress={fromBridgeAddress}
           getQuote={(data) => setNativeEth(parseEther(data))}
           args={{
             amount: parseUnits(deposit, 18),
             destinationChain: Number(toChain),
-            toAddress: address!,
+            toAddress: destinationAddress!,
             token: getToken(+chain)
           }}
         />
@@ -303,9 +356,9 @@ export default function XION() {
               bridging({
                 token: getToken(+chain),
                 amount: parseUnits(deposit, 18),
-                toAddress: address!,
+                toAddress: destinationAddress!,
                 destinationChain: Number(toChain),
-                nativeEth: nativeEth
+                nativeEth
               })
             }
           >

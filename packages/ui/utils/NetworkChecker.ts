@@ -1,6 +1,6 @@
 import { switchChain } from '@wagmi/core';
 
-import { wagmiConfig } from './connectors';
+import { wagmiAdapter } from '@ui/config/web3';
 
 export const handleSwitchOriginChain = async (
   selectedDropdownChain: number,
@@ -8,7 +8,7 @@ export const handleSwitchOriginChain = async (
 ) => {
   try {
     if (selectedDropdownChain !== walletsChain) {
-      await switchChain(wagmiConfig, {
+      await switchChain(wagmiAdapter.wagmiConfig, {
         chainId: selectedDropdownChain
       });
       return true;

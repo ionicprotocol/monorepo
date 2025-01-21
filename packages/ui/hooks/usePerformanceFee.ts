@@ -1,9 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, formatEther } from 'viem';
+import { formatEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const usePerformanceFee = (poolChainId: number, pluginAddress?: Address) => {
+import type { Address } from 'viem';
+
+export const usePerformanceFee = (
+  poolChainId: number,
+  pluginAddress?: Address
+) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery({
@@ -30,7 +35,6 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: Address) 
       }
     },
 
-    gcTime: Infinity,
     enabled: !!pluginAddress && !!sdk,
     staleTime: Infinity
   });

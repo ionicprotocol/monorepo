@@ -1,10 +1,12 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { PositionInfo } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { PositionInfo } from '@ionicprotocol/types';
 
 export const getPositionInfo = async (
   position: Address,
@@ -35,15 +37,10 @@ export function usePositionInfo(
     queryKey: ['usePositionInfo', sdk?.chainId, position, supplyApy],
 
     queryFn: async () => {
-      if (sdk && supplyApy) {
-        return await getPositionInfo(position, supplyApy, sdk);
-      } else {
-        return null;
-      }
+      return await getPositionInfo(position, supplyApy!, sdk!);
     },
 
-    gcTime: Infinity,
-    enabled: !!sdk && !!position && !!supplyApy && !!chainId,
+    enabled: !!sdk && !!position && typeof supplyApy === 'bigint' && !!chainId,
     staleTime: Infinity
   });
 }
@@ -68,7 +65,7 @@ export function usePositionsInfo(
             const position = positions[i];
             const totalApy = totalApys[i];
 
-            if (sdk && totalApy) {
+            if (sdk && typeof totalApy === 'bigint') {
               const info = await getPositionInfo(position, totalApy, sdk);
 
               if (info) {
@@ -84,7 +81,6 @@ export function usePositionsInfo(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!positions && !!totalApys && !!chainIds,
     staleTime: Infinity
   });

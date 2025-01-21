@@ -15,11 +15,17 @@ import { LeveredPositionStorage } from "./LeveredPositionStorage.sol";
 import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
+interface IFlywheelLensRouter_LP {
+  function claimAllRewardTokens(address user) external returns (address[] memory, uint256[] memory);
+}
+
 contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   error OnlyWhenClosed();
   error NotPositionOwner();
+  error OnlyFactoryOwner();
+  error AssetNotRescuable();
   error RepayFlashLoanFailed(address asset, uint256 currentBalance, uint256 repayAmount);
 
   error ConvertFundsFailed();
@@ -157,6 +163,22 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
         rewardToken.transfer(withdrawTo, rewardsAccrued);
       }
     }
+  }
+
+  function rescueTokens(IERC20Upgradeable asset) external {
+    if (msg.sender != factory.owner()) revert OnlyFactoryOwner();
+    if (asset == stableAsset || asset == collateralAsset) revert AssetNotRescuable();
+
+    asset.transfer(positionOwner, asset.balanceOf(address(this)));
+  }
+
+  function claimRewardsFromRouter(address _flr) external returns (address[] memory, uint256[] memory) {
+    IFlywheelLensRouter_LP flr = IFlywheelLensRouter_LP(_flr);
+    (address[] memory rewardTokens, uint256[] memory rewards) = flr.claimAllRewardTokens(address(this));
+    for (uint256 i = 0; i < rewardTokens.length; i++) {
+      IERC20Upgradeable(rewardTokens[i]).safeTransfer(positionOwner, rewards[i]);
+    }
+    return (rewardTokens, rewards);
   }
 
   fallback() external {
@@ -422,6 +444,8 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
       uint256 assumedSlippage = factory.liquidatorsRegistry().getSlippage(collateralAsset, stableAsset);
       uint256 amountToRedeemValueScaled = (borrowsToRepayValueScaled * (10000 + assumedSlippage)) / 10000;
       amountToRedeem = amountToRedeemValueScaled / collateralAssetPrice;
+      // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
+      if (amountToRedeemValueScaled % collateralAssetPrice > 0) amountToRedeem += 1;
     } else {
       // else derive the debt to be repaid from the amount to redeem
       (amountToRedeem, borrowsToRepay) = _getSupplyAmountDelta(

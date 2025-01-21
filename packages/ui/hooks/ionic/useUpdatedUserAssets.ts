@@ -1,35 +1,32 @@
-import type { FundOperationMode } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-// TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
+import { useUsdPrice } from '../useUsdPrices';
+
+import type { FundOperationMode } from '@ionicprotocol/types';
+
 interface UseUpdatedUserAssetsResult<T> {
-  amount: bigint;
-  assets: Array<T> | undefined;
-  index: number;
   mode: FundOperationMode;
+  index: number;
+  assets: Array<T> | undefined;
+  amount: bigint;
   poolChainId: number;
+  enabled?: boolean;
 }
+
 const useUpdatedUserAssets = <T extends MarketData>({
   mode,
   index,
   assets,
   amount,
-  poolChainId
+  poolChainId,
+  enabled = false
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiIonic();
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice, isLoading: isPriceLoading } =
+    useUsdPrice(poolChainId);
 
   return useQuery({
     queryKey: [
@@ -42,40 +39,38 @@ const useUpdatedUserAssets = <T extends MarketData>({
       usdPrice,
       currentSdk?.chainId
     ],
-
     queryFn: async () => {
-      if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
+      if (!assets?.length || !usdPrice || !currentSdk) return [];
 
-      const resAssets = await currentSdk
-        .getUpdatedAssets(mode, index, assets, amount)
-        .catch((e) => {
-          console.warn(
-            `Updated assets error: `,
-            { amount, assets, index, mode },
-            e
-          );
+      try {
+        const resAssets = await currentSdk.getUpdatedAssets(
+          mode,
+          index,
+          assets,
+          amount
+        );
 
-          return [];
-        });
-      const assetsWithPrice: MarketData[] = [];
-      if (resAssets && resAssets.length !== 0) {
-        resAssets.map((asset) => {
-          assetsWithPrice.push({
-            ...asset,
-            borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-            liquidityFiat: asset.liquidityNative * usdPrice,
-            netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
-            supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-            totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-            totalSupplyFiat: asset.totalSupplyNative * usdPrice
-          });
-        });
+        return resAssets.map((asset) => ({
+          ...asset,
+          borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+          liquidityFiat: asset.liquidityNative * usdPrice,
+          netSupplyBalanceFiat: asset.netSupplyBalanceNative * usdPrice,
+          supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+          totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+          totalSupplyFiat: asset.totalSupplyNative * usdPrice
+        }));
+      } catch (e) {
+        console.warn(
+          'Updated assets error: ',
+          { amount, assets, index, mode },
+          e
+        );
+        return [];
       }
-
-      return assetsWithPrice;
     },
-
-    enabled: !!assets && !!usdPrice && !!currentSdk
+    enabled: !!assets && !isPriceLoading && !!currentSdk && enabled,
+    staleTime: enabled ? 0 : undefined,
+    retry: false
   });
 };
 

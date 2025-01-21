@@ -18,6 +18,9 @@ export const wstETH = "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb";
 export const SNX = "0x8700dAec35aF8Ff88c16BdF0418774CB3D7599B4";
 export const WBTC = "0x68f180fcCe6836688e9084f035309E29Bf0A2095";
 export const LUSD = "0xc40F949F8a4e094D1b49a23ea9241D289B7b2819";
+export const wUSDM = "0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812";
+export const ION = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC";
+export const weETH = "0x5A7fACB970D094B6C7FF1df0eA68D99E6e73CBFF";
 
 export const assets: SupportedAsset[] = [
   {
@@ -100,8 +103,8 @@ export const assets: SupportedAsset[] = [
     oracleSpecificParams: { feed: "0x39d020f60982ed892abbcd4a06a276a9f9b7bfbce003204c110b6e488f502da3" },
     extraDocs: defaultDocs("https://optimistic.etherscan.io", SNX),
     initialCf: "70",
-    initialSupplyCap: parseEther(String(40_000)).toString(),
-    initialBorrowCap: parseEther(String(32_000)).toString()
+    initialSupplyCap: parseEther(String(350_000)).toString(),
+    initialBorrowCap: parseEther(String(280_000)).toString()
   },
   {
     symbol: assetSymbols.WBTC,
@@ -129,6 +132,44 @@ export const assets: SupportedAsset[] = [
     initialCf: "70",
     initialSupplyCap: parseEther(String(2_200_000)).toString(),
     initialBorrowCap: parseEther(String(1_700_000)).toString()
+  },
+  {
+    symbol: assetSymbols.wUSDM,
+    underlying: wUSDM,
+    name: "Wrapped USDM",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xD673873c8627b29d9e245cDC133c6dA0a398b65A",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://optimistic.etherscan.io", wUSDM),
+    initialCf: "0.82",
+    initialSupplyCap: parseEther(String(1_300_000)).toString(),
+    initialBorrowCap: parseEther(String(1_000_000)).toString()
+  },
+  {
+    symbol: assetSymbols.ION,
+    underlying: ION,
+    name: "Ion",
+    decimals: 18,
+    oracle: OracleTypes.AerodromePriceOracle,
+    extraDocs: defaultDocs("https://optimistic.etherscan.io", ION)
+  },
+  {
+    symbol: assetSymbols.weETH,
+    underlying: weETH,
+    name: "Wrapped eETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x72EC6bF88effEd88290C66DCF1bE2321d80502f5",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.ETH
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://optimistic.etherscan.io", weETH),
+    initialBorrowCap: parseEther(String(600)).toString(),
+    initialSupplyCap: parseEther(String(1_000)).toString(),
+    initialCf: "0.80"
   }
 ];
 

@@ -1,9 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import ResultHandler from './_components/ResultHandler';
+import { useRouter } from 'next/navigation';
+
+import ResultHandler from '../components/ResultHandler';
 
 const Home = () => {
   const router = useRouter();

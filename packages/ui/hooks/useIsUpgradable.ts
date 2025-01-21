@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import type { Address } from 'viem';
 
 export const useIsUpgradeable = (comptrollerAddress: Address) => {
   const { currentSdk, currentChain } = useMultiIonic();
@@ -37,7 +38,6 @@ export const useIsUpgradeable = (comptrollerAddress: Address) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
     staleTime: Infinity
   });

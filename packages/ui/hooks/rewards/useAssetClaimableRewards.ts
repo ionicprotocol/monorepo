@@ -1,10 +1,12 @@
-import type { IonicSdk } from '@ionicprotocol/sdk';
-import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
+
+import type { IonicSdk } from '@ionicprotocol/sdk';
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 
 export const useAssetClaimableRewards = (
   marketAddress: Address,
@@ -48,7 +50,6 @@ export const useAssetClaimableRewards = (
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!marketAddress && !!address && !!sdk,
     staleTime: Infinity
   });
@@ -122,7 +123,6 @@ export const useAssetsClaimableRewards = ({
       return null;
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!address && !!sdk,
     staleTime: Infinity
   });

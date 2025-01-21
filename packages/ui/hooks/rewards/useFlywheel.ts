@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { Flywheel } from '@ui/types/ComponentPropsType';
-import { Address } from 'viem';
+
+import type { Address } from 'viem';
 
 export const useFlywheel = (flywheelAddress?: Address) => {
   const { currentSdk } = useMultiIonic();
@@ -76,7 +77,6 @@ export const useFlywheel = (flywheelAddress?: Address) => {
       } as Flywheel;
     },
 
-    gcTime: Infinity,
     enabled: !!flywheelAddress && !!currentSdk,
     initialData: undefined,
     staleTime: Infinity

@@ -1,79 +1,72 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, parseEther } from 'viem';
+import { parseEther, getContract } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import type { MarketData } from '@ui/types/TokensDataMap';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
+import { cTokenFirstExtensionAbi } from '@ionicprotocol/sdk/src';
+
 export function useAssetChartData(
-  interestRateModelAddress: Address,
-  reserveFactor: number,
-  adminFee: number,
-  poolChainId: number
+  marketData: MarketData | undefined,
+  chainId: number
 ) {
-  const sdk = useSdk(poolChainId);
+  const sdk = useSdk(chainId);
 
   return useQuery({
-    queryKey: [
-      'useAssetChartData',
-      interestRateModelAddress,
-      adminFee,
-      reserveFactor,
-      sdk?.chainId
-    ],
-
+    queryKey: ['useAssetChartData', marketData?.cToken, chainId],
     queryFn: async () => {
-      if (sdk) {
-        const interestRateModel = await sdk
-          .identifyInterestRateModel(interestRateModelAddress)
-          .catch((e) => {
-            console.warn(
-              `Identifying interest rate model error: `,
-              {
-                adminFee,
-                interestRateModelAddress,
-                poolChainId,
-                reserveFactor
-              },
-              e
-            );
+      if (!marketData?.cToken || !sdk?.publicClient) return null;
 
-            return null;
-          });
+      const cTokenContract = getContract({
+        address: marketData.cToken,
+        abi: cTokenFirstExtensionAbi,
+        client: sdk.publicClient
+      });
 
-        if (interestRateModel === null) {
-          return null;
-        }
+      const irm = await cTokenContract.read.interestRateModel();
+      if (!irm) return null;
 
-        await interestRateModel._init(
-          interestRateModelAddress,
-          // reserve factor
-          // reserveFactor * 1e16,
-          parseEther((reserveFactor / 100).toString()),
+      const interestRateModel = await sdk.identifyInterestRateModel(irm);
+      if (!interestRateModel) return null;
 
-          // admin fee
-          // adminFee * 1e16,
-          parseEther((adminFee / 100).toString()),
+      await interestRateModel._init(
+        irm,
+        parseEther((Number(marketData.reserveFactor) / 1e16 / 100).toString()),
+        parseEther((Number(marketData.adminFee) / 1e16 / 100).toString()),
+        parseEther('0.1'), // 10% Fuse fee
+        sdk.publicClient
+      );
 
-          // hardcoded 10% Fuse fee
-          parseEther((10 / 100).toString()),
-          sdk.publicClient
-        );
+      const rawData = await convertIRMtoCurve(sdk, interestRateModel, chainId);
+      if (!rawData?.rates) return null;
 
-        return convertIRMtoCurve(sdk, interestRateModel, sdk.chainId);
-      } else {
-        return null;
-      }
+      return {
+        rates: rawData.rates,
+        formattedData: {
+          labels: rawData.rates.map(
+            (point) => `${point.utilization.toFixed(0)}%`
+          ),
+          datasets: [
+            {
+              label: 'Borrow Rate',
+              data: rawData.rates.map((point) => point.borrowRate),
+              borderColor: '#ff3863ff',
+              backgroundColor: '#ff386310',
+              fill: true
+            },
+            {
+              label: 'Supply Rate',
+              data: rawData.rates.map((point) => point.depositRate),
+              borderColor: '#3bff89ff',
+              backgroundColor: '#3bff8910',
+              fill: true
+            }
+          ]
+        },
+        interestRateModelAddress: irm
+      };
     },
-
-    gcTime: Infinity,
-
-    enabled:
-      !!interestRateModelAddress &&
-      !!adminFee.toString() &&
-      !!reserveFactor.toString() &&
-      !!sdk &&
-      !!poolChainId,
-
-    staleTime: Infinity
+    enabled: Boolean(marketData?.cToken && sdk?.publicClient)
   });
 }

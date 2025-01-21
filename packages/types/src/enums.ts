@@ -3,7 +3,15 @@ export enum SupportedChains {
   base = 8453,
   optimism = 10,
   bob = 60808,
-  fraxtal = 252
+  fraxtal = 252,
+  lisk = 1135,
+  ink = 57073,
+  superseed = 5330,
+  worldchain = 480,
+  swell = 1923,
+  soneium = 1868,
+  ozeantest = 7849306,
+  camptest = 325000
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -11,37 +19,16 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
   .filter((value) => typeof value === "number");
 
 export enum RedemptionStrategyContract {
-  CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
-  XBombLiquidatorFunder = "XBombLiquidatorFunder",
-  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
-  UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
+  AerodromeV2Liquidator = "AerodromeV2Liquidator",
+  AerodromeCLLiquidator = "AerodromeCLLiquidator",
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
   UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
-  GelatoGUniLiquidator = "GelatoGUniLiquidator",
-  GammaAlgebraLpTokenLiquidator = "GammaAlgebraLpTokenLiquidator",
-  GammaUniswapV3LpTokenLiquidator = "GammaUniswapV3LpTokenLiquidator",
-  GammaAlgebraLpTokenWrapper = "GammaAlgebraLpTokenWrapper",
-  GammaUniswapV3LpTokenWrapper = "GammaUniswapV3LpTokenWrapper",
-  CurveSwapLiquidator = "CurveSwapLiquidator",
-  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
-  CurveLpTokenWrapper = "CurveLpTokenWrapper",
-  SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
-  BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
-  BalancerSwapLiquidator = "BalancerSwapLiquidator",
-  ERC4626Liquidator = "ERC4626Liquidator",
   AlgebraSwapLiquidator = "AlgebraSwapLiquidator",
-  SolidlyLpTokenLiquidator = "SolidlyLpTokenLiquidator",
-  SolidlyLpTokenWrapper = "SolidlyLpTokenWrapper",
-  SolidlySwapLiquidator = "SolidlySwapLiquidator",
-  AaveTokenLiquidator = "AaveTokenLiquidator",
   KimUniV2Liquidator = "KimUniV2Liquidator"
 }
 
 export enum FundingStrategyContract {
-  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
-  XBombLiquidatorFunder = "XBombLiquidatorFunder",
-  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
-  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder"
+  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder"
 }
 
 export enum DelegateContractName {
@@ -85,7 +72,8 @@ export enum OracleTypes {
   RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle",
   RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle",
   AerodromePriceOracle = "AerodromePriceOracle",
-  VelodromePriceOracle = "VelodromePriceOracle"
+  VelodromePriceOracle = "VelodromePriceOracle",
+  eOracle = "eOracle"
 }
 
 export enum IrmTypes {
@@ -189,7 +177,8 @@ export enum assetSymbols {
   // mode
   WETH = "WETH",
   ezETH = "ezETH",
-  weETH = "weETH.mode",
+  weETH = "weETH",
+  "weETH.mode" = "weETH.mode",
   wrsETH = "wrsETH",
   ETH = "ETH",
   USDC = "USDC",
@@ -206,6 +195,9 @@ export enum assetSymbols {
   dMBTC = "dMBTC",
   STONE = "STONE",
   msDAI = "msDAI",
+  oBTC = "oBTC",
+  uniBTC = "uniBTC",
+  uBTC = "uBTC",
 
   // base
   AERO = "AERO",
@@ -214,6 +206,22 @@ export enum assetSymbols {
   hyUSD = "hyUSD",
   RSR = "RSR",
   cbBTC = "cbBTC",
+  superOETHb = "superOETHb",
+  wsuperOETHb = "wsuperOETHb",
+  wUSDM = "wUSDM",
+  OGN = "OGN",
+  EURC = "EURC",
+  USDplus = "USD+",
+  wUSDplus = "wUSD+",
+  USDz = "USDz",
+  uSOL = "uSOL",
+  uSUI = "uSUI",
+  sUSDz = "sUSDz",
+  fBOMB = "fBOMB",
+  KLIMA = "KLIMA",
+  uXRP = "uXRP",
+  ionicUSDC = "ionicUSDC",
+  ionicWETH = "ionicWETH",
 
   // optimism
   OP = "OP",
@@ -228,6 +236,19 @@ export enum assetSymbols {
   sFRXETH = "sFRXETH",
   sFRAX = "sFRAX",
   frxBTC = "frxBTC",
+  insfrxETH = "insfrxETH",
+
+  // lisk
+  LSK = "LSK",
+
+  // ozean
+  WUSDX = "WUSDX",
+
+  // soneium
+  ASTR = "ASTR",
+
+  // swell
+  rswETH = "rswETH",
 
   // legacy
   DAI = "DAI",

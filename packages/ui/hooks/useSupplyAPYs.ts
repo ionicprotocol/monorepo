@@ -43,7 +43,6 @@ export const useSupplyAPYs = (
       return result;
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && !!assets && !!chainId,
     staleTime: Infinity
   });

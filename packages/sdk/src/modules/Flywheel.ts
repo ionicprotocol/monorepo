@@ -43,6 +43,11 @@ export interface IFlywheel {
   ): Promise<FlywheelClaimableRewards[]>;
   getFlywheelClaimableRewardsForPool(poolAddress: Address, account: Address): Promise<FlywheelClaimableRewards[]>;
   getAllFlywheelClaimableRewards(account: Address): Promise<FlywheelClaimableRewards[]>;
+  getRewardsForMarketsAndFlywheels(
+    account: Address,
+    markets: Address[],
+    flywheels: Address[]
+  ): Promise<FlywheelClaimableRewards[]>;
   getFlywheelEnabledMarkets(flywheelAddress: Address): Promise<Address[]>;
   setStaticRewardInfo(staticRewardsAddress: Address, marketAddress: Address, rewardInfo: any): Promise<Address>;
   setFlywheelRewards(flywheelAddress: Address, rewardsAddress: Address): Promise<Address>;
@@ -68,37 +73,67 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelMarketRewardsByPool(pool: Address): Promise<FlywheelMarketRewardsInfo[]> {
-      const [flywheelsOfPool, marketsOfPool] = await Promise.all([
-        this.getFlywheelsByPool(pool),
-        this.createComptroller(pool, this.publicClient).read.getAllMarkets()
-      ]);
-      const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.read.getAllStrategies()));
+      const retryOperation = async <T>(operation: () => Promise<T>, retries = 3): Promise<T> => {
+        try {
+          return await operation();
+        } catch (error) {
+          if (retries > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return retryOperation(operation, retries - 1);
+          }
+          throw error;
+        }
+      };
 
-      const rewardTokens: string[] = [];
-      const marketRewardsInfo = await Promise.all(
-        marketsOfPool.map(async (market) => {
-          const rewardsInfo = await Promise.all(
-            flywheelsOfPool
-              // Make sure this market is active in this flywheel
-              .filter((_, fwIndex) => strategiesOfFlywheels[fwIndex].includes(market))
-              // TODO also check marketState?
-              .map(async (fw) => {
-                const rewardToken = await fw.read.rewardToken();
-                rewardTokens.push(rewardToken);
-                return {
-                  rewardToken,
-                  flywheel: fw.address
-                };
-              })
-          );
-          return {
-            market,
-            rewardsInfo
-          };
-        })
-      );
+      try {
+        // Use Promise.all with retry for initial data fetching
+        const [flywheelsOfPool, marketsOfPool] = await Promise.all([
+          retryOperation(() => this.getFlywheelsByPool(pool)),
+          retryOperation(() => this.createComptroller(pool, this.publicClient).read.getAllMarkets())
+        ]);
 
-      return marketRewardsInfo;
+        // Get strategies with retry
+        const strategiesOfFlywheels = await Promise.all(
+          flywheelsOfPool.map((fw) => retryOperation(() => fw.read.getAllStrategies()))
+        );
+
+        const marketRewardsInfo = await Promise.all(
+          marketsOfPool.map(async (market) => {
+            // Filter and map operations combined to reduce async operations
+            const rewardsInfo = await Promise.all(
+              flywheelsOfPool
+                .map(async (fw, fwIndex) => {
+                  // Skip if market is not active in this flywheel
+                  if (!strategiesOfFlywheels[fwIndex].includes(market)) {
+                    return null;
+                  }
+
+                  try {
+                    const rewardToken = await retryOperation(() => fw.read.rewardToken());
+                    return {
+                      rewardToken,
+                      flywheel: fw.address
+                    };
+                  } catch (error) {
+                    console.warn(`Failed to get reward token for flywheel ${fw.address}: ${error}`);
+                    return null;
+                  }
+                })
+                .filter((x): x is Promise<{ rewardToken: Hex; flywheel: Address } | null> => x !== null)
+            );
+
+            return {
+              market,
+              rewardsInfo: rewardsInfo.filter((info): info is { rewardToken: Hex; flywheel: Address } => info !== null)
+            };
+          })
+        );
+
+        return marketRewardsInfo;
+      } catch (error) {
+        console.error(`Failed to get flywheel market rewards for pool ${pool}:`, error);
+        return [];
+      }
     }
 
     async getFlywheelsByPool(
@@ -255,6 +290,30 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
 
       return rewardTokens.map((rewardToken, i) => {
         return {
+          rewardToken,
+          amount: rewards[i]
+        };
+      });
+    }
+
+    async getRewardsForMarketsAndFlywheels(
+      account: Address,
+      markets: Address[],
+      flywheels: Address[]
+    ): Promise<FlywheelClaimableRewards[]> {
+      const fwLensRouter = this.createIonicFlywheelLensRouter();
+
+      const result = await fwLensRouter.simulate.claimRewardsForMarkets([
+        account,
+        markets,
+        flywheels,
+        Array.from(flywheels, () => true)
+      ]);
+      const [_flywheels, rewardTokens, rewards] = result.result;
+
+      return rewardTokens.map((rewardToken, i) => {
+        return {
+          flywheel: _flywheels[i],
           rewardToken,
           amount: rewards[i]
         };

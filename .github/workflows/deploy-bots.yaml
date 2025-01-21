@@ -36,6 +36,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"  
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -109,6 +114,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       # Avoids rate limits error on pulling from public ECR
+      #dummy commit
       - name: Login to Public ECR
         uses: docker/login-action@v2
         with:
@@ -128,6 +134,52 @@ jobs:
           docker build --build-arg UPTIME_LIQUIDATOR_API=${{ secrets.UPTIME_LIQUIDATOR_API }} -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG
+
+
+
+  build-and-push-liquidator-ecs-image:
+    needs: [terraform-infra]
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: 058264122535.dkr.ecr.us-east-1.amazonaws.com
+      REPOSITORY: liquidator-ecs
+      UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
+      UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to Private ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Avoids rate limits error on pulling from public ECR
+      - name: Login to Public ECR
+        uses: docker/login-action@v2
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Log in to GH Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        run: |
+          docker build --build-arg UPTIME_LIQUIDATOR_API=${{ secrets.UPTIME_LIQUIDATOR_API }} -f docker/liquidator-ecs/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push ghcr.io/ionicprotocol/$REPOSITORY:$IMAGE_TAG        
 
   build-and-push-oracles-monitor-image:
     needs: [terraform-infra]
@@ -221,6 +273,8 @@ jobs:
       REPOSITORY: ionic-pyth-updater
       UPTIME_LIQUIDATOR_API: ${{ secrets.UPTIME_LIQUIDATOR_API }}
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
+      PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT }}'
+      PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY }}'
 
     steps:
       - uses: actions/checkout@v4 
@@ -261,20 +315,26 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       [
-        build-and-push-liquidator-image,
         build-and-push-oracles-monitor-image,
         build-and-push-pyth-updater-image,
         build-and-push-pyth-liquidator-image,
+        build-and-push-liquidator-ecs-image,
+        build-and-push-liquidator-image,
         # build-and-push-liquidator-base-image,
         lint-bots,
       ]
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
+      PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT }}'
+      PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY }}'
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
       LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
       PER_DISCORD_WEBHOOK_URL: ${{ secrets.PER_DISCORD_WEBHOOK_URL }}
+      DISCORD_FAILURE_WEBHOOK_URL: ${{secrets.DISCORD_FAILURE_WEBHOOK_URL }}
+      DISCORD_SUCCESS_WEBHOOK_URL: ${{secrets.DISCORD_SUCCESS_WEBHOOK_URL }}
+      LIFIAPIKEY: ${{ secrets.LIFIAPIKEY }}
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
@@ -282,6 +342,9 @@ jobs:
       UPTIME_PYTH_UPDATER_API: ${{ secrets.UPTIME_PYTH_UPDATER_API }}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
+      LISK_MAINNET_RPC_URLS: ${{ secrets.LISK_MAINNET_RPC_URLS }}
+      FRAXTAL_MAINNET_RPC_URLS: ${{ secrets.FRAXTAL_MAINNET_RPC_URLS }}
 
     steps:
       - name: Checkout repository
@@ -306,13 +369,15 @@ jobs:
       #   working-directory: ./ops
       #   run: make feed-verifier-smoke-test
 
-      # - name: run smoke tests for price verifier
+
+     # - name: run smoke tests for price verifier
       #   working-directory: ./ops
       #   run: make price-verifier-smoke-test
 
       # - name: run smoke tests for price change verifier
       #   working-directory: ./ops
       #   run: make price-change-verifier-smoke-test
+
 
   terraform-deploy-bots:
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development'
@@ -322,19 +387,32 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
+      PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_ACCOUNT }}'
+      PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.PYTH_UPDATER_ETHEREUM_ADMIN_PRIVATE_KEY }}'
       INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
       LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
       ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       PER_DISCORD_WEBHOOK_URL: ${{ secrets.PER_DISCORD_WEBHOOK_URL }}
+      DISCORD_FAILURE_WEBHOOK_URL: ${{secrets.DISCORD_FAILURE_WEBHOOK_URL }}
+      DISCORD_SUCCESS_WEBHOOK_URL: ${{secrets.DISCORD_SUCCESS_WEBHOOK_URL }}
+      LIFIAPIKEY: ${{ secrets.LIFIAPIKEY }}
       PYTH_UPDATER_DISCORD_WEBHOOK_URL: ${{ secrets.PYTH_UPDATER_DISCORD_WEBHOOK_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       SENDGRID_EMAIL_TO: ${{ secrets.SENDGRID_EMAIL_TO}}
       MODE_MAINNET_RPC_URLS: ${{ secrets.MODE_MAINNET_RPC_URLS }} 
       BASE_MAINNET_RPC_URLS: ${{ secrets.BASE_MAINNET_RPC_URLS }}
+      OPTIMISM_MAINNET_RPC_URLS: ${{ secrets.OPTIMISM_MAINNET_RPC_URLS }}
+      LISK_MAINNET_RPC_URLS: ${{ secrets.LISK_MAINNET_RPC_URLS }}
+      FRAXTAL_MAINNET_RPC_URLS: ${{ secrets.FRAXTAL_MAINNET_RPC_URLS }}
     steps:
       - name: Checkout
         uses: actions/checkout@master
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"  
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

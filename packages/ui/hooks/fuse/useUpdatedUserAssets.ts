@@ -1,10 +1,11 @@
-import type { FundOperationMode } from '@ionicprotocol/types';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
+
+import { useUsdPrice } from '../useUsdPrices';
+
+import type { FundOperationMode } from '@ionicprotocol/types';
 
 // TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
 interface UseUpdatedUserAssetsResult<T> {
@@ -22,14 +23,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   poolChainId
 }: UseUpdatedUserAssetsResult<T>) => {
   const { currentSdk, currentChain } = useMultiIonic();
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
 
   return useQuery({
     queryKey: [
@@ -75,7 +69,6 @@ const useUpdatedUserAssets = <T extends MarketData>({
       return assetsWithPrice;
     },
 
-    gcTime: Infinity,
     enabled: !!assets && !!usdPrice && !!currentSdk,
     staleTime: Infinity
   });

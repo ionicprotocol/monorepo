@@ -97,8 +97,8 @@ export type ChainlinkAsset = {
 
 export type DiaAsset = {
   symbol: string;
-  underlying: string;
-  feed: string;
+  underlying: Address;
+  feed: Address;
   key: string;
 };
 
@@ -148,6 +148,7 @@ export type ChainDeployFnParams = {
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
   deployments: HardhatRuntimeEnvironment["deployments"];
   run: RunTaskFunction;
+  chainId: number;
 };
 
 export type LiquidatorDeployFnParams = ChainDeployFnParams & {
@@ -327,7 +328,8 @@ export enum OracleTypes {
   RedstoneAdapterPriceOracle = "RedstoneAdapterPriceOracle",
   RedstoneAdapterWrsETHPriceOracle = "RedstoneAdapterWrsETHPriceOracle",
   VelodromePriceOracle = "VelodromePriceOracle",
-  AerodromePriceOracle = "AerodromePriceOracle"
+  AerodromePriceOracle = "AerodromePriceOracle",
+  DiaPriceOracle = "DiaPriceOracle"
 }
 
 export type ChainAddresses = {

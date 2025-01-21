@@ -29,7 +29,7 @@ contract LeveredPositionFactoryFirstExtension is
   error PositionNotClosed();
 
   function _getExtensionFunctions() external pure override returns (bytes4[] memory) {
-    uint8 fnsCount = 9;
+    uint8 fnsCount = 10;
     bytes4[] memory functionSelectors = new bytes4[](fnsCount);
     functionSelectors[--fnsCount] = this.removeClosedPosition.selector;
     functionSelectors[--fnsCount] = this.closeAndRemoveUserPosition.selector;
@@ -40,6 +40,8 @@ contract LeveredPositionFactoryFirstExtension is
     functionSelectors[--fnsCount] = this.getAccountsWithOpenPositions.selector;
     functionSelectors[--fnsCount] = this.getPositionsByAccount.selector;
     functionSelectors[--fnsCount] = this.getPositionsExtension.selector;
+    functionSelectors[--fnsCount] = this._setPositionsExtension.selector;
+
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
   }
@@ -66,6 +68,10 @@ contract LeveredPositionFactoryFirstExtension is
 
     removed = userPositions.remove(closedPosition);
     if (userPositions.length() == 0) accountsWithOpenPositions.remove(positionOwner);
+  }
+
+  function _setPositionsExtension(bytes4 msgSig, address extension) external onlyOwner {
+    _positionsExtensions[msgSig] = extension;
   }
 
   /*----------------------------------------------------------------
@@ -106,7 +112,6 @@ contract LeveredPositionFactoryFirstExtension is
   }
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address) {
-    // TODO
-    return address(0);
+    return _positionsExtensions[msgSig];
   }
 }

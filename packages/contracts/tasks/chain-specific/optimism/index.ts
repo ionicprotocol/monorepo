@@ -1,0 +1,11 @@
+import "./market";
+import "./rewards";
+import "./liquidation";
+import "./leverage";
+export const COMPTROLLER_MAIN = "0xaFB4A254D125B0395610fdc8f1D022936c7b166B";
+export const ION = "0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC";
+export const USDC_MARKET = "0x50549be7e21C3dc0Db03c3AbAb83e1a78d07e6e0";
+export const wUSDM_MARKET = "0xc63B18Fc9025ACC7830B9df05e5A0B208940a3EE";
+export const WETH_MARKET = "0x53b1D15b24d93330b2fD359C798dE7183255e7f2";
+export const SNX_MARKET = "0xe4c5Aeb87762789F854B3Bae7515CF00d77a1f5e";
+export const weETH_MARKET = "0xC741af01903f39841228dE21d9DdD31Ba604Fec5";

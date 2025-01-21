@@ -1,9 +1,4 @@
 'use client';
-import { chainIdToConfig } from '@ionicprotocol/chains';
-import { IonicSdk } from '@ionicprotocol/sdk';
-import type Security from '@ionicprotocol/security';
-import type { SupportedChains } from '@ionicprotocol/types';
-import * as Sentry from '@sentry/browser';
 import type { Dispatch, ReactNode } from 'react';
 import {
   createContext,
@@ -13,6 +8,8 @@ import {
   useMemo,
   useState
 } from 'react';
+
+import * as Sentry from '@sentry/browser';
 import {
   createPublicClient,
   fallback,
@@ -24,6 +21,11 @@ import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
+
+import { chainIdToConfig } from '@ionicprotocol/chains';
+import { IonicSdk } from '@ionicprotocol/sdk';
+import type Security from '@ionicprotocol/security';
+import type { SupportedChains } from '@ionicprotocol/types';
 
 export interface MultiIonicContextData {
   address?: `0x${string}`;
@@ -44,6 +46,8 @@ export interface MultiIonicContextData {
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
   walletClient?: WalletClient;
+  dropChain: string;
+  setDropChain: (val: string) => void;
 }
 
 export const MultiIonicContext = createContext<
@@ -74,6 +78,7 @@ export const MultiIonicProvider = (
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
+  const [dropChain, setDropChain] = useState<string>('34443');
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: IonicSdk[] = [];
@@ -202,7 +207,9 @@ export const MultiIonicProvider = (
       setAddress,
       setGlobalLoading,
       setIsSidebarCollapsed,
-      walletClient
+      walletClient,
+      dropChain,
+      setDropChain
     };
   }, [
     sdks,
@@ -220,7 +227,9 @@ export const MultiIonicProvider = (
     walletClient,
     setAddress,
     isSidebarCollapsed,
-    setIsSidebarCollapsed
+    setIsSidebarCollapsed,
+    dropChain,
+    setDropChain
   ]);
 
   return (

@@ -52,6 +52,7 @@ export const upgradeMarketToSupportFlywheel = async (
         implementationAddress as Address,
         implementationData
       ]);
+      console.log("setImplementationTx: ", setImplementationTx);
 
       const receipt = await publicClient.waitForTransactionReceipt({
         hash: setImplementationTx
