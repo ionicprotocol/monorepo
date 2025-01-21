@@ -32,6 +32,10 @@ contract IonicMarketERC4626 is IonicERC4626 {
   }
 
   /* ========== VIEW FUNCTIONS ========== */
+  function totalAssets() public view virtual override returns (uint256) {
+    return cToken.balanceOfUnderlying(address(this));
+  }
+
   /// @notice maximum amount of underlying tokens that can be deposited into the underlying protocol
   function maxDeposit(address) public view override returns (uint256) {
     if (cToken.comptroller().mintGuardianPaused(address(cToken))) {
