@@ -10,7 +10,7 @@ import { getMarketInfo } from "../../market";
 const modeAssets = mode.assets;
 
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.uniBTC];
+  const assetsToDeploy: string[] = [assetSymbols.oBTC];
   for (const asset of modeAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -50,7 +50,7 @@ task("mode:set-caps:new", "one time setup").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.uniBTC];
+    const assetsToDeploy: string[] = [assetSymbols.oBTC];
     for (const asset of mode.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
@@ -96,7 +96,7 @@ task("market:set-cf:mode:new", "Sets CF on a market").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.USDe, assetSymbols.rswETH, assetSymbols.weETH];
+    const assetsToDeploy: string[] = [assetSymbols.oBTC, assetSymbols.uniBTC];
     for (const asset of mode.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
