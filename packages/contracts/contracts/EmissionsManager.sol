@@ -164,7 +164,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     if (nonBlacklistable[_user] || keccak256(_user.code) == keccak256(nonBlacklistableTargetBytecode)) {
       return false;
     }
-    return !_checkCollateralRatio(_user);
+    return !_checkCollateralRatio(_user) && !isBlacklisted[_user];
   }
 
   function _blacklistUserAndClaimEmissions(address user) internal {
