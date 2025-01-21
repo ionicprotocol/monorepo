@@ -6,15 +6,11 @@ import { DiamondBase, DiamondExtension } from "../ionic/DiamondExtension.sol";
 
 import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
 import { LeveredPositionFactory, IFeeDistributor } from "../ionic/levered/LeveredPositionFactory.sol";
-import { JarvisLiquidatorFunder } from "../liquidators/JarvisLiquidatorFunder.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
-import { SolidlyLpTokenLiquidator, SolidlyLpTokenWrapper } from "../liquidators/SolidlyLpTokenLiquidator.sol";
-import { SolidlySwapLiquidator } from "../liquidators/SolidlySwapLiquidator.sol";
 import { UniswapV3LiquidatorFunder } from "../liquidators/UniswapV3LiquidatorFunder.sol";
 import { AerodromeCLLiquidator } from "../liquidators/AerodromeCLLiquidator.sol";
 import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
 
-import { CurveLpTokenLiquidatorNoRegistry } from "../liquidators/CurveLpTokenLiquidatorNoRegistry.sol";
 import { LeveredPositionFactoryFirstExtension } from "../ionic/levered/LeveredPositionFactoryFirstExtension.sol";
 import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredPositionFactorySecondExtension.sol";
 import { ILeveredPositionFactory } from "../ionic/levered/ILeveredPositionFactory.sol";
@@ -656,29 +652,6 @@ contract PearlUsdrWUsdrUsdrLpLeveredPositionTest is LeveredPositionTest {
     _configurePair(lpTokenMarket, usdrMarket);
     _fundMarketAndSelf(ICErc20(lpTokenMarket), lpTokenWhale);
     _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-
-    (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
-  }
-}
-
-contract PearlUsdcUsdrLeveredPositionTest is LeveredPositionTest {
-  function setUp() public fork(POLYGON_MAINNET) {}
-
-  function afterForkSetUp() internal override {
-    super.afterForkSetUp();
-    upgradeRegistry();
-
-    uint256 depositAmount = 800e9;
-
-    address usdrMarket = 0x1F11940B239D129dE0e5D30A3E59089af5Ecd6ed;
-    address usdcMarket = 0x71A7037a42D0fB9F905a76B7D16846b2EACC59Aa;
-    address usdrWhale = 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265; // wUSDR contract
-    address usdcWhale = 0x5a52E96BAcdaBb82fd05763E25335261B270Efcb;
-
-    IRedemptionStrategy liquidator = new SolidlySwapLiquidator();
-    _configurePairAndLiquidator(usdrMarket, usdcMarket, liquidator);
-    _fundMarketAndSelf(ICErc20(usdrMarket), usdrWhale);
-    _fundMarketAndSelf(ICErc20(usdcMarket), usdcWhale);
 
     (position, maxLevRatio, minLevRatio) = _openLeveredPosition(address(this), depositAmount);
   }
