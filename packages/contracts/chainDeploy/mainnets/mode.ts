@@ -10,6 +10,12 @@ import { mode } from "@ionicprotocol/chains";
 import { assetSymbols, OracleTypes, ChainlinkSpecificParams, PythSpecificParams } from "@ionicprotocol/types";
 import { ChainlinkAsset, PythAsset, UmbrellaAsset } from "../types";
 import { deployVelodromeOracle } from "../helpers/oracles/velodrome";
+import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
+
+const KIM_ROUTER = "0xAc48FcF1049668B285f3dC72483DF5Ae2162f7e8";
+const VELODROME_V2_ROUTER = "0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45";
+const VELODROME_V2_FACTORY = "0x31832f2a97Fd20664D76Cc421207669b55CE4BC0";
+const SWAPMODE_ROUTER = "0xc1e624C810D297FD70eF53B0E08F44FABE468591";
 
 export const deployConfig: ChainDeployConfig = {
   blocksPerYear: 30 * 60 * 24 * 365, // 30 blocks per minute = 2 sec block time
@@ -94,6 +100,55 @@ export const deploy = async ({
   const balance = await publicClient.getBalance({ address: deployer as Address });
   console.log("balance: ", formatEther(balance));
 
+  const ap = await viem.getContractAt(
+    "AddressesProvider",
+    (await deployments.get("AddressesProvider")).address as Address
+  );
+
+  await configureAddress(ap, publicClient, deployer, "ALGEBRA_SWAP_ROUTER", KIM_ROUTER);
+
+  // const velodromeV2Liquidator = await deployments.deploy("VelodromeV2Liquidator", {
+  //   from: deployer,
+  //   args: [],
+  //   log: true,
+  //   waitConfirmations: 1
+  // });
+  // console.log("VelodromeV2Liquidator: ", velodromeV2Liquidator.address);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_ROUTER", VELODROME_V2_ROUTER);
+  await configureAddress(ap, publicClient, deployer, "AERODROME_V2_FACTORY", VELODROME_V2_FACTORY);
+
+  const uniswapV2Liquidator = await deployments.deploy("UniswapV2LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+
+  if (uniswapV2Liquidator.transactionHash) {
+    await publicClient.waitForTransactionReceipt({ hash: uniswapV2Liquidator.transactionHash as Hash });
+  }
+  console.log("UniswapV2LiquidatorFunder: ", uniswapV2Liquidator.address);
+  await configureAddress(ap, publicClient, deployer, "IUniswapV2Router02", SWAPMODE_ROUTER);
+
+  const eOracleAssets = mode.assets
+    .filter((a) => a.oracle === OracleTypes.eOracle)
+    .map((a) => ({
+      symbol: a.symbol as assetSymbols,
+      aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0xf3035649cE73EDF8de7dD9B56f14910335819536" },
+    assets: mode.assets,
+    chainlinkAssets: eOracleAssets,
+    namePostfix: "eOracle",
+    chainId: mode.chainId
+  });
+
   // await deployVelodromeOracle({
   //   viem,
   //   assets: velodromeAssets,
@@ -117,6 +172,13 @@ export const deploy = async ({
   //   dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
   // });
 
+  const chainlinkAssets = mode.assets
+    .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((a) => ({
+      symbol: a.symbol as assetSymbols,
+      aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency
+    }));
   await deployChainlinkOracle({
     run,
     viem,
@@ -124,7 +186,8 @@ export const deploy = async ({
     deployments,
     deployConfig,
     assets: mode.assets,
-    chainlinkAssets
+    chainlinkAssets,
+    chainId: mode.chainId
   });
 
   // await addRedstoneFallbacks({

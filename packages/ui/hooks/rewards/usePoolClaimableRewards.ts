@@ -1,48 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import { type Address } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePoolClaimableRewards = (
-  poolAddress?: Address,
-  poolChainId?: number
+  poolAddress: Address,
+  poolChainId: number,
+  account?: Address
 ) => {
   const { address } = useMultiIonic();
+  const addressToUse = account || address;
   const sdk = useSdk(poolChainId);
 
   return useQuery({
     queryKey: ['usePoolClaimableRewards', poolAddress, address, sdk?.chainId],
 
     queryFn: async () => {
-      if (sdk && poolAddress && address) {
-        try {
-          const rewards = await sdk.getFlywheelClaimableRewardsForPool(
-            poolAddress,
-            address
-          );
+      const rewards = await sdk!.getFlywheelClaimableRewardsForPool(
+        poolAddress!,
+        addressToUse!
+      );
 
-          return rewards.filter((reward) => reward.amount > 0n);
-        } catch (e) {
-          console.warn(
-            'Getting pool claimable rewards error: ',
-            {
-              address,
-              poolAddress,
-              poolChainId
-            },
-            e
-          );
-
-          return null;
-        }
-      }
-
-      return null;
+      return rewards.filter((reward) => reward.amount > 0n);
     },
 
-    gcTime: Infinity,
-    enabled: !!poolAddress && !!address && !!sdk,
+    enabled: !!poolAddress && !!addressToUse && !!sdk,
     staleTime: Infinity
   });
 };

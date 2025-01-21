@@ -26,7 +26,8 @@
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "test:integration": "ts-node tests-integration/index.ts",
-    "test:rewards": "ts-node tests-integration/rewards-testing.ts"
+    "test:rewards": "ts-node tests-integration/rewards-testing.ts",
+    "test:aggLiquidation": "ts-node tests-integration/aggLiquidation.ts"
   },
   "keywords": [],
   "author": "Ionic Protocol",
@@ -65,6 +66,6 @@
     "bufferutil": "^4.0.8",
     "perf_hooks": "^0.0.1",
     "utf-8-validate": "^6.0.4",
-    "viem": "^2.16.3"
+    "viem": "^2.21.55"
   }
 }

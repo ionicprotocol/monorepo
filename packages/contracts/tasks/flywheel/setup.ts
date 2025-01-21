@@ -1,4 +1,4 @@
-import { Deployment, DeployResult } from "hardhat-deploy/types";
+import { DeployResult } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Address, zeroAddress } from "viem";
 import { upgradeMarketToSupportFlywheel } from "./upgrade";
@@ -13,7 +13,10 @@ export const setupRewards = async (
   epochDuration: number,
   deployer: Address,
   viem: HardhatRuntimeEnvironment["viem"],
-  deployments: HardhatRuntimeEnvironment["deployments"]
+  deployments: HardhatRuntimeEnvironment["deployments"],
+  multisig?: Address,
+  _flywheelName?: string,
+  _flywheelRewardsName?: string
 ) => {
   const publicClient = await viem.getPublicClient();
   const needsMultisig = await upgradeMarketToSupportFlywheel(market, viem, deployer, deployments);
@@ -38,7 +41,9 @@ export const setupRewards = async (
     );
   }
 
-  const flywheelName = `${contractName}${type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
+  const flywheelName =
+    _flywheelName ??
+    `${contractName}${publicClient.chain.id === base.id && type === "borrow" ? "_Borrow" : ""}_${rewardTokenName}${publicClient.chain.id === base.id && type === "supply" ? "_v3" : ""}`;
   const _flywheel = await deployments.deploy(flywheelName, {
     contract: contractName,
     from: deployer,
@@ -50,7 +55,8 @@ export const setupRewards = async (
           methodName: "initialize",
           args: [rewardToken, zeroAddress, type === "borrow" ? booster!.address : zeroAddress, deployer]
         }
-      }
+      },
+      owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
@@ -60,7 +66,9 @@ export const setupRewards = async (
   );
 
   // accidentally deployed the wrong flywheel rewards contract for mode for borrow, without the borrow prefix
-  const flywheelRewardsName = `IonicFlywheelDynamicRewards_${publicClient.chain.id !== mode.id && type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${type === "supply" ? "_v3" : ""}`;
+  const flywheelRewardsName =
+    _flywheelRewardsName ??
+    `IonicFlywheelDynamicRewards_${publicClient.chain.id !== mode.id && type === "borrow" ? "Borrow_" : ""}${rewardTokenName}${type === "supply" ? "_v3" : ""}`;
   const flywheelRewards = await deployments.deploy(flywheelRewardsName, {
     contract: "IonicFlywheelDynamicRewards",
     from: deployer,
@@ -70,6 +78,7 @@ export const setupRewards = async (
       epochDuration // epoch duration
     ],
     waitConfirmations: 1
+    // skipIfAlreadyDeployed: true
   });
   console.log(
     `Deployed flywheel rewards ${flywheelRewardsName}: ${flywheelRewards.address} - ${flywheelRewards.newlyDeployed ? "NEW: " : "reused: "} ${flywheelRewards.transactionHash}`
@@ -80,12 +89,12 @@ export const setupRewards = async (
     (await deployments.get(flywheelName)).address as Address
   );
 
-  const setFlywheelRewards = await flywheel.read.flywheelRewards();
-  console.log("setFlywheelRewards: ", setFlywheelRewards);
-  if ((setFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
+  const currentFlywheelRewards = await flywheel.read.flywheelRewards();
+  console.log("currentFlywheelRewards: ", currentFlywheelRewards);
+  if ((currentFlywheelRewards as Address).toLowerCase() !== flywheelRewards.address.toLowerCase()) {
     const txFlywheel = await flywheel.write.setFlywheelRewards([flywheelRewards.address as Address]);
     await publicClient.waitForTransactionReceipt({ hash: txFlywheel });
-    console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address})`);
+    console.log(`Set rewards (${flywheelRewards.address}) to flywheel (${flywheel.address}): ${txFlywheel}`);
   } else {
     console.log(`Rewards (${flywheelRewards.address}) already set to flywheel (${flywheel.address})`);
   }
@@ -96,7 +105,7 @@ export const setupRewards = async (
     console.log(`Adding strategy ${market} to flywheel ${flywheel.address}`);
     const addTx = await flywheel.write.addStrategyForRewards([market]);
     await publicClient.waitForTransactionReceipt({ hash: addTx });
-    console.log(`Added strategy (${market}) to flywheel (${flywheel.address})`);
+    console.log(`Added strategy (${market}) to flywheel (${flywheel.address}): ${addTx}`);
   } else console.log(`Strategy (${market}) was already added to flywheel (${flywheel.address})`);
 
   // Adding flywheel to comptroller
@@ -124,7 +133,7 @@ export const setupRewards = async (
       const addTx = await comptroller.write._addRewardsDistributor([flywheel.address]);
       await publicClient.waitForTransactionReceipt({ hash: addTx });
       console.log({ addTx });
-      console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller})`);
+      console.log(`Added flywheel (${flywheel.address}) to pool (${_comptroller}): ${addTx}`);
     }
   } else {
     console.log(`Flywheel ${flywheel.address} already added to pool ${_comptroller}`);
@@ -144,8 +153,9 @@ export const setupRewards = async (
   } else {
     // Approving token spending for fwRewards contract
     const tx = await _market.write.approve([rewardToken as Address, fwRewards as Address]);
-    console.log(`mining tx ${tx}`);
     await publicClient.waitForTransactionReceipt({ hash: tx });
-    console.log(`approved flywheel ${flywheel.address} to pull reward token ${rewardToken} from market ${market}`);
+    console.log(
+      `Approved flywheel ${flywheel.address} to pull reward token ${rewardToken} from market ${market}: ${tx}`
+    );
   }
 };

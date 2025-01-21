@@ -1,5 +1,5 @@
 import { task, types } from "hardhat/config";
-import { Address, encodeAbiParameters, parseAbiParameters, publicActions, zeroAddress , encodeFunctionData } from "viem";
+import { Address, encodeAbiParameters, parseAbiParameters, zeroAddress, parseEther } from "viem";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
@@ -46,9 +46,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     if (receipt.status !== "success") {
       throw `Failed set implementation to ${implementationAddress}`;
     }
-    console.log(
-      `Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`
-    );
+    console.log(`Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`);
   });
 
 task("market:upgrade:safe", "Upgrades a market's implementation")
@@ -77,8 +75,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     const extensions = await cTokenDelegator.read._listExtensions();
     const comptroller = await cTokenDelegator.read.comptroller();
     const comptrollerAsExt = await viem.getContractAt("IonicComptroller", comptroller as Address);
-    const ctokenAsExt = await viem.getContractAt("CTokenFirstExtension", marketAddress)
-    
+    const ctokenAsExt = await viem.getContractAt("CTokenFirstExtension", marketAddress);
+
     if (
       impl.toLowerCase() != implementationAddress.toLowerCase() ||
       extensions.length == 0 ||
@@ -90,8 +88,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
       const implementationData = encodeAbiParameters(parseAbiParameters("address"), [pluginAddress]);
       console.log(`Setting implementation to ${implementationAddress} with plugin ${pluginAddress}`);
 
-      const comptrollerAdmin = await comptrollerAsExt.read.admin()
-      if(comptrollerAdmin.toLowerCase() !== deployer.toLowerCase()) {        
+      const comptrollerAdmin = await comptrollerAsExt.read.admin();
+      if (comptrollerAdmin.toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: cTokenDelegator,
           functionName: "_setImplementationSafe",
@@ -107,9 +105,7 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
           functionName: "_setAddressesProvider",
           args: [ap.address],
           description: `Setting AddressesProvider on ${marketAddress}`,
-          inputs: [
-            { internalType: "address", name: "_ap", type: "address" }
-          ]
+          inputs: [{ internalType: "address", name: "_ap", type: "address" }]
         });
       } else {
         console.log(`Setting implementation to ${implementationAddress}`);
@@ -123,9 +119,7 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
         if (receipt.status !== "success") {
           throw `Failed set implementation to ${implementationAddress}`;
         }
-        console.log(
-          `Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`
-        );
+        console.log(`Implementation successfully set to ${implementationAddress}: ${setImplementationTx}`);
 
         console.log(`Setting AP to to ${ap.address}`);
         const setAPTX = await ctokenAsExt.write._setAddressesProvider([ap.address]);
@@ -149,9 +143,8 @@ task("market:upgrade:safe", "Upgrades a market's implementation")
     }
   });
 
-task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provider on them")
-  .addFlag("forceUpgrade", "If the pool upgrade should be forced")
-  .setAction(async ({ forceUpgrade }, { viem, getChainId, deployments, run, getNamedAccounts }) => {
+task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provider on them").setAction(
+  async (_, { viem, deployments, run, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
     const walletClient = await viem.getWalletClient(deployer as Address);
@@ -173,14 +166,12 @@ task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provi
       contractInstance: ionicUniV3Liquidator,
       functionName: "setHealthFactorThreshold",
       args: [
-        BigInt("990000000000000000").toString() // 0.99e18 as a BigInt
+        parseEther("1").toString() // 0.99e18 as a BigInt
       ],
       description: `Setting Liquidator Health Factor Threshold`,
-      inputs: [
-        { internalType: "uint256", name: "_healthFactorThreshold", type: "uint256" }
-      ]
+      inputs: [{ internalType: "uint256", name: "_healthFactorThreshold", type: "uint256" }]
     });
-    
+
     const [, pools] = await poolDirectory.read.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
@@ -198,11 +189,60 @@ task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provi
           ]);
           await run("market:upgrade:safe", {
             marketAddress: market,
-            implementationAddress: latestImpl,
+            implementationAddress: latestImpl
           });
         }
       } catch (e) {
         console.error(`error while upgrading the pool`, e);
       }
     }
-  });
+  }
+);
+
+task("markets:set-ap", "Sets addresses provider on all markets").setAction(
+  async ({}, { viem, getChainId, deployments, run, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+    const ap = await viem.getContractAt(
+      "AddressesProvider",
+      (await deployments.get("AddressesProvider")).address as Address
+    );
+    const poolDirectory = await viem.getContractAt(
+      "PoolDirectory",
+      (await deployments.get("PoolDirectory")).address as Address
+    );
+    const [, pools] = await poolDirectory.read.getActivePools();
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      console.log("pool", { name: pool.name, address: pool.comptroller });
+      const comptrollerAsExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
+      const markets = await comptrollerAsExtension.read.getAllMarkets();
+      for (let j = 0; j < markets.length; j++) {
+        const market = markets[j];
+        console.log(`market address ${market}`);
+        const ctokenAsExt = await viem.getContractAt("CTokenFirstExtension", market);
+        const comptrollerAdmin = await comptrollerAsExtension.read.admin();
+        if (comptrollerAdmin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: ctokenAsExt,
+            functionName: "_setAddressesProvider",
+            args: [ap.address],
+            description: `Setting AddressesProvider on ${market}`,
+            inputs: [{ internalType: "address", name: "_ap", type: "address" }]
+          });
+        } else {
+          console.log(`Setting AP to to ${ap.address}`);
+          const setAPTX = await ctokenAsExt.write._setAddressesProvider([ap.address]);
+          const receiptAP = await publicClient.waitForTransactionReceipt({
+            hash: setAPTX
+          });
+          if (receiptAP.status !== "success") {
+            throw `Failed set AP to ${ap.address}`;
+          } else {
+            console.log(`AP successfully set to ${ap.address}: ${setAPTX}`);
+          }
+        }
+      }
+    }
+  }
+);

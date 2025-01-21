@@ -46,6 +46,8 @@ interface ILeveredPositionFactoryFirstExtension {
   function getBorrowableMarketsByCollateral(ICErc20 _collateralMarket) external view returns (address[] memory);
 
   function getPositionsExtension(bytes4 msgSig) external view returns (address);
+
+  function _setPositionsExtension(bytes4 msgSig, address extension) external;
 }
 
 interface ILeveredPositionFactorySecondExtension {

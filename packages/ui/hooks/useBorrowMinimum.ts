@@ -1,21 +1,17 @@
-import type { IonicAsset } from '@ionicprotocol/types';
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
+import { useQuery } from '@tanstack/react-query';
 import { formatUnits, parseUnits } from 'viem';
+
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
+
+import { useUsdPrice } from './useUsdPrices';
+
+import type { IonicAsset } from '@ionicprotocol/types';
 
 export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
   const { currentSdk } = useMultiIonic();
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
 
   const response = useQuery({
     queryKey: [`useBorrowMinimum`, currentSdk?.chainId, asset.cToken],
@@ -38,7 +34,6 @@ export const useBorrowMinimum = (asset: IonicAsset, poolChainId: number) => {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!currentSdk,
     staleTime: Infinity
   });

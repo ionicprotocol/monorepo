@@ -1,6 +1,7 @@
 import { Address, Hash, parseEther, PublicClient, zeroAddress } from "viem";
 import { AddressesProviderConfigFnParams, LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../../types";
-import { chainIdToConfig } from "@ionicprotocol/chains";
+import { chainIdtoChain, chainIdToConfig } from "@ionicprotocol/chains";
+import { prepareAndLogTransaction } from "../logging";
 
 export const deployIonicLiquidator = async ({
   viem,
@@ -49,7 +50,8 @@ export const deployIonicLiquidator = async ({
             args: initializeArgs
           }
         },
-        proxyContract: "OpenZeppelinTransparentProxy"
+        proxyContract: "OpenZeppelinTransparentProxy",
+        owner: multisig
       }
     });
   }
@@ -64,10 +66,12 @@ export const deployIonicUniV3Liquidator = async ({
   viem,
   getNamedAccounts,
   deployments,
-  deployConfig
+  deployConfig,
+  chainId
 }: LiquidatorDeployFnParams): Promise<string> => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   const uniV3Liquidator = await deployments.deploy("IonicUniV3Liquidator", {
     from: deployer,
@@ -79,8 +83,7 @@ export const deployIonicUniV3Liquidator = async ({
           args: [deployConfig.wtoken, deployConfig.uniswap.uniswapV3Quoter]
         }
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
-      owner: multisig
+      proxyContract: "OpenZeppelinTransparentProxy"
     }
   });
   if (uniV3Liquidator.transactionHash)
@@ -89,7 +92,8 @@ export const deployIonicUniV3Liquidator = async ({
 
   const ionicLiquidator = await viem.getContractAt(
     "IonicUniV3Liquidator",
-    (await deployments.get("IonicUniV3Liquidator")).address as Address
+    (await deployments.get("IonicUniV3Liquidator")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const uniV3LiquidatorOwner = await ionicLiquidator.read.owner();
   console.log(`IonicUniV3Liquidator owner is ${uniV3LiquidatorOwner}`);
@@ -101,22 +105,27 @@ export const configureIonicLiquidator = async ({
   contractName,
   viem,
   chainId,
-  deployments
+  deployments,
+  getNamedAccounts
 }: LiquidatorConfigFnParams): Promise<void> => {
-  const publicClient = await viem.getPublicClient();
+  const { deployer } = await getNamedAccounts();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
   const ionicLiquidator = await viem.getContractAt(
     contractName,
-    (await deployments.get(contractName)).address as Address
+    (await deployments.get(contractName)).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
     const redemptionStrategyContract = await viem.getContractAt(
       strategy as string,
-      (await deployments.get(strategy)).address as Address
+      (await deployments.get(strategy)).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
@@ -132,7 +141,8 @@ export const configureIonicLiquidator = async ({
     const { strategy } = fundingStrategy;
     const fundingStrategyContract = await viem.getContractAt(
       strategy as string,
-      (await deployments.get(strategy)).address as Address
+      (await deployments.get(strategy)).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
@@ -152,23 +162,25 @@ export const configureIonicLiquidator = async ({
     console.log("no redemption strategies for whitelisting");
   }
 
-  const poolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address);
+  const poolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address, {
+    client: { public: publicClient, wallet: walletClient }
+  });
   const healthFactorThreshold = parseEther("1");
   const expressRelay = chainIdToConfig[chainId].chainAddresses.EXPRESS_RELAY;
 
-  const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
-  await publicClient.waitForTransactionReceipt({ hash: lensTx });
-  console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
+  // const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
+  // await publicClient.waitForTransactionReceipt({ hash: lensTx });
+  // console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
 
-  if (expressRelay) {
-    const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
-    await publicClient.waitForTransactionReceipt({ hash: relayTx });
-    console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
-  }
+  // if (expressRelay) {
+  //   const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
+  //   await publicClient.waitForTransactionReceipt({ hash: relayTx });
+  //   console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
+  // }
 
-  const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
-  await publicClient.waitForTransactionReceipt({ hash: hfTx });
-  console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
+  // const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
+  // await publicClient.waitForTransactionReceipt({ hash: hfTx });
+  // console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
 };
 
 export const configureAddressesProviderAddresses = async ({
@@ -179,108 +191,142 @@ export const configureAddressesProviderAddresses = async ({
   deployments
 }: AddressesProviderConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
   const chainConfig = chainIdToConfig[chainId];
   const _ap = await deployments.getOrNull("AddressesProvider");
   if (_ap) {
-    const ap = await viem.getContractAt("AddressesProvider", _ap.address as Address);
+    const ap = await viem.getContractAt("AddressesProvider", _ap.address as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     /// EXTERNAL ADDRESSES
-    await configureAddress(ap, publicClient, "IUniswapV2Factory", deployConfig.uniswap.uniswapV2FactoryAddress);
-    await configureAddress(ap, publicClient, "IUniswapV2Router02", deployConfig.uniswap.uniswapV2RouterAddress);
-    await configureAddress(ap, publicClient, "wtoken", deployConfig.wtoken);
-    await configureAddress(ap, publicClient, "wBTCToken", deployConfig.wBTCToken);
-    await configureAddress(ap, publicClient, "stableToken", deployConfig.stableToken);
-    await configureAddress(ap, publicClient, "UNISWAP_V3_ROUTER", chainConfig.chainAddresses.UNISWAP_V3_ROUTER);
-    await configureAddress(ap, publicClient, "ALGEBRA_SWAP_ROUTER", chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER);
-    await configureAddress(ap, publicClient, "SOLIDLY_SWAP_ROUTER", chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER);
     await configureAddress(
       ap,
       publicClient,
-      "GAMMA_ALGEBRA_SWAP_ROUTER",
-      chainConfig.chainAddresses.GAMMA_ALGEBRA_SWAP_ROUTER
+      deployer,
+      "IUniswapV2Factory",
+      deployConfig.uniswap.uniswapV2FactoryAddress
     );
     await configureAddress(
       ap,
       publicClient,
-      "GAMMA_ALGEBRA_UNI_PROXY",
-      chainConfig.chainAddresses.GAMMA_ALGEBRA_UNI_PROXY
+      deployer,
+      "IUniswapV2Router02",
+      deployConfig.uniswap.uniswapV2RouterAddress
+    );
+    await configureAddress(ap, publicClient, deployer, "wtoken", deployConfig.wtoken);
+    await configureAddress(ap, publicClient, deployer, "wBTCToken", deployConfig.wBTCToken);
+    await configureAddress(ap, publicClient, deployer, "stableToken", deployConfig.stableToken);
+    await configureAddress(
+      ap,
+      publicClient,
+      deployer,
+      "UNISWAP_V3_ROUTER",
+      chainConfig.chainAddresses.UNISWAP_V3_ROUTER
     );
     await configureAddress(
       ap,
       publicClient,
-      "GAMMA_UNISWAP_V3_SWAP_ROUTER",
-      chainConfig.chainAddresses.GAMMA_UNISWAP_V3_SWAP_ROUTER
+      deployer,
+      "ALGEBRA_SWAP_ROUTER",
+      chainConfig.chainAddresses.ALGEBRA_SWAP_ROUTER
     );
     await configureAddress(
       ap,
       publicClient,
-      "GAMMA_UNISWAP_V3_UNI_PROXY",
-      chainConfig.chainAddresses.GAMMA_UNISWAP_V3_UNI_PROXY
+      deployer,
+      "SOLIDLY_SWAP_ROUTER",
+      chainConfig.chainAddresses.SOLIDLY_SWAP_ROUTER
     );
 
     const uv2l = await deployments.getOrNull("UniswapV2Liquidator");
-    await configureAddress(ap, publicClient, "UniswapV2Liquidator", uv2l?.address);
+    await configureAddress(ap, publicClient, deployer, "UniswapV2Liquidator", uv2l?.address);
 
     const clptlnr = await deployments.getOrNull("CurveLpTokenLiquidatorNoRegistry");
-    await configureAddress(ap, publicClient, "CurveLpTokenLiquidatorNoRegistry", clptlnr?.address);
+    await configureAddress(ap, publicClient, deployer, "CurveLpTokenLiquidatorNoRegistry", clptlnr?.address);
 
     /// SYSTEM ADDRESSES
     await configureAddress(ap, publicClient, "deployer", deployer);
 
     const masterPO = await deployments.getOrNull("MasterPriceOracle");
-    await configureAddress(ap, publicClient, "MasterPriceOracle", masterPO?.address);
+    await configureAddress(ap, publicClient, deployer, "MasterPriceOracle", masterPO?.address);
 
     const fpd = await deployments.getOrNull("PoolDirectory");
-    await configureAddress(ap, publicClient, "PoolDirectory", fpd?.address);
+    await configureAddress(ap, publicClient, deployer, "PoolDirectory", fpd?.address);
 
     const ffd = await deployments.getOrNull("FeeDistributor");
-    await configureAddress(ap, publicClient, "FeeDistributor", ffd?.address);
+    await configureAddress(ap, publicClient, deployer, "FeeDistributor", ffd?.address);
 
     const fsl = await deployments.getOrNull("IonicLiquidator");
-    await configureAddress(ap, publicClient, "IonicLiquidator", fsl?.address);
+    await configureAddress(ap, publicClient, deployer, "IonicLiquidator", fsl?.address);
 
     const uniV3Liquidator = await deployments.getOrNull("IonicUniV3Liquidator");
-    await configureAddress(ap, publicClient, "IonicUniV3Liquidator", uniV3Liquidator?.address);
+    await configureAddress(ap, publicClient, deployer, "IonicUniV3Liquidator", uniV3Liquidator?.address);
 
     const dpa = await deployments.getOrNull("DefaultProxyAdmin");
-    await configureAddress(ap, publicClient, "DefaultProxyAdmin", dpa?.address);
+    await configureAddress(ap, publicClient, deployer, "DefaultProxyAdmin", dpa?.address);
 
     const quoter = await deployments.getOrNull("Quoter");
-    await configureAddress(ap, publicClient, "Quoter", quoter?.address);
+    await configureAddress(ap, publicClient, deployer, "Quoter", quoter?.address);
 
     const lr = await deployments.getOrNull("LiquidatorsRegistry");
-    await configureAddress(ap, publicClient, "LiquidatorsRegistry", lr?.address);
+    await configureAddress(ap, publicClient, deployer, "LiquidatorsRegistry", lr?.address);
 
-    if (chainId !== 1) {
-      const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
-      await configureAddress(ap, publicClient, "OptimizedVaultsRegistry", ovr?.address);
+    const poolLens = await deployments.getOrNull("PoolLens");
+    await configureAddress(ap, publicClient, deployer, "PoolLens", poolLens?.address);
 
-      const lpf = await deployments.getOrNull("LeveredPositionFactory");
-      await configureAddress(ap, publicClient, "LeveredPositionFactory", lpf?.address);
+    const ovr = await deployments.getOrNull("OptimizedVaultsRegistry");
+    await configureAddress(ap, publicClient, deployer, "OptimizedVaultsRegistry", ovr?.address);
 
-      const lpl = await deployments.getOrNull("LeveredPositionsLens");
-      await configureAddress(ap, publicClient, "LeveredPositionsLens", lpl?.address);
-    }
+    const lpf = await deployments.getOrNull("LeveredPositionFactory");
+    await configureAddress(ap, publicClient, deployer, "LeveredPositionFactory", lpf?.address);
+
+    const lpl = await deployments.getOrNull("LeveredPositionsLens");
+    await configureAddress(ap, publicClient, deployer, "LeveredPositionsLens", lpl?.address);
 
     const mflr = await deployments.getOrNull("IonicFlywheelLensRouter");
-    await configureAddress(ap, publicClient, "IonicFlywheelLensRouter", mflr?.address);
+    await configureAddress(ap, publicClient, deployer, "IonicFlywheelLensRouter", mflr?.address);
 
     const ar = await deployments.getOrNull("AuthoritiesRegistry");
-    await configureAddress(ap, publicClient, "AuthoritiesRegistry", ar?.address);
+    await configureAddress(ap, publicClient, deployer, "AuthoritiesRegistry", ar?.address);
   }
 };
 
-async function configureAddress(ap: any, publicClient: PublicClient, key: string, value?: string) {
-  if (!value) {
+export async function configureAddress(
+  ap: any,
+  publicClient: PublicClient,
+  deployer: string,
+  key: string,
+  value?: string
+) {
+  if (!value || value === "") {
     console.log(`empty value for key ${key}`);
     return;
   }
 
   const currentValue = await ap.read.getAddress([key]);
+  const owner = await ap.read.owner();
+  console.log(`current value for key ${key}: ${currentValue}, expected: ${value}`);
   if (currentValue && currentValue !== value) {
-    const hash = await ap.write.setAddress([key, value]);
+    if (deployer.toLowerCase() !== owner.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: ap,
+        functionName: "setAddress",
+        args: [key, value],
+        description: `Set address: ${key}, ${value}`,
+        inputs: [
+          { internalType: "string", name: "id", type: "address" },
+          { internalType: "address", name: "newAddress", type: "address" }
+        ]
+      });
+    } else {
+      console.log(`setting address ${key}: ${value}`);
+      const hash = await ap.write.setAddress([key, value]);
 
-    await publicClient.waitForTransactionReceipt({ hash });
-    console.log(`setAddress ${key}: ${hash}`);
+      await publicClient.waitForTransactionReceipt({ hash });
+      console.log(`setAddress ${key}: ${hash}`);
+    }
+  } else {
+    console.log(`${key} already set to ${value}`);
   }
 }

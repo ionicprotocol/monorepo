@@ -19,7 +19,7 @@ import {
   PublicClient,
   WalletClient
 } from "viem";
-import { bob, mode } from "viem/chains";
+import { bob, lisk, mode } from "viem/chains";
 
 import {
   addressesProviderAbi,
@@ -125,20 +125,19 @@ export class IonicBase {
         address: this.chainDeployment.PoolLensSecondary.address as Address,
         client: this.publicClient
       }),
-      IonicLiquidator:
-        this.chainId === bob.id
-          ? ({} as any)
-          : this.chainId === mode.id
-            ? getContract({
-                abi: ionicUniV3LiquidatorAbi,
-                address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
-                client: this.publicClient
-              })
-            : getContract({
-                abi: ionicLiquidatorAbi,
-                address: this.chainDeployment.IonicLiquidator.address as Address,
-                client: this.publicClient
-              }),
+      IonicLiquidator: this.chainDeployment?.IonicUniV3Liquidator?.address
+        ? getContract({
+            abi: ionicUniV3LiquidatorAbi,
+            address: this.chainDeployment.IonicUniV3Liquidator.address as Address,
+            client: this.walletClient!
+          })
+        : this.chainDeployment?.IonicLiquidator?.address
+          ? getContract({
+              abi: ionicLiquidatorAbi,
+              address: this.chainDeployment.IonicLiquidator.address as Address,
+              client: this.publicClient
+            })
+          : ({} as any),
       FeeDistributor: getContract({
         abi: feeDistributorAbi,
         address: this.chainDeployment.FeeDistributor.address as Address,
@@ -306,7 +305,7 @@ export class IonicBase {
       }
     }
     if (irmModel === null) {
-      throw Error("InterestRateModel not found");
+      return new JumpRateModel();
     }
     return irmModel;
   }

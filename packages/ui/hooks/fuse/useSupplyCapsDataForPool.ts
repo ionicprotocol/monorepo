@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export interface SupplyCapsDataForPoolType {
   cTokenAddress: string;
@@ -53,7 +54,6 @@ export const useSupplyCapsDataForPool = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });
@@ -94,7 +94,6 @@ export const useSupplyCapsDataForAsset = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!supplyCapsDataForPool && !!cTokenAddress,
     staleTime: Infinity
   });

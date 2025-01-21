@@ -17,7 +17,12 @@ variable "ethereum_admin_account" {
 variable "ethereum_admin_private_key" {
   type = string
 }
-
+variable "pyth_updater_ethereum_admin_account" {
+  type = string
+}
+variable "pyth_updater_ethereum_admin_private_key" {
+  type = string
+}
 variable "infura_api_key" {
   type = string
 }
@@ -38,11 +43,29 @@ variable "pyth_updater_discord_webhook_url" {
 variable "liquidation_discord_webhook_url" {
   type = string
 }
+variable "discord_success_webhook_url" {
+  type = string
+}
+variable "discord_failure_webhook_url" {
+  type = string
+}
+variable "lifi_api_key" {
+  type = string
+}
 variable "per_discord_webhook_url" {
   type = string
 }
 
 variable "liquidation_sendgrid_api_key" {
+  type = string
+}
+variable "optimism_mainnet_rpcs" {
+  type = string
+}
+variable "lisk_mainnet_rpcs" {
+  type = string
+}
+variable "fraxtal_mainnet_rpcs" {
   type = string
 }
 
@@ -62,8 +85,29 @@ variable "uptime_pyth_updater_api" {
   type = string
 }
 
+variable "task_definition_family_optimism" {
+  description = "Family name for the Optimism task definition"
+  type        = string
+}
 
+variable "task_definition_family_base" {
+  description = "Family name for the Base task definition"
+  type        = string
+}
 
+variable "task_definition_family_mode" {
+  description = "Family name for the Mode task definition"
+  type        = string
+}
+variable "task_definition_family_lisk" {
+  description = "Family name for the Lisk task definition"
+  type        = string
+}
+
+variable "task_definition_family_fraxtal" {
+  description = "Family name for the Fraxtal task definition"
+  type        = string
+}
 
 
 variable "ecr_repository_name" {
@@ -81,6 +125,11 @@ variable "container_name" {
   description = "The name of the container"
   type        = string
 }
+variable "liquidator_container_name" {
+  description = "The name of the container"
+  type        = string
+}
+
 
 
 variable "desired_count" {
@@ -90,6 +139,10 @@ variable "desired_count" {
 
 
 variable "cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+variable "liquidator_cluster_name" {
   description = "Name of the ECS cluster"
   type        = string
 }
@@ -120,6 +173,9 @@ variable "autoscaling_group_name" {
   type        = string
 }
 variable "ecs_service_name"{
+
+}
+variable "liquidator_service_name"{
 
 }
 variable "base_mainnet_rpcs" {

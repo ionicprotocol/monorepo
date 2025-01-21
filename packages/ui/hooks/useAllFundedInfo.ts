@@ -1,4 +1,3 @@
-import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type Address } from 'viem';
@@ -12,6 +11,8 @@ import type { UseRewardsData } from '@ui/hooks/useRewards';
 import { fetchFlywheelRewards, fetchRewards } from '@ui/hooks/useRewards';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+
+import type { FlywheelClaimableRewards } from '@ionicprotocol/sdk/dist/cjs/src/modules/Flywheel';
 
 export interface FundedAsset extends MarketData {
   chainId: string;
@@ -222,7 +223,6 @@ export function useAllFundedInfo() {
       return null;
     },
 
-    gcTime: Infinity,
     enabled: enabledChains.length > 0 && !!poolsPerChain,
     staleTime: Infinity
   });

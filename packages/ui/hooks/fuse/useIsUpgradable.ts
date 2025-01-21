@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: number) => {
+import type { Address } from 'viem';
+
+export const useIsUpgradeable = (
+  comptrollerAddress: Address,
+  poolChainId: number
+) => {
   const sdk = useSdk(poolChainId);
 
   const { data } = useQuery({
@@ -31,7 +35,6 @@ export const useIsUpgradeable = (comptrollerAddress: Address, poolChainId: numbe
       }
     },
 
-    gcTime: Infinity,
     enabled: !!comptrollerAddress && !!sdk,
     staleTime: Infinity
   });

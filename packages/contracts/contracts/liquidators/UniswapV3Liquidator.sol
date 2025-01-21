@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { IRedemptionStrategy } from "./IRedemptionStrategy.sol";
-import { ISwapRouter } from "../external/uniswap/ISwapRouter.sol";
+import { IV3SwapRouter } from "../external/uniswap/IV3SwapRouter.sol";
 
 import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
@@ -26,21 +26,20 @@ contract UniswapV3Liquidator is IRedemptionStrategy {
     uint256 inputAmount,
     bytes memory strategyData
   ) internal returns (IERC20Upgradeable outputToken, uint256 outputAmount) {
-    (, address _outputToken, uint24 fee, ISwapRouter swapRouter, ) = abi.decode(
+    (, address _outputToken, uint24 fee, IV3SwapRouter swapRouter, ) = abi.decode(
       strategyData,
-      (address, address, uint24, ISwapRouter, address)
+      (address, address, uint24, IV3SwapRouter, address)
     );
     outputToken = IERC20Upgradeable(_outputToken);
 
     inputToken.approve(address(swapRouter), inputAmount);
 
     outputAmount = swapRouter.exactInputSingle(
-      ISwapRouter.ExactInputSingleParams(
+      IV3SwapRouter.ExactInputSingleParams(
         address(inputToken),
         _outputToken,
         fee,
         address(this),
-        block.timestamp,
         inputAmount,
         0,
         0

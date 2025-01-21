@@ -5,6 +5,7 @@ import { Address, Hex, zeroAddress } from "viem";
 import { underlying } from "../utils";
 import { ChainlinkFeedBaseCurrency } from "@ionicprotocol/types";
 import { ChainlinkDeployFnParams } from "../../types";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 export const deployChainlinkOracle = async ({
   viem,
@@ -13,10 +14,12 @@ export const deployChainlinkOracle = async ({
   deployConfig,
   assets,
   chainlinkAssets,
-  namePostfix
+  namePostfix,
+  chainId
 }: ChainlinkDeployFnParams): Promise<{ cpo: any; chainLinkv2: any }> => {
-  const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const { deployer, multisig } = await getNamedAccounts();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
   let tx: Hex;
 
   //// Chainlink Oracle
@@ -43,6 +46,7 @@ export const deployChainlinkOracle = async ({
         }
       },
       proxyContract: "OpenZeppelinTransparentProxy"
+      // owner: multisig ?? deployer
     },
     waitConfirmations: 1,
     skipIfAlreadyDeployed: true
@@ -52,7 +56,8 @@ export const deployChainlinkOracle = async ({
 
   const chainLinkv2 = await viem.getContractAt(
     "ChainlinkPriceOracleV2",
-    (await deployments.get(contractName)).address as Address
+    (await deployments.get(contractName)).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   const chainlinkAssetsToChange = [];
@@ -135,13 +140,15 @@ export const deployChainlinkOracle = async ({
 
   const mpo = await viem.getContractAt(
     "MasterPriceOracle",
-    (await deployments.get("MasterPriceOracle")).address as Address
+    (await deployments.get("MasterPriceOracle")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   await addUnderlyingsToMpo(mpo as any, underlyings, chainLinkv2.address, deployer, publicClient);
 
   const addressesProvider = await viem.getContractAt(
     "AddressesProvider",
-    (await deployments.get("AddressesProvider")).address as Address
+    (await deployments.get("AddressesProvider")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const chainLinkv2Address = await addressesProvider.read.getAddress([contractName]);
   if (chainLinkv2Address !== chainLinkv2.address) {

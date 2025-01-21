@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export function useEquityAmount(position: Address, chainId?: number) {
   const sdk = useSdk(chainId);
@@ -29,7 +30,6 @@ export function useEquityAmount(position: Address, chainId?: number) {
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk,
     staleTime: Infinity
   });

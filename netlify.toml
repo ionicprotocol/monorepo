@@ -83,3 +83,12 @@ schedule = "0 0 * * *"
 
 [functions."total-tvl-*"]
 schedule = "@hourly"
+
+[functions."tvl-total-pool-*"]
+schedule = "@hourly"
+
+[functions."asset-price-and-rates-*"]
+schedule = "@hourly"
+
+[functions."asset-master-data-*"]
+schedule = "@hourly"

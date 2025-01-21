@@ -1,8 +1,26 @@
-import { SupportedChainsArray } from '@ionicprotocol/types';
-import { type Address } from 'viem';
-import { base, bob, fraxtal, mode, optimism } from 'viem/chains';
+import {
+  base,
+  bob,
+  fraxtal,
+  lisk,
+  mode,
+  optimism,
+  superseed,
+  worldchain
+} from 'viem/chains';
 
 import type { TxStep } from '@ui/types/ComponentPropsType';
+
+import type { Address } from 'viem';
+
+import {
+  camptest,
+  ink,
+  ozeantest,
+  soneium,
+  swellchain
+} from '@ionicprotocol/chains';
+import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
   SupportedChainsArray.join('|')
@@ -11,30 +29,83 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
+export const shouldGetFeatured: Record<
+  string,
+  Record<number, Record<string, string>>
+> = {
+  featuredSupply: {
+    [mode.id]: {
+      '0': 'usdc',
+      '1': 'usdc'
+    },
+    [optimism.id]: {
+      '0': 'usdc'
+    },
+    [base.id]: {
+      '0': 'usdc'
+    },
+    [bob.id]: {
+      '0': 'usdc'
+    },
+    [fraxtal.id]: {
+      '0': ''
+    },
+    [lisk.id]: {
+      '0': ''
+    }
+  },
+  featuredSupply2: {
+    [mode.id]: {
+      '0': 'weth',
+      '1': 'weth'
+    },
+    [optimism.id]: {
+      '0': 'weth'
+    },
+    [base.id]: {
+      '0': 'weth'
+    },
+    [bob.id]: {
+      '0': 'weth'
+    },
+    [fraxtal.id]: {
+      '0': 'wfrxeth'
+    },
+    [lisk.id]: {
+      '0': 'weth'
+    }
+  }
+};
+
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
     '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
   },
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
-    '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR'
+    '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
+    '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
+    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
+  },
+  [optimism.id]: {
+    '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
+  },
+  [lisk.id]: {
+    '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013': 'ION',
+    '0xac485391EB2d7D88253a7F1eF18C37f4242D1A24': 'LSK'
+  },
+  [fraxtal.id]: {
+    '0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE': 'ION'
   }
 };
 
 export const chainsArr: Record<number, string> = {
-  34443: 'Mode',
-  8453: 'Base',
-  10: 'Optimism',
-  60808: 'Bob',
-  252: 'Frax'
-};
-
-export const scans: Record<number, string> = {
-  34443: 'https://explorer.mode.network/tx/',
-  8453: 'https://basescan.org/tx/',
-  10: 'https://optimistic.etherscan.io/tx/',
-  60808: 'https://explorer.gobob.xyz/tx/',
-  252: 'https://fraxscan.com/tx/'
+  [mode.id]: 'Mode',
+  [base.id]: 'Base',
+  [optimism.id]: 'Optimism',
+  [bob.id]: 'Bob',
+  [fraxtal.id]: 'Fraxtal',
+  [lisk.id]: 'Lisk'
 };
 
 export const FLYWHEEL_TYPE_MAP: Record<
@@ -42,19 +113,72 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: ['0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062'],
-    borrow: ['0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec']
+    supply: [
+      '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
+      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
+      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44',
+      '0xfB30366C781a913b40c96617e380F18071761F9F'
+    ],
+    borrow: [
+      '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
+      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834',
+      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5',
+      '0xE135500Cc111eEd663b49394E378d8bdCe86c540'
+    ]
   },
   [base.id]: {
     supply: [
       '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
       '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
-      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122'
-      // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
+      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
+      '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
+      '0xc39441b305705AfD07de97237bC835a4501AbbEC',
+      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
+      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
+      '0x1d0a712aE0162431E0573A8a735D02a29805d124',
+      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
+      '0x1e00C933e092912d47153765Fa7c886632c1d083',
+      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440',
+      '0xf42dBd423970fd6735a7CE2d850aA85897C79eeE',
+      '0xDB04Ab33184594Be006364e9bDb4263988c323df'
     ],
     borrow: [
-      '0x327410E4D3A32EF37712e77fCB005e5327F082De',
-      '0x6aC943b6Ab1f759ECc67Ed56b7413f085fBE525d'
+      '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
+      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
+      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
+      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
+      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a',
+      '0x1005d01cAAC7201e19c661c82a86b878a5e2C5cD'
+    ]
+  },
+  [optimism.id]: {
+    supply: [
+      '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
+      '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
+      '0x05c3e910F7639457f92220605966e7f86A2ef966',
+      '0xb988eE92A2B9A621187D33C845907DF5c5a1C9A3'
+    ],
+    borrow: [
+      '0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA',
+      '0x030a6514049D0AF71cf89E51a01C9D82873F4a2b'
+    ]
+  },
+  [lisk.id]: {
+    supply: [
+      '0x523F183ECbBf9144403D937B444d8486aD752453',
+      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7',
+      '0xdC737c91900097EF84c44885374527b26CD48d89'
+    ],
+    borrow: []
+  },
+  [fraxtal.id]: {
+    supply: [
+      '0xa54697FAF64721Ec6ddd13bC345bd733de17539D',
+      '0xD07cd8Df6CCdC9228EBcEd7FA236E1d59C272164'
+    ],
+    borrow: [
+      '0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF',
+      '0x738d34C11a66Ff56B95D2fC4DC1b3a954baB5da4'
     ]
   }
 };
@@ -79,6 +203,18 @@ type PoolParams = {
     name: string;
     assets: string[];
   }[];
+  vaults?: {
+    id: string;
+    name: string;
+    description: string;
+    assets: string[];
+  }[];
+};
+
+export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
+  [mode.id]: {
+    '0': ['dMBTC', 'msDAI', 'USDe', 'sUSDe', 'weETH']
+  }
 };
 
 export const pools: Record<number, PoolParams> = {
@@ -98,18 +234,19 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'WETH',
           'USDC',
+          'msDAI',
+          'weETH.mode',
+          'uniBTC',
+          'M-BTC',
+          'sUSDe',
+          'wrsETH',
           'ezETH',
           'STONE',
-          'msDAI',
-          'sUSDe',
-          'USDe',
-          'wrsETH',
-          'weETH.mode',
-          'dMBTC',
-          'M-BTC',
           'WBTC',
+          'USDe',
           'USDT',
-          'weETH'
+          'weETH',
+          'dMBTC'
         ]
       },
       {
@@ -120,13 +257,13 @@ export const pools: Record<number, PoolParams> = {
     ]
   },
   [base.id]: {
-    hexcode: '#2467ed',
     name: 'Base',
     arrow: 'ffffff',
+    hexcode: '#2467ed',
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
-    border: 'border-blue-600',
+    border: 'border-base',
     logo: '/img/logo/BASE.png',
     pools: [
       {
@@ -135,24 +272,47 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'USDC',
           'WETH',
+          'wsuperOETHb',
+          'OGN',
+          'sUSDz',
+          'USDz',
+          'wUSD+',
+          'wUSDM',
+          'uSOL',
+          'uSUI',
+          'uXRP',
+          'EURC',
           'cbBTC',
           'eUSD',
           'bsdETH',
           'hyUSD',
           'ezETH',
-          'weETH.mode',
+          'weETH',
           'AERO',
           'RSR',
           'wstETH',
-          'cbETH'
+          'cbETH',
+          'USD+',
+          'fBOMB',
+          'KLIMA'
         ]
       }
     ]
+    // vaults: [
+    //   {
+    //     id: 'vault',
+    //     name: 'Supply Vaults',
+    //     description: 'Optimized yield strategies',
+    //     assets: ['USDC', 'WETH']
+    //   }
+    // ]
   },
   [optimism.id]: {
     name: 'Optimism',
+    hexcode: '#ff0420',
     arrow: 'ffffff',
     bg: 'bg-optimism',
+    accentbg: 'bg-optimism',
     text: 'text-white',
     border: 'border-optimism',
     logo: '/img/logo/OPTIMISM.png',
@@ -160,7 +320,18 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Pool',
-        assets: ['USDC', 'USDT', 'WETH', 'OP', 'wstETH', 'SNX', 'WBTC', 'LUSD']
+        assets: [
+          'USDC',
+          'USDT',
+          'WETH',
+          'wUSDM',
+          'weETH',
+          'OP',
+          'wstETH',
+          'SNX',
+          'WBTC',
+          'LUSD'
+        ]
       }
     ]
   },
@@ -189,8 +360,124 @@ export const pools: Record<number, PoolParams> = {
     pools: [
       {
         id: '0',
-        name: 'Main Market',
-        assets: ['FRAX', 'wfrxETH', 'FXS']
+        name: 'Main Pool',
+        assets: ['FRAX', 'wfrxETH', 'insfrxETH', 'sfrxETH', 'sFRAX', 'FXS']
+      }
+    ]
+  },
+  [lisk.id]: {
+    name: 'Lisk',
+    arrow: 'ffffff',
+    bg: 'bg-lisk',
+    text: 'text-white',
+    border: 'border-lisk',
+    logo: '/img/logo/Lisk.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDC', 'USDT', 'WBTC', 'LSK']
+      }
+    ]
+  },
+  [superseed.id]: {
+    name: 'Superseed',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SUPERSEED.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [worldchain.id]: {
+    name: 'Worldchain',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/WORLDCHAIN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [ink.chainId]: {
+    name: 'Ink',
+    arrow: 'ffffff',
+    bg: 'bg-ink',
+    text: 'text-white',
+    border: 'border-ink',
+    logo: '/img/logo/INK.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [swellchain.chainId]: {
+    name: 'Swell',
+    arrow: 'ffffff',
+    bg: 'bg-swell',
+    text: 'text-white',
+    border: 'border-swell',
+    logo: '/img/logo/SWELL.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDe', 'rswETH', 'weETH']
+      }
+    ]
+  },
+  [camptest.chainId]: {
+    name: 'Camp Testnet',
+    arrow: 'ffffff',
+    bg: 'bg-camp',
+    text: 'text-white',
+    border: 'border-camp',
+    logo: '/img/logo/CAMP.png',
+    pools: [{ id: '0', name: 'Main Pool', assets: ['WETH'] }]
+  },
+  [ozeantest.chainId]: {
+    arrow: 'ffffff',
+    name: 'Ozean Testnet',
+    hexcode: '#2467ed',
+    bg: 'bg-blue-600',
+    accentbg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-base',
+    logo: '/img/logo/OZEAN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WUSDX']
+      }
+    ]
+  },
+  [soneium.chainId]: {
+    name: 'Soneium',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SONEIUM.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDC', 'ASTR']
       }
     ]
   }
@@ -198,6 +485,7 @@ export const pools: Record<number, PoolParams> = {
 
 export const DROPDOWN = {
   AirdropSZN1: 1,
+  AirdropSZN2: 2,
   PublicSale: 0
 };
 // export const pools = [
@@ -281,17 +569,6 @@ export const POOLS_PER_PAGE = 6;
 export const DEFAULT_DECIMALS = 18;
 
 // enums
-
-export enum FusePoolMetric {
-  totalLiquidityNative,
-  totalSuppliedNative,
-  totalBorrowedNative
-}
-
-export enum UserAction {
-  NO_ACTION,
-  WAITING_FOR_TRANSACTIONS
-}
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
 
@@ -514,10 +791,10 @@ export const POOLS_COLUMNS = [
   TOTAL_BORROW,
   EXPANDER
 ];
-export const FEATURE_REQUESTS_URL =
-  'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API =
   'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
+export const FEATURE_REQUESTS_URL =
+  'https://midascapital.canny.io/feature-requests';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 export const HIGH_RISK_RATIO = 0.8;
 
@@ -592,5 +869,9 @@ export const INFO_MESSAGES = {
   },
   WITHDRAW: {
     WITHDRAWING: 'Withdrawing funds'
+  },
+  SWAP: {
+    APPROVE: 'Approve amount for spending',
+    SWAPPING: 'Swapping'
   }
 };

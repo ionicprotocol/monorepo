@@ -1,9 +1,11 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { Hash } from "viem";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
-const func: DeployFunction = async ({ viem, getNamedAccounts, deployments }) => {
+const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
 
   let fpd;
   try {

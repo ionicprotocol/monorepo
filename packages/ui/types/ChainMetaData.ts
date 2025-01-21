@@ -1,7 +1,18 @@
-import { base, bob, mode, optimism, fraxtal } from '@ionicprotocol/chains';
-import type { IonicPoolData } from '@ionicprotocol/types';
-
 import { config } from '@ui/config/index';
+
+import {
+  base,
+  bob,
+  mode,
+  optimism,
+  fraxtal,
+  lisk,
+  superseed,
+  worldchain,
+  ink,
+  swellchain
+} from '@ionicprotocol/chains';
+import type { IonicPoolData } from '@ionicprotocol/types';
 
 export const supportedChainIdToConfig: {
   [chainId: number]: { enabled: boolean; supported: boolean };
@@ -25,6 +36,26 @@ export const supportedChainIdToConfig: {
   [fraxtal.chainId]: {
     enabled: config.isFraxtalEnabled,
     supported: config.isFraxtalEnabled
+  },
+  [lisk.chainId]: {
+    enabled: config.isLiskEnabled,
+    supported: config.isLiskEnabled
+  },
+  [superseed.chainId]: {
+    enabled: config.isSuperseedEnabled,
+    supported: config.isSuperseedEnabled
+  },
+  [worldchain.chainId]: {
+    enabled: config.isWorldchainEnabled,
+    supported: config.isWorldchainEnabled
+  },
+  [ink.chainId]: {
+    enabled: config.isInkEnabled,
+    supported: config.isInkEnabled
+  },
+  [swellchain.chainId]: {
+    enabled: config.isSwellEnabled,
+    supported: config.isSwellEnabled
   }
 };
 

@@ -1,16 +1,24 @@
 import { task, types } from "hardhat/config";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
+import { Address } from "viem";
 
 export default task("market:set-borrow-cap", "Set borrow cap on market")
   .addParam("admin", "Named account from which to set the borrow caps", "deployer", types.string)
   .addParam("market", "The address of the CToken", undefined, types.string)
   .addParam("maxBorrow", "Maximum amount of tokens that can be borrowed", undefined, types.string)
-  .setAction(async ({ market, maxBorrow }, { viem, getNamedAccounts }) => {
+  .setAction(async ({ market, maxBorrow }, { viem, getNamedAccounts, getChainId }) => {
     const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const cToken = await viem.getContractAt("ICErc20", market);
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const cToken = await viem.getContractAt("ICErc20", market, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const comptroller = await cToken.read.comptroller();
-    const pool = await viem.getContractAt("IonicComptroller", comptroller);
+    const pool = await viem.getContractAt("IonicComptroller", comptroller, {
+      client: { public: publicClient, wallet: walletClient }
+    });
 
     const currentBorrowCap = await pool.read.borrowCaps([cToken.address]);
     console.log(`Current borrow cap is ${currentBorrowCap}`);
@@ -22,8 +30,7 @@ export default task("market:set-borrow-cap", "Set borrow cap on market")
       return;
     }
 
-    const feeDistributor = await viem.getContractAt("FeeDistributor", await pool.read.ionicAdmin());
-    const owner = await feeDistributor.read.owner();
+    const owner = await pool.read.admin();
 
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({

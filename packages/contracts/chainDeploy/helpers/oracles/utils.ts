@@ -1,7 +1,7 @@
 import { Address, encodeFunctionData, PublicClient, WalletClient, zeroAddress } from "viem";
 import { addTransaction, prepareAndLogTransaction } from "../logging";
-import { masterPriceOracleAbi } from "../../../generated";
 import type { GetContractReturnType } from "@nomicfoundation/hardhat-viem/types.js";
+import { masterPriceOracleAbi } from "../../../../sdk/src/generated";
 
 export async function addUnderlyingsToMpo(
   mpo: GetContractReturnType<typeof masterPriceOracleAbi>,
@@ -21,6 +21,7 @@ export async function addUnderlyingsToMpo(
   }
 
   if (underlyings.length) {
+    console.log("adding underlyings to mpo", underlyings, oracles);
     if ((await mpo.read.admin()).toLowerCase() === deployer.toLowerCase()) {
       const tx = await mpo.write.add([underlyings, oracles]);
       console.log("tx: ", tx);

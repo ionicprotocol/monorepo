@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export const useRewardTokensOfPool = (
   poolAddress?: Address,
@@ -35,7 +36,6 @@ export const useRewardTokensOfPool = (
       }
     },
 
-    gcTime: Infinity,
     enabled: !!poolAddress && !!sdk,
     placeholderData: [],
     staleTime: Infinity

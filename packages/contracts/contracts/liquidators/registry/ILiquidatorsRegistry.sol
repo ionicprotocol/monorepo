@@ -125,6 +125,29 @@ interface ILiquidatorsRegistrySecondExtension {
     IERC20Upgradeable[] calldata outputTokens,
     uint256[] calldata slippages
   ) external;
+
+  function optimalSwapPath(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IERC20Upgradeable[] memory);
+
+  function _setOptimalSwapPath(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken,
+    IERC20Upgradeable[] calldata optimalPath
+  ) external;
+
+  function wrappedToUnwrapped4626(address wrapped) external view returns (address);
+
+  function _setWrappedToUnwrapped4626(address wrapped, address unwrapped) external;
+
+  function aeroCLTickSpacings(address inputToken, address outputToken) external view returns (int24);
+
+  function _setAeroCLTickSpacings(address inputToken, address outputToken, int24 tickSpacing) external;
+
+  function aeroV2IsStable(address inputToken, address outputToken) external view returns (bool);
+
+  function _setAeroV2IsStable(address inputToken, address outputToken, bool isStable) external;
 }
 
 interface ILiquidatorsRegistry is

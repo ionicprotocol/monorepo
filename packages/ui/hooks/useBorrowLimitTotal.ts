@@ -1,24 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { formatUnits } from 'viem';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useAllUsdPrices } from '@ui/hooks/useAllUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
-import { formatUnits } from 'viem';
+
+import { useUsdPrice } from './useUsdPrices';
 
 export const useBorrowLimitTotal = (
   assets: MarketData[],
   poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
-  const { data: usdPrices } = useAllUsdPrices();
-  const usdPrice = useMemo(() => {
-    if (usdPrices && usdPrices[poolChainId.toString()]) {
-      return usdPrices[poolChainId.toString()].value;
-    } else {
-      return undefined;
-    }
-  }, [usdPrices, poolChainId]);
+  const { data: usdPrice } = useUsdPrice(poolChainId);
 
   return useQuery({
     queryKey: [
@@ -53,7 +46,6 @@ export const useBorrowLimitTotal = (
       return _maxBorrow;
     },
 
-    gcTime: Infinity,
     enabled: !!usdPrice,
     staleTime: Infinity
   });

@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { Address, formatEther, parseEther } from 'viem';
+import { formatEther, parseEther } from 'viem';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+
+import type { Address } from 'viem';
 
 export function useGetNetApy(
   collateralMarket: Address,
@@ -56,7 +58,6 @@ export function useGetNetApy(
       }
     },
 
-    gcTime: Infinity,
     enabled: !!sdk && supplyApy !== undefined && !!amount && !!leverageRatio,
     staleTime: Infinity
   });
