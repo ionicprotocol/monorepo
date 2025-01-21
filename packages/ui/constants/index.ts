@@ -237,6 +237,7 @@ export const pools: Record<number, PoolParams> = {
           'msDAI',
           'weETH.mode',
           'uniBTC',
+          'oBTC',
           'M-BTC',
           'sUSDe',
           'wrsETH',
