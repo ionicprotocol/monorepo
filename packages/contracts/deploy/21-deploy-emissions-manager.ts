@@ -1,5 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, pad, toBytes, Hash, parseEther } from "viem";
+import { Address, fromBytes, pad, toBytes, Hash, parseEther, Hex } from "viem";
 import { base, bob, fraxtal, mode, optimism } from "viem/chains";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
@@ -20,11 +20,14 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
 
   let hash;
-  const poolDirectoryAddress: Address = "0xPoolDirectoryAddress";
-  const protocolAddress: Address = "0xProtocolAddress";
-  const rewardTokenAddress: Address = "0xRewardTokenAddress";
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const protocolAddress: Address = deployer as Hex;
+  const rewardTokenAddress: Address = chainDeployParams.ION;
   const collateralBp: number = 2500;
-  const nonBlacklistableBytecode: string = "0x...";
+  const nonBlacklistableBytecode: string = "0x";
 
   let emissionsManager;
   try {
@@ -38,7 +41,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         execute: {
           init: {
             methodName: "initialize",
-            args: [poolDirectoryAddress, protocolAddress, rewardTokenAddress, collateralBp, nonBlacklistableBytecode]
+            args: [poolDirectory.address, protocolAddress, rewardTokenAddress, collateralBp, nonBlacklistableBytecode]
           }
         }
       }
@@ -58,9 +61,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║      SET VEION ON EMISSIONS MANAGER      ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await emissionsManager.write.setVoter([veION.address], { from: deployer });
+    const txHash = await emissionsManager.write.setVeIon([veION.address], { from: deployer });
     await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set voter: ${veION.address}`);
+    console.log(`Successfully set veION: ${veION.address}`);
   } catch (error) {
     console.error("Error setting voter:", error);
   }

@@ -19,16 +19,6 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   //   params: []
   // });
 
-  // const privateKey = process.env.DEPLOYER;
-  const privateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-  const account = privateKeyToAccount(privateKey as Hex);
-
-  const walletClient = createWalletClient({
-    account,
-    chain: base,
-    transport: http("https://base-mainnet.g.alchemy.com/v2/Qas8P5h61iinHB4zz2BKXR9gxk440Ohe")
-  });
-
   const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
 

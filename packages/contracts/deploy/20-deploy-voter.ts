@@ -81,6 +81,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     "PoolDirectory",
     (await deployments.get("PoolDirectory")).address as Address
   );
+  console.log(poolDirectory.address);
 
   // ╔══════════════════════════════════════════╗
   // ║               ADD MARKETS                ║
@@ -93,9 +94,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     try {
       const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
       const markets = await comptroller.read.getAllMarkets();
+      console.log(`Setting up ${markets.length} Markets`);
       for (const market of markets) {
         allMarkets.push({ marketAddress: market, side: 0 });
         allMarkets.push({ marketAddress: market, side: 1 });
+        console.log(`Setting up ${market}`);
       }
     } catch (error) {
       console.error(`Error processing pool ${pool.name}:`, error);
@@ -113,7 +116,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       console.error(`Transaction ${hash} failed: ${receipt.status}`);
     }
   } catch (error) {
-    console.error(`Error adding markets`);
+    console.error(`Error adding markets ${error}`);
   }
 
   // ╔══════════════════════════════════════════╗
@@ -126,10 +129,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const marketSides: number[] = [];
 
   // Loop through allMarkets to deploy a RewardAccumulator for each market and configure it
+  let counter = 0;
   for (const market of allMarkets) {
+    const deploymentName = `RewardAccumulator_${market.marketAddress}_${market.side}`;
     try {
       // Deploy RewardAccumulator
-      const rewardAccumulatorDeployment = await deployments.deploy("RewardAccumulator", {
+      const rewardAccumulatorDeployment = await deployments.deploy(deploymentName, {
+        contract: "RewardAccumulator",
         from: deployer,
         log: true,
         proxy: {
@@ -147,7 +153,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       if (rewardAccumulatorDeployment.transactionHash) {
         await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
       }
-      console.log(`Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}`);
+      console.log(
+        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${allMarkets.length}`
+      );
 
       // Collect data for setMarketRewardAccumulators
       rewardAccumulators.push(rewardAccumulatorDeployment.address as Hex);
@@ -180,10 +188,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   const bribes: Address[] = []; // To store deployed BribeRewards addresses
 
+  counter = 0;
   for (const rewardAccumulator of rewardAccumulators) {
+    const deploymentName = `BribeRewards_${rewardAccumulator}`;
     try {
       // Deploy BribeRewards contract
-      const bribeDeployment = await deployments.deploy("BribeRewards", {
+      const bribeDeployment = await deployments.deploy(deploymentName, {
+        contract: "BribeRewards",
         from: deployer,
         log: true,
         proxy: {
@@ -202,7 +213,9 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         await publicClient.waitForTransactionReceipt({ hash: bribeDeployment.transactionHash as Hash });
       }
 
-      console.log(`Deployed BribeRewards at: ${bribeDeployment.address}`);
+      console.log(
+        `Deployed BribeRewards at: ${bribeDeployment.address}, Counter: ${++counter}/${rewardAccumulators.length}`
+      );
       bribes.push(bribeDeployment.address as Hex);
     } catch (error) {
       console.error(`Error deploying BribeRewards for RewardAccumulator: ${rewardAccumulator}`, error);

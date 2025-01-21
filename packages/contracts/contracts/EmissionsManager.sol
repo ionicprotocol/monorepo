@@ -68,7 +68,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
 
   function setVeIon(IveION _veIon) external onlyOwner {
     if (address(_veIon) == address(0)) revert InvalidVeIONAddress();
-    veION = _veIon;
+    veION = address(_veIon);
     emit VeIonSet(address(_veIon));
   }
 
@@ -86,6 +86,11 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
   function setNonBlacklistableTargetBytecode(bytes memory _newBytecode) external onlyOwner {
     nonBlacklistableTargetBytecode = _newBytecode;
     emit NonBlacklistableTargetBytecodeSet(_newBytecode);
+  }
+
+  function setProtocolAddress(address _newProtocolAddress) external onlyOwner {
+    require(_newProtocolAddress != address(0), "Invalid address");
+    protocolAddress = _newProtocolAddress;
   }
 
   function _getUserTotalCollateral(address _user) internal view returns (uint256) {
