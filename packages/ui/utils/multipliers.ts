@@ -44,7 +44,8 @@ export const multipliers: Record<
         multiplier: 66000,
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          op: true
         }
       },
       dMBTC: {
@@ -56,6 +57,16 @@ export const multipliers: Record<
         supply: {
           underlyingAPR: 10,
           flywheel: true
+        }
+      },
+      uniBTC: {
+        supply: {
+          op: true
+        }
+      },
+      oBTC: {
+        supply: {
+          op: true
         }
       },
       STONE: {
