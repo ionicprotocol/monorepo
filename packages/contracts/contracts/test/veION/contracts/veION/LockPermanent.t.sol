@@ -19,10 +19,10 @@ contract LockPermanent is veIONTest {
     vm.prank(user);
     IveION(ve).lockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory lock = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
     uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, veloLpType);
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
       IveION(ve).s_lpType(lockInput.tokenAddress),
       userEpoch

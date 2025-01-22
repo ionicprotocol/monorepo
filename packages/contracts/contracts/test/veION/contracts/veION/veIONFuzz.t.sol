@@ -32,7 +32,10 @@ contract veIONFuzzing is veIONTest {
     uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, stakeUnderlying);
     vm.stopPrank();
 
-    IveION.LockedBalance memory lock = IveION(ve).getUserLock(tokenId, IveION(ve).s_lpType(tokenAddresses[0]));
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory lock = IveION(ve).getUserLock(
+      tokenId,
+      IveION(ve).s_lpType(tokenAddresses[0])
+    );
 
     uint256 maxBoost = 2e18;
     assertGe(maxBoost, lock.boost, "Boost should never be above the maximum");

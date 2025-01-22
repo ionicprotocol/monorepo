@@ -47,10 +47,16 @@ contract Split is veIONTest {
       splitAmount
     );
 
-    IveION.LockedBalance memory veloLocked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
-    IveION.LockedBalance memory balancerLocked1 = IveION(ve).getUserLock(tokenId1, balancerLpType);
-    IveION.LockedBalance memory veloLocked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
-    IveION.LockedBalance memory balancerLocked2 = IveION(ve).getUserLock(tokenId2, balancerLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory veloLocked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory balancerLocked1 = IveION(ve).getUserLock(
+      tokenId1,
+      balancerLpType
+    );
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory veloLocked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory balancerLocked2 = IveION(ve).getUserLock(
+      tokenId2,
+      balancerLpType
+    );
 
     assertEq(IveION(ve).balanceOf(user), 2, "User balance should be 2 after split");
     assertEq(veloLocked1.amount, MINIMUM_LOCK_AMOUNT, "First token's velo balance should be reduced by split amount");
@@ -83,10 +89,16 @@ contract Split is veIONTest {
       splitAmount
     );
 
-    IveION.LockedBalance memory veloLocked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
-    IveION.LockedBalance memory balancerLocked1 = IveION(ve).getUserLock(tokenId1, balancerLpType);
-    IveION.LockedBalance memory veloLocked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
-    IveION.LockedBalance memory balancerLocked2 = IveION(ve).getUserLock(tokenId2, balancerLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory veloLocked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory balancerLocked1 = IveION(ve).getUserLock(
+      tokenId1,
+      balancerLpType
+    );
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory veloLocked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory balancerLocked2 = IveION(ve).getUserLock(
+      tokenId2,
+      balancerLpType
+    );
 
     assertEq(veloLocked1.amount, MINT_AMT / 2, "First split lock amount should be half of the original");
     assertEq(balancerLocked1.amount, MINT_AMT, "Second split lock amount should be half of the original");
@@ -141,7 +153,7 @@ contract Split is veIONTest {
     IveION(ve).toggleSplit(address(0), true);
     vm.prank(user);
     vm.expectEmit(false, false, false, false);
-    emit IveION.SplitCompleted(0, 0, 0, 0, address(0));
+    emit IveIONStructsEnumsErrorsEvents.SplitCompleted(0, 0, 0, 0, address(0));
     IveION(ve).split(address(modeVelodrome5050IonMode), lockInputMultiLP.tokenId, splitAmount);
   }
 

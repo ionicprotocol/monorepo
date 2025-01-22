@@ -16,7 +16,7 @@ import { IAddressesProvider } from "./interfaces/IveIONCore.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
 
 /**
- * @title veION Contract
+ * @title veION Contract Second Extension
  * @notice This contract manages the veION framework, enabling the staking and management LP tokens for voting power.
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
@@ -30,6 +30,10 @@ contract veIONSecondExtension is
   using EnumerableSet for EnumerableSet.UintSet;
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for IERC20;
+
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
 
   /// @inheritdoc IveIONSecondExtension
   function whitelistTokens(address[] memory _tokens, bool[] memory _isWhitelisted) external onlyOwner {
