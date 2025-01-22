@@ -1,7 +1,6 @@
-
 import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
-import { Chain, createPublicClient, http, formatEther, getContract, formatUnits } from 'viem';
+import { Chain, createPublicClient, http, formatEther, getContract, formatUnits, type Abi } from 'viem';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
 import axios from 'axios';
@@ -94,10 +93,41 @@ const calculateRewardApy = (rewardRate: bigint, index: bigint): number => {
 export const updateAssetMasterData = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
-    const publicClient = createPublicClient({
-      chain: chainIdtoChain[chainId] as Chain,
-      transport: http(config.specificParams.metadata.rpcUrls.default.http[0]),
-    });
+    let publicClient;
+    
+    // Special handling for Base chain
+    if (chainId === SupportedChains.base) {
+      const rpcUrls = config.specificParams.metadata.rpcUrls.default.http;
+      
+      for (const rpcUrl of rpcUrls) {
+        try {
+          publicClient = createPublicClient({
+            chain: chainIdtoChain[chainId] as Chain,
+            transport: http(rpcUrl, {
+              timeout: 60000,
+              retryCount: 5,
+              retryDelay: 2000,
+            }),
+          });
+          await publicClient.getBlockNumber();
+          console.log(`Connected to Base RPC: ${rpcUrl}`);
+          break;
+        } catch (e) {
+          console.log(`Failed to connect to Base RPC ${rpcUrl}, trying next...`);
+          continue;
+        }
+      }
+    } else {
+      // For other chains, use default RPC
+      publicClient = createPublicClient({
+        chain: chainIdtoChain[chainId] as Chain,
+        transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
+      });
+    }
+
+    if (!publicClient) {
+      throw new Error(`All RPC endpoints failed for ${chainIdtoChain[chainId].name}`);
+    }
     const sdk = new IonicSdk(publicClient as any, undefined, config);
     
     // Get pools and their assets
@@ -123,23 +153,21 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
           // Get exchange rate with proper decimal handling
           let exchangeRateNum = 1;
           try {
-            const cTokenContract = getContract({
+            const exchangeRate = await publicClient.readContract({
               address: asset.cToken as `0x${string}`,
-              abi: CTokenABI,
-              client: publicClient
+              abi: CTokenABI as Abi,
+              functionName: 'exchangeRateCurrent'
             });
-            
-            try {
-              const exchangeRate = await cTokenContract.read.exchangeRateCurrent();
-              exchangeRateNum = Number(formatEther(exchangeRate as bigint));
-              await new Promise(resolve => setTimeout(resolve, 1000));
-            } catch (err) {
-              console.log(`Falling back to exchangeRateStored for ${asset.cToken}`);
-              const exchangeRate = await cTokenContract.read.exchangeRateStored();
-              exchangeRateNum = Number(formatEther(exchangeRate as bigint));
-            }
-          } catch (e) {
-            console.log(`Using default exchange rate for ${asset.cToken}`);
+            exchangeRateNum = Number(formatEther(exchangeRate as bigint));
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          } catch (err) {
+            console.log(`Falling back to exchangeRateStored for ${asset.cToken}`);
+            const exchangeRate = await publicClient.readContract({
+              address: asset.cToken as `0x${string}`,
+              abi: CTokenABI as Abi,
+              functionName: 'exchangeRateStored'
+            });
+            exchangeRateNum = Number(formatEther(exchangeRate as bigint));
           }
           // Calculate APYs
           const supplyApy = sdk.ratePerBlockToAPY(
@@ -174,13 +202,11 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
                     const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
                     
                     // Get the flywheel booster address
-                    const flywheelContract = getContract({
+                    const boosterAddress = await publicClient.readContract({
                       address: reward.flywheel as `0x${string}`,
-                      abi: FlywheelABI,
-                      client: publicClient
+                      abi: FlywheelABI as Abi,
+                      functionName: 'flywheelBooster'
                     });
-                    
-                    const boosterAddress = await flywheelContract.read.flywheelBooster();
                     
                     // If booster address is zero address, it's a supply reward
                     if (boosterAddress === '0x0000000000000000000000000000000000000000') {

@@ -155,7 +155,7 @@ export default function APR(props: APRCellProps) {
           </div>
 
           {config?.op && (
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex justify-between items-center gap-2">
               <Link
                 href="https://app.merkl.xyz/?chain=34443"
                 target="_blank"
@@ -168,7 +168,10 @@ export default function APR(props: APRCellProps) {
                   height={16}
                   className="w-4 h-4"
                 />
-                <span className="text-xs text-gray-400">OP Rewards</span>
+                <span className="flex items-center text-xs text-gray-400">
+                  OP Rewards{' '}
+                  <ExternalLink className="w-3 h-3 text-gray-400 ml-1" />
+                </span>
               </Link>
               <span className="text-xs font-medium">+{merklAprFormatted}%</span>
             </div>
