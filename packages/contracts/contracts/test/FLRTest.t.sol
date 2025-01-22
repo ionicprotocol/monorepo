@@ -8,7 +8,7 @@
 // import { ERC20 } from "solmate/tokens/ERC20.sol";
 // import { Authority } from "solmate/auth/Auth.sol";
 // import { MockERC20 } from "solmate/test/utils/mocks/MockERC20.sol";
-// import { IERC20MetadataUpgradeable, IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+// import { IERC20MetadataUpgradeable, IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 // import { IFlywheelBooster } from "../ionic/strategies/flywheel/IFlywheelBooster.sol";
 // import { FlywheelStaticRewards } from "../ionic/strategies/flywheel/rewards/FlywheelStaticRewards.sol";

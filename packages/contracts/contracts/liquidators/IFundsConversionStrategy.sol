@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import "./IRedemptionStrategy.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 interface IFundsConversionStrategy is IRedemptionStrategy {
   function convert(
@@ -11,8 +11,8 @@ interface IFundsConversionStrategy is IRedemptionStrategy {
     bytes memory strategyData
   ) external returns (IERC20Upgradeable outputToken, uint256 outputAmount);
 
-  function estimateInputAmount(uint256 outputAmount, bytes memory strategyData)
-    external
-    view
-    returns (IERC20Upgradeable inputToken, uint256 inputAmount);
+  function estimateInputAmount(
+    uint256 outputAmount,
+    bytes memory strategyData
+  ) external view returns (IERC20Upgradeable inputToken, uint256 inputAmount);
 }

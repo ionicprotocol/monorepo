@@ -10,16 +10,24 @@ contract IonicFlywheel is IonicFlywheelCore, IIonicFlywheel {
   bool public constant isFlywheel = true;
 
   function flywheelPreSupplierAction(address market, address supplier) external {
-    _updateBlacklistBalances(ERC20(market), supplier);
     accrue(ERC20(market), supplier);
+  }
+
+  function flywheelPostSupplierAction(address market, address supplier) external {
+    _updateBlacklistBalances(ERC20(market), supplier);
   }
 
   function flywheelPreBorrowerAction(address market, address borrower) external {}
 
+  function flywheelPostBorrowerAction(address market, address borrower) external {}
+
   function flywheelPreTransferAction(address market, address src, address dst) external {
+    accrue(ERC20(market), src, dst);
+  }
+
+  function flywheelPostTransferAction(address market, address src, address dst) external {
     _updateBlacklistBalances(ERC20(market), src);
     _updateBlacklistBalances(ERC20(market), dst);
-    accrue(ERC20(market), src, dst);
   }
 
   function compAccrued(address user) external view returns (uint256) {
@@ -30,7 +38,6 @@ contract IonicFlywheel is IonicFlywheelCore, IIonicFlywheel {
     _addStrategyForRewards(strategy);
   }
 
-  // TODO remove
   function marketState(ERC20 strategy) external view returns (uint224, uint32) {
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
   }

@@ -6,7 +6,7 @@ import { ICErc20, CTokenSecondExtensionInterface, CTokenFirstExtensionInterface 
 
 import { RolesAuthority, Authority } from "solmate/auth/authorities/RolesAuthority.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 contract PoolRolesAuthority is RolesAuthority, Initializable {
   constructor() RolesAuthority(address(0), Authority(address(0))) {

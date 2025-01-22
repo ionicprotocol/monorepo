@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.0;
+pragma solidity 0.8.22;
 
 interface IStakeWallet {
+  /// @notice Emitted when tokens are staked
+  event Staked(uint256 amount);
+
+  /// @notice Emitted when rewards are claimed
+  event Claimed(address indexed from, uint256 rewardAmount);
+
+  /// @notice Emitted when tokens are withdrawn
+  event Withdrawn(address indexed withdrawTo, uint256 amount);
+
   /**
    * @notice Stakes a specified amount of tokens according to the strategy.
    * @param amount The amount of tokens to stake.
@@ -16,8 +25,8 @@ interface IStakeWallet {
 
   /**
    * @notice Withdraws a specified amount of staked tokens.
-   * @param from The address of the user withdrawing the tokens.
+   * @param withdrawTo The address to withdraw tokens to.
    * @param amount The amount of tokens to withdraw.
    */
-  function withdraw(address from, uint256 amount) external;
+  function withdraw(address withdrawTo, uint256 amount) external;
 }

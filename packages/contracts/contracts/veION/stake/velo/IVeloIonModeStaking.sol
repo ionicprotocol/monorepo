@@ -1,16 +1,7 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.22;
 
 interface IVeloIonModeStaking {
-  error InsufficientAmount();
-  error NotAlive();
-  error NotAuthorized();
-  error NotNotifyAdmin();
-  error PeriodFinish();
-  error RewardRateTooHigh();
-  error ZeroAmount();
-  error ZeroRewardRate();
-
   event Deposit(address indexed from, address indexed to, uint256 amount);
   event Withdraw(address indexed from, uint256 amount);
   event NotifyReward(address indexed from, uint256 amount);

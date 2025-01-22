@@ -1,7 +1,32 @@
-// SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.22;
 
 interface IBribeRewards {
+  /// @notice A checkpoint for marking balance
+  struct Checkpoint {
+    uint256 timestamp;
+    uint256 balanceOf;
+  }
+
+  /// @notice A checkpoint for marking supply
+  struct SupplyCheckpoint {
+    uint256 timestamp;
+    uint256 supply;
+  }
+
+  struct EarnedVars {
+    uint256 totalReward;
+    uint256 reward;
+    uint256 supplyValue;
+    uint256 epochBalanceValue;
+    uint256 currTs;
+    uint256 index;
+    uint256 numEpochs;
+    uint256 overallBalance;
+    uint256 overallSupply;
+    uint256 historicalPrice;
+  }
+
   error InvalidReward();
   error Unauthorized();
   error InvalidGauge();
@@ -10,25 +35,27 @@ interface IBribeRewards {
   error InvalidVotingEscrow();
   error TokenNotWhitelisted();
   error AmountCannotBeZero();
+  error HistoricalPriceNotSet(address lpToken, uint256 epochStart);
 
   event Deposit(address indexed user, uint256 indexed tokenId, uint256 amount);
   event Withdraw(address indexed user, uint256 indexed tokenId, uint256 amount);
   event RewardNotification(address indexed user, address indexed rewardToken, uint256 indexed epoch, uint256 amount);
   event RewardsClaimed(address indexed user, address indexed rewardToken, uint256 amount);
+  event HistoricalPriceSet(uint256 indexed epochTimestamp, address indexed lpToken, uint256 price);
 
   /// @notice Deposit an amount into the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.
   /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be deposited for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _deposit(address lpToken, uint256 amount, uint256 tokenId) external;
+  function deposit(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Withdraw an amount from the bribe rewards contract for a specific veNFT
   /// @dev Can only be called internally by authorized entities.
   /// @param lpToken  Address of the liquidity pool token
   /// @param amount   Amount to be withdrawn for the veNFT
   /// @param tokenId  Unique identifier of the veNFT
-  function _withdraw(address lpToken, uint256 amount, uint256 tokenId) external;
+  function withdraw(address lpToken, uint256 amount, uint256 tokenId) external;
 
   /// @notice Claim the rewards earned by a veNFT holder
   /// @param tokenId  Unique identifier of the veNFT

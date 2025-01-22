@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 import { IonicLiquidator, ILiquidator } from "../../IonicLiquidator.sol";
 import { IonicUniV3Liquidator } from "../../IonicUniV3Liquidator.sol";
@@ -29,11 +29,7 @@ import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin
 import { PoolLens } from "../../PoolLens.sol";
 
 contract MockRedemptionStrategy is IRedemptionStrategy {
-  function redeem(
-    IERC20Upgradeable,
-    uint256,
-    bytes memory
-  ) external returns (IERC20Upgradeable, uint256) {
+  function redeem(IERC20Upgradeable, uint256, bytes memory) external returns (IERC20Upgradeable, uint256) {
     return (IERC20Upgradeable(address(0)), 1);
   }
 
@@ -155,8 +151,8 @@ contract IonicLiquidatorTest is UpgradesBaseTest {
 
     vars.redemptionStrategies[0] = IFundsConversionStrategy(0x5cA3fd2c285C4138185Ef1BdA7573D415020F3C8);
     vars.strategyData[
-        0
-      ] = hex"0000000000000000000000004200000000000000000000000000000000000006000000000000000000000000ac48fcf1049668b285f3dc72483df5ae2162f7e8";
+      0
+    ] = hex"0000000000000000000000004200000000000000000000000000000000000006000000000000000000000000ac48fcf1049668b285f3dc72483df5ae2162f7e8";
 
     liquidator.safeLiquidateToTokensWithFlashLoan(vars);
   }
@@ -274,17 +270,25 @@ contract IonicLiquidatorTest is UpgradesBaseTest {
     });
 
     vm.mockCall(
-      expressRelay, 
-      abi.encodeWithSelector(bytes4(keccak256("isPermissioned(address,bytes)")), address(liquidatorV3), abi.encode(borrower)),
-      abi.encode(false)  
+      expressRelay,
+      abi.encodeWithSelector(
+        bytes4(keccak256("isPermissioned(address,bytes)")),
+        address(liquidatorV3),
+        abi.encode(borrower)
+      ),
+      abi.encode(false)
     );
     vm.expectRevert("invalid liquidation");
     liquidatorV3.safeLiquidateToTokensWithFlashLoan(vars);
 
     vm.mockCall(
-      expressRelay, 
-      abi.encodeWithSelector(bytes4(keccak256("isPermissioned(address,bytes)")), address(liquidatorV3), abi.encode(borrower)),
-      abi.encode(true)  
+      expressRelay,
+      abi.encodeWithSelector(
+        bytes4(keccak256("isPermissioned(address,bytes)")),
+        address(liquidatorV3),
+        abi.encode(borrower)
+      ),
+      abi.encode(true)
     );
     liquidatorV3.safeLiquidateToTokensWithFlashLoan(vars);
 
