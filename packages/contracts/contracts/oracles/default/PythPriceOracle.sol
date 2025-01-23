@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { MasterPriceOracle } from "../MasterPriceOracle.sol";
 import { BasePriceOracle, ICErc20 } from "../BasePriceOracle.sol";
@@ -37,22 +37,14 @@ contract PythPriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
 
   IPyth public PYTH;
 
-  function initialize(
-    address pythAddress,
-    bytes32 nativeTokenUsdFeed,
-    address usdToken
-  ) public initializer {
+  function initialize(address pythAddress, bytes32 nativeTokenUsdFeed, address usdToken) public initializer {
     __SafeOwnable_init(msg.sender);
     NATIVE_TOKEN_USD_FEED = nativeTokenUsdFeed;
     USD_TOKEN = usdToken;
     PYTH = IPyth(pythAddress);
   }
 
-  function reinitialize(
-    address pythAddress,
-    bytes32 nativeTokenUsdFeed,
-    address usdToken
-  ) public onlyOwnerOrAdmin {
+  function reinitialize(address pythAddress, bytes32 nativeTokenUsdFeed, address usdToken) public onlyOwnerOrAdmin {
     NATIVE_TOKEN_USD_FEED = nativeTokenUsdFeed;
     USD_TOKEN = usdToken;
     PYTH = IPyth(pythAddress);
@@ -125,7 +117,7 @@ contract PythPriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
     uint256 underlyingDecimals = uint256(ERC20Upgradeable(underlying).decimals());
     return
       underlyingDecimals <= 18
-        ? uint256(oraclePrice) * (10**(18 - underlyingDecimals))
-        : uint256(oraclePrice) / (10**(underlyingDecimals - 18));
+        ? uint256(oraclePrice) * (10 ** (18 - underlyingDecimals))
+        : uint256(oraclePrice) / (10 ** (underlyingDecimals - 18));
   }
 }

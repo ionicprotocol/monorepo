@@ -279,6 +279,7 @@ export const pools: Record<number, PoolParams> = {
           'USDz',
           'wUSD+',
           'wUSDM',
+          'mBASIS',
           'uSOL',
           'uSUI',
           'uXRP',

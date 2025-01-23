@@ -7,7 +7,7 @@ import { FeeDistributor } from "../FeeDistributor.sol";
 import { MasterPriceOracle } from "../oracles/MasterPriceOracle.sol";
 
 import { BaseTest } from "./config/BaseTest.t.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 contract MinBorrowTest is BaseTest {
   FeeDistributor ffd;

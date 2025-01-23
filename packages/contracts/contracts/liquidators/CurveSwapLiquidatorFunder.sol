@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import "./CurveSwapLiquidator.sol";
 import "./IFundsConversionStrategy.sol";
 
-import { IERC20MetadataUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import { IERC20MetadataUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 contract CurveSwapLiquidatorFunder is CurveSwapLiquidator, IFundsConversionStrategy {
   function convert(
@@ -15,11 +15,10 @@ contract CurveSwapLiquidatorFunder is CurveSwapLiquidator, IFundsConversionStrat
     return _convert(inputToken, inputAmount, strategyData);
   }
 
-  function estimateInputAmount(uint256 outputAmount, bytes memory strategyData)
-    external
-    view
-    returns (IERC20Upgradeable, uint256)
-  {
+  function estimateInputAmount(
+    uint256 outputAmount,
+    bytes memory strategyData
+  ) external view returns (IERC20Upgradeable, uint256) {
     ICurvePool curvePool;
     int128 i;
     int128 j;
@@ -65,7 +64,7 @@ contract CurveSwapLiquidatorFunder is CurveSwapLiquidator, IFundsConversionStrat
     IERC20MetadataUpgradeable inputMetadataToken,
     uint256 outputAmount
   ) internal view returns (uint256) {
-    uint256 oneInputToken = 10**inputMetadataToken.decimals();
+    uint256 oneInputToken = 10 ** inputMetadataToken.decimals();
     uint256 outputTokensForOneInputToken = curvePool.get_dy(i, j, oneInputToken);
     // inputAmount / outputAmount = oneInputToken / outputTokensForOneInputToken
     uint256 inputAmount = (outputAmount * oneInputToken) / outputTokensForOneInputToken;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { IERC4626 } from "../../compound/IERC4626.sol";
 import { BasePriceOracle, ICErc20 } from "../BasePriceOracle.sol";
@@ -25,7 +25,7 @@ contract ERC4626Oracle is SafeOwnableUpgradeable, BasePriceOracle {
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(ERC20Upgradeable(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(ERC20Upgradeable(underlying).decimals()));
   }
 
   /**
@@ -34,8 +34,8 @@ contract ERC4626Oracle is SafeOwnableUpgradeable, BasePriceOracle {
   function _price(address underlying) internal view virtual returns (uint256) {
     IERC4626 vault = IERC4626(underlying);
     address asset = vault.asset();
-    uint256 redeemAmount = vault.previewRedeem(10**vault.decimals());
+    uint256 redeemAmount = vault.previewRedeem(10 ** vault.decimals());
     uint256 underlyingPrice = BasePriceOracle(msg.sender).price(asset);
-    return (redeemAmount * underlyingPrice) / 10**ERC20Upgradeable(asset).decimals();
+    return (redeemAmount * underlyingPrice) / 10 ** ERC20Upgradeable(asset).decimals();
   }
 }

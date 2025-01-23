@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../../external/uniswap/IUniswapV2Pair.sol";
 import "../../external/uniswap/IUniswapV2Factory.sol";
@@ -108,15 +108,11 @@ contract UniswapTwapPriceOracleV2Root {
   /**
    * @dev Returns the price of `underlying` in terms of `baseToken` given `factory`.
    */
-  function price(
-    address underlying,
-    address baseToken,
-    address factory
-  ) external view returns (uint256) {
+  function price(address underlying, address baseToken, address factory) external view returns (uint256) {
     // Return ERC20/ETH TWAP
     address pair = IUniswapV2Factory(factory).getPair(underlying, baseToken);
-    uint256 baseUnit = 10**uint256(ERC20Upgradeable(underlying).decimals());
-    return (((underlying < baseToken ? price0TWAP(pair) : price1TWAP(pair)) / (2**56)) * baseUnit) / (2**56); // Scaled by 1e18, not 2 ** 112
+    uint256 baseUnit = 10 ** uint256(ERC20Upgradeable(underlying).decimals());
+    return (((underlying < baseToken ? price0TWAP(pair) : price1TWAP(pair)) / (2 ** 56)) * baseUnit) / (2 ** 56); // Scaled by 1e18, not 2 ** 112
   }
 
   /**
@@ -204,10 +200,10 @@ contract UniswapTwapPriceOracleV2Root {
     address token0 = IUniswapV2Pair(pair).token0();
     bool useToken0Price = token0 != baseToken;
     address underlying = useToken0Price ? token0 : IUniswapV2Pair(pair).token1();
-    uint256 baseUnit = 10**uint256(ERC20Upgradeable(underlying).decimals());
+    uint256 baseUnit = 10 ** uint256(ERC20Upgradeable(underlying).decimals());
 
     // Get TWAP price
-    uint256 twapPrice = (((useToken0Price ? price0TWAP(pair) : price1TWAP(pair)) / (2**56)) * baseUnit) / (2**56); // Scaled by 1e18, not 2 ** 112
+    uint256 twapPrice = (((useToken0Price ? price0TWAP(pair) : price1TWAP(pair)) / (2 ** 56)) * baseUnit) / (2 ** 56); // Scaled by 1e18, not 2 ** 112
 
     // Get spot price
     (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(pair).getReserves();

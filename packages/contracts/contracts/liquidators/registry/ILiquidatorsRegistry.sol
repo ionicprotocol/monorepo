@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 interface ILiquidatorsRegistryStorage {
   function redemptionStrategiesByName(string memory name) external view returns (IRedemptionStrategy);

@@ -11,11 +11,19 @@ contract IonicFlywheelBorrow is IonicFlywheelCore, IIonicFlywheel {
 
   function flywheelPreSupplierAction(address market, address supplier) external {}
 
+  function flywheelPostSupplierAction(address market, address supplier) external {}
+
   function flywheelPreBorrowerAction(address market, address borrower) external {
     accrue(ERC20(market), borrower);
   }
 
+  function flywheelPostBorrowerAction(address market, address borrower) external {
+    _updateBlacklistBalances(ERC20(market), borrower);
+  }
+
   function flywheelPreTransferAction(address market, address src, address dst) external {}
+
+  function flywheelPostTransferAction(address market, address src, address dst) external {}
 
   function compAccrued(address user) external view returns (uint256) {
     return _rewardsAccrued[user];
@@ -25,7 +33,6 @@ contract IonicFlywheelBorrow is IonicFlywheelCore, IIonicFlywheel {
     _addStrategyForRewards(strategy);
   }
 
-  // TODO remove
   function marketState(ERC20 strategy) external view returns (uint224, uint32) {
     return (_strategyState[strategy].index, _strategyState[strategy].lastUpdatedTimestamp);
   }

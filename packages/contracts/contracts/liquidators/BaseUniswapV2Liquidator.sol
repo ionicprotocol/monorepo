@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../external/uniswap/IUniswapV2Router02.sol";
 
@@ -50,9 +50,5 @@ abstract contract BaseUniswapV2Liquidator is IRedemptionStrategy {
     outputAmount = outputToken.balanceOf(address(this));
   }
 
-  function _swap(
-    IUniswapV2Router02 uniswapV2Router,
-    uint256 inputAmount,
-    address[] memory swapPath
-  ) internal virtual;
+  function _swap(IUniswapV2Router02 uniswapV2Router, uint256 inputAmount, address[] memory swapPath) internal virtual;
 }
