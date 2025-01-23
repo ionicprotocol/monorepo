@@ -40,6 +40,7 @@ interface IMaxDeposit {
   handleInput?: (val?: string) => void;
   headerText?: string;
   max?: string;
+  effectiveMax?: string;
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
@@ -47,11 +48,9 @@ interface IMaxDeposit {
   useUnderlyingBalance?: boolean;
   footerText?: string;
   decimals?: number;
-  // Added slider props
   readonly?: boolean;
   isLoading?: boolean;
   showUtilizationSlider?: boolean;
-  initialUtilization?: number;
   hintText?: string;
 }
 
@@ -62,6 +61,7 @@ function MaxDeposit({
   token,
   handleInput,
   max,
+  effectiveMax,
   chain,
   tokenSelector = false,
   tokenArr,
@@ -71,12 +71,8 @@ function MaxDeposit({
   readonly,
   isLoading,
   showUtilizationSlider = false,
-  initialUtilization = 0,
   hintText = 'Balance'
 }: IMaxDeposit) {
-  const [bal, setBal] = useState<IBal>();
-  const [utilizationPercentage, setUtilizationPercentage] =
-    useState(initialUtilization);
   const { address } = useAccount();
   const [open, setOpen] = useState<boolean>(false);
   const newRef = useRef<HTMLDivElement>(null);
@@ -106,23 +102,24 @@ function MaxDeposit({
     }
   });
 
-  useMemo(() => {
+  const bal = useMemo(() => {
     const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
 
     if (max) {
       const value = parseUnits(max, decimals);
-      setBal({ value, decimals });
+      return { value, decimals };
     } else if (max === '0') {
-      setBal({ value: BigInt(0), decimals });
+      return { value: BigInt(0), decimals };
     } else if (useUnderlyingBalance) {
       const value = underlyingBalance ?? BigInt(0);
-      setBal({ value, decimals });
+      return { value, decimals };
     } else if (!useUnderlyingBalance && regularBalance) {
-      setBal({
+      return {
         value: regularBalance.value,
         decimals: regularBalance.decimals
-      });
+      };
     }
+    return null;
   }, [
     max,
     regularBalance,
@@ -131,55 +128,48 @@ function MaxDeposit({
     propDecimals
   ]);
 
+  // Use effectiveMax for slider if provided, otherwise fall back to max
+  const sliderMax = effectiveMax || max;
+
+  // Format balance for display with proper decimals
   const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
     const formatted = formatUnits(value, decimals);
     const number = Number(formatted);
 
-    if (number > 0 && number < 0.00001) {
+    if (number === 0) return '0';
+
+    if (number < 0.00001) {
       return formatted;
     }
 
     return number.toLocaleString('en-US', {
-      maximumFractionDigits: 5,
-      useGrouping: true
+      maximumFractionDigits: 4,
+      minimumFractionDigits: 2
     });
   };
 
-  const formatBalanceForCalculation = (
-    value: bigint,
-    decimals: number
-  ): string => {
-    return formatUnits(value, decimals);
-  };
-
   function handleMax() {
-    if (!handleInput || !bal) return;
-    const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
-    handleInput(maxValue);
-    setUtilizationPercentage(100);
+    if (!handleInput || !sliderMax) return;
+    handleInput(sliderMax);
   }
 
   function handleUtilizationChange(value: number[]) {
-    const percentage = value[0];
-    setUtilizationPercentage(percentage);
+    if (!sliderMax || !handleInput) return;
 
-    if (!bal || !handleInput) return;
+    const percentage = value[0];
 
     try {
-      const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
-      const calculatedAmount = Number(maxValue) * (percentage / 100);
+      const calculatedAmount = (Number(sliderMax) * percentage) / 100;
 
-      // Format to the appropriate number of decimal places
+      // Format to appropriate decimal places
       let formattedAmount: string;
       if (calculatedAmount < 0.00001) {
-        // For very small numbers, use more decimal places to maintain precision
-        formattedAmount = calculatedAmount.toFixed(bal.decimals);
+        formattedAmount = calculatedAmount.toFixed(18);
       } else {
-        // For normal numbers, use fewer decimal places
-        formattedAmount = calculatedAmount.toFixed(5);
+        formattedAmount = calculatedAmount.toFixed(4);
       }
 
-      // Remove trailing zeros after decimal point
+      // Remove trailing zeros
       formattedAmount = formattedAmount.replace(/\.?0+$/, '');
 
       if (isNaN(Number(formattedAmount))) {
@@ -193,12 +183,18 @@ function MaxDeposit({
     }
   }
 
-  const tokens = tokenName?.split('/') ?? ['eth'];
+  // Calculate display percentage for the slider
+  const displayPercentage = useMemo(() => {
+    if (!amount || !max || Number(max) === 0) return 0;
+    // Always calculate percentage based on the current amount and its own maximum
+    return (Number(amount) / Number(max)) * 100;
+  }, [amount, max]);
+
   const formattedBalance = bal
     ? formatBalanceForDisplay(bal.value, bal.decimals)
     : max ?? '0';
 
-  const isMaxDisabled = !bal || bal.value === BigInt(0);
+  const isMaxDisabled = !max || max === '0';
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
@@ -212,11 +208,7 @@ function MaxDeposit({
                 handleInput={handleInput}
                 readonly={readonly}
                 amount={amount}
-                max={
-                  bal
-                    ? formatBalanceForCalculation(bal.value, bal.decimals)
-                    : max ?? '0'
-                }
+                max={max}
                 isLoading={isLoading}
               />
               <div className="flex flex-col items-end gap-1">
@@ -241,7 +233,7 @@ function MaxDeposit({
                   />
                 ) : (
                   <TokenDisplay
-                    tokens={tokens}
+                    tokens={tokenName?.split('/') ?? ['eth']}
                     tokenName={tokenName}
                   />
                 )}
@@ -255,22 +247,24 @@ function MaxDeposit({
                     <div
                       className={cn(
                         'w-full',
-                        (!bal || bal.value === BigInt(0)) &&
+                        (!sliderMax || sliderMax === '0') &&
                           'opacity-50 cursor-not-allowed'
                       )}
                     >
                       <Slider
-                        value={[utilizationPercentage]}
+                        value={[displayPercentage]}
                         step={1}
                         min={0}
                         max={100}
-                        onValueChange={handleUtilizationChange}
-                        disabled={!bal || bal.value === BigInt(0)}
+                        onValueChange={
+                          readonly ? undefined : handleUtilizationChange
+                        }
+                        disabled={!sliderMax || sliderMax === '0' || readonly}
                         className="w-full"
                       />
                     </div>
                   </TooltipTrigger>
-                  {(!bal || bal.value === BigInt(0)) && (
+                  {(!sliderMax || sliderMax === '0') && (
                     <TooltipContent>
                       <p>No balance available</p>
                     </TooltipContent>
@@ -287,11 +281,7 @@ function MaxDeposit({
               handleInput={handleInput}
               readonly={readonly}
               amount={amount}
-              max={
-                bal
-                  ? formatBalanceForCalculation(bal.value, bal.decimals)
-                  : max ?? '0'
-              }
+              max={max}
               isLoading={isLoading}
             />
 
@@ -303,22 +293,24 @@ function MaxDeposit({
                       <div
                         className={cn(
                           'w-full',
-                          (!bal || bal.value === BigInt(0)) &&
+                          (!sliderMax || sliderMax === '0') &&
                             'opacity-50 cursor-not-allowed'
                         )}
                       >
                         <Slider
-                          value={[utilizationPercentage]}
+                          value={[displayPercentage]}
                           step={1}
                           min={0}
                           max={100}
-                          onValueChange={handleUtilizationChange}
-                          disabled={!bal || bal.value === BigInt(0)}
+                          onValueChange={
+                            readonly ? undefined : handleUtilizationChange
+                          }
+                          disabled={!sliderMax || sliderMax === '0' || readonly}
                           className="w-full"
                         />
                       </div>
                     </TooltipTrigger>
-                    {(!bal || bal.value === BigInt(0)) && (
+                    {(!sliderMax || sliderMax === '0') && (
                       <TooltipContent>
                         <p>No balance available</p>
                       </TooltipContent>
@@ -353,7 +345,7 @@ function MaxDeposit({
                 />
               ) : (
                 <TokenDisplay
-                  tokens={tokens}
+                  tokens={tokenName?.split('/') ?? ['eth']}
                   tokenName={tokenName}
                 />
               )}

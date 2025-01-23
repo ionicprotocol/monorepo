@@ -7,9 +7,8 @@ import { formatEther } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { getVeIonContract, isVeIonSupported } from '@ui/constants/veIon';
-import { useIonPrice, useIonPrices } from '@ui/hooks/useDexScreenerPrices';
+import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
-import { useTokenCalculations } from '@ui/hooks/useTokenCalculations';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
 import { useVeIONLocks } from '@ui/hooks/veion/useVeIONLocks';
 import type {
@@ -17,7 +16,6 @@ import type {
   LiquidityData,
   EmissionsData,
   ReservesData,
-  TokenCalculations,
   VeIONLockData,
   ChainId
 } from '@ui/types/VeIION';
@@ -38,9 +36,6 @@ interface VeIONContextType {
   emissions: EmissionsData;
   reserves: ReservesData;
   locks: VeIONLockData;
-
-  // Token calculations
-  tokenCalculations: TokenCalculations;
 
   // Loading state
   isLoading: boolean;
@@ -80,11 +75,6 @@ const defaultContext: VeIONContextType = {
     myLocks: [],
     delegatedLocks: [],
     isLoading: true
-  },
-  tokenCalculations: {
-    getTokenBalance: () => '0',
-    calculateTokenAmount: () => '0',
-    calculateIonAmount: () => '0'
   },
   isLoading: true
 };
@@ -134,11 +124,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const { reserves, isLoading: reservesLoading } = useReserves(currentChain);
 
-  const tokenCalculations = useTokenCalculations({
-    address,
-    chainId: currentChain
-  });
-
   // Use consolidated hooks only if veIon is supported on this chain
   const { liquidity, emissions } = useVeIonData({
     address,
@@ -177,7 +162,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     emissions: isSupported ? emissions : defaultContext.emissions,
     reserves,
     locks: isSupported ? locks : defaultContext.locks,
-    tokenCalculations,
     isLoading: reservesLoading || (isSupported && locks.isLoading)
   };
 
