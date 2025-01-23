@@ -60,39 +60,31 @@ export function useVeIONActions() {
       parseEther(tokenBAmount) -
       (parseEther(tokenBAmount) * BigInt(slippage)) / BigInt(100);
 
-    const functionName =
-      selectedToken === 'eth' ? 'addLiquidityETH' : 'addLiquidity';
-    const args =
-      selectedToken === 'eth'
-        ? [
-            tokenA,
-            false,
-            parseUnits(tokenAmount, 18),
-            minA,
-            minB,
-            address,
-            deadline
-          ]
-        : [
-            tokenA,
-            tokenB,
-            false,
-            parseUnits(tokenAmount, 18),
-            parseUnits(tokenBAmount, 18),
-            minA,
-            minB,
-            address,
-            deadline
-          ];
+    const args = [
+      tokenA,
+      tokenB,
+      false, // stable
+      parseUnits(tokenAmount, 18),
+      parseUnits(tokenBAmount, 18),
+      minA,
+      minB,
+      address,
+      deadline
+    ];
 
+    console.log('args', args);
+    console.log(
+      'getSpenderContract(currentChain)',
+      getSpenderContract(currentChain)
+    );
+
+    // Always use addLiquidity since we're dealing with two tokens
     return write(
       {
         address: getSpenderContract(currentChain),
         abi: LiquidityContractAbi,
-        functionName,
-        args,
-        value:
-          selectedToken === 'eth' ? parseUnits(tokenBAmount, 18) : undefined
+        functionName: 'addLiquidity',
+        args
       },
       {
         successMessage: 'Successfully added liquidity'

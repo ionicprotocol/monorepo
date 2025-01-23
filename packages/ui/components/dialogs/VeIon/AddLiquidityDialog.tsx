@@ -16,6 +16,7 @@ import { Separator } from '@ui/components/ui/separator';
 import BuyIonSection from '@ui/components/veion/BuyIonSection';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
+import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 
 interface AddLiquidityDialogProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export default function AddLiquidityDialog({
   });
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { addLiquidity, isPending } = useVeIONActions();
 
   const {
     calculateTokenAmount,
@@ -90,7 +92,14 @@ export default function AddLiquidityDialog({
       }
 
       setIsLoading(true);
-      // Your existing addLiquidity logic here
+
+      await addLiquidity({
+        tokenAmount: maxDeposit.ion,
+        tokenBAmount: maxDeposit.eth,
+        selectedToken
+      });
+
+      setMaxDeposit({ ion: '', eth: '' });
     } catch (err) {
       console.warn(err);
     } finally {
@@ -140,7 +149,11 @@ export default function AddLiquidityDialog({
               className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold h-10"
               onClick={handleAddLiquidity}
               disabled={
-                !isConnected || !maxDeposit.ion || !maxDeposit.eth || isLoading
+                !isConnected ||
+                !maxDeposit.ion ||
+                !maxDeposit.eth ||
+                isLoading ||
+                isPending
               }
             >
               {isLoading ? 'Adding Liquidity...' : 'Provide Liquidity'}

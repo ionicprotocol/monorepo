@@ -3,7 +3,8 @@ import {
   useMemo,
   useRef,
   type SetStateAction,
-  type Dispatch
+  type Dispatch,
+  useCallback
 } from 'react';
 
 import dynamic from 'next/dynamic';
@@ -102,6 +103,61 @@ function MaxDeposit({
     }
   });
 
+  // Use effectiveMax for slider if provided, otherwise fall back to max
+  const sliderMax = effectiveMax || max;
+
+  const maxValue = useMemo(() => {
+    if (effectiveMax) return effectiveMax;
+    if (max) return max;
+
+    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
+
+    if (useUnderlyingBalance && underlyingBalance) {
+      return formatUnits(underlyingBalance, decimals);
+    }
+
+    if (!useUnderlyingBalance && regularBalance) {
+      return formatUnits(regularBalance.value, decimals);
+    }
+
+    return '0';
+  }, [
+    effectiveMax,
+    max,
+    regularBalance,
+    underlyingBalance,
+    useUnderlyingBalance,
+    propDecimals
+  ]);
+
+  function handleUtilizationChange(value: number[]) {
+    if (!maxValue || !handleInput) return;
+
+    const percentage = value[0];
+
+    try {
+      const calculatedAmount = (Number(sliderMax) * percentage) / 100;
+
+      let formattedAmount: string;
+      if (calculatedAmount < 0.00001) {
+        formattedAmount = calculatedAmount.toFixed(18);
+      } else {
+        formattedAmount = calculatedAmount.toFixed(4);
+      }
+
+      formattedAmount = formattedAmount.replace(/\.?0+$/, '');
+
+      if (isNaN(Number(formattedAmount))) {
+        console.error('Invalid amount calculated');
+        return;
+      }
+
+      handleInput(formattedAmount);
+    } catch (error) {
+      console.error('Error in utilization calculation:', error);
+    }
+  }
+
   const bal = useMemo(() => {
     const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
 
@@ -128,10 +184,16 @@ function MaxDeposit({
     propDecimals
   ]);
 
-  // Use effectiveMax for slider if provided, otherwise fall back to max
-  const sliderMax = effectiveMax || max;
+  function handleMax() {
+    if (!handleInput) return;
+    handleInput(maxValue);
+  }
 
-  // Format balance for display with proper decimals
+  const displayPercentage = useMemo(() => {
+    if (!amount || !max || Number(max) === 0) return 0;
+    return (Number(amount) / Number(max)) * 100;
+  }, [amount, max]);
+
   const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
     const formatted = formatUnits(value, decimals);
     const number = Number(formatted);
@@ -147,54 +209,16 @@ function MaxDeposit({
       minimumFractionDigits: 2
     });
   };
-
-  function handleMax() {
-    if (!handleInput || !sliderMax) return;
-    handleInput(sliderMax);
-  }
-
-  function handleUtilizationChange(value: number[]) {
-    if (!sliderMax || !handleInput) return;
-
-    const percentage = value[0];
-
-    try {
-      const calculatedAmount = (Number(sliderMax) * percentage) / 100;
-
-      // Format to appropriate decimal places
-      let formattedAmount: string;
-      if (calculatedAmount < 0.00001) {
-        formattedAmount = calculatedAmount.toFixed(18);
-      } else {
-        formattedAmount = calculatedAmount.toFixed(4);
-      }
-
-      // Remove trailing zeros
-      formattedAmount = formattedAmount.replace(/\.?0+$/, '');
-
-      if (isNaN(Number(formattedAmount))) {
-        console.error('Invalid amount calculated');
-        return;
-      }
-
-      handleInput(formattedAmount);
-    } catch (error) {
-      console.error('Error in utilization calculation:', error);
-    }
-  }
-
-  // Calculate display percentage for the slider
-  const displayPercentage = useMemo(() => {
-    if (!amount || !max || Number(max) === 0) return 0;
-    // Always calculate percentage based on the current amount and its own maximum
-    return (Number(amount) / Number(max)) * 100;
-  }, [amount, max]);
-
   const formattedBalance = bal
     ? formatBalanceForDisplay(bal.value, bal.decimals)
     : max ?? '0';
 
-  const isMaxDisabled = !max || max === '0';
+  const isMaxDisabled = !maxValue || maxValue === '0';
+
+  const balanceMax = useMemo(() => {
+    if (!bal) return '0';
+    return formatUnits(bal.value, bal.decimals);
+  }, [bal]);
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
@@ -208,7 +232,7 @@ function MaxDeposit({
                 handleInput={handleInput}
                 readonly={readonly}
                 amount={amount}
-                max={max}
+                max={effectiveMax || max || balanceMax}
                 isLoading={isLoading}
               />
               <div className="flex flex-col items-end gap-1">
@@ -281,7 +305,7 @@ function MaxDeposit({
               handleInput={handleInput}
               readonly={readonly}
               amount={amount}
-              max={max}
+              max={effectiveMax || max || balanceMax}
               isLoading={isLoading}
             />
 
