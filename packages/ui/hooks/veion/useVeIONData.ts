@@ -1,6 +1,6 @@
 // hooks/useLiquidity.ts
 import { formatEther } from 'viem';
-import { useReadContracts } from 'wagmi';
+import { useReadContract, useReadContracts } from 'wagmi';
 
 import {
   LIQUIDITY_POOLS,
@@ -12,7 +12,12 @@ import { useEthPrice } from '../useEthPrice';
 
 import type { Address } from 'viem';
 
-import { emissionsManagerAbi, veIonAbi } from '@ionicprotocol/sdk';
+import {
+  emissionsManagerAbi,
+  veIonAbi,
+  veIonFirstExtensionAbi
+} from '@ionicprotocol/sdk';
+
 export type LPType = (typeof LP_TYPES)[number];
 
 interface VeIonDataProps {
@@ -88,14 +93,13 @@ export function useVeIonData({
     ]
   });
 
-  // Get locked tokens data
+  // First get the extension address and collateral data
   const { data: mainData, isLoading: mainDataLoading } = useReadContracts({
     contracts: [
       {
         address: veIonContract,
         abi: veIonAbi,
-        functionName: 'getTotalEthValueOfTokens',
-        args: address ? [address] : undefined
+        functionName: 'veIONFirstExtension'
       },
       {
         address: emissionsManagerContract,
@@ -104,6 +108,14 @@ export function useVeIonData({
         args: address ? [address] : undefined
       }
     ]
+  });
+
+  // Then get token value from extension
+  const { data: tokenValue, isLoading: tokenValueLoading } = useReadContract({
+    address: mainData?.[0]?.result,
+    abi: veIonFirstExtensionAbi,
+    functionName: 'getTotalEthValueOfTokens',
+    args: address ? [address] : undefined
   });
 
   const { data: lockedSupplies, isLoading: suppliesLoading } = useReadContracts(
@@ -117,7 +129,7 @@ export function useVeIonData({
     }
   ) as { data?: ReadContractResult[]; isLoading: boolean };
 
-  const [stakedValue, totalCollateral] = mainData || [];
+  const [_, totalCollateral] = mainData || [];
 
   // Calculate total liquidity
   const totalLiquidity =
@@ -139,10 +151,8 @@ export function useVeIonData({
       return acc + value * ethPrice * 2;
     }, 0) || 0;
 
-  // Calculate staked/locked values
-  const stakedAmount = stakedValue?.result
-    ? Number(formatEther(stakedValue.result))
-    : 0;
+  // Calculate staked/locked values using tokenValue from extension
+  const stakedAmount = tokenValue ? Number(formatEther(tokenValue)) : 0;
   const stakedLiquidity = stakedAmount * ethPrice;
 
   const totalCollateralAmount = totalCollateral?.result
@@ -162,12 +172,14 @@ export function useVeIonData({
       ? (stakedAmount / totalCollateralAmount) * 100
       : 0;
 
+  const isLoading = mainDataLoading || tokenValueLoading || suppliesLoading;
+
   return {
     liquidity: {
       total: totalLiquidity,
       staked: stakedLiquidity,
       locked: totalLocked,
-      isLoading: mainDataLoading || suppliesLoading // Fixed loading state
+      isLoading
     },
     emissions: {
       lockedValue: {
@@ -179,7 +191,7 @@ export function useVeIonData({
         amount: totalCollateralAmount,
         usdValue: (totalCollateralAmount * ethPrice).toFixed(2)
       },
-      isLoading: mainDataLoading || suppliesLoading // Fixed loading state
+      isLoading
     }
   };
 }

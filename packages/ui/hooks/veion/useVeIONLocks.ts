@@ -16,7 +16,7 @@ import type {
 import { useIonPrices } from '../useDexScreenerPrices';
 import { useReserves } from '../useReserves';
 
-import { veIonAbi } from '@ionicprotocol/sdk';
+import { veIonAbi, veIonSecondExtensionAbi } from '@ionicprotocol/sdk';
 
 // Chain configuration
 export const VEION_CHAIN_CONFIGS: Record<
@@ -277,9 +277,17 @@ export function useVeIONLocks({
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
 
   // Get token IDs for current chain
-  const { data: tokenIdsResult } = useReadContract({
+  const { data: secondExtensionAddress } = useReadContract({
     address: veIonContract,
     abi: veIonAbi,
+    functionName: 'veIONSecondExtension',
+    chainId
+  });
+
+  // Then get token IDs using the extension
+  const { data: tokenIdsResult } = useReadContract({
+    address: secondExtensionAddress,
+    abi: veIonSecondExtensionAbi,
     functionName: 'getOwnedTokenIds',
     args: [address as `0x${string}`],
     chainId

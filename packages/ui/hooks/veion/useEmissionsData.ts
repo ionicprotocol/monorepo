@@ -1,11 +1,15 @@
 import { formatEther } from 'viem';
-import { useReadContracts } from 'wagmi';
+import { useReadContract, useReadContracts } from 'wagmi';
 
 import { useEthPrice } from '../useEthPrice';
 
 import type { Address } from 'viem';
 
-import { emissionsManagerAbi, veIonAbi } from '@ionicprotocol/sdk';
+import {
+  emissionsManagerAbi,
+  veIonAbi,
+  veIonFirstExtensionAbi
+} from '@ionicprotocol/sdk';
 
 interface EmissionsDataProps {
   address?: Address;
@@ -33,16 +37,13 @@ export function useEmissionsData({
 }: EmissionsDataProps): EmissionsData {
   const { data: ethPrice = 0 } = useEthPrice();
 
-  const { data, isLoading } = useReadContracts({
+  const { data, isLoading: contractsLoading } = useReadContracts({
     contracts: [
-      // Get total ETH value of locked veION tokens
       {
         address: veIonContract,
         abi: veIonAbi,
-        functionName: 'getTotalEthValueOfTokens',
-        args: address ? [address] : undefined
+        functionName: 'veIONFirstExtension'
       },
-      // Get total collateral value
       {
         address: emissionsManagerContract,
         abi: emissionsManagerAbi,
@@ -52,7 +53,16 @@ export function useEmissionsData({
     ]
   });
 
-  if (!data || !address) {
+  const { data: tokenValue, isLoading: tokenValueLoading } = useReadContract({
+    address: data?.[0]?.result,
+    abi: veIonFirstExtensionAbi,
+    functionName: 'getTotalEthValueOfTokens',
+    args: address ? [address] : undefined
+  });
+
+  const isLoading = contractsLoading || tokenValueLoading;
+
+  if (!data || !address || !tokenValue) {
     return {
       lockedVeIon: { amount: 0, usdValue: '0', percentage: 0 },
       totalDeposits: { amount: 0, usdValue: '0' },
@@ -60,12 +70,10 @@ export function useEmissionsData({
     };
   }
 
-  const [veIonValue, totalCollateral] = data;
+  const [_, totalCollateral] = data;
 
   // Calculate values in ETH
-  const lockedVeIonAmount = veIonValue?.result
-    ? Number(formatEther(veIonValue.result))
-    : 0;
+  const lockedVeIonAmount = Number(formatEther(tokenValue));
   const totalDepositsAmount = totalCollateral?.result
     ? Number(formatEther(totalCollateral.result))
     : 0;
