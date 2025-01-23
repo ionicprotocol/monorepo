@@ -7,7 +7,7 @@ import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 import { getMarketInfo } from "../../market";
 
 task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.uXRP];
+  const assetsToDeploy: string[] = [assetSymbols.mBASIS];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     console.log("Deploying market for ", asset.symbol, asset.name);
     await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
@@ -43,7 +43,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.uXRP];
+  const assetsToDeploy: string[] = [assetSymbols.mBASIS];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
@@ -81,7 +81,7 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.uXRP)) {
+  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.mBASIS)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
