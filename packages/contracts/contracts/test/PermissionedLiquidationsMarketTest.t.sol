@@ -17,7 +17,7 @@ import { ComptrollerV3Storage } from "../compound/ComptrollerStorage.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 import { ILiquidator } from "../ILiquidator.sol";
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import { PoolLens } from "../PoolLens.sol";
 import { AddressesProvider } from "../ionic/AddressesProvider.sol";

@@ -10,7 +10,7 @@ import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { LeveredPositionFactoryStorage } from "./LeveredPositionFactoryStorage.sol";
 import { DiamondBase, DiamondExtension, LibDiamond } from "../../ionic/DiamondExtension.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract LeveredPositionFactory is LeveredPositionFactoryStorage, DiamondBase {
@@ -20,11 +20,7 @@ contract LeveredPositionFactory is LeveredPositionFactoryStorage, DiamondBase {
                             Constructor
   ----------------------------------------------------------------*/
 
-  constructor(
-    IFeeDistributor _feeDistributor,
-    ILiquidatorsRegistry _registry,
-    uint256 _blocksPerYear
-  ) {
+  constructor(IFeeDistributor _feeDistributor, ILiquidatorsRegistry _registry, uint256 _blocksPerYear) {
     feeDistributor = _feeDistributor;
     liquidatorsRegistry = _registry;
     blocksPerYear = _blocksPerYear;
@@ -34,11 +30,7 @@ contract LeveredPositionFactory is LeveredPositionFactoryStorage, DiamondBase {
                             Admin Functions
   ----------------------------------------------------------------*/
 
-  function _setPairWhitelisted(
-    ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    bool _whitelisted
-  ) external onlyOwner {
+  function _setPairWhitelisted(ICErc20 _collateralMarket, ICErc20 _stableMarket, bool _whitelisted) external onlyOwner {
     require(_collateralMarket.comptroller() == _stableMarket.comptroller(), "markets not of the same pool");
 
     if (_whitelisted) {
@@ -55,11 +47,10 @@ contract LeveredPositionFactory is LeveredPositionFactoryStorage, DiamondBase {
     liquidatorsRegistry = _liquidatorsRegistry;
   }
 
-  function _registerExtension(DiamondExtension extensionToAdd, DiamondExtension extensionToReplace)
-    public
-    override
-    onlyOwner
-  {
+  function _registerExtension(
+    DiamondExtension extensionToAdd,
+    DiamondExtension extensionToReplace
+  ) public override onlyOwner {
     LibDiamond.registerExtension(extensionToAdd, extensionToReplace);
   }
 }

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../BasePriceOracle.sol";
 import "./UniswapTwapPriceOracleV2Root.sol";
@@ -65,7 +65,7 @@ contract UniswapTwapPriceOracleV2 is Initializable, BasePriceOracle {
     address underlying = cToken.underlying();
 
     // Get price, format, and return
-    uint256 baseUnit = 10**uint256(ERC20Upgradeable(underlying).decimals());
+    uint256 baseUnit = 10 ** uint256(ERC20Upgradeable(underlying).decimals());
     return (_price(underlying) * 1e18) / baseUnit;
   }
 
@@ -81,7 +81,8 @@ contract UniswapTwapPriceOracleV2 is Initializable, BasePriceOracle {
     return
       baseToken == address(wtoken)
         ? twap
-        : (twap * BasePriceOracle(msg.sender).price(baseToken)) / (10**uint256(ERC20Upgradeable(baseToken).decimals()));
+        : (twap * BasePriceOracle(msg.sender).price(baseToken)) /
+          (10 ** uint256(ERC20Upgradeable(baseToken).decimals()));
   }
 
   /**
