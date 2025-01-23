@@ -55,6 +55,13 @@ const config: HardhatUserConfig = {
     artifacts: "./artifacts"
   },
   networks: {
+    hardhat: {
+      forking: {
+        url: process.env.BASE_RPC_URL || "https://base.meowrpc.com", // Base RPC URL
+        blockNumber: process.env.BASE_BLOCK_NUMBER ? parseInt(process.env.BASE_BLOCK_NUMBER) : undefined // Optional
+      },
+      chainId: 8453
+    },
     local: {
       accounts,
       url: "http://localhost:8545",

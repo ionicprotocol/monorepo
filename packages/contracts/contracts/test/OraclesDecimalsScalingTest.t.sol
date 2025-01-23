@@ -7,7 +7,7 @@ import { PoolDirectory } from "../PoolDirectory.sol";
 import { ICErc20 } from "../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../compound/ComptrollerInterface.sol";
 
-import { IERC20MetadataUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import { IERC20MetadataUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
 contract OraclesDecimalsScalingTest is BaseTest {
   MasterPriceOracle mpo;
@@ -64,8 +64,8 @@ contract OraclesDecimalsScalingTest is BaseTest {
 
           uint8 decimals = IERC20MetadataUpgradeable(underlying).decimals();
           uint256 expectedScaledPrice = decimals <= 18
-            ? uint256(oraclePrice) * (10**(18 - decimals))
-            : uint256(oraclePrice) / (10**(decimals - 18));
+            ? uint256(oraclePrice) * (10 ** (18 - decimals))
+            : uint256(oraclePrice) / (10 ** (decimals - 18));
 
           assertEq(scaledPrice, expectedScaledPrice, "the comptroller expects prices to be scaled by 1e(36-decimals)");
         }

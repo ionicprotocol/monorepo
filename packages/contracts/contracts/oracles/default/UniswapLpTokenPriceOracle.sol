@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import "../../external/uniswap/IUniswapV2Pair.sol";
 
@@ -26,8 +26,8 @@ contract UniswapLpTokenPriceOracle is UniswapLikeLpTokenPriceOracle {
     if (totalSupply == 0) return 0;
     (uint256 r0, uint256 r1, ) = pair.getReserves();
 
-    r0 = r0 * 10**(18 - uint256(ERC20Upgradeable(pair.token0()).decimals()));
-    r1 = r1 * 10**(18 - uint256(ERC20Upgradeable(pair.token1()).decimals()));
+    r0 = r0 * 10 ** (18 - uint256(ERC20Upgradeable(pair.token0()).decimals()));
+    r1 = r1 * 10 ** (18 - uint256(ERC20Upgradeable(pair.token1()).decimals()));
 
     address token0 = pair.token0();
     address token1 = pair.token1();
@@ -37,7 +37,7 @@ contract UniswapLpTokenPriceOracle is UniswapLikeLpTokenPriceOracle {
     uint256 token1FairPrice = token1 == wtoken ? 1e18 : BasePriceOracle(msg.sender).price(token1);
 
     // Implementation from https://github.com/AlphaFinanceLab/homora-v2/blob/e643392d582c81f6695136971cff4b685dcd2859/contracts/oracle/UniswapV2Oracle.sol#L18
-    uint256 sqrtK = (sqrt(r0 * r1) * (2**112)) / totalSupply;
-    return (((sqrtK * 2 * sqrt(token0FairPrice)) / (2**56)) * sqrt(token1FairPrice)) / (2**56);
+    uint256 sqrtK = (sqrt(r0 * r1) * (2 ** 112)) / totalSupply;
+    return (((sqrtK * 2 * sqrt(token0FairPrice)) / (2 ** 56)) * sqrt(token1FairPrice)) / (2 ** 56);
   }
 }

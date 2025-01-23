@@ -3,10 +3,10 @@ pragma solidity >=0.8.0;
 
 import { FixedPointMathLib } from "solmate/utils/FixedPointMathLib.sol";
 
-import { PausableUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/security/PausableUpgradeable.sol";
-import { ERC4626Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/ERC4626Upgradeable.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
-import { SafeERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { PausableUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/security/PausableUpgradeable.sol";
+import { ERC4626Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/ERC4626Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import { SafeOwnableUpgradeable } from "../../ionic/SafeOwnableUpgradeable.sol";
 
@@ -43,7 +43,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     );
     __ERC4626_init(asset_);
 
-    vaultShareHWM = 10**asset_.decimals();
+    vaultShareHWM = 10 ** asset_.decimals();
     feeRecipient = msg.sender;
   }
 
@@ -80,11 +80,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     afterDeposit(assets, shares);
   }
 
-  function withdraw(
-    uint256 assets,
-    address receiver,
-    address owner
-  ) public override returns (uint256 shares) {
+  function withdraw(uint256 assets, address receiver, address owner) public override returns (uint256 shares) {
     shares = previewWithdraw(assets); // No need to check for rounding error, previewWithdraw rounds up.
 
     if (msg.sender != owner) {
@@ -108,11 +104,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     _asset().safeTransfer(receiver, assets);
   }
 
-  function redeem(
-    uint256 shares,
-    address receiver,
-    address owner
-  ) public override returns (uint256 assets) {
+  function redeem(uint256 shares, address receiver, address owner) public override returns (uint256 assets) {
     if (msg.sender != owner) {
       uint256 allowed = allowance(owner, msg.sender); // Saves gas for limited approvals.
 
@@ -148,7 +140,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     require(feeRecipient != address(0), "fee recipient not initialized");
 
     uint256 currentAssets = totalAssets();
-    uint256 shareValue = convertToAssets(10**_asset().decimals());
+    uint256 shareValue = convertToAssets(10 ** _asset().decimals());
 
     require(shareValue > vaultShareHWM, "shareValue !> vaultShareHWM");
     // cache value
@@ -157,7 +149,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     uint256 accruedPerformanceFee = (performanceFee * (shareValue - vaultShareHWM) * supply) / 1e36;
     _mint(feeRecipient, accruedPerformanceFee.mulDivDown(supply, (currentAssets - accruedPerformanceFee)));
 
-    vaultShareHWM = convertToAssets(10**_asset().decimals());
+    vaultShareHWM = convertToAssets(10 ** _asset().decimals());
   }
 
   /**
