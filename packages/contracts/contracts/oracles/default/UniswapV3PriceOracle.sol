@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { BasePriceOracle } from "../BasePriceOracle.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { ConcentratedLiquidityBasePriceOracle } from "./ConcentratedLiquidityBasePriceOracle.sol";
 
 import "../../external/uniswap/TickMath.sol";

@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import { UniswapV2Liquidator } from "./UniswapV2Liquidator.sol";
 import "./IFundsConversionStrategy.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import "../external/uniswap/IUniswapV2Router02.sol";
 
 contract UniswapV2LiquidatorFunder is UniswapV2Liquidator, IFundsConversionStrategy {
@@ -15,11 +15,10 @@ contract UniswapV2LiquidatorFunder is UniswapV2Liquidator, IFundsConversionStrat
     return _convert(inputToken, inputAmount, strategyData);
   }
 
-  function estimateInputAmount(uint256 outputAmount, bytes memory strategyData)
-    external
-    view
-    returns (IERC20Upgradeable inputToken, uint256 inputAmount)
-  {
+  function estimateInputAmount(
+    uint256 outputAmount,
+    bytes memory strategyData
+  ) external view returns (IERC20Upgradeable inputToken, uint256 inputAmount) {
     (IUniswapV2Router02 uniswapV2Router, address[] memory swapPath) = abi.decode(
       strategyData,
       (IUniswapV2Router02, address[])

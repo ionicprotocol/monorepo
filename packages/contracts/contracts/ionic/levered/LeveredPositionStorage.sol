@@ -5,7 +5,7 @@ import { ILeveredPositionFactory } from "./ILeveredPositionFactory.sol";
 import { IonicComptroller } from "../../compound/ComptrollerInterface.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 contract LeveredPositionStorage {
   address public immutable positionOwner;
