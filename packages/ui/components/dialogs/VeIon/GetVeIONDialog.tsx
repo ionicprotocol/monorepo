@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import Image from 'next/image';
-
-import { useAccount } from 'wagmi';
+import { formatUnits } from 'viem';
+import { useAccount, useBalance } from 'wagmi';
 
 import CustomTooltip from '@ui/components/CustomTooltip';
 import { LockDurationPicker } from '@ui/components/LockDurationPicker';
@@ -19,7 +18,9 @@ import { Separator } from '@ui/components/ui/separator';
 import AutoLock from '@ui/components/veion/AutoLock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import { getToken, getAvailableStakingToken } from '@ui/utils/getStakingTokens';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
+
+import { SuccessView } from './SuccessView';
 
 interface GetVeIONDialogProps {
   isOpen: boolean;
@@ -36,9 +37,18 @@ export default function GetVeIONDialog({
   const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>('0');
-  const { isConnected } = useAccount();
-  const { currentChain, veIonBalance } = useVeIONContext();
+  const { currentChain } = useVeIONContext();
   const { createLock, isPending } = useVeIONActions();
+  const { address, isConnected } = useAccount();
+
+  const { data: withdrawalMaxToken } = useBalance({
+    address,
+    token: getAvailableStakingToken(currentChain, selectedToken),
+    chainId: currentChain,
+    query: {
+      notifyOnChangeProps: ['data', 'error']
+    }
+  });
 
   const { amount: selectedDuration, handleAmountChange: handleDurationChange } =
     usePrecisionSlider({
@@ -89,10 +99,17 @@ export default function GetVeIONDialog({
             <div className="space-y-6">
               <MaxDeposit
                 headerText="LOCK AMOUNT"
-                max={veIonBalance}
+                max={
+                  withdrawalMaxToken
+                    ? formatUnits(
+                        withdrawalMaxToken.value,
+                        withdrawalMaxToken.decimals
+                      )
+                    : '0'
+                }
                 amount={amount}
-                tokenName="ion/weth"
-                token={getToken(currentChain)}
+                tokenName={`ion/${selectedToken}`}
+                token={getAvailableStakingToken(currentChain, selectedToken)}
                 handleInput={(val?: string) => setAmount(val || '0')}
                 chain={currentChain}
                 showUtilizationSlider
@@ -144,41 +161,6 @@ function VotingPowerInfo({ amount }: { amount: number }) {
         <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
       </div>
       <p className="text-white">{amount.toFixed(2)} veIon</p>
-    </div>
-  );
-}
-
-function SuccessView({
-  amount,
-  onClose
-}: {
-  amount: number;
-  onClose: () => void;
-}) {
-  return (
-    <div className="flex flex-col gap-y-4 py-2">
-      <DialogHeader>
-        <DialogTitle>Congratulations!</DialogTitle>
-      </DialogHeader>
-      <p className="text-sm text-white/60">
-        Successfully locked {amount.toFixed(2)} LP tokens for{' '}
-        {amount.toFixed(2)} veION.
-        <br /> <br />
-        Proceed to your veION Overview to vote on your favorite Market.
-      </p>
-      <Image
-        src="/api/placeholder/48/48"
-        alt="success"
-        width={48}
-        height={48}
-        className="w-12 mx-auto h-12"
-      />
-      <Button
-        onClick={onClose}
-        className="w-full bg-accent text-black"
-      >
-        Back to Overview
-      </Button>
     </div>
   );
 }

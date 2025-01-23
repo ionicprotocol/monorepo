@@ -117,7 +117,6 @@ export function useVeIONActions() {
         const transaction = await publicClient?.waitForTransactionReceipt({
           hash: tx
         });
-        console.log('Transaction --->>>', transaction);
       } else {
         const tx = await walletClient.writeContract({
           abi: LiquidityContractAbi,
@@ -140,12 +139,10 @@ export function useVeIONActions() {
         const transaction = await publicClient?.waitForTransactionReceipt({
           hash: tx
         });
-        console.log('Transaction --->>>', transaction);
       }
 
       setIsPending(false);
     } catch (err) {
-      console.log(err);
       setIsPending(false);
     }
   };
@@ -229,7 +226,6 @@ export function useVeIONActions() {
 
       setIsPending(false);
     } catch (err) {
-      console.log(err);
       setIsPending(false);
     }
   };
@@ -248,27 +244,45 @@ export function useVeIONActions() {
 
       setIsPending(true);
 
+      // Convert duration from days to seconds
+      const durationInSeconds = duration * 24 * 60 * 60;
+
+      const args = [
+        [tokenAddress],
+        [parseUnits(tokenAmount, 18)],
+        [durationInSeconds],
+        [stakeUnderlying]
+      ];
+
+      // approve
+      const approvalTx = await walletClient.writeContract({
+        abi: erc20Abi,
+        account: walletClient.account,
+        address: tokenAddress,
+        args: [veIonContract.address, parseUnits(tokenAmount, 18)],
+        functionName: 'approve'
+      });
+
+      // Wait for approval transaction to complete
+      await publicClient?.waitForTransactionReceipt({
+        hash: approvalTx
+      });
+
+      // lock
       const tx = await walletClient.writeContract({
         abi: veIonContract.abi,
         account: walletClient.account,
         address: veIonContract.address,
-        args: [
-          tokenAddress,
-          parseUnits(tokenAmount, 18),
-          duration,
-          stakeUnderlying
-        ],
+        args,
         functionName: 'createLock'
       });
 
       const transaction = await publicClient?.waitForTransactionReceipt({
         hash: tx
       });
-      console.log('Transaction --->>>', transaction);
 
       setIsPending(false);
     } catch (err) {
-      console.log(err);
       setIsPending(false);
     }
   };
