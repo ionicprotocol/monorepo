@@ -1,5 +1,7 @@
+import { useState } from 'react';
+
 import { erc20Abi, parseEther, parseUnits } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -9,8 +11,6 @@ import {
   getSpenderContract,
   getToken
 } from '@ui/utils/getStakingTokens';
-
-import { useContractWrite } from '../useContractWrite';
 
 interface AddLiquidityParams {
   tokenAmount: string;
@@ -34,129 +34,204 @@ interface LockVeIONParams {
 export function useVeIONActions() {
   const { getSdk } = useMultiIonic();
   const { address, isConnected } = useAccount();
-  const { write, isPending } = useContractWrite();
   const { currentChain, prices } = useVeIONContext();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
 
   // Get veION contract
   const ionicSdk = getSdk(currentChain);
   const veIonContract = ionicSdk?.veIONContracts?.veION;
+  const [isPending, setIsPending] = useState(false);
 
   const addLiquidity = async ({
     tokenAmount,
     tokenBAmount,
-    selectedToken,
-    slippage = 5
+    selectedToken
   }: AddLiquidityParams) => {
-    if (!address) throw new Error('Wallet not connected');
+    try {
+      const args = {
+        tokenA: getToken(currentChain),
+        tokenB: getPoolToken(selectedToken),
+        stable: false,
+        amountTokenADesired: parseUnits(tokenAmount, 18),
+        amounTokenAMin:
+          parseEther(tokenAmount) -
+          (parseEther(tokenAmount) * BigInt(5)) / BigInt(100),
+        amountTokenBDesired: parseUnits(tokenBAmount, 18),
+        amounTokenBMin:
+          parseEther(tokenBAmount) -
+          (parseEther(tokenBAmount) * BigInt(5)) / BigInt(100),
+        to: address,
+        deadline: Math.floor((Date.now() + 3600000) / 1000)
+      };
 
-    const tokenA = getToken(currentChain);
-    const tokenB = getPoolToken(selectedToken);
-    const deadline = Math.floor((Date.now() + 3600000) / 1000);
-
-    const minA =
-      parseEther(tokenAmount) -
-      (parseEther(tokenAmount) * BigInt(slippage)) / BigInt(100);
-    const minB =
-      parseEther(tokenBAmount) -
-      (parseEther(tokenBAmount) * BigInt(slippage)) / BigInt(100);
-
-    const args = [
-      tokenA,
-      tokenB,
-      false, // stable
-      parseUnits(tokenAmount, 18),
-      parseUnits(tokenBAmount, 18),
-      minA,
-      minB,
-      address,
-      deadline
-    ];
-
-    console.log('args', args);
-    console.log(
-      'getSpenderContract(currentChain)',
-      getSpenderContract(currentChain)
-    );
-
-    // Always use addLiquidity since we're dealing with two tokens
-    return write(
-      {
-        address: getSpenderContract(currentChain),
-        abi: LiquidityContractAbi,
-        functionName: 'addLiquidity',
-        args
-      },
-      {
-        successMessage: 'Successfully added liquidity'
+      if (!isConnected || !walletClient) {
+        console.error('Not connected');
+        return;
       }
-    );
+
+      const approvalA = await walletClient.writeContract({
+        abi: erc20Abi,
+        account: walletClient.account,
+        address: args.tokenA,
+        args: [getSpenderContract(currentChain), args.amountTokenADesired],
+        functionName: 'approve'
+      });
+
+      if (selectedToken !== 'eth') {
+        const approvalB = await walletClient.writeContract({
+          abi: erc20Abi,
+          account: walletClient.account,
+          address: args.tokenB,
+          args: [getSpenderContract(currentChain), args.amountTokenBDesired],
+          functionName: 'approve'
+        });
+        await publicClient?.waitForTransactionReceipt({
+          hash: approvalB
+        });
+      }
+
+      setIsPending(true);
+      await publicClient?.waitForTransactionReceipt({
+        hash: approvalA
+      });
+
+      if (selectedToken === 'eth') {
+        const tx = await walletClient.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient.account,
+          address: getSpenderContract(currentChain),
+          args: [
+            args.tokenA,
+            args.stable,
+            args.amountTokenADesired,
+            args.amounTokenAMin,
+            args.amountTokenBDesired,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidityETH',
+          value: parseUnits(tokenBAmount, 18)
+        });
+
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        console.log('Transaction --->>>', transaction);
+      } else {
+        const tx = await walletClient.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient.account,
+          address: getSpenderContract(currentChain),
+          args: [
+            args.tokenA,
+            args.tokenB,
+            args.stable,
+            args.amountTokenADesired,
+            args.amountTokenBDesired,
+            args.amounTokenAMin,
+            args.amounTokenBMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'addLiquidity'
+        });
+
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+        console.log('Transaction --->>>', transaction);
+      }
+
+      setIsPending(false);
+    } catch (err) {
+      console.log(err);
+      setIsPending(false);
+    }
   };
 
   const removeLiquidity = async ({
     liquidity,
     selectedToken
   }: RemoveLiquidityParams) => {
-    if (!isConnected) throw new Error('Wallet not connected');
+    try {
+      const args = {
+        token: getToken(currentChain),
+        tokenB: getPoolToken(selectedToken),
+        stable: false,
+        liquidity: parseUnits(liquidity, 18),
+        amounTokenMin: 0n,
+        amountETHMin: 0n,
+        to: address,
+        deadline: Math.floor((Date.now() + 3600000) / 1000)
+      };
 
-    const args = {
-      token: getToken(currentChain),
-      tokenB: getPoolToken(selectedToken),
-      stable: false,
-      liquidity: parseUnits(liquidity, 18),
-      amounTokenMin: 0n,
-      amountETHMin: 0n,
-      to: address,
-      deadline: Math.floor((Date.now() + 3600000) / 1000)
-    };
+      if (!isConnected || !walletClient) {
+        console.error('Not connected');
+        return;
+      }
 
-    const stakingTokenAddress = getToken(currentChain);
-    const spenderContract = getSpenderContract(currentChain);
-
-    // Handle approvals and removal
-    await write(
-      {
-        address: stakingTokenAddress,
+      const approval = await walletClient.writeContract({
         abi: erc20Abi,
-        functionName: 'approve',
-        args: [spenderContract, args.liquidity]
-      },
-      {
-        successMessage: 'Approval successful'
-      }
-    );
+        account: walletClient.account,
+        address: args.token,
+        args: [getSpenderContract(currentChain), args.liquidity],
+        functionName: 'approve'
+      });
 
-    return write(
-      {
-        address: spenderContract,
-        abi: LiquidityContractAbi,
-        functionName:
-          selectedToken === 'eth' ? 'removeLiquidityETH' : 'removeLiquidity',
-        args:
-          selectedToken === 'eth'
-            ? [
-                args.token,
-                args.stable,
-                args.liquidity,
-                args.amounTokenMin,
-                args.amountETHMin,
-                args.to,
-                args.deadline
-              ]
-            : [
-                args.token,
-                args.tokenB,
-                args.stable,
-                args.liquidity,
-                args.amounTokenMin,
-                args.amountETHMin,
-                args.to,
-                args.deadline
-              ]
-      },
-      {
-        successMessage: 'Successfully removed liquidity'
+      setIsPending(true);
+      await publicClient?.waitForTransactionReceipt({
+        hash: approval
+      });
+
+      if (selectedToken === 'eth') {
+        const tx = await walletClient.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient.account,
+          address: getSpenderContract(currentChain),
+          args: [
+            args.token,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidityETH'
+        });
+
+        await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+      } else {
+        const tx = await walletClient.writeContract({
+          abi: LiquidityContractAbi,
+          account: walletClient.account,
+          address: getSpenderContract(currentChain),
+          args: [
+            args.token,
+            args.tokenB,
+            args.stable,
+            args.liquidity,
+            args.amounTokenMin,
+            args.amountETHMin,
+            args.to,
+            args.deadline
+          ],
+          functionName: 'removeLiquidity'
+        });
+
+        await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
       }
-    );
+
+      setIsPending(false);
+    } catch (err) {
+      console.log(err);
+      setIsPending(false);
+    }
   };
 
   const createLock = async ({
@@ -165,24 +240,37 @@ export function useVeIONActions() {
     duration,
     stakeUnderlying = true
   }: LockVeIONParams) => {
-    if (!veIonContract) throw new Error('Contract not initialized');
+    try {
+      if (!veIonContract || !isConnected || !walletClient) {
+        console.error('Contract not initialized or not connected');
+        return;
+      }
 
-    return write(
-      {
-        address: veIonContract.address,
+      setIsPending(true);
+
+      const tx = await walletClient.writeContract({
         abi: veIonContract.abi,
-        functionName: 'createLock',
+        account: walletClient.account,
+        address: veIonContract.address,
         args: [
           tokenAddress,
           parseUnits(tokenAmount, 18),
           duration,
           stakeUnderlying
-        ]
-      },
-      {
-        successMessage: 'Successfully created veION lock'
-      }
-    );
+        ],
+        functionName: 'createLock'
+      });
+
+      const transaction = await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
+      console.log('Transaction --->>>', transaction);
+
+      setIsPending(false);
+    } catch (err) {
+      console.log(err);
+      setIsPending(false);
+    }
   };
 
   return {

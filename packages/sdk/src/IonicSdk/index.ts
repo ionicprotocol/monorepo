@@ -173,11 +173,11 @@ export class IonicBase {
   public get veIONContracts(): Contracts {
     return {
       veION: {
-        address: "0x0",
+        address: "0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27",
         abi: veIonAbi
       },
       voter: {
-        address: "0x0",
+        address: "0x669A6F5421dA53696fa06f1043CF127d380f6EB9",
         abi: voterAbi
       }
     };
