@@ -28,8 +28,8 @@ contract Delegate is veIONTest {
     vm.prank(user);
     IveION(ve).delegate(tokenId1, tokenId2, address(modeVelodrome5050IonMode), MINT_AMT);
 
-    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
-    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenId1, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenId2, veloLpType);
 
     uint256 amountDelegated = IveION(ve).s_delegations(tokenId1, tokenId2, veloLpType);
 
@@ -52,14 +52,14 @@ contract Delegate is veIONTest {
     }
 
     uint256 userEpoch2 = IveION(ve).s_userPointEpoch(tokenId2, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint2 = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint2 = IveION(ve).getUserPoint(
       tokenId2,
       IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch2
     );
 
     uint256 userEpoch1 = IveION(ve).s_userPointEpoch(tokenId1, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint1 = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint1 = IveION(ve).getUserPoint(
       tokenId1,
       IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch1

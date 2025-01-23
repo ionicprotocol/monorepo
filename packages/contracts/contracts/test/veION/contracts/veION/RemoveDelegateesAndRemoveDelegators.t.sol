@@ -53,8 +53,8 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     vm.prank(cindy);
     IveION(ve).removeDelegatees(tokenIdAlice, toTokenIds, address(modeVelodrome5050IonMode), amounts);
 
-    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenIdAlice, veloLpType);
-    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenIdBob, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenIdAlice, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenIdBob, veloLpType);
 
     uint256[] memory delegatees = IveION(ve).getDelegatees(tokenIdAlice, veloLpType);
     uint256 amountDelegated = IveION(ve).s_delegations(tokenIdAlice, tokenIdBob, veloLpType);
@@ -67,7 +67,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     }
 
     uint256 userEpoch = IveION(ve).s_userPointEpoch(tokenIdBob, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(
       tokenIdBob,
       IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch
@@ -230,8 +230,8 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     vm.prank(cindy);
     IveION(ve).removeDelegators(fromTokenIds, tokenIdBob, address(modeVelodrome5050IonMode), amounts);
 
-    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenIdAlice, veloLpType);
-    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenIdBob, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked1 = IveION(ve).getUserLock(tokenIdAlice, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenIdBob, veloLpType);
 
     uint256 amountDelegated = IveION(ve).s_delegations(tokenIdAlice, tokenIdBob, veloLpType);
 
@@ -254,7 +254,7 @@ contract RemoveDelegateesAndRemoveDelegators is veIONTest {
     }
 
     uint256 userEpoch = IveION(ve).s_userPointEpoch(tokenIdBob, IveION(ve).s_lpType(address(modeVelodrome5050IonMode)));
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(
       tokenIdBob,
       IveION(ve).s_lpType(address(modeVelodrome5050IonMode)),
       userEpoch

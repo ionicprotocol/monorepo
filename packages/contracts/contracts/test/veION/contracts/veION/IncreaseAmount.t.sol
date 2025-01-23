@@ -24,7 +24,10 @@ contract IncreaseAmount is veIONTest {
     IveION(ve).increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
 
-    IveION.LockedBalance memory actualLocked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory actualLocked = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      veloLpType
+    );
     uint256 calculated_end = ((block.timestamp + lockInput.duration) / WEEK) * WEEK; // Update end time
     uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddress));
     uint256[] memory ownerTokenIds = IveION(ve).getOwnedTokenIds(user);
@@ -59,9 +62,12 @@ contract IncreaseAmount is veIONTest {
     IveION(ve).increaseAmount(address(modeVelodrome5050IonMode), lockInput.tokenId, additionalAmount, false);
     vm.stopPrank();
 
-    IveION.LockedBalance memory actualLocked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory actualLocked = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      veloLpType
+    );
     uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddress));
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
       IveION(ve).s_lpType(lockInput.tokenAddress),
       userEpoch

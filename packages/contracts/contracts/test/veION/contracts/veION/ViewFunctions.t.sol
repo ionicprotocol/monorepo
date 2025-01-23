@@ -9,8 +9,8 @@ contract ViewFunctions is veIONTest {
 
   function test_getUserLock() public {
     uint256 tokenId = 1;
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
-    IveION.LockedBalance memory lock = IveION(ve).getUserLock(tokenId, lpType);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory lock = IveION(ve).getUserLock(tokenId, lpType);
     assertEq(lock.amount, 0, "Initial lock amount should be zero");
   }
 
@@ -62,23 +62,23 @@ contract ViewFunctions is veIONTest {
 
   function test_getDelegatees() public {
     uint256 tokenId = 1;
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     uint256[] memory delegatees = IveION(ve).getDelegatees(tokenId, lpType);
     assertEq(delegatees.length, 0, "Initially, there should be no delegatees");
   }
 
   function test_getDelegators() public {
     uint256 tokenId = 1;
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     uint256[] memory delegators = IveION(ve).getDelegators(tokenId, lpType);
     assertEq(delegators.length, 0, "Initially, there should be no delegators");
   }
 
   function test_getUserPoint() public {
     uint256 tokenId = 1;
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     uint256 epoch = 0;
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(tokenId, lpType, epoch);
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(tokenId, lpType, epoch);
     assertEq(userPoint.bias, 0, "Initial user point bias should be zero");
   }
 }

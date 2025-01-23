@@ -23,7 +23,7 @@ contract UnlockPermanent is veIONTest {
     IveION(ve).unlockPermanent(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
     uint256 endTime = ((block.timestamp + MAXTIME) / WEEK) * WEEK;
-    IveION.LockedBalance memory locked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
     assertEq(locked.tokenAddress, lockInput.tokenAddress);
     assertEq(locked.amount, lockInput.tokenAmount, "Amount should be reset to the original lock input value");
     assertEq(locked.delegateAmount, 0, "Delegate amount should be zero after unlocking permanent lock");

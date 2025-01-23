@@ -45,27 +45,27 @@ contract Setters is veIONTest {
 
   function test_setLpTokenType() public {
     address tokenAddress = address(0x456);
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     IveION(ve).setLpTokenType(tokenAddress, lpType);
     assertEq(uint256(IveION(ve).s_lpType(tokenAddress)), uint256(lpType), "LP token type should be updated");
   }
 
   function test_setLpTokenType_revertIfInvalidTokenAddress() public {
     address invalidTokenAddress = address(0);
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     vm.expectRevert(abi.encodeWithSignature("InvalidTokenAddress()"));
     IveION(ve).setLpTokenType(invalidTokenAddress, lpType);
   }
 
   function test_setStakeStrategy() public {
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     IStakeStrategy strategy = IStakeStrategy(address(0x789));
     IveION(ve).setStakeStrategy(lpType, strategy);
     assertEq(address(IveION(ve).s_stakeStrategy(lpType)), address(strategy), "Stake strategy should be updated");
   }
 
   function test_setStakeStrategy_revertIfInvalidStrategyAddress() public {
-    IveION.LpTokenType lpType = IveION.LpTokenType(1);
+    IveIONStructsEnumsErrorsEvents.LpTokenType lpType = IveIONStructsEnumsErrorsEvents.LpTokenType(1);
     IStakeStrategy invalidStrategy = IStakeStrategy(address(0));
     vm.expectRevert(abi.encodeWithSignature("InvalidStrategyAddress()"));
     IveION(ve).setStakeStrategy(lpType, invalidStrategy);

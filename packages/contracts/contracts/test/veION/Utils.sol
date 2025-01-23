@@ -32,8 +32,8 @@ contract veIONTest is BaseTest {
   MockERC20 baseBalancer8020IonEth;
   MockERC20 optimismVelodrome5050IonOp;
   MockERC20 optimismBalancer8020IonEth;
-  IveION.LpTokenType veloLpType;
-  IveION.LpTokenType balancerLpType;
+  IveIONStructsEnumsErrorsEvents.LpTokenType veloLpType;
+  IveIONStructsEnumsErrorsEvents.LpTokenType balancerLpType;
   VeloAeroStakingWallet veloStakingWalletImplementation;
   veIONHarness harness;
 
@@ -90,11 +90,17 @@ contract veIONTest is BaseTest {
     }
     IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
 
-    IveION(ve).setLpTokenType(address(modeVelodrome5050IonMode), IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
-    IveION(ve).setLpTokenType(address(modeBalancer8020IonEth), IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
+    IveION(ve).setLpTokenType(
+      address(modeVelodrome5050IonMode),
+      IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE
+    );
+    IveION(ve).setLpTokenType(
+      address(modeBalancer8020IonEth),
+      IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Balancer_8020_ION_ETH
+    );
 
-    veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
-    balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+    veloLpType = IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    balancerLpType = IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Balancer_8020_ION_ETH;
 
     veloStakingWalletImplementation = new VeloAeroStakingWallet();
 
@@ -165,11 +171,11 @@ contract veIONTest is BaseTest {
     isWhitelistedTokens[1] = true;
 
     IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    IveION(ve).setLpTokenType(ionMode5050LP, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
-    IveION(ve).setLpTokenType(wethUSDC5050LP, IveION.LpTokenType.Mode_Balancer_8020_ION_ETH);
+    IveION(ve).setLpTokenType(ionMode5050LP, IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    IveION(ve).setLpTokenType(wethUSDC5050LP, IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Balancer_8020_ION_ETH);
 
-    veloLpType = IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE;
-    balancerLpType = IveION.LpTokenType.Mode_Balancer_8020_ION_ETH;
+    veloLpType = IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE;
+    balancerLpType = IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Balancer_8020_ION_ETH;
 
     IveION(ve).setStakeStrategy(veloLpType, IStakeStrategy(veloIonModeStakingStrategy));
     IveION(ve).setStakeStrategy(balancerLpType, IStakeStrategy(veloWethUsdcStakingStrategy));
@@ -207,8 +213,14 @@ contract veIONTest is BaseTest {
     isWhitelistedTokens[1] = true;
 
     IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    IveION(ve).setLpTokenType(ionWeth5050lPAero, IveION.LpTokenType.Base_Aerodrome_5050_ION_wstETH);
-    IveION(ve).setLpTokenType(wethAero5050LPAero, IveION.LpTokenType.Base_Balancer_8020_ION_ETH);
+    IveION(ve).setLpTokenType(
+      ionWeth5050lPAero,
+      IveIONStructsEnumsErrorsEvents.LpTokenType.Base_Aerodrome_5050_ION_wstETH
+    );
+    IveION(ve).setLpTokenType(
+      wethAero5050LPAero,
+      IveIONStructsEnumsErrorsEvents.LpTokenType.Base_Balancer_8020_ION_ETH
+    );
 
     IveION(ve).setMaxEarlyWithdrawFee(EARLY_WITHDRAW_FEE);
     IveION(ve).setMinimumLockDuration(MINTIME);
@@ -360,7 +372,10 @@ contract veIONTest is BaseTest {
   function _logTokens(uint256[] memory tokenIds, address[] memory lpTokens) internal view {
     for (uint256 i = 0; i < tokenIds.length; i++) {
       for (uint256 j = 0; j < lpTokens.length; j++) {
-        IveION.LockedBalance memory lock = IveION(ve).getUserLock(tokenIds[i], IveION(ve).s_lpType(lpTokens[j]));
+        IveIONStructsEnumsErrorsEvents.LockedBalance memory lock = IveION(ve).getUserLock(
+          tokenIds[i],
+          IveION(ve).s_lpType(lpTokens[j])
+        );
         uint256 tokenId = i + 1;
         console.log(
           string(abi.encodePacked("Token ID ", tokenId.toString(), " Locked Token: ", lock.tokenAddress.toHexString()))

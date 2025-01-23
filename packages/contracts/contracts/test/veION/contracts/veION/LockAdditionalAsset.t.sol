@@ -32,12 +32,15 @@ contract LockAdditionalAsset is veIONTest {
       false
     );
 
-    IveION.LockedBalance memory lockedBalancer = IveION(ve).getUserLock(lockInput.tokenId, balancerLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory lockedBalancer = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      balancerLpType
+    );
     uint256 expectedEndTimeBalancer = ((block.timestamp + 26 weeks) / WEEK) * WEEK;
 
-    IveION.LockedBalance memory lockedVelo = IveION(ve).getUserLock(
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory lockedVelo = IveION(ve).getUserLock(
       lockInput.tokenId,
-      IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE
+      IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE
     );
     uint256 expectedEndTimeVelo = ((block.timestamp + 52 weeks) / WEEK) * WEEK;
 

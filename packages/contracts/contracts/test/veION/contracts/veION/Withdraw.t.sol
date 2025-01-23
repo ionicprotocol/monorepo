@@ -45,12 +45,12 @@ contract Withdraw is veIONTest {
     vm.prank(user);
     IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory locked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
 
     uint256 cumulativeLPAmountAfter = IveION(ve).s_userCumulativeAssetValues(user, address(modeVelodrome5050IonMode));
     uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(user);
     uint256 userEpoch = IveION(ve).s_userPointEpoch(lockInput.tokenId, IveION(ve).s_lpType(lockInput.tokenAddress));
-    IveION.UserPoint memory userPoint = IveION(ve).getUserPoint(
+    IveIONStructsEnumsErrorsEvents.UserPoint memory userPoint = IveION(ve).getUserPoint(
       lockInput.tokenId,
       IveION(ve).s_lpType(lockInput.tokenAddress),
       userEpoch
@@ -92,7 +92,10 @@ contract Withdraw is veIONTest {
     vm.prank(user);
     IveION(ve).withdraw(address(modeVelodrome5050IonMode), lockInput.tokenId);
 
-    IveION.LockedBalance memory actualLocked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory actualLocked = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      veloLpType
+    );
 
     uint256 userBalanceAfterWithdraw = modeVelodrome5050IonMode.balanceOf(user);
     assertEq(actualLocked.amount, 0, "Lock amount should be zero after withdrawal");
@@ -134,7 +137,7 @@ contract Withdraw is veIONTest {
     isWhitelistedTokens[0] = true;
 
     IveION(ve).whitelistTokens(whitelistedTokens, isWhitelistedTokens);
-    IveION(ve).setLpTokenType(ionMode5050, IveION.LpTokenType.Mode_Velodrome_5050_ION_MODE);
+    IveION(ve).setLpTokenType(ionMode5050, IveIONStructsEnumsErrorsEvents.LpTokenType.Mode_Velodrome_5050_ION_MODE);
     // Mint ModeVelodrome tokens to the user
     vars.user = address(0x5678);
     vars.amount = 10 ether;

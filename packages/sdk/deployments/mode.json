@@ -84,7 +84,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83"
+      "address": "0xA1E217358E118A156446c02385591BB329194f82"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
@@ -316,6 +316,15 @@
     },
     "RedstoneAdapterPriceOracleWrsETH": {
       "address": "0xE3643FD41095658cDF063e15f5cb30A5738979e8"
+    },
+    "RewardAccumulator": {
+      "address": "0x420798c015a9dB1e67E6c26EC7e202Cc5B0818C6"
+    },
+    "RewardAccumulator_Implementation": {
+      "address": "0x36b09B9AC0b7494ecC3c66da5F9781B0D7B24f71"
+    },
+    "RewardAccumulator_Proxy": {
+      "address": "0x420798c015a9dB1e67E6c26EC7e202Cc5B0818C6"
     },
     "SimplePriceOracle": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"

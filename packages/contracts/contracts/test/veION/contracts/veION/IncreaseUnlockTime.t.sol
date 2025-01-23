@@ -20,7 +20,10 @@ contract IncreaseUnlockTime is veIONTest {
     vm.prank(user);
     IveION(ve).increaseUnlockTime(address(modeVelodrome5050IonMode), lockInput.tokenId, newLockTime);
 
-    IveION.LockedBalance memory actualLocked = IveION(ve).getUserLock(lockInput.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory actualLocked = IveION(ve).getUserLock(
+      lockInput.tokenId,
+      veloLpType
+    );
     uint256 expectedEndTime = ((block.timestamp + newLockTime) / WEEK) * WEEK;
     assertEq(expectedEndTime, actualLocked.end, "Lock end time should be increased");
   }

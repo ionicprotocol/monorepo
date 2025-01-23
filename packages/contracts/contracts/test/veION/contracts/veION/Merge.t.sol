@@ -21,8 +21,14 @@ contract Merge is veIONTest {
     vm.prank(user);
     IveION(ve).merge(lockInput_1.tokenId, lockInput_2.tokenId);
 
-    IveION.LockedBalance memory mergedLock = IveION(ve).getUserLock(lockInput_2.tokenId, veloLpType);
-    IveION.LockedBalance memory burnedLock = IveION(ve).getUserLock(lockInput_1.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLock = IveION(ve).getUserLock(
+      lockInput_2.tokenId,
+      veloLpType
+    );
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory burnedLock = IveION(ve).getUserLock(
+      lockInput_1.tokenId,
+      veloLpType
+    );
 
     assertEq(
       mergedLock.amount,
@@ -40,8 +46,14 @@ contract Merge is veIONTest {
     vm.prank(user);
     IveION(ve).merge(lockInputMultiLP.tokenId, lockInput_2.tokenId);
 
-    IveION.LockedBalance memory mergedLockVelo = IveION(ve).getUserLock(lockInput_2.tokenId, veloLpType);
-    IveION.LockedBalance memory mergedLockBalancer = IveION(ve).getUserLock(lockInput_2.tokenId, balancerLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLockVelo = IveION(ve).getUserLock(
+      lockInput_2.tokenId,
+      veloLpType
+    );
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLockBalancer = IveION(ve).getUserLock(
+      lockInput_2.tokenId,
+      balancerLpType
+    );
 
     assertEq(mergedLockVelo.amount, MINT_AMT * 2, "Velo merged lock amount should be the sum of the original locks");
     assertEq(
@@ -70,8 +82,14 @@ contract Merge is veIONTest {
     vm.prank(user);
     IveION(ve).merge(lockInput_1.tokenId, lockInputMultiLP.tokenId);
 
-    IveION.LockedBalance memory mergedLockVelo = IveION(ve).getUserLock(lockInputMultiLP.tokenId, veloLpType);
-    IveION.LockedBalance memory mergedLockBalancer = IveION(ve).getUserLock(lockInputMultiLP.tokenId, balancerLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLockVelo = IveION(ve).getUserLock(
+      lockInputMultiLP.tokenId,
+      veloLpType
+    );
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLockBalancer = IveION(ve).getUserLock(
+      lockInputMultiLP.tokenId,
+      balancerLpType
+    );
 
     assertEq(mergedLockVelo.amount, MINT_AMT * 2, "Velo merged lock amount should be the sum of the original locks");
     assertEq(
@@ -191,20 +209,23 @@ contract Merge is veIONTest {
     uint256[] memory durations = new uint256[](1);
     durations[0] = 26 weeks;
 
-    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(lockInput_1.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked1 = IveION(ve).getUserLock(
+      lockInput_1.tokenId,
+      veloLpType
+    );
     uint256 expectedStart = locked1.start;
 
     vm.startPrank(user);
     modeVelodrome5050IonMode.approve(address(ve), amount);
     uint256 tokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
 
-    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked2 = IveION(ve).getUserLock(tokenId, veloLpType);
     uint256 expectedEnd = locked2.end;
 
     IveION(ve).merge(lockInput_1.tokenId, tokenId);
     vm.stopPrank();
 
-    IveION.LockedBalance memory mergedLock = IveION(ve).getUserLock(tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLock = IveION(ve).getUserLock(tokenId, veloLpType);
 
     assertEq(mergedLock.start, expectedStart, "Merged lock should have the earlier start time");
     assertEq(mergedLock.end, expectedEnd, "Merged lock should have the later end time");
@@ -223,7 +244,10 @@ contract Merge is veIONTest {
     uint256[] memory durations = new uint256[](1);
     durations[0] = 70 weeks;
 
-    IveION.LockedBalance memory locked1 = IveION(ve).getUserLock(lockInput_1.tokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked1 = IveION(ve).getUserLock(
+      lockInput_1.tokenId,
+      veloLpType
+    );
     uint256 expectedStart = locked1.start;
     uint256 expectedEnd = locked1.end;
     uint256 boost = locked1.boost;
@@ -234,13 +258,13 @@ contract Merge is veIONTest {
     vm.startPrank(user);
     modeBalancer8020IonEth.approve(address(ve), amount);
     uint256 secondTokenId = IveION(ve).createLock(tokenAddresses, tokenAmounts, durations, new bool[](1));
-    IveION.LockedBalance memory locked2 = IveION(ve).getUserLock(secondTokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory locked2 = IveION(ve).getUserLock(secondTokenId, veloLpType);
     emit log_named_uint("locked2 start time", locked2.start);
     emit log_named_uint("locked2 end time", locked2.end);
     IveION(ve).merge(lockInput_1.tokenId, secondTokenId);
     vm.stopPrank();
 
-    IveION.LockedBalance memory mergedLock = IveION(ve).getUserLock(secondTokenId, veloLpType);
+    IveIONStructsEnumsErrorsEvents.LockedBalance memory mergedLock = IveION(ve).getUserLock(secondTokenId, veloLpType);
 
     emit log_named_uint("mergedLock start time", mergedLock.start);
     emit log_named_uint("mergedLock end time", mergedLock.end);

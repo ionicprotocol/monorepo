@@ -16,7 +16,7 @@ import { IAddressesProvider } from "./interfaces/IveIONCore.sol";
 import { IStakeStrategy } from "./stake/IStakeStrategy.sol";
 
 /**
- * @title veION Contract
+ * @title veION Contract First Extensions
  * @notice This contract manages the veION framework, enabling the staking and management LP tokens for voting power.
  * @author Jourdan Dunkley <jourdan@ionic.money> (https://github.com/jourdanDunkley)
  */
@@ -30,6 +30,10 @@ contract veIONFirstExtension is
   using EnumerableSet for EnumerableSet.UintSet;
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for IERC20;
+
+  constructor() {
+    _disableInitializers(); // Locks the implementation contract from being initialized
+  }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                           External Functions                              ║
@@ -293,7 +297,13 @@ contract veIONFirstExtension is
     emit DelegationRemoved(fromTokenId, toTokenId, lpToken, amount);
   }
 
-  /// @inheritdoc IveIONFirstExtension
+  /**
+   * @notice Removes delegatees from a specific veNFT
+   * @param fromTokenId ID of the veNFT from which delegatees are removed
+   * @param toTokenIds Array of veNFT IDs that are delegatees to be removed
+   * @param lpToken Address of the LP token associated with the delegation
+   * @param amounts Array of amounts of voting power to remove from each delegatee
+   */
   function removeDelegatees(
     uint256 fromTokenId,
     uint256[] memory toTokenIds,
