@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
     contracts: [{ artifacts: "./out" }]
   },
   paths: {
-    sources: "./contracts",
+    sources: "./contracts/src",
     tests: "./contracts/test",
     artifacts: "./artifacts"
   },
