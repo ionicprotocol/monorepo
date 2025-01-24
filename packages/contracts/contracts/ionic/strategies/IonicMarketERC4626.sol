@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.22;
 import { IonicERC4626, ERC20Upgradeable } from "./IonicERC4626.sol";
-import { SafeERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { ComptrollerErrorReporter } from "../../compound/ErrorReporter.sol";
 
