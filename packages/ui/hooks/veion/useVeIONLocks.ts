@@ -329,7 +329,7 @@ export function useVeIONLocks({
 
   // Calculate total supply from user locks
   const totalSupply =
-    userLockResults?.reduce((sum, result) => {
+    userLockResults?.reduce<bigint>((sum, result) => {
       if (
         result?.status === 'success' &&
         result.result &&

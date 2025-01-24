@@ -9,8 +9,8 @@ import { useAccount, useBalance, useChainId } from 'wagmi';
 import { getVeIonContract, isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
+import { useMultiChainVeIONLocks } from '@ui/hooks/veion/useMultiChainVeionLocks';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
-import { useVeIONLocks } from '@ui/hooks/veion/useVeIONLocks';
 import type {
   PriceData,
   LiquidityData,
@@ -132,10 +132,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     emissionsManagerContract: '0x'
   });
 
-  const locks = useVeIONLocks({
+  const locks = useMultiChainVeIONLocks({
     address,
-    veIonContract: veIonContract.address,
-    chainId: currentChain as ChainId
+    selectedChainId: currentChain as ChainId
   });
 
   // Calculate USD values
