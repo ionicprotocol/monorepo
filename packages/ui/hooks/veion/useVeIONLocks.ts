@@ -31,6 +31,20 @@ function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
   }
 }
 
+type SimpleBalanceResult = {
+  status: 'failure' | 'success';
+  result?: [string[], bigint[], bigint[]];
+};
+
+type SimpleLockResult = {
+  status: 'failure' | 'success';
+  result?: {
+    start: bigint;
+    end: bigint;
+    isPermanent: boolean;
+  };
+};
+
 // Chain configuration
 export const VEION_CHAIN_CONFIGS: Record<
   ChainId,
@@ -328,18 +342,22 @@ export function useVeIONLocks({
   });
 
   // Calculate total supply from user locks
-  const totalSupply =
-    userLockResults?.reduce<bigint>((sum, result) => {
-      if (
-        result?.status === 'success' &&
-        result.result &&
-        typeof result.result === 'object'
-      ) {
-        const lock = result.result as { amount?: bigint };
-        return sum + (lock.amount ?? 0n);
+  // Calculate total supply by summing amounts directly
+  type SimpleContractResult = {
+    status: 'failure' | 'success';
+    result?: { amount?: bigint };
+  };
+
+  let totalSupply = 0n;
+  const results = userLockResults as SimpleContractResult[] | undefined;
+
+  if (results) {
+    for (const result of results) {
+      if (result.status === 'success' && result.result?.amount) {
+        totalSupply += result.result.amount;
       }
-      return sum;
-    }, 0n) ?? 0n;
+    }
+  }
 
   // Get delegatee information
   const { data: delegateesResults } = useReadContracts({
@@ -360,25 +378,22 @@ export function useVeIONLocks({
   const ionPrice = ionPrices[chainId] || 0;
 
   const allLocks = tokenIds.flatMap((tokenId, tokenIndex) => {
-    const balanceResult = balanceResults?.[tokenIndex];
-    if (balanceResult?.status !== 'success') return null;
+    const balanceResult = (
+      balanceResults as SimpleBalanceResult[] | undefined
+    )?.[tokenIndex];
+    if (balanceResult?.status !== 'success' || !balanceResult.result)
+      return null;
 
-    const [assets, balances, boosts] = balanceResult.result as [
-      string[],
-      bigint[],
-      bigint[]
-    ];
+    const [assets, balances, boosts] = balanceResult.result;
 
     return assets.map((tokenAddress, i) => {
-      const userLockResult =
-        userLockResults?.[tokenIndex * chainConfig.lpTypes.length + i];
-      if (userLockResult?.status !== 'success') return null;
+      const userLockResult = (
+        userLockResults as SimpleLockResult[] | undefined
+      )?.[tokenIndex * chainConfig.lpTypes.length + i];
+      if (userLockResult?.status !== 'success' || !userLockResult.result)
+        return null;
 
-      const userLock = userLockResult.result as {
-        start: bigint;
-        end: bigint;
-        isPermanent: boolean;
-      };
+      const userLock = userLockResult.result;
       const amount = balances[i];
       const boost = boosts[i];
 
