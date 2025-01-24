@@ -48,12 +48,12 @@ export interface TokenCalculations {
 
 // Enumeration for possible LP token types
 export enum LpTokenType {
-  BASE_ETH,
-  BASE_ION,
-  MODE_ETH,
-  MODE_ION,
-  OP_ETH,
-  OP_ION
+  OP_ETH = 0,
+  OP_ION = 1,
+  BASE_ETH = 2,
+  BASE_ION = 3,
+  MODE_ETH = 4,
+  MODE_ION = 5
 }
 
 // Raw lock data from the contract
@@ -75,6 +75,7 @@ export interface VeIONLockData {
 
 export type MyVeionData = {
   id: string;
+  chainId: ChainId;
   tokensLocked: string;
   lockedBLP: {
     amount: string;

@@ -10,6 +10,7 @@ import type {
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import type { MyVeionData } from '@ui/types/VeIION';
 
 import ExtendVeion from './ExtendVeion';
 import ManageDialog from './ManageDialog';
@@ -17,31 +18,7 @@ import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 
-type BaseVeionData = {
-  id: string;
-  tokensLocked: string;
-  lockedBLP: {
-    amount: string;
-    value: string;
-  };
-  lockExpires: {
-    date: string;
-    timeLeft: string;
-  };
-  votingPower: string;
-  chainId: number;
-  position?: number;
-};
-
-type MyVeionData = BaseVeionData & {
-  enableClaim?: boolean;
-};
-
-interface MyVeionTableProps {
-  data: MyVeionData[];
-}
-
-function MyVeionTable({ data }: MyVeionTableProps) {
+function MyVeionTable() {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
@@ -50,10 +27,6 @@ function MyVeionTable({ data }: MyVeionTableProps) {
   const {
     locks: { myLocks, isLoading }
   } = useVeIONContext();
-  // eslint-disable-next-line no-console
-  console.log('isLoading', isLoading);
-  // eslint-disable-next-line no-console
-  console.log('myLocks', myLocks);
 
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
@@ -64,7 +37,7 @@ function MyVeionTable({ data }: MyVeionTableProps) {
         <div className="pl-6">
           <PositionTitle
             chainId={row.original.chainId}
-            position={row.original.position}
+            position={row.original.id}
           />
         </div>
       )
@@ -201,9 +174,9 @@ function MyVeionTable({ data }: MyVeionTableProps) {
       />
 
       <CommonTable
-        data={data}
+        data={myLocks}
         columns={myVeionColumns}
-        isLoading={false}
+        isLoading={isLoading}
       />
     </div>
   );

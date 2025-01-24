@@ -9,7 +9,6 @@ import { base, optimism, mode } from 'viem/chains';
 
 import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
-import FlatMap from '@ui/components/points_comp/FlatMap';
 import ToggleLinks from '@ui/components/ToggleLink';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
 import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
@@ -18,7 +17,7 @@ import {
   DelegateVeIonTable,
   GovernanceHeader
 } from '@ui/components/veion';
-import { lockedData, lockedDataWithDelegate } from '@ui/constants/mock';
+import { lockedDataWithDelegate } from '@ui/constants/mock';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 
 export default function Governance() {
@@ -112,11 +111,7 @@ export default function Governance() {
         </CardHeader>
         <CardContent className="border-none">
           {view === 'My veION' ? (
-            <MyVeionTable
-              data={lockedData.filter(
-                (position) => +chain === 0 || position.chainId === +chain
-              )}
-            />
+            <MyVeionTable />
           ) : (
             <DelegateVeIonTable
               data={lockedDataWithDelegate.filter(

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useAccount, useChainId } from 'wagmi';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getVeIonContract } from '@ui/constants/veIon';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useContractWrite } from '../useContractWrite';
@@ -13,11 +13,9 @@ interface VeIONDelegateState {
 }
 
 export function useVeIONDelegate(chain: number) {
-  const { getSdk } = useMultiIonic();
-  const ionicSdk = getSdk(chain);
-  const veIonContract = ionicSdk?.veIONContracts?.veION;
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const veIonContract = getVeIonContract(chainId);
   const { write } = useContractWrite();
 
   const [state, setState] = useState<VeIONDelegateState>({

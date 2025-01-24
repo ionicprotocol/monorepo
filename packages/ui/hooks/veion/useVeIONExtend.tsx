@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { parseUnits, erc20Abi } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getVeIonContract } from '@ui/constants/veIon';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useContractWrite } from '../useContractWrite';
@@ -15,11 +15,9 @@ interface VeIONExtendState {
 }
 
 export function useVeIONExtend(chain: number) {
-  const { getSdk } = useMultiIonic();
-  const ionicSdk = getSdk(chain);
-  const veIonContract = ionicSdk?.veIONContracts?.veION;
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const veIonContract = getVeIonContract(chainId);
   const { write } = useContractWrite();
 
   const [state, setState] = useState<VeIONExtendState>({

@@ -1,15 +1,13 @@
 import { parseUnits } from 'viem';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getVeIonContract } from '@ui/constants/veIon';
 
 import { useContractWrite } from '../useContractWrite';
 
 import type { Hex } from 'viem';
 
 export function useVeIONManage(chain: number) {
-  const { getSdk } = useMultiIonic();
-  const ionicSdk = getSdk(chain);
-  const veIonContract = ionicSdk?.veIONContracts?.veION;
+  const veIonContract = getVeIonContract(chain);
   const { write, isPending } = useContractWrite();
 
   const getContractConfig = (functionName: string, args: any[]) => {

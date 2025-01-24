@@ -16,7 +16,20 @@ import type {
 import { useIonPrices } from '../useDexScreenerPrices';
 import { useReserves } from '../useReserves';
 
-import { veIonAbi, veIonSecondExtensionAbi } from '@ionicprotocol/sdk';
+import { iveIonAbi } from '@ionicprotocol/sdk';
+
+function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
+  switch (chainId) {
+    case 8453:
+      return 'eth';
+    case 34443:
+      return 'mode';
+    case 10:
+      return 'weth';
+    default:
+      return 'eth';
+  }
+}
 
 // Chain configuration
 export const VEION_CHAIN_CONFIGS: Record<
@@ -224,6 +237,7 @@ class VeIONLock implements VeIONTableData {
   toTableFormat(): MyVeionData {
     return {
       id: this.id,
+      chainId: this.chainId,
       tokensLocked: this.tokensLocked.ratio,
       lockedBLP: {
         amount: this.lockedBLP.amount,
@@ -276,116 +290,127 @@ export function useVeIONLocks({
 }): VeIONLockData {
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
 
-  // Get token IDs for current chain
-  const { data: secondExtensionAddress } = useReadContract({
-    address: veIonContract,
-    abi: veIonAbi,
-    functionName: 'veIONSecondExtension',
-    chainId
-  });
-
-  // Then get token IDs using the extension
   const { data: tokenIdsResult } = useReadContract({
-    address: secondExtensionAddress,
-    abi: veIonSecondExtensionAbi,
+    address: veIonContract,
+    abi: iveIonAbi,
     functionName: 'getOwnedTokenIds',
     args: [address as `0x${string}`],
     chainId
   });
 
-  // Get total supply for current chain's LP types
-  const { data: totalSupplyResults } = useReadContracts({
-    contracts: chainConfig.lpTypes.map((lpType) => ({
+  const { reserves, isLoading: reservesLoading } = useReserves(chainId);
+  const tokenIds = Array.isArray(tokenIdsResult)
+    ? tokenIdsResult.map(String)
+    : [];
+
+  // Get user locks
+  const { data: userLockResults, isError: lockError } = useReadContracts({
+    contracts: tokenIds.flatMap((tokenId) =>
+      chainConfig.lpTypes.map((lpType) => ({
+        address: veIonContract,
+        abi: iveIonAbi,
+        functionName: 'getUserLock',
+        args: [BigInt(tokenId), BigInt(lpType)],
+        chainId
+      }))
+    )
+  });
+
+  // Get balances and boosts
+  const { data: balanceResults, isLoading: locksLoading } = useReadContracts({
+    contracts: tokenIds.map((tokenId) => ({
       address: veIonContract,
-      abi: veIonAbi,
-      functionName: 's_supply',
-      args: [lpType],
+      abi: iveIonAbi,
+      functionName: 'balanceOfNFT',
+      args: [tokenId],
       chainId
     }))
   });
 
-  const tokenIds =
-    Array.isArray(tokenIdsResult) && tokenIdsResult.length > 0
-      ? (tokenIdsResult as string[])
-      : [];
+  // Calculate total supply from user locks
+  const totalSupply =
+    userLockResults?.reduce((sum, result) => {
+      if (
+        result?.status === 'success' &&
+        result.result &&
+        typeof result.result === 'object'
+      ) {
+        const lock = result.result as { amount?: bigint };
+        return sum + (lock.amount ?? 0n);
+      }
+      return sum;
+    }, 0n) ?? 0n;
 
-  // Get locks for each token ID and LP type
-  const { data: locksResults, isLoading: locksLoading } = useReadContracts({
+  // Get delegatee information
+  const { data: delegateesResults } = useReadContracts({
     contracts: tokenIds.flatMap((tokenId) =>
       chainConfig.lpTypes.map((lpType) => ({
         address: veIonContract,
-        abi: veIonAbi,
-        functionName: 'getUserLock',
+        abi: iveIonAbi,
+        functionName: 'getDelegatees',
         args: [tokenId, lpType],
         chainId
       }))
     )
   });
 
-  // Get reserves and price data
-  const { reserves, isLoading: reservesLoading } = useReserves(chainId);
-
-  // Use useIonPrices with either all chains or specific chain
   const { data: ionPrices = {} } = useIonPrices(
     chainId === ALL_CHAINS_VALUE ? undefined : [chainId]
   );
   const ionPrice = ionPrices[chainId] || 0;
 
-  // Calculate total supply
-  const totalSupply =
-    // @ts-ignore
-    (totalSupplyResults || [])?.reduce(
-      (sum, result) =>
-        result.status === 'success' ? sum + (result.result as bigint) : sum,
-      0n
-    ) ?? 0n;
+  const allLocks = tokenIds.flatMap((tokenId, tokenIndex) => {
+    const balanceResult = balanceResults?.[tokenIndex];
+    if (balanceResult?.status !== 'success') return null;
 
-  // Process locks
-  const allLocks = tokenIds.flatMap((tokenId, tokenIndex) =>
-    chainConfig.lpTypes
-      .map((lpType, lpTypeIndex) => {
-        const lockResult =
-          locksResults?.[tokenIndex * chainConfig.lpTypes.length + lpTypeIndex];
+    const [assets, balances, boosts] = balanceResult.result as [
+      string[],
+      bigint[],
+      bigint[]
+    ];
 
-        if (lockResult?.status !== 'success') return null;
+    return assets.map((tokenAddress, i) => {
+      const userLockResult =
+        userLockResults?.[tokenIndex * chainConfig.lpTypes.length + i];
+      if (userLockResult?.status !== 'success') return null;
 
-        const lock = lockResult.result as LockedBalance;
-        if (!lock || lock.amount <= 0n) return null;
+      const userLock = userLockResult.result as {
+        start: bigint;
+        end: bigint;
+        isPermanent: boolean;
+      };
+      const amount = balances[i];
+      const boost = boosts[i];
 
-        return new VeIONLock(
-          tokenId,
-          chainId,
-          lpType,
-          lock.tokenAddress,
-          lock,
-          reserves[getTokenType(chainId)],
-          ionPrice,
-          totalSupply
-        );
-      })
-      .filter((lock): lock is VeIONLock => lock !== null)
-  );
+      const lock: LockedBalance = {
+        tokenAddress: tokenAddress as `0x${string}`,
+        amount,
+        start: userLock.start,
+        end: userLock.end,
+        isPermanent: userLock.isPermanent,
+        boost
+      };
+
+      return new VeIONLock(
+        tokenId,
+        chainId,
+        chainConfig.lpTypes[i],
+        tokenAddress as `0x${string}`,
+        lock,
+        reserves[getTokenType(chainId)],
+        ionPrice,
+        totalSupply
+      );
+    });
+  });
 
   return {
     myLocks: allLocks
-      .filter((lock) => !lock.delegation)
-      .map((lock) => lock.toTableFormat()),
+      .filter((lock) => lock && !lock.delegation)
+      .map((lock) => lock!.toTableFormat()),
     delegatedLocks: allLocks
-      .filter((lock) => lock.delegation)
-      .map((lock) => lock.toDelegateTableFormat()),
+      .filter((lock) => lock && lock.delegation)
+      .map((lock) => lock!.toDelegateTableFormat()),
     isLoading: locksLoading || reservesLoading
   };
-}
-
-function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
-  switch (chainId) {
-    case 8453:
-      return 'eth';
-    case 34443:
-      return 'mode';
-    case 10:
-      return 'weth';
-    default:
-      return 'eth';
-  }
 }

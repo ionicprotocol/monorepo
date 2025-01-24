@@ -111,9 +111,10 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     chainId: currentChain
   });
 
+  // needs fixing
   const { data: veIonBalance } = useBalance({
     address,
-    token: veIonContract,
+    token: veIonContract.address,
     chainId: currentChain
   });
 
@@ -127,13 +128,13 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   // Use consolidated hooks only if veIon is supported on this chain
   const { liquidity, emissions } = useVeIonData({
     address,
-    veIonContract,
+    veIonContract: veIonContract.address,
     emissionsManagerContract: '0x'
   });
 
   const locks = useVeIONLocks({
     address,
-    veIonContract,
+    veIonContract: veIonContract.address,
     chainId: currentChain as ChainId
   });
 

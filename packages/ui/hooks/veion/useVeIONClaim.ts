@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { erc20Abi } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
+import { getVeIonContract } from '@ui/constants/veIon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -16,11 +17,9 @@ interface VeIONClaimState {
 }
 
 export function useVeIONClaim(chain: number) {
-  const { getSdk } = useMultiIonic();
-  const ionicSdk = getSdk(chain);
-  const veIonContract = ionicSdk?.veIONContracts?.veION;
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const veIonContract = getVeIonContract(chainId);
   const { write } = useContractWrite();
 
   const [state, setState] = useState<VeIONClaimState>({

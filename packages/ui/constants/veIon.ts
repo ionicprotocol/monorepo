@@ -1,13 +1,37 @@
 import type { ChainId, MarketExclusionConfig } from '@ui/types/VeIION';
 
+import { iveIonAbi, iVoterAbi } from '@ionicprotocol/sdk';
+
 export const VEION_CONTRACTS: Partial<Record<ChainId, `0x${string}`>> = {
-  8453: '0x0000000000000000000000000000000000000000' as `0x${string}`, // Base
+  8453: '0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27' as `0x${string}`, // Base
   34443: '0x0000000000000000000000000000000000000000' as `0x${string}`, // Mode
   10: '0x0000000000000000000000000000000000000000' as `0x${string}` // Optimism
 };
 
-export function getVeIonContract(chainId: number): `0x${string}` {
-  return VEION_CONTRACTS[chainId as ChainId] ?? '0x';
+export const VOTER_CONTRACTS: Partial<Record<ChainId, `0x${string}`>> = {
+  8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9' as `0x${string}`, // Base
+  34443: '0x0000000000000000000000000000000000000000' as `0x${string}`, // Mode
+  10: '0x0000000000000000000000000000000000000000' as `0x${string}` // Optimism
+};
+
+export function getVeIonContract(chainId: number): {
+  abi: typeof iveIonAbi;
+  address: `0x${string}`;
+} {
+  return {
+    abi: iveIonAbi,
+    address: VEION_CONTRACTS[chainId as ChainId] as `0x${string}`
+  };
+}
+
+export function getVoterContract(chainId: number): {
+  abi: typeof iVoterAbi;
+  address: `0x${string}`;
+} {
+  return {
+    abi: iVoterAbi,
+    address: VOTER_CONTRACTS[chainId as ChainId] as `0x${string}`
+  };
 }
 
 export function isVeIonSupported(chainId: number): boolean {

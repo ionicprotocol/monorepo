@@ -4,7 +4,7 @@ import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getVeIonContract } from '@ui/constants/veIon';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import {
   getPoolToken,
@@ -32,15 +32,13 @@ interface LockVeIONParams {
 }
 
 export function useVeIONActions() {
-  const { getSdk } = useMultiIonic();
   const { address, isConnected } = useAccount();
   const { currentChain, prices } = useVeIONContext();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
   // Get veION contract
-  const ionicSdk = getSdk(currentChain);
-  const veIonContract = ionicSdk?.veIONContracts?.veION;
+  const veIonContract = getVeIonContract(currentChain);
   const [isPending, setIsPending] = useState(false);
 
   const addLiquidity = async ({
@@ -247,13 +245,6 @@ export function useVeIONActions() {
       // Convert duration from days to seconds
       const durationInSeconds = duration * 24 * 60 * 60;
 
-      const args = [
-        [tokenAddress],
-        [parseUnits(tokenAmount, 18)],
-        [durationInSeconds],
-        [stakeUnderlying]
-      ];
-
       // approve
       const approvalTx = await walletClient.writeContract({
         abi: erc20Abi,
@@ -273,7 +264,12 @@ export function useVeIONActions() {
         abi: veIonContract.abi,
         account: walletClient.account,
         address: veIonContract.address,
-        args,
+        args: [
+          [tokenAddress],
+          [parseUnits(tokenAmount, 18)],
+          [BigInt(durationInSeconds)],
+          [stakeUnderlying]
+        ] as const,
         functionName: 'createLock'
       });
 

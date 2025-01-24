@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+
 import Link from 'next/link';
-import { base, optimism, mode } from 'viem/chains';
+import { useSearchParams } from 'next/navigation';
+
 import { ArrowLeft } from 'lucide-react';
 
-import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import {
   Card,
   CardHeader,
@@ -18,7 +18,6 @@ import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
 import { lockedData } from '@ui/constants/mock';
 import { EmissionsProvider } from '@ui/context/EmissionsManagementContext';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const Vote: React.FC = () => {
   const searchParams = useSearchParams();

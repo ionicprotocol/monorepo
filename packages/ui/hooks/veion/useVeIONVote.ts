@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useAccount, useChainId } from 'wagmi';
 
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
+import { getVoterContract } from '@ui/constants/veIon';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useContractWrite } from '../useContractWrite';
@@ -27,9 +27,8 @@ interface VoteState {
 }
 
 export function useVeIONVote(chain: number) {
-  const { getSdk } = useMultiIonic();
-  const ionicSdk = getSdk(chain);
-  const voterContract = ionicSdk?.veIONContracts?.voter;
+  const voterContract = getVoterContract(chain);
+
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { write } = useContractWrite();
