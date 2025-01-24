@@ -7,7 +7,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { parseEther } from "viem";
+import { parseEther, parseUnits } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -34,6 +34,8 @@ export const USDe = "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34";
 export const dMBTC = "0x93a397fb0db16BA4bb045a4C08Ee639Cb5639495";
 export const STONE = "0x80137510979822322193FC997d400D5A6C747bf7";
 export const msDAI = "0x3f51c6c5927B88CDEc4b61e2787F9BD0f5249138";
+export const oBTC = "0xe3C0FF176eF92FC225096C6d1788cCB818808b35";
+export const uniBTC = "0x6B2a01A5f79dEb4c2f3c0eDa7b01DF456FbD726a";
 
 export const assets: SupportedAsset[] = [
   {
@@ -194,6 +196,36 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://explorer.mode.network", msDAI),
     initialSupplyCap: parseEther(String(100_000)).toString(),
     initialBorrowCap: parseEther(String(100_000)).toString(),
+    initialCf: "0.5"
+  },
+  {
+    symbol: assetSymbols.oBTC,
+    underlying: oBTC,
+    name: "Obelisk BTC",
+    decimals: 8,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x49e47Ff91C510B2029E2E8c45FF784cbb1399508",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", oBTC),
+    initialSupplyCap: parseUnits(String(100), 8).toString(),
+    initialBorrowCap: parseUnits(String(40), 8).toString(),
+    initialCf: "0.5"
+  },
+  {
+    symbol: assetSymbols.uniBTC,
+    underlying: uniBTC,
+    name: "uniBTC",
+    decimals: 8,
+    oracle: OracleTypes.eOracle,
+    oracleSpecificParams: {
+      aggregator: "0x4EEB40C0379B8654db64966b2C7C6039486d4F9f",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", uniBTC),
+    initialSupplyCap: parseUnits(String(100), 8).toString(),
+    initialBorrowCap: parseUnits(String(40), 8).toString(),
     initialCf: "0.5"
   }
 ];

@@ -43,6 +43,7 @@ export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
 export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
 export const ionicUSDC = "0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e";
 export const ionicWETH = "0x5A32099837D89E3a794a44fb131CBbAD41f87a8C";
+export const mBASIS = "0x1C2757c1FeF1038428b5bEF062495ce94BBe92b2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -437,6 +438,21 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(2_000)).toString(),
     initialBorrowCap: "1",
     initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.mBASIS,
+    underlying: mBASIS,
+    name: "Midas Basis Trading Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x6d62D3C3C8f9912890788b50299bF4D2C64823b6",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", mBASIS),
+    initialSupplyCap: parseEther(String(1_000_000)).toString(),
+    initialBorrowCap: parseEther(String(100_000)).toString(),
+    initialCf: "0.50"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

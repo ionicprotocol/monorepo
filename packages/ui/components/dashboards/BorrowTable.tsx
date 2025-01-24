@@ -145,6 +145,7 @@ function BorrowTable({
   return (
     <CommonTable
       data={data}
+      hidePR={false}
       columns={columns}
       isLoading={isLoading}
       getRowStyle={(row) => ({

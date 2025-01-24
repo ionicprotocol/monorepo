@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { MasterPriceOracle } from "../MasterPriceOracle.sol";
 import { BasePriceOracle, ICErc20 } from "../BasePriceOracle.sol";
@@ -98,7 +98,9 @@ contract PythPriceOracleDmBTC is BasePriceOracle, SafeOwnableUpgradeable {
       uint256 usdNativeTokenPrice = BasePriceOracle(msg.sender).price(USD_TOKEN);
       uint256 nativeTokenUsdPrice = 1e36 / usdNativeTokenPrice; // 18 decimals -- TODO: doublecheck
       PythStructs.Price memory tokenUsdPrice = PYTH.getPriceUnsafe(feed); // 8 decimals ---  TODO: doublecheck
-      normalizedPrice = tokenUsdPrice.price >= 0 ? (uint256(uint64(tokenUsdPrice.price)) * 1e28) / uint256(nativeTokenUsdPrice) : 0;
+      normalizedPrice = tokenUsdPrice.price >= 0
+        ? (uint256(uint64(tokenUsdPrice.price)) * 1e28) / uint256(nativeTokenUsdPrice)
+        : 0;
     } else {
       uint128 nativeTokenUsdPrice = uint128(uint64(PYTH.getPriceUnsafe(NATIVE_TOKEN_USD_FEED).price));
       if (nativeTokenUsdPrice <= 0) return 0;
@@ -134,7 +136,7 @@ contract PythPriceOracleDmBTC is BasePriceOracle, SafeOwnableUpgradeable {
     uint256 underlyingDecimals = uint256(ERC20Upgradeable(underlying).decimals());
     return
       underlyingDecimals <= 18
-        ? uint256(oraclePrice) * (10**(18 - underlyingDecimals))
-        : uint256(oraclePrice) / (10**(underlyingDecimals - 18));
+        ? uint256(oraclePrice) * (10 ** (18 - underlyingDecimals))
+        : uint256(oraclePrice) / (10 ** (underlyingDecimals - 18));
   }
 }

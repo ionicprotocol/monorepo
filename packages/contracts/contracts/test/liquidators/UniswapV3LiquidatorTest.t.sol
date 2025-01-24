@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 import { IonicUniV3Liquidator, IUniswapV3Pool, ILiquidator } from "../../IonicUniV3Liquidator.sol";
 import "../../external/uniswap/quoter/interfaces/IUniswapV3Quoter.sol";

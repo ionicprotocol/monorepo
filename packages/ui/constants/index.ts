@@ -13,7 +13,13 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
-import { camptest, ink, ozeantest, swellchain } from '@ionicprotocol/chains';
+import {
+  camptest,
+  ink,
+  ozeantest,
+  soneium,
+  swellchain
+} from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -110,12 +116,14 @@ export const FLYWHEEL_TYPE_MAP: Record<
     supply: [
       '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
       '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
-      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44'
+      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44',
+      '0xfB30366C781a913b40c96617e380F18071761F9F'
     ],
     borrow: [
       '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
       '0x4E854cde138495a3eB9CFe48e50F12dC352cD834',
-      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5'
+      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5',
+      '0xE135500Cc111eEd663b49394E378d8bdCe86c540'
     ]
   },
   [base.id]: {
@@ -130,35 +138,48 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x1d0a712aE0162431E0573A8a735D02a29805d124',
       '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
       '0x1e00C933e092912d47153765Fa7c886632c1d083',
-      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440'
-      // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
+      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440',
+      '0xf42dBd423970fd6735a7CE2d850aA85897C79eeE',
+      '0xDB04Ab33184594Be006364e9bDb4263988c323df'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
       '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
       '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
       '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
-      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a'
+      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a',
+      '0x1005d01cAAC7201e19c661c82a86b878a5e2C5cD'
     ]
   },
   [optimism.id]: {
     supply: [
       '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
       '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
-      '0x05c3e910F7639457f92220605966e7f86A2ef966'
+      '0x05c3e910F7639457f92220605966e7f86A2ef966',
+      '0xb988eE92A2B9A621187D33C845907DF5c5a1C9A3'
     ],
-    borrow: ['0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA']
+    borrow: [
+      '0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA',
+      '0x030a6514049D0AF71cf89E51a01C9D82873F4a2b'
+    ]
   },
   [lisk.id]: {
     supply: [
       '0x523F183ECbBf9144403D937B444d8486aD752453',
-      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7'
+      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7',
+      '0xdC737c91900097EF84c44885374527b26CD48d89'
     ],
     borrow: []
   },
   [fraxtal.id]: {
-    supply: ['0xa54697FAF64721Ec6ddd13bC345bd733de17539D'],
-    borrow: ['0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF']
+    supply: [
+      '0xa54697FAF64721Ec6ddd13bC345bd733de17539D',
+      '0xD07cd8Df6CCdC9228EBcEd7FA236E1d59C272164'
+    ],
+    borrow: [
+      '0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF',
+      '0x738d34C11a66Ff56B95D2fC4DC1b3a954baB5da4'
+    ]
   }
 };
 
@@ -215,7 +236,8 @@ export const pools: Record<number, PoolParams> = {
           'USDC',
           'msDAI',
           'weETH.mode',
-          'dMBTC',
+          'uniBTC',
+          'oBTC',
           'M-BTC',
           'sUSDe',
           'wrsETH',
@@ -224,7 +246,8 @@ export const pools: Record<number, PoolParams> = {
           'WBTC',
           'USDe',
           'USDT',
-          'weETH'
+          'weETH',
+          'dMBTC'
         ]
       },
       {
@@ -256,6 +279,7 @@ export const pools: Record<number, PoolParams> = {
           'USDz',
           'wUSD+',
           'wUSDM',
+          'mBASIS',
           'uSOL',
           'uSUI',
           'uXRP',
@@ -414,7 +438,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Pool',
-        assets: ['WETH']
+        assets: ['WETH', 'USDe', 'rswETH', 'weETH']
       }
     ]
   },
@@ -441,6 +465,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: ['WUSDX']
+      }
+    ]
+  },
+  [soneium.chainId]: {
+    name: 'Soneium',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SONEIUM.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDC', 'ASTR']
       }
     ]
   }

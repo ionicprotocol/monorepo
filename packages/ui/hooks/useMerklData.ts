@@ -5,12 +5,12 @@ import { mode } from 'viem/chains';
 import type { Address } from 'viem';
 
 interface MerklOpportunity {
-  action: 'supply' | 'borrow';
+  action: 'borrow' | 'supply';
   apr: number;
   tvl: number;
   platform: string;
   name: string;
-  status: 'live' | 'inactive';
+  status: 'inactive' | 'live';
   campaigns: {
     active: Array<{
       apr: number;
@@ -28,7 +28,7 @@ interface MerklOpportunityResponse {
 
 export interface TokenAprInfo {
   token: Address;
-  type: 'supply' | 'borrow';
+  type: 'borrow' | 'supply';
   apr: number;
 }
 

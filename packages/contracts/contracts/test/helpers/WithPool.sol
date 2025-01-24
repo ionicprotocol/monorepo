@@ -19,7 +19,7 @@ import { PoolDirectory } from "../../PoolDirectory.sol";
 import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 import { ERC4626 } from "solmate/mixins/ERC4626.sol";
 import { PoolLens } from "../../PoolLens.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import { CTokenFirstExtension, DiamondExtension } from "../../compound/CTokenFirstExtension.sol";
 import { ComptrollerFirstExtension } from "../../compound/ComptrollerFirstExtension.sol";

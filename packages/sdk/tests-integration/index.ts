@@ -1,20 +1,24 @@
-import { chainIdToConfig, mode } from "@ionicprotocol/chains";
 import { config as dotenvConfig } from "dotenv";
-import { providers, Wallet } from "ethers";
+import { http, createPublicClient, encodeFunctionData, parseEther } from "viem";
+import { base } from "viem/chains";
 
-import { IonicSdk } from "../src";
+import { cToken } from "./ctoken";
 
 dotenvConfig();
 
 const run = async () => {
-  const provider = new providers.JsonRpcProvider("https://mainnet.mode.network");
-  const signer = Wallet.fromMnemonic(process.env.MNEMONIC!).connect(provider);
-  const sdk = new IonicSdk(signer, chainIdToConfig[mode.chainId]);
-  console.log("signer: ", await sdk.signer.getAddress());
-  Object.entries(sdk.contracts).map((contract) => {
-    console.log("name: ", contract[0]);
-    console.log("contract: ", contract[1].address);
+  const publicClient = createPublicClient({ transport: http(), chain: base });
+  const data = encodeFunctionData({
+    abi: cToken,
+    functionName: "mint",
+    args: [parseEther("0.1")]
   });
+  const tx = await publicClient.prepareTransactionRequest({
+    account: "0x5A9e792143bf2708b4765C144451dCa54f559a19",
+    data,
+    to: "0x49420311B518f3d0c94e897592014de53831cfA3"
+  });
+  console.log("tx", tx);
 };
 
 run()

@@ -26,6 +26,366 @@
     "AuthoritiesRegistry_Proxy": {
       "address": "0xC3cEc17c135d3C5d6BadC284AFF08f396447DaaC"
     },
+    "BribeRewards_0x00626ad5300653549c71f5472C0EEe3Dff76587f": {
+      "address": "0xC8390fAA72924E4be5Baa4801ddd46b8eB368E4f"
+    },
+    "BribeRewards_0x00626ad5300653549c71f5472C0EEe3Dff76587f_Implementation": {
+      "address": "0xE2D34A0607e39CB1273f07CA43686416E697aF88"
+    },
+    "BribeRewards_0x00626ad5300653549c71f5472C0EEe3Dff76587f_Proxy": {
+      "address": "0xC8390fAA72924E4be5Baa4801ddd46b8eB368E4f"
+    },
+    "BribeRewards_0x077345467Df20429A34C05A84337fb416B17F86d": {
+      "address": "0xF8c8d67327127BC8CdA98FA8f5C39202dE40e889"
+    },
+    "BribeRewards_0x077345467Df20429A34C05A84337fb416B17F86d_Implementation": {
+      "address": "0x12daB6B398D9b645c8Fae77ad20E546C8979b96F"
+    },
+    "BribeRewards_0x077345467Df20429A34C05A84337fb416B17F86d_Proxy": {
+      "address": "0xF8c8d67327127BC8CdA98FA8f5C39202dE40e889"
+    },
+    "BribeRewards_0x098100F2a25BdF4Fc1912d19FcA7851fbB8B06a6": {
+      "address": "0xE3a82B7Aa9e18B3A64f41370701F11C27aD33b38"
+    },
+    "BribeRewards_0x098100F2a25BdF4Fc1912d19FcA7851fbB8B06a6_Implementation": {
+      "address": "0xDCCe70D7F5eEc4472BE51d94EB90039c87312F33"
+    },
+    "BribeRewards_0x098100F2a25BdF4Fc1912d19FcA7851fbB8B06a6_Proxy": {
+      "address": "0xE3a82B7Aa9e18B3A64f41370701F11C27aD33b38"
+    },
+    "BribeRewards_0x0A047265AEf47269b2CF703dA8F3BE8e567A3Fb1": {
+      "address": "0x488fa442A6b953cAE4756619d94658a0c06eA567"
+    },
+    "BribeRewards_0x0A047265AEf47269b2CF703dA8F3BE8e567A3Fb1_Implementation": {
+      "address": "0x7e6D5f59CBc8c3A5745E10DcAd2419e12294a245"
+    },
+    "BribeRewards_0x0A047265AEf47269b2CF703dA8F3BE8e567A3Fb1_Proxy": {
+      "address": "0x488fa442A6b953cAE4756619d94658a0c06eA567"
+    },
+    "BribeRewards_0x0A7860AB7E72aC34e030B00849099B9772a673aE": {
+      "address": "0xaBcE039f1FBd4ca1Aa90aC7628321067e41Fb16A"
+    },
+    "BribeRewards_0x0A7860AB7E72aC34e030B00849099B9772a673aE_Implementation": {
+      "address": "0x9ba805334C8A1d07824C00f25C9b3d9A413ab2c4"
+    },
+    "BribeRewards_0x0A7860AB7E72aC34e030B00849099B9772a673aE_Proxy": {
+      "address": "0xaBcE039f1FBd4ca1Aa90aC7628321067e41Fb16A"
+    },
+    "BribeRewards_0x0a5f511bDdf264c8B8A6c0E2e6EFfBdA808a4D4f": {
+      "address": "0xEB5e754dFCddA2860fEc9D5ecD6e5B3bA06dA7f9"
+    },
+    "BribeRewards_0x0a5f511bDdf264c8B8A6c0E2e6EFfBdA808a4D4f_Implementation": {
+      "address": "0x7aE816A452A277236405E2400ebd4B5C82D4E211"
+    },
+    "BribeRewards_0x0a5f511bDdf264c8B8A6c0E2e6EFfBdA808a4D4f_Proxy": {
+      "address": "0xEB5e754dFCddA2860fEc9D5ecD6e5B3bA06dA7f9"
+    },
+    "BribeRewards_0x0d262617b451A80fCb684027cF9837A09FaC325d": {
+      "address": "0x220493AC0030a24F572AAbacbb448E8f745d0aB1"
+    },
+    "BribeRewards_0x0d262617b451A80fCb684027cF9837A09FaC325d_Implementation": {
+      "address": "0x707a1514BD31179347c578dcD425048e083Cd549"
+    },
+    "BribeRewards_0x0d262617b451A80fCb684027cF9837A09FaC325d_Proxy": {
+      "address": "0x220493AC0030a24F572AAbacbb448E8f745d0aB1"
+    },
+    "BribeRewards_0x116081bbC59ef9828a5443253fF602C0EA2d1274": {
+      "address": "0xdf0e282C820Dc28Ad9C7B608FCB6191ABDe882ff"
+    },
+    "BribeRewards_0x116081bbC59ef9828a5443253fF602C0EA2d1274_Implementation": {
+      "address": "0xA90F1041b3269eeeDdC847D7653B344623806F86"
+    },
+    "BribeRewards_0x116081bbC59ef9828a5443253fF602C0EA2d1274_Proxy": {
+      "address": "0xdf0e282C820Dc28Ad9C7B608FCB6191ABDe882ff"
+    },
+    "BribeRewards_0x16232Cd14316377fACF9CA2C635b632DDfEa9BB9": {
+      "address": "0xcEB871f37Eef41078f0F97F0B701b22955d02414"
+    },
+    "BribeRewards_0x16232Cd14316377fACF9CA2C635b632DDfEa9BB9_Implementation": {
+      "address": "0x25187aF8c8Ae3CeB67393f720DAD118331ab595B"
+    },
+    "BribeRewards_0x16232Cd14316377fACF9CA2C635b632DDfEa9BB9_Proxy": {
+      "address": "0xcEB871f37Eef41078f0F97F0B701b22955d02414"
+    },
+    "BribeRewards_0x17b567B4366fB1F0809C8fD05Cccfa7fb684f12A": {
+      "address": "0x21384A0434E1501E190d74550d8B0B175e0244B3"
+    },
+    "BribeRewards_0x17b567B4366fB1F0809C8fD05Cccfa7fb684f12A_Implementation": {
+      "address": "0xb3D99b9287DCacD59BAdE0A30bB7F11444a6B33D"
+    },
+    "BribeRewards_0x17b567B4366fB1F0809C8fD05Cccfa7fb684f12A_Proxy": {
+      "address": "0x21384A0434E1501E190d74550d8B0B175e0244B3"
+    },
+    "BribeRewards_0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4": {
+      "address": "0x69f380B026A64a909767C1dD18fB92f8299ab4f9"
+    },
+    "BribeRewards_0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4_Implementation": {
+      "address": "0xe5968baC664d53407059AF796f349803dB2f55aa"
+    },
+    "BribeRewards_0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4_Proxy": {
+      "address": "0x69f380B026A64a909767C1dD18fB92f8299ab4f9"
+    },
+    "BribeRewards_0x2393Ca5ACbb1A709B038ADf3DeC75871114Fe3BD": {
+      "address": "0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f"
+    },
+    "BribeRewards_0x2393Ca5ACbb1A709B038ADf3DeC75871114Fe3BD_Implementation": {
+      "address": "0x2798Db41Cf767F78BCc0Fba884c9536698459F2D"
+    },
+    "BribeRewards_0x2393Ca5ACbb1A709B038ADf3DeC75871114Fe3BD_Proxy": {
+      "address": "0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f"
+    },
+    "BribeRewards_0x268a6dC79883Ae61b51feeD1799a99dB1FA0Aa34": {
+      "address": "0x154a30802Fd208d1255A49592fc03864bD182D73"
+    },
+    "BribeRewards_0x268a6dC79883Ae61b51feeD1799a99dB1FA0Aa34_Implementation": {
+      "address": "0xC2fc5f2B5321A3a0bf24F05920F3Dfef16A5D7CA"
+    },
+    "BribeRewards_0x268a6dC79883Ae61b51feeD1799a99dB1FA0Aa34_Proxy": {
+      "address": "0x154a30802Fd208d1255A49592fc03864bD182D73"
+    },
+    "BribeRewards_0x34FAF91C6967867fF8fc9FD50EaA20FfF28c392E": {
+      "address": "0xd9513b033ED3eC4F5bDECcCD1cCAC1285C5DA902"
+    },
+    "BribeRewards_0x34FAF91C6967867fF8fc9FD50EaA20FfF28c392E_Implementation": {
+      "address": "0x030B1A2ab2a68ceF5e901886e548E8b7a3d00af6"
+    },
+    "BribeRewards_0x34FAF91C6967867fF8fc9FD50EaA20FfF28c392E_Proxy": {
+      "address": "0xd9513b033ED3eC4F5bDECcCD1cCAC1285C5DA902"
+    },
+    "BribeRewards_0x35a9Eb388AD60fB51606df19045C98C79d999db4": {
+      "address": "0xbD399f53860A4703888BE1d0568634A92C555635"
+    },
+    "BribeRewards_0x35a9Eb388AD60fB51606df19045C98C79d999db4_Implementation": {
+      "address": "0xa84B4CDF7553CCAC6cbbBb18534c6f13f4AD7BF5"
+    },
+    "BribeRewards_0x35a9Eb388AD60fB51606df19045C98C79d999db4_Proxy": {
+      "address": "0xbD399f53860A4703888BE1d0568634A92C555635"
+    },
+    "BribeRewards_0x40D2405b39314E6610b04dac3Ebf9A666b167c77": {
+      "address": "0x7AeffbBbaA543586BCd25ECB4bA8119fc482520f"
+    },
+    "BribeRewards_0x40D2405b39314E6610b04dac3Ebf9A666b167c77_Implementation": {
+      "address": "0xbb39470AD959665d731d241245D10905BE96B4aC"
+    },
+    "BribeRewards_0x40D2405b39314E6610b04dac3Ebf9A666b167c77_Proxy": {
+      "address": "0x7AeffbBbaA543586BCd25ECB4bA8119fc482520f"
+    },
+    "BribeRewards_0x4e036F071E256b233Eb3cD91996e288800e72BD9": {
+      "address": "0xAd4DE67285Fa0A2Ce94a5fA9680C940163459716"
+    },
+    "BribeRewards_0x4e036F071E256b233Eb3cD91996e288800e72BD9_Implementation": {
+      "address": "0x8CbbC22D5b5036d8E96dAcfC3E1CcfE484763648"
+    },
+    "BribeRewards_0x4e036F071E256b233Eb3cD91996e288800e72BD9_Proxy": {
+      "address": "0xAd4DE67285Fa0A2Ce94a5fA9680C940163459716"
+    },
+    "BribeRewards_0x54A1CE2F4767250c31c77401E26e9E6a3d2488a6": {
+      "address": "0x805Cf4F692062Ba4D9fe6793176E0A039A341232"
+    },
+    "BribeRewards_0x54A1CE2F4767250c31c77401E26e9E6a3d2488a6_Implementation": {
+      "address": "0x07a200F0Aaf26169061275eF5E7F8b1C883963c2"
+    },
+    "BribeRewards_0x54A1CE2F4767250c31c77401E26e9E6a3d2488a6_Proxy": {
+      "address": "0x805Cf4F692062Ba4D9fe6793176E0A039A341232"
+    },
+    "BribeRewards_0x59aFE660D15aFa776E44B304e2d3cAC9426139C8": {
+      "address": "0xa5cC08421efcbF7c139FEc3679e489B6aC9BEeCD"
+    },
+    "BribeRewards_0x59aFE660D15aFa776E44B304e2d3cAC9426139C8_Implementation": {
+      "address": "0x36ed47D6B56dc3b1d121373C68623E7650DD18Ff"
+    },
+    "BribeRewards_0x59aFE660D15aFa776E44B304e2d3cAC9426139C8_Proxy": {
+      "address": "0xa5cC08421efcbF7c139FEc3679e489B6aC9BEeCD"
+    },
+    "BribeRewards_0x766608751C06417214CE6aE2cE1D33529552c795": {
+      "address": "0x639A5072401caaf58f6037d467C9CE90256Fee55"
+    },
+    "BribeRewards_0x766608751C06417214CE6aE2cE1D33529552c795_Implementation": {
+      "address": "0xcA7C9eC1E5599361E9BF6C8ABc497347428E6538"
+    },
+    "BribeRewards_0x766608751C06417214CE6aE2cE1D33529552c795_Proxy": {
+      "address": "0x639A5072401caaf58f6037d467C9CE90256Fee55"
+    },
+    "BribeRewards_0x78234BDEcB57f4286A156a34E71FFf20df3D40D6": {
+      "address": "0x2E65b4124237e0C2450Fe93cE4315eacf9b40991"
+    },
+    "BribeRewards_0x78234BDEcB57f4286A156a34E71FFf20df3D40D6_Implementation": {
+      "address": "0x613674F3f9876F950C33189493a31371C9C6d44a"
+    },
+    "BribeRewards_0x78234BDEcB57f4286A156a34E71FFf20df3D40D6_Proxy": {
+      "address": "0x2E65b4124237e0C2450Fe93cE4315eacf9b40991"
+    },
+    "BribeRewards_0x81078080a054015bea7Abb35ec9c18cDb08b099E": {
+      "address": "0x13CE157Ecca1a00739787C4AC4F415BdD2c363fA"
+    },
+    "BribeRewards_0x81078080a054015bea7Abb35ec9c18cDb08b099E_Implementation": {
+      "address": "0x91a763F8aF024122bc4E4D69425707af9bbaEDf5"
+    },
+    "BribeRewards_0x81078080a054015bea7Abb35ec9c18cDb08b099E_Proxy": {
+      "address": "0x13CE157Ecca1a00739787C4AC4F415BdD2c363fA"
+    },
+    "BribeRewards_0x86a1E25cf68CB0e6F63B11B3c900Fb706aD735e8": {
+      "address": "0x2b1C33f8ac8D6ffe95f028F567F7aA1C669e7757"
+    },
+    "BribeRewards_0x86a1E25cf68CB0e6F63B11B3c900Fb706aD735e8_Implementation": {
+      "address": "0x9dc8AD195B2927BF91A93B85c30F08365Ea7b412"
+    },
+    "BribeRewards_0x86a1E25cf68CB0e6F63B11B3c900Fb706aD735e8_Proxy": {
+      "address": "0x2b1C33f8ac8D6ffe95f028F567F7aA1C669e7757"
+    },
+    "BribeRewards_0x8Ec87cC92b732bFa25cE6e9383b649C72d850532": {
+      "address": "0x36BddCECD75Bfd9762BfA3A598B103512100A27c"
+    },
+    "BribeRewards_0x8Ec87cC92b732bFa25cE6e9383b649C72d850532_Implementation": {
+      "address": "0xa458Fa6C5CB5cB6684E08dDede8353eFe94F7c63"
+    },
+    "BribeRewards_0x8Ec87cC92b732bFa25cE6e9383b649C72d850532_Proxy": {
+      "address": "0x36BddCECD75Bfd9762BfA3A598B103512100A27c"
+    },
+    "BribeRewards_0x9E8D3cE2725Fb02390bB3856DeA86d7Dd28a0480": {
+      "address": "0xBc8db270bE1De1275d1a73ADCB6d4F3Cd52a9a54"
+    },
+    "BribeRewards_0x9E8D3cE2725Fb02390bB3856DeA86d7Dd28a0480_Implementation": {
+      "address": "0xA58fa9C7FA531F40fbB39C7081b4F8A07D628D28"
+    },
+    "BribeRewards_0x9E8D3cE2725Fb02390bB3856DeA86d7Dd28a0480_Proxy": {
+      "address": "0xBc8db270bE1De1275d1a73ADCB6d4F3Cd52a9a54"
+    },
+    "BribeRewards_0xA2e729033eaab424fE309C159a52C8ec5f06F4Df": {
+      "address": "0x6e752fFBF784a2da17345cA5E0AD39905fFC428c"
+    },
+    "BribeRewards_0xA2e729033eaab424fE309C159a52C8ec5f06F4Df_Implementation": {
+      "address": "0xf6aAf0EeA4a79C5DaA5Db5C6eadCDbeC2b5bbb62"
+    },
+    "BribeRewards_0xA2e729033eaab424fE309C159a52C8ec5f06F4Df_Proxy": {
+      "address": "0x6e752fFBF784a2da17345cA5E0AD39905fFC428c"
+    },
+    "BribeRewards_0xA4cb3Ec91444c2C00F210Bb0DF2152b8175422A9": {
+      "address": "0x57F87ef8Ab73805565B7D97A518cc2A3a079E3A4"
+    },
+    "BribeRewards_0xA4cb3Ec91444c2C00F210Bb0DF2152b8175422A9_Implementation": {
+      "address": "0xF80be59beeD04BA31DD94f75aECb480540AbB129"
+    },
+    "BribeRewards_0xA4cb3Ec91444c2C00F210Bb0DF2152b8175422A9_Proxy": {
+      "address": "0x57F87ef8Ab73805565B7D97A518cc2A3a079E3A4"
+    },
+    "BribeRewards_0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5": {
+      "address": "0x9ec895A1a054024FaA9d2DA5441BA17B0A9dfD73"
+    },
+    "BribeRewards_0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5_Implementation": {
+      "address": "0xd1114198CC058A39f6EeFED037ab5DB997fc9e63"
+    },
+    "BribeRewards_0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5_Proxy": {
+      "address": "0x9ec895A1a054024FaA9d2DA5441BA17B0A9dfD73"
+    },
+    "BribeRewards_0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18": {
+      "address": "0x75151301BadA61a7d540A8dfa6C3aa2BaB9ea0B0"
+    },
+    "BribeRewards_0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18_Implementation": {
+      "address": "0xbb4D7f5FB328E467316afD5E8D6f6c768D312244"
+    },
+    "BribeRewards_0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18_Proxy": {
+      "address": "0x75151301BadA61a7d540A8dfa6C3aa2BaB9ea0B0"
+    },
+    "BribeRewards_0xE546d9BFa50De74029623c3F6F90C7Dc885E34EA": {
+      "address": "0xa81737b8141f4af508bACdF739cE2A5A30C38D42"
+    },
+    "BribeRewards_0xE546d9BFa50De74029623c3F6F90C7Dc885E34EA_Implementation": {
+      "address": "0xBdDDe3839Fa376D6516F2332b661D7f3fC96cF4b"
+    },
+    "BribeRewards_0xE546d9BFa50De74029623c3F6F90C7Dc885E34EA_Proxy": {
+      "address": "0xa81737b8141f4af508bACdF739cE2A5A30C38D42"
+    },
+    "BribeRewards_0xb7edC0d7e000cBAB5FE73d727A190DF39ab76912": {
+      "address": "0x7F927Fd18303A435Fa21662f2C34Ef93c07A71Fd"
+    },
+    "BribeRewards_0xb7edC0d7e000cBAB5FE73d727A190DF39ab76912_Implementation": {
+      "address": "0x7507528eaE0DB5131Df420d1993F3620c8927842"
+    },
+    "BribeRewards_0xb7edC0d7e000cBAB5FE73d727A190DF39ab76912_Proxy": {
+      "address": "0x7F927Fd18303A435Fa21662f2C34Ef93c07A71Fd"
+    },
+    "BribeRewards_0xbB69e2D41c0f935dFb4cc16B44aa4F1F28079E3b": {
+      "address": "0x1BaC4d5aD20dDe8C4FD1fe0885f87dA3A8DFFE22"
+    },
+    "BribeRewards_0xbB69e2D41c0f935dFb4cc16B44aa4F1F28079E3b_Implementation": {
+      "address": "0x9fC071e6A52fEfcab61752D488F722B6539e2Ac7"
+    },
+    "BribeRewards_0xbB69e2D41c0f935dFb4cc16B44aa4F1F28079E3b_Proxy": {
+      "address": "0x1BaC4d5aD20dDe8C4FD1fe0885f87dA3A8DFFE22"
+    },
+    "BribeRewards_0xc9055938D2B198395db778842414d557cB61cb6C": {
+      "address": "0x459AeC2b73a6EF3eAEE29134DF6405C41Eb5551a"
+    },
+    "BribeRewards_0xc9055938D2B198395db778842414d557cB61cb6C_Implementation": {
+      "address": "0xd58a467Da7cd1f1Fe9cf37F1e23B554115352840"
+    },
+    "BribeRewards_0xc9055938D2B198395db778842414d557cB61cb6C_Proxy": {
+      "address": "0x459AeC2b73a6EF3eAEE29134DF6405C41Eb5551a"
+    },
+    "BribeRewards_0xd2B4d357fecB763832B26b9edB44aE2954E6Ca2d": {
+      "address": "0x35cD5c64AD70EB1Fb57d83750975D44AFE874ab6"
+    },
+    "BribeRewards_0xd2B4d357fecB763832B26b9edB44aE2954E6Ca2d_Implementation": {
+      "address": "0x6b6f728Ab4D874dbD63b2c7306eAF4CD40728550"
+    },
+    "BribeRewards_0xd2B4d357fecB763832B26b9edB44aE2954E6Ca2d_Proxy": {
+      "address": "0x35cD5c64AD70EB1Fb57d83750975D44AFE874ab6"
+    },
+    "BribeRewards_0xd496fa43090549b29673120525eC379d8e1692BC": {
+      "address": "0xB68cE41A16BC25AC806589A05C965Ef8cbED88F1"
+    },
+    "BribeRewards_0xd496fa43090549b29673120525eC379d8e1692BC_Implementation": {
+      "address": "0x9f5DF3d9BfFc816fAF3E08359A318ACcB009FB23"
+    },
+    "BribeRewards_0xd496fa43090549b29673120525eC379d8e1692BC_Proxy": {
+      "address": "0xB68cE41A16BC25AC806589A05C965Ef8cbED88F1"
+    },
+    "BribeRewards_0xd85d895B32A233a16f99f1E5014598150c66c550": {
+      "address": "0x9c5330830D57B48DB7C3F8578ddCB28979492FBA"
+    },
+    "BribeRewards_0xd85d895B32A233a16f99f1E5014598150c66c550_Implementation": {
+      "address": "0x0e1Af910f1c6C232B90d40490D972E79a0F861e5"
+    },
+    "BribeRewards_0xd85d895B32A233a16f99f1E5014598150c66c550_Proxy": {
+      "address": "0x9c5330830D57B48DB7C3F8578ddCB28979492FBA"
+    },
+    "BribeRewards_0xdab021e6AC3F40A82085B356513BFC6a8fFe262B": {
+      "address": "0x2824878a54db92117C4084AE7F264B529F1AE581"
+    },
+    "BribeRewards_0xdab021e6AC3F40A82085B356513BFC6a8fFe262B_Implementation": {
+      "address": "0xE86b15A633b7Ee1fa40B4605a9b16bc69723717D"
+    },
+    "BribeRewards_0xdab021e6AC3F40A82085B356513BFC6a8fFe262B_Proxy": {
+      "address": "0x2824878a54db92117C4084AE7F264B529F1AE581"
+    },
+    "BribeRewards_0xf787E39283cdd5DA78a4E3567F7dE88D5Baa50Cd": {
+      "address": "0xa78261e531b18EB265300B76d1CA38Efc8033EF5"
+    },
+    "BribeRewards_0xf787E39283cdd5DA78a4E3567F7dE88D5Baa50Cd_Implementation": {
+      "address": "0x953b89ff669DE2c3EA947B29F5DE7cb3d4f6eB0d"
+    },
+    "BribeRewards_0xf787E39283cdd5DA78a4E3567F7dE88D5Baa50Cd_Proxy": {
+      "address": "0xa78261e531b18EB265300B76d1CA38Efc8033EF5"
+    },
+    "BribeRewards_0xfc8c9853E14f103ab38De127c807bE48eF2E41f9": {
+      "address": "0x32687C77535B2317023A3C11E09154c8CF3b2115"
+    },
+    "BribeRewards_0xfc8c9853E14f103ab38De127c807bE48eF2E41f9_Implementation": {
+      "address": "0x1d96164D0Af3f4791E849891898FdAcB22657441"
+    },
+    "BribeRewards_0xfc8c9853E14f103ab38De127c807bE48eF2E41f9_Proxy": {
+      "address": "0x32687C77535B2317023A3C11E09154c8CF3b2115"
+    },
+    "BribeRewards_0xff9B28261D7f3BE5a93a1678Fe147a2a8b0e2EFb": {
+      "address": "0x4A5C33694Ae0036e41B2631760D60c10685f6783"
+    },
+    "BribeRewards_0xff9B28261D7f3BE5a93a1678Fe147a2a8b0e2EFb_Implementation": {
+      "address": "0x43d3Dd634c21cFcE07850B7d550318cf69800350"
+    },
+    "BribeRewards_0xff9B28261D7f3BE5a93a1678Fe147a2a8b0e2EFb_Proxy": {
+      "address": "0x4A5C33694Ae0036e41B2631760D60c10685f6783"
+    },
     "CErc20Delegate": {
       "address": "0x0bf35374FDDFF73EB48A78328e916fb97a8e6c75"
     },
@@ -84,7 +444,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83"
+      "address": "0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
@@ -94,6 +454,15 @@
     },
     "DiscouragingJumpRateModel_20": {
       "address": "0x2e06C354dd5f4674Fa99d04E8b5Df6150AE0595E"
+    },
+    "EmissionsManager": {
+      "address": "0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7"
+    },
+    "EmissionsManager_Implementation": {
+      "address": "0x78af941B145280eE338Fe12AE0fAF22Bf227E165"
+    },
+    "EmissionsManager_Proxy": {
+      "address": "0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7"
     },
     "FeeDistributor": {
       "address": "0x8ea3fc79D9E463464C5159578d38870b770f6E57"
@@ -122,6 +491,15 @@
     "IonicFlywheelBorrow_Borrow_ION_epoch5_Proxy": {
       "address": "0xa80ff99c82d55dFE893867E25C5c77276DFb23C5"
     },
+    "IonicFlywheelBorrow_Borrow_ION_epoch6": {
+      "address": "0xE135500Cc111eEd663b49394E378d8bdCe86c540"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_epoch6_Implementation": {
+      "address": "0x319aac402f9E18cFC063aD1030A55E6B4F922E41"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_epoch6_Proxy": {
+      "address": "0xE135500Cc111eEd663b49394E378d8bdCe86c540"
+    },
     "IonicFlywheelBorrow_ION": {
       "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
     },
@@ -134,6 +512,9 @@
     "IonicFlywheelDynamicRewards_Borrow_ION_epoch5": {
       "address": "0x02f606ae6016af2C06A4EE50129F3E24c520d11F"
     },
+    "IonicFlywheelDynamicRewards_Borrow_ION_epoch6": {
+      "address": "0x392e3F031ACB895DE25983EFd860E0d10313B15a"
+    },
     "IonicFlywheelDynamicRewards_ION": {
       "address": "0xdb93567451Cc2D785fAB5744a07dbF0C7a90415f"
     },
@@ -142,6 +523,9 @@
     },
     "IonicFlywheelDynamicRewards_ION_epoch5": {
       "address": "0x23deC9C9a5dF017bE2C06a841b85B711AeF6Fd88"
+    },
+    "IonicFlywheelDynamicRewards_ION_epoch6": {
+      "address": "0xc03d82000B52177467380C7ffc643a9Ea94fFbC7"
     },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0x4a003b110162C86fE10cD39822c782eb08C2549C"
@@ -175,6 +559,15 @@
     },
     "IonicFlywheel_ION_epoch5_Proxy": {
       "address": "0x1A118B250ED0Ba690f03877AC46519A4b66f1D44"
+    },
+    "IonicFlywheel_ION_epoch6": {
+      "address": "0xfB30366C781a913b40c96617e380F18071761F9F"
+    },
+    "IonicFlywheel_ION_epoch6_Implementation": {
+      "address": "0x1b47365aCd1d1d44F200cbc651716Ca796462f8D"
+    },
+    "IonicFlywheel_ION_epoch6_Proxy": {
+      "address": "0xfB30366C781a913b40c96617e380F18071761F9F"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -293,6 +686,375 @@
     "RedstoneAdapterPriceOracleWrsETH": {
       "address": "0xE3643FD41095658cDF063e15f5cb30A5738979e8"
     },
+    "RewardAccumulator": {
+      "address": "0x420798c015a9dB1e67E6c26EC7e202Cc5B0818C6"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_0": {
+      "address": "0x00626ad5300653549c71f5472C0EEe3Dff76587f"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_0_Implementation": {
+      "address": "0x9eaFd1767d18E4f324d9A95dEf074eC6d1016204"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_0_Proxy": {
+      "address": "0x00626ad5300653549c71f5472C0EEe3Dff76587f"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_1": {
+      "address": "0xfc8c9853E14f103ab38De127c807bE48eF2E41f9"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_1_Implementation": {
+      "address": "0x401e9c1f3AC63bFDEc4176658604eFBD4FefF5D0"
+    },
+    "RewardAccumulator_0x0aCC14dcFf35b731A3f9Bd70DCBa3c97C44EdBA0_1_Proxy": {
+      "address": "0xfc8c9853E14f103ab38De127c807bE48eF2E41f9"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_0": {
+      "address": "0xf787E39283cdd5DA78a4E3567F7dE88D5Baa50Cd"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_0_Implementation": {
+      "address": "0x476B3169b858e32a4819bB541Dc6716B9D026Ab3"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_0_Proxy": {
+      "address": "0xf787E39283cdd5DA78a4E3567F7dE88D5Baa50Cd"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_1": {
+      "address": "0x098100F2a25BdF4Fc1912d19FcA7851fbB8B06a6"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_1_Implementation": {
+      "address": "0xb99A54b0FE0162d03077D8b0777893C738165294"
+    },
+    "RewardAccumulator_0x19F245782b1258cf3e11Eda25784A378cC18c108_1_Proxy": {
+      "address": "0x098100F2a25BdF4Fc1912d19FcA7851fbB8B06a6"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_0": {
+      "address": "0xd85d895B32A233a16f99f1E5014598150c66c550"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_0_Implementation": {
+      "address": "0x8C79960f7e6caF803211d77F5aaC1f072942537e"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_0_Proxy": {
+      "address": "0xd85d895B32A233a16f99f1E5014598150c66c550"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_1": {
+      "address": "0x9E8D3cE2725Fb02390bB3856DeA86d7Dd28a0480"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_1_Implementation": {
+      "address": "0xB284feED520B1703a6E25ED7C9E23bB848924a57"
+    },
+    "RewardAccumulator_0x2BE717340023C9e14C1Bb12cb3ecBcfd3c3fB038_1_Proxy": {
+      "address": "0x9E8D3cE2725Fb02390bB3856DeA86d7Dd28a0480"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_0": {
+      "address": "0x81078080a054015bea7Abb35ec9c18cDb08b099E"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_0_Implementation": {
+      "address": "0x831f62492009a032E0b18D38f81126A4620707C6"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_0_Proxy": {
+      "address": "0x81078080a054015bea7Abb35ec9c18cDb08b099E"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_1": {
+      "address": "0x4e036F071E256b233Eb3cD91996e288800e72BD9"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_1_Implementation": {
+      "address": "0xEc2F52B895f50a8B83eE11E995038a25F34213FE"
+    },
+    "RewardAccumulator_0x3120B4907851cc9D780eef9aF88ae4d5360175Fd_1_Proxy": {
+      "address": "0x4e036F071E256b233Eb3cD91996e288800e72BD9"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_0": {
+      "address": "0x34FAF91C6967867fF8fc9FD50EaA20FfF28c392E"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_0_Implementation": {
+      "address": "0x9E0fB485eE537a2345849A522F800A52C4A697e6"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_0_Proxy": {
+      "address": "0x34FAF91C6967867fF8fc9FD50EaA20FfF28c392E"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_1": {
+      "address": "0x17b567B4366fB1F0809C8fD05Cccfa7fb684f12A"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_1_Implementation": {
+      "address": "0x2Ab02bcAbEAAd787ea2A82e8B362D4E34Ef6B1a5"
+    },
+    "RewardAccumulator_0x4341620757Bee7EB4553912FaFC963e59C949147_1_Proxy": {
+      "address": "0x17b567B4366fB1F0809C8fD05Cccfa7fb684f12A"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_0": {
+      "address": "0x16232Cd14316377fACF9CA2C635b632DDfEa9BB9"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_0_Implementation": {
+      "address": "0xB356fe0C375F982fe5C13282EC534F053E38Ef54"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_0_Proxy": {
+      "address": "0x16232Cd14316377fACF9CA2C635b632DDfEa9BB9"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_1": {
+      "address": "0x86a1E25cf68CB0e6F63B11B3c900Fb706aD735e8"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_1_Implementation": {
+      "address": "0x4978C74fD33401B9Cfa31fA6B2fb3aE330bD2cF0"
+    },
+    "RewardAccumulator_0x4417A9B33bA8dD6fC9dfd8274B401AFd42299AA3_1_Proxy": {
+      "address": "0x86a1E25cf68CB0e6F63B11B3c900Fb706aD735e8"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_0": {
+      "address": "0xc9055938D2B198395db778842414d557cB61cb6C"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_0_Implementation": {
+      "address": "0x33E61DAa3C2c9b2d73805A88A07f44285f1d6c13"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_0_Proxy": {
+      "address": "0xc9055938D2B198395db778842414d557cB61cb6C"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_1": {
+      "address": "0xdab021e6AC3F40A82085B356513BFC6a8fFe262B"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_1_Implementation": {
+      "address": "0x4c490951059b7679c3afD453f85E5341E3844284"
+    },
+    "RewardAccumulator_0x48c234AB217f077dF3C7f541b67D90436cf59b27_1_Proxy": {
+      "address": "0xdab021e6AC3F40A82085B356513BFC6a8fFe262B"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_0": {
+      "address": "0x40D2405b39314E6610b04dac3Ebf9A666b167c77"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_0_Implementation": {
+      "address": "0xAE8Dd190f1C8b8e49b0F86d595D65eBBb5BaeE02"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_0_Proxy": {
+      "address": "0x40D2405b39314E6610b04dac3Ebf9A666b167c77"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_1": {
+      "address": "0x766608751C06417214CE6aE2cE1D33529552c795"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_1_Implementation": {
+      "address": "0xFF5Ae8B4573C967b364032147d9C46b5AA205b17"
+    },
+    "RewardAccumulator_0x49950319aBE7CE5c3A6C90698381b45989C99b46_1_Proxy": {
+      "address": "0x766608751C06417214CE6aE2cE1D33529552c795"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_0": {
+      "address": "0x35a9Eb388AD60fB51606df19045C98C79d999db4"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_0_Implementation": {
+      "address": "0x2a31bd93Ca272c690032D2BDEe53170EcEA789Dd"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_0_Proxy": {
+      "address": "0x35a9Eb388AD60fB51606df19045C98C79d999db4"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_1": {
+      "address": "0x268a6dC79883Ae61b51feeD1799a99dB1FA0Aa34"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_1_Implementation": {
+      "address": "0x5faDd76E3eC1Ed3526b6b8DF034Ab95C4F84BbC8"
+    },
+    "RewardAccumulator_0x5158ae44C1351682B3DC046541Edf84BF28c8ca4_1_Proxy": {
+      "address": "0x268a6dC79883Ae61b51feeD1799a99dB1FA0Aa34"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_0": {
+      "address": "0x8Ec87cC92b732bFa25cE6e9383b649C72d850532"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_0_Implementation": {
+      "address": "0x98A569430728B6272677798B966be330BeF018a1"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_0_Proxy": {
+      "address": "0x8Ec87cC92b732bFa25cE6e9383b649C72d850532"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_1": {
+      "address": "0x78234BDEcB57f4286A156a34E71FFf20df3D40D6"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_1_Implementation": {
+      "address": "0xc6B7b8882e808Ee940B5669149b26bBEd8a296fD"
+    },
+    "RewardAccumulator_0x59e710215d45F584f44c0FEe83DA6d43D762D857_1_Proxy": {
+      "address": "0x78234BDEcB57f4286A156a34E71FFf20df3D40D6"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_0": {
+      "address": "0x077345467Df20429A34C05A84337fb416B17F86d"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_0_Implementation": {
+      "address": "0x65BD5D2cE7335AE183a44A4BA1050615786c866E"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_0_Proxy": {
+      "address": "0x077345467Df20429A34C05A84337fb416B17F86d"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_1": {
+      "address": "0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_1_Implementation": {
+      "address": "0xD10AB90985ffDC5bA20C33fF49A149C8a761e5B9"
+    },
+    "RewardAccumulator_0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2_1_Proxy": {
+      "address": "0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_0": {
+      "address": "0x0d262617b451A80fCb684027cF9837A09FaC325d"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_0_Implementation": {
+      "address": "0xD601d74C484e5c2d057fFd0111a079fa0a44ad40"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_0_Proxy": {
+      "address": "0x0d262617b451A80fCb684027cF9837A09FaC325d"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_1": {
+      "address": "0xbB69e2D41c0f935dFb4cc16B44aa4F1F28079E3b"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_1_Implementation": {
+      "address": "0x7Eb561E4e35B7B38Dd3d0b240bE51C409C96939A"
+    },
+    "RewardAccumulator_0x94812F2eEa03A49869f95e1b5868C6f3206ee3D3_1_Proxy": {
+      "address": "0xbB69e2D41c0f935dFb4cc16B44aa4F1F28079E3b"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_0": {
+      "address": "0xA2e729033eaab424fE309C159a52C8ec5f06F4Df"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_0_Implementation": {
+      "address": "0x560775A142Cd84c61dAc834aE5800ECBd869432A"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_0_Proxy": {
+      "address": "0xA2e729033eaab424fE309C159a52C8ec5f06F4Df"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_1": {
+      "address": "0x0A047265AEf47269b2CF703dA8F3BE8e567A3Fb1"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_1_Implementation": {
+      "address": "0x9f6435B581cab85FC9553E8C958853D7Ab88eE59"
+    },
+    "RewardAccumulator_0x959FA710CCBb22c7Ce1e59Da82A247e686629310_1_Proxy": {
+      "address": "0x0A047265AEf47269b2CF703dA8F3BE8e567A3Fb1"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_0": {
+      "address": "0x59aFE660D15aFa776E44B304e2d3cAC9426139C8"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_0_Implementation": {
+      "address": "0xa55118db9989e075539F9AFeed2527D453168cB4"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_0_Proxy": {
+      "address": "0x59aFE660D15aFa776E44B304e2d3cAC9426139C8"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_1": {
+      "address": "0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_1_Implementation": {
+      "address": "0x49Acb8f9306F8853d91b8CE9F35F84A44AdA8271"
+    },
+    "RewardAccumulator_0x9a9072302B775FfBd3Db79a7766E75Cf82bcaC0A_1_Proxy": {
+      "address": "0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_0": {
+      "address": "0xE546d9BFa50De74029623c3F6F90C7Dc885E34EA"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_0_Implementation": {
+      "address": "0x0d73610FDD329aC6178A16B0C92ce81030E29851"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_0_Proxy": {
+      "address": "0xE546d9BFa50De74029623c3F6F90C7Dc885E34EA"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_1": {
+      "address": "0x116081bbC59ef9828a5443253fF602C0EA2d1274"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_1_Implementation": {
+      "address": "0x7cdDC890E3F8633baFa1465B5a7d3fCCC658d8Fb"
+    },
+    "RewardAccumulator_0xA0D844742B4abbbc43d8931a6Edb00C56325aA18_1_Proxy": {
+      "address": "0x116081bbC59ef9828a5443253fF602C0EA2d1274"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_0": {
+      "address": "0x0a5f511bDdf264c8B8A6c0E2e6EFfBdA808a4D4f"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_0_Implementation": {
+      "address": "0x503575C8B90c1984E15588ce4ab21e5246c80ae5"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_0_Proxy": {
+      "address": "0x0a5f511bDdf264c8B8A6c0E2e6EFfBdA808a4D4f"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_1": {
+      "address": "0x54A1CE2F4767250c31c77401E26e9E6a3d2488a6"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_1_Implementation": {
+      "address": "0x578590723EC8EbAaB0A6dd8e72BF6E1423f58fE3"
+    },
+    "RewardAccumulator_0xBb2B9780BDB4Ccc168947050dFfC3181503c4D18_1_Proxy": {
+      "address": "0x54A1CE2F4767250c31c77401E26e9E6a3d2488a6"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_0": {
+      "address": "0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_0_Implementation": {
+      "address": "0xb65562522e6D33D22d6B7f6E428a3b011104964D"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_0_Proxy": {
+      "address": "0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_1": {
+      "address": "0xd496fa43090549b29673120525eC379d8e1692BC"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_1_Implementation": {
+      "address": "0x34936c3710aC631EeEfcd4fDB6B6c55C41f4BBF6"
+    },
+    "RewardAccumulator_0xDb8eE6D1114021A94A045956BBeeCF35d13a30F2_1_Proxy": {
+      "address": "0xd496fa43090549b29673120525eC379d8e1692BC"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_0": {
+      "address": "0xff9B28261D7f3BE5a93a1678Fe147a2a8b0e2EFb"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_0_Implementation": {
+      "address": "0x54ec66372AFa769b8552C49FC8b1FCfaC1c7D7aa"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_0_Proxy": {
+      "address": "0xff9B28261D7f3BE5a93a1678Fe147a2a8b0e2EFb"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_1": {
+      "address": "0xA4cb3Ec91444c2C00F210Bb0DF2152b8175422A9"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_1_Implementation": {
+      "address": "0xe67b6476Dee7412e8d75aaa4340aF9Eef9799d15"
+    },
+    "RewardAccumulator_0xa48750877a83f7dEC11f722178C317b54a44d142_1_Proxy": {
+      "address": "0xA4cb3Ec91444c2C00F210Bb0DF2152b8175422A9"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_0": {
+      "address": "0xb7edC0d7e000cBAB5FE73d727A190DF39ab76912"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_0_Implementation": {
+      "address": "0xFE6e203b01a5249e6db53D9A417e563439eb5788"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_0_Proxy": {
+      "address": "0xb7edC0d7e000cBAB5FE73d727A190DF39ab76912"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_1": {
+      "address": "0x2393Ca5ACbb1A709B038ADf3DeC75871114Fe3BD"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_1_Implementation": {
+      "address": "0x34036Bd160a39529F9db3e84A02cD5c3a1BdD40E"
+    },
+    "RewardAccumulator_0xc53edEafb6D502DAEC5A7015D67936CEa0cD0F52_1_Proxy": {
+      "address": "0x2393Ca5ACbb1A709B038ADf3DeC75871114Fe3BD"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_0": {
+      "address": "0x0A7860AB7E72aC34e030B00849099B9772a673aE"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_0_Implementation": {
+      "address": "0x7c8a7c8959290D7B48De045EcdB7941ed7F23B10"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_0_Proxy": {
+      "address": "0x0A7860AB7E72aC34e030B00849099B9772a673aE"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_1": {
+      "address": "0xd2B4d357fecB763832B26b9edB44aE2954E6Ca2d"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_1_Implementation": {
+      "address": "0xC7b13c67C5A9739622A797D4ABC93f55cD8b7f54"
+    },
+    "RewardAccumulator_0xd70254C3baD29504789714A7c69d60Ec1127375C_1_Proxy": {
+      "address": "0xd2B4d357fecB763832B26b9edB44aE2954E6Ca2d"
+    },
+    "RewardAccumulator_Implementation": {
+      "address": "0x36b09B9AC0b7494ecC3c66da5F9781B0D7B24f71"
+    },
+    "RewardAccumulator_Proxy": {
+      "address": "0x420798c015a9dB1e67E6c26EC7e202Cc5B0818C6"
+    },
     "SimplePriceOracle": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
     },
@@ -301,6 +1063,9 @@
     },
     "SimplePriceOracle_Proxy": {
       "address": "0x5f0369AA93f36cA6a8B5ed7aAc47bf9e76086D03"
+    },
+    "UniswapLpTokenPriceOracle": {
+      "address": "0x7eD97d2A0C05C5835FC3120E433D2d49194bff4d"
     },
     "UniswapV2Liquidator": {
       "address": "0x586671b05A8Ab0E9F288207761808c15a24813ba"
@@ -313,6 +1078,30 @@
     },
     "VelodromeV2Liquidator": {
       "address": "0xA1aBF92ef468464962aF1CEFFB44631a6fFb33ec"
+    },
+    "Voter": {
+      "address": "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429"
+    },
+    "Voter_Implementation": {
+      "address": "0x8b4352493077D2B04b033DE83516Dc2d53d09931"
+    },
+    "Voter_Proxy": {
+      "address": "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429"
+    },
+    "veION": {
+      "address": "0x2Abd9eB57Fb7727138f4181B68DA0426B7fd47e8"
+    },
+    "veIONFirstExtension": {
+      "address": "0x3D62fc502CDe46e83417807B6bA10e305f9CE6f3"
+    },
+    "veIONSecondExtension": {
+      "address": "0x0AeC5eeA2378B9B9DBa01620dE80D562E230E894"
+    },
+    "veION_Implementation": {
+      "address": "0x33803B97F74397a3aE116693f577C58D9CC36d9A"
+    },
+    "veION_Proxy": {
+      "address": "0x2Abd9eB57Fb7727138f4181B68DA0426B7fd47e8"
     },
     "xERC20Hyperlane": {
       "address": "0xb81ab95BEE03ed655C8a99d484EFfCfE335319EB"
