@@ -578,7 +578,9 @@ contract veION is Ownable2StepUpgradeable, ERC721Upgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IveIONCore
   function setExtensions(address _veIONFirstExtension, address _veIONSecondExtension) external onlyOwner {
-    require(_veIONFirstExtension != address(0), "Invalid implementation address");
+    require(_veIONFirstExtension != address(0), "Invalid First Extension Address");
+    require(_veIONSecondExtension != address(0), "Invalid Second Extension Address");
+    require(_veIONFirstExtension != _veIONSecondExtension, "Submitted Identical Addresses");
     veIONFirstExtension = _veIONFirstExtension;
     veIONSecondExtension = _veIONSecondExtension;
     emit ExtensionsSet(_veIONFirstExtension, _veIONSecondExtension);
