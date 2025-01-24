@@ -87,6 +87,7 @@ export type MyVeionData = {
   };
   votingPower: string;
   enableClaim?: boolean;
+  votingPercentage: string;
 };
 
 export type DelegateVeionData = {

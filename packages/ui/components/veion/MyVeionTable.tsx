@@ -27,6 +27,7 @@ function MyVeionTable() {
   const {
     locks: { myLocks, isLoading }
   } = useVeIONContext();
+  console.log('myLocks', myLocks);
 
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
@@ -93,10 +94,10 @@ function MyVeionTable() {
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
-            {row.getValue('votingPower')}
+            {row.original.votingPower}
           </div>
           <div className="text-xs font-semibold text-white/40">
-            1.67% of all
+            {row.original.votingPercentage}
           </div>
         </div>
       )

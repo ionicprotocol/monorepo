@@ -31,6 +31,27 @@ function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
   }
 }
 
+const getLPRatio = (chainId: ChainId, lpType: LpTokenType) => {
+  // AeroSwap pools are 50-50, Balancer pools are 80-20
+  const isBalancer = [
+    LpTokenType.OP_ETH,
+    LpTokenType.BASE_ETH,
+    LpTokenType.MODE_ETH
+  ].includes(lpType);
+
+  if (isBalancer) {
+    return {
+      ionPercent: 80,
+      tokenPercent: 20
+    };
+  }
+
+  return {
+    ionPercent: 50,
+    tokenPercent: 50
+  };
+};
+
 type SimpleBalanceResult = {
   status: 'failure' | 'success';
   result?: [string[], bigint[], bigint[]];
@@ -175,41 +196,26 @@ class VeIONLock implements VeIONTableData {
       totalSupply
     };
 
+    const { ionPercent, tokenPercent } = getLPRatio(chainId, lpType);
+    const nativeCurrency =
+      VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH';
+
     // Calculate token ratios
-    if (reserves) {
-      const ionAmount = Number(formatUnits(reserves.ion, 18));
-      const tokenAmount = Number(formatUnits(reserves.token, 18));
-      const total = ionAmount + tokenAmount;
-      const ionPercent = (ionAmount / total) * 100;
-      const tokenPercent = (tokenAmount / total) * 100;
-      const nativeCurrency =
-        VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH';
+    this.tokensLocked = {
+      ratio: `${ionPercent}% ION / ${tokenPercent}% ${nativeCurrency}`,
+      token1: 'ION',
+      token2: nativeCurrency,
+      token1Percent: ionPercent,
+      token2Percent: tokenPercent
+    };
 
-      this.tokensLocked = {
-        ratio: `${ionPercent.toFixed(0)}% ION / ${tokenPercent.toFixed(0)}% ${nativeCurrency}`,
-        token1: 'ION',
-        token2: nativeCurrency,
-        token1Percent: ionPercent,
-        token2Percent: tokenPercent
-      };
-    } else {
-      this.tokensLocked = {
-        ratio: 'Loading...',
-        token1: 'ION',
-        token2: VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH',
-        token1Percent: 0,
-        token2Percent: 0
-      };
-    }
-
-    // Set BLP values
+    // BLP value calculation (temporary until oracle is set up)
     const formattedAmount = formatUnits(raw.amount, 18);
-    const valueNum = Number(formattedAmount) * ionPrice;
     this.lockedBLP = {
       amount: `${formattedAmount} BLP`,
       rawAmount: raw.amount,
-      value: `$${valueNum.toFixed(2)}`,
-      valueNum
+      value: 'TBD', // Will be updated when oracle is available
+      valueNum: 0
     };
 
     // Set lock expiry info
@@ -262,6 +268,7 @@ class VeIONLock implements VeIONTableData {
         timeLeft: this.lockExpires.timeLeft
       },
       votingPower: this.votingPower.amount,
+      votingPercentage: this.votingPower.percentage,
       enableClaim: this.status.isClaimable
     };
   }
@@ -341,23 +348,15 @@ export function useVeIONLocks({
     }))
   });
 
-  // Calculate total supply from user locks
-  // Calculate total supply by summing amounts directly
-  type SimpleContractResult = {
-    status: 'failure' | 'success';
-    result?: { amount?: bigint };
-  };
-
-  let totalSupply = 0n;
-  const results = userLockResults as SimpleContractResult[] | undefined;
-
-  if (results) {
-    for (const result of results) {
-      if (result.status === 'success' && result.result?.amount) {
-        totalSupply += result.result.amount;
-      }
-    }
-  }
+  const { data: supplyResults } = useReadContracts({
+    contracts: chainConfig.lpTypes.map((lpType) => ({
+      address: veIonContract,
+      abi: iveIonAbi,
+      functionName: 's_supply',
+      args: [lpType],
+      chainId
+    }))
+  });
 
   // Get delegatee information
   const { data: delegateesResults } = useReadContracts({
@@ -387,6 +386,8 @@ export function useVeIONLocks({
     const [assets, balances, boosts] = balanceResult.result;
 
     return assets.map((tokenAddress, i) => {
+      const totalSupply = (supplyResults?.[i]?.result as bigint) ?? 0n;
+
       const userLockResult = (
         userLockResults as SimpleLockResult[] | undefined
       )?.[tokenIndex * chainConfig.lpTypes.length + i];
