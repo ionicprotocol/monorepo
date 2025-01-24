@@ -40,8 +40,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
             methodName: "initialize",
             args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
           }
-        },
-        owner: multisig
+        }
+        // owner: multisig
       }
     });
     if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });
@@ -145,8 +145,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
               methodName: "initialize",
               args: []
             }
-          },
-          owner: multisig
+          }
+          // owner: multisig
         }
       });
 
@@ -204,8 +204,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
               methodName: "initialize",
               args: [voter.address, veION.address] // Replace `voter` and `veION` with actual instances
             }
-          },
-          owner: multisig
+          }
+          // owner: multisig
         }
       });
 

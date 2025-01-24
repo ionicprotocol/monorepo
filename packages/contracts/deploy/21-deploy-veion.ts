@@ -286,7 +286,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ╔══════════════════════════════════════════╗
   // ║          SET VEAERO                      ║
   // ╚══════════════════════════════════════════╝
-  for (let i = 0; i < veParams.lpTokens.length; i++) {
+  if (veParams.veAERO) {
     if (owner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
         contractInstance: veION,
@@ -311,7 +311,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ╚══════════════════════════════════════════╝
   for (let i = 0; i < veParams.lpTokens.length; i++) {
     let stakingWalletImplementation;
-    if (veParams.lpStakingStrategies[i] === undefined) {
+    if (!veParams.lpStakingStrategies[i]) {
+      console.log(`Skipping LP token at index ${i}: no staking strategy provided.`);
       continue;
     }
     const stakingWalletImplementationName = veParams.lpStakingWalletImplementations[i];
