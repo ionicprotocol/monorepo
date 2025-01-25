@@ -426,7 +426,7 @@ export default function Loop({
       const tx = await walletClient?.writeContract({
         abi: iLeveredPositionFactoryAbi,
         address: factory.address,
-        functionName: 'createAndFundPositionAtRatio',
+        functionName: 'createAndFundPositionWithAggregatorSwapsAtRatio',
         args: [
           selectedCollateralAsset.cToken,
           selectedBorrowAsset!.cToken,
