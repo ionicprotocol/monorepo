@@ -178,7 +178,7 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
     bytes memory aggregatorData
   ) internal {
     // supply the flash loaned collateral
-    _supplyCollateral(collateralAsset, address(0), hex"00");
+    _supplyCollateral(collateralAsset, address(0), "");
 
     // borrow stables that will be swapped to repay the FL
     uint256 errorCode = stableMarket.borrow(stableToBorrow);

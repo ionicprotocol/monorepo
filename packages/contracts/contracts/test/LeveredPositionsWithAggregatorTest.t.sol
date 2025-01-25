@@ -92,6 +92,7 @@ contract LeveredPositionsWithAggregatorTest is LeveredPositionsFactoryBaseTest {
     LeveredPositionWithAggregatorSwaps position;
     // 2x target ratio
     address wstethWhale = 0xe04Bb5B4de60FA2fBa69a93adE13A8B3B569d5B4;
+    // wstEth
     IERC20Upgradeable fundingAsset = IERC20Upgradeable(0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb);
     uint256 fundingAmount = 0.1 ether;
 
@@ -110,7 +111,7 @@ contract LeveredPositionsWithAggregatorTest is LeveredPositionsFactoryBaseTest {
       fundingAmount,
       2 ether, // target ratio
       address(0),
-      hex"00",
+      "",
       aggrTarget,
       aggrData
     );

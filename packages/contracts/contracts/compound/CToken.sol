@@ -444,10 +444,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
        */
       vars.redeemTokens = redeemTokensIn;
 
-      (vars.mathErr, vars.redeemAmount) = mulScalarTruncate(
-        Exp({ mantissa: vars.exchangeRateMantissa }),
-        redeemTokensIn
-      );
+      (vars.mathErr, vars.redeemAmount) = _previewRedeem(redeemTokensIn, vars.exchangeRateMantissa);
       if (vars.mathErr != MathError.NO_ERROR) {
         return
           failOpaque(Error.MATH_ERROR, FailureInfo.REDEEM_EXCHANGE_TOKENS_CALCULATION_FAILED, uint256(vars.mathErr));
