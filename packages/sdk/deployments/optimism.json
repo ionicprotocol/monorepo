@@ -177,10 +177,10 @@
       "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x0212C6436e7196a61f492cF6d38D74eb901585D5"
+      "address": "0x831632585F9B4a82BACf90e8Dd85B56D3C44Bbb2"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xF1b46e8627D547Cb694662E3326158574cb1D14B"
+      "address": "0xbbD618684645c09E60963540e68Fc8160F61a459"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
