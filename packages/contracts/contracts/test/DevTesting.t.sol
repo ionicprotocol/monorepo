@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 import "./config/BaseTest.t.sol";
@@ -154,6 +154,82 @@ contract DevTesting is BaseTest {
     uint256 hf = newImpl.getHealthFactor(rahul, pool);
 
     emit log_named_uint("hf", hf);
+  }
+
+  function testQuickHF() public debuggingOnly forkAtBlock(MODE_MAINNET, 11831371) {
+    address rahul = 0xf1bAeb439b8eF5043E069af0C8C8145963ebc3f8;
+
+    uint256 hf = lens.getHealthFactor(rahul, pool);
+    uint256 hf2 = lens.getHealthFactor(rahul, IonicComptroller(0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a));
+
+    emit log_named_uint("hf", hf);
+    emit log_named_uint("hf2", hf2);
+  }
+
+  function testQuickLiquidation() public debuggingOnly forkAtBlock(MODE_MAINNET, 12018198) {
+    address user = 0xf1bAeb439b8eF5043E069af0C8C8145963ebc3f8;
+    address whale = 0xaaEd68a3875F6BDbD44f70418dd16082870De8A0;
+    address borrowedAsset = 0x80137510979822322193FC997d400D5A6C747bf7;
+    uint256 repayAmount = 1968810267461862;
+    address collateralToSeizeCToken = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
+    address borrowedAssetCToken = 0x959FA710CCBb22c7Ce1e59Da82A247e686629310;
+
+    IonicUniV3Liquidator uniV3liquidator = IonicUniV3Liquidator(payable(0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A));
+
+    emit log_named_address("univ3liq", address(uniV3liquidator));
+    emit log_named_address("express relay", address(uniV3liquidator.expressRelay()));
+
+    vm.mockCall(
+      address(uniV3liquidator.expressRelay()),
+      abi.encodeWithSelector(
+        bytes4(keccak256("isPermissioned(address,bytes)")),
+        address(uniV3liquidator),
+        abi.encode(user)
+      ),
+      abi.encode(true)
+    );
+
+    vm.startPrank(whale);
+    ERC20(borrowedAsset).approve(address(uniV3liquidator), type(uint256).max);
+    uniV3liquidator.safeLiquidate(user, repayAmount, ICErc20(borrowedAssetCToken), ICErc20(collateralToSeizeCToken), 0);
+    vm.stopPrank();
+  }
+
+  function testQuickAssets() public debuggingOnly forkAtBlock(MODE_MAINNET, 12314870) {
+    address user = 0x5BDB1Fb5d0F841f4eb88D537bED0DD674fA88D7c;
+    IonicComptroller comptroller = IonicComptroller(0xFB3323E24743Caf4ADD0fDCCFB268565c0685556);
+    IonicComptroller comptroller2 = IonicComptroller(0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a);
+
+    uint256 hf = lens.getHealthFactor(user, comptroller);
+    uint256 hf2 = lens.getHealthFactor(user, comptroller2);
+
+    PoolLens.PoolAsset[] memory assets = lens.getPoolAssetsByUser(comptroller, user);
+    PoolLens.PoolAsset[] memory assets2 = lens.getPoolAssetsByUser(comptroller2, user);
+
+    emit log("<---------------------------------MAIN MARKETS--------------------------------->");
+    emit log_named_uint("hf", hf);
+    for (uint i; i < assets.length; i++) {
+      emit log("====================================================");
+      emit log_named_string("name", assets[i].underlyingName);
+      emit log_named_address("ctoken", assets[i].cToken);
+      emit log_named_address("underlying", assets[i].underlyingToken);
+      emit log_named_uint("supplyBalance", assets[i].supplyBalance);
+      emit log_named_uint("borrowBalance", assets[i].borrowBalance);
+      emit log_named_uint("underlyingPrice", assets[i].underlyingPrice);
+      emit log_named_uint("exchange rate", assets[i].exchangeRate);
+    }
+
+    emit log("<---------------------------------NATIVE MARKETS--------------------------------->");
+    emit log_named_uint("hf", hf2);
+    for (uint i; i < assets2.length; i++) {
+      emit log("====================================================");
+      emit log_named_string("name", assets2[i].underlyingName);
+      emit log_named_address("ctoken", assets2[i].cToken);
+      emit log_named_address("underlying", assets2[i].underlyingToken);
+      emit log_named_uint("supplyBalance", assets2[i].supplyBalance);
+      emit log_named_uint("borrowBalance", assets2[i].borrowBalance);
+      emit log_named_uint("underlyingPrice", assets2[i].underlyingPrice);
+    }
   }
 
   function testNetAprMode() public debuggingOnly forkAtBlock(MODE_MAINNET, 8479829) {

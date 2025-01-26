@@ -8,7 +8,7 @@ import { LeveredPositionWithAggregatorSwaps } from "./LeveredPositionWithAggrega
 import { IFeeDistributor } from "../../compound/IFeeDistributor.sol";
 import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsRegistry.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 interface ILeveredPositionFactoryStorage {
   function feeDistributor() external view returns (IFeeDistributor);
@@ -23,18 +23,14 @@ interface ILeveredPositionFactoryStorage {
 interface ILeveredPositionFactoryBase {
   function _setLiquidatorsRegistry(ILiquidatorsRegistry _liquidatorsRegistry) external;
 
-  function _setPairWhitelisted(
-    ICErc20 _collateralMarket,
-    ICErc20 _stableMarket,
-    bool _whitelisted
-  ) external;
+  function _setPairWhitelisted(ICErc20 _collateralMarket, ICErc20 _stableMarket, bool _whitelisted) external;
 }
 
 interface ILeveredPositionFactoryFirstExtension {
-  function getRedemptionStrategies(IERC20Upgradeable inputToken, IERC20Upgradeable outputToken)
-    external
-    view
-    returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData);
+  function getRedemptionStrategies(
+    IERC20Upgradeable inputToken,
+    IERC20Upgradeable outputToken
+  ) external view returns (IRedemptionStrategy[] memory strategies, bytes[] memory strategiesData);
 
   function getMinBorrowNative() external view returns (uint256);
 

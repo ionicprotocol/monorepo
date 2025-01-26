@@ -7,10 +7,10 @@ import { SafeCastLib } from "solmate/utils/SafeCastLib.sol";
 
 import { IFlywheelRewards } from "./rewards/IFlywheelRewards.sol";
 import { IFlywheelBooster } from "./IFlywheelBooster.sol";
+import { IEmissionsManager } from "../../../IEmissionsManager.sol";
+import { Ownable2StepUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 
-import { SafeOwnableUpgradeable } from "../../../ionic/SafeOwnableUpgradeable.sol";
-
-contract IonicFlywheelCore is SafeOwnableUpgradeable {
+contract IonicFlywheelCore is Ownable2StepUpgradeable {
   using SafeTransferLib for ERC20;
   using SafeCastLib for uint256;
 
@@ -32,6 +32,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   /// @notice optional booster module for calculating virtual balances on strategies
   IFlywheelBooster public flywheelBooster;
 
+  IEmissionsManager public emissionsManager;
+
   /// @notice The accrued but not yet transferred rewards for each user
   mapping(address => uint256) internal _rewardsAccrued;
 
@@ -41,9 +43,19 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   /// @notice user index per strategy
   mapping(ERC20 => mapping(address => uint224)) internal _userIndex;
 
+  /// @notice user blacklisted supply per strategy
+  mapping(ERC20 => mapping(address => uint256)) public userBlacklistedSupply;
+
+  /// @notice blacklisted supply per strategy
+  mapping(ERC20 => uint256) public blacklistedSupply;
+
+  modifier onlyEmissionsManager() {
+    require(address(emissionsManager) == msg.sender, "!emissionsManager");
+    _;
+  }
+
   constructor() {
-    // prevents the misusage of the implementation contract
-    _disableInitializers();
+    _disableInitializers(); // Locks the implementation contract from being initialized
   }
 
   function initialize(
@@ -52,13 +64,11 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     IFlywheelBooster _flywheelBooster,
     address _owner
   ) public initializer {
-    __SafeOwnable_init(msg.sender);
+    __Ownable2Step_init();
 
     rewardToken = _rewardToken;
     flywheelRewards = _flywheelRewards;
     flywheelBooster = _flywheelBooster;
-
-    _transferOwnership(_owner);
 
     performanceFee = 10e16; // 10%
     feeRecipient = _owner;
@@ -108,11 +118,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       @return the cumulative amount of rewards accrued to the first user (including prior)
       @return the cumulative amount of rewards accrued to the second user (including prior)
     */
-  function accrue(
-    ERC20 strategy,
-    address user,
-    address secondUser
-  ) public returns (uint256, uint256) {
+  function accrue(ERC20 strategy, address user, address secondUser) public returns (uint256, uint256) {
     (uint224 index, uint32 ts) = strategyState(strategy);
     RewardsState memory state = RewardsState(index, ts);
 
@@ -128,6 +134,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       @dev this function is public, and all rewards transfer to the user
     */
   function claimRewards(address user) external {
+    require(!emissionsManager.isUserBlacklisted(user), "blacklisted");
+    require(!emissionsManager.isUserBlacklistable(user), "blacklistable");
     uint256 accrued = rewardsAccrued(user);
 
     if (accrued != 0) {
@@ -139,6 +147,67 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     }
   }
 
+  /** 
+      @notice take rewards for a given user
+      @param user the user claiming rewards
+      @param receiver the address that receives the rewards
+      @dev this function is public, and all rewards transfer to the receiver
+    */
+  function takeRewardsFromUser(address user, address receiver) external onlyEmissionsManager {
+    uint256 accrued = rewardsAccrued(user);
+
+    if (accrued != 0) {
+      _rewardsAccrued[user] = 0;
+
+      rewardToken.safeTransferFrom(address(flywheelRewards), receiver, accrued);
+
+      emit ClaimRewards(user, accrued);
+    }
+  }
+
+  /** 
+      @notice set user balances to zero
+      @param strategy strategy to whitelist user for
+      @param user the user to be whitelisted
+      @dev this function is public, and all user and strategy blacklisted supplies are reset
+    */
+  function whitelistUser(ERC20 strategy, address user) external onlyEmissionsManager {
+    blacklistedSupply[strategy] -= userBlacklistedSupply[strategy][user];
+    userBlacklistedSupply[strategy][user] = 0;
+  }
+
+  /** 
+      @notice update user blacklisted balances
+      @param strategy strategy to update blacklisted balances
+      @param user the user to be blacklisted
+      @dev this function is public
+    */
+  function updateBlacklistBalances(ERC20 strategy, address user) external onlyEmissionsManager {
+    _updateBlacklistBalances(strategy, user);
+  }
+
+  /** 
+      @notice update user blacklisted balances
+      @param strategy strategy to update blacklisted balances
+      @param user the user to be blacklisted
+      @dev this function is private
+    */
+  function _updateBlacklistBalances(ERC20 strategy, address user) internal {
+    if (emissionsManager.isUserBlacklisted(user)) {
+      uint256 _oldUserBlacklistedSupply = userBlacklistedSupply[strategy][user];
+      uint256 supplierTokens = address(flywheelBooster) != address(0)
+        ? flywheelBooster.boostedBalanceOf(ERC20(strategy), user)
+        : ERC20(strategy).balanceOf(user);
+
+      if (supplierTokens >= _oldUserBlacklistedSupply) {
+        blacklistedSupply[strategy] += supplierTokens - _oldUserBlacklistedSupply;
+        userBlacklistedSupply[strategy][user] = supplierTokens;
+      } else {
+        blacklistedSupply[strategy] -= _oldUserBlacklistedSupply - supplierTokens;
+        userBlacklistedSupply[strategy][user] = supplierTokens;
+      }
+    }
+  }
   /*----------------------------------------------------------------
                           ADMIN LOGIC
     ----------------------------------------------------------------*/
@@ -150,6 +219,11 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   event AddStrategy(address indexed newStrategy);
 
   /// @notice initialize a new strategy
+  function setEmissionsManager(IEmissionsManager _emissionsManager) external onlyOwner {
+    emissionsManager = _emissionsManager;
+  }
+
+  /// @notice initialize a new strategy
   function addStrategyForRewards(ERC20 strategy) external onlyOwner {
     _addStrategyForRewards(strategy);
   }
@@ -158,7 +232,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     (uint224 index, ) = strategyState(strategy);
     require(index == 0, "strategy");
     _strategyState[strategy] = RewardsState({
-      index: (10**rewardToken.decimals()).safeCastTo224(),
+      index: (10 ** rewardToken.decimals()).safeCastTo224(),
       lastUpdatedTimestamp: block.timestamp.safeCastTo32()
     });
 
@@ -241,10 +315,10 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   }
 
   /// @notice accumulate global rewards on a strategy
-  function accrueStrategy(ERC20 strategy, RewardsState memory state)
-    private
-    returns (RewardsState memory rewardsState)
-  {
+  function accrueStrategy(
+    ERC20 strategy,
+    RewardsState memory state
+  ) private returns (RewardsState memory rewardsState) {
     // calculate accrued rewards through module
     uint256 strategyRewardsAccrued = flywheelRewards.getAccruedRewards(strategy, state.lastUpdatedTimestamp);
 
@@ -253,8 +327,8 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     if (strategyRewardsAccrued > 0) {
       // use the booster or token supply to calculate reward index denominator
       uint256 supplyTokens = address(flywheelBooster) != address(0)
-        ? flywheelBooster.boostedTotalSupply(strategy)
-        : strategy.totalSupply();
+        ? flywheelBooster.boostedTotalSupply(strategy) - blacklistedSupply[strategy]
+        : strategy.totalSupply() - blacklistedSupply[strategy];
 
       // 100% = 100e16
       uint256 accruedFees = (strategyRewardsAccrued * performanceFee) / uint224(100e16);
@@ -265,7 +339,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
       uint224 deltaIndex;
 
       if (supplyTokens != 0)
-        deltaIndex = ((strategyRewardsAccrued * (10**strategy.decimals())) / supplyTokens).safeCastTo224();
+        deltaIndex = ((strategyRewardsAccrued * (10 ** strategy.decimals())) / supplyTokens).safeCastTo224();
 
       // accumulate rewards per token onto the index, multiplied by fixed-point factor
       rewardsState = RewardsState({
@@ -277,11 +351,7 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
   }
 
   /// @notice accumulate rewards on a strategy for a specific user
-  function accrueUser(
-    ERC20 strategy,
-    address user,
-    RewardsState memory state
-  ) private returns (uint256) {
+  function accrueUser(ERC20 strategy, address user, RewardsState memory state) private returns (uint256) {
     // load indices
     uint224 strategyIndex = state.index;
     uint224 supplierIndex = userIndex(strategy, user);
@@ -292,17 +362,17 @@ contract IonicFlywheelCore is SafeOwnableUpgradeable {
     // if user hasn't yet accrued rewards, grant them interest from the strategy beginning if they have a balance
     // zero balances will have no effect other than syncing to global index
     if (supplierIndex == 0) {
-      supplierIndex = (10**rewardToken.decimals()).safeCastTo224();
+      supplierIndex = (10 ** rewardToken.decimals()).safeCastTo224();
     }
 
     uint224 deltaIndex = strategyIndex - supplierIndex;
     // use the booster or token balance to calculate reward balance multiplier
     uint256 supplierTokens = address(flywheelBooster) != address(0)
-      ? flywheelBooster.boostedBalanceOf(strategy, user)
-      : strategy.balanceOf(user);
+      ? flywheelBooster.boostedBalanceOf(strategy, user) - userBlacklistedSupply[strategy][user]
+      : strategy.balanceOf(user) - userBlacklistedSupply[strategy][user];
 
     // accumulate rewards by multiplying user tokens by rewardsPerToken index and adding on unclaimed
-    uint256 supplierDelta = (deltaIndex * supplierTokens) / (10**strategy.decimals());
+    uint256 supplierDelta = (deltaIndex * supplierTokens) / (10 ** strategy.decimals());
     uint256 supplierAccrued = rewardsAccrued(user) + supplierDelta;
 
     _rewardsAccrued[user] = supplierAccrued;

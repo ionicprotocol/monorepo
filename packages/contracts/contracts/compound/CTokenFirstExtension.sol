@@ -141,8 +141,7 @@ contract CTokenFirstExtension is
     emit Transfer(src, dst, tokens);
 
     /* We call the defense hook */
-    // unused function
-    // comptroller.transferVerify(address(this), src, dst, tokens);
+    comptroller.transferVerify(address(this), src, dst, tokens);
 
     return uint256(Error.NO_ERROR);
   }

@@ -12,8 +12,8 @@ import { IonicFlywheel } from "../../ionic/strategies/flywheel/IonicFlywheel.sol
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { LeveredPositionStorage } from "./LeveredPositionStorage.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 
 interface IFlywheelLensRouter_LP {
   function claimAllRewardTokens(address user) external returns (address[] memory, uint256[] memory);

@@ -10,9 +10,15 @@ interface IIonicFlywheel {
 
   function flywheelPreSupplierAction(address market, address supplier) external;
 
+  function flywheelPostSupplierAction(address market, address supplier) external;
+
   function flywheelPreBorrowerAction(address market, address borrower) external;
 
+  function flywheelPostBorrowerAction(address market, address borrower) external;
+
   function flywheelPreTransferAction(address market, address src, address dst) external;
+
+  function flywheelPostTransferAction(address market, address src, address dst) external;
 
   function compAccrued(address user) external view returns (uint256);
 

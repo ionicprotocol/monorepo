@@ -13,8 +13,8 @@ import { ILiquidatorsRegistry } from "../../liquidators/registry/ILiquidatorsReg
 import { AuthoritiesRegistry } from "../AuthoritiesRegistry.sol";
 import { PoolRolesAuthority } from "../PoolRolesAuthority.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract LeveredPositionFactoryFirstExtension is
