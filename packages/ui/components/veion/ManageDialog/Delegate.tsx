@@ -117,7 +117,7 @@ export function Delegate({ chain }: DelegateProps) {
         <p>
           <strong>Important:</strong>
           <br />
-          • Delegation doesn't transfer token ownership
+          • Delegation doesn&apos;t transfer token ownership
           <br />• Even after revocation, delegates retain voting rights until
           the end of the current voting period
         </p>

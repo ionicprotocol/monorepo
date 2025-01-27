@@ -19,7 +19,7 @@ interface LockDurationPickerProps {
   lockDate: Date;
   onDurationChange: (duration: number) => void;
   onDateChange: (date: Date) => void;
-  baseLockDate: Date;
+  baseLockDate?: Date;
   minDuration?: number;
   maxDuration?: number;
   showTooltip?: boolean;
@@ -38,7 +38,7 @@ export function LockDurationPicker({
   lockDate,
   onDurationChange,
   onDateChange,
-  baseLockDate,
+  baseLockDate = new Date(),
   minDuration = 1,
   maxDuration = 730,
   showTooltip = true,

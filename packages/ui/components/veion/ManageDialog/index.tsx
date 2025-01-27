@@ -15,7 +15,7 @@ import {
 } from '@ui/components/ui/dialog';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
-import { Delegate } from './Delegate';
+// import { Delegate } from './Delegate';
 import { Extend } from './Extend';
 import { IncreaseLockedAmount } from './IncreaseLockedAmount';
 import { ManageTabs } from './ManageTabs';
@@ -37,7 +37,7 @@ export default function ManageDialog({
   const toggleArr = [
     'Increase',
     'Extend',
-    'Delegate',
+    // 'Delegate',
     'Merge',
     'Split',
     'Transfer'
@@ -86,7 +86,7 @@ export default function ManageDialog({
           <IncreaseLockedAmount chain={chain} />
         )}
         {activeManageToggle === 'Extend' && <Extend chain={chain} />}
-        {activeManageToggle === 'Delegate' && <Delegate chain={chain} />}
+        {/* {activeManageToggle === 'Delegate' && <Delegate chain={chain} />} */}
         {activeManageToggle === 'Merge' && <MergeLps chain={chain} />}
         {activeManageToggle === 'Split' && <SplitLp chain={chain} />}
         {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}

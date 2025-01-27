@@ -41,11 +41,11 @@ export function MergeLps({ chain }: MergeLpsProps) {
   const selectedLpData = availableLPs.find((lp) => lp.id === selectedLp);
 
   const handleMerge = async () => {
-    if (!selectedLp) return;
+    if (!selectedLp || !selectedManagePosition?.id) return;
 
     await merge({
-      fromTokenId: selectedManagePosition?.id as `0x${string}`,
-      toTokenId: selectedLp as `0x${string}`
+      fromTokenId: selectedManagePosition?.id,
+      toTokenId: selectedLp
     });
   };
 

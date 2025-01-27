@@ -140,8 +140,8 @@ export function useVeIONManage(chain: number) {
     fromTokenId,
     toTokenId
   }: {
-    fromTokenId: number;
-    toTokenId: number;
+    fromTokenId: string;
+    toTokenId: string;
   }) {
     return write(getContractConfig('merge', [fromTokenId, toTokenId]), {
       successMessage: 'Successfully merged positions',
