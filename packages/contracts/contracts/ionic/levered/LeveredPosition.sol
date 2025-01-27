@@ -63,7 +63,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
                           Mutable Functions
   ----------------------------------------------------------------*/
 
-  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public {
+  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public virtual {
     fundingAsset.safeTransferFrom(msg.sender, address(this), amount);
     _supplyCollateral(fundingAsset);
 

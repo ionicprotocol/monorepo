@@ -33,6 +33,10 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
     }
   }
 
+  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public override {
+    _fallback();
+  }
+
   function closePosition(
     uint256 supplyDelta,
     uint256 borrowsDelta,
