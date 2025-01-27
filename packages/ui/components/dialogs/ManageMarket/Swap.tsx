@@ -27,7 +27,7 @@ import ResultHandler from '../../ResultHandler';
 
 import type { GetBalanceData } from 'wagmi/query';
 
-import { wethAbi } from '@ionicprotocol/sdk';
+import { iwethAbi } from '@ionicprotocol/sdk';
 
 export type SwapProps = {
   close: () => void;
@@ -82,7 +82,7 @@ export default function Swap({
   );
   const queryClient = useQueryClient();
   const WTokenContract = useMemo<
-    GetContractReturnType<typeof wethAbi, PublicClient> | undefined
+    GetContractReturnType<typeof iwethAbi, PublicClient> | undefined
   >(() => {
     if (!currentSdk || !address) {
       return undefined;
@@ -90,7 +90,7 @@ export default function Swap({
 
     return getContract({
       address: currentSdk.chainSpecificAddresses.W_TOKEN as Address,
-      abi: wethAbi,
+      abi: iwethAbi,
       client: currentSdk.walletClient!
     }) as any;
   }, [address, currentSdk]);
