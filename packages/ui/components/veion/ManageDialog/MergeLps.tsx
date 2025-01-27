@@ -14,7 +14,6 @@ import {
 } from '@ui/components/ui/select';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import CustomTooltip from '../../CustomTooltip';
@@ -28,7 +27,6 @@ export function MergeLps({ chain }: MergeLpsProps) {
 
   const { address } = useAccount();
   const { merge, isPending } = useVeIONManage(Number(chain));
-  const { toast } = useToast();
   const { locks, selectedManagePosition } = useVeIONContext();
 
   const availableLPs = locks.myLocks
@@ -45,18 +43,10 @@ export function MergeLps({ chain }: MergeLpsProps) {
   const handleMerge = async () => {
     if (!selectedLp) return;
 
-    try {
-      await merge({
-        fromTokenId: selectedManagePosition?.id as `0x${string}`,
-        toTokenId: selectedLp as `0x${string}`
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to merge positions',
-        variant: 'destructive'
-      });
-    }
+    await merge({
+      fromTokenId: selectedManagePosition?.id as `0x${string}`,
+      toTokenId: selectedLp as `0x${string}`
+    });
   };
 
   return (

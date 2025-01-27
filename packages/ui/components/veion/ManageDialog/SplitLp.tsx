@@ -1,27 +1,32 @@
 import { useState } from 'react';
+
 import { InfoIcon } from 'lucide-react';
+import { formatEther } from 'viem';
 import { useAccount } from 'wagmi';
+
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { useToast } from '@ui/hooks/use-toast';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
+
 import { PrecisionSlider } from '../../PrecisionSlider';
 
 type SplitLpProps = {
   chain: string;
-  tokenId?: string;
-  maxAmount?: number;
 };
 
-export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
+export function SplitLp({ chain }: SplitLpProps) {
   const utilizationMarks = [0, 25, 50, 75, 100];
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
-  const { toast } = useToast();
-
+  const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
   const { split, isPending } = useVeIONManage(Number(chain));
   const lpToken = getAvailableStakingToken(+chain, 'eth');
+
+  // Get the raw amount and convert it to a number for calculations
+  const rawAmount = selectedManagePosition?.lockedBLP?.rawAmount || '0';
+  const totalAmount = BigInt(rawAmount);
 
   const handleFirstSliderChange = (newValue: number) => {
     setSplitValues([newValue, Math.round(100 - newValue)]);
@@ -31,33 +36,27 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
     setSplitValues([Math.round(100 - newValue), newValue]);
   };
 
-  const firstAmount = Number(((splitValues[0] / 100) * maxAmount).toFixed(2));
-  const secondAmount = Number(((splitValues[1] / 100) * maxAmount).toFixed(2));
+  // Calculate split amounts using BigInt arithmetic
+  const firstAmountRaw = (totalAmount * BigInt(splitValues[0])) / BigInt(100);
+  const secondAmountRaw = (totalAmount * BigInt(splitValues[1])) / BigInt(100);
 
-  const handleSplit = async () => {
-    if (!address || !tokenId || !firstAmount) return;
+  // Format the amounts for display (as ETH/BLP)
+  const firstAmountFormatted = Number(formatEther(firstAmountRaw)).toFixed(4);
+  const secondAmountFormatted = Number(formatEther(secondAmountRaw)).toFixed(4);
 
-    try {
-      await split({
-        tokenAddress: lpToken as `0x${string}`,
-        from: tokenId as `0x${string}`,
-        amount: firstAmount
-      });
+  async function handleSplit() {
+    if (!selectedManagePosition?.id || !firstAmountRaw) return;
 
-      // The toast will be shown from the useContractWrite hook after the transaction is confirmed
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to split veION',
-        variant: 'destructive'
-      });
-    }
-  };
+    await split({
+      tokenAddress: lpToken,
+      from: +selectedManagePosition.id,
+      amount: firstAmountRaw
+    });
+  }
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
       <Separator className="bg-white/10 mb-4" />
-
       <div className="space-y-6">
         <div>
           <p className="text-xs text-white/50 mb-2">
@@ -69,12 +68,10 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
             marks={utilizationMarks}
           />
           <p className="text-xs text-white/50 mt-2">
-            Amount: {firstAmount.toLocaleString()} veION
+            Amount: {firstAmountFormatted} BLP
           </p>
         </div>
-
         <Separator className="bg-white/10" />
-
         <div>
           <p className="text-xs text-white/50 mb-2">
             Second Split: {splitValues[1]}%
@@ -85,11 +82,10 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
             marks={utilizationMarks}
           />
           <p className="text-xs text-white/50 mt-2">
-            Amount: {secondAmount.toLocaleString()} veION
+            Amount: {secondAmountFormatted} BLP
           </p>
         </div>
       </div>
-
       <div className="border border-red-500 text-red-500 text-xs flex items-center gap-3 rounded-md py-2.5 px-4 mt-2">
         <InfoIcon className="h-5 w-5 flex-shrink-0" />
         <span>
@@ -97,7 +93,6 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
           sure to claim everything before you split!
         </span>
       </div>
-
       <Button
         className="w-full bg-accent text-black mt-4"
         disabled={isPending || !address}

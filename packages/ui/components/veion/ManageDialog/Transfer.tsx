@@ -6,7 +6,6 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
-import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import type { Hex } from 'viem';
@@ -19,7 +18,6 @@ type TransferProps = {
 export function Transfer({ chain, tokenId }: TransferProps) {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
-  const { toast } = useToast();
 
   const { address } = useAccount();
   const { safeTransfer, isPending } = useVeIONManage(Number(chain));
@@ -27,25 +25,11 @@ export function Transfer({ chain, tokenId }: TransferProps) {
   const handleTransfer = async () => {
     if (!isValidAddress || !address || !tokenId) return;
 
-    try {
-      await safeTransfer({
-        from: address,
-        to: transferAddress as `0x${string}`,
-        tokenId: tokenId as Hex
-      });
-
-      toast({
-        title: 'Success',
-        description: 'veION transferred successfully',
-        variant: 'default'
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to transfer veION',
-        variant: 'destructive'
-      });
-    }
+    await safeTransfer({
+      from: address,
+      to: transferAddress as `0x${string}`,
+      tokenId: tokenId as Hex
+    });
   };
 
   return (

@@ -87,12 +87,7 @@ export default function ManageDialog({
         )}
         {activeManageToggle === 'Extend' && <Extend chain={chain} />}
         {activeManageToggle === 'Delegate' && <Delegate chain={chain} />}
-        {activeManageToggle === 'Merge' && (
-          <MergeLps
-            lockedUntil={lockedUntil}
-            chain={chain}
-          />
-        )}
+        {activeManageToggle === 'Merge' && <MergeLps chain={chain} />}
         {activeManageToggle === 'Split' && <SplitLp chain={chain} />}
         {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
       </DialogContent>

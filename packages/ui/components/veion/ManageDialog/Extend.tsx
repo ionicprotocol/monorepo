@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
-import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
@@ -31,40 +30,16 @@ export function Extend({
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
 
   const { address } = useAccount();
-  const { toast } = useToast();
   const { extendLock, isPending } = useVeIONManage(Number(chain));
 
   const tokenAddress = getAvailableStakingToken(+chain, 'eth');
 
   const handleExtend = async () => {
-    if (!address) {
-      toast({
-        title: 'Error',
-        description: 'Please connect your wallet',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    try {
-      await extendLock({
-        tokenAddress: tokenAddress as `0x${string}`,
-        tokenId: tokenAddress,
-        lockDuration: selectedDuration * 86400
-      });
-
-      toast({
-        title: 'Success',
-        description: 'Lock duration extended successfully',
-        variant: 'default'
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to extend lock duration',
-        variant: 'destructive'
-      });
-    }
+    await extendLock({
+      tokenAddress: tokenAddress as `0x${string}`,
+      tokenId: tokenAddress,
+      lockDuration: selectedDuration * 86400
+    });
   };
 
   return (

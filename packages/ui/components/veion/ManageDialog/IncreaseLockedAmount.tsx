@@ -4,7 +4,6 @@ import { useAccount, useBalance } from 'wagmi';
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { toast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 
@@ -44,17 +43,10 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
     handlePercentageChange: handleSliderChange
   } = usePrecisionSlider({ maxValue: tokenValue });
 
-  const handleIncrease = () => {
-    if (!address || !selectedManagePosition) {
-      toast({
-        title: 'Error',
-        description: 'Please connect your wallet',
-        variant: 'destructive'
-      });
-      return;
-    }
+  const handleIncrease = async () => {
+    if (!address || !selectedManagePosition) return;
 
-    increaseAmount({
+    await increaseAmount({
       tokenAddress: tokenAddress as `0x${string}`,
       tokenId: +selectedManagePosition.id,
       amount: veionAmount,

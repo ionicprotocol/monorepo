@@ -6,7 +6,6 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
-import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
@@ -24,7 +23,6 @@ export function Delegate({
   const [delegateAddress, setDelegateAddress] = useState('');
   const [amount, setAmount] = useState<number>(0);
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
-  const { toast } = useToast();
 
   const { address } = useAccount();
   const { delegate, isPending } = useVeIONManage(Number(chain));
@@ -33,20 +31,12 @@ export function Delegate({
   const handleDelegate = async () => {
     if (!isValidAddress || !fromTokenId || !amount) return;
 
-    try {
-      await delegate({
-        fromTokenId: fromTokenId as `0x${string}`,
-        toTokenId: delegateAddress as `0x${string}`,
-        lpToken: lpToken as `0x${string}`,
-        amount
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delegate voting power',
-        variant: 'destructive'
-      });
-    }
+    await delegate({
+      fromTokenId: fromTokenId as `0x${string}`,
+      toTokenId: delegateAddress as `0x${string}`,
+      lpToken: lpToken as `0x${string}`,
+      amount
+    });
   };
 
   return (

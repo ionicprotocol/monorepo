@@ -1,5 +1,7 @@
 // context
 
+import type { Hex } from 'viem';
+
 export interface PriceData {
   ionUsd: number;
   veIonUsd: number;
@@ -77,9 +79,11 @@ export type MyVeionData = {
   id: string;
   chainId: ChainId;
   tokensLocked: string;
+  lpTokenAddress: Hex;
   lockedBLP: {
     amount: string;
     value: string;
+    rawAmount: bigint;
   };
   lockExpires: {
     date: string;

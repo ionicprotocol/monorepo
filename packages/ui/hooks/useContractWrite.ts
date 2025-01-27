@@ -16,11 +16,12 @@ interface WriteContractOptions {
   successMessage?: string;
   errorMessage?: string;
   onSuccess?: () => void;
+  onError?: (error: Error) => void;
 }
 
 export function useContractWrite() {
   const { toast } = useToast();
-  const { writeContract, isPending, isSuccess, isError, data } =
+  const { writeContractAsync, isPending, isSuccess, isError, data } =
     useWriteContract();
   const publicClient = usePublicClient();
 
@@ -33,13 +34,16 @@ export function useContractWrite() {
     }
 
     try {
-      const hash = await writeContract({
-        ...config
-      });
+      // Execute the write contract call and get the hash
+      const hash = await writeContractAsync(config);
+
+      if (!hash) {
+        throw new Error('Transaction failed - no hash returned');
+      }
 
       // Wait for the transaction to be confirmed
       const receipt = await publicClient.waitForTransactionReceipt({
-        hash: hash as unknown as `0x${string}`
+        hash
       });
 
       if (receipt.status === 'success') {
@@ -50,20 +54,19 @@ export function useContractWrite() {
         });
         options.onSuccess?.();
       } else {
-        toast({
-          title: 'Error',
-          description: 'Transaction failed',
-          variant: 'destructive'
-        });
+        throw new Error('Transaction failed during confirmation');
       }
 
       return receipt;
     } catch (error: any) {
+      const errorMessage = error?.message || 'Transaction failed';
       toast({
         title: 'Error',
-        description: options.errorMessage || error.message,
+        description: options.errorMessage || errorMessage,
         variant: 'destructive'
       });
+
+      options.onError?.(error);
       throw error;
     }
   };

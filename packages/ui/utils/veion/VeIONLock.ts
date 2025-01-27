@@ -164,9 +164,11 @@ export class VeIONLock implements VeIONTableData {
       id: this.id,
       chainId: this.chainId,
       tokensLocked: this.tokensLocked.ratio,
+      lpTokenAddress: this.lpTokenAddress,
       lockedBLP: {
         amount: this.lockedBLP.amount,
-        value: this.lockedBLP.value
+        value: this.lockedBLP.value,
+        rawAmount: this.lockedBLP.rawAmount
       },
       lockExpires: {
         date: this.lockExpires.date,
