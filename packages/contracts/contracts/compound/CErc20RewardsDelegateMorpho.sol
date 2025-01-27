@@ -3,8 +3,23 @@ pragma solidity >=0.8.0;
 
 import "./CErc20RewardsDelegate.sol";
 
-contract CErc20RewardsDelegateMorpho is CErc20RewardsDelegate {
+contract CErc20RewardsDelegateMorpho is CErc20Delegate {
   event RewardsClaimedAndSet(address indexed account, address indexed reward, uint256 claimedAmount);
+
+  function _getExtensionFunctions() public pure virtual override returns (bytes4[] memory functionSelectors) {
+    uint8 fnsCount = 1;
+
+    bytes4[] memory superFunctionSelectors = super._getExtensionFunctions();
+    functionSelectors = new bytes4[](superFunctionSelectors.length + fnsCount);
+
+    for (uint256 i = 0; i < superFunctionSelectors.length; i++) {
+      functionSelectors[i] = superFunctionSelectors[i];
+    }
+
+    functionSelectors[--fnsCount + superFunctionSelectors.length] = this.claim.selector;
+
+    require(fnsCount == 0, "use the correct array length");
+  }
 
   /**
    * @notice Claims the reward tokens from the Morpho contract and forwards them to the FlywheelRewards contract.
