@@ -6,29 +6,28 @@ import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Input } from '@ui/components/ui/input';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
-
-import type { Hex } from 'viem';
 
 type TransferProps = {
   chain: string;
-  tokenId?: string;
 };
 
-export function Transfer({ chain, tokenId }: TransferProps) {
+export function Transfer({ chain }: TransferProps) {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
+  const { selectedManagePosition } = useVeIONContext();
 
   const { address } = useAccount();
-  const { safeTransfer, isPending } = useVeIONManage(Number(chain));
+  const { transfer, isPending } = useVeIONManage(Number(chain));
 
   const handleTransfer = async () => {
-    if (!isValidAddress || !address || !tokenId) return;
+    if (!isValidAddress || !address || !selectedManagePosition) return;
 
-    await safeTransfer({
+    await transfer({
       from: address,
       to: transferAddress as `0x${string}`,
-      tokenId: tokenId as Hex
+      tokenId: +selectedManagePosition.id
     });
   };
 
@@ -37,6 +36,7 @@ export function Transfer({ chain, tokenId }: TransferProps) {
       <p className="text-[10px] mb-2 text-white/50">TRANSFER ADDRESS</p>
       <Input
         placeholder="0x..."
+        value={transferAddress}
         onChange={(e) => setTransferAddress(e.target.value)}
         className={!isValidAddress && transferAddress ? 'border-red-500' : ''}
       />

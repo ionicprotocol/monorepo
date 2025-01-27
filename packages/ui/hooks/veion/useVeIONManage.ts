@@ -6,11 +6,6 @@ import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { useContractWrite } from '../useContractWrite';
 
-type Position = {
-  id: string;
-  amount: string;
-};
-
 export function useVeIONManage(chain: number) {
   const veIonContract = getVeIonContract(chain);
   const { write, isPending } = useContractWrite();
@@ -167,7 +162,7 @@ export function useVeIONManage(chain: number) {
     });
   }
 
-  function safeTransfer({
+  function transfer({
     from,
     to,
     tokenId
@@ -176,7 +171,7 @@ export function useVeIONManage(chain: number) {
     to: `0x${string}`;
     tokenId: number;
   }) {
-    return write(getContractConfig('safeTransferFrom', [from, to, tokenId]), {
+    return write(getContractConfig('transferFrom', [from, to, tokenId]), {
       successMessage: 'Successfully transferred veION',
       errorMessage: 'Failed to transfer veION'
     });
@@ -185,10 +180,9 @@ export function useVeIONManage(chain: number) {
   type Position = {
     id: string;
     amount: string;
-    isPermanent: boolean; // Add this field
+    isPermanent: boolean;
   };
 
-  // In useVeIONManage.ts, modify getOwnedTokenIds:
   async function getOwnedTokenIds(
     ownerAddress: `0x${string}`
   ): Promise<Position[]> {
@@ -243,15 +237,14 @@ export function useVeIONManage(chain: number) {
     }
   }
 
-  // Then add getOwnedTokenIds to the return object
   return {
     increaseAmount,
     extendLock,
     delegate,
     merge,
     split,
-    safeTransfer,
-    getOwnedTokenIds, // Add this line
+    transfer,
+    getOwnedTokenIds,
     isPending,
     isContractLoading: !veIonContract
   };
