@@ -18,7 +18,7 @@
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "AuthoritiesRegistry_Implementation": {
-      "address": "0xD293538c9A02534009b1b9C65545499B2D742d32"
+      "address": "0xc685192794Bd9E119eBa0249Cdde5984Fb7D0695"
     },
     "AuthoritiesRegistry_Proxy": {
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
@@ -177,10 +177,13 @@
       "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x831632585F9B4a82BACf90e8Dd85B56D3C44Bbb2"
+      "address": "0x26f5e66bF3908f9554798489a47957255620d55a"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xbbD618684645c09E60963540e68Fc8160F61a459"
+      "address": "0xb00DfbD8A83204C5761a8D075A38877dd067B4A2"
+    },
+    "LeveredPositionFactoryThirdExtension": {
+      "address": "0x0dF62e9eAB641208FE6E9930F0B611a5f903f2BA"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
