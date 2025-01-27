@@ -51,6 +51,25 @@ export type ChainDeployConfig = {
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
   cgId: string;
+  veION: veIONConfig;
+  ION: Address;
+};
+
+export type veIONConfig = {
+  lpTokens: Address[];
+  lpStakingStrategies: string[];
+  lpStakingWalletImplementations: string[];
+  lpExternalStakingContracts: Address[];
+  lpTokenWhitelistStatuses: boolean[];
+  lpTokenTypes: number[];
+  minimumLockAmounts: bigint[];
+  minimumLockDuration: number;
+  maxEarlyWithdrawFee: bigint;
+  ionicAeroVeloPool?: Address;
+  aeroVoting?: Address;
+  aeroVotingBoost?: bigint;
+  veAERO?: Address;
+  maxVotingNum?: number;
 };
 
 export type DynamicFlywheelConfig = {
@@ -129,6 +148,7 @@ export type ChainDeployFnParams = {
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
   deployments: HardhatRuntimeEnvironment["deployments"];
   run: RunTaskFunction;
+  chainId: number;
 };
 
 export type LiquidatorDeployFnParams = ChainDeployFnParams & {

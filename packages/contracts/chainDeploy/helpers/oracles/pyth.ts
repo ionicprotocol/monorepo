@@ -5,6 +5,7 @@ import { addTransaction, prepareAndLogTransaction } from "../logging";
 import { addUnderlyingsToMpo } from "./utils";
 import { PythAsset, PythDeployFnParams } from "../../types";
 import { pythPriceOracleAbi } from "../../../../sdk/src/generated";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 export const deployPythPriceOracle = async ({
   viem,
@@ -13,15 +14,17 @@ export const deployPythPriceOracle = async ({
   pythAddress,
   usdToken,
   pythAssets,
-  nativeTokenUsdFeed
+  nativeTokenUsdFeed,
+  chainId
 }: PythDeployFnParams): Promise<{ pythOracle: GetContractReturnType<typeof pythPriceOracleAbi, WalletClient> }> => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
-  const walletClient = await viem.getWalletClient(deployer as Address);
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const [walletClient] = await viem.getWalletClients({ chain: chainIdtoChain[chainId] });
 
   const mpo = await viem.getContractAt(
     "MasterPriceOracle",
-    (await deployments.get("MasterPriceOracle")).address as Address
+    (await deployments.get("MasterPriceOracle")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   //// Pyth Oracle
@@ -51,7 +54,8 @@ export const deployPythPriceOracle = async ({
 
   const pythOracle = await viem.getContractAt(
     "PythPriceOracle",
-    (await deployments.get("PythPriceOracle")).address as Address
+    (await deployments.get("PythPriceOracle")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   const pythAssetsToChange: PythAsset[] = [];

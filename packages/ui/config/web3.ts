@@ -89,6 +89,26 @@ export const ozeantest: AppKitNetwork = {
   }
 };
 
+export const soneium: AppKitNetwork = {
+  id: 1868,
+  name: 'Soneium',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://soneium.rpc.scs.startale.com?apikey=hnUFGYMhADAQ3hFfZ6zIjEbKb6KjoBAq'
+      ]
+    }
+  },
+  blockExplorers: {
+    default: {
+      name: 'Soneium Explorer',
+      url: 'https://xckc3jvrzboyo8w4.blockscout.com',
+      apiUrl: 'https://xckc3jvrzboyo8w4.blockscout.com/api'
+    }
+  }
+};
+
 export const networks: AppKitNetwork[] = [
   base,
   mode,
@@ -101,7 +121,8 @@ export const networks: AppKitNetwork[] = [
   ink,
   swellchain,
   camptest,
-  ozeantest
+  ozeantest,
+  soneium
 ];
 
 export const metadata = {

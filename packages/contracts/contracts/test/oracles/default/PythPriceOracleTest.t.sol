@@ -6,7 +6,7 @@ import { MasterPriceOracle } from "../../../oracles/MasterPriceOracle.sol";
 import { BaseTest } from "../../config/BaseTest.t.sol";
 import { IPyth } from "@pythnetwork/pyth-sdk-solidity/MockPyth.sol";
 import { PythStructs } from "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { BasePriceOracle } from "../../../oracles/BasePriceOracle.sol";
 
 contract PythPriceOracleTest is BaseTest {

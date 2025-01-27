@@ -13,7 +13,7 @@ import { IUniswapV3Pool } from "../../external/uniswap/IUniswapV3Pool.sol";
 import { ISwapRouter } from "../../external/uniswap/ISwapRouter.sol";
 import { IComptroller } from "../../external/compound/IComptroller.sol";
 import { IUniswapV2Router02 } from "../../external/uniswap/IUniswapV2Router02.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { IRedemptionStrategy } from "../../liquidators/IRedemptionStrategy.sol";
 import { IFundsConversionStrategy } from "../../liquidators/IFundsConversionStrategy.sol";
 

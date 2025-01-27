@@ -12,6 +12,9 @@ export type Multipliers = {
   underlyingAPR?: number;
   op?: boolean;
   lsk?: boolean;
+  fxtl?: number;
+  totems?: number;
+  inceptionTurtle?: boolean;
 };
 
 export const multipliers: Record<
@@ -34,7 +37,8 @@ export const multipliers: Record<
     '0': {
       'M-BTC': {
         borrow: {
-          ionAPR: false
+          ionAPR: false,
+          op: true
         },
         market: 'm_btc_market',
         multiplier: 66000,
@@ -53,6 +57,16 @@ export const multipliers: Record<
         supply: {
           underlyingAPR: 10,
           flywheel: true
+        }
+      },
+      uniBTC: {
+        supply: {
+          op: true
+        }
+      },
+      oBTC: {
+        supply: {
+          op: true
         }
       },
       STONE: {
@@ -270,7 +284,7 @@ export const multipliers: Record<
       hyUSD: {
         supply: {
           underlyingAPR: 3.5,
-          ionAPR: false,
+          ionAPR: true,
           flywheel: true
         },
         borrow: {
@@ -627,7 +641,8 @@ export const multipliers: Record<
         supply: {
           underlyingAPR: 3.46,
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 2.5
         }
       },
       FRAX: {
@@ -637,7 +652,8 @@ export const multipliers: Record<
         },
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 2.5
         }
       },
       sfrxETH: {
@@ -653,13 +669,16 @@ export const multipliers: Record<
       FXS: {
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          fxtl: 12.5
         }
       },
       insfrxETH: {
         supply: {
           ionAPR: true,
-          flywheel: true
+          flywheel: true,
+          totems: 3,
+          inceptionTurtle: true
         }
       },
       sFRAX: {

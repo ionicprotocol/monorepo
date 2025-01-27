@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 import { IonicComptroller } from "./compound/ComptrollerInterface.sol";
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
@@ -60,16 +60,9 @@ contract PoolLensSecondary is Initializable {
    * @dev This function is not designed to be called in a transaction: it is too gas-intensive.
    * Ideally, we can add the `view` modifier, but many cToken functions potentially modify the state.
    */
-  function getPoolOwnership(IonicComptroller comptroller)
-    external
-    view
-    returns (
-      address,
-      bool,
-      bool,
-      CTokenOwnership[] memory
-    )
-  {
+  function getPoolOwnership(
+    IonicComptroller comptroller
+  ) external view returns (address, bool, bool, CTokenOwnership[] memory) {
     // Get pool ownership
     address comptrollerAdmin = comptroller.admin();
     bool comptrollerAdminHasRights = comptroller.adminHasRights();
@@ -163,11 +156,7 @@ contract PoolLensSecondary is Initializable {
    * @param account The account to determine liquidity for.
    * @return Maximum borrow/redeem amount.
    */
-  function getMaxRedeemOrBorrow(
-    address account,
-    ICErc20 cTokenModify,
-    bool isBorrow
-  ) internal returns (uint256) {
+  function getMaxRedeemOrBorrow(address account, ICErc20 cTokenModify, bool isBorrow) internal returns (uint256) {
     IonicComptroller comptroller = IonicComptroller(cTokenModify.comptroller());
     return comptroller.getMaxRedeemOrBorrow(account, cTokenModify, isBorrow);
   }
@@ -176,17 +165,9 @@ contract PoolLensSecondary is Initializable {
    * @notice Returns an array of all markets, an array of all `RewardsDistributor` contracts, an array of reward token addresses for each `RewardsDistributor`, an array of supply speeds for each distributor for each, and their borrow speeds.
    * @param comptroller The Ionic pool Comptroller to check.
    */
-  function getRewardSpeedsByPool(IonicComptroller comptroller)
-    public
-    view
-    returns (
-      ICErc20[] memory,
-      address[] memory,
-      address[] memory,
-      uint256[][] memory,
-      uint256[][] memory
-    )
-  {
+  function getRewardSpeedsByPool(
+    IonicComptroller comptroller
+  ) public view returns (ICErc20[] memory, address[] memory, address[] memory, uint256[][] memory, uint256[][] memory) {
     ICErc20[] memory allMarkets = comptroller.getAllMarkets();
     address[] memory distributors;
 
@@ -225,16 +206,12 @@ contract PoolLensSecondary is Initializable {
    * @notice For each `Comptroller`, returns an array of all markets, an array of all `RewardsDistributor` contracts, an array of reward token addresses for each `RewardsDistributor`, an array of supply speeds for each distributor for each, and their borrow speeds.
    * @param comptrollers The Ionic pool Comptrollers to check.
    */
-  function getRewardSpeedsByPools(IonicComptroller[] memory comptrollers)
+  function getRewardSpeedsByPools(
+    IonicComptroller[] memory comptrollers
+  )
     external
     view
-    returns (
-      ICErc20[][] memory,
-      address[][] memory,
-      address[][] memory,
-      uint256[][][] memory,
-      uint256[][][] memory
-    )
+    returns (ICErc20[][] memory, address[][] memory, address[][] memory, uint256[][][] memory, uint256[][][] memory)
   {
     ICErc20[][] memory allMarkets = new ICErc20[][](comptrollers.length);
     address[][] memory distributors = new address[][](comptrollers.length);
@@ -280,16 +257,10 @@ contract PoolLensSecondary is Initializable {
    * @param distributors The `RewardsDistributor` contracts to check.
    * @return For each of `distributors`: total quantity of unclaimed rewards, array of cTokens, array of unaccrued (unclaimed) supply-side and borrow-side rewards per cToken, and quantity of funds available in the distributor.
    */
-  function getUnclaimedRewardsByDistributors(address holder, IRewardsDistributor_PLS[] memory distributors)
-    external
-    returns (
-      address[] memory,
-      uint256[] memory,
-      ICErc20[][] memory,
-      uint256[2][][] memory,
-      uint256[] memory
-    )
-  {
+  function getUnclaimedRewardsByDistributors(
+    address holder,
+    IRewardsDistributor_PLS[] memory distributors
+  ) external returns (address[] memory, uint256[] memory, ICErc20[][] memory, uint256[2][][] memory, uint256[] memory) {
     address[] memory rewardTokens = new address[](distributors.length);
     uint256[] memory compUnclaimedTotal = new uint256[](distributors.length);
     ICErc20[][] memory allMarkets = new ICErc20[][](distributors.length);
@@ -318,15 +289,9 @@ contract PoolLensSecondary is Initializable {
    * @notice Returns arrays of indexes, `Comptroller` proxy contracts, and `RewardsDistributor` contracts for Ionic pools supplied to by `account`.
    * @dev This function is not designed to be called in a transaction: it is too gas-intensive.
    */
-  function getRewardsDistributorsBySupplier(address supplier)
-    external
-    view
-    returns (
-      uint256[] memory,
-      IonicComptroller[] memory,
-      address[][] memory
-    )
-  {
+  function getRewardsDistributorsBySupplier(
+    address supplier
+  ) external view returns (uint256[] memory, IonicComptroller[] memory, address[][] memory) {
     // Get array length
     (, PoolDirectory.Pool[] memory pools) = directory.getActivePools();
     uint256 arrayLength = 0;
@@ -368,15 +333,9 @@ contract PoolLensSecondary is Initializable {
    * @notice The returned list of flywheels contains address(0) for flywheels for which the user has no rewards to claim
    * @dev This function is not designed to be called in a transaction: it is too gas-intensive.
    */
-  function getFlywheelsToClaim(address user)
-    external
-    view
-    returns (
-      uint256[] memory,
-      IonicComptroller[] memory,
-      address[][] memory
-    )
-  {
+  function getFlywheelsToClaim(
+    address user
+  ) external view returns (uint256[] memory, IonicComptroller[] memory, address[][] memory) {
     (uint256[] memory poolIds, PoolDirectory.Pool[] memory pools) = directory.getActivePools();
 
     IonicComptroller[] memory comptrollers = new IonicComptroller[](pools.length);
@@ -393,11 +352,10 @@ contract PoolLensSecondary is Initializable {
     return (poolIds, comptrollers, distributors);
   }
 
-  function flywheelsWithRewardsForPoolUser(address user, address[] memory _distributors)
-    internal
-    view
-    returns (address[] memory)
-  {
+  function flywheelsWithRewardsForPoolUser(
+    address user,
+    address[] memory _distributors
+  ) internal view returns (address[] memory) {
     address[] memory distributors = new address[](_distributors.length);
     for (uint256 j = 0; j < _distributors.length; j++) {
       if (IRewardsDistributor_PLS(_distributors[j]).compAccrued(user) > 0) {
