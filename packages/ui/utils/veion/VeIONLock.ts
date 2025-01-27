@@ -40,6 +40,9 @@ export class VeIONLock implements VeIONTableData {
     rawAmount: bigint;
     value: string;
     valueNum: number;
+    start: number;
+    end: number;
+    duration: number;
   };
   lockExpires: {
     date: string;
@@ -120,7 +123,10 @@ export class VeIONLock implements VeIONTableData {
       amount: `${formattedAmount} BLP`,
       rawAmount: raw.amount,
       value: 'TBD', // Will be updated when oracle is available
-      valueNum: 0
+      valueNum: 0,
+      start: Number(raw.start),
+      end: Number(raw.end),
+      duration: Number(raw.end) - Number(raw.start)
     };
 
     // Set lock expiry info
@@ -168,7 +174,10 @@ export class VeIONLock implements VeIONTableData {
       lockedBLP: {
         amount: this.lockedBLP.amount,
         value: this.lockedBLP.value,
-        rawAmount: this.lockedBLP.rawAmount
+        rawAmount: this.lockedBLP.rawAmount,
+        start: this.lockedBLP.start,
+        end: this.lockedBLP.end,
+        duration: this.lockedBLP.duration
       },
       lockExpires: {
         date: this.lockExpires.date,

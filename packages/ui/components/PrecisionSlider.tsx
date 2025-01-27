@@ -21,27 +21,24 @@ export function PrecisionSlider({
   marks,
   className
 }: PrecisionSliderProps) {
+  const sliderMarks = marks?.map((mark) => ({
+    value: mark,
+    label: `${mark}d`,
+    isDisabled: false
+  }));
+
   return (
     <div className="w-full">
-      {marks && (
-        <div className="w-full mb-2 text-xs flex justify-between text-white/25">
-          {marks.map((mark) => (
-            <span
-              key={mark}
-              className={value >= mark ? 'text-accent' : ''}
-            >
-              {mark}%
-            </span>
-          ))}
-        </div>
-      )}
       <Slider
         value={[value]}
         onValueChange={(val) => onChange(Math.round(val[0]))}
         max={max}
         min={min}
         step={step}
-        className={`[&_[role=slider]]:bg-accent [&_[role=slider]]:border-0 ${className || ''}`}
+        className={className}
+        marks={sliderMarks}
+        onMarkClick={(val) => onChange(val)}
+        currentPosition={value}
       />
     </div>
   );

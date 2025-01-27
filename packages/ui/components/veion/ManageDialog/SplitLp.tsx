@@ -8,7 +8,6 @@ import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
-import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
 
@@ -22,7 +21,6 @@ export function SplitLp({ chain }: SplitLpProps) {
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
   const { split, isPending } = useVeIONManage(Number(chain));
-  const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   // Get the raw amount and convert it to a number for calculations
   const rawAmount = selectedManagePosition?.lockedBLP?.rawAmount || '0';
@@ -48,7 +46,6 @@ export function SplitLp({ chain }: SplitLpProps) {
     if (!selectedManagePosition?.id || !firstAmountRaw) return;
 
     await split({
-      tokenAddress: lpToken,
       from: +selectedManagePosition.id,
       amount: firstAmountRaw
     });

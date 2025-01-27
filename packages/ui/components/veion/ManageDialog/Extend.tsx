@@ -1,87 +1,99 @@
 import { useState } from 'react';
 
-import { format } from 'date-fns';
+import { format, addDays, differenceInDays } from 'date-fns';
+import { ArrowRight } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
-import { Separator } from '@ui/components/ui/separator';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
-import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
-import CustomTooltip from '../../CustomTooltip';
 import { LockDurationPicker } from '../../LockDurationPicker';
 import AutoLock from '../AutoLock';
 
 type ExtendProps = {
   chain: string;
-  currentLockDate?: Date;
-  votingPower?: string;
 };
 
-export function Extend({
-  chain,
-  currentLockDate,
-  votingPower = '0.00'
-}: ExtendProps) {
-  const [autoLock, setAutoLock] = useState(false);
-  const [lockDate, setLockDate] = useState<Date>(
-    () => currentLockDate || new Date()
-  );
-  const [selectedDuration, setSelectedDuration] = useState<number>(180);
-
+export function Extend({ chain }: ExtendProps) {
+  const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
   const { extendLock, isPending } = useVeIONManage(Number(chain));
 
-  const tokenAddress = getAvailableStakingToken(+chain, 'eth');
+  const currentLockDate = new Date(
+    selectedManagePosition?.lockExpires?.date || Date.now()
+  );
+  const [newLockDate, setNewLockDate] = useState<Date>(() =>
+    addDays(currentLockDate, 1)
+  );
+
+  const extensionDays = differenceInDays(newLockDate, currentLockDate);
+  const [autoLock, setAutoLock] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
   const handleExtend = async () => {
+    if (
+      extensionDays <= 0 ||
+      !selectedManagePosition?.id ||
+      !selectedManagePosition.lockedBLP
+    )
+      return;
+
+    // Add the extension days in seconds
+    const newDurationSeconds =
+      selectedManagePosition.lockedBLP.duration + extensionDays * 86400;
+
     await extendLock({
-      tokenAddress: tokenAddress as `0x${string}`,
-      tokenId: tokenAddress,
-      lockDuration: selectedDuration * 86400
+      tokenId: +selectedManagePosition.id,
+      lockDuration: newDurationSeconds
     });
   };
 
+  const handleDurationChange = (duration: number) => {
+    setSelectedDuration(duration);
+    const calculatedNewDate = addDays(currentLockDate, duration);
+    setNewLockDate(calculatedNewDate);
+  };
+
   return (
-    <div className="flex flex-col gap-y-2 py-2 px-3">
-      <LockDurationPicker
-        selectedDuration={selectedDuration}
-        lockDate={lockDate}
-        onDurationChange={setSelectedDuration}
-        onDateChange={setLockDate}
-      />
+    <div className="flex flex-col gap-y-4 p-4">
+      <div className="flex flex-col gap-y-2">
+        <LockDurationPicker
+          selectedDuration={selectedDuration}
+          lockDate={newLockDate}
+          onDurationChange={handleDurationChange}
+          onDateChange={(date) => setNewLockDate(date)}
+          baseLockDate={currentLockDate}
+          minDuration={1}
+          maxDuration={730}
+          tooltipContent="Longer lock periods provide higher voting power"
+        />
+      </div>
+
+      <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg">
+        <div className="flex flex-col">
+          <span className="text-sm text-white/60">NEW LOCK ENDS</span>
+          <span className="text-lg font-medium">
+            {format(newLockDate, 'dd MMM yyyy')}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-white/60">+{extensionDays} days</span>
+          <ArrowRight className="w-4 h-4 text-accent" />
+        </div>
+      </div>
 
       <AutoLock
         autoLock={autoLock}
         setAutoLock={setAutoLock}
       />
 
-      <Separator className="bg-white/10 my-4" />
-
-      <div className="flex w-full items-center justify-between text-xs text-white/50">
-        <div className="flex items-center gap-2">
-          VOTING POWER
-          <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
-        </div>
-        <p>{votingPower} veIon</p>
-      </div>
-
-      <div className="flex w-full items-center justify-between text-xs text-white/50">
-        LOCKED Until
-        <p>
-          {currentLockDate
-            ? format(currentLockDate, 'dd MMM yyyy')
-            : 'Not locked'}
-          → {format(lockDate, 'dd MMM yyyy')}
-        </p>
-      </div>
-
       <Button
-        className="w-full bg-accent text-black mt-4"
+        className="w-full bg-accent text-black mt-2"
         onClick={handleExtend}
-        disabled={isPending || !address}
+        disabled={isPending || !address || extensionDays <= 0}
       >
-        {isPending ? 'Extending...' : 'Extend Lock'}
+        {isPending ? 'Extending...' : `Extend Lock by ${extensionDays} Days`}
       </Button>
     </div>
   );

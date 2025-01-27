@@ -84,6 +84,9 @@ export type MyVeionData = {
     amount: string;
     value: string;
     rawAmount: bigint;
+    start: number;
+    end: number;
+    duration: number;
   };
   lockExpires: {
     date: string;

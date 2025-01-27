@@ -1,4 +1,3 @@
-// LockDurationPicker.tsx
 import { useState, useMemo } from 'react';
 
 import { format, addDays } from 'date-fns';
@@ -20,6 +19,7 @@ interface LockDurationPickerProps {
   lockDate: Date;
   onDurationChange: (duration: number) => void;
   onDateChange: (date: Date) => void;
+  baseLockDate: Date;
   minDuration?: number;
   maxDuration?: number;
   showTooltip?: boolean;
@@ -27,9 +27,9 @@ interface LockDurationPickerProps {
 }
 
 const defaultDurationLabels = {
+  1: '1d',
   180: '180d',
   365: '1y',
-  547: '1.5y',
   730: '2y'
 };
 
@@ -38,7 +38,8 @@ export function LockDurationPicker({
   lockDate,
   onDurationChange,
   onDateChange,
-  minDuration = 180,
+  baseLockDate,
+  minDuration = 1,
   maxDuration = 730,
   showTooltip = true,
   tooltipContent = 'A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power.'
@@ -46,18 +47,17 @@ export function LockDurationPicker({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const dateRange = useMemo(() => {
-    const today = new Date();
     return {
-      minDate: addDays(today, minDuration),
-      maxDate: addDays(today, maxDuration)
+      minDate: addDays(baseLockDate, minDuration),
+      maxDate: addDays(baseLockDate, maxDuration)
     };
-  }, [minDuration, maxDuration]);
+  }, [baseLockDate, minDuration, maxDuration]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      onDateChange(date);
+      onDateChange?.(date);
       const durationInDays = Math.round(
-        (date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+        (date.getTime() - baseLockDate.getTime()) / (1000 * 60 * 60 * 24)
       );
       const clampedDuration = Math.max(
         minDuration,
@@ -76,7 +76,7 @@ export function LockDurationPicker({
       </div>
       <div className="flex items-center justify-between">
         <div className="text-sm text-white/60">
-          {format(lockDate, 'dd. MM. yyyy')}
+          {format(lockDate, 'dd MMM yyyy')}
         </div>
         <Popover
           open={isCalendarOpen}
@@ -108,25 +108,18 @@ export function LockDurationPicker({
           </PopoverContent>
         </Popover>
       </div>
-      <PrecisionSlider
-        value={selectedDuration}
-        onChange={(val) => {
-          onDurationChange(val);
-          onDateChange(addDays(new Date(), val));
-        }}
-        max={maxDuration}
-        min={minDuration}
-        step={1}
-      />
-      <div className="w-full flex justify-between text-xs text-white/60">
-        {Object.entries(defaultDurationLabels).map(([days, label]) => (
-          <span
-            key={days}
-            className={selectedDuration >= Number(days) ? 'text-accent' : ''}
-          >
-            {label}
-          </span>
-        ))}
+      <div className="pt-6">
+        <PrecisionSlider
+          value={selectedDuration}
+          onChange={(val) => {
+            onDurationChange(val);
+            onDateChange?.(addDays(baseLockDate, val));
+          }}
+          max={maxDuration}
+          min={minDuration}
+          step={1}
+          marks={Object.keys(defaultDurationLabels).map(Number)}
+        />
       </div>
     </div>
   );

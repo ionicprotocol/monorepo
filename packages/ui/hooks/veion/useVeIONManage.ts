@@ -2,10 +2,9 @@ import { parseUnits, erc20Abi } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { getVeIonContract } from '@ui/constants/veIon';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { useContractWrite } from '../useContractWrite';
-
-import type { Hex } from 'viem';
 
 export function useVeIONManage(chain: number) {
   const veIonContract = getVeIonContract(chain);
@@ -13,6 +12,7 @@ export function useVeIONManage(chain: number) {
   const publicClient = usePublicClient();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const tokenAddress = getAvailableStakingToken(+chain, 'eth');
 
   const getContractConfig = (functionName: string, args: any[]) => {
     if (!veIonContract) {
@@ -97,19 +97,17 @@ export function useVeIONManage(chain: number) {
   }
 
   function extendLock({
-    tokenAddress,
     tokenId,
     lockDuration
   }: {
-    tokenAddress: `0x${string}`;
-    tokenId: Hex;
+    tokenId: number;
     lockDuration: number;
   }) {
     return write(
       getContractConfig('increaseUnlockTime', [
         tokenAddress,
-        tokenId,
-        lockDuration
+        BigInt(tokenId),
+        BigInt(lockDuration)
       ]),
       {
         successMessage: 'Successfully extended lock duration',
@@ -124,8 +122,8 @@ export function useVeIONManage(chain: number) {
     lpToken,
     amount
   }: {
-    fromTokenId: Hex;
-    toTokenId: Hex;
+    fromTokenId: number;
+    toTokenId: number;
     lpToken: `0x${string}`;
     amount: number;
   }) {
@@ -142,8 +140,8 @@ export function useVeIONManage(chain: number) {
     fromTokenId,
     toTokenId
   }: {
-    fromTokenId: Hex;
-    toTokenId: Hex;
+    fromTokenId: number;
+    toTokenId: number;
   }) {
     return write(getContractConfig('merge', [fromTokenId, toTokenId]), {
       successMessage: 'Successfully merged positions',
@@ -151,15 +149,7 @@ export function useVeIONManage(chain: number) {
     });
   }
 
-  function split({
-    tokenAddress,
-    from,
-    amount
-  }: {
-    tokenAddress: `0x${string}`;
-    from: number;
-    amount: bigint;
-  }) {
+  function split({ from, amount }: { from: number; amount: bigint }) {
     const config = getContractConfig('split', [
       tokenAddress,
       BigInt(from),
@@ -179,7 +169,7 @@ export function useVeIONManage(chain: number) {
   }: {
     from: `0x${string}`;
     to: `0x${string}`;
-    tokenId: Hex;
+    tokenId: number;
   }) {
     return write(getContractConfig('safeTransferFrom', [from, to, tokenId]), {
       successMessage: 'Successfully transferred veION',
