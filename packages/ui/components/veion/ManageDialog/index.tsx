@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import { Delegate } from './Delegate';
 import { Extend } from './Extend';
@@ -31,6 +32,8 @@ export default function ManageDialog({
   isOpen,
   onOpenChange
 }: ManageDialogProps) {
+  const { selectedManagePosition, setSelectedManagePosition } =
+    useVeIONContext();
   const toggleArr = [
     'Increase',
     'Extend',
@@ -39,6 +42,13 @@ export default function ManageDialog({
     'Split',
     'Transfer'
   ];
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setSelectedManagePosition(null);
+    }
+    onOpenChange(open);
+  };
 
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -53,11 +63,11 @@ export default function ManageDialog({
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
     >
       <DialogContent className="bg-grayone border border-grayUnselect sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Manage veION #12</DialogTitle>
+          <DialogTitle>Manage veION #{selectedManagePosition?.id}</DialogTitle>
         </DialogHeader>
 
         <div className="flex gap-2 text-xs mb-3">
@@ -72,7 +82,6 @@ export default function ManageDialog({
           setActiveToggle={setActiveManageToggle}
           defaultValue={toggleArr[0]}
         />
-
         {activeManageToggle === 'Increase' && (
           <IncreaseLockedAmount chain={chain} />
         )}

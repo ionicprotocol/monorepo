@@ -1,4 +1,4 @@
-import { useWriteContract } from 'wagmi';
+import { usePublicClient, useWriteContract } from 'wagmi';
 
 import { useToast } from '@ui/hooks/use-toast';
 
@@ -20,34 +20,44 @@ interface WriteContractOptions {
 
 export function useContractWrite() {
   const { toast } = useToast();
-
   const { writeContract, isPending, isSuccess, isError, data } =
-    useWriteContract({
-      mutation: {
-        onError(error: Error) {
-          toast({
-            title: 'Error',
-            description: error.message,
-            variant: 'destructive'
-          });
-        },
-        onSuccess() {
-          toast({
-            title: 'Success',
-            description: 'Transaction successful'
-          });
-        }
-      }
-    });
+    useWriteContract();
+  const publicClient = usePublicClient();
 
   const write = async (
     config: ContractConfig,
     options: WriteContractOptions = {}
   ) => {
+    if (!publicClient) {
+      throw new Error('Public client not initialized');
+    }
+
     try {
-      return await writeContract({
+      const hash = await writeContract({
         ...config
       });
+
+      // Wait for the transaction to be confirmed
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: hash as unknown as `0x${string}`
+      });
+
+      if (receipt.status === 'success') {
+        toast({
+          title: 'Success',
+          description: options.successMessage || 'Transaction successful',
+          variant: 'default'
+        });
+        options.onSuccess?.();
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Transaction failed',
+          variant: 'destructive'
+        });
+      }
+
+      return receipt;
     } catch (error: any) {
       toast({
         title: 'Error',

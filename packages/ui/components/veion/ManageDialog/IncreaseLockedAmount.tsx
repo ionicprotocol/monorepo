@@ -3,6 +3,7 @@ import { useAccount, useBalance } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { toast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
@@ -17,6 +18,7 @@ type IncreaseLockedAmountProps = {
 
 export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
   const { increaseAmount, isPending } = useVeIONManage(Number(chain));
+  const { selectedManagePosition } = useVeIONContext();
 
   const utilizationMarks = [0, 25, 50, 75, 100];
   const token = getToken(+chain);
@@ -43,7 +45,7 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
   } = usePrecisionSlider({ maxValue: tokenValue });
 
   const handleIncrease = () => {
-    if (!address) {
+    if (!address || !selectedManagePosition) {
       toast({
         title: 'Error',
         description: 'Please connect your wallet',
@@ -54,7 +56,7 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
 
     increaseAmount({
       tokenAddress: tokenAddress as `0x${string}`,
-      tokenId: tokenAddress,
+      tokenId: +selectedManagePosition.id,
       amount: veionAmount,
       tokenDecimals: tokenBalance?.decimals || 18
     });
@@ -66,7 +68,7 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
         headerText={'Lock Amount'}
         max={String(tokenValue)}
         amount={String(veionAmount)}
-        tokenName={'ion/eth LP'}
+        tokenName={'ion/eth'}
         token={token}
         handleInput={(val?: string) => handleInputChange(Number(val || 0))}
         chain={+chain}

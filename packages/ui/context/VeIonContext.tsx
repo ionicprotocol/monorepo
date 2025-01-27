@@ -17,7 +17,8 @@ import type {
   EmissionsData,
   ReservesData,
   VeIONLockData,
-  ChainId
+  ChainId,
+  MyVeionData
 } from '@ui/types/VeIION';
 import { getToken } from '@ui/utils/getStakingTokens';
 
@@ -39,6 +40,8 @@ interface VeIONContextType {
 
   // Loading state
   isLoading: boolean;
+  selectedManagePosition: MyVeionData | null;
+  setSelectedManagePosition: (position: MyVeionData | null) => void;
 }
 
 const defaultContext: VeIONContextType = {
@@ -76,7 +79,9 @@ const defaultContext: VeIONContextType = {
     delegatedLocks: [],
     isLoading: true
   },
-  isLoading: true
+  isLoading: true,
+  selectedManagePosition: null,
+  setSelectedManagePosition: () => {}
 };
 
 const VeIONContext = createContext<VeIONContextType>(defaultContext);
@@ -86,6 +91,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const defaultChainId = useChainId();
   const searchParams = useSearchParams();
   const [currentChain, setCurrentChain] = useState<number>(defaultChainId);
+  const [selectedManagePosition, setSelectedManagePosition] =
+    useState<MyVeionData | null>(null);
 
   const veIonContract = getVeIonContract(currentChain);
   const isSupported = isVeIonSupported(currentChain);
@@ -162,7 +169,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     emissions: isSupported ? emissions : defaultContext.emissions,
     reserves,
     locks: isSupported ? locks : defaultContext.locks,
-    isLoading: reservesLoading || (isSupported && locks.isLoading)
+    isLoading: reservesLoading || (isSupported && locks.isLoading),
+    selectedManagePosition,
+    setSelectedManagePosition
   };
 
   return (

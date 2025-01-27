@@ -36,7 +36,7 @@ export function Extend({
 
   const tokenAddress = getAvailableStakingToken(+chain, 'eth');
 
-  const handleExtend = () => {
+  const handleExtend = async () => {
     if (!address) {
       toast({
         title: 'Error',
@@ -46,11 +46,25 @@ export function Extend({
       return;
     }
 
-    extendLock({
-      tokenAddress: tokenAddress as `0x${string}`,
-      tokenId: tokenAddress,
-      lockDuration: selectedDuration * 86400 // Convert days to seconds
-    });
+    try {
+      await extendLock({
+        tokenAddress: tokenAddress as `0x${string}`,
+        tokenId: tokenAddress,
+        lockDuration: selectedDuration * 86400
+      });
+
+      toast({
+        title: 'Success',
+        description: 'Lock duration extended successfully',
+        variant: 'default'
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to extend lock duration',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (

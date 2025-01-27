@@ -1,4 +1,5 @@
-import { parseUnits } from 'viem';
+import { parseUnits, erc20Abi } from 'viem';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { getVeIonContract } from '@ui/constants/veIon';
 
@@ -9,6 +10,9 @@ import type { Hex } from 'viem';
 export function useVeIONManage(chain: number) {
   const veIonContract = getVeIonContract(chain);
   const { write, isPending } = useContractWrite();
+  const publicClient = usePublicClient();
+  const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
 
   const getContractConfig = (functionName: string, args: any[]) => {
     if (!veIonContract) throw new Error('Contract not initialized');
@@ -20,29 +24,78 @@ export function useVeIONManage(chain: number) {
     };
   };
 
-  const increaseAmount = async ({
+  const checkAllowance = async (
+    tokenAddress: `0x${string}`,
+    owner: `0x${string}`,
+    amount: bigint
+  ) => {
+    if (!veIonContract) throw new Error('Contract not initialized');
+    if (!publicClient) throw new Error('Public client not initialized');
+
+    const allowance = await publicClient.readContract({
+      address: tokenAddress,
+      abi: erc20Abi,
+      functionName: 'allowance',
+      args: [owner, veIonContract.address]
+    });
+
+    return allowance >= amount;
+  };
+
+  async function increaseAmount({
     tokenAddress,
     tokenId,
     amount,
     tokenDecimals
   }: {
     tokenAddress: `0x${string}`;
-    tokenId: Hex;
+    tokenId: number;
     amount: number;
     tokenDecimals: number;
-  }) => {
-    return write(
-      getContractConfig('increaseAmount', [
-        [tokenAddress],
-        tokenId,
-        [parseUnits(String(amount), tokenDecimals)],
-        [true]
-      ]),
-      { successMessage: 'Successfully increased locked amount' }
-    );
-  };
+  }) {
+    if (address && publicClient && walletClient) {
+      try {
+        const parsedAmount = parseUnits(String(amount), tokenDecimals);
 
-  const extendLock = async ({
+        // Check if approval is needed
+        const hasAllowance = await checkAllowance(
+          tokenAddress,
+          address,
+          parsedAmount
+        );
+
+        if (!hasAllowance) {
+          // First approve tokens
+          const approvalTx = await walletClient.writeContract({
+            abi: erc20Abi,
+            account: walletClient.account,
+            address: tokenAddress,
+            args: [veIonContract.address, parsedAmount],
+            functionName: 'approve'
+          });
+
+          // Wait for approval transaction to be confirmed
+          await publicClient.waitForTransactionReceipt({ hash: approvalTx });
+        }
+
+        // Then increase amount
+        return write(
+          getContractConfig('increaseAmount', [
+            tokenAddress,
+            BigInt(tokenId),
+            parsedAmount,
+            true // _stakeUnderlying parameter
+          ]),
+          { successMessage: 'Successfully increased locked amount' }
+        );
+      } catch (error) {
+        console.error('Error in increaseAmount:', error);
+        throw error;
+      }
+    }
+  }
+
+  function extendLock({
     tokenAddress,
     tokenId,
     lockDuration
@@ -50,7 +103,7 @@ export function useVeIONManage(chain: number) {
     tokenAddress: `0x${string}`;
     tokenId: Hex;
     lockDuration: number;
-  }) => {
+  }) {
     return write(
       getContractConfig('increaseUnlockTime', [
         tokenAddress,
@@ -59,9 +112,9 @@ export function useVeIONManage(chain: number) {
       ]),
       { successMessage: 'Successfully extended lock duration' }
     );
-  };
+  }
 
-  const delegate = async ({
+  function delegate({
     fromTokenId,
     toTokenId,
     lpToken,
@@ -71,26 +124,26 @@ export function useVeIONManage(chain: number) {
     toTokenId: Hex;
     lpToken: `0x${string}`;
     amount: number;
-  }) => {
+  }) {
     return write(
       getContractConfig('delegate', [fromTokenId, toTokenId, lpToken, amount]),
       { successMessage: 'Successfully delegated voting power' }
     );
-  };
+  }
 
-  const merge = async ({
+  function merge({
     fromTokenId,
     toTokenId
   }: {
     fromTokenId: Hex;
     toTokenId: Hex;
-  }) => {
+  }) {
     return write(getContractConfig('merge', [fromTokenId, toTokenId]), {
       successMessage: 'Successfully merged positions'
     });
-  };
+  }
 
-  const split = async ({
+  function split({
     tokenAddress,
     from,
     amount
@@ -98,13 +151,13 @@ export function useVeIONManage(chain: number) {
     tokenAddress: `0x${string}`;
     from: Hex;
     amount: number;
-  }) => {
+  }) {
     return write(getContractConfig('split', [tokenAddress, from, amount]), {
       successMessage: 'Successfully split veION position'
     });
-  };
+  }
 
-  const safeTransfer = async ({
+  function safeTransfer({
     from,
     to,
     tokenId
@@ -112,11 +165,11 @@ export function useVeIONManage(chain: number) {
     from: `0x${string}`;
     to: `0x${string}`;
     tokenId: Hex;
-  }) => {
+  }) {
     return write(getContractConfig('safeTransferFrom', [from, to, tokenId]), {
       successMessage: 'Successfully transferred veION'
     });
-  };
+  }
 
   return {
     increaseAmount,

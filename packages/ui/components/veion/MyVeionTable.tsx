@@ -25,6 +25,7 @@ function MyVeionTable() {
 
   const router = useRouter();
   const {
+    setSelectedManagePosition,
     locks: { myLocks, isLoading }
   } = useVeIONContext();
 
@@ -138,7 +139,10 @@ function MyVeionTable() {
                 />
                 <ActionButton
                   half
-                  action={() => setIsManageOpen(true)}
+                  action={() => {
+                    setSelectedManagePosition(data);
+                    setIsManageOpen(true);
+                  }}
                   label="Manage"
                   bg="bg-white/10"
                   className="text-white"

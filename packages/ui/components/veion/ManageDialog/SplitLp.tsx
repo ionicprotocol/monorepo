@@ -1,13 +1,11 @@
 import { useState } from 'react';
-
 import { InfoIcon } from 'lucide-react';
 import { useAccount } from 'wagmi';
-
 import { Button } from '@ui/components/ui/button';
 import { Separator } from '@ui/components/ui/separator';
+import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
-
 import { PrecisionSlider } from '../../PrecisionSlider';
 
 type SplitLpProps = {
@@ -19,6 +17,7 @@ type SplitLpProps = {
 export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
   const utilizationMarks = [0, 25, 50, 75, 100];
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
+  const { toast } = useToast();
 
   const { address } = useAccount();
   const { split, isPending } = useVeIONManage(Number(chain));
@@ -38,11 +37,21 @@ export function SplitLp({ chain, tokenId, maxAmount = 1000 }: SplitLpProps) {
   const handleSplit = async () => {
     if (!address || !tokenId || !firstAmount) return;
 
-    await split({
-      tokenAddress: lpToken as `0x${string}`,
-      from: tokenId as `0x${string}`,
-      amount: firstAmount
-    });
+    try {
+      await split({
+        tokenAddress: lpToken as `0x${string}`,
+        from: tokenId as `0x${string}`,
+        amount: firstAmount
+      });
+
+      // The toast will be shown from the useContractWrite hook after the transaction is confirmed
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to split veION',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 
 import { format } from 'date-fns';
-import { isAddress } from 'viem';
+import { InfoIcon } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
-import { Input } from '@ui/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -14,96 +13,89 @@ import {
   SelectValue
 } from '@ui/components/ui/select';
 import { Separator } from '@ui/components/ui/separator';
+import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import CustomTooltip from '../../CustomTooltip';
 
-type LP = {
-  id: string;
-  votingPower: string;
-  lockedUntil: Date;
-};
-
 type MergeLpsProps = {
   chain: string;
-  availableLPs?: LP[];
-  lockedUntil: Date;
 };
 
-export function MergeLps({
-  chain,
-  availableLPs = [],
-  lockedUntil
-}: MergeLpsProps) {
+export function MergeLps({ chain }: MergeLpsProps) {
   const [selectedLp, setSelectedLp] = useState<string>('');
-  const [toAddress, setToAddress] = useState('');
-  const isValidAddress = toAddress ? isAddress(toAddress) : false;
 
   const { address } = useAccount();
   const { merge, isPending } = useVeIONManage(Number(chain));
+  const { toast } = useToast();
+  const { locks, selectedManagePosition } = useVeIONContext();
 
-  // Mock data for demonstration - replace with actual LP data
-  const mockLPs: LP[] =
-    availableLPs.length > 0
-      ? availableLPs
-      : [
-          {
-            id: '10990',
-            votingPower: '100.00',
-            lockedUntil: new Date('2024-12-31')
-          },
-          {
-            id: '10991',
-            votingPower: '50.00',
-            lockedUntil: new Date('2024-11-30')
-          },
-          {
-            id: '10992',
-            votingPower: '75.00',
-            lockedUntil: new Date('2024-10-31')
-          }
-        ];
+  const availableLPs = locks.myLocks
+    .filter((lock) => lock.id !== selectedManagePosition?.id)
+    .map((lock) => ({
+      id: lock.id,
+      votingPower: lock.votingPower,
+      lockedUntil: new Date(lock.lockExpires.date)
+    }));
 
-  const selectedLpData = mockLPs.find((lp) => lp.id === selectedLp);
+  const hasAvailablePositions = availableLPs.length > 0;
+  const selectedLpData = availableLPs.find((lp) => lp.id === selectedLp);
 
   const handleMerge = async () => {
-    if (!isValidAddress || !selectedLp) return;
+    if (!selectedLp) return;
 
-    await merge({
-      fromTokenId: selectedLp as `0x${string}`,
-      toTokenId: toAddress as `0x${string}`
-    });
+    try {
+      await merge({
+        fromTokenId: selectedManagePosition?.id as `0x${string}`,
+        toTokenId: selectedLp as `0x${string}`
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to merge positions',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
       <p className="text-[10px] text-white/50">Select veION to merge from</p>
-      <Select
-        onValueChange={setSelectedLp}
-        value={selectedLp}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select LP position" />
-        </SelectTrigger>
-        <SelectContent>
-          {mockLPs.map((lp) => (
-            <SelectItem
-              key={lp.id}
-              value={lp.id}
-            >
-              #{lp.id} - {lp.votingPower} veION
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
 
-      <p className="text-[10px] text-white/50 mt-3">Merge To</p>
-      <Input
-        placeholder="0x..."
-        value={toAddress}
-        onChange={(e) => setToAddress(e.target.value)}
-        className={!isValidAddress && toAddress ? 'border-red-500' : ''}
-      />
+      {!hasAvailablePositions ? (
+        <div className="text-sm text-white/70 bg-white/5 rounded-md p-4 text-center">
+          No positions available to merge
+        </div>
+      ) : (
+        <Select
+          onValueChange={setSelectedLp}
+          value={selectedLp}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select LP position" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableLPs.map((lp) => (
+              <SelectItem
+                key={lp.id}
+                value={lp.id}
+              >
+                #{lp.id} - {lp.votingPower}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4 mt-2">
+        <InfoIcon className="h-5 w-5 flex-shrink-0" />
+        <span>
+          Positions get merged to the selected tokenID ({selectedLpData?.id}),
+          the current one is burned and lock is set to the one further in the
+          future.
+        </span>
+      </div>
 
       <Separator className="bg-white/10 my-5" />
 
@@ -118,16 +110,24 @@ export function MergeLps({
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         LOCKED Until
         <p>
-          {format(selectedLpData?.lockedUntil || lockedUntil, 'dd MMM yyyy')}
+          {selectedLpData?.lockedUntil
+            ? format(selectedLpData.lockedUntil, 'dd MMM yyyy')
+            : 'N/A'}
         </p>
       </div>
 
       <Button
         className="w-full bg-accent text-black mt-4"
-        disabled={!isValidAddress || !selectedLp || !address || isPending}
+        disabled={
+          !hasAvailablePositions || !selectedLp || !address || isPending
+        }
         onClick={handleMerge}
       >
-        {isPending ? 'Merging...' : 'Merge'}
+        {isPending
+          ? 'Merging...'
+          : hasAvailablePositions
+            ? 'Merge'
+            : 'No Positions Available'}
       </Button>
     </div>
   );
