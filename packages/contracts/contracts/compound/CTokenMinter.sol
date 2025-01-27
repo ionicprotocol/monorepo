@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 
 import "./CToken.sol";
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 contract CTokenMinter is Initializable, OwnableUpgradeable {
   ICErc20 public collateralMarket;
