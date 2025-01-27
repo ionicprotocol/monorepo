@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { Globe, Diamond, Wallet } from 'lucide-react';
+
 import { pools } from '@ui/constants/index';
 
 const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
@@ -17,7 +19,6 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
           <div className="inline-flex items-center h-full gap-1">
             {poolsData.map((poolConfig, idx) => {
               const isActive = pool === poolConfig.id;
-              const isMain = poolConfig.name.toLowerCase().includes('main');
 
               return (
                 <Link
@@ -34,13 +35,15 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
                     }
                   `}
                 >
-                  {isMain ? (
+                  {poolConfig.id === '0' ? (
                     <Globe className="h-4 w-4" />
-                  ) : (
+                  ) : poolConfig.id === '1' ? (
                     <Diamond className="h-4 w-4" />
+                  ) : (
+                    <></>
                   )}
                   <span className="relative whitespace-nowrap">
-                    {isMain ? 'Main' : 'Native'}
+                    {poolConfig.name}
                   </span>
                 </Link>
               );

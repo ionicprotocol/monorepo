@@ -52,7 +52,10 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.base)
+    extraDocs: wrappedAssetDocs(SupportedChains.base),
+    initialSupplyCap: parseEther(String(1_500)).toString(),
+    initialBorrowCap: parseEther(String(1_200)).toString(),
+    initialCf: "0.85"
   },
   {
     symbol: assetSymbols.USDC,
@@ -64,7 +67,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    extraDocs: defaultDocs("https://basescan.org", USDC)
+    extraDocs: defaultDocs("https://basescan.org", USDC),
+    initialSupplyCap: parseUnits(String(10_000_000_000), 6).toString(),
+    initialBorrowCap: parseUnits(String(8_000_000_000), 6).toString(),
+    initialCf: "0.85"
   },
   {
     symbol: assetSymbols.wstETH,
