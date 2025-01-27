@@ -6,6 +6,11 @@ import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { useContractWrite } from '../useContractWrite';
 
+type Position = {
+  id: string;
+  amount: string;
+};
+
 export function useVeIONManage(chain: number) {
   const veIonContract = getVeIonContract(chain);
   const { write, isPending } = useContractWrite();
@@ -125,7 +130,7 @@ export function useVeIONManage(chain: number) {
     fromTokenId: number;
     toTokenId: number;
     lpToken: `0x${string}`;
-    amount: number;
+    amount: bigint;
   }) {
     return write(
       getContractConfig('delegate', [fromTokenId, toTokenId, lpToken, amount]),
@@ -177,6 +182,68 @@ export function useVeIONManage(chain: number) {
     });
   }
 
+  type Position = {
+    id: string;
+    amount: string;
+    isPermanent: boolean; // Add this field
+  };
+
+  // In useVeIONManage.ts, modify getOwnedTokenIds:
+  async function getOwnedTokenIds(
+    ownerAddress: `0x${string}`
+  ): Promise<Position[]> {
+    if (!publicClient || !veIonContract) {
+      throw new Error('Client or contract not initialized');
+    }
+
+    try {
+      const tokenIds = await publicClient.readContract({
+        address: veIonContract.address,
+        abi: veIonContract.abi,
+        functionName: 'getOwnedTokenIds',
+        args: [ownerAddress]
+      });
+
+      const positions = await Promise.all(
+        tokenIds.map(async (id) => {
+          // First get balance info
+          const [assets, balances, boosts] = await publicClient.readContract({
+            address: veIonContract.address,
+            abi: veIonContract.abi,
+            functionName: 'balanceOfNFT',
+            args: [id]
+          });
+
+          // Then get lock info to check if permanent
+          const lockInfo = await publicClient.readContract({
+            address: veIonContract.address,
+            abi: veIonContract.abi,
+            functionName: 's_locked',
+            args: [id, 0] // 0 for eth LP type
+          });
+
+          // Find the relevant balance
+          const tokenIndex = assets.findIndex(
+            (asset: string) =>
+              asset.toLowerCase() === tokenAddress?.toLowerCase()
+          );
+
+          return {
+            id: id.toString(),
+            amount: tokenIndex !== -1 ? balances[tokenIndex].toString() : '0',
+            isPermanent: lockInfo.isPermanent
+          };
+        })
+      );
+
+      return positions;
+    } catch (error) {
+      console.error('Error fetching owned token IDs:', error);
+      throw error;
+    }
+  }
+
+  // Then add getOwnedTokenIds to the return object
   return {
     increaseAmount,
     extendLock,
@@ -184,6 +251,7 @@ export function useVeIONManage(chain: number) {
     merge,
     split,
     safeTransfer,
+    getOwnedTokenIds, // Add this line
     isPending,
     isContractLoading: !veIonContract
   };

@@ -91,6 +91,7 @@ export type MyVeionData = {
   lockExpires: {
     date: string;
     timeLeft: string;
+    isPermanent: boolean;
   };
   votingPower: string;
   enableClaim?: boolean;

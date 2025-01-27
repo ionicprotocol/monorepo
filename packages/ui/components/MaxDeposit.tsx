@@ -3,8 +3,7 @@ import {
   useMemo,
   useRef,
   type SetStateAction,
-  type Dispatch,
-  useCallback
+  type Dispatch
 } from 'react';
 
 import dynamic from 'next/dynamic';

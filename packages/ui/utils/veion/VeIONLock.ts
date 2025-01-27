@@ -181,7 +181,8 @@ export class VeIONLock implements VeIONTableData {
       },
       lockExpires: {
         date: this.lockExpires.date,
-        timeLeft: this.lockExpires.timeLeft
+        timeLeft: this.lockExpires.timeLeft,
+        isPermanent: this.lockExpires.isPermanent // Add this
       },
       votingPower: this.votingPower.amount,
       votingPercentage: this.votingPower.percentage,
