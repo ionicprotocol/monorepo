@@ -29,6 +29,11 @@ function MyVeionTable() {
     locks: { myLocks, isLoading }
   } = useVeIONContext();
 
+  const hasLockExpired = (lockExpiryDate: string, isPermanent: boolean) => {
+    if (isPermanent) return false;
+    return new Date(lockExpiryDate).getTime() < Date.now();
+  };
+
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {
       id: 'id',
@@ -108,10 +113,14 @@ function MyVeionTable() {
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => {
         const data = row.original;
+        const isExpired = hasLockExpired(
+          data.lockExpires.date,
+          data.lockExpires.isPermanent
+        );
 
         return (
           <div className="flex gap-2 w-full">
-            {data.enableClaim ? (
+            {isExpired ? (
               <>
                 <ActionButton
                   half

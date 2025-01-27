@@ -237,6 +237,36 @@ export function useVeIONManage(chain: number) {
     }
   }
 
+  function withdraw({ tokenId }: { tokenId: number }) {
+    return write(
+      getContractConfig('withdraw', [tokenAddress, BigInt(tokenId)]),
+      {
+        successMessage: 'Successfully withdrew veION',
+        errorMessage: 'Failed to withdraw veION'
+      }
+    );
+  }
+
+  function unlockPermanent({ tokenId }: { tokenId: number }) {
+    return write(
+      getContractConfig('unlockPermanent', [tokenAddress, BigInt(tokenId)]),
+      {
+        successMessage: 'Successfully unlocked veION',
+        errorMessage: 'Failed to unlock veION'
+      }
+    );
+  }
+
+  function lockPermanent({ tokenId }: { tokenId: number }) {
+    return write(
+      getContractConfig('lockPermanent', [tokenAddress, BigInt(tokenId)]),
+      {
+        successMessage: 'Successfully locked veION',
+        errorMessage: 'Failed to lock veION'
+      }
+    );
+  }
+
   return {
     increaseAmount,
     extendLock,
@@ -245,6 +275,9 @@ export function useVeIONManage(chain: number) {
     split,
     transfer,
     getOwnedTokenIds,
+    withdraw,
+    unlockPermanent,
+    lockPermanent,
     isPending,
     isContractLoading: !veIonContract
   };

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon, LockIcon } from 'lucide-react';
 import { formatUnits, isAddress, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
@@ -45,9 +45,8 @@ export function Delegate({ chain }: DelegateProps) {
   const canDelegate = selectedManagePosition?.lockExpires.isPermanent;
 
   const { address } = useAccount();
-  const { delegate, isPending, getOwnedTokenIds } = useVeIONManage(
-    Number(chain)
-  );
+  const { delegate, isPending, getOwnedTokenIds, lockPermanent } =
+    useVeIONManage(Number(chain));
   const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const fetchTokenIds = useCallback(
@@ -59,11 +58,8 @@ export function Delegate({ chain }: DelegateProps) {
         const positions = await getOwnedTokenIds(
           delegateAddress as `0x${string}`
         );
-        // Filter for permanent locks only and exclude current position
         setPositions(
-          positions.filter(
-            (pos) => pos.id !== selectedManagePosition?.id && pos.isPermanent
-          )
+          positions.filter((pos) => pos.id !== selectedManagePosition?.id)
         );
       } catch (error) {
         console.error('Error fetching token IDs:', error);
@@ -96,39 +92,31 @@ export function Delegate({ chain }: DelegateProps) {
     });
   };
 
-  const infoMessage = !canDelegate ? (
-    <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
-      <InfoIcon className="h-5 w-5 flex-shrink-0" />
-      <div>
-        Your selected position must be a permanent lock to delegate voting
-        power. Please convert your position to a permanent lock first.
-      </div>
-    </div>
-  ) : (
-    <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
-      <InfoIcon className="h-5 w-5 flex-shrink-0" />
-      <div className="space-y-2">
-        <p>
-          <strong>Requirements:</strong>
-          <br />
-          • Both positions must be permanent locks to delegate voting power
-          <br />• The delegated voting power can be revoked at any time
-        </p>
-        <p>
-          <strong>Important:</strong>
-          <br />
-          • Delegation doesn&apos;t transfer token ownership
-          <br />• Even after revocation, delegates retain voting rights until
-          the end of the current voting period
-        </p>
-      </div>
-    </div>
-  );
+  const handleLockSourcePosition = async () => {
+    if (!selectedManagePosition) return;
+    await lockPermanent({ tokenId: +selectedManagePosition.id });
+  };
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
       {!canDelegate ? (
-        infoMessage
+        <div className="space-y-4">
+          <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
+            <InfoIcon className="h-5 w-5 flex-shrink-0" />
+            <div>
+              Your selected position must be a permanent lock to delegate voting
+              power. Please convert your position to a permanent lock first.
+            </div>
+          </div>
+          <Button
+            className="w-full bg-yellow-200 text-black hover:bg-yellow-300"
+            onClick={handleLockSourcePosition}
+            disabled={isPending}
+          >
+            <LockIcon className="h-4 w-4 mr-2" />
+            Lock Position #{selectedManagePosition?.id}
+          </Button>
+        </div>
       ) : (
         <>
           <div className="space-y-2">
@@ -161,6 +149,9 @@ export function Delegate({ chain }: DelegateProps) {
                     >
                       Token ID: {position.id} (
                       {formatUnits(BigInt(position.amount), 18)} veION)
+                      {position.isPermanent && (
+                        <LockIcon className="h-4 w-4 ml-2 inline-block text-yellow-200" />
+                      )}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -170,8 +161,7 @@ export function Delegate({ chain }: DelegateProps) {
 
           {isValidAddress && !isLoading && positions.length === 0 && (
             <p className="text-sm text-yellow-200">
-              No permanent locks found for this address. Both positions must be
-              permanent locks to delegate voting power.
+              No positions found for this address.
             </p>
           )}
 
@@ -189,7 +179,25 @@ export function Delegate({ chain }: DelegateProps) {
             </div>
           </div>
 
-          {infoMessage}
+          <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
+            <InfoIcon className="h-5 w-5 flex-shrink-0" />
+            <div className="space-y-2">
+              <p>
+                <strong>Requirements:</strong>
+                <br />
+                • Both positions must be permanent locks to delegate voting
+                power
+                <br />• The delegated voting power can be revoked at any time
+              </p>
+              <p>
+                <strong>Important:</strong>
+                <br />
+                • Delegation doesn&apos;t transfer token ownership
+                <br />• Even after revocation, delegates retain voting rights
+                until the end of the current voting period
+              </p>
+            </div>
+          </div>
 
           <Button
             className="w-full bg-accent text-black"
@@ -198,6 +206,7 @@ export function Delegate({ chain }: DelegateProps) {
               !isValidAddress ||
               !selectedTokenId ||
               !amount ||
+              !selectedPosition?.isPermanent ||
               amount > maxDelegateAmount ||
               !address ||
               isPending ||

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 import { useSearchParams } from 'next/navigation';
@@ -15,13 +13,15 @@ import {
 } from '@ui/components/ui/dialog';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
-// import { Delegate } from './Delegate';
+import { Delegate } from './Delegate';
 import { Extend } from './Extend';
 import { IncreaseLockedAmount } from './IncreaseLockedAmount';
 import { ManageTabs } from './ManageTabs';
 import { MergeLps } from './MergeLps';
 import { SplitLp } from './SplitLp';
 import { Transfer } from './Transfer';
+import { Unlock } from './Unlock';
+import { Withdraw } from './WIthdraw';
 
 interface ManageDialogProps {
   isOpen: boolean;
@@ -37,10 +37,12 @@ export default function ManageDialog({
   const toggleArr = [
     'Increase',
     'Extend',
-    // 'Delegate',
+    'Delegate',
     'Merge',
     'Split',
-    'Transfer'
+    'Transfer',
+    'Withdraw'
+    // 'Unlock'
   ];
 
   const handleOpenChange = (open: boolean) => {
@@ -67,7 +69,7 @@ export default function ManageDialog({
       open={isOpen}
       onOpenChange={handleOpenChange}
     >
-      <DialogContent className="bg-grayone border border-grayUnselect sm:max-w-[500px]">
+      <DialogContent className="bg-grayone border border-grayUnselect">
         <DialogHeader>
           <DialogTitle>Manage veION #{selectedManagePosition?.id}</DialogTitle>
         </DialogHeader>
@@ -88,10 +90,12 @@ export default function ManageDialog({
           <IncreaseLockedAmount chain={chain} />
         )}
         {activeManageToggle === 'Extend' && <Extend chain={chain} />}
-        {/* {activeManageToggle === 'Delegate' && <Delegate chain={chain} />} */}
+        {activeManageToggle === 'Delegate' && <Delegate chain={chain} />}
         {activeManageToggle === 'Merge' && <MergeLps chain={chain} />}
         {activeManageToggle === 'Split' && <SplitLp chain={chain} />}
         {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
+        {activeManageToggle === 'Withdraw' && <Withdraw chain={chain} />}
+        {/* {activeManageToggle === 'Unlock' && <Unlock chain={chain} />} */}
       </DialogContent>
     </Dialog>
   );
