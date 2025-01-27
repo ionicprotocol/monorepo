@@ -223,6 +223,8 @@ export enum assetSymbols {
   ionicUSDC = "ionicUSDC",
   ionicWETH = "ionicWETH",
   mBASIS = "mBASIS",
+  msETH = "msETH",
+  msUSD = "msUSD",
 
   // optimism
   OP = "OP",
