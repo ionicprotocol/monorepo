@@ -464,8 +464,8 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: defaultDocs("https://basescan.org", msETH),
     initialCf: "0.10",
-    initialSupplyCap: parseEther(String(2000)).toString(),
-    initialBorrowCap: parseEther(String(1600)).toString()
+    initialSupplyCap: parseEther(String(30)).toString(),
+    initialBorrowCap: parseEther(String(100)).toString()
   },
   {
     symbol: assetSymbols.msUSD,

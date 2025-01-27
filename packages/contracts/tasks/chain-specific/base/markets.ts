@@ -43,7 +43,7 @@ task("markets:deploy:base:new", "deploy base market").setAction(async (_, { viem
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.mBASIS];
+  const assetsToDeploy: string[] = [assetSymbols.msETH];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
