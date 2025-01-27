@@ -64,6 +64,16 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     await publicClient.waitForTransactionReceipt({ hash: lpfExt2Dep.transactionHash as Hash });
   console.log("LeveredPositionFactorySecondExtension: ", lpfExt2Dep.address);
 
+  const lpfExt3Dep = await deployments.deploy("LeveredPositionFactoryThirdExtension", {
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1
+  });
+  if (lpfExt3Dep.transactionHash)
+    await publicClient.waitForTransactionReceipt({ hash: lpfExt3Dep.transactionHash as Hash });
+  console.log("LeveredPositionFactoryThirdExtension: ", lpfExt3Dep.address);
+
   const leveredPositionFactory = await viem.getContractAt(
     "LeveredPositionFactory",
     (await deployments.get("LeveredPositionFactory")).address as Address,
@@ -110,6 +120,22 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       await publicClient.waitForTransactionReceipt({ hash: tx });
       console.log("registered the LeveredPositionFactory second extension: ", tx);
     }
+    if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt3Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory Third Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
+    } else {
+      tx = await leveredPositionFactory.write._registerExtension([lpfExt3Dep.address as Address, zeroAddress]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("registered the LeveredPositionFactory third extension: ", tx);
+    }
   } else if (currentLPFExtensions.length == 2) {
     if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
       console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt1Dep.address}`);
@@ -155,6 +181,89 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         console.log("replaced the LeveredPositionFactory second extension: ", tx);
       }
     }
+    if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt3Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory Third Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
+    } else {
+      tx = await leveredPositionFactory.write._registerExtension([lpfExt3Dep.address as Address, zeroAddress]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("registered the LeveredPositionFactory third extension: ", tx);
+    }
+  } else if (currentLPFExtensions.length == 3) {
+    if (lpfExt1Dep.address.toLowerCase() != currentLPFExtensions[0].toLowerCase()) {
+      console.log(`replacing ${currentLPFExtensions[0]} with ${lpfExt1Dep.address}`);
+      if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: leveredPositionFactory,
+          functionName: "_registerExtension",
+          args: [lpfExt1Dep.address as Address, currentLPFExtensions[0]],
+          description: "Replace LeveredPositionFactory First Extension",
+          inputs: [
+            { internalType: "address", name: "extensionToAdd", type: "address" },
+            { internalType: "address", name: "extensionToReplace", type: "address" }
+          ]
+        });
+      } else {
+        tx = await leveredPositionFactory.write._registerExtension([
+          lpfExt1Dep.address as Address,
+          currentLPFExtensions[0]
+        ]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log("replaced the LeveredPositionFactory first extension: ", tx);
+      }
+    }
+    if (lpfExt2Dep.address.toLowerCase() != currentLPFExtensions[1].toLowerCase()) {
+      console.log(`replacing ${currentLPFExtensions[1]} with ${lpfExt2Dep.address}`);
+      if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: leveredPositionFactory,
+          functionName: "_registerExtension",
+          args: [lpfExt2Dep.address as Address, currentLPFExtensions[1]],
+          description: "Replace LeveredPositionFactory Second Extension",
+          inputs: [
+            { internalType: "address", name: "extensionToAdd", type: "address" },
+            { internalType: "address", name: "extensionToReplace", type: "address" }
+          ]
+        });
+      } else {
+        tx = await leveredPositionFactory.write._registerExtension([
+          lpfExt2Dep.address as Address,
+          currentLPFExtensions[1]
+        ]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log("replaced the LeveredPositionFactory second extension: ", tx);
+      }
+    }
+    if (lpfExt3Dep.address.toLowerCase() != currentLPFExtensions[2].toLowerCase()) {
+      console.log(`replacing ${currentLPFExtensions[2]} with ${lpfExt3Dep.address}`);
+      if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: leveredPositionFactory,
+          functionName: "_registerExtension",
+          args: [lpfExt3Dep.address as Address, currentLPFExtensions[2]],
+          description: "Replace LeveredPositionFactory Third Extension",
+          inputs: [
+            { internalType: "address", name: "extensionToAdd", type: "address" },
+            { internalType: "address", name: "extensionToReplace", type: "address" }
+          ]
+        });
+      } else {
+        tx = await leveredPositionFactory.write._registerExtension([
+          lpfExt3Dep.address as Address,
+          currentLPFExtensions[2]
+        ]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log("replaced the LeveredPositionFactory third extension: ", tx);
+      }
+    }
   } else if (currentLPFExtensions.length == 0) {
     console.log(`no LeveredPositionFactory extensions configured, adding them`);
     if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
@@ -188,6 +297,22 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       tx = await leveredPositionFactory.write._registerExtension([lpfExt2Dep.address as Address, zeroAddress]);
       await publicClient.waitForTransactionReceipt({ hash: tx });
       console.log("registered the LeveredPositionFactory second extension: ", tx);
+    }
+    if ((await leveredPositionFactory.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: leveredPositionFactory,
+        functionName: "_registerExtension",
+        args: [lpfExt3Dep.address as Address, zeroAddress],
+        description: "Register LeveredPositionFactory Third Extension",
+        inputs: [
+          { internalType: "address", name: "extensionToAdd", type: "address" },
+          { internalType: "address", name: "extensionToReplace", type: "address" }
+        ]
+      });
+    } else {
+      tx = await leveredPositionFactory.write._registerExtension([lpfExt3Dep.address as Address, zeroAddress]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log("registered the LeveredPositionFactory third extension: ", tx);
     }
   } else {
     console.log(`no LeveredPositionFactory extensions to update`);
