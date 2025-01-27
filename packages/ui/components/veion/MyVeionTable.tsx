@@ -27,7 +27,6 @@ function MyVeionTable() {
   const {
     locks: { myLocks, isLoading }
   } = useVeIONContext();
-  console.log('myLocks', myLocks);
 
   const myVeionColumns: EnhancedColumnDef<MyVeionData>[] = [
     {

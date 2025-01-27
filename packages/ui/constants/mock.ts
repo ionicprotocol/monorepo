@@ -1,5 +1,5 @@
-import { VEION_CHAIN_CONFIGS } from '@ui/hooks/veion/useVeIONLocks';
 import type { ChainId } from '@ui/types/VeIION';
+import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
 
 export type LockedData = {
   id: string;

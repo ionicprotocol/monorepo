@@ -200,3 +200,17 @@ type ChainAssetConfig = {
 export type MarketExclusionConfig = {
   [chainId: number]: ChainAssetConfig;
 };
+
+export interface Reserves {
+  ion: bigint;
+  token: bigint;
+}
+
+export interface LockedBalance {
+  tokenAddress: `0x${string}`;
+  amount: bigint;
+  start: bigint;
+  end: bigint;
+  isPermanent: boolean;
+  boost: bigint;
+}
