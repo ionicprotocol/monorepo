@@ -58,7 +58,9 @@ export default function ManageDialog({
     toggleArr[0]
   );
 
-  const lockedUntil = new Date('2023-08-28');
+  const lockedUntil = selectedManagePosition?.lockExpires.date
+    ? new Date(selectedManagePosition.lockExpires.date)
+    : new Date();
 
   return (
     <Dialog
