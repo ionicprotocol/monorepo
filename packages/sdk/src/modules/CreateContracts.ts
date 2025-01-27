@@ -14,6 +14,7 @@ import {
   ionicFlywheelLensRouterAbi,
   jumpRateModelAbi,
   leveredPositionAbi,
+  leveredPositionWithAggregatorSwapsAbi,
   leveredPositionsLensAbi,
   masterPriceOracleAbi,
   poolLensAbi,
@@ -84,6 +85,11 @@ export interface ICreateContracts {
     publicClient?: PublicClient,
     walletClient?: WalletClient
   ) => GetContractReturnType<typeof leveredPositionAbi, WalletClient>;
+  createLeveredPositionWithAggregatorSwaps: (
+    address: Address,
+    publicClient?: PublicClient,
+    walletClient?: WalletClient
+  ) => GetContractReturnType<typeof leveredPositionWithAggregatorSwapsAbi, WalletClient>;
   createLeveredPositionLens: (
     publicClient?: PublicClient,
     walletClient?: WalletClient
@@ -191,6 +197,14 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       return getContract({
         address,
         abi: leveredPositionAbi,
+        client: walletClient ?? publicClient
+      });
+    }
+
+    createLeveredPositionWithAggregatorSwaps(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+      return getContract({
+        address,
+        abi: leveredPositionWithAggregatorSwapsAbi,
         client: walletClient ?? publicClient
       });
     }

@@ -49,9 +49,10 @@ export interface ILeverage {
   closeLeveredPosition(address: Address, withdrawTo?: Address): Promise<Hex | null>;
   closeLeveredPositionWithAggregator(
     address: Address,
+    supplyDelta: bigint,
+    borrowsDelta: bigint,
     aggregatorTarget: Address,
     aggregatorData: Hex,
-    expectedSlippage: bigint,
     withdrawTo?: Address
   ): Promise<Hex | null>;
   adjustLeverageRatio(address: Address, ratio: number): Promise<Hex>;
@@ -283,13 +284,30 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       collateralMarket: Address,
       borrowMarket: Address,
       fundingAsset: Address,
+      fundingAmount: bigint
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+
+      return await leveredPositionFactory.write.createAndFundPosition(
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
+      );
+    }
+
+    async createAndFundPositionWithAggregatorSwaps(
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
       fundingAmount: bigint,
       aggregatorTarget: Address,
       aggregatorData: Hex
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
-      return await leveredPositionFactory.write.createAndFundPosition(
+      return await leveredPositionFactory.write.createAndFundPositionWithAggregatorSwaps(
         [collateralMarket, borrowMarket, fundingAsset, fundingAmount, aggregatorTarget, aggregatorData],
         {
           account: this.walletClient!.account!.address,
@@ -303,12 +321,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       borrowMarket: Address,
       fundingAsset: Address,
       fundingAmount: bigint,
-      leverageRatio: bigint,
-      fundingTarget: Address,
-      fundingData: Hex,
-      aggregatorTarget: Address,
-      aggregatorData: Hex,
-      expectedSlippage: bigint
+      leverageRatio: bigint
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
@@ -318,12 +331,39 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           borrowMarket,
           fundingAsset,
           fundingAmount,
+          leverageRatio
+        ],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
+      );
+    }
+
+    async createAndFundPositionWithAggregatorSwapsAtRatio(
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
+      fundingAmount: bigint,
+      leverageRatio: bigint,
+      fundingTarget: Address,
+      fundingData: Hex,
+      aggregatorTarget: Address,
+      aggregatorData: Hex
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+
+      return await leveredPositionFactory.write.createAndFundPositionWithAggregatorSwapsAtRatio(
+        [
+          collateralMarket,
+          borrowMarket,
+          fundingAsset,
+          fundingAmount,
           leverageRatio,
           fundingTarget,
           fundingData,
           aggregatorTarget,
-          aggregatorData,
-          expectedSlippage
+          aggregatorData
         ],
         {
           account: this.walletClient!.account!.address,
@@ -374,27 +414,28 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
     async closeLeveredPositionWithAggregator(
       address: Address,
+      supplyDelta: bigint,
+      borrowsDelta: bigint,
       aggregatorTarget: Address,
       aggregatorData: Hex,
-      expectedSlippage: bigint,
       withdrawTo?: Address
     ) {
       const isPositionClosed = await this.isPositionClosed(address);
-      const leveredPosition = this.createLeveredPosition(address, this.publicClient);
+      const leveredPosition = this.createLeveredPositionWithAggregatorSwaps(address, this.publicClient);
 
       if (!isPositionClosed) {
         let tx: Hex;
 
         if (withdrawTo) {
           tx = await leveredPosition.write.closePosition(
-            [withdrawTo, aggregatorTarget, aggregatorData, expectedSlippage],
+            [withdrawTo, supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData],
             {
               account: this.walletClient!.account!.address,
               chain: this.walletClient!.chain
             }
           );
         } else {
-          tx = await leveredPosition.write.closePosition([aggregatorTarget, aggregatorData, expectedSlippage], {
+          tx = await leveredPosition.write.closePosition([supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData], {
             account: this.walletClient!.account!.address,
             chain: this.walletClient!.chain
           });
