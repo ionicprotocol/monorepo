@@ -33,6 +33,10 @@ contract CErc20RewardsDelegateMorpho is CErc20Delegate {
     EIP20Interface(rewardToken).transfer(comptroller.admin(), claimedAmount);
     emit RewardsClaimedAndSet(address(this), rewardToken, claimedAmount);
   }
+
+  function delegateType() public pure virtual override returns (uint8) {
+    return 5;
+  }
 }
 
 interface IMorphoClaim {
