@@ -77,6 +77,14 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
     collateralAsset.safeTransfer(withdrawTo, withdrawAmount);
   }
 
+  function closePosition() external override returns (uint256) {
+    _fallback();
+  }
+
+  function closePosition(address withdrawTo) public override returns (uint256 withdrawAmount) {
+    _fallback();
+  }
+
   function increaseLeverageRatio(
     uint256 supplyDelta,
     uint256 borrowsDelta,
@@ -134,6 +142,10 @@ contract LeveredPositionWithAggregatorSwaps is LeveredPosition {
 
     // return the de facto achieved ratio
     return getCurrentLeverageRatio();
+  }
+
+  function adjustLeverageRatio(uint256 targetRatioMantissa) public override returns (uint256){
+    _fallback();
   }
 
   function receiveFlashLoan(address assetAddress, uint256 borrowedAmount, bytes calldata data) external override {

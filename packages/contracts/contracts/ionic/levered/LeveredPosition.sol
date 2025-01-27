@@ -74,11 +74,11 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function closePosition() public returns (uint256) {
+  function closePosition() external virtual returns (uint256) {
     return closePosition(msg.sender);
   }
 
-  function closePosition(address withdrawTo) public returns (uint256 withdrawAmount) {
+  function closePosition(address withdrawTo) public virtual returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     _leverDown(1e18, _getAssumedSlippage(false));
@@ -103,7 +103,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     collateralAsset.safeTransfer(withdrawTo, withdrawAmount);
   }
 
-  function adjustLeverageRatio(uint256 targetRatioMantissa) public returns (uint256){
+  function adjustLeverageRatio(uint256 targetRatioMantissa) public virtual returns (uint256){
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
     if (targetRatioMantissa <= 1e18) {
@@ -201,6 +201,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   fallback() external {
+    _fallback();
+  }
+
+  function _fallback() internal {
     address extension = factory.getPositionsExtension(msg.sig);
     if (extension == address(0)) revert ExtNotFound(msg.sig);
     // Execute external function from extension using delegatecall and return any value.
