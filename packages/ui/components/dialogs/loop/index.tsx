@@ -55,7 +55,8 @@ import TransactionStepsHandler, {
 import {
   icErc20Abi,
   iLeveredPositionFactoryAbi,
-  leveredPositionAbi
+  leveredPositionAbi,
+  leveredPositionWithAggregatorSwapsAbi
 } from '@ionicprotocol/sdk';
 import type { OpenPosition } from '@ionicprotocol/types';
 
@@ -396,7 +397,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
-          slippageWithSmallerBuffer,
+          BigInt(slippageWithSmallerBuffer),
           actualRedeemedAmountForAggregatorSwap,
           0n
         ]
@@ -504,14 +505,6 @@ export default function Loop({
     ]);
 
     let upOrDown: 'down' | 'up' = 'up';
-    console.log(
-      '🚀 ~ handleLeverageAdjustment ~ currentPositionLeverageRatio:',
-      currentPositionLeverageRatio
-    );
-    console.log(
-      '🚀 ~ handleLeverageAdjustment ~ currentLeverage:',
-      currentLeverage
-    );
     if (currentPositionLeverageRatio > currentLeverage) {
       upOrDown = 'down';
     }
@@ -525,14 +518,6 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [parseEther(currentLeverage.toString()), 1n]
         });
-
-      console.log(
-        'DSDSHFKJDKFJKD',
-        upOrDown === 'up'
-          ? initialBorrowAmount.toString()
-          : initialSupplyAmount.toString()
-      );
-
       const quote = await getQuote({
         fromChain: chainId,
         toChain: chainId,
@@ -559,11 +544,6 @@ export default function Loop({
       if (realSlippage < 0.001) realSlippage = 0.001;
       const slippageWithSmallerBuffer = realSlippage * 1.1;
 
-      console.log(
-        'slippageWithSmallerBuffer',
-        slippageWithSmallerBuffer * 10000
-      );
-
       const [finalSupplyAmount, finalBorrowAmount] =
         await publicClient.readContract({
           abi: leveredPositionAbi,
@@ -571,16 +551,9 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [
             parseEther(currentLeverage.toString()),
-            slippageWithSmallerBuffer
+            BigInt(slippageWithSmallerBuffer)
           ]
         });
-
-      console.log(
-        'final swap amount',
-        upOrDown === 'up'
-          ? finalBorrowAmount.toString()
-          : finalSupplyAmount.toString()
-      );
 
       const quoteFinal = await getQuote({
         fromChain: chainId,
@@ -604,7 +577,7 @@ export default function Loop({
       let tx;
       if (upOrDown === 'up') {
         tx = await walletClient?.writeContract({
-          abi: leveredPositionAbi,
+          abi: leveredPositionWithAggregatorSwapsAbi,
           address: currentPosition.address,
           functionName: 'increaseLeverageRatio',
           args: [
@@ -616,7 +589,7 @@ export default function Loop({
         });
       } else {
         tx = await walletClient?.writeContract({
-          abi: leveredPositionAbi,
+          abi: leveredPositionWithAggregatorSwapsAbi,
           address: currentPosition.address,
           functionName: 'decreaseLeverageRatio',
           args: [
@@ -787,8 +760,6 @@ export default function Loop({
         args: [parseEther('1'), 1n]
       });
 
-      console.log('CLOSING SUPPLY DELTA', initialSupplyAmount.toString());
-
       const quote = await getQuote({
         fromChain: chainId,
         toChain: chainId,
@@ -806,15 +777,13 @@ export default function Loop({
       if (realSlippage < 0.001) realSlippage = 0.001;
       const slippageWithSmallerBuffer = realSlippage * 1.1;
 
-      const [finalSupplyAmount, finalBorrowsAmount] = await publicClient.readContract({
-        abi: leveredPositionAbi,
-        address: currentPosition.address,
-        functionName: 'getAdjustmentAmountDeltas',
-        args: [
-          parseEther('1'),
-          slippageWithSmallerBuffer
-        ]
-      });
+      const [finalSupplyAmount, finalBorrowsAmount] =
+        await publicClient.readContract({
+          abi: leveredPositionAbi,
+          address: currentPosition.address,
+          functionName: 'getAdjustmentAmountDeltas',
+          args: [parseEther('1'), BigInt(slippageWithSmallerBuffer)]
+        });
 
       const quoteFinal = await getQuote({
         fromChain: chainId,
