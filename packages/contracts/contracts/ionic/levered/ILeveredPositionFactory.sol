@@ -116,7 +116,8 @@ interface ILeveredPositionFactoryThirdExtension {
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
   ) external returns (LeveredPositionWithAggregatorSwaps);
 }
 

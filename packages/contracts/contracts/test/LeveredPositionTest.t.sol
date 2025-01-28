@@ -118,7 +118,8 @@ contract LeveredPositionLensTest is BaseTest {
       address(0),
       "",
       address(0),
-      ""
+      "",
+      100
     );
     emit log_named_address("position", address(position));
 

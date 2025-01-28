@@ -90,7 +90,8 @@ contract LeveredPositionFactoryThirdExtension is
     address _fundingAssetSwapAggregatorTarget,
     bytes memory _fundingAssetSwapAggregatorData,
     address _adjustLeverageRatioAggregatorTarget,
-    bytes memory _adjustLeverageRatioAggregatorData
+    bytes memory _adjustLeverageRatioAggregatorData,
+    uint256 _expectedSlippage
   ) external returns (LeveredPositionWithAggregatorSwaps) {
     LeveredPositionWithAggregatorSwaps position = createAndFundPositionWithAggregatorSwaps(
       _collateralMarket,
@@ -101,7 +102,7 @@ contract LeveredPositionFactoryThirdExtension is
       _fundingAssetSwapAggregatorData
     );
 
-    (uint256 supplyDelta, uint256 borrowsDelta) = position.getAdjustmentAmountDeltas(_leverageRatio);
+    (uint256 supplyDelta, uint256 borrowsDelta) = position.getAdjustmentAmountDeltas(_leverageRatio, _expectedSlippage);
     if (_leverageRatio > 1e18) {
       position.increaseLeverageRatio(
         supplyDelta,
