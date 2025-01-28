@@ -397,7 +397,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
-          BigInt(slippageWithSmallerBuffer),
+          BigInt(slippageWithSmallerBuffer * 10000),
           actualRedeemedAmountForAggregatorSwap,
           0n
         ]
@@ -551,7 +551,7 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [
             parseEther(currentLeverage.toString()),
-            BigInt(slippageWithSmallerBuffer)
+            BigInt(slippageWithSmallerBuffer * 10000),
           ]
         });
 
@@ -782,7 +782,10 @@ export default function Loop({
           abi: leveredPositionAbi,
           address: currentPosition.address,
           functionName: 'getAdjustmentAmountDeltas',
-          args: [parseEther('1'), BigInt(slippageWithSmallerBuffer)]
+          args: [
+            parseEther('1'),
+            BigInt(slippageWithSmallerBuffer * 10000)
+          ]
         });
 
       const quoteFinal = await getQuote({
