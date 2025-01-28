@@ -5,8 +5,6 @@ import { createPublicClient, erc20Abi, http } from 'viem';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { morphoBaseAddresses, vaultAbi } from '@ui/utils/morphoUtils';
 
-import type { BigNumber } from 'ethers';
-
 interface MorphoProtocolProps {
   asset: 'USDC' | 'WETH';
   isLegacy?: boolean;
@@ -59,7 +57,7 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
   }, [address, asset, fetchMaxWithdraw]);
 
   const supply = useCallback(
-    async (amount: BigNumber) => {
+    async (amount: bigint) => {
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
@@ -78,14 +76,12 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
           args: [address, vaultAddress]
         });
 
-        const amountBigInt = amount.toBigInt();
-
-        if (allowance < amountBigInt) {
+        if (allowance < amount) {
           const approvalTx = await walletClient.writeContract({
             address: tokenAddress,
             abi: erc20Abi,
             functionName: 'approve',
-            args: [vaultAddress, amountBigInt],
+            args: [vaultAddress, amount],
             chain: currentChain,
             account: address
           });
@@ -97,7 +93,7 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
           address: vaultAddress,
           abi: vaultAbi,
           functionName: 'deposit',
-          args: [amountBigInt, address],
+          args: [amount, address],
           chain: currentChain,
           account: address
         });
@@ -114,7 +110,7 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
   );
 
   const withdraw = useCallback(
-    async (amount: BigNumber) => {
+    async (amount: bigint) => {
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
@@ -124,9 +120,8 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
         const vaultAddress = isLegacy
           ? morphoBaseAddresses.legacyVaults[asset]
           : morphoBaseAddresses.vaults[asset];
-        const amountBigInt = amount.toBigInt();
 
-        if (amountBigInt > maxWithdraw) {
+        if (amount > maxWithdraw) {
           throw new Error('Withdrawal amount exceeds available balance');
         }
 
@@ -134,7 +129,7 @@ export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
           address: vaultAddress,
           abi: vaultAbi,
           functionName: 'withdraw',
-          args: [amountBigInt, address, address],
+          args: [amount, address, address],
           chain: currentChain,
           account: address
         });
