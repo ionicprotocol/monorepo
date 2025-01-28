@@ -20,7 +20,6 @@ interface LockedBalance {
   start: bigint;
   end: bigint;
   isPermanent: boolean;
-  boost: bigint;
 }
 
 export class VeIONLock implements VeIONTableData {
@@ -51,10 +50,10 @@ export class VeIONLock implements VeIONTableData {
     isPermanent: boolean;
   };
   votingPower: {
-    amount: string;
+    amount: number;
     rawAmount: bigint;
-    percentage: string;
-    boost: bigint;
+    percentage: number;
+    boost: number;
   };
   status: {
     isClaimable: boolean;
@@ -97,10 +96,36 @@ export class VeIONLock implements VeIONTableData {
     const now = Date.now();
     const endDate = new Date(Number(raw.end) * 1000);
 
+    // Calculate duration in days
+    const durationInDays = Math.floor(
+      (Number(raw.end) - Number(raw.start)) / (60 * 60 * 24)
+    );
+
+    // Determine boost based on duration
+    let boost = 1;
+    if (raw.isPermanent) {
+      boost = 2; // Permanent lock gets 2x boost
+    } else if (durationInDays > 180) {
+      // Linear increase from 180 days to 730 days (2 years)
+      const minDays = 180;
+      const maxDays = 730;
+      const minBoost = 1;
+      const maxBoost = 2;
+
+      // Calculate linear boost
+      boost =
+        minBoost +
+        ((durationInDays - minDays) * (maxBoost - minBoost)) /
+          (maxDays - minDays);
+
+      // Cap the boost at 2x
+      boost = Math.min(boost, 2);
+    }
+
     // Set raw data
     this.raw = {
       lockData: raw,
-      boost: raw.boost,
+      boost: BigInt(Math.floor(boost * 1e6)), // Store boost with 6 decimal places for precision
       totalSupply
     };
 
@@ -137,16 +162,24 @@ export class VeIONLock implements VeIONTableData {
       isPermanent: raw.isPermanent
     };
 
+    // Calculate voting power
+    const votingPowerRaw =
+      (raw.amount * BigInt(Math.floor(boost * 1e6))) / BigInt(1e6); // Apply boost with 6 decimal precision
+
+    // Calculate voting power percentage
+    const votingPowerPercentage =
+      totalSupply > 0n
+        ? (Number(votingPowerRaw) * 100) / Number(totalSupply)
+        : 0;
+
+    const votingPowerAmount = formatUnits(votingPowerRaw, 18); // Format to human-readable amount
+
     // Set voting power info
-    const votingPowerAmount = formatUnits(raw.boost, 18);
     this.votingPower = {
-      amount: `${votingPowerAmount} veION`,
-      rawAmount: raw.boost,
-      percentage:
-        totalSupply > 0n
-          ? `${((Number(raw.boost) * 100) / Number(totalSupply)).toFixed(2)}% of all`
-          : '0% of all',
-      boost: raw.boost
+      amount: +votingPowerAmount,
+      rawAmount: votingPowerRaw,
+      percentage: votingPowerPercentage,
+      boost
     };
 
     // Set status info
@@ -182,9 +215,10 @@ export class VeIONLock implements VeIONTableData {
       lockExpires: {
         date: this.lockExpires.date,
         timeLeft: this.lockExpires.timeLeft,
-        isPermanent: this.lockExpires.isPermanent // Add this
+        isPermanent: this.lockExpires.isPermanent
       },
       votingPower: this.votingPower.amount,
+      votingBoost: Number(this.votingPower.boost),
       votingPercentage: this.votingPower.percentage,
       enableClaim: this.status.isClaimable
     };

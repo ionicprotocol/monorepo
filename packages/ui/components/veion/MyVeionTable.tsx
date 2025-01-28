@@ -17,6 +17,7 @@ import ManageDialog from './ManageDialog';
 import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
+import { Badge } from '../ui/badge';
 
 function MyVeionTable() {
   const [isManageOpen, setIsManageOpen] = useState(false);
@@ -88,9 +89,12 @@ function MyVeionTable() {
       id: 'lockExpiresDate',
       accessorFn: (row: MyVeionData) => row.lockExpires.date,
       header: 'LOCK EXPIRES',
-      cell: ({ row }: MarketCellProps) => (
-        <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
-      )
+      cell: ({ row }: MarketCellProps) =>
+        row.original.lockExpires.isPermanent ? (
+          <Badge className="text-xs font-medium">Permanent</Badge>
+        ) : (
+          <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
+        )
     },
     {
       id: 'votingPower',
@@ -99,10 +103,11 @@ function MyVeionTable() {
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
-            {row.original.votingPower}
+            {row.original.votingPower} veION (
+            {row.original.votingBoost.toFixed(2)}x)
           </div>
           <div className="text-xs font-semibold text-white/40">
-            {row.original.votingPercentage}
+            {row.original.votingPercentage.toFixed(3)} %
           </div>
         </div>
       )

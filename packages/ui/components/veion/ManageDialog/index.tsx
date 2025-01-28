@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { useChainId } from 'wagmi';
 
+import { Badge } from '@ui/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,6 @@ import { ManageTabs } from './ManageTabs';
 import { MergeLps } from './MergeLps';
 import { SplitLp } from './SplitLp';
 import { Transfer } from './Transfer';
-import { Unlock } from './Unlock';
 import { Withdraw } from './WIthdraw';
 
 interface ManageDialogProps {
@@ -74,11 +74,19 @@ export default function ManageDialog({
           <DialogTitle>Manage veION #{selectedManagePosition?.id}</DialogTitle>
         </DialogHeader>
 
-        <div className="flex gap-2 text-xs mb-3">
-          <span className="text-white/50">Voting Power: 20.00 veION</span>
+        <div className="flex items-center gap-2 text-xs mb-3">
           <span className="text-white/50">
-            Locked Until: {format(lockedUntil, 'dd MMM yyyy')}
+            {selectedManagePosition?.votingPower} (
+            {selectedManagePosition?.votingBoost.toFixed(2)}x)
           </span>
+
+          {selectedManagePosition?.lockExpires.isPermanent ? (
+            <Badge className="text-xs font-medium">Permanent</Badge>
+          ) : (
+            <span className="text-white/50">
+              Locked Until: {format(lockedUntil, 'dd MMM yyyy')}
+            </span>
+          )}
         </div>
 
         <ManageTabs

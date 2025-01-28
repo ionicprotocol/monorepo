@@ -6,7 +6,7 @@ export interface PriceData {
   ionUsd: number;
   veIonUsd: number;
   ionBalanceUsd: string;
-  veIonBalanceUsd: string;
+  veIonBalanceUsd: number;
 }
 
 export interface LiquidityData {
@@ -93,9 +93,10 @@ export type MyVeionData = {
     timeLeft: string;
     isPermanent: boolean;
   };
-  votingPower: string;
+  votingPower: number;
+  votingBoost: number;
   enableClaim?: boolean;
-  votingPercentage: string;
+  votingPercentage: number;
 };
 
 export type DelegateVeionData = {
@@ -109,7 +110,7 @@ export type DelegateVeionData = {
     date: string;
     timeLeft: string;
   };
-  votingPower: string;
+  votingPower: number;
   delegatedTo: string;
   readyToDelegate: boolean;
   chainId: number;
@@ -147,10 +148,10 @@ export interface VeIONTableData {
   };
 
   votingPower: {
-    amount: string;
+    amount: number;
     rawAmount: bigint;
-    percentage: string;
-    boost: bigint;
+    percentage: number;
+    boost: number;
   };
 
   status: {

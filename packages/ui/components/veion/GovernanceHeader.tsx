@@ -21,7 +21,7 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const GovernanceHeader = ({ view = 'MyVeion' }) => {
-  const { ionBalance, isLoading, prices, emissions } = useVeIONContext();
+  const { ionBalance, veIonBalance, prices, emissions } = useVeIONContext();
 
   const infoBlocks = [
     {
@@ -34,7 +34,7 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
     },
     {
       label: 'Your locked veION',
-      value: emissions.lockedValue.amount.toString(),
+      value: veIonBalance.toString(),
       token: 'veION',
       infoContent: 'This is the amount of ION you have locked in the protocol.',
       icon: '/img/logo/ion.svg',

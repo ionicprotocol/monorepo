@@ -25,7 +25,7 @@ import { getToken } from '@ui/utils/getStakingTokens';
 interface VeIONContextType {
   // Balances
   ionBalance: string;
-  veIonBalance: string;
+  veIonBalance: number;
   ethBalance: string;
 
   // Chain info
@@ -46,14 +46,14 @@ interface VeIONContextType {
 
 const defaultContext: VeIONContextType = {
   ionBalance: '0',
-  veIonBalance: '0',
+  veIonBalance: 0,
   ethBalance: '0',
   currentChain: 0,
   prices: {
     ionUsd: 0,
     veIonUsd: 0,
     ionBalanceUsd: '0',
-    veIonBalanceUsd: '0'
+    veIonBalanceUsd: 0
   },
   liquidity: {
     total: 0,
@@ -118,13 +118,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     chainId: currentChain
   });
 
-  // needs fixing
-  const { data: veIonBalance } = useBalance({
-    address,
-    token: veIonContract.address,
-    chainId: currentChain
-  });
-
   const { data: ethBalanceData } = useBalance({
     address,
     chainId: currentChain
@@ -132,8 +125,10 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const { reserves, isLoading: reservesLoading } = useReserves(currentChain);
 
-  // Use consolidated hooks only if veIon is supported on this chain
-  const { liquidity, emissions } = useVeIonData({
+  const {
+    liquidity
+    // emissions
+  } = useVeIonData({
     address,
     veIonContract: veIonContract.address,
     emissionsManagerContract: '0x'
@@ -148,22 +143,41 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const ionBalanceAmount = ionBalance
     ? Number(formatEther(ionBalance.value))
     : 0;
-  const veIonBalanceAmount = veIonBalance
-    ? Number(formatEther(veIonBalance.value))
-    : 0;
   const ionBalanceUsd = (ionBalanceAmount * ionPrice).toFixed(2);
-  const veIonBalanceUsd = (veIonBalanceAmount * veIonPrice).toFixed(2);
+
+  const veIonBalance = locks.myLocks.reduce<number>(
+    (acc, lock) => acc + +lock.votingPower,
+    0
+  );
+
+  const veIonPercents = locks.myLocks.reduce<number>(
+    (acc, lock) => acc + +lock.votingPercentage,
+    0
+  );
+
+  const emissions = {
+    lockedValue: {
+      amount: veIonBalance,
+      usdValue: (veIonBalance * veIonPrice).toFixed(2),
+      percentage: veIonPercents
+    },
+    totalDeposits: {
+      amount: 0,
+      usdValue: '0'
+    },
+    isLoading: false
+  };
 
   const value = {
     ionBalance: ionBalance ? formatEther(ionBalance.value) : '0',
-    veIonBalance: veIonBalance ? formatEther(veIonBalance.value) : '0',
+    veIonBalance,
     ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0',
     currentChain,
     prices: {
       ionUsd: ionPrice,
       veIonUsd: veIonPrice,
       ionBalanceUsd,
-      veIonBalanceUsd
+      veIonBalanceUsd: 0
     },
     liquidity: isSupported ? liquidity : defaultContext.liquidity,
     emissions: isSupported ? emissions : defaultContext.emissions,

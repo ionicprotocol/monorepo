@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { formatEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
@@ -9,7 +11,6 @@ import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 
 import CustomTooltip from '../../CustomTooltip';
 import MaxDeposit from '../../MaxDeposit';
-import { usePrecisionSlider, PrecisionSlider } from '../../PrecisionSlider';
 
 type IncreaseLockedAmountProps = {
   chain: string;
@@ -19,7 +20,6 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
   const { increaseAmount, isPending } = useVeIONManage(Number(chain));
   const { selectedManagePosition } = useVeIONContext();
 
-  const utilizationMarks = [0, 25, 50, 75, 100];
   const token = getToken(+chain);
   const { address } = useAccount();
 
@@ -36,42 +36,31 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
 
   const tokenValue = Number(formatEther((tokenBalance?.value || 0) as bigint));
 
-  const {
-    amount: veionAmount,
-    percentage: sliderValue,
-    handleAmountChange: handleInputChange,
-    handlePercentageChange: handleSliderChange
-  } = usePrecisionSlider({ maxValue: tokenValue });
-
   const handleIncrease = async () => {
     if (!address || !selectedManagePosition) return;
 
     await increaseAmount({
       tokenAddress: tokenAddress as `0x${string}`,
       tokenId: +selectedManagePosition.id,
-      amount: veionAmount,
+      amount: +amount,
       tokenDecimals: tokenBalance?.decimals || 18
     });
   };
+
+  const [amount, setAmount] = useState<string>('');
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
       <MaxDeposit
         headerText={'Lock Amount'}
         max={String(tokenValue)}
-        amount={String(veionAmount)}
+        amount={amount}
         tokenName={'ion/eth'}
         token={token}
-        handleInput={(val?: string) => handleInputChange(Number(val || 0))}
+        handleInput={(val) => setAmount(val || '0')}
         chain={+chain}
+        showUtilizationSlider
       />
-      <div className="w-full mx-auto mt-3 mb-5">
-        <PrecisionSlider
-          value={sliderValue}
-          onChange={handleSliderChange}
-          marks={utilizationMarks}
-        />
-      </div>
       <Separator className="bg-white/10 my-4" />
 
       <div className="flex w-full items-center justify-between text-xs text-white/50">
@@ -90,7 +79,7 @@ export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
       <Button
         className="w-full bg-accent text-black mt-4"
         onClick={handleIncrease}
-        disabled={isPending || !veionAmount || !address}
+        disabled={isPending || amount === '0' || !address}
       >
         {isPending ? 'Increasing...' : 'Increase Locked Amount'}
       </Button>
