@@ -201,7 +201,11 @@ export function withCreateContracts<TBase extends IonicBaseConstructor>(
       });
     }
 
-    createLeveredPositionWithAggregatorSwaps(address: Address, publicClient = this.publicClient, walletClient = this.walletClient) {
+    createLeveredPositionWithAggregatorSwaps(
+      address: Address,
+      publicClient = this.publicClient,
+      walletClient = this.walletClient
+    ) {
       return getContract({
         address,
         abi: leveredPositionWithAggregatorSwapsAbi,
