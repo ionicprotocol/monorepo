@@ -387,7 +387,8 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
+      const slippageWithBuffer = realSlippage * 1.1;
+      const slippageWithBufferScaled = BigInt(Math.round(slippageWithBuffer * 10000));
 
       const [, finalBorrowAmount] = await publicClient.readContract({
         abi: iLeveredPositionFactoryAbi,
@@ -397,7 +398,7 @@ export default function Loop({
           parseEther(currentLeverage.toString()),
           selectedCollateralAsset.underlyingPrice,
           selectedBorrowAsset!.underlyingPrice,
-          BigInt(slippageWithSmallerBuffer * 10000),
+          slippageWithBufferScaled,
           actualRedeemedAmountForAggregatorSwap,
           0n
         ]
@@ -420,7 +421,7 @@ export default function Loop({
         toToken: selectedCollateralAsset.underlyingToken,
         fromAmount: finalBorrowAmount.toString(),
         fromAddress: result.result,
-        slippage: slippageWithSmallerBuffer
+        slippage: slippageWithBuffer
       });
 
       const tx = await walletClient?.writeContract({
@@ -542,7 +543,8 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
+      const slippageWithBuffer = realSlippage * 1.1;
+      const slippageWithBufferScaled = BigInt(Math.round(slippageWithBuffer * 10000));
 
       const [finalSupplyAmount, finalBorrowAmount] =
         await publicClient.readContract({
@@ -551,7 +553,7 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [
             parseEther(currentLeverage.toString()),
-            BigInt(slippageWithSmallerBuffer * 10000),
+            slippageWithBufferScaled,
           ]
         });
 
@@ -571,7 +573,7 @@ export default function Loop({
             ? finalBorrowAmount.toString()
             : finalSupplyAmount.toString(),
         fromAddress: currentPosition.address,
-        slippage: slippageWithSmallerBuffer
+        slippage: slippageWithBuffer
       });
 
       let tx;
@@ -775,7 +777,8 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
+      const slippageWithBuffer = realSlippage * 1.1;
+      const slippageWithBufferScaled = BigInt(Math.round(slippageWithBuffer * 10000));
 
       const [finalSupplyAmount, finalBorrowsAmount] =
         await publicClient.readContract({
@@ -784,7 +787,7 @@ export default function Loop({
           functionName: 'getAdjustmentAmountDeltas',
           args: [
             parseEther('1'),
-            BigInt(slippageWithSmallerBuffer * 10000)
+            slippageWithBufferScaled
           ]
         });
 
@@ -795,7 +798,7 @@ export default function Loop({
         toToken: selectedBorrowAsset!.underlyingToken,
         fromAmount: finalSupplyAmount.toString(),
         fromAddress: currentPosition.address,
-        slippage: slippageWithSmallerBuffer
+        slippage: slippageWithBuffer
       });
 
       const tx = await currentSdk.closeLeveredPositionWithAggregator(
