@@ -326,13 +326,7 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
       return await leveredPositionFactory.write.createAndFundPositionAtRatio(
-        [
-          collateralMarket,
-          borrowMarket,
-          fundingAsset,
-          fundingAmount,
-          leverageRatio
-        ],
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, leverageRatio],
         {
           account: this.walletClient!.account!.address,
           chain: this.walletClient!.chain
@@ -435,10 +429,13 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             }
           );
         } else {
-          tx = await leveredPosition.write.closePosition([supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData], {
-            account: this.walletClient!.account!.address,
-            chain: this.walletClient!.chain
-          });
+          tx = await leveredPosition.write.closePosition(
+            [supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData],
+            {
+              account: this.walletClient!.account!.address,
+              chain: this.walletClient!.chain
+            }
+          );
         }
 
         return tx;
