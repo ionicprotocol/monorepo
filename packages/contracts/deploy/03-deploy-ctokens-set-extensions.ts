@@ -3,6 +3,7 @@ import { Address, encodeAbiParameters, Hash, parseAbiParameters, zeroAddress } f
 
 import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 import { chainIdtoChain } from "@ionicprotocol/chains";
+import { base } from "viem/chains";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -37,13 +38,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     await publicClient.waitForTransactionReceipt({ hash: erc20Del.transactionHash as Hash });
   console.log("CErc20Delegate: ", erc20Del.address);
 
-  const erc20PluginDel = await deployments.deploy("CErc20PluginDelegate", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1
-  });
-  console.log("CErc20PluginDelegate: ", erc20PluginDel.address);
+  // const erc20PluginDel = await deployments.deploy("CErc20PluginDelegate", {
+  //   from: deployer,
+  //   args: [],
+  //   log: true,
+  //   waitConfirmations: 1
+  // });
+  // console.log("CErc20PluginDelegate: ", erc20PluginDel.address);
 
   const erc20RewardsDel = await deployments.deploy("CErc20RewardsDelegate", {
     from: deployer,
@@ -52,6 +53,14 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     waitConfirmations: 1
   });
   console.log("CErc20RewardsDelegate: ", erc20RewardsDel.address);
+
+  const erc20MorphoDel = await deployments.deploy("CErc20RewardsDelegateMorpho", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CErc20RewardsDelegateMorpho: ", erc20MorphoDel.address);
 
   // const erc20PluginRewardsDel = await deployments.deploy("CErc20PluginRewardsDelegate", {
   //   from: deployer,
@@ -122,71 +131,71 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
-  {
-    // CErc20PluginDelegate
-    const erc20PluginDelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([
-      erc20PluginDel.address as Address
-    ]);
-    if (
-      erc20PluginDelExtensions.length == 0 ||
-      erc20PluginDelExtensions[0] != erc20PluginDel.address ||
-      erc20PluginDelExtensions[1] != cTokenFirstExtension.address
-    ) {
-      if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-        await prepareAndLogTransaction({
-          contractInstance: fuseFeeDistributor,
-          functionName: "_setCErc20DelegateExtensions",
-          args: [
-            erc20PluginDel.address as Address,
-            [erc20PluginDel.address as Address, cTokenFirstExtension.address as Address]
-          ],
-          description: "Set CErc20PluginDelegate Extensions",
-          inputs: [
-            { internalType: "address", name: "cErc20Delegate", type: "address" },
-            { internalType: "address[]", name: "extensions", type: "address[]" }
-          ]
-        });
-      } else {
-        tx = await fuseFeeDistributor.write._setCErc20DelegateExtensions([
-          erc20PluginDel.address as Address,
-          [erc20PluginDel.address as Address, cTokenFirstExtension.address as Address]
-        ]);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
-        console.log(`configured the extensions for the CErc20PluginDelegate ${erc20PluginDel.address}`);
-      }
-    } else {
-      console.log(`CErc20PluginDelegate extensions already configured`);
-    }
+  // {
+  //   // CErc20PluginDelegate
+  //   const erc20PluginDelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([
+  //     erc20PluginDel.address as Address
+  //   ]);
+  //   if (
+  //     erc20PluginDelExtensions.length == 0 ||
+  //     erc20PluginDelExtensions[0] != erc20PluginDel.address ||
+  //     erc20PluginDelExtensions[1] != cTokenFirstExtension.address
+  //   ) {
+  //     if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+  //       await prepareAndLogTransaction({
+  //         contractInstance: fuseFeeDistributor,
+  //         functionName: "_setCErc20DelegateExtensions",
+  //         args: [
+  //           erc20PluginDel.address as Address,
+  //           [erc20PluginDel.address as Address, cTokenFirstExtension.address as Address]
+  //         ],
+  //         description: "Set CErc20PluginDelegate Extensions",
+  //         inputs: [
+  //           { internalType: "address", name: "cErc20Delegate", type: "address" },
+  //           { internalType: "address[]", name: "extensions", type: "address[]" }
+  //         ]
+  //       });
+  //     } else {
+  //       tx = await fuseFeeDistributor.write._setCErc20DelegateExtensions([
+  //         erc20PluginDel.address as Address,
+  //         [erc20PluginDel.address as Address, cTokenFirstExtension.address as Address]
+  //       ]);
+  //       await publicClient.waitForTransactionReceipt({ hash: tx });
+  //       console.log(`configured the extensions for the CErc20PluginDelegate ${erc20PluginDel.address}`);
+  //     }
+  //   } else {
+  //     console.log(`CErc20PluginDelegate extensions already configured`);
+  //   }
 
-    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.read.latestCErc20Delegate([2]);
-    if (latestCErc20PluginDelegate === zeroAddress || latestCErc20PluginDelegate !== erc20PluginDel.address) {
-      if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
-        await prepareAndLogTransaction({
-          contractInstance: fuseFeeDistributor,
-          functionName: "_setLatestCErc20Delegate",
-          args: [2, erc20PluginDel.address as Address, becomeImplementationData],
-          description: "Set Latest CErc20PluginDelegate",
-          inputs: [
-            { internalType: "uint8", name: "delegateType", type: "uint8" },
-            { internalType: "address", name: "newImplementation", type: "address" },
-            { internalType: "bytes", name: "becomeImplementationData", type: "bytes" }
-          ]
-        });
-      } else {
-        tx = await fuseFeeDistributor.write._setLatestCErc20Delegate([
-          2,
-          erc20PluginDel.address as Address,
-          becomeImplementationData
-        ]);
-        await publicClient.waitForTransactionReceipt({ hash: tx });
-        console.log(
-          `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
-        );
-      }
-    } else {
-      console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
-    }
-  }
+  //   const [latestCErc20PluginDelegate] = await fuseFeeDistributor.read.latestCErc20Delegate([2]);
+  //   if (latestCErc20PluginDelegate === zeroAddress || latestCErc20PluginDelegate !== erc20PluginDel.address) {
+  //     if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+  //       await prepareAndLogTransaction({
+  //         contractInstance: fuseFeeDistributor,
+  //         functionName: "_setLatestCErc20Delegate",
+  //         args: [2, erc20PluginDel.address as Address, becomeImplementationData],
+  //         description: "Set Latest CErc20PluginDelegate",
+  //         inputs: [
+  //           { internalType: "uint8", name: "delegateType", type: "uint8" },
+  //           { internalType: "address", name: "newImplementation", type: "address" },
+  //           { internalType: "bytes", name: "becomeImplementationData", type: "bytes" }
+  //         ]
+  //       });
+  //     } else {
+  //       tx = await fuseFeeDistributor.write._setLatestCErc20Delegate([
+  //         2,
+  //         erc20PluginDel.address as Address,
+  //         becomeImplementationData
+  //       ]);
+  //       await publicClient.waitForTransactionReceipt({ hash: tx });
+  //       console.log(
+  //         `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
+  //       );
+  //     }
+  //   } else {
+  //     console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
+  //   }
+  // }
 
   {
     // CErc20RewardsDelegate
@@ -250,6 +259,52 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       }
     } else {
       console.log(`No change in the latest CErc20RewardsDelegate implementation ${erc20RewardsDel.address}`);
+    }
+  }
+
+  {
+    // CErc20RewardsDelegateMorpho
+    const erc20MorphoDelExtensions = await fuseFeeDistributor.read.getCErc20DelegateExtensions([
+      erc20MorphoDel.address as Address
+    ]);
+    if (
+      erc20MorphoDelExtensions.length == 0 ||
+      erc20MorphoDelExtensions[0] != erc20MorphoDel.address ||
+      erc20MorphoDelExtensions[1] != cTokenFirstExtension.address
+    ) {
+      console.log(`CErc20RewardsDelegateMorpho extensions already configured`);
+    }
+
+    const [latestCErc20RewardsDelegateMorpho] = await fuseFeeDistributor.read.latestCErc20Delegate([5]);
+    if (
+      latestCErc20RewardsDelegateMorpho === zeroAddress ||
+      latestCErc20RewardsDelegateMorpho !== erc20RewardsDel.address
+    ) {
+      if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: fuseFeeDistributor,
+          functionName: "_setLatestCErc20Delegate",
+          args: [5, erc20RewardsDel.address as Address, becomeImplementationData],
+          description: "Set Latest CErc20RewardsDelegate",
+          inputs: [
+            { internalType: "uint8", name: "delegateType", type: "uint8" },
+            { internalType: "address", name: "newImplementation", type: "address" },
+            { internalType: "bytes", name: "becomeImplementationData", type: "bytes" }
+          ]
+        });
+      } else {
+        tx = await fuseFeeDistributor.write._setLatestCErc20Delegate([
+          5,
+          erc20MorphoDel.address as Address,
+          becomeImplementationData
+        ]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log(
+          `Set the latest CErc20RewardsDelegate implementation from ${latestCErc20RewardsDelegateMorpho} to ${erc20MorphoDel.address}`
+        );
+      }
+    } else {
+      console.log(`No change in the latest CErc20RewardsDelegateMorpho implementation ${erc20MorphoDel.address}`);
     }
   }
 
