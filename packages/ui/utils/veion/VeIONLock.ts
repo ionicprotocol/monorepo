@@ -84,9 +84,8 @@ export class VeIONLock implements VeIONTableData {
     lpType: LpTokenType,
     lpTokenAddress: `0x${string}`,
     raw: LockedBalance,
-    reserves: Reserves | undefined,
-    ionPrice: number,
-    totalSupply: bigint
+    totalSupply: bigint,
+    tokenPrice: bigint
   ) {
     this.id = id;
     this.chainId = chainId;
@@ -112,20 +111,17 @@ export class VeIONLock implements VeIONTableData {
       const minBoost = 1;
       const maxBoost = 2;
 
-      // Calculate linear boost
       boost =
         minBoost +
         ((durationInDays - minDays) * (maxBoost - minBoost)) /
           (maxDays - minDays);
 
-      // Cap the boost at 2x
       boost = Math.min(boost, 2);
     }
 
-    // Set raw data
     this.raw = {
       lockData: raw,
-      boost: BigInt(Math.floor(boost * 1e6)), // Store boost with 6 decimal places for precision
+      boost: BigInt(Math.floor(boost * 1e6)),
       totalSupply
     };
 
@@ -133,7 +129,6 @@ export class VeIONLock implements VeIONTableData {
     const nativeCurrency =
       VEION_CHAIN_CONFIGS[chainId]?.nativeCurrency || 'ETH';
 
-    // Calculate token ratios
     this.tokensLocked = {
       ratio: `${ionPercent}% ION / ${tokenPercent}% ${nativeCurrency}`,
       token1: 'ION',
@@ -142,13 +137,27 @@ export class VeIONLock implements VeIONTableData {
       token2Percent: tokenPercent
     };
 
-    // BLP value calculation (temporary until oracle is set up)
+    // Calculate BLP value using oracle price
     const formattedAmount = formatUnits(raw.amount, 18);
+
+    // Ensure safe BigInt calculations
+    const safePriceBigInt = tokenPrice ? BigInt(tokenPrice.toString()) : 0n;
+    const valueInUSD =
+      safePriceBigInt !== 0n
+        ? (raw.amount * safePriceBigInt) / BigInt(1e18)
+        : 0n;
+
+    const formattedValue = formatUnits(valueInUSD, 18);
+    const numericValue = parseFloat(formattedValue);
+
     this.lockedBLP = {
       amount: `${formattedAmount} BLP`,
       rawAmount: raw.amount,
-      value: 'TBD', // Will be updated when oracle is available
-      valueNum: 0,
+      value: `$${numericValue.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 8
+      })}`,
+      valueNum: numericValue,
       start: Number(raw.start),
       end: Number(raw.end),
       duration: Number(raw.end) - Number(raw.start)
@@ -164,17 +173,15 @@ export class VeIONLock implements VeIONTableData {
 
     // Calculate voting power
     const votingPowerRaw =
-      (raw.amount * BigInt(Math.floor(boost * 1e6))) / BigInt(1e6); // Apply boost with 6 decimal precision
+      (raw.amount * BigInt(Math.floor(boost * 1e6))) / BigInt(1e6);
 
-    // Calculate voting power percentage
     const votingPowerPercentage =
       totalSupply > 0n
         ? (Number(votingPowerRaw) * 100) / Number(totalSupply)
         : 0;
 
-    const votingPowerAmount = formatUnits(votingPowerRaw, 18); // Format to human-readable amount
+    const votingPowerAmount = formatUnits(votingPowerRaw, 18);
 
-    // Set voting power info
     this.votingPower = {
       amount: +votingPowerAmount,
       rawAmount: votingPowerRaw,
@@ -182,7 +189,6 @@ export class VeIONLock implements VeIONTableData {
       boost
     };
 
-    // Set status info
     this.status = {
       isClaimable: Number(raw.end) * 1000 < now,
       isExpired: Number(raw.end) * 1000 < now,
@@ -190,7 +196,6 @@ export class VeIONLock implements VeIONTableData {
       canExtend: !raw.isPermanent
     };
 
-    // Set metadata
     this.metadata = {
       createdAt: Number(raw.start),
       lastUpdated: Number(raw.start),

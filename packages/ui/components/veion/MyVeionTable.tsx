@@ -81,7 +81,9 @@ function MyVeionTable() {
           <div className="text-xs font-semibold text-white/80">
             {row.original.lockedBLP.amount}
           </div>
-          <div className="text-xs font-semibold text-white/40">$400.32</div>
+          <div className="text-xs font-semibold text-white/40">
+            {row.original.lockedBLP.value}
+          </div>
         </div>
       )
     },

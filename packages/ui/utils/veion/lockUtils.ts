@@ -1,6 +1,5 @@
-import type { ChainId, Reserves } from '@ui/types/VeIION';
+import type { ChainId } from '@ui/types/VeIION';
 
-import { getTokenType } from './tokenUtils';
 import { VeIONLock } from './VeIONLock';
 
 import type { VEION_CHAIN_CONFIGS } from './chainConfig';
@@ -42,8 +41,7 @@ export const createVeIONLock = (
     boosts,
     chainConfig,
     chainId,
-    reserves,
-    ionPrice
+    tokenPrice
   }: {
     supplyResults: SupplyResult[] | undefined;
     userLockResults: SimpleLockResult[] | undefined;
@@ -51,8 +49,8 @@ export const createVeIONLock = (
     boosts: bigint[];
     chainConfig: (typeof VEION_CHAIN_CONFIGS)[ChainId];
     chainId: ChainId;
-    reserves: Record<string, Reserves>;
     ionPrice: number;
+    tokenPrice: bigint;
   }
 ) => {
   const supplyResult = supplyResults?.[i];
@@ -77,8 +75,7 @@ export const createVeIONLock = (
     chainConfig.lpTypes[i],
     tokenAddress as `0x${string}`,
     lock,
-    reserves[getTokenType(chainId)],
-    ionPrice,
-    totalSupply
+    totalSupply,
+    tokenPrice
   );
 };

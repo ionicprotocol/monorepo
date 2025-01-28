@@ -1,32 +1,34 @@
+// ManageTabs.tsx
 import * as React from 'react';
 
 import { Tabs, TabsList, TabsTrigger } from '@ui/components/ui/tabs';
 
-interface ManageTabsProps {
-  arrText: string[];
-  setActiveToggle: (value: string) => void;
-  defaultValue?: string;
+interface Tab {
+  value: string;
+  label: React.ReactNode | string;
 }
 
-export function ManageTabs({
-  arrText,
-  setActiveToggle,
-  defaultValue = 'Increase'
-}: ManageTabsProps) {
+interface ManageTabsProps {
+  tabs: Tab[];
+  activeTab: string;
+  onTabChange: (value: string) => void;
+}
+
+export function ManageTabs({ tabs, activeTab, onTabChange }: ManageTabsProps) {
   return (
     <Tabs
-      defaultValue={defaultValue}
-      onValueChange={setActiveToggle}
+      value={activeTab}
+      onValueChange={onTabChange}
       className="w-full"
     >
       <TabsList className="w-full bg-graylite rounded-lg p-1 h-auto gap-1">
-        {arrText.map((text) => (
+        {tabs.map((tab) => (
           <TabsTrigger
-            key={text}
-            value={text}
+            key={tab.value}
+            value={tab.value}
             className="rounded-md py-1 px-3 text-xs text-white/40 data-[state=active]:bg-darkone data-[state=active]:text-accent data-[state=active]:shadow-none transition-all"
           >
-            {text}
+            {tab.label}
           </TabsTrigger>
         ))}
       </TabsList>

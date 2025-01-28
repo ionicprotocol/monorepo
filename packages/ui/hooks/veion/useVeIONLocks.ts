@@ -5,8 +5,8 @@ import type { ChainId, VeIONLockData } from '@ui/types/VeIION';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
 import { createVeIONLock } from '@ui/utils/veion/lockUtils';
 
+import { useOracleBatch } from '../ionic/useOracleBatch';
 import { useIonPrices } from '../useDexScreenerPrices';
-import { useReserves } from '../useReserves';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
 
@@ -25,6 +25,7 @@ type SimpleLockResult = ContractResult<{
 }>;
 type SupplyResult = ContractResult<bigint>;
 type DelegateesResult = ContractResult<[string, boolean, number[], string[]]>;
+type AssetsLockedResult = ContractResult<string[]>;
 
 export function useVeIONLocks({
   address,
@@ -37,6 +38,7 @@ export function useVeIONLocks({
 }): VeIONLockData {
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
 
+  // Get owned token IDs
   const { data: tokenIdsResult } = useReadContract({
     address: veIonContract,
     abi: iveIonAbi,
@@ -45,11 +47,34 @@ export function useVeIONLocks({
     chainId
   });
 
-  const { reserves, isLoading: reservesLoading } = useReserves(chainId);
   const tokenIds = Array.isArray(tokenIdsResult)
     ? tokenIdsResult.map(String)
     : [];
 
+  // Get all locked assets for each token ID
+  const { data: assetsLockedResults } = useReadContracts({
+    contracts: tokenIds.map((tokenId) => ({
+      address: veIonContract,
+      abi: iveIonAbi,
+      functionName: 'getAssetsLocked',
+      args: [tokenId],
+      chainId
+    }))
+  }) as { data: AssetsLockedResult[] | undefined };
+
+  // Get unique token addresses
+  const allTokenAddresses = [
+    ...new Set(
+      assetsLockedResults?.flatMap((result) =>
+        result.status === 'success' ? result.result : []
+      ) ?? []
+    )
+  ].filter((address): address is `0x${string}` => address !== undefined);
+
+  // Get prices for all tokens in parallel
+  const tokenPrices = useOracleBatch(allTokenAddresses, chainId);
+
+  // Get user locks for each token ID and LP type
   const { data: userLockResults } = useReadContracts({
     contracts: tokenIds.flatMap((tokenId) =>
       chainConfig.lpTypes.map((lpType) => ({
@@ -62,6 +87,7 @@ export function useVeIONLocks({
     )
   }) as { data: SimpleLockResult[] | undefined };
 
+  // Get balances for each token ID
   const { data: balanceResults } = useReadContracts({
     contracts: tokenIds.map((tokenId) => ({
       address: veIonContract,
@@ -72,6 +98,7 @@ export function useVeIONLocks({
     }))
   }) as { data: SimpleBalanceResult[] | undefined };
 
+  // Get supply for each LP type
   const { data: supplyResults } = useReadContracts({
     contracts: chainConfig.lpTypes.map((lpType) => ({
       address: veIonContract,
@@ -82,6 +109,7 @@ export function useVeIONLocks({
     }))
   }) as { data: SupplyResult[] | undefined };
 
+  // Get delegatees for each token ID and LP type
   const { data: delegateesResults } = useReadContracts({
     contracts: tokenIds.flatMap((tokenId) =>
       chainConfig.lpTypes.map((lpType) => ({
@@ -94,19 +122,23 @@ export function useVeIONLocks({
     )
   }) as { data: DelegateesResult[] | undefined };
 
+  // Get ION prices
   const { data: ionPrices = {} } = useIonPrices(
     chainId === ALL_CHAINS_VALUE ? undefined : [chainId]
   );
   const ionPrice = ionPrices[chainId] || 0;
 
+  // Create locks with token prices
   const allLocks = tokenIds.flatMap((tokenId, tokenIndex) => {
     const balanceResult = balanceResults?.[tokenIndex];
-    if (balanceResult?.status !== 'success' || !balanceResult.result)
+    if (balanceResult?.status !== 'success' || !balanceResult.result) {
       return null;
+    }
 
     const [assets, balances, boosts] = balanceResult.result;
 
     return assets.map((tokenAddress, i) => {
+      // Get delegations info
       const delegateesResult =
         delegateesResults?.[tokenIndex * chainConfig.lpTypes.length + i];
       const delegation =
@@ -119,6 +151,8 @@ export function useVeIONLocks({
             }
           : undefined;
 
+      const tokenPrice = tokenPrices.data[tokenAddress as `0x${string}`];
+
       return createVeIONLock(tokenAddress, i, tokenId, tokenIndex, {
         supplyResults,
         userLockResults,
@@ -126,9 +160,8 @@ export function useVeIONLocks({
         boosts,
         chainConfig,
         chainId,
-        reserves,
-        ionPrice
-        // delegation
+        ionPrice,
+        tokenPrice
       });
     });
   });
@@ -146,6 +179,6 @@ export function useVeIONLocks({
           lock !== null && !!lock.delegation
       )
       .map((lock) => lock.toDelegateTableFormat()),
-    isLoading: reservesLoading
+    isLoading: false
   };
 }
