@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -24,6 +26,60 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
   const { balances, prices, emissions } = useVeIONContext();
   const { ion: ionBalance, veIon: veIonBalance } = balances;
   const { veIonBalanceUsd, ionBalanceUsd } = prices;
+
+  const votingPeriodEndDate = new Date('2025-01-30');
+  const [timeRemaining, setTimeRemaining] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  useEffect(() => {
+    const calculateTimeRemaining = () => {
+      const now = new Date();
+      const difference = votingPeriodEndDate.getTime() - now.getTime();
+
+      if (difference <= 0) {
+        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeRemaining({ days, hours, minutes, seconds });
+    };
+
+    calculateTimeRemaining();
+    const interval = setInterval(calculateTimeRemaining, 1000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const formatTimeDisplay = () => {
+    const { days, hours, minutes, seconds } = timeRemaining;
+
+    if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+      return (
+        <div className="inline-block min-w-[200px] text-right">
+          Voting period has ended
+        </div>
+      );
+    }
+
+    return (
+      <div className="font-mono inline-block min-w-[160px] text-right">
+        {days}d {String(hours).padStart(2, '0')}h{' '}
+        {String(minutes).padStart(2, '0')}m {String(seconds).padStart(2, '0')}s
+      </div>
+    );
+  };
 
   const infoBlocks = [
     {
@@ -61,7 +117,7 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
         </CardTitle>
         <div className="text-white/60 text-md flex items-center gap-1">
           Current voting round ends:
-          <span className="text-white font-medium">2 days</span>
+          <span className="text-white font-medium">{formatTimeDisplay()}</span>
         </div>
       </CardHeader>
       <CardContent>

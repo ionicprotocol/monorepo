@@ -89,7 +89,7 @@ export default function ManageDialog({
           <DialogTitle>Manage veION #{selectedManagePosition?.id}</DialogTitle>
           <div className="flex items-center gap-2 text-xs mr-6 mt-0">
             <span className="text-white/50">
-              {selectedManagePosition?.votingPower} (
+              {selectedManagePosition?.votingPower.toFixed(4)} (
               {selectedManagePosition?.votingBoost.toFixed(2)}x)
             </span>
 

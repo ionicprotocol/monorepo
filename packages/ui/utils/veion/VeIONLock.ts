@@ -7,8 +7,7 @@ import type {
   VeIONTableData,
   VeIONLockRaw,
   MyVeionData,
-  DelegateVeionData,
-  Reserves
+  DelegateVeionData
 } from '@ui/types/VeIION';
 
 import { VEION_CHAIN_CONFIGS } from './chainConfig';
