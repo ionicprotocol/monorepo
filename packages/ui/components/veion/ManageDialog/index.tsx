@@ -17,10 +17,10 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import { Delegate } from './Delegate';
 import { Extend } from './Extend';
-import { IncreaseLockedAmount } from './IncreaseLockedAmount';
+import { Increase } from './Increase';
 import { ManageTabs } from './ManageTabs';
-import { MergeLps } from './MergeLps';
-import { SplitLp } from './SplitLp';
+import { Merge } from './Merge';
+import { Split } from './Split';
 import { Transfer } from './Transfer';
 import { Unlock } from './Unlock';
 import { Withdraw } from './WIthdraw';
@@ -111,13 +111,11 @@ export default function ManageDialog({
           }
         />
 
-        {activeManageToggle === 'Increase' && (
-          <IncreaseLockedAmount chain={chain} />
-        )}
+        {activeManageToggle === 'Increase' && <Increase chain={chain} />}
         {activeManageToggle === 'Extend' && <Extend chain={chain} />}
         {activeManageToggle === 'Delegate' && <Delegate chain={chain} />}
-        {activeManageToggle === 'Merge' && <MergeLps chain={chain} />}
-        {activeManageToggle === 'Split' && <SplitLp chain={chain} />}
+        {activeManageToggle === 'Merge' && <Merge chain={chain} />}
+        {activeManageToggle === 'Split' && <Split chain={chain} />}
         {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
         {activeManageToggle === 'Withdraw' && <Withdraw chain={chain} />}
         {activeManageToggle === 'Unlock' && <Unlock chain={chain} />}

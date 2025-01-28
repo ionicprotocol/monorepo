@@ -12,11 +12,11 @@ import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
 import CustomTooltip from '../../CustomTooltip';
 import MaxDeposit from '../../MaxDeposit';
 
-type IncreaseLockedAmountProps = {
+type IncreaseProps = {
   chain: string;
 };
 
-export function IncreaseLockedAmount({ chain }: IncreaseLockedAmountProps) {
+export function Increase({ chain }: IncreaseProps) {
   const { increaseAmount, isPending } = useVeIONManage(Number(chain));
   const { selectedManagePosition } = useVeIONContext();
 

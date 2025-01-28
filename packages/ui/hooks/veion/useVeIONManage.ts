@@ -213,7 +213,7 @@ export function useVeIONManage(chain: number) {
             address: veIonContract.address,
             abi: veIonContract.abi,
             functionName: 's_locked',
-            args: [id, 0] // 0 for eth LP type
+            args: [id, 2]
           });
 
           // Find the relevant balance

@@ -11,11 +11,11 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
 
-type SplitLpProps = {
+type SplitProps = {
   chain: string;
 };
 
-export function SplitLp({ chain }: SplitLpProps) {
+export function Split({ chain }: SplitProps) {
   const utilizationMarks = [0, 25, 50, 75, 100];
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
   const { selectedManagePosition } = useVeIONContext();

@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
+import { debounce } from 'lodash';
 import { InfoIcon, LockIcon } from 'lucide-react';
 import { formatUnits, isAddress, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
@@ -31,7 +32,9 @@ type Position = {
 export function Delegate({ chain }: DelegateProps) {
   const [delegateAddress, setDelegateAddress] = useState('');
   const [amount, setAmount] = useState<string>('');
+
   const [selectedTokenId, setSelectedTokenId] = useState<string>('');
+
   const [isLoading, setIsLoading] = useState(false);
   const { selectedManagePosition } = useVeIONContext();
   const [positions, setPositions] = useState<Position[]>([]);
@@ -45,33 +48,50 @@ export function Delegate({ chain }: DelegateProps) {
   const canDelegate = selectedManagePosition?.lockExpires.isPermanent;
 
   const { address } = useAccount();
+
   const { delegate, isPending, getOwnedTokenIds, lockPermanent } =
     useVeIONManage(Number(chain));
+
   const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const fetchTokenIds = useCallback(
     async (delegateAddress: string) => {
-      if (!isValidAddress || !getOwnedTokenIds) return;
+      if (!isAddress(delegateAddress) || !getOwnedTokenIds) return;
 
       setIsLoading(true);
       try {
         const positions = await getOwnedTokenIds(
           delegateAddress as `0x${string}`
         );
+
         setPositions(
           positions.filter((pos) => pos.id !== selectedManagePosition?.id)
         );
-      } catch (error) {
-        console.error('Error fetching token IDs:', error);
-      }
+      } catch (error) {}
       setIsLoading(false);
     },
-    [isValidAddress, getOwnedTokenIds, selectedManagePosition]
+    [getOwnedTokenIds, selectedManagePosition]
   );
 
+  // Debounced version of fetchTokenIds
+  const debouncedFetchTokenIds = useRef(
+    debounce((address: string) => {
+      if (isAddress(address)) {
+        fetchTokenIds(address);
+      }
+    }, 500)
+  ).current;
+
   useEffect(() => {
-    fetchTokenIds(delegateAddress);
-  }, [delegateAddress, fetchTokenIds]);
+    debouncedFetchTokenIds(delegateAddress);
+  }, [delegateAddress, debouncedFetchTokenIds]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      debouncedFetchTokenIds.cancel();
+    };
+  }, [debouncedFetchTokenIds]);
 
   const handleDelegate = async () => {
     if (
@@ -96,6 +116,17 @@ export function Delegate({ chain }: DelegateProps) {
     if (!selectedManagePosition) return;
     await lockPermanent({ tokenId: +selectedManagePosition.id });
   };
+
+  const disabled =
+    !canDelegate ||
+    !isValidAddress ||
+    !selectedTokenId ||
+    !amount ||
+    !selectedPosition?.isPermanent ||
+    amount > maxDelegateAmount ||
+    !address ||
+    isPending ||
+    isLoading;
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
@@ -146,6 +177,7 @@ export function Delegate({ chain }: DelegateProps) {
                     <SelectItem
                       key={position.id}
                       value={position.id}
+                      className="hover:cursor-pointer hover:bg-gray-800"
                     >
                       Token ID: {position.id} (
                       {formatUnits(BigInt(position.amount), 18)} veION)
@@ -201,17 +233,7 @@ export function Delegate({ chain }: DelegateProps) {
 
           <Button
             className="w-full bg-accent text-black"
-            disabled={
-              !canDelegate ||
-              !isValidAddress ||
-              !selectedTokenId ||
-              !amount ||
-              !selectedPosition?.isPermanent ||
-              amount > maxDelegateAmount ||
-              !address ||
-              isPending ||
-              isLoading
-            }
+            disabled={disabled}
             onClick={handleDelegate}
           >
             {isPending ? 'Delegating...' : 'Delegate veION'}

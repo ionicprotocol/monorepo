@@ -18,11 +18,11 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import CustomTooltip from '../../CustomTooltip';
 
-type MergeLpsProps = {
+type MergeProps = {
   chain: string;
 };
 
-export function MergeLps({ chain }: MergeLpsProps) {
+export function Merge({ chain }: MergeProps) {
   const [selectedLp, setSelectedLp] = useState<string>('');
 
   const { address } = useAccount();
