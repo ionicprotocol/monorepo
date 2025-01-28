@@ -7,61 +7,59 @@ import { SUPPLY_DURATION } from "..";
 import { ION, LSK, LSK_MARKET, USDC_MARKET, USDT_MARKET, WBTC_MARKET, WETH_MARKET } from ".";
 import { sendRewardsToMarkets } from "../../flywheel/rewards";
 
-task("lisk:send-ion:epoch6", "send ion to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+task("lisk:send-ion", "send ion to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
   const { deployer } = await getNamedAccounts();
 
   const rewardsToSend: { market: Address; amount: string }[] = [
     {
       market: WETH_MARKET,
-      amount: "10000"
+      amount: "6250"
     },
     {
       market: USDC_MARKET,
-      amount: "10000"
+      amount: "6250"
     },
     {
       market: USDT_MARKET,
-      amount: "10000"
+      amount: "6250"
     },
     {
       market: WBTC_MARKET,
-      amount: "10000"
+      amount: "6250"
     },
     {
       market: LSK_MARKET,
-      amount: "10000"
+      amount: "6250"
     }
   ];
 
   await sendRewardsToMarkets(viem, ION, rewardsToSend, deployer as Address);
 });
 
-task("lisk:send-ion:epoch6:lsk", "send lsk to a market").setAction(
-  async (_, { viem, deployments, getNamedAccounts }) => {
-    const { deployer } = await getNamedAccounts();
+task("lisk:send-lsk", "send lsk to a market").setAction(async (_, { viem, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
 
-    const rewardsToSend: { market: Address; amount: string }[] = [
-      {
-        market: WETH_MARKET,
-        amount: "316"
-      },
-      {
-        market: USDC_MARKET,
-        amount: "316"
-      },
-      {
-        market: USDT_MARKET,
-        amount: "316"
-      },
-      {
-        market: WBTC_MARKET,
-        amount: "316"
-      }
-    ];
+  const rewardsToSend: { market: Address; amount: string }[] = [
+    {
+      market: WETH_MARKET,
+      amount: "316"
+    },
+    {
+      market: USDC_MARKET,
+      amount: "316"
+    },
+    {
+      market: USDT_MARKET,
+      amount: "316"
+    },
+    {
+      market: WBTC_MARKET,
+      amount: "316"
+    }
+  ];
 
-    await sendRewardsToMarkets(viem, LSK, rewardsToSend, deployer as Address);
-  }
-);
+  await sendRewardsToMarkets(viem, LSK, rewardsToSend, deployer as Address);
+});
 
 task("lisk:add-rewards:supply", "add rewards to a market").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
