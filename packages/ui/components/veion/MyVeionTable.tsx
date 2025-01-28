@@ -82,7 +82,11 @@ function MyVeionTable() {
             {row.original.lockedBLP.amount}
           </div>
           <div className="text-xs font-semibold text-white/40">
-            {row.original.lockedBLP.value}
+            $
+            {row.original.lockedBLP.value.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 7
+            })}
           </div>
         </div>
       )
@@ -105,7 +109,7 @@ function MyVeionTable() {
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
-            {row.original.votingPower} veION (
+            {row.original.votingPower.toFixed(5)} veION (
             {row.original.votingBoost.toFixed(2)}x)
           </div>
           <div className="text-xs font-semibold text-white/40">

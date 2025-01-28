@@ -1,5 +1,5 @@
-import { useAccount } from 'wagmi';
 import { InfoIcon, LockIcon } from 'lucide-react';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { useVeIONContext } from '@ui/context/VeIonContext';

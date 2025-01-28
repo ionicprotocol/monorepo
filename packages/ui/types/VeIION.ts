@@ -4,7 +4,6 @@ import type { Hex } from 'viem';
 
 export interface PriceData {
   ionUsd: number;
-  veIonUsd: number;
   ionBalanceUsd: string;
   veIonBalanceUsd: number;
 }
@@ -20,7 +19,6 @@ export type ChainId = 0 | 10 | 8453 | 34443;
 export interface EmissionsData {
   lockedValue: {
     amount: number;
-    usdValue: string;
     percentage: number;
   };
   totalDeposits: {
@@ -81,7 +79,7 @@ export type MyVeionData = {
   lpTokenAddress: Hex;
   lockedBLP: {
     amount: string;
-    value: string;
+    value: number;
     rawAmount: bigint;
     start: number;
     end: number;
@@ -103,7 +101,7 @@ export type DelegateVeionData = {
   tokensLocked: string;
   lockedBLP: {
     amount: string;
-    value: string;
+    value: number;
   };
   lockExpires: {
     date: string;
@@ -135,7 +133,7 @@ export interface VeIONTableData {
   lockedBLP: {
     amount: string;
     rawAmount: bigint;
-    value: string;
+    value: number;
     valueNum: number;
   };
 

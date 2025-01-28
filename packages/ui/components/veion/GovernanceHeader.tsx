@@ -21,7 +21,9 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const GovernanceHeader = ({ view = 'MyVeion' }) => {
-  const { ionBalance, veIonBalance, prices, emissions } = useVeIONContext();
+  const { balances, prices, emissions } = useVeIONContext();
+  const { ion: ionBalance, veIon: veIonBalance } = balances;
+  const { veIonBalanceUsd, ionBalanceUsd } = prices;
 
   const infoBlocks = [
     {
@@ -30,15 +32,15 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
       token: 'ION',
       infoContent: 'This is the amount of ION you have in your wallet.',
       icon: '/img/logo/ion.svg',
-      usdValue: prices.ionBalanceUsd
+      usdValue: ionBalanceUsd
     },
     {
-      label: 'Your locked veION',
-      value: veIonBalance.toString(),
+      label: 'YOUR VEION',
+      value: veIonBalance.toFixed(3),
       token: 'veION',
       infoContent: 'This is the amount of ION you have locked in the protocol.',
       icon: '/img/logo/ion.svg',
-      usdValue: emissions.lockedValue.usdValue
+      usdValue: veIonBalanceUsd.toFixed(5)
     },
     {
       label: 'Your Rewards',
@@ -94,7 +96,7 @@ const InfoBlock = ({
   token: string;
   infoContent: string;
   icon: string;
-  usdValue: string;
+  usdValue: number | string;
 }) => (
   <div className="flex flex-col gap-1 mt-3">
     <div className="text-white/60 text-xs flex items-center gap-2">
@@ -124,7 +126,8 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { emissions } = useVeIONContext();
+  const { emissions, prices } = useVeIONContext();
+  const { veIonBalanceUsd } = prices;
 
   const { lockedValue, totalDeposits } = emissions;
   const isActive = lockedValue.percentage >= 2.5;
@@ -199,8 +202,9 @@ const EmissionsStatus = () => {
       <div className="flex justify-between items-center text-gray-400">
         <div className="flex items-center gap-2">
           <span className="text-xs">
-            LOCKED VEION: ${lockedValue.usdValue} (
-            {lockedValue.percentage.toFixed(1)}%)
+            YOUR VEION: ${veIonBalanceUsd.toFixed(5)} (
+            {lockedValue.percentage.toFixed(2)}
+            %)
           </span>
           <CustomTooltip content="Amount of veION locked in the protocol" />
         </div>

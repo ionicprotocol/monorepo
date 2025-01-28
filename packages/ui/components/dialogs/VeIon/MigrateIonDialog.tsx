@@ -26,7 +26,8 @@ export default function MigrateIonDialog({
   const [amount, setAmount] = useState<string>('0');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { currentChain, veIonBalance } = useVeIONContext();
+  const { currentChain, balances } = useVeIONContext();
+  const { veIon: veIonBalance } = balances;
   const { removeLiquidity, isPending } = useVeIONActions();
 
   // const stakingTokenBalance = getTokenBalance('eth');

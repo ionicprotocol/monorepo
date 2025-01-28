@@ -76,7 +76,7 @@ export default function Governance() {
                 <span className="text-xs whitespace-nowrap">
                   My Voting Power :{' '}
                   <span className="font-medium">
-                    {emissions.lockedValue.amount.toFixed(2)}
+                    {emissions.lockedValue.amount.toFixed(3)}
                   </span>
                 </span>
                 <span className="text-white/50 text-xs whitespace-nowrap">

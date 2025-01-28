@@ -36,7 +36,8 @@ const sides = [
 ];
 
 const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
-  const { currentChain, veIonBalance } = useVeIONContext(); // Add veIonBalance
+  const { currentChain, balances } = useVeIONContext(); // Add veIonBalance
+  const { veIon: veIonBalance } = balances;
   const [selectedSide, setSelectedSide] = useState(sides[0]);
   const [amount, setAmount] = useState<string>('0');
 

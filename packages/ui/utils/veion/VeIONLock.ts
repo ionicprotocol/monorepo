@@ -37,7 +37,7 @@ export class VeIONLock implements VeIONTableData {
   lockedBLP: {
     amount: string;
     rawAmount: bigint;
-    value: string;
+    value: number;
     valueNum: number;
     start: number;
     end: number;
@@ -151,12 +151,9 @@ export class VeIONLock implements VeIONTableData {
     const numericValue = parseFloat(formattedValue);
 
     this.lockedBLP = {
-      amount: `${formattedAmount} BLP`,
+      amount: `${Number(formattedAmount).toFixed(5)} BLP`,
       rawAmount: raw.amount,
-      value: `$${numericValue.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 8
-      })}`,
+      value: numericValue,
       valueNum: numericValue,
       start: Number(raw.start),
       end: Number(raw.end),

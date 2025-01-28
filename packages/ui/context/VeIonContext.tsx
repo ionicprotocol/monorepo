@@ -24,9 +24,11 @@ import { getToken } from '@ui/utils/getStakingTokens';
 
 interface VeIONContextType {
   // Balances
-  ionBalance: string;
-  veIonBalance: number;
-  ethBalance: string;
+  balances: {
+    ion: string;
+    veIon: number;
+    ethBalance: string;
+  };
 
   // Chain info
   currentChain: number;
@@ -45,13 +47,14 @@ interface VeIONContextType {
 }
 
 const defaultContext: VeIONContextType = {
-  ionBalance: '0',
-  veIonBalance: 0,
-  ethBalance: '0',
   currentChain: 0,
+  balances: {
+    ion: '0',
+    veIon: 0,
+    ethBalance: '0'
+  },
   prices: {
     ionUsd: 0,
-    veIonUsd: 0,
     ionBalanceUsd: '0',
     veIonBalanceUsd: 0
   },
@@ -64,7 +67,6 @@ const defaultContext: VeIONContextType = {
   emissions: {
     lockedValue: {
       amount: 0,
-      usdValue: '0',
       percentage: 0
     },
     totalDeposits: {
@@ -99,7 +101,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const { data: ionPriceData } = useIonPrices([currentChain]);
   const ionPrice = Number(ionPriceData?.[currentChain] || 0);
-  const veIonPrice = ionPrice;
 
   // Update chain whenever URL params change
   useEffect(() => {
@@ -150,6 +151,11 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     0
   );
 
+  const veIonBalanceUsd = locks.myLocks.reduce<number>(
+    (acc, lock) => acc + +lock.lockedBLP.value,
+    0
+  );
+
   const veIonPercents = locks.myLocks.reduce<number>(
     (acc, lock) => acc + +lock.votingPercentage,
     0
@@ -158,7 +164,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const emissions = {
     lockedValue: {
       amount: veIonBalance,
-      usdValue: (veIonBalance * veIonPrice).toFixed(2),
       percentage: veIonPercents
     },
     totalDeposits: {
@@ -169,15 +174,16 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   };
 
   const value = {
-    ionBalance: ionBalance ? formatEther(ionBalance.value) : '0',
-    veIonBalance,
-    ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0',
     currentChain,
+    balances: {
+      ion: ionBalance ? formatEther(ionBalance.value) : '0',
+      veIon: veIonBalance,
+      ethBalance: ethBalanceData ? formatEther(ethBalanceData.value) : '0'
+    },
     prices: {
       ionUsd: ionPrice,
-      veIonUsd: veIonPrice,
       ionBalanceUsd,
-      veIonBalanceUsd: 0
+      veIonBalanceUsd
     },
     liquidity: isSupported ? liquidity : defaultContext.liquidity,
     emissions: isSupported ? emissions : defaultContext.emissions,
