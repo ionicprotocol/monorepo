@@ -387,7 +387,7 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = realSlippage * 1.1;
+      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
 
       const [, finalBorrowAmount] = await publicClient.readContract({
         abi: iLeveredPositionFactoryAbi,
@@ -542,7 +542,7 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = realSlippage * 1.1;
+      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
 
       const [finalSupplyAmount, finalBorrowAmount] =
         await publicClient.readContract({
@@ -775,7 +775,7 @@ export default function Loop({
               Number(quote.estimate.fromAmountUSD)
           : 0;
       if (realSlippage < 0.001) realSlippage = 0.001;
-      const slippageWithSmallerBuffer = realSlippage * 1.1;
+      const slippageWithSmallerBuffer = Math.round(realSlippage * 1.1);
 
       const [finalSupplyAmount, finalBorrowsAmount] =
         await publicClient.readContract({

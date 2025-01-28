@@ -13,7 +13,7 @@ import {
   parseEther,
   type PublicClient
 } from 'viem';
-import { fraxtal, mode } from 'viem/chains';
+import {`` fraxtal, mode } from 'viem/chains';
 import { useBalance } from 'wagmi';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
