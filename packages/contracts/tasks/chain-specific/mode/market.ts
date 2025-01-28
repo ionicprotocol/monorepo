@@ -50,7 +50,7 @@ task("mode:set-caps:new", "one time setup").setAction(
     const chainId = parseInt(await getChainId());
     const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
     const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
-    const assetsToDeploy: string[] = [assetSymbols.oBTC];
+    const assetsToDeploy: string[] = [assetSymbols.oBTC, assetSymbols.uniBTC];
     for (const asset of mode.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
       const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
         client: { public: publicClient, wallet: walletClient }
