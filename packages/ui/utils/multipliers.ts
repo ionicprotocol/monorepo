@@ -56,7 +56,7 @@ export const multipliers: Record<
         market: 'dmBTC_market',
         supply: {
           underlyingAPR: 10,
-          flywheel: true
+          flywheel: false
         }
       },
       uniBTC: {
@@ -84,13 +84,16 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionAPR: true,
-          flywheel: true,
+          ionAPR: false,
+          flywheel: false,
           op: true
         },
         decimals: 6,
         market: 'usdc_market',
-        supply: {}
+        supply: {
+          ionAPR: true,
+          flywheel: true
+        }
       },
       USDT: {
         borrow: {
@@ -100,8 +103,8 @@ export const multipliers: Record<
         decimals: 6,
         market: 'usdt_market',
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       WBTC: {
@@ -112,8 +115,8 @@ export const multipliers: Record<
         market: 'wbtc_market',
         multiplier: 66000,
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       WETH: {
@@ -176,8 +179,8 @@ export const multipliers: Record<
         borrow: {
           eigenlayer: true,
           etherfi: 1,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'weeth_market_new',
         multiplier: 3000,
@@ -300,8 +303,8 @@ export const multipliers: Record<
         market: 'ionaero_base',
         multiplier: 1.15,
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDC: {
@@ -311,14 +314,15 @@ export const multipliers: Record<
         },
         market: 'ionusdc_base',
         supply: {
-          flywheel: true
+          flywheel: true,
+          ionAPR: true
         },
         decimals: 6
       },
       WETH: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ionweth_base',
         multiplier: 3000,
@@ -329,14 +333,14 @@ export const multipliers: Record<
       },
       cbETH: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'ioncbeth_base',
         multiplier: 3000,
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       ezETH: {
@@ -373,8 +377,8 @@ export const multipliers: Record<
           flywheel: false
         },
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       wstETH: {
@@ -385,8 +389,8 @@ export const multipliers: Record<
         multiplier: 3000,
         supply: {
           underlyingAPR: 2.9,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       wsuperOETHb: {
@@ -395,18 +399,19 @@ export const multipliers: Record<
         },
         supply: {
           underlyingAPR: 15,
-          ionAPR: false
+          ionAPR: false,
+          flywheel: false
         }
       },
       wUSDM: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
           underlyingAPR: 5,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       'USD+': {
@@ -424,14 +429,14 @@ export const multipliers: Record<
         },
         supply: {
           underlyingAPR: 10,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       USDz: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
           ionAPR: false,
@@ -440,20 +445,20 @@ export const multipliers: Record<
       },
       EURC: {
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       cbBTC: {
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       uSOL: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
           ionAPR: true,
@@ -462,8 +467,8 @@ export const multipliers: Record<
       },
       uSUI: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
           ionAPR: true,
@@ -472,12 +477,12 @@ export const multipliers: Record<
       },
       sUSDz: {
         borrow: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         supply: {
-          ionAPR: true,
-          flywheel: true,
+          ionAPR: false,
+          flywheel: false,
           underlyingAPR: 15
         }
       },
@@ -487,8 +492,8 @@ export const multipliers: Record<
           flywheel: false
         },
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       KLIMA: {

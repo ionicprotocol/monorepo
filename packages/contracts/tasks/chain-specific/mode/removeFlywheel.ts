@@ -6,7 +6,7 @@ task("market:mode:remove-flywheel", "Deploys flywheel and adds rewards").setActi
   async (_, { viem, run, deployments, getNamedAccounts }) => {
     const publicClient = await viem.getPublicClient();
 
-    const flywheels: Address[] = [];
+    const flywheels: Address[] = ["0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"];
 
     const comptroller = await viem.getContractAt("IonicComptroller", COMPTROLLER_NATIVE);
     for (const flywheel of flywheels) {
