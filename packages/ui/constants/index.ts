@@ -273,6 +273,8 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'USDC',
           'WETH',
+          'msETH',
+          'msUSD',
           'wsuperOETHb',
           'OGN',
           'sUSDz',

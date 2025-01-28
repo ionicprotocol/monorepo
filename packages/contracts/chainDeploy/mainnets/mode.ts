@@ -1,4 +1,4 @@
-import { Address, formatEther, Hash, Hex, zeroAddress } from "viem";
+import { Address, formatEther, Hash, Hex, zeroAddress, parseEther } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracleDmBTC } from "../helpers";
@@ -34,7 +34,20 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3SwapRouter: "0xC9Adff795f46105E53be9bbf14221b1C9919EE25",
     uniswapV3Quoter: "0x7Fd569b2021850fbA53887dd07736010aCBFc787"
   },
-  wtoken: mode.chainAddresses.W_TOKEN as Address
+  wtoken: mode.chainAddresses.W_TOKEN as Address,
+  veION: {
+    lpTokens: ["0xC6A394952c097004F83d2dfB61715d245A38735a"],
+    lpStakingStrategies: [],
+    lpStakingWalletImplementations: [],
+    lpExternalStakingContracts: [],
+    lpTokenWhitelistStatuses: [true],
+    lpTokenTypes: [0],
+    minimumLockAmounts: [parseEther("0.01")],
+    minimumLockDuration: 6 * 30 * 24 * 60 * 60,
+    maxEarlyWithdrawFee: parseEther("0.8"),
+    maxVotingNum: 20
+  },
+  ION: "0x18470019bF0E94611f15852F7e93cf5D65BC34CA"
 };
 
 // // TODO add more assets https://pyth.network/developers/price-feed-ids
