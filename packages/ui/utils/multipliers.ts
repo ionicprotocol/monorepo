@@ -56,7 +56,7 @@ export const multipliers: Record<
         market: 'dmBTC_market',
         supply: {
           underlyingAPR: 10,
-          flywheel: true
+          flywheel: false
         }
       },
       uniBTC: {
@@ -84,13 +84,16 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          ionAPR: true,
-          flywheel: true,
+          ionAPR: false,
+          flywheel: false,
           op: true
         },
         decimals: 6,
         market: 'usdc_market',
-        supply: {}
+        supply: {
+          ionAPR: true,
+          flywheel: true
+        }
       },
       USDT: {
         borrow: {
@@ -100,8 +103,8 @@ export const multipliers: Record<
         decimals: 6,
         market: 'usdt_market',
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       WBTC: {
@@ -112,8 +115,8 @@ export const multipliers: Record<
         market: 'wbtc_market',
         multiplier: 66000,
         supply: {
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         }
       },
       WETH: {
@@ -176,8 +179,8 @@ export const multipliers: Record<
         borrow: {
           eigenlayer: true,
           etherfi: 1,
-          ionAPR: true,
-          flywheel: true
+          ionAPR: false,
+          flywheel: false
         },
         market: 'weeth_market_new',
         multiplier: 3000,
