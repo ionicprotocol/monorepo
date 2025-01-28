@@ -71,7 +71,7 @@ export default function MigrateIonDialog({
             handleInput={(val?: string) => setAmount(val || '0')}
             tokenName="ion/weth"
             chain={currentChain}
-            max={veIonBalance}
+            max={String(veIonBalance)}
             headerText="Available LP"
             showUtilizationSlider
           />

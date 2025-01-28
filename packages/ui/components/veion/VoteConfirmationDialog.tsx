@@ -1,4 +1,9 @@
 import React from 'react';
+
+import Image from 'next/image';
+
+import { Info } from 'lucide-react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,8 +15,6 @@ import {
   AlertDialogTitle
 } from '@ui/components/ui/alert-dialog';
 import { ScrollArea } from '@ui/components/ui/scroll-area';
-import { Info } from 'lucide-react';
-import Image from 'next/image';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
 
 type VoteRecord = Record<

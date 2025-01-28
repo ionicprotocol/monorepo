@@ -2,7 +2,9 @@
 
 import dynamic from 'next/dynamic';
 import { useSearchParams, usePathname } from 'next/navigation';
+
 import { mode, base } from 'viem/chains';
+
 import { pools } from '@ui/constants/index';
 
 function DynamicSubNav() {

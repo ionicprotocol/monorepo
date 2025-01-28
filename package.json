@@ -16,7 +16,9 @@
   ],
   "resolutions": {
     "viem": "^2.21.55",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",

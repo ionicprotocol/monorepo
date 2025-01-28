@@ -1,8 +1,10 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
+
+import type { MarketRowData } from '@ui/hooks/market/useMarketData';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
 import WrapEthSwaps from './WrapEthSwaps';
 import ResultHandler from '../ResultHandler';
-import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { MarketRowData } from '@ui/hooks/market/useMarketData';
 
 interface FeaturedMarketTileProps {
   selectedChain: number;

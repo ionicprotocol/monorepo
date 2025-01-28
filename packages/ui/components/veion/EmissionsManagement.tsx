@@ -10,7 +10,6 @@ import CommonTable from '@ui/components/CommonTable';
 import type { EnhancedColumnDef } from '@ui/components/CommonTable';
 import { CopyButton } from '@ui/components/CopyButton';
 import APR from '@ui/components/markets/Cells/APR';
-import TokenBalance from '@ui/components/markets/Cells/TokenBalance';
 import PoolToggle from '@ui/components/markets/PoolToggle';
 import SearchInput from '@ui/components/markets/SearcInput';
 import {

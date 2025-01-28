@@ -146,7 +146,7 @@ const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
 
         <MaxDeposit
           headerText="LOCK AMOUNT"
-          max={veIonBalance}
+          max={String(veIonBalance)}
           amount={amount}
           tokenName="ion/weth"
           token={getToken(currentChain)}

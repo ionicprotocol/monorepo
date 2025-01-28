@@ -66,7 +66,6 @@ export type VeIONLockRaw = {
   start: bigint;
   end: bigint;
   isPermanent: boolean;
-  boost: bigint;
 };
 
 export interface VeIONLockData {

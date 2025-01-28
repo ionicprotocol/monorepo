@@ -4,7 +4,6 @@ import { erc20Abi } from 'viem';
 import { useAccount, useChainId } from 'wagmi';
 
 import { getVeIonContract } from '@ui/constants/veIon';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useContractWrite } from '../useContractWrite';

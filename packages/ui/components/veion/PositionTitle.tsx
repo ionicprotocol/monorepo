@@ -1,8 +1,10 @@
 import React from 'react';
+
 import Image from 'next/image';
+
 import { getChainName } from '@ui/constants/mock';
-import type { ChainId } from '@ui/types/VeIION';
 import { cn } from '@ui/lib/utils';
+import type { ChainId } from '@ui/types/VeIION';
 
 const sizes = {
   sm: 'gap-1.5 text-xs',

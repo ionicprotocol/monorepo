@@ -18,6 +18,7 @@ import {
   GovernanceHeader
 } from '@ui/components/veion';
 import { lockedDataWithDelegate } from '@ui/constants/mock';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 
 export default function Governance() {
@@ -25,6 +26,7 @@ export default function Governance() {
   const router = useRouter();
   const [isUniversalClaimOpen, setIsUniversalClaimOpen] =
     useState<boolean>(false);
+  const { emissions } = useVeIONContext();
 
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
@@ -72,10 +74,13 @@ export default function Governance() {
             <div className="flex gap-4 items-center">
               <div className="flex flex-col text-right min-w-[160px] justify-center">
                 <span className="text-xs whitespace-nowrap">
-                  My Voting Power : <span className="font-medium">1134</span>
+                  My Voting Power :{' '}
+                  <span className="font-medium">
+                    {emissions.lockedValue.amount.toFixed(2)}
+                  </span>
                 </span>
                 <span className="text-white/50 text-xs whitespace-nowrap">
-                  10% of all veION
+                  {emissions.lockedValue.percentage.toFixed(2)}% of all veION
                 </span>
               </div>
               {view === 'My veION' && (

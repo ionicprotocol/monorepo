@@ -1,8 +1,10 @@
 import { useState } from 'react';
+
 import { Card } from '@ui/components/ui/card';
 import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
-import VoteConfirmationDialog from './VoteConfirmationDialog';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+
+import VoteConfirmationDialog from './VoteConfirmationDialog';
 
 interface EmissionsManagementFooterProps {
   onSubmitVotes?: () => Promise<void>;

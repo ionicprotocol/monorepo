@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { base, mode, optimism } from 'viem/chains';
 
-import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
 import { BaseReservesContractAddr } from '@ui/constants/baselp';
 import { ModeReservesContractAddr } from '@ui/constants/lp';
 import { OPReservesContractAddr } from '@ui/constants/oplp';
