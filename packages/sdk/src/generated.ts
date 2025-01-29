@@ -27442,6 +27442,7 @@ export const iLeveredPositionFactoryAbi = [
       { name: '_fundingAssetSwapAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
+      { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionWithAggregatorSwapsAtRatio',
     outputs: [
@@ -27718,6 +27719,7 @@ export const iLeveredPositionFactoryExtensionAbi = [
       { name: '_fundingAssetSwapAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
+      { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionWithAggregatorSwapsAtRatio',
     outputs: [
@@ -28080,6 +28082,7 @@ export const iLeveredPositionFactoryThirdExtensionAbi = [
       { name: '_fundingAssetSwapAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
+      { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionWithAggregatorSwapsAtRatio',
     outputs: [
@@ -42369,6 +42372,7 @@ export const leveredPositionFactoryThirdExtensionAbi = [
       { name: '_fundingAssetSwapAggregatorData', internalType: 'bytes', type: 'bytes' },
       { name: '_adjustLeverageRatioAggregatorTarget', internalType: 'address', type: 'address' },
       { name: '_adjustLeverageRatioAggregatorData', internalType: 'bytes', type: 'bytes' },
+      { name: '_expectedSlippage', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'createAndFundPositionWithAggregatorSwapsAtRatio',
     outputs: [
