@@ -70,6 +70,7 @@ export interface VeIONLockData {
   myLocks: MyVeionData[]; // Changed from VeIONTableData[]
   delegatedLocks: DelegateVeionData[]; // Changed from VeIONTableData[]
   isLoading: boolean;
+  refetch?: () => Promise<any>;
 }
 
 export type MyVeionData = {

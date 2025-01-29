@@ -1,53 +1,39 @@
 import { useState } from 'react';
 
-import { formatEther } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import CustomTooltip from '@ui/components/CustomTooltip';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import TransactionButton from '@ui/components/TransactionButton';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
-import { getAvailableStakingToken, getToken } from '@ui/utils/getStakingTokens';
-
-import CustomTooltip from '../../CustomTooltip';
-import MaxDeposit from '../../MaxDeposit';
+import { getToken } from '@ui/utils/getStakingTokens';
 
 type IncreaseProps = {
   chain: string;
 };
 
 export function Increase({ chain }: IncreaseProps) {
-  const { increaseAmount, isPending } = useVeIONManage(Number(chain));
+  const { handleIncrease, tokenValue } = useVeIONManage(Number(chain));
   const { selectedManagePosition } = useVeIONContext();
-
-  const token = getToken(+chain);
   const { address } = useAccount();
-
-  const tokenAddress = getAvailableStakingToken(+chain, 'eth');
-
-  const { data: tokenBalance } = useBalance({
-    address,
-    token: tokenAddress,
-    chainId: +chain,
-    query: {
-      notifyOnChangeProps: ['data', 'error']
-    }
-  });
-
-  const tokenValue = Number(formatEther((tokenBalance?.value || 0) as bigint));
-
-  const handleIncrease = async () => {
-    if (!address || !selectedManagePosition) return;
-
-    await increaseAmount({
-      tokenAddress: tokenAddress as `0x${string}`,
-      tokenId: +selectedManagePosition.id,
-      amount: +amount,
-      tokenDecimals: tokenBalance?.decimals || 18
-    });
-  };
+  const token = getToken(+chain);
 
   const [amount, setAmount] = useState<string>('');
+
+  const onIncrease = async () => {
+    try {
+      const success = await handleIncrease(+amount);
+      if (success) {
+        setAmount('');
+      }
+      return { success };
+    } catch (error) {
+      console.error('Transaction failed:', error);
+      return { success: false };
+    }
+  };
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
@@ -68,7 +54,7 @@ export function Increase({ chain }: IncreaseProps) {
           VOTING POWER
           <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
         </div>
-        <p>{selectedManagePosition?.votingPower.toFixed(4)} veION</p>
+        <p>{selectedManagePosition?.votingPower.toFixed(5)} veION</p>
       </div>
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         <div className="flex items-center gap-2">
@@ -76,13 +62,12 @@ export function Increase({ chain }: IncreaseProps) {
         </div>
         <p>{selectedManagePosition?.lockedBLP.amount}</p>
       </div>
-      <Button
-        className="w-full bg-accent text-black mt-4"
-        onClick={handleIncrease}
-        disabled={isPending || amount === '0' || !address}
-      >
-        {isPending ? 'Increasing...' : 'Increase Locked Amount'}
-      </Button>
+
+      <TransactionButton
+        onSubmit={onIncrease}
+        isDisabled={amount === '0' || !address || !amount}
+        buttonText="Increase Locked Amount"
+      />
     </div>
   );
 }

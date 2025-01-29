@@ -1,7 +1,13 @@
-import { parseUnits, erc20Abi } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { parseUnits, erc20Abi, formatEther } from 'viem';
+import {
+  useAccount,
+  usePublicClient,
+  useWalletClient,
+  useBalance
+} from 'wagmi';
 
 import { getVeIonContract } from '@ui/constants/veIon';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { useContractWrite } from '../useContractWrite';
@@ -12,7 +18,21 @@ export function useVeIONManage(chain: number) {
   const publicClient = usePublicClient();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const tokenAddress = getAvailableStakingToken(+chain, 'eth');
+  const { setSelectedManagePosition, selectedManagePosition, locks } =
+    useVeIONContext();
+  const tokenAddress = getAvailableStakingToken(chain, 'eth');
+
+  // Token balance handling
+  const { data: tokenBalance, refetch: refetchBalance } = useBalance({
+    address,
+    token: tokenAddress,
+    chainId: chain,
+    query: {
+      notifyOnChangeProps: ['data', 'error']
+    }
+  });
+
+  const tokenValue = Number(formatEther((tokenBalance?.value || 0n) as bigint));
 
   const getContractConfig = (functionName: string, args: any[]) => {
     if (!veIonContract) {
@@ -59,7 +79,6 @@ export function useVeIONManage(chain: number) {
     if (address && publicClient && walletClient) {
       const parsedAmount = parseUnits(String(amount), tokenDecimals);
 
-      // Check if approval is needed
       const hasAllowance = await checkAllowance(
         tokenAddress,
         address,
@@ -67,7 +86,6 @@ export function useVeIONManage(chain: number) {
       );
 
       if (!hasAllowance) {
-        // First approve tokens
         const approvalTx = await walletClient.writeContract({
           abi: erc20Abi,
           account: walletClient.account,
@@ -76,17 +94,15 @@ export function useVeIONManage(chain: number) {
           functionName: 'approve'
         });
 
-        // Wait for approval transaction to be confirmed
         await publicClient.waitForTransactionReceipt({ hash: approvalTx });
       }
 
-      // Then increase amount
       return write(
         getContractConfig('increaseAmount', [
           tokenAddress,
           BigInt(tokenId),
           parsedAmount,
-          true // _stakeUnderlying parameter
+          true
         ]),
         {
           successMessage: 'Successfully increased locked amount',
@@ -200,7 +216,6 @@ export function useVeIONManage(chain: number) {
 
       const positions = await Promise.all(
         tokenIds.map(async (id) => {
-          // First get balance info
           const [assets, balances, boosts] = await publicClient.readContract({
             address: veIonContract.address,
             abi: veIonContract.abi,
@@ -208,7 +223,6 @@ export function useVeIONManage(chain: number) {
             args: [id]
           });
 
-          // Then get lock info to check if permanent
           const lockInfo = await publicClient.readContract({
             address: veIonContract.address,
             abi: veIonContract.abi,
@@ -216,7 +230,6 @@ export function useVeIONManage(chain: number) {
             args: [id, 2]
           });
 
-          // Find the relevant balance
           const tokenIndex = assets.findIndex(
             (asset: string) =>
               asset.toLowerCase() === tokenAddress?.toLowerCase()
@@ -267,8 +280,29 @@ export function useVeIONManage(chain: number) {
     );
   }
 
+  // handlers
+
+  async function handleIncrease(amount: number) {
+    if (!address || !selectedManagePosition || !tokenBalance) return;
+
+    try {
+      await increaseAmount({
+        tokenAddress: tokenAddress as `0x${string}`,
+        tokenId: +selectedManagePosition.id,
+        amount: amount,
+        tokenDecimals: tokenBalance.decimals || 18
+      });
+
+      await Promise.all([locks.refetch?.(), refetchBalance()]);
+      return true;
+    } catch (error) {
+      console.error('Error increasing amount:', error);
+      return false;
+    }
+  }
+
   return {
-    increaseAmount,
+    handleIncrease,
     extendLock,
     delegate,
     merge,
@@ -279,6 +313,8 @@ export function useVeIONManage(chain: number) {
     unlockPermanent,
     lockPermanent,
     isPending,
-    isContractLoading: !veIonContract
+    isContractLoading: !veIonContract,
+    tokenValue,
+    tokenBalance
   };
 }

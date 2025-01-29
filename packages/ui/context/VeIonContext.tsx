@@ -156,6 +156,21 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     0
   );
 
+  useEffect(() => {
+    if (selectedManagePosition) {
+      const updatedPosition = locks.myLocks.find(
+        (lock) => lock.id === selectedManagePosition.id
+      );
+      if (
+        updatedPosition &&
+        JSON.stringify(updatedPosition) !==
+          JSON.stringify(selectedManagePosition)
+      ) {
+        setSelectedManagePosition(updatedPosition);
+      }
+    }
+  }, [locks.myLocks, selectedManagePosition]);
+
   const veIonPercents = locks.myLocks.reduce<number>(
     (acc, lock) => acc + +lock.votingPercentage,
     0
