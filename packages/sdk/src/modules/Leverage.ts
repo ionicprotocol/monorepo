@@ -343,7 +343,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       fundingTarget: Address,
       fundingData: Hex,
       aggregatorTarget: Address,
-      aggregatorData: Hex
+      aggregatorData: Hex,
+      expectedSlippage: bigint
     ) {
       const leveredPositionFactory = this.createLeveredPositionFactory();
 
@@ -357,7 +358,8 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
           fundingTarget,
           fundingData,
           aggregatorTarget,
-          aggregatorData
+          aggregatorData,
+          expectedSlippage
         ],
         {
           account: this.walletClient!.account!.address,
