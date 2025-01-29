@@ -117,7 +117,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
       '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
       '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44',
-      '0xfB30366C781a913b40c96617e380F18071761F9F'
+      '0xfB30366C781a913b40c96617e380F18071761F9F',
+      '0xdcf01C75eeB8d74D2829eadC3dC5F1EaF542f577'
     ],
     borrow: [
       '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
@@ -140,7 +141,8 @@ export const FLYWHEEL_TYPE_MAP: Record<
       '0x1e00C933e092912d47153765Fa7c886632c1d083',
       '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440',
       '0xf42dBd423970fd6735a7CE2d850aA85897C79eeE',
-      '0xDB04Ab33184594Be006364e9bDb4263988c323df'
+      '0xDB04Ab33184594Be006364e9bDb4263988c323df',
+      '0xB5c75749C7D03C012f169f69847e9006b8Cf5c58'
     ],
     borrow: [
       '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
@@ -273,6 +275,8 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'USDC',
           'WETH',
+          'msETH',
+          'msUSD',
           'wsuperOETHb',
           'OGN',
           'sUSDz',
