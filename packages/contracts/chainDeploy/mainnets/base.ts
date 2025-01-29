@@ -6,6 +6,7 @@ import { Address, Hex, zeroAddress, parseEther } from "viem";
 import { configureAddress } from "../helpers/liquidators/ionicLiquidator";
 import { deployDiaPriceOracle } from "../helpers/oracles/dia";
 import { ChainlinkSpecificParams, DiaSpecificParams, OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
+import { addUnderlyingsToMpo } from "../helpers/oracles/utils";
 
 const assets = base.assets;
 
@@ -62,6 +63,23 @@ export const deploy = async ({
   const { deployer, multisig } = await getNamedAccounts();
   const chainId = parseInt(await getChainId());
   const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+
+  //// Fixed Native Oracle
+  const fixedNativeAssets = base.assets
+    .filter((asset) => asset.oracle === OracleTypes.FixedNativePriceOracle)
+    .map((asset) => asset.underlying);
+  const mpo = await viem.getContractAt(
+    "MasterPriceOracle",
+    (await deployments.get("MasterPriceOracle")).address as Address
+  );
+  const fixedNativeOracle = await deployments.get("FixedNativePriceOracle");
+  await addUnderlyingsToMpo(
+    mpo as any,
+    fixedNativeAssets,
+    fixedNativeOracle.address as Address,
+    deployer,
+    publicClient
+  );
 
   //// Pyth Oracle
   await deployPythPriceOracle({

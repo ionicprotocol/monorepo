@@ -222,4 +222,13 @@ contract EmissionsManagerTest is BaseTest {
     vm.expectRevert("Already whitelisted");
     emissionsManager.whitelistUser(user);
   }
+
+  function test_isUserBlacklistable_AlreadyBlacklistedUserCantBeBlacklistable() public {
+    assertTrue(emissionsManager.isUserBlacklistable(user), "User should be blacklistable");
+
+    vm.prank(reporter);
+    emissionsManager.reportUser(user);
+
+    assertFalse(emissionsManager.isUserBlacklistable(user), "User shouldn't be blacklistable");
+  }
 }
