@@ -4,7 +4,7 @@ import { format, addDays, differenceInDays } from 'date-fns';
 import { ArrowRight } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
@@ -18,7 +18,7 @@ type ExtendProps = {
 export function Extend({ chain }: ExtendProps) {
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
-  const { extendLock, isPending } = useVeIONManage(Number(chain));
+  const { handleExtend } = useVeIONManage(Number(chain));
 
   const currentLockDate = new Date(
     selectedManagePosition?.lockExpires?.date || Date.now()
@@ -31,22 +31,20 @@ export function Extend({ chain }: ExtendProps) {
   const [autoLock, setAutoLock] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
-  const handleExtend = async () => {
+  const onExtend = async () => {
     if (
       extensionDays <= 0 ||
       !selectedManagePosition?.id ||
       !selectedManagePosition.lockedBLP
-    )
-      return;
+    ) {
+      return { success: false };
+    }
 
-    // Add the extension days in seconds
     const newDurationSeconds =
       selectedManagePosition.lockedBLP.duration + extensionDays * 86400;
 
-    await extendLock({
-      tokenId: +selectedManagePosition.id,
-      lockDuration: newDurationSeconds
-    });
+    const success = await handleExtend({ lockDuration: newDurationSeconds });
+    return { success };
   };
 
   const handleDurationChange = (duration: number) => {
@@ -88,13 +86,11 @@ export function Extend({ chain }: ExtendProps) {
         setAutoLock={setAutoLock}
       />
 
-      <Button
-        className="w-full bg-accent text-black mt-2"
-        onClick={handleExtend}
-        disabled={isPending || !address || extensionDays <= 0}
-      >
-        {isPending ? 'Extending...' : `Extend Lock by ${extensionDays} Days`}
-      </Button>
+      <TransactionButton
+        onSubmit={onExtend}
+        isDisabled={!address || extensionDays <= 0}
+        buttonText={`Extend Lock by ${extensionDays} Days`}
+      />
     </div>
   );
 }

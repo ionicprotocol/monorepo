@@ -4,7 +4,7 @@ import { InfoIcon } from 'lucide-react';
 import { isAddress } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import { Input } from '@ui/components/ui/input';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
@@ -17,18 +17,19 @@ export function Transfer({ chain }: TransferProps) {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
   const { selectedManagePosition } = useVeIONContext();
-
   const { address } = useAccount();
-  const { transfer, isPending } = useVeIONManage(Number(chain));
+  const { handleTransfer } = useVeIONManage(Number(chain));
 
-  const handleTransfer = async () => {
-    if (!isValidAddress || !address || !selectedManagePosition) return;
+  const onTransfer = async () => {
+    if (!isValidAddress || !address || !selectedManagePosition) {
+      return { success: false };
+    }
 
-    await transfer({
-      from: address,
-      to: transferAddress as `0x${string}`,
-      tokenId: +selectedManagePosition.id
+    const success = await handleTransfer({
+      to: transferAddress as `0x${string}`
     });
+
+    return { success };
   };
 
   return (
@@ -46,13 +47,11 @@ export function Transfer({ chain }: TransferProps) {
           Once you transfer the tokens, you lose access to them irrevocably.
         </span>
       </div>
-      <Button
-        className="w-full bg-accent text-black mt-4"
-        disabled={!isValidAddress || isPending || !address}
-        onClick={handleTransfer}
-      >
-        {isPending ? 'Transferring...' : 'Transfer veION'}
-      </Button>
+      <TransactionButton
+        onSubmit={onTransfer}
+        isDisabled={!isValidAddress || !address}
+        buttonText="Transfer veION"
+      />
     </div>
   );
 }

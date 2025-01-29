@@ -18,8 +18,7 @@ export function useVeIONManage(chain: number) {
   const publicClient = usePublicClient();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { setSelectedManagePosition, selectedManagePosition, locks } =
-    useVeIONContext();
+  const { selectedManagePosition, locks } = useVeIONContext();
   const tokenAddress = getAvailableStakingToken(chain, 'eth');
 
   // Token balance handling
@@ -301,20 +300,157 @@ export function useVeIONManage(chain: number) {
     }
   }
 
+  async function handleExtend({ lockDuration }: { lockDuration: number }) {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await extendLock({
+        tokenId: +selectedManagePosition.id,
+        lockDuration
+      });
+
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error extending lock:', error);
+      return false;
+    }
+  }
+
+  async function handleMerge({ toTokenId }: { toTokenId: string }) {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await merge({
+        fromTokenId: selectedManagePosition.id,
+        toTokenId
+      });
+
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error merging positions:', error);
+      return false;
+    }
+  }
+
+  async function handleSplit({
+    from,
+    amount
+  }: {
+    from: number;
+    amount: bigint;
+  }) {
+    if (!address) return false;
+
+    try {
+      await split({ from, amount });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error splitting position:', error);
+      return false;
+    }
+  }
+
+  async function handleTransfer({ to }: { to: `0x${string}` }) {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await transfer({
+        from: address,
+        to,
+        tokenId: +selectedManagePosition.id
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error transferring position:', error);
+      return false;
+    }
+  }
+
+  async function handleUnlockPermanent() {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await unlockPermanent({
+        tokenId: +selectedManagePosition.id
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error unlocking permanent position:', error);
+      return false;
+    }
+  }
+
+  async function handleLockPermanent() {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await lockPermanent({
+        tokenId: +selectedManagePosition.id
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error locking permanent position:', error);
+      return false;
+    }
+  }
+
+  async function handleWithdraw() {
+    if (!address || !selectedManagePosition) return false;
+
+    try {
+      await withdraw({
+        tokenId: +selectedManagePosition.id
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error withdrawing position:', error);
+      return false;
+    }
+  }
+
+  async function handleDelegate({
+    toTokenId,
+    amount
+  }: {
+    toTokenId: number;
+    amount: bigint;
+  }) {
+    if (!address || !selectedManagePosition || !tokenAddress) return false;
+
+    try {
+      await delegate({
+        fromTokenId: +selectedManagePosition.id,
+        toTokenId,
+        lpToken: tokenAddress as `0x${string}`,
+        amount
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error delegating position:', error);
+      return false;
+    }
+  }
+
   return {
-    handleIncrease,
-    extendLock,
-    delegate,
-    merge,
-    split,
-    transfer,
     getOwnedTokenIds,
-    withdraw,
-    unlockPermanent,
-    lockPermanent,
-    isPending,
-    isContractLoading: !veIonContract,
     tokenValue,
-    tokenBalance
+    // handlers
+    handleIncrease,
+    handleExtend,
+    handleMerge,
+    handleSplit,
+    handleTransfer,
+    handleUnlockPermanent,
+    handleLockPermanent,
+    handleWithdraw,
+    handleDelegate
   };
 }

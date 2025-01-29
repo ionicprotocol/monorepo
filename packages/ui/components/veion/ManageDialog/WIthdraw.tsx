@@ -1,7 +1,7 @@
 import { InfoIcon } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
@@ -12,14 +12,15 @@ type WithdrawProps = {
 export function Withdraw({ chain }: WithdrawProps) {
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
-  const { withdraw, isPending } = useVeIONManage(Number(chain));
+  const { handleWithdraw } = useVeIONManage(Number(chain));
 
-  const handleWithdraw = async () => {
-    if (!address || !selectedManagePosition) return;
+  const onWithdraw = async () => {
+    if (!address || !selectedManagePosition) {
+      return { success: false };
+    }
 
-    await withdraw({
-      tokenId: +selectedManagePosition.id
-    });
+    const success = await handleWithdraw();
+    return { success };
   };
 
   return (
@@ -31,13 +32,11 @@ export function Withdraw({ chain }: WithdrawProps) {
           penalty goes to the protocol, and 75% is redistributed to other users.
         </span>
       </div>
-      <Button
-        className="w-full bg-accent text-black mt-4"
-        disabled={isPending || !address}
-        onClick={handleWithdraw}
-      >
-        {isPending ? 'Withdrawing...' : 'Withdraw veION'}
-      </Button>
+      <TransactionButton
+        onSubmit={onWithdraw}
+        isDisabled={!address}
+        buttonText="Withdraw veION"
+      />
     </div>
   );
 }

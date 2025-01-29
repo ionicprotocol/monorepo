@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { InfoIcon } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import {
   Select,
   SelectContent,
@@ -26,7 +26,7 @@ export function Merge({ chain }: MergeProps) {
   const [selectedLp, setSelectedLp] = useState<string>('');
 
   const { address } = useAccount();
-  const { merge, isPending } = useVeIONManage(Number(chain));
+  const { handleMerge } = useVeIONManage(Number(chain));
   const { locks, selectedManagePosition } = useVeIONContext();
 
   const availableLPs = locks.myLocks
@@ -40,13 +40,13 @@ export function Merge({ chain }: MergeProps) {
   const hasAvailablePositions = availableLPs.length > 0;
   const selectedLpData = availableLPs.find((lp) => lp.id === selectedLp);
 
-  const handleMerge = async () => {
-    if (!selectedLp || !selectedManagePosition?.id) return;
+  const onMerge = async () => {
+    if (!selectedLp || !selectedManagePosition?.id) {
+      return { success: false };
+    }
 
-    await merge({
-      fromTokenId: selectedManagePosition?.id,
-      toTokenId: selectedLp
-    });
+    const success = await handleMerge({ toTokenId: selectedLp });
+    return { success };
   };
 
   return (
@@ -106,19 +106,11 @@ export function Merge({ chain }: MergeProps) {
         </p>
       </div>
 
-      <Button
-        className="w-full bg-accent text-black mt-4"
-        disabled={
-          !hasAvailablePositions || !selectedLp || !address || isPending
-        }
-        onClick={handleMerge}
-      >
-        {isPending
-          ? 'Merging...'
-          : hasAvailablePositions
-            ? 'Merge'
-            : 'No Positions Available'}
-      </Button>
+      <TransactionButton
+        onSubmit={onMerge}
+        isDisabled={!hasAvailablePositions || !selectedLp || !address}
+        buttonText={hasAvailablePositions ? 'Merge' : 'No Positions Available'}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { InfoIcon } from 'lucide-react';
 import { formatEther } from 'viem';
 import { useAccount } from 'wagmi';
 
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
@@ -20,9 +20,8 @@ export function Split({ chain }: SplitProps) {
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
-  const { split, isPending } = useVeIONManage(Number(chain));
+  const { handleSplit } = useVeIONManage(Number(chain));
 
-  // Get the raw amount and convert it to a number for calculations
   const rawAmount = selectedManagePosition?.lockedBLP?.rawAmount || '0';
   const totalAmount = BigInt(rawAmount);
 
@@ -34,22 +33,24 @@ export function Split({ chain }: SplitProps) {
     setSplitValues([Math.round(100 - newValue), newValue]);
   };
 
-  // Calculate split amounts using BigInt arithmetic
   const firstAmountRaw = (totalAmount * BigInt(splitValues[0])) / BigInt(100);
   const secondAmountRaw = (totalAmount * BigInt(splitValues[1])) / BigInt(100);
 
-  // Format the amounts for display (as ETH/BLP)
   const firstAmountFormatted = Number(formatEther(firstAmountRaw)).toFixed(4);
   const secondAmountFormatted = Number(formatEther(secondAmountRaw)).toFixed(4);
 
-  async function handleSplit() {
-    if (!selectedManagePosition?.id || !firstAmountRaw) return;
+  const onSplit = async () => {
+    if (!selectedManagePosition?.id || !firstAmountRaw) {
+      return { success: false };
+    }
 
-    await split({
+    const success = await handleSplit({
       from: +selectedManagePosition.id,
       amount: firstAmountRaw
     });
-  }
+
+    return { success };
+  };
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
@@ -90,13 +91,11 @@ export function Split({ chain }: SplitProps) {
           sure to claim everything before you split!
         </span>
       </div>
-      <Button
-        className="w-full bg-accent text-black mt-4"
-        disabled={isPending || !address}
-        onClick={handleSplit}
-      >
-        {isPending ? 'Splitting...' : 'Split veION'}
-      </Button>
+      <TransactionButton
+        onSubmit={onSplit}
+        isDisabled={!address}
+        buttonText="Split veION"
+      />
     </div>
   );
 }

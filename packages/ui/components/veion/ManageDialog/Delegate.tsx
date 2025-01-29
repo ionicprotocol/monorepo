@@ -6,7 +6,7 @@ import { formatUnits, isAddress, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import { Input } from '@ui/components/ui/input';
 import {
   Select,
@@ -17,7 +17,6 @@ import {
 } from '@ui/components/ui/select';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
-import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 type DelegateProps = {
   chain: string;
@@ -32,12 +31,14 @@ type Position = {
 export function Delegate({ chain }: DelegateProps) {
   const [delegateAddress, setDelegateAddress] = useState('');
   const [amount, setAmount] = useState<string>('');
-
   const [selectedTokenId, setSelectedTokenId] = useState<string>('');
-
   const [isLoading, setIsLoading] = useState(false);
-  const { selectedManagePosition } = useVeIONContext();
   const [positions, setPositions] = useState<Position[]>([]);
+
+  const { selectedManagePosition } = useVeIONContext();
+  const { address } = useAccount();
+  const { handleDelegate, handleLockPermanent, getOwnedTokenIds } =
+    useVeIONManage(Number(chain));
 
   const selectedPosition = positions.find((pos) => pos.id === selectedTokenId);
   const maxDelegateAmount = selectedPosition
@@ -46,13 +47,6 @@ export function Delegate({ chain }: DelegateProps) {
 
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
   const canDelegate = selectedManagePosition?.lockExpires.isPermanent;
-
-  const { address } = useAccount();
-
-  const { delegate, isPending, getOwnedTokenIds, lockPermanent } =
-    useVeIONManage(Number(chain));
-
-  const lpToken = getAvailableStakingToken(+chain, 'eth');
 
   const fetchTokenIds = useCallback(
     async (delegateAddress: string) => {
@@ -67,13 +61,14 @@ export function Delegate({ chain }: DelegateProps) {
         setPositions(
           positions.filter((pos) => pos.id !== selectedManagePosition?.id)
         );
-      } catch (error) {}
+      } catch (error) {
+        console.error('Error fetching token IDs:', error);
+      }
       setIsLoading(false);
     },
     [getOwnedTokenIds, selectedManagePosition]
   );
 
-  // Debounced version of fetchTokenIds
   const debouncedFetchTokenIds = useRef(
     debounce((address: string) => {
       if (isAddress(address)) {
@@ -84,48 +79,51 @@ export function Delegate({ chain }: DelegateProps) {
 
   useEffect(() => {
     debouncedFetchTokenIds(delegateAddress);
-  }, [delegateAddress, debouncedFetchTokenIds]);
-
-  // Cleanup debounce on unmount
-  useEffect(() => {
     return () => {
       debouncedFetchTokenIds.cancel();
     };
-  }, [debouncedFetchTokenIds]);
+  }, [delegateAddress, debouncedFetchTokenIds]);
 
-  const handleDelegate = async () => {
+  const onDelegate = async () => {
     if (
       !isValidAddress ||
       !selectedManagePosition ||
       !amount ||
       !selectedTokenId
-    )
-      return;
+    ) {
+      return { success: false };
+    }
 
     const amountBigInt = parseUnits(amount, 18);
-
-    await delegate({
-      fromTokenId: +selectedManagePosition.id,
+    const success = await handleDelegate({
       toTokenId: +selectedTokenId,
-      lpToken: lpToken as `0x${string}`,
       amount: amountBigInt
     });
+
+    if (success) {
+      setAmount('');
+      setSelectedTokenId('');
+    }
+
+    return { success };
   };
 
-  const handleLockSourcePosition = async () => {
-    if (!selectedManagePosition) return;
-    await lockPermanent({ tokenId: +selectedManagePosition.id });
+  const onLockSourcePosition = async () => {
+    if (!selectedManagePosition) {
+      return { success: false };
+    }
+    const success = await handleLockPermanent();
+    return { success };
   };
 
-  const disabled =
+  const isDisabled =
     !canDelegate ||
     !isValidAddress ||
     !selectedTokenId ||
     !amount ||
     !selectedPosition?.isPermanent ||
-    amount > maxDelegateAmount ||
+    Number(amount) > Number(maxDelegateAmount) ||
     !address ||
-    isPending ||
     isLoading;
 
   return (
@@ -139,14 +137,12 @@ export function Delegate({ chain }: DelegateProps) {
               power. Please convert your position to a permanent lock first.
             </div>
           </div>
-          <Button
-            className="w-full bg-yellow-200 text-black hover:bg-yellow-300"
-            onClick={handleLockSourcePosition}
-            disabled={isPending}
-          >
-            <LockIcon className="h-4 w-4 mr-2" />
-            Lock Position #{selectedManagePosition?.id}
-          </Button>
+          <TransactionButton
+            onSubmit={onLockSourcePosition}
+            buttonText={`Lock Position #${selectedManagePosition?.id}`}
+            className="bg-yellow-200 text-black hover:bg-yellow-300"
+            isDisabled={!address}
+          />
         </div>
       ) : (
         <>
@@ -199,16 +195,14 @@ export function Delegate({ chain }: DelegateProps) {
 
           <div className="space-y-2">
             <p className="text-sm font-medium">Amount to Delegate</p>
-            <div className="space-y-2">
-              <MaxDeposit
-                headerText="Amount to Delegate"
-                amount={amount}
-                handleInput={(val) => setAmount(val || '0')}
-                max={maxDelegateAmount}
-                chain={Number(chain)}
-                showUtilizationSlider
-              />
-            </div>
+            <MaxDeposit
+              headerText="Amount to Delegate"
+              amount={amount}
+              handleInput={(val) => setAmount(val || '0')}
+              max={maxDelegateAmount}
+              chain={Number(chain)}
+              showUtilizationSlider
+            />
           </div>
 
           <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
@@ -231,13 +225,11 @@ export function Delegate({ chain }: DelegateProps) {
             </div>
           </div>
 
-          <Button
-            className="w-full bg-accent text-black"
-            disabled={disabled}
-            onClick={handleDelegate}
-          >
-            {isPending ? 'Delegating...' : 'Delegate veION'}
-          </Button>
+          <TransactionButton
+            onSubmit={onDelegate}
+            isDisabled={isDisabled}
+            buttonText="Delegate veION"
+          />
         </>
       )}
     </div>
