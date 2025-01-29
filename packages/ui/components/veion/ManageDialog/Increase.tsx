@@ -68,13 +68,13 @@ export function Increase({ chain }: IncreaseProps) {
           VOTING POWER
           <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
         </div>
-        <p>{tokenValue.toFixed(3)} veIon</p>
+        <p>{selectedManagePosition?.votingPower.toFixed(4)} veION</p>
       </div>
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         <div className="flex items-center gap-2">
           LP <CustomTooltip content="Info regarding the locked BLP." />
         </div>
-        <p>{tokenValue.toFixed(3)} veIon</p>
+        <p>{selectedManagePosition?.lockedBLP.amount}</p>
       </div>
       <Button
         className="w-full bg-accent text-black mt-4"
