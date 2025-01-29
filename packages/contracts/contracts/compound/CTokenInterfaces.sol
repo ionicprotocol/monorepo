@@ -153,16 +153,6 @@ abstract contract CErc20Storage is CTokenAdminStorage {
    * @notice Addresses Provider
    */
   AddressesProvider public ap;
-
-  /**
-   * @notice Morpho Universal Rewards Distributor
-   */
-  address public morphoURD;
-
-  /**
-   * @notice Permissioned cTokenMinter
-   */
-  address public cTokenMinter;
 }
 
 abstract contract CTokenBaseEvents {
