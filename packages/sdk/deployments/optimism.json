@@ -177,13 +177,13 @@
       "address": "0xdB72b56053CefBc40B6F69432C64E2A18B55861A"
     },
     "LeveredPositionFactoryFirstExtension": {
-      "address": "0x26f5e66bF3908f9554798489a47957255620d55a"
+      "address": "0x948BD775Fc9Ffa4f173Da5506074Bf10Ba14B057"
     },
     "LeveredPositionFactorySecondExtension": {
-      "address": "0xb00DfbD8A83204C5761a8D075A38877dd067B4A2"
+      "address": "0x488A72390fdCE3BA70c0f39b186968C919b22ea2"
     },
     "LeveredPositionFactoryThirdExtension": {
-      "address": "0x0dF62e9eAB641208FE6E9930F0B611a5f903f2BA"
+      "address": "0x95fc22BF6764A74CF3b8614f600600a5044e7065"
     },
     "LeveredPositionsLens": {
       "address": "0x844263dFdcbE769a59BDE62D4fe084527B802869"
