@@ -437,7 +437,8 @@ export default function Loop({
           zeroAddress,
           '0x',
           quoteFinal.transactionRequest!.to! as Address,
-          quoteFinal.transactionRequest!.data! as Hex
+          quoteFinal.transactionRequest!.data! as Hex,
+          slippageWithBufferScaled
         ]
       });
 
