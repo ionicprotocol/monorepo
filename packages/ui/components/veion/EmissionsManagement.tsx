@@ -245,7 +245,7 @@ function EmissionsManagement({
       },
       {
         id: 'vote',
-        header: 'VOTE',
+        header: 'VOTE (%)',
         cell: ({ row }) => (
           <VoteInput
             marketAddress={row.original.marketAddress}

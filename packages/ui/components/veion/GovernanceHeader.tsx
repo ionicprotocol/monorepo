@@ -27,7 +27,7 @@ const GovernanceHeader = ({ view = 'MyVeion' }) => {
   const { ion: ionBalance, veIon: veIonBalance } = balances;
   const { veIonBalanceUsd, ionBalanceUsd } = prices;
 
-  const votingPeriodEndDate = new Date('2025-01-30');
+  const votingPeriodEndDate = new Date('2025-02-12');
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
     hours: 0,
