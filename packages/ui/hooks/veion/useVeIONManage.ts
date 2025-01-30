@@ -439,6 +439,55 @@ export function useVeIONManage(chain: number) {
     }
   }
 
+  function undelegate({
+    fromTokenId,
+    toTokenIds,
+    lpToken,
+    amounts
+  }: {
+    fromTokenId: number;
+    toTokenIds: number[];
+    lpToken: `0x${string}`;
+    amounts: string[];
+  }) {
+    return write(
+      getContractConfig('undelegate', [
+        fromTokenId,
+        toTokenIds,
+        lpToken,
+        amounts
+      ]),
+      {
+        successMessage: 'Successfully undelegated voting power',
+        errorMessage: 'Failed to undelegate voting power'
+      }
+    );
+  }
+
+  async function handleUndelegate({
+    toTokenIds,
+    amounts
+  }: {
+    toTokenIds: number[];
+    amounts: string[];
+  }) {
+    if (!address || !selectedManagePosition || !tokenAddress) return false;
+
+    try {
+      await undelegate({
+        fromTokenId: +selectedManagePosition.id,
+        toTokenIds,
+        lpToken: tokenAddress as `0x${string}`,
+        amounts
+      });
+      await locks.refetch?.();
+      return true;
+    } catch (error) {
+      console.error('Error undelegating position:', error);
+      return false;
+    }
+  }
+
   return {
     getOwnedTokenIds,
     tokenValue,

@@ -29,6 +29,13 @@ interface SimpleLockResult {
   error?: Error;
 }
 
+export interface Delegation {
+  delegatedTo: bigint[];
+  readyToDelegate: boolean;
+  delegatedTokenIds: bigint[];
+  delegatedAmounts: string[];
+}
+
 export const createVeIONLock = (
   tokenAddress: string,
   i: number,
@@ -41,7 +48,8 @@ export const createVeIONLock = (
     boosts,
     chainConfig,
     chainId,
-    tokenPrice
+    tokenPrice,
+    delegation
   }: {
     supplyResults: SupplyResult[] | undefined;
     userLockResults: SimpleLockResult[] | undefined;
@@ -51,6 +59,7 @@ export const createVeIONLock = (
     chainId: ChainId;
     ionPrice: number;
     tokenPrice: bigint;
+    delegation?: Delegation;
   }
 ) => {
   const supplyResult = supplyResults?.[i];
@@ -76,6 +85,7 @@ export const createVeIONLock = (
     tokenAddress as `0x${string}`,
     lock,
     totalSupply,
-    tokenPrice
+    tokenPrice,
+    delegation // Pass delegation to VeIONLock constructor
   );
 };

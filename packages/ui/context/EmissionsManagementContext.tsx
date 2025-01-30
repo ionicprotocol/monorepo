@@ -32,7 +32,6 @@ export type VoteMarketRow = {
   side: MarketSide;
   marketAddress: `0x${string}`;
   currentAmount: string;
-  projectedMarketAPR: string;
   incentives: {
     balanceUSD: number;
     tokens: {
@@ -236,7 +235,6 @@ export const EmissionsProvider: React.FC<{
                 side: MarketSide.Supply,
                 marketAddress: asset.cToken as `0x${string}`,
                 currentAmount: (Math.random() * 1000000).toFixed(2),
-                projectedMarketAPR: (Math.random() * 12).toFixed(2) + '%',
                 incentives: mockIncentives(),
                 veAPR: (Math.random() * 8).toFixed(2) + '%',
                 totalVotes: {
@@ -268,7 +266,6 @@ export const EmissionsProvider: React.FC<{
                 side: MarketSide.Borrow,
                 marketAddress: asset.cToken as `0x${string}`,
                 currentAmount: (Math.random() * 1000000).toFixed(2),
-                projectedMarketAPR: (Math.random() * 18).toFixed(2) + '%',
                 incentives: mockIncentives(),
                 veAPR: (Math.random() * 8).toFixed(2) + '%',
                 totalVotes: {

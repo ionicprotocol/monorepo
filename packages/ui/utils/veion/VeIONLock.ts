@@ -13,6 +13,8 @@ import type {
 import { VEION_CHAIN_CONFIGS } from './chainConfig';
 import { getLPRatio } from './tokenUtils';
 
+import type { Delegation } from './lockUtils';
+
 interface LockedBalance {
   tokenAddress: `0x${string}`;
   amount: bigint;
@@ -60,12 +62,7 @@ export class VeIONLock implements VeIONTableData {
     isLocked: boolean;
     canExtend: boolean;
   };
-  delegation?: {
-    delegatedTo: string;
-    readyToDelegate: boolean;
-    delegatedTokenIds: number[];
-    delegatedAmounts: string[];
-  };
+  delegation?: Delegation;
   metadata: {
     createdAt: number;
     lastUpdated: number;
@@ -84,7 +81,8 @@ export class VeIONLock implements VeIONTableData {
     lpTokenAddress: `0x${string}`,
     raw: LockedBalance,
     totalSupply: bigint,
-    tokenPrice: bigint
+    tokenPrice: bigint,
+    delegation?: Delegation
   ) {
     this.id = id;
     this.chainId = chainId;
@@ -98,6 +96,10 @@ export class VeIONLock implements VeIONTableData {
     const durationInDays = Math.floor(
       (Number(raw.end) - Number(raw.start)) / (60 * 60 * 24)
     );
+
+    if (delegation) {
+      this.delegation = delegation;
+    }
 
     // Determine boost based on duration
     let boost = 1;
@@ -225,6 +227,7 @@ export class VeIONLock implements VeIONTableData {
     };
   }
 
+  // First, update the toDelegateTableFormat method in VeIONLock class:
   toDelegateTableFormat(): DelegateVeionData {
     if (!this.delegation) {
       throw new Error('No delegation data available');
@@ -232,22 +235,27 @@ export class VeIONLock implements VeIONTableData {
 
     return {
       id: this.id,
+      chainId: this.chainId,
       tokensLocked: this.tokensLocked.ratio,
+      lpTokenAddress: this.lpTokenAddress,
       lockedBLP: {
         amount: this.lockedBLP.amount,
-        value: this.lockedBLP.value
+        value: this.lockedBLP.value,
+        rawAmount: this.lockedBLP.rawAmount,
+        start: this.lockedBLP.start,
+        end: this.lockedBLP.end,
+        duration: this.lockedBLP.duration
       },
       lockExpires: {
         date: this.lockExpires.date,
-        timeLeft: this.lockExpires.timeLeft
+        timeLeft: this.lockExpires.timeLeft,
+        isPermanent: this.lockExpires.isPermanent
       },
       votingPower: this.votingPower.amount,
-      delegatedTo: this.delegation.delegatedTo,
-      readyToDelegate: this.delegation.readyToDelegate,
-      chainId: this.chainId,
-      lpTokenAddress: this.lpTokenAddress,
-      delegatedTokenIds: this.delegation.delegatedTokenIds,
-      delegatedAmounts: this.delegation.delegatedAmounts
+      votingBoost: this.votingPower.boost,
+      votingPercentage: this.votingPower.percentage,
+      delegation: this.delegation,
+      position: this.id // Adding this to match the interface used in PositionTitle
     };
   }
 }

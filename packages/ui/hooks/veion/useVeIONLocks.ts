@@ -26,7 +26,7 @@ type SimpleLockResult = ContractResult<{
   isPermanent: boolean;
 }>;
 type SupplyResult = ContractResult<bigint>;
-type DelegateesResult = ContractResult<[string, boolean, number[], string[]]>;
+type DelegateesResult = ContractResult<bigint[]>;
 type AssetsLockedResult = ContractResult<string[]>;
 
 export function useVeIONLocks({
@@ -156,6 +156,18 @@ export function useVeIONLocks({
     isLoading: boolean;
   };
 
+  const processedDelegateesResults =
+    delegateesResults?.map((result, index) => {
+      if (result.status !== 'success' || !result.result) return null;
+
+      return {
+        delegatedTo: result.result,
+        readyToDelegate: false,
+        delegatedTokenIds: result.result,
+        delegatedAmounts: []
+      };
+    }) || [];
+
   // Get unique token addresses
   const allTokenAddresses = [
     ...new Set(
@@ -189,20 +201,8 @@ export function useVeIONLocks({
     const [assets, balances, boosts] = balanceResult.result;
 
     return assets.map((tokenAddress, i) => {
-      // Get delegations info
       const delegateesResult =
-        delegateesResults?.[tokenIndex * chainConfig.lpTypes.length + i];
-      const delegation =
-        delegateesResult?.status === 'success' && delegateesResult.result
-          ? {
-              delegatedTo: delegateesResult.result[0],
-              readyToDelegate: delegateesResult.result[1],
-              delegatedTokenIds: delegateesResult.result[2],
-              delegatedAmounts: delegateesResult.result[3]
-            }
-          : undefined;
-
-      const tokenPrice = tokenPrices?.[tokenAddress as `0x${string}`];
+        processedDelegateesResults[tokenIndex * chainConfig.lpTypes.length + i];
 
       return createVeIONLock(tokenAddress, i, tokenId, tokenIndex, {
         supplyResults,
@@ -212,7 +212,8 @@ export function useVeIONLocks({
         chainConfig,
         chainId,
         ionPrice,
-        tokenPrice
+        tokenPrice: tokenPrices?.[tokenAddress as `0x${string}`],
+        delegation: delegateesResult || undefined
       });
     });
   });
@@ -251,15 +252,14 @@ export function useVeIONLocks({
 
   return {
     myLocks: allLocks
-      .filter(
-        (lock): lock is NonNullable<typeof lock> =>
-          lock !== null && !lock.delegation
-      )
+      .filter((lock): lock is NonNullable<typeof lock> => lock !== null)
       .map((lock) => lock.toTableFormat()),
     delegatedLocks: allLocks
       .filter(
         (lock): lock is NonNullable<typeof lock> =>
-          lock !== null && !!lock.delegation
+          lock !== null &&
+          lock.delegation?.delegatedTo !== undefined &&
+          lock.delegation.delegatedTo.length > 0
       )
       .map((lock) => lock.toDelegateTableFormat()),
     isLoading,

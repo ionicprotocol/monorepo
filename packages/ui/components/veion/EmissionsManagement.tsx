@@ -172,16 +172,6 @@ function EmissionsManagement({
         )
       },
       {
-        id: 'projectedMarketAPR',
-        header: (
-          <TooltipWrapper content="Projected market APR for the next Epoch considering votes distribution as of this moment including underlying asset APR">
-            <span>PROJECTED APR</span>
-          </TooltipWrapper>
-        ),
-        sortingFn: 'numerical',
-        cell: ({ row }) => <span>{row.original.projectedMarketAPR}</span>
-      },
-      {
         id: 'incentives',
         header: (
           <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">

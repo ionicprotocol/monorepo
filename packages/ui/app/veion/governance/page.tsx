@@ -17,7 +17,6 @@ import {
   DelegateVeIonTable,
   GovernanceHeader
 } from '@ui/components/veion';
-import { lockedDataWithDelegate } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 
@@ -115,15 +114,7 @@ export default function Governance() {
           </div>
         </CardHeader>
         <CardContent className="border-none">
-          {view === 'My veION' ? (
-            <MyVeionTable />
-          ) : (
-            <DelegateVeIonTable
-              data={lockedDataWithDelegate.filter(
-                (position) => +chain === 0 || position.chainId === +chain
-              )}
-            />
-          )}
+          {view === 'My veION' ? <MyVeionTable /> : <DelegateVeIonTable />}
         </CardContent>
       </Card>
     </div>

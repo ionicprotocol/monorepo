@@ -9,87 +9,22 @@ import type {
 import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
-import { useVeIONDelegate } from '@ui/hooks/veion/useVeIONDelegate';
+import type { DelegateVeionData } from '@ui/types/VeIION';
 
+import { DelegatedToCell } from './DelegatedToCell';
 import PositionTitle from './PositionTitle';
-import TimeRemaining from './TimeRemaining';
-
-// Types
-type BaseVeionData = {
-  id: string;
-  tokensLocked: string;
-  lockedBLP: {
-    amount: string;
-    value: string;
-  };
-  lockExpires: {
-    date: string;
-    timeLeft: string;
-  };
-  votingPower: string;
-};
-
-type DelegateVeionData = BaseVeionData & {
-  delegatedTo: string;
-  readyToDelegate: boolean;
-  chainId: number;
-  lpTokenAddress: string;
-  delegatedTokenIds: number[];
-  delegatedAmounts: string[];
-};
 
 interface DelegateVeionTableProps {
-  data: DelegateVeionData[];
   onUndelegateSuccess?: () => void;
 }
 
-function DelegateVeionTable({
-  data,
-  onUndelegateSuccess
-}: DelegateVeionTableProps) {
+function DelegateVeionTable({ onUndelegateSuccess }: DelegateVeionTableProps) {
   const { toast } = useToast();
   const [processingId, setProcessingId] = useState<string | null>(null);
   const {
     locks: { delegatedLocks, isLoading }
   } = useVeIONContext();
-  // eslint-disable-next-line no-console
-  console.log('isLoading', isLoading);
-  // eslint-disable-next-line no-console
-  console.log('delegatedLocks', delegatedLocks);
 
-  const defaultChain = data[0]?.chainId ?? 1;
-  const { undelegate, isUndelegating } = useVeIONDelegate(defaultChain);
-
-  const handleUndelegate = async (row: DelegateVeionData) => {
-    try {
-      setProcessingId(row.id);
-
-      const success = await undelegate({
-        fromTokenId: parseInt(row.id),
-        toTokenIds: row.delegatedTokenIds,
-        lpToken: row.lpTokenAddress as `0x${string}`,
-        amounts: row.delegatedAmounts
-      });
-
-      if (success) {
-        toast({
-          title: 'Success',
-          description: 'Successfully undelegated tokens'
-        });
-        onUndelegateSuccess?.();
-      }
-    } catch (err: any) {
-      toast({
-        title: 'Error',
-        description: err.message || 'Failed to undelegate tokens',
-        variant: 'destructive'
-      });
-    } finally {
-      setProcessingId(null);
-    }
-  };
-
-  // Delegate VeION Table Configuration
   const delegateVeionColumns: EnhancedColumnDef<DelegateVeionData>[] = [
     {
       id: 'id',
@@ -136,16 +71,14 @@ function DelegateVeionTable({
           <div className="text-xs font-semibold text-white/80">
             {row.original.lockedBLP.amount}
           </div>
-          <div className="text-xs font-semibold text-white/40">$400.32</div>
+          <div className="text-xs font-semibold text-white/40">
+            $
+            {row.original.lockedBLP.value.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 7
+            })}
+          </div>
         </div>
-      )
-    },
-    {
-      id: 'lockExpiresDate',
-      accessorFn: (row: DelegateVeionData) => row.lockExpires.date,
-      header: 'LOCK EXPIRES',
-      cell: ({ row }: MarketCellProps) => (
-        <TimeRemaining lockExpiryDate={row.original.lockExpires.date} />
       )
     },
     {
@@ -155,10 +88,11 @@ function DelegateVeionTable({
       cell: ({ row }: MarketCellProps) => (
         <div className="flex flex-col">
           <div className="text-xs font-semibold text-white/80">
-            {row.getValue('votingPower')}
+            {row.original.votingPower.toFixed(5)} veION (
+            {row.original.votingBoost.toFixed(2)}x)
           </div>
           <div className="text-xs font-semibold text-white/40">
-            1.67% of all
+            {row.original.votingPercentage.toFixed(3)} %
           </div>
         </div>
       )
@@ -167,11 +101,7 @@ function DelegateVeionTable({
       id: 'delegatedTo',
       header: 'DELEGATED TO',
       sortingFn: 'alphabetical',
-      cell: ({ row }: MarketCellProps) => (
-        <div className="text-xs font-semibold text-white/80">
-          {row.getValue('delegatedTo') || '-'}
-        </div>
-      )
+      cell: DelegatedToCell
     },
     {
       id: 'actions',
@@ -183,20 +113,12 @@ function DelegateVeionTable({
 
         return (
           <div className="flex gap-2 w-full pr-6">
-            {data.readyToDelegate ? (
-              <ActionButton
-                half={false}
-                action={() => handleUndelegate(data)}
-                disabled={isProcessing || isUndelegating}
-                label={isProcessing ? 'Undelegating...' : 'Undelegate'}
-              />
-            ) : (
-              <ActionButton
-                half={false}
-                disabled
-                label={data.lockExpires.timeLeft}
-              />
-            )}
+            <ActionButton
+              half={false}
+              action={() => {}}
+              disabled={isProcessing}
+              label={isProcessing ? 'Undelegating...' : 'Undelegate'}
+            />
           </div>
         );
       }
@@ -206,9 +128,9 @@ function DelegateVeionTable({
   return (
     <div>
       <CommonTable
-        data={data}
+        data={delegatedLocks}
         columns={delegateVeionColumns}
-        isLoading={false}
+        isLoading={isLoading}
       />
     </div>
   );

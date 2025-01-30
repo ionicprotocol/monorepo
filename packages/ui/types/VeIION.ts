@@ -1,5 +1,7 @@
 // context
 
+import type { Delegation } from '@ui/utils/veion/lockUtils';
+
 import type { Hex } from 'viem';
 
 export interface PriceData {
@@ -99,22 +101,27 @@ export type MyVeionData = {
 
 export type DelegateVeionData = {
   id: string;
+  chainId: ChainId;
+  position: string;
   tokensLocked: string;
+  lpTokenAddress: string;
   lockedBLP: {
     amount: string;
     value: number;
+    rawAmount: bigint;
+    start: number;
+    end: number;
+    duration: number;
   };
   lockExpires: {
     date: string;
     timeLeft: string;
+    isPermanent: boolean;
   };
   votingPower: number;
-  delegatedTo: string;
-  readyToDelegate: boolean;
-  chainId: number;
-  lpTokenAddress: string;
-  delegatedTokenIds: number[];
-  delegatedAmounts: string[];
+  votingBoost: number;
+  votingPercentage: number;
+  delegation: Delegation;
 };
 
 export interface VeIONTableData {
@@ -159,12 +166,7 @@ export interface VeIONTableData {
     canExtend: boolean;
   };
 
-  delegation?: {
-    delegatedTo: string;
-    readyToDelegate: boolean;
-    delegatedTokenIds: number[];
-    delegatedAmounts: string[];
-  };
+  delegation?: Delegation;
 
   metadata: {
     createdAt: number;
