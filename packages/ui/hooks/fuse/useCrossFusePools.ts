@@ -24,72 +24,70 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
         queryFn: async () => {
           const sdk = getSdk(Number(chainId));
 
-          if (chainId && prices && prices[chainIdStr] && sdk) {
-            const chainPools: FusePoolsPerChain = {};
-            const _allPools: IonicPoolData[] = [];
+          if (!chainId || !prices?.[chainIdStr] || !sdk) return null;
 
-            try {
-              const pools = await sdk.fetchPoolsManual();
-              const visiblePools: IonicPoolData[] = !pools
-                ? []
-                : poolSort(
-                    pools.map(
-                      (p) =>
-                        ({
-                          ...p,
-                          chainId: Number(sdk.chainId)
-                        }) as IonicPoolData
-                    )
-                  );
+          const chainPools: FusePoolsPerChain = {};
+          const _allPools: IonicPoolData[] = [];
 
-              chainPools[sdk.chainId] = visiblePools;
-              _allPools.push(...visiblePools);
+          try {
+            const pools = await sdk.fetchPoolsManual();
+            const visiblePools: IonicPoolData[] = !pools
+              ? []
+              : poolSort(
+                  pools.map(
+                    (p) =>
+                      ({
+                        ...p,
+                        chainId: Number(sdk.chainId)
+                      }) as IonicPoolData
+                  )
+                );
 
-              const usdPrice = prices[chainIdStr].value;
-              const allPools: PoolData[] = await Promise.all(
-                _allPools.map((pool) => {
-                  const assetsWithPrice: MarketData[] = [];
-                  const { assets } = pool;
+            chainPools[sdk.chainId] = visiblePools;
+            _allPools.push(...visiblePools);
 
-                  if (assets && assets.length !== 0) {
-                    assets.map((asset) => {
-                      assetsWithPrice.push({
-                        ...asset,
-                        borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
-                        liquidityFiat: asset.liquidityNative * usdPrice,
-                        netSupplyBalanceFiat:
-                          asset.netSupplyBalanceNative * usdPrice,
-                        supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
-                        totalBorrowFiat: asset.totalBorrowNative * usdPrice,
-                        totalSupplyFiat: asset.totalSupplyNative * usdPrice
-                      });
+            const usdPrice = prices[chainIdStr].value;
+            const allPools: PoolData[] = await Promise.all(
+              _allPools.map((pool) => {
+                const assetsWithPrice: MarketData[] = [];
+                const { assets } = pool;
+
+                if (assets && assets.length !== 0) {
+                  assets.map((asset) => {
+                    assetsWithPrice.push({
+                      ...asset,
+                      borrowBalanceFiat: asset.borrowBalanceNative * usdPrice,
+                      liquidityFiat: asset.liquidityNative * usdPrice,
+                      netSupplyBalanceFiat:
+                        asset.netSupplyBalanceNative * usdPrice,
+                      supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
+                      totalBorrowFiat: asset.totalBorrowNative * usdPrice,
+                      totalSupplyFiat: asset.totalSupplyNative * usdPrice
                     });
-                  }
+                  });
+                }
 
-                  const adaptedIonicPoolData: PoolData = {
-                    ...pool,
-                    assets: assetsWithPrice,
-                    totalAvailableLiquidityFiat:
-                      pool.totalAvailableLiquidityNative * usdPrice,
-                    totalBorrowBalanceFiat:
-                      pool.totalBorrowBalanceNative * usdPrice,
-                    totalBorrowedFiat: pool.totalBorrowedNative * usdPrice,
-                    totalLiquidityFiat: pool.totalLiquidityNative * usdPrice,
-                    totalSuppliedFiat: pool.totalSuppliedNative * usdPrice,
-                    totalSupplyBalanceFiat:
-                      pool.totalSupplyBalanceNative * usdPrice
-                  };
+                const adaptedIonicPoolData: PoolData = {
+                  ...pool,
+                  assets: assetsWithPrice,
+                  totalAvailableLiquidityFiat:
+                    pool.totalAvailableLiquidityNative * usdPrice,
+                  totalBorrowBalanceFiat:
+                    pool.totalBorrowBalanceNative * usdPrice,
+                  totalBorrowedFiat: pool.totalBorrowedNative * usdPrice,
+                  totalLiquidityFiat: pool.totalLiquidityNative * usdPrice,
+                  totalSuppliedFiat: pool.totalSuppliedNative * usdPrice,
+                  totalSupplyBalanceFiat:
+                    pool.totalSupplyBalanceNative * usdPrice
+                };
 
-                  return adaptedIonicPoolData;
-                })
-              );
+                return adaptedIonicPoolData;
+              })
+            );
 
-              return allPools;
-            } catch (e) {
-              console.warn(`Fetching pools error: `, { chainId }, e);
-              return null;
-            }
-          } else {
+            return allPools;
+          } catch (e) {
+            console.warn(`Fetching pools error: `, { chainId }, e);
             return null;
           }
         },

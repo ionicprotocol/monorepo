@@ -39,6 +39,25 @@ const PoolToggle = dynamic(() => import('@ui/components/markets/PoolToggle'), {
   ssr: false
 });
 
+export interface TableSectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+export const TableSection: React.FC<TableSectionProps> = ({
+  title,
+  children
+}) => {
+  return (
+    <div className="bg-grayone w-full px-6 py-3 mt-3 rounded-xl">
+      <div className="w-full flex items-center justify-between py-3">
+        <h1 className="font-semibold">{title}</h1>
+      </div>
+      {children}
+    </div>
+  );
+};
+
 export default function Dashboard() {
   const { currentSdk } = useMultiIonic();
   const searchParams = useSearchParams();
@@ -347,11 +366,8 @@ export default function Dashboard() {
             chain={+chain}
           />
         </div>
-        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
-          <div className={` w-full flex items-center justify-between py-3 `}>
-            <h1 className={`font-semibold`}>Your Borrows (Loans)</h1>
-          </div>
 
+        <TableSection title="Your Borrows (Loans)">
           <BorrowTable
             data={borrowTableData}
             isLoading={isLoadingMarketData}
@@ -359,13 +375,9 @@ export default function Dashboard() {
             setActiveTab={setActiveTab}
             setSelectedSymbol={setSelectedSymbol}
           />
-        </div>
+        </TableSection>
 
-        <div className={`bg-grayone  w-full px-6 py-3 mt-3 rounded-xl`}>
-          <div className={` w-full flex items-center justify-between py-3 `}>
-            <h1 className={`font-semibold`}>Your Loops</h1>
-          </div>
-
+        <TableSection title="Your Loops">
           <LoopTable
             data={loopTableData as LoopRowData[]}
             isLoading={
@@ -385,7 +397,7 @@ export default function Dashboard() {
             comptroller={marketData?.comptroller}
             selectedLoopBorrowData={selectedLoopBorrowData}
           />
-        </div>
+        </TableSection>
       </div>
 
       {selectedMarketData && marketData && (
