@@ -3,7 +3,8 @@ import React, {
   useContext,
   useState,
   useCallback,
-  useMemo
+  useMemo,
+  useEffect
 } from 'react';
 
 import { MarketSide } from '@ui/types/veION';
@@ -14,29 +15,56 @@ type VotesContextType = {
   votes: Record<string, string>;
   updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
   resetVotes: () => void;
-  refreshVotingData: (nftId: string) => Promise<void>;
 };
 
 const VotesContext = createContext<VotesContextType>({
   votes: {},
   updateVote: () => {},
-  resetVotes: () => {},
-  refreshVotingData: async () => {}
+  resetVotes: () => {}
 });
 
 export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
   const [votes, setVotes] = useState<Record<string, string>>({});
+  const [totalVotes, setTotalVotes] = useState(0);
+
+  // Update total votes whenever votes change
+  useEffect(() => {
+    const newTotal = Object.values(votes).reduce((sum, value) => {
+      const numValue = parseFloat(value);
+      return isNaN(numValue) ? sum : sum + numValue;
+    }, 0);
+    setTotalVotes(newTotal);
+  }, [votes]);
 
   const updateVote = useCallback(
     (marketAddress: string, side: MarketSide, value: string) => {
       setVotes((prev) => {
         const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+
         if (value === '' || isNaN(parseFloat(value))) {
           const { [key]: _, ...rest } = prev;
           return rest;
         }
+
+        // Calculate new total excluding current key
+        const otherVotesTotal = Object.entries(prev).reduce(
+          (sum, [voteKey, voteValue]) => {
+            if (voteKey !== key && voteValue) {
+              return sum + parseFloat(voteValue);
+            }
+            return sum;
+          },
+          0
+        );
+
+        const newValue = parseFloat(value);
+        if (otherVotesTotal + newValue > 100) {
+          // Don't update if it would exceed 100%
+          return prev;
+        }
+
         return { ...prev, [key]: value };
       });
     },
@@ -47,18 +75,14 @@ export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
     setVotes({});
   }, []);
 
-  const refreshVotingData = async (nftId: string) => {
-    // Implementation
-  };
-
   const value = useMemo(
     () => ({
       votes,
       updateVote,
       resetVotes,
-      refreshVotingData
+      totalVotes
     }),
-    [votes, updateVote, resetVotes]
+    [votes, updateVote, resetVotes, totalVotes]
   );
 
   return (
