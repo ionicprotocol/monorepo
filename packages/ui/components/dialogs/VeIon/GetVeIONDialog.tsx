@@ -15,7 +15,6 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
-import AutoLock from '@ui/components/veion/AutoLock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
@@ -34,7 +33,6 @@ export default function GetVeIONDialog({
   selectedToken
 }: GetVeIONDialogProps) {
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
-  const [autoLock, setAutoLock] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>('0');
   const { currentChain } = useVeIONContext();
@@ -122,11 +120,6 @@ export default function GetVeIONDialog({
                 lockDate={lockDate}
                 onDurationChange={handleDurationChange}
                 onDateChange={setLockDate}
-              />
-
-              <AutoLock
-                autoLock={autoLock}
-                setAutoLock={setAutoLock}
               />
 
               <Separator className="bg-white/10" />

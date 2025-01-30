@@ -16,7 +16,6 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONExtend } from '@ui/hooks/veion/useVeIONExtend';
 
-import AutoLock from './AutoLock';
 import CustomTooltip from '../CustomTooltip';
 import { LockDurationPicker } from '../LockDurationPicker';
 import { PrecisionSlider, usePrecisionSlider } from '../PrecisionSlider';
@@ -41,7 +40,6 @@ const ExtendVeion = ({
   tokenAddress
 }: ExtendVeionProps) => {
   const { toast } = useToast();
-  const [autoLock, setAutoLock] = useState(false);
   const [lockDate, setLockDate] = useState<Date>(() => new Date());
   const [selectedDuration, setSelectedDuration] = useState<number>(180);
   const { currentChain } = useVeIONContext();
@@ -137,11 +135,6 @@ const ExtendVeion = ({
             lockDate={lockDate}
             onDurationChange={setSelectedDuration}
             onDateChange={setLockDate}
-          />
-
-          <AutoLock
-            autoLock={autoLock}
-            setAutoLock={setAutoLock}
           />
 
           <Separator className="bg-white/10 my-4" />

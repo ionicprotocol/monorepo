@@ -9,7 +9,6 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import { LockDurationPicker } from '../../LockDurationPicker';
-import AutoLock from '../AutoLock';
 
 type ExtendProps = {
   chain: string;
@@ -28,7 +27,6 @@ export function Extend({ chain }: ExtendProps) {
   );
 
   const extensionDays = differenceInDays(newLockDate, currentLockDate);
-  const [autoLock, setAutoLock] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
   const onExtend = async () => {
@@ -80,11 +78,6 @@ export function Extend({ chain }: ExtendProps) {
           <ArrowRight className="w-4 h-4 text-accent" />
         </div>
       </div>
-
-      <AutoLock
-        autoLock={autoLock}
-        setAutoLock={setAutoLock}
-      />
 
       <TransactionButton
         onSubmit={onExtend}

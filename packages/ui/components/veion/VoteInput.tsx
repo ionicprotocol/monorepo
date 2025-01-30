@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import { Input } from '@ui/components/ui/input';
 import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
@@ -8,20 +9,26 @@ interface VoteInputProps {
   isDisabled: boolean;
 }
 
-function VoteInput({ marketAddress, side, isDisabled }: VoteInputProps) {
+const VoteInput = React.memo(function VoteInput({
+  marketAddress,
+  side,
+  isDisabled
+}: VoteInputProps) {
   const { votes, updateVote } = useEmissionsContext();
   const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    // Only allow numbers and empty string
-    if (
-      newValue === '' ||
-      (/^\d*\.?\d*$/.test(newValue) && parseFloat(newValue) <= 100)
-    ) {
-      updateVote(marketAddress, side, newValue);
-    }
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      if (
+        newValue === '' ||
+        (/^\d*\.?\d*$/.test(newValue) && parseFloat(newValue) <= 100)
+      ) {
+        updateVote(marketAddress, side, newValue);
+      }
+    },
+    [marketAddress, side, updateVote]
+  );
 
   return (
     <Input
@@ -33,6 +40,6 @@ function VoteInput({ marketAddress, side, isDisabled }: VoteInputProps) {
       placeholder="0"
     />
   );
-}
+});
 
 export default VoteInput;
