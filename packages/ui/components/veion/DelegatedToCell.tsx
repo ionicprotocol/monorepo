@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { getChainName } from '@ui/constants/mock';
 import { cn } from '@ui/lib/utils';
-import type { ChainId } from '@ui/types/VeIION';
+import type { ChainId } from '@ui/types/veION';
 
 import type { MarketCellProps } from '../CommonTable';
 

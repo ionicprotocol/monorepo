@@ -24,11 +24,12 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
-import type { VoteMarketRow } from '@ui/context/EmissionsManagementContext';
-import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useTableData, useVotes } from '@ui/context/VotesContext';
 import { useToast } from '@ui/hooks/use-toast';
-import { MarketSide, useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
+import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
+import type { VoteMarketRow } from '@ui/types/veION';
+import { MarketSide } from '@ui/types/veION';
 
 import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
@@ -65,7 +66,8 @@ function EmissionsManagement({
   showPendingOnly
 }: EmissionsManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { marketRows, isLoading, error } = useEmissionsContext();
+  const { marketRows, isLoading, error } = useTableData();
+  const { votes } = useVotes();
   const { toast } = useToast();
   const { submitVote, isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
@@ -88,7 +90,8 @@ function EmissionsManagement({
       if (assetTypeFilter === 'borrow' && row.side !== MarketSide.Borrow) {
         return false;
       }
-      if (showPendingOnly && row.voteValue !== '') {
+      const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+      if (showPendingOnly && votes[key]) {
         return false;
       }
       if (term) {
@@ -99,7 +102,7 @@ function EmissionsManagement({
       }
       return true;
     });
-  }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter]);
+  }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter, votes]);
 
   const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(
     () => [
@@ -273,6 +276,13 @@ function EmissionsManagement({
     }
   };
 
+  const voteSum = useMemo(() => {
+    return Object.values(votes).reduce((sum, value) => {
+      const numValue = parseFloat(value);
+      return isNaN(numValue) ? sum : sum + numValue;
+    }, 0);
+  }, [votes]);
+
   if (error) {
     return (
       <div className="w-full min-h-[400px] flex items-center justify-center">
@@ -325,6 +335,7 @@ function EmissionsManagement({
       <EmissionsManagementFooter
         onSubmitVotes={handleSubmitVotes}
         isVoting={isVoting}
+        voteSum={voteSum}
       />
     </div>
   );

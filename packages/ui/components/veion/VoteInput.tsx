@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
+
 import { Input } from '@ui/components/ui/input';
-import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
-import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+import { useVotes } from '@ui/context/VotesContext';
+import { MarketSide } from '@ui/types/veION';
 
 interface VoteInputProps {
   marketAddress: string;
@@ -14,7 +15,7 @@ const VoteInput = React.memo(function VoteInput({
   side,
   isDisabled
 }: VoteInputProps) {
-  const { votes, updateVote } = useEmissionsContext();
+  const { votes, updateVote } = useVotes();
   const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
 
   const handleChange = useCallback(
@@ -32,7 +33,6 @@ const VoteInput = React.memo(function VoteInput({
 
   return (
     <Input
-      type="text"
       value={votes[key] || ''}
       className="w-20 h-8 px-2 py-1 text-sm"
       onChange={handleChange}

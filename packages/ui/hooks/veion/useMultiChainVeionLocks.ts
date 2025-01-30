@@ -7,7 +7,7 @@ import type {
   ChainId,
   MyVeionData,
   DelegateVeionData
-} from '@ui/types/VeIION';
+} from '@ui/types/veION';
 
 import { useVeIONLocks } from './useVeIONLocks';
 

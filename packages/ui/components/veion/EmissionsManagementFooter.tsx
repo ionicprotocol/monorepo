@@ -1,25 +1,29 @@
 import { useState } from 'react';
 
 import { Card } from '@ui/components/ui/card';
-import { useEmissionsContext } from '@ui/context/EmissionsManagementContext';
-import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+import { useVotes, useTableData } from '@ui/context/VotesContext';
+import { MarketSide } from '@ui/types/veION';
 
 import VoteConfirmationDialog from './VoteConfirmationDialog';
 
 interface EmissionsManagementFooterProps {
   onSubmitVotes?: () => Promise<void>;
   isVoting?: boolean;
+  voteSum: number;
 }
 
 function EmissionsManagementFooter({
   onSubmitVotes,
-  isVoting = false
+  isVoting = false,
+  voteSum
 }: EmissionsManagementFooterProps) {
-  const { votes, resetVotes, marketRows } = useEmissionsContext();
+  // Split the context usage
+  const { votes, resetVotes } = useVotes();
+  const { marketRows } = useTableData();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const hasVotes = Object.keys(votes).length > 0;
 
-  // Transform votes into the format needed for the confirmation dialog
+  // Create vote data from the combined rows data
   const voteData = marketRows.reduce(
     (acc, row) => {
       if (row.voteValue) {
@@ -49,7 +53,11 @@ function EmissionsManagementFooter({
   };
 
   const handleVoteClick = () => {
-    setShowConfirmation(true);
+    if (voteSum <= 100) {
+      setShowConfirmation(true);
+    } else {
+      alert('Total votes cannot exceed 100%');
+    }
   };
 
   const handleConfirmVote = async () => {
@@ -91,7 +99,7 @@ function EmissionsManagementFooter({
                   Voting...
                 </div>
               ) : (
-                'Vote'
+                `Vote (${voteSum.toFixed(2)}%)`
               )}
             </button>
           </div>

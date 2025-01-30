@@ -9,7 +9,7 @@ import type {
 import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useToast } from '@ui/hooks/use-toast';
-import type { DelegateVeionData } from '@ui/types/VeIION';
+import type { DelegateVeionData } from '@ui/types/veION';
 
 import { DelegatedToCell } from './DelegatedToCell';
 import PositionTitle from './PositionTitle';

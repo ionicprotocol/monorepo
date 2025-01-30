@@ -19,7 +19,7 @@ import type {
   VeIONLockData,
   ChainId,
   MyVeionData
-} from '@ui/types/VeIION';
+} from '@ui/types/veION';
 import { getToken } from '@ui/utils/getStakingTokens';
 
 interface VeIONContextType {

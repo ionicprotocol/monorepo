@@ -3,16 +3,12 @@ import { useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 
 import { getVoterContract } from '@ui/constants/veIon';
+import type { MarketSide } from '@ui/types/veION';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useContractWrite } from '../useContractWrite';
 
 import type { Address } from 'viem';
-
-export enum MarketSide {
-  Supply = 0,
-  Borrow = 1
-}
 
 interface VoteState {
   isVoting: boolean;

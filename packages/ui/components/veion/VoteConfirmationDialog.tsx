@@ -15,7 +15,7 @@ import {
   AlertDialogTitle
 } from '@ui/components/ui/alert-dialog';
 import { ScrollArea } from '@ui/components/ui/scroll-area';
-import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+import { MarketSide } from '@ui/types/veION';
 
 type VoteRecord = Record<
   string,

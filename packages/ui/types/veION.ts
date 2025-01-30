@@ -4,6 +4,8 @@ import type { Delegation } from '@ui/utils/veion/lockUtils';
 
 import type { Hex } from 'viem';
 
+import type { FlywheelReward } from '@ionicprotocol/types';
+
 export interface PriceData {
   ionUsd: number;
   ionBalanceUsd: string;
@@ -222,4 +224,46 @@ export interface LockedBalance {
   end: bigint;
   isPermanent: boolean;
   boost: bigint;
+}
+
+export type VoteMarketRow = {
+  asset: string;
+  underlyingToken: Hex;
+  side: MarketSide;
+  marketAddress: `0x${string}`;
+  currentAmount: string;
+  incentives: {
+    balanceUSD: number;
+    tokens: {
+      tokenSymbol: string;
+      tokenAmount: number;
+      tokenAmountUSD: number;
+    }[];
+  };
+  veAPR: string;
+  totalVotes: {
+    percentage: string;
+    limit: string;
+  };
+  myVotes: {
+    percentage: string;
+    value: string;
+  };
+  voteValue: string;
+  apr: {
+    supplyAPR?: number;
+    borrowAPR?: number;
+    supplyRewards?: FlywheelReward[];
+    borrowRewards?: FlywheelReward[];
+    nativeAssetYield?: number;
+    supplyAPRTotal?: number;
+    borrowAPRTotal?: number;
+    cTokenAddress: `0x${string}`;
+    comptrollerAddress: `0x${string}`;
+  };
+};
+
+export enum MarketSide {
+  Supply = 0,
+  Borrow = 1
 }

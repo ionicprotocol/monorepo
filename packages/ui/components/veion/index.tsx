@@ -1,4 +1,3 @@
-export { default as AutoLock } from './AutoLock';
 export { default as ExtendVeion } from './ExtendVeion';
 export { default as InfoCard } from './InfoCard';
 export { default as InfoPopover } from './InfoPopover';

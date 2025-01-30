@@ -1,5 +1,5 @@
-import type { ChainId } from '@ui/types/VeIION';
-import { LpTokenType } from '@ui/types/VeIION';
+import type { ChainId } from '@ui/types/veION';
+import { LpTokenType } from '@ui/types/veION';
 
 export function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
   switch (chainId) {

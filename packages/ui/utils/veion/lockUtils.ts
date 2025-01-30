@@ -1,4 +1,4 @@
-import type { ChainId } from '@ui/types/VeIION';
+import type { ChainId } from '@ui/types/veION';
 
 import { VeIONLock } from './VeIONLock';
 

@@ -1,22 +1,21 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { formatUnits } from 'viem';
-import _ from 'lodash';
 
-import { EXCLUDED_MARKETS } from '@ui/constants/veIon';
 import { FLYWHEEL_TYPE_MAP } from '@ui/constants';
+import { EXCLUDED_MARKETS } from '@ui/constants/veIon';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useMerklData } from '@ui/hooks/useMerklData';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
-import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useMerklData } from '@ui/hooks/useMerklData';
-import { MarketSide } from '@ui/hooks/veion/useVeIONVote';
+import type { VoteMarketRow } from '@ui/types/veION';
+import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
-import { FlywheelReward } from '@ionicprotocol/types';
-import { VoteMarketRow } from '@ui/context/EmissionsManagementContext';
 
-export const useMarketRows = (chain: string | number, selectedPool: string) => {
+import type { FlywheelReward } from '@ionicprotocol/types';
+
+export const useMarketRows = (chain: number | string, selectedPool: string) => {
   const mockIncentives = useMemo(() => {
     const tokenOptions = [
       { symbol: 'ION', priceRange: [10, 50] },
@@ -208,6 +207,7 @@ export const useMarketRows = (chain: string | number, selectedPool: string) => {
 
       return [...rows, ...newRows];
     }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, selectedPool, supplyRates, borrowRates, rewards, merklApr]);
 
   useEffect(() => {

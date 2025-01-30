@@ -8,7 +8,7 @@ import type {
   VeIONLockRaw,
   MyVeionData,
   DelegateVeionData
-} from '@ui/types/VeIION';
+} from '@ui/types/veION';
 
 import { VEION_CHAIN_CONFIGS } from './chainConfig';
 import { getLPRatio } from './tokenUtils';

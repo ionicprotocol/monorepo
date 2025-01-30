@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useReadContract, useReadContracts } from 'wagmi';
 
 import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
-import type { ChainId, VeIONLockData } from '@ui/types/VeIION';
+import type { ChainId, VeIONLockData } from '@ui/types/veION';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
 import { createVeIONLock } from '@ui/utils/veion/lockUtils';
 

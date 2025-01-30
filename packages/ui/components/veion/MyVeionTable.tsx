@@ -10,7 +10,7 @@ import type {
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import type { MyVeionData } from '@ui/types/VeIION';
+import type { MyVeionData } from '@ui/types/veION';
 
 import ExtendVeion from './ExtendVeion';
 import ManageDialog from './ManageDialog';

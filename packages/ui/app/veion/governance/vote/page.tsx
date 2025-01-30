@@ -17,7 +17,7 @@ import { Switch } from '@ui/components/ui/switch';
 import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
 import { lockedData } from '@ui/constants/mock';
-import { EmissionsProvider } from '@ui/context/EmissionsManagementContext';
+import { EmissionsProvider } from '@ui/context/VotesContext';
 
 const Vote: React.FC = () => {
   const searchParams = useSearchParams();

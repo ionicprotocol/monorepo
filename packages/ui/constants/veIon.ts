@@ -1,4 +1,4 @@
-import type { ChainId, MarketExclusionConfig } from '@ui/types/VeIION';
+import type { ChainId, MarketExclusionConfig } from '@ui/types/veION';
 
 import { iveIonAbi, iVoterAbi } from '@ionicprotocol/sdk';
 
