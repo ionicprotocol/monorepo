@@ -43,10 +43,11 @@ export const deployPythPriceOracle = async ({
           args: [pythAddress, nativeTokenUsdFeed, usdToken]
         }
       },
-      owner: multisig ?? deployer,
+      // owner: multisig ?? deployer,
       proxyContract: "OpenZeppelinTransparentProxy"
     },
-    waitConfirmations: 1
+    waitConfirmations: 1,
+    skipIfAlreadyDeployed: true
   });
 
   if (pyth.transactionHash) publicClient.waitForTransactionReceipt({ hash: pyth.transactionHash as Address });
