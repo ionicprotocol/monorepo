@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { ArrowLeft } from 'lucide-react';
 
+import { Badge } from '@ui/components/ui/badge';
 import {
   Card,
   CardHeader,
@@ -16,76 +17,100 @@ import {
 import { Switch } from '@ui/components/ui/switch';
 import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
-import { lockedData } from '@ui/constants/mock';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { EmissionsProvider } from '@ui/context/VotesContext';
 
-const Vote: React.FC = () => {
+const Vote = () => {
   const searchParams = useSearchParams();
-  const initialId = searchParams.get('id') || lockedData[0].id;
+  const { locks } = useVeIONContext();
+  const initialId = searchParams.get('id');
 
-  const [showPendingOnly, setShowPendingOnly] = useState<boolean>(false);
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
 
-  const selectedData = useMemo(
-    () => lockedData.find((item) => item.id === initialId),
-    [initialId]
-  );
+  const selectedData = useMemo(() => {
+    if (!initialId) return locks.myLocks[0];
+    return (
+      locks.myLocks.find((lock) => lock.id === initialId) || locks.myLocks[0]
+    );
+  }, [initialId, locks.myLocks]);
 
-  const infoBlocksData = useMemo(
-    () => [
+  const infoBlocksData = useMemo(() => {
+    if (!selectedData) return [];
+
+    return [
       {
         label: 'Tokens Locked',
-        value: selectedData?.tokensLocked || '',
+        value: selectedData.tokensLocked,
         icon: null,
-        infoContent: `This is the amount of #${initialId} veION you have locked.`
+        infoContent: `This is the amount of #${selectedData.id} veION you have locked.`
       },
       {
         label: 'Locked Until',
-        value: selectedData?.lockExpires.date || '',
-        secondaryValue: selectedData?.lockExpires.timeLeft || '',
+        value: selectedData.lockExpires.isPermanent ? (
+          <Badge className="text-xs font-medium">Permanent</Badge>
+        ) : (
+          selectedData.lockExpires.date
+        ),
+        secondaryValue: !selectedData.lockExpires.isPermanent
+          ? selectedData.lockExpires.timeLeft
+          : undefined,
         icon: null,
-        infoContent: `This is the date until your #${initialId} veION is locked.`
+        infoContent: `This is the date until your #${selectedData.id} veION is locked.`
       },
       {
         label: 'My Total Voting power',
-        value: selectedData?.votingPower || '',
+        value: selectedData.votingPower.toString(),
         icon: '/img/logo/ion.svg',
         infoContent: 'This is your current voting power.'
       }
-    ],
-    [selectedData, initialId]
-  );
+    ];
+  }, [selectedData]);
+
+  if (locks.isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-48">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!selectedData) {
+    return (
+      <div className="w-full flex justify-center items-center h-48">
+        No locks found
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
-      {selectedData && (
-        <Card className="w-full bg-grayone">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/veion/governance"
-                className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-700/50 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-white/80" />
-              </Link>
-              <PositionTitle
-                chainId={selectedData.chainId}
-                position={selectedData.position}
-                size="lg"
+      <Card className="w-full bg-grayone">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/veion/governance"
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-700/50 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-white/80" />
+            </Link>
+            <PositionTitle
+              chainId={selectedData.chainId}
+              position={selectedData.id}
+              size="lg"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-4">
+            {infoBlocksData.map((block) => (
+              <InfoBlock
+                key={block.label}
+                block={block}
               />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap items-center gap-4">
-              {infoBlocksData.map((block) => (
-                <InfoBlock
-                  key={block.label}
-                  block={block}
-                />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card
         className="w-full"
@@ -112,7 +137,7 @@ const Vote: React.FC = () => {
         <CardContent className="border-none">
           <EmissionsProvider>
             <EmissionsManagement
-              tokenId={0}
+              tokenId={+selectedData.id}
               showPendingOnly={showPendingOnly}
             />
           </EmissionsProvider>

@@ -46,8 +46,9 @@ const VoteInput = React.memo(function VoteInput({
   return (
     <div className="relative w-20">
       <Input
-        value={votes[key] || ''}
-        className="h-8 px-2 py-1 text-sm pr-6"
+        ref={inputRef}
+        value={localValue}
+        className="w-20 h-8 px-2 py-1 text-sm"
         onChange={handleChange}
         disabled={isDisabled}
         placeholder="0"

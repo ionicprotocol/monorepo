@@ -1,15 +1,25 @@
-import Image from 'next/image';
+import type { ReactNode } from 'react';
+import React from 'react';
 
-import type { InfoBlock } from '@ui/constants/mock';
+import Image from 'next/image';
 
 import CustomTooltip from '../CustomTooltip';
 
-interface InfoBlockProps {
-  block: InfoBlock;
+export interface InfoBlockType {
+  label: string;
+  value: ReactNode | string;
+  icon: string | null;
+  infoContent: string;
+  secondaryValue?: string;
 }
 
-const InfoBlockComponent: React.FC<InfoBlockProps> = ({ block }) => (
-  <div className="flex flex-col gap-1 mt-3">
+interface InfoBlockProps {
+  block: InfoBlockType;
+  className?: string;
+}
+
+const InfoBlockComponent: React.FC<InfoBlockProps> = ({ block, className }) => (
+  <div className={`flex flex-col gap-1 mt-3 ${className || ''}`}>
     <div className="text-white/60 text-xs flex items-center gap-1">
       {block.label}
       <CustomTooltip content={block.infoContent} />
@@ -25,6 +35,9 @@ const InfoBlockComponent: React.FC<InfoBlockProps> = ({ block }) => (
         />
       )}
       <span className="text-white text-sm">{block.value}</span>
+      {block.secondaryValue && (
+        <span className="text-white/60 ml-2">{block.secondaryValue}</span>
+      )}
     </div>
   </div>
 );

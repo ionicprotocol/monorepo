@@ -22,7 +22,7 @@ type Size = keyof typeof sizes;
 
 interface PositionTitleProps {
   chainId: ChainId;
-  position: number;
+  position: number | string;
   size?: Size;
   className?: string;
 }
