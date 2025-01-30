@@ -15,12 +15,14 @@ type VotesContextType = {
   votes: Record<string, string>;
   updateVote: (marketAddress: string, side: MarketSide, value: string) => void;
   resetVotes: () => void;
+  totalVotes: number;
 };
 
 const VotesContext = createContext<VotesContextType>({
   votes: {},
   updateVote: () => {},
-  resetVotes: () => {}
+  resetVotes: () => {},
+  totalVotes: 0
 });
 
 export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -33,7 +35,8 @@ export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const newTotal = Object.values(votes).reduce((sum, value) => {
       const numValue = parseFloat(value);
-      return isNaN(numValue) ? sum : sum + numValue;
+      // Use a small epsilon for floating point comparison
+      return isNaN(numValue) ? sum : Math.round((sum + numValue) * 100) / 100;
     }, 0);
     setTotalVotes(newTotal);
   }, [votes]);
@@ -60,8 +63,11 @@ export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
         );
 
         const newValue = parseFloat(value);
-        if (otherVotesTotal + newValue > 100) {
-          // Don't update if it would exceed 100%
+        // Round to 2 decimal places to avoid floating point issues
+        const roundedTotal =
+          Math.round((otherVotesTotal + newValue) * 100) / 100;
+
+        if (roundedTotal > 100) {
           return prev;
         }
 
@@ -73,6 +79,7 @@ export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const resetVotes = useCallback(() => {
     setVotes({});
+    setTotalVotes(0);
   }, []);
 
   const value = useMemo(

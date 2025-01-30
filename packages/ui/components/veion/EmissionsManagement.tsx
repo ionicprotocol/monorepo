@@ -68,8 +68,7 @@ function EmissionsManagement({
   const { currentChain } = useVeIONContext();
   const { marketRows, isLoading, error } = useTableData();
   const { votes } = useVotes();
-  const { toast } = useToast();
-  const { submitVote, isVoting } = useVeIONVote(currentChain);
+  const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
   const searchParams = useSearchParams();
   const [assetTypeFilter, setAssetTypeFilter] =
@@ -258,38 +257,12 @@ function EmissionsManagement({
     [chain, isVoting, selectedPool]
   );
 
-  const handleSubmitVotes = async () => {
-    try {
-      const success = await submitVote(tokenId);
-      if (success) {
-        toast({
-          title: 'Success',
-          description: 'Votes submitted successfully'
-        });
-      }
-    } catch (err: any) {
-      toast({
-        title: 'Error',
-        description: err.message,
-        variant: 'destructive'
-      });
-    }
-  };
-
   const voteSum = useMemo(() => {
     return Object.values(votes).reduce((sum, value) => {
       const numValue = parseFloat(value);
       return isNaN(numValue) ? sum : sum + numValue;
     }, 0);
   }, [votes]);
-
-  if (error) {
-    return (
-      <div className="w-full min-h-[400px] flex items-center justify-center">
-        <div className="text-red-500">Error loading data: {error.message}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative pb-12">
@@ -332,11 +305,7 @@ function EmissionsManagement({
         isLoading={isLoading}
       />
 
-      <EmissionsManagementFooter
-        onSubmitVotes={handleSubmitVotes}
-        isVoting={isVoting}
-        voteSum={voteSum}
-      />
+      <EmissionsManagementFooter tokenId={tokenId} />
     </div>
   );
 }

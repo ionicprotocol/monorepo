@@ -1,20 +1,26 @@
-import React from 'react';
+/* eslint-disable no-console */
+import React, { useState } from 'react';
 
 import Image from 'next/image';
 
 import { Info } from 'lucide-react';
 
+import TransactionButton from '@ui/components/TransactionButton';
+import { Button } from '@ui/components/ui/button';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@ui/components/ui/alert-dialog';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@ui/components/ui/dialog';
 import { ScrollArea } from '@ui/components/ui/scroll-area';
+import { useVeIONContext } from '@ui/context/VeIonContext';
+import {
+  convertToContractWeight,
+  useVeIONVote
+} from '@ui/hooks/veion/useVeIONVote';
 import { MarketSide } from '@ui/types/veION';
 
 type VoteRecord = Record<
@@ -30,36 +36,79 @@ type VoteRecord = Record<
 interface VoteConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void>;
   votes: VoteRecord;
-  isVoting: boolean;
+  tokenId: number;
 }
 
 const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
   isOpen,
   onClose,
-  onConfirm,
   votes,
-  isVoting
+  tokenId
 }) => {
+  const { currentChain } = useVeIONContext();
+  const { submitVote, isVoting } = useVeIONVote(currentChain);
   const voteEntries = Object.entries(votes);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async () => {
+    try {
+      // Transform votes into arrays as expected by the contract
+      const voteArrays = Object.entries(votes).reduce(
+        (acc, [_, vote]) => {
+          acc.marketAddresses.push(vote.marketAddress);
+          acc.sides.push(vote.side);
+          // Convert percentage to basis points (multiply by 100) and then to bigint
+          acc.weights.push(BigInt(convertToContractWeight(vote.voteValue)));
+          return acc;
+        },
+        {
+          marketAddresses: [] as `0x${string}`[],
+          sides: [] as MarketSide[],
+          weights: [] as bigint[] // Change type to bigint[]
+        }
+      );
+
+      console.log('Submitting vote with:', {
+        tokenId,
+        marketAddresses: voteArrays.marketAddresses,
+        sides: voteArrays.sides,
+        weights: voteArrays.weights
+      });
+
+      const success = await submitVote(tokenId, {
+        marketAddresses: voteArrays.marketAddresses,
+        sides: voteArrays.sides,
+        weights: voteArrays.weights
+      });
+
+      if (success) {
+        onClose();
+      }
+      return { success };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit votes');
+      return { success: false };
+    }
+  };
 
   return (
-    <AlertDialog
+    <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        if (!isVoting) {
+        if (!isVoting && !open) {
           onClose();
+          setError(null);
         }
       }}
     >
-      <AlertDialogContent className="max-w-2xl">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Confirm Your Votes</AlertDialogTitle>
-          <AlertDialogDescription>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Confirm Your Votes</DialogTitle>
+          <DialogDescription>
             Please review your voting selections before confirming.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          </DialogDescription>
+        </DialogHeader>
 
         <div className="flex items-center gap-2 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
           <Info className="h-4 w-4 text-blue-500" />
@@ -68,6 +117,8 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
             modified
           </p>
         </div>
+
+        {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
 
         <ScrollArea className="h-96 rounded-md border border-white/10">
           <div className="p-4">
@@ -112,33 +163,23 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </div>
         </ScrollArea>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel
+        <DialogFooter className="mt-4 flex items-center justify-end gap-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
             disabled={isVoting}
             className="hover:bg-gray-900"
           >
             Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async (e) => {
-              e.preventDefault();
-              await onConfirm();
-            }}
-            disabled={isVoting}
-            className="bg-accent hover:bg-green-600"
-          >
-            {isVoting ? (
-              <div className="flex items-center gap-2">
-                <span className="animate-spin">⟳</span>
-                Confirming...
-              </div>
-            ) : (
-              'Confirm Votes'
-            )}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+          <TransactionButton
+            onSubmit={handleSubmit}
+            isDisabled={isVoting}
+            buttonText="Confirm Votes"
+          />
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

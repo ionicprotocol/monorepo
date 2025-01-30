@@ -53,14 +53,14 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
         >
           <span>{buttonText}</span>
         </ResultHandler>
-        <span className="ml-2 text-sm font-medium">{buttonText}</span>
+        <span className="text-sm font-medium">{buttonText}</span>
       </div>
     );
   };
 
   return (
     <Button
-      className={`w-full bg-accent text-black mt-4 relative min-h-[40px] ${className}`}
+      className={`w-full bg-accent text-black relative min-h-[40px] ${className}`}
       onClick={handleTransaction}
       disabled={isDisabled || isLoading}
     >
