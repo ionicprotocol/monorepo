@@ -2443,7 +2443,6 @@ __metadata:
     millify: "npm:^6.1.0"
     next: "npm:^15.0.3"
     next-nprogress-bar: "npm:^2.3.12"
-    nextjs-progressbar: "npm:^0.0.16"
     postcss: "npm:^8"
     react: "npm:19.0.0-rc.1"
     react-chartjs-2: "npm:^5.2.0"
@@ -8586,13 +8585,6 @@ __metadata:
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
   checksum: 10/65dff72b543997b7be8b0265eca7ace0e34b75c3e5fee31de11179d08fa7124a7a5587265d53d0409532ecb7f7fba662c2012807963e1f9b059653ec2c83ee05
-  languageName: node
-  linkType: hard
-
-"@types/nprogress@npm:^0.2.0":
-  version: 0.2.3
-  resolution: "@types/nprogress@npm:0.2.3"
-  checksum: 10/2bd96ba1167f548e8f898ae8a790b6501a5422217621c9b8ea75962f3e8473f0e371058b79d83e04e80a6bfee2d66fc6612cdb28296648007b35d3c2a6d64e5c
   languageName: node
   linkType: hard
 
@@ -20173,20 +20165,6 @@ __metadata:
   bin:
     next: dist/bin/next
   checksum: 10/d7044b22cd0724970464e88c51adc584d6252ccacff61b7c60dc3f248cca7227daa5a7265c2cc5ee1e19646ed51d1398c7c8d97c2a424cc1c951dddf7bb6b16e
-  languageName: node
-  linkType: hard
-
-"nextjs-progressbar@npm:^0.0.16":
-  version: 0.0.16
-  resolution: "nextjs-progressbar@npm:0.0.16"
-  dependencies:
-    "@types/nprogress": "npm:^0.2.0"
-    nprogress: "npm:^0.2.0"
-    prop-types: "npm:^15.8.1"
-  peerDependencies:
-    next: ">= 6.0.0"
-    react: ">= 16.0.0"
-  checksum: 10/8aeaf13e43ffa69c0cb238a981da9838c88ee83acd563a8e182e95a17fc594fcdd0564b4cb801b9b5278bbf23fd7237526fac90ac025c5a0e1c79f341ae70a7f
   languageName: node
   linkType: hard
 

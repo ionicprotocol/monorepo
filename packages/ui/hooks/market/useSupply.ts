@@ -38,7 +38,6 @@ export const useSupply = ({
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
-
   const { transactionSteps } = useTransactionSteps();
 
   const amountAsBInt = useMemo(
@@ -57,8 +56,15 @@ export const useSupply = ({
       !amount ||
       amountAsBInt <= 0n ||
       amountAsBInt > maxAmount
-    )
+    ) {
       return;
+    }
+    if (amountAsBInt > maxAmount) {
+      toast.error(
+        `Cannot supply more than ${Number(maxAmount) / 10 ** selectedMarketData.underlyingDecimals} ${selectedMarketData.underlyingSymbol} due to supply cap restrictions. Please reduce the amount or contact the pool administrator.`
+      );
+      return;
+    }
 
     let currentTransactionStep = 0;
 
@@ -186,7 +192,6 @@ export const useSupply = ({
       });
 
       if (!currentSdk || !currentSdk.walletClient) {
-        console.error('SDK or wallet client is not initialized');
         return;
       }
 
@@ -228,7 +233,6 @@ export const useSupply = ({
         `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
       );
     } catch (error) {
-      console.error('Supply error:', error);
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
 
