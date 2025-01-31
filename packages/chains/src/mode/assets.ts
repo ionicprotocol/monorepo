@@ -234,14 +234,14 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.uBTC,
     underlying: uBTC,
     name: "uBTC",
-    decimals: 8,
+    decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
     oracleSpecificParams: {
       feed: "0xc9d8b075a5c69303365ae23633d4e085199bf5c520a3b90fed1322a0342ffc33"
     } as PythSpecificParams,
     extraDocs: defaultDocs("https://explorer.mode.network", uBTC),
-    initialSupplyCap: parseUnits(String(250), 8).toString(),
-    initialBorrowCap: parseUnits(String(40), 8).toString(),
+    initialSupplyCap: parseUnits(String(250), 18).toString(),
+    initialBorrowCap: parseUnits(String(40), 18).toString(),
     initialCf: "0.5"
   }
 ];
