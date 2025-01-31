@@ -240,6 +240,7 @@ export const pools: Record<number, PoolParams> = {
           'weETH.mode',
           'uniBTC',
           'oBTC',
+          'uBTC',
           'M-BTC',
           'sUSDe',
           'wrsETH',
