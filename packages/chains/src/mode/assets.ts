@@ -243,6 +243,21 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseUnits(String(250), 18).toString(),
     initialBorrowCap: parseUnits(String(40), 18).toString(),
     initialCf: "0.5"
+  },
+  {
+    symbol: assetSymbols.LBTC,
+    underlying: LBTC,
+    name: "Lombard Staked Bitcoin",
+    decimals: 8,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0xc9fd2A1D31216c7F01B44333a9f08a487810044",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    } as ChainlinkSpecificParams,
+    extraDocs: defaultDocs("https://explorer.mode.network", LBTC),
+    initialSupplyCap: parseUnits(String(250), 8).toString(),
+    initialBorrowCap: parseUnits(String(40), 18).toString(),
+    initialCf: "0.5"
   }
 ];
 
