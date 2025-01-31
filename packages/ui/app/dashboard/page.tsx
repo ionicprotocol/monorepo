@@ -39,15 +39,12 @@ const PoolToggle = dynamic(() => import('@ui/components/markets/PoolToggle'), {
   ssr: false
 });
 
-export interface TableSectionProps {
+interface TableSectionProps {
   title: string;
   children: React.ReactNode;
 }
 
-export const TableSection: React.FC<TableSectionProps> = ({
-  title,
-  children
-}) => {
+const TableSection: React.FC<TableSectionProps> = ({ title, children }) => {
   return (
     <div className="bg-grayone w-full px-6 py-3 mt-3 rounded-xl">
       <div className="w-full flex items-center justify-between py-3">
