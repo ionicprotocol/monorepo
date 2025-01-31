@@ -103,17 +103,17 @@ export function useVeIONVote(chain: number) {
 
     try {
       // Check if NFT is whitelisted
-      const isWhitelisted = await publicClient.readContract({
-        ...voterContract,
-        functionName: 'isWhitelistedNFT',
-        args: [BigInt(tokenId)]
-      });
+      // const isWhitelisted = await publicClient.readContract({
+      //   ...voterContract,
+      //   functionName: 'isWhitelistedNFT',
+      //   args: [BigInt(tokenId)]
+      // });
 
-      console.log('NFT whitelist status:', { tokenId, isWhitelisted });
+      // console.log('NFT whitelist status:', { tokenId, isWhitelisted });
 
-      if (!isWhitelisted) {
-        throw new Error('NFT is not whitelisted');
-      }
+      // if (!isWhitelisted) {
+      //   throw new Error('NFT is not whitelisted');
+      // }
 
       // Check if already voted in this epoch
       const lastVoted = await publicClient.readContract({
@@ -175,19 +175,21 @@ export function useVeIONVote(chain: number) {
       await simulateVote(tokenId, voteParams);
 
       // Validate weights sum to 10000 (100%)
-      const totalWeight = weights.reduce(
-        (sum, weight) => sum + Number(weight),
-        0
-      );
-      console.log('Total weight:', totalWeight);
+      // const totalWeight = weights.reduce(
+      //   (sum, weight) => sum + Number(weight),
+      //   0
+      // );
+      // console.log('Total weight:', totalWeight);
 
-      if (totalWeight !== 10000) {
-        throw new Error(
-          `Vote weights must sum to 100% (got ${totalWeight / 100}%)`
-        );
-      }
+      // if (totalWeight !== 10000) {
+      //   throw new Error(
+      //     `Vote weights must sum to 100% (got ${totalWeight / 100}%)`
+      //   );
+      // }
 
       // Validate array lengths match
+      console.log('marketAddresses', marketAddresses);
+      console.log('sides', sides);
       if (
         marketAddresses.length !== sides.length ||
         sides.length !== weights.length
