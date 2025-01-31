@@ -12,9 +12,11 @@ import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { useContractWrite } from '../useContractWrite';
 
+import { iveIonAbi } from '@ionicprotocol/sdk';
+
 export function useVeIONManage(chain: number) {
   const veIonContract = getVeIonContract(chain);
-  const { write, isPending } = useContractWrite();
+  const { write } = useContractWrite();
   const publicClient = usePublicClient();
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -40,7 +42,7 @@ export function useVeIONManage(chain: number) {
     }
     return {
       address: veIonContract.address,
-      abi: veIonContract.abi,
+      abi: iveIonAbi,
       functionName,
       args
     };
@@ -208,7 +210,7 @@ export function useVeIONManage(chain: number) {
     try {
       const tokenIds = await publicClient.readContract({
         address: veIonContract.address,
-        abi: veIonContract.abi,
+        abi: iveIonAbi,
         functionName: 'getOwnedTokenIds',
         args: [ownerAddress]
       });
@@ -217,14 +219,14 @@ export function useVeIONManage(chain: number) {
         tokenIds.map(async (id) => {
           const [assets, balances, boosts] = await publicClient.readContract({
             address: veIonContract.address,
-            abi: veIonContract.abi,
+            abi: iveIonAbi,
             functionName: 'balanceOfNFT',
             args: [id]
           });
 
           const lockInfo = await publicClient.readContract({
             address: veIonContract.address,
-            abi: veIonContract.abi,
+            abi: iveIonAbi,
             functionName: 's_locked',
             args: [id, 2]
           });
@@ -439,51 +441,66 @@ export function useVeIONManage(chain: number) {
     }
   }
 
-  function undelegate({
-    fromTokenId,
-    toTokenIds,
-    lpToken,
-    amounts
-  }: {
-    fromTokenId: number;
-    toTokenIds: number[];
-    lpToken: `0x${string}`;
-    amounts: string[];
-  }) {
-    return write(
-      getContractConfig('undelegate', [
-        fromTokenId,
-        toTokenIds,
-        lpToken,
-        amounts
-      ]),
-      {
-        successMessage: 'Successfully undelegated voting power',
-        errorMessage: 'Failed to undelegate voting power'
-      }
-    );
-  }
-
   async function handleUndelegate({
-    toTokenIds,
-    amounts
+    toIds,
+    amounts,
+    id
   }: {
-    toTokenIds: number[];
+    toIds: number[];
     amounts: string[];
+    id: number | string;
   }) {
-    if (!address || !selectedManagePosition || !tokenAddress) return false;
+    if (!address || !tokenAddress) return false;
+
+    const fromTokenId = BigInt(id);
+    const toTokenIds = toIds.map((id) => BigInt(id));
 
     try {
-      await undelegate({
-        fromTokenId: +selectedManagePosition.id,
-        toTokenIds,
-        lpToken: tokenAddress as `0x${string}`,
-        amounts
+      if (!veIonContract || !publicClient) {
+        console.error('Contract or public client not initialized');
+        return false;
+      }
+
+      // Simulate the transaction
+      const { request } = await publicClient.simulateContract({
+        account: address,
+        address: veIonContract.address,
+        abi: iveIonAbi,
+        functionName: 'removeDelegatees',
+        args: [
+          fromTokenId,
+          toTokenIds,
+          tokenAddress as `0x${string}`,
+          amounts.map((amount) => BigInt(amount))
+        ]
       });
+
+      // If simulation succeeds, proceed with the actual transaction
+      await write(
+        getContractConfig('removeDelegatees', [
+          fromTokenId,
+          toTokenIds,
+          tokenAddress as `0x${string}`,
+          amounts.map((amount) => BigInt(amount))
+        ]),
+        {
+          successMessage: 'Successfully undelegated voting power',
+          errorMessage: 'Failed to undelegate voting power'
+        }
+      );
+
       await locks.refetch?.();
       return true;
     } catch (error) {
-      console.error('Error undelegating position:', error);
+      console.error('Error in handleUndelegate:', {
+        error,
+        params: {
+          fromTokenId: selectedManagePosition?.id,
+          toTokenIds,
+          lpToken: tokenAddress,
+          amounts
+        }
+      });
       return false;
     }
   }
@@ -500,6 +517,7 @@ export function useVeIONManage(chain: number) {
     handleUnlockPermanent,
     handleLockPermanent,
     handleWithdraw,
-    handleDelegate
+    handleDelegate,
+    handleUndelegate
   };
 }

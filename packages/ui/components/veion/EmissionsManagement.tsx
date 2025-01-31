@@ -26,7 +26,6 @@ import {
 } from '@ui/components/ui/tooltip';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useTableData, useVotes } from '@ui/context/VotesContext';
-import { useToast } from '@ui/hooks/use-toast';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';

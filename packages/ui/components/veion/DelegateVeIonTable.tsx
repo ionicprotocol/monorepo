@@ -8,22 +8,34 @@ import type {
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useToast } from '@ui/hooks/use-toast';
 import type { DelegateVeionData } from '@ui/types/veION';
 
 import { DelegatedToCell } from './DelegatedToCell';
 import PositionTitle from './PositionTitle';
+import UndelegateDialog from './UndelegateDIalog';
 
 interface DelegateVeionTableProps {
   onUndelegateSuccess?: () => void;
 }
 
 function DelegateVeionTable({ onUndelegateSuccess }: DelegateVeionTableProps) {
-  const { toast } = useToast();
-  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [selectedPosition, setSelectedPosition] =
+    useState<DelegateVeionData | null>(null);
+  const [isUndelegateDialogOpen, setIsUndelegateDialogOpen] = useState(false);
+
   const {
     locks: { delegatedLocks, isLoading }
   } = useVeIONContext();
+
+  const handleUndelegateClick = (position: DelegateVeionData) => {
+    setSelectedPosition(position);
+    setIsUndelegateDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setSelectedPosition(null);
+    setIsUndelegateDialogOpen(false);
+  };
 
   const delegateVeionColumns: EnhancedColumnDef<DelegateVeionData>[] = [
     {
@@ -109,15 +121,13 @@ function DelegateVeionTable({ onUndelegateSuccess }: DelegateVeionTableProps) {
       enableSorting: false,
       cell: ({ row }: MarketCellProps) => {
         const data = row.original;
-        const isProcessing = processingId === data.id;
 
         return (
           <div className="flex gap-2 w-full pr-6">
             <ActionButton
               half={false}
-              action={() => {}}
-              disabled={isProcessing}
-              label={isProcessing ? 'Undelegating...' : 'Undelegate'}
+              action={() => handleUndelegateClick(data)}
+              label="Undelegate"
             />
           </div>
         );
@@ -132,6 +142,24 @@ function DelegateVeionTable({ onUndelegateSuccess }: DelegateVeionTableProps) {
         columns={delegateVeionColumns}
         isLoading={isLoading}
       />
+
+      {selectedPosition && (
+        <UndelegateDialog
+          isOpen={isUndelegateDialogOpen}
+          onClose={handleDialogClose}
+          position={{
+            id: selectedPosition.id,
+            chainId: selectedPosition.chainId,
+            delegation: {
+              delegatedTo: selectedPosition.delegation.delegatedTo.map(
+                (bigintValue: bigint) => Number(bigintValue)
+              ),
+              amounts: selectedPosition.delegation.delegatedAmounts // Add this line
+            }
+          }}
+          onSuccess={onUndelegateSuccess}
+        />
+      )}
     </div>
   );
 }

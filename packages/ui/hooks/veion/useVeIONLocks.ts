@@ -156,15 +156,73 @@ export function useVeIONLocks({
     isLoading: boolean;
   };
 
+  // Then let's check our calls
+  const delegationAmountCalls = tokenIds
+    .flatMap((tokenId, tokenIdIndex) =>
+      chainConfig.lpTypes.flatMap((lpType, lpTypeIndex) => {
+        const delegateesResult =
+          delegateesResults?.[
+            tokenIdIndex * chainConfig.lpTypes.length + lpTypeIndex
+          ];
+
+        return delegateesResult?.status === 'success' && delegateesResult.result
+          ? delegateesResult.result.map((delegateeId) => {
+              return {
+                address: veIonContract,
+                abi: iveIonAbi,
+                functionName: 's_delegations',
+                args: [BigInt(tokenId), delegateeId, lpType],
+                chainId
+              };
+            })
+          : [];
+      })
+    )
+    .filter(Boolean);
+
+  const {
+    data: delegationAmountResults,
+    refetch: refetchDelegationAmounts,
+    isLoading: isLoadingDelegationAmounts
+  } = useReadContracts({
+    contracts: delegationAmountCalls
+  }) as {
+    data: ContractResult<bigint>[] | undefined;
+    refetch: () => Promise<any>;
+    isLoading: boolean;
+  };
+
   const processedDelegateesResults =
     delegateesResults?.map((result, index) => {
       if (result.status !== 'success' || !result.result) return null;
+
+      const delegatedTo = result.result;
+
+      const startIndex = delegateesResults
+        .slice(0, index)
+        .reduce((acc, prevResult) => {
+          return (
+            acc +
+            (prevResult?.status === 'success'
+              ? prevResult.result?.length ?? 0
+              : 0)
+          );
+        }, 0);
+
+      const amounts = delegatedTo.map((delegateeId, i) => {
+        const amountResult = delegationAmountResults?.[startIndex + i];
+
+        if (amountResult?.status === 'success' && amountResult.result) {
+          return amountResult.result.toString();
+        }
+        return '0';
+      });
 
       return {
         delegatedTo: result.result,
         readyToDelegate: false,
         delegatedTokenIds: result.result,
-        delegatedAmounts: []
+        delegatedAmounts: amounts
       };
     }) || [];
 
@@ -227,7 +285,8 @@ export function useVeIONLocks({
       refetchBalances(),
       refetchSupplies(),
       refetchDelegatees(),
-      refetchIonPrices()
+      refetchIonPrices(),
+      refetchDelegationAmounts()
     ]);
   }, [
     refetchTokenIds,
@@ -236,10 +295,10 @@ export function useVeIONLocks({
     refetchBalances,
     refetchSupplies,
     refetchDelegatees,
-    refetchIonPrices
+    refetchIonPrices,
+    refetchDelegationAmounts
   ]);
 
-  // Calculate overall loading state
   const isLoading =
     isLoadingTokenIds ||
     isLoadingAssets ||
@@ -248,7 +307,8 @@ export function useVeIONLocks({
     isLoadingSupplies ||
     isLoadingDelegatees ||
     isLoadingTokenPrices ||
-    isLoadingIonPrices;
+    isLoadingIonPrices ||
+    isLoadingDelegationAmounts;
 
   return {
     myLocks: allLocks
