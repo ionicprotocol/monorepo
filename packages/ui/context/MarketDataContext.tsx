@@ -10,16 +10,24 @@ import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
 import type { VoteMarketRow } from '@ui/types/veION';
 
 type MarketDataContextType = {
-  baseMarketRows: VoteMarketRow[];
-  isLoading: boolean;
-  error: Error | null;
-  votingPeriod: VotingPeriodInfo;
+  baseMarketRows: {
+    data: VoteMarketRow[];
+    isLoading: boolean;
+    error: Error | null;
+    refetch?: () => Promise<void>;
+  };
+  votingPeriod: VotingPeriodInfo & {
+    refetch?: () => Promise<void>;
+  };
 };
 
 const MarketDataContext = createContext<MarketDataContextType>({
-  baseMarketRows: [],
-  isLoading: false,
-  error: null,
+  baseMarketRows: {
+    data: [],
+    isLoading: false,
+    error: null,
+    refetch: async () => {}
+  },
   votingPeriod: {
     hasVoted: false,
     nextVotingDate: null,
@@ -27,7 +35,8 @@ const MarketDataContext = createContext<MarketDataContextType>({
     lastVoted: null,
     isLoading: false,
     error: null,
-    timeRemaining: { days: 0, hours: 0, minutes: 0, seconds: 0 }
+    timeRemaining: { days: 0, hours: 0, minutes: 0, seconds: 0 },
+    refetch: async () => {}
   }
 });
 
@@ -41,22 +50,29 @@ export const MarketDataProvider: React.FC<{
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
-  const { baseMarketRows, isLoading, error } = useMarketRows(
-    chain,
-    selectedPool,
-    tokenId
-  );
+  const {
+    baseMarketRows,
+    isLoading,
+    error,
+    refetch: refetchMarketRows
+  } = useMarketRows(chain, selectedPool, tokenId);
 
   const votingPeriod = useVotingPeriod(chain, tokenId);
 
   const value = useMemo(
     () => ({
-      baseMarketRows,
-      isLoading: isLoading || votingPeriod.isLoading,
-      error: error || votingPeriod.error,
-      votingPeriod
+      baseMarketRows: {
+        data: baseMarketRows,
+        isLoading,
+        error,
+        refetch: refetchMarketRows
+      },
+      votingPeriod: {
+        ...votingPeriod,
+        refetch: votingPeriod.refetch
+      }
     }),
-    [baseMarketRows, isLoading, error, votingPeriod]
+    [baseMarketRows, isLoading, error, refetchMarketRows, votingPeriod]
   );
 
   return (
@@ -66,7 +82,7 @@ export const MarketDataProvider: React.FC<{
   );
 };
 
-export const useMarketData = () => {
+export const useMarketDataContext = () => {
   const context = useContext(MarketDataContext);
   if (!context) {
     throw new Error('useMarketData must be used within a MarketDataProvider');

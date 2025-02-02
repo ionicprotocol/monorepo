@@ -15,8 +15,8 @@ import {
 import { Progress } from '@ui/components/ui/progress';
 import {
   Tooltip,
-  TooltipContent,
-  TooltipTrigger
+  TooltipTrigger,
+  TooltipContent
 } from '@ui/components/ui/tooltip';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
@@ -54,10 +54,10 @@ const GovernanceHeader = ({
 
   const infoBlocks = [
     {
-      label: 'Ion Wallet Balance',
+      label: 'ION BALANCE',
       value: ionBalance,
       token: 'ION',
-      infoContent: 'This is the amount of ION you have in your wallet.',
+      infoContent: 'ION balance held in your wallet.',
       icon: '/img/logo/ion.svg',
       usdValue: ionBalanceUsd
     },
@@ -65,16 +65,15 @@ const GovernanceHeader = ({
       label: 'YOUR VEION',
       value: veIonBalance.toFixed(3),
       token: 'veION',
-      infoContent: 'This is the amount of ION you have locked in the protocol.',
+      infoContent: 'veION amount locked on a given chain.',
       icon: '/img/logo/ion.svg',
       usdValue: veIonBalanceUsd.toFixed(5)
     },
     {
-      label: 'Your Rewards',
+      label: 'ION REWARDS',
       value: emissions.totalDeposits.amount.toString(),
       token: 'ION',
-      infoContent:
-        'This is the total amount of ION you have deposited in the protocol.',
+      infoContent: 'Pending ION rewards.',
       icon: '/img/logo/ion.svg',
       usdValue: emissions.totalDeposits.usdValue
     }
@@ -127,7 +126,7 @@ const InfoBlock = ({
 }) => (
   <div className="flex flex-col gap-1 mt-3">
     <div className="text-white/60 text-xs flex items-center gap-2">
-      {label.toUpperCase()}
+      {label}
       <CustomTooltip content={infoContent} />
     </div>
     <div className="text-white/60 text-xs flex flex-col">
@@ -180,13 +179,13 @@ const EmissionsStatus = () => {
           </TooltipTrigger>
           <TooltipContent className="bg-background p-2 rounded-md shadow-md">
             <p className="text-sm">
-              To receive emissions, lenders/borrowers must have 2.5% of their
-              collateral worth of $ION locked as $veION.
+              Activation Threshold: To receive emissions, 2.5% of your
+              collateral worth have to be locked as veION.
             </p>
           </TooltipContent>
         </Tooltip>
         <Link
-          href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/tokenomics"
+          href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion"
           className="text-green-400 hover:text-green-500 p-0 h-auto flex items-center"
           target="_blank"
           rel="noopener noreferrer"
@@ -197,30 +196,23 @@ const EmissionsStatus = () => {
       </div>
 
       <div className="flex gap-2">
-        {/* First 2.5% bar */}
-        <div className="w-[22.5%] relative group">
+        <div className="w-full relative group">
           <CustomTooltip
-            content={`${firstBarProgress.toFixed(2)}% / ${thresholdPercentage}% (Activation Threshold)`}
+            content={`${lockedValue.percentage.toFixed(2)}% of your collateral worth locked as veION`}
           >
-            <div className="w-full">
-              <Progress
-                value={(firstBarProgress / thresholdPercentage) * 100}
-                className="[&>div]:rounded-l-md [&>div]:rounded-r-none"
-              />
-            </div>
-          </CustomTooltip>
-        </div>
-
-        {/* Remaining 97.5% bar */}
-        <div className="w-[77.5%] relative group">
-          <CustomTooltip
-            content={`${secondBarProgress.toFixed(2)}% / ${secondBarMax}% (Additional Voting Power)`}
-          >
-            <div className="w-full">
-              <Progress
-                value={(secondBarProgress / secondBarMax) * 100}
-                className="[&>div]:rounded-l-none [&>div]:rounded-r-md"
-              />
+            <div className="flex gap-2">
+              <div className="w-[10%]">
+                <Progress
+                  value={(firstBarProgress / thresholdPercentage) * 100}
+                  className="[&>div]:rounded-l-md [&>div]:rounded-r-none"
+                />
+              </div>
+              <div className="w-[90%]">
+                <Progress
+                  value={(secondBarProgress / secondBarMax) * 100}
+                  className="[&>div]:rounded-l-none [&>div]:rounded-r-md"
+                />
+              </div>
             </div>
           </CustomTooltip>
         </div>
@@ -230,10 +222,8 @@ const EmissionsStatus = () => {
         <div className="flex items-center gap-2">
           <span className="text-xs">
             YOUR VEION: ${veIonBalanceUsd.toFixed(5)} (
-            {lockedValue.percentage.toFixed(2)}
-            %)
+            {lockedValue.percentage.toFixed(2)}%)
           </span>
-          <CustomTooltip content="Amount of veION locked in the protocol" />
         </div>
         <div className="text-xs">TOTAL DEPOSITS: ${totalDeposits.usdValue}</div>
       </div>

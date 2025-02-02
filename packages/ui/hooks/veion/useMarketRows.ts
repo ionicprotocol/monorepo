@@ -105,7 +105,11 @@ export const useMarketRows = (
     return { marketAddresses: addresses, marketSides: sides, lpTokens: tokens };
   }, [chain, poolData?.assets]);
 
-  const { voteData, isLoading: isLoadingVoteData } = useVoteData({
+  const {
+    voteData,
+    isLoading: isLoadingVoteData,
+    refresh: refreshVoteData
+  } = useVoteData({
     tokenId,
     chain: +chain,
     marketAddresses,
@@ -276,6 +280,7 @@ export const useMarketRows = (
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isLoadingPoolData,
     isLoadingSupplyApys,
@@ -287,6 +292,10 @@ export const useMarketRows = (
     processMarketRows
   ]);
 
+  const refetch = useCallback(async () => {
+    await refreshVoteData();
+  }, [refreshVoteData]);
+
   return {
     baseMarketRows,
     isLoading:
@@ -297,6 +306,7 @@ export const useMarketRows = (
       isLoadingRewards ||
       isLoadingVoteData ||
       isLoadingMerklData,
-    error
+    error,
+    refetch
   };
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useState } from 'react';
 
 import Image from 'next/image';
@@ -47,25 +46,24 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
   tokenId
 }) => {
   const { currentChain } = useVeIONContext();
-  const { submitVote, isVoting } = useVeIONVote(currentChain);
+  const { handleVote, isVoting } = useVeIONVote(currentChain);
   const voteEntries = Object.entries(votes);
+  console.log('voteEntries', voteEntries);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     try {
-      // Transform votes into arrays as expected by the contract
       const voteArrays = Object.entries(votes).reduce(
         (acc, [_, vote]) => {
           acc.marketAddresses.push(vote.marketAddress);
           acc.sides.push(vote.side);
-          // Convert percentage to basis points (multiply by 100) and then to bigint
           acc.weights.push(BigInt(convertToContractWeight(vote.voteValue)));
           return acc;
         },
         {
           marketAddresses: [] as `0x${string}`[],
           sides: [] as MarketSide[],
-          weights: [] as bigint[] // Change type to bigint[]
+          weights: [] as bigint[]
         }
       );
 
@@ -76,7 +74,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
         weights: voteArrays.weights
       });
 
-      const success = await submitVote(tokenId, {
+      const success = await handleVote(tokenId, {
         marketAddresses: voteArrays.marketAddresses,
         sides: voteArrays.sides,
         weights: voteArrays.weights
@@ -110,12 +108,13 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-          <Info className="h-4 w-4 text-blue-500" />
-          <p className="text-sm text-blue-100">
-            Your choices will automatically apply to future epochs unless
-            modified
-          </p>
+        <div className="flex gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+          <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-1" />
+          <div className="space-y-2 text-sm text-blue-100">
+            <p>• Votes count once per epoch</p>
+            <p>• You can't recast votes within the same epoch</p>
+            <p>• Voting rewards will be available in the next epoch</p>
+          </div>
         </div>
 
         {error && <div className="text-sm text-red-500 mt-2">{error}</div>}

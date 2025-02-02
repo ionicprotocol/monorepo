@@ -14,18 +14,6 @@ import {
 import CustomTooltip from './CustomTooltip';
 import { PrecisionSlider } from './PrecisionSlider';
 
-interface LockDurationPickerProps {
-  selectedDuration: number;
-  lockDate: Date;
-  onDurationChange: (duration: number) => void;
-  onDateChange: (date: Date) => void;
-  baseLockDate?: Date;
-  minDuration?: number;
-  maxDuration?: number;
-  showTooltip?: boolean;
-  tooltipContent?: string;
-}
-
 const defaultDurationLabels = {
   1: '1d',
   180: '180d',
@@ -33,12 +21,27 @@ const defaultDurationLabels = {
   730: '2y'
 };
 
+interface LockDurationPickerProps {
+  selectedDuration: number;
+  lockDate: Date;
+  onDurationChange: (duration: number) => void;
+  onDateChange: (date: Date) => void;
+  baseLockDate?: Date;
+  currentDuration?: number;
+  minDuration?: number;
+  maxDuration?: number;
+  showTooltip?: boolean;
+  tooltipContent?: string;
+}
+
+// LockDurationPicker.tsx
 export function LockDurationPicker({
   selectedDuration,
   lockDate,
   onDurationChange,
   onDateChange,
   baseLockDate = new Date(),
+  currentDuration = 0,
   minDuration = 1,
   maxDuration = 730,
   showTooltip = true,
@@ -48,10 +51,10 @@ export function LockDurationPicker({
 
   const dateRange = useMemo(() => {
     return {
-      minDate: addDays(baseLockDate, minDuration),
-      maxDate: addDays(baseLockDate, maxDuration)
+      minDate: baseLockDate,
+      maxDate: addDays(baseLockDate, maxDuration - currentDuration)
     };
-  }, [baseLockDate, minDuration, maxDuration]);
+  }, [baseLockDate, currentDuration, maxDuration]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
@@ -59,13 +62,32 @@ export function LockDurationPicker({
       const durationInDays = Math.round(
         (date.getTime() - baseLockDate.getTime()) / (1000 * 60 * 60 * 24)
       );
+      const totalDuration = currentDuration + durationInDays;
       const clampedDuration = Math.max(
-        minDuration,
-        Math.min(maxDuration, durationInDays)
+        currentDuration,
+        Math.min(maxDuration, totalDuration)
       );
       onDurationChange(clampedDuration);
       setIsCalendarOpen(false);
     }
+  };
+
+  const sliderMarks = [0, 180, 365, 730]
+    .filter((mark, index, array) => {
+      // Remove duplicates and ensure marks are in valid range
+      return mark <= maxDuration && array.indexOf(mark) === index;
+    })
+    .sort((a, b) => a - b);
+
+  const handleSliderChange = (duration: number) => {
+    // Prevent going below current duration
+    if (duration < currentDuration) {
+      return;
+    }
+
+    onDurationChange(duration);
+    const extensionDays = duration - currentDuration;
+    onDateChange?.(addDays(baseLockDate, extensionDays));
   };
 
   return (
@@ -111,15 +133,19 @@ export function LockDurationPicker({
       <div className="pt-6">
         <PrecisionSlider
           value={selectedDuration}
-          onChange={(val) => {
-            onDurationChange(val);
-            onDateChange?.(addDays(baseLockDate, val));
-          }}
+          onChange={handleSliderChange}
           max={maxDuration}
-          min={minDuration}
+          min={0}
           step={1}
-          marks={Object.keys(defaultDurationLabels).map(Number)}
+          marks={sliderMarks}
+          className="mt-6"
         />
+        <div className="flex justify-between mt-2 text-xs text-white/60">
+          <span>
+            {currentDuration > 0 ? `Current: ${currentDuration}d` : '0d'}
+          </span>
+          <span>{maxDuration}d (max)</span>
+        </div>
       </div>
     </div>
   );

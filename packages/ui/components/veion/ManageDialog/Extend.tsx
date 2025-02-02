@@ -22,12 +22,19 @@ export function Extend({ chain }: ExtendProps) {
   const currentLockDate = new Date(
     selectedManagePosition?.lockExpires?.date || Date.now()
   );
+
+  // Calculate current duration in days
+  const currentDurationDays = selectedManagePosition?.lockedBLP
+    ? Math.floor(selectedManagePosition.lockedBLP.duration / 86400)
+    : 0;
+
   const [newLockDate, setNewLockDate] = useState<Date>(() =>
     addDays(currentLockDate, 1)
   );
 
   const extensionDays = differenceInDays(newLockDate, currentLockDate);
-  const [selectedDuration, setSelectedDuration] = useState<number>(1);
+  const [selectedDuration, setSelectedDuration] =
+    useState<number>(currentDurationDays);
 
   const onExtend = async () => {
     if (
@@ -46,8 +53,13 @@ export function Extend({ chain }: ExtendProps) {
   };
 
   const handleDurationChange = (duration: number) => {
-    setSelectedDuration(duration);
-    const calculatedNewDate = addDays(currentLockDate, duration);
+    // Ensure we don't go below current duration
+    const newDuration = Math.max(currentDurationDays, duration);
+    setSelectedDuration(newDuration);
+    const calculatedNewDate = addDays(
+      currentLockDate,
+      newDuration - currentDurationDays
+    );
     setNewLockDate(calculatedNewDate);
   };
 
@@ -60,7 +72,8 @@ export function Extend({ chain }: ExtendProps) {
           onDurationChange={handleDurationChange}
           onDateChange={(date) => setNewLockDate(date)}
           baseLockDate={currentLockDate}
-          minDuration={1}
+          currentDuration={currentDurationDays}
+          minDuration={currentDurationDays}
           maxDuration={730}
           tooltipContent="Longer lock periods provide higher voting power"
         />

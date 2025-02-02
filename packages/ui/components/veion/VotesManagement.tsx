@@ -24,7 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
-import { useMarketData } from '@ui/context/MarketDataContext';
+import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
@@ -66,11 +66,7 @@ function VotesManagement({
   showPendingOnly
 }: VotesManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const {
-    baseMarketRows: marketRows,
-    isLoading,
-    votingPeriod
-  } = useMarketData();
+  const { baseMarketRows: marketRows, votingPeriod } = useMarketDataContext();
   const { votes } = useVotes();
   const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
@@ -86,7 +82,7 @@ function VotesManagement({
   const filteredVotingData = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
-    return marketRows.filter((row) => {
+    return marketRows.data.filter((row) => {
       if (assetTypeFilter === 'supply' && row.side !== MarketSide.Supply) {
         return false;
       }
@@ -200,7 +196,7 @@ function VotesManagement({
       id: 'incentives',
       accessorFn: (row) => row.incentives.balanceUSD,
       header: (
-        <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">
+        <TooltipWrapper content="Incentives allocated for voters">
           <span>INCENTIVES</span>
         </TooltipWrapper>
       ),
@@ -216,7 +212,7 @@ function VotesManagement({
       id: 'veAPR',
       accessorFn: (row) => row.veAPR,
       header: (
-        <TooltipWrapper content="Current voting APR considering votes distribution as of this moment">
+        <TooltipWrapper content="Current voting APR">
           <span>veAPR</span>
         </TooltipWrapper>
       ),
@@ -331,7 +327,7 @@ function VotesManagement({
       <CommonTable
         columns={columns}
         data={filteredVotingData}
-        isLoading={isLoading}
+        isLoading={marketRows.isLoading}
       />
 
       {!votingPeriod.hasVoted && <VotesManagementFooter tokenId={tokenId} />}

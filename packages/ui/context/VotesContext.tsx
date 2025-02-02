@@ -9,7 +9,7 @@ import React, {
 
 import { MarketSide } from '@ui/types/veION';
 
-import { useMarketData } from './MarketDataContext';
+import { useMarketDataContext } from './MarketDataContext';
 
 type VotesContextType = {
   votes: Record<string, string>;
@@ -106,13 +106,14 @@ export const useVotes = () => {
 };
 
 export const useVoteTableData = () => {
-  const { baseMarketRows, isLoading, error } = useMarketData();
+  const { baseMarketRows } = useMarketDataContext();
+  const { isLoading, error, data } = baseMarketRows;
   const { votes } = useVotes();
 
   const marketRows = useMemo(() => {
     if (isLoading || error) return baseMarketRows;
 
-    return baseMarketRows.map((row) => {
+    return data.map((row) => {
       const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
       return {
         ...row,

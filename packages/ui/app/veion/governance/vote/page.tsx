@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useEffect } from 'react';
+
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+
 import { ArrowLeft } from 'lucide-react';
 
 import { Badge } from '@ui/components/ui/badge';
@@ -13,11 +15,12 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Switch } from '@ui/components/ui/switch';
-import { InfoBlock, VotesManagement } from '@ui/components/veion';
+import { InfoBlock } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
+import VotesManagement from '@ui/components/veion/VotesManagement';
 import {
   MarketDataProvider,
-  useMarketData
+  useMarketDataContext
 } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { VotesProvider } from '@ui/context/VotesContext';
@@ -140,9 +143,9 @@ const Vote = () => {
 
 const VotingManagementWrapper = ({ tokenId }: { tokenId: number }) => {
   const [showPendingOnly, setShowPendingOnly] = React.useState(false);
-  const { votingPeriod, isLoading } = useMarketData();
+  const { votingPeriod } = useMarketDataContext();
 
-  if (isLoading) {
+  if (votingPeriod.isLoading) {
     return (
       <div className="w-full flex justify-center items-center h-48">
         Loading voting data...

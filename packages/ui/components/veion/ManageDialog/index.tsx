@@ -23,7 +23,7 @@ import { Merge } from './Merge';
 import { Split } from './Split';
 import { Transfer } from './Transfer';
 import { Unlock } from './Unlock';
-import { Withdraw } from './WIthdraw';
+import { Withdraw } from './Withdraw';
 
 interface ManageDialogProps {
   isOpen: boolean;
@@ -40,6 +40,13 @@ type TabValue =
   | 'Unlock'
   | 'Withdraw';
 
+interface TabConfig {
+  value: TabValue;
+  label: JSX.Element | string;
+  disabled?: boolean;
+  tooltip?: string;
+}
+
 const DEFAULT_TAB: TabValue = 'Increase';
 
 export default function ManageDialog({
@@ -51,15 +58,24 @@ export default function ManageDialog({
   const [activeManageToggle, setActiveManageToggle] =
     useState<TabValue>(DEFAULT_TAB);
 
+  const isPermanent = selectedManagePosition?.lockExpires.isPermanent;
+
   const toggleArr = [
-    { value: 'Increase' as TabValue, label: 'Increase' },
-    { value: 'Extend' as TabValue, label: 'Extend' },
-    { value: 'Delegate' as TabValue, label: 'Delegate' },
-    { value: 'Merge' as TabValue, label: 'Merge' },
-    { value: 'Split' as TabValue, label: 'Split' },
-    { value: 'Transfer' as TabValue, label: 'Transfer' },
-    { value: 'Withdraw' as TabValue, label: 'Withdraw' },
-    { value: 'Unlock' as TabValue, label: <Lock className="h-4 w-4" /> }
+    { value: 'Increase', label: 'Increase' },
+    {
+      value: 'Extend',
+      label: 'Extend',
+      disabled: isPermanent,
+      tooltip: isPermanent
+        ? 'This position is permanently locked and cannot be extended'
+        : undefined
+    },
+    { value: 'Delegate', label: 'Delegate' },
+    { value: 'Merge', label: 'Merge' },
+    { value: 'Split', label: 'Split' },
+    { value: 'Transfer', label: 'Transfer' },
+    { value: 'Withdraw', label: 'Withdraw' },
+    { value: 'Unlock', label: <Lock className="h-4 w-4" /> }
   ];
 
   const handleOpenChange = (open: boolean) => {
@@ -79,6 +95,13 @@ export default function ManageDialog({
     ? new Date(selectedManagePosition.lockExpires.date)
     : new Date();
 
+  const handleTabChange = (value: string) => {
+    const tab = toggleArr.find((t) => t.value === value);
+    if (!tab?.disabled) {
+      setActiveManageToggle(value as TabValue);
+    }
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -93,7 +116,7 @@ export default function ManageDialog({
               {selectedManagePosition?.votingBoost.toFixed(2)}x)
             </span>
 
-            {selectedManagePosition?.lockExpires.isPermanent ? (
+            {isPermanent ? (
               <Badge className="text-xs font-medium">Permanent</Badge>
             ) : (
               <span className="text-white/50">
@@ -106,9 +129,7 @@ export default function ManageDialog({
         <ManageTabs
           tabs={toggleArr}
           activeTab={activeManageToggle}
-          onTabChange={(value: string) =>
-            setActiveManageToggle(value as TabValue)
-          }
+          onTabChange={handleTabChange}
         />
 
         {activeManageToggle === 'Increase' && <Increase chain={chain} />}

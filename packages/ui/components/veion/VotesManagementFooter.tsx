@@ -1,7 +1,9 @@
 import { useState } from 'react';
+
 import { InfoIcon } from 'lucide-react';
+
 import { Card } from '@ui/components/ui/card';
-import { useMarketData } from '@ui/context/MarketDataContext';
+import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
@@ -16,27 +18,46 @@ interface VotesManagementFooterProps {
 function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const { currentChain } = useVeIONContext();
   const { votes, resetVotes, totalVotes } = useVotes();
-  const { baseMarketRows: marketRows, votingPeriod } = useMarketData();
+  const { baseMarketRows: marketRows, votingPeriod } = useMarketDataContext();
   const { isVoting } = useVeIONVote(currentChain);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const hasVotes = Object.keys(votes).length > 0;
+  const remainingVotes = 100 - totalVotes;
   const isVoteEnabled =
     hasVotes &&
     !isVoting &&
     !votingPeriod.hasVoted &&
-    Math.abs(totalVotes - 100) < 0.01;
+    Math.abs(remainingVotes) < 0.01;
 
-  const voteData = marketRows.reduce(
+  // Create a mapping of market address to asset for lookup
+  const marketAssetMap = marketRows.data.reduce(
     (acc, row) => {
-      if (row.voteValue) {
-        const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+      const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+      acc[key] = {
+        asset: row.asset,
+        marketAddress: row.marketAddress as `0x${string}`,
+        side: row.side
+      };
+      return acc;
+    },
+    {} as Record<
+      string,
+      { asset: string; marketAddress: `0x${string}`; side: MarketSide }
+    >
+  );
+
+  // Transform votes directly into the expected format using the votes object
+  const voteData = Object.entries(votes).reduce(
+    (acc, [key, voteValue]) => {
+      const marketInfo = marketAssetMap[key];
+      if (marketInfo) {
         acc[key] = {
-          marketAddress: row.marketAddress,
-          side: row.side,
-          voteValue: row.voteValue,
-          asset: row.asset
+          marketAddress: marketInfo.marketAddress,
+          side: marketInfo.side,
+          voteValue: voteValue,
+          asset: marketInfo.asset
         };
       }
       return acc;
@@ -59,18 +80,43 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
 
   const handleVoteClick = () => {
     setSubmitError(null);
-    if (Math.abs(totalVotes - 100) > 0.01) {
+    if (Math.abs(remainingVotes) > 0.01) {
       setSubmitError('Total votes must equal exactly 100%');
     } else {
       setShowConfirmation(true);
     }
   };
 
+  const getButtonStyles = () => {
+    if (isVoting) {
+      return 'bg-gray-500 cursor-not-allowed';
+    }
+    if (isVoteEnabled) {
+      return 'bg-green-500 hover:bg-green-600';
+    }
+    return 'bg-red-500 hover:bg-red-600';
+  };
+
+  const getButtonText = () => {
+    if (isVoting) {
+      return (
+        <div className="flex items-center gap-2">
+          <span className="animate-spin">⟳</span>
+          Voting...
+        </div>
+      );
+    }
+    if (Math.abs(remainingVotes) < 0.01) {
+      return `Vote (${totalVotes.toFixed(2)}%)`;
+    }
+    return `Remaining (${remainingVotes.toFixed(2)}%)`;
+  };
+
   return (
     <>
       <Card className="fixed bottom-4 left-4 right-4 p-4 bg-[#35363D] border-t border-white/10 z-10">
         <div className="flex flex-col w-full">
-          <div className="flex justify-between items-center w-full ">
+          <div className="flex justify-between items-center w-full">
             <div className="space-y-2">
               {submitError && (
                 <div className="text-sm text-red-500">{submitError}</div>
@@ -95,25 +141,13 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
 
               <button
                 onClick={handleVoteClick}
-                disabled={!isVoteEnabled}
+                disabled={!hasVotes || isVoting || votingPeriod.hasVoted}
                 className={`
-                  px-4 py-2 text-sm 
-                  ${
-                    isVoteEnabled
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-green-500/50 cursor-not-allowed'
-                  }
-                  text-white rounded-lg transition-colors
+                  px-4 py-2 text-sm text-white rounded-lg transition-colors
+                  ${getButtonStyles()}
                 `}
               >
-                {isVoting ? (
-                  <div className="flex items-center gap-2">
-                    <span className="animate-spin">⟳</span>
-                    Voting...
-                  </div>
-                ) : (
-                  `Vote (${totalVotes.toFixed(2)}%)`
-                )}
+                {getButtonText()}
               </button>
             </div>
           </div>

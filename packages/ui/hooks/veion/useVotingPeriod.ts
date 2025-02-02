@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
@@ -61,6 +61,7 @@ export interface VotingPeriodInfo {
     minutes: number;
     seconds: number;
   };
+  refetch: () => Promise<void>;
 }
 
 export function useVotingPeriod(
@@ -72,37 +73,37 @@ export function useVotingPeriod(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchLastVoted = async () => {
-      if (!tokenId || !publicClient) {
-        setLastVoted(null);
-        return;
-      }
+  const fetchLastVoted = useCallback(async () => {
+    if (!tokenId || !publicClient) {
+      setLastVoted(null);
+      return;
+    }
 
-      try {
-        setIsLoading(true);
-        const voterContract = getVoterContract(+chain);
-        const lastVotedTimestamp = await publicClient.readContract({
-          ...voterContract,
-          functionName: 'lastVoted',
-          args: [BigInt(tokenId)]
-        });
-        setLastVoted(Number(lastVotedTimestamp));
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching last voted timestamp:', err);
-        setError(
-          err instanceof Error
-            ? err
-            : new Error('Failed to fetch last voted timestamp')
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchLastVoted();
+    try {
+      setIsLoading(true);
+      const voterContract = getVoterContract(+chain);
+      const lastVotedTimestamp = await publicClient.readContract({
+        ...voterContract,
+        functionName: 'lastVoted',
+        args: [BigInt(tokenId)]
+      });
+      setLastVoted(Number(lastVotedTimestamp));
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching last voted timestamp:', err);
+      setError(
+        err instanceof Error
+          ? err
+          : new Error('Failed to fetch last voted timestamp')
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }, [chain, tokenId, publicClient]);
+
+  useEffect(() => {
+    fetchLastVoted();
+  }, [fetchLastVoted]);
 
   return useMemo(() => {
     const currentEpoch = calculateCurrentEpoch();
@@ -129,7 +130,8 @@ export function useVotingPeriod(
       lastVoted,
       isLoading,
       error,
-      timeRemaining
+      timeRemaining,
+      refetch: fetchLastVoted // Include refetch function in return object
     };
-  }, [lastVoted, isLoading, error]);
+  }, [lastVoted, isLoading, error, fetchLastVoted]);
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useState } from 'react';
 
 import {
@@ -9,6 +8,7 @@ import {
 } from 'wagmi';
 
 import { getVoterContract } from '@ui/constants/veIon';
+import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import type { MarketSide } from '@ui/types/veION';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -46,10 +46,12 @@ export function useVeIONVote(chain: number) {
   const voterContract = getVoterContract(chain);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
   const { write } = useContractWrite();
+
+  // Get refresh functions from context
+  const { baseMarketRows, votingPeriod } = useMarketDataContext();
 
   const [state, setState] = useState<VoteState>({
     isVoting: false,
@@ -70,23 +72,6 @@ export function useVeIONVote(chain: number) {
     };
   };
 
-  const resetState = () => {
-    setState({
-      isVoting: false,
-      error: null,
-      pendingVotes: new Map()
-    });
-  };
-
-  const handleError = (error: Error) => {
-    setState((prev) => ({
-      ...prev,
-      error: error.message,
-      isVoting: false
-    }));
-    console.error('Vote Error:', error);
-  };
-
   const simulateVote = async (tokenId: number, voteParams: VoteParams) => {
     if (!voterContract || !publicClient) {
       throw new Error('Contract not initialized for simulation');
@@ -94,15 +79,7 @@ export function useVeIONVote(chain: number) {
 
     const { marketAddresses, sides, weights } = voteParams;
 
-    console.log('Simulating vote with params:', {
-      tokenId,
-      marketAddresses,
-      sides,
-      weights
-    });
-
     try {
-      // Simulate the transaction
       const simulatedCall = await publicClient.simulateContract({
         ...voterContract,
         functionName: 'vote',
@@ -110,7 +87,6 @@ export function useVeIONVote(chain: number) {
         account: address as `0x${string}`
       });
 
-      console.log('Simulation successful:', simulatedCall);
       return true;
     } catch (error) {
       console.error('Simulation failed:', error);
@@ -118,7 +94,7 @@ export function useVeIONVote(chain: number) {
     }
   };
 
-  const submitVote = async (tokenId: number, voteParams: VoteParams) => {
+  async function handleVote(tokenId: number, voteParams: VoteParams) {
     if (!isConnected || !address) {
       throw new Error('Wallet not connected');
     }
@@ -134,15 +110,6 @@ export function useVeIONVote(chain: number) {
     }
 
     try {
-      console.log('Starting vote submission:', {
-        tokenId,
-        marketAddresses,
-        sides,
-        weights,
-        currentChain: chainId,
-        targetChain: chain
-      });
-
       // Validate chain
       const isSwitched = await handleSwitchOriginChain(chain, chainId);
       if (!isSwitched) throw new Error('Failed to switch chain');
@@ -152,22 +119,7 @@ export function useVeIONVote(chain: number) {
       // Simulate before actual transaction
       await simulateVote(tokenId, voteParams);
 
-      // Validate weights sum to 10000 (100%)
-      // const totalWeight = weights.reduce(
-      //   (sum, weight) => sum + Number(weight),
-      //   0
-      // );
-      // console.log('Total weight:', totalWeight);
-
-      // if (totalWeight !== 10000) {
-      //   throw new Error(
-      //     `Vote weights must sum to 100% (got ${totalWeight / 100}%)`
-      //   );
-      // }
-
       // Validate array lengths match
-      console.log('marketAddresses', marketAddresses);
-      console.log('sides', sides);
       if (
         marketAddresses.length !== sides.length ||
         sides.length !== weights.length
@@ -175,45 +127,45 @@ export function useVeIONVote(chain: number) {
         throw new Error('Mismatched array lengths');
       }
 
-      // Get current block for reference
-      const block = await publicClient.getBlock();
-      console.log('Current block:', {
-        number: block.number,
-        timestamp: block.timestamp
-      });
-
       await write(
         getContractConfig('vote', [tokenId, marketAddresses, sides, weights]),
         {
           successMessage: 'Successfully submitted votes',
-          errorMessage: 'Failed to submit votes',
-          onSuccess: () => {
-            console.log('Vote transaction succeeded');
-            setState((prev) => ({
-              ...prev,
-              isVoting: false,
-              pendingVotes: new Map()
-            }));
-          },
-          onError: (error) => {
-            console.error('Vote transaction failed:', error);
-            handleError(error as Error);
-          }
+          errorMessage: 'Failed to submit votes'
         }
       );
+
+      // Refetch data after successful vote
+      await Promise.all([votingPeriod.refetch?.(), baseMarketRows.refetch?.()]);
+
+      setState((prev) => ({
+        ...prev,
+        isVoting: false,
+        pendingVotes: new Map()
+      }));
 
       return true;
     } catch (error) {
       console.error('Vote submission failed:', error);
-      handleError(error as Error);
+      setState((prev) => ({
+        ...prev,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+        isVoting: false
+      }));
       return false;
     }
-  };
+  }
 
   return {
-    submitVote,
+    handleVote,
     simulateVote,
-    resetState,
+    resetState: () =>
+      setState({
+        isVoting: false,
+        error: null,
+        pendingVotes: new Map()
+      }),
     ...state
   };
 }
