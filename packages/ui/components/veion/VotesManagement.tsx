@@ -146,6 +146,10 @@ function VotesManagement({
           </TooltipWrapper>
         ),
         sortingFn: 'numerical',
+        accessorFn: (row) =>
+          row.side === MarketSide.Supply
+            ? row.apr.supplyAPRTotal
+            : row.apr.borrowAPRTotal,
         cell: ({ row }) => (
           <APR
             type={row.original.side === MarketSide.Supply ? 'supply' : 'borrow'}
@@ -176,6 +180,7 @@ function VotesManagement({
       },
       {
         id: 'incentives',
+        accessorFn: (row) => row.incentives.balanceUSD,
         header: (
           <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">
             <span>INCENTIVES</span>
@@ -191,6 +196,7 @@ function VotesManagement({
       },
       {
         id: 'veAPR',
+        accessorFn: (row) => row.veAPR,
         header: (
           <TooltipWrapper content="Current voting APR considering votes distribution as of this moment">
             <span>veAPR</span>
@@ -200,44 +206,46 @@ function VotesManagement({
         cell: ({ row }) => <span>{row.original.veAPR}</span>
       },
       {
-        id: 'totalVotes',
+        id: 'totalVotes.limit',
         header: (
           <TooltipWrapper content="Current votes distribution breakdown">
             <span>TOTAL VOTES</span>
           </TooltipWrapper>
         ),
+        accessorFn: (row) => row.totalVotes.limit,
         sortingFn: 'numerical',
         cell: ({ row }) => {
           const totalVotes = row.original.totalVotes;
           return (
             <div className="flex flex-col">
               <div className="text-xs font-semibold text-white/80">
-                {totalVotes.limit}
+                {totalVotes.limit.toFixed(2)}
               </div>
               <div className="text-xs font-semibold text-white/40">
-                {totalVotes.percentage}
+                {totalVotes.percentage.toFixed(2)}%
               </div>
             </div>
           );
         }
       },
       {
-        id: 'myVotes',
+        id: 'myVotes.value',
         header: (
           <TooltipWrapper content="Your vote distribution breakdown">
             <span>MY VOTES</span>
           </TooltipWrapper>
         ),
         sortingFn: 'numerical',
+        accessorFn: (row) => row.myVotes.value,
         cell: ({ row }) => {
           const myVotes = row.original.myVotes;
           return (
             <div className="flex flex-col">
               <div className="text-xs font-semibold text-white/80">
-                {myVotes.value}
+                {myVotes.value.toFixed(2)}
               </div>
               <div className="text-xs font-semibold text-white/40">
-                {myVotes.percentage}
+                {myVotes.percentage.toFixed(2)}%
               </div>
             </div>
           );

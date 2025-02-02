@@ -12,20 +12,19 @@ interface UseVoteDataParams {
 
 interface VoteData {
   totalVotes: {
-    percentage: string;
-    limit: string;
+    percentage: number; // Pure number for sorting
+    limit: number; // Pure number for sorting
   };
   myVotes: {
-    percentage: string;
-    value: string;
+    percentage: number; // Pure number for sorting
+    value: number; // Pure number for sorting
   };
 }
 
-const PERCENTAGE_DECIMALS = 2;
 const BASIS_POINTS = 10000n;
 const TOKEN_DECIMALS = 18;
 const DECIMALS_SCALAR = BigInt(10 ** TOKEN_DECIMALS);
-const MULTICALL_CHUNK_SIZE = 2; // Number of markets to process in each multicall
+const MULTICALL_CHUNK_SIZE = 2;
 
 export function useVoteData({
   tokenId,
@@ -40,11 +39,10 @@ export function useVoteData({
 
   const voterContract = getVoterContract(chain);
 
-  const formatValue = (value: bigint): string => {
-    return ((value * BASIS_POINTS) / DECIMALS_SCALAR).toString();
+  const formatValue = (value: bigint): number => {
+    return Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
   };
 
-  // Helper to chunk array into smaller pieces
   const chunkArray = <T>(array: T[], size: number): T[][] => {
     const chunks: T[][] = [];
     for (let i = 0; i < array.length; i += size) {
@@ -82,7 +80,6 @@ export function useVoteData({
         const marketsChunk = marketChunks[i];
         const sidesChunk = sideChunks[i];
 
-        // Create multicall for this chunk
         const weightCalls = marketsChunk.flatMap((market, index) =>
           lpTokens.map((lpToken) => ({
             ...voterContract,
@@ -101,7 +98,6 @@ export function useVoteData({
             )
           : [];
 
-        // Execute multicalls for this chunk
         const [weights, votes] = await Promise.all([
           publicClient.multicall({
             contracts: weightCalls,
@@ -147,29 +143,26 @@ export function useVoteData({
         });
       }
 
-      // Format final data
+      // Format final data with pure numbers
       const newVoteData = Object.entries(marketData).reduce(
         (acc, [key, { totalWeight, userVotes }]) => {
+          const totalWeightNumber = formatValue(totalWeight);
+          const userVotesNumber = formatValue(userVotes);
+
           acc[key] = {
             totalVotes: {
               percentage:
                 totalSystemWeight > 0n
-                  ? (
-                      (Number(totalWeight) / Number(totalSystemWeight)) *
-                      100
-                    ).toFixed(PERCENTAGE_DECIMALS) + '%'
-                  : '0.00%',
-              limit: formatValue(totalWeight)
+                  ? (Number(totalWeight) / Number(totalSystemWeight)) * 100
+                  : 0,
+              limit: totalWeightNumber
             },
             myVotes: {
-              value: formatValue(userVotes),
+              value: userVotesNumber,
               percentage:
                 totalUserWeight > 0n
-                  ? (
-                      (Number(userVotes) / Number(totalUserWeight)) *
-                      100
-                    ).toFixed(PERCENTAGE_DECIMALS) + '%'
-                  : '0.00%'
+                  ? (Number(userVotes) / Number(totalUserWeight)) * 100
+                  : 0
             }
           };
           return acc;

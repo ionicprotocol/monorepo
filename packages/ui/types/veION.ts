@@ -240,15 +240,15 @@ export type VoteMarketRow = {
       tokenAmountUSD: number;
     }[];
   };
-  veAPR: string;
   totalVotes: {
-    percentage: string;
-    limit: string;
+    percentage: number;
+    limit: number;
   };
   myVotes: {
-    percentage: string;
-    value: string;
+    percentage: number;
+    value: number;
   };
+  veAPR: number;
   voteValue: string;
   apr: {
     supplyAPR?: number;

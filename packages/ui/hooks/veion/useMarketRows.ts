@@ -156,14 +156,14 @@ export const useMarketRows = (
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalSupplyFiat.toFixed(2),
           incentives: mockIncentives,
-          veAPR: (0).toFixed(2) + '%',
+          veAPR: 0,
           totalVotes: voteData[key]?.totalVotes ?? {
-            percentage: '0.00%',
-            limit: '0'
+            percentage: 0,
+            limit: 0
           },
           myVotes: voteData[key]?.myVotes ?? {
-            percentage: '0.00%',
-            value: '0'
+            percentage: 0,
+            value: 0
           },
           voteValue: '',
           apr: {
@@ -206,14 +206,14 @@ export const useMarketRows = (
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalBorrowFiat.toFixed(2),
           incentives: mockIncentives,
-          veAPR: (0).toFixed(2) + '%',
+          veAPR: 0, // Changed from string to number
           totalVotes: voteData[key]?.totalVotes ?? {
-            percentage: '0.00%',
-            limit: '0'
+            percentage: 0,
+            limit: 0
           },
           myVotes: voteData[key]?.myVotes ?? {
-            percentage: '0.00%',
-            value: '0'
+            percentage: 0,
+            value: 0
           },
           voteValue: '',
           apr: {
@@ -248,7 +248,6 @@ export const useMarketRows = (
 
       return [...rows, ...newRows];
     }, []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chain,
     selectedPool,
