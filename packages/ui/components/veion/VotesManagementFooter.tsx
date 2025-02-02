@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { InfoIcon } from 'lucide-react';
 import { Card } from '@ui/components/ui/card';
 import { useMarketData } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
@@ -70,21 +70,21 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
     <>
       <Card className="fixed bottom-4 left-4 right-4 p-4 bg-[#35363D] border-t border-white/10 z-10">
         <div className="flex flex-col w-full">
-          {submitError && (
-            <div className="mb-4 text-sm text-red-500">{submitError}</div>
-          )}
-          {totalVotes > 0 && totalVotes < 100 && (
-            <div className="mb-4 text-sm text-yellow-500">
-              Total votes must equal 100% (currently {totalVotes.toFixed(2)}%)
-            </div>
-          )}
-          <div className="flex justify-between items-center w-full">
-            {votingPeriod.hasVoted && (
-              <div className="text-sm text-yellow-500">
-                Already voted this epoch
+          <div className="flex justify-between items-center w-full ">
+            <div className="space-y-2">
+              {submitError && (
+                <div className="text-sm text-red-500">{submitError}</div>
+              )}
+              <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
+                <InfoIcon className="h-5 w-5 flex-shrink-0" />
+                <span>
+                  You can vote once per epoch and votes are final. Your voting
+                  power (100%) must be fully allocated across your chosen
+                  positions.
+                </span>
               </div>
-            )}
-            <div className="flex items-center gap-4 ml-auto">
+            </div>
+            <div className="flex items-center gap-4">
               <button
                 onClick={handleFullReset}
                 className="px-4 py-2 text-sm text-white/60 hover:text-white/80 transition-colors border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
