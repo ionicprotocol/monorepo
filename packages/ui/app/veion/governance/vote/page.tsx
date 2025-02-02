@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-
 import { ArrowLeft } from 'lucide-react';
 
 import { Badge } from '@ui/components/ui/badge';
@@ -26,62 +24,82 @@ import { VotesProvider } from '@ui/context/VotesContext';
 
 const Vote = () => {
   const searchParams = useSearchParams();
-  const { locks } = useVeIONContext();
+  const { locks, selectedManagePosition, setSelectedManagePosition } =
+    useVeIONContext();
+
   const initialId = searchParams.get('id');
 
-  const [showPendingOnly, setShowPendingOnly] = useState(false);
+  // Set initial position when component mounts or when locks/initialId changes
+  console.log('locks.myLocks', locks.myLocks);
+  useEffect(() => {
+    if (!selectedManagePosition && locks.myLocks.length > 0) {
+      const position = initialId
+        ? locks.myLocks.find((lock) => lock.id === initialId)
+        : locks.myLocks[0];
 
-  const selectedData = useMemo(() => {
-    if (!initialId) return locks.myLocks[0];
-    return (
-      locks.myLocks.find((lock) => lock.id === initialId) || locks.myLocks[0]
-    );
-  }, [initialId, locks.myLocks]);
+      if (position) {
+        setSelectedManagePosition(position);
+      }
+    }
+  }, [
+    initialId,
+    locks.myLocks,
+    selectedManagePosition,
+    setSelectedManagePosition
+  ]);
 
-  const infoBlocksData = useMemo(() => {
-    if (!selectedData) return [];
+  const infoBlocksData = React.useMemo(() => {
+    if (!selectedManagePosition) return [];
 
     return [
       {
         label: 'Tokens Locked',
-        value: selectedData.tokensLocked,
+        value: selectedManagePosition.tokensLocked,
         icon: null,
-        infoContent: `This is the amount of #${selectedData.id} veION you have locked.`
+        infoContent: `This is the amount of #${selectedManagePosition.id} veION you have locked.`
       },
       {
         label: 'Locked Until',
-        value: selectedData.lockExpires.isPermanent ? (
+        value: selectedManagePosition.lockExpires.isPermanent ? (
           <Badge className="text-xs font-medium">Permanent</Badge>
         ) : (
-          selectedData.lockExpires.date
+          selectedManagePosition.lockExpires.date
         ),
-        secondaryValue: !selectedData.lockExpires.isPermanent
-          ? selectedData.lockExpires.timeLeft
+        secondaryValue: !selectedManagePosition.lockExpires.isPermanent
+          ? selectedManagePosition.lockExpires.timeLeft
           : undefined,
         icon: null,
-        infoContent: `This is the date until your #${selectedData.id} veION is locked.`
+        infoContent: `This is the date until your #${selectedManagePosition.id} veION is locked.`
       },
       {
         label: 'My Total Voting power',
-        value: selectedData.votingPower.toString(),
+        value: selectedManagePosition.votingPower.toString(),
         icon: '/img/logo/ion.svg',
         infoContent: 'This is your current voting power.'
       }
     ];
-  }, [selectedData]);
+  }, [selectedManagePosition]);
 
   if (locks.isLoading) {
     return (
       <div className="w-full flex justify-center items-center h-48">
-        Loading...
+        Loading positions...
       </div>
     );
   }
 
-  if (!selectedData) {
+  if (!selectedManagePosition && locks.myLocks.length === 0) {
     return (
       <div className="w-full flex justify-center items-center h-48">
         No locks found
+      </div>
+    );
+  }
+
+  if (!selectedManagePosition) {
+    return (
+      <div className="w-full flex justify-center items-center h-48">
+        Loading position details...
       </div>
     );
   }
@@ -98,8 +116,8 @@ const Vote = () => {
               <ArrowLeft className="w-5 h-5 text-white/80" />
             </Link>
             <PositionTitle
-              chainId={selectedData.chainId}
-              position={selectedData.id}
+              chainId={selectedManagePosition.chainId}
+              position={selectedManagePosition.id}
               size="lg"
             />
           </div>
@@ -116,24 +134,23 @@ const Vote = () => {
         </CardContent>
       </Card>
 
-      <VotingManagementWrapper tokenId={+selectedData.id} />
+      <VotingManagementWrapper tokenId={+selectedManagePosition.id} />
     </div>
   );
 };
 
 const VotingManagementWrapper = ({ tokenId }: { tokenId: number }) => {
-  const [showPendingOnly, setShowPendingOnly] = useState(false);
+  const [showPendingOnly, setShowPendingOnly] = React.useState(false);
   const { votingPeriod, isLoading } = useMarketData();
 
   if (isLoading) {
     return (
       <div className="w-full flex justify-center items-center h-48">
-        Loading...
+        Loading voting data...
       </div>
     );
   }
 
-  // Only show the toggle if there's an active voting period
   const showToggle =
     votingPeriod && !votingPeriod.hasVoted && votingPeriod.nextVotingDate;
 
