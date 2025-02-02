@@ -66,7 +66,9 @@ function VotesManagement({
 }: VotesManagementTableProps) {
   const { currentChain } = useVeIONContext();
   const { marketRows, isLoading, error } = useVoteTableData();
+  console.log('marketRows', marketRows);
   const { votes } = useVotes();
+  console.log('votes', votes);
   const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
   const searchParams = useSearchParams();
@@ -212,9 +214,9 @@ function VotesManagement({
               <div className="text-xs font-semibold text-white/80">
                 {totalVotes.limit}
               </div>
-              {/* <div className="text-xs font-semibold text-white/40">
-                {totalVotes.limit}
-              </div> */}
+              <div className="text-xs font-semibold text-white/40">
+                {totalVotes.percentage}
+              </div>
             </div>
           );
         }

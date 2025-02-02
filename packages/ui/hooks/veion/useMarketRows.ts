@@ -112,6 +112,7 @@ export const useMarketRows = (
     marketAddresses,
     marketSides
   });
+  console.log('voteData', voteData);
 
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
@@ -248,7 +249,15 @@ export const useMarketRows = (
       return [...rows, ...newRows];
     }, []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain, selectedPool, supplyRates, borrowRates, rewards, merklApr]);
+  }, [
+    chain,
+    selectedPool,
+    supplyRates,
+    borrowRates,
+    rewards,
+    merklApr,
+    voteData
+  ]);
 
   useEffect(() => {
     if (

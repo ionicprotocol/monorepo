@@ -25,6 +25,7 @@ const PERCENTAGE_DECIMALS = 2;
 const BASIS_POINTS = 10000n;
 const TOKEN_DECIMALS = 18;
 const DECIMALS_SCALAR = BigInt(10 ** TOKEN_DECIMALS);
+const MULTICALL_CHUNK_SIZE = 2; // Number of markets to process in each multicall
 
 export function useVoteData({
   tokenId,
@@ -39,28 +40,17 @@ export function useVoteData({
 
   const voterContract = getVoterContract(chain);
 
-  const calculateTotalVotesPercentage = (value: bigint): string => {
-    // Calculate total votes as percentage of total basis points (10000)
-    const normalizedValue = (value * BASIS_POINTS) / DECIMALS_SCALAR;
-    const percentage = Number(normalizedValue) / 100;
-    return percentage.toFixed(PERCENTAGE_DECIMALS) + '%';
-  };
-
-  const calculateMyVotesPercentage = (
-    myVotes: bigint,
-    totalVotes: bigint
-  ): string => {
-    // If total votes is 0, return 0%
-    if (totalVotes === 0n) return '0.00%';
-
-    // Calculate my votes as percentage of total votes
-    const percentage = (Number(myVotes) / Number(totalVotes)) * 100;
-    return percentage.toFixed(PERCENTAGE_DECIMALS) + '%';
-  };
-
   const formatValue = (value: bigint): string => {
-    // Format the raw value normalized to basis points scale
     return ((value * BASIS_POINTS) / DECIMALS_SCALAR).toString();
+  };
+
+  // Helper to chunk array into smaller pieces
+  const chunkArray = <T>(array: T[], size: number): T[][] => {
+    const chunks: T[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunks.push(array.slice(i, i + size));
+    }
+    return chunks;
   };
 
   const fetchVoteData = useCallback(async () => {
@@ -78,65 +68,110 @@ export function useVoteData({
         functionName: 'getAllLpRewardTokens'
       });
 
-      console.log('LP tokens:', lpTokens);
+      const marketChunks = chunkArray(marketAddresses, MULTICALL_CHUNK_SIZE);
+      const sideChunks = chunkArray(marketSides, MULTICALL_CHUNK_SIZE);
 
-      const votePromises = marketAddresses.map(async (market, index) => {
-        const side = marketSides[index];
+      const marketData: {
+        [key: string]: { totalWeight: bigint; userVotes: bigint };
+      } = {};
+      let totalSystemWeight = 0n;
+      let totalUserWeight = 0n;
 
-        const totalWeightPromises = lpTokens.map((lpToken) =>
-          publicClient.readContract({
+      // Process each chunk of markets
+      for (let i = 0; i < marketChunks.length; i++) {
+        const marketsChunk = marketChunks[i];
+        const sidesChunk = sideChunks[i];
+
+        // Create multicall for this chunk
+        const weightCalls = marketsChunk.flatMap((market, index) =>
+          lpTokens.map((lpToken) => ({
             ...voterContract,
             functionName: 'weights',
-            args: [market, side, lpToken]
-          })
+            args: [market, sidesChunk[index], lpToken]
+          }))
         );
 
-        const weights = await Promise.all(totalWeightPromises);
-        const totalWeight = weights.reduce((sum, w) => sum + w, BigInt(0));
+        const voteCalls = tokenId
+          ? marketsChunk.flatMap((market, index) =>
+              lpTokens.map((lpToken) => ({
+                ...voterContract,
+                functionName: 'votes',
+                args: [BigInt(tokenId), market, sidesChunk[index], lpToken]
+              }))
+            )
+          : [];
 
-        let userVotes = BigInt(0);
-        if (tokenId) {
-          const userVotePromises = lpTokens.map((lpToken) =>
-            publicClient.readContract({
-              ...voterContract,
-              functionName: 'votes',
-              args: [BigInt(tokenId), market, side, lpToken]
-            })
+        // Execute multicalls for this chunk
+        const [weights, votes] = await Promise.all([
+          publicClient.multicall({
+            contracts: weightCalls,
+            allowFailure: true
+          }),
+          tokenId
+            ? publicClient.multicall({
+                contracts: voteCalls,
+                allowFailure: true
+              })
+            : Promise.resolve([])
+        ]);
+
+        // Process results for this chunk
+        marketsChunk.forEach((market, marketIndex) => {
+          const lpStart = marketIndex * lpTokens.length;
+          const lpEnd = lpStart + lpTokens.length;
+
+          const marketWeights = weights
+            .slice(lpStart, lpEnd)
+            .map((w) => (w.status === 'success' ? w.result : 0n) as bigint);
+          const marketTotalWeight = marketWeights.reduce(
+            (sum, w) => sum + w,
+            0n
           );
-          const votes = await Promise.all(userVotePromises);
-          userVotes = votes.reduce((sum, v) => sum + v, BigInt(0));
-        }
 
-        const formattedTotalWeight = formatValue(totalWeight);
-        const formattedUserVotes = formatValue(userVotes);
+          const marketUserVotes = tokenId
+            ? votes
+                .slice(lpStart, lpEnd)
+                .map((v) => (v.status === 'success' ? v.result : 0n) as bigint)
+                .reduce((sum, v) => sum + v, 0n)
+            : 0n;
 
-        console.log('Vote results for market', market, {
-          totalWeight: formattedTotalWeight,
-          userVotes: formattedUserVotes,
-          myVotesPercentage: calculateMyVotesPercentage(userVotes, totalWeight)
+          const key = `${market}-${sidesChunk[marketIndex] === MarketSide.Supply ? 'supply' : 'borrow'}`;
+
+          marketData[key] = {
+            totalWeight: marketTotalWeight,
+            userVotes: marketUserVotes
+          };
+
+          totalSystemWeight += marketTotalWeight;
+          totalUserWeight += marketUserVotes;
         });
+      }
 
-        const key = `${market}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
-
-        return {
-          key,
-          data: {
+      // Format final data
+      const newVoteData = Object.entries(marketData).reduce(
+        (acc, [key, { totalWeight, userVotes }]) => {
+          acc[key] = {
             totalVotes: {
-              percentage: calculateTotalVotesPercentage(totalWeight),
-              limit: formattedTotalWeight
+              percentage:
+                totalSystemWeight > 0n
+                  ? (
+                      (Number(totalWeight) / Number(totalSystemWeight)) *
+                      100
+                    ).toFixed(PERCENTAGE_DECIMALS) + '%'
+                  : '0.00%',
+              limit: formatValue(totalWeight)
             },
             myVotes: {
-              percentage: calculateMyVotesPercentage(userVotes, totalWeight),
-              value: formattedUserVotes
+              value: formatValue(userVotes),
+              percentage:
+                totalUserWeight > 0n
+                  ? (
+                      (Number(userVotes) / Number(totalUserWeight)) *
+                      100
+                    ).toFixed(PERCENTAGE_DECIMALS) + '%'
+                  : '0.00%'
             }
-          }
-        };
-      });
-
-      const results = await Promise.all(votePromises);
-      const newVoteData = results.reduce(
-        (acc, { key, data }) => {
-          acc[key] = data;
+          };
           return acc;
         },
         {} as Record<string, VoteData>
