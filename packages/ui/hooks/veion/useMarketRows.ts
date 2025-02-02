@@ -54,7 +54,6 @@ export const useMarketRows = (
   }, []);
 
   const [baseMarketRows, setBaseMarketRows] = useState<VoteMarketRow[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
@@ -112,7 +111,6 @@ export const useMarketRows = (
     marketAddresses,
     marketSides
   });
-  console.log('voteData', voteData);
 
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
@@ -276,8 +274,6 @@ export const useMarketRows = (
         setError(
           err instanceof Error ? err : new Error('Failed to initialize markets')
         );
-      } finally {
-        setIsLoading(false);
       }
     }
   }, [

@@ -102,28 +102,6 @@ export function useVeIONVote(chain: number) {
     });
 
     try {
-      // Check if NFT is whitelisted
-      // const isWhitelisted = await publicClient.readContract({
-      //   ...voterContract,
-      //   functionName: 'isWhitelistedNFT',
-      //   args: [BigInt(tokenId)]
-      // });
-
-      // console.log('NFT whitelist status:', { tokenId, isWhitelisted });
-
-      // if (!isWhitelisted) {
-      //   throw new Error('NFT is not whitelisted');
-      // }
-
-      // Check if already voted in this epoch
-      const lastVoted = await publicClient.readContract({
-        ...voterContract,
-        functionName: 'lastVoted',
-        args: [BigInt(tokenId)]
-      });
-
-      console.log('Last voted timestamp:', { tokenId, lastVoted });
-
       // Simulate the transaction
       const simulatedCall = await publicClient.simulateContract({
         ...voterContract,

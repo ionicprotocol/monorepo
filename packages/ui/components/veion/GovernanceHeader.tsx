@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -21,50 +19,23 @@ import {
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
 
-const GovernanceHeader = ({ view = 'MyVeion' }) => {
+const GovernanceHeader = ({
+  view = 'MyVeion',
+  chain
+}: {
+  view?: string;
+  chain: string;
+}) => {
   const { balances, prices, emissions } = useVeIONContext();
   const { ion: ionBalance, veIon: veIonBalance } = balances;
   const { veIonBalanceUsd, ionBalanceUsd } = prices;
 
-  const votingPeriodEndDate = new Date('2025-02-12');
-  const [timeRemaining, setTimeRemaining] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-
-  useEffect(() => {
-    const calculateTimeRemaining = () => {
-      const now = new Date();
-      const difference = votingPeriodEndDate.getTime() - now.getTime();
-
-      if (difference <= 0) {
-        setTimeRemaining({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTimeRemaining({ days, hours, minutes, seconds });
-    };
-
-    calculateTimeRemaining();
-    const interval = setInterval(calculateTimeRemaining, 1000);
-
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { timeRemaining } = useVotingPeriod(chain);
+  const { days, hours, minutes, seconds } = timeRemaining;
 
   const formatTimeDisplay = () => {
-    const { days, hours, minutes, seconds } = timeRemaining;
-
     if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
       return (
         <div className="inline-block min-w-[200px] text-right">

@@ -9,7 +9,7 @@ import React, {
 
 import { MarketSide } from '@ui/types/veION';
 
-import { useMarketData, MarketDataProvider } from './MarketDataContext';
+import { useMarketData } from './MarketDataContext';
 
 type VotesContextType = {
   votes: Record<string, string>;
@@ -122,16 +122,4 @@ export const useVoteTableData = () => {
   }, [baseMarketRows, votes, isLoading, error]);
 
   return { marketRows, isLoading, error };
-};
-
-// EmissionsProvider.tsx
-export const EmissionsProvider: React.FC<{
-  children: React.ReactNode;
-  tokenId?: number;
-}> = ({ children, tokenId }) => {
-  return (
-    <MarketDataProvider tokenId={tokenId}>
-      <VotesProvider>{children}</VotesProvider>
-    </MarketDataProvider>
-  );
 };

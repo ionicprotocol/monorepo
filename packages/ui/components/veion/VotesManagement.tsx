@@ -24,8 +24,9 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
+import { useMarketData } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useVoteTableData, useVotes } from '@ui/context/VotesContext';
+import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
@@ -65,10 +66,12 @@ function VotesManagement({
   showPendingOnly
 }: VotesManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { marketRows, isLoading, error } = useVoteTableData();
-  console.log('marketRows', marketRows);
+  const {
+    baseMarketRows: marketRows,
+    isLoading,
+    votingPeriod
+  } = useMarketData();
   const { votes } = useVotes();
-  console.log('votes', votes);
   const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
   const searchParams = useSearchParams();
@@ -104,154 +107,175 @@ function VotesManagement({
     });
   }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter, votes]);
 
-  const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(
-    () => [
-      {
-        id: 'asset',
-        header: 'ASSET',
-        sortingFn: 'alphabetical',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Image
-              src={`/img/symbols/32/color/${row.original.asset.toLowerCase()}.png`}
-              alt={row.original.asset}
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-white/80">
-                  {row.original.asset}
-                </span>
-                <CopyButton
-                  value={row.original.underlyingToken}
-                  message={`${row.original.asset} token address copied to clipboard`}
-                  tooltipMessage="Copy token address"
-                />
-              </div>
-              <span className="text-xs text-white/60">
-                {row.original.side === MarketSide.Supply ? 'Supply' : 'Borrow'}:{' '}
-                {row.original.currentAmount}
+  const votingWarning = useMemo(() => {
+    if (votingPeriod.hasVoted && votingPeriod.nextVotingDate) {
+      return (
+        <div className="w-full p-4 mb-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <p className="text-yellow-500 text-sm">
+            You have already voted this epoch. Votes can only be submitted once
+            per epoch. Next voting period starts{' '}
+            {votingPeriod.nextVotingDate.toLocaleDateString()} at{' '}
+            {votingPeriod.nextVotingDate.toLocaleTimeString()}.
+          </p>
+        </div>
+      );
+    }
+    return null;
+  }, [votingPeriod.hasVoted, votingPeriod.nextVotingDate]);
+
+  const baseColumns: EnhancedColumnDef<VoteMarketRow>[] = [
+    {
+      id: 'asset',
+      header: 'ASSET',
+      sortingFn: 'alphabetical',
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Image
+            src={`/img/symbols/32/color/${row.original.asset.toLowerCase()}.png`}
+            alt={row.original.asset}
+            width={24}
+            height={24}
+            className="rounded-full"
+          />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-white/80">
+                {row.original.asset}
               </span>
+              <CopyButton
+                value={row.original.underlyingToken}
+                message={`${row.original.asset} token address copied to clipboard`}
+                tooltipMessage="Copy token address"
+              />
+            </div>
+            <span className="text-xs text-white/60">
+              {row.original.side === MarketSide.Supply ? 'Supply' : 'Borrow'}:{' '}
+              {row.original.currentAmount}
+            </span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'aprTotal',
+      header: (
+        <TooltipWrapper content="Current market APR including underlying asset APR">
+          <span>CURRENT APR</span>
+        </TooltipWrapper>
+      ),
+      sortingFn: 'numerical',
+      accessorFn: (row) =>
+        row.side === MarketSide.Supply
+          ? row.apr.supplyAPRTotal
+          : row.apr.borrowAPRTotal,
+      cell: ({ row }) => (
+        <APR
+          type={row.original.side === MarketSide.Supply ? 'supply' : 'borrow'}
+          baseAPR={
+            (row.original.side === MarketSide.Supply
+              ? row.original.apr.supplyAPR
+              : row.original.apr.borrowAPR) ?? 0
+          }
+          asset={row.original.asset}
+          rewards={
+            row.original.side === MarketSide.Supply
+              ? row.original.apr.supplyRewards
+              : row.original.apr.borrowRewards
+          }
+          dropdownSelectedChain={+chain}
+          selectedPoolId={selectedPool}
+          cToken={row.original.apr.cTokenAddress}
+          pool={row.original.apr.comptrollerAddress}
+          nativeAssetYield={row.original.apr.nativeAssetYield}
+          underlyingToken={row.original.underlyingToken}
+          aprTotal={
+            row.original.side === MarketSide.Supply
+              ? row.original.apr.supplyAPRTotal
+              : row.original.apr.borrowAPRTotal
+          }
+        />
+      )
+    },
+    {
+      id: 'incentives',
+      accessorFn: (row) => row.incentives.balanceUSD,
+      header: (
+        <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">
+          <span>INCENTIVES</span>
+        </TooltipWrapper>
+      ),
+      sortingFn: 'numerical',
+      cell: ({ row }) => (
+        <BalanceBreakdown
+          balanceUSD={row.original.incentives.balanceUSD}
+          tokens={row.original.incentives.tokens}
+        />
+      )
+    },
+    {
+      id: 'veAPR',
+      accessorFn: (row) => row.veAPR,
+      header: (
+        <TooltipWrapper content="Current voting APR considering votes distribution as of this moment">
+          <span>veAPR</span>
+        </TooltipWrapper>
+      ),
+      sortingFn: 'numerical',
+      cell: ({ row }) => <span>{row.original.veAPR}</span>
+    },
+    {
+      id: 'totalVotes.limit',
+      header: (
+        <TooltipWrapper content="Current votes distribution breakdown">
+          <span>TOTAL VOTES</span>
+        </TooltipWrapper>
+      ),
+      accessorFn: (row) => row.totalVotes.limit,
+      sortingFn: 'numerical',
+      cell: ({ row }) => {
+        const totalVotes = row.original.totalVotes;
+        return (
+          <div className="flex flex-col">
+            <div className="text-xs font-semibold text-white/80">
+              {totalVotes.limit.toFixed(2)}
+            </div>
+            <div className="text-xs font-semibold text-white/40">
+              {totalVotes.percentage.toFixed(2)}%
             </div>
           </div>
-        )
-      },
-      {
-        id: 'aprTotal',
-        header: (
-          <TooltipWrapper content="Current market APR including underlying asset APR">
-            <span>CURRENT APR</span>
-          </TooltipWrapper>
-        ),
-        sortingFn: 'numerical',
-        accessorFn: (row) =>
-          row.side === MarketSide.Supply
-            ? row.apr.supplyAPRTotal
-            : row.apr.borrowAPRTotal,
-        cell: ({ row }) => (
-          <APR
-            type={row.original.side === MarketSide.Supply ? 'supply' : 'borrow'}
-            baseAPR={
-              (row.original.side === MarketSide.Supply
-                ? row.original.apr.supplyAPR
-                : row.original.apr.borrowAPR) ?? 0
-            }
-            asset={row.original.asset}
-            rewards={
-              row.original.side === MarketSide.Supply
-                ? row.original.apr.supplyRewards
-                : row.original.apr.borrowRewards
-            }
-            dropdownSelectedChain={+chain}
-            selectedPoolId={selectedPool}
-            cToken={row.original.apr.cTokenAddress}
-            pool={row.original.apr.comptrollerAddress}
-            nativeAssetYield={row.original.apr.nativeAssetYield}
-            underlyingToken={row.original.underlyingToken}
-            aprTotal={
-              row.original.side === MarketSide.Supply
-                ? row.original.apr.supplyAPRTotal
-                : row.original.apr.borrowAPRTotal
-            }
-          />
-        )
-      },
-      {
-        id: 'incentives',
-        accessorFn: (row) => row.incentives.balanceUSD,
-        header: (
-          <TooltipWrapper content="Vote incentives allocated for the voter to the specific market and side">
-            <span>INCENTIVES</span>
-          </TooltipWrapper>
-        ),
-        sortingFn: 'numerical',
-        cell: ({ row }) => (
-          <BalanceBreakdown
-            balanceUSD={row.original.incentives.balanceUSD}
-            tokens={row.original.incentives.tokens}
-          />
-        )
-      },
-      {
-        id: 'veAPR',
-        accessorFn: (row) => row.veAPR,
-        header: (
-          <TooltipWrapper content="Current voting APR considering votes distribution as of this moment">
-            <span>veAPR</span>
-          </TooltipWrapper>
-        ),
-        sortingFn: 'numerical',
-        cell: ({ row }) => <span>{row.original.veAPR}</span>
-      },
-      {
-        id: 'totalVotes.limit',
-        header: (
-          <TooltipWrapper content="Current votes distribution breakdown">
-            <span>TOTAL VOTES</span>
-          </TooltipWrapper>
-        ),
-        accessorFn: (row) => row.totalVotes.limit,
-        sortingFn: 'numerical',
-        cell: ({ row }) => {
-          const totalVotes = row.original.totalVotes;
-          return (
-            <div className="flex flex-col">
-              <div className="text-xs font-semibold text-white/80">
-                {totalVotes.limit.toFixed(2)}
-              </div>
-              <div className="text-xs font-semibold text-white/40">
-                {totalVotes.percentage.toFixed(2)}%
-              </div>
+        );
+      }
+    },
+    {
+      id: 'myVotes.value',
+      header: (
+        <TooltipWrapper content="Your vote distribution breakdown">
+          <span>MY VOTES</span>
+        </TooltipWrapper>
+      ),
+      sortingFn: 'numerical',
+      accessorFn: (row) => row.myVotes.value,
+      cell: ({ row }) => {
+        const myVotes = row.original.myVotes;
+        return (
+          <div className="flex flex-col">
+            <div className="text-xs font-semibold text-white/80">
+              {myVotes.value.toFixed(2)}
             </div>
-          );
-        }
-      },
-      {
-        id: 'myVotes.value',
-        header: (
-          <TooltipWrapper content="Your vote distribution breakdown">
-            <span>MY VOTES</span>
-          </TooltipWrapper>
-        ),
-        sortingFn: 'numerical',
-        accessorFn: (row) => row.myVotes.value,
-        cell: ({ row }) => {
-          const myVotes = row.original.myVotes;
-          return (
-            <div className="flex flex-col">
-              <div className="text-xs font-semibold text-white/80">
-                {myVotes.value.toFixed(2)}
-              </div>
-              <div className="text-xs font-semibold text-white/40">
-                {myVotes.percentage.toFixed(2)}%
-              </div>
+            <div className="text-xs font-semibold text-white/40">
+              {myVotes.percentage.toFixed(2)}%
             </div>
-          );
-        }
-      },
-      {
+          </div>
+        );
+      }
+    }
+  ];
+
+  const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(() => {
+    const columnsWithOptionalVoting = [...baseColumns];
+
+    if (!votingPeriod.hasVoted) {
+      columnsWithOptionalVoting.push({
         id: 'vote',
         header: 'VOTE (%)',
         cell: ({ row }) => (
@@ -261,20 +285,16 @@ function VotesManagement({
             isDisabled={isVoting}
           />
         )
-      }
-    ],
-    [chain, isVoting, selectedPool]
-  );
+      });
+    }
 
-  const voteSum = useMemo(() => {
-    return Object.values(votes).reduce((sum, value) => {
-      const numValue = parseFloat(value);
-      return isNaN(numValue) ? sum : sum + numValue;
-    }, 0);
-  }, [votes]);
+    return columnsWithOptionalVoting;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [votingPeriod.hasVoted, isVoting]);
 
   return (
     <div className="relative pb-12">
+      {votingWarning}
       <div className="w-full flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
           <PoolToggle
@@ -314,7 +334,7 @@ function VotesManagement({
         isLoading={isLoading}
       />
 
-      <VotesManagementFooter tokenId={tokenId} />
+      {!votingPeriod.hasVoted && <VotesManagementFooter tokenId={tokenId} />}
     </div>
   );
 }

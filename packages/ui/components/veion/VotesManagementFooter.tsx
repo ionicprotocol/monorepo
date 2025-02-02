@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { Card } from '@ui/components/ui/card';
+import { useMarketData } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useVotes, useVoteTableData } from '@ui/context/VotesContext';
+import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import { MarketSide } from '@ui/types/veION';
 
@@ -14,19 +15,18 @@ interface VotesManagementFooterProps {
 
 function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const { currentChain } = useVeIONContext();
-  const { votes, resetVotes } = useVotes();
-  const { marketRows } = useVoteTableData();
+  const { votes, resetVotes, totalVotes } = useVotes();
+  const { baseMarketRows: marketRows, votingPeriod } = useMarketData();
   const { isVoting } = useVeIONVote(currentChain);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const hasVotes = Object.keys(votes).length > 0;
-
-  // Calculate vote sum
-  const voteSum = Object.values(votes).reduce((sum, value) => {
-    const numValue = parseFloat(value);
-    return isNaN(numValue) ? sum : sum + numValue;
-  }, 0);
+  const isVoteEnabled =
+    hasVotes &&
+    !isVoting &&
+    !votingPeriod.hasVoted &&
+    Math.abs(totalVotes - 100) < 0.01;
 
   const voteData = marketRows.reduce(
     (acc, row) => {
@@ -59,10 +59,10 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
 
   const handleVoteClick = () => {
     setSubmitError(null);
-    if (voteSum <= 100) {
-      setShowConfirmation(true);
+    if (Math.abs(totalVotes - 100) > 0.01) {
+      setSubmitError('Total votes must equal exactly 100%');
     } else {
-      setSubmitError('Total votes cannot exceed 100%');
+      setShowConfirmation(true);
     }
   };
 
@@ -73,8 +73,18 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
           {submitError && (
             <div className="mb-4 text-sm text-red-500">{submitError}</div>
           )}
-          <div className="flex justify-end w-full">
-            <div className="flex items-center gap-4">
+          {totalVotes > 0 && totalVotes < 100 && (
+            <div className="mb-4 text-sm text-yellow-500">
+              Total votes must equal 100% (currently {totalVotes.toFixed(2)}%)
+            </div>
+          )}
+          <div className="flex justify-between items-center w-full">
+            {votingPeriod.hasVoted && (
+              <div className="text-sm text-yellow-500">
+                Already voted this epoch
+              </div>
+            )}
+            <div className="flex items-center gap-4 ml-auto">
               <button
                 onClick={handleFullReset}
                 className="px-4 py-2 text-sm text-white/60 hover:text-white/80 transition-colors border border-white/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
@@ -85,11 +95,11 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
 
               <button
                 onClick={handleVoteClick}
-                disabled={!hasVotes || isVoting}
+                disabled={!isVoteEnabled}
                 className={`
                   px-4 py-2 text-sm 
                   ${
-                    hasVotes && !isVoting
+                    isVoteEnabled
                       ? 'bg-green-500 hover:bg-green-600'
                       : 'bg-green-500/50 cursor-not-allowed'
                   }
@@ -102,7 +112,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
                     Voting...
                   </div>
                 ) : (
-                  `Vote (${voteSum.toFixed(2)}%)`
+                  `Vote (${totalVotes.toFixed(2)}%)`
                 )}
               </button>
             </div>

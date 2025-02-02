@@ -51,7 +51,10 @@ export default function Governance() {
 
   return (
     <div className="w-full flex flex-col items-start gap-y-4">
-      <GovernanceHeader view={view} />
+      <GovernanceHeader
+        view={view}
+        chain={chain}
+      />
 
       <NetworkSelector
         nopool

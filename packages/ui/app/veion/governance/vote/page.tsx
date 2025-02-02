@@ -17,8 +17,12 @@ import {
 import { Switch } from '@ui/components/ui/switch';
 import { InfoBlock, VotesManagement } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
+import {
+  MarketDataProvider,
+  useMarketData
+} from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { EmissionsProvider } from '@ui/context/VotesContext';
+import { VotesProvider } from '@ui/context/VotesContext';
 
 const Vote = () => {
   const searchParams = useSearchParams();
@@ -112,12 +116,35 @@ const Vote = () => {
         </CardContent>
       </Card>
 
-      <Card
-        className="w-full"
-        style={{ backgroundColor: '#212126ff' }}
-      >
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <CardTitle>Emissions Management</CardTitle>
+      <VotingManagementWrapper tokenId={+selectedData.id} />
+    </div>
+  );
+};
+
+const VotingManagementWrapper = ({ tokenId }: { tokenId: number }) => {
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
+  const { votingPeriod, isLoading } = useMarketData();
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-48">
+        Loading...
+      </div>
+    );
+  }
+
+  // Only show the toggle if there's an active voting period
+  const showToggle =
+    votingPeriod && !votingPeriod.hasVoted && votingPeriod.nextVotingDate;
+
+  return (
+    <Card
+      className="w-full"
+      style={{ backgroundColor: '#212126ff' }}
+    >
+      <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <CardTitle>Emissions Management</CardTitle>
+        {showToggle && (
           <div className="flex items-center space-x-2 mt-2 md:mt-0">
             <label
               htmlFor="pending-votes"
@@ -133,17 +160,19 @@ const Vote = () => {
               aria-label="Toggle pending votes only"
             />
           </div>
-        </CardHeader>
-        <CardContent className="border-none">
-          <EmissionsProvider tokenId={+selectedData.id}>
+        )}
+      </CardHeader>
+      <CardContent className="border-none">
+        <MarketDataProvider tokenId={tokenId}>
+          <VotesProvider>
             <VotesManagement
-              tokenId={+selectedData.id}
+              tokenId={tokenId}
               showPendingOnly={showPendingOnly}
             />
-          </EmissionsProvider>
-        </CardContent>
-      </Card>
-    </div>
+          </VotesProvider>
+        </MarketDataProvider>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -5,21 +5,32 @@ import { useSearchParams } from 'next/navigation';
 import { mode } from 'viem/chains';
 
 import { useMarketRows } from '@ui/hooks/veion/useMarketRows';
+import type { VotingPeriodInfo } from '@ui/hooks/veion/useVotingPeriod';
+import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
 import type { VoteMarketRow } from '@ui/types/veION';
 
 type MarketDataContextType = {
   baseMarketRows: VoteMarketRow[];
   isLoading: boolean;
   error: Error | null;
+  votingPeriod: VotingPeriodInfo;
 };
 
 const MarketDataContext = createContext<MarketDataContextType>({
   baseMarketRows: [],
   isLoading: false,
-  error: null
+  error: null,
+  votingPeriod: {
+    hasVoted: false,
+    nextVotingDate: null,
+    currentEpoch: 0,
+    lastVoted: null,
+    isLoading: false,
+    error: null,
+    timeRemaining: { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
 });
 
-// MarketDataProvider.tsx
 export const MarketDataProvider: React.FC<{
   children: React.ReactNode;
   tokenId?: number;
@@ -36,13 +47,16 @@ export const MarketDataProvider: React.FC<{
     tokenId
   );
 
+  const votingPeriod = useVotingPeriod(chain, tokenId);
+
   const value = useMemo(
     () => ({
       baseMarketRows,
-      isLoading,
-      error
+      isLoading: isLoading || votingPeriod.isLoading,
+      error: error || votingPeriod.error,
+      votingPeriod
     }),
-    [baseMarketRows, isLoading, error]
+    [baseMarketRows, isLoading, error, votingPeriod]
   );
 
   return (

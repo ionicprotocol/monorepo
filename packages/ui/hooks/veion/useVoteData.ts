@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
+
 import { usePublicClient } from 'wagmi';
+
 import { getVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
 
@@ -36,6 +38,7 @@ export function useVoteData({
   const [voteData, setVoteData] = useState<Record<string, VoteData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [lastVoted, setLastVoted] = useState<number | null>(null);
 
   const voterContract = getVoterContract(chain);
 
@@ -180,6 +183,7 @@ export function useVoteData({
     } finally {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, chain, marketAddresses, marketSides]);
 
   useEffect(() => {
