@@ -15,5 +15,5 @@ export { default as MigrateIonDialog } from '../dialogs/VeIon/MigrateIonDialog';
 export { default as TimeRemaining } from './TimeRemaining';
 export { default as VoteInput } from './VoteInput';
 export { default as InfoBlock } from './InfoBlock';
-export { default as EmissionsManagement } from './EmissionsManagement';
+export { default as VotesManagement } from './VotesManagement';
 export { default as GovernanceHeader } from './GovernanceHeader';

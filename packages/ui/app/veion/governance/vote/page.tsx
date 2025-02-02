@@ -15,7 +15,7 @@ import {
   CardContent
 } from '@ui/components/ui/card';
 import { Switch } from '@ui/components/ui/switch';
-import { InfoBlock, EmissionsManagement } from '@ui/components/veion';
+import { InfoBlock, VotesManagement } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { EmissionsProvider } from '@ui/context/VotesContext';
@@ -135,8 +135,8 @@ const Vote = () => {
           </div>
         </CardHeader>
         <CardContent className="border-none">
-          <EmissionsProvider>
-            <EmissionsManagement
+          <EmissionsProvider tokenId={+selectedData.id}>
+            <VotesManagement
               tokenId={+selectedData.id}
               showPendingOnly={showPendingOnly}
             />

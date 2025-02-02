@@ -19,9 +19,11 @@ const MarketDataContext = createContext<MarketDataContextType>({
   error: null
 });
 
-export const MarketDataProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+// MarketDataProvider.tsx
+export const MarketDataProvider: React.FC<{
+  children: React.ReactNode;
+  tokenId?: number;
+}> = ({ children, tokenId }) => {
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
@@ -30,7 +32,8 @@ export const MarketDataProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { baseMarketRows, isLoading, error } = useMarketRows(
     chain,
-    selectedPool
+    selectedPool,
+    tokenId
   );
 
   const value = useMemo(

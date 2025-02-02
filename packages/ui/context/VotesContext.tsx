@@ -105,7 +105,7 @@ export const useVotes = () => {
   return context;
 };
 
-export const useTableData = () => {
+export const useVoteTableData = () => {
   const { baseMarketRows, isLoading, error } = useMarketData();
   const { votes } = useVotes();
 
@@ -124,12 +124,13 @@ export const useTableData = () => {
   return { marketRows, isLoading, error };
 };
 
-// Root provider
-export const EmissionsProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+// EmissionsProvider.tsx
+export const EmissionsProvider: React.FC<{
+  children: React.ReactNode;
+  tokenId?: number;
+}> = ({ children, tokenId }) => {
   return (
-    <MarketDataProvider>
+    <MarketDataProvider tokenId={tokenId}>
       <VotesProvider>{children}</VotesProvider>
     </MarketDataProvider>
   );

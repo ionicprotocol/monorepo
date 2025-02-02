@@ -13,9 +13,15 @@ import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
 
+import { useVoteData } from './useVoteData';
+
 import type { FlywheelReward } from '@ionicprotocol/types';
 
-export const useMarketRows = (chain: number | string, selectedPool: string) => {
+export const useMarketRows = (
+  chain: number | string,
+  selectedPool: string,
+  tokenId?: number
+) => {
   const mockIncentives = useMemo(() => {
     const tokenOptions = [
       { symbol: 'ION', priceRange: [10, 50] },
@@ -77,6 +83,36 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
 
   const { data: merklApr, isLoading: isLoadingMerklData } = useMerklData();
 
+  const { marketAddresses, marketSides } = useMemo(() => {
+    if (!poolData?.assets) return { marketAddresses: [], marketSides: [] };
+
+    const addresses: `0x${string}`[] = [];
+    const sides: MarketSide[] = [];
+    const tokens: `0x${string}`[] = [];
+
+    poolData.assets.forEach((asset) => {
+      if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.supply) {
+        addresses.push(asset.cToken as `0x${string}`);
+        sides.push(MarketSide.Supply);
+        tokens.push(asset.underlyingToken as `0x${string}`);
+      }
+      if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.borrow) {
+        addresses.push(asset.cToken as `0x${string}`);
+        sides.push(MarketSide.Borrow);
+        tokens.push(asset.underlyingToken as `0x${string}`);
+      }
+    });
+
+    return { marketAddresses: addresses, marketSides: sides, lpTokens: tokens };
+  }, [chain, poolData?.assets]);
+
+  const { voteData, isLoading: isLoadingVoteData } = useVoteData({
+    tokenId,
+    chain: +chain,
+    marketAddresses,
+    marketSides
+  });
+
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
 
@@ -110,6 +146,8 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
       const newRows: VoteMarketRow[] = [];
 
       if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.supply) {
+        const key = `${asset.cToken}-supply`;
+
         newRows.push({
           asset: asset.underlyingSymbol,
           underlyingToken: asset.underlyingToken,
@@ -118,13 +156,13 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
           currentAmount: asset.totalSupplyFiat.toFixed(2),
           incentives: mockIncentives,
           veAPR: (0).toFixed(2) + '%',
-          totalVotes: {
-            percentage: (0).toFixed(2) + '%',
-            limit: (0).toFixed(0)
+          totalVotes: voteData[key]?.totalVotes ?? {
+            percentage: '0.00%',
+            limit: '0'
           },
-          myVotes: {
-            percentage: 0 + '%',
-            value: (0).toFixed(0)
+          myVotes: voteData[key]?.myVotes ?? {
+            percentage: '0.00%',
+            value: '0'
           },
           voteValue: '',
           apr: {
@@ -158,6 +196,8 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
       }
 
       if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.borrow) {
+        const key = `${asset.cToken}-borrow`;
+
         newRows.push({
           asset: asset.underlyingSymbol,
           underlyingToken: asset.underlyingToken,
@@ -166,13 +206,13 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
           currentAmount: asset.totalBorrowFiat.toFixed(2),
           incentives: mockIncentives,
           veAPR: (0).toFixed(2) + '%',
-          totalVotes: {
-            percentage: (0).toFixed(2) + '%',
-            limit: (0).toFixed(0)
+          totalVotes: voteData[key]?.totalVotes ?? {
+            percentage: '0.00%',
+            limit: '0'
           },
-          myVotes: {
-            percentage: 0 + '%',
-            value: (0).toFixed(0)
+          myVotes: voteData[key]?.myVotes ?? {
+            percentage: '0.00%',
+            value: '0'
           },
           voteValue: '',
           apr: {
@@ -217,6 +257,7 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
       !isLoadingBorrowApys &&
       !isLoadingFraxtalAprs &&
       !isLoadingRewards &&
+      !isLoadingVoteData &&
       !isLoadingMerklData
     ) {
       try {
@@ -238,6 +279,7 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
     isLoadingFraxtalAprs,
     isLoadingRewards,
     isLoadingMerklData,
+    isLoadingVoteData,
     processMarketRows
   ]);
 
@@ -249,6 +291,7 @@ export const useMarketRows = (chain: number | string, selectedPool: string) => {
       isLoadingBorrowApys ||
       isLoadingFraxtalAprs ||
       isLoadingRewards ||
+      isLoadingVoteData ||
       isLoadingMerklData,
     error
   };

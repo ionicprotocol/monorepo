@@ -25,16 +25,16 @@ import {
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useTableData, useVotes } from '@ui/context/VotesContext';
+import { useVoteTableData, useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 
-import EmissionsManagementFooter from './EmissionsManagementFooter';
 import VoteInput from './VoteInput';
+import VotesManagementFooter from './VotesManagementFooter';
 import BalanceBreakdown from '../markets/Cells/BalanceBreakdown';
 
-interface EmissionsManagementTableProps {
+interface VotesManagementTableProps {
   tokenId: number;
   showPendingOnly: boolean;
 }
@@ -60,12 +60,12 @@ const TooltipWrapper = ({
   </Tooltip>
 );
 
-function EmissionsManagement({
+function VotesManagement({
   tokenId,
   showPendingOnly
-}: EmissionsManagementTableProps) {
+}: VotesManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { marketRows, isLoading, error } = useTableData();
+  const { marketRows, isLoading, error } = useVoteTableData();
   const { votes } = useVotes();
   const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
@@ -210,11 +210,11 @@ function EmissionsManagement({
           return (
             <div className="flex flex-col">
               <div className="text-xs font-semibold text-white/80">
-                {totalVotes.percentage}
-              </div>
-              <div className="text-xs font-semibold text-white/40">
                 {totalVotes.limit}
               </div>
+              {/* <div className="text-xs font-semibold text-white/40">
+                {totalVotes.limit}
+              </div> */}
             </div>
           );
         }
@@ -232,10 +232,10 @@ function EmissionsManagement({
           return (
             <div className="flex flex-col">
               <div className="text-xs font-semibold text-white/80">
-                {myVotes.percentage}
+                {myVotes.value}
               </div>
               <div className="text-xs font-semibold text-white/40">
-                {myVotes.value}
+                {myVotes.percentage}
               </div>
             </div>
           );
@@ -304,9 +304,9 @@ function EmissionsManagement({
         isLoading={isLoading}
       />
 
-      <EmissionsManagementFooter tokenId={tokenId} />
+      <VotesManagementFooter tokenId={tokenId} />
     </div>
   );
 }
 
-export default EmissionsManagement;
+export default VotesManagement;

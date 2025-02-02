@@ -2,22 +2,20 @@ import { useState } from 'react';
 
 import { Card } from '@ui/components/ui/card';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useVotes, useTableData } from '@ui/context/VotesContext';
+import { useVotes, useVoteTableData } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import { MarketSide } from '@ui/types/veION';
 
 import VoteConfirmationDialog from './VoteConfirmationDialog';
 
-interface EmissionsManagementFooterProps {
+interface VotesManagementFooterProps {
   tokenId: number;
 }
 
-function EmissionsManagementFooter({
-  tokenId
-}: EmissionsManagementFooterProps) {
+function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const { currentChain } = useVeIONContext();
   const { votes, resetVotes } = useVotes();
-  const { marketRows } = useTableData();
+  const { marketRows } = useVoteTableData();
   const { isVoting } = useVeIONVote(currentChain);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -125,4 +123,4 @@ function EmissionsManagementFooter({
   );
 }
 
-export default EmissionsManagementFooter;
+export default VotesManagementFooter;
