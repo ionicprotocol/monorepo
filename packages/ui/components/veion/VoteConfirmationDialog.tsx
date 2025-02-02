@@ -48,7 +48,6 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
   const { currentChain } = useVeIONContext();
   const { handleVote, isVoting } = useVeIONVote(currentChain);
   const voteEntries = Object.entries(votes);
-  console.log('voteEntries', voteEntries);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
@@ -66,13 +65,6 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           weights: [] as bigint[]
         }
       );
-
-      console.log('Submitting vote with:', {
-        tokenId,
-        marketAddresses: voteArrays.marketAddresses,
-        sides: voteArrays.sides,
-        weights: voteArrays.weights
-      });
 
       const success = await handleVote(tokenId, {
         marketAddresses: voteArrays.marketAddresses,
@@ -112,7 +104,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-1" />
           <div className="space-y-2 text-sm text-blue-100">
             <p>• Votes count once per epoch</p>
-            <p>• You can't recast votes within the same epoch</p>
+            <p>• You can&apos;t recast votes within the same epoch</p>
             <p>• Voting rewards will be available in the next epoch</p>
           </div>
         </div>

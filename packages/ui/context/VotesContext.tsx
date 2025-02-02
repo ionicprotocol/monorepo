@@ -120,6 +120,7 @@ export const useVoteTableData = () => {
         voteValue: votes[key] || ''
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseMarketRows, votes, isLoading, error]);
 
   return { marketRows, isLoading, error };

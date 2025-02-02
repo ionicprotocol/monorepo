@@ -250,6 +250,7 @@ export const useMarketRows = (
 
       return [...rows, ...newRows];
     }, []);
+    //
   }, [
     chain,
     selectedPool,

@@ -23,7 +23,7 @@ import { Merge } from './Merge';
 import { Split } from './Split';
 import { Transfer } from './Transfer';
 import { Unlock } from './Unlock';
-import { Withdraw } from './Withdraw';
+import { WithdrawTab } from './WithdrawTab';
 
 interface ManageDialogProps {
   isOpen: boolean;
@@ -138,7 +138,7 @@ export default function ManageDialog({
         {activeManageToggle === 'Merge' && <Merge chain={chain} />}
         {activeManageToggle === 'Split' && <Split chain={chain} />}
         {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
-        {activeManageToggle === 'Withdraw' && <Withdraw chain={chain} />}
+        {activeManageToggle === 'Withdraw' && <WithdrawTab chain={chain} />}
         {activeManageToggle === 'Unlock' && <Unlock chain={chain} />}
       </DialogContent>
     </Dialog>
