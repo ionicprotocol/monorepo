@@ -7,10 +7,14 @@ import { LiquidityContractAbi } from '@ui/constants/lp';
 import { getVeIonContract } from '@ui/constants/veIon';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import {
+  getAvailableStakingToken,
   getPoolToken,
   getSpenderContract,
+  getStakingToContract,
   getToken
 } from '@ui/utils/getStakingTokens';
+import { StakingContractAbi } from '@ui/constants/staking';
+import { useToast } from '@ui/hooks/use-toast';
 
 interface AddLiquidityParams {
   tokenAmount: string;
@@ -36,6 +40,7 @@ export function useVeIONActions() {
   const { currentChain, prices } = useVeIONContext();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+  const { toast } = useToast();
 
   // Get veION contract
   const veIonContract = getVeIonContract(currentChain);
@@ -139,8 +144,19 @@ export function useVeIONActions() {
         });
       }
 
+      toast({
+        title: 'Success',
+        description: 'Successfully added liquidity',
+        variant: 'default'
+      });
+
       setIsPending(false);
     } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'Transaction failed',
+        variant: 'destructive'
+      });
       setIsPending(false);
     }
   };
@@ -151,14 +167,7 @@ export function useVeIONActions() {
   }: RemoveLiquidityParams) => {
     try {
       const args = {
-        token: getToken(currentChain),
-        tokenB: getPoolToken(selectedToken),
-        stable: false,
-        liquidity: parseUnits(liquidity, 18),
-        amounTokenMin: 0n,
-        amountETHMin: 0n,
-        to: address,
-        deadline: Math.floor((Date.now() + 3600000) / 1000)
+        lpToken: parseUnits(liquidity, 18)
       };
 
       if (!isConnected || !walletClient) {
@@ -166,64 +175,44 @@ export function useVeIONActions() {
         return;
       }
 
-      const approval = await walletClient.writeContract({
-        abi: erc20Abi,
-        account: walletClient.account,
-        address: args.token,
-        args: [getSpenderContract(currentChain), args.liquidity],
-        functionName: 'approve'
-      });
+      // Get staking contract address
+      const stakingContractAddress = getStakingToContract(
+        currentChain,
+        selectedToken
+      );
 
       setIsPending(true);
-      await publicClient?.waitForTransactionReceipt({
-        hash: approval
+
+      const tx = await walletClient.writeContract({
+        abi: StakingContractAbi,
+        account: walletClient.account,
+        address: stakingContractAddress,
+        args: [args.lpToken],
+        functionName: 'withdraw'
       });
 
-      if (selectedToken === 'eth') {
-        const tx = await walletClient.writeContract({
-          abi: LiquidityContractAbi,
-          account: walletClient.account,
-          address: getSpenderContract(currentChain),
-          args: [
-            args.token,
-            args.stable,
-            args.liquidity,
-            args.amounTokenMin,
-            args.amountETHMin,
-            args.to,
-            args.deadline
-          ],
-          functionName: 'removeLiquidityETH'
-        });
+      if (!tx) return;
 
-        await publicClient?.waitForTransactionReceipt({
-          hash: tx
-        });
-      } else {
-        const tx = await walletClient.writeContract({
-          abi: LiquidityContractAbi,
-          account: walletClient.account,
-          address: getSpenderContract(currentChain),
-          args: [
-            args.token,
-            args.tokenB,
-            args.stable,
-            args.liquidity,
-            args.amounTokenMin,
-            args.amountETHMin,
-            args.to,
-            args.deadline
-          ],
-          functionName: 'removeLiquidity'
-        });
+      await publicClient?.waitForTransactionReceipt({
+        hash: tx
+      });
 
-        await publicClient?.waitForTransactionReceipt({
-          hash: tx
-        });
-      }
+      toast({
+        title: 'Success',
+        description: 'Successfully removed liquidity',
+        variant: 'default'
+      });
 
       setIsPending(false);
     } catch (err) {
+      console.log(err);
+      toast({
+        title: 'Error',
+        description: 'Transaction failed',
+        variant: 'destructive'
+      });
+      setIsPending(false);
+    } finally {
       setIsPending(false);
     }
   };
@@ -291,6 +280,13 @@ export function useVeIONActions() {
         });
 
         setIsPending(false);
+
+        toast({
+          title: 'Success',
+          description: 'Successfully locked tokens',
+          variant: 'default'
+        });
+
         return transaction;
       } catch (error) {
         console.error('Lock simulation failed:', error);
@@ -298,6 +294,11 @@ export function useVeIONActions() {
         throw new Error('Lock simulation failed');
       }
     } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'Transaction failed',
+        variant: 'destructive'
+      });
       setIsPending(false);
       throw err;
     }
