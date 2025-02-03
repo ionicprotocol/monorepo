@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@ui/components/ui/button';
 import { DialogHeader, DialogTitle } from '@ui/components/ui/dialog';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface SuccessViewProps {
   amount: number;
@@ -11,9 +12,15 @@ interface SuccessViewProps {
 
 export function SuccessView({ amount, onClose }: SuccessViewProps) {
   const router = useRouter();
+  const { locks } = useVeIONContext();
 
-  const handleNavigateAndClose = () => {
+  const handleNavigateAndClose = async () => {
     onClose();
+
+    if (locks.refetch) {
+      await locks.refetch();
+    }
+
     router.push('/veion/governance');
   };
 
