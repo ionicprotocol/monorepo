@@ -200,7 +200,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       ionBalanceUsd,
       veIonBalanceUsd
     },
-    liquidity: isSupported ? liquidity : defaultContext.liquidity,
+    liquidity: isSupported ? liquidity : defaultContext.liquidity, // ???
     emissions: isSupported ? emissions : defaultContext.emissions,
     reserves,
     locks: isSupported ? locks : defaultContext.locks,
