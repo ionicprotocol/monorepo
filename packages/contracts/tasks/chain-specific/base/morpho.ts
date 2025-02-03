@@ -23,3 +23,33 @@ task("base:morpho:upgrade", "one time setup").setAction(async (_, { viem, run, d
     implementationAddress: delegate.address as Address
   });
 });
+
+task("base:morpho:deploy-distributor", "one time setup")
+  .addParam("morphoMarket", "Morpho CToken", undefined, types.string)
+  .addParam("morphoBribes", "Morpho Bribe Contract", undefined, types.string)
+  .setAction(async (taskArgs, { deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+
+    let morphoBribeDistributor;
+    try {
+      console.log("Deploying Morpho Bribe Distributor...");
+
+      morphoBribeDistributor = await deployments.deploy("MorphoBribeDistributor", {
+        from: deployer,
+        log: true,
+        proxy: {
+          proxyContract: "OpenZeppelinTransparentProxy",
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [taskArgs.morphoMarket, taskArgs.morphoBribes]
+            }
+          }
+        }
+      });
+
+      console.log(`Morpho Bribe Distributor deployed at: ${morphoBribeDistributor.address}`);
+    } catch (error) {
+      console.error("Error deploying Morpho Bribe Distributor:", error);
+    }
+  });

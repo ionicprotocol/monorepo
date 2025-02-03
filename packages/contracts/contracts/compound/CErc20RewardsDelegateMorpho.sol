@@ -4,6 +4,8 @@ pragma solidity >=0.8.0;
 import "./CErc20RewardsDelegate.sol";
 
 contract CErc20RewardsDelegateMorpho is CErc20Delegate {
+  address constant DISTRIBUTOR = 0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27;
+
   event RewardsClaimedAndSet(address indexed account, address indexed reward, uint256 claimedAmount);
 
   function _getExtensionFunctions() public pure virtual override returns (bytes4[] memory functionSelectors) {
@@ -30,13 +32,18 @@ contract CErc20RewardsDelegateMorpho is CErc20Delegate {
    */
   function claim(address morphoURD, address rewardToken, uint256 claimable, bytes32[] memory proof) external {
     uint256 claimedAmount = IMorphoClaim(morphoURD).claim(address(this), rewardToken, claimable, proof);
-    EIP20Interface(rewardToken).transfer(comptroller.admin(), claimedAmount);
+    EIP20Interface(rewardToken).approve(DISTRIBUTOR, claimedAmount);
+    IDistributor(DISTRIBUTOR).distribute(rewardToken, claimedAmount);
     emit RewardsClaimedAndSet(address(this), rewardToken, claimedAmount);
   }
 
   function delegateType() public pure virtual override returns (uint8) {
     return 5;
   }
+}
+
+interface IDistributor {
+  function distribute(address _rewardToken, uint256 _amount) external;
 }
 
 interface IMorphoClaim {
