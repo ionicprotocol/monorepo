@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.0;
+pragma solidity 0.8.22;
 
 import { IBribeRewards } from "../veION/interfaces/IBribeRewards.sol";
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -49,7 +49,7 @@ contract MorphoBribeDistributor is OwnableUpgradeable {
    */
   function distribute(address _rewardToken, uint256 _amount) external onlyMorphoMarket {
     IERC20(_rewardToken).safeTransferFrom(msg.sender, address(this), _amount);
-    EIP20Interface(rewardToken).approve(morphoBribes, _amount);
+    IERC20(_rewardToken).approve(morphoBribes, _amount);
     IBribeRewards(morphoBribes).notifyRewardAmount(_rewardToken, _amount);
     emit Distributed(msg.sender, _amount);
   }
