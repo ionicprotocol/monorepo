@@ -7,7 +7,16 @@ import { assetSymbols } from "@ionicprotocol/types";
 import { chainIdtoChain } from "@ionicprotocol/chains";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
-task("base:morpho:upgrade", "one time setup").setAction(async (_, { viem, run, deployments }) => {
+task("base:morpho:upgrade", "one time setup").setAction(async (_, { viem, run, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const erc20MorphoDel = await deployments.deploy("CErc20RewardsDelegateMorpho", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  console.log("CErc20RewardsDelegateMorpho: ", erc20MorphoDel.address);
+
   const assetToUpgrade = assetSymbols.ionicWETH;
 
   const delegate = await deployments.get("CErc20RewardsDelegateMorpho");
