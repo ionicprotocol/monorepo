@@ -85,7 +85,7 @@ function MyVeionTable() {
             $
             {row.original.lockedBLP.value.toLocaleString(undefined, {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 7
+              maximumFractionDigits: 3
             })}
           </div>
         </div>

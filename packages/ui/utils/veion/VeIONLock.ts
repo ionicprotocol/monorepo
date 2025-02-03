@@ -82,7 +82,8 @@ export class VeIONLock implements VeIONTableData {
     raw: LockedBalance,
     totalSupply: bigint,
     tokenPrice: bigint,
-    delegation?: Delegation
+    delegation: Delegation,
+    ethPrice: number
   ) {
     this.id = id;
     this.chainId = chainId;
@@ -143,9 +144,10 @@ export class VeIONLock implements VeIONTableData {
 
     // Ensure safe BigInt calculations
     const safePriceBigInt = tokenPrice ? BigInt(tokenPrice.toString()) : 0n;
+    const ethPriceBigInt = BigInt(Math.floor(ethPrice * 1e6));
     const valueInUSD =
       safePriceBigInt !== 0n
-        ? (raw.amount * safePriceBigInt) / BigInt(1e18)
+        ? (raw.amount * safePriceBigInt * ethPriceBigInt) / BigInt(1e24)
         : 0n;
 
     const formattedValue = formatUnits(valueInUSD, 18);

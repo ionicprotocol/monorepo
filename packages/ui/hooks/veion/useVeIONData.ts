@@ -28,10 +28,12 @@ interface ChainSupplyResult {
 export function useVeIonData(chainId: number) {
   const { data: ethPrice = 0 } = useEthPrice();
   const { data: ionPrices = {} } = useIonPrices();
-  const lpToken = getAvailableStakingToken(chainId, 'eth');
+  const lpTokenBase = getAvailableStakingToken(8453, 'eth');
+  const lpTokenMode = getAvailableStakingToken(34443, 'eth');
 
   // Get oracle prices for LP tokens
-  const { data: lpTokenPrices } = useOracleBatch([lpToken], chainId);
+  const { data: lpTokenPricesBase } = useOracleBatch([lpTokenBase], 8453);
+  const { data: lpTokenPriceMode } = useOracleBatch([lpTokenMode], 34443);
 
   // Get total staked amounts across all chains
   const { data: stakedAmounts, isLoading: stakedAmountLoading } =
@@ -160,11 +162,14 @@ export function useVeIonData(chainId: number) {
       let lpTokenPrice = 0;
       if (chainId === 8453) {
         // Base chain LP token
-        lpTokenPrice = lpTokenPrices?.[lpToken] || 0;
+        lpTokenPrice = Number(
+          formatEther(lpTokenPricesBase?.[lpTokenBase] || 0)
+        );
       } else if (chainId === 34443) {
         // Mode chain LP token
-        lpTokenPrice =
-          lpTokenPrices?.[getAvailableStakingToken(34443, 'eth')] || 0;
+        lpTokenPrice = Number(
+          formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)
+        );
       }
 
       const valueInUsd = amount * (Number(lpTokenPrice) / 1e18);
@@ -195,22 +200,15 @@ export function useVeIonData(chainId: number) {
   // Calculate staked amounts for each chain
   const baseStakedAmount = stakedAmounts?.[0]?.result
     ? Number(formatEther(stakedAmounts[0].result)) *
-      (lpTokenPrices?.[lpToken] ? Number(lpTokenPrices[lpToken]) / 1e18 : 0)
+      Number(formatEther(lpTokenPricesBase?.[lpTokenBase] || 0)) *
+      ethPrice
     : 0;
 
   const modeStakedAmount = stakedAmounts?.[1]?.result
     ? Number(formatEther(stakedAmounts[1].result)) *
-      (lpTokenPrices?.[getAvailableStakingToken(34443, 'eth')]
-        ? Number(lpTokenPrices[getAvailableStakingToken(34443, 'eth')]) / 1e18
-        : 0)
+      Number(formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)) *
+      ethPrice
     : 0;
-
-  // const optimismStakedAmount = stakedAmounts?.[2]?.result
-  //   ? Number(formatEther(stakedAmounts[2].result)) *
-  //     (lpTokenPrices?.[getAvailableStakingToken(10, 'eth')]
-  //       ? Number(lpTokenPrices[getAvailableStakingToken(10, 'eth')]) / 1e18
-  //       : 0)
-  //   : 0;
 
   return {
     totalLiquidity: {

@@ -9,6 +9,7 @@ import { createVeIONLock } from '@ui/utils/veion/lockUtils';
 
 import { useOracleBatch } from '../ionic/useOracleBatch';
 import { useIonPrices } from '../useDexScreenerPrices';
+import { useEthPrice } from '../useEthPrice';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
 
@@ -41,6 +42,7 @@ export function useVeIONLocks({
   supplyResults: SupplyResult[];
 }): VeIONLockData & { refetch: () => Promise<void> } {
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
+  const { data: ethPrice = 0 } = useEthPrice();
 
   // Get owned token IDs
   const {
@@ -254,7 +256,8 @@ export function useVeIONLocks({
         chainId,
         ionPrice,
         tokenPrice: tokenPrices?.[tokenAddress as `0x${string}`],
-        delegation: delegateesResult || undefined
+        delegation: delegateesResult || undefined,
+        ethPrice
       });
     });
   });

@@ -67,7 +67,7 @@ const GovernanceHeader = ({
       token: 'veION',
       infoContent: 'veION amount locked on a given chain.',
       icon: '/img/logo/ion.svg',
-      usdValue: veIonBalanceUsd.toFixed(5)
+      usdValue: veIonBalanceUsd.toFixed(2)
     },
     {
       label: 'ION REWARDS',
@@ -141,7 +141,7 @@ const InfoBlock = ({
         <span className="text-white text-lg ml-1">
           {Number(value).toLocaleString('en-US', {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 6
+            maximumFractionDigits: 2
           })}{' '}
           {token}
         </span>
@@ -221,7 +221,7 @@ const EmissionsStatus = () => {
       <div className="flex justify-between items-center text-gray-400">
         <div className="flex items-center gap-2">
           <span className="text-xs">
-            YOUR VEION: ${veIonBalanceUsd.toFixed(5)} (
+            YOUR VEION: ${veIonBalanceUsd.toFixed(2)} (
             {lockedValue.percentage.toFixed(2)}%)
           </span>
         </div>

@@ -49,7 +49,13 @@ export const createVeIONLock = (
     chainConfig,
     chainId,
     tokenPrice,
-    delegation
+    delegation = {
+      delegatedTo: [],
+      readyToDelegate: false,
+      delegatedTokenIds: [],
+      delegatedAmounts: []
+    },
+    ethPrice
   }: {
     supplyResults: SupplyResult[] | undefined;
     userLockResults: SimpleLockResult[] | undefined;
@@ -60,6 +66,7 @@ export const createVeIONLock = (
     ionPrice: number;
     tokenPrice: bigint;
     delegation?: Delegation;
+    ethPrice: number;
   }
 ) => {
   const supplyResult = supplyResults?.[i];
@@ -86,6 +93,7 @@ export const createVeIONLock = (
     lock,
     totalSupply,
     tokenPrice,
-    delegation // Pass delegation to VeIONLock constructor
+    delegation,
+    ethPrice
   );
 };
