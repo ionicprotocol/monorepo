@@ -4,17 +4,16 @@ import { erc20Abi, parseEther, parseUnits } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 
 import { LiquidityContractAbi } from '@ui/constants/lp';
+import { StakingContractAbi } from '@ui/constants/staking';
 import { getVeIonContract } from '@ui/constants/veIon';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useToast } from '@ui/hooks/use-toast';
 import {
-  getAvailableStakingToken,
   getPoolToken,
   getSpenderContract,
   getStakingToContract,
   getToken
 } from '@ui/utils/getStakingTokens';
-import { StakingContractAbi } from '@ui/constants/staking';
-import { useToast } from '@ui/hooks/use-toast';
 
 interface AddLiquidityParams {
   tokenAmount: string;
@@ -205,7 +204,6 @@ export function useVeIONActions() {
 
       setIsPending(false);
     } catch (err) {
-      console.log(err);
       toast({
         title: 'Error',
         description: 'Transaction failed',

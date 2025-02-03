@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useAccount, useSwitchChain, useReadContract } from 'wagmi';
+
 import { formatEther } from 'viem';
+import { useAccount, useSwitchChain, useReadContract } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
@@ -11,14 +12,14 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { getChainName } from '@ui/constants/mock';
+import { StakingContractAbi } from '@ui/constants/staking';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import { StakingContractAbi } from '@ui/constants/staking';
+import type { ChainId } from '@ui/types/veION';
 import {
   getStakingToContract,
   getAvailableStakingToken
 } from '@ui/utils/getStakingTokens';
-import type { ChainId } from '@ui/types/veION';
 
 interface MigrateIonDialogProps {
   isOpen: boolean;

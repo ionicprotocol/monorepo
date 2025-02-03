@@ -1,3 +1,4 @@
+// useLiquidityCalculations.ts
 import { useMemo } from 'react';
 
 import { formatEther, parseUnits, type Address } from 'viem';
@@ -37,17 +38,26 @@ export function useLiquidityCalculations({
   });
 
   // Fetch balances
-  const { data: ionBalance } = useBalance({
+  const { data: ionBalance, refetch: refetchIonBalance } = useBalance({
     address,
     token: getToken(chainId),
     chainId
   });
 
-  const { data: selectedTokenBalance } = useBalance({
-    address,
-    ...(selectedToken !== 'eth' && { token: getToken(chainId) }),
-    chainId
-  });
+  const { data: selectedTokenBalance, refetch: refetchSelectedTokenBalance } =
+    useBalance({
+      address,
+      ...(selectedToken !== 'eth' && { token: getToken(chainId) }),
+      chainId
+    });
+
+  const refetchAll = async () => {
+    await Promise.all([
+      reserves.refetch(),
+      refetchIonBalance(),
+      refetchSelectedTokenBalance()
+    ]);
+  };
 
   // Process reserve data considering chain specifics
   const processedReserves = useMemo(() => {
@@ -57,7 +67,6 @@ export function useLiquidityCalculations({
       | [bigint, bigint, bigint]
       | [bigint, bigint];
 
-    // Handle chain-specific reserve ordering
     if (chainId === optimism.id) {
       return {
         ion: resData[1],
@@ -95,7 +104,6 @@ export function useLiquidityCalculations({
         (selectedTokenBalance.value * processedReserves.ion) /
         processedReserves.token;
 
-      // Return the smaller of the two maximums
       return formatEther(
         maxIonBasedOnBalance < maxIonBasedOnReserves
           ? maxIonBasedOnBalance
@@ -107,7 +115,6 @@ export function useLiquidityCalculations({
     }
   };
 
-  // Check if a given ion amount would exceed available liquidity
   const wouldExceedLiquidity = (ionAmount: string): boolean => {
     if (!processedReserves || !selectedTokenBalance || !ionAmount) return false;
 
@@ -128,6 +135,7 @@ export function useLiquidityCalculations({
     ionBalance: ionBalance ? formatEther(ionBalance.value) : '0',
     selectedTokenBalance: selectedTokenBalance
       ? formatEther(selectedTokenBalance.value)
-      : '0'
+      : '0',
+    refetchAll
   };
 }

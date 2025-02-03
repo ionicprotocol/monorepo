@@ -26,6 +26,7 @@ interface AddLiquidityDialogProps {
   selectedToken: 'eth' | 'mode' | 'weth';
 }
 
+// AddLiquidityDialog.tsx
 export default function AddLiquidityDialog({
   isOpen,
   onOpenChange,
@@ -42,6 +43,19 @@ export default function AddLiquidityDialog({
   const { addLiquidity, isPending } = useVeIONActions();
   const { switchChain } = useSwitchChain();
 
+  const {
+    calculateTokenAmount,
+    getMaximumIonInput,
+    wouldExceedLiquidity,
+    ionBalance,
+    selectedTokenBalance,
+    refetchAll
+  } = useLiquidityCalculations({
+    address,
+    chainId: currentChain,
+    selectedToken
+  });
+
   const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
     try {
       await switchChain({ chainId });
@@ -49,18 +63,6 @@ export default function AddLiquidityDialog({
       console.error('Failed to switch network:', switchError);
     }
   };
-
-  const {
-    calculateTokenAmount,
-    getMaximumIonInput,
-    wouldExceedLiquidity,
-    ionBalance,
-    selectedTokenBalance
-  } = useLiquidityCalculations({
-    address,
-    chainId: currentChain,
-    selectedToken
-  });
 
   const updateDepositValues = useCallback(
     (ionValue: string) => {
@@ -109,6 +111,9 @@ export default function AddLiquidityDialog({
         tokenBAmount: maxDeposit.eth,
         selectedToken
       });
+
+      // Refresh data after transaction
+      await refetchAll();
 
       setMaxDeposit({ ion: '', eth: '' });
     } catch (err) {

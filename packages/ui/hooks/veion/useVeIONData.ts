@@ -60,7 +60,6 @@ export function useVeIonData(chainId: number) {
         // }
       ]
     });
-  console.log('stakedAmounts', stakedAmounts);
 
   // Get pool balances for total liquidity calculation
   const { data: poolBalances, isLoading: poolBalanceLoading } =
