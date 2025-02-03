@@ -41,12 +41,12 @@ export function useMultiChainVeIONLocks({
     supplyResults
   });
 
-  const optimismLocks = useVeIONLocks({
-    address,
-    veIonContract: VEION_CONTRACTS[10] as Hex,
-    chainId: 10,
-    supplyResults
-  });
+  // const optimismLocks = useVeIONLocks({
+  //   address,
+  //   veIonContract: VEION_CONTRACTS[10] as Hex,
+  //   chainId: 10,
+  //   supplyResults
+  // });
 
   return useMemo(() => {
     // Helper to check if we should preserve state
@@ -86,12 +86,12 @@ export function useMultiChainVeIONLocks({
             updateCacheIfValid(modeLocks, 34443);
             return modeLocks;
 
-          case 10:
-            if (shouldPreserveState(optimismLocks, 10)) {
-              return chainValidStates[10];
-            }
-            updateCacheIfValid(optimismLocks, 10);
-            return optimismLocks;
+          // case 10:
+          //   if (shouldPreserveState(optimismLocks, 10)) {
+          //     return chainValidStates[10];
+          //   }
+          //   updateCacheIfValid(optimismLocks, 10);
+          //   return optimismLocks;
 
           default:
             return { myLocks: [], delegatedLocks: [], isLoading: false };
@@ -102,16 +102,15 @@ export function useMultiChainVeIONLocks({
       const combinedLocks = {
         myLocks: [
           ...baseLocks.myLocks,
-          ...modeLocks.myLocks,
-          ...optimismLocks.myLocks
+          ...modeLocks.myLocks
+          // ...optimismLocks.myLocks
         ],
         delegatedLocks: [
           ...baseLocks.delegatedLocks,
-          ...modeLocks.delegatedLocks,
-          ...optimismLocks.delegatedLocks
+          ...modeLocks.delegatedLocks
+          // ...optimismLocks.delegatedLocks
         ],
-        isLoading:
-          baseLocks.isLoading || modeLocks.isLoading || optimismLocks.isLoading
+        isLoading: baseLocks.isLoading || modeLocks.isLoading
       };
 
       if (shouldPreserveState(combinedLocks, ALL_CHAINS_VALUE)) {
@@ -130,5 +129,10 @@ export function useMultiChainVeIONLocks({
     };
 
     return validLocks;
-  }, [selectedChainId, baseLocks, modeLocks, optimismLocks]);
+  }, [
+    selectedChainId,
+    baseLocks,
+    modeLocks
+    // optimismLocks
+  ]);
 }

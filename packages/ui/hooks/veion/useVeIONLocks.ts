@@ -9,9 +9,9 @@ import { createVeIONLock } from '@ui/utils/veion/lockUtils';
 
 import { useOracleBatch } from '../ionic/useOracleBatch';
 import { useIonPrices } from '../useDexScreenerPrices';
-import { useEthPrice } from '../useEthPrice';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
+import { useEthPrice } from '../useEthPrice';
 
 interface WagmiResult<T> {
   status: 'failure' | 'success';

@@ -57,7 +57,7 @@ function MyVeionTable() {
         <div className="flex items-center gap-3">
           <TokenPair
             token1="ion"
-            token2="eth"
+            token2={row.original.chainId === 34443 ? 'mode' : 'eth'}
             size={24}
           />
           <div className="flex flex-col">
