@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { formatUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
-import CustomTooltip from '@ui/components/CustomTooltip';
 import { LockDurationPicker } from '@ui/components/LockDurationPicker';
 import MaxDeposit from '@ui/components/MaxDeposit';
 import { usePrecisionSlider } from '@ui/components/PrecisionSlider';
@@ -20,6 +19,8 @@ import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { SuccessView } from './SuccessView';
+
+const MINIMUM_AMOUNT = BigInt('10000000000000000');
 
 interface GetVeIONDialogProps {
   isOpen: boolean;
@@ -38,6 +39,16 @@ export default function GetVeIONDialog({
   const { currentChain } = useVeIONContext();
   const { createLock, isPending } = useVeIONActions();
   const { address, isConnected } = useAccount();
+
+  const isAboveMinimum = useMemo(() => {
+    if (!amount || amount === '0') return false;
+    try {
+      const amountInWei = parseUnits(amount, 18);
+      return amountInWei >= MINIMUM_AMOUNT;
+    } catch {
+      return false;
+    }
+  }, [amount]);
 
   const { data: withdrawalMaxToken } = useBalance({
     address,
@@ -81,7 +92,8 @@ export default function GetVeIONDialog({
     }
   }
 
-  const isButtonDisabled = !lockDate || Number(amount) === 0 || isPending;
+  const isButtonDisabled =
+    !lockDate || Number(amount) === 0 || !isAboveMinimum || isPending;
 
   return (
     <Dialog
@@ -95,23 +107,33 @@ export default function GetVeIONDialog({
               <DialogTitle>Get veION</DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
-              <MaxDeposit
-                headerText="LOCK AMOUNT"
-                max={
-                  withdrawalMaxToken
-                    ? formatUnits(
-                        withdrawalMaxToken.value,
-                        withdrawalMaxToken.decimals
-                      )
-                    : '0'
-                }
-                amount={amount}
-                tokenName={`ion/${selectedToken}`}
-                token={getAvailableStakingToken(currentChain, selectedToken)}
-                handleInput={(val?: string) => setAmount(val || '0')}
-                chain={currentChain}
-                showUtilizationSlider
-              />
+              <div className="space-y-2">
+                <MaxDeposit
+                  headerText="LOCK AMOUNT"
+                  max={
+                    withdrawalMaxToken
+                      ? formatUnits(
+                          withdrawalMaxToken.value,
+                          withdrawalMaxToken.decimals
+                        )
+                      : '0'
+                  }
+                  amount={amount}
+                  tokenName={`ion/${selectedToken}`}
+                  token={getAvailableStakingToken(currentChain, selectedToken)}
+                  handleInput={(val?: string) => setAmount(val || '0')}
+                  chain={currentChain}
+                  showUtilizationSlider
+                />
+                <div className="text-xs text-white/50 px-1">
+                  Minimum required: {formatUnits(MINIMUM_AMOUNT, 18)} ION
+                  {amount !== '0' && !isAboveMinimum && (
+                    <span className="text-red-400 ml-2">
+                      (Current amount is below minimum)
+                    </span>
+                  )}
+                </div>
+              </div>
 
               <Separator className="bg-white/10" />
 
@@ -124,14 +146,16 @@ export default function GetVeIONDialog({
 
               <Separator className="bg-white/10" />
 
-              <VotingPowerInfo amount={Number(amount)} />
-
               <Button
                 onClick={lockAndGetVeion}
                 className="w-full bg-accent text-black"
                 disabled={isButtonDisabled}
               >
-                {isPending ? 'Locking...' : 'Lock LP and get veION'}
+                {isPending
+                  ? 'Locking...'
+                  : !isAboveMinimum && amount !== '0'
+                    ? 'Amount Below Minimum'
+                    : 'Lock LP and get veION'}
               </Button>
             </div>
           </>
@@ -143,17 +167,5 @@ export default function GetVeIONDialog({
         )}
       </DialogContent>
     </Dialog>
-  );
-}
-
-function VotingPowerInfo({ amount }: { amount: number }) {
-  return (
-    <div className="flex w-full items-center justify-between text-xs text-white/50">
-      <div className="flex items-center gap-2">
-        VOTING POWER
-        <CustomTooltip content="Your voting power diminishes each day closer to the end of the token lock period." />
-      </div>
-      <p className="text-white">{amount.toFixed(2)} veIon</p>
-    </div>
   );
 }

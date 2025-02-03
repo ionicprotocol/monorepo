@@ -235,51 +235,71 @@ export function useVeIONActions() {
     stakeUnderlying = true
   }: LockVeIONParams) => {
     try {
-      if (!veIonContract || !isConnected || !walletClient) {
+      if (!veIonContract || !isConnected || !walletClient || !publicClient) {
         console.error('Contract not initialized or not connected');
         return;
       }
 
       setIsPending(true);
+      const amount = parseUnits(tokenAmount, 18);
 
       // Convert duration from days to seconds
       const durationInSeconds = duration * 24 * 60 * 60;
 
-      // approve
-      const approvalTx = await walletClient.writeContract({
-        abi: erc20Abi,
-        account: walletClient.account,
-        address: tokenAddress,
-        args: [veIonContract.address, parseUnits(tokenAmount, 18)],
-        functionName: 'approve'
-      });
+      try {
+        const { request: approvalRequest } =
+          await publicClient.simulateContract({
+            abi: erc20Abi,
+            address: tokenAddress,
+            functionName: 'approve',
+            account: walletClient.account,
+            args: [veIonContract.address, amount]
+          });
 
-      // Wait for approval transaction to complete
-      await publicClient?.waitForTransactionReceipt({
-        hash: approvalTx
-      });
+        // If simulation succeeds, execute approval
+        const approvalTx = await walletClient.writeContract(approvalRequest);
 
-      // lock
-      const tx = await walletClient.writeContract({
-        abi: veIonContract.abi,
-        account: walletClient.account,
-        address: veIonContract.address,
-        args: [
-          [tokenAddress],
-          [parseUnits(tokenAmount, 18)],
-          [BigInt(durationInSeconds)],
-          [stakeUnderlying]
-        ] as const,
-        functionName: 'createLock'
-      });
+        // Wait for approval transaction to complete
+        await publicClient?.waitForTransactionReceipt({
+          hash: approvalTx
+        });
+      } catch (error) {
+        console.error('Approval simulation failed:', error);
+        setIsPending(false);
+        throw new Error('Approval simulation failed');
+      }
 
-      const transaction = await publicClient?.waitForTransactionReceipt({
-        hash: tx
-      });
+      // Simulate lock
+      try {
+        const { request: lockRequest } = await publicClient.simulateContract({
+          abi: veIonContract.abi,
+          address: veIonContract.address,
+          functionName: 'createLock',
+          account: walletClient.account,
+          args: [
+            [tokenAddress],
+            [amount],
+            [BigInt(durationInSeconds)],
+            [stakeUnderlying]
+          ] as const
+        });
 
-      setIsPending(false);
+        const tx = await walletClient.writeContract(lockRequest);
+
+        const transaction = await publicClient?.waitForTransactionReceipt({
+          hash: tx
+        });
+
+        setIsPending(false);
+        return transaction;
+      } catch (error) {
+        console.error('Lock simulation failed:', error);
+        setIsPending(false);
+        throw new Error('Lock simulation failed');
+      }
     } catch (err) {
       setIsPending(false);
+      throw err;
     }
   };
 

@@ -250,7 +250,7 @@ export const useMarketRows = (
 
       return [...rows, ...newRows];
     }, []);
-    //
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chain,
     selectedPool,

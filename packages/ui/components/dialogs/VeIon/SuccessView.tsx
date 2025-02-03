@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@ui/components/ui/button';
 import { DialogHeader, DialogTitle } from '@ui/components/ui/dialog';
@@ -9,6 +10,13 @@ interface SuccessViewProps {
 }
 
 export function SuccessView({ amount, onClose }: SuccessViewProps) {
+  const router = useRouter();
+
+  const handleNavigateAndClose = () => {
+    onClose();
+    router.push('/veion/governance');
+  };
+
   return (
     <div className="flex flex-col gap-y-4 py-2">
       <DialogHeader>
@@ -29,10 +37,10 @@ export function SuccessView({ amount, onClose }: SuccessViewProps) {
         className="w-12 mx-auto h-12"
       />
       <Button
-        onClick={onClose}
+        onClick={handleNavigateAndClose}
         className="w-full bg-accent text-black"
       >
-        View My Position
+        View My Positions
       </Button>
     </div>
   );

@@ -1,3 +1,4 @@
+// Extend.tsx
 import { useState } from 'react';
 
 import { format, addDays, differenceInDays } from 'date-fns';
@@ -9,6 +10,9 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import { LockDurationPicker } from '../../LockDurationPicker';
+
+const MIN_LOCK_DURATION = 180;
+const MAX_LOCK_DURATION = 730;
 
 type ExtendProps = {
   chain: string;
@@ -23,22 +27,32 @@ export function Extend({ chain }: ExtendProps) {
     selectedManagePosition?.lockExpires?.date || Date.now()
   );
 
-  // Calculate current duration in days
   const currentDurationDays = selectedManagePosition?.lockedBLP
     ? Math.floor(selectedManagePosition.lockedBLP.duration / 86400)
     : 0;
 
+  // Calculate minimum days needed to reach MIN_LOCK_DURATION
+  const minNeededDays = Math.max(0, MIN_LOCK_DURATION - currentDurationDays);
+
+  // Initialize with current duration + minimum needed days (if any)
+  const [selectedDuration, setSelectedDuration] = useState<number>(() =>
+    Math.min(currentDurationDays + minNeededDays, MAX_LOCK_DURATION)
+  );
+
   const [newLockDate, setNewLockDate] = useState<Date>(() =>
-    addDays(currentLockDate, 1)
+    addDays(currentLockDate, minNeededDays)
   );
 
   const extensionDays = differenceInDays(newLockDate, currentLockDate);
-  const [selectedDuration, setSelectedDuration] =
-    useState<number>(currentDurationDays);
+  const totalDurationAfterExtension = currentDurationDays + extensionDays;
+
+  const isExtensionValid =
+    totalDurationAfterExtension >= MIN_LOCK_DURATION &&
+    totalDurationAfterExtension <= MAX_LOCK_DURATION;
 
   const onExtend = async () => {
     if (
-      extensionDays <= 0 ||
+      !isExtensionValid ||
       !selectedManagePosition?.id ||
       !selectedManagePosition.lockedBLP
     ) {
@@ -53,8 +67,15 @@ export function Extend({ chain }: ExtendProps) {
   };
 
   const handleDurationChange = (duration: number) => {
-    // Ensure we don't go below current duration
-    const newDuration = Math.max(currentDurationDays, duration);
+    // Ensure total duration is at least MIN_LOCK_DURATION and at most MAX_LOCK_DURATION
+    const maxAllowedExtension = MAX_LOCK_DURATION - currentDurationDays;
+
+    // Calculate new duration within bounds
+    const newDuration = Math.min(
+      duration,
+      currentDurationDays + maxAllowedExtension
+    );
+
     setSelectedDuration(newDuration);
     const calculatedNewDate = addDays(
       currentLockDate,
@@ -73,9 +94,9 @@ export function Extend({ chain }: ExtendProps) {
           onDateChange={(date) => setNewLockDate(date)}
           baseLockDate={currentLockDate}
           currentDuration={currentDurationDays}
-          minDuration={currentDurationDays}
-          maxDuration={730}
+          maxDuration={MAX_LOCK_DURATION}
           tooltipContent="Longer lock periods provide higher voting power"
+          isExtending={true}
         />
       </div>
 
@@ -84,6 +105,9 @@ export function Extend({ chain }: ExtendProps) {
           <span className="text-sm text-white/60">NEW LOCK ENDS</span>
           <span className="text-lg font-medium">
             {format(newLockDate, 'dd MMM yyyy')}
+          </span>
+          <span className="text-xs text-white/40">
+            Total duration: {totalDurationAfterExtension} days
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -94,8 +118,14 @@ export function Extend({ chain }: ExtendProps) {
 
       <TransactionButton
         onSubmit={onExtend}
-        isDisabled={!address || extensionDays <= 0}
-        buttonText={`Extend Lock by ${extensionDays} Days`}
+        isDisabled={!address || !isExtensionValid}
+        buttonText={
+          totalDurationAfterExtension > MAX_LOCK_DURATION
+            ? 'Cannot exceed maximum duration'
+            : totalDurationAfterExtension < MIN_LOCK_DURATION
+              ? `Need ${minNeededDays} more days minimum`
+              : `Extend Lock by ${extensionDays} Days`
+        }
       />
     </div>
   );

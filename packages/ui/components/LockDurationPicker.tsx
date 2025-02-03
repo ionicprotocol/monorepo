@@ -1,8 +1,10 @@
+// LockDurationPicker.tsx
 import { useState, useMemo } from 'react';
 
 import { format, addDays } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Info } from 'lucide-react';
 
+import { PrecisionSlider } from '@ui/components/PrecisionSlider';
 import { Button } from '@ui/components/ui/button';
 import { Calendar } from '@ui/components/ui/calendar';
 import {
@@ -11,15 +13,8 @@ import {
   PopoverTrigger
 } from '@ui/components/ui/popover';
 
-import CustomTooltip from './CustomTooltip';
-import { PrecisionSlider } from './PrecisionSlider';
-
-const defaultDurationLabels = {
-  1: '1d',
-  180: '180d',
-  365: '1y',
-  730: '2y'
-};
+const MIN_LOCK_DURATION = 180;
+const MAX_LOCK_DURATION = 730;
 
 interface LockDurationPickerProps {
   selectedDuration: number;
@@ -28,13 +23,12 @@ interface LockDurationPickerProps {
   onDateChange: (date: Date) => void;
   baseLockDate?: Date;
   currentDuration?: number;
-  minDuration?: number;
   maxDuration?: number;
   showTooltip?: boolean;
   tooltipContent?: string;
+  isExtending?: boolean;
 }
 
-// LockDurationPicker.tsx
 export function LockDurationPicker({
   selectedDuration,
   lockDate,
@@ -42,65 +36,116 @@ export function LockDurationPicker({
   onDateChange,
   baseLockDate = new Date(),
   currentDuration = 0,
-  minDuration = 1,
-  maxDuration = 730,
+  maxDuration = MAX_LOCK_DURATION,
   showTooltip = true,
-  tooltipContent = 'A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power.'
+  tooltipContent = 'A longer lock period gives you more veION for the same amount of LPs, which means a higher voting power.',
+  isExtending = false
 }: LockDurationPickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const dateRange = useMemo(() => {
-    return {
-      minDate: baseLockDate,
-      maxDate: addDays(baseLockDate, maxDuration - currentDuration)
-    };
-  }, [baseLockDate, currentDuration, maxDuration]);
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      onDateChange?.(date);
-      const durationInDays = Math.round(
-        (date.getTime() - baseLockDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const totalDuration = currentDuration + durationInDays;
-      const clampedDuration = Math.max(
-        currentDuration,
-        Math.min(maxDuration, totalDuration)
-      );
-      onDurationChange(clampedDuration);
-      setIsCalendarOpen(false);
+  // Calculate effective minimum duration based on whether we're extending or creating
+  const effectiveMinDuration = useMemo(() => {
+    if (isExtending) {
+      // When extending, calculate how many days we need to add to reach MIN_LOCK_DURATION
+      const daysNeededForMin = Math.max(0, MIN_LOCK_DURATION - currentDuration);
+      return currentDuration + daysNeededForMin;
+    } else {
+      // When creating, minimum is just MIN_LOCK_DURATION
+      return MIN_LOCK_DURATION;
     }
+  }, [currentDuration, isExtending]);
+
+  const dateRange = useMemo(() => {
+    if (isExtending) {
+      // Calculate minimum days needed to reach MIN_LOCK_DURATION
+      const minDaysNeeded = Math.max(0, MIN_LOCK_DURATION - currentDuration);
+
+      return {
+        minDate: addDays(baseLockDate, minDaysNeeded),
+        maxDate: addDays(baseLockDate, MAX_LOCK_DURATION - currentDuration)
+      };
+    } else {
+      return {
+        minDate: addDays(baseLockDate, MIN_LOCK_DURATION),
+        maxDate: addDays(baseLockDate, MAX_LOCK_DURATION)
+      };
+    }
+  }, [baseLockDate, currentDuration, isExtending]);
+
+  const handleCalendarSelect = (date: Date | undefined) => {
+    if (!date) return;
+
+    const durationInDays = Math.round(
+      (date.getTime() - baseLockDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const totalDuration = isExtending
+      ? currentDuration + durationInDays
+      : durationInDays;
+
+    const clampedDuration = Math.max(
+      effectiveMinDuration,
+      Math.min(maxDuration, totalDuration)
+    );
+
+    onDateChange(date);
+    onDurationChange(clampedDuration);
   };
 
-  const sliderMarks = [0, 180, 365, 730]
-    .filter((mark, index, array) => {
-      // Remove duplicates and ensure marks are in valid range
-      return mark <= maxDuration && array.indexOf(mark) === index;
-    })
+  const sliderMarks = [effectiveMinDuration, 365, maxDuration]
+    .filter((mark) => mark <= maxDuration && mark >= effectiveMinDuration)
     .sort((a, b) => a - b);
 
   const handleSliderChange = (duration: number) => {
-    // Prevent going below current duration
-    if (duration < currentDuration) {
-      return;
-    }
+    const validDuration = Math.max(
+      effectiveMinDuration,
+      Math.min(maxDuration, duration)
+    );
 
-    onDurationChange(duration);
-    const extensionDays = duration - currentDuration;
-    onDateChange?.(addDays(baseLockDate, extensionDays));
+    if (isExtending) {
+      const extensionDays = validDuration - currentDuration;
+      onDurationChange(validDuration);
+      onDateChange(addDays(baseLockDate, extensionDays));
+    } else {
+      onDurationChange(validDuration);
+      onDateChange(addDays(baseLockDate, validDuration));
+    }
   };
+
+  const minNeededDays = isExtending
+    ? Math.max(0, MIN_LOCK_DURATION - currentDuration)
+    : MIN_LOCK_DURATION;
 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-xs text-white/60 tracking-wider mb-2">
-        <p>LOCK UNTIL</p>
-        {showTooltip && <CustomTooltip content={tooltipContent} />}
+        <p>
+          {isExtending
+            ? minNeededDays > 0
+              ? `EXTEND LOCK (min +${minNeededDays} days needed)`
+              : 'EXTEND LOCK'
+            : `LOCK UNTIL (min ${MIN_LOCK_DURATION} days)`}
+        </p>
+        {showTooltip && (
+          <div
+            className="tooltip"
+            data-tip={tooltipContent}
+          >
+            <Info className="h-4 w-4 cursor-help" />
+          </div>
+        )}
       </div>
       <div className="flex items-center justify-between">
         <div className="text-sm text-white/60">
           {format(lockDate, 'dd MMM yyyy')}
+          {isExtending && (
+            <span className="ml-2 text-xs text-white/40">
+              (Current: {format(baseLockDate, 'dd MMM yyyy')})
+            </span>
+          )}
         </div>
         <Popover
+          modal={true}
           open={isCalendarOpen}
           onOpenChange={setIsCalendarOpen}
         >
@@ -115,16 +160,18 @@ export function LockDurationPicker({
           <PopoverContent
             className="w-auto p-0 bg-grayUnselect border-white/10"
             sideOffset={5}
+            onClick={(e) => e.stopPropagation()}
           >
             <Calendar
               mode="single"
               selected={lockDate}
-              onSelect={handleDateSelect}
+              onSelect={handleCalendarSelect}
               disabled={{
                 before: dateRange.minDate,
                 after: dateRange.maxDate
               }}
-              defaultMonth={dateRange.minDate}
+              month={lockDate}
+              defaultMonth={lockDate}
               className="border-white/10 text-white"
             />
           </PopoverContent>
@@ -135,17 +182,24 @@ export function LockDurationPicker({
           value={selectedDuration}
           onChange={handleSliderChange}
           max={maxDuration}
-          min={0}
+          min={effectiveMinDuration}
           step={1}
           marks={sliderMarks}
           className="mt-6"
         />
         <div className="flex justify-between mt-2 text-xs text-white/60">
           <span>
-            {currentDuration > 0 ? `Current: ${currentDuration}d` : '0d'}
+            {isExtending
+              ? `Current: ${currentDuration}d${minNeededDays > 0 ? ` (need +${minNeededDays}d min)` : ''}`
+              : `Min: ${MIN_LOCK_DURATION}d`}
           </span>
           <span>{maxDuration}d (max)</span>
         </div>
+        {isExtending && (
+          <div className="mt-2 text-xs text-white/40">
+            Total duration after extension: {selectedDuration}d
+          </div>
+        )}
       </div>
     </div>
   );
