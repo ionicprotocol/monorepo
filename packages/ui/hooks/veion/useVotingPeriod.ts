@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
-import { getVoterContract } from '@ui/constants/veIon';
+import { getiVoterContract } from '@ui/constants/veIon';
 
 export const EPOCH_ZERO = new Date('2025-01-27');
 export const EPOCH_DURATION_DAYS = 8;
@@ -81,7 +81,7 @@ export function useVotingPeriod(
 
     try {
       setIsLoading(true);
-      const voterContract = getVoterContract(+chain);
+      const voterContract = getiVoterContract(+chain);
       const lastVotedTimestamp = await publicClient.readContract({
         ...voterContract,
         functionName: 'lastVoted',

@@ -16,6 +16,7 @@ import { multipliers } from '@ui/utils/multipliers';
 import { useVoteData } from './useVoteData';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+import { useVeAPR } from './useVeAPR';
 
 export const useMarketRows = (
   chain: number | string,
@@ -116,6 +117,18 @@ export const useMarketRows = (
     marketSides
   });
 
+  // const {
+  //   veAPRs,
+  //   isLoading: isLoadingVeAPR,
+  //   refresh: refreshVeAPR
+  // } = useVeAPR({
+  //   chain: +chain,
+  //   marketAddresses,
+  //   marketSides
+  // });
+
+  // console.log('veAPRs', veAPRs);
+
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
 
@@ -159,6 +172,7 @@ export const useMarketRows = (
           currentAmount: asset.totalSupplyFiat.toFixed(2),
           incentives: mockIncentives,
           veAPR: 0,
+          // veAPR: veAPRs[key] ?? 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
@@ -208,7 +222,8 @@ export const useMarketRows = (
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalBorrowFiat.toFixed(2),
           incentives: mockIncentives,
-          veAPR: 0, // Changed from string to number
+          // veAPR: veAPRs[key] ?? 0,
+          veAPR: 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
@@ -259,6 +274,7 @@ export const useMarketRows = (
     rewards,
     merklApr,
     voteData
+    // veAPRs
   ]);
 
   useEffect(() => {
@@ -268,7 +284,7 @@ export const useMarketRows = (
       !isLoadingBorrowApys &&
       !isLoadingFraxtalAprs &&
       !isLoadingRewards &&
-      !isLoadingVoteData &&
+      // !isLoadingVoteData &&
       !isLoadingMerklData
     ) {
       try {
@@ -290,6 +306,7 @@ export const useMarketRows = (
     isLoadingRewards,
     isLoadingMerklData,
     isLoadingVoteData,
+    // isLoadingVeAPR,
     processMarketRows
   ]);
 
@@ -306,6 +323,7 @@ export const useMarketRows = (
       isLoadingFraxtalAprs ||
       isLoadingRewards ||
       isLoadingVoteData ||
+      // isLoadingVeAPR ||
       isLoadingMerklData,
     error,
     refetch

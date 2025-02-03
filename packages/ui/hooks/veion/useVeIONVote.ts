@@ -7,7 +7,7 @@ import {
   useWalletClient
 } from 'wagmi';
 
-import { getVoterContract } from '@ui/constants/veIon';
+import { getiVoterContract } from '@ui/constants/veIon';
 import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import type { MarketSide } from '@ui/types/veION';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -43,7 +43,7 @@ export const convertFromContractWeight = (weight: number): string => {
 };
 
 export function useVeIONVote(chain: number) {
-  const voterContract = getVoterContract(chain);
+  const voterContract = getiVoterContract(chain);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { address, isConnected } = useAccount();

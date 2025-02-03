@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
-import { getVoterContract } from '@ui/constants/veIon';
+import { getiVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
 
 interface UseVoteDataParams {
@@ -38,9 +38,8 @@ export function useVoteData({
   const [voteData, setVoteData] = useState<Record<string, VoteData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [lastVoted, setLastVoted] = useState<number | null>(null);
 
-  const voterContract = getVoterContract(chain);
+  const voterContract = getiVoterContract(chain);
 
   const formatValue = (value: bigint): number => {
     return Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
