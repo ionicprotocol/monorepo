@@ -18,7 +18,7 @@ const TokenPair = ({
       className="rounded-full"
     />
     <Image
-      src={`/img/logo/${token2.toLowerCase()}.svg`}
+      src={`/img/logo/${token2.toUpperCase()}.png`}
       alt={`${token2} logo`}
       width={size}
       height={size}

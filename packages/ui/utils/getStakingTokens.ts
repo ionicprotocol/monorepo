@@ -117,9 +117,18 @@ export function getReservesArgs(
   if (chain === optimism.id || chain === base.id) {
     return [];
   }
-  if (chain === mode.id && (token === 'weth' || token === 'eth')) {
-    return [getToken(+chain), getPoolToken('weth'), false];
+
+  // MODE specific logic - we need to include MODE token case
+  if (chain === mode.id) {
+    if (token === 'weth' || token === 'eth') {
+      return [getToken(chain), getPoolToken('weth'), false];
+    }
+    if (token === 'mode') {
+      // For MODE/ION pair, pass ion token, mode token address, and false for the reverse flag
+      return [getToken(chain), getPoolToken('mode'), false];
+    }
   }
+
   return [];
 }
 

@@ -48,7 +48,7 @@ export function useVeIonData(chainId: number) {
         },
         // Mode staked amount
         {
-          address: getStakingToContract(34443, 'eth'),
+          address: getStakingToContract(34443, 'mode'),
           abi: StakingContractAbi,
           functionName: 'totalSupply',
           chainId: 34443

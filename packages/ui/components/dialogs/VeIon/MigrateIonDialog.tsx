@@ -24,11 +24,13 @@ import {
 interface MigrateIonDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  selectedToken: 'eth' | 'mode' | 'weth';
 }
 
 export default function MigrateIonDialog({
   isOpen,
-  onOpenChange
+  onOpenChange,
+  selectedToken
 }: MigrateIonDialogProps) {
   const { isConnected, address, chainId } = useAccount();
   const [amount, setAmount] = useState<string>('');
@@ -37,8 +39,14 @@ export default function MigrateIonDialog({
   const { currentChain } = useVeIONContext();
   const { removeLiquidity, isPending } = useVeIONActions();
 
-  const stakingContractAddress = getStakingToContract(currentChain, 'eth');
-  const stakingTokenAddress = getAvailableStakingToken(currentChain, 'eth');
+  const stakingContractAddress = getStakingToContract(
+    currentChain,
+    selectedToken
+  );
+  const stakingTokenAddress = getAvailableStakingToken(
+    currentChain,
+    selectedToken
+  );
 
   const allStakedAmount = useReadContract({
     abi: StakingContractAbi,
@@ -75,7 +83,7 @@ export default function MigrateIonDialog({
 
       await removeLiquidity({
         liquidity: amount,
-        selectedToken: 'eth'
+        selectedToken
       });
 
       allStakedAmount.refetch();
@@ -100,7 +108,7 @@ export default function MigrateIonDialog({
           <MaxDeposit
             amount={amount}
             handleInput={(val?: string) => setAmount(val || '')}
-            tokenName="ion/eth"
+            tokenName={`ion/${selectedToken}`}
             token={stakingTokenAddress}
             chain={currentChain}
             max={

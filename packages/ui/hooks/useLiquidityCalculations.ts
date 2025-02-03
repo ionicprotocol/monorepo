@@ -1,4 +1,3 @@
-// useLiquidityCalculations.ts
 import { useMemo } from 'react';
 
 import { formatEther, parseUnits, type Address } from 'viem';
@@ -9,7 +8,8 @@ import {
   getReservesABI,
   getReservesContract,
   getReservesArgs,
-  getToken
+  getToken,
+  getPoolToken
 } from '@ui/utils/getStakingTokens';
 
 interface UseLiquidityCalculationsProps {
@@ -23,7 +23,6 @@ export function useLiquidityCalculations({
   chainId,
   selectedToken
 }: UseLiquidityCalculationsProps) {
-  // Fetch reserves data
   const reserves = useReadContract({
     abi: getReservesABI(chainId),
     address: getReservesContract(chainId),
@@ -37,17 +36,23 @@ export function useLiquidityCalculations({
     }
   });
 
-  // Fetch balances
+  // Fetch ION balance
   const { data: ionBalance, refetch: refetchIonBalance } = useBalance({
     address,
     token: getToken(chainId),
     chainId
   });
 
+  // Fetch selected token balance with correct token address
   const { data: selectedTokenBalance, refetch: refetchSelectedTokenBalance } =
     useBalance({
       address,
-      ...(selectedToken !== 'eth' && { token: getToken(chainId) }),
+      // For ETH, don't provide a token address
+      // For MODE, use the correct MODE token address from getPoolToken
+      // For WETH, use the WETH address from getPoolToken
+      ...(selectedToken !== 'eth' && {
+        token: getPoolToken(selectedToken)
+      }),
       chainId
     });
 
@@ -58,27 +63,6 @@ export function useLiquidityCalculations({
       refetchSelectedTokenBalance()
     ]);
   };
-
-  // Process reserve data considering chain specifics
-  const processedReserves = useMemo(() => {
-    if (reserves.status !== 'success' || !reserves.data) return null;
-
-    const resData = reserves.data as
-      | [bigint, bigint, bigint]
-      | [bigint, bigint];
-
-    if (chainId === optimism.id) {
-      return {
-        ion: resData[1],
-        token: resData[0]
-      };
-    }
-
-    return {
-      ion: resData[0],
-      token: resData[1]
-    };
-  }, [reserves.status, reserves.data, chainId]);
 
   const calculateTokenAmount = (ionAmount: string): string => {
     if (!processedReserves || !ionAmount || processedReserves.ion === 0n)
@@ -95,8 +79,34 @@ export function useLiquidityCalculations({
     }
   };
 
+  const processedReserves = useMemo(() => {
+    if (reserves.status !== 'success' || !reserves.data) {
+      return null;
+    }
+
+    const resData = reserves.data as
+      | [bigint, bigint, bigint]
+      | [bigint, bigint];
+
+    if (chainId === optimism.id) {
+      return {
+        ion: resData[1],
+        token: resData[0]
+      };
+    }
+
+    const result = {
+      ion: resData[0],
+      token: resData[1]
+    };
+
+    return result;
+  }, [reserves.status, reserves.data, chainId]);
+
   const getMaximumIonInput = (): string => {
-    if (!processedReserves || !selectedTokenBalance || !ionBalance) return '0';
+    if (!processedReserves || !selectedTokenBalance || !ionBalance) {
+      return '0';
+    }
 
     try {
       const maxIonBasedOnBalance = ionBalance.value;

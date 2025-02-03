@@ -16,7 +16,6 @@ import { multipliers } from '@ui/utils/multipliers';
 import { useVoteData } from './useVoteData';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import { useVeAPR } from './useVeAPR';
 
 export const useMarketRows = (
   chain: number | string,

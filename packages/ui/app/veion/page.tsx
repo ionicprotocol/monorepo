@@ -38,8 +38,7 @@ export default function VeIon() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
-  const queryToken = searchParams.get('token');
-  const selectedtoken = queryToken ?? 'eth';
+  const selectedtoken = querychain === '8453' ? 'eth' : 'mode';
   const chain = querychain ? querychain : String(chainId);
 
   return (
@@ -105,6 +104,7 @@ export default function VeIon() {
               onClick: () => setIsAddLiquidityOpen(true),
               get: 'vAMM'
             }}
+            chain={+chain}
           />
 
           <LPRow
@@ -123,6 +123,7 @@ export default function VeIon() {
               onClick: () => setIsMigrateOpen(true),
               get: 'vAMM'
             }}
+            chain={+chain}
           />
 
           <LPRow
@@ -142,6 +143,7 @@ export default function VeIon() {
               onClick: () => setIsDialogOpen(true),
               get: 'veION'
             }}
+            chain={+chain}
           />
         </div>
       </CardContent>
@@ -152,11 +154,6 @@ export default function VeIon() {
         </Button>
       </Link>
 
-      <GetVeIONDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
       <AddLiquidityDialog
         isOpen={isAddLiquidityOpen}
         onOpenChange={setIsAddLiquidityOpen}
@@ -165,6 +162,12 @@ export default function VeIon() {
       <MigrateIonDialog
         isOpen={isMigrateOpen}
         onOpenChange={setIsMigrateOpen}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+      />
+      <GetVeIONDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
       />
     </Card>
   );

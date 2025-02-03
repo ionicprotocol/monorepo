@@ -1,7 +1,6 @@
 import { BaseReservesContractAddr } from '@ui/constants/baselp';
 import { ModeLpAddressPool } from '@ui/constants/lp';
 import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
-import { OPReservesContractAddr } from '@ui/constants/oplp';
 
 export const LIQUIDITY_POOLS = {
   // Base pools
@@ -20,19 +19,19 @@ export const LIQUIDITY_POOLS = {
     chainId: 34443,
     lpAddress: ModeLpAddressPool,
     ionAddress: '0x18470019bF0E94611f15852F7e93cf5D65BC34CA'
-  },
-  // Optimism pools
-  OP_WETH_POOL: {
-    chainId: 10,
-    lpAddress: OPReservesContractAddr,
-    wethAddress: '0x4200000000000000000000000000000000000006'
-  },
-  OP_DUAL_POOL: {
-    chainId: 10,
-    lpAddress: '0x39B50c59782F8aa57628b115Dc2Fd87b322E60b9',
-    wethAddress: '0x4200000000000000000000000000000000000006',
-    ionAddress: '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'
   }
+  // Optimism pools
+  // OP_WETH_POOL: {
+  //   chainId: 10,
+  //   lpAddress: OPReservesContractAddr,
+  //   wethAddress: '0x4200000000000000000000000000000000000006'
+  // },
+  // OP_DUAL_POOL: {
+  //   chainId: 10,
+  //   lpAddress: '0x39B50c59782F8aa57628b115Dc2Fd87b322E60b9',
+  //   wethAddress: '0x4200000000000000000000000000000000000006',
+  //   ionAddress: '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'
+  // }
 } as const;
 
 export const LP_TYPES = ['eth', 'mode', 'op', 'weth'] as const;

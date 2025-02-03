@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Address, createPublicClient, getContract, PublicClient } from 'viem';
+
 import { usePublicClient } from 'wagmi';
 
-import { getiVoterContract, getVoterContract } from '@ui/constants/veIon';
+import { getVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
+
+import type { Address } from 'viem';
+
 import { bribeRewardsAbi } from '@ionicprotocol/sdk/src/generated';
 
 interface UseVeAPRParams {
@@ -59,7 +62,7 @@ export function useVeAPR({
             })) as Address;
 
             if (!rewardAccumulator) {
-              console.log('No reward accumulator for market:', key);
+              // console.log('No reward accumulator for market:', key);
               return;
             }
 
@@ -74,7 +77,7 @@ export function useVeAPR({
               !bribeAddress ||
               bribeAddress === '0x0000000000000000000000000000000000000000'
             ) {
-              console.log('No bribe contract for market:', key);
+              // console.log('No bribe contract for market:', key);
               return;
             }
 
@@ -89,10 +92,10 @@ export function useVeAPR({
               ...bribeContract,
               functionName: 'getAllLpRewardTokens'
             })) as Address[];
-            console.log('Reward tokens:', rewardTokens);
+            // console.log('Reward tokens:', rewardTokens);
 
             if (!rewardTokens.length) {
-              console.log('No reward tokens for market:', key);
+              //   console.log('No reward tokens for market:', key);
               return;
             }
 
@@ -142,7 +145,7 @@ export function useVeAPR({
         })
       );
 
-      console.log('Setting new veAPRs:', newVeAPRs);
+      //   console.log('Setting new veAPRs:', newVeAPRs);
       setVeAPRs(newVeAPRs);
       setError(null);
     } catch (err) {
@@ -154,6 +157,7 @@ export function useVeAPR({
     } finally {
       setIsLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, marketAddresses, marketSides, publicClient, voterContract]);
 
   // Only run when marketAddresses changes

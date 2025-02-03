@@ -66,9 +66,7 @@ function DelegateVeionTable({ onUndelegateSuccess }: DelegateVeionTableProps) {
             <div className="text-xs font-semibold text-white/80">
               {row.getValue('tokensLocked')}
             </div>
-            <div className="text-xs font-semibold text-white/40">
-              Balancer LP
-            </div>
+            <div className="text-xs font-semibold text-white/40">Aero LP</div>
           </div>
         </div>
       )

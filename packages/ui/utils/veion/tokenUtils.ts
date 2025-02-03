@@ -17,8 +17,8 @@ export function getTokenType(chainId: ChainId): 'eth' | 'mode' | 'weth' {
 export const getLPRatio = (chainId: ChainId, lpType: LpTokenType) => {
   // AeroSwap pools are 50-50, Balancer pools are 80-20
   const isBalancer = [
-    LpTokenType.OP_ETH,
-    LpTokenType.BASE_ETH,
+    // LpTokenType.OP_ETH,
+    // LpTokenType.BASE_ETH,
     LpTokenType.MODE_ETH
   ].includes(lpType);
 
