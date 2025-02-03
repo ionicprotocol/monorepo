@@ -30,7 +30,7 @@ contract CErc20RewardsDelegateMorpho is CErc20Delegate {
    * @param proof The proof required to validate the claim.
    * @dev Only callable by the governance.
    */
-  function claim(address morphoURD, address rewardToken, uint256 claimable, bytes32[] memory proof) external {
+  function claim(address morphoURD, address rewardToken, uint256 claimable, bytes32[] memory proof) external isAuthorized {
     uint256 claimedAmount = IMorphoClaim(morphoURD).claim(address(this), rewardToken, claimable, proof);
     EIP20Interface(rewardToken).approve(DISTRIBUTOR, claimedAmount);
     IDistributor(DISTRIBUTOR).distribute(rewardToken, claimedAmount);

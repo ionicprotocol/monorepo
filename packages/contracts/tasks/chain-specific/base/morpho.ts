@@ -8,7 +8,7 @@ import { chainIdtoChain } from "@ionicprotocol/chains";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("base:morpho:upgrade", "one time setup").setAction(async (_, { viem, run, deployments }) => {
-  const assetToUpgrade = assetSymbols.ionicUSDC;
+  const assetToUpgrade = assetSymbols.ionicWETH;
 
   const delegate = await deployments.get("CErc20RewardsDelegateMorpho");
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
 import { FixedPointMathLib } from "solmate/utils/FixedPointMathLib.sol";
@@ -29,6 +29,8 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     address newFeeRecipient
   );
 
+  event UpdatedRewardsRecipient(address oldRewardsRecipient, address newRewardsRecipient);
+
   /* ========== INITIALIZER ========== */
 
   function __IonicER4626_init(ERC20Upgradeable asset_) internal onlyInitializing {
@@ -37,7 +39,7 @@ abstract contract IonicERC4626 is SafeOwnableUpgradeable, PausableUpgradeable, E
     __Context_init();
     __ERC20_init(
       string(abi.encodePacked("Ionic ", asset_.name(), " Vault")),
-      string(abi.encodePacked("mv", asset_.symbol()))
+      string(abi.encodePacked("iv", asset_.symbol()))
     );
     __ERC4626_init(asset_);
 

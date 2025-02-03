@@ -519,7 +519,7 @@
       "address": "0x6Dd7dDacBb2106bA8B3Cb29318B73dE584430a30"
     },
     "CErc20Delegate": {
-      "address": "0x8fCEdd8c4BC49396C356c17c6a4c939C92e38330"
+      "address": "0x5b45Ef77eEC6c68a815e372449097165DA4e4ba8"
     },
     "CErc20PluginDelegate": {
       "address": "0x440c9E2aAE9b3b3E9B39E591ee43fF1e755D7901"
@@ -528,13 +528,13 @@
       "address": "0x5FB0a996a2252B0541aa2815f23B8f46291A54Ae"
     },
     "CErc20RewardsDelegate": {
-      "address": "0x1b35d5a057069938F039883d2e14c4B2F63d311d"
+      "address": "0x1F7A449e24C2727AFE1bCF0650f05c671B8aB5dD"
     },
     "CErc20RewardsDelegateMorpho": {
-      "address": "0xd0C7667eEc7d08e009954510b2B3F60C5235E85c"
+      "address": "0x2FC7a0bE1884013f9741496ce2EC5C7C8B2eE87F"
     },
     "CTokenFirstExtension": {
-      "address": "0xcb8A5A8004D145cd83058735029255f3B5286801"
+      "address": "0x40bd189116af806A172cF88Fa3eB96257F99392c"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"

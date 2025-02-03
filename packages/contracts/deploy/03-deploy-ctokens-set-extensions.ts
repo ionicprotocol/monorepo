@@ -272,20 +272,42 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       erc20MorphoDelExtensions[0] != erc20MorphoDel.address ||
       erc20MorphoDelExtensions[1] != cTokenFirstExtension.address
     ) {
+      if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: fuseFeeDistributor,
+          functionName: "_setCErc20DelegateExtensions",
+          args: [
+            erc20MorphoDel.address as Address,
+            [erc20MorphoDel.address as Address, cTokenFirstExtension.address as Address]
+          ],
+          description: "Set CErc20RewardsDelegateMorpho Extensions",
+          inputs: [
+            { internalType: "address", name: "cErc20Delegate", type: "address" },
+            { internalType: "address[]", name: "extensions", type: "address[]" }
+          ]
+        });
+      } else {
+        tx = await fuseFeeDistributor.write._setCErc20DelegateExtensions([
+          erc20MorphoDel.address as Address,
+          [erc20MorphoDel.address as Address, cTokenFirstExtension.address as Address]
+        ]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log(`configured the extensions for the CErc20RewardsDelegateMorpho ${erc20MorphoDel.address}`);
+      }
+    } else {
       console.log(`CErc20RewardsDelegateMorpho extensions already configured`);
     }
-
     const [latestCErc20RewardsDelegateMorpho] = await fuseFeeDistributor.read.latestCErc20Delegate([5]);
     if (
       latestCErc20RewardsDelegateMorpho === zeroAddress ||
-      latestCErc20RewardsDelegateMorpho !== erc20RewardsDel.address
+      latestCErc20RewardsDelegateMorpho !== erc20MorphoDel.address
     ) {
       if ((await fuseFeeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
         await prepareAndLogTransaction({
           contractInstance: fuseFeeDistributor,
           functionName: "_setLatestCErc20Delegate",
-          args: [5, erc20RewardsDel.address as Address, becomeImplementationData],
-          description: "Set Latest CErc20RewardsDelegate",
+          args: [5, erc20MorphoDel.address as Address, becomeImplementationData],
+          description: "Set Latest CErc20RewardsDelegateMorpho",
           inputs: [
             { internalType: "uint8", name: "delegateType", type: "uint8" },
             { internalType: "address", name: "newImplementation", type: "address" },
@@ -300,11 +322,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         ]);
         await publicClient.waitForTransactionReceipt({ hash: tx });
         console.log(
-          `Set the latest CErc20RewardsDelegate implementation from ${latestCErc20RewardsDelegateMorpho} to ${erc20MorphoDel.address}`
+          `Set the latest CErc20RewardsDelegate implementation from ${latestCErc20RewardsDelegateMorpho} to ${erc20RewardsDel.address}`
         );
       }
     } else {
-      console.log(`No change in the latest CErc20RewardsDelegateMorpho implementation ${erc20MorphoDel.address}`);
+      console.log(`No change in the latest CErc20RewardsDelegate implementation ${erc20MorphoDel.address}`);
     }
   }
 
