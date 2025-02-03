@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
+import { useChainId, useSwitchChain } from 'wagmi';
+
 import { Button } from '@ui/components/ui/button';
+import { getChainName } from '@ui/constants/mock';
+import type { ChainId } from '@ui/types/veION';
 
 import ResultHandler from './ResultHandler';
 
@@ -14,18 +18,30 @@ type TransactionButtonProps = {
   isDisabled: boolean;
   buttonText?: string;
   className?: string;
+  targetChainId?: number;
 };
 
 const TransactionButton: React.FC<TransactionButtonProps> = ({
   onSubmit,
   isDisabled,
   buttonText = 'Submit',
-  className = ''
+  className = '',
+  targetChainId
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const currentChainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
+  const isWrongNetwork = targetChainId && targetChainId !== currentChainId;
 
   const handleTransaction = async () => {
     try {
+      // If we're on the wrong network, switch first
+      if (isWrongNetwork && targetChainId) {
+        await switchChain({ chainId: targetChainId });
+        return; // The UI will re-render with the new network, and the button can be clicked again
+      }
+
       setIsLoading(true);
       const result = await onSubmit();
 
@@ -39,6 +55,10 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
   };
 
   const getButtonContent = () => {
+    if (isWrongNetwork) {
+      return `Switch to ${getChainName(targetChainId as ChainId)}`;
+    }
+
     if (!isLoading) {
       return buttonText;
     }
@@ -62,7 +82,7 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
     <Button
       className={`w-full bg-accent text-black relative min-h-[40px] ${className}`}
       onClick={handleTransaction}
-      disabled={isDisabled || isLoading}
+      disabled={isDisabled || (isLoading && !isWrongNetwork)}
     >
       {getButtonContent()}
     </Button>

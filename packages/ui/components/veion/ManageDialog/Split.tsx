@@ -11,14 +11,11 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
 
-type SplitProps = {
-  chain: string;
-};
-
-export function Split({ chain }: SplitProps) {
+export function Split() {
+  const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
   const utilizationMarks = [0, 25, 50, 75, 100];
   const [splitValues, setSplitValues] = useState<[number, number]>([50, 50]);
-  const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
   const { handleSplit } = useVeIONManage(Number(chain));
 
@@ -95,6 +92,7 @@ export function Split({ chain }: SplitProps) {
         onSubmit={onSplit}
         isDisabled={!address}
         buttonText="Split veION"
+        targetChainId={chain}
       />
     </div>
   );

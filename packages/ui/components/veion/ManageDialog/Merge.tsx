@@ -18,16 +18,12 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import CustomTooltip from '../../CustomTooltip';
 
-type MergeProps = {
-  chain: string;
-};
-
-export function Merge({ chain }: MergeProps) {
+export function Merge() {
   const [selectedLp, setSelectedLp] = useState<string>('');
-
   const { address } = useAccount();
-  const { handleMerge } = useVeIONManage(Number(chain));
   const { locks, selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
+  const { handleMerge } = useVeIONManage(Number(chain));
 
   const availableLPs = locks.myLocks
     .filter((lock) => lock.id !== selectedManagePosition?.id)
@@ -110,6 +106,7 @@ export function Merge({ chain }: MergeProps) {
         onSubmit={onMerge}
         isDisabled={!hasAvailablePositions || !selectedLp || !address}
         buttonText={hasAvailablePositions ? 'Merge' : 'No Positions Available'}
+        targetChainId={chain}
       />
     </div>
   );

@@ -10,15 +10,12 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getToken } from '@ui/utils/getStakingTokens';
 
-type IncreaseProps = {
-  chain: string;
-};
-
-export function Increase({ chain }: IncreaseProps) {
-  const { handleIncrease, tokenValue } = useVeIONManage(Number(chain));
+export function Increase() {
   const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
+  const { handleIncrease, tokenValue } = useVeIONManage(Number(chain));
   const { address } = useAccount();
-  const token = getToken(+chain);
+  const token = getToken(chain);
 
   const [amount, setAmount] = useState<string>('');
 
@@ -67,6 +64,7 @@ export function Increase({ chain }: IncreaseProps) {
         onSubmit={onIncrease}
         isDisabled={amount === '0' || !address || !amount}
         buttonText="Increase Locked Amount"
+        targetChainId={chain}
       />
     </div>
   );

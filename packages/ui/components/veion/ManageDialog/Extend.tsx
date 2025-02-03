@@ -14,14 +14,13 @@ import { LockDurationPicker } from '../../LockDurationPicker';
 const MIN_LOCK_DURATION = 180;
 const MAX_LOCK_DURATION = 730;
 
-type ExtendProps = {
-  chain: string;
-};
-
-export function Extend({ chain }: ExtendProps) {
+export function Extend() {
   const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
   const { address } = useAccount();
-  const { handleExtend } = useVeIONManage(Number(chain));
+  const { handleExtend } = useVeIONManage(
+    Number(selectedManagePosition?.chainId)
+  );
 
   const currentLockDate = new Date(
     selectedManagePosition?.lockExpires?.date || Date.now()
@@ -126,6 +125,7 @@ export function Extend({ chain }: ExtendProps) {
               ? `Need ${minNeededDays} more days minimum`
               : `Extend Lock by ${extensionDays} Days`
         }
+        targetChainId={chain}
       />
     </div>
   );

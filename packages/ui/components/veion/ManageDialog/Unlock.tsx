@@ -5,12 +5,9 @@ import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
-type UnlockProps = {
-  chain: string;
-};
-
-export function Unlock({ chain }: UnlockProps) {
+export function Unlock() {
   const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
   const { address } = useAccount();
   const { handleUnlockPermanent, handleLockPermanent } = useVeIONManage(
     Number(chain)
@@ -90,6 +87,7 @@ export function Unlock({ chain }: UnlockProps) {
             isDisabled={!address}
             buttonText="Lock veION"
             className="bg-yellow-200 text-black hover:bg-yellow-300"
+            targetChainId={chain}
           />
         </>
       )}

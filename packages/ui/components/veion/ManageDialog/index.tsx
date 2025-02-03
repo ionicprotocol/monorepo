@@ -132,14 +132,14 @@ export default function ManageDialog({
           onTabChange={handleTabChange}
         />
 
-        {activeManageToggle === 'Increase' && <Increase chain={chain} />}
-        {activeManageToggle === 'Extend' && <Extend chain={chain} />}
-        {activeManageToggle === 'Delegate' && <Delegate chain={chain} />}
-        {activeManageToggle === 'Merge' && <Merge chain={chain} />}
-        {activeManageToggle === 'Split' && <Split chain={chain} />}
-        {activeManageToggle === 'Transfer' && <Transfer chain={chain} />}
-        {activeManageToggle === 'Withdraw' && <WithdrawTab chain={chain} />}
-        {activeManageToggle === 'Unlock' && <Unlock chain={chain} />}
+        {activeManageToggle === 'Increase' && <Increase />}
+        {activeManageToggle === 'Extend' && <Extend />}
+        {activeManageToggle === 'Delegate' && <Delegate />}
+        {activeManageToggle === 'Merge' && <Merge />}
+        {activeManageToggle === 'Split' && <Split />}
+        {activeManageToggle === 'Transfer' && <Transfer />}
+        {activeManageToggle === 'Withdraw' && <WithdrawTab />}
+        {activeManageToggle === 'Unlock' && <Unlock />}
       </DialogContent>
     </Dialog>
   );

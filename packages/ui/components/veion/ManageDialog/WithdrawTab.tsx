@@ -5,13 +5,10 @@ import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
-type WithdrawTabProps = {
-  chain: string;
-};
-
-export function WithdrawTab({ chain }: WithdrawTabProps) {
+export function WithdrawTab() {
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
+  const chain = Number(selectedManagePosition?.chainId);
   const { handleWithdraw } = useVeIONManage(Number(chain));
 
   const onWithdraw = async () => {
@@ -36,6 +33,7 @@ export function WithdrawTab({ chain }: WithdrawTabProps) {
         onSubmit={onWithdraw}
         isDisabled={!address}
         buttonText="Withdraw veION"
+        targetChainId={chain}
       />
     </div>
   );

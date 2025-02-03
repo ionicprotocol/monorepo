@@ -18,17 +18,13 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
-type DelegateProps = {
-  chain: string;
-};
-
 type Position = {
   id: string;
   amount: string;
   isPermanent: boolean;
 };
 
-export function Delegate({ chain }: DelegateProps) {
+export function Delegate() {
   const [delegateAddress, setDelegateAddress] = useState('');
   const [amount, setAmount] = useState<string>('');
   const [selectedTokenId, setSelectedTokenId] = useState<string>('');
@@ -36,6 +32,7 @@ export function Delegate({ chain }: DelegateProps) {
   const [positions, setPositions] = useState<Position[]>([]);
 
   const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
   const { address } = useAccount();
   const { handleDelegate, handleLockPermanent, getOwnedTokenIds } =
     useVeIONManage(Number(chain));
@@ -229,6 +226,7 @@ export function Delegate({ chain }: DelegateProps) {
             onSubmit={onDelegate}
             isDisabled={isDisabled}
             buttonText="Delegate veION"
+            targetChainId={chain}
           />
         </>
       )}

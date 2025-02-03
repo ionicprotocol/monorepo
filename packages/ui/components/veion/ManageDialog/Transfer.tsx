@@ -9,14 +9,11 @@ import { Input } from '@ui/components/ui/input';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
-type TransferProps = {
-  chain: string;
-};
-
-export function Transfer({ chain }: TransferProps) {
+export function Transfer() {
   const [transferAddress, setTransferAddress] = useState('');
   const isValidAddress = transferAddress ? isAddress(transferAddress) : false;
   const { selectedManagePosition } = useVeIONContext();
+  const chain = Number(selectedManagePosition?.chainId);
   const { address } = useAccount();
   const { handleTransfer } = useVeIONManage(Number(chain));
 
@@ -51,6 +48,7 @@ export function Transfer({ chain }: TransferProps) {
         onSubmit={onTransfer}
         isDisabled={!isValidAddress || !address}
         buttonText="Transfer veION"
+        targetChainId={chain}
       />
     </div>
   );
