@@ -1,19 +1,23 @@
 import { formatEther } from 'viem';
 import { useReadContracts } from 'wagmi';
 
+import { StakingContractAbi } from '@ui/constants/staking';
 import { VEION_CONTRACTS } from '@ui/constants/veIon';
+import {
+  getAvailableStakingToken,
+  getStakingToContract
+} from '@ui/utils/getStakingTokens';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
-import { useOracleBatch } from '../ionic/useOracleBatch';
 
 import {
   LIQUIDITY_POOLS,
   ERC20_BALANCE_ABI
 } from '../../utils/getLiquidityTokens';
+import { useOracleBatch } from '../ionic/useOracleBatch';
 import { useIonPrices } from '../useDexScreenerPrices';
 import { useEthPrice } from '../useEthPrice';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
-import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 interface ChainSupplyResult {
   error?: Error;
@@ -29,59 +33,65 @@ export function useVeIonData(chainId: number) {
   // Get oracle prices for LP tokens
   const { data: lpTokenPrices } = useOracleBatch([lpToken], chainId);
 
+  // Get total staked amounts across all chains
+  const { data: stakedAmounts, isLoading: stakedAmountLoading } =
+    useReadContracts({
+      contracts: [
+        // Base staked amount
+        {
+          address: getStakingToContract(8453, 'eth'),
+          abi: StakingContractAbi,
+          functionName: 'totalSupply',
+          chainId: 8453
+        },
+        // Mode staked amount
+        {
+          address: getStakingToContract(34443, 'eth'),
+          abi: StakingContractAbi,
+          functionName: 'totalSupply',
+          chainId: 34443
+        }
+        // Optimism staked amount
+        // {
+        //   address: getStakingToContract(10, 'eth'),
+        //   abi: StakingContractAbi,
+        //   functionName: 'totalSupply',
+        //   chainId: 10
+        // }
+      ]
+    });
+  console.log('stakedAmounts', stakedAmounts);
+
   // Get pool balances for total liquidity calculation
-  const { data: poolBalances } = useReadContracts({
-    contracts: [
-      // Base WETH Pool
-      {
-        address: LIQUIDITY_POOLS.BASE_WETH_POOL.wethAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.BASE_WETH_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.BASE_WETH_POOL.chainId
-      },
-      // Mode WETH Pool
-      {
-        address: LIQUIDITY_POOLS.MODE_WETH_POOL.wethAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.MODE_WETH_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.MODE_WETH_POOL.chainId
-      },
-      // Mode ION Pool
-      {
-        address: LIQUIDITY_POOLS.MODE_ION_POOL.ionAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.MODE_ION_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.MODE_ION_POOL.chainId
-      },
-      // Optimism WETH Pool
-      {
-        address: LIQUIDITY_POOLS.OP_WETH_POOL.wethAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.OP_WETH_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.OP_WETH_POOL.chainId
-      },
-      // Optimism Dual Pool WETH
-      {
-        address: LIQUIDITY_POOLS.OP_DUAL_POOL.wethAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.OP_DUAL_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.OP_DUAL_POOL.chainId
-      },
-      // Optimism Dual Pool ION
-      {
-        address: LIQUIDITY_POOLS.OP_DUAL_POOL.ionAddress,
-        abi: ERC20_BALANCE_ABI,
-        functionName: 'balanceOf',
-        args: [LIQUIDITY_POOLS.OP_DUAL_POOL.lpAddress],
-        chainId: LIQUIDITY_POOLS.OP_DUAL_POOL.chainId
-      }
-    ]
-  });
+  const { data: poolBalances, isLoading: poolBalanceLoading } =
+    useReadContracts({
+      contracts: [
+        // Base WETH Pool
+        {
+          address: LIQUIDITY_POOLS.BASE_WETH_POOL.wethAddress,
+          abi: ERC20_BALANCE_ABI,
+          functionName: 'balanceOf',
+          args: [LIQUIDITY_POOLS.BASE_WETH_POOL.lpAddress],
+          chainId: LIQUIDITY_POOLS.BASE_WETH_POOL.chainId
+        },
+        // Mode WETH Pool
+        {
+          address: LIQUIDITY_POOLS.MODE_WETH_POOL.wethAddress,
+          abi: ERC20_BALANCE_ABI,
+          functionName: 'balanceOf',
+          args: [LIQUIDITY_POOLS.MODE_WETH_POOL.lpAddress],
+          chainId: LIQUIDITY_POOLS.MODE_WETH_POOL.chainId
+        },
+        // Mode ION Pool
+        {
+          address: LIQUIDITY_POOLS.MODE_ION_POOL.ionAddress,
+          abi: ERC20_BALANCE_ABI,
+          functionName: 'balanceOf',
+          args: [LIQUIDITY_POOLS.MODE_ION_POOL.lpAddress],
+          chainId: LIQUIDITY_POOLS.MODE_ION_POOL.chainId
+        }
+      ]
+    });
 
   // Get locked supplies for all chains and LP types
   const { data: allChainSupplies = [], isLoading: supplyLoading } =
@@ -102,15 +112,15 @@ export function useVeIonData(chainId: number) {
           functionName: 's_supply',
           args: [BigInt(lpType)],
           chainId: 34443
-        })),
-        // Optimism chain supplies
-        ...VEION_CHAIN_CONFIGS[10].lpTypes.map((lpType) => ({
-          address: VEION_CONTRACTS[10],
-          abi: iveIonAbi,
-          functionName: 's_supply',
-          args: [BigInt(lpType)],
-          chainId: 10
         }))
+        // // Optimism chain supplies
+        // ...VEION_CHAIN_CONFIGS[10].lpTypes.map((lpType) => ({
+        //   address: VEION_CONTRACTS[10],
+        //   abi: iveIonAbi,
+        //   functionName: 's_supply',
+        //   args: [BigInt(lpType)],
+        //   chainId: 10
+        // }))
       ]
     }) as { data: ChainSupplyResult[]; isLoading: boolean };
 
@@ -151,16 +161,14 @@ export function useVeIonData(chainId: number) {
       let lpTokenPrice = 0;
       if (chainId === 8453) {
         // Base chain LP token
-        lpTokenPrice =
-          lpTokenPrices?.['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] || 0;
+        lpTokenPrice = lpTokenPrices?.[lpToken] || 0;
       } else if (chainId === 34443) {
         // Mode chain LP token
         lpTokenPrice =
-          lpTokenPrices?.['0xC6A394952c097004F83d2dfB61715d245A38735a'] || 0;
+          lpTokenPrices?.[getAvailableStakingToken(34443, 'eth')] || 0;
       }
 
-      const valueInUsd =
-        amount * Number(formatEther(BigInt(lpTokenPrice || 0)));
+      const valueInUsd = amount * (Number(lpTokenPrice) / 1e18);
       return acc + valueInUsd;
     }, 0);
   };
@@ -185,6 +193,26 @@ export function useVeIonData(chainId: number) {
     VEION_CHAIN_CONFIGS[10].lpTypes
   );
 
+  // Calculate staked amounts for each chain
+  const baseStakedAmount = stakedAmounts?.[0]?.result
+    ? Number(formatEther(stakedAmounts[0].result)) *
+      (lpTokenPrices?.[lpToken] ? Number(lpTokenPrices[lpToken]) / 1e18 : 0)
+    : 0;
+
+  const modeStakedAmount = stakedAmounts?.[1]?.result
+    ? Number(formatEther(stakedAmounts[1].result)) *
+      (lpTokenPrices?.[getAvailableStakingToken(34443, 'eth')]
+        ? Number(lpTokenPrices[getAvailableStakingToken(34443, 'eth')]) / 1e18
+        : 0)
+    : 0;
+
+  // const optimismStakedAmount = stakedAmounts?.[2]?.result
+  //   ? Number(formatEther(stakedAmounts[2].result)) *
+  //     (lpTokenPrices?.[getAvailableStakingToken(10, 'eth')]
+  //       ? Number(lpTokenPrices[getAvailableStakingToken(10, 'eth')]) / 1e18
+  //       : 0)
+  //   : 0;
+
   return {
     totalLiquidity: {
       8453: baseTotalLiquidity,
@@ -196,7 +224,12 @@ export function useVeIonData(chainId: number) {
       34443: modeLockedValue,
       10: optimismLockedValue
     },
-    isLoading: supplyLoading,
+    stakedAmount: {
+      8453: baseStakedAmount,
+      34443: modeStakedAmount,
+      10: 0
+    },
+    isLoading: supplyLoading || stakedAmountLoading || poolBalanceLoading,
     allChainSupplies
   };
 }

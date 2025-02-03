@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { ExternalLink, LockIcon } from 'lucide-react';
-import { base, mode, optimism } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
@@ -73,7 +73,11 @@ export default function VeIon() {
           <NetworkSelector
             dropdownSelectedChain={+chain}
             nopool={true}
-            enabledChains={[mode.id, base.id, optimism.id]}
+            enabledChains={[
+              mode.id,
+              base.id
+              //  optimism.id
+            ]}
           />
         </div>
       </CardHeader>
@@ -128,7 +132,7 @@ export default function VeIon() {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 3
               }),
               Icon: <LockIcon className="size-4 inline-block" />
             }}

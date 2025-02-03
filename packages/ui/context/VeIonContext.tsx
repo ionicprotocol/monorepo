@@ -129,6 +129,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const {
     totalLiquidity,
     lockedLiquidity,
+    stakedAmount,
     isLoading: veIonDataLoading,
     allChainSupplies
   } = useVeIonData(currentChain);
@@ -137,6 +138,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;
   const locked =
     lockedLiquidity[currentChain as keyof typeof lockedLiquidity] || 0;
+
+  // const staked = stakedAmount[currentChain as keyof typeof stakedAmount] || 0;
+  const staked = stakedAmount[currentChain as keyof typeof stakedAmount] || 0;
 
   const locks = useMultiChainVeIONLocks({
     address,
@@ -207,7 +211,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     liquidity: isSupported
       ? {
           total,
-          staked: 0, // placeholder
+          staked,
           locked,
           isLoading: veIonDataLoading
         }

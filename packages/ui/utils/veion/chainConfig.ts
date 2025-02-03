@@ -1,5 +1,4 @@
-import type { ChainId } from '@ui/types/veION';
-import { LpTokenType } from '@ui/types/veION';
+import type { ChainId, LpTokenType } from '@ui/types/veION';
 
 export const VEION_CHAIN_CONFIGS: Record<
   ChainId,

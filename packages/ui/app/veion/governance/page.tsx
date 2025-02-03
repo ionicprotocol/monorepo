@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import { formatEther } from 'viem';
-import { base, optimism, mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 
 import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
@@ -59,7 +59,11 @@ export default function Governance() {
       <NetworkSelector
         nopool
         dropdownSelectedChain={+chain}
-        enabledChains={[mode.id, base.id, optimism.id]}
+        enabledChains={[
+          mode.id,
+          base.id
+          // optimism.id
+        ]}
         showAll
       />
 
