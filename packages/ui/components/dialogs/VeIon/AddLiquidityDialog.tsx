@@ -14,11 +14,11 @@ import {
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
 import BuyIonSection from '@ui/components/veion/BuyIonSection';
+import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import { getChainName } from '@ui/constants/mock';
-import { ChainId } from '@ui/types/veION';
+import type { ChainId } from '@ui/types/veION';
 
 interface AddLiquidityDialogProps {
   isOpen: boolean;

@@ -32,11 +32,13 @@ type AssetsLockedResult = ContractResult<string[]>;
 export function useVeIONLocks({
   address,
   veIonContract,
-  chainId
+  chainId,
+  supplyResults
 }: {
   address?: string;
   veIonContract: `0x${string}`;
   chainId: ChainId;
+  supplyResults: SupplyResult[];
 }): VeIONLockData & { refetch: () => Promise<void> } {
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
 
@@ -112,25 +114,6 @@ export function useVeIONLocks({
     }))
   }) as {
     data: SimpleBalanceResult[] | undefined;
-    refetch: () => Promise<any>;
-    isLoading: boolean;
-  };
-
-  // Get supply for each LP type
-  const {
-    data: supplyResults,
-    refetch: refetchSupplies,
-    isLoading: isLoadingSupplies
-  } = useReadContracts({
-    contracts: chainConfig.lpTypes.map((lpType) => ({
-      address: veIonContract,
-      abi: iveIonAbi,
-      functionName: 's_supply',
-      args: [lpType],
-      chainId
-    }))
-  }) as {
-    data: SupplyResult[] | undefined;
     refetch: () => Promise<any>;
     isLoading: boolean;
   };
@@ -283,7 +266,6 @@ export function useVeIONLocks({
       refetchAssets(),
       refetchUserLocks(),
       refetchBalances(),
-      refetchSupplies(),
       refetchDelegatees(),
       refetchIonPrices(),
       refetchDelegationAmounts()
@@ -293,7 +275,6 @@ export function useVeIONLocks({
     refetchAssets,
     refetchUserLocks,
     refetchBalances,
-    refetchSupplies,
     refetchDelegatees,
     refetchIonPrices,
     refetchDelegationAmounts
@@ -304,7 +285,6 @@ export function useVeIONLocks({
     isLoadingAssets ||
     isLoadingUserLocks ||
     isLoadingBalances ||
-    isLoadingSupplies ||
     isLoadingDelegatees ||
     isLoadingTokenPrices ||
     isLoadingIonPrices ||

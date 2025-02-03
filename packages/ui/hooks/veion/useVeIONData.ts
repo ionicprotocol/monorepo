@@ -1,16 +1,17 @@
 import { formatEther } from 'viem';
 import { useReadContracts } from 'wagmi';
-import type { Address } from 'viem';
 
-import { useIonPrices } from '../useDexScreenerPrices';
-import { useEthPrice } from '../useEthPrice';
 import { VEION_CONTRACTS } from '@ui/constants/veIon';
-import { iveIonAbi } from '@ionicprotocol/sdk';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
+
 import {
   LIQUIDITY_POOLS,
   ERC20_BALANCE_ABI
 } from '../../utils/getLiquidityTokens';
+import { useIonPrices } from '../useDexScreenerPrices';
+import { useEthPrice } from '../useEthPrice';
+
+import { iveIonAbi } from '@ionicprotocol/sdk';
 
 interface ChainSupplyResult {
   error?: Error;
@@ -20,7 +21,6 @@ interface ChainSupplyResult {
 
 export function useVeIonData() {
   const { data: ethPrice = 0 } = useEthPrice();
-  console.log('ethPrice', ethPrice);
   const { data: ionPrices = {} } = useIonPrices();
 
   // Get pool balances for total liquidity calculation
@@ -112,7 +112,6 @@ export function useVeIonData() {
   const baseTotalLiquidity = poolBalances?.[0]?.result
     ? Number(formatEther(poolBalances[0].result)) * ethPrice * 2
     : 0;
-  console.log('baseTotalLiquidity', baseTotalLiquidity);
 
   const modeTotalLiquidity =
     poolBalances?.slice(1, 3)?.reduce((acc, balance, index) => {
@@ -181,6 +180,7 @@ export function useVeIonData() {
       34443: modeLockedValue,
       10: optimismLockedValue
     },
-    isLoading: supplyLoading
+    isLoading: supplyLoading,
+    allChainSupplies
   };
 }

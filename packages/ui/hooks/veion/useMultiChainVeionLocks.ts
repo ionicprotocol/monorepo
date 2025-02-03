@@ -16,29 +16,36 @@ const chainValidStates: Record<number, VeIONLockData | null> = {
   [ALL_CHAINS_VALUE]: null // combined state
 };
 
+type SupplyResult = any;
+
 export function useMultiChainVeIONLocks({
   address,
-  selectedChainId
+  selectedChainId,
+  supplyResults
 }: {
   address?: string;
   selectedChainId: ChainId;
+  supplyResults: SupplyResult[];
 }): VeIONLockData {
   const baseLocks = useVeIONLocks({
     address,
     veIonContract: VEION_CONTRACTS[8453] ?? '0x0',
-    chainId: 8453
+    chainId: 8453,
+    supplyResults
   });
 
   const modeLocks = useVeIONLocks({
     address,
     veIonContract: VEION_CONTRACTS[34443] as Hex,
-    chainId: 34443
+    chainId: 34443,
+    supplyResults
   });
 
   const optimismLocks = useVeIONLocks({
     address,
     veIonContract: VEION_CONTRACTS[10] as Hex,
-    chainId: 10
+    chainId: 10,
+    supplyResults
   });
 
   return useMemo(() => {

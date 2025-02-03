@@ -129,9 +129,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const {
     totalLiquidity,
     lockedLiquidity,
-    isLoading: veIonDataLoading
+    isLoading: veIonDataLoading,
+    allChainSupplies
   } = useVeIonData();
-  console.log('lockedLiquidity', lockedLiquidity);
 
   const total =
     totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;
@@ -140,7 +140,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
 
   const locks = useMultiChainVeIONLocks({
     address,
-    selectedChainId: currentChain as ChainId
+    selectedChainId: currentChain as ChainId,
+    supplyResults: allChainSupplies
   });
 
   // Calculate USD values

@@ -14,13 +14,13 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
+import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
+import type { ChainId } from '@ui/types/veION';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { SuccessView } from './SuccessView';
-import { getChainName } from '@ui/constants/mock';
-import { ChainId } from '@ui/types/veION';
 
 const MINIMUM_AMOUNT = BigInt('10000000000000000');
 

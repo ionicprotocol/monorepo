@@ -13,13 +13,13 @@ export const VEION_CHAIN_CONFIGS: Record<
   },
   8453: {
     // Base
-    lpTypes: [LpTokenType.BASE_ETH, LpTokenType.BASE_ION],
+    lpTypes: [2],
     nativeCurrency: 'ETH',
     name: 'Base'
   },
   34443: {
     // Mode
-    lpTypes: [LpTokenType.MODE_ETH, LpTokenType.MODE_ION],
+    lpTypes: [0],
     nativeCurrency: 'MODE',
     name: 'Mode'
   },
