@@ -7,7 +7,7 @@ export const VEION_CHAIN_CONFIGS: Record<
 > = {
   10: {
     // Optimism
-    lpTypes: [LpTokenType.OP_ETH, LpTokenType.OP_ION],
+    lpTypes: [0],
     nativeCurrency: 'ETH',
     name: 'Optimism'
   },
@@ -25,14 +25,7 @@ export const VEION_CHAIN_CONFIGS: Record<
   },
   0: {
     // All chains
-    lpTypes: [
-      LpTokenType.OP_ETH,
-      LpTokenType.OP_ION,
-      LpTokenType.BASE_ETH,
-      LpTokenType.BASE_ION,
-      LpTokenType.MODE_ETH,
-      LpTokenType.MODE_ION
-    ],
+    lpTypes: [0, 2],
     nativeCurrency: 'ETH',
     name: 'All Chains'
   }

@@ -131,7 +131,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     lockedLiquidity,
     isLoading: veIonDataLoading,
     allChainSupplies
-  } = useVeIonData();
+  } = useVeIonData(currentChain);
 
   const total =
     totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;

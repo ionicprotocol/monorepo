@@ -3,6 +3,7 @@ import { useReadContracts } from 'wagmi';
 
 import { VEION_CONTRACTS } from '@ui/constants/veIon';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
+import { useOracleBatch } from '../ionic/useOracleBatch';
 
 import {
   LIQUIDITY_POOLS,
@@ -12,6 +13,7 @@ import { useIonPrices } from '../useDexScreenerPrices';
 import { useEthPrice } from '../useEthPrice';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 interface ChainSupplyResult {
   error?: Error;
@@ -19,9 +21,13 @@ interface ChainSupplyResult {
   status: 'failure' | 'success';
 }
 
-export function useVeIonData() {
+export function useVeIonData(chainId: number) {
   const { data: ethPrice = 0 } = useEthPrice();
   const { data: ionPrices = {} } = useIonPrices();
+  const lpToken = getAvailableStakingToken(chainId, 'eth');
+
+  // Get oracle prices for LP tokens
+  const { data: lpTokenPrices } = useOracleBatch([lpToken], chainId);
 
   // Get pool balances for total liquidity calculation
   const { data: poolBalances } = useReadContracts({
@@ -129,27 +135,37 @@ export function useVeIonData() {
       return acc + value * price * 2;
     }, 0) || 0;
 
-  // Calculate locked value for each chain
+  // Calculate locked value for each chain using oracle prices
   const calculateChainLockedValue = (
     chainId: number,
     startIndex: number,
     lpTypes: number[]
   ) => {
-    const ethUsdPrice = ethPrice;
-    const ionUsdPrice = ionPrices[chainId] || 0;
-
     return lpTypes.reduce((acc, lpType, index) => {
       const supply = allChainSupplies[startIndex + index];
       if (supply?.status !== 'success' || !supply.result) return acc;
 
       const amount = Number(formatEther(supply.result));
-      const valueInUsd = amount;
 
+      // Get the appropriate LP token price from oracle
+      let lpTokenPrice = 0;
+      if (chainId === 8453) {
+        // Base chain LP token
+        lpTokenPrice =
+          lpTokenPrices?.['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] || 0;
+      } else if (chainId === 34443) {
+        // Mode chain LP token
+        lpTokenPrice =
+          lpTokenPrices?.['0xC6A394952c097004F83d2dfB61715d245A38735a'] || 0;
+      }
+
+      const valueInUsd =
+        amount * Number(formatEther(BigInt(lpTokenPrice || 0)));
       return acc + valueInUsd;
     }, 0);
   };
 
-  // Calculate locked values
+  // Calculate locked values using oracle prices
   const baseLockedValue = calculateChainLockedValue(
     8453,
     0,
