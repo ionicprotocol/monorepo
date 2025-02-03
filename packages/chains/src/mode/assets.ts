@@ -110,7 +110,10 @@ export const assets: SupportedAsset[] = [
     name: "Mode Token",
     decimals: 18,
     oracle: OracleTypes.PythPriceOracle,
-    extraDocs: defaultDocs("https://explorer.mode.network", MODE)
+    extraDocs: defaultDocs("https://explorer.mode.network", MODE),
+    initialSupplyCap: parseEther(String(50_000_000)).toString(),
+    initialBorrowCap: parseEther(String(40_000_000)).toString(),
+    initialCf: "0.5"
   },
   {
     symbol: assetSymbols.ION,
