@@ -132,7 +132,7 @@ export default function VeIon() {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 3
+                maximumFractionDigits: 2
               }),
               Icon: <LockIcon className="size-4 inline-block" />
             }}

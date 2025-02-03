@@ -138,14 +138,6 @@ export function useVeIonData(chainId: number) {
       return acc + value * price * 2;
     }, 0) || 0;
 
-  const optimismTotalLiquidity =
-    poolBalances?.slice(3)?.reduce((acc, balance, index) => {
-      if (!balance?.result) return acc;
-      const value = Number(formatEther(balance.result));
-      const price = index === 2 ? ionPrices[10] || 0 : ethPrice;
-      return acc + value * price * 2;
-    }, 0) || 0;
-
   // Calculate locked value for each chain using oracle prices
   const calculateChainLockedValue = (
     chainId: number,
@@ -158,21 +150,20 @@ export function useVeIonData(chainId: number) {
 
       const amount = Number(formatEther(supply.result));
 
-      // Get the appropriate LP token price from oracle
-      let lpTokenPrice = 0;
+      // Use the same LP token price calculation as staked amounts
+      let valueInUsd = 0;
       if (chainId === 8453) {
-        // Base chain LP token
-        lpTokenPrice = Number(
-          formatEther(lpTokenPricesBase?.[lpTokenBase] || 0)
-        );
+        valueInUsd =
+          amount *
+          Number(formatEther(lpTokenPricesBase?.[lpTokenBase] || 0)) *
+          ethPrice;
       } else if (chainId === 34443) {
-        // Mode chain LP token
-        lpTokenPrice = Number(
-          formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)
-        );
+        valueInUsd =
+          amount *
+          Number(formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)) *
+          ethPrice;
       }
 
-      const valueInUsd = amount * (Number(lpTokenPrice) / 1e18);
       return acc + valueInUsd;
     }, 0);
   };
@@ -190,12 +181,12 @@ export function useVeIonData(chainId: number) {
     VEION_CHAIN_CONFIGS[34443].lpTypes
   );
 
-  const optimismLockedValue = calculateChainLockedValue(
-    10,
-    VEION_CHAIN_CONFIGS[8453].lpTypes.length +
-      VEION_CHAIN_CONFIGS[34443].lpTypes.length,
-    VEION_CHAIN_CONFIGS[10].lpTypes
-  );
+  // const optimismLockedValue = calculateChainLockedValue(
+  //   10,
+  //   VEION_CHAIN_CONFIGS[8453].lpTypes.length +
+  //     VEION_CHAIN_CONFIGS[34443].lpTypes.length,
+  //   VEION_CHAIN_CONFIGS[10].lpTypes
+  // );
 
   // Calculate staked amounts for each chain
   const baseStakedAmount = stakedAmounts?.[0]?.result
@@ -214,12 +205,12 @@ export function useVeIonData(chainId: number) {
     totalLiquidity: {
       8453: baseTotalLiquidity,
       34443: modeTotalLiquidity,
-      10: optimismTotalLiquidity
+      10: 0
     },
     lockedLiquidity: {
       8453: baseLockedValue,
       34443: modeLockedValue,
-      10: optimismLockedValue
+      10: 0
     },
     stakedAmount: {
       8453: baseStakedAmount,
