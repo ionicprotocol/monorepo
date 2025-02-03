@@ -1,45 +1,29 @@
-// hooks/useLiquidity.ts
 import { formatEther } from 'viem';
-import { useReadContract, useReadContracts } from 'wagmi';
-
-import {
-  LIQUIDITY_POOLS,
-  ERC20_BALANCE_ABI,
-  LP_TYPES
-} from '../../utils/getLiquidityTokens';
-import { useIonPrices } from '../useDexScreenerPrices';
-import { useEthPrice } from '../useEthPrice';
-
+import { useReadContracts } from 'wagmi';
 import type { Address } from 'viem';
 
+import { useIonPrices } from '../useDexScreenerPrices';
+import { useEthPrice } from '../useEthPrice';
+import { VEION_CONTRACTS } from '@ui/constants/veIon';
+import { iveIonAbi } from '@ionicprotocol/sdk';
+import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
 import {
-  emissionsManagerAbi,
-  veIonAbi,
-  veIonFirstExtensionAbi
-} from '@ionicprotocol/sdk';
+  LIQUIDITY_POOLS,
+  ERC20_BALANCE_ABI
+} from '../../utils/getLiquidityTokens';
 
-export type LPType = (typeof LP_TYPES)[number];
-
-interface VeIonDataProps {
-  address?: Address;
-  veIonContract: Address;
-  emissionsManagerContract: Address;
-}
-
-interface ReadContractResult {
+interface ChainSupplyResult {
   error?: Error;
-  result: bigint;
+  result?: bigint;
   status: 'failure' | 'success';
 }
 
-export function useVeIonData({
-  address,
-  veIonContract,
-  emissionsManagerContract
-}: VeIonDataProps) {
+export function useVeIonData() {
   const { data: ethPrice = 0 } = useEthPrice();
+  console.log('ethPrice', ethPrice);
   const { data: ionPrices = {} } = useIonPrices();
 
+  // Get pool balances for total liquidity calculation
   const { data: poolBalances } = useReadContracts({
     contracts: [
       // Base WETH Pool
@@ -93,105 +77,110 @@ export function useVeIonData({
     ]
   });
 
-  // First get the extension address and collateral data
-  const { data: mainData, isLoading: mainDataLoading } = useReadContracts({
-    contracts: [
-      {
-        address: veIonContract,
-        abi: veIonAbi,
-        functionName: 'veIONFirstExtension'
-      },
-      {
-        address: emissionsManagerContract,
-        abi: emissionsManagerAbi,
-        functionName: 'getUserTotalCollateral',
-        args: address ? [address] : undefined
-      }
-    ]
-  });
+  // Get locked supplies for all chains and LP types
+  const { data: allChainSupplies = [], isLoading: supplyLoading } =
+    useReadContracts({
+      contracts: [
+        // Base chain supplies
+        ...VEION_CHAIN_CONFIGS[8453].lpTypes.map((lpType) => ({
+          address: VEION_CONTRACTS[8453],
+          abi: iveIonAbi,
+          functionName: 's_supply',
+          args: [BigInt(lpType)],
+          chainId: 8453
+        })),
+        // Mode chain supplies
+        ...VEION_CHAIN_CONFIGS[34443].lpTypes.map((lpType) => ({
+          address: VEION_CONTRACTS[34443],
+          abi: iveIonAbi,
+          functionName: 's_supply',
+          args: [BigInt(lpType)],
+          chainId: 34443
+        })),
+        // Optimism chain supplies
+        ...VEION_CHAIN_CONFIGS[10].lpTypes.map((lpType) => ({
+          address: VEION_CONTRACTS[10],
+          abi: iveIonAbi,
+          functionName: 's_supply',
+          args: [BigInt(lpType)],
+          chainId: 10
+        }))
+      ]
+    }) as { data: ChainSupplyResult[]; isLoading: boolean };
 
-  // Then get token value from extension
-  const { data: tokenValue, isLoading: tokenValueLoading } = useReadContract({
-    address: mainData?.[0]?.result,
-    abi: veIonFirstExtensionAbi,
-    functionName: 'getTotalEthValueOfTokens',
-    args: address ? [address] : undefined
-  });
+  // Calculate total liquidity per chain
+  const baseTotalLiquidity = poolBalances?.[0]?.result
+    ? Number(formatEther(poolBalances[0].result)) * ethPrice * 2
+    : 0;
+  console.log('baseTotalLiquidity', baseTotalLiquidity);
 
-  const { data: lockedSupplies, isLoading: suppliesLoading } = useReadContracts(
-    {
-      contracts: LP_TYPES.map((lpType) => ({
-        address: veIonContract,
-        abi: veIonAbi,
-        functionName: 's_supply',
-        args: [lpType]
-      }))
-    }
-  ) as { data?: ReadContractResult[]; isLoading: boolean };
-
-  const [_, totalCollateral] = mainData || [];
-
-  // Calculate total liquidity
-  const totalLiquidity =
-    poolBalances?.reduce((acc, balance, index) => {
+  const modeTotalLiquidity =
+    poolBalances?.slice(1, 3)?.reduce((acc, balance, index) => {
       if (!balance?.result) return acc;
       const value = Number(formatEther(balance.result));
-
-      // For ION pools get the correct chain's ION price
-      if (index === 2) {
-        // Mode ION Pool
-        return acc + value * (ionPrices[34443] || 0) * 2;
-      }
-      if (index === 5) {
-        // Optimism ION Pool
-        return acc + value * (ionPrices[10] || 0) * 2;
-      }
-
-      // For ETH pools
-      return acc + value * ethPrice * 2;
+      const price = index === 0 ? ethPrice : ionPrices[34443] || 0;
+      return acc + value * price * 2;
     }, 0) || 0;
 
-  // Calculate staked/locked values using tokenValue from extension
-  const stakedAmount = tokenValue ? Number(formatEther(tokenValue)) : 0;
-  const stakedLiquidity = stakedAmount * ethPrice;
-
-  const totalCollateralAmount = totalCollateral?.result
-    ? Number(formatEther(totalCollateral.result))
-    : 0;
-
-  // Calculate total locked
-  const totalLocked =
-    lockedSupplies?.reduce((acc, supply) => {
-      if (!supply?.result) return acc;
-      return acc + Number(formatEther(supply.result));
+  const optimismTotalLiquidity =
+    poolBalances?.slice(3)?.reduce((acc, balance, index) => {
+      if (!balance?.result) return acc;
+      const value = Number(formatEther(balance.result));
+      const price = index === 2 ? ionPrices[10] || 0 : ethPrice;
+      return acc + value * price * 2;
     }, 0) || 0;
 
-  // Calculate percentage for emissions
-  const emissionsPercentage =
-    totalCollateralAmount > 0
-      ? (stakedAmount / totalCollateralAmount) * 100
-      : 0;
+  // Calculate locked value for each chain
+  const calculateChainLockedValue = (
+    chainId: number,
+    startIndex: number,
+    lpTypes: number[]
+  ) => {
+    const ethUsdPrice = ethPrice;
+    const ionUsdPrice = ionPrices[chainId] || 0;
 
-  const isLoading = mainDataLoading || tokenValueLoading || suppliesLoading;
+    return lpTypes.reduce((acc, lpType, index) => {
+      const supply = allChainSupplies[startIndex + index];
+      if (supply?.status !== 'success' || !supply.result) return acc;
+
+      const amount = Number(formatEther(supply.result));
+      const valueInUsd = amount;
+
+      return acc + valueInUsd;
+    }, 0);
+  };
+
+  // Calculate locked values
+  const baseLockedValue = calculateChainLockedValue(
+    8453,
+    0,
+    VEION_CHAIN_CONFIGS[8453].lpTypes
+  );
+
+  const modeLockedValue = calculateChainLockedValue(
+    34443,
+    VEION_CHAIN_CONFIGS[8453].lpTypes.length,
+    VEION_CHAIN_CONFIGS[34443].lpTypes
+  );
+
+  const optimismLockedValue = calculateChainLockedValue(
+    10,
+    VEION_CHAIN_CONFIGS[8453].lpTypes.length +
+      VEION_CHAIN_CONFIGS[34443].lpTypes.length,
+    VEION_CHAIN_CONFIGS[10].lpTypes
+  );
 
   return {
-    liquidity: {
-      total: totalLiquidity,
-      staked: stakedLiquidity,
-      locked: totalLocked,
-      isLoading
+    totalLiquidity: {
+      8453: baseTotalLiquidity,
+      34443: modeTotalLiquidity,
+      10: optimismTotalLiquidity
     },
-    emissions: {
-      lockedValue: {
-        amount: stakedAmount,
-        usdValue: (stakedAmount * ethPrice).toFixed(2),
-        percentage: emissionsPercentage
-      },
-      totalDeposits: {
-        amount: totalCollateralAmount,
-        usdValue: (totalCollateralAmount * ethPrice).toFixed(2)
-      },
-      isLoading
-    }
+    lockedLiquidity: {
+      8453: baseLockedValue,
+      34443: modeLockedValue,
+      10: optimismLockedValue
+    },
+    isLoading: supplyLoading
   };
 }

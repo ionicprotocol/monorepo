@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
 import { Portal } from '@radix-ui/react-portal';
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
 import Widget from '@ui/components/stake/Widget';
@@ -17,6 +17,8 @@ import BuyIonSection from '@ui/components/veion/BuyIonSection';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
+import { getChainName } from '@ui/constants/mock';
+import { ChainId } from '@ui/types/veION';
 
 interface AddLiquidityDialogProps {
   isOpen: boolean;
@@ -29,7 +31,7 @@ export default function AddLiquidityDialog({
   onOpenChange,
   selectedToken
 }: AddLiquidityDialogProps) {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { currentChain } = useVeIONContext();
   const [maxDeposit, setMaxDeposit] = useState<{ ion: string; eth: string }>({
     ion: '',
@@ -38,6 +40,15 @@ export default function AddLiquidityDialog({
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const { addLiquidity, isPending } = useVeIONActions();
+  const { switchChain } = useSwitchChain();
+
+  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
+    try {
+      await switchChain({ chainId });
+    } catch (switchError) {
+      console.error('Failed to switch network:', switchError);
+    }
+  };
 
   const {
     calculateTokenAmount,
@@ -144,20 +155,29 @@ export default function AddLiquidityDialog({
               readonly={true}
             />
 
-            <Button
-              variant="default"
-              className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold h-10"
-              onClick={handleAddLiquidity}
-              disabled={
-                !isConnected ||
-                !maxDeposit.ion ||
-                !maxDeposit.eth ||
-                isLoading ||
-                isPending
-              }
-            >
-              {isLoading ? 'Adding Liquidity...' : 'Provide Liquidity'}
-            </Button>
+            {chainId !== currentChain ? (
+              <Button
+                onClick={() => switchToCorrectChain({ chainId: currentChain })}
+                className="w-full bg-accent text-black"
+              >
+                Switch to {getChainName(currentChain as ChainId)}
+              </Button>
+            ) : (
+              <Button
+                variant="default"
+                className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold h-10"
+                onClick={handleAddLiquidity}
+                disabled={
+                  !isConnected ||
+                  !maxDeposit.ion ||
+                  !maxDeposit.eth ||
+                  isLoading ||
+                  isPending
+                }
+              >
+                {isLoading ? 'Adding Liquidity...' : 'Provide Liquidity'}
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>

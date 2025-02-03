@@ -131,7 +131,7 @@ function MyVeionTable() {
 
         return (
           <div className="flex gap-2 w-full">
-            {isExpired ? (
+            {/* {isExpired ? (
               <>
                 <ActionButton
                   half
@@ -144,31 +144,31 @@ function MyVeionTable() {
                   label="Extend"
                 />
               </>
-            ) : (
-              <>
-                <ActionButton
-                  half
-                  action={() =>
-                    router.push(
-                      `/veion/governance/vote?chain=${data.chainId}&id=${data.id}`
-                    )
-                  }
-                  label="Vote"
-                  bg="bg-white/10"
-                  className="text-white"
-                />
-                <ActionButton
-                  half
-                  action={() => {
-                    setSelectedManagePosition(data);
-                    setIsManageOpen(true);
-                  }}
-                  label="Manage"
-                  bg="bg-white/10"
-                  className="text-white"
-                />
-              </>
-            )}
+            ) : ( */}
+            <>
+              <ActionButton
+                half
+                action={() =>
+                  router.push(
+                    `/veion/governance/vote?chain=${data.chainId}&id=${data.id}`
+                  )
+                }
+                label="Vote"
+                bg="bg-white/10"
+                className="text-white"
+              />
+              <ActionButton
+                half
+                action={() => {
+                  setSelectedManagePosition(data);
+                  setIsManageOpen(true);
+                }}
+                label="Manage"
+                bg="bg-white/10"
+                className="text-white"
+              />
+            </>
+            {/* )} */}
           </div>
         );
       }

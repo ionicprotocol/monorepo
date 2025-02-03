@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { formatUnits, parseUnits } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useSwitchChain } from 'wagmi';
 
 import { LockDurationPicker } from '@ui/components/LockDurationPicker';
 import MaxDeposit from '@ui/components/MaxDeposit';
@@ -19,6 +19,8 @@ import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { SuccessView } from './SuccessView';
+import { getChainName } from '@ui/constants/mock';
+import { ChainId } from '@ui/types/veION';
 
 const MINIMUM_AMOUNT = BigInt('10000000000000000');
 
@@ -38,7 +40,8 @@ export default function GetVeIONDialog({
   const [amount, setAmount] = useState<string>('0');
   const { currentChain } = useVeIONContext();
   const { createLock, isPending } = useVeIONActions();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
 
   const isAboveMinimum = useMemo(() => {
     if (!amount || amount === '0') return false;
@@ -68,6 +71,14 @@ export default function GetVeIONDialog({
   useEffect(() => {
     setAmount('0');
   }, [currentChain]);
+
+  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
+    try {
+      await switchChain({ chainId });
+    } catch (switchError) {
+      console.error('Failed to switch network:', switchError);
+    }
+  };
 
   async function lockAndGetVeion() {
     try {
@@ -146,17 +157,28 @@ export default function GetVeIONDialog({
 
               <Separator className="bg-white/10" />
 
-              <Button
-                onClick={lockAndGetVeion}
-                className="w-full bg-accent text-black"
-                disabled={isButtonDisabled}
-              >
-                {isPending
-                  ? 'Locking...'
-                  : !isAboveMinimum && amount !== '0'
-                    ? 'Amount Below Minimum'
-                    : 'Lock LP and get veION'}
-              </Button>
+              {chainId !== currentChain ? (
+                <Button
+                  onClick={() =>
+                    switchToCorrectChain({ chainId: currentChain })
+                  }
+                  className="w-full bg-accent text-black"
+                >
+                  Switch to {getChainName(currentChain as ChainId)}
+                </Button>
+              ) : (
+                <Button
+                  onClick={lockAndGetVeion}
+                  className="w-full bg-accent text-black"
+                  disabled={isButtonDisabled}
+                >
+                  {isPending
+                    ? 'Locking...'
+                    : !isAboveMinimum && amount !== '0'
+                      ? 'Amount Below Minimum'
+                      : 'Lock LP and get veION'}
+                </Button>
+              )}
             </div>
           </>
         ) : (

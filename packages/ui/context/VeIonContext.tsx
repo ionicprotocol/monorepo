@@ -127,13 +127,16 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const { reserves, isLoading: reservesLoading } = useReserves(currentChain);
 
   const {
-    liquidity
-    // emissions
-  } = useVeIonData({
-    address,
-    veIonContract: veIonContract.address,
-    emissionsManagerContract: '0x'
-  });
+    totalLiquidity,
+    lockedLiquidity,
+    isLoading: veIonDataLoading
+  } = useVeIonData();
+  console.log('lockedLiquidity', lockedLiquidity);
+
+  const total =
+    totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;
+  const locked =
+    lockedLiquidity[currentChain as keyof typeof lockedLiquidity] || 0;
 
   const locks = useMultiChainVeIONLocks({
     address,
@@ -200,7 +203,14 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       ionBalanceUsd,
       veIonBalanceUsd
     },
-    liquidity: isSupported ? liquidity : defaultContext.liquidity, // ???
+    liquidity: isSupported
+      ? {
+          total,
+          staked: 0, // placeholder
+          locked,
+          isLoading: veIonDataLoading
+        }
+      : defaultContext.liquidity,
     emissions: isSupported ? emissions : defaultContext.emissions,
     reserves,
     locks: isSupported ? locks : defaultContext.locks,

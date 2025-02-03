@@ -33,8 +33,8 @@ export default function VeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
-  const { liquidity } = useVeIONContext();
 
+  const { liquidity } = useVeIONContext();
   const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
@@ -90,7 +90,9 @@ export default function VeIon() {
               title: 'TOTAL LP',
               amount: liquidity.total.toLocaleString('en-US', {
                 style: 'currency',
-                currency: 'USD'
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               })
             }}
             detail={{
@@ -106,7 +108,9 @@ export default function VeIon() {
               title: 'STAKED LP',
               amount: liquidity.staked.toLocaleString('en-US', {
                 style: 'currency',
-                currency: 'USD'
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               })
             }}
             detail={{
@@ -122,7 +126,9 @@ export default function VeIon() {
               title: 'LOCKED LP',
               amount: liquidity.locked.toLocaleString('en-US', {
                 style: 'currency',
-                currency: 'USD'
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
               }),
               Icon: <LockIcon className="size-4 inline-block" />
             }}

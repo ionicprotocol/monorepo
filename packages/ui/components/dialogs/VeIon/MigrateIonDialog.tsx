@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
 import { Button } from '@ui/components/ui/button';
@@ -12,6 +12,8 @@ import {
 } from '@ui/components/ui/dialog';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
+import { getChainName } from '@ui/constants/mock';
+import { ChainId } from '@ui/types/veION';
 
 interface MigrateIonDialogProps {
   isOpen: boolean;
@@ -22,15 +24,22 @@ export default function MigrateIonDialog({
   isOpen,
   onOpenChange
 }: MigrateIonDialogProps) {
-  const { isConnected } = useAccount();
+  const { isConnected, chainId } = useAccount();
   const [amount, setAmount] = useState<string>('0');
   const [isLoading, setIsLoading] = useState(false);
+  const { switchChain } = useSwitchChain();
 
   const { currentChain, balances } = useVeIONContext();
   const { veIon: veIonBalance } = balances;
   const { removeLiquidity, isPending } = useVeIONActions();
 
-  // const stakingTokenBalance = getTokenBalance('eth');
+  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
+    try {
+      await switchChain({ chainId });
+    } catch (switchError) {
+      console.error('Failed to switch network:', switchError);
+    }
+  };
 
   useEffect(() => {
     setAmount('0');
@@ -77,13 +86,24 @@ export default function MigrateIonDialog({
             showUtilizationSlider
           />
 
-          <Button
-            onClick={handleMigrate}
-            className="w-full bg-red-500 text-white hover:bg-red-600"
-            disabled={!amount || Number(amount) === 0 || isLoading || isPending}
-          >
-            {isLoading || isPending ? 'Migrating...' : 'Migrate Liquidity'}
-          </Button>
+          {chainId !== currentChain ? (
+            <Button
+              onClick={() => switchToCorrectChain({ chainId: currentChain })}
+              className="w-full bg-accent text-black"
+            >
+              Switch to {getChainName(currentChain as ChainId)}
+            </Button>
+          ) : (
+            <Button
+              onClick={handleMigrate}
+              className="w-full bg-red-500 text-white hover:bg-red-600"
+              disabled={
+                !amount || Number(amount) === 0 || isLoading || isPending
+              }
+            >
+              {isLoading || isPending ? 'Migrating...' : 'Migrate Liquidity'}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
