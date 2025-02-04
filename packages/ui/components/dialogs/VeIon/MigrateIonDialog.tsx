@@ -1,21 +1,19 @@
 import { useState, useEffect } from 'react';
 
 import { formatEther } from 'viem';
-import { useAccount, useSwitchChain, useReadContract } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import { getChainName } from '@ui/constants/mock';
 import { StakingContractAbi } from '@ui/constants/staking';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import type { ChainId } from '@ui/types/veION';
 import {
   getStakingToContract,
   getAvailableStakingToken
@@ -34,7 +32,6 @@ export default function MigrateIonDialog({
 }: MigrateIonDialogProps) {
   const { isConnected, address, chainId } = useAccount();
   const [amount, setAmount] = useState<string>('');
-  const { switchChain } = useSwitchChain();
 
   const { currentChain } = useVeIONContext();
   const { removeLiquidity, isPending } = useVeIONActions();
@@ -66,19 +63,13 @@ export default function MigrateIonDialog({
     setAmount('');
   }, [currentChain]);
 
-  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
-    try {
-      await switchChain({ chainId });
-    } catch (switchError) {
-      console.error('Failed to switch network:', switchError);
-    }
-  };
-
   const handleMigrate = async () => {
     try {
       if (!isConnected) {
         console.warn('Wallet not connected');
-        return;
+        return {
+          success: false
+        };
       }
 
       await removeLiquidity({
@@ -89,8 +80,14 @@ export default function MigrateIonDialog({
       allStakedAmount.refetch();
 
       setAmount('');
+      return {
+        success: true
+      };
     } catch (err) {
       console.warn(err);
+      return {
+        success: false
+      };
     }
   };
 
@@ -120,22 +117,12 @@ export default function MigrateIonDialog({
             showUtilizationSlider
           />
 
-          {chainId !== currentChain ? (
-            <Button
-              onClick={() => switchToCorrectChain({ chainId: currentChain })}
-              className="w-full bg-accent text-black"
-            >
-              Switch to {getChainName(currentChain as ChainId)}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleMigrate}
-              className="w-full bg-red-500 text-white hover:bg-red-600"
-              disabled={!amount || Number(amount) === 0 || isPending}
-            >
-              {isPending ? 'Migrating...' : 'Migrate Liquidity'}
-            </Button>
-          )}
+          <TransactionButton
+            onSubmit={handleMigrate}
+            isDisabled={!isConnected || !amount || Number(amount) === 0}
+            buttonText="Unstake LP"
+            targetChainId={currentChain}
+          />
         </div>
       </DialogContent>
     </Dialog>

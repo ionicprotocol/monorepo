@@ -198,7 +198,7 @@ export function useVeIONActions() {
 
       toast({
         title: 'Success',
-        description: 'Successfully removed liquidity',
+        description: 'Successfully unstaked LP',
         variant: 'default'
       });
 

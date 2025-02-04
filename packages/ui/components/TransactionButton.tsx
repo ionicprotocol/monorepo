@@ -8,7 +8,7 @@ import type { ChainId } from '@ui/types/veION';
 
 import ResultHandler from './ResultHandler';
 
-type TransactionResult = {
+export type TransactionResult = {
   success?: boolean;
   needsApproval?: boolean;
 };

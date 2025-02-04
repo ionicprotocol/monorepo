@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { formatUnits, parseUnits } from 'viem';
-import { useAccount, useBalance, useSwitchChain } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 
 import { LockDurationPicker } from '@ui/components/LockDurationPicker';
 import MaxDeposit from '@ui/components/MaxDeposit';
 import { usePrecisionSlider } from '@ui/components/PrecisionSlider';
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import {
   Dialog,
   DialogContent,
@@ -14,10 +14,8 @@ import {
   DialogTitle
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
-import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import type { ChainId } from '@ui/types/veION';
 import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
 
 import { SuccessView } from './SuccessView';
@@ -40,8 +38,7 @@ export default function GetVeIONDialog({
   const [amount, setAmount] = useState<string>('0');
   const { currentChain } = useVeIONContext();
   const { createLock, isPending } = useVeIONActions();
-  const { address, isConnected, chainId } = useAccount();
-  const { switchChain } = useSwitchChain();
+  const { address, isConnected } = useAccount();
 
   const isAboveMinimum = useMemo(() => {
     if (!amount || amount === '0') return false;
@@ -72,19 +69,13 @@ export default function GetVeIONDialog({
     setAmount('0');
   }, [currentChain]);
 
-  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
-    try {
-      await switchChain({ chainId });
-    } catch (switchError) {
-      console.error('Failed to switch network:', switchError);
-    }
-  };
-
   async function lockAndGetVeion() {
     try {
       if (!isConnected) {
         console.warn('Wallet not connected');
-        return;
+        return {
+          success: false
+        };
       }
 
       const tokenAddress = getAvailableStakingToken(
@@ -98,8 +89,15 @@ export default function GetVeIONDialog({
         stakeUnderlying: true
       });
       setSuccess(true);
+
+      return {
+        success: true
+      };
     } catch (err) {
       console.warn(err);
+      return {
+        success: false
+      };
     }
   }
 
@@ -156,28 +154,12 @@ export default function GetVeIONDialog({
                 onDateChange={setLockDate}
               />
 
-              {chainId !== currentChain ? (
-                <Button
-                  onClick={() =>
-                    switchToCorrectChain({ chainId: currentChain })
-                  }
-                  className="w-full bg-accent text-black"
-                >
-                  Switch to {getChainName(currentChain as ChainId)}
-                </Button>
-              ) : (
-                <Button
-                  onClick={lockAndGetVeion}
-                  className="w-full bg-accent text-black"
-                  disabled={isButtonDisabled}
-                >
-                  {isPending
-                    ? 'Locking...'
-                    : !isAboveMinimum && amount !== '0'
-                      ? 'Amount Below Minimum'
-                      : 'Lock LP and get veION'}
-                </Button>
-              )}
+              <TransactionButton
+                onSubmit={lockAndGetVeion}
+                isDisabled={!isConnected || !amount || !isAboveMinimum}
+                buttonText="Lock LP and get veION"
+                targetChainId={currentChain}
+              />
             </div>
           </>
         ) : (

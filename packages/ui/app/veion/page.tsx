@@ -16,20 +16,18 @@ import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 import {
   GetVeIONDialog,
   LPRow,
-  InfoCard,
   AddLiquidityDialog,
   MigrateIonDialog
 } from '@ui/components/veion';
+import InfoCardsSection from '@ui/components/veion/InfoCard';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 const NetworkSelector = dynamic(
   () => import('@ui/components/markets/NetworkSelector'),
-  {
-    ssr: false
-  }
+  { ssr: false }
 );
 
-export default function VeIon() {
+export default function EnhancedVeIon() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
@@ -42,133 +40,135 @@ export default function VeIon() {
   const chain = querychain ? querychain : String(chainId);
 
   return (
-    <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-grayone mx-auto my-6">
-      <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
-        <div className="flex items-center justify-between w-full">
-          <Image
-            className="size-16"
-            src="/img/assets/db.svg"
-            alt="ion logo"
-            width={32}
-            height={32}
-          />
-        </div>
-
-        <div className="flex justify-between gap-2">
-          <div className="flex items-center gap-1 text-2xl">
-            Participate in{' '}
-            <Link
-              href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion"
-              className="text-accent flex items-center hover:underline"
-              target="_blank"
-            >
-              Emissions{' '}
-              <ExternalLink
-                className="ml-1"
-                size={24}
+    <div className="min-h-screen bg-black to-black py-12">
+      <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-gradient-to-br from-grayone to-black backdrop-blur-lg mx-auto my-6 border border-white/10 shadow-2xl">
+        <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
+          <div className="flex items-center justify-between w-full">
+            <div className="relative">
+              <Image
+                className="size-16 relative transform transition-all duration-500 hover:scale-110"
+                src="/img/assets/db.svg"
+                alt="ion logo"
+                width={32}
+                height={32}
               />
-            </Link>
+            </div>
           </div>
-          <NetworkSelector
-            dropdownSelectedChain={+chain}
-            nopool={true}
-            enabledChains={[
-              mode.id,
-              base.id
-              //  optimism.id
-            ]}
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
-        {/* Info Cards */}
-        <InfoCard text="Incentivize Markets on your favorite Chain with Liquidity Gauges" />
-        <InfoCard text="Significantly boost your collateral pool depth with bribes" />
-        <InfoCard text="Increase Emissions and earn POL for your Treasury" />
 
-        {/* LP Rows */}
-        <div className="col-span-6 space-y-4">
-          <LPRow
-            summary={{
-              title: 'TOTAL LP',
-              amount: liquidity.total.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })
-            }}
-            detail={{
-              title: 'PROVIDE LP ON DEX',
-              buttonText: 'Add Liquidity',
-              onClick: () => setIsAddLiquidityOpen(true),
-              get: 'vAMM'
-            }}
-            chain={+chain}
-          />
+          <div className="flex justify-between gap-2 items-center">
+            <div className="flex items-center gap-1 text-2xl">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-accent font-bold">
+                Participate in
+              </span>{' '}
+              <Link
+                href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion"
+                className="text-accent flex items-center hover:underline group"
+                target="_blank"
+              >
+                Emissions
+                <ExternalLink
+                  className="ml-1 group-hover:translate-x-1 transition-transform duration-300"
+                  size={24}
+                />
+              </Link>
+            </div>
+            <NetworkSelector
+              dropdownSelectedChain={+chain}
+              nopool={true}
+              enabledChains={[mode.id, base.id]}
+            />
+          </div>
+        </CardHeader>
 
-          <LPRow
-            summary={{
-              title: 'STAKED LP',
-              amount: liquidity.staked.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })
-            }}
-            detail={{
-              title: 'MIGRATE YOUR STAKED LP',
-              buttonText: 'Migrate LP',
-              onClick: () => setIsMigrateOpen(true),
-              get: 'vAMM'
-            }}
-            chain={+chain}
-          />
+        <CardContent className="h-full text-white/60 grid grid-cols-6 xl:gap-4 gap-3 md:gap-y-7 gap-y-3 *:text-xs p-0 pt-6">
+          <InfoCardsSection />
 
-          <LPRow
-            summary={{
-              title: 'LOCKED LP',
-              amount: liquidity.locked.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }),
-              Icon: <LockIcon className="size-4 inline-block" />
-            }}
-            detail={{
-              title: 'LOCK YOUR ION LP',
-              buttonText: 'Lock and Get',
-              onClick: () => setIsDialogOpen(true),
-              get: 'veION'
-            }}
-            chain={+chain}
-          />
-        </div>
-      </CardContent>
+          <div className="col-span-6 space-y-6">
+            <LPRow
+              summary={{
+                title: 'TOTAL LP',
+                amount: liquidity.total.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              }}
+              detail={{
+                title: 'PROVIDE LP ON DEX',
+                buttonText: 'Add Liquidity',
+                onClick: () => setIsAddLiquidityOpen(true),
+                get: 'vAMM'
+              }}
+              chain={+chain}
+            />
 
-      <Link href="/veion/governance">
-        <Button className="w-full bg-accent hover:bg-accent/80 mt-4">
-          My veION
-        </Button>
-      </Link>
+            <LPRow
+              summary={{
+                title: 'STAKED LP',
+                amount: liquidity.staked.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })
+              }}
+              detail={{
+                title: 'UNSTAKE YOUR LP',
+                buttonText: 'Unstake LP',
+                onClick: () => setIsMigrateOpen(true),
+                get: 'vAMM'
+              }}
+              chain={+chain}
+            />
 
-      <AddLiquidityDialog
-        isOpen={isAddLiquidityOpen}
-        onOpenChange={setIsAddLiquidityOpen}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
-      <MigrateIonDialog
-        isOpen={isMigrateOpen}
-        onOpenChange={setIsMigrateOpen}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
-      <GetVeIONDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
-      />
-    </Card>
+            <LPRow
+              summary={{
+                title: 'LOCKED LP',
+                amount: liquidity.locked.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }),
+                Icon: <LockIcon className="size-4 inline-block" />
+              }}
+              detail={{
+                title: 'Restake and Lock your ION LP',
+                buttonText: 'Get veION',
+                onClick: () => setIsDialogOpen(true),
+                get: 'veION'
+              }}
+              chain={+chain}
+            />
+          </div>
+        </CardContent>
+
+        <Link
+          href="/veion/governance"
+          className="mt-8 block"
+        >
+          <Button className="w-full bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-lg font-semibold py-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+            My veION
+          </Button>
+        </Link>
+
+        <AddLiquidityDialog
+          isOpen={isAddLiquidityOpen}
+          onOpenChange={setIsAddLiquidityOpen}
+          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+        />
+        <MigrateIonDialog
+          isOpen={isMigrateOpen}
+          onOpenChange={setIsMigrateOpen}
+          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+        />
+        <GetVeIONDialog
+          isOpen={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+        />
+      </Card>
+    </div>
   );
 }

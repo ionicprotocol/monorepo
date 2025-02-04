@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react';
 
 import { Portal } from '@radix-ui/react-portal';
-import { useAccount, useSwitchChain } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import MaxDeposit from '@ui/components/MaxDeposit';
 import Widget from '@ui/components/stake/Widget';
-import { Button } from '@ui/components/ui/button';
+import TransactionButton from '@ui/components/TransactionButton';
 import {
   Dialog,
   DialogContent,
@@ -14,11 +14,9 @@ import {
 } from '@ui/components/ui/dialog';
 import { Separator } from '@ui/components/ui/separator';
 import BuyIonSection from '@ui/components/veion/BuyIonSection';
-import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
 import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
-import type { ChainId } from '@ui/types/veION';
 
 interface AddLiquidityDialogProps {
   isOpen: boolean;
@@ -41,7 +39,6 @@ export default function AddLiquidityDialog({
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const { addLiquidity, isPending } = useVeIONActions();
-  const { switchChain } = useSwitchChain();
 
   const {
     calculateTokenAmount,
@@ -55,14 +52,6 @@ export default function AddLiquidityDialog({
     chainId: currentChain,
     selectedToken
   });
-
-  const switchToCorrectChain = async ({ chainId }: { chainId: number }) => {
-    try {
-      await switchChain({ chainId });
-    } catch (switchError) {
-      console.error('Failed to switch network:', switchError);
-    }
-  };
 
   const updateDepositValues = useCallback(
     (ionValue: string) => {
@@ -101,7 +90,9 @@ export default function AddLiquidityDialog({
     try {
       if (!isConnected || !address) {
         console.warn('Wallet not connected');
-        return;
+        return {
+          success: false
+        };
       }
 
       setIsLoading(true);
@@ -116,8 +107,11 @@ export default function AddLiquidityDialog({
       await refetchAll();
 
       setMaxDeposit({ ion: '', eth: '' });
+
+      return { success: true };
     } catch (err) {
       console.warn(err);
+      return { success: false };
     } finally {
       setIsLoading(false);
     }
@@ -127,7 +121,10 @@ export default function AddLiquidityDialog({
     <>
       <Dialog
         open={isOpen}
-        onOpenChange={(open) => !widgetPopup && onOpenChange(open)}
+        onOpenChange={(open) => {
+          !widgetPopup && onOpenChange(open);
+          setMaxDeposit({ ion: '', eth: '' });
+        }}
       >
         <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
           <BuyIonSection onBuy={() => setWidgetPopup(true)} />
@@ -160,29 +157,12 @@ export default function AddLiquidityDialog({
               readonly={true}
             />
 
-            {chainId !== currentChain ? (
-              <Button
-                onClick={() => switchToCorrectChain({ chainId: currentChain })}
-                className="w-full bg-accent text-black"
-              >
-                Switch to {getChainName(currentChain as ChainId)}
-              </Button>
-            ) : (
-              <Button
-                variant="default"
-                className="w-full bg-green-400 hover:bg-green-500 text-black font-semibold h-10"
-                onClick={handleAddLiquidity}
-                disabled={
-                  !isConnected ||
-                  !maxDeposit.ion ||
-                  !maxDeposit.eth ||
-                  isLoading ||
-                  isPending
-                }
-              >
-                {isLoading ? 'Adding Liquidity...' : 'Provide Liquidity'}
-              </Button>
-            )}
+            <TransactionButton
+              onSubmit={handleAddLiquidity}
+              isDisabled={!isConnected || !maxDeposit.ion || !maxDeposit.eth}
+              buttonText="Provide Liquidity"
+              targetChainId={currentChain}
+            />
           </div>
         </DialogContent>
       </Dialog>
