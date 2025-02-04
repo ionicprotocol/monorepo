@@ -154,7 +154,7 @@ export class VeIONLock implements VeIONTableData {
     const numericValue = parseFloat(formattedValue);
 
     this.lockedBLP = {
-      amount: `${Number(formattedAmount).toFixed(5)} BLP`,
+      amount: `${Number(formattedAmount).toFixed(3)} vAAM`,
       rawAmount: raw.amount,
       value: numericValue,
       valueNum: numericValue,

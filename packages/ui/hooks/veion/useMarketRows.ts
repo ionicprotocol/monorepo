@@ -93,7 +93,6 @@ export const useMarketRows = (
   } = useBribeData({
     chain: +chain
   });
-  console.log('bribeData', bribeData);
 
   const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
     const details = getRewardDetails(

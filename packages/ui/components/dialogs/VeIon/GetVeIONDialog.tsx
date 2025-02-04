@@ -150,12 +150,11 @@ export default function GetVeIONDialog({
 
               <LockDurationPicker
                 selectedDuration={selectedDuration}
+                tooltipContent="Choose the duration of the lock, longer lock gives higher vote multiplier."
                 lockDate={lockDate}
                 onDurationChange={handleDurationChange}
                 onDateChange={setLockDate}
               />
-
-              <Separator className="bg-white/10" />
 
               {chainId !== currentChain ? (
                 <Button
@@ -185,6 +184,7 @@ export default function GetVeIONDialog({
           <SuccessView
             amount={Number(amount)}
             onClose={() => setSuccess(false)}
+            chain={currentChain}
           />
         )}
       </DialogContent>

@@ -17,6 +17,7 @@ import ManageDialog from './ManageDialog';
 import PositionTitle from './PositionTitle';
 import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
+import { getBgColor, getTextColor } from '../DynamicSubNav';
 import { Badge } from '../ui/badge';
 
 function MyVeionTable() {
@@ -64,7 +65,9 @@ function MyVeionTable() {
             <div className="text-xs font-semibold text-white/80">
               {row.getValue('tokensLocked')}
             </div>
-            <div className="text-xs font-semibold text-white/40">Aero LP</div>
+            <div className="text-xs font-semibold text-white/40">
+              {row.original.chainId === 34443 ? 'Velodrome LP' : 'Aerodrome LP'}
+            </div>
           </div>
         </div>
       )
@@ -146,6 +149,19 @@ function MyVeionTable() {
             <>
               <ActionButton
                 half
+                action={() => {
+                  setSelectedManagePosition(data);
+                  setIsManageOpen(true);
+                }}
+                label="Manage"
+                bg="bg-white/10"
+                className={`${getBgColor('', data.chainId)} ${getTextColor(
+                  '',
+                  data.chainId
+                )}`}
+              />
+              <ActionButton
+                half
                 action={() =>
                   router.push(
                     `/veion/governance/vote?chain=${data.chainId}&id=${data.id}`
@@ -153,17 +169,7 @@ function MyVeionTable() {
                 }
                 label="Vote"
                 bg="bg-white/10"
-                className="text-white"
-              />
-              <ActionButton
-                half
-                action={() => {
-                  setSelectedManagePosition(data);
-                  setIsManageOpen(true);
-                }}
-                label="Manage"
-                bg="bg-white/10"
-                className="text-white"
+                className="bg-accent"
               />
             </>
             {/* )} */}

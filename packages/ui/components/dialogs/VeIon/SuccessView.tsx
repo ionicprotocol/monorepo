@@ -8,9 +8,10 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 interface SuccessViewProps {
   amount: number;
   onClose: () => void;
+  chain: number;
 }
 
-export function SuccessView({ amount, onClose }: SuccessViewProps) {
+export function SuccessView({ amount, onClose, chain }: SuccessViewProps) {
   const router = useRouter();
   const { locks } = useVeIONContext();
 
@@ -21,7 +22,7 @@ export function SuccessView({ amount, onClose }: SuccessViewProps) {
       await locks.refetch();
     }
 
-    router.push('/veion/governance');
+    router.push(`/veion/governance?chain=${chain}`);
   };
 
   return (

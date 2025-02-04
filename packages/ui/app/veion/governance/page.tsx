@@ -30,7 +30,7 @@ export default function Governance() {
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const view = queryview ?? 'My veION';
-  const chain = querychain ?? '0'; // Default to ALL_CHAINS_VALUE (0)
+  const chain = querychain ?? '34443';
 
   const allChains = [8453, 34443, 10];
   const { data: claimableRewards, isLoading: isLoadingRewards } =
@@ -41,7 +41,7 @@ export default function Governance() {
   useEffect(() => {
     if (!querychain) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set('chain', '0'); // Set to ALL_CHAINS_VALUE
+      newSearchParams.set('chain', '34443');
       if (queryview) {
         newSearchParams.set('view', queryview);
       }
@@ -59,12 +59,8 @@ export default function Governance() {
       <NetworkSelector
         nopool
         dropdownSelectedChain={+chain}
-        enabledChains={[
-          mode.id,
-          base.id
-          // optimism.id
-        ]}
-        showAll
+        enabledChains={[mode.id, base.id]}
+        upcomingChains={['Optimism']}
       />
 
       <Card className="w-full bg-grayone">

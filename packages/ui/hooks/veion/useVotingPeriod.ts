@@ -33,7 +33,6 @@ export const hasVotedInCurrentEpoch = (lastVotedTimestamp: number | null) => {
     new Date(EPOCH_ZERO).getTime() / 1000 +
     currentEpoch * EPOCH_DURATION_SECONDS;
   const epochEndTime = epochStartTime + EPOCH_DURATION_SECONDS;
-
   return (
     lastVotedTimestamp >= epochStartTime && lastVotedTimestamp < epochEndTime
   );
@@ -87,6 +86,7 @@ export function useVotingPeriod(
         functionName: 'lastVoted',
         args: [BigInt(tokenId)]
       });
+
       setLastVoted(Number(lastVotedTimestamp));
       setError(null);
     } catch (err) {
@@ -131,7 +131,7 @@ export function useVotingPeriod(
       isLoading,
       error,
       timeRemaining,
-      refetch: fetchLastVoted // Include refetch function in return object
+      refetch: fetchLastVoted
     };
   }, [lastVoted, isLoading, error, fetchLastVoted]);
 }

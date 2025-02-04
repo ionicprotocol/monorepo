@@ -17,8 +17,7 @@ export const VEION_CHAIN_CONFIGS: Record<
     name: 'Base'
   },
   34443: {
-    // Mode
-    lpTypes: [1, 0],
+    lpTypes: [1],
     nativeCurrency: 'MODE',
     name: 'Mode'
   },
