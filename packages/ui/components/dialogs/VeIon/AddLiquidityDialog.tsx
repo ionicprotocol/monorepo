@@ -37,7 +37,6 @@ export default function AddLiquidityDialog({
     eth: ''
   });
   const [widgetPopup, setWidgetPopup] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { addLiquidity, isPending } = useVeIONActions();
 
   const {
@@ -95,8 +94,6 @@ export default function AddLiquidityDialog({
         };
       }
 
-      setIsLoading(true);
-
       await addLiquidity({
         tokenAmount: maxDeposit.ion,
         tokenBAmount: maxDeposit.eth,
@@ -112,8 +109,6 @@ export default function AddLiquidityDialog({
     } catch (err) {
       console.warn(err);
       return { success: false };
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -126,14 +121,19 @@ export default function AddLiquidityDialog({
           setMaxDeposit({ ion: '', eth: '' });
         }}
       >
-        <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
+        <DialogContent className="bg-black bg-opacity-90 border border-white/10 shadow-2xl backdrop-blur-lg w-full max-w-[520px] p-6">
           <BuyIonSection onBuy={() => setWidgetPopup(true)} />
 
-          <Separator className="bg-white/10" />
+          <Separator className="bg-white/5 my-6" />
 
-          <div className="space-y-6">
-            <DialogHeader className="flex flex-row items-center pr-0">
-              <DialogTitle>Add ION Liquidity</DialogTitle>
+          <div className="space-y-8">
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">
+                Add ION Liquidity
+              </DialogTitle>
+              <p className="text-sm text-white/60">
+                Provide liquidity to earn fees and participate in governance
+              </p>
             </DialogHeader>
 
             <MaxDeposit
@@ -159,7 +159,13 @@ export default function AddLiquidityDialog({
 
             <TransactionButton
               onSubmit={handleAddLiquidity}
-              isDisabled={!isConnected || !maxDeposit.ion || !maxDeposit.eth}
+              isDisabled={
+                !isConnected ||
+                !maxDeposit.ion ||
+                !maxDeposit.eth ||
+                maxDeposit.ion === '0' ||
+                maxDeposit.eth === '0'
+              }
               buttonText="Provide Liquidity"
               targetChainId={currentChain}
               onContinue={() => {

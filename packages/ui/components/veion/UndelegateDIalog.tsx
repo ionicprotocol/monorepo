@@ -293,7 +293,6 @@ export default function UndelegateDialog({
               onSubmit={onUndelegateSubmit}
               isDisabled={selectedCount === 0 || !hasValidAmounts || !address}
               buttonText={`Undelegate ${selectedCount} Position${selectedCount !== 1 ? 's' : ''}`}
-              className="flex-1"
             />
           </div>
         </DialogFooter>

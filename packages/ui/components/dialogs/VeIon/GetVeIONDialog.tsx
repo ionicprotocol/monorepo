@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { LockIcon, TrendingUpIcon } from 'lucide-react';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 
@@ -113,14 +114,21 @@ export default function GetVeIONDialog({
         handleDurationChange(180);
       }}
     >
-      <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
+      <DialogContent className="bg-black bg-opacity-90 border border-white/10 shadow-2xl backdrop-blur-lg w-full max-w-[520px] p-6">
         {!success ? (
           <>
-            <DialogHeader>
-              <DialogTitle>Get veION</DialogTitle>
+            <DialogHeader className="space-y-3">
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-accent bg-clip-text text-transparent flex items-center gap-2">
+                <LockIcon className="size-6 text-white" /> Get veION
+              </DialogTitle>
+              <p className="text-sm text-white/60">
+                Lock your LP tokens to receive veION and participate in
+                governance
+              </p>
             </DialogHeader>
-            <div className="space-y-6">
-              <div className="space-y-2">
+
+            <div className="space-y-8 mt-6">
+              <div className="space-y-3">
                 <MaxDeposit
                   headerText="LOCK AMOUNT"
                   max={
@@ -138,7 +146,8 @@ export default function GetVeIONDialog({
                   chain={currentChain}
                   showUtilizationSlider
                 />
-                <div className="text-xs text-white/50 px-1">
+                <div className="text-xs text-white/50 px-1 flex items-center gap-2">
+                  <TrendingUpIcon className="size-4" />
                   Minimum required: {formatUnits(MINIMUM_AMOUNT, 18)} ION
                   {amount !== '0' && !isAboveMinimum && (
                     <span className="text-red-400 ml-2">
@@ -148,7 +157,7 @@ export default function GetVeIONDialog({
                 </div>
               </div>
 
-              <Separator className="bg-white/10" />
+              <Separator className="bg-white/5" />
 
               <LockDurationPicker
                 selectedDuration={selectedDuration}

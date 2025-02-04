@@ -95,12 +95,17 @@ export default function UnstakeIonDialog({
       open={isOpen}
       onOpenChange={onOpenChange}
     >
-      <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
-        <DialogHeader className="flex flex-row items-center">
-          <DialogTitle>Migrate ION Liquidity</DialogTitle>
+      <DialogContent className="bg-black bg-opacity-90 border border-white/10 shadow-2xl backdrop-blur-lg w-full max-w-[520px] p-6">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">
+            Unstake ION Liquidity
+          </DialogTitle>
+          <p className="text-sm text-white/60">
+            Withdraw your staked LP tokens
+          </p>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-8 mt-6">
           <MaxDeposit
             amount={amount}
             handleInput={(val?: string) => setAmount(val || '')}

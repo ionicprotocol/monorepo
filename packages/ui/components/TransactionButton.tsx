@@ -4,6 +4,7 @@ import { useChainId, useSwitchChain } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { getChainName } from '@ui/constants/mock';
+import { cn } from '@ui/lib/utils';
 import type { ChainId } from '@ui/types/veION';
 
 import ResultHandler from './ResultHandler';
@@ -18,8 +19,17 @@ type TransactionButtonProps = {
   onContinue?: () => void;
   isDisabled: boolean;
   buttonText?: string;
-  className?: string;
   targetChainId?: number;
+  variant?: 'accent' | 'default' | 'green';
+};
+
+const variantStyles = {
+  default:
+    'bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70',
+  accent:
+    'bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70',
+  green:
+    'bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600'
 };
 
 const TransactionButton: React.FC<TransactionButtonProps> = ({
@@ -27,8 +37,8 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
   onContinue,
   isDisabled,
   buttonText = 'Submit',
-  className = '',
-  targetChainId
+  targetChainId,
+  variant = 'default'
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showContinue, setShowContinue] = useState(false);
@@ -95,7 +105,14 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
 
   return (
     <Button
-      className={`w-full bg-accent text-black relative min-h-[40px] ${className}`}
+      className={cn(
+        'w-full text-black relative min-h-[48px] text-base font-semibold py-4',
+        'transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg',
+        variantStyles[variant],
+        (isDisabled && !showContinue) || (isLoading && !isWrongNetwork)
+          ? 'opacity-50 cursor-not-allowed'
+          : ''
+      )}
       onClick={handleTransaction}
       disabled={(isDisabled && !showContinue) || (isLoading && !isWrongNetwork)}
     >

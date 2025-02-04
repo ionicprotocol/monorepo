@@ -17,36 +17,37 @@ export function SuccessView({ amount, onClose, chain }: SuccessViewProps) {
 
   const handleNavigateAndClose = async () => {
     onClose();
-
     if (locks.refetch) {
       await locks.refetch();
     }
-
     router.push(`/veion/governance?chain=${chain}`);
   };
 
   return (
-    <div className="flex flex-col gap-y-4 py-2">
-      <DialogHeader>
-        <DialogTitle>Position Created Successfully!</DialogTitle>
+    <div className="flex flex-col gap-y-6 py-2">
+      <DialogHeader className="space-y-3">
+        <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">
+          Position Created Successfully!
+        </DialogTitle>
+        <p className="text-sm text-white/60">
+          Successfully created veION position by locking {amount.toFixed(2)} LP
+          tokens. Your veION position represents your locked tokens and voting
+          power.
+        </p>
       </DialogHeader>
-      <p className="text-sm text-white/60">
-        Successfully created veION position by locking {amount.toFixed(2)} LP
-        tokens.
-        <br /> <br />
-        Your veION position represents your locked tokens and voting power. Head
-        to the veION Overview to start participating in market governance.
-      </p>
-      <Image
-        src="/img/symbols/32/color/ion.png"
-        alt="veion nft"
-        width={48}
-        height={48}
-        className="w-12 mx-auto h-12"
-      />
+
+      <div className="relative w-24 h-24 mx-auto">
+        <Image
+          src="/img/symbols/32/color/ion.png"
+          alt="veion nft"
+          fill
+          className="object-contain animate-pulse"
+        />
+      </div>
+
       <Button
         onClick={handleNavigateAndClose}
-        className="w-full bg-accent text-black"
+        className="w-full bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-lg font-semibold py-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
       >
         View My Positions
       </Button>

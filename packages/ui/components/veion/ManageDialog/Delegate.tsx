@@ -137,7 +137,6 @@ export function Delegate() {
           <TransactionButton
             onSubmit={onLockSourcePosition}
             buttonText={`Lock Position #${selectedManagePosition?.id}`}
-            className="bg-yellow-200 text-black hover:bg-yellow-300"
             isDisabled={!address}
           />
         </div>

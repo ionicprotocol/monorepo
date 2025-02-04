@@ -86,7 +86,6 @@ export function Unlock() {
             onSubmit={onLock}
             isDisabled={!address}
             buttonText="Lock veION"
-            className="bg-yellow-200 text-black hover:bg-yellow-300"
             targetChainId={chain}
           />
         </>
