@@ -86,16 +86,6 @@ export const useMarketRows = (
     marketSides
   });
 
-  // const {
-  //   veAPRs,
-  //   isLoading: isLoadingVeAPR,
-  //   refresh: refreshVeAPR
-  // } = useVeAPR({
-  //   chain: +chain,
-  //   marketAddresses,
-  //   marketSides
-  // });
-
   const {
     bribeData,
     getRewardDetails,
@@ -103,6 +93,7 @@ export const useMarketRows = (
   } = useBribeData({
     chain: +chain
   });
+  console.log('bribeData', bribeData);
 
   const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
     const details = getRewardDetails(
@@ -279,7 +270,6 @@ export const useMarketRows = (
       !isLoadingBorrowApys &&
       !isLoadingFraxtalAprs &&
       !isLoadingRewards &&
-      // !isLoadingVoteData &&
       !isLoadingMerklData
     ) {
       try {
@@ -301,7 +291,6 @@ export const useMarketRows = (
     isLoadingRewards,
     isLoadingMerklData,
     isLoadingVoteData,
-    // isLoadingVeAPR,
     processMarketRows
   ]);
 
@@ -318,7 +307,6 @@ export const useMarketRows = (
       isLoadingFraxtalAprs ||
       isLoadingRewards ||
       isLoadingVoteData ||
-      // isLoadingVeAPR ||
       isLoadingMerklData,
     error,
     refetch
