@@ -107,7 +107,11 @@ export default function GetVeIONDialog({
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        setAmount('0');
+        handleDurationChange(180);
+      }}
     >
       <DialogContent className="bg-grayUnselect w-full max-w-[480px]">
         {!success ? (
