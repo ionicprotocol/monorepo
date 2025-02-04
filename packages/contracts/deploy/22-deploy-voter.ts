@@ -178,7 +178,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
       }
       console.log(
-        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${allMarkets.length}`
+        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${marketsWithoutRewardAccumulator.length}`
       );
 
       // Collect data for setMarketRewardAccumulators
