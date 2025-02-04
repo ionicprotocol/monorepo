@@ -43,7 +43,8 @@ task("base:morpho:deploy-distributor", "one time setup")
     try {
       console.log("Deploying Morpho Bribe Distributor...");
 
-      morphoBribeDistributor = await deployments.deploy("MorphoBribeDistributor", {
+      morphoBribeDistributor = await deployments.deploy(`MorphoBribeDistributor_${taskArgs.morphoMarket}`, {
+        contract: "MorphoBribeDistributor",
         from: deployer,
         log: true,
         proxy: {
