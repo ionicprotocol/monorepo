@@ -15,6 +15,7 @@ export type TransactionResult = {
 
 type TransactionButtonProps = {
   onSubmit: () => Promise<TransactionResult>;
+  onContinue?: () => void;
   isDisabled: boolean;
   buttonText?: string;
   className?: string;
@@ -23,29 +24,39 @@ type TransactionButtonProps = {
 
 const TransactionButton: React.FC<TransactionButtonProps> = ({
   onSubmit,
+  onContinue,
   isDisabled,
   buttonText = 'Submit',
   className = '',
   targetChainId
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showContinue, setShowContinue] = useState(false);
   const currentChainId = useChainId();
   const { switchChain } = useSwitchChain();
 
   const isWrongNetwork = targetChainId && targetChainId !== currentChainId;
 
   const handleTransaction = async () => {
+    if (showContinue && onContinue) {
+      onContinue();
+      setShowContinue(false);
+      return;
+    }
+
     try {
-      // If we're on the wrong network, switch first
       if (isWrongNetwork && targetChainId) {
         await switchChain({ chainId: targetChainId });
-        return; // The UI will re-render with the new network, and the button can be clicked again
+        return;
       }
 
       setIsLoading(true);
       const result = await onSubmit();
 
       if (result.success) {
+        if (onContinue) {
+          setShowContinue(true);
+        }
         setIsLoading(false);
       }
     } catch (error) {
@@ -57,6 +68,10 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
   const getButtonContent = () => {
     if (isWrongNetwork) {
       return `Switch to ${getChainName(targetChainId as ChainId)}`;
+    }
+
+    if (showContinue) {
+      return 'Continue';
     }
 
     if (!isLoading) {
@@ -82,7 +97,7 @@ const TransactionButton: React.FC<TransactionButtonProps> = ({
     <Button
       className={`w-full bg-accent text-black relative min-h-[40px] ${className}`}
       onClick={handleTransaction}
-      disabled={isDisabled || (isLoading && !isWrongNetwork)}
+      disabled={(isDisabled && !showContinue) || (isLoading && !isWrongNetwork)}
     >
       {getButtonContent()}
     </Button>

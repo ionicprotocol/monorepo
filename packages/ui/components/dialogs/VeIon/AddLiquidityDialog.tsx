@@ -162,6 +162,10 @@ export default function AddLiquidityDialog({
               isDisabled={!isConnected || !maxDeposit.ion || !maxDeposit.eth}
               buttonText="Provide Liquidity"
               targetChainId={currentChain}
+              onContinue={() => {
+                setMaxDeposit({ ion: '', eth: '' });
+                onOpenChange(false);
+              }}
             />
           </div>
         </DialogContent>

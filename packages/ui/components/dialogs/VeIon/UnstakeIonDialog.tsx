@@ -19,17 +19,17 @@ import {
   getAvailableStakingToken
 } from '@ui/utils/getStakingTokens';
 
-interface MigrateIonDialogProps {
+interface UnstakeIonDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedToken: 'eth' | 'mode' | 'weth';
 }
 
-export default function MigrateIonDialog({
+export default function UnstakeIonDialog({
   isOpen,
   onOpenChange,
   selectedToken
-}: MigrateIonDialogProps) {
+}: UnstakeIonDialogProps) {
   const { isConnected, address, chainId } = useAccount();
   const [amount, setAmount] = useState<string>('');
 
@@ -58,7 +58,6 @@ export default function MigrateIonDialog({
     }
   });
 
-  // Reset amount when chain changes
   useEffect(() => {
     setAmount('');
   }, [currentChain]);
@@ -122,6 +121,7 @@ export default function MigrateIonDialog({
             isDisabled={!isConnected || !amount || Number(amount) === 0}
             buttonText="Unstake LP"
             targetChainId={currentChain}
+            onContinue={() => onOpenChange(false)}
           />
         </div>
       </DialogContent>

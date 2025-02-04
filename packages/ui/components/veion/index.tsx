@@ -10,7 +10,7 @@ export { default as DelegateVeIonTable } from './DelegateVeIonTable';
 export { default as AddLiquidityDialog } from '../dialogs/VeIon/AddLiquidityDialog';
 export { default as EpochInfo } from './EpochInfo';
 export { default as MarketSelector } from './MarketSelector';
-export { default as MigrateIonDialog } from '../dialogs/VeIon/MigrateIonDialog';
+export { default as UnstakeIonDialog } from '../dialogs/VeIon/UnstakeIonDialog';
 export { default as TimeRemaining } from './TimeRemaining';
 export { default as VoteInput } from './VoteInput';
 export { default as InfoBlock } from './InfoBlock';

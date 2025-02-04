@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { type Address, erc20Abi } from 'viem';
-import { usePublicClient, useReadContract } from 'wagmi';
-
 import type { PublicClient } from 'viem';
+import { type Address, erc20Abi  } from 'viem';
+import { usePublicClient, useReadContract } from 'wagmi';
 
 import { voterLensAbi, bribeRewardsAbi } from '@ionicprotocol/sdk/src';
 

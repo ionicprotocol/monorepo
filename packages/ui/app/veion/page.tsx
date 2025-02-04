@@ -17,7 +17,7 @@ import {
   GetVeIONDialog,
   LPRow,
   AddLiquidityDialog,
-  MigrateIonDialog
+  UnstakeIonDialog
 } from '@ui/components/veion';
 import InfoCardsSection from '@ui/components/veion/InfoCard';
 import { useVeIONContext } from '@ui/context/VeIonContext';
@@ -158,7 +158,7 @@ export default function EnhancedVeIon() {
           onOpenChange={setIsAddLiquidityOpen}
           selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
         />
-        <MigrateIonDialog
+        <UnstakeIonDialog
           isOpen={isMigrateOpen}
           onOpenChange={setIsMigrateOpen}
           selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
