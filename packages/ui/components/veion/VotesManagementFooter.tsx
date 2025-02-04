@@ -18,7 +18,7 @@ interface VotesManagementFooterProps {
 function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const { currentChain } = useVeIONContext();
   const { votes, resetVotes, totalVotes } = useVotes();
-  const { baseMarketRows: marketRows, votingPeriod } = useMarketDataContext();
+  const { allMarketRows, votingPeriod } = useMarketDataContext();
   const { isVoting } = useVeIONVote(currentChain);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -31,24 +31,30 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
     !votingPeriod.hasVoted &&
     Math.abs(remainingVotes) < 0.01;
 
-  // Create a mapping of market address to asset for lookup
-  const marketAssetMap = marketRows.data.reduce(
-    (acc, row) => {
-      const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
-      acc[key] = {
-        asset: row.asset,
-        marketAddress: row.marketAddress as `0x${string}`,
-        side: row.side
-      };
+  const marketAssetMap = Object.values(allMarketRows).reduce(
+    (acc, pool) => {
+      pool.data.forEach((row) => {
+        const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+        acc[key] = {
+          asset: row.asset,
+          marketAddress: row.marketAddress as `0x${string}`,
+          side: row.side,
+          poolName: pool.poolName
+        };
+      });
       return acc;
     },
     {} as Record<
       string,
-      { asset: string; marketAddress: `0x${string}`; side: MarketSide }
+      {
+        asset: string;
+        marketAddress: `0x${string}`;
+        side: MarketSide;
+        poolName: string;
+      }
     >
   );
 
-  // Transform votes directly into the expected format using the votes object
   const voteData = Object.entries(votes).reduce(
     (acc, [key, voteValue]) => {
       const marketInfo = marketAssetMap[key];
@@ -57,7 +63,8 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
           marketAddress: marketInfo.marketAddress,
           side: marketInfo.side,
           voteValue: voteValue,
-          asset: marketInfo.asset
+          asset: marketInfo.asset,
+          poolName: marketInfo.poolName
         };
       }
       return acc;
@@ -69,6 +76,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
         side: MarketSide;
         voteValue: string;
         asset: string;
+        poolName: string;
       }
     >
   );
@@ -88,12 +96,8 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   };
 
   const getButtonStyles = () => {
-    if (isVoting) {
-      return 'bg-gray-500 cursor-not-allowed';
-    }
-    if (isVoteEnabled) {
-      return 'bg-green-500 hover:bg-green-600';
-    }
+    if (isVoting) return 'bg-gray-500 cursor-not-allowed';
+    if (isVoteEnabled) return 'bg-green-500 hover:bg-green-600';
     return 'bg-red-500 hover:bg-red-600';
   };
 
@@ -106,9 +110,8 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
         </div>
       );
     }
-    if (Math.abs(remainingVotes) < 0.01) {
+    if (Math.abs(remainingVotes) < 0.01)
       return `Vote (${totalVotes.toFixed(2)}%)`;
-    }
     return `Remaining (${remainingVotes.toFixed(2)}%)`;
   };
 
@@ -142,10 +145,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
               <button
                 onClick={handleVoteClick}
                 disabled={!hasVotes || isVoting || votingPeriod.hasVoted}
-                className={`
-                  px-4 py-2 text-sm text-white rounded-lg transition-colors
-                  ${getButtonStyles()}
-                `}
+                className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${getButtonStyles()}`}
               >
                 {getButtonText()}
               </button>

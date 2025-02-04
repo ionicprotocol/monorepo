@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { Globe, Diamond, Wallet } from 'lucide-react';
 
@@ -8,9 +8,19 @@ import { pools } from '@ui/constants/index';
 
 const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const chainConfig = pools[+chain];
   const poolsData = chainConfig.pools;
   const vaultsData = chainConfig.vaults;
+
+  const getUpdatedUrl = (newPool: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('chain', chain.toString());
+    if (newPool) {
+      params.set('pool', newPool);
+    }
+    return `${pathname}?${params.toString()}`;
+  };
 
   return (
     <div className="flex flex-col sm:flex-row gap-2">
@@ -24,9 +34,7 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
               return (
                 <Link
                   key={idx}
-                  href={`${pathname}?chain=${chain}${
-                    poolConfig.id ? `&pool=${poolConfig.id}` : ''
-                  }`}
+                  href={getUpdatedUrl(poolConfig.id)}
                   className={`
                     inline-flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
                     ${
@@ -54,7 +62,7 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
       {vaultsData && vaultsData.length > 0 && (
         <div className="h-9 rounded-lg bg-darktwo border border-white/10 p-0.5">
           <Link
-            href={`${pathname}?chain=${chain}&pool=vault`}
+            href={getUpdatedUrl('vault')}
             className={`
               inline-flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
               ${

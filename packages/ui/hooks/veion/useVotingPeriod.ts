@@ -67,7 +67,9 @@ export function useVotingPeriod(
   chain: string,
   tokenId?: number
 ): VotingPeriodInfo {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({
+    chainId: +chain
+  });
   const [lastVoted, setLastVoted] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

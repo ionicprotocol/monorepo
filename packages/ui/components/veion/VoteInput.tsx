@@ -101,7 +101,7 @@ const VoteInput = React.memo(function VoteInput({
   const currentValue = parseFloat(localValue) || 0;
 
   return (
-    <div className="h-12 relative">
+    <div className="relative">
       <div className="flex items-center gap-1">
         <Button
           variant="outline"

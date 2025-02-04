@@ -10,7 +10,13 @@ import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
 import type { VoteMarketRow } from '@ui/types/veION';
 
 type MarketDataContextType = {
-  baseMarketRows: {
+  allMarketRows: {
+    [poolId: string]: {
+      data: VoteMarketRow[];
+      poolName: string;
+    };
+  };
+  selectedPoolRows: {
     data: VoteMarketRow[];
     isLoading: boolean;
     error: Error | null;
@@ -22,7 +28,8 @@ type MarketDataContextType = {
 };
 
 const MarketDataContext = createContext<MarketDataContextType>({
-  baseMarketRows: {
+  allMarketRows: {},
+  selectedPoolRows: {
     data: [],
     isLoading: false,
     error: null,
@@ -50,29 +57,53 @@ export const MarketDataProvider: React.FC<{
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
-  const {
-    baseMarketRows,
-    isLoading,
-    error,
-    refetch: refetchMarketRows
-  } = useMarketRows(chain, selectedPool, tokenId);
-
   const votingPeriod = useVotingPeriod(chain, tokenId);
+
+  // needs refactoring
+  const pool0 = useMarketRows(chain, '0', tokenId);
+  const pool1 = useMarketRows(chain, '1', tokenId);
+
+  const allMarketRows = useMemo(
+    () => ({
+      '0': {
+        data: pool0.baseMarketRows,
+        poolName: 'Pool 0',
+        isLoading: pool0.isLoading,
+        error: pool0.error,
+        refetch: pool0.refetch
+      },
+      '1': {
+        data: pool1.baseMarketRows,
+        poolName: 'Pool 1',
+        isLoading: pool1.isLoading,
+        error: pool1.error,
+        refetch: pool1.refetch
+      }
+    }),
+    [pool0, pool1]
+  );
+
+  const selectedPoolRows =
+    allMarketRows[selectedPool as keyof typeof allMarketRows];
 
   const value = useMemo(
     () => ({
-      baseMarketRows: {
-        data: baseMarketRows,
-        isLoading,
-        error,
-        refetch: refetchMarketRows
+      allMarketRows,
+      selectedPoolRows: {
+        data: selectedPoolRows.data,
+        isLoading: selectedPoolRows.isLoading,
+        error: selectedPoolRows.error,
+        refetch: async () => {
+          await pool0?.refetch();
+          await pool1?.refetch();
+        }
       },
       votingPeriod: {
         ...votingPeriod,
         refetch: votingPeriod.refetch
       }
     }),
-    [baseMarketRows, isLoading, error, refetchMarketRows, votingPeriod]
+    [allMarketRows, selectedPoolRows, votingPeriod, pool0, pool1]
   );
 
   return (

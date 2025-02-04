@@ -34,7 +34,9 @@ export function useVoteData({
   marketAddresses,
   marketSides
 }: UseVoteDataParams) {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({
+    chainId: chain
+  });
   const [voteData, setVoteData] = useState<Record<string, VoteData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

@@ -106,12 +106,12 @@ export const useVotes = () => {
 };
 
 export const useVoteTableData = () => {
-  const { baseMarketRows } = useMarketDataContext();
-  const { isLoading, error, data } = baseMarketRows;
+  const { selectedPoolRows } = useMarketDataContext();
+  const { isLoading, error, data } = selectedPoolRows;
   const { votes } = useVotes();
 
   const marketRows = useMemo(() => {
-    if (isLoading || error) return baseMarketRows;
+    if (isLoading || error) return selectedPoolRows;
 
     return data.map((row) => {
       const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
@@ -121,7 +121,7 @@ export const useVoteTableData = () => {
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseMarketRows, votes, isLoading, error]);
+  }, [selectedPoolRows, votes, isLoading, error]);
 
   return { marketRows, isLoading, error };
 };

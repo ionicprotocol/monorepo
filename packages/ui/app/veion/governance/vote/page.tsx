@@ -34,7 +34,10 @@ const Vote = () => {
 
   // Set initial position when component mounts or when locks/initialId changes
   useEffect(() => {
-    if (!selectedManagePosition && locks.myLocks.length > 0) {
+    if (
+      (!selectedManagePosition && locks.myLocks.length > 0) ||
+      selectedManagePosition?.id !== initialId
+    ) {
       const position = initialId
         ? locks.myLocks.find((lock) => lock.id === initialId)
         : locks.myLocks[0];

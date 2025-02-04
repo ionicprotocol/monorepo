@@ -51,7 +51,7 @@ export function useVeIONVote(chain: number) {
   const { write } = useContractWrite();
 
   // Get refresh functions from context
-  const { baseMarketRows, votingPeriod } = useMarketDataContext();
+  const { selectedPoolRows, votingPeriod } = useMarketDataContext();
 
   const [state, setState] = useState<VoteState>({
     isVoting: false,
@@ -136,7 +136,10 @@ export function useVeIONVote(chain: number) {
       );
 
       // Refetch data after successful vote
-      await Promise.all([votingPeriod.refetch?.(), baseMarketRows.refetch?.()]);
+      await Promise.all([
+        votingPeriod.refetch?.(),
+        selectedPoolRows.refetch?.()
+      ]);
 
       setState((prev) => ({
         ...prev,
