@@ -43,6 +43,7 @@ export const getCycleInfoForAllMarkets = async (
             end: cycleInfo[1],
             reward: cycleInfo[2],
             flywheelRewards: flywheelRewards.address,
+            flywheel : flywheel.address,
             rewardSymbol
           });
 
@@ -67,7 +68,7 @@ export const getCycleInfoForAllMarkets = async (
     console.log("-".repeat(30));
     rewards.forEach((reward) => {
       console.log(
-        `Market: ${reward.symbol} (${reward.cToken}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Start Time: ${reward.start}\n${"-".repeat(20)}`
+        `Market: ${reward.symbol} (${reward.cToken}) | Flywheel (${reward.flywheel}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Start Time: ${reward.start}\n${"-".repeat(20)}`
       );
     });
   });
