@@ -59,9 +59,9 @@ const Vote = () => {
     return [
       {
         label: 'Tokens Locked',
-        value: selectedManagePosition.tokensLocked,
+        value: selectedManagePosition.lockedBLP.amount,
         icon: null,
-        infoContent: `This is the amount of #${selectedManagePosition.id} veION you have locked.`
+        infoContent: 'LP amount locked'
       },
       {
         label: 'Locked Until',
