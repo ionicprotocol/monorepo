@@ -13,6 +13,7 @@ import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
 
+import { useBribeData } from './useBribeData';
 import { useVoteData } from './useVoteData';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
@@ -22,37 +23,6 @@ export const useMarketRows = (
   selectedPool: string,
   tokenId?: number
 ) => {
-  const mockIncentives = useMemo(() => {
-    const tokenOptions = [
-      { symbol: 'ION', priceRange: [10, 50] },
-      { symbol: 'USDC', priceRange: [0.99, 1.01] },
-      { symbol: 'FRAX', priceRange: [0.99, 1.01] },
-      { symbol: 'ETH', priceRange: [2000, 3000] }
-    ];
-
-    const numTokens = Math.floor(Math.random() * 2) + 1;
-    const selectedTokens = [...tokenOptions]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, numTokens);
-
-    const tokens = selectedTokens.map((token) => {
-      const tokenAmount = Math.random() * 1000;
-      const price =
-        token.priceRange[0] +
-        Math.random() * (token.priceRange[1] - token.priceRange[0]);
-      return {
-        tokenSymbol: token.symbol,
-        tokenAmount,
-        tokenAmountUSD: tokenAmount * price
-      };
-    });
-
-    return {
-      balanceUSD: tokens.reduce((sum, token) => sum + token.tokenAmountUSD, 0),
-      tokens
-    };
-  }, []);
-
   const [baseMarketRows, setBaseMarketRows] = useState<VoteMarketRow[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
@@ -126,7 +96,35 @@ export const useMarketRows = (
   //   marketSides
   // });
 
-  // console.log('veAPRs', veAPRs);
+  const {
+    bribeData,
+    getRewardDetails,
+    isLoading: isLoadingBribes
+  } = useBribeData({
+    chain: +chain
+  });
+
+  const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
+    const details = getRewardDetails(
+      marketAddress,
+      side === MarketSide.Supply ? 'supply' : 'borrow'
+    );
+    if (!details || !details.rewards.length)
+      return {
+        balanceUSD: 0,
+        tokens: []
+      };
+
+    return {
+      balanceUSD: 0, // need to fix this up
+      tokens: details.rewards.map((reward) => ({
+        tokenSymbol: reward.symbol || 'Unknown',
+        tokenAmount: Number(reward.weeklyAmount),
+        tokenAmountFormatted: reward.formattedWeeklyAmount,
+        tokenAmountUSD: 0 // need to fix this up
+      }))
+    };
+  };
 
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
@@ -169,9 +167,8 @@ export const useMarketRows = (
           side: MarketSide.Supply,
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalSupplyFiat.toFixed(2),
-          incentives: mockIncentives,
-          veAPR: 0,
-          // veAPR: veAPRs[key] ?? 0,
+          incentives: getIncentivesFromBribes(asset.cToken, MarketSide.Supply),
+          veAPR: getRewardDetails(asset.cToken, 'supply')?.totalApr || 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
@@ -220,9 +217,8 @@ export const useMarketRows = (
           side: MarketSide.Borrow,
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalBorrowFiat.toFixed(2),
-          incentives: mockIncentives,
-          // veAPR: veAPRs[key] ?? 0,
-          veAPR: 0,
+          incentives: getIncentivesFromBribes(asset.cToken, MarketSide.Borrow),
+          veAPR: getRewardDetails(asset.cToken, 'borrow')?.totalApr || 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
