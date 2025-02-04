@@ -26,7 +26,7 @@ interface VoteData {
 const BASIS_POINTS = 10000n;
 const TOKEN_DECIMALS = 18;
 const DECIMALS_SCALAR = BigInt(10 ** TOKEN_DECIMALS);
-const MULTICALL_CHUNK_SIZE = 2;
+const MULTICALL_CHUNK_SIZE = 5;
 
 export function useVoteData({
   tokenId,
@@ -65,10 +65,14 @@ export function useVoteData({
     try {
       setIsLoading(true);
 
-      const lpTokens = await publicClient.readContract({
-        ...voterContract,
-        functionName: 'getAllLpRewardTokens'
-      });
+      // For MODE chain, only use the specific LP token
+      const lpTokens =
+        chain === 34443
+          ? (['0x690A74d2eC0175a69C0962B309E03021C0b5002E'] as `0x${string}`[])
+          : await publicClient.readContract({
+              ...voterContract,
+              functionName: 'getAllLpRewardTokens'
+            });
 
       const marketChunks = chunkArray(marketAddresses, MULTICALL_CHUNK_SIZE);
       const sideChunks = chunkArray(marketSides, MULTICALL_CHUNK_SIZE);
@@ -79,7 +83,6 @@ export function useVoteData({
       let totalSystemWeight = 0n;
       let totalUserWeight = 0n;
 
-      // Process each chunk of markets
       for (let i = 0; i < marketChunks.length; i++) {
         const marketsChunk = marketChunks[i];
         const sidesChunk = sideChunks[i];
@@ -115,7 +118,6 @@ export function useVoteData({
             : Promise.resolve([])
         ]);
 
-        // Process results for this chunk
         marketsChunk.forEach((market, marketIndex) => {
           const lpStart = marketIndex * lpTokens.length;
           const lpEnd = lpStart + lpTokens.length;
@@ -147,7 +149,6 @@ export function useVoteData({
         });
       }
 
-      // Format final data with pure numbers
       const newVoteData = Object.entries(marketData).reduce(
         (acc, [key, { totalWeight, userVotes }]) => {
           const totalWeightNumber = formatValue(totalWeight);

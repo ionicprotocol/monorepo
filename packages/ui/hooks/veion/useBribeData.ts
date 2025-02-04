@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import type { PublicClient } from 'viem';
-import { type Address, erc20Abi  } from 'viem';
+import { erc20Abi } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
-import { voterLensAbi, bribeRewardsAbi } from '@ionicprotocol/sdk/src';
+import type { Address, PublicClient } from 'viem';
+
+import { bribeRewardsAbi } from '@ionicprotocol/sdk';
+import { voterLensAbi } from '@ionicprotocol/sdk/src';
 
 const CHAIN_ADDRESSES = {
   8453: '0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02', // Base

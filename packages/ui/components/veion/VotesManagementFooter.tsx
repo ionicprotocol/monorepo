@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { InfoIcon } from 'lucide-react';
 
 import { Card } from '@ui/components/ui/card';
-import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useVeIonVoteContext } from '@ui/context/VeIonVoteContext';
 import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
 import { MarketSide } from '@ui/types/veION';
@@ -18,7 +18,7 @@ interface VotesManagementFooterProps {
 function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const { currentChain } = useVeIONContext();
   const { votes, resetVotes, totalVotes } = useVotes();
-  const { allMarketRows, votingPeriod } = useMarketDataContext();
+  const { allMarketRows, votingPeriod } = useVeIonVoteContext();
   const { isVoting } = useVeIONVote(currentChain);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);

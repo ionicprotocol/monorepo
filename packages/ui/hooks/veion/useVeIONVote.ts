@@ -8,7 +8,7 @@ import {
 } from 'wagmi';
 
 import { getiVoterContract } from '@ui/constants/veIon';
-import { useMarketDataContext } from '@ui/context/MarketDataContext';
+import { useVeIonVoteContext } from '@ui/context/VeIonVoteContext';
 import type { MarketSide } from '@ui/types/veION';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -51,7 +51,7 @@ export function useVeIONVote(chain: number) {
   const { write } = useContractWrite();
 
   // Get refresh functions from context
-  const { selectedPoolRows, votingPeriod } = useMarketDataContext();
+  const { selectedPoolRows, votingPeriod } = useVeIonVoteContext();
 
   const [state, setState] = useState<VoteState>({
     isVoting: false,

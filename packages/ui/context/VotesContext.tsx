@@ -9,7 +9,7 @@ import React, {
 
 import { MarketSide } from '@ui/types/veION';
 
-import { useMarketDataContext } from './MarketDataContext';
+import { useVeIonVoteContext } from './VeIonVoteContext';
 
 type VotesContextType = {
   votes: Record<string, string>;
@@ -106,7 +106,7 @@ export const useVotes = () => {
 };
 
 export const useVoteTableData = () => {
-  const { selectedPoolRows } = useMarketDataContext();
+  const { selectedPoolRows } = useVeIonVoteContext();
   const { isLoading, error, data } = selectedPoolRows;
   const { votes } = useVotes();
 

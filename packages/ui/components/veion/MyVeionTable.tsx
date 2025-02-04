@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { useSwitchChain } from 'wagmi';
+
 import ActionButton from '@ui/components/ActionButton';
 import CommonTable from '@ui/components/CommonTable';
 import type {
@@ -24,6 +26,7 @@ function MyVeionTable() {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isClaimOpen, setIsClaimOpen] = useState(false);
   const [isExtendOpen, setIsExtendOpen] = useState(false);
+  const { switchChain } = useSwitchChain();
 
   const router = useRouter();
   const {
@@ -162,11 +165,14 @@ function MyVeionTable() {
               />
               <ActionButton
                 half
-                action={() =>
+                action={() => {
+                  switchChain({
+                    chainId: data.chainId
+                  });
                   router.push(
                     `/veion/governance/vote?chain=${data.chainId}&id=${data.id}`
-                  )
-                }
+                  );
+                }}
                 label="Vote"
                 bg="bg-white/10"
                 className="bg-accent"

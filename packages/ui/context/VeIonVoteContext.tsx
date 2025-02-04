@@ -9,7 +9,7 @@ import type { VotingPeriodInfo } from '@ui/hooks/veion/useVotingPeriod';
 import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
 import type { VoteMarketRow } from '@ui/types/veION';
 
-type MarketDataContextType = {
+type VeIonVoteContextType = {
   allMarketRows: {
     [poolId: string]: {
       data: VoteMarketRow[];
@@ -27,7 +27,7 @@ type MarketDataContextType = {
   };
 };
 
-const MarketDataContext = createContext<MarketDataContextType>({
+const VeIonVoteContext = createContext<VeIonVoteContextType>({
   allMarketRows: {},
   selectedPoolRows: {
     data: [],
@@ -47,7 +47,7 @@ const MarketDataContext = createContext<MarketDataContextType>({
   }
 });
 
-export const MarketDataProvider: React.FC<{
+export const VeIonVoteProvider: React.FC<{
   children: React.ReactNode;
   tokenId?: number;
 }> = ({ children, tokenId }) => {
@@ -107,16 +107,16 @@ export const MarketDataProvider: React.FC<{
   );
 
   return (
-    <MarketDataContext.Provider value={value}>
+    <VeIonVoteContext.Provider value={value}>
       {children}
-    </MarketDataContext.Provider>
+    </VeIonVoteContext.Provider>
   );
 };
 
-export const useMarketDataContext = () => {
-  const context = useContext(MarketDataContext);
+export const useVeIonVoteContext = () => {
+  const context = useContext(VeIonVoteContext);
   if (!context) {
-    throw new Error('useMarketData must be used within a MarketDataProvider');
+    throw new Error('useMarketData must be used within a VeIonVoteProvider');
   }
   return context;
 };

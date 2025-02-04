@@ -24,12 +24,11 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
-import { getChainName } from '@ui/constants/mock';
-import { useMarketDataContext } from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useVeIonVoteContext } from '@ui/context/VeIonVoteContext';
 import { useVotes } from '@ui/context/VotesContext';
 import { useVeIONVote } from '@ui/hooks/veion/useVeIONVote';
-import type { ChainId, VoteMarketRow } from '@ui/types/veION';
+import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 
 import VoteInput from './VoteInput';
@@ -67,7 +66,7 @@ function VotesManagement({
   showPendingOnly
 }: VotesManagementTableProps) {
   const { currentChain } = useVeIONContext();
-  const { selectedPoolRows: marketRows, votingPeriod } = useMarketDataContext();
+  const { selectedPoolRows: marketRows, votingPeriod } = useVeIonVoteContext();
   const { votes } = useVotes();
   const { isVoting } = useVeIONVote(currentChain);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +78,6 @@ function VotesManagement({
   const querypool = searchParams.get('pool');
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
-  const chainName = getChainName(+chain as ChainId);
 
   const filteredVotingData = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();

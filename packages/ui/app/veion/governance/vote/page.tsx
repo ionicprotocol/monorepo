@@ -18,11 +18,11 @@ import { Switch } from '@ui/components/ui/switch';
 import { InfoBlock } from '@ui/components/veion';
 import PositionTitle from '@ui/components/veion/PositionTitle';
 import VotesManagement from '@ui/components/veion/VotesManagement';
-import {
-  MarketDataProvider,
-  useMarketDataContext
-} from '@ui/context/MarketDataContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import {
+  useVeIonVoteContext,
+  VeIonVoteProvider
+} from '@ui/context/VeIonVoteContext';
 import { VotesProvider } from '@ui/context/VotesContext';
 
 const Vote = () => {
@@ -115,7 +115,7 @@ const Vote = () => {
         <CardHeader>
           <div className="flex items-center gap-3">
             <Link
-              href="/veion/governance"
+              href={`/veion/governance?chain=${selectedManagePosition.chainId}`}
               className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-700/50 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-white/80" />
@@ -146,7 +146,7 @@ const Vote = () => {
 
 const VotingManagementWrapper = ({ tokenId }: { tokenId: number }) => {
   const [showPendingOnly, setShowPendingOnly] = React.useState(false);
-  const { votingPeriod } = useMarketDataContext();
+  const { votingPeriod } = useVeIonVoteContext();
 
   if (votingPeriod.isLoading) {
     return (
@@ -185,14 +185,14 @@ const VotingManagementWrapper = ({ tokenId }: { tokenId: number }) => {
         )}
       </CardHeader>
       <CardContent className="border-none">
-        <MarketDataProvider tokenId={tokenId}>
+        <VeIonVoteProvider tokenId={tokenId}>
           <VotesProvider>
             <VotesManagement
               tokenId={tokenId}
               showPendingOnly={showPendingOnly}
             />
           </VotesProvider>
-        </MarketDataProvider>
+        </VeIonVoteProvider>
       </CardContent>
     </Card>
   );
