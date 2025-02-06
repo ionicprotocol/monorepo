@@ -265,19 +265,11 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
 task("markets:all:pause", "Pauses borrowing on a market")
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
+  .addOptionalParam("pool", "The pool to operate on", undefined, types.string)
   .setAction(async (taskArgs, { viem, getNamedAccounts, deployments, run }) => {
-    const poolDirectory = await viem.getContractAt(
-      "PoolDirectory",
-      (await deployments.get("PoolDirectory")).address as Address
-    );
-
-    const [, poolData] = await poolDirectory.read.getActivePools();
-
-    for (const pool of poolData) {
-      const poolExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
-
-      const markets = await poolExtension.read.getAllMarkets();
-
+    if (taskArgs.pool) {
+      const pool = await viem.getContractAt("IonicComptroller", taskArgs.pool as Address);
+      const markets = await pool.read.getAllMarkets();
       await run("markets:borrow-pause", {
         markets: markets.join(","),
         paused: taskArgs.paused
@@ -286,5 +278,27 @@ task("markets:all:pause", "Pauses borrowing on a market")
         markets: markets.join(","),
         paused: taskArgs.paused
       });
+    } else {
+      const poolDirectory = await viem.getContractAt(
+        "PoolDirectory",
+        (await deployments.get("PoolDirectory")).address as Address
+      );
+
+      const [, poolData] = await poolDirectory.read.getActivePools();
+
+      for (const pool of poolData) {
+        const poolExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
+
+        const markets = await poolExtension.read.getAllMarkets();
+
+        await run("markets:borrow-pause", {
+          markets: markets.join(","),
+          paused: taskArgs.paused
+        });
+        await run("market:mint-pause", {
+          markets: markets.join(","),
+          paused: taskArgs.paused
+        });
+      }
     }
   });
