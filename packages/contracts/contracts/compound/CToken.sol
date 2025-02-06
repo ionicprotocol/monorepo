@@ -7,7 +7,6 @@ import { TokenErrorReporter } from "./ErrorReporter.sol";
 import { Exponential } from "./Exponential.sol";
 import { EIP20Interface } from "./EIP20Interface.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";
-import { ComptrollerV3Storage } from "./ComptrollerStorage.sol";
 import { IFeeDistributor } from "./IFeeDistributor.sol";
 import { CTokenOracleProtected } from "./CTokenOracleProtected.sol";
 
@@ -57,8 +56,8 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
     functionSelectors[--fnsCount] = this.seize.selector;
     functionSelectors[--fnsCount] = this.selfTransferOut.selector;
     functionSelectors[--fnsCount] = this.selfTransferIn.selector;
-    functionSelectors[--fnsCount] = this._withdrawIonicFees.selector;
-    functionSelectors[--fnsCount] = this._withdrawAdminFees.selector;
+    functionSelectors[--fnsCount] = this.previewDeposit.selector;
+    functionSelectors[--fnsCount] = this.previewRedeem.selector;
 
     require(fnsCount == 0, "use the correct array length");
     return functionSelectors;
@@ -67,7 +66,42 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   /*** User Interface ***/
 
   /**
-   * @notice Sender supplies assets into the market and receives cTokens in exchange
+   * @notice Simulate the effects of a deposit at the current block, given current on-chain conditions.
+   * @param assets Exact amount of underlying `asset` token to deposit
+   * @return of the vault issued in exchange to the user for `assets`
+   */
+  function previewDeposit(uint256 assets) public view returns (uint256) {
+    (, uint256 mintedCTokens) = _previewDeposit(assets, asCTokenExtension().exchangeRateCurrent());
+    return mintedCTokens;
+  }
+
+  function _previewDeposit(uint256 assets, uint256 exchangeRateMantissa) internal pure returns (MathError, uint256) {
+    // mintedCTokens is rounded down here - correct
+    return divScalarByExpTruncate(
+      assets,
+      Exp({ mantissa: exchangeRateMantissa })
+    );
+  }
+
+  /**
+   * @notice Simulate the effects of a redemption at the current block, given current on-chain conditions.
+   * @param redeemTokensIn Exact amount of `cTokens` to redeem
+   * @return quantity of underlying returned in exchange for `cTokens`.
+   */
+  function previewRedeem(uint256 redeemTokensIn) public view returns (uint256) {
+    (, uint256 redeemAmount) = _previewRedeem(redeemTokensIn, asCTokenExtension().exchangeRateCurrent());
+    return redeemAmount;
+  }
+
+  function _previewRedeem(uint256 redeemTokensIn, uint256 exchangeRateMantissa) internal pure returns (MathError, uint256) {
+    return mulScalarTruncate(
+      Exp({ mantissa: exchangeRateMantissa }),
+      redeemTokensIn
+    );
+  }
+
+/**
+ * @notice Sender supplies assets into the market and receives cTokens in exchange
    * @dev Accrues interest whether or not the operation succeeds, unless reverted
    * @param mintAmount The amount of the underlying asset to supply
    * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
@@ -177,71 +211,6 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
   function selfTransferIn(address from, uint256 amount) external override returns (uint256) {
     require(msg.sender == address(this), "!self");
     return doTransferIn(from, amount);
-  }
-
-  /**
-   * @notice Accrues interest and reduces Ionic fees by transferring to Ionic
-   * @param withdrawAmount Amount of fees to withdraw
-   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
-   */
-  function _withdrawIonicFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
-    asCTokenExtension().accrueInterest();
-
-    if (accrualBlockNumber != block.number) {
-      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_IONIC_FEES_FRESH_CHECK);
-    }
-
-    if (getCashInternal() < withdrawAmount) {
-      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_IONIC_FEES_CASH_NOT_AVAILABLE);
-    }
-
-    if (withdrawAmount > totalIonicFees) {
-      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_IONIC_FEES_VALIDATION);
-    }
-
-    /////////////////////////
-    // EFFECTS & INTERACTIONS
-    // (No safe failures beyond this point)
-
-    uint256 totalIonicFeesNew = totalIonicFees - withdrawAmount;
-    totalIonicFees = totalIonicFeesNew;
-
-    // doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
-    doTransferOut(address(ionicAdmin), withdrawAmount);
-
-    return uint256(Error.NO_ERROR);
-  }
-
-  /**
-   * @notice Accrues interest and reduces admin fees by transferring to admin
-   * @param withdrawAmount Amount of fees to withdraw
-   * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)
-   */
-  function _withdrawAdminFees(uint256 withdrawAmount) external override nonReentrant(false) onlyOracleApproved returns (uint256) {
-    asCTokenExtension().accrueInterest();
-
-    if (accrualBlockNumber != block.number) {
-      return fail(Error.MARKET_NOT_FRESH, FailureInfo.WITHDRAW_ADMIN_FEES_FRESH_CHECK);
-    }
-
-    // Fail gracefully if protocol has insufficient underlying cash
-    if (getCashInternal() < withdrawAmount) {
-      return fail(Error.TOKEN_INSUFFICIENT_CASH, FailureInfo.WITHDRAW_ADMIN_FEES_CASH_NOT_AVAILABLE);
-    }
-
-    if (withdrawAmount > totalAdminFees) {
-      return fail(Error.BAD_INPUT, FailureInfo.WITHDRAW_ADMIN_FEES_VALIDATION);
-    }
-
-    /////////////////////////
-    // EFFECTS & INTERACTIONS
-    // (No safe failures beyond this point)
-    totalAdminFees = totalAdminFees - withdrawAmount;
-
-    // doTransferOut reverts if anything goes wrong, since we can't be sure if side effects occurred.
-    doTransferOut(ComptrollerV3Storage(address(comptroller)).admin(), withdrawAmount);
-
-    return uint256(Error.NO_ERROR);
   }
 
   /*** Safe Token ***/
@@ -376,9 +345,9 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
      */
 
     // mintTokens is rounded down here - correct
-    (vars.mathErr, vars.mintTokens) = divScalarByExpTruncate(
+    (vars.mathErr, vars.mintTokens) = _previewDeposit(
       vars.actualMintAmount,
-      Exp({ mantissa: vars.exchangeRateMantissa })
+      vars.exchangeRateMantissa
     );
     require(vars.mathErr == MathError.NO_ERROR, "MINT_EXCHANGE_CALCULATION_FAILED");
     require(vars.mintTokens > 0, "MINT_ZERO_CTOKENS_REJECTED");
@@ -475,10 +444,7 @@ abstract contract CErc20 is CTokenOracleProtected, CTokenSecondExtensionBase, To
        */
       vars.redeemTokens = redeemTokensIn;
 
-      (vars.mathErr, vars.redeemAmount) = mulScalarTruncate(
-        Exp({ mantissa: vars.exchangeRateMantissa }),
-        redeemTokensIn
-      );
+      (vars.mathErr, vars.redeemAmount) = _previewRedeem(redeemTokensIn, vars.exchangeRateMantissa);
       if (vars.mathErr != MathError.NO_ERROR) {
         return
           failOpaque(Error.MATH_ERROR, FailureInfo.REDEEM_EXCHANGE_TOKENS_CALCULATION_FAILED, uint256(vars.mathErr));

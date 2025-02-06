@@ -11,9 +11,11 @@ auto_detect_solc = true
 [rpc_endpoints]
 mode = "${MODE_MAINNET_RPC_URL}"
 base = "${BASE_MAINNET_RPC_URL}"
+optimism = "${OPTIMISM_MAINNET_RPC_URL}"
 
 mode_archive = "${MODE_MAINNET_ARCHIVE_RPC_URL}"
 base_archive = "${BASE_MAINNET_ARCHIVE_RPC_URL}"
+optimism_archive = "${OPTIMISM_MAINNET_ARCHIVE_RPC_URL}"
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config
 

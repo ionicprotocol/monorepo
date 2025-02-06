@@ -28,18 +28,33 @@ export interface ILeverage {
     collateralMarket: Address,
     borrowMarket: Address,
     fundingAsset: Address,
-    fundingAmount: bigint
+    fundingAmount: bigint,
+    aggregatorTarget: Address,
+    aggregatorData: Hex
   ): Promise<Hex>;
   createAndFundPositionAtRatio(
     collateralMarket: Address,
     borrowMarket: Address,
     fundingAsset: Address,
     fundingAmount: bigint,
-    leverageRatio: bigint
+    leverageRatio: bigint,
+    fundingTarget: Address,
+    fundingData: Hex,
+    aggregatorTarget: Address,
+    aggregatorData: Hex,
+    expectedSlippage: bigint
   ): Promise<Hex>;
   getRangeOfLeverageRatio(address: Address): Promise<[bigint, bigint]>;
   isPositionClosed(address: Address): Promise<boolean>;
   closeLeveredPosition(address: Address, withdrawTo?: Address): Promise<Hex | null>;
+  closeLeveredPositionWithAggregator(
+    address: Address,
+    supplyDelta: bigint,
+    borrowsDelta: bigint,
+    aggregatorTarget: Address,
+    aggregatorData: Hex,
+    withdrawTo?: Address
+  ): Promise<Hex | null>;
   adjustLeverageRatio(address: Address, ratio: number): Promise<Hex>;
   fundPosition(positionAddress: Address, underlyingToken: Address, amount: bigint): Promise<Hex>;
   getNetAPY(
@@ -282,6 +297,25 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
       );
     }
 
+    async createAndFundPositionWithAggregatorSwaps(
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
+      fundingAmount: bigint,
+      aggregatorTarget: Address,
+      aggregatorData: Hex
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+
+      return await leveredPositionFactory.write.createAndFundPositionWithAggregatorSwaps(
+        [collateralMarket, borrowMarket, fundingAsset, fundingAmount, aggregatorTarget, aggregatorData],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
+      );
+    }
+
     async createAndFundPositionAtRatio(
       collateralMarket: Address,
       borrowMarket: Address,
@@ -293,6 +327,40 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
 
       return await leveredPositionFactory.write.createAndFundPositionAtRatio(
         [collateralMarket, borrowMarket, fundingAsset, fundingAmount, leverageRatio],
+        {
+          account: this.walletClient!.account!.address,
+          chain: this.walletClient!.chain
+        }
+      );
+    }
+
+    async createAndFundPositionWithAggregatorSwapsAtRatio(
+      collateralMarket: Address,
+      borrowMarket: Address,
+      fundingAsset: Address,
+      fundingAmount: bigint,
+      leverageRatio: bigint,
+      fundingTarget: Address,
+      fundingData: Hex,
+      aggregatorTarget: Address,
+      aggregatorData: Hex,
+      expectedSlippage: bigint
+    ) {
+      const leveredPositionFactory = this.createLeveredPositionFactory();
+
+      return await leveredPositionFactory.write.createAndFundPositionWithAggregatorSwapsAtRatio(
+        [
+          collateralMarket,
+          borrowMarket,
+          fundingAsset,
+          fundingAmount,
+          leverageRatio,
+          fundingTarget,
+          fundingData,
+          aggregatorTarget,
+          aggregatorData,
+          expectedSlippage
+        ],
         {
           account: this.walletClient!.account!.address,
           chain: this.walletClient!.chain
@@ -332,6 +400,44 @@ export function withLeverage<TBase extends CreateContractsModule = CreateContrac
             account: this.walletClient!.account!.address,
             chain: this.walletClient!.chain
           });
+        }
+
+        return tx;
+      } else {
+        return null;
+      }
+    }
+
+    async closeLeveredPositionWithAggregator(
+      address: Address,
+      supplyDelta: bigint,
+      borrowsDelta: bigint,
+      aggregatorTarget: Address,
+      aggregatorData: Hex,
+      withdrawTo?: Address
+    ) {
+      const isPositionClosed = await this.isPositionClosed(address);
+      const leveredPosition = this.createLeveredPositionWithAggregatorSwaps(address, this.publicClient);
+
+      if (!isPositionClosed) {
+        let tx: Hex;
+
+        if (withdrawTo) {
+          tx = await leveredPosition.write.closePosition(
+            [withdrawTo, supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData],
+            {
+              account: this.walletClient!.account!.address,
+              chain: this.walletClient!.chain
+            }
+          );
+        } else {
+          tx = await leveredPosition.write.closePosition(
+            [supplyDelta, borrowsDelta, aggregatorTarget, aggregatorData],
+            {
+              account: this.walletClient!.account!.address,
+              chain: this.walletClient!.chain
+            }
+          );
         }
 
         return tx;

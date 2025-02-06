@@ -36,6 +36,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   error RepayBorrowFailed(uint256 errorCode);
   error RedeemCollateralFailed(uint256 errorCode);
   error ExtNotFound(bytes4 _functionSelector);
+  error MarketsPoolsDiffer();
+  error FlashLoanSourceError();
+  error DelegateCallToNonContract();
+  error LowLevelDelegateCallFailed();
 
   constructor(
     address _positionOwner,
@@ -44,7 +48,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   ) LeveredPositionStorage(_positionOwner) {
     IonicComptroller collateralPool = _collateralMarket.comptroller();
     IonicComptroller stablePool = _stableMarket.comptroller();
-    require(collateralPool == stablePool, "markets pools differ");
+    if(collateralPool != stablePool) revert MarketsPoolsDiffer();
     pool = collateralPool;
 
     collateralMarket = _collateralMarket;
@@ -59,7 +63,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
                           Mutable Functions
   ----------------------------------------------------------------*/
 
-  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public {
+  function fundPosition(IERC20Upgradeable fundingAsset, uint256 amount) public virtual {
     fundingAsset.safeTransferFrom(msg.sender, address(this), amount);
     _supplyCollateral(fundingAsset);
 
@@ -70,14 +74,14 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function closePosition() public returns (uint256) {
+  function closePosition() external virtual returns (uint256) {
     return closePosition(msg.sender);
   }
 
-  function closePosition(address withdrawTo) public returns (uint256 withdrawAmount) {
+  function closePosition(address withdrawTo) public virtual returns (uint256 withdrawAmount) {
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
-    _leverDown(1e18);
+    _leverDown(1e18, _getAssumedSlippage(false));
 
     // calling accrue and exit allows to redeem the full underlying balance
     collateralMarket.accrueInterest();
@@ -88,9 +92,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     errorCode = collateralMarket.redeem(collateralMarket.balanceOf(address(this)));
     if (errorCode != 0) revert RedeemFailed(errorCode);
 
-    if (stableAsset.balanceOf(address(this)) > 0) {
-      // convert all overborrowed leftovers/profits to the collateral asset
-      convertAllTo(stableAsset, collateralAsset);
+    uint256 stableBalance = stableAsset.balanceOf(address(this));
+    if (stableBalance > 0) {
+      // transfer the stable asset to the owner
+      stableAsset.safeTransfer(withdrawTo, stableBalance);
     }
 
     // withdraw the redeemed collateral
@@ -98,49 +103,63 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     collateralAsset.safeTransfer(withdrawTo, withdrawAmount);
   }
 
-  function adjustLeverageRatio(uint256 targetRatioMantissa) public returns (uint256) {
+  function adjustLeverageRatio(uint256 targetRatioMantissa) public virtual returns (uint256){
     if (msg.sender != positionOwner && msg.sender != address(factory)) revert NotPositionOwner();
 
-    // anything under 1x means removing the leverage
-    if (targetRatioMantissa <= 1e18) _leverDown(1e18);
-
-    if (getCurrentLeverageRatio() < targetRatioMantissa) _leverUp(targetRatioMantissa);
-    else _leverDown(targetRatioMantissa);
+    if (targetRatioMantissa <= 1e18) {
+      // anything under 1x means removing the leverage
+      _leverDown(1e18, 0);
+    } else {
+      if (getCurrentLeverageRatio() < targetRatioMantissa) {
+        _leverUp(targetRatioMantissa, 0);
+      } else {
+        _leverDown(targetRatioMantissa, 0);
+      }
+    }
 
     // return the de facto achieved ratio
     return getCurrentLeverageRatio();
   }
 
-  function receiveFlashLoan(address assetAddress, uint256 borrowedAmount, bytes calldata data) external override {
+  function receiveFlashLoan(
+    address assetAddress,
+    uint256 borrowedAmount,
+    bytes calldata data
+  ) external virtual override {
     if (msg.sender == address(collateralMarket)) {
       // increasing the leverage ratio
-      uint256 stableBorrowAmount = abi.decode(data, (uint256));
+      (uint256 stableBorrowAmount) = abi.decode(
+        data,
+        (uint256)
+      );
       _leverUpPostFL(stableBorrowAmount);
       uint256 positionCollateralBalance = collateralAsset.balanceOf(address(this));
       if (positionCollateralBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(collateralAsset), positionCollateralBalance, borrowedAmount);
     } else if (msg.sender == address(stableMarket)) {
       // decreasing the leverage ratio
-      uint256 amountToRedeem = abi.decode(data, (uint256));
+      (uint256 amountToRedeem) = abi.decode(
+        data,
+        (uint256)
+      );
       _leverDownPostFL(borrowedAmount, amountToRedeem);
       uint256 positionStableBalance = stableAsset.balanceOf(address(this));
       if (positionStableBalance < borrowedAmount)
         revert RepayFlashLoanFailed(address(stableAsset), positionStableBalance, borrowedAmount);
     } else {
-      revert("!fl not from either markets");
+      revert FlashLoanSourceError();
     }
 
     // repay FL
     IERC20Upgradeable(assetAddress).approve(msg.sender, borrowedAmount);
   }
 
-  function withdrawStableLeftovers(address withdrawTo) public returns (uint256) {
+  function withdrawStableLeftovers(address withdrawTo) public returns (uint256 stableLeftovers) {
     if (msg.sender != positionOwner) revert NotPositionOwner();
     if (!isPositionClosed()) revert OnlyWhenClosed();
 
-    uint256 stableLeftovers = stableAsset.balanceOf(address(this));
+    stableLeftovers = stableAsset.balanceOf(address(this));
     stableAsset.safeTransfer(withdrawTo, stableLeftovers);
-    return stableLeftovers;
   }
 
   function claimRewards() public {
@@ -182,6 +201,10 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   fallback() external {
+    _fallback();
+  }
+
+  function _fallback() internal {
     address extension = factory.getPositionsExtension(msg.sig);
     if (extension == address(0)) revert ExtNotFound(msg.sig);
     // Execute external function from extension using delegatecall and return any value.
@@ -204,7 +227,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   /*----------------------------------------------------------------
-                          View Functions
+                            View Functions
   ----------------------------------------------------------------*/
 
   /// @notice this is a lens fn, it is not intended to be used on-chain
@@ -252,50 +275,34 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function getMinLeverageRatio() public view returns (uint256) {
+    return getMinLeverageRatio(0);
+  }
+
+  function getMinLeverageRatio(uint256 assumedSlippage) public view returns (uint256) {
     uint256 positionSupplyAmount = collateralMarket.balanceOfUnderlying(address(this));
     if (positionSupplyAmount == 0) return 0;
 
     BasePriceOracle oracle = pool.oracle();
     uint256 borrowedAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 minStableBorrowAmount = (factory.getMinBorrowNative() * 1e18) / borrowedAssetPrice;
-    return _getLeverageRatioAfterBorrow(minStableBorrowAmount, positionSupplyAmount, 0);
+
+    if (assumedSlippage == 0) assumedSlippage = _getAssumedSlippage(false);
+    return _getLeverageRatioAfterBorrow(minStableBorrowAmount, positionSupplyAmount, 0, assumedSlippage);
   }
 
   function getMaxLeverageRatio() public view returns (uint256) {
+    return getMaxLeverageRatio(0);
+  }
+
+  function getMaxLeverageRatio(uint256 assumedSlippage) public view returns (uint256) {
     uint256 positionSupplyAmount = collateralMarket.balanceOfUnderlying(address(this));
     if (positionSupplyAmount == 0) return 0;
 
     uint256 maxBorrow = pool.getMaxRedeemOrBorrow(address(this), stableMarket, true);
     uint256 positionBorrowAmount = stableMarket.borrowBalanceCurrent(address(this));
-    return _getLeverageRatioAfterBorrow(maxBorrow, positionSupplyAmount, positionBorrowAmount);
-  }
 
-  function _getLeverageRatioAfterBorrow(
-    uint256 newBorrowsAmount,
-    uint256 positionSupplyAmount,
-    uint256 positionBorrowAmount
-  ) internal view returns (uint256 r) {
-    BasePriceOracle oracle = pool.oracle();
-    uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
-    uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
-
-    uint256 currentBorrowsValue = (positionBorrowAmount * stableAssetPrice) / 1e18;
-    uint256 newBorrowsValue = (newBorrowsAmount * stableAssetPrice) / 1e18;
-    uint256 positionValue = (positionSupplyAmount * collateralAssetPrice) / 1e18;
-
-    // accounting for swaps slippage
-    uint256 assumedSlippage = factory.liquidatorsRegistry().getSlippage(stableAsset, collateralAsset);
-    {
-      // add 10 bps just to not go under the min borrow value
-      assumedSlippage += 10;
-    }
-    uint256 topUpCollateralValue = (newBorrowsValue * 10000) / (10000 + assumedSlippage);
-
-    int256 s = int256(positionValue);
-    int256 b = int256(currentBorrowsValue);
-    int256 x = int256(topUpCollateralValue);
-
-    r = uint256(((s + x) * 1e18) / (s + x - b - int256(newBorrowsValue)));
+    if (assumedSlippage == 0) assumedSlippage = _getAssumedSlippage(true);
+    return _getLeverageRatioAfterBorrow(maxBorrow, positionSupplyAmount, positionBorrowAmount, assumedSlippage);
   }
 
   function isPositionClosed() public view returns (bool) {
@@ -316,93 +323,118 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     equityAmount = (equityValue * 1e18) / collateralAssetPrice;
   }
 
-  function getSupplyAmountDelta(uint256 targetRatio) public view returns (uint256, uint256) {
+  function getAdjustmentAmountDeltas(uint256 targetRatio) public view returns (uint256, uint256) {
+    return getAdjustmentAmountDeltas(targetRatio, 0);
+  }
+
+  function getAdjustmentAmountDeltas(uint256 targetRatio, uint256 assumedSlippage) public view returns (uint256, uint256) {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
 
-    uint256 currentRatio = getCurrentLeverageRatio();
-    bool up = targetRatio > currentRatio;
-    return _getSupplyAmountDelta(up, targetRatio, collateralAssetPrice, stableAssetPrice);
-  }
-
-  function _getSupplyAmountDelta(
-    bool up,
-    uint256 targetRatio,
-    uint256 collateralAssetPrice,
-    uint256 borrowedAssetPrice
-  ) internal view returns (uint256 supplyDelta, uint256 borrowsDelta) {
-    uint256 positionSupplyAmount = collateralMarket.balanceOfUnderlying(address(this));
-    uint256 debtAmount = stableMarket.borrowBalanceCurrent(address(this));
-    uint256 assumedSlippage;
-    if (up) assumedSlippage = factory.liquidatorsRegistry().getSlippage(stableAsset, collateralAsset);
-    else assumedSlippage = factory.liquidatorsRegistry().getSlippage(collateralAsset, stableAsset);
-    uint256 slippageFactor = (1e18 * (10000 + assumedSlippage)) / 10000;
-
-    uint256 supplyValueDeltaAbs;
-    {
-      // s = supply value before
-      // b = borrow value before
-      // r = target ratio after
-      // c = borrow value coefficient to account for the slippage
-      int256 s = int256((collateralAssetPrice * positionSupplyAmount) / 1e18);
-      int256 b = int256((borrowedAssetPrice * debtAmount) / 1e18);
-      int256 r = int256(targetRatio);
-      int256 r1 = r - 1e18;
-      int256 c = int256(slippageFactor);
-
-      // some math magic here
-      // https://www.wolframalpha.com/input?i2d=true&i=r%3D%5C%2840%29Divide%5B%5C%2840%29s%2Bx%5C%2841%29%2C%5C%2840%29s%2Bx-b-c*x%5C%2841%29%5D+%5C%2841%29+solve+for+x
-
-      // x = supplyValueDelta
-      int256 supplyValueDelta = (((r1 * s) - (b * r)) * 1e18) / ((c * r) - (1e18 * r1));
-      supplyValueDeltaAbs = uint256((supplyValueDelta < 0) ? -supplyValueDelta : supplyValueDelta);
-    }
-
-    supplyDelta = (supplyValueDeltaAbs * 1e18) / collateralAssetPrice;
-    borrowsDelta = (supplyValueDeltaAbs * 1e18) / borrowedAssetPrice;
-
-    if (up) {
-      // stables to borrow = c * x
-      borrowsDelta = (borrowsDelta * slippageFactor) / 1e18;
-    } else {
-      // amount to redeem = c * x
-      supplyDelta = (supplyDelta * slippageFactor) / 1e18;
-    }
+    if (assumedSlippage == 0) assumedSlippage = _getAssumedSlippage(
+      getCurrentLeverageRatio() < targetRatio
+    );
+    return _getAdjustmentAmountDeltas(
+      targetRatio,
+      collateralAssetPrice,
+      stableAssetPrice,
+      assumedSlippage
+    );
   }
 
   /*----------------------------------------------------------------
                             Internal Functions
   ----------------------------------------------------------------*/
 
-  function _supplyCollateral(IERC20Upgradeable fundingAsset) internal returns (uint256 amountToSupply) {
+  function _getLeverageRatioAfterBorrow(
+    uint256 newBorrowsAmount,
+    uint256 positionSupplyAmount,
+    uint256 positionBorrowAmount,
+    uint256 assumedSlippage
+  ) internal view returns (uint256 r) {
+    BasePriceOracle oracle = pool.oracle();
+    uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
+    uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
+
+    uint256 currentBorrowsValue = (positionBorrowAmount * stableAssetPrice) / 1e18;
+    uint256 newBorrowsValue = (newBorrowsAmount * stableAssetPrice) / 1e18;
+    uint256 positionValue = (positionSupplyAmount * collateralAssetPrice) / 1e18;
+    uint256 topUpCollateralValue = (newBorrowsValue * 10000) / (10000 + assumedSlippage);
+
+    int256 s = int256(positionValue);
+    int256 b = int256(currentBorrowsValue);
+    int256 x = int256(topUpCollateralValue);
+
+    r = uint256(((s + x) * 1e18) / (s + x - b - int256(newBorrowsValue)));
+  }
+
+  function _getAdjustmentAmountDeltas(
+    uint256 targetRatio,
+    uint256 collateralAssetPrice,
+    uint256 borrowedAssetPrice,
+    uint256 expectedSlippage
+  ) internal view returns (uint256 supplyDelta, uint256 borrowsDelta) {
+    uint256 positionSupplyAmount = collateralMarket.balanceOfUnderlying(address(this));
+    uint256 debtAmount = stableMarket.borrowBalanceCurrent(address(this));
+
+    return factory.calculateAdjustmentAmountDeltas(
+      targetRatio,
+      collateralAssetPrice,
+      borrowedAssetPrice,
+      expectedSlippage,
+      positionSupplyAmount,
+      debtAmount
+    );
+  }
+
+  function _getAssumedSlippage(bool collateralToBorrowed) internal view returns (uint256) {
+    if (collateralToBorrowed) {
+      return factory.liquidatorsRegistry().getSlippage(collateralAsset, stableAsset);
+    } else {
+      return factory.liquidatorsRegistry().getSlippage(stableAsset, collateralAsset);
+    }
+  }
+
+  function _supplyCollateral(
+    IERC20Upgradeable fundingAsset
+  ) private returns (uint256 amountToSupply) {
     // in case the funding is with a different asset
     if (address(collateralAsset) != address(fundingAsset)) {
       // swap for collateral asset
-      convertAllTo(fundingAsset, collateralAsset);
+      amountToSupply = convertAllTo(fundingAsset, collateralAsset);
+    } else {
+      amountToSupply = collateralAsset.balanceOf(address(this));
     }
 
     // supply the collateral
-    amountToSupply = collateralAsset.balanceOf(address(this));
     collateralAsset.approve(address(collateralMarket), amountToSupply);
     uint256 errorCode = collateralMarket.mint(amountToSupply);
     if (errorCode != 0) revert SupplyCollateralFailed(errorCode);
   }
 
   // @dev flash loan the needed amount, then borrow stables and swap them for the amount needed to repay the FL
-  function _leverUp(uint256 targetRatio) internal {
+  function _leverUp(
+    uint256 targetRatio,
+    uint256 expectedSlippage
+  ) private {
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
 
-    (uint256 flashLoanCollateralAmount, uint256 stableToBorrow) = _getSupplyAmountDelta(
-      true,
+    if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(true);
+
+    (uint256 flashLoanCollateralAmount, uint256 stableToBorrow) = _getAdjustmentAmountDeltas(
       targetRatio,
       collateralAssetPrice,
-      stableAssetPrice
+      stableAssetPrice,
+      expectedSlippage
     );
 
-    collateralMarket.flash(flashLoanCollateralAmount, abi.encode(stableToBorrow));
+    collateralMarket.flash(
+      flashLoanCollateralAmount,
+      abi.encode(stableToBorrow)
+    );
     // the execution will first receive a callback to receiveFlashLoan()
     // then it continues from here
 
@@ -415,7 +447,9 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   // @dev supply the flash loaned collateral and then borrow stables with it
-  function _leverUpPostFL(uint256 stableToBorrow) internal {
+  function _leverUpPostFL(
+    uint256 stableToBorrow
+  ) private {
     // supply the flash loaned collateral
     _supplyCollateral(collateralAsset);
 
@@ -428,37 +462,30 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   // @dev redeems the supplied collateral by first repaying the debt with which it was levered
-  function _leverDown(uint256 targetRatio) internal {
-    uint256 amountToRedeem;
-    uint256 borrowsToRepay;
+  function _leverDown(
+    uint256 targetRatio,
+    uint256 expectedSlippage
+  ) private {
+    if (expectedSlippage == 0) expectedSlippage = _getAssumedSlippage(false);
 
     BasePriceOracle oracle = pool.oracle();
     uint256 stableAssetPrice = oracle.getUnderlyingPrice(stableMarket);
     uint256 collateralAssetPrice = oracle.getUnderlyingPrice(collateralMarket);
 
-    if (targetRatio <= 1e18) {
-      // if max levering down, then derive the amount to redeem from the debt to be repaid
-      borrowsToRepay = stableMarket.borrowBalanceCurrent(address(this));
-      uint256 borrowsToRepayValueScaled = borrowsToRepay * stableAssetPrice;
-      // accounting for swaps slippage
-      uint256 assumedSlippage = factory.liquidatorsRegistry().getSlippage(collateralAsset, stableAsset);
-      uint256 amountToRedeemValueScaled = (borrowsToRepayValueScaled * (10000 + assumedSlippage)) / 10000;
-      amountToRedeem = amountToRedeemValueScaled / collateralAssetPrice;
-      // round up when dividing in order to redeem enough (otherwise calcs could be exploited)
-      if (amountToRedeemValueScaled % collateralAssetPrice > 0) amountToRedeem += 1;
-    } else {
-      // else derive the debt to be repaid from the amount to redeem
-      (amountToRedeem, borrowsToRepay) = _getSupplyAmountDelta(
-        false,
-        targetRatio,
-        collateralAssetPrice,
-        stableAssetPrice
-      );
-      // the slippage is already accounted for in _getSupplyAmountDelta
-    }
+    // else derive the debt to be repaid from the amount to redeem
+    (uint256 amountToRedeem, uint256 borrowsToRepay) = _getAdjustmentAmountDeltas(
+      targetRatio,
+      collateralAssetPrice,
+      stableAssetPrice,
+      expectedSlippage
+    );
+    // the slippage is already accounted for in _getAdjustmentAmountDeltas
 
     if (borrowsToRepay > 0) {
-      ICErc20(address(stableMarket)).flash(borrowsToRepay, abi.encode(amountToRedeem));
+      ICErc20(address(stableMarket)).flash(
+        borrowsToRepay,
+        abi.encode(amountToRedeem)
+      );
       // the execution will first receive a callback to receiveFlashLoan()
       // then it continues from here
     }
@@ -476,10 +503,13 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
     }
   }
 
-  function _leverDownPostFL(uint256 _flashLoanedCollateral, uint256 _amountToRedeem) internal {
+  function _leverDownPostFL(
+    uint256 _flashLoanedRepayAmount,
+    uint256 _amountToRedeem
+  ) private {
     // repay the borrows
     uint256 borrowBalance = stableMarket.borrowBalanceCurrent(address(this));
-    uint256 repayAmount = _flashLoanedCollateral < borrowBalance ? _flashLoanedCollateral : borrowBalance;
+    uint256 repayAmount = _flashLoanedRepayAmount < borrowBalance ? _flashLoanedRepayAmount : borrowBalance;
     stableAsset.approve(address(stableMarket), repayAmount);
     uint256 errorCode = stableMarket.repayBorrow(repayAmount);
     if (errorCode != 0) revert RepayBorrowFailed(errorCode);
@@ -498,7 +528,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   ) private returns (uint256 outputAmount) {
     uint256 inputAmount = inputToken.balanceOf(address(this));
     (IRedemptionStrategy[] memory redemptionStrategies, bytes[] memory strategiesData) = factory
-      .getRedemptionStrategies(inputToken, outputToken);
+    .getRedemptionStrategies(inputToken, outputToken);
 
     if (redemptionStrategies.length == 0) revert ConvertFundsFailed();
 
@@ -525,15 +555,14 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
   }
 
   function _functionDelegateCall(address target, bytes memory data) private returns (bytes memory) {
-    require(AddressUpgradeable.isContract(target), "Address: delegate call to non-contract");
+    if(!AddressUpgradeable.isContract(target)) revert DelegateCallToNonContract();// "Address: delegate call to non-contract";
     (bool success, bytes memory returndata) = target.delegatecall(data);
-    return _verifyCallResult(success, returndata, "Address: low-level delegate call failed");
+    return _verifyCallResult(success, returndata);
   }
 
   function _verifyCallResult(
     bool success,
-    bytes memory returndata,
-    string memory errorMessage
+    bytes memory returndata
   ) private pure returns (bytes memory) {
     if (success) {
       return returndata;
@@ -544,7 +573,7 @@ contract LeveredPosition is LeveredPositionStorage, IFlashLoanReceiver {
           revert(add(32, returndata), returndata_size)
         }
       } else {
-        revert(errorMessage);
+        revert LowLevelDelegateCallFailed();
       }
     }
   }

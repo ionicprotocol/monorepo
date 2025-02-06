@@ -22,6 +22,7 @@ abstract contract BaseTest is Test {
   uint128 constant ZKEVM_MAINNET = 1101;
   uint128 constant MODE_MAINNET = 34443;
   uint128 constant BASE_MAINNET = 8453;
+  uint128 constant OP_MAINNET = 10;
 
   // taken from ERC1967Upgrade
   bytes32 internal constant _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
@@ -51,7 +52,7 @@ abstract contract BaseTest is Test {
     if (testImportance >= runLevel) {
       _;
     } else {
-      emit log("not running the test");
+      emit log("not running this test");
     }
   }
 
@@ -132,6 +133,8 @@ abstract contract BaseTest is Test {
         forkIds[chainid] = vm.createFork(vm.rpcUrl("mode")) + 100;
       } else if (chainid == BASE_MAINNET) {
         forkIds[chainid] = vm.createFork(vm.rpcUrl("base")) + 100;
+        } else if (chainid == OP_MAINNET) {
+        forkIds[chainid] = vm.createFork("https://mainnet.optimism.io") + 100;
       }
     }
 
@@ -162,6 +165,8 @@ abstract contract BaseTest is Test {
         forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("mode_archive")) + 100;
       } else if (chainid == BASE_MAINNET) {
         forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("base_archive")) + 100;
+      } else if (chainid == OP_MAINNET) {
+        forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("optimism_archive")) + 100;
       }
     }
     return forkIds[chainidWithOffset] - 100;
@@ -188,6 +193,8 @@ abstract contract BaseTest is Test {
       ap = AddressesProvider(0xb0033576a9E444Dd801d5B69e1b63DBC459A6115);
     } else if (chainid == BASE_MAINNET) {
       ap = AddressesProvider(0xcD4D7c8e2bA627684a9B18F7fe88239341D3ba5c);
+    } else if (chainid == OP_MAINNET) {
+      ap = AddressesProvider(0xb0033576a9E444Dd801d5B69e1b63DBC459A6115);
     } else {
       dpa = new ProxyAdmin();
       AddressesProvider logic = new AddressesProvider();
