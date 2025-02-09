@@ -2,8 +2,9 @@ import "@nomicfoundation/hardhat-toolbox-viem";
 import "@nomicfoundation/hardhat-foundry";
 import "@nomicfoundation/hardhat-viem";
 import "hardhat-deploy";
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig, subtask } from "hardhat/config";
 import { config as dotenv } from "dotenv";
+import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
 
 import "./tasks";
 import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
@@ -17,6 +18,11 @@ const accounts = [
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
+
+subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS).setAction(async (_, __, runSuper) => {
+  const paths = await runSuper();
+  return paths.filter((p) => !p.endsWith(".t.sol"));
+});
 
 const config: HardhatUserConfig = {
   namedAccounts: {
