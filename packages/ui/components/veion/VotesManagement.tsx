@@ -81,7 +81,8 @@ function VotesManagement({
 
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
-  const selectedPool = querypool ?? '0';
+  const selectedPool =
+    querychain === mode.id.toString() ? '1' : querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
   const hiddenPools: HiddenPool[] = [{ chainId: mode.id, poolId: '0' }];
@@ -344,11 +345,7 @@ function VotesManagement({
           <SearchInput
             value={searchTerm}
             onChange={setSearchTerm}
-            placeholder={`Search by ${
-              selectedPool === 'vault'
-                ? 'vault name, token, or strategy'
-                : 'token or address'
-            }...`}
+            placeholder="Search by token or address..."
           />
         </div>
       </div>
