@@ -258,8 +258,8 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     } as ChainlinkSpecificParams,
     extraDocs: defaultDocs("https://explorer.mode.network", LBTC),
-    initialSupplyCap: parseUnits(String(250), 8).toString(),
-    initialBorrowCap: parseUnits(String(40), 18).toString(),
+    initialSupplyCap: "1",
+    initialBorrowCap: "1",
     initialCf: "0.5"
   }
 ];
