@@ -85,7 +85,7 @@ export default function Governance() {
                   {emissions.lockedValue.percentage.toFixed(2)}% of all veION
                 </span>
               </div>
-              {view === 'My veION' && (
+              {/* {view === 'My veION' && (
                 <>
                   <ActionButton
                     action={() => setIsUniversalClaimOpen(true)}
@@ -112,7 +112,7 @@ export default function Governance() {
                     mode="selective"
                   />
                 </>
-              )}
+              )} */}
             </div>
           </div>
         </CardHeader>
