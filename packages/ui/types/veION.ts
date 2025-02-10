@@ -71,8 +71,8 @@ export type VeIONLockRaw = {
 };
 
 export interface VeIONLockData {
-  myLocks: MyVeionData[]; // Changed from VeIONTableData[]
-  delegatedLocks: DelegateVeionData[]; // Changed from VeIONTableData[]
+  myLocks: MyVeionData[];
+  delegatedLocks: DelegateVeionData[];
   isLoading: boolean;
   refetch?: () => Promise<any>;
 }

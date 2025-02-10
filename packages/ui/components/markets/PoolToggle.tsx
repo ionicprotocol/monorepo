@@ -6,7 +6,18 @@ import { Globe, Diamond, Wallet } from 'lucide-react';
 
 import { pools } from '@ui/constants/index';
 
-const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
+interface HiddenPool {
+  chainId: number;
+  poolId: string;
+}
+
+interface PoolToggleProps {
+  chain: number;
+  pool: string;
+  hiddenPools?: HiddenPool[];
+}
+
+const PoolToggle = ({ chain, pool, hiddenPools = [] }: PoolToggleProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const chainConfig = pools[+chain];
@@ -22,12 +33,19 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
     return `${pathname}?${params.toString()}`;
   };
 
+  const filteredPoolsData = poolsData.filter((poolConfig) => {
+    return !hiddenPools.some(
+      (hiddenPool) =>
+        hiddenPool.chainId === chain && hiddenPool.poolId === poolConfig.id
+    );
+  });
+
   return (
     <div className="flex flex-col sm:flex-row gap-2">
-      {poolsData.length > 0 && (
+      {filteredPoolsData.length > 0 && (
         <div className="h-9 rounded-lg bg-darktwo border border-white/10 p-0.5">
           <div className="inline-flex items-center h-full gap-1">
-            {poolsData.map((poolConfig, idx) => {
+            {filteredPoolsData.map((poolConfig, idx) => {
               const isActive = pool === poolConfig.id;
               const isMain = poolConfig.name.toLowerCase().includes('main');
 

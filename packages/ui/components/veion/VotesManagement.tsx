@@ -35,6 +35,11 @@ import VoteInput from './VoteInput';
 import VotesManagementFooter from './VotesManagementFooter';
 import BalanceBreakdown from '../markets/Cells/BalanceBreakdown';
 
+interface HiddenPool {
+  chainId: number;
+  poolId: string;
+}
+
 interface VotesManagementTableProps {
   tokenId: number;
   showPendingOnly: boolean;
@@ -79,7 +84,21 @@ function VotesManagement({
   const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
 
+  const hiddenPools: HiddenPool[] = [{ chainId: mode.id, poolId: '0' }];
+
+  const isHiddenPool = useMemo(() => {
+    return hiddenPools.some(
+      (hiddenPool) =>
+        hiddenPool.chainId === +chain && hiddenPool.poolId === selectedPool
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain, selectedPool]);
+
   const filteredVotingData = useMemo(() => {
+    if (isHiddenPool) {
+      return [];
+    }
+
     const term = searchTerm.trim().toLowerCase();
 
     return marketRows.data.filter((row) => {
@@ -101,7 +120,14 @@ function VotesManagement({
       }
       return true;
     });
-  }, [marketRows, showPendingOnly, searchTerm, assetTypeFilter, votes]);
+  }, [
+    isHiddenPool,
+    searchTerm,
+    marketRows.data,
+    assetTypeFilter,
+    showPendingOnly,
+    votes
+  ]);
 
   const votingWarning = useMemo(() => {
     if (votingPeriod.hasVoted && votingPeriod.nextVotingDate) {
@@ -298,6 +324,7 @@ function VotesManagement({
           <PoolToggle
             chain={+chain}
             pool={selectedPool}
+            hiddenPools={hiddenPools}
           />
         </div>
         <Select
