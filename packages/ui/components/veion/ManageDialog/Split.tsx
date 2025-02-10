@@ -61,6 +61,7 @@ export function Split() {
             value={splitValues[0]}
             onChange={handleFirstSliderChange}
             marks={utilizationMarks}
+            markSymbol="%"
           />
           <p className="text-xs text-white/50 mt-2">
             Amount: {firstAmountFormatted} BLP
@@ -75,6 +76,7 @@ export function Split() {
             value={splitValues[1]}
             onChange={handleSecondSliderChange}
             marks={utilizationMarks}
+            markSymbol="%"
           />
           <p className="text-xs text-white/50 mt-2">
             Amount: {secondAmountFormatted} BLP

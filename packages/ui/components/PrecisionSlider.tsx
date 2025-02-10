@@ -9,6 +9,7 @@ interface PrecisionSliderProps {
   min?: number;
   step?: number;
   marks?: number[];
+  markSymbol?: string; // New prop for configurable mark symbol
   className?: string;
 }
 
@@ -19,11 +20,12 @@ export function PrecisionSlider({
   min = 0,
   step = 1,
   marks,
+  markSymbol = '', // Default to empty string
   className
 }: PrecisionSliderProps) {
   const sliderMarks = marks?.map((mark) => ({
     value: mark,
-    label: `${mark}d`,
+    label: `${mark}${markSymbol}`,
     isDisabled: false
   }));
 
