@@ -54,8 +54,8 @@ export const VeIonVoteProvider: React.FC<{
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
-  const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
+  const selectedPool = +chain === mode.id ? '1' : querypool ?? '0';
 
   const votingPeriod = useVotingPeriod(chain, tokenId);
 
