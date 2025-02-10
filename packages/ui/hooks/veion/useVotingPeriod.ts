@@ -4,47 +4,40 @@ import { usePublicClient } from 'wagmi';
 
 import { getiVoterContract } from '@ui/constants/veIon';
 
-export const EPOCH_ZERO = new Date('2025-01-27');
-export const EPOCH_DURATION_DAYS = 8;
-export const EPOCH_DURATION_SECONDS = EPOCH_DURATION_DAYS * 24 * 60 * 60;
+const EPOCH_START_TIMESTAMP = 1739404800;
+const EPOCH_DURATION_DAYS = 7;
+const EPOCH_DURATION_SECONDS = EPOCH_DURATION_DAYS * 24 * 60 * 60;
 
-export const calculateCurrentEpoch = () => {
-  const now = new Date();
-  const timeDiff = now.getTime() - EPOCH_ZERO.getTime();
-  const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
-  return Math.floor(daysDiff / EPOCH_DURATION_DAYS);
+const calculateCurrentEpoch = () => {
+  const now = Math.floor(Date.now() / 1000);
+  const timeDiff = now - EPOCH_START_TIMESTAMP;
+  return Math.floor(timeDiff / EPOCH_DURATION_SECONDS);
 };
 
-export const calculateVotingPeriodEndDate = (
-  epoch = calculateCurrentEpoch()
-) => {
-  const epochStartDate = new Date(EPOCH_ZERO);
-  epochStartDate.setDate(
-    epochStartDate.getDate() + (epoch + 1) * EPOCH_DURATION_DAYS
-  );
-  return epochStartDate;
+const calculateVotingPeriodEndDate = (epoch = calculateCurrentEpoch()) => {
+  const epochEndTimestamp =
+    EPOCH_START_TIMESTAMP + (epoch + 1) * EPOCH_DURATION_SECONDS;
+  return new Date(epochEndTimestamp * 1000);
 };
 
-export const hasVotedInCurrentEpoch = (lastVotedTimestamp: number | null) => {
+const hasVotedInCurrentEpoch = (lastVotedTimestamp: number | null) => {
   if (!lastVotedTimestamp) return false;
 
   const currentEpoch = calculateCurrentEpoch();
   const epochStartTime =
-    new Date(EPOCH_ZERO).getTime() / 1000 +
-    currentEpoch * EPOCH_DURATION_SECONDS;
+    EPOCH_START_TIMESTAMP + currentEpoch * EPOCH_DURATION_SECONDS;
   const epochEndTime = epochStartTime + EPOCH_DURATION_SECONDS;
+
   return (
     lastVotedTimestamp >= epochStartTime && lastVotedTimestamp < epochEndTime
   );
 };
 
-export const getNextVotingPeriod = (lastVotedTimestamp: number) => {
+const getNextVotingPeriod = () => {
   const currentEpoch = calculateCurrentEpoch();
-  const nextEpochStart = new Date(EPOCH_ZERO);
-  nextEpochStart.setDate(
-    nextEpochStart.getDate() + (currentEpoch + 1) * EPOCH_DURATION_DAYS
-  );
-  return nextEpochStart;
+  const nextEpochStartTimestamp =
+    EPOCH_START_TIMESTAMP + (currentEpoch + 1) * EPOCH_DURATION_SECONDS;
+  return new Date(nextEpochStartTimestamp * 1000);
 };
 
 export interface VotingPeriodInfo {
@@ -110,7 +103,7 @@ export function useVotingPeriod(
   return useMemo(() => {
     const currentEpoch = calculateCurrentEpoch();
     const hasVoted = hasVotedInCurrentEpoch(lastVoted);
-    const nextVotingDate = lastVoted ? getNextVotingPeriod(lastVoted) : null;
+    const nextVotingDate = lastVoted ? getNextVotingPeriod() : null;
 
     const now = new Date();
     const votingPeriodEndDate = calculateVotingPeriodEndDate(currentEpoch);
