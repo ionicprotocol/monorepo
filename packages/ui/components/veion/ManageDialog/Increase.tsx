@@ -38,7 +38,7 @@ export function Increase() {
         headerText={'Lock Amount'}
         max={String(tokenValue)}
         amount={amount}
-        tokenName={'ion/eth'}
+        tokenName={chain === 34443 ? 'ion/mode' : 'ion/eth'}
         token={token}
         handleInput={(val) => setAmount(val || '0')}
         chain={+chain}

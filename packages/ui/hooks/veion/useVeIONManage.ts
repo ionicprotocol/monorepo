@@ -21,7 +21,8 @@ export function useVeIONManage(chain: number) {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { selectedManagePosition, locks } = useVeIONContext();
-  const tokenAddress = getAvailableStakingToken(chain, 'eth');
+  const token = chain === 34443 ? 'mode' : 'eth';
+  const tokenAddress = getAvailableStakingToken(chain, token);
 
   // Token balance handling
   const { data: tokenBalance, refetch: refetchBalance } = useBalance({
