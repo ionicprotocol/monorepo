@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 import { Address } from "viem";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 export default task("flywheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
   .addParam("flywheel", "address of flywheel", undefined, types.string)
@@ -34,7 +35,6 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
 
 task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool")
   .addParam("pool", "address of comptroller", undefined, types.string)
-  .addParam("ion", "address of ionic token", undefined, types.string)
   .setAction(async (taskArgs, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const publicClient = await viem.getPublicClient();
@@ -48,6 +48,7 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
       const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
       const comptrollerAsFirstExtension = await viem.getContractAt("ComptrollerFirstExtension", pool.comptroller);
       const rewardsDistributors = await comptroller.read.getRewardsDistributors();
+      const admin = await comptroller.read.admin();
       for (const rewardsDistributor of rewardsDistributors) {
         const flywheel = await viem.getContractAt("IonicFlywheel", rewardsDistributor);
         const fwr = await flywheel.read.flywheelRewards();
@@ -58,10 +59,19 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
           await publicClient.waitForTransactionReceipt({ hash: tx });
           console.log("setFlywheelRewards: ", tx);
         } 
-        const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
-        await publicClient.waitForTransactionReceipt({ hash: tx2 });
-        console.log("_removeFlywheel: ", tx2);
-
+        if (admin.toLowerCase() !== deployer.toLowerCase()) {
+          await prepareAndLogTransaction({
+            contractInstance: comptrollerAsFirstExtension,
+            functionName: "_removeFlywheel",
+            args: [flywheel.address],
+            description: "_removeFlywheel",
+            inputs: [{ internalType: "address", name: "flywheel", type: "address" }]
+          });
+        } else {
+          const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
+          await publicClient.waitForTransactionReceipt({ hash: tx2 });
+          console.log("_removeFlywheel: ", tx2);
+        }
         console.log(`${flywheel.address} removed.`);
       }
     }
