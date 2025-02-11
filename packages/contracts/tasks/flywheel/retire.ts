@@ -61,9 +61,19 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
             await publicClient.waitForTransactionReceipt({ hash: tx });
             console.log("setFlywheelRewards: ", tx);
           } 
-          const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
-          await publicClient.waitForTransactionReceipt({ hash: tx2 });
-          console.log("_removeFlywheel: ", tx2);
+          if (admin.toLowerCase() !== deployer.toLowerCase()) {
+            await prepareAndLogTransaction({
+              contractInstance: comptrollerAsFirstExtension,
+              functionName: "_removeFlywheel",
+              args: [flywheel.address],
+              description: "_removeFlywheel",
+              inputs: [{ internalType: "address", name: "flywheel", type: "address" }]
+            });
+          } else {
+            const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
+            await publicClient.waitForTransactionReceipt({ hash: tx2 });
+            console.log("_removeFlywheel: ", tx2);
+          }
 
           console.log(`${flywheel.address} removed.`);
         }
