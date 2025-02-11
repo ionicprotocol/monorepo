@@ -1,6 +1,5 @@
 import { task, types } from "hardhat/config";
 import { Address } from "viem";
-import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 export default task("flywheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
   .addParam("flywheel", "address of flywheel", undefined, types.string)
@@ -49,27 +48,21 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
       const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
       const comptrollerAsFirstExtension = await viem.getContractAt("ComptrollerFirstExtension", pool.comptroller);
       const rewardsDistributors = await comptroller.read.getRewardsDistributors();
-      const admin = await comptroller.read.admin();
       for (const rewardsDistributor of rewardsDistributors) {
         const flywheel = await viem.getContractAt("IonicFlywheel", rewardsDistributor);
         const fwr = await flywheel.read.flywheelRewards();
         const flywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", fwr);
         const rw = await flywheel.read.rewardToken();
-        if (rw === taskArgs.ion) {
-          if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
-            const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
-            await publicClient.waitForTransactionReceipt({ hash: tx });
-            console.log("setFlywheelRewards: ", tx);
-          } 
-          const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
-          await publicClient.waitForTransactionReceipt({ hash: tx2 });
-          console.log("_removeFlywheel: ", tx2);
+        if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
+          const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
+          await publicClient.waitForTransactionReceipt({ hash: tx });
+          console.log("setFlywheelRewards: ", tx);
+        } 
+        const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx2 });
+        console.log("_removeFlywheel: ", tx2);
 
-          console.log(`${flywheel.address} removed.`);
-        }
-        else {
-          console.log(`${flywheel.address} is not ION flywheel, skiping removal..`);
-        }
+        console.log(`${flywheel.address} removed.`);
       }
     }
   });
