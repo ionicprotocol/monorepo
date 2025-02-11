@@ -162,7 +162,7 @@ export function useVeIONManage(chain: number) {
     toTokenId: string;
   }) {
     return write(getContractConfig('merge', [fromTokenId, toTokenId]), {
-      successMessage: 'Successfully merged positions',
+      successMessage: `Successfully merged position ${fromTokenId} into ${toTokenId}`,
       errorMessage: 'Failed to merge positions'
     });
   }

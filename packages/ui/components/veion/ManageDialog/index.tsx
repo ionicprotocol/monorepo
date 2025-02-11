@@ -121,13 +121,7 @@ export default function ManageDialog({
         {activeManageToggle === 'Extend' && <Extend />}
         {activeManageToggle === 'Delegate' && <Delegate />}
         {activeManageToggle === 'Merge' && <Merge />}
-        {activeManageToggle === 'Split' && (
-          <Split
-            closeDialog={() => {
-              onOpenChange(false);
-            }}
-          />
-        )}
+        {activeManageToggle === 'Split' && <Split />}
         {activeManageToggle === 'Transfer' && <Transfer />}
         {activeManageToggle === 'Withdraw' && <WithdrawTab />}
         {activeManageToggle === 'Unlock' && <Unlock />}

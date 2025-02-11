@@ -21,7 +21,8 @@ import CustomTooltip from '../../CustomTooltip';
 export function Merge() {
   const [selectedLp, setSelectedLp] = useState<string>('');
   const { address } = useAccount();
-  const { locks, selectedManagePosition } = useVeIONContext();
+  const { locks, selectedManagePosition, setSelectedManagePosition } =
+    useVeIONContext();
   const chain = Number(selectedManagePosition?.chainId);
   const { handleMerge } = useVeIONManage(Number(chain));
 
@@ -42,12 +43,17 @@ export function Merge() {
     }
 
     const success = await handleMerge({ toTokenId: selectedLp });
+
+    const mergingInto = locks.myLocks.find((lock) => lock.id === selectedLp);
+
+    if (mergingInto) setSelectedManagePosition(mergingInto);
+
     return { success };
   };
 
   return (
     <div className="flex flex-col gap-y-2 py-2 px-3">
-      <p className="text-[10px] text-white/50">Select veION to merge from</p>
+      <p className="text-[10px] text-white/50">Select veION to merge into</p>
 
       {!hasAvailablePositions ? (
         <div className="text-sm text-white/70 bg-white/5 rounded-md p-4 text-center">
@@ -77,9 +83,9 @@ export function Merge() {
       <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4 mt-2">
         <InfoIcon className="h-5 w-5 flex-shrink-0" />
         <span>
-          Positions get merged to the selected tokenID ({selectedLpData?.id}),
-          the current one is burned and lock is set to the one further in the
-          future.
+          {selectedLpData?.id
+            ? `Position #${selectedManagePosition?.id} will be merged into position #${selectedLpData.id}. The original position will be burned, and the lock duration will be set to the longer of the two periods.`
+            : `Select a position to merge into. Your current position #${selectedManagePosition?.id} will be merged into the selected position, and the lock duration will be set to the longer of the two periods.`}
         </span>
       </div>
 
