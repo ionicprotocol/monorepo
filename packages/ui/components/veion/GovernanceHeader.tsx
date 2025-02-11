@@ -66,7 +66,7 @@ const GovernanceHeader = ({
       value: veIonBalance.toFixed(3),
       token: 'veION',
       infoContent: 'veION amount locked on a given chain.',
-      icon: '/img/logo/ion.svg',
+      icon: '/img/symbols/32/color/veion.png',
       usdValue: veIonBalanceUsd.toFixed(2)
     },
     {
@@ -135,7 +135,7 @@ const InfoBlock = ({
           alt="ion logo"
           width={32}
           height={32}
-          className="inline-block"
+          className="inline-block rounded-full"
           src={icon}
         />
         <span className="text-white text-lg ml-1">

@@ -38,8 +38,8 @@ export function Delegate() {
     useVeIONManage(Number(chain));
 
   const selectedPosition = positions.find((pos) => pos.id === selectedTokenId);
-  const maxDelegateAmount = selectedPosition
-    ? formatUnits(BigInt(selectedPosition.amount), 18)
+  const maxDelegateAmount = selectedManagePosition
+    ? formatUnits(BigInt(selectedManagePosition.lockedBLP.rawAmount), 18)
     : '0';
 
   const isValidAddress = delegateAddress ? isAddress(delegateAddress) : false;
@@ -190,11 +190,11 @@ export function Delegate() {
           )}
 
           <div className="space-y-2">
-            <p className="text-sm font-medium">Amount to Delegate</p>
             <MaxDeposit
               headerText="Amount to Delegate"
               amount={amount}
               handleInput={(val) => setAmount(val || '0')}
+              tokenName="veion"
               max={maxDelegateAmount}
               chain={Number(chain)}
               showUtilizationSlider
