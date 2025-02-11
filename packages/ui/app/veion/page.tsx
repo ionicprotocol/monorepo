@@ -130,8 +130,7 @@ export default function EnhancedVeIon() {
                   currency: 'USD',
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
-                }),
-                Icon: <LockIcon className="size-4 inline-block" />
+                })
               }}
               detail={{
                 title: 'Restake and Lock your ION LP',

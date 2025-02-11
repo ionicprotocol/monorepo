@@ -25,7 +25,7 @@ interface ChainSupplyResult {
   status: 'failure' | 'success';
 }
 
-export function useVeIonData(chainId: number) {
+export function useVeIonData() {
   const { data: ethPrice = 0 } = useEthPrice();
   const { data: ionPrices = {} } = useIonPrices();
   const lpTokenBase = getAvailableStakingToken(8453, 'eth');
@@ -53,13 +53,6 @@ export function useVeIonData(chainId: number) {
           functionName: 'totalSupply',
           chainId: 34443
         }
-        // Optimism staked amount
-        // {
-        //   address: getStakingToContract(10, 'eth'),
-        //   abi: StakingContractAbi,
-        //   functionName: 'totalSupply',
-        //   chainId: 10
-        // }
       ]
     });
 
@@ -75,15 +68,7 @@ export function useVeIonData(chainId: number) {
           args: [LIQUIDITY_POOLS.BASE_WETH_POOL.lpAddress],
           chainId: LIQUIDITY_POOLS.BASE_WETH_POOL.chainId
         },
-        // Mode WETH Pool
-        {
-          address: LIQUIDITY_POOLS.MODE_WETH_POOL.wethAddress,
-          abi: ERC20_BALANCE_ABI,
-          functionName: 'balanceOf',
-          args: [LIQUIDITY_POOLS.MODE_WETH_POOL.lpAddress],
-          chainId: LIQUIDITY_POOLS.MODE_WETH_POOL.chainId
-        },
-        // Mode ION Pool
+        // Mode ION Pool only
         {
           address: LIQUIDITY_POOLS.MODE_ION_POOL.ionAddress,
           abi: ERC20_BALANCE_ABI,
@@ -114,14 +99,6 @@ export function useVeIonData(chainId: number) {
           args: [BigInt(lpType)],
           chainId: 34443
         }))
-        // // Optimism chain supplies
-        // ...VEION_CHAIN_CONFIGS[10].lpTypes.map((lpType) => ({
-        //   address: VEION_CONTRACTS[10],
-        //   abi: iveIonAbi,
-        //   functionName: 's_supply',
-        //   args: [BigInt(lpType)],
-        //   chainId: 10
-        // }))
       ]
     }) as { data: ChainSupplyResult[]; isLoading: boolean };
 
@@ -130,13 +107,10 @@ export function useVeIonData(chainId: number) {
     ? Number(formatEther(poolBalances[0].result)) * ethPrice * 2
     : 0;
 
-  const modeTotalLiquidity =
-    poolBalances?.slice(1, 3)?.reduce((acc, balance, index) => {
-      if (!balance?.result) return acc;
-      const value = Number(formatEther(balance.result));
-      const price = index === 0 ? ethPrice : ionPrices[34443] || 0;
-      return acc + value * price * 2;
-    }, 0) || 0;
+  // Modified Mode liquidity calculation - only ION pool
+  const modeTotalLiquidity = poolBalances?.[1]?.result
+    ? Number(formatEther(poolBalances[1].result)) * (ionPrices[34443] || 0) * 2 // Multiply by 2 since it's a pool with equal values
+    : 0;
 
   // Calculate locked value for each chain using oracle prices
   const calculateChainLockedValue = (
@@ -150,7 +124,6 @@ export function useVeIonData(chainId: number) {
 
       const amount = Number(formatEther(supply.result));
 
-      // Use the same LP token price calculation as staked amounts
       let valueInUsd = 0;
       if (chainId === 8453) {
         valueInUsd =
@@ -158,10 +131,7 @@ export function useVeIonData(chainId: number) {
           Number(formatEther(lpTokenPricesBase?.[lpTokenBase] || 0)) *
           ethPrice;
       } else if (chainId === 34443) {
-        valueInUsd =
-          amount *
-          Number(formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)) *
-          ethPrice;
+        valueInUsd = amount * (ionPrices[34443] || 0); // Use ION price directly for Mode chain
       }
 
       return acc + valueInUsd;
@@ -181,13 +151,6 @@ export function useVeIonData(chainId: number) {
     VEION_CHAIN_CONFIGS[34443].lpTypes
   );
 
-  // const optimismLockedValue = calculateChainLockedValue(
-  //   10,
-  //   VEION_CHAIN_CONFIGS[8453].lpTypes.length +
-  //     VEION_CHAIN_CONFIGS[34443].lpTypes.length,
-  //   VEION_CHAIN_CONFIGS[10].lpTypes
-  // );
-
   // Calculate staked amounts for each chain
   const baseStakedAmount = stakedAmounts?.[0]?.result
     ? Number(formatEther(stakedAmounts[0].result)) *
@@ -196,9 +159,7 @@ export function useVeIonData(chainId: number) {
     : 0;
 
   const modeStakedAmount = stakedAmounts?.[1]?.result
-    ? Number(formatEther(stakedAmounts[1].result)) *
-      Number(formatEther(lpTokenPriceMode?.[lpTokenMode] || 0)) *
-      ethPrice
+    ? Number(formatEther(stakedAmounts[1].result)) * (ionPrices[34443] || 0) // Use ION price directly
     : 0;
 
   return {

@@ -1,6 +1,5 @@
 import { BaseReservesContractAddr } from '@ui/constants/baselp';
 import { ModeLpAddressPool } from '@ui/constants/lp';
-import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
 
 export const LIQUIDITY_POOLS = {
   // Base pools
@@ -10,11 +9,11 @@ export const LIQUIDITY_POOLS = {
     wethAddress: '0x4200000000000000000000000000000000000006'
   },
   // Mode pools
-  MODE_WETH_POOL: {
-    chainId: 34443,
-    lpAddress: ModeTradingContractAddress,
-    wethAddress: '0x4200000000000000000000000000000000000006'
-  },
+  // MODE_WETH_POOL: {
+  //   chainId: 34443,
+  //   lpAddress: ModeTradingContractAddress,
+  //   wethAddress: '0x4200000000000000000000000000000000000006'
+  // },
   MODE_ION_POOL: {
     chainId: 34443,
     lpAddress: ModeLpAddressPool,

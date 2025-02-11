@@ -132,7 +132,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     stakedAmount,
     isLoading: veIonDataLoading,
     allChainSupplies
-  } = useVeIonData(currentChain);
+  } = useVeIonData();
 
   const total =
     totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;
