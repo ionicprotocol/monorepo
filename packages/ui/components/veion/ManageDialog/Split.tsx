@@ -11,7 +11,7 @@ import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
 import { PrecisionSlider } from '../../PrecisionSlider';
 
-export function Split() {
+export function Split({ closeDialog }: { closeDialog: () => void }) {
   const { selectedManagePosition } = useVeIONContext();
   const chain = Number(selectedManagePosition?.chainId);
   const utilizationMarks = [0, 25, 50, 75, 100];
@@ -45,6 +45,10 @@ export function Split() {
       from: +selectedManagePosition.id,
       amount: firstAmountRaw
     });
+
+    if (success) {
+      closeDialog();
+    }
 
     return { success };
   };

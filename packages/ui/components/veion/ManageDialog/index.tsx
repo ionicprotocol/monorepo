@@ -1,10 +1,7 @@
 import { useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
-
 import { format } from 'date-fns';
 import { Lock } from 'lucide-react';
-import { useChainId } from 'wagmi';
 
 import { Badge } from '@ui/components/ui/badge';
 import {
@@ -39,13 +36,6 @@ type TabValue =
   | 'Transfer'
   | 'Unlock'
   | 'Withdraw';
-
-interface TabConfig {
-  value: TabValue;
-  label: JSX.Element | string;
-  disabled?: boolean;
-  tooltip?: string;
-}
 
 const DEFAULT_TAB: TabValue = 'Increase';
 
@@ -85,11 +75,6 @@ export default function ManageDialog({
     }
     onOpenChange(open);
   };
-
-  const chainId = useChainId();
-  const searchParams = useSearchParams();
-  const querychain = searchParams.get('chain');
-  const chain = querychain ? querychain : String(chainId);
 
   const lockedUntil = selectedManagePosition?.lockExpires.date
     ? new Date(selectedManagePosition.lockExpires.date)
@@ -136,7 +121,13 @@ export default function ManageDialog({
         {activeManageToggle === 'Extend' && <Extend />}
         {activeManageToggle === 'Delegate' && <Delegate />}
         {activeManageToggle === 'Merge' && <Merge />}
-        {activeManageToggle === 'Split' && <Split />}
+        {activeManageToggle === 'Split' && (
+          <Split
+            closeDialog={() => {
+              onOpenChange(false);
+            }}
+          />
+        )}
         {activeManageToggle === 'Transfer' && <Transfer />}
         {activeManageToggle === 'Withdraw' && <WithdrawTab />}
         {activeManageToggle === 'Unlock' && <Unlock />}
