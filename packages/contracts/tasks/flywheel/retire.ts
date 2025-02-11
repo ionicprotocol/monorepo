@@ -57,19 +57,9 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
         if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
         const rw = await flywheelRewards.read.rewardToken();
           if (rw === taskArgs.ion) {
-            if (admin !== deployer) {
-              await prepareAndLogTransaction({
-                contractInstance: flywheel,
-                functionName: "setFlywheelRewards",
-                args: [deployer as Address],
-                description: "setFlywheelRewards",
-                inputs: [{ internalType: "address", name: "newRewardsDistributor", type: "address" }]
-              });
-            } else {
-              const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
-              await publicClient.waitForTransactionReceipt({ hash: tx });
-              console.log("setFlywheelRewards: ", tx);
-            }
+            const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
+            await publicClient.waitForTransactionReceipt({ hash: tx });
+            console.log("setFlywheelRewards: ", tx);
             if (admin !== deployer) {
               await prepareAndLogTransaction({
                 contractInstance: comptrollerAsFirstExtension,
