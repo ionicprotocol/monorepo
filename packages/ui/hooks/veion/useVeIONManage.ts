@@ -208,6 +208,8 @@ export function useVeIONManage(chain: number) {
       throw new Error('Client or contract not initialized');
     }
 
+    const poolType = chain === 34443 ? 1 : 2;
+
     try {
       const tokenIds = await publicClient.readContract({
         address: veIonContract.address,
@@ -229,7 +231,7 @@ export function useVeIONManage(chain: number) {
             address: veIonContract.address,
             abi: iveIonAbi,
             functionName: 's_locked',
-            args: [id, 2]
+            args: [id, poolType]
           });
 
           const tokenIndex = assets.findIndex(
