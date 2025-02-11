@@ -54,30 +54,21 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
         const flywheel = await viem.getContractAt("IonicFlywheel", rewardsDistributor);
         const fwr = await flywheel.read.flywheelRewards();
         const flywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", fwr);
-        if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
-        const rw = await flywheelRewards.read.rewardToken();
-          if (rw === taskArgs.ion) {
+        const rw = await flywheel.read.rewardToken();
+        if (rw === taskArgs.ion) {
+          if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
             const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
             await publicClient.waitForTransactionReceipt({ hash: tx });
             console.log("setFlywheelRewards: ", tx);
-            if (admin !== deployer) {
-              await prepareAndLogTransaction({
-                contractInstance: comptrollerAsFirstExtension,
-                functionName: "_removeFlywheel",
-                args: [flywheel.address],
-                description: "_removeFlywheel",
-                inputs: [{ internalType: "address", name: "flywheel", type: "address" }]
-              });
-            } else {
-              const tx = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
-              await publicClient.waitForTransactionReceipt({ hash: tx });
-              console.log("_removeFlywheel: ", tx);
-            }
+          } 
+          const tx2 = await comptrollerAsFirstExtension.write._removeFlywheel([flywheel.address]);
+          await publicClient.waitForTransactionReceipt({ hash: tx2 });
+          console.log("_removeFlywheel: ", tx2);
 
-            console.log(`${flywheel.address} removed.`);
-          } else {
-            console.log(`${flywheel.address} is not ION flywheel, skiping removal..`);
-          }
+          console.log(`${flywheel.address} removed.`);
+        }
+        else {
+          console.log(`${flywheel.address} is not ION flywheel, skiping removal..`);
         }
       }
     }
