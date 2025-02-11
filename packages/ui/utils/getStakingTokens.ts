@@ -71,7 +71,7 @@ export function getStakingToContract(
   if (chain === mode.id && (token === 'eth' || token === 'weth'))
     return StakingContractAddress;
   if (chain === mode.id && token === 'mode')
-    return '0x8EE410cC13948e7e684ebACb36b552e2c2A125fC';
+    return '0x8ff8b21a0736738b25597D32d8f7cf658f39f157';
   if (chain === base.id) return '0x9b42e5F8c45222b2715F804968251c747c588fd7';
   if (chain === optimism.id && token === 'eth') return OPStakingContractAddr;
   return '0x0000000000000000000000000000000000000000';
