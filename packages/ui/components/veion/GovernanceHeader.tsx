@@ -32,22 +32,30 @@ const GovernanceHeader = ({
   const { ion: ionBalance, veIon: veIonBalance } = balances;
   const { veIonBalanceUsd, ionBalanceUsd } = prices;
 
-  const { timeRemaining } = useVotingPeriod(chain);
+  const { timeRemaining, isVotingClosed } = useVotingPeriod(chain);
   const { days, hours, minutes, seconds } = timeRemaining;
 
   const formatTimeDisplay = () => {
-    if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+    if (isVotingClosed) {
       return (
-        <div className="inline-block min-w-[200px] text-right">
-          Voting period has ended
+        <div className="inline-flex items-center gap-2">
+          <span className="text-yellow-500">Voting period closed</span>
+          <span className="font-mono text-white">
+            ({days}d {String(hours).padStart(2, '0')}h{' '}
+            {String(minutes).padStart(2, '0')}m{' '}
+            {String(seconds).padStart(2, '0')}s)
+          </span>
         </div>
       );
     }
 
     return (
       <div className="font-mono inline-block min-w-[160px] text-right">
-        {days}d {String(hours).padStart(2, '0')}h{' '}
-        {String(minutes).padStart(2, '0')}m {String(seconds).padStart(2, '0')}s
+        <span className="text-green-400">
+          {days}d {String(hours).padStart(2, '0')}h{' '}
+          {String(minutes).padStart(2, '0')}m {String(seconds).padStart(2, '0')}
+          s
+        </span>
       </div>
     );
   };
@@ -86,7 +94,9 @@ const GovernanceHeader = ({
           {view === 'MyVeion' ? 'veION Overview' : 'My VeION'}
         </CardTitle>
         <div className="text-white/60 text-md flex items-center gap-1">
-          Current voting round ends:
+          {isVotingClosed
+            ? 'Time until next voting period:'
+            : 'Current voting round ends in:'}
           <span className="text-white font-medium">{formatTimeDisplay()}</span>
         </div>
       </CardHeader>

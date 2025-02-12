@@ -7,6 +7,8 @@ import { getiVoterContract } from '@ui/constants/veIon';
 const EPOCH_START_TIMESTAMP = 1739404800;
 const EPOCH_DURATION_DAYS = 7;
 const EPOCH_DURATION_SECONDS = EPOCH_DURATION_DAYS * 24 * 60 * 60;
+const VOTING_CUTOFF_HOURS = 12;
+const VOTING_CUTOFF_SECONDS = VOTING_CUTOFF_HOURS * 60 * 60;
 
 const calculateCurrentEpoch = () => {
   const now = Math.floor(Date.now() / 1000);
@@ -17,20 +19,7 @@ const calculateCurrentEpoch = () => {
 const calculateVotingPeriodEndDate = (epoch = calculateCurrentEpoch()) => {
   const epochEndTimestamp =
     EPOCH_START_TIMESTAMP + (epoch + 1) * EPOCH_DURATION_SECONDS;
-  return new Date(epochEndTimestamp * 1000);
-};
-
-const hasVotedInCurrentEpoch = (lastVotedTimestamp: number | null) => {
-  if (!lastVotedTimestamp) return false;
-
-  const currentEpoch = calculateCurrentEpoch();
-  const epochStartTime =
-    EPOCH_START_TIMESTAMP + currentEpoch * EPOCH_DURATION_SECONDS;
-  const epochEndTime = epochStartTime + EPOCH_DURATION_SECONDS;
-
-  return (
-    lastVotedTimestamp >= epochStartTime && lastVotedTimestamp < epochEndTime
-  );
+  return new Date((epochEndTimestamp - VOTING_CUTOFF_SECONDS) * 1000);
 };
 
 const getNextVotingPeriod = () => {
@@ -40,32 +29,36 @@ const getNextVotingPeriod = () => {
   return new Date(nextEpochStartTimestamp * 1000);
 };
 
-export interface VotingPeriodInfo {
-  hasVoted: boolean;
-  nextVotingDate: Date | null;
-  currentEpoch: number;
-  lastVoted: number | null;
-  isLoading: boolean;
-  error: Error | null;
-  timeRemaining: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
+const calculateTimeRemaining = (targetDate: Date, now: Date) => {
+  const difference = targetDate.getTime() - now.getTime();
+  return {
+    days: Math.max(0, Math.floor(difference / (1000 * 60 * 60 * 24))),
+    hours: Math.max(
+      0,
+      Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    ),
+    minutes: Math.max(
+      0,
+      Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+    ),
+    seconds: Math.max(0, Math.floor((difference % (1000 * 60)) / 1000))
   };
-  refetch: () => Promise<void>;
-}
+};
 
 export function useVotingPeriod(
   chain: string,
   tokenId?: number
 ): VotingPeriodInfo {
-  const publicClient = usePublicClient({
-    chainId: +chain
-  });
+  const publicClient = usePublicClient({ chainId: +chain });
   const [lastVoted, setLastVoted] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchLastVoted = useCallback(async () => {
     if (!tokenId || !publicClient) {
@@ -102,21 +95,16 @@ export function useVotingPeriod(
 
   return useMemo(() => {
     const currentEpoch = calculateCurrentEpoch();
-    const hasVoted = hasVotedInCurrentEpoch(lastVoted);
-    const nextVotingDate = lastVoted ? getNextVotingPeriod() : null;
-
-    const now = new Date();
     const votingPeriodEndDate = calculateVotingPeriodEndDate(currentEpoch);
-    const difference = votingPeriodEndDate.getTime() - now.getTime();
+    const nextVotingDate = getNextVotingPeriod();
+    const hasVoted = lastVoted ? hasVotedInCurrentEpoch(lastVoted) : false;
 
-    const timeRemaining = {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      ),
-      minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((difference % (1000 * 60)) / 1000)
-    };
+    const isVotingClosed = now >= votingPeriodEndDate;
+
+    // Calculate time remaining to either voting end or next voting period
+    const timeRemaining = isVotingClosed
+      ? calculateTimeRemaining(nextVotingDate, now)
+      : calculateTimeRemaining(votingPeriodEndDate, now);
 
     return {
       hasVoted,
@@ -126,7 +114,38 @@ export function useVotingPeriod(
       isLoading,
       error,
       timeRemaining,
+      isVotingClosed,
       refetch: fetchLastVoted
     };
-  }, [lastVoted, isLoading, error, fetchLastVoted]);
+  }, [lastVoted, isLoading, error, fetchLastVoted, now]);
+}
+
+const hasVotedInCurrentEpoch = (lastVotedTimestamp: number) => {
+  const currentEpoch = calculateCurrentEpoch();
+  const epochStartTime =
+    EPOCH_START_TIMESTAMP + currentEpoch * EPOCH_DURATION_SECONDS;
+  const epochEndTime =
+    EPOCH_START_TIMESTAMP +
+    (currentEpoch + 1) * EPOCH_DURATION_SECONDS -
+    VOTING_CUTOFF_SECONDS;
+  return (
+    lastVotedTimestamp >= epochStartTime && lastVotedTimestamp < epochEndTime
+  );
+};
+
+export interface VotingPeriodInfo {
+  hasVoted: boolean;
+  nextVotingDate: Date | null;
+  currentEpoch: number;
+  lastVoted: number | null;
+  isLoading: boolean;
+  error: Error | null;
+  timeRemaining: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
+  isVotingClosed: boolean;
+  refetch: () => Promise<void>;
 }

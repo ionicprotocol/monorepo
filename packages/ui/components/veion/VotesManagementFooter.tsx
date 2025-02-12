@@ -23,6 +23,22 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  if (votingPeriod.isVotingClosed) {
+    return (
+      <Card className="fixed bottom-4 left-4 right-4 p-4 bg-[#35363D] border-t border-white/10 z-10">
+        <div className="flex flex-col w-full">
+          <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
+            <InfoIcon className="h-5 w-5 flex-shrink-0" />
+            <span>
+              Voting period is currently closed. Next voting period will start
+              at the beginning of the next epoch.
+            </span>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   const hasVotes = Object.keys(votes).length > 0;
   const remainingVotes = 100 - totalVotes;
   const isVoteEnabled =

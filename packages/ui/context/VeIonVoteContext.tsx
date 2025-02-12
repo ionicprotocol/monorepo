@@ -43,7 +43,8 @@ const VeIonVoteContext = createContext<VeIonVoteContextType>({
     isLoading: false,
     error: null,
     timeRemaining: { days: 0, hours: 0, minutes: 0, seconds: 0 },
-    refetch: async () => {}
+    refetch: async () => {},
+    isVotingClosed: false
   }
 });
 

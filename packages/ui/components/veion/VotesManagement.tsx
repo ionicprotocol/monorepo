@@ -298,7 +298,7 @@ function VotesManagement({
   const columns = useMemo<EnhancedColumnDef<VoteMarketRow>[]>(() => {
     const columnsWithOptionalVoting = [...baseColumns];
 
-    if (!votingPeriod.hasVoted) {
+    if (!votingPeriod.isVotingClosed && !votingPeriod.hasVoted) {
       columnsWithOptionalVoting.push({
         id: 'vote',
         header: 'VOTE (%)',
@@ -314,7 +314,7 @@ function VotesManagement({
 
     return columnsWithOptionalVoting;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [votingPeriod.hasVoted, isVoting]);
+  }, [votingPeriod.hasVoted, votingPeriod.isVotingClosed, isVoting]);
 
   return (
     <div className="relative pb-12">
