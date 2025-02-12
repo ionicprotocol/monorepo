@@ -222,7 +222,7 @@ const EmissionsStatus = () => {
         <div className="flex items-center gap-2">
           <span className="text-xs">
             YOUR VEION: ${veIonBalanceUsd.toFixed(2)} (
-            {lockedValue.percentage.toFixed(2)}%)
+            {lockedValue.percentage.toFixed(6)}%)
           </span>
         </div>
         <div className="text-xs">TOTAL DEPOSITS: ${totalDeposits.usdValue}</div>

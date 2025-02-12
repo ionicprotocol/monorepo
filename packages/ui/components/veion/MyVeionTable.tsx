@@ -117,7 +117,7 @@ function MyVeionTable() {
             {row.original.votingBoost.toFixed(2)}x)
           </div>
           <div className="text-xs font-semibold text-white/40">
-            {row.original.votingPercentage.toFixed(3)} %
+            {row.original.votingPercentage.toFixed(6)} %
           </div>
         </div>
       )
