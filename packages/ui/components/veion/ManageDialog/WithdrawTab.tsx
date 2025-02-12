@@ -5,7 +5,7 @@ import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
-export function WithdrawTab() {
+export function WithdrawTab({ closeDialog }: { closeDialog: () => void }) {
   const { selectedManagePosition } = useVeIONContext();
   const { address } = useAccount();
   const chain = Number(selectedManagePosition?.chainId);
@@ -17,6 +17,8 @@ export function WithdrawTab() {
     }
 
     const success = await handleWithdraw();
+
+    closeDialog();
     return { success };
   };
 

@@ -105,30 +105,6 @@ function MaxDeposit({
   // Use effectiveMax for slider if provided, otherwise fall back to max
   const sliderMax = effectiveMax || max;
 
-  const maxValue = useMemo(() => {
-    if (effectiveMax) return effectiveMax;
-    if (max) return max;
-
-    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
-
-    if (useUnderlyingBalance && underlyingBalance) {
-      return formatUnits(underlyingBalance, decimals);
-    }
-
-    if (!useUnderlyingBalance && regularBalance) {
-      return formatUnits(regularBalance.value, decimals);
-    }
-
-    return '0';
-  }, [
-    effectiveMax,
-    max,
-    regularBalance,
-    underlyingBalance,
-    useUnderlyingBalance,
-    propDecimals
-  ]);
-
   function handleUtilizationChange(value: number[]) {
     if (!maxValue || !handleInput) return;
 
@@ -157,22 +133,100 @@ function MaxDeposit({
     }
   }
 
+  // The key changes are in maxValue calculation and handleMax function
+
+  const maxValue = useMemo(() => {
+    if (effectiveMax) return effectiveMax;
+    if (max) return max;
+
+    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
+
+    try {
+      if (useUnderlyingBalance && underlyingBalance) {
+        const formatted = formatUnits(underlyingBalance, decimals);
+        // Handle small numbers by returning them in scientific notation
+        const num = Number(formatted);
+        if (num < 0.00001) {
+          return num.toFixed(decimals); // Convert to fixed decimal format
+        }
+        return formatted;
+      }
+
+      if (!useUnderlyingBalance && regularBalance) {
+        const formatted = formatUnits(regularBalance.value, decimals);
+        const num = Number(formatted);
+        if (num < 0.00001) {
+          return num.toFixed(decimals);
+        }
+        return formatted;
+      }
+    } catch (error) {
+      console.error('Error formatting units:', error);
+    }
+
+    return '0';
+  }, [
+    effectiveMax,
+    max,
+    regularBalance,
+    underlyingBalance,
+    useUnderlyingBalance,
+    propDecimals
+  ]);
+
+  function handleMax() {
+    if (!handleInput || !maxValue) return;
+
+    try {
+      const num = Number(maxValue);
+      if (isNaN(num)) {
+        console.error('Invalid maxValue:', maxValue);
+        return;
+      }
+
+      // For very small numbers, use full precision
+      if (num < 0.00001) {
+        handleInput(num.toFixed(18));
+        return;
+      }
+
+      // For regular numbers, limit to 4 decimal places
+      handleInput(num.toFixed(4));
+    } catch (error) {
+      console.error('Error in handleMax:', error);
+    }
+  }
+
   const bal = useMemo(() => {
     const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
 
-    if (max) {
-      const value = parseUnits(max, decimals);
-      return { value, decimals };
-    } else if (max === '0') {
-      return { value: BigInt(0), decimals };
-    } else if (useUnderlyingBalance) {
-      const value = underlyingBalance ?? BigInt(0);
-      return { value, decimals };
-    } else if (!useUnderlyingBalance && regularBalance) {
-      return {
-        value: regularBalance.value,
-        decimals: regularBalance.decimals
-      };
+    try {
+      if (max) {
+        // Handle scientific notation and very small numbers
+        const numMax = Number(max);
+        if (isNaN(numMax)) {
+          console.error('Invalid max value:', max);
+          return null;
+        }
+
+        // Convert to fixed decimal string before parsing
+        const fixedMax =
+          numMax < 0.00001 ? numMax.toFixed(18) : numMax.toFixed(4);
+        const value = parseUnits(fixedMax, decimals);
+        return { value, decimals };
+      } else if (max === '0') {
+        return { value: BigInt(0), decimals };
+      } else if (useUnderlyingBalance) {
+        const value = underlyingBalance ?? BigInt(0);
+        return { value, decimals };
+      } else if (!useUnderlyingBalance && regularBalance) {
+        return {
+          value: regularBalance.value,
+          decimals: regularBalance.decimals
+        };
+      }
+    } catch (error) {
+      console.error('Error in bal calculation:', error);
     }
     return null;
   }, [
@@ -182,11 +236,6 @@ function MaxDeposit({
     useUnderlyingBalance,
     propDecimals
   ]);
-
-  function handleMax() {
-    if (!handleInput) return;
-    handleInput(maxValue);
-  }
 
   const displayPercentage = useMemo(() => {
     if (!amount || !max || Number(max) === 0) return 0;

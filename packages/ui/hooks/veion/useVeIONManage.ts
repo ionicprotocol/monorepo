@@ -79,38 +79,71 @@ export function useVeIONManage(chain: number) {
     tokenDecimals: number;
   }) {
     if (address && publicClient && walletClient) {
-      const parsedAmount = parseUnits(String(amount), tokenDecimals);
+      // Convert the number to a fixed-point decimal string
+      const amountStr = amount.toFixed(tokenDecimals).replace(/\.?0+$/, '');
 
-      const hasAllowance = await checkAllowance(
-        tokenAddress,
-        address,
-        parsedAmount
-      );
+      try {
+        const parsedAmount = parseUnits(amountStr, tokenDecimals);
 
-      if (!hasAllowance) {
-        const approvalTx = await walletClient.writeContract({
-          abi: erc20Abi,
-          account: walletClient.account,
-          address: tokenAddress,
-          args: [veIonContract.address, parsedAmount],
-          functionName: 'approve'
-        });
+        const hasAllowance = await checkAllowance(
+          tokenAddress,
+          address,
+          parsedAmount
+        );
 
-        await publicClient.waitForTransactionReceipt({ hash: approvalTx });
+        if (!hasAllowance) {
+          const approvalTx = await walletClient.writeContract({
+            abi: erc20Abi,
+            account: walletClient.account,
+            address: tokenAddress,
+            args: [veIonContract.address, parsedAmount],
+            functionName: 'approve'
+          });
+
+          await publicClient.waitForTransactionReceipt({ hash: approvalTx });
+        }
+
+        return write(
+          getContractConfig('increaseAmount', [
+            tokenAddress,
+            BigInt(tokenId),
+            parsedAmount,
+            true
+          ]),
+          {
+            successMessage: 'Successfully increased locked amount',
+            errorMessage: 'Failed to increase locked amount'
+          }
+        );
+      } catch (error) {
+        console.error('Error in increaseAmount:', error);
+        throw error;
+      }
+    }
+  }
+
+  async function handleIncrease(amount: number) {
+    if (!address || !selectedManagePosition || !tokenBalance) return;
+
+    try {
+      // Handle very small numbers
+      if (amount < 1e-6) {
+        // Convert to fixed decimal string with full precision
+        amount = Number(amount.toFixed(tokenBalance.decimals || 18));
       }
 
-      return write(
-        getContractConfig('increaseAmount', [
-          tokenAddress,
-          BigInt(tokenId),
-          parsedAmount,
-          true
-        ]),
-        {
-          successMessage: 'Successfully increased locked amount',
-          errorMessage: 'Failed to increase locked amount'
-        }
-      );
+      await increaseAmount({
+        tokenAddress: tokenAddress as `0x${string}`,
+        tokenId: +selectedManagePosition.id,
+        amount: amount,
+        tokenDecimals: tokenBalance.decimals || 18
+      });
+
+      await Promise.all([locks.refetch?.(), refetchBalance()]);
+      return true;
+    } catch (error) {
+      console.error('Error increasing amount:', error);
+      return false;
     }
   }
 
@@ -282,27 +315,6 @@ export function useVeIONManage(chain: number) {
         errorMessage: 'Failed to lock veION'
       }
     );
-  }
-
-  // handlers
-
-  async function handleIncrease(amount: number) {
-    if (!address || !selectedManagePosition || !tokenBalance) return;
-
-    try {
-      await increaseAmount({
-        tokenAddress: tokenAddress as `0x${string}`,
-        tokenId: +selectedManagePosition.id,
-        amount: amount,
-        tokenDecimals: tokenBalance.decimals || 18
-      });
-
-      await Promise.all([locks.refetch?.(), refetchBalance()]);
-      return true;
-    } catch (error) {
-      console.error('Error increasing amount:', error);
-      return false;
-    }
   }
 
   async function handleExtend({ lockDuration }: { lockDuration: number }) {
