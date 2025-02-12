@@ -1,12 +1,9 @@
 import { useMemo } from 'react';
 
 import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
-import { VEION_CONTRACTS } from '@ui/constants/veIon';
 import type { VeIONLockData, ChainId } from '@ui/types/veION';
 
 import { useVeIONLocks } from './useVeIONLocks';
-
-import type { Hex } from 'viem';
 
 // Cache per chain
 const chainValidStates: Record<number, VeIONLockData | null> = {
@@ -16,29 +13,17 @@ const chainValidStates: Record<number, VeIONLockData | null> = {
   [ALL_CHAINS_VALUE]: null // combined state
 };
 
-type SupplyResult = any;
-
 export function useMultiChainVeIONLocks({
-  address,
-  selectedChainId,
-  supplyResults
+  selectedChainId
 }: {
-  address?: string;
   selectedChainId: ChainId;
-  supplyResults: SupplyResult[];
 }): VeIONLockData {
   const baseLocks = useVeIONLocks({
-    address,
-    veIonContract: VEION_CONTRACTS[8453] ?? '0x0',
-    chainId: 8453,
-    supplyResults
+    chainId: 8453
   });
 
   const modeLocks = useVeIONLocks({
-    address,
-    veIonContract: VEION_CONTRACTS[34443] as Hex,
-    chainId: 34443,
-    supplyResults
+    chainId: 34443
   });
 
   // const optimismLocks = useVeIONLocks({

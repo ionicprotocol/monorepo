@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { formatEther } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
-import { getVeIonContract, isVeIonSupported } from '@ui/constants/veIon';
+import { isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
 import { useMultiChainVeIONLocks } from '@ui/hooks/veion/useMultiChainVeionLocks';
@@ -96,7 +96,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const [selectedManagePosition, setSelectedManagePosition] =
     useState<MyVeionData | null>(null);
 
-  const veIonContract = getVeIonContract(currentChain);
   const isSupported = isVeIonSupported(currentChain);
 
   const { data: ionPriceData } = useIonPrices([currentChain]);
@@ -130,8 +129,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     totalLiquidity,
     lockedLiquidity,
     stakedAmount,
-    isLoading: veIonDataLoading,
-    allChainSupplies
+    isLoading: veIonDataLoading
   } = useVeIonData();
 
   const total =
@@ -143,9 +141,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   const staked = stakedAmount[currentChain as keyof typeof stakedAmount] || 0;
 
   const locks = useMultiChainVeIONLocks({
-    address,
-    selectedChainId: currentChain as ChainId,
-    supplyResults: allChainSupplies
+    selectedChainId: currentChain as ChainId
   });
 
   // Calculate USD values

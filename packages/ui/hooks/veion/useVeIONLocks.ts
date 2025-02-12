@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 
-import { useReadContract, useReadContracts } from 'wagmi';
+import { useAccount, useReadContract, useReadContracts } from 'wagmi';
 
 import { ALL_CHAINS_VALUE } from '@ui/components/markets/NetworkSelector';
+import { VEION_CONTRACTS } from '@ui/constants/veIon';
 import type { ChainId, VeIONLockData } from '@ui/types/veION';
 import { VEION_CHAIN_CONFIGS } from '@ui/utils/veion/chainConfig';
 import { createVeIONLock } from '@ui/utils/veion/lockUtils';
@@ -31,18 +32,14 @@ type DelegateesResult = ContractResult<bigint[]>;
 type AssetsLockedResult = ContractResult<string[]>;
 
 export function useVeIONLocks({
-  address,
-  veIonContract,
-  chainId,
-  supplyResults
+  chainId
 }: {
-  address?: string;
-  veIonContract: `0x${string}`;
   chainId: ChainId;
-  supplyResults: SupplyResult[];
 }): VeIONLockData & { refetch: () => Promise<void> } {
   const chainConfig = VEION_CHAIN_CONFIGS[chainId];
   const { data: ethPrice = 0 } = useEthPrice();
+  const veIonContract = VEION_CONTRACTS[chainId];
+  const { address } = useAccount();
 
   // Get owned token IDs
   const {
@@ -141,7 +138,17 @@ export function useVeIONLocks({
     isLoading: boolean;
   };
 
-  // Then let's check our calls
+  const { data: supplyResults = [], isLoading: isSupplyLoading } =
+    useReadContracts({
+      contracts: VEION_CHAIN_CONFIGS[chainId].lpTypes.map((lpType) => ({
+        address: VEION_CONTRACTS[chainId],
+        abi: iveIonAbi,
+        functionName: 's_supply',
+        args: [BigInt(lpType)],
+        chainId: chainId
+      }))
+    }) as { data: SupplyResult[]; isLoading: boolean };
+
   const delegationAmountCalls = tokenIds
     .flatMap((tokenId, tokenIdIndex) =>
       chainConfig.lpTypes.flatMap((lpType, lpTypeIndex) => {
@@ -291,7 +298,8 @@ export function useVeIONLocks({
     isLoadingDelegatees ||
     isLoadingTokenPrices ||
     isLoadingIonPrices ||
-    isLoadingDelegationAmounts;
+    isLoadingDelegationAmounts ||
+    isSupplyLoading;
 
   return {
     myLocks: allLocks
