@@ -184,20 +184,8 @@ function MaxDeposit({
     if (!handleInput || !maxValue) return;
 
     try {
-      const num = Number(maxValue);
-      if (isNaN(num)) {
-        console.error('Invalid maxValue:', maxValue);
-        return;
-      }
-
-      // For very small numbers, use full precision
-      if (num < 0.00001) {
-        handleInput(num.toFixed(18));
-        return;
-      }
-
-      // For regular numbers, limit to 4 decimal places
-      handleInput(num.toFixed(4));
+      // Always use the full precision maxValue when clicking max
+      handleInput(maxValue);
     } catch (error) {
       console.error('Error in handleMax:', error);
     }
