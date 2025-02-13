@@ -112,9 +112,9 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   };
 
   const getButtonStyles = () => {
-    if (isVoting) return 'bg-gray-500 cursor-not-allowed';
-    if (isVoteEnabled) return 'bg-green-500 hover:bg-green-600';
-    return 'bg-red-500 hover:bg-red-600';
+    if (isVoting) return 'bg-gray-500 cursor-not-allowed text-white';
+    if (isVoteEnabled) return 'bg-green-500 hover:bg-green-600 text-black';
+    return 'bg-red-500 hover:bg-red-600 text-white';
   };
 
   const getButtonText = () => {
@@ -161,7 +161,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
               <button
                 onClick={handleVoteClick}
                 disabled={!hasVotes || isVoting || votingPeriod.hasVoted}
-                className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${getButtonStyles()}`}
+                className={`px-4 py-2 text-sm rounded-lg transition-colors ${getButtonStyles()}`}
               >
                 {getButtonText()}
               </button>

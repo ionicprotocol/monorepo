@@ -45,7 +45,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
   votes,
   tokenId
 }) => {
-  const { currentChain } = useVeIONContext();
+  const { currentChain, selectedManagePosition } = useVeIONContext();
   const { handleVote, isVoting } = useVeIONVote(currentChain);
   const voteEntries = Object.entries(votes);
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +99,43 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
             Please review your voting selections before confirming.
           </DialogDescription>
         </DialogHeader>
+
+        {/* Position Details in 2x2 Grid */}
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-white/60">Position ID</span>
+              <span className="text-sm font-medium">
+                #{selectedManagePosition?.id}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-white/60">Tokens Locked</span>
+              <span className="text-sm font-medium">
+                {selectedManagePosition?.lockedBLP.amount} BLP
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-white/60">Value Locked</span>
+              <span className="text-sm font-medium">
+                $
+                {selectedManagePosition?.lockedBLP.value.toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 7
+                  }
+                )}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-white/60">Voting Power</span>
+              <span className="text-sm font-medium">
+                {selectedManagePosition?.votingPower.toFixed(5)} veION
+              </span>
+            </div>
+          </div>
+        </div>
 
         <div className="flex gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
           <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-1" />

@@ -139,7 +139,7 @@ const VoteInput = React.memo(function VoteInput({
       </div>
 
       {error && (
-        <span className="absolute left-0 top-10 text-xs text-red-500">
+        <span className="absolute left-0 top-8.5 text-xs text-red-500">
           {error}
         </span>
       )}
