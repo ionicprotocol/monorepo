@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { utils } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers';
 import { ThreeCircles } from 'react-loader-spinner';
 import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
@@ -22,7 +22,7 @@ export function WithdrawTab({ assetSymbol }: WithdrawTabProps) {
     asset: assetSymbol
   });
 
-  const formattedMaxWithdraw = utils.formatUnits(
+  const formattedMaxWithdraw = formatUnits(
     maxWithdraw,
     assetSymbol === 'WETH' ? 18 : 6
   );
@@ -46,10 +46,7 @@ export function WithdrawTab({ assetSymbol }: WithdrawTabProps) {
       }
 
       setIsProcessing(true);
-      const parsedAmount = utils.parseUnits(
-        amount,
-        assetSymbol === 'WETH' ? 18 : 6
-      );
+      const parsedAmount = parseUnits(amount, assetSymbol === 'WETH' ? 18 : 6);
       await withdraw(parsedAmount);
       setAmount('');
     } catch (error) {

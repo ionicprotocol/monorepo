@@ -857,6 +857,24 @@
     "IonicLiquidator_Proxy": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
     },
+    "IonicMarketERC4626_0x49420311B518f3d0c94e897592014de53831cfA3": {
+      "address": "0xD0B2406421470db765F80Bc85Bb253460FAeE5EF"
+    },
+    "IonicMarketERC4626_0x49420311B518f3d0c94e897592014de53831cfA3_Implementation": {
+      "address": "0x986F1289B2E803B0bf7ac29b777bbAcBDb3dE872"
+    },
+    "IonicMarketERC4626_0x49420311B518f3d0c94e897592014de53831cfA3_Proxy": {
+      "address": "0xD0B2406421470db765F80Bc85Bb253460FAeE5EF"
+    },
+    "IonicMarketERC4626_0xa900A17a49Bc4D442bA7F72c39FA2108865671f0": {
+      "address": "0x0beDB53713EBF4465DC2f485Df19BAd1EF04403B"
+    },
+    "IonicMarketERC4626_0xa900A17a49Bc4D442bA7F72c39FA2108865671f0_Implementation": {
+      "address": "0x0014cE7973246b7a99Ea95f0Bd38156C19551880"
+    },
+    "IonicMarketERC4626_0xa900A17a49Bc4D442bA7F72c39FA2108865671f0_Proxy": {
+      "address": "0x0beDB53713EBF4465DC2f485Df19BAd1EF04403B"
+    },
     "IonicUniV3Liquidator": {
       "address": "0x1c6518B495FdCB1E087A9EC9669DB8C584cE3C1d"
     },
@@ -1465,6 +1483,15 @@
     },
     "Voter": {
       "address": "0x669A6F5421dA53696fa06f1043CF127d380f6EB9"
+    },
+    "VoterLens": {
+      "address": "0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02"
+    },
+    "VoterLens_Implementation": {
+      "address": "0x7843F597075e7BdB8D6f72ad178EEeFeAc03916f"
+    },
+    "VoterLens_Proxy": {
+      "address": "0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02"
     },
     "Voter_Implementation": {
       "address": "0x61FD08eba8Cd59F95437b3232aB8DB55feA16Cda"

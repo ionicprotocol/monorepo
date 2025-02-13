@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { formatUnits } from 'ethers';
 
 import type { MorphoRow } from '@ui/types/Earn';
 
@@ -103,7 +103,7 @@ export const formatTokenAmount = (
 ): number => {
   try {
     const decimals = symbol.includes('WETH') ? 18 : 6;
-    const formatted = utils.formatUnits(totalAssets, decimals);
+    const formatted = formatUnits(totalAssets, decimals);
     const tokenAmount = parseFloat(formatted);
 
     return tokenAmount;

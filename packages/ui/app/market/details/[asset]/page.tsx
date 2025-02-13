@@ -54,11 +54,11 @@ import { INFO } from '@ui/constants/index';
 
 import Swap from '@ui/components/dialogs/ManageMarket/Swap';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
-import { MarketData } from '@ui/types/TokensDataMap';
+import { type MarketData } from '@ui/types/TokensDataMap';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import millify from 'millify';
-import { Address, formatEther, formatUnits } from 'viem';
+import { type Address, formatEther, formatUnits } from 'viem';
 import { useBorrowCapsDataForAsset } from '@ui/hooks/fuse/useBorrowCapsDataForAsset';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 import BorrowAmount from '@ui/components/markets/BorrowAmount';
@@ -130,7 +130,7 @@ const Asset = () => {
 
   // const availableAPR = assetData?.cToken ? supplyAPYs?.[assetData?.cToken] : 0;
   const totalSupplied = assetData?.totalSupplyNative
-    ? parseFloat(
+    ? Number.parseFloat(
         formatUnits(assetData!.totalSupply, assetData.underlyingDecimals)
       ).toLocaleString('en-US', {
         maximumFractionDigits: 2
@@ -138,7 +138,7 @@ const Asset = () => {
     : '0';
 
   const totalBorrows = assetData?.totalBorrowNative
-    ? parseFloat(
+    ? Number.parseFloat(
         formatUnits(assetData!.totalBorrow, assetData.underlyingDecimals)
       ).toLocaleString('en-US', {
         maximumFractionDigits: 2
@@ -147,20 +147,20 @@ const Asset = () => {
 
   function extractTime(isoTimestamp: number) {
     // Parse the ISO 8601 timestamp
-    let date = new Date(isoTimestamp);
+    const date = new Date(isoTimestamp);
     // Extract the date, month, and year
-    let day = String(date.getUTCDate()).padStart(2, '0');
-    let month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-    let year = date.getUTCFullYear();
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getUTCFullYear();
 
     // Extract the time component and format it
-    let hours = String(date.getUTCHours()).padStart(2, '0');
-    let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     // let seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
     // Combine to get the full time string
-    let timeStr = `${hours}:${minutes}`;
-    let dateStr = `${day}-${month}-${year}`;
+    const timeStr = `${hours}:${minutes}`;
+    const dateStr = `${day}-${month}-${year}`;
 
     return { timeStr, dateStr };
   }
@@ -179,11 +179,11 @@ const Asset = () => {
 
         // const data = await history?.json();
 
-        let borrowOBJAtY: { apy: number; createdAt: string }[] = [];
-        let borrowAtY: number[] = [];
-        let supplyOBJAtY: { apy: number; createdAt: string }[] = [];
-        let supplyAtY: number[] = [];
-        let valAtX: string[] = [];
+        const borrowOBJAtY: { apy: number; createdAt: string }[] = [];
+        const borrowAtY: number[] = [];
+        const supplyOBJAtY: { apy: number; createdAt: string }[] = [];
+        const supplyAtY: number[] = [];
+        const valAtX: string[] = [];
         //filteriing and pusing borrowapy of each date-----------------------------
         data.forEach((val: { borrowApy: number; created_at: number }) => {
           if (
@@ -268,13 +268,14 @@ const Asset = () => {
 
   const pricePerSingleAsset = useMemo<number>(
     () =>
-      parseFloat(formatEther(selectedMarketData?.underlyingPrice || 0n)) *
-      (usdPrice ?? 0),
+      Number.parseFloat(
+        formatEther(selectedMarketData?.underlyingPrice || 0n)
+      ) * (usdPrice ?? 0),
     [selectedMarketData, usdPrice]
   );
   const borrowCapAsNumber = useMemo<number>(
     () =>
-      parseFloat(
+      Number.parseFloat(
         formatUnits(
           borrowCap?.totalBorrowCap || 0n,
           selectedMarketData?.underlyingDecimals || 0
@@ -297,7 +298,7 @@ const Asset = () => {
   );
   const supplyCapAsNumber = useMemo<number>(
     () =>
-      parseFloat(
+      Number.parseFloat(
         formatUnits(
           supplyCap?.supplyCaps || 0n,
           selectedMarketData?.underlyingDecimals || 0

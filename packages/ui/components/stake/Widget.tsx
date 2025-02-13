@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-
-// import type { Route } from '@lifi/sdk';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { LiFiWidget, useWidgetEvents, WidgetEvent } from '@lifi/widget';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { mode } from 'viem/chains';
 
+import { Dialog, DialogContent, DialogTitle } from '@ui/components/ui/dialog';
 import { pools } from '@ui/constants/index';
 import { getToken } from '@ui/utils/getStakingTokens';
 
@@ -22,7 +19,6 @@ interface IProps {
 type IStatus = 'COMPLETED' | 'FAIL' | 'LOSS' | 'START' | 'UPDATE';
 
 export default function Widget({ close, open, chain }: IProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const widgetConfig: WidgetConfig = {
     toChain: +chain,
     fromChain: +chain,
@@ -39,57 +35,24 @@ export default function Widget({ close, open, chain }: IProps) {
     },
     sdkConfig: {
       routeOptions: {
-        maxPriceImpact: 0.4, // increases threshold to 40%
+        maxPriceImpact: 0.4,
         slippage: 0.005
       }
     },
     fee: 0.01,
-    // theme : { palette : "grey"},
     integrator: 'ionic',
     appearance: 'dark'
   };
 
   const [widgetStatus, setWidgetStatus] = useState<IStatus>();
-  const newRef = useRef(null!);
-
-  useEffect(() => {
-    const handleOutsideClick = (e: any) => {
-      //@ts-ignore
-      if (newRef.current && !newRef.current?.contains(e?.target)) {
-        close();
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [close]);
-
   const widgetEvents = useWidgetEvents();
 
-  // ...
-
   useEffect(() => {
-    const onRouteExecutionStarted = () => {
-      // console.log('onRouteExecutionStarted fired.');
-      setWidgetStatus('START');
-    };
-    const onRouteExecutionUpdated = () => {
-      // console.log('onRouteExecutionUpdated fired.');
-      setWidgetStatus('UPDATE');
-    };
-    const onRouteExecutionCompleted = () => {
-      // console.log('onRouteExecutionCompleted fired.');
-      setWidgetStatus('COMPLETED');
-    };
-    const onRouteExecutionFailed = () => {
-      // console.log('onRouteExecutionFailed fired.');
-      setWidgetStatus('FAIL');
-    };
-    const onRouteHighValueLoss = () => {
-      // console.log('onRouteHighValueLoss continued.');
-      setWidgetStatus('LOSS');
-    };
+    const onRouteExecutionStarted = () => setWidgetStatus('START');
+    const onRouteExecutionUpdated = () => setWidgetStatus('UPDATE');
+    const onRouteExecutionCompleted = () => setWidgetStatus('COMPLETED');
+    const onRouteExecutionFailed = () => setWidgetStatus('FAIL');
+    const onRouteHighValueLoss = () => setWidgetStatus('LOSS');
 
     widgetEvents.on(WidgetEvent.RouteExecutionStarted, onRouteExecutionStarted);
     widgetEvents.on(WidgetEvent.RouteExecutionUpdated, onRouteExecutionUpdated);
@@ -104,34 +67,41 @@ export default function Widget({ close, open, chain }: IProps) {
   }, [widgetEvents]);
 
   return (
-    <div
-      className={` z-50 fixed top-0 right-0 w-full h-screen  bg-black/35 ${
-        open ? 'flex' : 'hidden'
-      } items-center justify-center transition-opacity duration-300 overflow-y-auto animate-fade-in animated backdrop-blur-sm`}
+    <Dialog
+      open={open}
+      onOpenChange={close}
     >
-      <div
-        className={`w-max h-max relative flex flex-col items-center justify-center`}
-        ref={newRef}
+      <DialogContent
+        className="bg-transparent max-w-fit p-0 border-none"
+        hideCloseButton
       >
-        <LiFiWidget
-          integrator="ionic"
-          config={widgetConfig}
-        />
-        <button
-          className={`my-4 py-1.5 text-sm text-black w-full ${pools[+chain].accentbg ?? pools[mode.id].accentbg} rounded-md`}
-          onClick={() => {
-            (widgetStatus === 'COMPLETED' || widgetStatus === 'FAIL') &&
-              close();
-          }}
-        >
-          {widgetStatus ? 'Step 1 ' + widgetStatus.toLowerCase() : 'Lets Start'}{' '}
-          {widgetStatus === 'COMPLETED' && '🎉'}{' '}
-          {widgetStatus === 'FAIL' && '😵'} {widgetStatus === 'START' && '🤠'}{' '}
-          {widgetStatus === 'LOSS' && '📉'}
-        </button>
-      </div>
-    </div>
+        <VisuallyHidden.Root asChild>
+          <DialogTitle>Buy Token Widget</DialogTitle>
+        </VisuallyHidden.Root>
+        <div className="p-4">
+          <LiFiWidget
+            integrator="ionic"
+            config={widgetConfig}
+          />
+          <button
+            className={`my-4 py-1.5 text-sm text-black w-full ${
+              pools[+chain].accentbg ?? pools[mode.id].accentbg
+            } rounded-md`}
+            onClick={() => {
+              if (widgetStatus === 'COMPLETED' || widgetStatus === 'FAIL') {
+                close();
+              }
+            }}
+          >
+            {widgetStatus
+              ? 'Step 1 ' + widgetStatus.toLowerCase()
+              : 'Lets Start'}{' '}
+            {widgetStatus === 'COMPLETED' && '🎉'}{' '}
+            {widgetStatus === 'FAIL' && '😵'} {widgetStatus === 'START' && '🤠'}{' '}
+            {widgetStatus === 'LOSS' && '📉'}
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
-
-// export default dynamic(() => Promise.resolve(Widget), { ssr: false });

@@ -29,6 +29,7 @@ export default function EarnTable() {
       setRows([...rows]);
     };
     populateVals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns: EnhancedColumnDef<EarnRow>[] = [

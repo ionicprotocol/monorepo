@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
+import { Network } from 'lucide-react';
+
 import { Button } from '@ui/components/ui/button';
 import {
   Tooltip,
@@ -19,6 +21,7 @@ interface INetworkSelector {
   nopool?: boolean;
   enabledChains?: number[];
   upcomingChains?: string[];
+  showAll?: boolean;
 }
 
 const ACTIVE_NETWORKS = [
@@ -36,11 +39,15 @@ const ACTIVE_NETWORKS = [
   'Camp Testnet'
 ];
 
+// Using -1 as a special value for "All chains" to avoid conflicts with valid chain IDs
+export const ALL_CHAINS_VALUE = 0;
+
 function NetworkSelector({
   dropdownSelectedChain,
   nopool = false,
   enabledChains,
-  upcomingChains
+  upcomingChains,
+  showAll = false
 }: INetworkSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -66,6 +73,42 @@ function NetworkSelector({
 
   return (
     <div className="flex flex-wrap gap-2">
+      {showAll && (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <div>
+                <Button
+                  variant={
+                    dropdownSelectedChain === ALL_CHAINS_VALUE
+                      ? 'secondary'
+                      : 'ghost'
+                  }
+                  asChild
+                  className={`h-9 rounded-md ${dropdownSelectedChain === ALL_CHAINS_VALUE ? 'min-w-[80px] p-2' : 'min-w-[32px] p-1'}`}
+                >
+                  <Link
+                    href={getUrlWithParams(ALL_CHAINS_VALUE.toString())}
+                    onClick={() => setDropChain(ALL_CHAINS_VALUE.toString())}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Network className="w-6 h-6" />
+                    {dropdownSelectedChain === ALL_CHAINS_VALUE && (
+                      <span className="text-sm">All Chains</span>
+                    )}
+                  </Link>
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="flex items-center gap-2 bg-background">
+              <Network className="w-4 h-4" />
+              <p>All Chains</p>
+              <span className="text-emerald-400 text-xs">Active</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+
       {orderedNetworks.map(([chainId, network], idx) => {
         const isSelected = +chainId === +dropdownSelectedChain;
 
