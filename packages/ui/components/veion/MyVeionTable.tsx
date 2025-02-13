@@ -34,7 +34,6 @@ function MyVeionTable() {
     setSelectedManagePosition,
     locks: { myLocks, isLoading }
   } = useVeIONContext();
-  console.log('myLocks', myLocks);
 
   const hasLockExpired = (lockExpiryDate: string, isPermanent: boolean) => {
     if (isPermanent) return false;

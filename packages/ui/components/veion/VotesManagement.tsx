@@ -200,12 +200,9 @@ function VotesManagement({
               ? row.original.apr.supplyAPR
               : row.original.apr.borrowAPR) ?? 0
           }
+          noRewards
+          disabled
           asset={row.original.asset}
-          rewards={
-            row.original.side === MarketSide.Supply
-              ? row.original.apr.supplyRewards
-              : row.original.apr.borrowRewards
-          }
           dropdownSelectedChain={+chain}
           selectedPoolId={selectedPool}
           cToken={row.original.apr.cTokenAddress}
