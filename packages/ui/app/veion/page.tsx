@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-
-import { ExternalLink, LockIcon } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
-
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 import {
@@ -33,11 +29,10 @@ export default function EnhancedVeIon() {
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
 
   const { liquidity } = useVeIONContext();
-  const chainId = useChainId();
   const searchParams = useSearchParams();
   const querychain = searchParams.get('chain');
   const selectedtoken = querychain === '8453' ? 'eth' : 'mode';
-  const chain = querychain ? querychain : String(chainId);
+  const chain = querychain ? querychain : '34443';
 
   return (
     <div className="min-h-screen py-12">
