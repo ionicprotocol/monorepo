@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Search } from 'lucide-react';
+
 import { Input } from '@ui/components/ui/input';
 
 interface SearchInputProps {

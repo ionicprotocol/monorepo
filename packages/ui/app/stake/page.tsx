@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -32,6 +32,7 @@ import Toggle from '@ui/components/Toggle';
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
+import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
 import {
   getAvailableStakingToken,
   getPoolToken,
@@ -585,6 +586,51 @@ export default function Stake() {
     10: ['eth', 'weth']
   };
 
+  const {
+    calculateTokenAmount,
+    getMaximumIonInput,
+    wouldExceedLiquidity,
+    ionBalance,
+    selectedTokenBalance
+  } = useLiquidityCalculations({
+    address,
+    chainId: +chain,
+    selectedToken: selectedtoken as 'eth' | 'mode' | 'weth'
+  });
+
+  const updateDepositValues = useCallback(
+    (ionValue: string) => {
+      if (!ionValue) {
+        setMaxDeposit({ ion: '', eth: '' });
+        return;
+      }
+
+      const ethValue = calculateTokenAmount(ionValue);
+      if (ethValue) {
+        setMaxDeposit({ ion: ionValue, eth: ethValue });
+      }
+    },
+    [calculateTokenAmount]
+  );
+
+  const handleIonInput = useCallback(
+    (val?: string) => {
+      if (!val) {
+        updateDepositValues('');
+        return;
+      }
+
+      if (wouldExceedLiquidity(val)) {
+        const maxInput = getMaximumIonInput();
+        updateDepositValues(maxInput);
+        return;
+      }
+
+      updateDepositValues(val);
+    },
+    [wouldExceedLiquidity, getMaximumIonInput, updateDepositValues]
+  );
+
   return (
     <main>
       <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
@@ -643,11 +689,9 @@ export default function Stake() {
                   amount={maxDeposit.ion}
                   tokenName={'ion'}
                   token={ionTokenOfChain}
-                  handleInput={(val?: string) =>
-                    setMaxDeposit((p) => {
-                      return { ...p, ion: val || '' };
-                    })
-                  }
+                  handleInput={handleIonInput}
+                  max={ionBalance}
+                  effectiveMax={getMaximumIonInput()}
                   chain={+chain}
                 />
                 <MaxDeposit
@@ -655,9 +699,11 @@ export default function Stake() {
                   amount={maxDeposit.eth}
                   tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
+                  max={selectedTokenBalance}
                   chain={+chain}
                   tokenSelector
                   tokenArr={tokenArrOfChain[+chain]}
+                  readonly={true}
                 />
               </>
             )}

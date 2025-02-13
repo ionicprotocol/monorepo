@@ -30,7 +30,6 @@ import {
 } from 'viem';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
-import SliderComponent from '@ui/components/dialogs/ManageMarket/Slider';
 import TransactionStepsHandler, {
   useTransactionSteps
 } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
@@ -44,8 +43,6 @@ import type { MarketData } from '@ui/types/TokensDataMap';
 
 import SwapTo from './SwapTo';
 import MaxDeposit from '../MaxDeposit';
-
-import type { IBal } from './SwapTo';
 
 import { collateralSwapAbi } from '@ionicprotocol/sdk/src';
 

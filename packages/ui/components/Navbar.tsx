@@ -42,12 +42,14 @@ const NavLink = ({
   label,
   isActive,
   soon,
+  isNew,
   external
 }: {
   href: string;
   label: string;
   isActive?: boolean;
   soon?: boolean;
+  isNew?: boolean;
   external?: boolean;
 }) => (
   <Link
@@ -67,6 +69,11 @@ const NavLink = ({
       {soon && (
         <span className="absolute px-[5px] -bottom-2.5 left-1/2 -translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap">
           SOON!
+        </span>
+      )}
+      {isNew && (
+        <span className="absolute px-[5px] -bottom-2.5 left-1/2 -translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap">
+          NEW!
         </span>
       )}
     </div>
@@ -147,10 +154,9 @@ export default function Navbar() {
             isActive={pathname === '/xION'}
           />
           <NavLink
-            href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion"
+            href="/veion"
             label="veION"
-            soon
-            external
+            isNew
           />
 
           {!isConnected && (

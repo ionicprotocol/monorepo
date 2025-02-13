@@ -444,7 +444,7 @@
       "address": "0x0A183B983E395BeBfa344389Ef08250Ae987bEe4"
     },
     "DefaultProxyAdmin": {
-      "address": "0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27"
+      "address": "0xaF9cc7599DEFd86226e0f3A6810c4976E4a10f83"
     },
     "DiscouragingJumpRateModel": {
       "address": "0x413aD59b80b1632988d478115a466bdF9B26743a"
@@ -482,92 +482,20 @@
     "IonicFlywheelBorrowBooster_ION": {
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
-    "IonicFlywheelBorrow_Borrow_ION_epoch5": {
-      "address": "0xa80ff99c82d55dFE893867E25C5c77276DFb23C5"
-    },
-    "IonicFlywheelBorrow_Borrow_ION_epoch5_Implementation": {
-      "address": "0x82e88bC1d17d507ad23D9909ec90C6707BA0fBaF"
-    },
-    "IonicFlywheelBorrow_Borrow_ION_epoch5_Proxy": {
-      "address": "0xa80ff99c82d55dFE893867E25C5c77276DFb23C5"
-    },
-    "IonicFlywheelBorrow_Borrow_ION_epoch6": {
-      "address": "0xE135500Cc111eEd663b49394E378d8bdCe86c540"
-    },
-    "IonicFlywheelBorrow_Borrow_ION_epoch6_Implementation": {
-      "address": "0x319aac402f9E18cFC063aD1030A55E6B4F922E41"
-    },
-    "IonicFlywheelBorrow_Borrow_ION_epoch6_Proxy": {
-      "address": "0xE135500Cc111eEd663b49394E378d8bdCe86c540"
-    },
-    "IonicFlywheelBorrow_ION": {
-      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
-    },
-    "IonicFlywheelBorrow_ION_Implementation": {
-      "address": "0x47632638053139307342C086D60B510EB0025996"
-    },
-    "IonicFlywheelBorrow_ION_Proxy": {
-      "address": "0x4E854cde138495a3eB9CFe48e50F12dC352cD834"
-    },
-    "IonicFlywheelDynamicRewards_Borrow_ION_epoch5": {
-      "address": "0x02f606ae6016af2C06A4EE50129F3E24c520d11F"
-    },
-    "IonicFlywheelDynamicRewards_Borrow_ION_epoch6": {
-      "address": "0x392e3F031ACB895DE25983EFd860E0d10313B15a"
-    },
     "IonicFlywheelDynamicRewards_ION": {
-      "address": "0xdb93567451Cc2D785fAB5744a07dbF0C7a90415f"
-    },
-    "IonicFlywheelDynamicRewards_ION_epoch4": {
-      "address": "0xBFAE7571C47A1D42BcEAd3D57d116Ca69495d989"
-    },
-    "IonicFlywheelDynamicRewards_ION_epoch5": {
-      "address": "0x23deC9C9a5dF017bE2C06a841b85B711AeF6Fd88"
-    },
-    "IonicFlywheelDynamicRewards_ION_epoch6": {
-      "address": "0xc03d82000B52177467380C7ffc643a9Ea94fFbC7"
-    },
-    "IonicFlywheelDynamicRewards_ION_v3": {
-      "address": "0x4a003b110162C86fE10cD39822c782eb08C2549C"
+      "address": "0x0ee9f9A0EA64E0EB999A16Eb398006FBD1fE8ecd"
     },
     "IonicFlywheelLensRouter": {
       "address": "0x01aB485A0fae0667be36AB876c95ADc1A2a5e449"
     },
     "IonicFlywheel_ION": {
-      "address": "0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062"
+      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
     },
     "IonicFlywheel_ION_Implementation": {
-      "address": "0x4e2DfafC783372BF39986721F9f97F666BBe517e"
+      "address": "0x0f3Cf09125c8e920A26AF806eDA8DAa1263A5522"
     },
     "IonicFlywheel_ION_Proxy": {
-      "address": "0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062"
-    },
-    "IonicFlywheel_ION_epoch4": {
-      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
-    },
-    "IonicFlywheel_ION_epoch4_Implementation": {
-      "address": "0x92ce3434F254161178A4b4a786C7Be559b752497"
-    },
-    "IonicFlywheel_ION_epoch4_Proxy": {
-      "address": "0x6AfCca37CC93DB6bed729d20ADF203290d465df5"
-    },
-    "IonicFlywheel_ION_epoch5": {
-      "address": "0x1A118B250ED0Ba690f03877AC46519A4b66f1D44"
-    },
-    "IonicFlywheel_ION_epoch5_Implementation": {
-      "address": "0xA525Af96C271Bc98c9DEE6ceF90F238b8865F458"
-    },
-    "IonicFlywheel_ION_epoch5_Proxy": {
-      "address": "0x1A118B250ED0Ba690f03877AC46519A4b66f1D44"
-    },
-    "IonicFlywheel_ION_epoch6": {
-      "address": "0xfB30366C781a913b40c96617e380F18071761F9F"
-    },
-    "IonicFlywheel_ION_epoch6_Implementation": {
-      "address": "0x1b47365aCd1d1d44F200cbc651716Ca796462f8D"
-    },
-    "IonicFlywheel_ION_epoch6_Proxy": {
-      "address": "0xfB30366C781a913b40c96617e380F18071761F9F"
+      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -1071,7 +999,7 @@
       "address": "0x586671b05A8Ab0E9F288207761808c15a24813ba"
     },
     "UniswapV2LiquidatorFunder": {
-      "address": "0x678645c6F57F030aE98a0B33834292120aa3882e"
+      "address": "0xCD150E16901A862aA1faB231410cAaB3aACad818"
     },
     "VelodromePriceOracle": {
       "address": "0x9Bb6eFb9c1C16f4561591Fe13ea06AF8d1Fce2a9"

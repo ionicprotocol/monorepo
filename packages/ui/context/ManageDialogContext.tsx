@@ -10,7 +10,6 @@ import {
 } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash/debounce';
 import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
