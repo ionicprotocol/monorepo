@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   InfoIcon,
   LockIcon,
@@ -6,6 +7,7 @@ import {
   ArrowRightIcon,
   ShieldIcon
 } from 'lucide-react';
+
 import {
   Dialog,
   DialogContent,

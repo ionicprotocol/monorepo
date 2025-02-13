@@ -4,22 +4,19 @@ import { useEffect, useState } from 'react';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import { formatEther } from 'viem';
 import { base, mode } from 'viem/chains';
 
-import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import ToggleLinks from '@ui/components/ToggleLink';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
-import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import {
   MyVeionTable,
   DelegateVeIonTable,
   GovernanceHeader
 } from '@ui/components/veion';
+import DelegatedVeionInfo from '@ui/components/veion/DelegatedVeionInfo';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
-import DelegatedVeionInfo from '@ui/components/veion/DelegatedVeionInfo';
 
 export default function Governance() {
   const searchParams = useSearchParams();

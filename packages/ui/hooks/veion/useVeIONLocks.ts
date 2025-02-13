@@ -11,9 +11,9 @@ import { createVeIONLock } from '@ui/utils/veion/lockUtils';
 import { useOracleBatch } from '../ionic/useOracleBatch';
 import { useIonPrices } from '../useDexScreenerPrices';
 import { useEthPrice } from '../useEthPrice';
+import { calculateCurrentEpoch, useVotingStatuses } from './useVotingPeriod';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
-import { calculateCurrentEpoch, useVotingStatuses } from './useVotingPeriod';
 
 interface WagmiResult<T> {
   status: 'failure' | 'success';

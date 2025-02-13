@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+
 import { ExternalLink } from 'lucide-react';
 import { base, mode } from 'viem/chains';
+
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
 import {

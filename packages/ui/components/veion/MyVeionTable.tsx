@@ -11,6 +11,7 @@ import type {
   MarketCellProps
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
+import { pools } from '@ui/constants';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import type { MyVeionData } from '@ui/types/veION';
 
@@ -21,7 +22,6 @@ import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 import { getBgColor, getTextColor } from '../DynamicSubNav';
 import { Badge } from '../ui/badge';
-import { pools } from '@ui/constants';
 
 function MyVeionTable() {
   const [isManageOpen, setIsManageOpen] = useState(false);
