@@ -21,6 +21,7 @@ import TimeRemaining from './TimeRemaining';
 import VeionClaim from './VeionClaim';
 import { getBgColor, getTextColor } from '../DynamicSubNav';
 import { Badge } from '../ui/badge';
+import { pools } from '@ui/constants';
 
 function MyVeionTable() {
   const [isManageOpen, setIsManageOpen] = useState(false);
@@ -33,6 +34,7 @@ function MyVeionTable() {
     setSelectedManagePosition,
     locks: { myLocks, isLoading }
   } = useVeIONContext();
+  console.log('myLocks', myLocks);
 
   const hasLockExpired = (lockExpiryDate: string, isPermanent: boolean) => {
     if (isPermanent) return false;
@@ -208,9 +210,18 @@ function MyVeionTable() {
       />
 
       <CommonTable
+        hidePR={false}
         data={myLocks}
         columns={myVeionColumns}
         isLoading={isLoading}
+        getRowStyle={(row) => ({
+          badge: row.original.votingStatus.hasVoted
+            ? { text: 'Voted' }
+            : undefined,
+          borderClassName: row.original.votingStatus.hasVoted
+            ? pools[row.original.chainId]?.border
+            : undefined
+        })}
       />
     </div>
   );

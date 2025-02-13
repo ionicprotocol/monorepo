@@ -13,6 +13,7 @@ import { useIonPrices } from '../useDexScreenerPrices';
 import { useEthPrice } from '../useEthPrice';
 
 import { iveIonAbi } from '@ionicprotocol/sdk';
+import { calculateCurrentEpoch, useVotingStatuses } from './useVotingPeriod';
 
 interface WagmiResult<T> {
   status: 'failure' | 'success';
@@ -241,6 +242,11 @@ export function useVeIONLocks({
   } = useIonPrices(chainId === ALL_CHAINS_VALUE ? undefined : [chainId]);
   const ionPrice = ionPrices[chainId] || 0;
 
+  const { votingStatuses, isLoading: isLoadingVotes } = useVotingStatuses(
+    chainId.toString(),
+    tokenIds
+  );
+
   // Create locks with token prices
   const allLocks = tokenIds.flatMap((tokenId, tokenIndex) => {
     const balanceResult = balanceResults?.[tokenIndex];
@@ -254,6 +260,9 @@ export function useVeIONLocks({
       const delegateesResult =
         processedDelegateesResults[tokenIndex * chainConfig.lpTypes.length + i];
 
+      const hasVoted = votingStatuses[tokenId] || false;
+      const currentEpoch = calculateCurrentEpoch();
+
       return createVeIONLock(tokenAddress, i, tokenId, tokenIndex, {
         supplyResults,
         userLockResults,
@@ -264,7 +273,11 @@ export function useVeIONLocks({
         ionPrice,
         tokenPrice: tokenPrices?.[tokenAddress as `0x${string}`],
         delegation: delegateesResult || undefined,
-        ethPrice
+        ethPrice,
+        votingStatus: {
+          hasVoted,
+          currentEpoch
+        }
       });
     });
   });
@@ -299,7 +312,8 @@ export function useVeIONLocks({
     isLoadingTokenPrices ||
     isLoadingIonPrices ||
     isLoadingDelegationAmounts ||
-    isSupplyLoading;
+    isSupplyLoading ||
+    isLoadingVotes;
 
   return {
     myLocks: allLocks

@@ -99,6 +99,10 @@ export type MyVeionData = {
   votingBoost: number;
   enableClaim?: boolean;
   votingPercentage: number;
+  votingStatus: {
+    hasVoted: boolean;
+    currentEpoch: number;
+  };
 };
 
 export type DelegateVeionData = {
