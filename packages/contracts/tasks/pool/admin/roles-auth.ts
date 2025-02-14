@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 import { Address } from "viem";
+import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 task("pool:whitelist:borrowers", "Upgrade all upgradeable markets across all pools")
   .addParam("pool", "The address of the pool", undefined, types.string)
@@ -39,8 +40,13 @@ task("pool:pause:guardian", "Set pause guardian on all pools")
       const owner = await poolExtension.read.admin();
       if (owner.toLowerCase() !== deployer.toLowerCase()) {
         console.log(`Admin ${deployer} is not the owner of pool ${pool.comptroller}. Printing data.`);
-        // const data = await poolExtension.populateTransaction._setPauseGuardian(taskArgs.guardian);
-        // console.log("data: ", data);
+        await prepareAndLogTransaction({
+          contractInstance: poolExtension,
+          functionName: "_setPauseGuardian",
+          args: [taskArgs.guardian],
+          description: `Set the pause guardian on pool ${pool.comptroller} to ${taskArgs.guardian}`,
+          inputs: [{ internalType: "address", name: "newPauseGuardian", type: "address" }]
+        });
       } else {
         const result = await poolExtension.simulate._setPauseGuardian(taskArgs.guardian);
         if (result.result === 0n) {

@@ -7,6 +7,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useSupplyCapsDataForAsset } from '@ui/hooks/fuse/useSupplyCapsDataForPool';
 
 import type { Address } from 'viem';
+
 import type { NativePricedIonicAsset } from '@ionicprotocol/types';
 
 const NATIVE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';

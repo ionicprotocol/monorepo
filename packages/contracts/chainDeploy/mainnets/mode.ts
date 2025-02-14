@@ -1,7 +1,7 @@
 import { Address, formatEther, Hash, Hex, zeroAddress, parseEther } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracleDmBTC } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { addRedstoneWeETHFallbacks } from "../helpers/oracles/redstoneWeETHFallbacks";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
@@ -67,6 +67,14 @@ const chainlinkAssets: ChainlinkAsset[] = mode.assets
     aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
     feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
     symbol: a.symbol as assetSymbols
+  }));
+
+const pythAssets: PythAsset[] = mode.assets
+  .filter((a) => a.oracle === OracleTypes.PythPriceOracle)
+  .filter((a) => a.symbol === assetSymbols.uBTC)
+  .map((a) => ({
+    feed: (a.oracleSpecificParams as PythSpecificParams).feed as Hex,
+    underlying: underlying(mode.assets, a.symbol)
   }));
 
 // const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
@@ -160,6 +168,19 @@ export const deploy = async ({
     chainlinkAssets: eOracleAssets,
     namePostfix: "eOracle",
     chainId: mode.chainId
+  });
+
+  await deployPythPriceOracle({
+    run,
+    deployConfig,
+    viem,
+    getNamedAccounts,
+    deployments,
+    pythAssets,
+    chainId: mode.chainId,
+    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+    usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   });
 
   // await deployVelodromeOracle({

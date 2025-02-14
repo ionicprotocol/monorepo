@@ -40,6 +40,7 @@ interface IMaxDeposit {
   handleInput?: (val?: string) => void;
   headerText?: string;
   max?: string;
+  effectiveMax?: string;
   chain: number;
   tokenSelector?: boolean;
   tokenArr?: string[];
@@ -50,7 +51,6 @@ interface IMaxDeposit {
   readonly?: boolean;
   isLoading?: boolean;
   showUtilizationSlider?: boolean;
-  initialUtilization?: number;
   hintText?: string;
 }
 
@@ -61,6 +61,7 @@ function MaxDeposit({
   token,
   handleInput,
   max,
+  effectiveMax,
   chain,
   tokenSelector = false,
   tokenArr,
@@ -70,12 +71,8 @@ function MaxDeposit({
   readonly,
   isLoading,
   showUtilizationSlider = false,
-  initialUtilization = 0,
   hintText = 'Balance'
 }: IMaxDeposit) {
-  const [bal, setBal] = useState<IBal>();
-  const [utilizationPercentage, setUtilizationPercentage] =
-    useState(initialUtilization);
   const { address } = useAccount();
   const [open, setOpen] = useState<boolean>(false);
   const newRef = useRef<HTMLDivElement>(null);
@@ -105,80 +102,30 @@ function MaxDeposit({
     }
   });
 
-  useMemo(() => {
-    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
-
-    if (max) {
-      const value = parseUnits(max, decimals);
-      setBal({ value, decimals });
-    } else if (max === '0') {
-      setBal({ value: BigInt(0), decimals });
-    } else if (useUnderlyingBalance) {
-      const value = underlyingBalance ?? BigInt(0);
-      setBal({ value, decimals });
-    } else if (!useUnderlyingBalance && regularBalance) {
-      setBal({
-        value: regularBalance.value,
-        decimals: regularBalance.decimals
-      });
-    }
-  }, [
-    max,
-    regularBalance,
-    underlyingBalance,
-    useUnderlyingBalance,
-    propDecimals
-  ]);
-
-  const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
-    const formatted = formatUnits(value, decimals);
-    const number = Number(formatted);
-
-    if (number > 0 && number < 0.00001) {
-      return formatted;
-    }
-
-    return number.toLocaleString('en-US', {
-      maximumFractionDigits: 5,
-      useGrouping: true
-    });
-  };
-
-  const formatBalanceForCalculation = (
-    value: bigint,
-    decimals: number
-  ): string => {
-    return formatUnits(value, decimals);
-  };
-
-  function handleMax() {
-    if (!handleInput || !bal) return;
-    const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
-    handleInput(maxValue);
-    setUtilizationPercentage(100);
-  }
+  // Use effectiveMax for slider if provided, otherwise fall back to max
+  const sliderMax = effectiveMax || max;
 
   function handleUtilizationChange(value: number[]) {
-    const percentage = value[0];
-    setUtilizationPercentage(percentage);
+    if (!maxValue || !handleInput) return;
 
-    if (!bal || !handleInput) return;
+    const percentage = value[0];
 
     try {
-      const maxValue = formatBalanceForCalculation(bal.value, bal.decimals);
-      const calculatedAmount = Number(maxValue) * (percentage / 100);
-
-      // Format to the appropriate number of decimal places
-      let formattedAmount: string;
-      if (calculatedAmount < 0.00001) {
-        // For very small numbers, use more decimal places to maintain precision
-        formattedAmount = calculatedAmount.toFixed(bal.decimals);
-      } else {
-        // For normal numbers, use fewer decimal places
-        formattedAmount = calculatedAmount.toFixed(5);
+      // When slider is at 100%, use the exact maxValue instead of calculating
+      if (percentage === 100) {
+        handleInput(maxValue);
+        return;
       }
 
-      // Remove trailing zeros after decimal point
+      const calculatedAmount = (Number(sliderMax) * percentage) / 100;
+
+      let formattedAmount: string;
+      if (calculatedAmount < 0.00001) {
+        formattedAmount = calculatedAmount.toFixed(18);
+      } else {
+        formattedAmount = calculatedAmount.toFixed(4);
+      }
+
       formattedAmount = formattedAmount.replace(/\.?0+$/, '');
 
       if (isNaN(Number(formattedAmount))) {
@@ -192,12 +139,134 @@ function MaxDeposit({
     }
   }
 
-  const tokens = tokenName?.split('/') ?? ['eth'];
+  // The key changes are in maxValue calculation and handleMax function
+
+  const maxValue = useMemo(() => {
+    if (effectiveMax) return effectiveMax;
+    if (max) return max;
+
+    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
+
+    try {
+      if (useUnderlyingBalance && underlyingBalance) {
+        const formatted = formatUnits(underlyingBalance, decimals);
+        // Handle small numbers by returning them in scientific notation
+        const num = Number(formatted);
+        if (num < 0.00001) {
+          return num.toFixed(decimals); // Convert to fixed decimal format
+        }
+        return formatted;
+      }
+
+      if (!useUnderlyingBalance && regularBalance) {
+        const formatted = formatUnits(regularBalance.value, decimals);
+        const num = Number(formatted);
+        if (num < 0.00001) {
+          return num.toFixed(decimals);
+        }
+        return formatted;
+      }
+    } catch (error) {
+      console.error('Error formatting units:', error);
+    }
+
+    return '0';
+  }, [
+    effectiveMax,
+    max,
+    regularBalance,
+    underlyingBalance,
+    useUnderlyingBalance,
+    propDecimals
+  ]);
+
+  function handleMax() {
+    if (!handleInput || !maxValue) return;
+
+    try {
+      // Always use the full precision maxValue when clicking max
+      handleInput(maxValue);
+    } catch (error) {
+      console.error('Error in handleMax:', error);
+    }
+  }
+
+  const bal = useMemo(() => {
+    const decimals = propDecimals ?? regularBalance?.decimals ?? 18;
+
+    try {
+      if (max) {
+        // Handle scientific notation and very small numbers
+        const numMax = Number(max);
+        if (isNaN(numMax)) {
+          console.error('Invalid max value:', max);
+          return null;
+        }
+
+        // Convert to fixed decimal string before parsing
+        const fixedMax =
+          numMax < 0.00001 ? numMax.toFixed(18) : numMax.toFixed(4);
+        const value = parseUnits(fixedMax, decimals);
+        return { value, decimals };
+      } else if (max === '0') {
+        return { value: BigInt(0), decimals };
+      } else if (useUnderlyingBalance) {
+        const value = underlyingBalance ?? BigInt(0);
+        return { value, decimals };
+      } else if (!useUnderlyingBalance && regularBalance) {
+        return {
+          value: regularBalance.value,
+          decimals: regularBalance.decimals
+        };
+      }
+    } catch (error) {
+      console.error('Error in bal calculation:', error);
+    }
+    return null;
+  }, [
+    max,
+    regularBalance,
+    underlyingBalance,
+    useUnderlyingBalance,
+    propDecimals
+  ]);
+
+  const displayPercentage = useMemo(() => {
+    if (!amount || !max || Number(max) === 0) return 0;
+
+    // If amount exactly matches max, return 100
+    if (amount === max) return 100;
+
+    // Otherwise calculate percentage with higher precision
+    const percentage = (Number(amount) / Number(max)) * 100;
+    return Math.min(percentage, 100); // Ensure we never exceed 100%
+  }, [amount, max]);
+
+  const formatBalanceForDisplay = (value: bigint, decimals: number): string => {
+    const formatted = formatUnits(value, decimals);
+    const number = Number(formatted);
+
+    if (number === 0) return '0';
+
+    if (number < 0.00001) {
+      return formatted;
+    }
+
+    return number.toLocaleString('en-US', {
+      maximumFractionDigits: 4,
+      minimumFractionDigits: 2
+    });
+  };
   const formattedBalance = bal
     ? formatBalanceForDisplay(bal.value, bal.decimals)
     : max ?? '0';
 
-  const isMaxDisabled = !bal || bal.value === BigInt(0);
+  const isMaxDisabled = !maxValue || maxValue === '0';
+
+  const balanceMax = useMemo(() => {
+    if (!bal) return '0';
+    return formatUnits(bal.value, bal.decimals);
+  }, [bal]);
 
   return (
     <Card className="border-0 bg-transparent shadow-none">
@@ -211,11 +280,7 @@ function MaxDeposit({
                 handleInput={handleInput}
                 readonly={readonly}
                 amount={amount}
-                max={
-                  bal
-                    ? formatBalanceForCalculation(bal.value, bal.decimals)
-                    : max ?? '0'
-                }
+                max={effectiveMax || max || balanceMax}
                 isLoading={isLoading}
               />
               <div className="flex flex-col items-end gap-1">
@@ -240,7 +305,7 @@ function MaxDeposit({
                   />
                 ) : (
                   <TokenDisplay
-                    tokens={tokens}
+                    tokens={tokenName?.split('/') ?? ['eth']}
                     tokenName={tokenName}
                   />
                 )}
@@ -254,22 +319,24 @@ function MaxDeposit({
                     <div
                       className={cn(
                         'w-full',
-                        (!bal || bal.value === BigInt(0)) &&
+                        (!sliderMax || sliderMax === '0') &&
                           'opacity-50 cursor-not-allowed'
                       )}
                     >
                       <Slider
-                        value={[utilizationPercentage]}
+                        value={[displayPercentage]}
                         step={1}
                         min={0}
                         max={100}
-                        onValueChange={handleUtilizationChange}
-                        disabled={!bal || bal.value === BigInt(0)}
+                        onValueChange={
+                          readonly ? undefined : handleUtilizationChange
+                        }
+                        disabled={!sliderMax || sliderMax === '0' || readonly}
                         className="w-full"
                       />
                     </div>
                   </TooltipTrigger>
-                  {(!bal || bal.value === BigInt(0)) && (
+                  {(!sliderMax || sliderMax === '0') && (
                     <TooltipContent>
                       <p>No balance available</p>
                     </TooltipContent>
@@ -286,11 +353,7 @@ function MaxDeposit({
               handleInput={handleInput}
               readonly={readonly}
               amount={amount}
-              max={
-                bal
-                  ? formatBalanceForCalculation(bal.value, bal.decimals)
-                  : max ?? '0'
-              }
+              max={effectiveMax || max || balanceMax}
               isLoading={isLoading}
             />
 
@@ -302,22 +365,24 @@ function MaxDeposit({
                       <div
                         className={cn(
                           'w-full',
-                          (!bal || bal.value === BigInt(0)) &&
+                          (!sliderMax || sliderMax === '0') &&
                             'opacity-50 cursor-not-allowed'
                         )}
                       >
                         <Slider
-                          value={[utilizationPercentage]}
+                          value={[displayPercentage]}
                           step={1}
                           min={0}
                           max={100}
-                          onValueChange={handleUtilizationChange}
-                          disabled={!bal || bal.value === BigInt(0)}
+                          onValueChange={
+                            readonly ? undefined : handleUtilizationChange
+                          }
+                          disabled={!sliderMax || sliderMax === '0' || readonly}
                           className="w-full"
                         />
                       </div>
                     </TooltipTrigger>
-                    {(!bal || bal.value === BigInt(0)) && (
+                    {(!sliderMax || sliderMax === '0') && (
                       <TooltipContent>
                         <p>No balance available</p>
                       </TooltipContent>
@@ -352,14 +417,13 @@ function MaxDeposit({
                 />
               ) : (
                 <TokenDisplay
-                  tokens={tokens}
+                  tokens={tokenName?.split('/') ?? ['eth']}
                   tokenName={tokenName}
                 />
               )}
             </div>
           </div>
         </div>
-
         {footerText && (
           <div className="flex w-full mt-2 items-center justify-between text-[11px] text-white/40">
             <span>{footerText}</span>

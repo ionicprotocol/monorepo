@@ -13,8 +13,8 @@ import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import type { VaultRowData } from '@ui/types/SupplyVaults';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import TokenBalance from './Cells/TokenBalance';
 import ActionButton from '../ActionButton';
+import TokenBalance from './Cells/TokenBalance';
 import SupplyVaultDialog from '../dialogs/SupplyVault';
 
 export default function SupplyVaultTable({

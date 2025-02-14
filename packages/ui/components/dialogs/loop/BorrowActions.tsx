@@ -8,8 +8,8 @@ import { Slider } from '@ui/components/ui/slider';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { MarketData } from '@ui/types/TokensDataMap';
 
-import ResultHandler from '../../ResultHandler';
 import Amount from '../../Amount';
+import ResultHandler from '../../ResultHandler';
 
 export type LoopProps = {
   borrowableAssets: Address[];

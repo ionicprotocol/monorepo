@@ -11,12 +11,12 @@ import { Card } from '@ui/components/ui/card';
 import { REWARDS_TO_SYMBOL } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/ionic/useSdk';
 import { useFlywheelRewards } from '@ui/hooks/useFlyWheelRewards';
+import { cn } from '@ui/lib/utils';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import ResultHandler from '../ResultHandler';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
-import { cn } from '@ui/lib/utils';
 
 type FlyWheelRewardsProps = {
   cToken: Address;

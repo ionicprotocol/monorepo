@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { utils } from 'ethers';
+import { parseUnits } from 'ethers';
 import { ThreeCircles } from 'react-loader-spinner';
 import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
@@ -43,7 +43,7 @@ export function SupplyTab({ assetSymbol }: SupplyTabProps) {
 
       const decimals = assetSymbol === 'WETH' ? 18 : 6;
       const roundedAmount = Number(amount).toFixed(decimals);
-      const parsedAmount = utils.parseUnits(roundedAmount, decimals);
+      const parsedAmount = parseUnits(roundedAmount, decimals);
 
       await supply(parsedAmount);
       setAmount('');

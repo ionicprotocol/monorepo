@@ -478,8 +478,8 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     initialCf: "0.10",
-    initialSupplyCap: parseEther(String(5_000_000)).toString(),
-    initialBorrowCap: parseEther(String(4_000_000)).toString()
+    initialSupplyCap: parseEther(String(99_000)).toString(),
+    initialBorrowCap: parseEther(String(99_000)).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

@@ -53,6 +53,13 @@ export const pythConfig: PythAssetConfig[] = [
     validTimePeriodSeconds: 86400, // 24 hrs
     deviationThresholdBps: 100, // 1%
   },
+  {
+    // price feed for MODE
+    priceId: '0x0386e113cc716a7c6a55decd97b19c90ce080d9f2f5255ac78a0e26889446d1e',
+    configRefreshRateInSeconds: 3600,
+    validTimePeriodSeconds: 86400, // 24 hrs
+    deviationThresholdBps: 100, // 1%
+  },
   // {
   //   // price feed for UNI
   //   priceId: '0x78d185a741d07edb3412b09008b7c5cfb9bbbd7d568bf00ba737b456ba171501',

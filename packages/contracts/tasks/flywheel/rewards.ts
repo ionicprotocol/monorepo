@@ -18,8 +18,12 @@ export const getCycleInfoForAllMarkets = async (
     end: number;
     reward: bigint;
     flywheelRewards: Address;
+    flywheel: Address;
     rewardSymbol: string;
+    rewardsLeft: bigint;
   }[] = [];
+  let totalIONLeft = 0n;
+  let fwrs: string[] = []; 
   for (const pool of pools) {
     const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
     const rewardsDistributors = await comptroller.read.getRewardsDistributors();
@@ -35,15 +39,22 @@ export const getCycleInfoForAllMarkets = async (
         const rewardToken = await viem.getContractAt("EIP20Interface", rw);
         const rewardSymbol = await rewardToken.read.symbol();
         const cycleInfo = await flywheelRewards.read.rewardsCycle([cToken]);
+        const rewardsLeft = await rewardToken.read.balanceOf([flywheelRewards.address]);
+        if (rewardSymbol === "ION" && !fwrs.includes(fwr)) {
+          totalIONLeft += rewardsLeft;
+          fwrs.push(fwr);
+        }
         if (cycleInfo[0] !== 0 && cycleInfo[1] !== 0) {
           rewardsCycles.push({
             symbol,
             cToken,
             start: cycleInfo[0],
             end: cycleInfo[1],
-            reward: cycleInfo[2],
+            reward: (cycleInfo[2] / BigInt(1e18)),
             flywheelRewards: flywheelRewards.address,
-            rewardSymbol
+            flywheel : flywheel.address,
+            rewardSymbol,
+            rewardsLeft: (rewardsLeft / BigInt(1e18)),
           });
 
           // console.log(
@@ -67,10 +78,11 @@ export const getCycleInfoForAllMarkets = async (
     console.log("-".repeat(30));
     rewards.forEach((reward) => {
       console.log(
-        `Market: ${reward.symbol} (${reward.cToken}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Start Time: ${reward.start}\n${"-".repeat(20)}`
+        `Market: ${reward.symbol} (${reward.cToken}) | Flywheel (${reward.flywheel}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Tokens Left: ${reward.rewardsLeft} | Start Time: ${reward.start}\n${"-".repeat(20)}`
       );
     });
   });
+  console.log(`Total ION Left: ${totalIONLeft / BigInt(1e18)}`);
 };
 
 task("flywheel:get_cycle_info", "get cycle info from flywheel").setAction(async (_, { viem, deployments }) => {
