@@ -53,7 +53,7 @@ export function Split() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
-      {hasVoted && <InfoVoted chainId={chain} />}
+      {hasVoted && <InfoVoted />}
       <Separator className="bg-white/10 mb-4" />
       <div className="space-y-6">
         <div>

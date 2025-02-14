@@ -28,7 +28,7 @@ export function WithdrawTab({ closeDialog }: { closeDialog: () => void }) {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
-      {hasVoted && <InfoVoted chainId={chain} />}
+      {hasVoted && <InfoVoted />}
       <div className="border border-red-500 text-red-500 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
         <InfoIcon className="h-5 w-5 flex-shrink-0" />
         <span>

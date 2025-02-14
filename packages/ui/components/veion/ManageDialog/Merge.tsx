@@ -56,7 +56,7 @@ export function Merge() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
-      {hasVoted && <InfoVoted chainId={chain} />}
+      {hasVoted && <InfoVoted />}
 
       {!hasAvailablePositions ? (
         <div className="text-sm text-white/70 bg-white/5 rounded-md p-4 text-center">

@@ -18,11 +18,11 @@ import {
   TooltipTrigger,
   TooltipContent
 } from '@ui/components/ui/tooltip';
+import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
-import { getChainName } from '@ui/constants/mock';
-import { ChainId } from '@ui/types/veION';
+import type { ChainId } from '@ui/types/veION';
 
 const GovernanceHeader = ({
   view = 'MyVeion',

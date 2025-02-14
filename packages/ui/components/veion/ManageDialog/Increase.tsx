@@ -37,7 +37,7 @@ export function Increase() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
-      {hasVoted && <InfoVoted chainId={chain} />}
+      {hasVoted && <InfoVoted />}
 
       <MaxDeposit
         headerText={'Lock Amount'}

@@ -129,7 +129,7 @@ export function Delegate() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
-      {hasVoted && <InfoVoted chainId={chain} />}
+      {hasVoted && <InfoVoted />}
       {!canDelegate ? (
         <div className="space-y-4">
           <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
