@@ -5,6 +5,7 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
 
 import { logTransaction, prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import leveredPositionArtifacts from "../artifacts/contracts/ionic/levered/LeveredPosition.sol/LeveredPosition.json";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -27,7 +28,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const protocolAddress: Address = deployer as Hex;
   const rewardTokenAddress: Address = chainDeployParams.ION;
   const collateralBp: number = 2500;
-  const nonBlacklistableBytecode: string = "0x";
+  const nonBlacklistableBytecode: string = leveredPositionArtifacts.bytecode;
 
   let emissionsManager;
   try {

@@ -1,5 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { createWalletClient, Address, Hash, encodeFunctionData, Hex, http } from "viem";
+import { createWalletClient, Address, Hash, encodeFunctionData, Hex, http, zeroAddress } from "viem";
 import { base, bob, fraxtal, mode, optimism } from "viem/chains";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
@@ -86,12 +86,40 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   console.log(`Extensions Set: ${veIONFirstExtension.address}, ${veIONSecondExtension.address}`);
   const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
+  const owner = (await veION.read.owner()) as Address;
+
+  // ╔══════════════════════════════════════════╗
+  // ║          SET LP TOKEN TYPE               ║
+  // ╚══════════════════════════════════════════╝
+  for (let i = 0; i < veParams.lpTokens.length; i++) {
+    const token = veParams.lpTokens[i];
+    const type = veParams.lpTokenTypes[i];
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: veION,
+        functionName: "setLpTokenType",
+        args: [token, type],
+        description: `Set LP Token Type: ${token} to ${type}`,
+        inputs: [
+          { internalType: "address", name: "_token", type: "address" },
+          { internalType: "uint8", name: "_type", type: "uint8" }
+        ]
+      });
+    } else {
+      hash = await IveION.write.setLpTokenType([token, type], { from: deployer });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      if (receipt.status === "success") {
+        console.log(`Successfully set Lp Type: ${token}, ${type}`);
+      } else {
+        console.error(`Transaction ${hash} failed: ${receipt.status}`);
+      }
+    }
+  }
 
   // ╔══════════════════════════════════════════╗
   // ║            SET LP WHITELIST              ║
   // ║  Configuring which LP tokens are allowed ║
   // ╚══════════════════════════════════════════╝
-  const owner = (await veION.read.owner()) as Address;
   if (owner.toLowerCase() !== deployer.toLowerCase()) {
     await prepareAndLogTransaction({
       contractInstance: veION,
@@ -256,34 +284,6 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   }
 
   // ╔══════════════════════════════════════════╗
-  // ║          SET LP TOKEN TYPE               ║
-  // ╚══════════════════════════════════════════╝
-  for (let i = 0; i < veParams.lpTokens.length; i++) {
-    const token = veParams.lpTokens[i];
-    const type = veParams.lpTokenTypes[i];
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
-      await prepareAndLogTransaction({
-        contractInstance: veION,
-        functionName: "setLpTokenType",
-        args: [token, type],
-        description: `Set LP Token Type: ${token} to ${type}`,
-        inputs: [
-          { internalType: "address", name: "_token", type: "address" },
-          { internalType: "uint8", name: "_type", type: "uint8" }
-        ]
-      });
-    } else {
-      hash = await IveION.write.setLpTokenType([token, type], { from: deployer });
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      if (receipt.status === "success") {
-        console.log(`Successfully set Lp Type: ${token}, ${type}`);
-      } else {
-        console.error(`Transaction ${hash} failed: ${receipt.status}`);
-      }
-    }
-  }
-
-  // ╔══════════════════════════════════════════╗
   // ║          SET VEAERO                      ║
   // ╚══════════════════════════════════════════╝
   if (veParams.veAERO) {
@@ -377,6 +377,30 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       console.log(
         `Successfully set staking strategy to : ${stakeStrategy.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
       );
+    } else {
+      console.error(`Transaction ${hash} failed: ${receipt.status}`);
+    }
+  }
+
+  // ╔══════════════════════════════════════════╗
+  // ║          SET TOGGLE SPLIT TRUE           ║
+  // ╚══════════════════════════════════════════╝
+  if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    await prepareAndLogTransaction({
+      contractInstance: veION,
+      functionName: "toggleSplit",
+      args: [zeroAddress, true],
+      description: `Toggle global split: ${true}`,
+      inputs: [
+        { internalType: "address", name: "_account", type: "address" },
+        { internalType: "bool", name: "_isAllowed", type: "bool" }
+      ]
+    });
+  } else {
+    hash = await IveION.write.toggleSplit([zeroAddress, true], { from: deployer });
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    if (receipt.status === "success") {
+      console.log(`Successfully toggled global split: ${true}`);
     } else {
       console.error(`Transaction ${hash} failed: ${receipt.status}`);
     }
