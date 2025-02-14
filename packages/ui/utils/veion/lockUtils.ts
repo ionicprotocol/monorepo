@@ -55,7 +55,11 @@ export const createVeIONLock = (
       delegatedTokenIds: [],
       delegatedAmounts: []
     },
-    ethPrice
+    ethPrice,
+    votingStatus = {
+      hasVoted: false,
+      currentEpoch: 0
+    }
   }: {
     supplyResults: SupplyResult[] | undefined;
     userLockResults: SimpleLockResult[] | undefined;
@@ -67,6 +71,10 @@ export const createVeIONLock = (
     tokenPrice: bigint;
     delegation?: Delegation;
     ethPrice: number;
+    votingStatus: {
+      hasVoted: boolean;
+      currentEpoch: number;
+    };
   }
 ) => {
   const supplyResult = supplyResults?.[i];
@@ -94,6 +102,7 @@ export const createVeIONLock = (
     totalSupply,
     tokenPrice,
     delegation,
-    ethPrice
+    ethPrice,
+    votingStatus
   );
 };

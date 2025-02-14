@@ -172,25 +172,11 @@ export const useMarketRows = (
             supplyAPR: supplyRates?.[asset.cToken]
               ? supplyRates[asset.cToken] * 100
               : 0,
-            supplyRewards,
-            nativeAssetYield,
             supplyAPRTotal: calculateTotalAPR({
               type: 'supply',
               baseAPR: supplyRates?.[asset.cToken]
                 ? supplyRates[asset.cToken] * 100
-                : 0,
-              rewards: supplyRewards,
-              effectiveNativeYield:
-                nativeAssetYield !== undefined
-                  ? nativeAssetYield * 100
-                  : config?.supply?.underlyingAPR,
-              merklAprForOP: config?.supply?.op
-                ? merklApr?.find(
-                    (info) =>
-                      info.token?.toLowerCase() ===
-                      asset.underlyingToken?.toLowerCase()
-                  )?.apr
-                : undefined
+                : 0
             }),
             cTokenAddress: asset.cToken as `0x${string}`,
             comptrollerAddress: poolData.comptroller as `0x${string}`
@@ -222,25 +208,11 @@ export const useMarketRows = (
             borrowAPR: borrowRates?.[asset.cToken]
               ? borrowRates[asset.cToken] * 100
               : 0,
-            borrowRewards,
-            nativeAssetYield,
             borrowAPRTotal: calculateTotalAPR({
               type: 'borrow',
               baseAPR: borrowRates?.[asset.cToken]
                 ? borrowRates[asset.cToken] * 100
-                : 0,
-              rewards: borrowRewards,
-              effectiveNativeYield:
-                nativeAssetYield !== undefined
-                  ? nativeAssetYield * 100
-                  : config?.borrow?.underlyingAPR,
-              merklAprForOP: config?.borrow?.op
-                ? merklApr?.find(
-                    (info) =>
-                      info.token?.toLowerCase() ===
-                      asset.underlyingToken?.toLowerCase()
-                  )?.apr
-                : undefined
+                : 0
             }),
             cTokenAddress: asset.cToken as `0x${string}`,
             comptrollerAddress: poolData.comptroller as `0x${string}`

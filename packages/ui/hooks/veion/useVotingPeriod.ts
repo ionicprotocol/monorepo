@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
-import { usePublicClient } from 'wagmi';
+import { usePublicClient, useReadContracts } from 'wagmi';
 
 import { getiVoterContract } from '@ui/constants/veIon';
 
@@ -10,7 +10,7 @@ const EPOCH_DURATION_SECONDS = EPOCH_DURATION_DAYS * 24 * 60 * 60;
 const VOTING_CUTOFF_HOURS = 12;
 const VOTING_CUTOFF_SECONDS = VOTING_CUTOFF_HOURS * 60 * 60;
 
-const calculateCurrentEpoch = () => {
+export const calculateCurrentEpoch = () => {
   const now = Math.floor(Date.now() / 1000);
   const timeDiff = now - EPOCH_START_TIMESTAMP;
   return Math.floor(timeDiff / EPOCH_DURATION_SECONDS);
@@ -148,4 +148,37 @@ export interface VotingPeriodInfo {
   };
   isVotingClosed: boolean;
   refetch: () => Promise<void>;
+}
+
+export function useVotingStatuses(chain: string, tokenIds: string[]) {
+  const voterContract = getiVoterContract(+chain);
+
+  const { data: lastVotedResults, isLoading: isLoadingVotes } =
+    useReadContracts({
+      contracts: tokenIds.map((tokenId) => ({
+        ...voterContract,
+        functionName: 'lastVoted',
+        args: [BigInt(tokenId)]
+      }))
+    });
+
+  const votingStatuses = useMemo(() => {
+    if (!lastVotedResults) return {};
+
+    return tokenIds.reduce<Record<string, boolean>>((acc, tokenId, index) => {
+      const result = lastVotedResults[index];
+      if (result?.status === 'success') {
+        const lastVoted = Number(result.result);
+        acc[tokenId] = hasVotedInCurrentEpoch(lastVoted);
+      } else {
+        acc[tokenId] = false;
+      }
+      return acc;
+    }, {});
+  }, [lastVotedResults, tokenIds]);
+
+  return {
+    votingStatuses,
+    isLoading: isLoadingVotes
+  };
 }

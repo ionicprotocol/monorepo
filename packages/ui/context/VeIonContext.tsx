@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { formatEther } from 'viem';
-import { useAccount, useBalance, useChainId } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 
 import { isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
@@ -90,7 +90,7 @@ const VeIONContext = createContext<VeIONContextType>(defaultContext);
 
 export function VeIONProvider({ children }: { children: ReactNode }) {
   const { address } = useAccount();
-  const defaultChainId = useChainId();
+  const defaultChainId = 34443;
   const searchParams = useSearchParams();
   const [currentChain, setCurrentChain] = useState<number>(defaultChainId);
   const [selectedManagePosition, setSelectedManagePosition] =

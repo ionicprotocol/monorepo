@@ -31,6 +31,8 @@ export type APRCellProps = {
   nativeAssetYield?: number;
   underlyingToken: Hex;
   aprTotal?: number;
+  noRewards?: boolean;
+  disabled?: boolean;
 };
 
 const FlyWheelRewards = dynamic(() => import('../FlyWheelRewards'), {
@@ -54,6 +56,9 @@ export default function APR(props: APRCellProps) {
   const showFlywheel =
     config?.flywheel && (rewards || []).filter((r) => r.apy).length > 0;
 
+  const disabled = props.disabled;
+  const noRewards = props.noRewards;
+
   return (
     <HoverCard openDelay={50}>
       <HoverCardTrigger asChild>
@@ -63,7 +68,7 @@ export default function APR(props: APRCellProps) {
             <span
               className={cn(
                 'rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1',
-                showIonBadge
+                showIonBadge && !disabled
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
               )}
@@ -74,37 +79,29 @@ export default function APR(props: APRCellProps) {
                 alt="ION"
                 width={16}
                 height={16}
-                className={cn('rounded-full', !showIonBadge && 'opacity-50')}
+                className={cn(
+                  'rounded-full',
+                  (!showIonBadge || disabled) && 'opacity-50'
+                )}
               />
             </span>
 
-            {/* {showIonBadge && (
-              <span className="rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1 bg-accent text-green-900">
-                + ION APR
-                <Image
-                  src="/img/ionic-green-on-black.png"
-                  alt="ION"
-                  width={16}
-                  height={16}
-                  className="rounded-full"
-                />
-              </span>
-            )} */}
+            {(showRewardsBadge || effectiveNativeYield !== undefined) &&
+              !noRewards &&
+              !disabled && (
+                <div
+                  className={cn(
+                    'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
+                    pools[dropdownSelectedChain].text,
+                    pools[dropdownSelectedChain].bg
+                  )}
+                >
+                  <span>+ Rewards</span>
+                  <AssetIcons rewards={rewardIcons} />
+                </div>
+              )}
 
-            {(showRewardsBadge || effectiveNativeYield !== undefined) && (
-              <div
-                className={cn(
-                  'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
-                  pools[dropdownSelectedChain].text,
-                  pools[dropdownSelectedChain].bg
-                )}
-              >
-                <span>+ Rewards</span>
-                <AssetIcons rewards={rewardIcons} />
-              </div>
-            )}
-
-            {(config?.turtle || config?.kelp) && (
+            {(config?.turtle || config?.kelp) && !noRewards && (
               <span className="text-darkone rounded-md w-max md:ml-0 text-center">
                 <a
                   className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[3px] md:px-1 lg:px-1.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -154,7 +151,7 @@ export default function APR(props: APRCellProps) {
             <span className="text-xs font-medium">{baseAPRFormatted}%</span>
           </div>
 
-          {config?.op && (
+          {config?.op && !noRewards && (
             <div className="flex justify-between items-center gap-2">
               <Link
                 href="https://app.merkl.xyz/?chain=34443"
@@ -177,7 +174,7 @@ export default function APR(props: APRCellProps) {
             </div>
           )}
 
-          {effectiveNativeYield !== undefined && (
+          {effectiveNativeYield !== undefined && !noRewards && (
             <div className="flex justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <Image
@@ -199,25 +196,26 @@ export default function APR(props: APRCellProps) {
             </div>
           )}
 
-          {additionalRewards.map((reward) => (
-            <div
-              key={reward.name}
-              className="flex justify-between items-center gap-4"
-            >
-              <div className="flex items-center gap-2">
-                <Image
-                  src={reward.icon}
-                  alt={reward.name}
-                  width={16}
-                  height={16}
-                  className="w-4 h-4 rounded"
-                />
-                <span className="text-xs text-gray-400">{reward.text}</span>
+          {!noRewards &&
+            additionalRewards.map((reward) => (
+              <div
+                key={reward.name}
+                className="flex justify-between items-center gap-4"
+              >
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={reward.icon}
+                    alt={reward.name}
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 rounded"
+                  />
+                  <span className="text-xs text-gray-400">{reward.text}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {(config?.turtle || config?.kelp) && (
+          {(config?.turtle || config?.kelp) && !noRewards && (
             <Link
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
@@ -245,7 +243,7 @@ export default function APR(props: APRCellProps) {
             </Link>
           )}
 
-          {showFlywheel && (
+          {showFlywheel && !noRewards && (
             <div className="flex justify-between items-center gap-4">
               <FlyWheelRewards
                 cToken={cToken}
