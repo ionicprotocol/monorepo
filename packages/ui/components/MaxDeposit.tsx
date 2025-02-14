@@ -111,6 +111,12 @@ function MaxDeposit({
     const percentage = value[0];
 
     try {
+      // When slider is at 100%, use the exact maxValue instead of calculating
+      if (percentage === 100) {
+        handleInput(maxValue);
+        return;
+      }
+
       const calculatedAmount = (Number(sliderMax) * percentage) / 100;
 
       let formattedAmount: string;
@@ -178,20 +184,8 @@ function MaxDeposit({
     if (!handleInput || !maxValue) return;
 
     try {
-      const num = Number(maxValue);
-      if (isNaN(num)) {
-        console.error('Invalid maxValue:', maxValue);
-        return;
-      }
-
-      // For very small numbers, use full precision
-      if (num < 0.00001) {
-        handleInput(num.toFixed(18));
-        return;
-      }
-
-      // For regular numbers, limit to 4 decimal places
-      handleInput(num.toFixed(4));
+      // Always use the full precision maxValue when clicking max
+      handleInput(maxValue);
     } catch (error) {
       console.error('Error in handleMax:', error);
     }
@@ -239,7 +233,13 @@ function MaxDeposit({
 
   const displayPercentage = useMemo(() => {
     if (!amount || !max || Number(max) === 0) return 0;
-    return (Number(amount) / Number(max)) * 100;
+
+    // If amount exactly matches max, return 100
+    if (amount === max) return 100;
+
+    // Otherwise calculate percentage with higher precision
+    const percentage = (Number(amount) / Number(max)) * 100;
+    return Math.min(percentage, 100); // Ensure we never exceed 100%
   }, [amount, max]);
 
   const formatBalanceForDisplay = (value: bigint, decimals: number): string => {

@@ -4,19 +4,17 @@ import { useEffect, useState } from 'react';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import { formatEther } from 'viem';
 import { base, mode } from 'viem/chains';
 
-import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import ToggleLinks from '@ui/components/ToggleLink';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
-import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import {
   MyVeionTable,
   DelegateVeIonTable,
   GovernanceHeader
 } from '@ui/components/veion';
+import DelegatedVeionInfo from '@ui/components/veion/DelegatedVeionInfo';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 
@@ -66,12 +64,15 @@ export default function Governance() {
       <Card className="w-full bg-grayone">
         <CardHeader className="px-6 pt-6 pb-2">
           <div className="flex w-full items-center justify-between">
-            <div className="bg-grayUnselect rounded-md">
-              <ToggleLinks
-                arrText={['My veION', 'Delegated veION']}
-                baseUrl="/veion/governance"
-                currentChain={chain}
-              />
+            <div className="flex">
+              <div className="bg-grayUnselect rounded-md">
+                <ToggleLinks
+                  arrText={['My veION', 'Delegated veION']}
+                  baseUrl="/veion/governance"
+                  currentChain={chain}
+                />
+              </div>
+              {view === 'Delegated veION' && <DelegatedVeionInfo />}
             </div>
             <div className="flex gap-4 items-center">
               <div className="flex flex-col text-right min-w-[160px] justify-center">

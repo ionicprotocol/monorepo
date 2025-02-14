@@ -73,6 +73,10 @@ export class VeIONLock implements VeIONTableData {
     boost: bigint;
     totalSupply: bigint;
   };
+  votingStatus: {
+    hasVoted: boolean;
+    currentEpoch: number;
+  };
 
   constructor(
     id: string,
@@ -83,12 +87,17 @@ export class VeIONLock implements VeIONTableData {
     totalSupply: bigint,
     tokenPrice: bigint,
     delegation: Delegation,
-    ethPrice: number
+    ethPrice: number,
+    votingStatus: {
+      hasVoted: boolean;
+      currentEpoch: number;
+    }
   ) {
     this.id = id;
     this.chainId = chainId;
     this.lpType = lpType;
     this.lpTokenAddress = lpTokenAddress;
+    this.votingStatus = votingStatus;
 
     const now = Date.now();
     const endDate = new Date(Number(raw.end) * 1000);
@@ -225,7 +234,8 @@ export class VeIONLock implements VeIONTableData {
       votingPower: this.votingPower.amount,
       votingBoost: Number(this.votingPower.boost),
       votingPercentage: this.votingPower.percentage,
-      enableClaim: this.status.isClaimable
+      enableClaim: this.status.isClaimable,
+      votingStatus: this.votingStatus
     };
   }
 
@@ -257,7 +267,7 @@ export class VeIONLock implements VeIONTableData {
       votingBoost: this.votingPower.boost,
       votingPercentage: this.votingPower.percentage,
       delegation: this.delegation,
-      position: this.id // Adding this to match the interface used in PositionTitle
+      position: this.id
     };
   }
 }

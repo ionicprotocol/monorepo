@@ -5,11 +5,9 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 
-import { ExternalLink, LockIcon } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { base, mode } from 'viem/chains';
-import { useChainId } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
@@ -28,16 +26,13 @@ const NetworkSelector = dynamic(
 );
 
 export default function EnhancedVeIon() {
+  const { liquidity, currentChain } = useVeIONContext();
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
 
-  const { liquidity } = useVeIONContext();
-  const chainId = useChainId();
-  const searchParams = useSearchParams();
-  const querychain = searchParams.get('chain');
-  const selectedtoken = querychain === '8453' ? 'eth' : 'mode';
-  const chain = querychain ? querychain : String(chainId);
+  const selectedtoken = currentChain === 8453 ? 'eth' : 'mode';
 
   return (
     <div className="min-h-screen py-12">
@@ -73,7 +68,7 @@ export default function EnhancedVeIon() {
               </Link>
             </div>
             <NetworkSelector
-              dropdownSelectedChain={+chain}
+              dropdownSelectedChain={currentChain}
               nopool={true}
               enabledChains={[mode.id, base.id]}
             />
@@ -100,7 +95,7 @@ export default function EnhancedVeIon() {
                 onClick: () => setIsAddLiquidityOpen(true),
                 get: 'vAMM'
               }}
-              chain={+chain}
+              chain={currentChain}
             />
 
             <LPRow
@@ -119,7 +114,7 @@ export default function EnhancedVeIon() {
                 onClick: () => setIsMigrateOpen(true),
                 get: 'vAMM'
               }}
-              chain={+chain}
+              chain={currentChain}
             />
 
             <LPRow
@@ -138,7 +133,7 @@ export default function EnhancedVeIon() {
                 onClick: () => setIsDialogOpen(true),
                 get: 'veION'
               }}
-              chain={+chain}
+              chain={currentChain}
             />
           </div>
         </CardContent>

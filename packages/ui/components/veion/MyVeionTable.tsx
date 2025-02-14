@@ -11,6 +11,7 @@ import type {
   MarketCellProps
 } from '@ui/components/CommonTable';
 import TokenPair from '@ui/components/TokenPair';
+import { pools } from '@ui/constants';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import type { MyVeionData } from '@ui/types/veION';
 
@@ -208,9 +209,18 @@ function MyVeionTable() {
       />
 
       <CommonTable
+        hidePR={false}
         data={myLocks}
         columns={myVeionColumns}
         isLoading={isLoading}
+        getRowStyle={(row) => ({
+          badge: row.original.votingStatus.hasVoted
+            ? { text: 'Voted' }
+            : undefined,
+          borderClassName: row.original.votingStatus.hasVoted
+            ? pools[row.original.chainId]?.border
+            : undefined
+        })}
       />
     </div>
   );
