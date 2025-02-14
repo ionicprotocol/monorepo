@@ -162,7 +162,7 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { emissions, prices } = useVeIONContext();
+  const { emissions, prices, liquidity } = useVeIONContext();
   const { veIonBalanceUsd } = prices;
 
   const { lockedValue, totalDeposits } = emissions;
@@ -235,7 +235,15 @@ const EmissionsStatus = () => {
             {lockedValue.percentage.toFixed(6)}%)
           </span>
         </div>
-        <div className="text-xs">TOTAL DEPOSITS: ${totalDeposits.usdValue}</div>
+        <div className="text-xs">
+          TOTAL DEPOSITS:{' '}
+          {liquidity.locked.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
+        </div>
       </div>
     </div>
   );
