@@ -5,6 +5,8 @@ import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
+import InfoVoted from './InfoVoted';
+
 export function Unlock() {
   const { selectedManagePosition } = useVeIONContext();
   const chain = Number(selectedManagePosition?.chainId);
@@ -13,6 +15,7 @@ export function Unlock() {
     Number(chain)
   );
   const isPermanent = selectedManagePosition?.lockExpires.isPermanent;
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
 
   const onUnlock = async () => {
     if (!address || !selectedManagePosition) {
@@ -32,6 +35,7 @@ export function Unlock() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted chainId={chain} />}
       <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
         <InfoIcon className="h-5 w-5 flex-shrink-0" />
         <div className="space-y-2">
@@ -69,7 +73,7 @@ export function Unlock() {
           </div>
           <TransactionButton
             onSubmit={onUnlock}
-            isDisabled={!address}
+            isDisabled={!address || hasVoted}
             buttonText="Unlock veION"
           />
         </>
@@ -84,7 +88,7 @@ export function Unlock() {
           </div>
           <TransactionButton
             onSubmit={onLock}
-            isDisabled={!address}
+            isDisabled={!address || hasVoted}
             buttonText="Lock veION"
             targetChainId={chain}
           />

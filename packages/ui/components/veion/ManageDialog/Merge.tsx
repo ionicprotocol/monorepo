@@ -16,6 +16,7 @@ import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
+import InfoVoted from './InfoVoted';
 import CustomTooltip from '../../CustomTooltip';
 
 export function Merge() {
@@ -24,6 +25,8 @@ export function Merge() {
   const { locks, selectedManagePosition, setSelectedManagePosition } =
     useVeIONContext();
   const chain = Number(selectedManagePosition?.chainId);
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
+
   const { handleMerge } = useVeIONManage(Number(chain));
 
   const availableLPs = locks.myLocks
@@ -52,32 +55,38 @@ export function Merge() {
   };
 
   return (
-    <div className="flex flex-col gap-y-2 py-2 px-3">
-      <p className="text-[10px] text-white/50">Select veION to merge into</p>
+    <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted chainId={chain} />}
 
       {!hasAvailablePositions ? (
         <div className="text-sm text-white/70 bg-white/5 rounded-md p-4 text-center">
           No positions available to merge
         </div>
       ) : (
-        <Select
-          onValueChange={setSelectedLp}
-          value={selectedLp}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select LP position" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableLPs.map((lp) => (
-              <SelectItem
-                key={lp.id}
-                value={lp.id}
-              >
-                #{lp.id} - {lp.votingPower}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div>
+          <p className="text-[10px] text-white/50 pb-2">
+            Select veION to merge into
+          </p>
+
+          <Select
+            onValueChange={setSelectedLp}
+            value={selectedLp}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select LP position" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableLPs.map((lp) => (
+                <SelectItem
+                  key={lp.id}
+                  value={lp.id}
+                >
+                  #{lp.id} - {lp.votingPower}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       )}
 
       <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4 mt-2">
@@ -89,7 +98,7 @@ export function Merge() {
         </span>
       </div>
 
-      <Separator className="bg-white/10 my-5" />
+      <Separator className="bg-white/10 my-2" />
 
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         <div className="flex items-center gap-2">

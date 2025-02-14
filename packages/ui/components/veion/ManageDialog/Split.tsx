@@ -9,6 +9,7 @@ import { Separator } from '@ui/components/ui/separator';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
+import InfoVoted from './InfoVoted';
 import { PrecisionSlider } from '../../PrecisionSlider';
 
 export function Split() {
@@ -19,6 +20,7 @@ export function Split() {
   const { address } = useAccount();
   const { handleSplit } = useVeIONManage(Number(chain));
 
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
   const rawAmount = selectedManagePosition?.lockedBLP?.rawAmount || '0';
   const totalAmount = BigInt(rawAmount);
 
@@ -51,6 +53,7 @@ export function Split() {
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted chainId={chain} />}
       <Separator className="bg-white/10 mb-4" />
       <div className="space-y-6">
         <div>
@@ -92,7 +95,7 @@ export function Split() {
       </div>
       <TransactionButton
         onSubmit={onSplit}
-        isDisabled={!address}
+        isDisabled={!address || hasVoted}
         buttonText="Split veION"
         targetChainId={chain}
       />

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+
 import Image from 'next/image';
+
 import { Info } from 'lucide-react';
+
 import TransactionButton from '@ui/components/TransactionButton';
 import { Button } from '@ui/components/ui/button';
 import {
@@ -138,6 +141,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           <div className="space-y-2 text-sm text-blue-100">
             <p>• Votes count once per epoch</p>
             <p>• You can&apos;t recast votes within the same epoch</p>
+            <p>• You can&apos;t modify your position until the next epoch</p>
             <p>• Voting rewards will be available in the next epoch</p>
           </div>
         </div>
