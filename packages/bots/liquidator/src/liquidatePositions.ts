@@ -38,6 +38,13 @@ const HF_MIN = parseEther("0.5");
 const MAX_HEALTH_FACTOR = parseEther("1");
 const MIN_LIQUIDATION_USD = parseEther("0"); // Minimum liquidation value of $0.10
 
+type HealthFactorError = {
+  user: string;
+  error: Error;
+};
+
+type HealthFactorResult = bigint | { error: Error; user: `0x${string}` };
+
 async function getFusePoolUsers(comptroller: Address, botType: BotType) {
   const poolUsers: PoolUserStruct[] = [];
   let page = 0;
@@ -49,49 +56,89 @@ async function getFusePoolUsers(comptroller: Address, botType: BotType) {
   });
 
   while (true) {
-    const [, users] = await client.readContract({
-      abi: ionicComptrollerAbi,
-      address: comptroller,
-      functionName: "getPaginatedBorrowers",
-      args: [BigInt(page), BigInt(PAGE_SIZE)],
-    });
-    if (users.length === 0) {
+    try {
+      const [, users] = await client.readContract({
+        abi: ionicComptrollerAbi,
+        address: comptroller,
+        functionName: "getPaginatedBorrowers",
+        args: [BigInt(page), BigInt(PAGE_SIZE)],
+      });
+
+      if (users.length === 0) {
+        break;
+      }
+
+      // Process assets in batches
+
+      // const healthFactors = await client.multicall({
+      //   contracts: users.map((user) => ({
+      //     abi: poolLensAbi,
+      //     functionName: "getHealthFactor",
+      //     address: sdk.contracts.PoolLens.address,
+      //     args: [user, comptroller],
+      //   })),
+      // });
+
+      const healthFactorPromises = users.map((user) =>
+        client
+          .readContract({
+            abi: poolLensAbi,
+            functionName: "getHealthFactor",
+            address: sdk.contracts.PoolLens.address,
+            args: [user, comptroller],
+          })
+          .then((result): HealthFactorResult => result as bigint)
+          .catch(
+            (error): HealthFactorResult => ({
+              error,
+              user,
+            })
+          )
+      );
+
+      const healthFactorResults = await Promise.all(healthFactorPromises);
+
+      // Process results and handle errors
+      const errors: HealthFactorError[] = [];
+
+      healthFactorResults.forEach((result, index) => {
+        if (typeof result === "object" && "error" in result) {
+          errors.push({
+            user: users[index],
+            error: result.error,
+          });
+          return;
+        }
+
+        const health = result;
+
+        if (health < MAX_HEALTH_FACTOR && health > HF_MIN && botType === BotType.Pyth) {
+          poolUsers.push({ account: users[index], health });
+        } else if (health < healthFactorThreshold && health > HF_MIN && botType === BotType.Standard) {
+          poolUsers.push({ account: users[index], health });
+        }
+      });
+
+      if (errors.length > 0) {
+        logger.error(`Failed to fetch health factors for ${errors.length} users:`, {
+          comptroller,
+          page,
+          errors: errors.map((e) => ({
+            user: e.user,
+            error: e.error.message,
+          })),
+        });
+      }
+
+      page++;
+    } catch (error) {
+      logger.error(`Failed to fetch paginated borrowers:`, {
+        comptroller,
+        page,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
       break;
     }
-
-    // Process assets in batches
-
-    // const healthFactors = await client.multicall({
-    //   contracts: users.map((user) => ({
-    //     abi: poolLensAbi,
-    //     functionName: "getHealthFactor",
-    //     address: sdk.contracts.PoolLens.address,
-    //     args: [user, comptroller],
-    //   })),
-    // });
-
-    const healthFactors = await Promise.all(
-      users.map(async (user) => {
-        return await client.readContract({
-          abi: poolLensAbi,
-          functionName: "getHealthFactor",
-          address: sdk.contracts.PoolLens.address,
-          args: [user, comptroller],
-        });
-      })
-    );
-
-    healthFactors.forEach((health, index) => {
-      if (health < MAX_HEALTH_FACTOR && health > HF_MIN && botType === BotType.Pyth) {
-        // console.log("I am in pyth loop")
-        poolUsers.push({ account: users[index], health });
-      } else if (health < healthFactorThreshold && health > HF_MIN && botType === BotType.Standard) {
-        // console.log("I am in standard loop, ")
-        poolUsers.push({ account: users[index], health });
-      }
-    });
-
-    page++;
   }
 
   return {
