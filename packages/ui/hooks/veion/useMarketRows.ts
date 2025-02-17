@@ -108,7 +108,10 @@ export const useMarketRows = (
     return {
       balanceUSD: 0, // need to fix this up
       tokens: details.rewards.map((reward) => ({
-        tokenSymbol: reward.symbol || 'Unknown',
+        tokenSymbol:
+          reward.symbol === 'vAMM-ION/WETH'
+            ? 'ION'
+            : reward.symbol || 'Unknown',
         tokenAmount: Number(reward.weeklyAmount),
         tokenAmountFormatted: reward.formattedWeeklyAmount,
         tokenAmountUSD: 0 // need to fix this up

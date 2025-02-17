@@ -18,6 +18,8 @@ import {
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
+import InfoVoted from './InfoVoted';
+
 type Position = {
   id: string;
   amount: string;
@@ -37,6 +39,7 @@ export function Delegate() {
   const { handleDelegate, handleLockPermanent, getOwnedTokenIds } =
     useVeIONManage(Number(chain));
 
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
   const selectedPosition = positions.find((pos) => pos.id === selectedTokenId);
   const maxDelegateAmount = selectedManagePosition
     ? formatUnits(BigInt(selectedManagePosition.lockedBLP.rawAmount), 18)
@@ -121,10 +124,12 @@ export function Delegate() {
     !selectedPosition?.isPermanent ||
     Number(amount) > Number(maxDelegateAmount) ||
     !address ||
-    isLoading;
+    isLoading ||
+    hasVoted;
 
   return (
     <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted />}
       {!canDelegate ? (
         <div className="space-y-4">
           <div className="border border-yellow-200 text-yellow-200 text-xs flex items-center gap-3 rounded-md py-2.5 px-4">
@@ -137,7 +142,7 @@ export function Delegate() {
           <TransactionButton
             onSubmit={onLockSourcePosition}
             buttonText={`Lock Position #${selectedManagePosition?.id}`}
-            isDisabled={!address}
+            isDisabled={!address || !!hasVoted}
           />
         </div>
       ) : (

@@ -82,9 +82,9 @@ export default function Governance() {
                     {emissions.lockedValue.amount.toFixed(3)}
                   </span>
                 </span>
-                <span className="text-white/50 text-xs whitespace-nowrap">
+                {/* <span className="text-white/50 text-xs whitespace-nowrap">
                   {emissions.lockedValue.percentage.toFixed(2)}% of all veION
-                </span>
+                </span> */}
               </div>
               {/* {view === 'My veION' && (
                 <>
