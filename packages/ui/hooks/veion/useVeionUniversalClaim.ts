@@ -22,6 +22,7 @@ export interface CategoryReward {
 // Helper to determine reward section
 const getRewardSection = (rewardToken: string): CategoryReward['section'] => {
   const token = rewardToken.toLowerCase();
+  console.log('token', token);
   if (token.includes('market')) return 'Market Emissions';
   if (token.includes('lp')) return 'Locked LP Emissions';
   return 'Protocol Bribes';
@@ -45,6 +46,7 @@ export function useVeionUniversalClaim(chainIds: number[]) {
   const { data: rawRewards, isLoading: isLoadingRewards } =
     useAllClaimableRewards(chainIds);
   const { getSdk } = useMultiIonic();
+  console.log('rawRewards', rawRewards);
 
   const { data: categorizedRewards, isLoading: isProcessingRewards } = useQuery(
     {
@@ -64,7 +66,7 @@ export function useVeionUniversalClaim(chainIds: number[]) {
             tokenSymbol,
             amount: formatUnits(reward.amount, 18),
             network: getNetworkName(reward.chainId),
-            section: getRewardSection(reward.rewardToken),
+            section: 'Market Emissions',
             chainId: reward.chainId,
             rewardToken: reward.rewardToken as Address
           };

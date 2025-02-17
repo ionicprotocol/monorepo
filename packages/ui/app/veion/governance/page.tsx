@@ -17,6 +17,8 @@ import {
 import DelegatedVeionInfo from '@ui/components/veion/DelegatedVeionInfo';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
+import ActionButton from '@ui/components/ActionButton';
+import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 
 export default function Governance() {
   const searchParams = useSearchParams();
@@ -33,8 +35,7 @@ export default function Governance() {
   const allChains = [8453, 34443, 10];
   const { data: claimableRewards, isLoading: isLoadingRewards } =
     useAllClaimableRewards(allChains);
-  const totalRewards =
-    claimableRewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
+  const totalRewards = claimableRewards?.length;
 
   useEffect(() => {
     if (!querychain) {
@@ -86,23 +87,17 @@ export default function Governance() {
                   {emissions.lockedValue.percentage.toFixed(2)}% of all veION
                 </span> */}
               </div>
-              {/* {view === 'My veION' && (
+              {view === 'My veION' && (
                 <>
                   <ActionButton
                     action={() => setIsUniversalClaimOpen(true)}
-                    disabled={isLoadingRewards || totalRewards === 0n}
+                    disabled={isLoadingRewards || totalRewards === 0}
                     className="text-[12px] text-black"
                     label={
                       isLoadingRewards ? (
                         'Loading...'
                       ) : (
-                        <>
-                          Claim Rewards (
-                          {Math.round(
-                            +formatEther(totalRewards)
-                          ).toLocaleString()}
-                          )
-                        </>
+                        <>Claim Rewards ({totalRewards})</>
                       )
                     }
                   />
@@ -113,7 +108,7 @@ export default function Governance() {
                     mode="selective"
                   />
                 </>
-              )} */}
+              )}
             </div>
           </div>
         </CardHeader>
