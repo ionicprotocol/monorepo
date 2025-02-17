@@ -18,8 +18,11 @@ import {
   TooltipTrigger,
   TooltipContent
 } from '@ui/components/ui/tooltip';
+import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useVotingPeriod } from '@ui/hooks/veion/useVotingPeriod';
+import type { ChainId } from '@ui/types/veION';
 
 const GovernanceHeader = ({
   view = 'MyVeion',
@@ -162,15 +165,24 @@ const InfoBlock = ({
 );
 
 const EmissionsStatus = () => {
-  const { emissions, prices } = useVeIONContext();
+  const { prices, currentChain } = useVeIONContext();
   const { veIonBalanceUsd } = prices;
 
-  const { lockedValue, totalDeposits } = emissions;
-  const isActive = lockedValue.percentage >= 2.5;
+  const { data: marketData, isLoading: isLoadingMarketData } = useFusePoolData(
+    currentChain === 34443 ? '1' : '0',
+    +currentChain
+  );
+
+  const yourDeposits =
+    (marketData?.totalSupplyBalanceFiat || 0) + veIonBalanceUsd;
+
+  const veionPercentageVsTotalLocked = (veIonBalanceUsd / yourDeposits) * 100;
+
+  const isActive = veionPercentageVsTotalLocked >= 2.5;
 
   // Calculate progress values for both bars
-  const firstBarProgress = Math.min(lockedValue.percentage, 2.5);
-  const secondBarProgress = Math.max(0, lockedValue.percentage - 2.5);
+  const firstBarProgress = Math.min(veionPercentageVsTotalLocked, 2.5);
+  const secondBarProgress = Math.max(0, veionPercentageVsTotalLocked - 2.5);
   const secondBarMax = 97.5;
 
   const thresholdPercentage = 2.5;
@@ -208,7 +220,7 @@ const EmissionsStatus = () => {
       <div className="flex gap-2">
         <div className="w-full relative group">
           <CustomTooltip
-            content={`${lockedValue.percentage.toFixed(2)}% of your collateral worth locked as veION`}
+            content={`${veionPercentageVsTotalLocked.toFixed(2)}% of your collateral worth locked as veION`}
           >
             <div className="flex gap-2">
               <div className="w-[10%]">
@@ -229,13 +241,29 @@ const EmissionsStatus = () => {
       </div>
 
       <div className="flex justify-between items-center text-gray-400">
-        <div className="flex items-center gap-2">
-          <span className="text-xs">
-            YOUR VEION: ${veIonBalanceUsd.toFixed(2)} (
-            {lockedValue.percentage.toFixed(6)}%)
-          </span>
-        </div>
-        <div className="text-xs">TOTAL DEPOSITS: ${totalDeposits.usdValue}</div>
+        <CustomTooltip
+          content={`Your total veION on ${getChainName(currentChain as ChainId)}`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-xs">
+              YOUR VEION: ${veIonBalanceUsd.toFixed(2)} (
+              {veionPercentageVsTotalLocked.toFixed(4)}%)
+            </span>
+          </div>
+        </CustomTooltip>
+        <CustomTooltip
+          content={`Your total deposits into the Ionic Protocol on ${getChainName(currentChain as ChainId)}`}
+        >
+          <div className="text-xs">
+            YOUR DEPOSITS:{' '}
+            {yourDeposits.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
+          </div>
+        </CustomTooltip>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import TransactionButton from '@ui/components/TransactionButton';
 import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 
+import InfoVoted from './InfoVoted';
 import { LockDurationPicker } from '../../LockDurationPicker';
 
 const MIN_LOCK_DURATION = 180;
@@ -17,6 +18,7 @@ const MAX_LOCK_DURATION = 730;
 export function Extend() {
   const { selectedManagePosition } = useVeIONContext();
   const chain = Number(selectedManagePosition?.chainId);
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
   const { address } = useAccount();
   const { handleExtend } = useVeIONManage(
     Number(selectedManagePosition?.chainId)
@@ -84,7 +86,8 @@ export function Extend() {
   };
 
   return (
-    <div className="flex flex-col gap-y-4 p-4">
+    <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted />}
       <div className="flex flex-col gap-y-2">
         <LockDurationPicker
           selectedDuration={selectedDuration}
@@ -117,7 +120,7 @@ export function Extend() {
 
       <TransactionButton
         onSubmit={onExtend}
-        isDisabled={!address || !isExtensionValid}
+        isDisabled={!address || !isExtensionValid || hasVoted}
         buttonText={
           totalDurationAfterExtension > MAX_LOCK_DURATION
             ? 'Cannot exceed maximum duration'

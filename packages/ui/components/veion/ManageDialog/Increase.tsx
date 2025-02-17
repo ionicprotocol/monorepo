@@ -10,8 +10,11 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useVeIONManage } from '@ui/hooks/veion/useVeIONManage';
 import { getToken } from '@ui/utils/getStakingTokens';
 
+import InfoVoted from './InfoVoted';
+
 export function Increase() {
   const { selectedManagePosition } = useVeIONContext();
+  const hasVoted = !!selectedManagePosition?.votingStatus.hasVoted;
   const chain = Number(selectedManagePosition?.chainId);
   const { handleIncrease, tokenValue } = useVeIONManage(Number(chain));
   const { address } = useAccount();
@@ -33,7 +36,9 @@ export function Increase() {
   };
 
   return (
-    <div className="flex flex-col gap-y-2 py-2 px-3">
+    <div className="flex flex-col gap-y-4 py-2 px-3">
+      {hasVoted && <InfoVoted />}
+
       <MaxDeposit
         headerText={'Lock Amount'}
         max={String(tokenValue)}
@@ -44,7 +49,7 @@ export function Increase() {
         chain={+chain}
         showUtilizationSlider
       />
-      <Separator className="bg-white/10 my-4" />
+      <Separator className="bg-white/10 my-2" />
 
       <div className="flex w-full items-center justify-between text-xs text-white/50">
         <div className="flex items-center gap-2">

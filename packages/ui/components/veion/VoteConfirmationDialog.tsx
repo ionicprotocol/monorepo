@@ -92,7 +92,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
         }
       }}
     >
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl h-screen max-h-screen sm:max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Confirm Your Votes</DialogTitle>
           <DialogDescription>
@@ -100,8 +100,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Position Details in 2x2 Grid */}
-        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+        <div className="flex-none p-4 rounded-lg bg-white/5 border border-white/10">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <span className="text-sm text-white/60">Position ID</span>
@@ -137,18 +136,21 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </div>
         </div>
 
-        <div className="flex gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+        <div className="flex-none flex gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
           <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-1" />
           <div className="space-y-2 text-sm text-blue-100">
             <p>• Votes count once per epoch</p>
             <p>• You can&apos;t recast votes within the same epoch</p>
+            <p>• You can&apos;t modify your position until the next epoch</p>
             <p>• Voting rewards will be available in the next epoch</p>
           </div>
         </div>
 
-        {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
+        {error && (
+          <div className="flex-none text-sm text-red-500 mt-2">{error}</div>
+        )}
 
-        <ScrollArea className="h-96 rounded-md border border-white/10">
+        <ScrollArea className="flex-1 min-h-0 rounded-md border border-white/10">
           <div className="p-4">
             <div className="space-y-4">
               {voteEntries.map(([key, vote]) => (
@@ -191,7 +193,7 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
           </div>
         </ScrollArea>
 
-        <DialogFooter className="mt-4 flex items-center justify-end gap-3">
+        <DialogFooter className="flex-none mt-4 flex items-center justify-end gap-3">
           <Button
             variant="outline"
             onClick={onClose}
