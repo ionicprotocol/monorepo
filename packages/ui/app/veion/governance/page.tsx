@@ -6,9 +6,11 @@ import { useSearchParams, useRouter } from 'next/navigation';
 
 import { base, mode } from 'viem/chains';
 
+import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
 import ToggleLinks from '@ui/components/ToggleLink';
 import { Card, CardHeader, CardContent } from '@ui/components/ui/card';
+import UniversalClaimDialog from '@ui/components/UniversalClaimDialog';
 import {
   MyVeionTable,
   DelegateVeIonTable,
@@ -16,7 +18,7 @@ import {
 } from '@ui/components/veion';
 import DelegatedVeionInfo from '@ui/components/veion/DelegatedVeionInfo';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
+import { useRewardsAggregator } from '@ui/hooks/rewards/useRewardsAggregator';
 
 export default function Governance() {
   const searchParams = useSearchParams();
@@ -31,10 +33,9 @@ export default function Governance() {
   const chain = querychain ?? '34443';
 
   const allChains = [8453, 34443, 10];
-  const { data: claimableRewards, isLoading: isLoadingRewards } =
-    useAllClaimableRewards(allChains);
-  const totalRewards =
-    claimableRewards?.reduce((acc, reward) => acc + reward.amount, 0n) ?? 0n;
+  const { rewards, isLoading } = useRewardsAggregator(allChains);
+
+  const totalRewards = rewards?.length;
 
   useEffect(() => {
     if (!querychain) {
@@ -86,23 +87,17 @@ export default function Governance() {
                   {emissions.lockedValue.percentage.toFixed(2)}% of all veION
                 </span> */}
               </div>
-              {/* {view === 'My veION' && (
+              {view === 'My veION' && (
                 <>
                   <ActionButton
                     action={() => setIsUniversalClaimOpen(true)}
-                    disabled={isLoadingRewards || totalRewards === 0n}
+                    disabled={isLoading || totalRewards === 0}
                     className="text-[12px] text-black"
                     label={
-                      isLoadingRewards ? (
+                      isLoading ? (
                         'Loading...'
                       ) : (
-                        <>
-                          Claim Rewards (
-                          {Math.round(
-                            +formatEther(totalRewards)
-                          ).toLocaleString()}
-                          )
-                        </>
+                        <>Claim Rewards ({totalRewards})</>
                       )
                     }
                   />
@@ -113,7 +108,7 @@ export default function Governance() {
                     mode="selective"
                   />
                 </>
-              )} */}
+              )}
             </div>
           </div>
         </CardHeader>
