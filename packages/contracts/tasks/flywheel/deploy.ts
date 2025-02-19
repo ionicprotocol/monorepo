@@ -214,7 +214,7 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
       log: true,
       args: [
         flywheel, // flywheel
-        2484000 // epoch duration
+        604800 // epoch duration
       ],
       waitConfirmations: 1
     });
