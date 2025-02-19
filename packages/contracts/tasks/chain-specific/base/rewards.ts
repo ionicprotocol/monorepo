@@ -8,6 +8,7 @@ import {
   EURC_MARKET,
   eUSD,
   eUSD_MARKET,
+  ezETH_MARKET,
   fBOMB_MARKET,
   hyUSD,
   hyUSD_MARKET,
@@ -880,5 +881,77 @@ task("base:add-rewards:epoch7:supply:reserve", "add rewards to a market").setAct
       "IonicFlywheel_eUSD",
       "IonicFlywheelDynamicRewards_eUSD"
     );
+  }
+);
+
+task("base:flywheel-setup:veion:supply", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION",
+      rewardToken: ION,
+      booster: "",
+      strategies: [
+        weETH_MARKET,
+        ezETH_MARKET,
+        wstETH_MARKET,
+        cbETH_MARKET,
+        AERO_MARKET,
+        USDC_MARKET,
+        eUSD_MARKET,
+        WETH_MARKET,
+        bsdETH_MARKET,
+        hyUSD_MARKET,
+        RSR_MARKET,
+        wsuperOETH_MARKET,
+        wusdm_MARKET,
+        usdPlus_MARKET,
+        wusdPlus_MARKET,
+        USDz_MARKET,
+        EURC_MARKET,
+        cbBTC_MARKET,
+        uSOL_MARKET,
+        uSUI_MARKET,
+        sUSDz_MARKET,
+        fBOMB_MARKET,
+        KLIMA_MARKET
+      ].join(","),
+      pool: COMPTROLLER
+    });
+  }
+);
+
+task("base:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION_Borrow",
+      rewardToken: ION,
+      booster: "IonicFlywheelBorrowBooster_ION",
+      strategies: [
+        weETH_MARKET,
+        ezETH_MARKET,
+        wstETH_MARKET,
+        cbETH_MARKET,
+        AERO_MARKET,
+        USDC_MARKET,
+        eUSD_MARKET,
+        WETH_MARKET,
+        bsdETH_MARKET,
+        hyUSD_MARKET,
+        RSR_MARKET,
+        wsuperOETH_MARKET,
+        wusdm_MARKET,
+        usdPlus_MARKET,
+        wusdPlus_MARKET,
+        USDz_MARKET,
+        EURC_MARKET,
+        cbBTC_MARKET,
+        uSOL_MARKET,
+        uSUI_MARKET,
+        sUSDz_MARKET,
+        fBOMB_MARKET,
+        KLIMA_MARKET
+      ].join(","),
+      pool: COMPTROLLER
+    });
   }
 );

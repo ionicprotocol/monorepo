@@ -34,7 +34,6 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
   });
 
 task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool")
-  .addParam("pool", "address of comptroller", undefined, types.string)
   .addParam("comptroller", "address of comptroller", undefined, types.string)
   .setAction(async (taskArgs, { viem, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
@@ -45,7 +44,7 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
     );
     const pools = await poolDirectory.read.getAllPools();
     for (const pool of pools) {
-      if(pool.comptroller === taskArgs.comptroller) {
+      if (pool.comptroller === taskArgs.comptroller) {
         console.log(pool.name);
         const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
         const comptrollerAsFirstExtension = await viem.getContractAt("ComptrollerFirstExtension", pool.comptroller);
@@ -60,7 +59,7 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
             const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
             await publicClient.waitForTransactionReceipt({ hash: tx });
             console.log("setFlywheelRewards: ");
-          } 
+          }
           if (admin.toLowerCase() !== deployer.toLowerCase()) {
             await prepareAndLogTransaction({
               contractInstance: comptrollerAsFirstExtension,

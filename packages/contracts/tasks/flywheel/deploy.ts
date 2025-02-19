@@ -170,7 +170,7 @@ task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for 
               args: [rewardToken, zeroAddress, flywheelBooster, deployer]
             }
           },
-          owner: deployer
+          owner: "0x7d922bf0975424b3371074f54cC784AF738Dac0D"
         },
         waitConfirmations: 1
       });
