@@ -1,5 +1,6 @@
 import { task } from "hardhat/config";
 import {
+  COMPTROLLER_NATIVE,
   dmBTC_MARKET,
   ezETH_MARKET,
   ION,
@@ -100,5 +101,29 @@ task("mode:add-rewards:borrow", "add rewards to a market").setAction(
       "IonicFlywheelBorrow_Borrow_ION",
       "IonicFlywheelDynamicRewards_Borrow_ION"
     );
+  }
+);
+
+task("mode:flywheel-setup:veion:supply", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION",
+      rewardToken: ION,
+      booster: "",
+      strategies: [MODE_NATIVE_MARKET, WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET].join(","),
+      pool: COMPTROLLER_NATIVE
+    });
+  }
+);
+
+task("mode:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION_Borrow",
+      rewardToken: ION,
+      booster: "IonicFlywheelBorrowBooster_ION",
+      strategies: [MODE_NATIVE_MARKET, WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET].join(","),
+      pool: COMPTROLLER_NATIVE
+    });
   }
 );
