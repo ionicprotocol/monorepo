@@ -29,59 +29,59 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ╚══════════════════════════════════════════╝
   let hash;
   let voter;
-  try {
-    voter = await deployments.deploy("Voter", {
-      from: deployer,
-      log: true,
-      proxy: {
-        proxyContract: "OpenZeppelinTransparentProxy",
-        execute: {
-          init: {
-            methodName: "initialize",
-            args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
-          }
-        }
-        // owner: multisig
-      }
-    });
-    if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });
-    console.log("voter: ", veION.address);
-  } catch (error) {
-    console.error("Could not deploy:", error);
-  }
+  // try {
+  //   voter = await deployments.deploy("Voter", {
+  //     from: deployer,
+  //     log: true,
+  //     proxy: {
+  //       proxyContract: "OpenZeppelinTransparentProxy",
+  //       execute: {
+  //         init: {
+  //           methodName: "initialize",
+  //           args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
+  //         }
+  //       }
+  //       // owner: multisig
+  //     }
+  //   });
+  //   if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });
+  //   console.log("voter: ", veION.address);
+  // } catch (error) {
+  //   console.error("Could not deploy:", error);
+  // }
 
   voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
-  // ╔══════════════════════════════════════════╗
-  // ║               SET LP ARRAY               ║
-  // ║  Configuring which LP tokens are allowed ║
-  // ╚══════════════════════════════════════════╝
-  const owner = (await voter.read.owner()) as Address;
-  if (owner.toLowerCase() !== deployer.toLowerCase()) {
-    await prepareAndLogTransaction({
-      contractInstance: voter,
-      functionName: "setLpTokens",
-      args: [veParams.lpTokens],
-      description: "Set LP Tokens",
-      inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
-    });
-  } else {
-    hash = await voter.write.setLpTokens([veParams.lpTokens], {
-      from: deployer
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === "success") {
-      console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
-    } else {
-      console.error(`Transaction ${hash} failed: ${receipt.status}`);
-    }
-  }
+  // // ╔══════════════════════════════════════════╗
+  // // ║               SET LP ARRAY               ║
+  // // ║  Configuring which LP tokens are allowed ║
+  // // ╚══════════════════════════════════════════╝
+  // const owner = (await voter.read.owner()) as Address;
+  // if (owner.toLowerCase() !== deployer.toLowerCase()) {
+  //   await prepareAndLogTransaction({
+  //     contractInstance: voter,
+  //     functionName: "setLpTokens",
+  //     args: [veParams.lpTokens],
+  //     description: "Set LP Tokens",
+  //     inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
+  //   });
+  // } else {
+  //   hash = await voter.write.setLpTokens([veParams.lpTokens], {
+  //     from: deployer
+  //   });
+  //   const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  //   if (receipt.status === "success") {
+  //     console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
+  //   } else {
+  //     console.error(`Transaction ${hash} failed: ${receipt.status}`);
+  //   }
+  // }
 
-  const poolDirectory = await viem.getContractAt(
-    "PoolDirectory",
-    (await deployments.get("PoolDirectory")).address as Address
-  );
-  console.log(poolDirectory.address);
+  // const poolDirectory = await viem.getContractAt(
+  //   "PoolDirectory",
+  //   (await deployments.get("PoolDirectory")).address as Address
+  // );
+  // console.log(poolDirectory.address);
 
   // ╔══════════════════════════════════════════╗
   // ║               ADD MARKETS                ║
@@ -93,190 +93,202 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     const market = await voter.read.markets([BigInt(i)]);
     marketAlreadyAdded.push({ marketAddress: market[0], side: market[1] });
   }
-  const marketAlreadyAddedAddresses = marketAlreadyAdded.map((market) => market.marketAddress);
-  console.log(marketAlreadyAddedAddresses);
+  // const marketAlreadyAddedAddresses = marketAlreadyAdded.map((market) => market.marketAddress);
+  // console.log(marketAlreadyAddedAddresses);
 
-  const allMarkets: { marketAddress: Address; side: number }[] = [];
-  const [, pools] = await poolDirectory.read.getActivePools();
-  for (let i = 0; i < pools.length; i++) {
-    const pool = pools[i];
-    try {
-      const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
-      const markets = await comptroller.read.getAllMarkets();
-      console.log(`Setting up ${markets.length} Markets`);
-      for (const market of markets) {
-        if (!marketAlreadyAddedAddresses.includes(market)) {
-          allMarkets.push({ marketAddress: market, side: 0 });
-          allMarkets.push({ marketAddress: market, side: 1 });
-          console.log(`Setting up ${market}`);
-        }
-      }
-    } catch (error) {
-      console.error(`Error processing pool ${pool.name}:`, error);
-    }
-  }
+  // const allMarkets: { marketAddress: Address; side: number }[] = [];
+  // const [, pools] = await poolDirectory.read.getActivePools();
+  // for (let i = 0; i < pools.length; i++) {
+  //   const pool = pools[i];
+  //   try {
+  //     const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
+  //     const markets = await comptroller.read.getAllMarkets();
+  //     console.log(`Setting up ${markets.length} Markets`);
+  //     for (const market of markets) {
+  //       if (!marketAlreadyAddedAddresses.includes(market)) {
+  //         allMarkets.push({ marketAddress: market, side: 0 });
+  //         allMarkets.push({ marketAddress: market, side: 1 });
+  //         console.log(`Setting up ${market}`);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error processing pool ${pool.name}:`, error);
+  //   }
+  // }
 
-  try {
-    hash = await voter.write.addMarkets([allMarkets], {
-      from: deployer
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === "success") {
-      console.log(`Successfully set markets for: ${allMarkets}`);
-    } else {
-      console.error(`Transaction ${hash} failed: ${receipt.status}`);
-    }
-  } catch (error) {
-    console.error(`Error adding markets ${error}`);
-  }
+  // try {
+  //   hash = await voter.write.addMarkets([allMarkets], {
+  //     from: deployer
+  //   });
+  //   const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  //   if (receipt.status === "success") {
+  //     console.log(`Successfully set markets for: ${allMarkets}`);
+  //   } else {
+  //     console.error(`Transaction ${hash} failed: ${receipt.status}`);
+  //   }
+  // } catch (error) {
+  //   console.error(`Error adding markets ${error}`);
+  // }
 
   const marketsWithoutRewardAccumulator: { marketAddress: Address; side: number }[] = [];
   for (const market of marketAlreadyAdded) {
     try {
-      const rewardAccumulatorAddress = await voter.read.marketToRewardAccumulators([market.marketAddress, 0]);
-      if (rewardAccumulatorAddress === zeroAddress) {
-        marketsWithoutRewardAccumulator.push(market);
-      }
+      const rewardAccumulatorAddressSupply = await voter.read.marketToRewardAccumulators([market.marketAddress, 0]);
+      const rewardAccumulatorAddressBorrow = await voter.read.marketToRewardAccumulators([market.marketAddress, 1]);
+
+      const rewardAccumulatorSupply = await viem.getContractAt("RewardAccumulator", rewardAccumulatorAddressSupply);
+      const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", rewardAccumulatorAddressBorrow);
+
+      // Transfer ownership of both reward accumulators to the specified address
+      const newOwner = "0x1155b614971f16758C92c4890eD338C9e3ede6b7";
+      await rewardAccumulatorSupply.write.transferOwnership([newOwner], { from: deployer });
+      await rewardAccumulatorBorrow.write.transferOwnership([newOwner], { from: deployer });
+      console.log(
+        `Ownership of reward accumulator for market ${market.marketAddress} (supply) transferred to ${newOwner}`
+      );
+      console.log(
+        `Ownership of reward accumulator for market ${market.marketAddress} (borrow) transferred to ${newOwner}`
+      );
     } catch (error) {
       console.error(`Error querying reward accumulator for market ${market.marketAddress}:`, error);
     }
   }
   console.log("Markets without accumulators", marketsWithoutRewardAccumulator);
 
-  // ╔══════════════════════════════════════════╗
-  // ║     DEPLOY REWARD ACCUMULATORS           ║
-  // ║  AND SET THEM IN THE VOTER CONTRACT      ║
-  // ╚══════════════════════════════════════════╝
+  // // ╔══════════════════════════════════════════╗
+  // // ║     DEPLOY REWARD ACCUMULATORS           ║
+  // // ║  AND SET THEM IN THE VOTER CONTRACT      ║
+  // // ╚══════════════════════════════════════════╝
 
-  const rewardAccumulators: Address[] = [];
-  const marketAddresses: Address[] = [];
-  const marketSides: number[] = [];
+  // const rewardAccumulators: Address[] = [];
+  // const marketAddresses: Address[] = [];
+  // const marketSides: number[] = [];
 
-  // Loop through allMarkets to deploy a RewardAccumulator for each market and configure it
-  let counter = 0;
-  for (const market of marketsWithoutRewardAccumulator) {
-    const deploymentName = `RewardAccumulator_${market.marketAddress}_${market.side}`;
-    try {
-      // Deploy RewardAccumulator
-      const rewardAccumulatorDeployment = await deployments.deploy(deploymentName, {
-        contract: "RewardAccumulator",
-        from: deployer,
-        log: true,
-        proxy: {
-          proxyContract: "OpenZeppelinTransparentProxy",
-          execute: {
-            init: {
-              methodName: "initialize",
-              args: []
-            }
-          }
-          // owner: multisig
-        }
-      });
+  // // Loop through allMarkets to deploy a RewardAccumulator for each market and configure it
+  // let counter = 0;
+  // for (const market of marketsWithoutRewardAccumulator) {
+  //   const deploymentName = `RewardAccumulator_${market.marketAddress}_${market.side}`;
+  //   try {
+  //     // Deploy RewardAccumulator
+  //     const rewardAccumulatorDeployment = await deployments.deploy(deploymentName, {
+  //       contract: "RewardAccumulator",
+  //       from: deployer,
+  //       log: true,
+  //       proxy: {
+  //         proxyContract: "OpenZeppelinTransparentProxy",
+  //         execute: {
+  //           init: {
+  //             methodName: "initialize",
+  //             args: []
+  //           }
+  //         }
+  //         // owner: multisig
+  //       }
+  //     });
 
-      if (rewardAccumulatorDeployment.transactionHash) {
-        await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
-      }
-      console.log(
-        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${marketsWithoutRewardAccumulator.length}`
-      );
+  //     if (rewardAccumulatorDeployment.transactionHash) {
+  //       await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
+  //     }
+  //     console.log(
+  //       `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${marketsWithoutRewardAccumulator.length}`
+  //     );
 
-      // Collect data for setMarketRewardAccumulators
-      rewardAccumulators.push(rewardAccumulatorDeployment.address as Hex);
-      marketAddresses.push(market.marketAddress);
-      marketSides.push(market.side);
-    } catch (error) {
-      console.error(
-        `Error deploying RewardAccumulator for market: ${market.marketAddress}, side: ${market.side}`,
-        error
-      );
-    }
-  }
+  //     // Collect data for setMarketRewardAccumulators
+  //     rewardAccumulators.push(rewardAccumulatorDeployment.address as Hex);
+  //     marketAddresses.push(market.marketAddress);
+  //     marketSides.push(market.side);
+  //   } catch (error) {
+  //     console.error(
+  //       `Error deploying RewardAccumulator for market: ${market.marketAddress}, side: ${market.side}`,
+  //       error
+  //     );
+  //   }
+  // }
 
   // Call setMarketRewardAccumulators in the IVoter contract
-  try {
-    const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators], {
-      from: deployer
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(
-      `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
-    );
-  } catch (error) {
-    console.error("Error setting market reward accumulators:", error);
-  }
+  // try {
+  //   const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators], {
+  //     from: deployer
+  //   });
+  //   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(
+  //     `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
+  //   );
+  // } catch (error) {
+  //   console.error("Error setting market reward accumulators:", error);
+  // }
 
-  // ╔══════════════════════════════════════════╗
-  // ║       DEPLOY BRIBES AND SET MAPPINGS     ║
-  // ╚══════════════════════════════════════════╝
+  // // ╔══════════════════════════════════════════╗
+  // // ║       DEPLOY BRIBES AND SET MAPPINGS     ║
+  // // ╚══════════════════════════════════════════╝
 
-  const bribes: Address[] = []; // To store deployed BribeRewards addresses
+  // const bribes: Address[] = []; // To store deployed BribeRewards addresses
 
-  counter = 0;
-  for (const rewardAccumulator of rewardAccumulators) {
-    const deploymentName = `BribeRewards_${rewardAccumulator}`;
-    try {
-      // Deploy BribeRewards contract
-      const bribeDeployment = await deployments.deploy(deploymentName, {
-        contract: "BribeRewards",
-        from: deployer,
-        log: true,
-        proxy: {
-          proxyContract: "OpenZeppelinTransparentProxy",
-          execute: {
-            init: {
-              methodName: "initialize",
-              args: [voter.address, veION.address] // Replace `voter` and `veION` with actual instances
-            }
-          }
-          // owner: multisig
-        }
-      });
+  // counter = 0;
+  // for (const rewardAccumulator of rewardAccumulators) {
+  //   const deploymentName = `BribeRewards_${rewardAccumulator}`;
+  //   try {
+  //     // Deploy BribeRewards contract
+  //     const bribeDeployment = await deployments.deploy(deploymentName, {
+  //       contract: "BribeRewards",
+  //       from: deployer,
+  //       log: true,
+  //       proxy: {
+  //         proxyContract: "OpenZeppelinTransparentProxy",
+  //         execute: {
+  //           init: {
+  //             methodName: "initialize",
+  //             args: [voter.address, veION.address] // Replace `voter` and `veION` with actual instances
+  //           }
+  //         }
+  //         // owner: multisig
+  //       }
+  //     });
 
-      if (bribeDeployment.transactionHash) {
-        await publicClient.waitForTransactionReceipt({ hash: bribeDeployment.transactionHash as Hash });
-      }
+  //     if (bribeDeployment.transactionHash) {
+  //       await publicClient.waitForTransactionReceipt({ hash: bribeDeployment.transactionHash as Hash });
+  //     }
 
-      console.log(
-        `Deployed BribeRewards at: ${bribeDeployment.address}, Counter: ${++counter}/${rewardAccumulators.length}`
-      );
-      bribes.push(bribeDeployment.address as Hex);
-    } catch (error) {
-      console.error(`Error deploying BribeRewards for RewardAccumulator: ${rewardAccumulator}`, error);
-    }
-  }
+  //     console.log(
+  //       `Deployed BribeRewards at: ${bribeDeployment.address}, Counter: ${++counter}/${rewardAccumulators.length}`
+  //     );
+  //     bribes.push(bribeDeployment.address as Hex);
+  //   } catch (error) {
+  //     console.error(`Error deploying BribeRewards for RewardAccumulator: ${rewardAccumulator}`, error);
+  //   }
+  // }
 
-  try {
-    const txHash = await voter.write.setBribes([rewardAccumulators, bribes], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
-  } catch (error) {
-    console.error("Error setting bribes in Voter contract:", error);
-  }
+  // try {
+  //   const txHash = await voter.write.setBribes([rewardAccumulators, bribes], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
+  // } catch (error) {
+  //   console.error("Error setting bribes in Voter contract:", error);
+  // }
 
-  // ╔══════════════════════════════════════════╗
-  // ║           SET MAX VOTING NUM             ║
-  // ╚══════════════════════════════════════════╝
-  try {
-    const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum)], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
+  // // ╔══════════════════════════════════════════╗
+  // // ║           SET MAX VOTING NUM             ║
+  // // ╚══════════════════════════════════════════╝
+  // try {
+  //   const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum)], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
 
-  const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
+  // const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
 
-  // ╔══════════════════════════════════════════╗
-  // ║           SET VOTER ON VEION             ║
-  // ╚══════════════════════════════════════════╝
-  try {
-    const txHash = await IveION.write.setVoter([voter.address], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set voter: ${voter.address}`);
-  } catch (error) {
-    console.error("Error setting voter:", error);
-  }
+  // // ╔══════════════════════════════════════════╗
+  // // ║           SET VOTER ON VEION             ║
+  // // ╚══════════════════════════════════════════╝
+  // try {
+  //   const txHash = await IveION.write.setVoter([voter.address], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set voter: ${voter.address}`);
+  // } catch (error) {
+  //   console.error("Error setting voter:", error);
+  // }
 };
 
 func.tags = ["prod", "veion", "voter"];
