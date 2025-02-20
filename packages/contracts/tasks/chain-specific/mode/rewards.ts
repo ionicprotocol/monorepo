@@ -145,7 +145,7 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
       (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
     );
 
-    const veIONFlywheelBorrow = await deployments.get("IonicFlywheel_veION_Borrow");
+    const veIONFlywheelBorrow = await deployments.get("IonicFlywheelBorrow_veION_Borrow");
     const veIONFlywheelBorrowContract = await viem.getContractAt(
       "IonicFlywheel",
       veIONFlywheelBorrow.address as Address
@@ -174,8 +174,12 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
       console.log("Reward accumulator set for market supply: ", market, tx);
 
       const rewardAccumulator = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorSupply);
-      tx = await rewardAccumulator.write.approve([ION, veIONFlywheelSupply.address as Address]);
-      await publicClient.waitForTransactionReceipt({ hash: tx });
+      try {
+        tx = await rewardAccumulator.write.approve([ION, veIONFlywheelSupply.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+      } catch (e) {
+        console.log("Reward accumulator already approved for market supply: ", market, tx);
+      }
 
       console.log("Reward accumulator approved for market supply: ", market, tx);
 
@@ -190,8 +194,12 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
       console.log("Reward accumulator set for market borrow: ", market, tx);
 
       const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorBorrow);
-      tx = await rewardAccumulatorBorrow.write.approve([ION, veIONFlywheelBorrow.address as Address]);
-      await publicClient.waitForTransactionReceipt({ hash: tx });
+      try {
+        tx = await rewardAccumulatorBorrow.write.approve([ION, veIONFlywheelBorrow.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+      } catch (e) {
+        console.log("Reward accumulator already approved for market borrow: ", market, tx);
+      }
 
       console.log("Reward accumulator approved for market borrow: ", market, tx);
     }
