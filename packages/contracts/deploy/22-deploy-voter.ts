@@ -140,14 +140,35 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", rewardAccumulatorAddressBorrow);
 
       // Transfer ownership of both reward accumulators to the specified address
-      const newOwner = "0x1155b614971f16758C92c4890eD338C9e3ede6b7";
-      await rewardAccumulatorSupply.write.transferOwnership([newOwner], { from: deployer });
-      await rewardAccumulatorBorrow.write.transferOwnership([newOwner], { from: deployer });
+      const currentOwnerSupply = await rewardAccumulatorSupply.read.owner();
+      const currentOwnerBorrow = await rewardAccumulatorBorrow.read.owner();
+      if (currentOwnerSupply.toLowerCase() !== deployer.toLowerCase()) {
+        const pendingOwnerSupply = await rewardAccumulatorSupply.read.pendingOwner();
+        if (pendingOwnerSupply.toLowerCase() === deployer.toLowerCase()) {
+          const txSupply = await rewardAccumulatorSupply.write.acceptOwnership();
+          await publicClient.waitForTransactionReceipt({ hash: txSupply });
+        } else {
+          console.log("Pending owner supply is not deployer!!!!: ", pendingOwnerSupply);
+        }
+      } else {
+        console.log("Reward accumulator supply already owned by new owner");
+      }
+      if (currentOwnerBorrow.toLowerCase() !== deployer.toLowerCase()) {
+        const pendingOwnerBorrow = await rewardAccumulatorBorrow.read.pendingOwner();
+        if (pendingOwnerBorrow.toLowerCase() === deployer.toLowerCase()) {
+          const txBorrow = await rewardAccumulatorBorrow.write.acceptOwnership();
+          await publicClient.waitForTransactionReceipt({ hash: txBorrow });
+        } else {
+          console.log("Pending owner borrow is not deployer!!!!: ", pendingOwnerBorrow);
+        }
+      } else {
+        console.log("Reward accumulator borrow already owned by new owner");
+      }
       console.log(
-        `Ownership of reward accumulator for market ${market.marketAddress} (supply) transferred to ${newOwner}`
+        `Ownership of reward accumulator for market ${market.marketAddress} (supply) transferred to ${deployer}`
       );
       console.log(
-        `Ownership of reward accumulator for market ${market.marketAddress} (borrow) transferred to ${newOwner}`
+        `Ownership of reward accumulator for market ${market.marketAddress} (borrow) transferred to ${deployer}`
       );
     } catch (error) {
       console.error(`Error querying reward accumulator for market ${market.marketAddress}:`, error);
