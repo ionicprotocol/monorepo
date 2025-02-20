@@ -1,4 +1,3 @@
-import { viem } from "hardhat";
 import { task, types } from "hardhat/config";
 import { Address, getAddress, zeroAddress } from "viem";
 
@@ -100,7 +99,7 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
     if (taskArgs.name.includes("Borrow")) {
       contractName = "IonicFlywheelBorrow";
     } else contractName = "IonicFlywheel";
-  
+
     const flywheel = await viem.getContractAt(`${contractName}`, flywheelAddress);
     const addTx = await flywheel.write.addStrategyForRewards([strategyAddress]);
     await publicClient.waitForTransactionReceipt({ hash: addTx });
@@ -141,7 +140,7 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
 task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .addParam("rewardToken", "Reward token of flywheel", undefined, types.string)
-  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", undefined, types.string)
+  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", types.string)
   .addParam("strategies", "address of strategy for which to enable the flywheel", undefined, types.string)
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(
@@ -218,7 +217,7 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
       ],
       waitConfirmations: 1
     });
-  
+
     if (name.includes("Borrow")) {
       contractName = "IonicFlywheelBorrow";
     } else contractName = "IonicFlywheel";
@@ -247,32 +246,32 @@ task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM re
     return booster;
   });
 
-  task("flywheel:set-reward-accumulators-and-approve", "Deploy flywheel borrow bosster for LM rewards")
-  .addParam("rewardAccumulator", "String to append to the flywheel contract name", undefined, types.string)
-  .addParam("market", "String to append to the flywheel contract name", undefined, types.string)
-  .addParam("flywheelRewards", "String to append to the flywheel contract name", undefined, types.string)
-  .setAction(async ({ name, flywheel }, { deployments, getNamedAccounts }) => {
-    
+task("flywheel:set-reward-accumulators-and-approve", "Deploy flywheel borrow bosster for LM rewards")
+  .addOptionalParam("rewardAccumulator", "String to append to the flywheel contract name", undefined, types.string)
+  .addOptionalParam("market", "String to append to the flywheel contract name", undefined, types.string)
+  .addOptionalParam("flywheelRewards", "String to append to the flywheel contract name", undefined, types.string)
+  .setAction(async (_, { deployments, getNamedAccounts, viem }) => {
     const { deployer } = await getNamedAccounts();
 
     const flywheelRewardsContract = await viem.getContractAt(
-      'IonicFlywheelDynamicRewards',
-      (await deployments.get('IonicFlywheelDynamicRewards_veION')).address as Address
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
     );
-    await flywheelRewardsContract.write.setRewardAccumulators(
-      [
-        ['0x49420311B518f3d0c94e897592014de53831cfA3'],
-        ['0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4']
-      ] as const
-    );
-    
+    await flywheelRewardsContract.write.setRewardAccumulators([
+      ["0x49420311B518f3d0c94e897592014de53831cfA3"],
+      ["0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"]
+    ] as const);
+
     console.log("WETH Reward accumulator set");
 
     const rewardAccumulator = await viem.getContractAt(
-      'RewardAccumulator',
-      (await deployments.get('RewardAccumulator_0x49420311B518f3d0c94e897592014de53831cfA3_0_Proxy')).address as Address
+      "RewardAccumulator",
+      (await deployments.get("RewardAccumulator_0x49420311B518f3d0c94e897592014de53831cfA3_0_Proxy")).address as Address
     );
-    await rewardAccumulator.write.approve('0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5' as Address,'0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f' as Address);
+    await rewardAccumulator.write.approve([
+      "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
+      "0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f"
+    ]);
 
     console.log("WETH approved");
   });
