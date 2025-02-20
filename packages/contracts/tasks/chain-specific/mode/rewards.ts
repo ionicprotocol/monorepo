@@ -1,4 +1,4 @@
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import {
   COMPTROLLER_NATIVE,
   dmBTC_MARKET,
@@ -125,5 +125,29 @@ task("mode:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
       strategies: [MODE_NATIVE_MARKET, WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET].join(","),
       pool: COMPTROLLER_NATIVE
     });
+  }
+);
+
+task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and approve").setAction(
+  async (_, { deployments, viem }) => {
+    const publicClient = await viem.getPublicClient();
+
+    const flywheelRewardsContract = await viem.getContractAt(
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
+    );
+
+    const _rewardAccumulator = "0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5";
+    let tx = await flywheelRewardsContract.write.setRewardAccumulators([[WETH_MARKET], [_rewardAccumulator]]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+
+    console.log("WETH Reward accumulator set: ", tx);
+
+    const rewardAccumulator = await viem.getContractAt("RewardAccumulator", _rewardAccumulator);
+    const veIONFlywheel = await deployments.get("IonicFlywheel_veION");
+    tx = await rewardAccumulator.write.approve([ION, veIONFlywheel.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+
+    console.log("WETH approved: ", tx);
   }
 );
