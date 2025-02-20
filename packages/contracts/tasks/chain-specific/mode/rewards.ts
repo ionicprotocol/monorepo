@@ -175,7 +175,7 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
 
       const rewardAccumulator = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorSupply);
       try {
-        tx = await rewardAccumulator.write.approve([ION, veIONFlywheelSupply.address as Address]);
+        tx = await rewardAccumulator.write.approve([ION, flywheelRewardsContractSupply.address as Address]);
         await publicClient.waitForTransactionReceipt({ hash: tx });
       } catch (e) {
         console.log("Reward accumulator already approved for market supply: ", market, tx);
@@ -195,7 +195,7 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
 
       const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorBorrow);
       try {
-        tx = await rewardAccumulatorBorrow.write.approve([ION, veIONFlywheelBorrow.address as Address]);
+        tx = await rewardAccumulatorBorrow.write.approve([ION, flywheelRewardsContractBorrow.address as Address]);
         await publicClient.waitForTransactionReceipt({ hash: tx });
       } catch (e) {
         console.log("Reward accumulator already approved for market borrow: ", market, tx);

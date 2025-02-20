@@ -956,33 +956,103 @@ task("base:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
   }
 );
 
-task("base:flywheel:set-reward-accumulators-and-approve", "Deploy flywheel borrow bosster for LM rewards")
-  .addOptionalParam("rewardAccumulator", "String to append to the flywheel contract name", undefined, types.string)
-  .addOptionalParam("market", "String to append to the flywheel contract name", undefined, types.string)
-  .addOptionalParam("flywheelRewards", "String to append to the flywheel contract name", undefined, types.string)
-  .setAction(async (_, { deployments, getNamedAccounts, viem }) => {
-    const { deployer } = await getNamedAccounts();
+task("base:flywheel:set-reward-accumulators-and-approve", "Set accumulators and approve").setAction(
+  async (_, { deployments, viem }) => {
+    const publicClient = await viem.getPublicClient();
 
-    const flywheelRewardsContract = await viem.getContractAt(
+    const markets = [
+      weETH_MARKET,
+      ezETH_MARKET,
+      wstETH_MARKET,
+      cbETH_MARKET,
+      AERO_MARKET,
+      USDC_MARKET,
+      eUSD_MARKET,
+      WETH_MARKET,
+      bsdETH_MARKET,
+      hyUSD_MARKET,
+      RSR_MARKET,
+      wsuperOETH_MARKET,
+      wusdm_MARKET,
+      usdPlus_MARKET,
+      wusdPlus_MARKET,
+      USDz_MARKET,
+      EURC_MARKET,
+      cbBTC_MARKET,
+      uSOL_MARKET,
+      uSUI_MARKET,
+      sUSDz_MARKET,
+      fBOMB_MARKET,
+      KLIMA_MARKET
+    ];
+    const emissionsManager = await deployments.get("EmissionsManager");
+    const veIONFlywheelSupply = await deployments.get("IonicFlywheel_veION");
+    const veIONFlywheelSupplyContract = await viem.getContractAt(
+      "IonicFlywheel",
+      veIONFlywheelSupply.address as Address
+    );
+
+    const flywheelRewardsContractSupply = await viem.getContractAt(
       "IonicFlywheelDynamicRewards",
       (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
     );
-    await flywheelRewardsContract.write.setRewardAccumulators([
-      ["0x49420311B518f3d0c94e897592014de53831cfA3"],
-      ["0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"]
-    ] as const);
 
-    console.log("WETH Reward accumulator set");
-
-    const rewardAccumulator = await viem.getContractAt(
-      "RewardAccumulator",
-      (await deployments.get("RewardAccumulator_0x49420311B518f3d0c94e897592014de53831cfA3_0_Proxy")).address as Address
+    const veIONFlywheelBorrow = await deployments.get("IonicFlywheelBorrow_veION_Borrow");
+    const veIONFlywheelBorrowContract = await viem.getContractAt(
+      "IonicFlywheel",
+      veIONFlywheelBorrow.address as Address
     );
-    const veIONFlywheel = await deployments.get("IonicFlywheel_veION");
-    await rewardAccumulator.write.approve([
-      "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
-      veIONFlywheel.address as Address
-    ]);
 
-    console.log("WETH approved");
-  });
+    // Set emissions manager
+    let tx = await veIONFlywheelSupplyContract.write.setEmissionsManager([emissionsManager.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+    tx = await veIONFlywheelBorrowContract.write.setEmissionsManager([emissionsManager.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+
+    const flywheelRewardsContractBorrow = await viem.getContractAt(
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION_Borrow")).address as Address
+    );
+
+    for (const market of markets) {
+      const symbol = await(await viem.getContractAt("EIP20Interface", market as Address)).read.symbol();
+      console.log("symbol: ", symbol);
+      // supply side config
+      const _rewardAccumulatorSupply = (await deployments.get(`RewardAccumulator_${market}_0`)).address as Address;
+      let tx = await flywheelRewardsContractSupply.write.setRewardAccumulators([
+        [market as Address],
+        [_rewardAccumulatorSupply]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+
+      console.log("Reward accumulator set for market supply: ", market, tx);
+
+      const rewardAccumulator = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorSupply);
+      try {
+        tx = await rewardAccumulator.write.approve([ION, flywheelRewardsContractSupply.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log("Reward accumulator approved for market supply: ", market, tx);
+      } catch (e) {
+        console.log("Reward accumulator already approved for market supply: ", market, tx);
+      }
+      // borrow side config
+      const _rewardAccumulatorBorrow = (await deployments.get(`RewardAccumulator_${market}_1`)).address as Address;
+      tx = await flywheelRewardsContractBorrow.write.setRewardAccumulators([
+        [market as Address],
+        [_rewardAccumulatorBorrow]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+
+      console.log("Reward accumulator set for market borrow: ", market, tx);
+
+      const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorBorrow);
+      try {
+        tx = await rewardAccumulatorBorrow.write.approve([ION, flywheelRewardsContractBorrow.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        console.log("Reward accumulator approved for market borrow: ", market, tx);
+      } catch (e) {
+        console.log("Reward accumulator already approved for market borrow: ", market, tx);
+      }
+    }
+  }
+);
