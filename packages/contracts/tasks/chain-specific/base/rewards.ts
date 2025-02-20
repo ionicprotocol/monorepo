@@ -1,4 +1,4 @@
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import {
   AERO_MARKET,
   bsdETH_MARKET,
@@ -955,3 +955,34 @@ task("base:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
     });
   }
 );
+
+task("base:flywheel:set-reward-accumulators-and-approve", "Deploy flywheel borrow bosster for LM rewards")
+  .addOptionalParam("rewardAccumulator", "String to append to the flywheel contract name", undefined, types.string)
+  .addOptionalParam("market", "String to append to the flywheel contract name", undefined, types.string)
+  .addOptionalParam("flywheelRewards", "String to append to the flywheel contract name", undefined, types.string)
+  .setAction(async (_, { deployments, getNamedAccounts, viem }) => {
+    const { deployer } = await getNamedAccounts();
+
+    const flywheelRewardsContract = await viem.getContractAt(
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
+    );
+    await flywheelRewardsContract.write.setRewardAccumulators([
+      ["0x49420311B518f3d0c94e897592014de53831cfA3"],
+      ["0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"]
+    ] as const);
+
+    console.log("WETH Reward accumulator set");
+
+    const rewardAccumulator = await viem.getContractAt(
+      "RewardAccumulator",
+      (await deployments.get("RewardAccumulator_0x49420311B518f3d0c94e897592014de53831cfA3_0_Proxy")).address as Address
+    );
+    const veIONFlywheel = await deployments.get("IonicFlywheel_veION");
+    await rewardAccumulator.write.approve([
+      "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
+      veIONFlywheel.address as Address
+    ]);
+
+    console.log("WETH approved");
+  });

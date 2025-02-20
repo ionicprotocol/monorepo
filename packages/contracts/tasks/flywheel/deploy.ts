@@ -245,33 +245,3 @@ task("flywheel:deploy-borrow-booster", "Deploy flywheel borrow bosster for LM re
 
     return booster;
   });
-
-task("flywheel:set-reward-accumulators-and-approve", "Deploy flywheel borrow bosster for LM rewards")
-  .addOptionalParam("rewardAccumulator", "String to append to the flywheel contract name", undefined, types.string)
-  .addOptionalParam("market", "String to append to the flywheel contract name", undefined, types.string)
-  .addOptionalParam("flywheelRewards", "String to append to the flywheel contract name", undefined, types.string)
-  .setAction(async (_, { deployments, getNamedAccounts, viem }) => {
-    const { deployer } = await getNamedAccounts();
-
-    const flywheelRewardsContract = await viem.getContractAt(
-      "IonicFlywheelDynamicRewards",
-      (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
-    );
-    await flywheelRewardsContract.write.setRewardAccumulators([
-      ["0x49420311B518f3d0c94e897592014de53831cfA3"],
-      ["0x1E174C097Fc48a26f5c3D495ADEC0f7345977cD4"]
-    ] as const);
-
-    console.log("WETH Reward accumulator set");
-
-    const rewardAccumulator = await viem.getContractAt(
-      "RewardAccumulator",
-      (await deployments.get("RewardAccumulator_0x49420311B518f3d0c94e897592014de53831cfA3_0_Proxy")).address as Address
-    );
-    await rewardAccumulator.write.approve([
-      "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5",
-      "0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f"
-    ]);
-
-    console.log("WETH approved");
-  });

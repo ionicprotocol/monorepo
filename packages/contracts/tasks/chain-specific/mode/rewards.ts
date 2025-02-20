@@ -137,8 +137,9 @@ task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and 
       (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
     );
 
-    const _rewardAccumulator = "0xB7dcA84C35CB7b3eDae4b80945AcE77803C066D5";
-    let tx = await flywheelRewardsContract.write.setRewardAccumulators([[WETH_MARKET], [_rewardAccumulator]]);
+    const _rewardAccumulator = "0xd496fa43090549b29673120525eC379d8e1692BC";
+
+    let tx = await flywheelRewardsContract.write.setRewardAccumulators([[WETH_NATIVE_MARKET], [_rewardAccumulator]]);
     await publicClient.waitForTransactionReceipt({ hash: tx });
 
     console.log("WETH Reward accumulator set: ", tx);
