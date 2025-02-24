@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Image from 'next/image';
 
@@ -22,26 +22,27 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
+import { chainIdToName } from '@ui/constants';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 import { useRewardsAggregator } from '@ui/hooks/rewards/useRewardsAggregator';
 import { useToast } from '@ui/hooks/use-toast';
 
 interface ClaimDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  chainIds: number[];
   mode?: 'all' | 'selective';
 }
 
 const UniversalClaimDialog = ({
   isOpen,
   onClose,
-  chainIds,
   mode = 'selective'
 }: ClaimDialogProps) => {
   const [selectedRewards, setSelectedRewards] = useState<
     Record<string, boolean>
   >({});
-  const { rewards, isLoading, claimRewards } = useRewardsAggregator(chainIds);
+  const { rewards, isLoading, claimRewards } = useRewardsAggregator();
+  const { currentChain } = useVeIONContext();
   const { toast } = useToast();
   const [isClaimLoading, setIsClaimLoading] = useState(false);
 
@@ -50,6 +51,11 @@ const UniversalClaimDialog = ({
     'Protocol Bribes',
     'Locked LP Emissions'
   ];
+
+  // Reset selections on chain switch
+  useEffect(() => {
+    setSelectedRewards({});
+  }, [currentChain]);
 
   const handleClaim = async () => {
     try {
@@ -62,12 +68,7 @@ const UniversalClaimDialog = ({
       } else {
         await claimRewards();
       }
-
-      toast({
-        title: 'Success',
-        description: 'Successfully claimed rewards'
-      });
-
+      toast({ title: 'Success', description: 'Successfully claimed rewards' });
       setSelectedRewards({});
       onClose();
     } catch (error) {
@@ -83,10 +84,7 @@ const UniversalClaimDialog = ({
   };
 
   const toggleReward = (id: string) => {
-    setSelectedRewards((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setSelectedRewards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const getSelectedCount = () =>
@@ -104,7 +102,8 @@ const UniversalClaimDialog = ({
               <GiftIcon className="size-5 text-white" /> Claim Rewards
             </DialogTitle>
             <p className="text-sm text-white/60">
-              Claim your earned rewards from various protocol activities
+              Claim your earned rewards from various protocol activities on{' '}
+              {chainIdToName[currentChain]}
             </p>
           </DialogHeader>
         </div>
@@ -122,7 +121,10 @@ const UniversalClaimDialog = ({
                     {section}
                   </h3>
                   <div className="bg-white/5 rounded-lg py-1 px-2">
-                    <Table>
+                    <Table
+                      role="table"
+                      aria-label="Rewards available for claiming"
+                    >
                       <TableHeader>
                         <TableRow className="border-white/10 hover:bg-transparent">
                           <TableHead className="text-white/60 py-2 text-xs">
@@ -169,7 +171,7 @@ const UniversalClaimDialog = ({
                                 </div>
                               </TableCell>
                               <TableCell className="text-white py-1.5 text-sm">
-                                {Number(reward.amount).toFixed(6)}
+                                {reward.amount}
                               </TableCell>
                               <TableCell className="text-white py-1.5">
                                 <div className="flex items-center gap-1.5">
@@ -179,6 +181,11 @@ const UniversalClaimDialog = ({
                                     width={14}
                                     height={14}
                                     className="rounded-full"
+                                    onError={({ currentTarget }) => {
+                                      currentTarget.onerror = null;
+                                      currentTarget.src =
+                                        '/img/logo/unknown.png';
+                                    }}
                                     unoptimized
                                   />
                                   <span className="text-sm">

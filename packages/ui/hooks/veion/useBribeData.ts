@@ -2,15 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { erc20Abi } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
+import { VOTERLENS_CHAIN_ADDRESSES } from '../rewards/useBribeRewards';
+
 import type { Address, PublicClient } from 'viem';
 
 import { bribeRewardsAbi } from '@ionicprotocol/sdk';
 import { voterLensAbi } from '@ionicprotocol/sdk/src';
-
-const CHAIN_ADDRESSES = {
-  8453: '0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02', // Base
-  34443: '0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02' // Mode
-} as const;
 
 const CACHE_TIME = 5 * 60 * 1000;
 const STALE_TIME = 60 * 1000;
@@ -43,7 +40,7 @@ type BribeAprData = Record<string, MarketBribeData>;
 export const useBribeData = ({ chain }: { chain: number }) => {
   const publicClient = usePublicClient({ chainId: chain });
   const voterLensAddress =
-    CHAIN_ADDRESSES[chain as keyof typeof CHAIN_ADDRESSES];
+    VOTERLENS_CHAIN_ADDRESSES[chain as keyof typeof VOTERLENS_CHAIN_ADDRESSES];
 
   const { data: bribes = [] } = useReadContract({
     address: voterLensAddress,

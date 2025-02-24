@@ -32,8 +32,7 @@ export default function Governance() {
   const view = queryview ?? 'My veION';
   const chain = querychain ?? '34443';
 
-  const allChains = [8453, 34443, 10];
-  const { rewards, isLoading } = useRewardsAggregator(allChains);
+  const { rewards, isLoading } = useRewardsAggregator();
 
   const totalRewards = rewards?.length;
 
@@ -104,7 +103,6 @@ export default function Governance() {
                   <UniversalClaimDialog
                     isOpen={isUniversalClaimOpen}
                     onClose={() => setIsUniversalClaimOpen(false)}
-                    chainIds={allChains}
                     mode="selective"
                   />
                 </>

@@ -79,13 +79,16 @@ export const shouldGetFeatured: Record<
 
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
-    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
+    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION',
+    '0xC6A394952c097004F83d2dfB61715d245A38735a': 'ION',
+    '0x690A74d2eC0175a69C0962B309E03021C0b5002E': 'ION'
   },
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
     '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
-    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
+    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD',
+    '0x0FAc819628a7F612AbAc1CaD939768058cc0170c': 'ION'
   },
   [optimism.id]: {
     '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
@@ -99,7 +102,7 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   }
 };
 
-export const chainsArr: Record<number, string> = {
+export const chainIdToName: Record<number, string> = {
   [mode.id]: 'Mode',
   [base.id]: 'Base',
   [optimism.id]: 'Optimism',

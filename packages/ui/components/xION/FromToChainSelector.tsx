@@ -6,7 +6,7 @@ import React, { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
-import { chainsArr } from '@ui/constants/index';
+import { chainIdToName } from '@ui/constants/index';
 
 interface IChainSelector {
   newRef: any;
@@ -36,8 +36,8 @@ export default function FromTOChainSelector({
   const selectedToChain = toChain ?? '8453';
   const router = useRouter();
 
-  const fromArr = Object.entries(chainsArr);
-  const toArr = Object.entries(chainsArr).filter(
+  const fromArr = Object.entries(chainIdToName);
+  const toArr = Object.entries(chainIdToName).filter(
     ([key]) => key !== selectedChain
   );
   const createQueryString = useCallback(
@@ -82,14 +82,15 @@ export default function FromTOChainSelector({
           <img
             alt="symbol"
             className={`w-6 inline-block`}
-            src={`/img/logo/${chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase() || 'search'}.png`}
+            src={`/img/logo/${chainIdToName[mode === 'toChain' ? +selectedToChain : +selectedChain]?.toLowerCase() || 'search'}.png`}
             onError={({ currentTarget }) => {
               currentTarget.onerror = null;
               currentTarget.src = '/img/assets/search.png';
             }}
           />
-          {chainsArr[mode === 'toChain' ? +selectedToChain : +selectedChain] ??
-            'Select Chain'}{' '}
+          {chainIdToName[
+            mode === 'toChain' ? +selectedToChain : +selectedChain
+          ] ?? 'Select Chain'}{' '}
           <img
             alt="expand-arrow--v2"
             className={`w-3 transition-all duration-100 ease-linear absolute right-2 top-1/2 -translate-y-1/2 ${
@@ -111,7 +112,7 @@ export default function FromTOChainSelector({
             >
               {chainslist[1]}
               {'  '}
-              {chainsArr[
+              {chainIdToName[
                 mode === 'toChain' ? +selectedToChain : +selectedChain
               ] === chainslist[0] ? (
                 <img

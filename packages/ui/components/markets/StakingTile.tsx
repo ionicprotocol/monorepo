@@ -15,7 +15,7 @@ export default function StakingTile({ chain }: Iprop) {
     <div
       className={`w-full h-full lg:col-span-3 md:col-span-2 col-span-3 px-2 lg:px-[2%] xl:px-[3%] flex  flex-col items-center justify-center md:justify-start gap-3 bg-grayone  py-4 rounded-md`}
     >
-      <h1 className={` mr-auto text-xl font-semibold`}>$ION Staking</h1>
+      <h1 className={` mr-auto text-xl font-semibold`}>ION Emissions</h1>
       <div className={`w-full flex flex-col items-center justify-start `}>
         {+chain === mode.id || +chain === base.id ? (
           <RewardDisplay

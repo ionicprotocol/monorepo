@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { REWARDS_TO_SYMBOL, chainsArr } from '@ui/constants/index';
+import { REWARDS_TO_SYMBOL, chainIdToName } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
@@ -139,7 +139,7 @@ export default function ClaimRewardPopover({
                   <img
                     alt="icon"
                     className="size-5 rounded mx-auto  inline-block"
-                    src={`/img/symbols/32/color/${chainsArr[+reward.chainId]}.png`}
+                    src={`/img/symbols/32/color/${chainIdToName[+reward.chainId]}.png`}
                   />
                   {reward.chainId === chain ? (
                     <img
