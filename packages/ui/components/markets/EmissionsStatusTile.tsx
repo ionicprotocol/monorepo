@@ -25,13 +25,27 @@ export const EmissionsStatusTile = () => {
     currentChain
   );
 
-  const yourDeposits =
-    (marketData?.totalSupplyBalanceFiat || 0) + veIonBalanceUsd;
-  const veionPercentageVsTotalLocked = (veIonBalanceUsd / yourDeposits) * 100;
-  const isActive = veionPercentageVsTotalLocked >= 2.5;
+  // Compare veION to total supply
+  const totalSupply = marketData?.totalSupplyBalanceFiat || 0;
+  const veionPercentageVsTotalSupply =
+    totalSupply === 0 && veIonBalanceUsd > 0
+      ? 100 // If no collateral and veION exists, count as 100%
+      : totalSupply > 0
+        ? (veIonBalanceUsd / totalSupply) * 100
+        : 0;
+  const isActive = veionPercentageVsTotalSupply >= 2.5;
 
-  const firstBarProgress = Math.min(veionPercentageVsTotalLocked, 2.5);
-  const secondBarProgress = Math.max(0, veionPercentageVsTotalLocked - 2.5);
+  // Cap percentage at 100% if it exceeds, or use 100% for zero collateral case
+  const displayPercentage =
+    veionPercentageVsTotalSupply > 100 ? 100 : veionPercentageVsTotalSupply;
+  const displayText =
+    veionPercentageVsTotalSupply > 100 ||
+    (totalSupply === 0 && veIonBalanceUsd > 0)
+      ? '100%+'
+      : `${veionPercentageVsTotalSupply.toFixed(2)}%`;
+
+  const firstBarProgress = Math.min(displayPercentage, 2.5);
+  const secondBarProgress = Math.max(0, displayPercentage - 2.5);
   const secondBarMax = 97.5;
   const thresholdPercentage = 2.5;
 
@@ -68,7 +82,7 @@ export const EmissionsStatusTile = () => {
       <div className="flex gap-2">
         <div className="w-full relative group">
           <CustomTooltip
-            content={`${veionPercentageVsTotalLocked.toFixed(2)}% of your collateral worth locked as veION`}
+            content={`${displayText} of your total supply locked as veION`}
           >
             <div className="flex gap-2">
               <div className="w-[10%]">
@@ -93,16 +107,15 @@ export const EmissionsStatusTile = () => {
           content={`Your total veION on ${getChainName(currentChain as ChainId)}`}
         >
           <span>
-            VEION: ${veIonBalanceUsd.toFixed(2)} (
-            {veionPercentageVsTotalLocked.toFixed(2)}%)
+            YOUR VEION: ${veIonBalanceUsd.toFixed(2)} ({displayText})
           </span>
         </CustomTooltip>
         <CustomTooltip
-          content={`Your total deposits on ${getChainName(currentChain as ChainId)}`}
+          content={`Your total supply on ${getChainName(currentChain as ChainId)}`}
         >
           <span>
-            DEPOSITS: $
-            {yourDeposits.toLocaleString('en-US', {
+            YOUR COLLATERAL: $
+            {totalSupply.toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}
