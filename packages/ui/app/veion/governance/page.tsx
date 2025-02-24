@@ -30,7 +30,7 @@ export default function Governance() {
   const querychain = searchParams.get('chain');
   const queryview = searchParams.get('view');
   const view = queryview ?? 'My veION';
-  const chain = querychain ?? '34443';
+  const chain = querychain ?? '8453';
 
   const { rewards, isLoading } = useRewardsAggregator();
 
@@ -39,7 +39,7 @@ export default function Governance() {
   useEffect(() => {
     if (!querychain) {
       const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set('chain', '34443');
+      newSearchParams.set('chain', '8453');
       if (queryview) {
         newSearchParams.set('view', queryview);
       }
@@ -57,7 +57,7 @@ export default function Governance() {
       <NetworkSelector
         nopool
         dropdownSelectedChain={+chain}
-        enabledChains={[mode.id, base.id]}
+        enabledChains={[base.id, mode.id]}
         upcomingChains={['Optimism']}
       />
 

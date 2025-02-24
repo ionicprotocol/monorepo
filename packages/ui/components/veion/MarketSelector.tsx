@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { ChevronDown } from 'lucide-react';
-import { base, optimism, mode } from 'viem/chains';
+import { base, mode } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -52,7 +52,8 @@ const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
           <NetworkDropdown
             dropdownSelectedChain={currentChain}
             nopool
-            enabledChains={[mode.id, base.id, optimism.id]}
+            enabledChains={[base.id, mode.id]}
+            upcomingChains={['Optimism']}
           />
 
           <DropdownMenu>
