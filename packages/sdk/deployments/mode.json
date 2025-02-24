@@ -438,7 +438,7 @@
       "address": "0xc10fd848a764e878b36Ef9ACb7936dC7FA27EbeB"
     },
     "Comptroller": {
-      "address": "0x34d2f2f2505D504D1D8C849bc35CA9a118B6cB9E"
+      "address": "0x4F6462b8B6c65916d9b585Bc4d8276505a774735"
     },
     "ComptrollerFirstExtension": {
       "address": "0x139b09e9BA6D5E57b23e21f930587647119A1213"
@@ -494,9 +494,6 @@
     "IonicFlywheelBorrow_veION_Borrow_Proxy": {
       "address": "0x72eFD2A5562AFE03009632E2900e5B83214365ad"
     },
-    "IonicFlywheelDynamicRewards_ION": {
-      "address": "0x0ee9f9A0EA64E0EB999A16Eb398006FBD1fE8ecd"
-    },
     "IonicFlywheelDynamicRewards_veION": {
       "address": "0x2212D9E3aC93CAD9DB6096b971b362ff86BcDCbD"
     },
@@ -505,15 +502,6 @@
     },
     "IonicFlywheelLensRouter": {
       "address": "0x01aB485A0fae0667be36AB876c95ADc1A2a5e449"
-    },
-    "IonicFlywheel_ION": {
-      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
-    },
-    "IonicFlywheel_ION_Implementation": {
-      "address": "0x0f3Cf09125c8e920A26AF806eDA8DAa1263A5522"
-    },
-    "IonicFlywheel_ION_Proxy": {
-      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
     },
     "IonicFlywheel_veION": {
       "address": "0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A"

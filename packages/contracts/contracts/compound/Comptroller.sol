@@ -1353,7 +1353,7 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory functionSelectors) {
-    uint8 fnsCount = 32;
+    uint8 fnsCount = 36;
 
     functionSelectors = new bytes4[](fnsCount);
 
@@ -1389,6 +1389,10 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
     functionSelectors[--fnsCount] = this._becomeImplementation.selector;
     functionSelectors[--fnsCount] = this.effectiveSupplyCaps.selector;
     functionSelectors[--fnsCount] = this.effectiveBorrowCaps.selector;
+    functionSelectors[--fnsCount] = this.borrowVerify.selector;
+    functionSelectors[--fnsCount] = this.repayBorrowVerify.selector;
+    functionSelectors[--fnsCount] = this.seizeVerify.selector;
+    functionSelectors[--fnsCount] = this.transferVerify.selector;
 
     require(fnsCount == 0, "use the correct array length");
   }
