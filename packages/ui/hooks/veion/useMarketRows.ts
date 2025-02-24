@@ -1,9 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 
-import { FLYWHEEL_TYPE_MAP } from '@ui/constants';
 import { EXCLUDED_MARKETS } from '@ui/constants/veIon';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
-import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import { useRewards } from '@ui/hooks/useRewards';
@@ -11,12 +9,9 @@ import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
-import { multipliers } from '@ui/utils/multipliers';
 
 import { useBribeData } from './useBribeData';
 import { useVoteData } from './useVoteData';
-
-import type { FlywheelReward } from '@ionicprotocol/types';
 
 export const useMarketRows = (
   chain: number | string,
@@ -39,10 +34,6 @@ export const useMarketRows = (
   const { data: borrowRates, isLoading: isLoadingBorrowApys } = useBorrowAPYs(
     poolData?.assets ?? [],
     +chain
-  );
-
-  const { data: fraxtalAprs, isLoading: isLoadingFraxtalAprs } = useFraxtalAprs(
-    poolData?.assets ?? []
   );
 
   const { data: rewards, isLoading: isLoadingRewards } = useRewards({
@@ -86,11 +77,7 @@ export const useMarketRows = (
     marketSides
   });
 
-  const {
-    bribeData,
-    getRewardDetails,
-    isLoading: isLoadingBribes
-  } = useBribeData({
+  const { getRewardDetails } = useBribeData({
     chain: +chain
   });
 
@@ -123,32 +110,6 @@ export const useMarketRows = (
     if (!poolData?.assets || poolData.assets.length === 0) return [];
 
     return poolData.assets.reduce<VoteMarketRow[]>((rows, asset) => {
-      const supplyRewards = rewards?.[asset.cToken]
-        ?.filter((reward) =>
-          FLYWHEEL_TYPE_MAP[+chain]?.supply?.includes(
-            (reward as FlywheelReward).flywheel
-          )
-        )
-        .map((reward) => ({
-          ...reward,
-          apy: (reward.apy ?? 0) * 100
-        })) as FlywheelReward[];
-
-      const borrowRewards = rewards?.[asset.cToken]
-        ?.filter((reward) =>
-          FLYWHEEL_TYPE_MAP[+chain]?.borrow?.includes(
-            (reward as FlywheelReward).flywheel
-          )
-        )
-        .map((reward) => ({
-          ...reward,
-          apy: (reward.apy ?? 0) * 100
-        })) as FlywheelReward[];
-
-      const nativeAssetYield = fraxtalAprs?.[asset.cToken]?.nativeAssetYield;
-      const config =
-        multipliers[+chain]?.[selectedPool]?.[asset.underlyingSymbol];
-
       const newRows: VoteMarketRow[] = [];
 
       if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.supply) {
@@ -242,7 +203,6 @@ export const useMarketRows = (
       !isLoadingPoolData &&
       !isLoadingSupplyApys &&
       !isLoadingBorrowApys &&
-      !isLoadingFraxtalAprs &&
       !isLoadingRewards &&
       !isLoadingMerklData
     ) {
@@ -261,7 +221,6 @@ export const useMarketRows = (
     isLoadingPoolData,
     isLoadingSupplyApys,
     isLoadingBorrowApys,
-    isLoadingFraxtalAprs,
     isLoadingRewards,
     isLoadingMerklData,
     isLoadingVoteData,
@@ -278,7 +237,6 @@ export const useMarketRows = (
       isLoadingPoolData ||
       isLoadingSupplyApys ||
       isLoadingBorrowApys ||
-      isLoadingFraxtalAprs ||
       isLoadingRewards ||
       isLoadingVoteData ||
       isLoadingMerklData,

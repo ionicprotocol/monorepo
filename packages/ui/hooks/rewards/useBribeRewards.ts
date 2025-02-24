@@ -13,7 +13,7 @@ export const VOTERLENS_CHAIN_ADDRESSES = {
   34443: '0x414E7b43B8b82aDf0B02c84E9EC02Aa82d87b2aA' // Mode VoterLens
 } as const;
 
-const REWARD_TOKENS = {
+export const REWARD_TOKENS = {
   8453: ['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] as const, // Base
   34443: [
     '0xC6A394952c097004F83d2dfB61715d245A38735a',

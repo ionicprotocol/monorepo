@@ -2,37 +2,28 @@ import { useQuery } from '@tanstack/react-query';
 import { erc20Abi } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
-import { VOTERLENS_CHAIN_ADDRESSES } from '../rewards/useBribeRewards';
+import {
+  REWARD_TOKENS,
+  VOTERLENS_CHAIN_ADDRESSES
+} from '../rewards/useBribeRewards';
 
-import type { Address, PublicClient } from 'viem';
+import type { Address, Hex, PublicClient } from 'viem';
 
-import { bribeRewardsAbi } from '@ionicprotocol/sdk';
-import { voterLensAbi } from '@ionicprotocol/sdk/src';
-
-const CACHE_TIME = 5 * 60 * 1000;
-const STALE_TIME = 60 * 1000;
+import { voterLensAbi, bribeRewardsAbi } from '@ionicprotocol/sdk';
 
 type RewardInfo = {
   token: Address;
   symbol?: string;
   decimals?: number;
   weeklyAmount: bigint;
-  annualAmount: bigint; // weeklyAmount * 52
+  annualAmount: bigint;
   apr: number;
   formattedWeeklyAmount: string;
 };
 
 type MarketBribeData = {
-  supply: {
-    rewards: RewardInfo[];
-    totalApr: number;
-    bribeAddress: Address;
-  };
-  borrow: {
-    rewards: RewardInfo[];
-    totalApr: number;
-    bribeAddress: Address;
-  };
+  supply: { rewards: RewardInfo[]; totalApr: number; bribeAddress: Address };
+  borrow: { rewards: RewardInfo[]; totalApr: number; bribeAddress: Address };
 };
 
 type BribeAprData = Record<string, MarketBribeData>;
@@ -41,6 +32,7 @@ export const useBribeData = ({ chain }: { chain: number }) => {
   const publicClient = usePublicClient({ chainId: chain });
   const voterLensAddress =
     VOTERLENS_CHAIN_ADDRESSES[chain as keyof typeof VOTERLENS_CHAIN_ADDRESSES];
+  const rewardTokens = REWARD_TOKENS[chain as keyof typeof REWARD_TOKENS];
 
   const { data: bribes = [] } = useReadContract({
     address: voterLensAddress,
@@ -56,131 +48,123 @@ export const useBribeData = ({ chain }: { chain: number }) => {
   } = useQuery<BribeAprData, Error>({
     queryKey: ['bribeData', chain],
     queryFn: async () => {
-      if (!publicClient || !bribes.length) return {};
+      if (!publicClient || !bribes.length || !rewardTokens?.length) return {};
 
       const newBribeData: BribeAprData = {};
+      const currentEpoch = BigInt(Math.floor(Date.now() / 1000));
 
       await Promise.all(
         bribes.map(async (bribe) => {
           const marketKey = bribe.market.toLowerCase();
-
           const [supplyData, borrowData] = await Promise.all([
-            calculateDetailedBribeInfo(publicClient, bribe.bribeSupply, chain),
-            calculateDetailedBribeInfo(publicClient, bribe.bribeBorrow, chain)
+            calculateDetailedBribeInfo(
+              publicClient,
+              bribe.bribeSupply,
+              rewardTokens,
+              currentEpoch,
+              chain
+            ),
+            calculateDetailedBribeInfo(
+              publicClient,
+              bribe.bribeBorrow,
+              rewardTokens,
+              currentEpoch,
+              chain
+            )
           ]);
 
           newBribeData[marketKey] = {
-            supply: {
-              ...supplyData,
-              bribeAddress: bribe.bribeSupply
-            },
-            borrow: {
-              ...borrowData,
-              bribeAddress: bribe.bribeBorrow
-            }
+            supply: { ...supplyData, bribeAddress: bribe.bribeSupply },
+            borrow: { ...borrowData, bribeAddress: bribe.bribeBorrow }
           };
         })
       );
 
       return newBribeData;
     },
-    staleTime: STALE_TIME,
-    gcTime: CACHE_TIME,
-    enabled: bribes.length > 0 && !!publicClient
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+    enabled: bribes.length > 0 && !!publicClient && !!rewardTokens?.length
   });
 
-  const getBribeApr = (marketAddress: string, side: 'borrow' | 'supply') => {
-    const market = marketAddress.toLowerCase();
-    return bribeData[market]?.[side].totalApr ?? 0;
-  };
+  const getBribeApr = (marketAddress: string, side: 'borrow' | 'supply') =>
+    bribeData[marketAddress.toLowerCase()]?.[side].totalApr ?? 0;
 
-  const getRewardDetails = (
-    marketAddress: string,
-    side: 'borrow' | 'supply'
-  ) => {
-    const market = marketAddress.toLowerCase();
-    return bribeData[market]?.[side] ?? null;
-  };
+  const getRewardDetails = (marketAddress: string, side: 'borrow' | 'supply') =>
+    bribeData[marketAddress.toLowerCase()]?.[side] ?? null;
 
-  return {
-    bribeData,
-    isLoading,
-    error,
-    getBribeApr,
-    getRewardDetails
-  };
+  return { bribeData, isLoading, error, getBribeApr, getRewardDetails };
 };
 
 async function calculateDetailedBribeInfo(
   publicClient: PublicClient,
   bribeAddress: Address,
+  rewardTokens: readonly Hex[],
+  currentEpoch: bigint,
   chainId: number
 ) {
   try {
-    const rewardTokens = await publicClient.readContract({
-      address: bribeAddress,
-      abi: bribeRewardsAbi,
-      functionName: 'getAllLpRewardTokens'
-    });
-
-    if (!rewardTokens.length) {
-      return { rewards: [], totalApr: 0 };
-    }
-
-    // Get total supply using the first token
-    const totalSupply = await publicClient.readContract({
-      address: bribeAddress,
-      abi: bribeRewardsAbi,
-      functionName: 'totalSupply',
-      args: [rewardTokens[0]]
-    });
-
-    if (totalSupply === 0n) {
-      return { rewards: [], totalApr: 0 };
-    }
-
-    // Get details for each reward token
-    const rewardsInfo = await Promise.all(
-      rewardTokens.map(async (token) => {
-        const [weeklyAmount, decimals, symbol] = await Promise.all([
+    // Batch all contract calls
+    const [totalSupplies, tokenInfos, rewardsPerEpoch] = await Promise.all([
+      Promise.all(
+        rewardTokens.map((token) =>
+          publicClient.readContract({
+            address: bribeAddress,
+            abi: bribeRewardsAbi,
+            functionName: 'totalSupply',
+            args: [token]
+          })
+        )
+      ),
+      Promise.all(
+        rewardTokens.map((token) =>
+          Promise.all([
+            publicClient.readContract({
+              address: token,
+              abi: erc20Abi,
+              functionName: 'decimals'
+            }),
+            getTokenSymbol(token, publicClient, chainId)
+          ])
+        )
+      ),
+      Promise.all(
+        rewardTokens.map((token) =>
           publicClient.readContract({
             address: bribeAddress,
             abi: bribeRewardsAbi,
             functionName: 'tokenRewardsPerEpoch',
-            args: [token, BigInt(Math.floor(Date.now() / 1000))]
-          }),
-          publicClient.readContract({
-            address: token,
-            abi: erc20Abi,
-            functionName: 'decimals'
-          }),
-          getTokenSymbol(token, publicClient, chainId)
-        ]);
+            args: [token, currentEpoch]
+          })
+        )
+      )
+    ]);
 
-        const annualAmount = weeklyAmount * BigInt(52);
-        const apr =
-          totalSupply > 0n
-            ? (Number(annualAmount) / Number(totalSupply)) * 100
-            : 0;
+    const totalSupply = totalSupplies[0]; // Assuming same supply for all tokens
+    if (totalSupply === 0n) return { rewards: [], totalApr: 0 };
 
-        return {
-          token,
-          symbol,
-          decimals,
-          weeklyAmount,
-          annualAmount,
-          apr,
-          formattedWeeklyAmount: formatTokenAmount(weeklyAmount, decimals)
-        };
-      })
-    );
+    const rewardsInfo = rewardTokens.map((token, i) => {
+      const weeklyAmount = rewardsPerEpoch[i];
+      const [decimals, symbol] = tokenInfos[i];
+      const annualAmount = weeklyAmount * BigInt(52);
+      const apr =
+        totalSupply > 0n
+          ? (Number(annualAmount) / Number(totalSupply)) * 100
+          : 0;
+
+      return {
+        token,
+        symbol,
+        decimals,
+        weeklyAmount,
+        annualAmount,
+        apr,
+        formattedWeeklyAmount: formatTokenAmount(weeklyAmount, decimals)
+      };
+    });
 
     const totalApr = rewardsInfo.reduce((sum, reward) => sum + reward.apr, 0);
-
-    return {
-      rewards: rewardsInfo,
-      totalApr
-    };
+    return { rewards: rewardsInfo, totalApr };
   } catch (err) {
     console.error('Error calculating bribe info:', err);
     return { rewards: [], totalApr: 0 };
