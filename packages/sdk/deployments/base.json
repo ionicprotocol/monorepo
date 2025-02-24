@@ -519,19 +519,19 @@
       "address": "0x6Dd7dDacBb2106bA8B3Cb29318B73dE584430a30"
     },
     "CErc20Delegate": {
-      "address": "0x0C87ee2bE13473a1a2Af30408A76259183A39b53"
+      "address": "0xfa2DcAd8e8fE4e076Ab15A48CF663a4fC6cA4DeD"
     },
     "CErc20PluginDelegate": {
-      "address": "0x440c9E2aAE9b3b3E9B39E591ee43fF1e755D7901"
+      "address": "0x3d8dEcf11E0e835ED6040d35D9F44a69B81d1e59"
     },
     "CErc20PluginRewardsDelegate": {
       "address": "0x5FB0a996a2252B0541aa2815f23B8f46291A54Ae"
     },
     "CErc20RewardsDelegate": {
-      "address": "0xbdA6802B3b809E1B4f31b1aF63922E06C2cF6b16"
+      "address": "0xfceEA832b549F2A2e0881C8DB8B42e358C7a0889"
     },
     "CTokenFirstExtension": {
-      "address": "0x4b646107Ff8ddE14204001A98d26CdD3f9Ccb000"
+      "address": "0x4661DBCf8EB11801F438f8019B160F3Cb9B5d817"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0xb0033576a9E444Dd801d5B69e1b63DBC459A6115"
@@ -555,10 +555,13 @@
       "address": "0xF9fc8e7C5dAf707f18f06E04916Ff315B01326Da"
     },
     "Comptroller": {
-      "address": "0x2b3A2c76D57850FD4018B97dCCC8849bBD54C35c"
+      "address": "0xc63Ee58A68C22BFd7900ab5C3eB94D0f3d1442e9"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x151af46d007Cb7E60759318Ec1553c3Bdd8b93dB"
+      "address": "0x0C7d81F299dD96bF01432dE64f262E48AfF4F5ea"
+    },
+    "ComptrollerPrudentiaCapsExt": {
+      "address": "0x3C1c62d04ccA26DCD17e670325cd435541625daD"
     },
     "CurveSwapLiquidator": {
       "address": "0xa1452e5557CdEf25D88deFE06De12B45fC8eEA30"
