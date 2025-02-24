@@ -485,20 +485,32 @@
     "IonicFlywheelBorrowBooster_ION": {
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
-    "IonicFlywheelDynamicRewards_ION": {
-      "address": "0x0ee9f9A0EA64E0EB999A16Eb398006FBD1fE8ecd"
+    "IonicFlywheelBorrow_veION_Borrow": {
+      "address": "0x72eFD2A5562AFE03009632E2900e5B83214365ad"
+    },
+    "IonicFlywheelBorrow_veION_Borrow_Implementation": {
+      "address": "0xf4774A4cB5764F2b73a594661627215A01E7e743"
+    },
+    "IonicFlywheelBorrow_veION_Borrow_Proxy": {
+      "address": "0x72eFD2A5562AFE03009632E2900e5B83214365ad"
+    },
+    "IonicFlywheelDynamicRewards_veION": {
+      "address": "0x2212D9E3aC93CAD9DB6096b971b362ff86BcDCbD"
+    },
+    "IonicFlywheelDynamicRewards_veION_Borrow": {
+      "address": "0x02dCd3F36d1eeE2005b75F36CBAAe08fe3166667"
     },
     "IonicFlywheelLensRouter": {
       "address": "0x01aB485A0fae0667be36AB876c95ADc1A2a5e449"
     },
-    "IonicFlywheel_ION": {
-      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
+    "IonicFlywheel_veION": {
+      "address": "0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A"
     },
-    "IonicFlywheel_ION_Implementation": {
-      "address": "0x0f3Cf09125c8e920A26AF806eDA8DAa1263A5522"
+    "IonicFlywheel_veION_Implementation": {
+      "address": "0x9475EFFEA72b63658a1c484dF11BE23fF4880b90"
     },
-    "IonicFlywheel_ION_Proxy": {
-      "address": "0x91EDAA7fDbBc7a4098ab9BCB03a763EA2526c15f"
+    "IonicFlywheel_veION_Proxy": {
+      "address": "0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
