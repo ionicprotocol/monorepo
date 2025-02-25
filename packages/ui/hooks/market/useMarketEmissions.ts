@@ -22,7 +22,7 @@ interface MarketData {
 }
 
 interface UseMarketEmissionsProps {
-  chainId: 8453 | 34443;
+  chainId: number;
   cTokenAddresses?: string[];
 }
 
