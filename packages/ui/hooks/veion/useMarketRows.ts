@@ -242,8 +242,8 @@ export const useMarketRows = (
       isLoadingBorrowApys ||
       isLoadingRewards ||
       isLoadingVoteData ||
-      isLoadingMerklData ||
-      error,
+      isLoadingMerklData,
+    error,
     refetch
   };
 };
