@@ -34,8 +34,8 @@ export default function Market() {
 
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
-  const selectedPool = querypool ?? '0';
   const chain = querychain ? querychain : mode.id.toString();
+  const selectedPool = querypool ?? (chain === '34443' ? '1' : '0');
 
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 
