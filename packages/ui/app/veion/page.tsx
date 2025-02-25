@@ -100,7 +100,7 @@ export default function EnhancedVeIon() {
 
             <LPRow
               summary={{
-                title: 'STAKED LP',
+                title: 'TOTAL STAKED LP',
                 amount: liquidity.staked.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',
@@ -119,7 +119,7 @@ export default function EnhancedVeIon() {
 
             <LPRow
               summary={{
-                title: 'LOCKED LP',
+                title: 'TOTAL LOCKED LP',
                 amount: liquidity.locked.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD',

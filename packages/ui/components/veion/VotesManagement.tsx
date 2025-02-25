@@ -242,7 +242,7 @@ function VotesManagement({
         </TooltipWrapper>
       ),
       sortingFn: 'numerical',
-      cell: ({ row }) => <span>{row.original.veAPR}</span>
+      cell: ({ row }) => <span>{row.original.veAPR.toFixed(2)}</span>
     },
     {
       id: 'totalVotes.limit',

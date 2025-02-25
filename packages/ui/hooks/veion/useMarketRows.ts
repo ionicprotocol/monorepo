@@ -81,6 +81,11 @@ export const useMarketRows = (
     chain: +chain
   });
 
+  // const { data: veAPRData, isLoading: isLoadingVeAPR } = useMarketVeAPR({
+  //   chainId: chain === '34443' ? 34443 : 8453,
+  //   cTokenAddresses: marketAddresses
+  // });
+
   const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
     const details = getRewardDetails(
       marketAddress,
@@ -122,7 +127,7 @@ export const useMarketRows = (
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalSupplyFiat.toFixed(2),
           incentives: getIncentivesFromBribes(asset.cToken, MarketSide.Supply),
-          veAPR: getRewardDetails(asset.cToken, 'supply')?.totalApr || 0,
+          veAPR: 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
@@ -158,7 +163,7 @@ export const useMarketRows = (
           marketAddress: asset.cToken as `0x${string}`,
           currentAmount: asset.totalBorrowFiat.toFixed(2),
           incentives: getIncentivesFromBribes(asset.cToken, MarketSide.Borrow),
-          veAPR: getRewardDetails(asset.cToken, 'borrow')?.totalApr || 0,
+          veAPR: 0,
           totalVotes: voteData[key]?.totalVotes ?? {
             percentage: 0,
             limit: 0
@@ -195,7 +200,6 @@ export const useMarketRows = (
     rewards,
     merklApr,
     voteData
-    // veAPRs
   ]);
 
   useEffect(() => {
@@ -216,7 +220,6 @@ export const useMarketRows = (
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isLoadingPoolData,
     isLoadingSupplyApys,
@@ -239,8 +242,8 @@ export const useMarketRows = (
       isLoadingBorrowApys ||
       isLoadingRewards ||
       isLoadingVoteData ||
-      isLoadingMerklData,
-    error,
+      isLoadingMerklData ||
+      error,
     refetch
   };
 };
