@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -21,7 +22,7 @@ interface MarketData {
 }
 
 interface UseMarketEmissionsProps {
-  chainId: 34443 | 8453;
+  chainId: 8453 | 34443;
   cTokenAddresses?: string[];
 }
 

@@ -48,13 +48,13 @@ export default function RootLayout({
         gtag('js', new Date());
         gtag('config', 'G-PBTG02B74E');`}
       </Script>
-      <body className={'scrollbar-hide font-inter'}>
+      <body className="scrollbar-hide font-inter">
         <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
-              <VeIONProvider>
-                <TooltipProvider>
-                  <Suspense fallback={<></>}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <VeIONProvider>
+                  <TooltipProvider>
                     <ProgressBar
                       color="#3bff89ff"
                       height="2px"
@@ -82,9 +82,9 @@ export default function RootLayout({
                         }}
                       />
                     </div>
-                  </Suspense>
-                </TooltipProvider>
-              </VeIONProvider>
+                  </TooltipProvider>
+                </VeIONProvider>
+              </Suspense>
             </MultiIonicProvider>
           </QueryClientProvider>
         </WagmiProvider>
