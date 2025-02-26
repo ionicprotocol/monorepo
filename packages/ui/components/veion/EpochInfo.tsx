@@ -86,8 +86,9 @@ const EpochInfo = ({
               htmlFor="acknowledgement"
               className="text-sm leading-relaxed"
             >
-              I understand that incentivizing a market is irreversible, and
-              deposited tokens cannot be withdrawn.
+              I understand the incentives mechanics, and acknowledge that
+              incentivizing a market is irreversible process, deposited tokens
+              won&apos;t be withdrawable.
             </label>
           </div>
         </div>
