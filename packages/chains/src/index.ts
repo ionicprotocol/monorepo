@@ -7,6 +7,7 @@ import {
   lisk as vLisk,
   mode as vMode,
   optimism as vOptimism,
+  sonic as vSonic,
   superseed as vSuperseed,
   worldchain as vWorldchain
 } from "viem/chains";
@@ -109,7 +110,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [swellchain.chainId]: vSwellchain,
   [ozeantest.chainId]: vOzeantest,
   [camptest.chainId]: vCampTest,
-  [soneium.chainId]: vSoneium
+  [soneium.chainId]: vSoneium,
+  [vSonic.id]: vSonic
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -125,5 +127,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [swellchain.chainId]: swellchain,
   [ozeantest.chainId]: ozeantest,
   [camptest.chainId]: camptest,
-  [soneium.chainId]: soneium
+  [soneium.chainId]: soneium,
+  [vSonic.id]: {} as any
 };

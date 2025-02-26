@@ -67,7 +67,7 @@ export function getScanUrlByChainId(
 ): string | null {
   const chain = chainIdToConfig[chainId];
 
-  return chain && chain.specificParams.metadata.blockExplorerUrls.default
+  return chain && chain.specificParams?.metadata?.blockExplorerUrls?.default
     ? chain.specificParams.metadata.blockExplorerUrls.default.url
     : null;
 }

@@ -1,4 +1,4 @@
-import { base, bob, fraxtal, lisk, mode, optimism } from 'viem/chains';
+import { base, bob, fraxtal, lisk, mode, optimism, sonic } from 'viem/chains';
 
 import {
   BaseContractABI,
@@ -34,6 +34,7 @@ export function getToken(chain: number): Address {
   if (chain === optimism.id)
     return '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC'; //op
   if (chain === lisk.id) return '0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013'; //lisk
+  if (chain === sonic.id) return '0x141eD81BA9f0a70B03FF545711C931E69DAb1b7B'; //sonic
   return '0x0000000000000000000000000000000000000000';
 }
 

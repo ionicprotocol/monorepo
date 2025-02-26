@@ -1,7 +1,7 @@
 import { chainIdtoChain } from "@ionicprotocol/chains";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Address, fromBytes, pad, toBytes } from "viem";
-import { base, bob, fraxtal, lisk, mode, optimism } from "viem/chains";
+import { base, bob, fraxtal, lisk, mode, optimism, sonic } from "viem/chains";
 
 const lzEndpoints: Record<number, Address> = {
   [base.id]: "0x1a44076050125825900e736c501f859c50fE728c",
@@ -17,7 +17,8 @@ const hyperlaneEndpoints: Record<number, Address> = {
   [fraxtal.id]: "0x2f9DB5616fa3fAd1aB06cB2C906830BA63d135e3",
   [mode.id]: "0x2f2aFaE1139Ce54feFC03593FeE8AB2aDF4a85A7",
   [lisk.id]: "0x2f2aFaE1139Ce54feFC03593FeE8AB2aDF4a85A7",
-  [optimism.id]: "0xd4C1905BB1D26BC93DAC913e13CaCC278CdCC80D"
+  [optimism.id]: "0xd4C1905BB1D26BC93DAC913e13CaCC278CdCC80D",
+  [sonic.id]: "0x3a464f746D23Ab22155710f44dB16dcA53e0775E"
 };
 
 const xerc20HyperlaneDeployments: Record<number, Address> = {
@@ -26,7 +27,8 @@ const xerc20HyperlaneDeployments: Record<number, Address> = {
   [mode.id]: "0xb81ab95BEE03ed655C8a99d484EFfCfE335319EB",
   [fraxtal.id]: "0x7F2aFd3Fa3f9CFFb66AaA2ccE0f7527B37C8bbfA",
   [bob.id]: "0x5aB39DfE9eC8317825Ab6e1BCc7068c4C7897FB9",
-  [lisk.id]: "0x14A71B2822663491D98CBB8332bB15Db61c36f7a"
+  [lisk.id]: "0x14A71B2822663491D98CBB8332bB15Db61c36f7a",
+  [sonic.id]: "0x9BAD1f7685f33ad855AE81089dFe79040864E2F6"
 };
 
 const ionTokens: Record<number, Address> = {
@@ -35,7 +37,8 @@ const ionTokens: Record<number, Address> = {
   [mode.id]: "0x18470019bf0e94611f15852f7e93cf5d65bc34ca",
   [fraxtal.id]: "0x5BD5c0cB9E4404C63526433BcBd6d133C1d73ffE",
   [bob.id]: "0xb90f229f27851e205d77fd46487989ad6e44c17c",
-  [lisk.id]: "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013"
+  [lisk.id]: "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013",
+  [sonic.id]: "0x141eD81BA9f0a70B03FF545711C931E69DAb1b7B"
 };
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
