@@ -1,10 +1,4 @@
-import {
-  useState,
-  useMemo,
-  useRef,
-  type SetStateAction,
-  type Dispatch
-} from 'react';
+import { useMemo, type SetStateAction, type Dispatch } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -52,6 +46,7 @@ interface IMaxDeposit {
   isLoading?: boolean;
   showUtilizationSlider?: boolean;
   hintText?: string;
+  onTokenChange?: (token: string) => void;
 }
 
 function MaxDeposit({
@@ -71,11 +66,10 @@ function MaxDeposit({
   readonly,
   isLoading,
   showUtilizationSlider = false,
-  hintText = 'Balance'
+  hintText = 'Balance',
+  onTokenChange
 }: IMaxDeposit) {
   const { address } = useAccount();
-  const [open, setOpen] = useState<boolean>(false);
-  const newRef = useRef<HTMLDivElement>(null);
 
   const hooktoken =
     token === '0x0000000000000000000000000000000000000000' ? undefined : token;
@@ -297,11 +291,9 @@ function MaxDeposit({
                 </Button>
                 {tokenSelector ? (
                   <TokenSelector
-                    newRef={newRef}
-                    open={open}
-                    setOpen={setOpen}
                     tokenArr={tokenArr}
                     selectedToken={tokenName}
+                    onTokenSelect={onTokenChange}
                   />
                 ) : (
                   <TokenDisplay
@@ -409,11 +401,9 @@ function MaxDeposit({
               </Button>
               {tokenSelector ? (
                 <TokenSelector
-                  newRef={newRef}
-                  open={open}
-                  setOpen={setOpen}
                   tokenArr={tokenArr}
                   selectedToken={tokenName}
+                  onTokenSelect={onTokenChange}
                 />
               ) : (
                 <TokenDisplay

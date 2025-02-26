@@ -35,7 +35,7 @@ export default function EnhancedVeIon() {
   const selectedtoken = currentChain === 8453 ? 'eth' : 'mode';
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen">
       <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-gradient-to-br from-grayone to-black backdrop-blur-lg mx-auto my-6 border border-white/10 shadow-2xl">
         <CardHeader className="xl:text-xl text-2xl font-semibold space-y-5 p-0">
           <div className="flex items-center justify-between w-full">

@@ -1,21 +1,22 @@
-import { useState } from 'react';
+'use client';
 
-import { ChevronDown } from 'lucide-react';
-import { base, mode } from 'viem/chains';
+import { useState, useMemo } from 'react';
 
-import { Button } from '@ui/components/ui/button';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+
+import { base, mode } from 'wagmi/chains';
+
+import CustomTooltip from '@ui/components/CustomTooltip';
+import { Card, CardContent } from '@ui/components/ui/card';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@ui/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@ui/components/ui/dropdown-menu';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@ui/components/ui/select';
 import {
   Table,
   TableBody,
@@ -24,146 +25,243 @@ import {
   TableHeader,
   TableRow
 } from '@ui/components/ui/table';
-import { useVeIONContext } from '@ui/context/VeIonContext';
-import { getToken } from '@ui/utils/getStakingTokens';
+import { useMarketData } from '@ui/hooks/market/useMarketData';
 
-import MaxDeposit from '../MaxDeposit';
-import NetworkDropdown from '../NetworkDropdown';
+const NetworkSelector = dynamic(
+  () => import('@ui/components/markets/NetworkSelector'),
+  { ssr: false }
+);
+const MaxDeposit = dynamic(() => import('../MaxDeposit'), { ssr: false });
 
-const sides = [
-  { id: 'lend', name: 'Lend' },
-  { id: 'borrow', name: 'Borrow' }
-];
+interface MarketSelectorProps {
+  isAcknowledged: boolean;
+}
 
-const MarketSelector = ({ isAcknowledged }: { isAcknowledged: boolean }) => {
-  const { currentChain, balances } = useVeIONContext(); // Add veIonBalance
-  const { veIon: veIonBalance } = balances;
-  const [selectedSide, setSelectedSide] = useState(sides[0]);
-  const [amount, setAmount] = useState<string>('0');
+interface MarketData {
+  asset: string;
+  underlyingSymbol: string;
+  cTokenAddress: string;
+  supply: { total: number; totalUSD: number };
+  borrow: { total: number; totalUSD: number };
+  supplyAPR: number;
+  borrowAPR: number;
+}
+
+const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
+  const searchParams = useSearchParams();
+  const queryChain = searchParams.get('chain');
+  const currentChain = queryChain || base.id.toString();
+  const poolId = currentChain === mode.id.toString() ? '1' : '0';
+  const { marketData, isLoading } = useMarketData(poolId, currentChain);
+
+  const [selectedMarket, setSelectedMarket] = useState<string>('');
+  const [selectedSide, setSelectedSide] = useState<'' | 'borrow' | 'supply'>(
+    ''
+  );
+  const [selectedToken, setSelectedToken] = useState<string>(
+    currentChain === mode.id.toString() ? 'mode' : 'ion' // Default token based on chain
+  );
+
+  const marketOptions = useMemo(() => {
+    if (!marketData) return [];
+    return marketData.map((market: MarketData) => ({
+      value: market.cTokenAddress,
+      label: market.asset,
+      symbol: market.underlyingSymbol,
+      address: market.cTokenAddress
+    }));
+  }, [marketData]);
+
+  const selectedMarketData = useMemo(() => {
+    return marketData?.find(
+      (market: MarketData) => market.cTokenAddress === selectedMarket
+    );
+  }, [marketData, selectedMarket]);
+
+  const tokenOptions = useMemo(() => {
+    return currentChain === mode.id.toString()
+      ? ['mode', 'ion']
+      : ['ion', 'eth'];
+  }, [currentChain]);
+
+  const formatNumber = (num: number, isUSD: boolean = false) =>
+    isUSD
+      ? `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : num.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+  const handleTokenChange = (token: string) => {
+    setSelectedToken(token);
+  };
 
   return (
-    <Card className="bg-grayone">
-      <CardContent className="space-y-8 p-6">
-        <CardHeader className="p-0">
-          <CardTitle>Choose Market & Side</CardTitle>
-        </CardHeader>
-
-        <div className="flex items-center gap-4">
-          <NetworkDropdown
-            dropdownSelectedChain={currentChain}
-            nopool
-            enabledChains={[base.id, mode.id]}
-            upcomingChains={['Optimism']}
+    <Card className="bg-gradient-to-br from-grayone to-black border border-white/10 shadow-xl backdrop-blur-lg">
+      <CardContent className="space-y-6 p-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-accent">
+            Select Market
+          </h2>
+          <NetworkSelector
+            dropdownSelectedChain={+currentChain}
+            nopool={true}
+            enabledChains={[mode.id, base.id]}
           />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-2 bg-grayUnselect px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-700">
-                <span>{selectedSide.name}</span>
-                <ChevronDown className="w-4 h-4" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-grayone border-graylite">
-              {sides.map((side) => (
-                <DropdownMenuItem
-                  key={side.id}
-                  onClick={() => setSelectedSide(side)}
-                  className="hover:bg-graylite cursor-pointer"
-                >
-                  {side.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
 
-        {/* First Table - Balances */}
-        <Table
-          compact
-          className="text-gray-400"
+        <Select
+          value={selectedMarket}
+          onValueChange={setSelectedMarket}
+          disabled={isLoading || !isAcknowledged}
         >
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-32" />
-              <TableHead>TOTAL BALANCES</TableHead>
-              <TableHead>YOUR BALANCE</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Supply</TableCell>
-              <TableCell>16,009,106</TableCell>
-              <TableCell>00.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Borrow</TableCell>
-              <TableCell>10,007,070</TableCell>
-              <TableCell>00.00</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        {/* Second Table - Market Metrics */}
-        <Table
-          compact
-          className="text-gray-400"
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-32" />
-              <TableHead>APRS</TableHead>
-              <TableHead>VOTES</TableHead>
-              <TableHead>INCENTIVES</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Supply</TableCell>
-              <TableCell>5%</TableCell>
-              <TableCell>7,712,972.73</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-[#C3FF56] rounded-full flex items-center justify-center text-black font-bold">
-                    M
-                  </div>
-                  <span>$11.57</span>
+          <SelectTrigger className="w-full bg-grayone border-white/10 text-white shadow-inner">
+            <SelectValue placeholder="Choose a market" />
+          </SelectTrigger>
+          <SelectContent className="bg-grayone border-white/10 text-white shadow-lg">
+            {marketOptions.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+              >
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={`/img/symbols/32/color/${option.symbol.toLowerCase()}.png`}
+                    alt={option.label}
+                    width={28}
+                    height={28}
+                    className="rounded-full"
+                  />
+                  <span>
+                    {option.label} ({option.symbol})
+                  </span>
                 </div>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Borrow</TableCell>
-              <TableCell>11.9%</TableCell>
-              <TableCell>7,712,972.73</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-[#C3FF56] rounded-full flex items-center justify-center text-black font-bold">
-                    M
-                  </div>
-                  <span>$11.57</span>
-                </div>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <MaxDeposit
-          headerText="LOCK AMOUNT"
-          max={String(veIonBalance)}
-          amount={amount}
-          tokenName="ion/weth"
-          token={getToken(currentChain)}
-          handleInput={(val?: string) => setAmount(val || '0')}
-          chain={currentChain}
-          showUtilizationSlider
-        />
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold text-white">Select Side</h2>
+          <Select
+            value={selectedSide}
+            onValueChange={(value) =>
+              setSelectedSide(value as 'borrow' | 'supply')
+            }
+            disabled={!selectedMarket || !isAcknowledged}
+          >
+            <SelectTrigger className="w-full bg-grayone border-white/10 text-white shadow-inner">
+              <SelectValue placeholder="Choose supply or borrow" />
+            </SelectTrigger>
+            <SelectContent className="bg-grayone border-white/10 text-white shadow-lg">
+              <SelectItem value="supply">Supply</SelectItem>
+              <SelectItem value="borrow">Borrow</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-        <Button
-          className="w-full bg-green-400 hover:bg-[#B3EF46] text-black transition-opacity rounded-2xl h-14 text-lg font-medium"
-          disabled={!isAcknowledged}
-          style={{ opacity: isAcknowledged ? 1 : 0.7 }}
-        >
-          Incentivize
-        </Button>
+        {selectedMarket && selectedMarketData && (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-white">
+                Market Balances
+              </h2>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/10">
+                    <TableHead className="text-white/80">Type</TableHead>
+                    <TableHead className="text-white/80">Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow className="border-white/5">
+                    <TableCell className="text-white">Supply</TableCell>
+                    <TableCell className="text-white">
+                      <div>
+                        {formatNumber(selectedMarketData.supply.total)}{' '}
+                        {selectedMarketData.underlyingSymbol}
+                      </div>
+                      <div className="text-white/60">
+                        {formatNumber(selectedMarketData.supply.totalUSD, true)}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="border-white/5">
+                    <TableCell className="text-white">Borrow</TableCell>
+                    <TableCell className="text-white">
+                      <div>
+                        {formatNumber(selectedMarketData.borrow.total)}{' '}
+                        {selectedMarketData.underlyingSymbol}
+                      </div>
+                      <div className="text-white/60">
+                        {formatNumber(selectedMarketData.borrow.totalUSD, true)}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-white">
+                Market Metrics
+              </h2>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-white/10">
+                    <TableHead className="text-white/80">Type</TableHead>
+                    <TableHead className="text-white/80">APR</TableHead>
+                    <TableHead className="text-white/80">Votes</TableHead>
+                    <TableHead className="text-white/80">Incentives</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow className="border-white/5">
+                    <TableCell className="text-white">Supply</TableCell>
+                    <TableCell className="text-white">
+                      {selectedMarketData.supplyAPR.toFixed(2)}%
+                    </TableCell>
+                    <TableCell className="text-white">0</TableCell>
+                    <TableCell className="text-white">0</TableCell>
+                  </TableRow>
+                  <TableRow className="border-white/5">
+                    <TableCell className="text-white">Borrow</TableCell>
+                    <TableCell className="text-white">
+                      {selectedMarketData.borrowAPR.toFixed(2)}%
+                    </TableCell>
+                    <TableCell className="text-white">0</TableCell>
+                    <TableCell className="text-white">0</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-white">
+                Provide Incentives
+              </h2>
+              <MaxDeposit
+                headerText="Incentivize Amount"
+                tokenName={selectedToken} // Use local state for token
+                tokenSelector={true}
+                tokenArr={tokenOptions}
+                chain={+currentChain}
+                // handleInput={(val) => console.log('Amount:', val)} // Placeholder for amount handling
+                onTokenChange={handleTokenChange} // Pass callback for token selection
+              />
+            </div>
+          </div>
+        )}
+
+        {!isAcknowledged && (
+          <div className="text-white/60 text-sm">
+            <CustomTooltip content="You must acknowledge the Epoch Info terms before selecting markets or providing incentives.">
+              <span className="underline cursor-help">
+                Acknowledge required
+              </span>
+            </CustomTooltip>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
