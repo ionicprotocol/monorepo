@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useContext, useMemo } from 'react';
 
 import { useSearchParams } from 'next/navigation';
@@ -60,7 +62,6 @@ export const VeIonVoteProvider: React.FC<{
 
   const votingPeriod = useVotingPeriod(chain, tokenId);
 
-  // needs refactoring
   const pool0 = useMarketRows(chain, '0', tokenId);
   const pool1 = useMarketRows(chain, '1', tokenId);
 

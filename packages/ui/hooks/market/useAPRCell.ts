@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import type { APRCellProps } from '@ui/components/markets/Cells/APR';
+import { useMarketEmissions } from '@ui/hooks/market/useMarketEmissions';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import {
   hasAdditionalRewards,
@@ -36,11 +37,18 @@ export function useAPRCell({
   selectedPoolId,
   rewards,
   nativeAssetYield,
-  underlyingToken
+  underlyingToken,
+  cToken
 }: APRCellProps): APRCellData {
   const { data: merklApr } = useMerklData();
   const config =
     multipliers[dropdownSelectedChain]?.[selectedPoolId]?.[asset]?.[type];
+
+  const { data: emissionsData, isLoading: isEmissionsLoading } =
+    useMarketEmissions({
+      chainId: dropdownSelectedChain as 8453 | 34443,
+      cTokenAddresses: cToken ? [cToken] : undefined
+    });
 
   return useMemo(() => {
     const merklAprForOP = merklApr?.find(
@@ -64,13 +72,24 @@ export function useAPRCell({
       baseAPRPrefix +
       baseAPR.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
+    const marketEmissions = emissionsData?.data.find(
+      (market) => market.cTokenAddress.toLowerCase() === cToken?.toLowerCase()
+    );
+
+    const hasEmissions =
+      marketEmissions &&
+      !isEmissionsLoading &&
+      ((type === 'supply' && marketEmissions.supplyEmissions > 0) ||
+        (type === 'borrow' && marketEmissions.borrowEmissions > 0));
+    const showIonBadge = !!hasEmissions;
+
     return {
       baseAPRFormatted,
       effectiveNativeYield,
       showRewardsBadge:
         hasNonIonRewards(rewards, dropdownSelectedChain) ||
         hasAdditionalRewards(config),
-      showIonBadge: Boolean(config?.ionAPR),
+      showIonBadge,
       config,
       merklAprFormatted,
       rewardIcons: getAdditionalRewardIcons(
@@ -89,6 +108,9 @@ export function useAPRCell({
     nativeAssetYield,
     underlyingToken,
     merklApr,
-    config
+    config,
+    cToken,
+    emissionsData,
+    isEmissionsLoading
   ]);
 }

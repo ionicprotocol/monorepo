@@ -1,10 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Network } from 'lucide-react';
+import { base } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -25,8 +28,8 @@ interface INetworkSelector {
 }
 
 const ACTIVE_NETWORKS = [
-  'Mode',
   'Base',
+  'Mode',
   'Optimism',
   'Fraxtal',
   'Ink',
@@ -39,8 +42,9 @@ const ACTIVE_NETWORKS = [
   'Camp Testnet'
 ];
 
-// Using -1 as a special value for "All chains" to avoid conflicts with valid chain IDs
 export const ALL_CHAINS_VALUE = 0;
+
+const BASE_CHAIN_ID = base.id;
 
 function NetworkSelector({
   dropdownSelectedChain,
@@ -51,7 +55,28 @@ function NetworkSelector({
 }: INetworkSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { setDropChain } = useMultiIonic();
+
+  const baseNetwork = Object.entries(pools).find(
+    ([_, pool]) => pool.name === 'Base'
+  );
+
+  const baseChainId = baseNetwork ? baseNetwork[0] : BASE_CHAIN_ID.toString();
+
+  useEffect(() => {
+    const currentChain = searchParams.get('chain');
+
+    if (!currentChain) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('chain', baseChainId);
+      if (!nopool) {
+        params.set('pool', '0');
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+      setDropChain(baseChainId);
+    }
+  }, [pathname, searchParams, router, baseChainId, nopool, setDropChain]);
 
   const orderedNetworks = ACTIVE_NETWORKS.map((networkName) =>
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
@@ -63,7 +88,6 @@ function NetworkSelector({
 
   const getUrlWithParams = (chainId: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    // Always reset pool to 0 when changing chains unless nopool is true
     params.set('chain', chainId);
     if (!nopool) {
       params.set('pool', '0');

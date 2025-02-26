@@ -5,6 +5,8 @@ import { usePublicClient } from 'wagmi';
 import { getiVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
 
+import { REWARD_TOKENS } from '../rewards/useBribeRewards';
+
 interface UseVoteDataParams {
   tokenId?: number;
   chain: number;
@@ -13,19 +15,12 @@ interface UseVoteDataParams {
 }
 
 interface VoteData {
-  totalVotes: {
-    percentage: number; // Pure number for sorting
-    limit: number; // Pure number for sorting
-  };
-  myVotes: {
-    percentage: number; // Pure number for sorting
-    value: number; // Pure number for sorting
-  };
+  totalVotes: { percentage: number; limit: number };
+  myVotes: { percentage: number; value: number };
 }
 
 const BASIS_POINTS = 10000n;
-const TOKEN_DECIMALS = 18;
-const DECIMALS_SCALAR = BigInt(10 ** TOKEN_DECIMALS);
+const DECIMALS_SCALAR = BigInt(10 ** 18);
 const MULTICALL_CHUNK_SIZE = 5;
 
 export function useVoteData({
@@ -34,29 +29,24 @@ export function useVoteData({
   marketAddresses,
   marketSides
 }: UseVoteDataParams) {
-  const publicClient = usePublicClient({
-    chainId: chain
-  });
+  const publicClient = usePublicClient({ chainId: chain });
   const [voteData, setVoteData] = useState<Record<string, VoteData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const voterContract = getiVoterContract(chain);
+  const rewardTokens = REWARD_TOKENS[chain as keyof typeof REWARD_TOKENS];
 
-  const formatValue = (value: bigint): number => {
-    return Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
-  };
-
-  const chunkArray = <T>(array: T[], size: number): T[][] => {
-    const chunks: T[][] = [];
-    for (let i = 0; i < array.length; i += size) {
-      chunks.push(array.slice(i, i + size));
-    }
-    return chunks;
-  };
+  const formatValue = (value: bigint): number =>
+    Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
 
   const fetchVoteData = useCallback(async () => {
-    if (!voterContract || !publicClient || !marketAddresses.length) {
+    if (
+      !voterContract ||
+      !publicClient ||
+      !marketAddresses.length ||
+      !rewardTokens?.length
+    ) {
       setVoteData({});
       setIsLoading(false);
       return;
@@ -64,18 +54,10 @@ export function useVoteData({
 
     try {
       setIsLoading(true);
-
-      // For MODE chain, only use the specific LP token
-      const lpTokens =
-        chain === 34443
-          ? (['0x690A74d2eC0175a69C0962B309E03021C0b5002E'] as `0x${string}`[])
-          : await publicClient.readContract({
-              ...voterContract,
-              functionName: 'getAllLpRewardTokens'
-            });
-
-      const marketChunks = chunkArray(marketAddresses, MULTICALL_CHUNK_SIZE);
-      const sideChunks = chunkArray(marketSides, MULTICALL_CHUNK_SIZE);
+      const chunks = chunkArray(
+        marketAddresses.map((addr, i) => ({ addr, side: marketSides[i] })),
+        MULTICALL_CHUNK_SIZE
+      );
 
       const marketData: {
         [key: string]: { totalWeight: bigint; userVotes: bigint };
@@ -83,24 +65,21 @@ export function useVoteData({
       let totalSystemWeight = 0n;
       let totalUserWeight = 0n;
 
-      for (let i = 0; i < marketChunks.length; i++) {
-        const marketsChunk = marketChunks[i];
-        const sidesChunk = sideChunks[i];
-
-        const weightCalls = marketsChunk.flatMap((market, index) =>
-          lpTokens.map((lpToken) => ({
+      for (const chunk of chunks) {
+        const weightCalls = chunk.flatMap(({ addr, side }) =>
+          rewardTokens.map((token) => ({
             ...voterContract,
             functionName: 'weights',
-            args: [market, sidesChunk[index], lpToken]
+            args: [addr, side, token]
           }))
         );
 
         const voteCalls = tokenId
-          ? marketsChunk.flatMap((market, index) =>
-              lpTokens.map((lpToken) => ({
+          ? chunk.flatMap(({ addr, side }) =>
+              rewardTokens.map((token) => ({
                 ...voterContract,
                 functionName: 'votes',
-                args: [BigInt(tokenId), market, sidesChunk[index], lpToken]
+                args: [BigInt(tokenId), addr, side, token]
               }))
             )
           : [];
@@ -118,27 +97,29 @@ export function useVoteData({
             : Promise.resolve([])
         ]);
 
-        marketsChunk.forEach((market, marketIndex) => {
-          const lpStart = marketIndex * lpTokens.length;
-          const lpEnd = lpStart + lpTokens.length;
+        chunk.forEach(({ addr, side }, chunkIdx) => {
+          const start = chunkIdx * rewardTokens.length;
+          const end = start + rewardTokens.length;
 
           const marketWeights = weights
-            .slice(lpStart, lpEnd)
-            .map((w) => (w.status === 'success' ? w.result : 0n) as bigint);
+            .slice(start, end)
+            .map((w) => (w.status === 'success' ? w.result : 0n)) as bigint[];
           const marketTotalWeight = marketWeights.reduce(
             (sum, w) => sum + w,
             0n
           );
 
           const marketUserVotes = tokenId
-            ? votes
-                .slice(lpStart, lpEnd)
-                .map((v) => (v.status === 'success' ? v.result : 0n) as bigint)
-                .reduce((sum, v) => sum + v, 0n)
+            ? (
+                votes
+                  .slice(start, end)
+                  .map((v) =>
+                    v.status === 'success' ? v.result : 0n
+                  ) as bigint[]
+              ).reduce((sum, v) => sum + v, 0n)
             : 0n;
 
-          const key = `${market}-${sidesChunk[marketIndex] === MarketSide.Supply ? 'supply' : 'borrow'}`;
-
+          const key = `${addr}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
           marketData[key] = {
             totalWeight: marketTotalWeight,
             userVotes: marketUserVotes
@@ -193,4 +174,12 @@ export function useVoteData({
   }, [fetchVoteData]);
 
   return { voteData, isLoading, error, refresh: fetchVoteData };
+}
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
 }
