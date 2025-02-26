@@ -108,8 +108,6 @@ export default function XION() {
     args: [toBridgeAddress ?? zeroAddress],
     chainId: +(toChain ?? mode.id)
   });
-  console.log('🚀 ~ XION ~ toBridgeAddress:', toBridgeAddress);
-  console.log('🚀 ~ XION ~ destinationLimits:', destinationLimits);
 
   useEffect(() => {
     if (!destinationAddress) {
