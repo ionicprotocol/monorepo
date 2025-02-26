@@ -154,6 +154,11 @@ export default function Navbar() {
             isActive={pathname === '/xION'}
           />
           <NavLink
+            href="/incentives"
+            label="Incentives"
+            isActive={pathname === '/incentives'}
+          />
+          <NavLink
             href="/veion"
             label="veION"
             isNew
