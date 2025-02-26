@@ -13,7 +13,7 @@ import {
   parseUnits,
   zeroAddress
 } from 'viem';
-import { mode } from 'viem/chains';
+import { mode, sonic } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -46,6 +46,10 @@ const TxPopup = dynamic(() => import('@ui/components/xION/TxPopup'), {
 
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
 
+const extraBridgeAddresses = {
+  [sonic.id]: '0x9BAD1f7685f33ad855AE81089dFe79040864E2F6'
+};
+
 export default function XION() {
   const chainId = useChainId();
   const searchParams = useSearchParams();
@@ -62,11 +66,23 @@ export default function XION() {
         setToBridgeAddress(
           toSdk.chainDeployment.xERC20Hyperlane?.address as Address
         );
+      } else if (
+        extraBridgeAddresses[+toChain as keyof typeof extraBridgeAddresses]
+      ) {
+        setToBridgeAddress(
+          extraBridgeAddresses[
+            +toChain as keyof typeof extraBridgeAddresses
+          ] as Address
+        );
       }
     }
   }, [getSdk, toChain]);
   const fromBridgeAddress: Address =
-    (sdk?.chainDeployment?.xERC20Hyperlane?.address as Address) ?? zeroAddress;
+    (sdk?.chainDeployment?.xERC20Hyperlane?.address as Address) ??
+    (extraBridgeAddresses[
+      +chain as keyof typeof extraBridgeAddresses
+    ] as Address) ??
+    zeroAddress;
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const [destinationAddress, setDestinationAddress] = useState<
@@ -337,7 +353,7 @@ export default function XION() {
         <div className={`flex items-center justify-center w-full gap-2`}>
           <button
             disabled={progress >= 1 || !deposit ? true : false}
-            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
+            className={`my-3 py-1.5 text-sm ${pools[+chain]?.text ?? pools[mode.id].text} w-full ${pools[+chain]?.bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
             onClick={() => approval(parseUnits(deposit, 18))}
           >
             <ResultHandler
@@ -351,7 +367,7 @@ export default function XION() {
           </button>
           <button
             disabled={progress < 2 ? true : false}
-            className={`my-3 py-1.5 text-sm ${pools[+chain].text} w-full ${pools[+chain].bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
+            className={`my-3 py-1.5 text-sm ${pools[+chain]?.text ?? pools[mode.id].text} w-full ${pools[+chain]?.bg ?? pools[mode.id].bg} rounded-md flex items-center justify-center disabled:opacity-60`}
             onClick={() =>
               bridging({
                 token: getToken(+chain),

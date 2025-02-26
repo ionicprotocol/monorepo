@@ -7,7 +7,7 @@ import { config as dotenv } from "dotenv";
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from "hardhat/builtin-tasks/task-names";
 
 import "./tasks";
-import { base, fraxtal, mode, superseed, worldchain } from "viem/chains";
+import { base, fraxtal, mode, sonic, superseed, worldchain } from "viem/chains";
 
 dotenv();
 
@@ -21,7 +21,7 @@ const accounts = [
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS).setAction(async (_, __, runSuper) => {
   const paths = await runSuper();
-  return paths.filter((p) => !p.endsWith(".t.sol"));
+  return paths.filter((p: string) => !p.endsWith(".t.sol"));
 });
 
 const config: HardhatUserConfig = {
@@ -36,7 +36,8 @@ const config: HardhatUserConfig = {
       57073: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       1868: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
       325000: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
-      7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
+      7849306: "0x1155b614971f16758C92c4890eD338C9e3ede6b7",
+      [sonic.id]: "0x1155b614971f16758C92c4890eD338C9e3ede6b7"
     }
   },
   solidity: {
@@ -190,6 +191,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    sonic: {
+      url: "https://rpc.soniclabs.com",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://sonicscan.org/api",
+          apiKey: process.env.ETHERSCAN_API_KEY_SONIC
+        }
+      }
     }
   },
   etherscan: {
@@ -203,7 +214,8 @@ const config: HardhatUserConfig = {
       swellchain: "empty",
       camptest: "empty",
       ozeantest: "empty",
-      soneium: "empty"
+      soneium: "empty",
+      sonic: process.env.ETHERSCAN_API_KEY_SONIC!
     },
     customChains: [
       {
@@ -268,6 +280,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://soneium.blockscout.com/api",
           browserURL: "https://soneium.blockscout.com/"
+        }
+      },
+      {
+        network: "sonic",
+        chainId: 1868,
+        urls: {
+          apiURL: "https://sonicscan.org/api",
+          browserURL: "https://sonicscan.org"
         }
       }
     ]

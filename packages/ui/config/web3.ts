@@ -9,7 +9,8 @@ import {
   lisk,
   superseed,
   worldchain,
-  type AppKitNetwork
+  type AppKitNetwork,
+  sonic
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { http } from 'viem';
@@ -122,7 +123,8 @@ export const networks: AppKitNetwork[] = [
   swellchain,
   camptest,
   ozeantest,
-  soneium
+  soneium,
+  sonic
 ];
 
 export const metadata = {

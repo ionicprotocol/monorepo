@@ -6,7 +6,14 @@ import React, { useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
-import { chainsArr } from '@ui/constants/index';
+import { sonic } from 'viem/chains';
+
+import { chainsArr as _chainsArr } from '@ui/constants/index';
+
+const chainsArr: Record<number, string> = {
+  ..._chainsArr,
+  [sonic.id]: 'Sonic'
+};
 
 interface IChainSelector {
   newRef: any;
