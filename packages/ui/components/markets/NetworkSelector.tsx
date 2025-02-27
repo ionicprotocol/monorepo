@@ -90,7 +90,12 @@ function NetworkSelector({
     const params = new URLSearchParams(searchParams.toString());
     params.set('chain', chainId);
     if (!nopool) {
-      params.set('pool', '0');
+      const poolValue =
+        Object.entries(pools).find(([id]) => id === chainId)?.[1].name ===
+        'Mode'
+          ? '1'
+          : '0';
+      params.set('pool', poolValue);
     }
     return `${pathname}?${params.toString()}`;
   };

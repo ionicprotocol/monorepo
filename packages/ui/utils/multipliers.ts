@@ -223,28 +223,28 @@ export const multipliers: Record<
     '0': {
       eUSD: {
         borrow: {
-          flywheel: true
+          flywheel: false
         },
         supply: {
-          flywheel: true
+          flywheel: false
         }
       },
       bsdETH: {
         borrow: {
-          flywheel: true
+          flywheel: false
         },
         supply: {
           underlyingAPR: 2.6,
-          flywheel: true
+          flywheel: false
         }
       },
       hyUSD: {
         supply: {
           underlyingAPR: 3.5,
-          flywheel: true
+          flywheel: false
         },
         borrow: {
-          flywheel: true
+          flywheel: false
         }
       },
       AERO: {
@@ -259,7 +259,7 @@ export const multipliers: Record<
       },
       USDC: {
         borrow: {
-          flywheel: true
+          flywheel: false
         },
         market: 'ionusdc_base',
         supply: {
@@ -307,7 +307,7 @@ export const multipliers: Record<
           etherfi: 3,
           underlyingAPR: 2.99,
           eigenlayer: true,
-          flywheel: true
+          flywheel: false
         }
       },
       RSR: {
@@ -379,7 +379,7 @@ export const multipliers: Record<
           flywheel: false
         },
         supply: {
-          flywheel: true
+          flywheel: false
         }
       },
       uSUI: {
@@ -387,7 +387,7 @@ export const multipliers: Record<
           flywheel: false
         },
         supply: {
-          flywheel: true
+          flywheel: false
         }
       },
       sUSDz: {
@@ -412,7 +412,7 @@ export const multipliers: Record<
           flywheel: false
         },
         supply: {
-          flywheel: true
+          flywheel: false
         }
       }
     }
