@@ -86,10 +86,10 @@ export default function useSugarAPR({
 
       const staked0USD =
         Number(formatEther(sugarData.staked0)) *
-        (isToken0Weth ? ethPrice : Number(ionData.pair.priceUsd));
+        (isToken0Weth ? ethPrice : Number(ionData.pair?.priceUsd || 0));
       const staked1USD =
         Number(formatEther(sugarData.staked1)) *
-        (isToken0Weth ? Number(ionData.pair.priceUsd) : ethPrice);
+        (isToken0Weth ? Number(ionData.pair?.priceUsd || 0) : ethPrice);
 
       totalStakedUSD = staked0USD + staked1USD;
     }
