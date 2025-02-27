@@ -188,7 +188,7 @@ export const multipliers: Record<
         market: 'ionmode_modenative',
         multiplier: 0.035,
         supply: {
-          flywheel: false
+          flywheel: true
         }
       },
       USDC: {
