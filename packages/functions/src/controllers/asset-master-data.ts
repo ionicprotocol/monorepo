@@ -191,39 +191,28 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
           const rewardTokens = new Set<string>();
           let rewardApySupply = 0;
           let rewardApyBorrow = 0;
+          
           try {
-            const flywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(pool.comptroller)
-              .catch(err => {
-                console.error(`Error fetching flywheel rewards for pool ${pool.comptroller}:`, err);
-                return null;
-              });
+            const flywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(pool.comptroller);
             
             if (flywheelRewards) {
               const marketRewards = flywheelRewards.find(r => r.market === asset.cToken);
               if (marketRewards?.rewardsInfo) {
                 for (const reward of marketRewards.rewardsInfo) {
-                  try {
-                    if (reward.formattedAPR) {
-                      const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
-                      
-                      // Get the flywheel booster address
-                      const boosterAddress = await publicClient.readContract({
-                        address: reward.flywheel as `0x${string}`,
-                        abi: FlywheelABI as Abi,
-                        functionName: 'flywheelBooster'
-                      }).catch(() => '0x0000000000000000000000000000000000000000');
-                      
-                      // If booster address is zero address, it's a supply reward
-                      if (boosterAddress === '0x0000000000000000000000000000000000000000') {
-                        rewardApySupply += Math.min(apyForMarket * 100, 1000);
-                      } else {
-                        rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
-                      }
-                      rewardTokens.add(reward.rewardToken.toLowerCase());
+                  if (reward.formattedAPR) {
+                    const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
+                    const boosterAddress = await publicClient.readContract({
+                      address: reward.flywheel as `0x${string}`,
+                      abi: FlywheelABI as Abi,
+                      functionName: 'flywheelBooster'
+                    });
+                    
+                    if (boosterAddress === '0x0000000000000000000000000000000000000000') {
+                      rewardApySupply += Math.min(apyForMarket * 100, 1000);
+                    } else {
+                      rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
                     }
-                  } catch (e) {
-                    console.error(`Error processing reward for ${asset.cToken}:`, e);
-                    continue;
+                    rewardTokens.add(reward.rewardToken.toLowerCase());
                   }
                 }
               }
