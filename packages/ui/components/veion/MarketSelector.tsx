@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { base, mode } from 'wagmi/chains';
 
 import CustomTooltip from '@ui/components/CustomTooltip';
+import TokenBalance from '@ui/components/markets/Cells/TokenBalance';
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
 import {
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/components/ui/select';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 
 const NetworkSelector = dynamic(
@@ -34,18 +36,24 @@ interface MarketData {
   asset: string;
   underlyingSymbol: string;
   cTokenAddress: string;
-  supply: { total: number; totalUSD: number };
-  borrow: { total: number; totalUSD: number };
+  supply: { total: number; totalUSD: number; yourUSD: number; balance: number };
+  borrow: { total: number; totalUSD: number; yourUSD: number; balance: number };
   supplyAPR: number;
   borrowAPR: number;
+  votes: number;
+  incentives: number;
 }
 
 const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const searchParams = useSearchParams();
+  const { address } = useMultiIonic();
   const queryChain = searchParams.get('chain');
   const currentChain = queryChain || base.id.toString();
   const poolId = currentChain === mode.id.toString() ? '1' : '0';
-  const { marketData, isLoading } = useMarketData(poolId, currentChain);
+  const { marketData: rawMarketData, isLoading } = useMarketData(
+    poolId,
+    currentChain
+  );
 
   const [selectedMarket, setSelectedMarket] = useState<string>('');
   const [selectedSide, setSelectedSide] = useState<'' | 'borrow' | 'supply'>(
@@ -55,6 +63,35 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     currentChain === mode.id.toString() ? 'mode' : 'ion' // Default token based on chain
   );
   const [incentiveAmount, setIncentiveAmount] = useState<string>('');
+
+  // Transform raw market data to include user balances
+  const marketData = useMemo(() => {
+    if (!rawMarketData) return [];
+
+    return rawMarketData.map((market) => {
+      return {
+        asset: market.asset,
+        underlyingSymbol: market.underlyingSymbol,
+        cTokenAddress: market.cTokenAddress,
+        supply: {
+          total: market.supply?.total || 0,
+          totalUSD: market.supply?.totalUSD || 0,
+          yourUSD: market.supply?.balanceUSD || 0,
+          balance: market.supply?.balance || 0
+        },
+        borrow: {
+          total: market.borrow?.total || 0,
+          totalUSD: market.borrow?.totalUSD || 0,
+          yourUSD: market.borrow?.balanceUSD || 0,
+          balance: market.borrow?.balance || 0
+        },
+        supplyAPR: market.supplyAPR || 0,
+        borrowAPR: market.borrowAPR || 0,
+        votes: 0, // Default to 0 for now
+        incentives: 0 // Default to 0 for now
+      };
+    });
+  }, [rawMarketData]);
 
   const marketOptions = useMemo(() => {
     if (!marketData) return [];
@@ -184,51 +221,130 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                 <h3 className="text-sm font-medium text-white/80">
                   Market Balances
                 </h3>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Supply:</span>
-                    <span className="text-white font-medium">
-                      {formatNumber(selectedMarketData.supply.total)}{' '}
-                      {selectedMarketData.underlyingSymbol}
-                    </span>
-                  </div>
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Supply USD:</span>
-                    <span className="text-white font-medium">
-                      {formatNumber(selectedMarketData.supply.totalUSD, true)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Borrow:</span>
-                    <span className="text-white font-medium">
-                      {formatNumber(selectedMarketData.borrow.total)}{' '}
-                      {selectedMarketData.underlyingSymbol}
-                    </span>
-                  </div>
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Borrow USD:</span>
-                    <span className="text-white font-medium">
-                      {formatNumber(selectedMarketData.borrow.totalUSD, true)}
-                    </span>
-                  </div>
+                <div className="overflow-hidden rounded">
+                  <table className="w-full text-xs border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Type
+                        </th>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Total Market
+                        </th>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Your Position
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
+                          Supply
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <TokenBalance
+                            balance={selectedMarketData.supply.total}
+                            balanceUSD={selectedMarketData.supply.totalUSD}
+                            tokenName={selectedMarketData.underlyingSymbol}
+                          />
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <TokenBalance
+                            balance={selectedMarketData.supply.balance}
+                            balanceUSD={selectedMarketData.supply.yourUSD}
+                            tokenName={selectedMarketData.underlyingSymbol}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
+                          Borrow
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <TokenBalance
+                            balance={selectedMarketData.borrow.total}
+                            balanceUSD={selectedMarketData.borrow.totalUSD}
+                            tokenName={selectedMarketData.underlyingSymbol}
+                          />
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <TokenBalance
+                            balance={selectedMarketData.borrow.balance}
+                            balanceUSD={selectedMarketData.borrow.yourUSD}
+                            tokenName={selectedMarketData.underlyingSymbol}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
               <div className="bg-black/30 rounded-md p-3 space-y-2">
-                <h3 className="text-sm font-medium text-white/80">APR Rates</h3>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Supply APR:</span>
-                    <span className="text-green-400 font-medium">
-                      {selectedMarketData.supplyAPR.toFixed(2)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between bg-black/20 p-2 rounded">
-                    <span className="text-white/70">Borrow APR:</span>
-                    <span className="text-red-400 font-medium">
-                      {selectedMarketData.borrowAPR.toFixed(2)}%
-                    </span>
-                  </div>
+                <h3 className="text-sm font-medium text-white/80">
+                  APR Rates & Incentives
+                </h3>
+                <div className="overflow-hidden rounded">
+                  <table className="w-full text-xs border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Type
+                        </th>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          APR
+                        </th>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Votes
+                        </th>
+                        <th className="bg-black/40 p-2 text-left font-medium text-white/80">
+                          Incentives
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
+                          Supply
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-green-400 font-medium">
+                            {selectedMarketData.supplyAPR.toFixed(2)}%
+                          </span>
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-blue-400 font-medium">
+                            {selectedMarketData.votes || 0}
+                          </span>
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-purple-400 font-medium">
+                            {selectedMarketData.incentives || 0}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
+                          Borrow
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-red-400 font-medium">
+                            {selectedMarketData.borrowAPR.toFixed(2)}%
+                          </span>
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-blue-400 font-medium">
+                            {selectedMarketData.votes || 0}
+                          </span>
+                        </td>
+                        <td className="bg-black/20 p-2 border-t border-white/5">
+                          <span className="text-purple-400 font-medium">
+                            {selectedMarketData.incentives || 0}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
