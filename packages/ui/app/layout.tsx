@@ -15,6 +15,7 @@ import { Toaster as ToastProvider } from '@ui/components/ui/toaster';
 import { TooltipProvider } from '@ui/components/ui/tooltip';
 import { wagmiAdapter, initializeWeb3 } from '@ui/config/web3';
 import { MultiIonicProvider } from '@ui/context/MultiIonicContext';
+import { VeIONProvider } from '@ui/context/VeIonContext';
 
 import './globals.css';
 
@@ -47,41 +48,43 @@ export default function RootLayout({
         gtag('js', new Date());
         gtag('config', 'G-PBTG02B74E');`}
       </Script>
-      <body className={'scrollbar-hide font-inter'}>
+      <body className="scrollbar-hide font-inter">
         <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
           <QueryClientProvider client={queryClient}>
             <MultiIonicProvider>
-              <TooltipProvider>
-                <Suspense fallback={<></>}>
-                  <ProgressBar
-                    color="#3bff89ff"
-                    height="2px"
-                    options={{ showSpinner: false }}
-                    shallowRouting
-                  />
-                  <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[300px] min-h-screen w-[100vw]">
-                    <Navbar />
-                    <main>{children}</main>
-                    <Footer />
-                    <ToastProvider />
-                    <Toaster
-                      toastOptions={{
-                        error: {
-                          style: {
-                            background: '#e10000',
-                            color: '#fff'
-                          }
-                        },
-                        position: 'bottom-center',
-                        style: {
-                          background: '#3bff89ff',
-                          color: '#000'
-                        }
-                      }}
+              <Suspense fallback={<div>Loading...</div>}>
+                <VeIONProvider>
+                  <TooltipProvider>
+                    <ProgressBar
+                      color="#3bff89ff"
+                      height="2px"
+                      options={{ showSpinner: false }}
+                      shallowRouting
                     />
-                  </div>
-                </Suspense>
-              </TooltipProvider>
+                    <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[300px] min-h-screen w-[100vw]">
+                      <Navbar />
+                      <main>{children}</main>
+                      <Footer />
+                      <ToastProvider />
+                      <Toaster
+                        toastOptions={{
+                          error: {
+                            style: {
+                              background: '#e10000',
+                              color: '#fff'
+                            }
+                          },
+                          position: 'bottom-center',
+                          style: {
+                            background: '#3bff89ff',
+                            color: '#000'
+                          }
+                        }}
+                      />
+                    </div>
+                  </TooltipProvider>
+                </VeIONProvider>
+              </Suspense>
             </MultiIonicProvider>
           </QueryClientProvider>
         </WagmiProvider>

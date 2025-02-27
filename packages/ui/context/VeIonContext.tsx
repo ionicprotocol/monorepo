@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
 
@@ -90,7 +92,7 @@ const VeIONContext = createContext<VeIONContextType>(defaultContext);
 
 export function VeIONProvider({ children }: { children: ReactNode }) {
   const { address } = useAccount();
-  const defaultChainId = 34443;
+  const defaultChainId = 8453;
   const searchParams = useSearchParams();
   const [currentChain, setCurrentChain] = useState<number>(defaultChainId);
   const [selectedManagePosition, setSelectedManagePosition] =

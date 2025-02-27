@@ -45,7 +45,7 @@ export default function Dashboard() {
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const chain = querychain ? querychain : 34443;
-  const pool = querypool ? querypool : '0';
+  const pool = querypool ?? (chain === 34443 ? '1' : '0');
   const [selectedSymbol, setSelectedSymbol] = useState<string>('WETH');
   const [activeTab, setActiveTab] = useState<ActiveTab>();
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);

@@ -1,8 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-
 import dynamic from 'next/dynamic';
 
 import ResultHandler from '../ResultHandler';
@@ -31,22 +29,6 @@ function SwapTo({
   isLoading,
   footerText
 }: ISwapTo) {
-  const newRef = useRef(null!);
-  const [open, setOpen] = useState<boolean>(false);
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const handleOutsideClick = (e: any) => {
-    //@ts-ignore
-    if (newRef.current && !newRef.current?.contains(e?.target)) {
-      setOpen(false);
-    }
-  };
   return (
     <>
       <div
@@ -70,9 +52,6 @@ function SwapTo({
           className={`ml-auto min-w-max px-0.5 flex items-center justify-end`}
         >
           <TokenSelector
-            newRef={newRef}
-            open={open}
-            setOpen={setOpen}
             tokenArr={tokenArr}
             selectedToken={tokenName}
           />

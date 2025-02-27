@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useMemo, useState } from 'react';
 
 import Image from 'next/image';
@@ -242,7 +244,7 @@ function VotesManagement({
         </TooltipWrapper>
       ),
       sortingFn: 'numerical',
-      cell: ({ row }) => <span>{row.original.veAPR}</span>
+      cell: ({ row }) => <span>{row.original.veAPR.toFixed(2)}</span>
     },
     {
       id: 'totalVotes.limit',

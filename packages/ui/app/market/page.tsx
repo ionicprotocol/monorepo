@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
 import { isAddress } from 'viem';
-import { mode } from 'viem/chains';
+import { base } from 'viem/chains';
 import { useChainId } from 'wagmi';
 
 import ManageDialog from '@ui/components/dialogs/ManageMarket';
@@ -28,14 +28,17 @@ const NetworkSelector = dynamic(
   { ssr: false }
 );
 
+const BASE_CHAIN_ID = base.id.toString();
+
 export default function Market() {
   const searchParams = useSearchParams();
   const chainId = useChainId();
 
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
+  const chain = querychain ? querychain : BASE_CHAIN_ID;
+
   const selectedPool = querypool ?? '0';
-  const chain = querychain ? querychain : mode.id.toString();
 
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 
