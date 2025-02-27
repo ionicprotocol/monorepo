@@ -192,35 +192,45 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
           let rewardApySupply = 0;
           let rewardApyBorrow = 0;
           try {
-            const flywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(pool.comptroller);
+            const flywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(pool.comptroller)
+              .catch(err => {
+                console.error(`Error fetching flywheel rewards for pool ${pool.comptroller}:`, err);
+                return null;
+              });
             
             if (flywheelRewards) {
               const marketRewards = flywheelRewards.find(r => r.market === asset.cToken);
               if (marketRewards?.rewardsInfo) {
                 for (const reward of marketRewards.rewardsInfo) {
-                  if (reward.formattedAPR) {
-                    const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
-                    
-                    // Get the flywheel booster address
-                    const boosterAddress = await publicClient.readContract({
-                      address: reward.flywheel as `0x${string}`,
-                      abi: FlywheelABI as Abi,
-                      functionName: 'flywheelBooster'
-                    });
-                    
-                    // If booster address is zero address, it's a supply reward
-                    if (boosterAddress === '0x0000000000000000000000000000000000000000') {
-                      rewardApySupply += Math.min(apyForMarket * 100, 1000);
-                    } else {
-                      rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
+                  try {
+                    if (reward.formattedAPR) {
+                      const apyForMarket = Number(formatUnits(reward.formattedAPR, 18));
+                      
+                      // Get the flywheel booster address
+                      const boosterAddress = await publicClient.readContract({
+                        address: reward.flywheel as `0x${string}`,
+                        abi: FlywheelABI as Abi,
+                        functionName: 'flywheelBooster'
+                      }).catch(() => '0x0000000000000000000000000000000000000000');
+                      
+                      // If booster address is zero address, it's a supply reward
+                      if (boosterAddress === '0x0000000000000000000000000000000000000000') {
+                        rewardApySupply += Math.min(apyForMarket * 100, 1000);
+                      } else {
+                        rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
+                      }
+                      rewardTokens.add(reward.rewardToken.toLowerCase());
                     }
-                    rewardTokens.add(reward.rewardToken.toLowerCase());
+                  } catch (e) {
+                    console.error(`Error processing reward for ${asset.cToken}:`, e);
+                    continue;
                   }
                 }
               }
             }
           } catch (e) {
             console.error(`Error calculating rewards for ${asset.cToken}:`, e);
+            // Continue with zero rewards rather than failing the entire asset
           }
           const totalSupplyApy = supplyApy + rewardApySupply;
           const totalBorrowApy = (-1 * borrowApy) + rewardApyBorrow;
@@ -283,12 +293,34 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
         console.error(`Error processing pool ${pool.comptroller}:`, e);
       }
     }
-    // Insert into database
-    const { error } = await supabase
-      .from(environment.supabaseAssetMasterDataTableName)
-      .insert(masterEntries);
-    if (error) {
-      throw error;
+
+    // Insert into database with fallback to insert if upsert fails
+    try {
+      const { error } = await supabase
+        .from(environment.supabaseAssetMasterDataTableName)
+        .upsert(masterEntries, {
+          onConflict: 'chain_id,ctoken_address',
+          ignoreDuplicates: false
+        });
+
+      if (error) {
+        // If upsert fails due to missing constraint, fall back to insert
+        if (error.code === '42P10') {
+          console.log('Falling back to insert due to missing constraint');
+          const { error: insertError } = await supabase
+            .from(environment.supabaseAssetMasterDataTableName)
+            .insert(masterEntries);
+          
+          if (insertError) {
+            throw insertError;
+          }
+        } else {
+          throw error;
+        }
+      }
+    } catch (dbError) {
+      console.error('Database operation failed:', dbError);
+      throw dbError;
     }
     return masterEntries;
   } catch (err) {
