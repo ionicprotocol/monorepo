@@ -190,47 +190,6 @@ export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
 };
 
 export const pools: Record<number, PoolParams> = {
-  [mode.id]: {
-    hexcode: '#3bff89',
-    arrow: '000000',
-    bg: 'bg-lime',
-    accentbg: 'bg-accent',
-    text: 'text-darkone',
-    name: 'Mode',
-    border: 'border-mode',
-    logo: '/img/logo/MODE.png',
-    pools: [
-      {
-        id: '0',
-        name: 'Deprecated',
-        assets: [
-          'WETH',
-          'USDC',
-          'msDAI',
-          'weETH.mode',
-          'LBTC',
-          'uniBTC',
-          'oBTC',
-          'uBTC',
-          'M-BTC',
-          'sUSDe',
-          'wrsETH',
-          'ezETH',
-          'STONE',
-          'WBTC',
-          'USDe',
-          'USDT',
-          'weETH',
-          'dMBTC'
-        ]
-      },
-      {
-        id: '1',
-        name: 'Native Pool',
-        assets: ['MODE', 'WETH', 'USDC', 'USDT']
-      }
-    ]
-  },
   [base.id]: {
     name: 'Base',
     arrow: 'ffffff',
@@ -284,6 +243,47 @@ export const pools: Record<number, PoolParams> = {
     //     assets: ['USDC', 'WETH']
     //   }
     // ]
+  },
+  [mode.id]: {
+    hexcode: '#3bff89',
+    arrow: '000000',
+    bg: 'bg-lime',
+    accentbg: 'bg-accent',
+    text: 'text-darkone',
+    name: 'Mode',
+    border: 'border-mode',
+    logo: '/img/logo/MODE.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Deprecated',
+        assets: [
+          'WETH',
+          'USDC',
+          'msDAI',
+          'weETH.mode',
+          'LBTC',
+          'uniBTC',
+          'oBTC',
+          'uBTC',
+          'M-BTC',
+          'sUSDe',
+          'wrsETH',
+          'ezETH',
+          'STONE',
+          'WBTC',
+          'USDe',
+          'USDT',
+          'weETH',
+          'dMBTC'
+        ]
+      },
+      {
+        id: '1',
+        name: 'Native Pool',
+        assets: ['MODE', 'WETH', 'USDC', 'USDT']
+      }
+    ]
   },
   [optimism.id]: {
     name: 'Optimism',
