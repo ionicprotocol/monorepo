@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-import { Globe, Diamond, Wallet } from 'lucide-react';
+import { Globe, Diamond, Wallet, AlertCircle } from 'lucide-react';
 
 import { pools } from '@ui/constants/index';
 
@@ -79,11 +79,7 @@ const PoolToggle = ({ chain, pool, hiddenPools = [] }: PoolToggleProps) => {
                   {isNative ? (
                     <Diamond className="h-4 w-4" />
                   ) : isDeprecated ? (
-                    <img
-                      className="h-4 w-4 rounded-full"
-                      src="https://media.istockphoto.com/id/1913564962/de/vektor/nordkoreas-kreisflagge-schaltfl%C3%A4chen-flaggensymbol-standardfarbe-kreissymbol-flagge-computer.jpg?s=612x612&w=0&k=20&c=jgpP_sfyWiWBblsNszRatxff7Ps2n2TMOi2rqBk8TZs="
-                      alt="Deprecated Pool"
-                    />
+                    <AlertCircle className="h-4 w-4" />
                   ) : (
                     <Globe className="h-4 w-4" />
                   )}
