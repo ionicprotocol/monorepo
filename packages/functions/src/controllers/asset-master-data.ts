@@ -209,9 +209,9 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
                     });
                     
                     if (boosterAddress === '0x0000000000000000000000000000000000000000') {
-                      rewardApySupply += Math.min(apyForMarket * 100, 1000);
+                      rewardApySupply += apyForMarket * 100;
                     } else {
-                      rewardApyBorrow += Math.min(apyForMarket * 100, 1000);
+                      rewardApyBorrow += apyForMarket * 100;
                     }
                     rewardTokens.add(reward.rewardToken.toLowerCase());
                   }
