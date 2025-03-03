@@ -85,7 +85,6 @@ export default function Navbar() {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const pathname = usePathname();
   const { dropChain } = useMultiIonic();
-  const chainId = useChainId();
   const { isConnected } = useAccount();
 
   return (
@@ -134,11 +133,10 @@ export default function Navbar() {
             isActive={pathname === '/dashboard'}
           />
           <NavLink
-            href="/earn"
-            label="Earn"
-            isActive={pathname === '/earn'}
+            href="/xION?chain=34443&toChain=8453"
+            label="Bridge ION"
+            isActive={pathname === '/xION'}
           />
-
           <div className="relative mb-2 lg:mb-0">
             <p
               className="lg:px-2 xl:px-4 text-center transition-colors duration-200 hover:text-accent cursor-pointer"
@@ -147,12 +145,12 @@ export default function Navbar() {
               Swap
             </p>
           </div>
-
           <NavLink
-            href="/xION?chain=34443&toChain=8453"
-            label="Bridge ION"
-            isActive={pathname === '/xION'}
+            href="/earn"
+            label="Earn"
+            isActive={pathname === '/earn'}
           />
+
           {/* <NavLink
             href="/incentives"
             label="Incentives"
