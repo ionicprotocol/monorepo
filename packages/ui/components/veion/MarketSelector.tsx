@@ -1,14 +1,24 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 
+import {
+  Coins,
+  Info,
+  Database,
+  Percent,
+  LineChart,
+  CircleDollarSign,
+  Loader2
+} from 'lucide-react';
+import { erc20Abi, isAddress } from 'viem';
+import { useReadContract } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 
-import CustomTooltip from '@ui/components/CustomTooltip';
 import TokenBalance from '@ui/components/markets/Cells/TokenBalance';
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent } from '@ui/components/ui/card';
@@ -19,8 +29,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@ui/components/ui/select';
-import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useMarketData } from '@ui/hooks/market/useMarketData';
+import { useToast } from '@ui/hooks/use-toast';
+import { useIncentiveSubmission } from '@ui/hooks/veion/useIncentiveSubmission';
+import { useMarketIncentives } from '@ui/hooks/veion/useMarketIncentives';
+import { useMarketVotes } from '@ui/hooks/veion/useMarketVotes';
 
 const NetworkSelector = dynamic(
   () => import('@ui/components/markets/NetworkSelector'),
@@ -32,43 +45,92 @@ interface MarketSelectorProps {
   isAcknowledged: boolean;
 }
 
-interface MarketData {
-  asset: string;
-  underlyingSymbol: string;
-  cTokenAddress: string;
-  supply: { total: number; totalUSD: number; yourUSD: number; balance: number };
-  borrow: { total: number; totalUSD: number; yourUSD: number; balance: number };
-  supplyAPR: number;
-  borrowAPR: number;
-  votes: number;
-  incentives: number;
-}
-
 const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const searchParams = useSearchParams();
-  const { address } = useMultiIonic();
+  const { toast } = useToast();
   const queryChain = searchParams.get('chain');
   const currentChain = queryChain || base.id.toString();
+  const chainId = parseInt(currentChain);
   const poolId = currentChain === mode.id.toString() ? '1' : '0';
-  const { marketData: rawMarketData, isLoading } = useMarketData(
-    poolId,
-    currentChain
-  );
 
+  // Get market data
+  const { marketData: rawMarketData, isLoading: isMarketDataLoading } =
+    useMarketData(poolId, currentChain);
+
+  // State variables
   const [selectedMarket, setSelectedMarket] = useState<string>('');
   const [selectedSide, setSelectedSide] = useState<'' | 'borrow' | 'supply'>(
     ''
   );
-  const [selectedToken, setSelectedToken] = useState<string>(
-    currentChain === mode.id.toString() ? 'mode' : 'ion' // Default token based on chain
-  );
+  const [selectedToken, setSelectedToken] = useState<string>('');
   const [incentiveAmount, setIncentiveAmount] = useState<string>('');
 
-  // Transform raw market data to include user balances
+  // Extract all market addresses from raw market data
+  const marketAddresses = useMemo(() => {
+    if (!rawMarketData || !rawMarketData.length) return [];
+    return rawMarketData.map((market) => market.cTokenAddress);
+  }, [rawMarketData]);
+
+  // Get votes data for all markets
+  const { getMarketVotes, isLoading: isVotesLoading } = useMarketVotes(
+    chainId,
+    marketAddresses
+  );
+
+  // Get incentives data for all markets
+  const {
+    getMarketIncentives,
+    getBribeAddress,
+    rewardTokens,
+    isLoading: isIncentivesLoading
+  } = useMarketIncentives(chainId, marketAddresses);
+
+  // Incentive submission hook
+  const {
+    submitIncentive,
+    isApproving,
+    isSubmitting,
+    isConfirming,
+    error: submissionError
+  } = useIncentiveSubmission();
+
+  // Set default token when reward tokens are loaded
+  useEffect(() => {
+    if (rewardTokens && rewardTokens.length > 0 && !selectedToken) {
+      setSelectedToken(rewardTokens[0]);
+    }
+  }, [rewardTokens, selectedToken]);
+
+  // Reset form when chain changes
+  useEffect(() => {
+    setSelectedMarket('');
+    setSelectedSide('');
+    setSelectedToken('');
+    setIncentiveAmount('');
+  }, [currentChain]);
+
+  // Loading state
+  const isLoading =
+    isMarketDataLoading ||
+    isVotesLoading ||
+    isIncentivesLoading ||
+    isApproving ||
+    isSubmitting ||
+    isConfirming;
+
+  // Transform raw market data to include votes and incentives
   const marketData = useMemo(() => {
     if (!rawMarketData) return [];
 
     return rawMarketData.map((market) => {
+      const marketAddress = market.cTokenAddress;
+
+      // Get votes and incentives data
+      const supplyVotes = getMarketVotes(marketAddress, 'supply');
+      const borrowVotes = getMarketVotes(marketAddress, 'borrow');
+      const supplyIncentives = getMarketIncentives(marketAddress, 'supply');
+      const borrowIncentives = getMarketIncentives(marketAddress, 'borrow');
+
       return {
         asset: market.asset,
         underlyingSymbol: market.underlyingSymbol,
@@ -87,15 +149,22 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
         },
         supplyAPR: market.supplyAPR || 0,
         borrowAPR: market.borrowAPR || 0,
-        votes: 0, // Default to 0 for now
-        incentives: 0 // Default to 0 for now
+        votes: {
+          supply: supplyVotes,
+          borrow: borrowVotes
+        },
+        incentives: {
+          supply: supplyIncentives,
+          borrow: borrowIncentives
+        }
       };
     });
-  }, [rawMarketData]);
+  }, [rawMarketData, getMarketVotes, getMarketIncentives]);
 
+  // Market options for dropdown
   const marketOptions = useMemo(() => {
     if (!marketData) return [];
-    return marketData.map((market: MarketData) => ({
+    return marketData.map((market) => ({
       value: market.cTokenAddress,
       label: market.asset,
       symbol: market.underlyingSymbol,
@@ -103,34 +172,88 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }));
   }, [marketData]);
 
+  // Selected market data
   const selectedMarketData = useMemo(() => {
     return marketData?.find(
-      (market: MarketData) => market.cTokenAddress === selectedMarket
+      (market) => market.cTokenAddress === selectedMarket
     );
   }, [marketData, selectedMarket]);
 
-  const tokenOptions = useMemo(() => {
-    return currentChain === mode.id.toString()
-      ? ['mode', 'ion']
-      : ['ion', 'eth'];
-  }, [currentChain]);
-
-  const formatNumber = (num: number, isUSD: boolean = false) =>
-    isUSD
-      ? `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-      : num.toLocaleString('en-US', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-
+  // Handle token selection change
   const handleTokenChange = (token: string) => {
     setSelectedToken(token);
   };
 
+  // Handle incentive amount input
   const handleInput = (val: string) => {
     setIncentiveAmount(val);
   };
 
+  // Handle form submission
+  const { data: tokenDecimals } = useReadContract({
+    address: selectedToken as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'decimals',
+    query: {
+      enabled: !!selectedToken && isAddress(selectedToken)
+    }
+  });
+
+  // Modified handleSubmit function
+  const handleSubmit = async () => {
+    if (
+      !selectedMarket ||
+      !selectedSide ||
+      !incentiveAmount ||
+      !selectedToken
+    ) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Get the bribe address for the selected market and side
+    const bribeAddress = getBribeAddress(
+      selectedMarket,
+      selectedSide
+    ) as `0x${string}`;
+
+    if (!bribeAddress) {
+      toast({
+        title: 'Error',
+        description: 'Bribe address not found for the selected market and side',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    const result = await submitIncentive({
+      bribeAddress,
+      tokenAddress: selectedToken as `0x${string}`,
+      amount: incentiveAmount,
+      tokenDecimals: Number(tokenDecimals) || 18
+    });
+
+    if (result.success) {
+      toast({
+        title: 'Success',
+        description: 'Incentive successfully submitted!'
+      });
+      // Reset form
+      setIncentiveAmount('');
+    } else {
+      toast({
+        title: 'Error',
+        description: `Failed to submit incentive: ${result.error || submissionError || 'Unknown error'}`,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Form completion check
   const isFormComplete =
     selectedMarket && selectedSide && incentiveAmount && isAcknowledged;
 
@@ -138,9 +261,12 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     <Card className="bg-gradient-to-br from-grayone to-black border border-white/10 shadow-xl backdrop-blur-lg">
       <CardContent className="space-y-5 p-5">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-accent">
-            Select Market
-          </h2>
+          <div className="flex items-center gap-2">
+            <Coins className="h-5 w-5 text-accent" />
+            <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-accent">
+              Select Market
+            </h2>
+          </div>
           <NetworkSelector
             dropdownSelectedChain={+currentChain}
             nopool={true}
@@ -186,39 +312,108 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               onValueChange={(value) =>
                 setSelectedSide(value as 'borrow' | 'supply')
               }
-              disabled={!selectedMarket || !isAcknowledged}
+              disabled={!selectedMarket || !isAcknowledged || isLoading}
             >
               <SelectTrigger className="w-full bg-grayone border-white/10 text-white shadow-inner">
-                <SelectValue placeholder="Choose supply or borrow" />
+                <div className="flex items-center gap-2">
+                  <SelectValue placeholder="Choose supply or borrow" />
+                </div>
               </SelectTrigger>
               <SelectContent className="bg-grayone border-white/10 text-white shadow-lg">
-                <SelectItem value="supply">Supply</SelectItem>
-                <SelectItem value="borrow">Borrow</SelectItem>
+                <SelectItem value="supply">
+                  <div className="flex items-center gap-2">
+                    <span>Supply</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="borrow">
+                  <div className="flex items-center gap-2">
+                    <span>Borrow</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
 
-            <MaxDeposit
-              headerText="Incentivize Amount"
-              tokenName={selectedToken}
-              tokenSelector={true}
-              tokenArr={tokenOptions}
-              chain={+currentChain}
-              handleInput={(val?: string) => handleInput(val || '')}
-              onTokenChange={handleTokenChange}
-            />
+            {isIncentivesLoading ? (
+              <div className="relative p-6 border border-white/10 rounded-md bg-grayone animate-pulse">
+                <div className="flex items-center justify-center space-x-2">
+                  <Loader2
+                    size={20}
+                    className="text-accent animate-spin"
+                  />
+                  <div className="text-center text-white/60 text-sm">
+                    Loading reward tokens...
+                  </div>
+                </div>
+              </div>
+            ) : rewardTokens.length === 0 ? (
+              <div className="p-6 border border-white/10 rounded-md bg-grayone/80">
+                <div className="flex items-center justify-center">
+                  <Info
+                    size={20}
+                    className="text-yellow-400 mr-2"
+                  />
+                  <span className="text-white/80 font-medium">
+                    No Reward Tokens Available
+                  </span>
+                </div>
+                <p className="mt-2 text-center text-white/60 text-sm">
+                  There are currently no tokens available for incentives. Please
+                  check back later or contact the Ionic team.
+                </p>
+              </div>
+            ) : (
+              <MaxDeposit
+                headerText="Incentivize Amount"
+                tokenName={selectedToken}
+                tokenSelector={true}
+                tokenArr={rewardTokens}
+                chain={+currentChain}
+                handleInput={(val?: string) => handleInput(val || '')}
+                onTokenChange={handleTokenChange}
+              />
+            )}
 
             <Button
-              className="w-full bg-accent hover:bg-accent/90 text-black font-semibold"
-              disabled={!isFormComplete}
+              className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
+              disabled={
+                !isFormComplete || isLoading || rewardTokens.length === 0
+              }
+              onClick={handleSubmit}
             >
-              Incentivize
+              {isApproving || isSubmitting || isConfirming ? (
+                <div className="flex items-center justify-center">
+                  <Loader2
+                    size={18}
+                    className="mr-2 animate-spin"
+                  />
+                  <span>
+                    {isApproving
+                      ? 'Approving...'
+                      : isSubmitting
+                        ? 'Submitting...'
+                        : 'Confirming...'}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  <CircleDollarSign
+                    size={18}
+                    className="mr-2"
+                  />
+                  <span>Incentivize</span>
+                </div>
+              )}
             </Button>
           </div>
 
           {selectedMarket && selectedMarketData ? (
             <div className="space-y-4">
               <div className="bg-black/30 rounded-md p-3 space-y-2">
-                <h3 className="text-sm font-medium text-white/80">
+                <h3 className="text-sm font-medium text-white/80 flex items-center gap-2">
+                  <Database
+                    size={16}
+                    className="text-accent"
+                  />
                   Market Balances
                 </h3>
                 <div className="overflow-hidden rounded">
@@ -239,7 +434,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                     <tbody>
                       <tr>
                         <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
-                          Supply
+                          <div className="flex items-center gap-1">Supply</div>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <TokenBalance
@@ -258,7 +453,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                       </tr>
                       <tr>
                         <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
-                          Borrow
+                          <div className="flex items-center gap-1">Borrow</div>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <TokenBalance
@@ -281,7 +476,11 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               </div>
 
               <div className="bg-black/30 rounded-md p-3 space-y-2">
-                <h3 className="text-sm font-medium text-white/80">
+                <h3 className="text-sm font-medium text-white/80 flex items-center gap-2">
+                  <LineChart
+                    size={16}
+                    className="text-accent"
+                  />
                   APR Rates & Incentives
                 </h3>
                 <div className="overflow-hidden rounded">
@@ -305,41 +504,51 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                     <tbody>
                       <tr>
                         <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
-                          Supply
+                          <div className="flex items-center gap-1">Supply</div>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
-                          <span className="text-green-400 font-medium">
+                          <span className="text-green-400 font-medium flex items-center gap-1">
+                            <Percent size={12} />
                             {selectedMarketData.supplyAPR.toFixed(2)}%
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <span className="text-blue-400 font-medium">
-                            {selectedMarketData.votes || 0}
+                            {(
+                              selectedMarketData.votes.supply.value || 0
+                            ).toFixed(2)}
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <span className="text-purple-400 font-medium">
-                            {selectedMarketData.incentives || 0}
+                            {(
+                              selectedMarketData.incentives.supply || 0
+                            ).toFixed(2)}
                           </span>
                         </td>
                       </tr>
                       <tr>
                         <td className="bg-black/20 p-2 text-white/70 border-t border-white/5">
-                          Borrow
+                          <div className="flex items-center gap-1">Borrow</div>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
-                          <span className="text-red-400 font-medium">
+                          <span className="text-red-400 font-medium flex items-center gap-1">
+                            <Percent size={12} />
                             {selectedMarketData.borrowAPR.toFixed(2)}%
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <span className="text-blue-400 font-medium">
-                            {selectedMarketData.votes || 0}
+                            {(
+                              selectedMarketData.votes.borrow.value || 0
+                            ).toFixed(2)}
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
                           <span className="text-purple-400 font-medium">
-                            {selectedMarketData.incentives || 0}
+                            {(
+                              selectedMarketData.incentives.borrow || 0
+                            ).toFixed(2)}
                           </span>
                         </td>
                       </tr>
@@ -349,31 +558,21 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               </div>
             </div>
           ) : (
-            <div className="flex-1 bg-black/30 rounded-md p-4 flex items-center justify-center">
-              <p className="text-white/60 text-sm text-center">
-                Select a market to view detailed information
+            <div className="flex-1 bg-black/30 rounded-md p-4 flex flex-col items-center justify-center space-y-3">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-grayone/60 border border-white/5">
+                <Database
+                  size={32}
+                  className="text-white/60"
+                />
+              </div>
+              <p className="text-white/80 font-medium">Market Information</p>
+              <p className="text-white/60 text-sm text-center max-w-xs">
+                Select a market from the dropdown above to view detailed
+                information about balances, APR rates, and current incentives
               </p>
             </div>
           )}
         </div>
-
-        <div className="bg-black/30 rounded-md p-3 text-white/80 text-sm">
-          <p>
-            Choose the market, pool and side to provide incentives to. ION
-            emissions allocated by the voters will be given to all the veION
-            token holders.
-          </p>
-        </div>
-
-        {!isAcknowledged && (
-          <div className="text-white/60 text-sm">
-            <CustomTooltip content="You must acknowledge the Epoch Info terms before selecting markets or providing incentives.">
-              <span className="underline cursor-help">
-                Acknowledge required
-              </span>
-            </CustomTooltip>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
