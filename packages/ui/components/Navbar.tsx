@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { zeroAddress } from 'viem';
-import { http, createConfig, useChainId, useAccount } from 'wagmi';
+import { http, createConfig, useAccount } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
@@ -85,7 +85,6 @@ export default function Navbar() {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const pathname = usePathname();
   const { dropChain } = useMultiIonic();
-  const chainId = useChainId();
   const { isConnected } = useAccount();
 
   return (
@@ -120,48 +119,47 @@ export default function Navbar() {
             isActive={pathname === '/' || pathname === '/market'}
           />
           <NavLink
+            href="/veion"
+            label="veION"
+            isNew
+          />
+          {/* <NavLink
             href={`/stake?chain=${chainId === mode.id || chainId === base.id ? chainId : '34443'}`}
             label="Stake"
-          />
+          /> */}
           <NavLink
             href="/dashboard"
             label="Dashboard"
             isActive={pathname === '/dashboard'}
           />
           <NavLink
-            href="/earn"
-            label="Earn"
-            isActive={pathname === '/earn'}
+            href="/xION?chain=34443&toChain=8453"
+            label="Bridge ION"
+            isActive={pathname === '/xION'}
           />
-          <NavLink
-            href="/claim"
-            label="Claim"
-            isActive={pathname === '/claim'}
-          />
-
           <div className="relative mb-2 lg:mb-0">
             <p
               className="lg:px-2 xl:px-4 text-center transition-colors duration-200 hover:text-accent cursor-pointer"
               onClick={() => setSwapWidgetOpen(true)}
             >
-              Bridge
+              Swap
             </p>
           </div>
-
           <NavLink
-            href="/xION?chain=34443&toChain=8453"
-            label="xION"
-            isActive={pathname === '/xION'}
+            href="/earn"
+            label="Earn"
+            isActive={pathname === '/earn'}
           />
+
           {/* <NavLink
             href="/incentives"
             label="Incentives"
             isActive={pathname === '/incentives'}
           /> */}
           <NavLink
-            href="/veion"
-            label="veION"
-            isNew
+            href="/claim"
+            label="Claim"
+            isActive={pathname === '/claim'}
           />
 
           {!isConnected && (
