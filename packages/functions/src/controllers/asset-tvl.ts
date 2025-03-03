@@ -43,7 +43,12 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
             .catch(() => [])
         ).map(filterOnlyObjectProperties);
 
-        totalAssets.push(...assets);
+        // Filter out Mode Main market assets
+        const filteredAssets = assets.filter(asset => 
+          comptroller.toLowerCase() !== '0xfb3323e24743caf4add0fdccfb268565c0685556'.toLowerCase()
+        );
+
+        totalAssets.push(...filteredAssets);
         console.log("assets", totalAssets)
       })
     );
