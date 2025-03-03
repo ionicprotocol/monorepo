@@ -9,7 +9,7 @@ import {
   HoverCardTrigger,
   HoverCardContent
 } from '@ui/components/ui/hover-card';
-import { pools } from '@ui/constants';
+import { pools, REWARDS_TO_SYMBOL } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
 import { cn } from '@ui/lib/utils';
 
@@ -44,20 +44,32 @@ export default function APR(props: APRCellProps) {
     baseAPRFormatted,
     effectiveNativeYield,
     showRewardsBadge,
-    showIonBadge,
     config,
     merklAprFormatted,
     rewardIcons,
     additionalRewards
   } = useAPRCell(props);
 
-  const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
+  const {
+    dropdownSelectedChain,
+    asset,
+    cToken,
+    pool,
+    type,
+    rewards = [],
+    noRewards,
+    disabled
+  } = props;
 
-  const showFlywheel =
-    config?.flywheel && (rewards || []).filter((r) => r.apy).length > 0;
+  const rewardsSymbols = REWARDS_TO_SYMBOL[dropdownSelectedChain] ?? {};
+  const ionReward = rewards.find(
+    (reward) => rewardsSymbols[reward.token] === 'ION'
+  );
+  const ionAPR = ionReward?.apy || 0;
 
-  const disabled = props.disabled;
-  const noRewards = props.noRewards;
+  const otherRewards = rewards.filter(
+    (reward) => rewardsSymbols[reward.token] !== 'ION'
+  );
 
   return (
     <HoverCard openDelay={50}>
@@ -68,7 +80,7 @@ export default function APR(props: APRCellProps) {
             <span
               className={cn(
                 'rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1',
-                showIonBadge && !disabled
+                ionAPR > 0 && !disabled
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
               )}
@@ -81,7 +93,7 @@ export default function APR(props: APRCellProps) {
                 height={16}
                 className={cn(
                   'rounded-full',
-                  (!showIonBadge || disabled) && 'opacity-50'
+                  (ionAPR === 0 || disabled) && 'opacity-50'
                 )}
               />
             </span>
@@ -150,6 +162,24 @@ export default function APR(props: APRCellProps) {
             </div>
             <span className="text-xs font-medium">{baseAPRFormatted}%</span>
           </div>
+
+          {ionAPR !== 0 && !noRewards && (
+            <div className="flex justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/img/ionic-green-on-black.png"
+                  alt="ION"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4 rounded-full"
+                />
+                <span className="text-xs text-gray-400">ION Rewards</span>
+              </div>
+              <span className="text-xs font-medium text-green-400">
+                +{ionAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })}%
+              </span>
+            </div>
+          )}
 
           {config?.op && !noRewards && (
             <div className="flex justify-between items-center gap-2">
@@ -243,16 +273,14 @@ export default function APR(props: APRCellProps) {
             </Link>
           )}
 
-          {showFlywheel && !noRewards && (
-            <div className="flex justify-between items-center gap-4">
-              <FlyWheelRewards
-                cToken={cToken}
-                pool={pool}
-                poolChainId={dropdownSelectedChain}
-                type={type}
-                rewards={rewards}
-              />
-            </div>
+          {otherRewards.length > 0 && !noRewards && (
+            <FlyWheelRewards
+              cToken={cToken}
+              pool={pool}
+              poolChainId={dropdownSelectedChain}
+              type={type}
+              rewards={otherRewards}
+            />
           )}
 
           <div className="h-px bg-gray-700 my-1" />
