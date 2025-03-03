@@ -28,7 +28,7 @@ import { usePositionsSupplyApy } from '@ui/hooks/leverage/usePositionsSupplyApy'
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
 import { useOutsideClick } from '@ui/hooks/useOutsideClick';
-import { useRewards } from '@ui/hooks/useRewards';
+import { useRewardsWithEmissions } from '@ui/hooks/useRewardsWithEmissions';
 import { useUsdPrice } from '@ui/hooks/useUsdPrices';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -50,7 +50,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<ActiveTab>();
   const [isManageDialogOpen, setIsManageDialogOpen] = useState<boolean>(false);
 
-  const { data: rewards } = useRewards({
+  const { data: rewards } = useRewardsWithEmissions({
     chainId: +chain,
     poolId: pool
   });

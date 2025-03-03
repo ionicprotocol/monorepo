@@ -13,7 +13,6 @@ import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
@@ -21,6 +20,7 @@ import { multipliers } from '@ui/utils/multipliers';
 
 import { useTokenBalances } from './useTokenBalances';
 import { useMerklData } from '../useMerklData';
+import { useRewardsWithEmissions } from '../useRewardsWithEmissions';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
 
@@ -103,10 +103,11 @@ export const useMarketData = (
   const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
     useBorrowCapsForAssets(cTokenAddresses, +chain);
 
-  const { data: rewards, isLoading: isLoadingRewards } = useRewards({
-    chainId: +chain,
-    poolId: selectedPool
-  });
+  const { data: rewards, isLoading: isLoadingRewards } =
+    useRewardsWithEmissions({
+      chainId: +chain,
+      poolId: selectedPool
+    });
 
   const { balanceMap } = useTokenBalances({
     assets: assets?.map((asset) => ({
