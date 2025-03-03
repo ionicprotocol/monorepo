@@ -9,6 +9,11 @@ import { Chain, createPublicClient, formatUnits, formatEther, http } from 'viem'
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
+// Define excluded comptrollers
+const EXCLUDED_COMPTROLLERS = [
+  '0xfb3323e24743caf4add0fdccfb268565c0685556', // Mode Main market
+].map(address => address.toLowerCase());
+
 export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
@@ -43,9 +48,9 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
             .catch(() => [])
         ).map(filterOnlyObjectProperties);
 
-        // Filter out Mode Main market assets
+        // Filter out excluded markets
         const filteredAssets = assets.filter(asset => 
-          comptroller.toLowerCase() !== '0xfb3323e24743caf4add0fdccfb268565c0685556'.toLowerCase()
+          !EXCLUDED_COMPTROLLERS.includes(comptroller.toLowerCase())
         );
 
         totalAssets.push(...filteredAssets);
