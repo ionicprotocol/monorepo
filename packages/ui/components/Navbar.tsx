@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { zeroAddress } from 'viem';
-import { http, createConfig, useChainId, useAccount } from 'wagmi';
+import { http, createConfig, useAccount } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
