@@ -38,10 +38,6 @@ export const EmissionsStatusTile = () => {
 
   const isActive = !isUserBlacklisted && veionPercentageVsTotalSupply >= 2.5;
 
-  const handleWhitelistSuccess = () => {
-    window.location.reload();
-  };
-
   const displayPercentage =
     veionPercentageVsTotalSupply > 100 ? 100 : veionPercentageVsTotalSupply;
   const displayText =
@@ -99,13 +95,7 @@ export const EmissionsStatusTile = () => {
             </TooltipContent>
           </Tooltip>
 
-          {isUserBlacklisted && (
-            <WhitelistButton
-              chainId={currentChain}
-              isBlacklisted={!!isUserBlacklisted}
-              onSuccess={handleWhitelistSuccess}
-            />
-          )}
+          {isUserBlacklisted && <WhitelistButton />}
         </div>
 
         <Link

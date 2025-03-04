@@ -1,7 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { createPublicClient, http, formatUnits } from 'viem';
 import { base, mode } from 'viem/chains';
-import { useAccount } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  useWriteContract,
+  useSimulateContract
+} from 'wagmi';
+
+import { useToast } from '@ui/hooks/use-toast';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import type { Address } from 'viem';
 
@@ -37,10 +45,19 @@ interface EmissionsData {
   isLoading: boolean;
   isError: boolean;
   refetch: () => Promise<any>;
+  whitelistUser: {
+    execute: () => Promise<`0x${string}` | void>;
+    isPending: boolean;
+    isSimulating: boolean;
+    canWhitelist: boolean;
+  };
 }
 
 export function useEmissionsData(chainId: number): EmissionsData {
   const { address } = useAccount();
+  const currentChainId = useChainId();
+  const { toast } = useToast();
+  const { writeContractAsync, isPending } = useWriteContract();
 
   const contractAddress = EMISSIONS_MANAGER_ADDRESSES[chainId];
   const publicClient = publicClients[chainId as keyof typeof publicClients];
@@ -101,6 +118,62 @@ export function useEmissionsData(chainId: number): EmissionsData {
     enabled: !!publicClient && !!contractAddress
   });
 
+  // Simulation data for the whitelistUser function
+  const { data: simulationData, isFetching: isSimulating } =
+    useSimulateContract({
+      address: contractAddress as `0x${string}`,
+      abi: emissionsManagerAbi,
+      functionName: 'whitelistUser',
+      args: address ? [address] : undefined,
+      chainId,
+      query: {
+        enabled: !!address && !!data?.isUserBlacklisted
+      }
+    });
+
+  // Execute whitelist function
+  const whitelistUser = async () => {
+    if (!address || !contractAddress) return;
+
+    // Switch chain if needed
+    const isSwitched = await handleSwitchOriginChain(chainId, currentChainId);
+    if (!isSwitched) {
+      toast({
+        title: 'Chain Switch Required',
+        description: `Please switch to ${chainId === 8453 ? 'Base' : 'Mode'} to whitelist your address`,
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      const tx = await writeContractAsync({
+        abi: emissionsManagerAbi,
+        address: contractAddress as `0x${string}`,
+        args: [address],
+        functionName: 'whitelistUser',
+        chainId
+      });
+
+      toast({
+        title: 'Whitelist Transaction Submitted',
+        description: 'Your whitelist transaction is being processed'
+      });
+
+      // Refetch data after transaction
+      await refetch();
+
+      return tx;
+    } catch (err) {
+      console.error('Error whitelisting user:', err);
+      toast({
+        title: 'Whitelist Failed',
+        description: 'There was an error processing your whitelist request',
+        variant: 'destructive'
+      });
+    }
+  };
+
   // Calculate human-readable percentage (10000 basis points = 100%)
   const collateralPercentage = data?.collateralBp
     ? ((Number(data.collateralBp) / 10000) * 100).toFixed(2) + '%'
@@ -111,6 +184,10 @@ export function useEmissionsData(chainId: number): EmissionsData {
     ? formatUnits(data.totalCollateral, COLLATERAL_DECIMALS)
     : undefined;
 
+  const canWhitelist = Boolean(
+    simulationData?.request && data?.isUserBlacklisted
+  );
+
   return {
     collateralBp: data?.collateralBp,
     collateralPercentage,
@@ -119,6 +196,12 @@ export function useEmissionsData(chainId: number): EmissionsData {
     isUserBlacklisted: data?.isUserBlacklisted,
     isLoading,
     isError,
-    refetch
+    refetch,
+    whitelistUser: {
+      execute: whitelistUser,
+      isPending,
+      isSimulating,
+      canWhitelist
+    }
   };
 }
