@@ -185,7 +185,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   );
 
   const emissionsData = useEmissionsData(currentChain);
-  console.log('emissionsData', emissionsData);
 
   const emissions = {
     lockedValue: {
@@ -197,6 +196,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       usdValue: '0'
     },
     collateralBp: emissionsData.collateralBp || BigInt(0),
+    isUserBlacklisted: emissionsData.isUserBlacklisted,
     isLoading: emissionsData.isLoading
   };
 

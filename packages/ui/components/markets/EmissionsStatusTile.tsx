@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
 import CustomTooltip from '@ui/components/CustomTooltip';
+import { WhitelistButton } from '@ui/components/markets/WhitelistButton';
 import { Progress } from '@ui/components/ui/progress';
 import {
   Tooltip,
@@ -18,8 +19,8 @@ import type { ChainId } from '@ui/types/veION';
 
 export const EmissionsStatusTile = () => {
   const { prices, currentChain, emissions } = useVeIONContext();
-  console.log('emissions', emissions.collateralBp);
   const { veIonBalanceUsd } = prices;
+  const isUserBlacklisted = emissions.isUserBlacklisted;
 
   const { data: marketData } = useFusePoolData(
     currentChain === 34443 ? '1' : '0',
@@ -34,9 +35,13 @@ export const EmissionsStatusTile = () => {
       : totalSupply > 0
         ? (veIonBalanceUsd / totalSupply) * 100
         : 0;
-  const isActive = veionPercentageVsTotalSupply >= 2.5;
 
-  // Cap percentage at 100% if it exceeds, or use 100% for zero collateral case
+  const isActive = !isUserBlacklisted && veionPercentageVsTotalSupply >= 2.5;
+
+  const handleWhitelistSuccess = () => {
+    window.location.reload();
+  };
+
   const displayPercentage =
     veionPercentageVsTotalSupply > 100 ? 100 : veionPercentageVsTotalSupply;
   const displayText =
@@ -50,25 +55,59 @@ export const EmissionsStatusTile = () => {
   const secondBarMax = 97.5;
   const thresholdPercentage = 2.5;
 
+  const getStatusDisplay = () => {
+    if (isUserBlacklisted) {
+      return {
+        text: 'Inactive (Blacklisted)',
+        color: 'text-red-400'
+      };
+    }
+    return {
+      text: isActive ? 'Active' : 'Inactive',
+      color: isActive ? 'text-green-400' : 'text-red-400'
+    };
+  };
+
+  const statusDisplay = getStatusDisplay();
+
   return (
     <div className="w-full space-y-2">
       <div className="flex justify-between items-center">
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>
-            <div className="flex items-center gap-2 text-lg font-semibold">
-              <h3>Emissions:</h3>
-              <span className={isActive ? 'text-green-400' : 'text-red-400'}>
-                {isActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent className="bg-background p-2 rounded-md shadow-md">
-            <p className="text-sm">
-              Activation Threshold: 2.5% of your collateral worth must be locked
-              as veION.
-            </p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="flex items-center">
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-2 text-lg font-semibold">
+                <h3>Emissions:</h3>
+                <span className={statusDisplay.color}>
+                  {statusDisplay.text}
+                </span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-background p-2 rounded-md shadow-md">
+              {isUserBlacklisted ? (
+                <p className="text-sm">
+                  Your address has been blacklisted from receiving emissions.
+                  You may be able to whitelist yourself using the Whitelist
+                  button.
+                </p>
+              ) : (
+                <p className="text-sm">
+                  Activation Threshold: 2.5% of your collateral worth must be
+                  locked as veION.
+                </p>
+              )}
+            </TooltipContent>
+          </Tooltip>
+
+          {isUserBlacklisted && (
+            <WhitelistButton
+              chainId={currentChain}
+              isBlacklisted={!!isUserBlacklisted}
+              onSuccess={handleWhitelistSuccess}
+            />
+          )}
+        </div>
+
         <Link
           href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion"
           className="text-green-400 hover:text-green-500 p-0 h-auto flex items-center"
@@ -89,13 +128,13 @@ export const EmissionsStatusTile = () => {
               <div className="w-[10%]">
                 <Progress
                   value={(firstBarProgress / thresholdPercentage) * 100}
-                  className="[&>div]:rounded-l-md [&>div]:rounded-r-none"
+                  className={`[&>div]:rounded-l-md [&>div]:rounded-r-none ${isUserBlacklisted ? 'opacity-50' : ''}`}
                 />
               </div>
               <div className="w-[90%]">
                 <Progress
                   value={(secondBarProgress / secondBarMax) * 100}
-                  className="[&>div]:rounded-l-none [&>div]:rounded-r-md"
+                  className={`[&>div]:rounded-l-none [&>div]:rounded-r-md ${isUserBlacklisted ? 'opacity-50' : ''}`}
                 />
               </div>
             </div>

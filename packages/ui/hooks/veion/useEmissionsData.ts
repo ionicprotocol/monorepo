@@ -33,6 +33,7 @@ interface EmissionsData {
   collateralPercentage: string | undefined;
   totalCollateral: bigint | undefined;
   formattedTotalCollateral: string | undefined;
+  isUserBlacklisted: boolean | undefined;
   isLoading: boolean;
   isError: boolean;
   refetch: () => Promise<any>;
@@ -61,27 +62,43 @@ export function useEmissionsData(chainId: number): EmissionsData {
           functionName: 'collateralBp'
         });
 
-        // Fetch user's total collateral only if address is available
+        // Initialize with defaults
         let totalCollateral;
+        let isUserBlacklisted = false;
+
+        // Only fetch user-specific data if an address is available
         if (address) {
-          totalCollateral = await publicClient.readContract({
-            address: contractAddress,
-            abi: emissionsManagerAbi,
-            functionName: 'getUserTotalCollateral',
-            args: [address]
-          });
+          // Fetch blacklist status and total collateral in parallel
+          const [blacklistResult, collateralResult] = await Promise.all([
+            publicClient.readContract({
+              address: contractAddress,
+              abi: emissionsManagerAbi,
+              functionName: 'isUserBlacklisted',
+              args: [address]
+            }),
+            publicClient.readContract({
+              address: contractAddress,
+              abi: emissionsManagerAbi,
+              functionName: 'getUserTotalCollateral',
+              args: [address]
+            })
+          ]);
+
+          isUserBlacklisted = blacklistResult;
+          totalCollateral = collateralResult;
         }
 
         return {
           collateralBp,
-          totalCollateral
+          totalCollateral,
+          isUserBlacklisted
         };
       } catch (error) {
         console.error('Error fetching emissions data:', error);
         throw error;
       }
     },
-    enabled: !!publicClient && !!contractAddress && address !== undefined
+    enabled: !!publicClient && !!contractAddress
   });
 
   // Calculate human-readable percentage (10000 basis points = 100%)
@@ -99,6 +116,7 @@ export function useEmissionsData(chainId: number): EmissionsData {
     collateralPercentage,
     totalCollateral: data?.totalCollateral,
     formattedTotalCollateral,
+    isUserBlacklisted: data?.isUserBlacklisted,
     isLoading,
     isError,
     refetch
