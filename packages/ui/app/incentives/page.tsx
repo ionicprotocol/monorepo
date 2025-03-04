@@ -19,7 +19,7 @@ export default function IncentivesPage() {
 
   return (
     <div className="min-h-screen">
-      <Card className="lg:w-[60%] w-[80%] lg:p-8 text-white bg-gradient-to-br from-grayone to-black backdrop-blur-lg mx-auto my-6 border border-white/10 shadow-2xl">
+      <Card className="w-[80%] lg:p-8 text-white bg-gradient-to-br from-grayone to-black backdrop-blur-lg mx-auto my-6 border border-white/10 shadow-2xl">
         <CardContent className="p-0 pt-6 space-y-8">
           <div className="flex flex-col items-center space-y-4">
             <Image

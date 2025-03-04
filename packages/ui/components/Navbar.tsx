@@ -151,11 +151,11 @@ export default function Navbar() {
             isActive={pathname === '/earn'}
           />
 
-          {/* <NavLink
+          <NavLink
             href="/incentives"
             label="Incentives"
             isActive={pathname === '/incentives'}
-          /> */}
+          />
           <NavLink
             href="/claim"
             label="Claim"
