@@ -17,7 +17,8 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import type { ChainId } from '@ui/types/veION';
 
 export const EmissionsStatusTile = () => {
-  const { prices, currentChain } = useVeIONContext();
+  const { prices, currentChain, emissions } = useVeIONContext();
+  console.log('emissions', emissions.collateralBp);
   const { veIonBalanceUsd } = prices;
 
   const { data: marketData } = useFusePoolData(

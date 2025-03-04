@@ -11,6 +11,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
+import { useEmissionsData } from '@ui/hooks/veion/useEmissionsData';
 import { useMultiChainVeIONLocks } from '@ui/hooks/veion/useMultiChainVeionLocks';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
 import type {
@@ -75,6 +76,7 @@ const defaultContext: VeIONContextType = {
       amount: 0,
       usdValue: '0'
     },
+    collateralBp: BigInt(0),
     isLoading: true
   },
   reserves: {},
@@ -182,6 +184,9 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     0
   );
 
+  const emissionsData = useEmissionsData(currentChain);
+  console.log('emissionsData', emissionsData);
+
   const emissions = {
     lockedValue: {
       amount: veIonBalance,
@@ -191,7 +196,8 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       amount: 0,
       usdValue: '0'
     },
-    isLoading: false
+    collateralBp: emissionsData.collateralBp || BigInt(0),
+    isLoading: emissionsData.isLoading
   };
 
   const value = {

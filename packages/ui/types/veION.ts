@@ -29,6 +29,7 @@ export interface EmissionsData {
     amount: number;
     usdValue: string;
   };
+  collateralBp: bigint;
   isLoading: boolean;
 }
 

@@ -1,103 +1,106 @@
-import { formatEther } from 'viem';
-import { useReadContract, useReadContracts } from 'wagmi';
-
-import { useEthPrice } from '../useEthPrice';
+import { useQuery } from '@tanstack/react-query';
+import { createPublicClient, http, formatUnits } from 'viem';
+import { base, mode } from 'viem/chains';
+import { useAccount } from 'wagmi';
 
 import type { Address } from 'viem';
 
-import {
-  emissionsManagerAbi,
-  veIonAbi,
-  veIonFirstExtensionAbi
-} from '@ionicprotocol/sdk';
+import { emissionsManagerAbi } from '@ionicprotocol/sdk';
 
-interface EmissionsDataProps {
-  address?: Address;
-  veIonContract: Address;
-  emissionsManagerContract: Address;
-}
+// Mapping of chain IDs to emissions manager contract addresses
+const EMISSIONS_MANAGER_ADDRESSES: Record<number, Address> = {
+  8453: '0x74Dd8c217C01463b915A7e62879A496b3A5c07a5', // Base
+  34443: '0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7' // Mode
+};
+
+// Pre-initialize public clients for supported chains
+const publicClients = {
+  [base.id]: createPublicClient({
+    chain: base,
+    transport: http()
+  }),
+  [mode.id]: createPublicClient({
+    chain: mode,
+    transport: http()
+  })
+};
+
+// Number of decimals for the collateral token (typically 18 for most ERC20 tokens)
+const COLLATERAL_DECIMALS = 18;
 
 interface EmissionsData {
-  lockedVeIon: {
-    amount: number;
-    usdValue: string;
-    percentage: number;
-  };
-  totalDeposits: {
-    amount: number;
-    usdValue: string;
-  };
+  collateralBp: bigint | undefined;
+  collateralPercentage: string | undefined;
+  totalCollateral: bigint | undefined;
+  formattedTotalCollateral: string | undefined;
   isLoading: boolean;
+  isError: boolean;
+  refetch: () => Promise<any>;
 }
 
-export function useEmissionsData({
-  address,
-  veIonContract,
-  emissionsManagerContract
-}: EmissionsDataProps): EmissionsData {
-  const { data: ethPrice = 0 } = useEthPrice();
+export function useEmissionsData(chainId: number): EmissionsData {
+  const { address } = useAccount();
 
-  const { data, isLoading: contractsLoading } = useReadContracts({
-    contracts: [
-      {
-        address: veIonContract,
-        abi: veIonAbi,
-        functionName: 'veIONFirstExtension'
-      },
-      {
-        address: emissionsManagerContract,
-        abi: emissionsManagerAbi,
-        functionName: 'getUserTotalCollateral',
-        args: address ? [address] : undefined
+  const contractAddress = EMISSIONS_MANAGER_ADDRESSES[chainId];
+  const publicClient = publicClients[chainId as keyof typeof publicClients];
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['emissionsData', chainId, address],
+    queryFn: async () => {
+      if (!publicClient || !contractAddress) {
+        throw new Error(
+          `No public client or contract address for chain ID: ${chainId}`
+        );
       }
-    ]
+
+      try {
+        // Fetch collateralBp
+        const collateralBp = await publicClient.readContract({
+          address: contractAddress,
+          abi: emissionsManagerAbi,
+          functionName: 'collateralBp'
+        });
+
+        // Fetch user's total collateral only if address is available
+        let totalCollateral;
+        if (address) {
+          totalCollateral = await publicClient.readContract({
+            address: contractAddress,
+            abi: emissionsManagerAbi,
+            functionName: 'getUserTotalCollateral',
+            args: [address]
+          });
+        }
+
+        return {
+          collateralBp,
+          totalCollateral
+        };
+      } catch (error) {
+        console.error('Error fetching emissions data:', error);
+        throw error;
+      }
+    },
+    enabled: !!publicClient && !!contractAddress && address !== undefined
   });
 
-  const { data: tokenValue, isLoading: tokenValueLoading } = useReadContract({
-    address: data?.[0]?.result,
-    abi: veIonFirstExtensionAbi,
-    functionName: 'getTotalEthValueOfTokens',
-    args: address ? [address] : undefined
-  });
+  // Calculate human-readable percentage (10000 basis points = 100%)
+  const collateralPercentage = data?.collateralBp
+    ? ((Number(data.collateralBp) / 10000) * 100).toFixed(2) + '%'
+    : undefined;
 
-  const isLoading = contractsLoading || tokenValueLoading;
-
-  if (!data || !address || !tokenValue) {
-    return {
-      lockedVeIon: { amount: 0, usdValue: '0', percentage: 0 },
-      totalDeposits: { amount: 0, usdValue: '0' },
-      isLoading
-    };
-  }
-
-  const [_, totalCollateral] = data;
-
-  // Calculate values in ETH
-  const lockedVeIonAmount = Number(formatEther(tokenValue));
-  const totalDepositsAmount = totalCollateral?.result
-    ? Number(formatEther(totalCollateral.result))
-    : 0;
-
-  // Calculate USD values
-  const lockedVeIonUsd = (lockedVeIonAmount * ethPrice).toFixed(2);
-  const totalDepositsUsd = (totalDepositsAmount * ethPrice).toFixed(2);
-
-  // Calculate percentage
-  const percentage =
-    totalDepositsAmount > 0
-      ? (lockedVeIonAmount / totalDepositsAmount) * 100
-      : 0;
+  // Format the total collateral with appropriate decimals
+  const formattedTotalCollateral = data?.totalCollateral
+    ? formatUnits(data.totalCollateral, COLLATERAL_DECIMALS)
+    : undefined;
 
   return {
-    lockedVeIon: {
-      amount: lockedVeIonAmount,
-      usdValue: lockedVeIonUsd,
-      percentage
-    },
-    totalDeposits: {
-      amount: totalDepositsAmount,
-      usdValue: totalDepositsUsd
-    },
-    isLoading
+    collateralBp: data?.collateralBp,
+    collateralPercentage,
+    totalCollateral: data?.totalCollateral,
+    formattedTotalCollateral,
+    isLoading,
+    isError,
+    refetch
   };
 }
