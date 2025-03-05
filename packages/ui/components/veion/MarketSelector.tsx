@@ -659,7 +659,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                           <span className="text-blue-400 font-medium">
                             {(
                               selectedMarketData.votes.supply.value || 0
-                            ).toFixed(2)}
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
@@ -684,7 +687,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                           <span className="text-blue-400 font-medium">
                             {(
                               selectedMarketData.votes.borrow.value || 0
-                            ).toFixed(2)}
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
                           </span>
                         </td>
                         <td className="bg-black/20 p-2 border-t border-white/5">
