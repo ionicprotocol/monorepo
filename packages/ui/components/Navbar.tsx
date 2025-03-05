@@ -128,11 +128,6 @@ export default function Navbar() {
             label="Stake"
           /> */}
           <NavLink
-            href="/dashboard"
-            label="Dashboard"
-            isActive={pathname === '/dashboard'}
-          />
-          <NavLink
             href="/xION?chain=34443&toChain=8453"
             label="Bridge ION"
             isActive={pathname === '/xION'}
@@ -146,20 +141,24 @@ export default function Navbar() {
             </p>
           </div>
           <NavLink
+            href="/dashboard"
+            label="Dashboard"
+            isActive={pathname === '/dashboard'}
+          />
+          <NavLink
             href="/earn"
             label="Earn"
             isActive={pathname === '/earn'}
           />
-
-          {/* <NavLink
-            href="/incentives"
-            label="Incentives"
-            isActive={pathname === '/incentives'}
-          /> */}
           <NavLink
             href="/claim"
             label="Claim"
             isActive={pathname === '/claim'}
+          />
+          <NavLink
+            href="/incentives"
+            label="Protocols"
+            isActive={pathname === '/incentives'}
           />
 
           {!isConnected && (
