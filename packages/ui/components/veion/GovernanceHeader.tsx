@@ -23,7 +23,8 @@ const GovernanceHeader = ({
 }) => {
   const { balances, prices, emissions } = useVeIONContext();
   const { ion: ionBalance, veIon: veIonBalance } = balances;
-  const { veIonBalanceUsd, ionBalanceUsd } = prices;
+  const { ionBalanceUsd } = prices;
+  const veIonBalanceUsd = emissions.veIonBalanceUsd;
 
   const { timeRemaining, isVotingClosed } = useVotingPeriod(chain);
   const { days, hours, minutes, seconds } = timeRemaining;

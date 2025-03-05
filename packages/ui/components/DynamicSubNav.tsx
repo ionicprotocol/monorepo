@@ -35,7 +35,7 @@ function DynamicSubNav() {
             key={index}
             className="pl-14"
           >
-            veION COMING SOON! Supply & Borrow Assets to earn $ION. Accumulate &
+            veION is LIVE! Supply & Borrow Assets to earn $ION. Accumulate &
             Lock $ION to increase Emissions to your favorite Assets and Maximize
             Yields!
           </span>

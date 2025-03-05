@@ -11,18 +11,46 @@ import { useAccount, useBalance } from 'wagmi';
 import { isVeIonSupported } from '@ui/constants/veIon';
 import { useIonPrices } from '@ui/hooks/useDexScreenerPrices';
 import { useReserves } from '@ui/hooks/useReserves';
+import { useEmissionsData } from '@ui/hooks/veion/useEmissionsData';
 import { useMultiChainVeIONLocks } from '@ui/hooks/veion/useMultiChainVeionLocks';
 import { useVeIonData } from '@ui/hooks/veion/useVeIONData';
 import type {
   PriceData,
   LiquidityData,
-  EmissionsData,
   ReservesData,
   VeIONLockData,
   ChainId,
   MyVeionData
 } from '@ui/types/veION';
 import { getToken } from '@ui/utils/getStakingTokens';
+
+// Updated EmissionsData interface for VeIONContext
+interface EmissionsData {
+  lockedValue: {
+    amount: number;
+    percentage: number;
+  };
+  totalDeposits: {
+    amount: number;
+    usdValue: string;
+  };
+  collateralBp: bigint;
+  collateralPercentageNumeric?: number; // Threshold percentage
+  actualRatio?: number; // Actual ratio in percentage
+  veIonValue?: string; // veION value in ETH
+  veIonBalanceUsd: number; // veION value in USD from contract data
+  totalCollateralUsd?: number; // Collateral in USD using same exchange rate
+  userCollateral?: string; // User's collateral value as a formatted string
+  isUserBlacklisted: boolean | undefined;
+  isLoading: boolean;
+  refetch: () => Promise<any>;
+  whitelistUser: {
+    execute: () => Promise<`0x${string}` | void>;
+    isPending: boolean;
+    isSimulating: boolean;
+    canWhitelist: boolean;
+  };
+}
 
 interface VeIONContextType {
   // Balances
@@ -48,6 +76,33 @@ interface VeIONContextType {
   setSelectedManagePosition: (position: MyVeionData | null) => void;
 }
 
+const defaultEmissionsData: EmissionsData = {
+  lockedValue: {
+    amount: 0,
+    percentage: 0
+  },
+  totalDeposits: {
+    amount: 0,
+    usdValue: '0'
+  },
+  collateralBp: BigInt(0),
+  collateralPercentageNumeric: undefined,
+  actualRatio: undefined,
+  veIonValue: undefined,
+  veIonBalanceUsd: 0,
+  totalCollateralUsd: undefined,
+  userCollateral: undefined,
+  isUserBlacklisted: undefined,
+  isLoading: true,
+  refetch: async () => ({}),
+  whitelistUser: {
+    execute: async () => {},
+    isPending: false,
+    isSimulating: false,
+    canWhitelist: false
+  }
+};
+
 const defaultContext: VeIONContextType = {
   currentChain: 0,
   balances: {
@@ -66,17 +121,7 @@ const defaultContext: VeIONContextType = {
     locked: 0,
     isLoading: true
   },
-  emissions: {
-    lockedValue: {
-      amount: 0,
-      percentage: 0
-    },
-    totalDeposits: {
-      amount: 0,
-      usdValue: '0'
-    },
-    isLoading: true
-  },
+  emissions: defaultEmissionsData,
   reserves: {},
   locks: {
     myLocks: [],
@@ -138,8 +183,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     totalLiquidity[currentChain as keyof typeof totalLiquidity] || 0;
   const locked =
     lockedLiquidity[currentChain as keyof typeof lockedLiquidity] || 0;
-
-  // const staked = stakedAmount[currentChain as keyof typeof stakedAmount] || 0;
   const staked = stakedAmount[currentChain as keyof typeof stakedAmount] || 0;
 
   const locks = useMultiChainVeIONLocks({
@@ -182,17 +225,31 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
     0
   );
 
-  const emissions = {
-    lockedValue: {
-      amount: veIonBalance,
-      percentage: veIonPercents
-    },
-    totalDeposits: {
-      amount: 0,
-      usdValue: '0'
-    },
-    isLoading: false
-  };
+  const emissionsData = useEmissionsData(currentChain);
+
+  const emissions: EmissionsData = isSupported
+    ? {
+        lockedValue: {
+          amount: veIonBalance,
+          percentage: veIonPercents
+        },
+        totalDeposits: {
+          amount: 0,
+          usdValue: '0'
+        },
+        collateralBp: emissionsData.collateralBp || BigInt(0),
+        collateralPercentageNumeric: emissionsData.collateralPercentageNumeric,
+        actualRatio: emissionsData.actualRatio,
+        veIonValue: emissionsData.formattedVeIonValue,
+        veIonBalanceUsd: emissionsData.veIonBalanceUsd || 0,
+        totalCollateralUsd: emissionsData.totalCollateralUsd,
+        userCollateral: emissionsData.formattedTotalCollateral,
+        isUserBlacklisted: emissionsData.isUserBlacklisted,
+        isLoading: emissionsData.isLoading,
+        refetch: emissionsData.refetch,
+        whitelistUser: emissionsData.whitelistUser
+      }
+    : defaultEmissionsData;
 
   const value = {
     currentChain,
@@ -212,7 +269,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
       locked,
       isLoading: veIonDataLoading
     },
-    emissions: isSupported ? emissions : defaultContext.emissions,
+    emissions,
     reserves,
     locks: isSupported ? locks : defaultContext.locks,
     isLoading: reservesLoading || (isSupported && locks.isLoading),

@@ -3,6 +3,7 @@ import "./rewards";
 import "./liquidation";
 import "./leverage";
 import "./removeFlywheel";
+import "./veION";
 
 export const ION = "0x18470019bf0e94611f15852f7e93cf5d65bc34ca";
 

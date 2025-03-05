@@ -81,11 +81,6 @@ export const useMarketRows = (
     chain: +chain
   });
 
-  // const { data: veAPRData, isLoading: isLoadingVeAPR } = useMarketVeAPR({
-  //   chainId: chain === '34443' ? 34443 : 8453,
-  //   cTokenAddresses: marketAddresses
-  // });
-
   const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
     const details = getRewardDetails(
       marketAddress,
@@ -101,7 +96,8 @@ export const useMarketRows = (
       balanceUSD: 0, // need to fix this up
       tokens: details.rewards.map((reward) => ({
         tokenSymbol:
-          reward.symbol === 'vAMM-ION/WETH'
+          reward.symbol === 'vAMM-ION/WETH' ||
+          reward.symbol === 'vAMMV2-ION/MODE'
             ? 'ION'
             : reward.symbol || 'Unknown',
         tokenAmount: Number(reward.weeklyAmount),

@@ -14,11 +14,8 @@ export const VOTERLENS_CHAIN_ADDRESSES = {
 } as const;
 
 export const REWARD_TOKENS = {
-  8453: ['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] as const, // Base
-  34443: [
-    '0xC6A394952c097004F83d2dfB61715d245A38735a',
-    '0x690A74d2eC0175a69C0962B309E03021C0b5002E'
-  ] as const // Mode
+  8453: ['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] as const, // ION
+  34443: ['0x690A74d2eC0175a69C0962B309E03021C0b5002E'] as const // ION
 } as const;
 
 export interface BribeReward {

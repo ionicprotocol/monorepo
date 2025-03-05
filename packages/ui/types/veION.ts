@@ -29,6 +29,7 @@ export interface EmissionsData {
     amount: number;
     usdValue: string;
   };
+  isUserBlacklisted?: boolean;
   isLoading: boolean;
 }
 
