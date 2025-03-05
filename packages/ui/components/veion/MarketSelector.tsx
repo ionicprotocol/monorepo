@@ -32,6 +32,7 @@ import {
 import { useMarketData } from '@ui/hooks/market/useMarketData';
 import { useToast } from '@ui/hooks/use-toast';
 import { useIncentiveSubmission } from '@ui/hooks/veion/useIncentiveSubmission';
+import type { RewardTokenInfo } from '@ui/hooks/veion/useMarketIncentives';
 import { useMarketIncentives } from '@ui/hooks/veion/useMarketIncentives';
 import { useMarketVotes } from '@ui/hooks/veion/useMarketVotes';
 
@@ -62,7 +63,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const [selectedSide, setSelectedSide] = useState<'' | 'borrow' | 'supply'>(
     ''
   );
-  const [selectedToken, setSelectedToken] = useState<string>('');
+  const [selectedToken, setSelectedToken] = useState<RewardTokenInfo>();
   const [incentiveAmount, setIncentiveAmount] = useState<string>('');
 
   // Extract all market addresses from raw market data
@@ -77,13 +78,19 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     marketAddresses
   );
 
-  // Get incentives data for all markets
+  // Update the useMarketIncentives hook usage
   const {
     getMarketIncentives,
     getBribeAddress,
-    rewardTokens,
+    // rewardTokens,
+    rewardTokensInfo,
     isLoading: isIncentivesLoading
-  } = useMarketIncentives(chainId, marketAddresses);
+  } = useMarketIncentives(
+    chainId,
+    marketAddresses,
+    selectedSide,
+    selectedMarket
+  );
 
   // Incentive submission hook
   const {
@@ -96,16 +103,16 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
   // Set default token when reward tokens are loaded
   useEffect(() => {
-    if (rewardTokens && rewardTokens.length > 0 && !selectedToken) {
-      setSelectedToken(rewardTokens[0]);
+    if (rewardTokensInfo && rewardTokensInfo.length > 0 && !selectedToken) {
+      setSelectedToken(rewardTokensInfo[0]);
     }
-  }, [rewardTokens, selectedToken]);
+  }, [rewardTokensInfo, selectedToken]);
 
   // Reset form when chain changes
   useEffect(() => {
     setSelectedMarket('');
     setSelectedSide('');
-    setSelectedToken('');
+    setSelectedToken(undefined);
     setIncentiveAmount('');
   }, [currentChain]);
 
@@ -181,7 +188,28 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
   // Handle token selection change
   const handleTokenChange = (token: string) => {
-    setSelectedToken(token);
+    const tokenInfo = rewardTokensInfo.find((t) => t.symbol === token);
+    if (tokenInfo) {
+      setSelectedToken(tokenInfo);
+    }
+  };
+
+  // Update the side selection handler
+  const handleSideChange = (value: string) => {
+    const newSide = value as 'borrow' | 'supply';
+    setSelectedSide(newSide);
+    // Reset token when side changes
+    setSelectedToken(undefined);
+    setIncentiveAmount('');
+  };
+
+  // Update the market selection handler
+  const handleMarketChange = (value: string) => {
+    setSelectedMarket(value);
+    // Reset side, token, and amount when market changes
+    setSelectedSide('');
+    setSelectedToken(undefined);
+    setIncentiveAmount('');
   };
 
   // Handle incentive amount input
@@ -191,11 +219,11 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
   // Handle form submission
   const { data: tokenDecimals } = useReadContract({
-    address: selectedToken as `0x${string}`,
+    address: selectedToken?.address as `0x${string}`,
     abi: erc20Abi,
     functionName: 'decimals',
     query: {
-      enabled: !!selectedToken && isAddress(selectedToken)
+      enabled: !!selectedToken && isAddress(selectedToken.address)
     }
   });
 
@@ -232,7 +260,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
     const result = await submitIncentive({
       bribeAddress,
-      tokenAddress: selectedToken as `0x${string}`,
+      tokenAddress: selectedToken.address as `0x${string}`,
       amount: incentiveAmount,
       tokenDecimals: Number(tokenDecimals) || 18
     });
@@ -278,7 +306,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
           <div className="grid grid-cols-1 gap-4">
             <Select
               value={selectedMarket}
-              onValueChange={setSelectedMarket}
+              onValueChange={handleMarketChange}
               disabled={isLoading || !isAcknowledged}
             >
               <SelectTrigger className="w-full bg-grayone border-white/10 text-white shadow-inner">
@@ -309,9 +337,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
             <Select
               value={selectedSide}
-              onValueChange={(value) =>
-                setSelectedSide(value as 'borrow' | 'supply')
-              }
+              onValueChange={handleSideChange}
               disabled={!selectedMarket || !isAcknowledged || isLoading}
             >
               <SelectTrigger className="w-full bg-grayone border-white/10 text-white shadow-inner">
@@ -345,7 +371,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                   </div>
                 </div>
               </div>
-            ) : rewardTokens.length === 0 ? (
+            ) : rewardTokensInfo.length === 0 ? (
               <div className="p-6 border border-white/10 rounded-md bg-grayone/80">
                 <div className="flex items-center justify-center">
                   <Info
@@ -364,9 +390,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
             ) : (
               <MaxDeposit
                 headerText="Incentivize Amount"
-                tokenName={selectedToken}
+                tokenName={selectedToken?.symbol}
                 tokenSelector={true}
-                tokenArr={rewardTokens}
+                tokenArr={rewardTokensInfo.map((token) => token.symbol)}
+                max={selectedToken?.balance || '0'}
                 chain={+currentChain}
                 handleInput={(val?: string) => handleInput(val || '')}
                 onTokenChange={handleTokenChange}
@@ -376,7 +403,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
             <Button
               className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
               disabled={
-                !isFormComplete || isLoading || rewardTokens.length === 0
+                !isFormComplete || isLoading || rewardTokensInfo.length === 0
               }
               onClick={handleSubmit}
             >
