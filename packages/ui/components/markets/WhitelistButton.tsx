@@ -1,14 +1,15 @@
 'use client';
 
-import { Button } from '@ui/components/ui/button';
-import { useVeIONContext } from '@ui/context/VeIonContext';
 import { Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
+
+import { Button } from '@ui/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
+import { useVeIONContext } from '@ui/context/VeIonContext';
 
 interface WhitelistButtonProps {
   className?: string;
