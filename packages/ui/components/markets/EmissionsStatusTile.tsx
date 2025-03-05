@@ -74,7 +74,7 @@ export const EmissionsStatusTile = () => {
   const getStatusDisplay = () => {
     if (isUserBlacklisted) {
       return {
-        text: 'Inactive (Blacklisted)',
+        text: 'Inactive',
         color: 'text-red-400'
       };
     }
