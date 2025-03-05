@@ -47,7 +47,6 @@ export const getNetworkName = (chainId: number): string => {
 };
 
 export const useRewardsAggregator = () => {
-  // No chainIds parameter
   const { getSdk } = useMultiIonic();
   const {
     currentChain,
