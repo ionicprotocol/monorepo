@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -69,6 +69,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   );
   const [selectedToken, setSelectedToken] = useState<RewardTokenInfo>();
   const [incentiveAmount, setIncentiveAmount] = useState<string>('');
+  const [maxDepositKey, setMaxDepositKey] = useState<number>(0);
 
   // Extract all market addresses from raw market data
   const marketAddresses = useMemo(() => {
@@ -88,7 +89,8 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     getBribeAddress,
     // rewardTokens,
     rewardTokensInfo,
-    isLoading: isIncentivesLoading
+    isLoading: isIncentivesLoading,
+    fetchRewardTokensForBribe
   } = useMarketIncentives(
     chainId,
     marketAddresses,
@@ -222,8 +224,38 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }
   });
 
-  // Modified handleSubmit function
-  // Modified handleSubmit function for MarketSelector
+  const refreshState = useCallback(async () => {
+    if (!selectedMarket || !selectedSide) return;
+
+    const bribeAddress = getBribeAddress(
+      selectedMarket,
+      selectedSide
+    ) as `0x${string}`;
+
+    if (!bribeAddress) return;
+
+    setIncentiveAmount('');
+
+    setMaxDepositKey((prevKey) => prevKey + 1);
+
+    setTimeout(async () => {
+      try {
+        await fetchRewardTokensForBribe(
+          bribeAddress,
+          selectedMarket.toLowerCase(),
+          selectedSide
+        );
+      } catch (err) {
+        console.error('Error refreshing token balances:', err);
+      }
+    }, 2000);
+  }, [
+    selectedMarket,
+    selectedSide,
+    getBribeAddress,
+    fetchRewardTokensForBribe
+  ]);
+
   const handleSubmit = async () => {
     if (
       !selectedMarket ||
@@ -273,8 +305,8 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
         title: 'Success',
         description: 'Incentive successfully submitted!'
       });
-      // Reset form
-      setIncentiveAmount('');
+
+      refreshState();
     } else {
       toast({
         title: 'Error',
@@ -293,7 +325,19 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     }
   };
 
-  // Update the loading state to include network switching
+  useEffect(() => {
+    if (rewardTokensInfo.length > 0 && !selectedToken) {
+      setSelectedToken(rewardTokensInfo[0]);
+    } else if (selectedToken) {
+      const updatedToken = rewardTokensInfo.find(
+        (token) => token.address === selectedToken.address
+      );
+      if (updatedToken && updatedToken.balance !== selectedToken.balance) {
+        setSelectedToken(updatedToken);
+      }
+    }
+  }, [rewardTokensInfo, selectedToken]);
+
   const isLoading =
     isMarketDataLoading ||
     isVotesLoading ||
@@ -302,7 +346,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     isSubmitting ||
     isConfirming;
 
-  // Form completion check
   const isFormComplete =
     selectedMarket && selectedSide && incentiveAmount && isAcknowledged;
 
@@ -417,6 +460,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               </div>
             ) : (
               <MaxDeposit
+                key={maxDepositKey}
                 headerText="Incentivize Amount"
                 tokenName={selectedToken?.symbol}
                 tokenSelector={true}
@@ -425,6 +469,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                 chain={+currentChain}
                 handleInput={(val?: string) => handleInput(val || '')}
                 onTokenChange={handleTokenChange}
+                amount={incentiveAmount}
               />
             )}
 
