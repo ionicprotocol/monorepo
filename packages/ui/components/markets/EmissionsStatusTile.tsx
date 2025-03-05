@@ -14,42 +14,62 @@ import {
 } from '@ui/components/ui/tooltip';
 import { getChainName } from '@ui/constants/mock';
 import { useVeIONContext } from '@ui/context/VeIonContext';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+// Removed useFusePoolData dependency
 import type { ChainId } from '@ui/types/veION';
 
 export const EmissionsStatusTile = () => {
-  const { prices, currentChain, emissions } = useVeIONContext();
-  const { veIonBalanceUsd } = prices;
+  const { currentChain, emissions } = useVeIONContext();
+  // Use veIonBalanceUsd directly from emissions data instead of from prices
+  const veIonBalanceUsd = emissions.veIonBalanceUsd;
   const isUserBlacklisted = emissions.isUserBlacklisted;
 
-  const { data: marketData } = useFusePoolData(
-    currentChain === 34443 ? '1' : '0',
-    currentChain
-  );
+  // Get the threshold percentage from emissions data (dynamically from contract)
+  // Default to 2.5% if not available, for backward compatibility
+  const thresholdPercentage = emissions.collateralPercentageNumeric ?? 2.5;
 
-  // Compare veION to total supply
-  const totalSupply = marketData?.totalSupplyBalanceFiat || 0;
-  const veionPercentageVsTotalSupply =
-    totalSupply === 0 && veIonBalanceUsd > 0
-      ? 100 // If no collateral and veION exists, count as 100%
-      : totalSupply > 0
-        ? (veIonBalanceUsd / totalSupply) * 100
-        : 0;
+  // Get user's collateral value directly from emissions data
+  const userCollateral = emissions.userCollateral
+    ? parseFloat(emissions.userCollateral)
+    : 0;
 
-  const isActive = !isUserBlacklisted && veionPercentageVsTotalSupply >= 2.5;
+  // Use the actual ratio from emissions data if available
+  // This is calculated using the same formula as the contract: (userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue
+  let veionPercentageVsCollateral = emissions.actualRatio;
 
+  // If actualRatio is not available, calculate it manually for backward compatibility
+  if (veionPercentageVsCollateral === undefined) {
+    veionPercentageVsCollateral =
+      userCollateral === 0 && veIonBalanceUsd > 0
+        ? 100 // If no collateral and veION exists, count as 100%
+        : userCollateral > 0
+          ? (veIonBalanceUsd / userCollateral) * 100
+          : 0;
+  }
+
+  // Determine if the user is active based on blacklist status and veION percentage
+  const isActive =
+    !isUserBlacklisted && veionPercentageVsCollateral >= thresholdPercentage;
+
+  // For display purposes, cap at 100%
   const displayPercentage =
-    veionPercentageVsTotalSupply > 100 ? 100 : veionPercentageVsTotalSupply;
-  const displayText =
-    veionPercentageVsTotalSupply > 100 ||
-    (totalSupply === 0 && veIonBalanceUsd > 0)
-      ? '100%+'
-      : `${veionPercentageVsTotalSupply.toFixed(2)}%`;
+    veionPercentageVsCollateral > 100 ? 100 : veionPercentageVsCollateral;
 
-  const firstBarProgress = Math.min(displayPercentage, 2.5);
-  const secondBarProgress = Math.max(0, displayPercentage - 2.5);
-  const secondBarMax = 97.5;
-  const thresholdPercentage = 2.5;
+  const displayText =
+    veionPercentageVsCollateral > 100 ||
+    (userCollateral === 0 && veIonBalanceUsd > 0)
+      ? '100%+'
+      : `${veionPercentageVsCollateral?.toFixed(2)}%`;
+
+  // Calculate progress bar values based on threshold
+  const firstBarProgress = Math.min(
+    displayPercentage || 0,
+    thresholdPercentage
+  );
+  const secondBarProgress = Math.max(
+    0,
+    (displayPercentage || 0) - thresholdPercentage
+  );
+  const secondBarMax = 100 - thresholdPercentage;
 
   const getStatusDisplay = () => {
     if (isUserBlacklisted) {
@@ -88,8 +108,8 @@ export const EmissionsStatusTile = () => {
                 </p>
               ) : (
                 <p className="text-sm">
-                  Activation Threshold: 2.5% of your collateral worth must be
-                  locked as veION.
+                  Activation Threshold: {thresholdPercentage.toFixed(1)}% of
+                  your collateral worth must be locked as veION.
                 </p>
               )}
             </TooltipContent>
@@ -112,7 +132,7 @@ export const EmissionsStatusTile = () => {
       <div className="flex gap-2">
         <div className="w-full relative group">
           <CustomTooltip
-            content={`${displayText} of your total supply locked as veION`}
+            content={`${displayText} of your collateral is locked as veION (calculated in ETH terms)`}
           >
             <div className="flex gap-2">
               <div className="w-[10%]">
@@ -145,7 +165,7 @@ export const EmissionsStatusTile = () => {
         >
           <span>
             YOUR COLLATERAL: $
-            {totalSupply.toLocaleString('en-US', {
+            {(emissions.totalCollateralUsd || 0).toLocaleString('en-US', {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2
             })}

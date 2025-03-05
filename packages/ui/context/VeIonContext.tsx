@@ -24,6 +24,7 @@ import type {
 } from '@ui/types/veION';
 import { getToken } from '@ui/utils/getStakingTokens';
 
+// Updated EmissionsData interface for VeIONContext
 interface EmissionsData {
   lockedValue: {
     amount: number;
@@ -34,6 +35,12 @@ interface EmissionsData {
     usdValue: string;
   };
   collateralBp: bigint;
+  collateralPercentageNumeric?: number; // Threshold percentage
+  actualRatio?: number; // Actual ratio in percentage
+  veIonValue?: string; // veION value in ETH
+  veIonBalanceUsd: number; // veION value in USD from contract data
+  totalCollateralUsd?: number; // Collateral in USD using same exchange rate
+  userCollateral?: string; // User's collateral value as a formatted string
   isUserBlacklisted: boolean | undefined;
   isLoading: boolean;
   refetch: () => Promise<any>;
@@ -79,6 +86,12 @@ const defaultEmissionsData: EmissionsData = {
     usdValue: '0'
   },
   collateralBp: BigInt(0),
+  collateralPercentageNumeric: undefined,
+  actualRatio: undefined,
+  veIonValue: undefined,
+  veIonBalanceUsd: 0,
+  totalCollateralUsd: undefined,
+  userCollateral: undefined,
   isUserBlacklisted: undefined,
   isLoading: true,
   refetch: async () => ({}),
@@ -213,6 +226,7 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   );
 
   const emissionsData = useEmissionsData(currentChain);
+  console.log('emissionsData', emissionsData);
 
   const emissions: EmissionsData = isSupported
     ? {
@@ -225,6 +239,12 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
           usdValue: '0'
         },
         collateralBp: emissionsData.collateralBp || BigInt(0),
+        collateralPercentageNumeric: emissionsData.collateralPercentageNumeric,
+        actualRatio: emissionsData.actualRatio,
+        veIonValue: emissionsData.formattedVeIonValue,
+        veIonBalanceUsd: emissionsData.veIonBalanceUsd || 0,
+        totalCollateralUsd: emissionsData.totalCollateralUsd,
+        userCollateral: emissionsData.formattedTotalCollateral,
         isUserBlacklisted: emissionsData.isUserBlacklisted,
         isLoading: emissionsData.isLoading,
         refetch: emissionsData.refetch,

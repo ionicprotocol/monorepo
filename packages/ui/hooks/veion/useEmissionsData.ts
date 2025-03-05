@@ -8,8 +8,11 @@ import {
   useSimulateContract
 } from 'wagmi';
 
+import { getVeIonContract } from '@ui/constants/veIon';
 import { useToast } from '@ui/hooks/use-toast';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
+
+import { useUsdPrice } from '../useUsdPrices';
 
 import type { Address } from 'viem';
 
@@ -35,15 +38,23 @@ const publicClients = {
 
 // Number of decimals for the collateral token (typically 18 for most ERC20 tokens)
 const COLLATERAL_DECIMALS = 18;
+// Maximum basis points constant from the contract
+const MAXIMUM_BASIS_POINTS = 10000;
 
 interface EmissionsData {
   collateralBp: bigint | undefined;
   collateralPercentage: string | undefined;
+  collateralPercentageNumeric: number | undefined;
   totalCollateral: bigint | undefined;
   formattedTotalCollateral: string | undefined;
+  veIonValue: bigint | undefined;
+  formattedVeIonValue: string | undefined;
+  veIonBalanceUsd: number; // Added for consistency with display
+  actualRatio: number | undefined;
   isUserBlacklisted: boolean | undefined;
   isLoading: boolean;
   isError: boolean;
+  totalCollateralUsd: number | undefined;
   refetch: () => Promise<any>;
   whitelistUser: {
     execute: () => Promise<`0x${string}` | void>;
@@ -61,9 +72,14 @@ export function useEmissionsData(chainId: number): EmissionsData {
 
   const contractAddress = EMISSIONS_MANAGER_ADDRESSES[chainId];
   const publicClient = publicClients[chainId as keyof typeof publicClients];
+  const veIonContract = getVeIonContract(chainId);
+
+  // Get ETH price using the existing hook
+  const { data: ethPriceData } = useUsdPrice(chainId);
+  const ethPrice = ethPriceData || 0;
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['emissionsData', chainId, address],
+    queryKey: ['emissionsData', chainId, address, ethPrice],
     queryFn: async () => {
       if (!publicClient || !contractAddress) {
         throw new Error(
@@ -81,33 +97,60 @@ export function useEmissionsData(chainId: number): EmissionsData {
 
         // Initialize with defaults
         let totalCollateral;
+        let veIonValue;
         let isUserBlacklisted = false;
 
         // Only fetch user-specific data if an address is available
         if (address) {
           // Fetch blacklist status and total collateral in parallel
-          const [blacklistResult, collateralResult] = await Promise.all([
-            publicClient.readContract({
-              address: contractAddress,
-              abi: emissionsManagerAbi,
-              functionName: 'isUserBlacklisted',
-              args: [address]
-            }),
-            publicClient.readContract({
-              address: contractAddress,
-              abi: emissionsManagerAbi,
-              functionName: 'getUserTotalCollateral',
-              args: [address]
-            })
-          ]);
+          const [blacklistResult, collateralResult, veIonAddress] =
+            await Promise.all([
+              publicClient.readContract({
+                address: contractAddress,
+                abi: emissionsManagerAbi,
+                functionName: 'isUserBlacklisted',
+                args: [address]
+              }),
+              publicClient.readContract({
+                address: contractAddress,
+                abi: emissionsManagerAbi,
+                functionName: 'getUserTotalCollateral',
+                args: [address]
+              }),
+              publicClient.readContract({
+                address: contractAddress,
+                abi: emissionsManagerAbi,
+                functionName: 'veION'
+              })
+            ]);
 
           isUserBlacklisted = blacklistResult;
           totalCollateral = collateralResult;
+
+          // Fetch the veION value if the veION address is valid
+          console.log('veIonAddress', veIonAddress);
+          if (
+            veIonAddress &&
+            veIonAddress !== '0x0000000000000000000000000000000000000000'
+          ) {
+            try {
+              veIonValue = await publicClient.readContract({
+                address: veIonAddress,
+                abi: veIonContract.abi,
+                functionName: 'getTotalEthValueOfTokens',
+                args: [address]
+              });
+            } catch (error) {
+              console.error('Error fetching veION value:', error);
+              // Keep the default undefined value
+            }
+          }
         }
 
         return {
           collateralBp,
           totalCollateral,
+          veIonValue,
           isUserBlacklisted
         };
       } catch (error) {
@@ -115,7 +158,7 @@ export function useEmissionsData(chainId: number): EmissionsData {
         throw error;
       }
     },
-    enabled: !!publicClient && !!contractAddress
+    enabled: !!publicClient && !!contractAddress && !!address
   });
 
   // Simulation data for the whitelistUser function
@@ -176,13 +219,54 @@ export function useEmissionsData(chainId: number): EmissionsData {
 
   // Calculate human-readable percentage (10000 basis points = 100%)
   const collateralPercentage = data?.collateralBp
-    ? ((Number(data.collateralBp) / 10000) * 100).toFixed(2) + '%'
+    ? ((Number(data.collateralBp) / MAXIMUM_BASIS_POINTS) * 100).toFixed(2) +
+      '%'
     : undefined;
 
-  // Format the total collateral with appropriate decimals
+  // Add numeric percentage for easier comparison (without the % symbol)
+  const collateralPercentageNumeric = data?.collateralBp
+    ? (Number(data.collateralBp) / MAXIMUM_BASIS_POINTS) * 100
+    : undefined;
+
+  // Format the total collateral with appropriate decimals (ETH)
   const formattedTotalCollateral = data?.totalCollateral
     ? formatUnits(data.totalCollateral, COLLATERAL_DECIMALS)
     : undefined;
+
+  // Format the veION value with appropriate decimals (ETH)
+  const formattedVeIonValue = data?.veIonValue
+    ? formatUnits(data.veIonValue, COLLATERAL_DECIMALS)
+    : undefined;
+
+  // Calculate USD values using the SAME exchange rate for both
+  const totalCollateralEth = formattedTotalCollateral
+    ? parseFloat(formattedTotalCollateral)
+    : 0;
+
+  const veIonValueEth = formattedVeIonValue
+    ? parseFloat(formattedVeIonValue)
+    : 0;
+
+  // Convert to USD using the same exchange rate
+  const totalCollateralUsd = totalCollateralEth * ethPrice;
+  const veIonBalanceUsd = veIonValueEth * ethPrice;
+
+  // Calculate the actual ratio using the same formula as the contract
+  // (userLPValue * MAXIMUM_BASIS_POINTS) / userCollateralValue >= collateralBp
+  // In percentage terms: (userLPValue / userCollateralValue) * 100 >= (collateralBp / MAXIMUM_BASIS_POINTS) * 100
+  let actualRatio: number | undefined = undefined;
+  if (data?.totalCollateral && data.totalCollateral > 0n && data?.veIonValue) {
+    const lpValueBigInt = data.veIonValue;
+    const collateralValueBigInt = data.totalCollateral;
+
+    // To avoid precision loss, we'll do the multiplication before the division
+    // and then convert to number for display
+    if (collateralValueBigInt > 0n) {
+      const ratioBigInt =
+        (lpValueBigInt * BigInt(MAXIMUM_BASIS_POINTS)) / collateralValueBigInt;
+      actualRatio = Number(ratioBigInt) / 100; // Convert basis points to percentage
+    }
+  }
 
   const canWhitelist = Boolean(
     simulationData?.request && data?.isUserBlacklisted
@@ -191,8 +275,14 @@ export function useEmissionsData(chainId: number): EmissionsData {
   return {
     collateralBp: data?.collateralBp,
     collateralPercentage,
+    collateralPercentageNumeric,
     totalCollateral: data?.totalCollateral,
     formattedTotalCollateral,
+    veIonValue: data?.veIonValue,
+    formattedVeIonValue,
+    veIonBalanceUsd,
+    totalCollateralUsd,
+    actualRatio,
     isUserBlacklisted: data?.isUserBlacklisted,
     isLoading,
     isError,
