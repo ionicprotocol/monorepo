@@ -226,7 +226,6 @@ export function VeIONProvider({ children }: { children: ReactNode }) {
   );
 
   const emissionsData = useEmissionsData(currentChain);
-  console.log('emissionsData', emissionsData);
 
   const emissions: EmissionsData = isSupported
     ? {

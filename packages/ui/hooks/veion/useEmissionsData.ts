@@ -128,7 +128,6 @@ export function useEmissionsData(chainId: number): EmissionsData {
           totalCollateral = collateralResult;
 
           // Fetch the veION value if the veION address is valid
-          console.log('veIonAddress', veIonAddress);
           if (
             veIonAddress &&
             veIonAddress !== '0x0000000000000000000000000000000000000000'
