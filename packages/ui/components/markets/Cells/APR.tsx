@@ -197,8 +197,27 @@ export default function APR(props: APRCellProps) {
         className="flex flex-col gap-2 p-3 bg-grayone border border-accent rounded-lg shadow-lg"
         align="center"
       >
-        <div className="text-sm font-medium text-gray-300 text-left">
-          APR Breakdown
+        <div className="flex justify-between items-center">
+          <div className="text-sm font-medium text-gray-300 text-left">
+            APR Breakdown
+          </div>
+          {showEmissionsWarning && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="bg-black rounded-full p-0.5 ml-1 flex items-center justify-center">
+                    <AlertTriangle className="w-3 h-3 text-amber-500" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">
+                    Your ION emissions are inactive. Increase your veION ratio
+                    to receive rewards.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center gap-4">
