@@ -99,7 +99,7 @@ const EpochInfo = ({
               </div>
               <span className="text-white font-medium">Ionic Emissions</span>
             </div>
-            <span className="text-green-400 font-semibold">100,000,000</span>
+            <span className="text-green-400 font-semibold">687,500</span>
           </div>
 
           <div
