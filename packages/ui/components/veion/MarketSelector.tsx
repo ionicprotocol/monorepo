@@ -469,6 +469,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                 chain={+currentChain}
                 handleInput={(val?: string) => handleInput(val || '')}
                 onTokenChange={handleTokenChange}
+                showUtilizationSlider
                 amount={incentiveAmount}
               />
             )}
