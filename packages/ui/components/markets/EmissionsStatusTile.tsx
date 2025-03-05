@@ -115,7 +115,7 @@ export const EmissionsStatusTile = () => {
             </TooltipContent>
           </Tooltip>
 
-          {isUserBlacklisted && <WhitelistButton />}
+          <WhitelistButton />
         </div>
 
         <Link

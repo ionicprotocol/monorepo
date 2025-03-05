@@ -161,6 +161,22 @@ export function useEmissionsData(chainId: number): EmissionsData {
   });
 
   // Simulation data for the whitelistUser function
+  // Determine if user meets the ratio requirement for whitelisting
+  const meetsRatioRequirement = (): boolean => {
+    if (!data?.veIonValue || !data.totalCollateral || !data.collateralBp) {
+      return false;
+    }
+
+    if (data.totalCollateral <= 0n) {
+      return false;
+    }
+
+    const ratio =
+      (data.veIonValue * BigInt(MAXIMUM_BASIS_POINTS)) / data.totalCollateral;
+    return ratio >= data.collateralBp;
+  };
+
+  // Simulation data for the whitelistUser function
   const { data: simulationData, isFetching: isSimulating } =
     useSimulateContract({
       address: contractAddress as `0x${string}`,
@@ -169,7 +185,8 @@ export function useEmissionsData(chainId: number): EmissionsData {
       args: address ? [address] : undefined,
       chainId,
       query: {
-        enabled: !!address && !!data?.isUserBlacklisted
+        enabled:
+          !!address && !!data?.isUserBlacklisted && meetsRatioRequirement()
       }
     });
 
