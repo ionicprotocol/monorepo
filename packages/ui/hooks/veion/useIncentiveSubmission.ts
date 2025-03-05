@@ -1,11 +1,9 @@
 import { useState, useCallback } from 'react';
 
 import { parseUnits } from 'viem';
-import {
-  useAccount,
-  useWriteContract,
-  useWaitForTransactionReceipt
-} from 'wagmi';
+import { useAccount, useWriteContract, usePublicClient } from 'wagmi';
+
+import { useToast } from '@ui/hooks/use-toast';
 
 import { erc20Abi, bribeRewardsAbi } from '@ionicprotocol/sdk';
 
@@ -18,50 +16,25 @@ type IncentiveSubmissionProps = {
 
 export const useIncentiveSubmission = () => {
   const { address } = useAccount();
+  const publicClient = usePublicClient();
+  const { toast } = useToast();
 
   const [isApproving, setIsApproving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
-  const [approveTxHash, setApproveTxHash] = useState<`0x${string}` | null>(
-    null
-  );
-  const [notifyTxHash, setNotifyTxHash] = useState<`0x${string}` | null>(null);
 
   // Contract writes
-  const { writeContractAsync: writeApprove } = useWriteContract();
-  const { writeContractAsync: writeNotifyReward } = useWriteContract();
-
-  // Approval transaction watcher
-  const { isLoading: isApproveConfirming, isSuccess: isApproveConfirmed } =
-    useWaitForTransactionReceipt({
-      hash: approveTxHash || undefined,
-      query: {
-        enabled: !!approveTxHash
-      }
-    });
-
-  // Notify transaction watcher
-  const { isLoading: isNotifyConfirming, isSuccess: isNotifyConfirmed } =
-    useWaitForTransactionReceipt({
-      hash: notifyTxHash || undefined,
-      query: {
-        enabled: !!notifyTxHash
-      }
-    });
-
-  // Derived state for component consumption
-  const isConfirming = isApproveConfirming || isNotifyConfirming;
-  const isConfirmed = isNotifyConfirmed;
+  const { writeContractAsync } = useWriteContract();
 
   // Reset state when unmounting or when needed
   const resetState = useCallback(() => {
     setError(null);
-    setApproveTxHash(null);
-    setNotifyTxHash(null);
     setTxHash(null);
     setIsApproving(false);
     setIsSubmitting(false);
+    setIsConfirming(false);
   }, []);
 
   const submitIncentive = async ({
@@ -70,79 +43,121 @@ export const useIncentiveSubmission = () => {
     amount,
     tokenDecimals = 18
   }: IncentiveSubmissionProps) => {
-    if (!address || !bribeAddress || !amount || !tokenAddress) {
-      setError('Missing required parameters');
-      return { success: false, error: 'Missing required parameters' };
+    if (
+      !address ||
+      !bribeAddress ||
+      !amount ||
+      !tokenAddress ||
+      !publicClient
+    ) {
+      const errorMsg = 'Missing required parameters or publicClient';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
     }
 
     try {
       resetState();
 
-      // Use provided decimals or default to 18
+      // Parse amount
       const parsedAmount = parseUnits(amount, tokenDecimals);
 
-      // Approve tokens
+      // Step 1: Approval - follow pattern from createLock
       setIsApproving(true);
 
       try {
-        const approveTx = await writeApprove({
-          address: tokenAddress,
-          abi: erc20Abi,
-          functionName: 'approve',
-          args: [bribeAddress, parsedAmount]
+        // Simulate approval first to catch any potential issues
+        const { request: approvalRequest } =
+          await publicClient.simulateContract({
+            abi: erc20Abi,
+            address: tokenAddress,
+            functionName: 'approve',
+            account: address,
+            args: [bribeAddress, parsedAmount]
+          });
+
+        // If simulation succeeds, execute approval
+        const approvalTx = await writeContractAsync(approvalRequest);
+        setTxHash(approvalTx);
+
+        // Wait for approval transaction to complete
+        setIsConfirming(true);
+        await publicClient.waitForTransactionReceipt({
+          hash: approvalTx
         });
 
-        setApproveTxHash(approveTx);
-        setTxHash(approveTx); // Set the current active txHash for UI
-
-        // Wait for the approval to be confirmed using a timeout
-        let approvalConfirmed = false;
-        const startTime = Date.now();
-        const timeoutDuration = 60000; // 1 minute timeout
-
-        while (!approvalConfirmed && Date.now() - startTime < timeoutDuration) {
-          if (isApproveConfirmed) {
-            approvalConfirmed = true;
-            break;
-          }
-          // Non-blocking delay
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-
-        if (!approvalConfirmed) {
-          throw new Error('Approval transaction timed out');
-        }
-      } catch (approveError) {
         setIsApproving(false);
-        throw new Error(`Approval failed: ${approveError}`);
+        setIsConfirming(false);
+      } catch (error) {
+        console.error('Approval failed:', error);
+        setIsApproving(false);
+        setIsConfirming(false);
+        throw new Error('Token approval failed');
       }
 
-      setIsApproving(false);
-
-      // Submit the incentive
+      // Step 2: Submit incentive
       setIsSubmitting(true);
 
-      const notifyTx = await writeNotifyReward({
-        address: bribeAddress,
-        abi: bribeRewardsAbi,
-        functionName: 'notifyRewardAmount',
-        args: [tokenAddress, parsedAmount]
-      });
+      try {
+        // Simulate transaction first
+        const { request: incentiveRequest } =
+          await publicClient.simulateContract({
+            abi: bribeRewardsAbi,
+            address: bribeAddress,
+            functionName: 'notifyRewardAmount',
+            account: address,
+            args: [tokenAddress, parsedAmount]
+          });
 
-      setNotifyTxHash(notifyTx);
-      setTxHash(notifyTx); // Update the current active txHash
-      setIsSubmitting(false);
+        // If simulation succeeds, execute transaction
+        const incentiveTx = await writeContractAsync(incentiveRequest);
+        setTxHash(incentiveTx);
 
-      return { success: true, txHash: notifyTx };
+        // Wait for incentive transaction to complete
+        setIsConfirming(true);
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash: incentiveTx
+        });
+
+        setIsSubmitting(false);
+        setIsConfirming(false);
+
+        toast({
+          title: 'Success',
+          description: 'Incentive successfully submitted',
+          variant: 'default'
+        });
+
+        return { success: true, txHash: incentiveTx };
+      } catch (error) {
+        console.error('Incentive submission failed:', error);
+        setIsSubmitting(false);
+        setIsConfirming(false);
+        throw new Error('Incentive submission failed');
+      }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       setIsApproving(false);
       setIsSubmitting(false);
+      setIsConfirming(false);
+
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive'
+      });
+
       return { success: false, error: errorMessage };
     }
   };
+
+  const isConfirmed =
+    !isApproving &&
+    !isSubmitting &&
+    !isConfirming &&
+    txHash !== null &&
+    error === null;
 
   return {
     submitIncentive,

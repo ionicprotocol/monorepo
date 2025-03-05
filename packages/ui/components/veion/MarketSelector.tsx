@@ -16,7 +16,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { erc20Abi, isAddress } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useSwitchChain } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 
 import TokenBalance from '@ui/components/markets/Cells/TokenBalance';
@@ -53,6 +53,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   const currentChain = queryChain || base.id.toString();
   const chainId = parseInt(currentChain);
   const poolId = currentChain === mode.id.toString() ? '1' : '0';
+
+  const { chain } = useAccount();
+  const { switchChain, isPending: isSwitchingNetwork } = useSwitchChain();
+  const isWrongNetwork = chain?.id !== chainId;
 
   // Get market data
   const { marketData: rawMarketData, isLoading: isMarketDataLoading } =
@@ -115,15 +119,6 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
     setSelectedToken(undefined);
     setIncentiveAmount('');
   }, [currentChain]);
-
-  // Loading state
-  const isLoading =
-    isMarketDataLoading ||
-    isVotesLoading ||
-    isIncentivesLoading ||
-    isApproving ||
-    isSubmitting ||
-    isConfirming;
 
   // Transform raw market data to include votes and incentives
   const marketData = useMemo(() => {
@@ -228,6 +223,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
   });
 
   // Modified handleSubmit function
+  // Modified handleSubmit function for MarketSelector
   const handleSubmit = async () => {
     if (
       !selectedMarket ||
@@ -258,6 +254,13 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
       return;
     }
 
+    // Start the process
+    toast({
+      title: 'Processing',
+      description: 'Starting incentive submission process...'
+    });
+
+    // Send the incentive - network switching will happen first if needed
     const result = await submitIncentive({
       bribeAddress,
       tokenAddress: selectedToken.address as `0x${string}`,
@@ -278,8 +281,26 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
         description: `Failed to submit incentive: ${result.error || submissionError || 'Unknown error'}`,
         variant: 'destructive'
       });
+
+      // If network switching failed, show additional guidance
+      if (result.error?.includes('network')) {
+        toast({
+          title: 'Network Error',
+          description: 'Please try switching networks manually and try again',
+          variant: 'destructive'
+        });
+      }
     }
   };
+
+  // Update the loading state to include network switching
+  const isLoading =
+    isMarketDataLoading ||
+    isVotesLoading ||
+    isIncentivesLoading ||
+    isApproving ||
+    isSubmitting ||
+    isConfirming;
 
   // Form completion check
   const isFormComplete =
@@ -317,6 +338,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                   <SelectItem
                     key={option.value}
                     value={option.value}
+                    className="hover:text-black aria-selected:text-black"
                   >
                     <div className="flex items-center gap-3">
                       <Image
@@ -346,12 +368,18 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-grayone border-white/10 text-white shadow-lg">
-                <SelectItem value="supply">
+                <SelectItem
+                  value="supply"
+                  className="hover:text-black focus:text-black active:text-black data-[highlighted=true]:text-black aria-selected:text-black"
+                >
                   <div className="flex items-center gap-2">
                     <span>Supply</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="borrow">
+                <SelectItem
+                  value="borrow"
+                  className="hover:text-black focus:text-black active:text-black data-[highlighted=true]:text-black aria-selected:text-black"
+                >
                   <div className="flex items-center gap-2">
                     <span>Borrow</span>
                   </div>
@@ -400,37 +428,80 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
               />
             )}
 
-            <Button
-              className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
-              disabled={
-                !isFormComplete || isLoading || rewardTokensInfo.length === 0
-              }
-              onClick={handleSubmit}
-            >
-              {isApproving || isSubmitting || isConfirming ? (
-                <div className="flex items-center justify-center">
-                  <Loader2
-                    size={18}
-                    className="mr-2 animate-spin"
-                  />
-                  <span>
-                    {isApproving
-                      ? 'Approving...'
-                      : isSubmitting
-                        ? 'Submitting...'
-                        : 'Confirming...'}
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center">
-                  <CircleDollarSign
-                    size={18}
-                    className="mr-2"
-                  />
-                  <span>Incentivize</span>
-                </div>
-              )}
-            </Button>
+            {isWrongNetwork ? (
+              // Show network switch button when on wrong network
+              <Button
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold relative overflow-hidden transition-all duration-300"
+                disabled={isSwitchingNetwork}
+                onClick={() => switchChain({ chainId })}
+              >
+                {isSwitchingNetwork ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2
+                      size={18}
+                      className="mr-2 animate-spin"
+                    />
+                    <span>
+                      Switching to {chainId === 8453 ? 'Base' : 'Mode'}{' '}
+                      network...
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-2"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>
+                      Switch to {chainId === 8453 ? 'Base' : 'Mode'} Network
+                      First
+                    </span>
+                  </div>
+                )}
+              </Button>
+            ) : (
+              // Show incentivize button when on correct network
+              <Button
+                className="w-full bg-accent hover:bg-accent/90 text-black font-semibold relative overflow-hidden transition-all duration-300"
+                disabled={
+                  !isFormComplete || isLoading || rewardTokensInfo.length === 0
+                }
+                onClick={handleSubmit}
+              >
+                {isApproving || isSubmitting || isConfirming ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2
+                      size={18}
+                      className="mr-2 animate-spin"
+                    />
+                    <span>
+                      {isApproving
+                        ? 'Approving tokens...'
+                        : isSubmitting
+                          ? 'Submitting incentive...'
+                          : 'Confirming transaction...'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <CircleDollarSign
+                      size={18}
+                      className="mr-2"
+                    />
+                    <span>Incentivize</span>
+                  </div>
+                )}
+              </Button>
+            )}
           </div>
 
           {selectedMarket && selectedMarketData ? (
