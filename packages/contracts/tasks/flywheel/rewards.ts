@@ -120,3 +120,51 @@ export const sendRewardsToMarkets = async (
     }
   }
 };
+
+export const getCurrentRewardsInfo= async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"]
+) => {
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const pools = await poolDirectory.read.getAllPools();
+
+  for (const pool of pools) {
+    const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
+    const rewardsDistributors = await comptroller.read.getRewardsDistributors();
+    const cTokens = await comptroller.read.getAllMarkets();
+    for (const rewardsDistributor of rewardsDistributors) {
+      const flywheel = await viem.getContractAt("IonicFlywheel", rewardsDistributor);
+      const fwr = await flywheel.read.flywheelRewards();
+      const flywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", fwr);
+      console.log(flywheel.address);
+      for (const cToken of cTokens) {
+        const cTokenContract = await viem.getContractAt("CErc20RewardsDelegate", cToken);
+        const totalBorrows = await cTokenContract.read.totalBorrows();
+        const symbol = await cTokenContract.read.symbol();
+        const blacklistedSupply = await flywheel.read.blacklistedSupply([cToken]);
+        const totalSupply = await cTokenContract.read.totalSupply();
+        let percentage;
+        /*if (flywheel.address === "0x90ffC9786f4757C262A9B529c4a4F6708c94339e"){
+          percentage = Number(blacklistedSupply) / Number(totalBorrows) * 100;
+          console.log(symbol, blacklistedSupply, totalBorrows, percentage);
+        }
+        else {
+          percentage =  Number(blacklistedSupply) / Number(totalSupply) * 100;
+          console.log(symbol, blacklistedSupply, totalSupply, percentage);
+        }*/
+        const info = await flywheelRewards.read.rewardsCycle([cToken]);
+        if (info[2] != 0n){
+          console.log(symbol, cToken, info[0], info[1], Number(info[2])/ 1e18);
+        }
+        }
+      }
+    }
+};
+
+task("flywheel:get_current_rewards_info", "get current flywheel rewards info").setAction(async (_, { viem, deployments }) => {
+  await getCurrentRewardsInfo(viem, deployments);
+});
+
