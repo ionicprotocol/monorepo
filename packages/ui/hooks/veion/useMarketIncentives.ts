@@ -324,11 +324,7 @@ export const useMarketIncentives = (
 
   // Function to fetch reward tokens for a specific bribe contract
   const fetchRewardTokensForBribe = useCallback(
-    async (
-      bribeAddress: string | undefined,
-      marketAddress: string,
-      side: 'borrow' | 'supply'
-    ) => {
+    async (bribeAddress: string | undefined) => {
       if (!bribeAddress || !publicClient) {
         setRewardTokens([]);
         setRewardTokensInfo([]);
@@ -508,7 +504,7 @@ export const useMarketIncentives = (
           : bribesMap[normalizedMarket]?.borrowBribe;
 
       // Fetch reward tokens for this specific market/side
-      fetchRewardTokensForBribe(bribeAddress, normalizedMarket, selectedSide);
+      fetchRewardTokensForBribe(bribeAddress);
     }
   }, [selectedMarket, selectedSide, bribesMap, fetchRewardTokensForBribe]);
 

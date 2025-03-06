@@ -240,11 +240,7 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
 
     setTimeout(async () => {
       try {
-        await fetchRewardTokensForBribe(
-          bribeAddress,
-          selectedMarket.toLowerCase(),
-          selectedSide
-        );
+        await fetchRewardTokensForBribe(bribeAddress);
       } catch (err) {
         console.error('Error refreshing token balances:', err);
       }
