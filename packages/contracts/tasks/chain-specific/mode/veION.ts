@@ -5,28 +5,28 @@ import { Address, parseEther } from "viem";
 task("mode:add-bribes", async (_, { viem, deployments }) => {
   const publicClient = await viem.getPublicClient();
   const bribesToAdd = [
-    {
-      market: MODE_NATIVE_MARKET,
-      side: "supply",
-      amount: parseEther("69420"),
-      token: ION
-    },
+    // {
+    //   market: MODE_NATIVE_MARKET,
+    //   side: "supply",
+    //   amount: parseEther("69420"),
+    //   token: ION
+    // },
     {
       market: WETH_NATIVE_MARKET,
       side: "supply",
-      amount: parseEther("69420"),
+      amount: parseEther("69"),
       token: ION
     },
     {
       market: USDC_NATIVE_MARKET,
       side: "supply",
-      amount: parseEther("69420"),
+      amount: parseEther("69"),
       token: ION
     },
     {
       market: USDT_NATIVE_MARKET,
       side: "supply",
-      amount: parseEther("69420"),
+      amount: parseEther("69"),
       token: ION
     }
   ];
