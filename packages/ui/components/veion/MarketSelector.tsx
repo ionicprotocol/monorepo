@@ -666,7 +666,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                           <span className="text-purple-400 font-medium">
                             {(
                               selectedMarketData.incentives.supply || 0
-                            ).toFixed(2)}
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
                           </span>
                         </td>
                       </tr>
@@ -694,7 +697,10 @@ const MarketSelector = ({ isAcknowledged }: MarketSelectorProps) => {
                           <span className="text-purple-400 font-medium">
                             {(
                               selectedMarketData.incentives.borrow || 0
-                            ).toFixed(2)}
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            })}
                           </span>
                         </td>
                       </tr>

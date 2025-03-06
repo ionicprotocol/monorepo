@@ -5,6 +5,18 @@ import { useQuery } from '@tanstack/react-query';
 import { erc20Abi, formatUnits } from 'viem';
 import { usePublicClient, useAccount } from 'wagmi';
 
+// Define contract addresses
+export const VOTER_CONTRACT_ADDRESSES = {
+  8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9', // Base
+  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429' // Mode
+};
+
+// Incentives viewer contract addresses - CORRECT ADDRESSES
+export const INCENTIVES_VIEWER_ADDRESSES = {
+  8453: '0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02', // Base
+  34443: '0xDf6b5b001D7658E35EfBfD2950A5E5a92A1f32E6' // Mode
+};
+
 // Add iVoterViewAbi
 export const iVoterViewAbi = [
   {
@@ -32,13 +44,59 @@ export const iVoterViewAbi = [
   }
 ] as const;
 
-// Define Voter contract addresses
-export const VOTER_CONTRACT_ADDRESSES = {
-  8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9', // Base
-  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429' // Mode
-};
-
-import { MarketSide } from '@ui/types/veION';
+// Incentives viewer ABI with exact struct from the engineer
+export const incentivesViewerAbi = [
+  {
+    inputs: [],
+    name: 'getAllIncentivesForBribes',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'market',
+            type: 'address'
+          },
+          {
+            internalType: 'address',
+            name: 'bribeSupply',
+            type: 'address'
+          },
+          {
+            internalType: 'address[]',
+            name: 'rewardsSupply',
+            type: 'address[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsSupplyAmounts',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'address',
+            name: 'bribeBorrow',
+            type: 'address'
+          },
+          {
+            internalType: 'address[]',
+            name: 'rewardsBorrow',
+            type: 'address[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsBorrowAmounts',
+            type: 'uint256[]'
+          }
+        ],
+        internalType: 'struct IncentiveInfo[]',
+        name: '_incentiveInfo',
+        type: 'tuple[]'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;
 
 import { bribeRewardsAbi } from '@ionicprotocol/sdk';
 
@@ -142,6 +200,18 @@ export interface RewardTokenInfo {
   cgId: string;
   balance: string;
   decimals: number;
+  price?: number;
+}
+
+// Define interface for the incentive info from the contract - EXACTLY MATCHING ENGINEER'S STRUCT
+export interface IncentiveInfo {
+  market: `0x${string}`;
+  bribeSupply: `0x${string}`;
+  rewardsSupply: `0x${string}`[];
+  rewardsSupplyAmounts: bigint[];
+  bribeBorrow: `0x${string}`;
+  rewardsBorrow: `0x${string}`[];
+  rewardsBorrowAmounts: bigint[];
 }
 
 export const useMarketIncentives = (
@@ -166,21 +236,22 @@ export const useMarketIncentives = (
   const [error, setError] = useState<Error | null>(null);
 
   // Track if we've already fetched data to prevent excessive fetches
-  const hasFetchedBribesRef = useRef(false);
   const hasFetchedIncentivesRef = useRef(false);
 
   // Track selected market/side to detect changes
   const previousMarketRef = useRef<string | undefined>();
   const previousSideRef = useRef<'borrow' | 'supply' | undefined>();
 
-  // Get Voter address for the chain - memoized
-  const voterAddress = useMemo(
+  // Get incentives viewer address for the chain
+  const incentivesViewerAddress = useMemo(
     () =>
-      VOTER_CONTRACT_ADDRESSES[chain as keyof typeof VOTER_CONTRACT_ADDRESSES],
+      INCENTIVES_VIEWER_ADDRESSES[
+        chain as keyof typeof INCENTIVES_VIEWER_ADDRESSES
+      ],
     [chain]
   );
 
-  // Prepare normalized market addresses for consistency - memoized
+  // Prepare normalized market addresses for consistency
   const normalizedMarketAddresses = useMemo(() => {
     if (!marketAddresses.length) return [];
     return marketAddresses.map((addr) => addr.toLowerCase());
@@ -188,141 +259,123 @@ export const useMarketIncentives = (
 
   // Reset tracking when key dependencies change
   useEffect(() => {
-    hasFetchedBribesRef.current = false;
     hasFetchedIncentivesRef.current = false;
     setRewardTokens([]);
+    setIncentivesData({});
+    setBribesMap({});
   }, [chain, normalizedMarketAddresses.length]);
 
-  // Fetch bribe addresses for all markets using the Voter contract
+  // SIMPLIFIED: Fetch incentives data directly from the incentives viewer contract
   useEffect(() => {
-    // Skip if already fetched bribes with these params
     if (
-      hasFetchedBribesRef.current ||
+      hasFetchedIncentivesRef.current ||
       !publicClient ||
-      !normalizedMarketAddresses.length ||
-      !voterAddress
-    )
+      !incentivesViewerAddress ||
+      !normalizedMarketAddresses.length
+    ) {
       return;
+    }
 
-    const fetchBribes = async () => {
+    const fetchIncentives = async () => {
       try {
         setIsLoading(true);
-        // Mark as fetched at the beginning to prevent duplicate fetches
-        hasFetchedBribesRef.current = true;
+        hasFetchedIncentivesRef.current = true;
 
-        // Create calls to get reward accumulator for each market and side
-        const accumulatorCalls = [];
+        // Call the getAllIncentivesForBribes function directly
+        const incentivesResult = (await publicClient.readContract({
+          address: incentivesViewerAddress as `0x${string}`,
+          abi: incentivesViewerAbi,
+          functionName: 'getAllIncentivesForBribes'
+        })) as IncentiveInfo[];
 
-        for (const market of normalizedMarketAddresses) {
-          // Call for supply side (0)
-          accumulatorCalls.push({
-            address: voterAddress as `0x${string}`,
-            abi: iVoterViewAbi,
-            functionName: 'marketToRewardAccumulators',
-            args: [market as `0x${string}`, MarketSide.Supply]
-          });
-
-          // Call for borrow side (1)
-          accumulatorCalls.push({
-            address: voterAddress as `0x${string}`,
-            abi: iVoterViewAbi,
-            functionName: 'marketToRewardAccumulators',
-            args: [market as `0x${string}`, MarketSide.Borrow]
-          });
+        if (!incentivesResult || !Array.isArray(incentivesResult)) {
+          throw new Error('Invalid incentives data format received');
         }
 
-        // Execute multicall to get all accumulators
-        const accumulatorResults = await publicClient.multicall({
-          contracts: accumulatorCalls,
-          allowFailure: true
-        });
-
-        // Create calls to get bribe contract for each accumulator
-        const bribeCalls = [];
-        const validAccumulators = [];
-
-        for (const result of accumulatorResults as any[]) {
-          if (result.status === 'success' && result.result) {
-            const accumulator = result.result as `0x${string}`;
-            validAccumulators.push(accumulator);
-
-            bribeCalls.push({
-              address: voterAddress as `0x${string}`,
-              abi: iVoterViewAbi,
-              functionName: 'rewardAccumulatorToBribe',
-              args: [accumulator]
-            });
-          } else {
-            // Push null for failed results to maintain array indexes
-            validAccumulators.push(null);
-          }
-        }
-
-        // Execute multicall to get all bribe contracts
-        const briberResults = await publicClient.multicall({
-          contracts: bribeCalls,
-          allowFailure: true
-        });
-
-        // Process results to build the bribesMap
+        // Process the incentives data
+        const newIncentivesData: Record<
+          string,
+          { supply: number; borrow: number }
+        > = {};
         const newBribesMap: Record<
           string,
           { supplyBribe: string; borrowBribe: string }
         > = {};
 
-        // Start at beginning of normalizedMarketAddresses
-        let resultIndex = 0;
-        for (const market of normalizedMarketAddresses) {
-          // Get supply accumulator and bribe
-          const supplyAccumulator = validAccumulators[resultIndex];
-          const supplyBribe = supplyAccumulator
-            ? (briberResults[validAccumulators.indexOf(supplyAccumulator)]
-                ?.result as unknown as string) ?? ''
-            : '';
+        // Process each incentive info
+        for (const info of incentivesResult) {
+          const marketAddress = info.market.toLowerCase();
 
-          resultIndex++;
-
-          // Get borrow accumulator and bribe
-          const borrowAccumulator = validAccumulators[resultIndex];
-          const borrowBribe = borrowAccumulator
-            ? (briberResults[validAccumulators.indexOf(borrowAccumulator)]
-                ?.result as unknown as string) ?? ''
-            : '';
-
-          resultIndex++;
-
-          // Add to map if we have at least one valid bribe contract
-          if (supplyBribe || borrowBribe) {
-            newBribesMap[market] = {
-              supplyBribe,
-              borrowBribe
-            };
+          // Skip if not in our list of markets
+          if (!normalizedMarketAddresses.includes(marketAddress)) {
+            continue;
           }
+
+          // Calculate supply incentives value (sum of all token amounts)
+          let supplyValue = 0;
+          if (
+            info.rewardsSupplyAmounts &&
+            info.rewardsSupplyAmounts.length > 0
+          ) {
+            for (const amount of info.rewardsSupplyAmounts) {
+              try {
+                supplyValue += Number(formatUnits(amount, 18));
+              } catch (e) {
+                console.error('Error formatting supply amount:', e);
+              }
+            }
+          }
+
+          // Calculate borrow incentives value (sum of all token amounts)
+          let borrowValue = 0;
+          if (
+            info.rewardsBorrowAmounts &&
+            info.rewardsBorrowAmounts.length > 0
+          ) {
+            for (const amount of info.rewardsBorrowAmounts) {
+              try {
+                borrowValue += Number(formatUnits(amount, 18));
+              } catch (e) {
+                console.error('Error formatting borrow amount:', e);
+              }
+            }
+          }
+
+          // Store the calculated values
+          newIncentivesData[marketAddress] = {
+            supply: supplyValue,
+            borrow: borrowValue
+          };
+
+          // Store bribe addresses
+          newBribesMap[marketAddress] = {
+            supplyBribe: info.bribeSupply,
+            borrowBribe: info.bribeBorrow
+          };
         }
 
-        // Update bribesMap
+        // Update state with processed data
+        setIncentivesData(newIncentivesData);
         setBribesMap(newBribesMap);
-
-        // Reset fetch tracking for dependent data
-        hasFetchedIncentivesRef.current = false;
-
         setError(null);
       } catch (err) {
-        console.error('Error fetching bribe contracts:', err);
+        console.error('Error fetching incentives data:', err);
         setError(
           err instanceof Error ? err : new Error('Unknown error occurred')
         );
-        // Reset fetch tracking on error to allow retry
-        hasFetchedBribesRef.current = false;
+        hasFetchedIncentivesRef.current = false;
+
+        // Attempt fallback to older method if this fails
+        // This section would implement the fallback, but I'm keeping it simple as requested
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBribes();
-  }, [normalizedMarketAddresses, publicClient, voterAddress]);
+    fetchIncentives();
+  }, [publicClient, incentivesViewerAddress, normalizedMarketAddresses]);
 
-  // Function to fetch reward tokens for a specific bribe contract
+  // Function to fetch reward tokens for a specific bribe contract - needed for the dropdown
   const fetchRewardTokensForBribe = useCallback(
     async (bribeAddress: string | undefined) => {
       if (!bribeAddress || !publicClient) {
@@ -429,7 +482,6 @@ export const useMarketIncentives = (
             }
 
             // Generate a CoinGecko ID from symbol or name
-            // This is a best-effort approach since there's no direct mapping
             const cgId =
               symbol.toLowerCase() || name.toLowerCase().replace(/\s+/g, '-');
 
@@ -507,118 +559,6 @@ export const useMarketIncentives = (
       fetchRewardTokensForBribe(bribeAddress);
     }
   }, [selectedMarket, selectedSide, bribesMap, fetchRewardTokensForBribe]);
-
-  // Fetch incentives for markets once we have the bribe addresses and reward tokens
-  useEffect(() => {
-    // Skip if already fetched with these params
-    if (
-      hasFetchedIncentivesRef.current ||
-      !publicClient ||
-      !normalizedMarketAddresses.length ||
-      Object.keys(bribesMap).length === 0
-    )
-      return;
-
-    const fetchIncentives = async () => {
-      try {
-        setIsLoading(true);
-        // Mark as fetched at the beginning to prevent duplicate fetches
-        hasFetchedIncentivesRef.current = true;
-
-        // Prepare calls for all markets and tokens
-        const calls = [];
-        const marketBribeMap: Record<
-          number,
-          { market: string; side: 'borrow' | 'supply' }
-        > = {};
-        let callIndex = 0;
-
-        // Add supply calls
-        for (const market of normalizedMarketAddresses) {
-          if (!bribesMap[market]?.supplyBribe) continue;
-
-          for (const token of rewardTokens) {
-            calls.push({
-              address: bribesMap[market].supplyBribe as `0x${string}`,
-              abi: bribeRewardsAbi,
-              functionName: 'totalSupply',
-              args: [token]
-            });
-
-            marketBribeMap[callIndex] = { market, side: 'supply' };
-            callIndex++;
-          }
-        }
-
-        // Add borrow calls
-        for (const market of normalizedMarketAddresses) {
-          if (!bribesMap[market]?.borrowBribe) continue;
-
-          for (const token of rewardTokens) {
-            calls.push({
-              address: bribesMap[market].borrowBribe as `0x${string}`,
-              abi: bribeRewardsAbi,
-              functionName: 'totalSupply',
-              args: [token]
-            });
-
-            marketBribeMap[callIndex] = { market, side: 'borrow' };
-            callIndex++;
-          }
-        }
-
-        if (calls.length === 0) {
-          setIsLoading(false);
-          return;
-        }
-
-        // Execute multicall
-        const results = await publicClient.multicall({
-          contracts: calls,
-          allowFailure: true
-        });
-
-        // Process results
-        const newIncentivesData: Record<
-          string,
-          { supply: number; borrow: number }
-        > = {};
-
-        // Initialize data structure
-        normalizedMarketAddresses.forEach((market) => {
-          newIncentivesData[market] = { supply: 0, borrow: 0 };
-        });
-
-        // Aggregate results
-        results.forEach((result, index) => {
-          if (result.status !== 'success') return;
-
-          const { market, side } = marketBribeMap[index];
-          const value = Number(formatUnits(result.result as bigint, 18)); // Assuming 18 decimals
-
-          if (!newIncentivesData[market]) {
-            newIncentivesData[market] = { supply: 0, borrow: 0 };
-          }
-
-          newIncentivesData[market][side] += value;
-        });
-
-        setIncentivesData(newIncentivesData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching incentives data:', err);
-        setError(
-          err instanceof Error ? err : new Error('Unknown error occurred')
-        );
-        // Reset fetch tracking on error to allow retry
-        hasFetchedIncentivesRef.current = false;
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchIncentives();
-  }, [normalizedMarketAddresses, rewardTokens, publicClient, bribesMap]);
 
   // Helper functions - memoized to maintain reference stability
   const getMarketIncentives = useCallback(
