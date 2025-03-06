@@ -7,11 +7,13 @@ type Token = {
 };
 
 type BalanceBreakdownProps = {
-  balanceUSD: number;
+  balance?: number;
+  balanceUSD?: number;
   tokens: Token[];
 };
 
 const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({
+  balance,
   balanceUSD,
   tokens
 }) => {
@@ -55,7 +57,12 @@ const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({
 
   return (
     <div className="flex flex-col items-start">
-      <span className="text-white">{formatUSD(balanceUSD)}</span>
+      {balance && (
+        <span className="text-white">{balance.toLocaleString('en-US')}</span>
+      )}
+      {balanceUSD && (
+        <span className="text-white">{formatUSD(balanceUSD)}</span>
+      )}
       {tokens.map((token, index) => (
         <span
           key={index}

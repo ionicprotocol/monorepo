@@ -238,7 +238,7 @@ export type VoteMarketRow = {
   marketAddress: `0x${string}`;
   currentAmount: string;
   incentives: {
-    balanceUSD: number;
+    incentiveAmount: number;
     tokens: {
       tokenSymbol: string;
       tokenAmount: number;

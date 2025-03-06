@@ -221,7 +221,7 @@ function VotesManagement({
     },
     {
       id: 'incentives',
-      accessorFn: (row) => row.incentives.balanceUSD,
+      accessorFn: (row) => row.incentives.incentiveAmount,
       header: (
         <TooltipWrapper content="Incentives allocated for voters">
           <span>INCENTIVES</span>
@@ -230,7 +230,7 @@ function VotesManagement({
       sortingFn: 'numerical',
       cell: ({ row }) => (
         <BalanceBreakdown
-          balanceUSD={row.original.incentives.balanceUSD}
+          balance={row.original.incentives.incentiveAmount}
           tokens={row.original.incentives.tokens}
         />
       )

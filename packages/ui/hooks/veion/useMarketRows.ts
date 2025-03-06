@@ -6,6 +6,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
+import { useMarketIncentives } from '@ui/hooks/veion/useMarketIncentives';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
@@ -66,6 +67,13 @@ export const useMarketRows = (
     return { marketAddresses: addresses, marketSides: sides, lpTokens: tokens };
   }, [chain, poolData?.assets]);
 
+  // Use the new market incentives hook for fetching incentives
+  const {
+    incentivesData,
+    rewardTokensInfo,
+    isLoading: isLoadingIncentives
+  } = useMarketIncentives(+chain, marketAddresses, '', undefined);
+
   const {
     voteData,
     isLoading: isLoadingVoteData,
@@ -77,35 +85,69 @@ export const useMarketRows = (
     marketSides
   });
 
+  // We'll still use the old hook for backward compatibility
   const { getRewardDetails } = useBribeData({
     chain: +chain
   });
 
-  const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
-    const details = getRewardDetails(
-      marketAddress,
-      side === MarketSide.Supply ? 'supply' : 'borrow'
-    );
-    if (!details || !details.rewards.length)
-      return {
-        balanceUSD: 0,
-        tokens: []
-      };
+  const getIncentivesFromBribes = useCallback(
+    (marketAddress: string, side: MarketSide) => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      const sideStr = side === MarketSide.Supply ? 'supply' : 'borrow';
 
-    return {
-      balanceUSD: 0, // need to fix this up
-      tokens: details.rewards.map((reward) => ({
-        tokenSymbol:
-          reward.symbol === 'vAMM-ION/WETH' ||
-          reward.symbol === 'vAMMV2-ION/MODE'
-            ? 'ION'
-            : reward.symbol || 'Unknown',
-        tokenAmount: Number(reward.weeklyAmount),
-        tokenAmountFormatted: reward.formattedWeeklyAmount,
-        tokenAmountUSD: 0 // need to fix this up
-      }))
-    };
-  };
+      // Get incentive amount from the new hook
+      const incentiveAmount = incentivesData[normalizedAddress]?.[sideStr] || 0;
+
+      // Fallback to the old method if no data
+      if (incentiveAmount === 0) {
+        const details = getRewardDetails(marketAddress, sideStr);
+        if (!details || !details.rewards.length) {
+          return {
+            incentiveAmount: 0,
+            tokens: []
+          };
+        }
+
+        return {
+          incentiveAmount: details.incentiveAmount || 0,
+          tokens: details.rewards.map((reward) => ({
+            tokenSymbol:
+              reward.symbol === 'vAMM-ION/WETH' ||
+              reward.symbol === 'vAMMV2-ION/MODE'
+                ? 'ION'
+                : reward.symbol || 'Unknown',
+            tokenAmount: Number(reward.weeklyAmount),
+            tokenAmountFormatted: reward.formattedWeeklyAmount,
+            tokenAmountUSD: Number(reward.weeklyAmount) * (reward.priceUSD || 0)
+          }))
+        };
+      }
+
+      // Find relevant tokens for this market
+      // In a real implementation, we would fetch specific tokens for each market/side
+      // Here, we're just distributing the incentive amount among all tokens
+
+      // Create a simplified token representation for the UI
+      const tokens =
+        rewardTokensInfo.length > 0
+          ? [
+              {
+                tokenSymbol: rewardTokensInfo[0].symbol || 'UNKNOWN',
+                tokenAmount: incentiveAmount,
+                tokenAmountFormatted: incentiveAmount.toFixed(2),
+                tokenAmountUSD:
+                  incentiveAmount * (rewardTokensInfo[0].price || 0)
+              }
+            ]
+          : [];
+
+      return {
+        incentiveAmount: incentiveAmount,
+        tokens
+      };
+    },
+    [incentivesData, rewardTokensInfo, getRewardDetails]
+  );
 
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
@@ -204,7 +246,8 @@ export const useMarketRows = (
       !isLoadingSupplyApys &&
       !isLoadingBorrowApys &&
       !isLoadingRewards &&
-      !isLoadingMerklData
+      !isLoadingMerklData &&
+      !isLoadingIncentives
     ) {
       try {
         const rows = processMarketRows();
@@ -223,6 +266,7 @@ export const useMarketRows = (
     isLoadingRewards,
     isLoadingMerklData,
     isLoadingVoteData,
+    isLoadingIncentives,
     processMarketRows
   ]);
 
@@ -238,7 +282,8 @@ export const useMarketRows = (
       isLoadingBorrowApys ||
       isLoadingRewards ||
       isLoadingVoteData ||
-      isLoadingMerklData,
+      isLoadingMerklData ||
+      isLoadingIncentives,
     error,
     refetch
   };
