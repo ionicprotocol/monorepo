@@ -42,7 +42,6 @@ const UniversalClaimDialog = ({
     Record<string, boolean>
   >({});
   const { rewards, isLoading, claimRewards } = useRewardsAggregator();
-  console.log('rewards', rewards);
   const { currentChain } = useVeIONContext();
   const { toast } = useToast();
   const [isClaimLoading, setIsClaimLoading] = useState(false);

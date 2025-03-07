@@ -88,10 +88,6 @@ export const useStakingRewards = (chainId: number) => {
           args: [address]
         });
 
-        console.log(
-          `Staking wallet for ${address} on chain ${chainId}: ${wallet}`
-        );
-
         return wallet;
       } catch (error) {
         console.error('Error fetching staking wallet:', error);

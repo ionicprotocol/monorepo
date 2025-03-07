@@ -75,6 +75,11 @@ export const incentivesViewerAbi = [
             type: 'uint256[]'
           },
           {
+            internalType: 'uint256[]',
+            name: 'rewardsSupplyETHValues',
+            type: 'uint256[]'
+          },
+          {
             internalType: 'address',
             name: 'bribeBorrow',
             type: 'address'
@@ -88,9 +93,14 @@ export const incentivesViewerAbi = [
             internalType: 'uint256[]',
             name: 'rewardsBorrowAmounts',
             type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsBorrowETHValues',
+            type: 'uint256[]'
           }
         ],
-        internalType: 'struct IncentiveInfo[]',
+        internalType: 'struct VoterLens.IncentiveInfo[]',
         name: '_incentiveInfo',
         type: 'tuple[]'
       }
@@ -121,9 +131,11 @@ export interface IncentiveInfo {
   bribeSupply: `0x${string}`;
   rewardsSupply: `0x${string}`[];
   rewardsSupplyAmounts: bigint[];
+  rewardsSupplyETHValues: bigint[]; // Added field
   bribeBorrow: `0x${string}`;
   rewardsBorrow: `0x${string}`[];
   rewardsBorrowAmounts: bigint[];
+  rewardsBorrowETHValues: bigint[]; // Added field
 }
 
 // New types for Market Token Details
