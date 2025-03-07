@@ -16,7 +16,7 @@ export const VOTER_CONTRACT_ADDRESSES = {
 // Incentives viewer contract addresses - CORRECT ADDRESSES
 export const INCENTIVES_VIEWER_ADDRESSES = {
   8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B', // Base
-  34443: '0xDf6b5b001D7658E35EfBfD2950A5E5a92A1f32E6' // Mode
+  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D' // Mode
 };
 
 // Add iVoterViewAbi
