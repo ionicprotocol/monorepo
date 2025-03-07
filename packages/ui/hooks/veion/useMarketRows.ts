@@ -11,7 +11,6 @@ import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 
-import { useBribeData } from './useBribeData';
 import { useVoteData } from './useVoteData';
 
 export const useMarketRows = (
@@ -71,6 +70,7 @@ export const useMarketRows = (
   const {
     incentivesData,
     rewardTokensInfo,
+    marketTokensDetails, // Add this to access token details
     isLoading: isLoadingIncentives
   } = useMarketIncentives(+chain, marketAddresses, '', undefined);
 
@@ -85,68 +85,36 @@ export const useMarketRows = (
     marketSides
   });
 
-  // We'll still use the old hook for backward compatibility
-  const { getRewardDetails } = useBribeData({
-    chain: +chain
-  });
-
   const getIncentivesFromBribes = useCallback(
     (marketAddress: string, side: MarketSide) => {
       const normalizedAddress = marketAddress.toLowerCase();
       const sideStr = side === MarketSide.Supply ? 'supply' : 'borrow';
 
-      // Get incentive amount from the new hook
+      // Get incentive amount from the incentivesData
       const incentiveAmount = incentivesData[normalizedAddress]?.[sideStr] || 0;
 
-      // Fallback to the old method if no data
-      if (incentiveAmount === 0) {
-        const details = getRewardDetails(marketAddress, sideStr);
-        if (!details || !details.rewards.length) {
-          return {
-            incentiveAmount: 0,
-            tokens: []
-          };
-        }
+      // Get detailed token info for this market/side from our enhanced marketTokensDetails
+      const tokenDetails =
+        marketTokensDetails[normalizedAddress]?.[sideStr] || [];
+
+      // Transform token details to the format expected by BalanceBreakdown
+      const tokens = tokenDetails.map((tokenDetail) => {
+        const formattedAmount = Number(tokenDetail.formattedAmount);
+        const tokenAmountUSD = formattedAmount * (tokenDetail.price || 0);
 
         return {
-          incentiveAmount: details.incentiveAmount || 0,
-          tokens: details.rewards.map((reward) => ({
-            tokenSymbol:
-              reward.symbol === 'vAMM-ION/WETH' ||
-              reward.symbol === 'vAMMV2-ION/MODE'
-                ? 'ION'
-                : reward.symbol || 'Unknown',
-            tokenAmount: Number(reward.weeklyAmount),
-            tokenAmountFormatted: reward.formattedWeeklyAmount,
-            tokenAmountUSD: Number(reward.weeklyAmount) * (reward.priceUSD || 0)
-          }))
+          tokenSymbol: tokenDetail.symbol,
+          tokenAmount: formattedAmount,
+          tokenAmountUSD
         };
-      }
-
-      // Find relevant tokens for this market
-      // In a real implementation, we would fetch specific tokens for each market/side
-      // Here, we're just distributing the incentive amount among all tokens
-
-      // Create a simplified token representation for the UI
-      const tokens =
-        rewardTokensInfo.length > 0
-          ? [
-              {
-                tokenSymbol: rewardTokensInfo[0].symbol || 'UNKNOWN',
-                tokenAmount: incentiveAmount,
-                tokenAmountFormatted: incentiveAmount.toFixed(2),
-                tokenAmountUSD:
-                  incentiveAmount * (rewardTokensInfo[0].price || 0)
-              }
-            ]
-          : [];
+      });
 
       return {
-        incentiveAmount: incentiveAmount,
-        tokens
+        incentiveAmount,
+        tokens: tokens.length > 0 ? tokens : []
       };
     },
-    [incentivesData, rewardTokensInfo, getRewardDetails]
+    [incentivesData, marketTokensDetails]
   );
 
   const processMarketRows = useCallback(() => {

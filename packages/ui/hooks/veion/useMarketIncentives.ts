@@ -214,6 +214,25 @@ export interface IncentiveInfo {
   rewardsBorrowAmounts: bigint[];
 }
 
+// New types for Market Token Details
+export interface TokenDetail {
+  tokenAddress: `0x${string}`;
+  amount: bigint;
+  symbol: string;
+  name: string;
+  cgId: string;
+  decimals: number;
+  price: number;
+  formattedAmount: string;
+}
+
+export interface MarketSideTokens {
+  supply: TokenDetail[];
+  borrow: TokenDetail[];
+}
+
+export type MarketTokensDetails = Record<string, MarketSideTokens>;
+
 export const useMarketIncentives = (
   chain: number,
   marketAddresses: string[] = [],
@@ -232,6 +251,9 @@ export const useMarketIncentives = (
   const [rewardTokensInfo, setRewardTokensInfo] = useState<RewardTokenInfo[]>(
     []
   );
+  const [marketTokensDetails, setMarketTokensDetails] =
+    useState<MarketTokensDetails>({});
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -263,6 +285,7 @@ export const useMarketIncentives = (
     setRewardTokens([]);
     setIncentivesData({});
     setBribesMap({});
+    setMarketTokensDetails({});
   }, [chain, normalizedMarketAddresses.length]);
 
   // SIMPLIFIED: Fetch incentives data directly from the incentives viewer contract
@@ -301,6 +324,16 @@ export const useMarketIncentives = (
           string,
           { supplyBribe: string; borrowBribe: string }
         > = {};
+        const newRawMarketTokensDetails: Record<
+          string,
+          {
+            supply: { tokenAddress: `0x${string}`; amount: bigint }[];
+            borrow: { tokenAddress: `0x${string}`; amount: bigint }[];
+          }
+        > = {};
+
+        // Collect all unique token addresses for batch fetching
+        const allTokenAddresses = new Set<`0x${string}`>();
 
         // Process each incentive info
         for (const info of incentivesResult) {
@@ -352,11 +385,41 @@ export const useMarketIncentives = (
             supplyBribe: info.bribeSupply,
             borrowBribe: info.bribeBorrow
           };
+
+          // Store raw token details for this market
+          newRawMarketTokensDetails[marketAddress] = {
+            supply: info.rewardsSupply.map((address, index) => {
+              allTokenAddresses.add(address);
+              return {
+                tokenAddress: address,
+                amount: info.rewardsSupplyAmounts[index] || BigInt(0)
+              };
+            }),
+            borrow: info.rewardsBorrow.map((address, index) => {
+              allTokenAddresses.add(address);
+              return {
+                tokenAddress: address,
+                amount: info.rewardsBorrowAmounts[index] || BigInt(0)
+              };
+            })
+          };
         }
 
         // Update state with processed data
         setIncentivesData(newIncentivesData);
         setBribesMap(newBribesMap);
+
+        // Now fetch token information for all unique token addresses
+        if (allTokenAddresses.size > 0) {
+          const tokenAddressesArray = Array.from(allTokenAddresses);
+          await fetchTokenDetails(
+            tokenAddressesArray,
+            newRawMarketTokensDetails
+          );
+        } else {
+          setMarketTokensDetails({});
+        }
+
         setError(null);
       } catch (err) {
         console.error('Error fetching incentives data:', err);
@@ -364,16 +427,191 @@ export const useMarketIncentives = (
           err instanceof Error ? err : new Error('Unknown error occurred')
         );
         hasFetchedIncentivesRef.current = false;
-
-        // Attempt fallback to older method if this fails
-        // This section would implement the fallback, but I'm keeping it simple as requested
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchIncentives();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicClient, incentivesViewerAddress, normalizedMarketAddresses]);
+
+  // Function to fetch token details (symbol, name, decimals) for all token addresses
+  const fetchTokenDetails = async (
+    tokenAddresses: `0x${string}`[],
+    rawMarketTokens: Record<
+      string,
+      {
+        supply: { tokenAddress: `0x${string}`; amount: bigint }[];
+        borrow: { tokenAddress: `0x${string}`; amount: bigint }[];
+      }
+    >
+  ) => {
+    if (!publicClient || tokenAddresses.length === 0) return;
+
+    try {
+      // Prepare calls for token details
+      const symbolCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'symbol'
+      }));
+
+      const nameCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'name'
+      }));
+
+      const decimalsCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'decimals'
+      }));
+
+      // Execute all calls in one multicall
+      const results = await publicClient.multicall({
+        contracts: [...symbolCalls, ...nameCalls, ...decimalsCalls],
+        allowFailure: true
+      });
+
+      // Process results
+      const tokenCount = tokenAddresses.length;
+      const tokenDetailsMap = new Map<
+        string,
+        {
+          symbol: string;
+          name: string;
+          decimals: number;
+          cgId: string;
+        }
+      >();
+
+      for (let i = 0; i < tokenCount; i++) {
+        const address = tokenAddresses[i].toLowerCase();
+
+        // Get symbol
+        let symbol = 'Unknown';
+        if (results[i].status === 'success') {
+          symbol = results[i].result as string;
+        }
+
+        // Get name
+        let name = 'Unknown Token';
+        if (results[i + tokenCount].status === 'success') {
+          name = results[i + tokenCount].result as string;
+        }
+
+        // Get decimals
+        let decimals = 18;
+        if (results[i + 2 * tokenCount].status === 'success') {
+          decimals = Number(results[i + 2 * tokenCount].result);
+        }
+
+        // Generate CoinGecko ID from symbol or name
+        const cgId =
+          symbol.toLowerCase() || name.toLowerCase().replace(/\s+/g, '-');
+
+        tokenDetailsMap.set(address, {
+          symbol,
+          name,
+          decimals,
+          cgId
+        });
+      }
+
+      // Prepare tokens for price fetching
+      const tokenConfigs: TokenConfig[] = Array.from(
+        tokenDetailsMap.values()
+      ).map((details) => ({
+        cgId: details.cgId,
+        symbol: details.symbol,
+        address: tokenAddresses.find(
+          (addr) =>
+            tokenDetailsMap.get(addr.toLowerCase())?.symbol === details.symbol
+        )
+      }));
+
+      // Fetch prices
+      const tokenPrices = await fetchTokenPrices(tokenConfigs);
+
+      // Update market tokens details with token info and prices
+      const enhancedMarketTokensDetails: MarketTokensDetails = {};
+
+      // Process each market
+      Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
+        enhancedMarketTokensDetails[marketAddress] = {
+          supply: sides.supply.map((token) => {
+            const tokenAddress = token.tokenAddress.toLowerCase();
+            const details = tokenDetailsMap.get(tokenAddress);
+            const price = tokenPrices[details?.symbol || 'Unknown']?.price || 0;
+            const decimals = details?.decimals || 18;
+
+            return {
+              tokenAddress: token.tokenAddress,
+              amount: token.amount,
+              symbol: details?.symbol || 'Unknown',
+              name: details?.name || 'Unknown Token',
+              cgId: details?.cgId || 'unknown',
+              decimals,
+              price,
+              formattedAmount: formatUnits(token.amount, decimals)
+            };
+          }),
+          borrow: sides.borrow.map((token) => {
+            const tokenAddress = token.tokenAddress.toLowerCase();
+            const details = tokenDetailsMap.get(tokenAddress);
+            const price = tokenPrices[details?.symbol || 'Unknown']?.price || 0;
+            const decimals = details?.decimals || 18;
+
+            return {
+              tokenAddress: token.tokenAddress,
+              amount: token.amount,
+              symbol: details?.symbol || 'Unknown',
+              name: details?.name || 'Unknown Token',
+              cgId: details?.cgId || 'unknown',
+              decimals,
+              price,
+              formattedAmount: formatUnits(token.amount, decimals)
+            };
+          })
+        };
+      });
+
+      setMarketTokensDetails(enhancedMarketTokensDetails);
+    } catch (err) {
+      console.error('Error fetching token details:', err);
+      // Still set market tokens but with default values
+      const defaultMarketTokensDetails: MarketTokensDetails = {};
+
+      Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
+        defaultMarketTokensDetails[marketAddress] = {
+          supply: sides.supply.map((token) => ({
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: 'Unknown',
+            name: 'Unknown Token',
+            cgId: 'unknown',
+            decimals: 18,
+            price: 0,
+            formattedAmount: formatUnits(token.amount, 18)
+          })),
+          borrow: sides.borrow.map((token) => ({
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: 'Unknown',
+            name: 'Unknown Token',
+            cgId: 'unknown',
+            decimals: 18,
+            price: 0,
+            formattedAmount: formatUnits(token.amount, 18)
+          }))
+        };
+      });
+
+      setMarketTokensDetails(defaultMarketTokensDetails);
+    }
+  };
 
   // Function to fetch reward tokens for a specific bribe contract - needed for the dropdown
   const fetchRewardTokensForBribe = useCallback(
@@ -579,6 +817,15 @@ export const useMarketIncentives = (
     [bribesMap]
   );
 
+  // Get token details for a specific market and side
+  const getMarketTokenDetails = useCallback(
+    (marketAddress: string, side: 'borrow' | 'supply'): TokenDetail[] => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      return marketTokensDetails[normalizedAddress]?.[side] || [];
+    },
+    [marketTokensDetails]
+  );
+
   // Hook to fetch token prices from Supabase
   const { data: tokenPrices } = useQuery({
     queryKey: ['tokenPrices', chain, rewardTokensInfo.map((t) => t.cgId)],
@@ -614,8 +861,10 @@ export const useMarketIncentives = (
     bribesMap,
     rewardTokens,
     rewardTokensInfo: rewardTokensWithInfo,
+    marketTokensDetails,
     getMarketIncentives,
     getBribeAddress,
+    getMarketTokenDetails,
     fetchRewardTokensForBribe,
     isLoading,
     error

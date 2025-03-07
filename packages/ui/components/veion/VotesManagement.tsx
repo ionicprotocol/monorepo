@@ -231,6 +231,7 @@ function VotesManagement({
       cell: ({ row }) => (
         <BalanceBreakdown
           balance={row.original.incentives.incentiveAmount}
+          balanceUSD={row.original.incentives.incentiveAmountUSD}
           tokens={row.original.incentives.tokens}
         />
       )
@@ -260,7 +261,10 @@ function VotesManagement({
         return (
           <div className="flex flex-col">
             <div className="text-xs font-semibold text-white/80">
-              {totalVotes.limit.toFixed(2)}
+              {totalVotes.limit.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
             <div className="text-xs font-semibold text-white/40">
               {totalVotes.percentage.toFixed(2)}%
@@ -283,7 +287,10 @@ function VotesManagement({
         return (
           <div className="flex flex-col">
             <div className="text-xs font-semibold text-white/80">
-              {myVotes.value.toFixed(2)}
+              {myVotes.value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
             <div className="text-xs font-semibold text-white/40">
               {myVotes.percentage.toFixed(2)}%
