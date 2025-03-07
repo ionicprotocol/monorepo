@@ -7,11 +7,13 @@ type Token = {
 };
 
 type BalanceBreakdownProps = {
-  balanceUSD: number;
+  balance?: number;
+  balanceUSD?: number;
   tokens: Token[];
 };
 
 const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({
+  balance,
   balanceUSD,
   tokens
 }) => {
@@ -55,15 +57,25 @@ const BalanceBreakdown: React.FC<BalanceBreakdownProps> = ({
 
   return (
     <div className="flex flex-col items-start">
-      <span className="text-white">{formatUSD(balanceUSD)}</span>
-      {tokens.map((token, index) => (
-        <span
-          key={index}
-          className="text-xs text-white/40 font-light"
-        >
-          {formatNumber(token.tokenAmount)} {token.tokenSymbol}
-        </span>
-      ))}
+      {balance !== undefined && (
+        <span className="text-white">{formatNumber(balance)}</span>
+      )}
+      {balanceUSD !== undefined && (
+        <span className="text-white">{formatUSD(balanceUSD)}</span>
+      )}
+
+      {/* Show token list */}
+      {tokens &&
+        tokens.length > 0 &&
+        tokens.map((token, index) => (
+          <span
+            key={index}
+            className="text-xs text-white/40 font-light"
+            title={`${formatUSD(token.tokenAmountUSD)}`}
+          >
+            {formatNumber(token.tokenAmount)} {token.tokenSymbol}
+          </span>
+        ))}
     </div>
   );
 };

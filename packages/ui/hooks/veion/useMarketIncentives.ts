@@ -1,9 +1,23 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
-import { createClient } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
 import { erc20Abi, formatUnits } from 'viem';
 import { usePublicClient, useAccount } from 'wagmi';
+
+import { useAssetPrices } from '../useAssetPrices';
+
+import { bribeRewardsAbi } from '@ionicprotocol/sdk';
+
+// Define contract addresses
+export const VOTER_CONTRACT_ADDRESSES = {
+  8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9', // Base
+  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429' // Mode
+};
+
+// Incentives viewer contract addresses - CORRECT ADDRESSES
+export const INCENTIVES_VIEWER_ADDRESSES = {
+  8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B', // Base
+  34443: '0xDf6b5b001D7658E35EfBfD2950A5E5a92A1f32E6' // Mode
+};
 
 // Add iVoterViewAbi
 export const iVoterViewAbi = [
@@ -32,109 +46,74 @@ export const iVoterViewAbi = [
   }
 ] as const;
 
-// Define Voter contract addresses
-export const VOTER_CONTRACT_ADDRESSES = {
-  8453: '0x669A6F5421dA53696fa06f1043CF127d380f6EB9', // Base
-  34443: '0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429' // Mode
-};
-
-import { MarketSide } from '@ui/types/veION';
-
-import { bribeRewardsAbi } from '@ionicprotocol/sdk';
-
-// Supabase client for token prices
-const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co/';
-const supabaseKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
+// Incentives viewer ABI with exact struct from the engineer
+export const incentivesViewerAbi = [
+  {
+    inputs: [],
+    name: 'getAllIncentivesForBribes',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'market',
+            type: 'address'
+          },
+          {
+            internalType: 'address',
+            name: 'bribeSupply',
+            type: 'address'
+          },
+          {
+            internalType: 'address[]',
+            name: 'rewardsSupply',
+            type: 'address[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsSupplyAmounts',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsSupplyETHValues',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'address',
+            name: 'bribeBorrow',
+            type: 'address'
+          },
+          {
+            internalType: 'address[]',
+            name: 'rewardsBorrow',
+            type: 'address[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsBorrowAmounts',
+            type: 'uint256[]'
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardsBorrowETHValues',
+            type: 'uint256[]'
+          }
+        ],
+        internalType: 'struct VoterLens.IncentiveInfo[]',
+        name: '_incentiveInfo',
+        type: 'tuple[]'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;
 export interface TokenConfig {
   cgId: string;
   symbol: string;
   address?: string;
 }
-
-interface TokenPrice {
-  symbol: string;
-  price: number;
-}
-
-interface AssetPrice {
-  chain_id: string;
-  created_at: string;
-  info: {
-    usdPrice: number;
-    symbol?: string;
-  };
-}
-
-// Function to fetch token prices from Supabase
-async function fetchTokenPrices(tokens: TokenConfig[]) {
-  const prices: Record<string, TokenPrice> = {};
-
-  if (tokens.length === 0) return prices;
-
-  try {
-    const { data: latestPrices, error } = await supabase
-      .from('asset-price')
-      .select('*')
-      .in(
-        'chain_id',
-        tokens.map((t) => t.cgId)
-      )
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    const latestByToken = new Map<string, AssetPrice>();
-    latestPrices?.forEach((price) => {
-      if (!latestByToken.has(price.chain_id)) {
-        latestByToken.set(price.chain_id, price);
-      }
-    });
-
-    tokens.forEach((token) => {
-      const priceData = latestByToken.get(token.cgId);
-      const price = priceData?.info.usdPrice ?? 0;
-
-      prices[token.symbol] = {
-        symbol: token.symbol,
-        price: Number.isFinite(price) ? price : 0
-      };
-
-      // Set default price of 1 for stablecoins if we got 0
-      if (
-        price === 0 &&
-        (token.symbol === 'USDC' ||
-          token.symbol === 'USDT' ||
-          token.symbol === 'DAI')
-      ) {
-        prices[token.symbol].price = 1;
-      }
-    });
-
-    return prices;
-  } catch (error) {
-    console.error('Failed to fetch token prices:', error);
-
-    // Return default prices in case of complete failure
-    tokens.forEach((token) => {
-      prices[token.symbol] = {
-        symbol: token.symbol,
-        price:
-          token.symbol === 'USDC' ||
-          token.symbol === 'USDT' ||
-          token.symbol === 'DAI'
-            ? 1
-            : 0
-      };
-    });
-
-    return prices;
-  }
-}
-
 export interface RewardTokenInfo {
   address: string;
   symbol: string;
@@ -142,6 +121,50 @@ export interface RewardTokenInfo {
   cgId: string;
   balance: string;
   decimals: number;
+  price?: number;
+  underlying_address?: string;
+}
+
+// Define interface for the incentive info from the contract - EXACTLY MATCHING ENGINEER'S STRUCT
+export interface IncentiveInfo {
+  market: `0x${string}`;
+  bribeSupply: `0x${string}`;
+  rewardsSupply: `0x${string}`[];
+  rewardsSupplyAmounts: bigint[];
+  rewardsSupplyETHValues: bigint[]; // Added field
+  bribeBorrow: `0x${string}`;
+  rewardsBorrow: `0x${string}`[];
+  rewardsBorrowAmounts: bigint[];
+  rewardsBorrowETHValues: bigint[]; // Added field
+}
+
+// New types for Market Token Details
+export interface TokenDetail {
+  tokenAddress: `0x${string}`;
+  amount: bigint;
+  symbol: string;
+  name: string;
+  decimals: number;
+  price: number;
+  formattedAmount: string;
+  usdValue: number; // Added USD value for each token
+}
+
+export interface MarketSideTokens {
+  supply: TokenDetail[];
+  borrow: TokenDetail[];
+  supplyUsdTotal: number; // Added total USD value for supply tokens
+  borrowUsdTotal: number; // Added total USD value for borrow tokens
+}
+
+export type MarketTokensDetails = Record<string, MarketSideTokens>;
+
+// Added new type for incentives data with USD values
+export interface IncentivesData {
+  supply: number;
+  borrow: number;
+  supplyUsd: number;
+  borrowUsd: number;
 }
 
 export const useMarketIncentives = (
@@ -153,7 +176,7 @@ export const useMarketIncentives = (
   const publicClient = usePublicClient({ chainId: chain });
   const { address: userAddress } = useAccount();
   const [incentivesData, setIncentivesData] = useState<
-    Record<string, { supply: number; borrow: number }>
+    Record<string, IncentivesData>
   >({});
   const [bribesMap, setBribesMap] = useState<
     Record<string, { supplyBribe: string; borrowBribe: string }>
@@ -162,173 +185,493 @@ export const useMarketIncentives = (
   const [rewardTokensInfo, setRewardTokensInfo] = useState<RewardTokenInfo[]>(
     []
   );
+  const [marketTokensDetails, setMarketTokensDetails] =
+    useState<MarketTokensDetails>({});
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   // Track if we've already fetched data to prevent excessive fetches
-  const hasFetchedBribesRef = useRef(false);
   const hasFetchedIncentivesRef = useRef(false);
 
   // Track selected market/side to detect changes
   const previousMarketRef = useRef<string | undefined>();
   const previousSideRef = useRef<'borrow' | 'supply' | undefined>();
 
-  // Get Voter address for the chain - memoized
-  const voterAddress = useMemo(
+  // Get incentives viewer address for the chain
+  const incentivesViewerAddress = useMemo(
     () =>
-      VOTER_CONTRACT_ADDRESSES[chain as keyof typeof VOTER_CONTRACT_ADDRESSES],
+      INCENTIVES_VIEWER_ADDRESSES[
+        chain as keyof typeof INCENTIVES_VIEWER_ADDRESSES
+      ],
     [chain]
   );
 
-  // Prepare normalized market addresses for consistency - memoized
+  // Prepare normalized market addresses for consistency
   const normalizedMarketAddresses = useMemo(() => {
     if (!marketAddresses.length) return [];
     return marketAddresses.map((addr) => addr.toLowerCase());
   }, [marketAddresses]);
 
+  // Use the useAssetPrices hook to fetch token prices
+  const { data: assetPricesResponse } = useAssetPrices({
+    chainId: chain,
+    tokens: tokenAddresses
+  });
+
+  // Create a map of token addresses to prices
+  const tokenPricesMap = useMemo(() => {
+    const prices: Record<string, number> = {};
+
+    if (assetPricesResponse?.data) {
+      assetPricesResponse.data.forEach((asset) => {
+        if (asset.underlying_address) {
+          prices[asset.underlying_address.toLowerCase()] =
+            asset.info.usdPrice || 0;
+        }
+      });
+    }
+
+    return prices;
+  }, [assetPricesResponse]);
+
   // Reset tracking when key dependencies change
   useEffect(() => {
-    hasFetchedBribesRef.current = false;
     hasFetchedIncentivesRef.current = false;
     setRewardTokens([]);
+    setIncentivesData({});
+    setBribesMap({});
+    setMarketTokensDetails({});
+    setTokenAddresses([]);
   }, [chain, normalizedMarketAddresses.length]);
 
-  // Fetch bribe addresses for all markets using the Voter contract
+  // SIMPLIFIED: Fetch incentives data directly from the incentives viewer contract
   useEffect(() => {
-    // Skip if already fetched bribes with these params
     if (
-      hasFetchedBribesRef.current ||
+      hasFetchedIncentivesRef.current ||
       !publicClient ||
-      !normalizedMarketAddresses.length ||
-      !voterAddress
-    )
+      !incentivesViewerAddress ||
+      !normalizedMarketAddresses.length
+    ) {
       return;
+    }
 
-    const fetchBribes = async () => {
+    const fetchIncentives = async () => {
       try {
         setIsLoading(true);
-        // Mark as fetched at the beginning to prevent duplicate fetches
-        hasFetchedBribesRef.current = true;
+        hasFetchedIncentivesRef.current = true;
 
-        // Create calls to get reward accumulator for each market and side
-        const accumulatorCalls = [];
+        // Call the getAllIncentivesForBribes function directly
+        const incentivesResult = (await publicClient.readContract({
+          address: incentivesViewerAddress as `0x${string}`,
+          abi: incentivesViewerAbi,
+          functionName: 'getAllIncentivesForBribes'
+        })) as IncentiveInfo[];
 
-        for (const market of normalizedMarketAddresses) {
-          // Call for supply side (0)
-          accumulatorCalls.push({
-            address: voterAddress as `0x${string}`,
-            abi: iVoterViewAbi,
-            functionName: 'marketToRewardAccumulators',
-            args: [market as `0x${string}`, MarketSide.Supply]
-          });
-
-          // Call for borrow side (1)
-          accumulatorCalls.push({
-            address: voterAddress as `0x${string}`,
-            abi: iVoterViewAbi,
-            functionName: 'marketToRewardAccumulators',
-            args: [market as `0x${string}`, MarketSide.Borrow]
-          });
+        if (!incentivesResult || !Array.isArray(incentivesResult)) {
+          throw new Error('Invalid incentives data format received');
         }
 
-        // Execute multicall to get all accumulators
-        const accumulatorResults = await publicClient.multicall({
-          contracts: accumulatorCalls,
-          allowFailure: true
-        });
-
-        // Create calls to get bribe contract for each accumulator
-        const bribeCalls = [];
-        const validAccumulators = [];
-
-        for (const result of accumulatorResults as any[]) {
-          if (result.status === 'success' && result.result) {
-            const accumulator = result.result as `0x${string}`;
-            validAccumulators.push(accumulator);
-
-            bribeCalls.push({
-              address: voterAddress as `0x${string}`,
-              abi: iVoterViewAbi,
-              functionName: 'rewardAccumulatorToBribe',
-              args: [accumulator]
-            });
-          } else {
-            // Push null for failed results to maintain array indexes
-            validAccumulators.push(null);
-          }
-        }
-
-        // Execute multicall to get all bribe contracts
-        const briberResults = await publicClient.multicall({
-          contracts: bribeCalls,
-          allowFailure: true
-        });
-
-        // Process results to build the bribesMap
+        // Process the incentives data
+        const newIncentivesData: Record<string, IncentivesData> = {};
         const newBribesMap: Record<
           string,
           { supplyBribe: string; borrowBribe: string }
         > = {};
-
-        // Start at beginning of normalizedMarketAddresses
-        let resultIndex = 0;
-        for (const market of normalizedMarketAddresses) {
-          // Get supply accumulator and bribe
-          const supplyAccumulator = validAccumulators[resultIndex];
-          const supplyBribe = supplyAccumulator
-            ? (briberResults[validAccumulators.indexOf(supplyAccumulator)]
-                ?.result as unknown as string) ?? ''
-            : '';
-
-          resultIndex++;
-
-          // Get borrow accumulator and bribe
-          const borrowAccumulator = validAccumulators[resultIndex];
-          const borrowBribe = borrowAccumulator
-            ? (briberResults[validAccumulators.indexOf(borrowAccumulator)]
-                ?.result as unknown as string) ?? ''
-            : '';
-
-          resultIndex++;
-
-          // Add to map if we have at least one valid bribe contract
-          if (supplyBribe || borrowBribe) {
-            newBribesMap[market] = {
-              supplyBribe,
-              borrowBribe
-            };
+        const newRawMarketTokensDetails: Record<
+          string,
+          {
+            supply: { tokenAddress: `0x${string}`; amount: bigint }[];
+            borrow: { tokenAddress: `0x${string}`; amount: bigint }[];
           }
+        > = {};
+
+        // Collect all unique token addresses for batch fetching
+        const allTokenAddresses = new Set<`0x${string}`>();
+
+        // Process each incentive info
+        for (const info of incentivesResult) {
+          const marketAddress = info.market.toLowerCase();
+
+          // Skip if not in our list of markets
+          if (!normalizedMarketAddresses.includes(marketAddress)) {
+            continue;
+          }
+
+          // Calculate supply incentives value (sum of all token amounts)
+          let supplyValue = 0;
+          if (
+            info.rewardsSupplyAmounts &&
+            info.rewardsSupplyAmounts.length > 0
+          ) {
+            for (const amount of info.rewardsSupplyAmounts) {
+              try {
+                supplyValue += Number(formatUnits(amount, 18));
+              } catch (e) {
+                console.error('Error formatting supply amount:', e);
+              }
+            }
+          }
+
+          // Calculate borrow incentives value (sum of all token amounts)
+          let borrowValue = 0;
+          if (
+            info.rewardsBorrowAmounts &&
+            info.rewardsBorrowAmounts.length > 0
+          ) {
+            for (const amount of info.rewardsBorrowAmounts) {
+              try {
+                borrowValue += Number(formatUnits(amount, 18));
+              } catch (e) {
+                console.error('Error formatting borrow amount:', e);
+              }
+            }
+          }
+
+          // Store base values (we'll add USD values after fetching prices)
+          newIncentivesData[marketAddress] = {
+            supply: supplyValue,
+            borrow: borrowValue,
+            supplyUsd: 0, // Will be updated later
+            borrowUsd: 0 // Will be updated later
+          };
+
+          // Store bribe addresses
+          newBribesMap[marketAddress] = {
+            supplyBribe: info.bribeSupply,
+            borrowBribe: info.bribeBorrow
+          };
+
+          // Store raw token details for this market and collect token addresses
+          newRawMarketTokensDetails[marketAddress] = {
+            supply: info.rewardsSupply.map((address, index) => {
+              allTokenAddresses.add(address);
+              return {
+                tokenAddress: address,
+                amount: info.rewardsSupplyAmounts[index] || BigInt(0)
+              };
+            }),
+            borrow: info.rewardsBorrow.map((address, index) => {
+              allTokenAddresses.add(address);
+              return {
+                tokenAddress: address,
+                amount: info.rewardsBorrowAmounts[index] || BigInt(0)
+              };
+            })
+          };
         }
 
-        // Update bribesMap
+        // Store token addresses for price fetching with useAssetPrices
+        setTokenAddresses(Array.from(allTokenAddresses));
+
+        // Update state with bribes map
         setBribesMap(newBribesMap);
 
-        // Reset fetch tracking for dependent data
-        hasFetchedIncentivesRef.current = false;
+        // Now fetch token information for all unique token addresses
+        if (allTokenAddresses.size > 0) {
+          const tokenAddressesArray = Array.from(allTokenAddresses);
+          await fetchTokenDetails(
+            tokenAddressesArray,
+            newRawMarketTokensDetails,
+            newIncentivesData
+          );
+        } else {
+          setMarketTokensDetails({});
+          setIncentivesData(newIncentivesData);
+        }
 
         setError(null);
       } catch (err) {
-        console.error('Error fetching bribe contracts:', err);
+        console.error('Error fetching incentives data:', err);
         setError(
           err instanceof Error ? err : new Error('Unknown error occurred')
         );
-        // Reset fetch tracking on error to allow retry
-        hasFetchedBribesRef.current = false;
+        hasFetchedIncentivesRef.current = false;
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBribes();
-  }, [normalizedMarketAddresses, publicClient, voterAddress]);
+    fetchIncentives();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicClient, incentivesViewerAddress, normalizedMarketAddresses]);
 
-  // Function to fetch reward tokens for a specific bribe contract
+  // Update market tokens details and incentives data when prices change
+  useEffect(() => {
+    const updateWithPrices = async () => {
+      if (!tokenPricesMap || Object.keys(tokenPricesMap).length === 0) return;
+
+      // Create a copy of the current marketTokensDetails state
+      const updatedMarketTokensDetails = { ...marketTokensDetails };
+      const updatedIncentivesData = { ...incentivesData };
+
+      // Update each market's token prices and USD values
+      Object.keys(updatedMarketTokensDetails).forEach((marketAddress) => {
+        let supplyUsdTotal = 0;
+        let borrowUsdTotal = 0;
+
+        // Update supply tokens
+        const updatedSupplyTokens = updatedMarketTokensDetails[
+          marketAddress
+        ].supply.map((token) => {
+          const price = tokenPricesMap[token.tokenAddress.toLowerCase()] || 0;
+          const formattedAmount = Number(token.formattedAmount);
+          const usdValue = formattedAmount * price;
+
+          supplyUsdTotal += usdValue;
+
+          return {
+            ...token,
+            price,
+            usdValue
+          };
+        });
+
+        // Update borrow tokens
+        const updatedBorrowTokens = updatedMarketTokensDetails[
+          marketAddress
+        ].borrow.map((token) => {
+          const price = tokenPricesMap[token.tokenAddress.toLowerCase()] || 0;
+          const formattedAmount = Number(token.formattedAmount);
+          const usdValue = formattedAmount * price;
+
+          borrowUsdTotal += usdValue;
+
+          return {
+            ...token,
+            price,
+            usdValue
+          };
+        });
+
+        // Update the market's tokens and USD totals
+        updatedMarketTokensDetails[marketAddress] = {
+          supply: updatedSupplyTokens,
+          borrow: updatedBorrowTokens,
+          supplyUsdTotal,
+          borrowUsdTotal
+        };
+
+        // Update incentives USD values
+        if (updatedIncentivesData[marketAddress]) {
+          updatedIncentivesData[marketAddress].supplyUsd = supplyUsdTotal;
+          updatedIncentivesData[marketAddress].borrowUsd = borrowUsdTotal;
+        }
+      });
+
+      // Update state
+      setMarketTokensDetails(updatedMarketTokensDetails);
+      setIncentivesData(updatedIncentivesData);
+    };
+
+    updateWithPrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenPricesMap]);
+
+  // Function to fetch token details (symbol, name, decimals) for all token addresses
+  const fetchTokenDetails = async (
+    tokenAddresses: `0x${string}`[],
+    rawMarketTokens: Record<
+      string,
+      {
+        supply: { tokenAddress: `0x${string}`; amount: bigint }[];
+        borrow: { tokenAddress: `0x${string}`; amount: bigint }[];
+      }
+    >,
+    baseIncentivesData: Record<string, IncentivesData>
+  ) => {
+    if (!publicClient || tokenAddresses.length === 0) {
+      return;
+    }
+
+    try {
+      // Prepare calls for token details
+      const symbolCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'symbol'
+      }));
+
+      const nameCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'name'
+      }));
+
+      const decimalsCalls = tokenAddresses.map((address) => ({
+        address,
+        abi: erc20Abi,
+        functionName: 'decimals'
+      }));
+
+      // Execute all calls in one multicall
+      const results = await publicClient.multicall({
+        contracts: [...symbolCalls, ...nameCalls, ...decimalsCalls],
+        allowFailure: true
+      });
+
+      // Process results
+      const tokenCount = tokenAddresses.length;
+      const tokenDetailsMap = new Map<
+        string,
+        {
+          symbol: string;
+          name: string;
+          decimals: number;
+        }
+      >();
+
+      for (let i = 0; i < tokenCount; i++) {
+        const address = tokenAddresses[i].toLowerCase();
+
+        // Get symbol
+        let symbol = 'Unknown';
+        if (results[i].status === 'success') {
+          symbol = results[i].result as string;
+        }
+
+        // Get name
+        let name = 'Unknown Token';
+        if (results[i + tokenCount].status === 'success') {
+          name = results[i + tokenCount].result as string;
+        }
+
+        // Get decimals
+        let decimals = 18;
+        if (results[i + 2 * tokenCount].status === 'success') {
+          decimals = Number(results[i + 2 * tokenCount].result);
+        }
+
+        tokenDetailsMap.set(address, {
+          symbol,
+          name,
+          decimals
+        });
+      }
+
+      // Create tokens info for the dropdown
+      const tokensInfo: RewardTokenInfo[] = tokenAddresses.map((address) => {
+        const addressLower = address.toLowerCase();
+        const details = tokenDetailsMap.get(addressLower);
+
+        return {
+          address,
+          symbol: details?.symbol || 'Unknown',
+          name: details?.name || 'Unknown Token',
+          cgId: details?.symbol?.toLowerCase() || 'unknown',
+          balance: '0',
+          decimals: details?.decimals || 18,
+          underlying_address: address
+        };
+      });
+
+      setRewardTokensInfo(tokensInfo);
+
+      // Build market tokens details with token info (prices will be updated in useEffect later)
+      const enhancedMarketTokensDetails: MarketTokensDetails = {};
+
+      // Process each market
+      Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
+        // Process supply tokens
+        const supplyTokens = sides.supply.map((token) => {
+          const tokenAddress = token.tokenAddress.toLowerCase();
+          const details = tokenDetailsMap.get(tokenAddress);
+          const decimals = details?.decimals || 18;
+
+          return {
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: details?.symbol || 'Unknown',
+            name: details?.name || 'Unknown Token',
+            decimals,
+            price: 0, // Will be updated with prices from useAssetPrices
+            formattedAmount: formatUnits(token.amount, decimals),
+            usdValue: 0 // Will be updated with prices from useAssetPrices
+          };
+        });
+
+        // Process borrow tokens
+        const borrowTokens = sides.borrow.map((token) => {
+          const tokenAddress = token.tokenAddress.toLowerCase();
+          const details = tokenDetailsMap.get(tokenAddress);
+          const decimals = details?.decimals || 18;
+
+          return {
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: details?.symbol || 'Unknown',
+            name: details?.name || 'Unknown Token',
+            decimals,
+            price: 0, // Will be updated with prices from useAssetPrices
+            formattedAmount: formatUnits(token.amount, decimals),
+            usdValue: 0 // Will be updated with prices from useAssetPrices
+          };
+        });
+
+        // Store tokens with initial totals
+        enhancedMarketTokensDetails[marketAddress] = {
+          supply: supplyTokens,
+          borrow: borrowTokens,
+          supplyUsdTotal: 0, // Will be updated later
+          borrowUsdTotal: 0 // Will be updated later
+        };
+      });
+
+      setMarketTokensDetails(enhancedMarketTokensDetails);
+      setIncentivesData(baseIncentivesData);
+    } catch (err) {
+      console.error('Error fetching token details:', err);
+
+      // Set default values on error
+      const defaultMarketTokensDetails: MarketTokensDetails = {};
+
+      Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
+        defaultMarketTokensDetails[marketAddress] = {
+          supply: sides.supply.map((token) => ({
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: 'Unknown',
+            name: 'Unknown Token',
+            decimals: 18,
+            price: 0,
+            formattedAmount: formatUnits(token.amount, 18),
+            usdValue: 0
+          })),
+          borrow: sides.borrow.map((token) => ({
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: 'Unknown',
+            name: 'Unknown Token',
+            decimals: 18,
+            price: 0,
+            formattedAmount: formatUnits(token.amount, 18),
+            usdValue: 0
+          })),
+          supplyUsdTotal: 0,
+          borrowUsdTotal: 0
+        };
+      });
+
+      setMarketTokensDetails(defaultMarketTokensDetails);
+      setIncentivesData(baseIncentivesData);
+    }
+  };
+
+  // Get market incentives in USD
+  const getMarketIncentivesUsd = useCallback(
+    (marketAddress: string, side: 'borrow' | 'supply'): number => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      return side === 'supply'
+        ? incentivesData[normalizedAddress]?.supplyUsd || 0
+        : incentivesData[normalizedAddress]?.borrowUsd || 0;
+    },
+    [incentivesData]
+  );
+
+  // Function to fetch reward tokens for a specific bribe contract - needed for the dropdown
   const fetchRewardTokensForBribe = useCallback(
-    async (
-      bribeAddress: string | undefined,
-      marketAddress: string,
-      side: 'borrow' | 'supply'
-    ) => {
+    async (bribeAddress: string | undefined) => {
       if (!bribeAddress || !publicClient) {
         setRewardTokens([]);
         setRewardTokensInfo([]);
@@ -432,11 +775,6 @@ export const useMarketIncentives = (
               name = results[i + tokenCount].result as string;
             }
 
-            // Generate a CoinGecko ID from symbol or name
-            // This is a best-effort approach since there's no direct mapping
-            const cgId =
-              symbol.toLowerCase() || name.toLowerCase().replace(/\s+/g, '-');
-
             // Get balance
             let balance = '0';
             let decimals = 18;
@@ -455,13 +793,22 @@ export const useMarketIncentives = (
               address,
               symbol,
               name,
-              cgId,
+              cgId: symbol.toLowerCase(),
               balance,
-              decimals
+              decimals,
+              underlying_address: address
             });
           }
 
           setRewardTokensInfo(tokenInfo);
+
+          // Update token addresses for price fetching if needed
+          if (tokenAddresses.length > 0) {
+            setTokenAddresses((prev) => {
+              const newAddresses = new Set([...prev, ...tokenAddresses]);
+              return Array.from(newAddresses);
+            });
+          }
         }
 
         setError(null);
@@ -508,121 +855,9 @@ export const useMarketIncentives = (
           : bribesMap[normalizedMarket]?.borrowBribe;
 
       // Fetch reward tokens for this specific market/side
-      fetchRewardTokensForBribe(bribeAddress, normalizedMarket, selectedSide);
+      fetchRewardTokensForBribe(bribeAddress);
     }
   }, [selectedMarket, selectedSide, bribesMap, fetchRewardTokensForBribe]);
-
-  // Fetch incentives for markets once we have the bribe addresses and reward tokens
-  useEffect(() => {
-    // Skip if already fetched with these params
-    if (
-      hasFetchedIncentivesRef.current ||
-      !publicClient ||
-      !normalizedMarketAddresses.length ||
-      Object.keys(bribesMap).length === 0
-    )
-      return;
-
-    const fetchIncentives = async () => {
-      try {
-        setIsLoading(true);
-        // Mark as fetched at the beginning to prevent duplicate fetches
-        hasFetchedIncentivesRef.current = true;
-
-        // Prepare calls for all markets and tokens
-        const calls = [];
-        const marketBribeMap: Record<
-          number,
-          { market: string; side: 'borrow' | 'supply' }
-        > = {};
-        let callIndex = 0;
-
-        // Add supply calls
-        for (const market of normalizedMarketAddresses) {
-          if (!bribesMap[market]?.supplyBribe) continue;
-
-          for (const token of rewardTokens) {
-            calls.push({
-              address: bribesMap[market].supplyBribe as `0x${string}`,
-              abi: bribeRewardsAbi,
-              functionName: 'totalSupply',
-              args: [token]
-            });
-
-            marketBribeMap[callIndex] = { market, side: 'supply' };
-            callIndex++;
-          }
-        }
-
-        // Add borrow calls
-        for (const market of normalizedMarketAddresses) {
-          if (!bribesMap[market]?.borrowBribe) continue;
-
-          for (const token of rewardTokens) {
-            calls.push({
-              address: bribesMap[market].borrowBribe as `0x${string}`,
-              abi: bribeRewardsAbi,
-              functionName: 'totalSupply',
-              args: [token]
-            });
-
-            marketBribeMap[callIndex] = { market, side: 'borrow' };
-            callIndex++;
-          }
-        }
-
-        if (calls.length === 0) {
-          setIsLoading(false);
-          return;
-        }
-
-        // Execute multicall
-        const results = await publicClient.multicall({
-          contracts: calls,
-          allowFailure: true
-        });
-
-        // Process results
-        const newIncentivesData: Record<
-          string,
-          { supply: number; borrow: number }
-        > = {};
-
-        // Initialize data structure
-        normalizedMarketAddresses.forEach((market) => {
-          newIncentivesData[market] = { supply: 0, borrow: 0 };
-        });
-
-        // Aggregate results
-        results.forEach((result, index) => {
-          if (result.status !== 'success') return;
-
-          const { market, side } = marketBribeMap[index];
-          const value = Number(formatUnits(result.result as bigint, 18)); // Assuming 18 decimals
-
-          if (!newIncentivesData[market]) {
-            newIncentivesData[market] = { supply: 0, borrow: 0 };
-          }
-
-          newIncentivesData[market][side] += value;
-        });
-
-        setIncentivesData(newIncentivesData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching incentives data:', err);
-        setError(
-          err instanceof Error ? err : new Error('Unknown error occurred')
-        );
-        // Reset fetch tracking on error to allow retry
-        hasFetchedIncentivesRef.current = false;
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchIncentives();
-  }, [normalizedMarketAddresses, rewardTokens, publicClient, bribesMap]);
 
   // Helper functions - memoized to maintain reference stability
   const getMarketIncentives = useCallback(
@@ -643,44 +878,40 @@ export const useMarketIncentives = (
     [bribesMap]
   );
 
-  // Hook to fetch token prices from Supabase
-  const { data: tokenPrices } = useQuery({
-    queryKey: ['tokenPrices', chain, rewardTokensInfo.map((t) => t.cgId)],
-    queryFn: async () => {
-      const tokens: TokenConfig[] = rewardTokensInfo.map((tokenInfo) => {
-        return {
-          cgId: tokenInfo.cgId,
-          symbol: tokenInfo.symbol,
-          address: tokenInfo.address
-        };
-      });
-
-      return fetchTokenPrices(tokens);
+  // Get token details for a specific market and side
+  const getMarketTokenDetails = useCallback(
+    (marketAddress: string, side: 'borrow' | 'supply'): TokenDetail[] => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      return marketTokensDetails[normalizedAddress]?.[side] || [];
     },
-    enabled: rewardTokensInfo.length > 0,
-    staleTime: 5 * 60 * 1000,
-    refetchInterval: 5 * 60 * 1000
-  });
+    [marketTokensDetails]
+  );
 
-  // Combined token info with prices
+  // Combined token info with prices from useAssetPrices
   const rewardTokensWithInfo = useMemo(() => {
     return rewardTokensInfo.map((token) => {
-      const price = tokenPrices?.[token.symbol]?.price || 0;
+      const price = token.underlying_address
+        ? tokenPricesMap[token.underlying_address.toLowerCase()] || 0
+        : 0;
+
       return {
         ...token,
         price
       };
     });
-  }, [rewardTokensInfo, tokenPrices]);
+  }, [rewardTokensInfo, tokenPricesMap]);
 
   return {
     incentivesData,
     bribesMap,
     rewardTokens,
     rewardTokensInfo: rewardTokensWithInfo,
+    marketTokensDetails,
     getMarketIncentives,
     getBribeAddress,
+    getMarketTokenDetails,
     fetchRewardTokensForBribe,
+    getMarketIncentivesUsd,
     isLoading,
     error
   };

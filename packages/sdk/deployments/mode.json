@@ -1025,6 +1025,15 @@
     "Voter": {
       "address": "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429"
     },
+    "VoterLens": {
+      "address": "0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D"
+    },
+    "VoterLens_Implementation": {
+      "address": "0xAFB6d2CB8826e467352678283E643102A3CAC4BB"
+    },
+    "VoterLens_Proxy": {
+      "address": "0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D"
+    },
     "Voter_Implementation": {
       "address": "0x8b4352493077D2B04b033DE83516Dc2d53d09931"
     },
