@@ -39,6 +39,8 @@ import { IRouter_Aerodrome } from "../external/aerodrome/IAerodromeRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
 import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
+import { VoterLens } from "../veION/VoterLens.sol";
+
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -153,6 +155,37 @@ contract DevTesting is BaseTest {
     uint256 hf = newImpl.getHealthFactor(rahul, pool);
 
     emit log_named_uint("hf", hf);
+  }
+
+  function testVoterLens() public debuggingOnly fork(MODE_MAINNET) {
+    VoterLens lens = new VoterLens();
+    lens.initialize(
+      0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
+      PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
+    );
+
+    lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+
+    VoterLens.IncentiveInfo[] memory info = lens.getAllIncentivesForBribes();
+    emit log_named_uint("IncentiveInfo array length", info.length);
+    for (uint256 i = 0; i < info.length; i++) {
+      emit log_named_address("Market", info[i].market);
+      emit log_named_address("Bribe Supply", info[i].bribeSupply);
+      emit log_named_address("Bribe Borrow", info[i].bribeBorrow);
+
+      for (uint256 j = 0; j < info[i].rewardsSupply.length; j++) {
+        emit log_named_address("Reward Supply", info[i].rewardsSupply[j]);
+        emit log_named_uint("Reward Supply Amount", info[i].rewardsSupplyAmounts[j]);
+        emit log_named_uint("Reward Supply Amount Value", info[i].rewardsSupplyETHValues[j]);
+      }
+
+      for (uint256 j = 0; j < info[i].rewardsBorrow.length; j++) {
+        emit log_named_address("Reward Borrow", info[i].rewardsBorrow[j]);
+        emit log_named_uint("Reward Borrow Amount", info[i].rewardsBorrowAmounts[j]);
+        emit log_named_uint("Reward Borrow Amount Value", info[i].rewardsBorrowETHValues[j]);
+      }
+      emit log("-----------------------------------------------------------");
+    }
   }
 
   function testQuickHF() public debuggingOnly forkAtBlock(MODE_MAINNET, 11831371) {

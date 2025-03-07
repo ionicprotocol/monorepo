@@ -1281,13 +1281,13 @@
       "address": "0x669A6F5421dA53696fa06f1043CF127d380f6EB9"
     },
     "VoterLens": {
-      "address": "0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02"
+      "address": "0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B"
     },
     "VoterLens_Implementation": {
-      "address": "0x7843F597075e7BdB8D6f72ad178EEeFeAc03916f"
+      "address": "0xd23933c6ceFbDdEF0902252Cb13A0E7371C5c5A9"
     },
     "VoterLens_Proxy": {
-      "address": "0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02"
+      "address": "0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B"
     },
     "Voter_Implementation": {
       "address": "0x61FD08eba8Cd59F95437b3232aB8DB55feA16Cda"
