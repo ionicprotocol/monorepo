@@ -95,20 +95,6 @@ export const useRewardsAggregator = () => {
         });
       }
 
-      // Locked LP Emissions
-      if (stakingRewards) {
-        rewards.push({
-          id: `staking-${stakingRewards.chainId}-${stakingRewards.rewardToken}`,
-          token: 'aero',
-          tokenSymbol: 'AERO',
-          amount: formatUnits(stakingRewards.amount, 18),
-          network: getNetworkName(stakingRewards.chainId),
-          section: 'Locked LP Emissions',
-          chainId: stakingRewards.chainId,
-          rewardToken: stakingRewards.rewardToken
-        });
-      }
-
       // Protocol Bribes
       if (bribeRewards) {
         bribeRewards.forEach((reward: BribeReward) => {
@@ -125,6 +111,20 @@ export const useRewardsAggregator = () => {
             rewardToken: reward.rewardToken,
             tokenId: reward.tokenId
           });
+        });
+      }
+
+      // Locked LP Emissions
+      if (stakingRewards) {
+        rewards.push({
+          id: `staking-${stakingRewards.chainId}-${stakingRewards.rewardToken}`,
+          token: currentChain === 8453 ? 'aero' : 'velo',
+          tokenSymbol: currentChain === 8453 ? 'AERO' : 'VELO',
+          amount: formatUnits(stakingRewards.amount, 18),
+          network: getNetworkName(stakingRewards.chainId),
+          section: 'Locked LP Emissions',
+          chainId: stakingRewards.chainId,
+          rewardToken: stakingRewards.rewardToken
         });
       }
 
