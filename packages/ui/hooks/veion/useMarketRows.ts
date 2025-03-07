@@ -6,11 +6,11 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useMerklData } from '@ui/hooks/useMerklData';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
+import { useMarketIncentives } from '@ui/hooks/veion/useMarketIncentives';
 import type { VoteMarketRow } from '@ui/types/veION';
 import { MarketSide } from '@ui/types/veION';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 
-import { useBribeData } from './useBribeData';
 import { useVoteData } from './useVoteData';
 
 export const useMarketRows = (
@@ -66,6 +66,13 @@ export const useMarketRows = (
     return { marketAddresses: addresses, marketSides: sides, lpTokens: tokens };
   }, [chain, poolData?.assets]);
 
+  // Use the new market incentives hook for fetching incentives
+  const {
+    incentivesData,
+    marketTokensDetails,
+    isLoading: isLoadingIncentives
+  } = useMarketIncentives(+chain, marketAddresses, '', undefined);
+
   const {
     voteData,
     isLoading: isLoadingVoteData,
@@ -77,35 +84,43 @@ export const useMarketRows = (
     marketSides
   });
 
-  const { getRewardDetails } = useBribeData({
-    chain: +chain
-  });
+  const getIncentivesFromBribes = useCallback(
+    (marketAddress: string, side: MarketSide) => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      const sideStr = side === MarketSide.Supply ? 'supply' : 'borrow';
 
-  const getIncentivesFromBribes = (marketAddress: string, side: MarketSide) => {
-    const details = getRewardDetails(
-      marketAddress,
-      side === MarketSide.Supply ? 'supply' : 'borrow'
-    );
-    if (!details || !details.rewards.length)
+      // Get incentive amount from the hook
+      const incentiveAmount = incentivesData[normalizedAddress]?.[sideStr] || 0;
+
+      // Get incentive USD amount
+      const incentiveAmountUSD =
+        side === MarketSide.Supply
+          ? incentivesData[normalizedAddress]?.supplyUsd || 0
+          : incentivesData[normalizedAddress]?.borrowUsd || 0;
+
+      // Get detailed token info for this market/side
+      const tokenDetails =
+        marketTokensDetails[normalizedAddress]?.[sideStr] || [];
+
+      // Transform to format expected by BalanceBreakdown
+      const tokens = tokenDetails.map((tokenDetail) => {
+        const formattedAmount = Number(tokenDetail.formattedAmount);
+
+        return {
+          tokenSymbol: tokenDetail.symbol,
+          tokenAmount: formattedAmount,
+          tokenAmountUSD: tokenDetail.usdValue
+        };
+      });
+
       return {
-        balanceUSD: 0,
-        tokens: []
+        incentiveAmount,
+        incentiveAmountUSD,
+        tokens: tokens.length > 0 ? tokens : []
       };
-
-    return {
-      balanceUSD: 0, // need to fix this up
-      tokens: details.rewards.map((reward) => ({
-        tokenSymbol:
-          reward.symbol === 'vAMM-ION/WETH' ||
-          reward.symbol === 'vAMMV2-ION/MODE'
-            ? 'ION'
-            : reward.symbol || 'Unknown',
-        tokenAmount: Number(reward.weeklyAmount),
-        tokenAmountFormatted: reward.formattedWeeklyAmount,
-        tokenAmountUSD: 0 // need to fix this up
-      }))
-    };
-  };
+    },
+    [incentivesData, marketTokensDetails]
+  );
 
   const processMarketRows = useCallback(() => {
     if (!poolData?.assets || poolData.assets.length === 0) return [];
@@ -204,7 +219,8 @@ export const useMarketRows = (
       !isLoadingSupplyApys &&
       !isLoadingBorrowApys &&
       !isLoadingRewards &&
-      !isLoadingMerklData
+      !isLoadingMerklData &&
+      !isLoadingIncentives
     ) {
       try {
         const rows = processMarketRows();
@@ -223,6 +239,7 @@ export const useMarketRows = (
     isLoadingRewards,
     isLoadingMerklData,
     isLoadingVoteData,
+    isLoadingIncentives,
     processMarketRows
   ]);
 
@@ -238,7 +255,8 @@ export const useMarketRows = (
       isLoadingBorrowApys ||
       isLoadingRewards ||
       isLoadingVoteData ||
-      isLoadingMerklData,
+      isLoadingMerklData ||
+      isLoadingIncentives,
     error,
     refetch
   };

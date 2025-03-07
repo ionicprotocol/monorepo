@@ -10,6 +10,29 @@ import type { BaseReward } from './useRewardsAggregator';
 
 import { iVeloIonModeStakingAbi } from '@ionicprotocol/sdk';
 
+// ABI for the VeloAeroStakingStrategy contract
+const veloAeroStakingStrategyAbi = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    name: 'userStakingWallet',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address'
+      }
+    ],
+    stateMutability: 'view',
+    type: 'function'
+  }
+] as const;
+
 const publicClients = {
   [mode.id]: createPublicClient({
     chain: mode,
@@ -19,6 +42,12 @@ const publicClients = {
     chain: base,
     transport: http()
   })
+};
+
+// Map chains to VeloAeroStakingStrategy addresses
+const veloAeroStakingStrategyAddresses: Record<number, `0x${string}`> = {
+  [base.id]: '0x8b4352493077D2B04b033DE83516Dc2d53d09931',
+  [mode.id]: '0x8ff8b21a0736738b25597D32d8f7cf658f39f157'
 };
 
 export const useStakingRewards = (chainId: number) => {
@@ -32,6 +61,44 @@ export const useStakingRewards = (chainId: number) => {
     if (chain === optimism.id) return 'eth';
     return 'eth';
   };
+
+  // Query to get the user's staking wallet
+  const { data: stakingWallet } = useQuery({
+    queryKey: ['stakingWallet', chainId, address],
+    queryFn: async () => {
+      if (!address) return null;
+
+      const publicClient = publicClients[chainId as keyof typeof publicClients];
+      if (!publicClient) {
+        console.error('No public client available for chain:', chainId);
+        return null;
+      }
+
+      const strategyAddress = veloAeroStakingStrategyAddresses[chainId];
+      if (!strategyAddress) {
+        console.error('No staking strategy address for chain:', chainId);
+        return null;
+      }
+
+      try {
+        const wallet = await publicClient.readContract({
+          address: strategyAddress,
+          abi: veloAeroStakingStrategyAbi,
+          functionName: 'userStakingWallet',
+          args: [address]
+        });
+
+        return wallet;
+      } catch (error) {
+        console.error('Error fetching staking wallet:', error);
+        return null;
+      }
+    },
+    enabled:
+      !!address &&
+      !!chainId &&
+      Object.keys(veloAeroStakingStrategyAddresses).includes(chainId.toString())
+  });
 
   const claimRewards = async () => {
     if (!address) return;
@@ -59,9 +126,9 @@ export const useStakingRewards = (chainId: number) => {
   };
 
   const query = useQuery({
-    queryKey: ['stakingRewards', chainId, address],
+    queryKey: ['stakingRewards', chainId, address, stakingWallet],
     queryFn: async () => {
-      if (!address) return null;
+      if (!address || !stakingWallet) return null;
 
       const publicClient = publicClients[chainId as keyof typeof publicClients];
       if (!publicClient) {
@@ -78,7 +145,7 @@ export const useStakingRewards = (chainId: number) => {
             address: contractAddress,
             abi: iVeloIonModeStakingAbi,
             functionName: 'earned',
-            args: [address]
+            args: [stakingWallet]
           }),
           publicClient.readContract({
             address: contractAddress,
@@ -102,6 +169,7 @@ export const useStakingRewards = (chainId: number) => {
 
   return {
     ...query,
-    claimRewards
+    claimRewards,
+    stakingWallet
   };
 };
