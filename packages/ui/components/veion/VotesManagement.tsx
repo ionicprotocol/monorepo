@@ -230,7 +230,6 @@ function VotesManagement({
       sortingFn: 'numerical',
       cell: ({ row }) => (
         <BalanceBreakdown
-          balance={row.original.incentives.incentiveAmount}
           balanceUSD={row.original.incentives.incentiveAmountUSD}
           tokens={row.original.incentives.tokens}
         />

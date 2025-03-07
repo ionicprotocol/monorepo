@@ -239,6 +239,7 @@ export type VoteMarketRow = {
   currentAmount: string;
   incentives: {
     incentiveAmount: number;
+    incentiveAmountUSD: number;
     tokens: {
       tokenSymbol: string;
       tokenAmount: number;

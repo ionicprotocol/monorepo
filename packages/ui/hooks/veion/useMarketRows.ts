@@ -69,8 +69,7 @@ export const useMarketRows = (
   // Use the new market incentives hook for fetching incentives
   const {
     incentivesData,
-    rewardTokensInfo,
-    marketTokensDetails, // Add this to access token details
+    marketTokensDetails,
     isLoading: isLoadingIncentives
   } = useMarketIncentives(+chain, marketAddresses, '', undefined);
 
@@ -90,27 +89,33 @@ export const useMarketRows = (
       const normalizedAddress = marketAddress.toLowerCase();
       const sideStr = side === MarketSide.Supply ? 'supply' : 'borrow';
 
-      // Get incentive amount from the incentivesData
+      // Get incentive amount from the hook
       const incentiveAmount = incentivesData[normalizedAddress]?.[sideStr] || 0;
 
-      // Get detailed token info for this market/side from our enhanced marketTokensDetails
+      // Get incentive USD amount
+      const incentiveAmountUSD =
+        side === MarketSide.Supply
+          ? incentivesData[normalizedAddress]?.supplyUsd || 0
+          : incentivesData[normalizedAddress]?.borrowUsd || 0;
+
+      // Get detailed token info for this market/side
       const tokenDetails =
         marketTokensDetails[normalizedAddress]?.[sideStr] || [];
 
-      // Transform token details to the format expected by BalanceBreakdown
+      // Transform to format expected by BalanceBreakdown
       const tokens = tokenDetails.map((tokenDetail) => {
         const formattedAmount = Number(tokenDetail.formattedAmount);
-        const tokenAmountUSD = formattedAmount * (tokenDetail.price || 0);
 
         return {
           tokenSymbol: tokenDetail.symbol,
           tokenAmount: formattedAmount,
-          tokenAmountUSD
+          tokenAmountUSD: tokenDetail.usdValue
         };
       });
 
       return {
         incentiveAmount,
+        incentiveAmountUSD,
         tokens: tokens.length > 0 ? tokens : []
       };
     },

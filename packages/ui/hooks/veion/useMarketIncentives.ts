@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
-import { createClient } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
 import { erc20Abi, formatUnits } from 'viem';
 import { usePublicClient, useAccount } from 'wagmi';
+
+import { useAssetPrices } from '../useAssetPrices';
+
+import { bribeRewardsAbi } from '@ionicprotocol/sdk';
 
 // Define contract addresses
 export const VOTER_CONTRACT_ADDRESSES = {
@@ -97,102 +99,11 @@ export const incentivesViewerAbi = [
     type: 'function'
   }
 ] as const;
-
-import { bribeRewardsAbi } from '@ionicprotocol/sdk';
-
-// Supabase client for token prices
-const supabaseUrl = 'https://uoagtjstsdrjypxlkuzr.supabase.co/';
-const supabaseKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export interface TokenConfig {
   cgId: string;
   symbol: string;
   address?: string;
 }
-
-interface TokenPrice {
-  symbol: string;
-  price: number;
-}
-
-interface AssetPrice {
-  chain_id: string;
-  created_at: string;
-  info: {
-    usdPrice: number;
-    symbol?: string;
-  };
-}
-
-// Function to fetch token prices from Supabase
-async function fetchTokenPrices(tokens: TokenConfig[]) {
-  const prices: Record<string, TokenPrice> = {};
-
-  if (tokens.length === 0) return prices;
-
-  try {
-    const { data: latestPrices, error } = await supabase
-      .from('asset-price')
-      .select('*')
-      .in(
-        'chain_id',
-        tokens.map((t) => t.cgId)
-      )
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    const latestByToken = new Map<string, AssetPrice>();
-    latestPrices?.forEach((price) => {
-      if (!latestByToken.has(price.chain_id)) {
-        latestByToken.set(price.chain_id, price);
-      }
-    });
-
-    tokens.forEach((token) => {
-      const priceData = latestByToken.get(token.cgId);
-      const price = priceData?.info.usdPrice ?? 0;
-
-      prices[token.symbol] = {
-        symbol: token.symbol,
-        price: Number.isFinite(price) ? price : 0
-      };
-
-      // Set default price of 1 for stablecoins if we got 0
-      if (
-        price === 0 &&
-        (token.symbol === 'USDC' ||
-          token.symbol === 'USDT' ||
-          token.symbol === 'DAI')
-      ) {
-        prices[token.symbol].price = 1;
-      }
-    });
-
-    return prices;
-  } catch (error) {
-    console.error('Failed to fetch token prices:', error);
-
-    // Return default prices in case of complete failure
-    tokens.forEach((token) => {
-      prices[token.symbol] = {
-        symbol: token.symbol,
-        price:
-          token.symbol === 'USDC' ||
-          token.symbol === 'USDT' ||
-          token.symbol === 'DAI'
-            ? 1
-            : 0
-      };
-    });
-
-    return prices;
-  }
-}
-
 export interface RewardTokenInfo {
   address: string;
   symbol: string;
@@ -201,6 +112,7 @@ export interface RewardTokenInfo {
   balance: string;
   decimals: number;
   price?: number;
+  underlying_address?: string;
 }
 
 // Define interface for the incentive info from the contract - EXACTLY MATCHING ENGINEER'S STRUCT
@@ -220,18 +132,28 @@ export interface TokenDetail {
   amount: bigint;
   symbol: string;
   name: string;
-  cgId: string;
   decimals: number;
   price: number;
   formattedAmount: string;
+  usdValue: number; // Added USD value for each token
 }
 
 export interface MarketSideTokens {
   supply: TokenDetail[];
   borrow: TokenDetail[];
+  supplyUsdTotal: number; // Added total USD value for supply tokens
+  borrowUsdTotal: number; // Added total USD value for borrow tokens
 }
 
 export type MarketTokensDetails = Record<string, MarketSideTokens>;
+
+// Added new type for incentives data with USD values
+export interface IncentivesData {
+  supply: number;
+  borrow: number;
+  supplyUsd: number;
+  borrowUsd: number;
+}
 
 export const useMarketIncentives = (
   chain: number,
@@ -242,7 +164,7 @@ export const useMarketIncentives = (
   const publicClient = usePublicClient({ chainId: chain });
   const { address: userAddress } = useAccount();
   const [incentivesData, setIncentivesData] = useState<
-    Record<string, { supply: number; borrow: number }>
+    Record<string, IncentivesData>
   >({});
   const [bribesMap, setBribesMap] = useState<
     Record<string, { supplyBribe: string; borrowBribe: string }>
@@ -253,6 +175,7 @@ export const useMarketIncentives = (
   );
   const [marketTokensDetails, setMarketTokensDetails] =
     useState<MarketTokensDetails>({});
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -279,6 +202,28 @@ export const useMarketIncentives = (
     return marketAddresses.map((addr) => addr.toLowerCase());
   }, [marketAddresses]);
 
+  // Use the useAssetPrices hook to fetch token prices
+  const { data: assetPricesResponse } = useAssetPrices({
+    chainId: chain,
+    tokens: tokenAddresses
+  });
+
+  // Create a map of token addresses to prices
+  const tokenPricesMap = useMemo(() => {
+    const prices: Record<string, number> = {};
+
+    if (assetPricesResponse?.data) {
+      assetPricesResponse.data.forEach((asset) => {
+        if (asset.underlying_address) {
+          prices[asset.underlying_address.toLowerCase()] =
+            asset.info.usdPrice || 0;
+        }
+      });
+    }
+
+    return prices;
+  }, [assetPricesResponse]);
+
   // Reset tracking when key dependencies change
   useEffect(() => {
     hasFetchedIncentivesRef.current = false;
@@ -286,6 +231,7 @@ export const useMarketIncentives = (
     setIncentivesData({});
     setBribesMap({});
     setMarketTokensDetails({});
+    setTokenAddresses([]);
   }, [chain, normalizedMarketAddresses.length]);
 
   // SIMPLIFIED: Fetch incentives data directly from the incentives viewer contract
@@ -316,10 +262,7 @@ export const useMarketIncentives = (
         }
 
         // Process the incentives data
-        const newIncentivesData: Record<
-          string,
-          { supply: number; borrow: number }
-        > = {};
+        const newIncentivesData: Record<string, IncentivesData> = {};
         const newBribesMap: Record<
           string,
           { supplyBribe: string; borrowBribe: string }
@@ -374,10 +317,12 @@ export const useMarketIncentives = (
             }
           }
 
-          // Store the calculated values
+          // Store base values (we'll add USD values after fetching prices)
           newIncentivesData[marketAddress] = {
             supply: supplyValue,
-            borrow: borrowValue
+            borrow: borrowValue,
+            supplyUsd: 0, // Will be updated later
+            borrowUsd: 0 // Will be updated later
           };
 
           // Store bribe addresses
@@ -386,7 +331,7 @@ export const useMarketIncentives = (
             borrowBribe: info.bribeBorrow
           };
 
-          // Store raw token details for this market
+          // Store raw token details for this market and collect token addresses
           newRawMarketTokensDetails[marketAddress] = {
             supply: info.rewardsSupply.map((address, index) => {
               allTokenAddresses.add(address);
@@ -405,8 +350,10 @@ export const useMarketIncentives = (
           };
         }
 
-        // Update state with processed data
-        setIncentivesData(newIncentivesData);
+        // Store token addresses for price fetching with useAssetPrices
+        setTokenAddresses(Array.from(allTokenAddresses));
+
+        // Update state with bribes map
         setBribesMap(newBribesMap);
 
         // Now fetch token information for all unique token addresses
@@ -414,10 +361,12 @@ export const useMarketIncentives = (
           const tokenAddressesArray = Array.from(allTokenAddresses);
           await fetchTokenDetails(
             tokenAddressesArray,
-            newRawMarketTokensDetails
+            newRawMarketTokensDetails,
+            newIncentivesData
           );
         } else {
           setMarketTokensDetails({});
+          setIncentivesData(newIncentivesData);
         }
 
         setError(null);
@@ -436,6 +385,78 @@ export const useMarketIncentives = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicClient, incentivesViewerAddress, normalizedMarketAddresses]);
 
+  // Update market tokens details and incentives data when prices change
+  useEffect(() => {
+    const updateWithPrices = async () => {
+      if (!tokenPricesMap || Object.keys(tokenPricesMap).length === 0) return;
+
+      // Create a copy of the current marketTokensDetails state
+      const updatedMarketTokensDetails = { ...marketTokensDetails };
+      const updatedIncentivesData = { ...incentivesData };
+
+      // Update each market's token prices and USD values
+      Object.keys(updatedMarketTokensDetails).forEach((marketAddress) => {
+        let supplyUsdTotal = 0;
+        let borrowUsdTotal = 0;
+
+        // Update supply tokens
+        const updatedSupplyTokens = updatedMarketTokensDetails[
+          marketAddress
+        ].supply.map((token) => {
+          const price = tokenPricesMap[token.tokenAddress.toLowerCase()] || 0;
+          const formattedAmount = Number(token.formattedAmount);
+          const usdValue = formattedAmount * price;
+
+          supplyUsdTotal += usdValue;
+
+          return {
+            ...token,
+            price,
+            usdValue
+          };
+        });
+
+        // Update borrow tokens
+        const updatedBorrowTokens = updatedMarketTokensDetails[
+          marketAddress
+        ].borrow.map((token) => {
+          const price = tokenPricesMap[token.tokenAddress.toLowerCase()] || 0;
+          const formattedAmount = Number(token.formattedAmount);
+          const usdValue = formattedAmount * price;
+
+          borrowUsdTotal += usdValue;
+
+          return {
+            ...token,
+            price,
+            usdValue
+          };
+        });
+
+        // Update the market's tokens and USD totals
+        updatedMarketTokensDetails[marketAddress] = {
+          supply: updatedSupplyTokens,
+          borrow: updatedBorrowTokens,
+          supplyUsdTotal,
+          borrowUsdTotal
+        };
+
+        // Update incentives USD values
+        if (updatedIncentivesData[marketAddress]) {
+          updatedIncentivesData[marketAddress].supplyUsd = supplyUsdTotal;
+          updatedIncentivesData[marketAddress].borrowUsd = borrowUsdTotal;
+        }
+      });
+
+      // Update state
+      setMarketTokensDetails(updatedMarketTokensDetails);
+      setIncentivesData(updatedIncentivesData);
+    };
+
+    updateWithPrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenPricesMap]);
+
   // Function to fetch token details (symbol, name, decimals) for all token addresses
   const fetchTokenDetails = async (
     tokenAddresses: `0x${string}`[],
@@ -445,9 +466,12 @@ export const useMarketIncentives = (
         supply: { tokenAddress: `0x${string}`; amount: bigint }[];
         borrow: { tokenAddress: `0x${string}`; amount: bigint }[];
       }
-    >
+    >,
+    baseIncentivesData: Record<string, IncentivesData>
   ) => {
-    if (!publicClient || tokenAddresses.length === 0) return;
+    if (!publicClient || tokenAddresses.length === 0) {
+      return;
+    }
 
     try {
       // Prepare calls for token details
@@ -483,7 +507,6 @@ export const useMarketIncentives = (
           symbol: string;
           name: string;
           decimals: number;
-          cgId: string;
         }
       >();
 
@@ -508,80 +531,87 @@ export const useMarketIncentives = (
           decimals = Number(results[i + 2 * tokenCount].result);
         }
 
-        // Generate CoinGecko ID from symbol or name
-        const cgId =
-          symbol.toLowerCase() || name.toLowerCase().replace(/\s+/g, '-');
-
         tokenDetailsMap.set(address, {
           symbol,
           name,
-          decimals,
-          cgId
+          decimals
         });
       }
 
-      // Prepare tokens for price fetching
-      const tokenConfigs: TokenConfig[] = Array.from(
-        tokenDetailsMap.values()
-      ).map((details) => ({
-        cgId: details.cgId,
-        symbol: details.symbol,
-        address: tokenAddresses.find(
-          (addr) =>
-            tokenDetailsMap.get(addr.toLowerCase())?.symbol === details.symbol
-        )
-      }));
+      // Create tokens info for the dropdown
+      const tokensInfo: RewardTokenInfo[] = tokenAddresses.map((address) => {
+        const addressLower = address.toLowerCase();
+        const details = tokenDetailsMap.get(addressLower);
 
-      // Fetch prices
-      const tokenPrices = await fetchTokenPrices(tokenConfigs);
+        return {
+          address,
+          symbol: details?.symbol || 'Unknown',
+          name: details?.name || 'Unknown Token',
+          cgId: details?.symbol?.toLowerCase() || 'unknown',
+          balance: '0',
+          decimals: details?.decimals || 18,
+          underlying_address: address
+        };
+      });
 
-      // Update market tokens details with token info and prices
+      setRewardTokensInfo(tokensInfo);
+
+      // Build market tokens details with token info (prices will be updated in useEffect later)
       const enhancedMarketTokensDetails: MarketTokensDetails = {};
 
       // Process each market
       Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
+        // Process supply tokens
+        const supplyTokens = sides.supply.map((token) => {
+          const tokenAddress = token.tokenAddress.toLowerCase();
+          const details = tokenDetailsMap.get(tokenAddress);
+          const decimals = details?.decimals || 18;
+
+          return {
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: details?.symbol || 'Unknown',
+            name: details?.name || 'Unknown Token',
+            decimals,
+            price: 0, // Will be updated with prices from useAssetPrices
+            formattedAmount: formatUnits(token.amount, decimals),
+            usdValue: 0 // Will be updated with prices from useAssetPrices
+          };
+        });
+
+        // Process borrow tokens
+        const borrowTokens = sides.borrow.map((token) => {
+          const tokenAddress = token.tokenAddress.toLowerCase();
+          const details = tokenDetailsMap.get(tokenAddress);
+          const decimals = details?.decimals || 18;
+
+          return {
+            tokenAddress: token.tokenAddress,
+            amount: token.amount,
+            symbol: details?.symbol || 'Unknown',
+            name: details?.name || 'Unknown Token',
+            decimals,
+            price: 0, // Will be updated with prices from useAssetPrices
+            formattedAmount: formatUnits(token.amount, decimals),
+            usdValue: 0 // Will be updated with prices from useAssetPrices
+          };
+        });
+
+        // Store tokens with initial totals
         enhancedMarketTokensDetails[marketAddress] = {
-          supply: sides.supply.map((token) => {
-            const tokenAddress = token.tokenAddress.toLowerCase();
-            const details = tokenDetailsMap.get(tokenAddress);
-            const price = tokenPrices[details?.symbol || 'Unknown']?.price || 0;
-            const decimals = details?.decimals || 18;
-
-            return {
-              tokenAddress: token.tokenAddress,
-              amount: token.amount,
-              symbol: details?.symbol || 'Unknown',
-              name: details?.name || 'Unknown Token',
-              cgId: details?.cgId || 'unknown',
-              decimals,
-              price,
-              formattedAmount: formatUnits(token.amount, decimals)
-            };
-          }),
-          borrow: sides.borrow.map((token) => {
-            const tokenAddress = token.tokenAddress.toLowerCase();
-            const details = tokenDetailsMap.get(tokenAddress);
-            const price = tokenPrices[details?.symbol || 'Unknown']?.price || 0;
-            const decimals = details?.decimals || 18;
-
-            return {
-              tokenAddress: token.tokenAddress,
-              amount: token.amount,
-              symbol: details?.symbol || 'Unknown',
-              name: details?.name || 'Unknown Token',
-              cgId: details?.cgId || 'unknown',
-              decimals,
-              price,
-              formattedAmount: formatUnits(token.amount, decimals)
-            };
-          })
+          supply: supplyTokens,
+          borrow: borrowTokens,
+          supplyUsdTotal: 0, // Will be updated later
+          borrowUsdTotal: 0 // Will be updated later
         };
       });
 
       setMarketTokensDetails(enhancedMarketTokensDetails);
+      setIncentivesData(baseIncentivesData);
     } catch (err) {
       console.error('Error fetching token details:', err);
-      // Still set market tokens but with default values
+
+      // Set default values on error
       const defaultMarketTokensDetails: MarketTokensDetails = {};
 
       Object.entries(rawMarketTokens).forEach(([marketAddress, sides]) => {
@@ -591,25 +621,28 @@ export const useMarketIncentives = (
             amount: token.amount,
             symbol: 'Unknown',
             name: 'Unknown Token',
-            cgId: 'unknown',
             decimals: 18,
             price: 0,
-            formattedAmount: formatUnits(token.amount, 18)
+            formattedAmount: formatUnits(token.amount, 18),
+            usdValue: 0
           })),
           borrow: sides.borrow.map((token) => ({
             tokenAddress: token.tokenAddress,
             amount: token.amount,
             symbol: 'Unknown',
             name: 'Unknown Token',
-            cgId: 'unknown',
             decimals: 18,
             price: 0,
-            formattedAmount: formatUnits(token.amount, 18)
-          }))
+            formattedAmount: formatUnits(token.amount, 18),
+            usdValue: 0
+          })),
+          supplyUsdTotal: 0,
+          borrowUsdTotal: 0
         };
       });
 
       setMarketTokensDetails(defaultMarketTokensDetails);
+      setIncentivesData(baseIncentivesData);
     }
   };
 
@@ -719,10 +752,6 @@ export const useMarketIncentives = (
               name = results[i + tokenCount].result as string;
             }
 
-            // Generate a CoinGecko ID from symbol or name
-            const cgId =
-              symbol.toLowerCase() || name.toLowerCase().replace(/\s+/g, '-');
-
             // Get balance
             let balance = '0';
             let decimals = 18;
@@ -741,13 +770,22 @@ export const useMarketIncentives = (
               address,
               symbol,
               name,
-              cgId,
+              cgId: symbol.toLowerCase(),
               balance,
-              decimals
+              decimals,
+              underlying_address: address
             });
           }
 
           setRewardTokensInfo(tokenInfo);
+
+          // Update token addresses for price fetching if needed
+          if (tokenAddresses.length > 0) {
+            setTokenAddresses((prev) => {
+              const newAddresses = new Set([...prev, ...tokenAddresses]);
+              return Array.from(newAddresses);
+            });
+          }
         }
 
         setError(null);
@@ -826,35 +864,19 @@ export const useMarketIncentives = (
     [marketTokensDetails]
   );
 
-  // Hook to fetch token prices from Supabase
-  const { data: tokenPrices } = useQuery({
-    queryKey: ['tokenPrices', chain, rewardTokensInfo.map((t) => t.cgId)],
-    queryFn: async () => {
-      const tokens: TokenConfig[] = rewardTokensInfo.map((tokenInfo) => {
-        return {
-          cgId: tokenInfo.cgId,
-          symbol: tokenInfo.symbol,
-          address: tokenInfo.address
-        };
-      });
-
-      return fetchTokenPrices(tokens);
-    },
-    enabled: rewardTokensInfo.length > 0,
-    staleTime: 5 * 60 * 1000,
-    refetchInterval: 5 * 60 * 1000
-  });
-
-  // Combined token info with prices
+  // Combined token info with prices from useAssetPrices
   const rewardTokensWithInfo = useMemo(() => {
     return rewardTokensInfo.map((token) => {
-      const price = tokenPrices?.[token.symbol]?.price || 0;
+      const price = token.underlying_address
+        ? tokenPricesMap[token.underlying_address.toLowerCase()] || 0
+        : 0;
+
       return {
         ...token,
         price
       };
     });
-  }, [rewardTokensInfo, tokenPrices]);
+  }, [rewardTokensInfo, tokenPricesMap]);
 
   return {
     incentivesData,
