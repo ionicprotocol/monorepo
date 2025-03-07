@@ -646,6 +646,17 @@ export const useMarketIncentives = (
     }
   };
 
+  // Get market incentives in USD
+  const getMarketIncentivesUsd = useCallback(
+    (marketAddress: string, side: 'borrow' | 'supply'): number => {
+      const normalizedAddress = marketAddress.toLowerCase();
+      return side === 'supply'
+        ? incentivesData[normalizedAddress]?.supplyUsd || 0
+        : incentivesData[normalizedAddress]?.borrowUsd || 0;
+    },
+    [incentivesData]
+  );
+
   // Function to fetch reward tokens for a specific bribe contract - needed for the dropdown
   const fetchRewardTokensForBribe = useCallback(
     async (bribeAddress: string | undefined) => {
@@ -888,6 +899,7 @@ export const useMarketIncentives = (
     getBribeAddress,
     getMarketTokenDetails,
     fetchRewardTokensForBribe,
+    getMarketIncentivesUsd,
     isLoading,
     error
   };
