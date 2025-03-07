@@ -64,6 +64,8 @@ export const useRewardsAggregator = () => {
     isLoading: isLoadingStaking,
     claimRewards: claimStakingRewards
   } = useStakingRewards(currentChain);
+  console.log('stakingRewards', stakingRewards);
+
   const { bribeRewards, isLoading: isLoadingBribes } = useBribeRewards();
 
   const { data: formattedRewards, isLoading: isProcessing } = useQuery({
