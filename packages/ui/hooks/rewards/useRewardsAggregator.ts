@@ -1,10 +1,13 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { useWalletClient, useWriteContract } from 'wagmi';
 
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
+import { VEION_CONTRACTS } from '@ui/constants/veIon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useBribeRewards, type BribeReward } from './useBribeRewards';
 import { useMarketRewards } from './useMarketRewards';
@@ -12,7 +15,7 @@ import { useStakingRewards } from './useStakingRewards';
 
 import type { Address, Hex } from 'viem';
 
-import { bribeRewardsAbi } from '@ionicprotocol/sdk';
+import { bribeRewardsAbi, veIonFirstExtensionAbi } from '@ionicprotocol/sdk';
 import type { SupportedChains } from '@ionicprotocol/types';
 
 export interface BaseReward {
@@ -48,13 +51,10 @@ export const getNetworkName = (chainId: number): string => {
 
 export const useRewardsAggregator = () => {
   const { getSdk } = useMultiIonic();
-  const {
-    currentChain,
-    locks: { myLocks }
-  } = useVeIONContext();
-  const tokenIds = myLocks?.map((lock) => BigInt(lock.id)) || [];
+  const { currentChain } = useVeIONContext();
   const queryClient = useQueryClient();
   const { data: walletClient } = useWalletClient({ chainId: currentChain });
+  const { writeContractAsync } = useWriteContract();
 
   const { data: marketRewards, isLoading: isLoadingMarket } = useMarketRewards([
     currentChain
@@ -135,8 +135,7 @@ export const useRewardsAggregator = () => {
   });
 
   const claimRewards = async (selectedIds?: string[]) => {
-    if (!formattedRewards || !walletClient || !tokenIds.length || !currentChain)
-      return;
+    if (!formattedRewards || !currentChain) return;
 
     const rewardsToProcess = selectedIds
       ? formattedRewards.filter((r) => selectedIds.includes(r.id))
@@ -209,21 +208,61 @@ export const useRewardsAggregator = () => {
         await queryClient.invalidateQueries({ queryKey: ['marketRewards'] });
       }
 
-      // Claim staking rewards
+      // Claim staking rewards (Locked LP Emissions - AERO/VELO)
       if (staking.length > 0) {
-        await claimStakingRewards();
+        const veIonFirstExtensionAddress =
+          VEION_CONTRACTS[currentChain as keyof typeof VEION_CONTRACTS];
+        if (veIonFirstExtensionAddress) {
+          const isSwitched = await handleSwitchOriginChain(
+            currentChain,
+            currentChain
+          );
+          if (!isSwitched) return;
+
+          // Use veIonFirstExtension.claimEmissions for Locked LP Emissions (AERO/VELO)
+          // Get the token type for the current chain
+          const tokenType = currentChain === 34443 ? 'mode' : 'eth';
+
+          // Get the LP token address directly using the utility function
+          const lpTokenAddress = getAvailableStakingToken(
+            currentChain,
+            tokenType
+          );
+
+          if (
+            lpTokenAddress &&
+            lpTokenAddress !== '0x0000000000000000000000000000000000000000'
+          ) {
+            // Now we have the LP token address, we can call claimEmissions
+            await writeContractAsync({
+              address: veIonFirstExtensionAddress,
+              abi: veIonFirstExtensionAbi,
+              functionName: 'claimEmissions',
+              args: [lpTokenAddress],
+              chainId: currentChain
+            });
+          } else {
+            // Fallback to the original method
+            console.warn(
+              `Could not get valid LP token address for chain ${currentChain}, falling back to original method`
+            );
+            await claimStakingRewards();
+          }
+        } else {
+          // Fallback to the old method if extension address is not available
+          await claimStakingRewards();
+        }
         await queryClient.invalidateQueries({ queryKey: ['stakingRewards'] });
       }
 
       // Claim bribe rewards
-      if (bribes.length > 0) {
+      if (bribes.length > 0 && walletClient) {
         for (const bribe of bribes) {
           await walletClient.writeContract({
             address: bribe.bribeAddress,
             abi: bribeRewardsAbi,
             functionName: 'getReward',
             args: [bribe.tokenId, [bribe.token]]
-            // chainId: currentChain
           });
         }
         await queryClient.invalidateQueries({ queryKey: ['bribeRewards'] });
