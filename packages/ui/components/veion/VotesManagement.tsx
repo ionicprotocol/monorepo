@@ -248,23 +248,17 @@ function VotesManagement({
         const veAPR = row.original.veAPR;
 
         let colorClass = 'text-white/80';
-        if (veAPR > 1000000) colorClass = 'text-green-500 font-bold';
+        if (veAPR > 100000) colorClass = 'text-green-500 font-bold';
         else if (veAPR > 10000) colorClass = 'text-green-400';
         else if (veAPR > 1000) colorClass = 'text-green-300';
         else if (veAPR > 100) colorClass = 'text-green-200';
 
         let displayValue = '-';
         if (veAPR > 0) {
-          if (veAPR > 1e20) {
-            displayValue = '∞%';
-          } else if (veAPR > 1e12) {
-            displayValue = `${(veAPR / 1e12).toFixed(2)}T%`;
-          } else if (veAPR > 1e9) {
-            displayValue = `${(veAPR / 1e9).toFixed(2)}B%`;
-          } else if (veAPR > 1e6) {
-            displayValue = `${(veAPR / 1e6).toFixed(2)}M%`;
-          } else if (veAPR > 1e3) {
-            displayValue = `${(veAPR / 1e3).toFixed(2)}K%`;
+          if (veAPR > 500000) {
+            displayValue = '>500,000%';
+          } else if (veAPR > 1000) {
+            displayValue = `${veAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
           } else {
             displayValue = `${veAPR.toFixed(2)}%`;
           }
