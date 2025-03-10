@@ -157,7 +157,7 @@ export const useMarketRows = (
       const totalVotesValueUSD = totalVotes.limit * veIonPrice;
 
       // Calculate veAPR (using weekly period for bribes)
-      return calculateVeAPR(incentiveUsdValue, totalVotesValueUSD, true);
+      return calculateVeAPR(incentiveUsdValue, totalVotesValueUSD);
     },
     [incentivesData, veIonPrice]
   );
