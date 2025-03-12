@@ -58,6 +58,7 @@ const SupplyTab = ({
     comptrollerAddress,
     chainId
   );
+  console.log('maxAmount', maxAmount);
 
   const { enableCollateral, handleCollateralToggle } = useCollateralToggle({
     selectedMarketData,
@@ -140,6 +141,9 @@ const SupplyTab = ({
         headerText="Supply Amount"
         decimals={selectedMarketData.underlyingDecimals}
         showUtilizationSlider
+        // Add these missing props:
+        max={maxAmount?.number?.toString()} // This is likely missing
+        effectiveMax={maxAmount?.number?.toString()} // This may also be needed
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">

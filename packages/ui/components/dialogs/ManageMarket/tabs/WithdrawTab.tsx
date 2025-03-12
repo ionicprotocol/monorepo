@@ -74,12 +74,16 @@ const WithdrawTab = ({
     }
   );
 
-  const isDisabled =
-    !amount ||
-    amountAsBInt === 0n ||
-    isLoadingPredictedHealthFactor ||
-    hfpStatus === HFPStatus.CRITICAL ||
-    hfpStatus === HFPStatus.UNKNOWN;
+  const isWusdm = selectedMarketData.underlyingSymbol === 'wUSDM';
+
+  // Allow button to be enabled for wUSDM regardless of health factor status
+  const isDisabled = isWusdm
+    ? !amount || amountAsBInt === 0n
+    : !amount ||
+      amountAsBInt === 0n ||
+      isLoadingPredictedHealthFactor ||
+      hfpStatus === HFPStatus.CRITICAL ||
+      hfpStatus === HFPStatus.UNKNOWN;
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
@@ -90,13 +94,16 @@ const WithdrawTab = ({
     return getStepsForTypes(TransactionType.WITHDRAW);
   }, [getStepsForTypes]);
 
+  console.log('maxAmount', maxAmount);
+  const max = formatUnits(
+    maxAmount ?? 0n,
+    selectedMarketData.underlyingDecimals
+  );
+
   return (
     <div className="space-y-4 pt-4">
       <MaxDeposit
-        max={formatUnits(
-          maxAmount ?? 0n,
-          selectedMarketData.underlyingDecimals
-        )}
+        max={max}
         isLoading={isLoadingMax || isPolling}
         amount={amount}
         tokenName={selectedMarketData.underlyingSymbol}
@@ -106,29 +113,36 @@ const WithdrawTab = ({
         decimals={selectedMarketData.underlyingDecimals}
         showUtilizationSlider
         hintText="Max Withdraw"
+        effectiveMax={max}
       />
 
-      <Alert
-        variant="default"
-        className="py-2 border-0 bg-opacity-90"
-      >
-        <div className="flex items-center">
-          <Info className="mr-2 h-4 w-4 text-white" />
-          <AlertDescription>
-            Please repay all loans and disable collateral before attempting to
-            withdraw.
-          </AlertDescription>
-        </div>
-      </Alert>
+      {/* Only show the alert for non-wUSDM assets */}
+      {!isWusdm && (
+        <Alert
+          variant="default"
+          className="py-2 border-0 bg-opacity-90"
+        >
+          <div className="flex items-center">
+            <Info className="mr-2 h-4 w-4 text-white" />
+            <AlertDescription>
+              Please repay all loans and disable collateral before attempting to
+              withdraw.
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
 
-      <StatusAlerts
-        status={hfpStatus}
-        availableStates={[
-          HFPStatus.CRITICAL,
-          HFPStatus.WARNING,
-          HFPStatus.UNKNOWN
-        ]}
-      />
+      {/* Only show status alerts for non-wUSDM assets */}
+      {!isWusdm && (
+        <StatusAlerts
+          status={hfpStatus}
+          availableStates={[
+            HFPStatus.CRITICAL,
+            HFPStatus.WARNING,
+            HFPStatus.UNKNOWN
+          ]}
+        />
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-x-8">
         <div className="space-y-4 content-center">
@@ -162,20 +176,23 @@ const WithdrawTab = ({
             </div>
           </div>
 
-          <div className="flex justify-between text-xs text-gray-400 uppercase">
-            <span>Health Factor</span>
-            <div className="flex items-center">
-              <span>{healthFactor.current}</span>
-              <span className="mx-1">→</span>
-              <ResultHandler
-                height={16}
-                width={16}
-                isLoading={isSliding || isLoadingUpdatedAssets}
-              >
-                {healthFactor.predicted}
-              </ResultHandler>
+          {/* Only show health factor for non-wUSDM assets */}
+          {!isWusdm && (
+            <div className="flex justify-between text-xs text-gray-400 uppercase">
+              <span>Health Factor</span>
+              <div className="flex items-center">
+                <span>{healthFactor.current}</span>
+                <span className="mx-1">→</span>
+                <ResultHandler
+                  height={16}
+                  width={16}
+                  isLoading={isSliding || isLoadingUpdatedAssets}
+                >
+                  {healthFactor.predicted}
+                </ResultHandler>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <MemoizedUtilizationStats
