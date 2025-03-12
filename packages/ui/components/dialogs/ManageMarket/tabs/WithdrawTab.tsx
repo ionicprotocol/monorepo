@@ -94,7 +94,6 @@ const WithdrawTab = ({
     return getStepsForTypes(TransactionType.WITHDRAW);
   }, [getStepsForTypes]);
 
-  console.log('maxAmount', maxAmount);
   const max = formatUnits(
     maxAmount ?? 0n,
     selectedMarketData.underlyingDecimals

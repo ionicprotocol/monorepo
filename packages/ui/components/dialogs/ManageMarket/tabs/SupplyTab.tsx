@@ -58,7 +58,6 @@ const SupplyTab = ({
     comptrollerAddress,
     chainId
   );
-  console.log('maxAmount', maxAmount);
 
   const { enableCollateral, handleCollateralToggle } = useCollateralToggle({
     selectedMarketData,
