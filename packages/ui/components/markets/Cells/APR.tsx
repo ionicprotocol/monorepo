@@ -205,9 +205,19 @@ export default function APR(props: APRCellProps) {
           {showEmissionsWarning && (
             <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-md px-3 py-2 border border-amber-500/50">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-medium text-amber-400">
-                You are not receiving emissions!
-              </span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-medium text-amber-400">
+                  You are not receiving emissions!
+                </span>
+                <a
+                  href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion#voting-and-bribing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           )}
         </div>
