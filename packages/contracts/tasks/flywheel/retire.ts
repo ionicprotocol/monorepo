@@ -58,7 +58,7 @@ task("flywheel:remove-all-flywheels", "remove a rewards distributor from a pool"
           if (flywheelRewards.address !== "0x1155b614971f16758C92c4890eD338C9e3ede6b7") {
             const tx = await flywheel.write.setFlywheelRewards([deployer as Address]);
             await publicClient.waitForTransactionReceipt({ hash: tx });
-            console.log("setFlywheelRewards: ");
+            console.log("setFlywheelRewards: ", tx);
           }
           if (admin.toLowerCase() !== deployer.toLowerCase()) {
             await prepareAndLogTransaction({
