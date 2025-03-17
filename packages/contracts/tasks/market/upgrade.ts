@@ -157,29 +157,29 @@ task("markets:upgrade-and-setup", "Upgrades all markets and sets addresses provi
       "FeeDistributor",
       (await deployments.get("FeeDistributor")).address as Address
     );
-    const ionicUniV3Liquidator = await viem.getContractAt(
-      "IonicUniV3Liquidator",
-      (await deployments.get("IonicUniV3Liquidator")).address as Address
-    );
+    // const ionicUniV3Liquidator = await viem.getContractAt(
+    //   "IonicUniV3Liquidator",
+    //   (await deployments.get("IonicUniV3Liquidator")).address as Address
+    // );
 
-    const liquidatorAdmin = await ionicUniV3Liquidator.read.owner();
-    if (liquidatorAdmin.toLowerCase() !== deployer.toLowerCase()) {
-      await prepareAndLogTransaction({
-        contractInstance: ionicUniV3Liquidator,
-        functionName: "setHealthFactorThreshold",
-        args: [
-          parseEther("1").toString() // 0.99e18 as a BigInt
-        ],
-        description: `Setting Liquidator Health Factor Threshold`,
-        inputs: [{ internalType: "uint256", name: "_healthFactorThreshold", type: "uint256" }]
-      });
-    } else {
-      const tx = await ionicUniV3Liquidator.write.setHealthFactorThreshold([parseEther("1")]);
-      await publicClient.waitForTransactionReceipt({
-        hash: tx
-      });
-      console.log(`Liquidator Health Factor Threshold set to ${parseEther("1")}`);
-    }
+    // const liquidatorAdmin = await ionicUniV3Liquidator.read.owner();
+    // if (liquidatorAdmin.toLowerCase() !== deployer.toLowerCase()) {
+    //   await prepareAndLogTransaction({
+    //     contractInstance: ionicUniV3Liquidator,
+    //     functionName: "setHealthFactorThreshold",
+    //     args: [
+    //       parseEther("1").toString() // 0.99e18 as a BigInt
+    //     ],
+    //     description: `Setting Liquidator Health Factor Threshold`,
+    //     inputs: [{ internalType: "uint256", name: "_healthFactorThreshold", type: "uint256" }]
+    //   });
+    // } else {
+    //   const tx = await ionicUniV3Liquidator.write.setHealthFactorThreshold([parseEther("1")]);
+    //   await publicClient.waitForTransactionReceipt({
+    //     hash: tx
+    //   });
+    //   console.log(`Liquidator Health Factor Threshold set to ${parseEther("1")}`);
+    // }
 
     const [, pools] = await poolDirectory.read.getActivePools();
     for (let i = 0; i < pools.length; i++) {
