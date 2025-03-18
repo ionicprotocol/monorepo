@@ -40,6 +40,9 @@ import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol"
 import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
 import { VoterLens } from "../veION/VoterLens.sol";
+import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
+import { IonicFlywheel } from "../ionic/strategies/flywheel/IonicFlywheel.sol";
+import { FlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/FlywheelDynamicRewards.sol";
 
 import "forge-std/console.sol";
 
@@ -157,14 +160,15 @@ contract DevTesting is BaseTest {
     emit log_named_uint("hf", hf);
   }
 
-  function testVoterLens() public debuggingOnly fork(MODE_MAINNET) {
-    VoterLens lens = new VoterLens();
-    lens.initialize(
-      0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
-      PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
-    );
+  function testVoterLens() public debuggingOnly fork(BASE_MAINNET) {
+    // VoterLens lens = new VoterLens();
+    // lens.initialize(
+    //   0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
+    //   PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
+    // );
 
-    lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    // lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    VoterLens lens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B);
 
     VoterLens.IncentiveInfo[] memory info = lens.getAllIncentivesForBribes();
     emit log_named_uint("IncentiveInfo array length", info.length);
@@ -186,6 +190,126 @@ contract DevTesting is BaseTest {
       }
       emit log("-----------------------------------------------------------");
     }
+  }
+
+  function testUserFlywheelRewards1() public debuggingOnly forkAtBlock(BASE_MAINNET, 26840321) {
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards2() public debuggingOnly forkAtBlock(BASE_MAINNET, 26904044) {
+    emit log("Distribution into reward accumulator");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards3() public debuggingOnly forkAtBlock(BASE_MAINNET, 26920527) {
+    emit log("Right before rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards4() public debuggingOnly forkAtBlock(BASE_MAINNET, 26920528) {
+    emit log("Rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards5() public debuggingOnly forkAtBlock(BASE_MAINNET, 26931538) {
+    emit log("First deposit after rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards6() public debuggingOnly forkAtBlock(BASE_MAINNET, 27123016) {
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards7() public debuggingOnly forkAtBlock(BASE_MAINNET, 27208871) {
+    emit log("Another Distribution");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards8() public debuggingOnly forkAtBlock(BASE_MAINNET, 27703171) {
+    emit log("Right before user whitelists himself");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards9() public debuggingOnly forkAtBlock(BASE_MAINNET, 27703172) {
+    emit log("User whitelists himself");
+    executeFlywheelRewardsTest();
+  }
+
+  struct FlywheelTestVars {
+    address ion;
+    address solMarket;
+    address user;
+    IonicFlywheel ionFlywheel;
+    IonicFlywheelDynamicRewards ionFlywheelRewards;
+    address rewardAccumulator;
+    uint256 ionBalance;
+    uint256 ionFlywheelRewardsBalance;
+    uint256 userBlacklistedSupply;
+    uint256 totalBlacklistedSupply;
+    uint256 compAccrued;
+    uint224 userIndex;
+    uint224 marketStateIndex;
+    uint32 marketStateLastUpdatedTimestamp;
+    uint256 totalSupply;
+    uint256 solMarketBalance;
+    uint32 rewardsCycleStart;
+    uint32 rewardsCycleEnd;
+    uint192 rewardsCycleReward;
+  }
+
+  function executeFlywheelRewardsTest() internal {
+    FlywheelTestVars memory vars;
+
+    vars.ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
+    vars.solMarket = 0xbd06905590b6E1b6Ac979Fc477A0AebB58d52371;
+    vars.user = 0x54494827316C7C6627908A9261AB13Ac0A5222E3;
+    vars.ionFlywheel = IonicFlywheel(0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f);
+    vars.ionFlywheelRewards = IonicFlywheelDynamicRewards(0x7Faf51cfF9ed26AD5BD071685F684B0D1338d163);
+
+    emit log("-----------------------------------------------------------");
+    vars.rewardAccumulator = vars.ionFlywheelRewards.rewardAccumulators(vars.solMarket);
+    emit log_named_address("Reward Accumulator for solMarket", vars.rewardAccumulator);
+
+    vars.ionBalance = ERC20(vars.ion).balanceOf(vars.rewardAccumulator);
+    emit log_named_uint("ION Balance of Reward Accumulator", vars.ionBalance);
+
+    vars.totalBlacklistedSupply = vars.ionFlywheel.blacklistedSupply(ERC20(vars.solMarket));
+    emit log_named_uint("Total Blacklisted Supply of solMarket", vars.totalBlacklistedSupply);
+
+    vars.ionFlywheelRewardsBalance = ERC20(vars.ion).balanceOf(address(vars.ionFlywheelRewards));
+    emit log_named_uint("ION Balance of Flywheel Rewards", vars.ionFlywheelRewardsBalance);
+
+    vars.userBlacklistedSupply = vars.ionFlywheel.userBlacklistedSupply(ERC20(vars.solMarket), vars.user);
+    emit log_named_uint("User Blacklisted Supply", vars.userBlacklistedSupply);
+
+    vars.compAccrued = vars.ionFlywheel.compAccrued(vars.user);
+    emit log_named_uint("Comp Accrued", vars.compAccrued);
+
+    vars.userIndex = vars.ionFlywheel.userIndex(ERC20(vars.solMarket), vars.user);
+    emit log_named_uint("User Index", vars.userIndex);
+
+    (vars.marketStateIndex, vars.marketStateLastUpdatedTimestamp) = vars.ionFlywheel.marketState(ERC20(vars.solMarket));
+    emit log_named_uint("Market State Index", vars.marketStateIndex);
+    emit log_named_uint("Market State Last Updated Timestamp", vars.marketStateLastUpdatedTimestamp);
+
+    vars.totalSupply = ERC20(vars.solMarket).totalSupply();
+    emit log_named_uint("Total Supply of solMarket", vars.totalSupply);
+
+    vars.solMarketBalance = ERC20(vars.solMarket).balanceOf(vars.user);
+    emit log_named_uint("solMarket Balance of User", vars.solMarketBalance);
+
+    // Retrieve the rewards cycle for the solMarket strategy
+    (vars.rewardsCycleStart, vars.rewardsCycleEnd, vars.rewardsCycleReward) = vars.ionFlywheelRewards.rewardsCycle(
+      ERC20(vars.solMarket)
+    );
+
+    // Log the rewards cycle details
+    emit log_named_uint("Rewards Cycle Start", vars.rewardsCycleStart);
+    emit log_named_uint("Rewards Cycle End", vars.rewardsCycleEnd);
+    emit log_named_uint("Rewards Cycle Reward", vars.rewardsCycleReward);
+
+    uint32 rewardsCycleLength = vars.ionFlywheelRewards.rewardsCycleLength();
+    emit log_named_uint("Rewards Cycle Length", rewardsCycleLength);
   }
 
   function testQuickHF() public debuggingOnly forkAtBlock(MODE_MAINNET, 11831371) {
