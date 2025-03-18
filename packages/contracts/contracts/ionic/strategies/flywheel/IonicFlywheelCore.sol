@@ -174,6 +174,10 @@ contract IonicFlywheelCore is Ownable2StepUpgradeable {
   function whitelistUser(ERC20 strategy, address user) external onlyEmissionsManager {
     blacklistedSupply[strategy] -= userBlacklistedSupply[strategy][user];
     userBlacklistedSupply[strategy][user] = 0;
+    (uint224 index, uint32 ts) = strategyState(strategy);
+    RewardsState memory state = RewardsState(index, ts);
+    state = accrueStrategy(strategy, state);
+    _userIndex[strategy][user] = state.index;
   }
 
   /** 
