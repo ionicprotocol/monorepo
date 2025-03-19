@@ -76,7 +76,6 @@ export const useBribeRewards = () => {
       if (!voterLensAddress) return [];
 
       try {
-        // Use the new getUserBribeRewards function to get all bribe rewards in one call
         const userBribes = (await publicClient.readContract({
           address: voterLensAddress,
           abi: extendedVoterLensAbi,
@@ -84,11 +83,8 @@ export const useBribeRewards = () => {
           args: [userAddress as Address]
         })) as UserBribe[];
 
-        // console.log('User bribes from VoterLens:', userBribes);
-
-        // Convert UserBribe objects to BribeReward objects
         const rewards: BribeReward[] = userBribes
-          .filter((bribe) => bribe.earned > 0n) // Only include bribes with non-zero amounts
+          .filter((bribe) => bribe.earned > 0n)
           .map((bribe) => ({
             amount: bribe.earned,
             chainId: currentChain as SupportedChains,
