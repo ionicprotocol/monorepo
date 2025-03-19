@@ -5,7 +5,8 @@ import { usePublicClient } from 'wagmi';
 import { getiVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
 
-import { REWARD_TOKENS } from '../rewards/useBribeRewards';
+// Import the new useRewardTokens hook
+import { useRewardTokens } from './useRewardTokens';
 
 export const useMarketVotes = (
   chain: number,
@@ -18,17 +19,18 @@ export const useMarketVotes = (
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Use refs to track if we should fetch data
-  const hasFetchedRef = useRef(false);
+  // Use the reusable hook to fetch reward tokens
+  const {
+    rewardTokens,
+    isLoading: isLoadingTokens,
+    error: tokenError
+  } = useRewardTokens(chain);
+
+  // Use refs to track if we should fetch votes data
+  const hasFetchedVotesRef = useRef(false);
 
   // Get voter contract for the chain - memoized to prevent recreating
   const voterContract = useMemo(() => getiVoterContract(chain), [chain]);
-
-  // Get reward tokens for the chain - memoized to prevent recreating
-  const rewardTokens = useMemo(
-    () => REWARD_TOKENS[chain as keyof typeof REWARD_TOKENS] || [],
-    [chain]
-  );
 
   // Prepare normalized market addresses for consistency - memoized to prevent recreating
   const normalizedMarketAddresses = useMemo(() => {
@@ -60,20 +62,24 @@ export const useMarketVotes = (
 
   useEffect(() => {
     // Reset tracking of fetch when dependencies change
-    hasFetchedRef.current = false;
-  }, [chain, normalizedMarketAddresses.length, rewardTokens.length]);
+    hasFetchedVotesRef.current = false;
+
+    // Also reset votes data when key dependencies change
+    setVotesData({});
+  }, [chain, normalizedMarketAddresses.length]);
 
   useEffect(() => {
-    // Skip if already fetched with these params
-    if (hasFetchedRef.current) return;
+    // Skip if already fetched with these params or if reward tokens aren't loaded yet
+    if (
+      hasFetchedVotesRef.current ||
+      isLoadingTokens ||
+      rewardTokens.length === 0 ||
+      !publicClient
+    )
+      return;
 
     const fetchVotes = async () => {
-      if (
-        !voterContract ||
-        !publicClient ||
-        !normalizedMarketAddresses.length ||
-        !rewardTokens.length
-      ) {
+      if (!voterContract || !normalizedMarketAddresses.length) {
         setVotesData({});
         setIsLoading(false);
         return;
@@ -83,7 +89,7 @@ export const useMarketVotes = (
         setIsLoading(true);
 
         // Mark as fetched at the beginning to prevent duplicate fetches
-        hasFetchedRef.current = true;
+        hasFetchedVotesRef.current = true;
 
         // Build calls for supply side
         const supplyCalls = normalizedMarketAddresses.flatMap((market) =>
@@ -105,6 +111,12 @@ export const useMarketVotes = (
 
         // Combine all calls and execute in one multicall
         const allCalls = [...supplyCalls, ...borrowCalls];
+
+        if (allCalls.length === 0) {
+          setIsLoading(false);
+          return;
+        }
+
         const results = await publicClient.multicall({
           contracts: allCalls,
           allowFailure: true
@@ -169,14 +181,20 @@ export const useMarketVotes = (
           err instanceof Error ? err : new Error('Unknown error occurred')
         );
         // Reset fetch tracking on error to allow retry
-        hasFetchedRef.current = false;
+        hasFetchedVotesRef.current = false;
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchVotes();
-  }, [normalizedMarketAddresses, rewardTokens, publicClient, voterContract]);
+  }, [
+    normalizedMarketAddresses,
+    rewardTokens,
+    isLoadingTokens,
+    publicClient,
+    voterContract
+  ]);
 
   // Format data like voteData with key format: ${marketAddress}-${side}
   const formattedVoteData = useMemo(() => {
@@ -208,10 +226,14 @@ export const useMarketVotes = (
     return result;
   }, [votesData]);
 
+  // Combine loading states and errors
+  const combinedIsLoading = isLoading || isLoadingTokens;
+  const combinedError = error || tokenError;
+
   return {
     votesData: formattedVoteData, // Formatted like useVoteData
     getMarketVotes,
-    isLoading,
-    error
+    isLoading: combinedIsLoading,
+    error: combinedError
   };
 };
