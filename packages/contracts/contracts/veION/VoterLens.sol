@@ -9,6 +9,8 @@ import { ComptrollerExtensionInterface } from "../compound/ComptrollerInterface.
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import { Ownable2StepUpgradeable } from "@openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
+import { veIONSecondExtension } from "./veIONSecondExtension.sol";
+import { Voter } from "./Voter.sol";
 
 contract VoterLens is Initializable, Ownable2StepUpgradeable {
   struct BribeInfo {
@@ -33,6 +35,7 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
   PoolDirectory poolDirectory;
   IMasterPriceOracle mpo;
   uint256 constant PRECISION = 1e18;
+  address veIONAddress;
 
   function initialize(address _voter, PoolDirectory _poolDirectory) public initializer {
     voter = _voter;
@@ -133,19 +136,102 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     }
   }
 
+  struct UserBribes {
+    uint256 tokenId;
+    address market;
+    address bribe;
+    address reward;
+    uint256 earned;
+  }
+
+  struct UserBribeVars {
+    uint256[] userTokens;
+    address[] lpTokens;
+    uint256 count;
+    IVoter.VoteDetails voteDetails;
+    address rewardAccumulator;
+    address bribeRewards;
+    uint256 bribesLength;
+    address reward;
+    uint256 rewardEarned;
+  }
+
+  function getUserBribeRewards(address _user) external view returns (UserBribes[] memory _userBribes) {
+    UserBribeVars memory vars;
+    vars.userTokens = veIONSecondExtension(veIONAddress).getOwnedTokenIds(_user);
+    vars.lpTokens = Voter(voter).getAllLpRewardTokens();
+    vars.count = 0;
+
+    for (uint256 i = 0; i < vars.userTokens.length; i++) {
+      for (uint256 j = 0; j < vars.lpTokens.length; j++) {
+        vars.voteDetails = IVoterView(voter).getVoteDetails(vars.userTokens[i], vars.lpTokens[j]);
+        for (uint256 k; k < vars.voteDetails.marketVotes.length; k++) {
+          vars.rewardAccumulator = IVoterView(voter).marketToRewardAccumulators(
+            vars.voteDetails.marketVotes[k],
+            vars.voteDetails.marketVoteSides[k]
+          );
+          vars.bribeRewards = IVoterView(voter).rewardAccumulatorToBribe(vars.rewardAccumulator);
+          vars.bribesLength = IBribeRewardsView(vars.bribeRewards).rewardsListLength();
+          for (uint256 x; x < vars.bribesLength; x++) {
+            vars.reward = IBribeRewardsView(vars.bribeRewards).rewards(x);
+            vars.rewardEarned = IBribeRewardsView(vars.bribeRewards).earned(vars.reward, vars.userTokens[i]);
+            if (vars.rewardEarned != 0) vars.count++;
+          }
+        }
+      }
+    }
+
+    _userBribes = new UserBribes[](vars.count);
+    vars.count = 0;
+    for (uint256 i = 0; i < vars.userTokens.length; i++) {
+      for (uint256 j = 0; j < vars.lpTokens.length; j++) {
+        vars.voteDetails = IVoterView(voter).getVoteDetails(vars.userTokens[i], vars.lpTokens[j]);
+        for (uint256 k; k < vars.voteDetails.marketVotes.length; k++) {
+          vars.rewardAccumulator = IVoterView(voter).marketToRewardAccumulators(
+            vars.voteDetails.marketVotes[k],
+            vars.voteDetails.marketVoteSides[k]
+          );
+          vars.bribeRewards = IVoterView(voter).rewardAccumulatorToBribe(vars.rewardAccumulator);
+          vars.bribesLength = IBribeRewardsView(vars.bribeRewards).rewardsListLength();
+          for (uint256 x; x < vars.bribesLength; x++) {
+            vars.reward = IBribeRewardsView(vars.bribeRewards).rewards(x);
+            vars.rewardEarned = IBribeRewardsView(vars.bribeRewards).earned(vars.reward, vars.userTokens[i]);
+            if (vars.rewardEarned != 0) {
+              _userBribes[vars.count].tokenId = vars.userTokens[i];
+              _userBribes[vars.count].market = vars.voteDetails.marketVotes[k];
+              _userBribes[vars.count].bribe = vars.bribeRewards;
+              _userBribes[vars.count].reward = vars.reward;
+              _userBribes[vars.count].earned = vars.rewardEarned;
+
+              vars.count++;
+            }
+          }
+        }
+      }
+    }
+  }
+
   function setMasterPriceOracle(address _masterPriceOracle) external onlyOwner {
     mpo = IMasterPriceOracle(_masterPriceOracle);
+  }
+
+  function setVeIONAddress(address _veIONAddress) external onlyOwner {
+    veIONAddress = _veIONAddress;
   }
 }
 
 interface IVoterView {
   function rewardAccumulatorToBribe(address rewardAccumulator) external view returns (address);
   function marketToRewardAccumulators(address market, IVoter.MarketSide marketSide) external view returns (address);
+  function marketVote(uint256 tokenId, address lpAsset) external view returns (address[] memory);
+  function marketVoteSide(uint256 tokenId, address lpAsset) external view returns (IVoter.MarketSide[] memory);
+  function getVoteDetails(uint256 _tokenId, address _lpAsset) external view returns (IVoter.VoteDetails memory);
 }
 
 interface IBribeRewardsView {
   function rewards(uint256 index) external view returns (address);
   function rewardsListLength() external view returns (uint256);
+  function earned(address token, uint256 tokenId) external view returns (uint256);
 }
 
 interface IMasterPriceOracle {

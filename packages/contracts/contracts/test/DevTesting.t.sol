@@ -43,6 +43,11 @@ import { VoterLens } from "../veION/VoterLens.sol";
 import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
 import { IonicFlywheel } from "../ionic/strategies/flywheel/IonicFlywheel.sol";
 import { FlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/FlywheelDynamicRewards.sol";
+import { Voter } from "../veION/Voter.sol";
+import { veION } from "../veION/veION.sol";
+import { veIONFirstExtension } from "../veION/veIONFirstExtension.sol";
+import { veIONSecondExtension } from "../veION/veIONSecondExtension.sol";
+import { BribeRewards } from "../veION/BribeRewards.sol";
 
 import "forge-std/console.sol";
 
@@ -192,6 +197,27 @@ contract DevTesting is BaseTest {
     }
   }
 
+  function testNewVoterLens() public debuggingOnly fork(BASE_MAINNET) {
+    VoterLens lens = new VoterLens();
+    lens.initialize(
+      0x669A6F5421dA53696fa06f1043CF127d380f6EB9,
+      PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f)
+    );
+
+    lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    lens.setVeIONAddress(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+
+    VoterLens.UserBribes[] memory userBribes = lens.getUserBribeRewards(0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437);
+    emit log_named_uint("UserBribes array length", userBribes.length);
+    for (uint256 i = 0; i < userBribes.length; i++) {
+      emit log_named_uint("TokenId", userBribes[i].tokenId);
+      emit log_named_address("Market", userBribes[i].market);
+      emit log_named_address("Bribe", userBribes[i].bribe);
+      emit log_named_address("Reward", userBribes[i].reward);
+      emit log_named_uint("Earned", userBribes[i].earned);
+    }
+  }
+
   function testUserFlywheelRewards1() public debuggingOnly forkAtBlock(BASE_MAINNET, 26840321) {
     executeFlywheelRewardsTest();
   }
@@ -233,6 +259,108 @@ contract DevTesting is BaseTest {
   function testUserFlywheelRewards9() public debuggingOnly forkAtBlock(BASE_MAINNET, 27703172) {
     emit log("User whitelists himself");
     executeFlywheelRewardsTest();
+  }
+
+  function testUserBribes() public debuggingOnly forkAtBlock(BASE_MAINNET, 27759655) {
+    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+    address lpAsset = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    VoterLens.IncentiveInfo[] memory incentives = voterLens.getAllIncentivesForBribes();
+
+    emit log("Incentive Information:");
+    for (uint256 i = 0; i < incentives.length; i++) {
+      if (
+        (incentives[i].bribeSupply != address(0) && incentives[i].rewardsSupply.length > 0) ||
+        (incentives[i].bribeBorrow != address(0) && incentives[i].rewardsBorrow.length > 0)
+      ) {
+        emit log_named_address("Market", incentives[i].market);
+        if (incentives[i].bribeSupply != address(0)) {
+          emit log_named_address("Bribe Supply", incentives[i].bribeSupply);
+          for (uint256 j = 0; j < incentives[i].rewardsSupply.length; j++) {
+            emit log_named_address("Reward Supply", incentives[i].rewardsSupply[j]);
+            emit log_named_uint("Reward Supply Amount", incentives[i].rewardsSupplyAmounts[j]);
+            emit log_named_uint("Reward Supply ETH Value", incentives[i].rewardsSupplyETHValues[j]);
+          }
+        }
+        if (incentives[i].bribeBorrow != address(0)) {
+          emit log_named_address("Bribe Borrow", incentives[i].bribeBorrow);
+          for (uint256 j = 0; j < incentives[i].rewardsBorrow.length; j++) {
+            emit log_named_address("Reward Borrow", incentives[i].rewardsBorrow[j]);
+            emit log_named_uint("Reward Borrow Amount", incentives[i].rewardsBorrowAmounts[j]);
+            emit log_named_uint("Reward Borrow ETH Value", incentives[i].rewardsBorrowETHValues[j]);
+          }
+        }
+        emit log("-----------------------------------------------------------");
+      }
+    }
+
+    uint256[] memory ownedTokenIds = veIONSecondExtension(address(ve)).getOwnedTokenIds(user);
+
+    emit log("Owned Token IDs for User:");
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      emit log_named_uint("Token ID", ownedTokenIds[i]);
+    }
+    emit log("-----------------------------------------------------------");
+
+    // Fetch the vote details for each token ID owned by the user
+    emit log("Vote Details for User:");
+    for (uint256 j = 0; j < ownedTokenIds.length; j++) {
+      Voter.VoteDetails memory voteDetails = voter.getVoteDetails(ownedTokenIds[j], lpAsset);
+      emit log_named_uint("Token ID", ownedTokenIds[j]);
+      for (uint256 i = 0; i < voteDetails.marketVotes.length; i++) {
+        emit log_named_address("Market Voted", voteDetails.marketVotes[i]);
+        emit log_named_uint("Market Side", uint256(voteDetails.marketVoteSides[i]));
+        emit log_named_uint("Votes", voteDetails.votes[i]);
+        emit log_named_uint("Used Weight", voteDetails.usedWeight);
+      }
+      emit log("-----------------------------------------------------------");
+    }
+
+    BribeRewards bribe = BribeRewards(0x4c63d1bcC6c67b9DE3DBf96f8e18eD9440400e6a);
+    uint256[] memory votingTokens = new uint256[](2);
+    votingTokens[0] = 15;
+    votingTokens[1] = 38;
+
+    for (uint256 i = 0; i < votingTokens.length; i++) {
+      uint256 earnedAmount = bribe.earned(lpAsset, votingTokens[i]);
+      emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
+      emit log_named_uint("Earned Amount", earnedAmount);
+    }
+  }
+
+  function testBribeIncentives() public debuggingOnly forkAtBlock(MODE_MAINNET, 21084461) {
+    VoterLens voterLens = VoterLens(0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D); // Replace with actual VoterLens contract address
+    VoterLens.IncentiveInfo[] memory incentives = voterLens.getAllIncentivesForBribes();
+
+    emit log("Incentive Information:");
+    for (uint256 i = 0; i < incentives.length; i++) {
+      if (
+        (incentives[i].bribeSupply != address(0) && incentives[i].rewardsSupply.length > 0) ||
+        (incentives[i].bribeBorrow != address(0) && incentives[i].rewardsBorrow.length > 0)
+      ) {
+        emit log_named_address("Market", incentives[i].market);
+        if (incentives[i].bribeSupply != address(0)) {
+          emit log_named_address("Bribe Supply", incentives[i].bribeSupply);
+          for (uint256 j = 0; j < incentives[i].rewardsSupply.length; j++) {
+            emit log_named_address("Reward Supply", incentives[i].rewardsSupply[j]);
+            emit log_named_uint("Reward Supply Amount", incentives[i].rewardsSupplyAmounts[j]);
+            emit log_named_uint("Reward Supply ETH Value", incentives[i].rewardsSupplyETHValues[j]);
+          }
+        }
+        if (incentives[i].bribeBorrow != address(0)) {
+          emit log_named_address("Bribe Borrow", incentives[i].bribeBorrow);
+          for (uint256 j = 0; j < incentives[i].rewardsBorrow.length; j++) {
+            emit log_named_address("Reward Borrow", incentives[i].rewardsBorrow[j]);
+            emit log_named_uint("Reward Borrow Amount", incentives[i].rewardsBorrowAmounts[j]);
+            emit log_named_uint("Reward Borrow ETH Value", incentives[i].rewardsBorrowETHValues[j]);
+          }
+        }
+        emit log("-----------------------------------------------------------");
+      }
+    }
   }
 
   struct FlywheelTestVars {

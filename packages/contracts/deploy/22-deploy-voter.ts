@@ -22,7 +22,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   //   (await deployments.get("MasterPriceOracle")).address as Address
   // );
 
-  // const veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
+  const veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
 
   // // ╔══════════════════════════════════════════╗
   // // ║               DEPLOY VOTER               ║
@@ -288,10 +288,18 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     (await deployments.get("MasterPriceOracle")).address as Address
   );
 
+  // try {
+  //   const txHash = await voterLens.write.setMasterPriceOracle([mpo.address], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set mpo to ${mpo.address}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
+
   try {
-    const txHash = await voterLens.write.setMasterPriceOracle([mpo.address], { from: deployer });
+    const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
     await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set mpo to ${mpo.address}`);
+    console.log(`Successfully set ve to ${veION.address}`);
   } catch (error) {
     console.error("Error setting max voting number:", error);
   }
