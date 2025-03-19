@@ -199,7 +199,7 @@ const UniversalClaimDialog = ({
                                 </div>
                               </TableCell>
                               <TableCell className="text-white py-1.5 text-sm">
-                                {reward.amount}
+                                {Number(reward.amount).toFixed(5)}
                               </TableCell>
                               <TableCell className="text-white py-1.5">
                                 <div className="flex items-center gap-1.5">

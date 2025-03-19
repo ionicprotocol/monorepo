@@ -99,13 +99,11 @@ export const useRewardsAggregator = () => {
       // Protocol Bribes
       if (bribeRewards) {
         bribeRewards.forEach((reward: BribeReward) => {
-          const tokenSymbol =
-            REWARDS_TO_SYMBOL[reward.chainId][reward.rewardToken] || 'Unknown';
           rewards.push({
             id: `bribe-${reward.chainId}-${reward.rewardToken}-${reward.bribeAddress}-${reward.tokenId}`,
-            token: tokenSymbol.toLowerCase(),
-            tokenSymbol,
-            amount: formatUnits(reward.amount, 18),
+            token: (reward.tokenSymbol || 'unknown').toLowerCase(),
+            tokenSymbol: reward.tokenSymbol || 'Unknown',
+            amount: reward.formattedAmount || '0', // Use the pre-formatted amount
             network: getNetworkName(reward.chainId),
             section: 'Protocol Bribes',
             chainId: reward.chainId,
