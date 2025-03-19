@@ -5,17 +5,12 @@ import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import type { Address, Hex } from 'viem';
 
-import { bribeRewardsAbi, voterLensAbi } from '@ionicprotocol/sdk';
+import { voterLensAbi } from '@ionicprotocol/sdk';
 import type { SupportedChains } from '@ionicprotocol/types';
 
 export const VOTERLENS_CHAIN_ADDRESSES = {
-  8453: '0x0E6F5bb82ba499A3FdAE6449c00A2936286bbf02', // Base VoterLens
-  34443: '0x414E7b43B8b82aDf0B02c84E9EC02Aa82d87b2aA' // Mode VoterLens
-} as const;
-
-export const REWARD_TOKENS = {
-  8453: ['0x0FAc819628a7F612AbAc1CaD939768058cc0170c'] as const, // ION
-  34443: ['0x690A74d2eC0175a69C0962B309E03021C0b5002E'] as const // ION
+  8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B',
+  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D'
 } as const;
 
 export interface BribeReward {
@@ -24,25 +19,53 @@ export interface BribeReward {
   rewardToken: Hex;
   bribeAddress: Address;
   tokenId: bigint;
+  market?: Address;
 }
+
+export interface UserBribe {
+  tokenId: bigint;
+  market: Address;
+  bribe: Address;
+  reward: Address;
+  earned: bigint;
+}
+
+const extendedVoterLensAbi = [
+  ...voterLensAbi,
+  {
+    type: 'function',
+    name: 'getUserBribeRewards',
+    inputs: [{ name: '_user', type: 'address' }],
+    outputs: [
+      {
+        name: '_userBribes',
+        type: 'tuple[]',
+        components: [
+          { name: 'tokenId', type: 'uint256' },
+          { name: 'market', type: 'address' },
+          { name: 'bribe', type: 'address' },
+          { name: 'reward', type: 'address' },
+          { name: 'earned', type: 'uint256' }
+        ]
+      }
+    ],
+    stateMutability: 'view'
+  }
+] as const;
 
 export const useBribeRewards = () => {
   const { address: userAddress } = useAccount();
-  const {
-    currentChain,
-    locks: { myLocks }
-  } = useVeIONContext();
+  const { currentChain } = useVeIONContext();
   const publicClient = usePublicClient({ chainId: currentChain });
-  const tokenIds = myLocks?.map((lock) => BigInt(lock.id)) || [];
 
   const {
     data: bribeRewards,
     isLoading,
     error
   } = useQuery<BribeReward[], Error>({
-    queryKey: ['bribeRewards', currentChain, userAddress, tokenIds],
+    queryKey: ['bribeRewards', currentChain, userAddress],
     queryFn: async () => {
-      if (!userAddress || !tokenIds.length || !publicClient || !currentChain) {
+      if (!userAddress || !publicClient || !currentChain) {
         return [];
       }
 
@@ -52,74 +75,36 @@ export const useBribeRewards = () => {
         ];
       if (!voterLensAddress) return [];
 
-      const rewardTokens =
-        REWARD_TOKENS[currentChain as keyof typeof REWARD_TOKENS];
-      if (!rewardTokens || !rewardTokens.length) return [];
+      try {
+        // Use the new getUserBribeRewards function to get all bribe rewards in one call
+        const userBribes = (await publicClient.readContract({
+          address: voterLensAddress,
+          abi: extendedVoterLensAbi,
+          functionName: 'getUserBribeRewards',
+          args: [userAddress as Address]
+        })) as UserBribe[];
 
-      // Fetch all bribe contracts for the current chain
-      const bribes = await publicClient.readContract({
-        address: voterLensAddress,
-        abi: voterLensAbi,
-        functionName: 'getAllBribes'
-      });
+        // console.log('User bribes from VoterLens:', userBribes);
 
-      if (!bribes.length) return [];
+        // Convert UserBribe objects to BribeReward objects
+        const rewards: BribeReward[] = userBribes
+          .filter((bribe) => bribe.earned > 0n) // Only include bribes with non-zero amounts
+          .map((bribe) => ({
+            amount: bribe.earned,
+            chainId: currentChain as SupportedChains,
+            rewardToken: bribe.reward as Hex,
+            bribeAddress: bribe.bribe as Address,
+            tokenId: bribe.tokenId,
+            market: bribe.market
+          }));
 
-      // Collect all bribe addresses
-      const bribeAddresses: Address[] = bribes.flatMap((bribe) => [
-        bribe.bribeSupply,
-        bribe.bribeBorrow
-      ]);
-
-      // Build earned calls for all combinations of bribeAddress, rewardToken, and tokenId
-      const earnedCalls = bribeAddresses.flatMap((bribeAddress) =>
-        rewardTokens.flatMap((rewardToken) =>
-          tokenIds.map((tokenId) => ({
-            address: bribeAddress,
-            abi: bribeRewardsAbi,
-            functionName: 'earned' as const,
-            args: [rewardToken, tokenId] as [Hex, bigint]
-          }))
-        )
-      );
-
-      if (!earnedCalls.length) return [];
-
-      // Execute all earned calls in one multicall
-      const earnedResults = await publicClient.multicall({
-        contracts: earnedCalls,
-        allowFailure: true
-      });
-
-      // Process results into BribeReward array
-      const rewards: BribeReward[] = [];
-      let resultIndex = 0;
-
-      for (const bribeAddress of bribeAddresses) {
-        for (const rewardToken of rewardTokens) {
-          for (const tokenId of tokenIds) {
-            const result = earnedResults[resultIndex];
-            if (result.status === 'success' && result.result) {
-              const amount = result.result as bigint;
-              if (amount > 0n) {
-                rewards.push({
-                  amount,
-                  chainId: currentChain as SupportedChains,
-                  rewardToken,
-                  bribeAddress,
-                  tokenId
-                });
-              }
-            }
-            resultIndex++;
-          }
-        }
+        return rewards;
+      } catch (err) {
+        console.error('Error fetching user bribe rewards:', err);
+        throw err;
       }
-
-      return rewards;
     },
-    enabled:
-      !!userAddress && !!tokenIds.length && !!publicClient && !!currentChain,
+    enabled: !!userAddress && !!publicClient && !!currentChain,
     staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000
   });
@@ -129,4 +114,19 @@ export const useBribeRewards = () => {
     isLoading,
     error
   };
+};
+
+// Helper function to group rewards by token ID (optional utility)
+export const groupRewardsByTokenId = (rewards: BribeReward[]) => {
+  const grouped: Record<string, BribeReward[]> = {};
+
+  rewards.forEach((reward) => {
+    const tokenIdKey = reward.tokenId.toString();
+    if (!grouped[tokenIdKey]) {
+      grouped[tokenIdKey] = [];
+    }
+    grouped[tokenIdKey].push(reward);
+  });
+
+  return grouped;
 };
