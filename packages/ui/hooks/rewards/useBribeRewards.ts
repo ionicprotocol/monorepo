@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 
+import { REWARDS_TO_SYMBOL } from '@ui/constants'; // Import the REWARDS_TO_SYMBOL mapping
 import { useVeIONContext } from '@ui/context/VeIonContext';
 
 import type { Address, Hex } from 'viem';
@@ -165,10 +166,14 @@ export const useBribeRewards = () => {
           const tokenAddress = reward.rewardToken.toLowerCase();
           const info = tokenInfo[tokenAddress];
 
-          // Use token info from DB or fallback
+          // Use token info from DB or fallback for decimals
           const decimals = info?.decimals || 18;
 
-          const tokenSymbol = info?.symbol || 'Unknown';
+          const tokenSymbol =
+            info?.symbol ||
+            (REWARDS_TO_SYMBOL[reward.chainId] &&
+              REWARDS_TO_SYMBOL[reward.chainId][reward.rewardToken]) ||
+            'Unknown';
 
           return {
             ...reward,
@@ -193,19 +198,4 @@ export const useBribeRewards = () => {
     isLoading,
     error
   };
-};
-
-// Helper function to group rewards by token ID (optional utility)
-export const groupRewardsByTokenId = (rewards: BribeReward[]) => {
-  const grouped: Record<string, BribeReward[]> = {};
-
-  rewards.forEach((reward) => {
-    const tokenIdKey = reward.tokenId.toString();
-    if (!grouped[tokenIdKey]) {
-      grouped[tokenIdKey] = [];
-    }
-    grouped[tokenIdKey].push(reward);
-  });
-
-  return grouped;
 };

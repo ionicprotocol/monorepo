@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
-import { useWalletClient, useWriteContract } from 'wagmi';
+import { useWriteContract } from 'wagmi';
 
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import { VEION_CONTRACTS } from '@ui/constants/veIon';
