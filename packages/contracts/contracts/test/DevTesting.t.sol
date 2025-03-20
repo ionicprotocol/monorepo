@@ -28,7 +28,7 @@ import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredP
 import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
 import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
 import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
-import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
+// import { IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
 import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
@@ -48,6 +48,7 @@ import { veION } from "../veION/veION.sol";
 import { veIONFirstExtension } from "../veION/veIONFirstExtension.sol";
 import { veIONSecondExtension } from "../veION/veIONSecondExtension.sol";
 import { BribeRewards } from "../veION/BribeRewards.sol";
+import { IonicFlywheelLensRouter } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 
 import "forge-std/console.sol";
 
@@ -69,6 +70,10 @@ struct HealthFactorVars {
   ICErc20 testCToken;
   address testUnderlying;
   uint256 amountBorrow;
+}
+
+interface IClaimRewards {
+  function claimRewardsForPool(address user, address pool) external;
 }
 
 contract DevTesting is BaseTest {
@@ -261,6 +266,29 @@ contract DevTesting is BaseTest {
     executeFlywheelRewardsTest();
   }
 
+  function testUserBribeClaims() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+
+    address[] memory _bribes = new address[](1);
+    _bribes[0] = 0x4c63d1bcC6c67b9DE3DBf96f8e18eD9440400e6a;
+
+    address[][] memory _tokens = new address[][](1);
+    _tokens[0] = new address[](1);
+
+    _tokens[0][0] = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+
+    vm.prank(user);
+    voter.claimBribes(_bribes, _tokens, 38);
+  }
+
+  function testUserEmissions() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x5321d7296fe0e7Cae533a090DcDA6E00F0499df0;
+    IClaimRewards lens = IClaimRewards(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
+
+    lens.claimRewardsForPool(user, 0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13);
+  }
+
   function testUserBribes() public debuggingOnly forkAtBlock(BASE_MAINNET, 27759655) {
     address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
     VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
@@ -325,7 +353,7 @@ contract DevTesting is BaseTest {
     votingTokens[1] = 38;
 
     for (uint256 i = 0; i < votingTokens.length; i++) {
-      uint256 earnedAmount = bribe.earned(lpAsset, votingTokens[i]);
+      uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
       emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
       emit log_named_uint("Earned Amount", earnedAmount);
     }
