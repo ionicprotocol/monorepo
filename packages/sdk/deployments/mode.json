@@ -486,31 +486,31 @@
       "address": "0xD2EA2dA2C6b0251B1b0436801c2dAc6AfCa29B14"
     },
     "IonicFlywheelBorrow_veION_Borrow": {
-      "address": "0x72eFD2A5562AFE03009632E2900e5B83214365ad"
+      "address": "0x2912D204D5873A8b7b4b62CFC1DF1dcdC3eAd03a"
     },
     "IonicFlywheelBorrow_veION_Borrow_Implementation": {
-      "address": "0xf4774A4cB5764F2b73a594661627215A01E7e743"
+      "address": "0xc9D2e1948766134f218fAC5bF0d96f1FFdA1e792"
     },
     "IonicFlywheelBorrow_veION_Borrow_Proxy": {
-      "address": "0x72eFD2A5562AFE03009632E2900e5B83214365ad"
+      "address": "0x2912D204D5873A8b7b4b62CFC1DF1dcdC3eAd03a"
     },
     "IonicFlywheelDynamicRewards_veION": {
-      "address": "0x2212D9E3aC93CAD9DB6096b971b362ff86BcDCbD"
+      "address": "0xdd929C45771530F5b066A7265C86C12b88Cd4323"
     },
     "IonicFlywheelDynamicRewards_veION_Borrow": {
-      "address": "0x02dCd3F36d1eeE2005b75F36CBAAe08fe3166667"
+      "address": "0x770C2B62a6E3fC6aF0a628D3498b7F52E7f2AAdE"
     },
     "IonicFlywheelLensRouter": {
       "address": "0x01aB485A0fae0667be36AB876c95ADc1A2a5e449"
     },
     "IonicFlywheel_veION": {
-      "address": "0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A"
+      "address": "0xE2805eB783AfF1D9140D27D660E26030F92bE029"
     },
     "IonicFlywheel_veION_Implementation": {
-      "address": "0x9475EFFEA72b63658a1c484dF11BE23fF4880b90"
+      "address": "0xF2b582Bfdf1D2D25d3A231031D3D8128900233D1"
     },
     "IonicFlywheel_veION_Proxy": {
-      "address": "0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A"
+      "address": "0xE2805eB783AfF1D9140D27D660E26030F92bE029"
     },
     "IonicLiquidator": {
       "address": "0x5782c512c07F217A8DE9611E7CE8c98f13193a46"
@@ -1035,7 +1035,7 @@
       "address": "0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D"
     },
     "Voter_Implementation": {
-      "address": "0x8b4352493077D2B04b033DE83516Dc2d53d09931"
+      "address": "0x01A6cB8a550bBf8DB0CAd86BAB0B9201E90010aE"
     },
     "Voter_Proxy": {
       "address": "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429"

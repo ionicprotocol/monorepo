@@ -618,31 +618,31 @@
       "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
     },
     "IonicFlywheelBorrow_veION_Borrow": {
-      "address": "0x90ffC9786f4757C262A9B529c4a4F6708c94339e"
+      "address": "0x8f88336f4A4fe791BA657541E1eA4e8F8BB841d2"
     },
     "IonicFlywheelBorrow_veION_Borrow_Implementation": {
-      "address": "0x25543b0c7E765FdDf6b933f98b3B84a3dacfFC95"
+      "address": "0x3a7a9c707527c01Cd9c8984d6378FAb4a2E8c291"
     },
     "IonicFlywheelBorrow_veION_Borrow_Proxy": {
-      "address": "0x90ffC9786f4757C262A9B529c4a4F6708c94339e"
+      "address": "0x8f88336f4A4fe791BA657541E1eA4e8F8BB841d2"
     },
     "IonicFlywheelDynamicRewards_veION": {
-      "address": "0x7Faf51cfF9ed26AD5BD071685F684B0D1338d163"
+      "address": "0xf871E19bf6B7E905B3994E1dF68521BafF636440"
     },
     "IonicFlywheelDynamicRewards_veION_Borrow": {
-      "address": "0x268C2867cdBaa91f89Ff1bf29135A3C6EabC89cf"
+      "address": "0xcA2d96C96aF1D15C7D640d4Cb093293C18274259"
     },
     "IonicFlywheelLensRouter": {
       "address": "0xB1402333b12fc066C3D7F55d37944D5e281a3e8B"
     },
     "IonicFlywheel_veION": {
-      "address": "0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f"
+      "address": "0x1eE8E310e992E7932A2a0964b29eC6d820f517A2"
     },
     "IonicFlywheel_veION_Implementation": {
-      "address": "0xa6b6Ce5ba7169c81eBDE7B1D72aBD3f7a0703FDa"
+      "address": "0x07b9cdfb399788B7B69De24152223BB1965f0D01"
     },
     "IonicFlywheel_veION_Proxy": {
-      "address": "0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f"
+      "address": "0x1eE8E310e992E7932A2a0964b29eC6d820f517A2"
     },
     "IonicLiquidator": {
       "address": "0x2BAF3A2B667A5027a83101d218A9e8B73577F117"
@@ -1290,7 +1290,7 @@
       "address": "0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B"
     },
     "Voter_Implementation": {
-      "address": "0x61FD08eba8Cd59F95437b3232aB8DB55feA16Cda"
+      "address": "0x5B15EB63639E9632A2ABf8E145470292d6242831"
     },
     "Voter_Proxy": {
       "address": "0x669A6F5421dA53696fa06f1043CF127d380f6EB9"

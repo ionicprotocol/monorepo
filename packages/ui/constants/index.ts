@@ -118,12 +118,12 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: ['0xD964eC7f4e962860bEd6d1BCb7759C27a9AEB22A'],
-    borrow: ['0x72eFD2A5562AFE03009632E2900e5B83214365ad']
+    supply: ['0xE2805eB783AfF1D9140D27D660E26030F92bE029'],
+    borrow: ['0x2912D204D5873A8b7b4b62CFC1DF1dcdC3eAd03a']
   },
   [base.id]: {
-    supply: ['0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f'],
-    borrow: ['0x90ffC9786f4757C262A9B529c4a4F6708c94339e']
+    supply: ['0x1eE8E310e992E7932A2a0964b29eC6d820f517A2'],
+    borrow: ['0x8f88336f4A4fe791BA657541E1eA4e8F8BB841d2']
   },
   [optimism.id]: {
     supply: [
