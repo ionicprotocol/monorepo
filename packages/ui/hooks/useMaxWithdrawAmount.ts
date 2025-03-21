@@ -13,9 +13,20 @@ export function useMaxWithdrawAmount(
   const sdk = useSdk(chainId);
 
   return useQuery({
-    queryKey: ['useMaxWithdrawAmount', asset.cToken, sdk?.chainId, address],
+    queryKey: [
+      'useMaxWithdrawAmount',
+      asset.cToken,
+      sdk?.chainId,
+      address,
+      asset.supplyBalance
+    ],
 
     queryFn: async () => {
+      // Special case for wUSDM - bypass restrictions
+      if (asset.underlyingSymbol === 'wUSDM') {
+        return asset.supplyBalance || 0n;
+      }
+
       if (sdk && address) {
         const maxRedeem = await sdk.contracts.PoolLensSecondary.simulate
           .getMaxRedeem([address, asset.cToken], { account: address })
@@ -26,7 +37,8 @@ export function useMaxWithdrawAmount(
               e
             );
 
-            return null;
+            // Fall back to asset supply balance for failed calls
+            return { result: asset.supplyBalance || 0n };
           })
           .then((result) => result?.result);
 
