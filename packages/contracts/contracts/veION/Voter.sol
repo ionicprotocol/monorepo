@@ -73,6 +73,8 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   ///@notice Mapping from Market to Market Side to Reward Accumulator
   mapping(address => mapping(MarketSide => address)) public marketToRewardAccumulators;
 
+  bool distributionTimelockAlive;
+
   // ╔═══════════════════════════════════════════════════════════════════════════╗
   // ║                               Modifiers                                   ║
   // ╚═══════════════════════════════════════════════════════════════════════════╝
@@ -214,7 +216,7 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
 
   /// @inheritdoc IVoter
   function distributeRewards() external onlyGovernance {
-    if (block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
+    if (distributionTimelockAlive && block.timestamp <= IonicTimeLibrary.epochVoteEnd(block.timestamp)) revert NotDistributeWindow();
     uint256 _reward = IERC20(rewardToken).balanceOf(address(this));
     uint256 _totalLPValueETH = _calculateTotalLPValue();
     for (uint256 i = 0; i < markets.length; i++) {
@@ -510,6 +512,12 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     if (_rewardAccumulator == address(0)) revert RewardAccumulatorDoesNotExist(_market);
     isAlive[_rewardAccumulator] = _isAlive;
     emit RewardAccumulatorAliveToggled(_market, _marketSide, _isAlive);
+  }
+
+  /// @inheritdoc IVoter
+  function toggleDistributionTimelockAlive(bool _isAlive) external onlyGovernance {
+    distributionTimelockAlive = _isAlive;
+    emit DistributionTimelockAliveToggled(_isAlive);
   }
 
   // ╔═══════════════════════════════════════════════════════════════════════════╗

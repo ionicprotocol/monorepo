@@ -47,3 +47,14 @@ task("mode:add-bribes", async (_, { viem, deployments }) => {
     console.log(`Added ${bribe.amount} ${bribe.side} bribe to ${bribe.market} - ${tx2}`);
   }
 });
+
+task("mode:distribute-rewards", async (_, { viem, deployments }) => {
+  const publicClient = await viem.getPublicClient();
+  const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+  const tx = await voter.write.distributeRewards();
+  await publicClient.waitForTransactionReceipt({ hash: tx });
+  console.log(`Distributed rewards - ${tx}`);
+  const tx2 = await voter.write.toggleDistributionTimelockAlive([true]);
+  await publicClient.waitForTransactionReceipt({ hash: tx2 });
+  console.log(`Toggled distribution timelock alive - ${tx2}`);
+});
