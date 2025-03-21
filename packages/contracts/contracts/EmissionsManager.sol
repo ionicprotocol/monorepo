@@ -100,12 +100,14 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     for (uint256 i = 0; i < poolsLength; i++) {
       IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
       BasePriceOracle oracle = comptroller.oracle();
-      ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
+      ICErc20[] memory cTokens = comptroller.getAllMarkets();
       uint256 cTokensLength = cTokens.length;
       for (uint256 j = 0; j < cTokensLength; j++) {
         uint256 supplyBalance = cTokens[j].balanceOfUnderlying(_user);
-        uint256 collateralInETH = (supplyBalance * oracle.getUnderlyingPrice(cTokens[j])) / 1e18;
-        totalColateralInETH += collateralInETH;
+        if (supplyBalance > 0) {
+          uint256 collateralInETH = (supplyBalance * oracle.getUnderlyingPrice(cTokens[j])) / 1e18;
+          totalColateralInETH += collateralInETH;
+        }
       }
     }
     return totalColateralInETH;
@@ -140,7 +142,7 @@ contract EmissionsManager is IEmissionsManager, Ownable2StepUpgradeable {
     uint256 poolsLength = pools.length;
     for (uint256 i = 0; i < poolsLength; i++) {
       IonicComptroller comptroller = IonicComptroller(pools[i].comptroller);
-      ICErc20[] memory cTokens = comptroller.getAssetsIn(_user);
+      ICErc20[] memory cTokens = comptroller.getAllMarkets();
       uint256 cTokensLength = cTokens.length;
       for (uint256 j = 0; j < cTokensLength; j++) {
         address[] memory flywheelAddresses = comptroller.getAccruingFlywheels();
