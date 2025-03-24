@@ -11,7 +11,8 @@ export enum SupportedChains {
   swell = 1923,
   soneium = 1868,
   ozeantest = 7849306,
-  camptest = 325000
+  camptest = 325000,
+  metalL2 = 1750
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
