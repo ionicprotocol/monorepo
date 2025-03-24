@@ -213,7 +213,8 @@ const config: HardhatUserConfig = {
       swellchain: "empty",
       camptest: "empty",
       ozeantest: "empty",
-      soneium: "empty"
+      soneium: "empty",
+      metalL2: "empty"
     },
     customChains: [
       {
