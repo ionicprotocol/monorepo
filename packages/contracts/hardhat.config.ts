@@ -21,7 +21,7 @@ const accounts = [
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS).setAction(async (_, __, runSuper) => {
   const paths = await runSuper();
-  return paths.filter((p) => !p.endsWith(".t.sol"));
+  return paths.filter((p: string) => !p.endsWith(".t.sol"));
 });
 
 const config: HardhatUserConfig = {
@@ -190,6 +190,16 @@ const config: HardhatUserConfig = {
           apiKey: "empty"
         }
       }
+    },
+    metalL2: {
+      url: "https://rpc.metall2.com",
+      accounts,
+      verify: {
+        etherscan: {
+          apiUrl: "https://explorer.metall2.com/api",
+          apiKey: "empty"
+        }
+      }
     }
   },
   etherscan: {
@@ -203,7 +213,8 @@ const config: HardhatUserConfig = {
       swellchain: "empty",
       camptest: "empty",
       ozeantest: "empty",
-      soneium: "empty"
+      soneium: "empty",
+      metalL2: "empty"
     },
     customChains: [
       {
@@ -268,6 +279,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://soneium.blockscout.com/api",
           browserURL: "https://soneium.blockscout.com/"
+        }
+      },
+      {
+        network: "metalL2",
+        chainId: 1750,
+        urls: {
+          apiURL: "https://explorer.metall2.com/api",
+          browserURL: "https://explorer.metall2.com"
         }
       }
     ]

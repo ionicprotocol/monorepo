@@ -3,6 +3,7 @@ import {
   bob,
   fraxtal,
   lisk,
+  metalL2,
   mode,
   optimism,
   superseed,
@@ -458,6 +459,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main Pool',
         assets: ['WETH', 'USDC', 'ASTR']
+      }
+    ]
+  },
+  [metalL2.id]: {
+    name: 'MetalL2',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/METALL2.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
       }
     ]
   }

@@ -11,7 +11,8 @@ import {
   swellchain,
   camptest,
   ozeantest,
-  soneium
+  soneium,
+  metalL2
 } from "@ionicprotocol/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -60,7 +61,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.swell]: swellchain.assets,
   [SupportedChains.soneium]: soneium.assets,
   [SupportedChains.camptest]: camptest.assets,
-  [SupportedChains.ozeantest]: ozeantest.assets
+  [SupportedChains.ozeantest]: ozeantest.assets,
+  [SupportedChains.metalL2]: metalL2.assets
 };
 
 export interface IIonicPools {

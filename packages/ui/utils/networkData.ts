@@ -6,7 +6,8 @@ import {
   fraxtal as vFraxtal,
   lisk as vLisk,
   superseed as vSuperseed,
-  worldchain as vWorldchain
+  worldchain as vWorldchain,
+  metalL2 as vMetalL2
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -32,7 +33,8 @@ import {
   ozeantest,
   vOzeantest,
   soneium,
-  vSoneium
+  vSoneium,
+  metalL2
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -137,6 +139,10 @@ export function getEnabledChains() {
     enabledChains.push(vSoneium);
   }
 
+  if (config.isMetalL2Enabled) {
+    enabledChains.push(vMetalL2);
+  }
+
   return enabledChains;
 }
 
@@ -153,7 +159,8 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.swell]: swellchain.assets,
   [SupportedChains.camptest]: camptest.assets,
   [SupportedChains.ozeantest]: ozeantest.assets,
-  [SupportedChains.soneium]: soneium.assets
+  [SupportedChains.soneium]: soneium.assets,
+  [SupportedChains.metalL2]: metalL2.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -169,5 +176,6 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.swell]: swellchain.deployedPlugins,
   [SupportedChains.soneium]: soneium.deployedPlugins,
   [SupportedChains.camptest]: camptest.deployedPlugins,
-  [SupportedChains.ozeantest]: ozeantest.deployedPlugins
+  [SupportedChains.ozeantest]: ozeantest.deployedPlugins,
+  [SupportedChains.metalL2]: metalL2.deployedPlugins
 };
