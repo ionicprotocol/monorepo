@@ -17,6 +17,7 @@ type CONFIG = {
   isCampTestEnabled: boolean;
   isSoneiumEnabled: boolean;
   isTestnetEnabled: boolean;
+  isMetalL2Enabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -50,6 +51,7 @@ const config: CONFIG = {
   isOzeantestEnabled: true,
   isCampTestEnabled: true,
   isSoneiumEnabled: true,
+  isMetalL2Enabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
