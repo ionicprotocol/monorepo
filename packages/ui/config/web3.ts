@@ -9,6 +9,7 @@ import {
   lisk,
   superseed,
   worldchain,
+  metalL2,
   type AppKitNetwork
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
@@ -114,15 +115,16 @@ export const networks: AppKitNetwork[] = [
   mode,
   optimism,
   bob,
-  fraxtal,
+  metalL2,
   lisk,
+  ink,
+  soneium,
   superseed,
   worldchain,
-  ink,
+  fraxtal,
   swellchain,
   camptest,
-  ozeantest,
-  soneium
+  ozeantest
 ];
 
 export const metadata = {
