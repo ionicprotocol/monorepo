@@ -44,7 +44,7 @@ export const VotesProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateVote = useCallback(
     (marketAddress: string, side: MarketSide, value: string) => {
       setVotes((prev) => {
-        const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+        const key = `${marketAddress.toLowerCase()}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
 
         if (value === '' || isNaN(parseFloat(value))) {
           const { [key]: _, ...rest } = prev;
