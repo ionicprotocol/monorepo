@@ -21,6 +21,7 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     address market;
     IVoter.MarketSide side;
     uint256 votes;
+    uint256 votesValueInEth;
   }
 
   struct IncentiveInfo {
@@ -147,6 +148,10 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
       _marketVoteInfo[i].market = _market.marketAddress;
       _marketVoteInfo[i].side = _market.side;
       _marketVoteInfo[i].votes = IVoterView(voter).weights(_market.marketAddress, _market.side, lp);
+
+      _marketVoteInfo[i].votesValueInEth =
+        (_marketVoteInfo[i].votes * 10 ** (18 - ERC20(lp).decimals()) * mpo.price(lp)) /
+        PRECISION;
     }
   }
 

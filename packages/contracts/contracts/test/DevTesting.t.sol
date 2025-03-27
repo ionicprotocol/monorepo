@@ -191,19 +191,20 @@ contract DevTesting is BaseTest {
   function testVoterLens2() public debuggingOnly fork(BASE_MAINNET) {
     VoterLens lens = new VoterLens();
     lens.initialize(
-      0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
-      PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
+      0x669A6F5421dA53696fa06f1043CF127d380f6EB9,
+      PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f)
     );
 
     lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
 
-    address lp = 0x5BDB1Fb5d0F841f4eb88D537bED0DD674fA88D7c; // Example LP address
+    address lp = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c; // Example LP address
     VoterLens.MarketVoteInfo[] memory marketVotes = lens.getAllMarketVotes(lp);
     emit log_named_uint("MarketVoteInfo array length", marketVotes.length);
     for (uint256 i = 0; i < marketVotes.length; i++) {
       emit log_named_address("Market", marketVotes[i].market);
       emit log_named_uint("Votes", marketVotes[i].votes);
       emit log_named_uint("Side", uint256(marketVotes[i].side));
+      emit log_named_uint("Votes Value In Eth", uint256(marketVotes[i].votesValueInEth));
       emit log("-----------------------------------------------------------");
     }
   }

@@ -283,18 +283,18 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
 
-  const mpo = await viem.getContractAt(
-    "MasterPriceOracle",
-    (await deployments.get("MasterPriceOracle")).address as Address
-  );
+  // const mpo = await viem.getContractAt(
+  //   "MasterPriceOracle",
+  //   (await deployments.get("MasterPriceOracle")).address as Address
+  // );
 
-  try {
-    const txHash = await voterLens.write.setMasterPriceOracle([mpo.address], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set mpo to ${mpo.address}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
+  // try {
+  //   const txHash = await voterLens.write.setMasterPriceOracle([mpo.address], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set mpo to ${mpo.address}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
 };
 
 func.tags = ["prod", "veion", "voter"];
