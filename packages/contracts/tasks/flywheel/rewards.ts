@@ -1,6 +1,8 @@
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address, formatEther, parseEther } from "viem";
+import { Address, formatEther, parseEther, formatUnits } from "viem";
+import { setTimeout } from 'timers/promises';
+
 
 export const getCycleInfoForAllMarkets = async (
   viem: HardhatRuntimeEnvironment["viem"],
@@ -168,3 +170,57 @@ task("flywheel:get_current_rewards_info", "get current flywheel rewards info").s
   await getCurrentRewardsInfo(viem, deployments);
 });
 
+
+export const depositInAllPools= async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"]
+) => {
+  const [caller] = await viem.getWalletClients(); // Gets the first signer
+  const callerAddress = caller.account.address;
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const pools = await poolDirectory.read.getAllPools();
+
+  for (const pool of pools) {
+    const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
+    if(pool.name !== 'Base Market') continue;
+
+    const rewardsDistributors = await comptroller.read.getRewardsDistributors();
+    const cTokens = await comptroller.read.getAllMarkets();
+    for (const cToken of cTokens) {
+      const cTokenContract = await viem.getContractAt("CErc20RewardsDelegate", cToken);
+      const underlyingToken = await cTokenContract.read.underlying();
+      const symbol = await cTokenContract.read.symbol();
+      const decimals = await cTokenContract.read.decimals();
+      const cTokenContractERC20 = await viem.getContractAt("solmate/tokens/ERC20.sol:ERC20", cToken);
+      const balanceDeposited =  Number(await cTokenContractERC20.read.balanceOf([callerAddress])) / 10 ** decimals;
+      //console.log("Market", symbol, underlyingToken);
+      const token = await viem.getContractAt("solmate/tokens/ERC20.sol:ERC20", underlyingToken);
+      const balance = Number(await token.read.balanceOf([callerAddress])) / 10 ** decimals;
+      const tokanSymbol = await token.read.symbol();
+      if (balanceDeposited > 0) {
+        console.log(`${symbol} already deposited ${balanceDeposited} ${tokanSymbol}`)
+        continue;
+      }
+
+      if (balance == 0 ) {
+        console.log(`Buy ${tokanSymbol}..`)
+        continue;
+      }
+      const allowance = await token.read.allowance([callerAddress, cToken])
+      if (allowance < balance ) {
+        console.log(`Increasing allowance ${tokanSymbol}..`)
+        await token.write.approve([cToken, balance]);
+        await setTimeout(3000);
+      }
+      console.log(`Depositing ${balance} ${tokanSymbol} into ${symbol}`)
+      await cTokenContract.write.mint([balance]);
+      }
+    }
+};
+
+task("flywheel:deposit_all_tokens", "get current flywheel rewards info").setAction(async (_, { viem, deployments }) => {
+  await depositInAllPools(viem, deployments);
+});
