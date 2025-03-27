@@ -31,6 +31,13 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     uint256[] rewardsBorrowETHValues;
   }
 
+  struct MarketVoteInfo {
+    address market;
+    IVoter.MarketSide side;
+    uint256 votes;
+    uint256 votesValueInEth;
+  }
+
   address voter;
   PoolDirectory poolDirectory;
   IMasterPriceOracle mpo;
@@ -211,6 +218,21 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     }
   }
 
+  function getAllMarketVotes(address lp) external view returns (MarketVoteInfo[] memory _marketVoteInfo) {
+    uint256 marketsLength = IVoter(voter).marketsLength();
+    _marketVoteInfo = new MarketVoteInfo[](marketsLength);
+    for (uint256 i; i < marketsLength; i++) {
+      IVoter.Market memory _market = IVoterView(voter).markets(i);
+      _marketVoteInfo[i].market = _market.marketAddress;
+      _marketVoteInfo[i].side = _market.side;
+      _marketVoteInfo[i].votes = IVoterView(voter).weights(_market.marketAddress, _market.side, lp);
+
+      _marketVoteInfo[i].votesValueInEth =
+        (_marketVoteInfo[i].votes * 10 ** (18 - ERC20(lp).decimals()) * mpo.price(lp)) /
+        PRECISION;
+    }
+  }
+
   function setMasterPriceOracle(address _masterPriceOracle) external onlyOwner {
     mpo = IMasterPriceOracle(_masterPriceOracle);
   }
@@ -226,6 +248,8 @@ interface IVoterView {
   function marketVote(uint256 tokenId, address lpAsset) external view returns (address[] memory);
   function marketVoteSide(uint256 tokenId, address lpAsset) external view returns (IVoter.MarketSide[] memory);
   function getVoteDetails(uint256 _tokenId, address _lpAsset) external view returns (IVoter.VoteDetails memory);
+  function markets(uint256 index) external view returns (IVoter.Market memory);
+  function weights(address market, IVoter.MarketSide marketSide, address lp) external view returns (uint256);
 }
 
 interface IBribeRewardsView {
