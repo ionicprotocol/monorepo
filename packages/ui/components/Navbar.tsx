@@ -157,7 +157,7 @@ export default function Navbar() {
           />
           <NavLink
             href="/incentives"
-            label="Protocols"
+            label="Incentivize"
             isActive={pathname === '/incentives'}
           />
 
