@@ -169,7 +169,7 @@ export const useMarketRows = (
       const newRows: VoteMarketRow[] = [];
 
       if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.supply) {
-        const key = `${asset.cToken}-supply`;
+        const key = `${(asset.cToken as string).toLowerCase()}-supply`;
         const totalVotes = voteData[key]?.totalVotes ?? {
           percentage: 0,
           limit: 0
@@ -216,7 +216,7 @@ export const useMarketRows = (
       }
 
       if (!EXCLUDED_MARKETS[+chain]?.[asset.underlyingSymbol]?.borrow) {
-        const key = `${asset.cToken}-borrow`;
+        const key = `${(asset.cToken as string).toLowerCase()}-borrow`;
         const totalVotes = voteData[key]?.totalVotes ?? {
           percentage: 0,
           limit: 0

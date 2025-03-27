@@ -110,7 +110,7 @@ function VotesManagement({
       if (assetTypeFilter === 'borrow' && row.side !== MarketSide.Borrow) {
         return false;
       }
-      const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+      const key = `${row.marketAddress.toLowerCase()}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
       if (showPendingOnly && votes[key]) {
         return false;
       }
