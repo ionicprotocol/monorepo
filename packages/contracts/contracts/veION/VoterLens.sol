@@ -17,6 +17,12 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     address bribeBorrow;
   }
 
+  struct MarketVoteInfo {
+    address market;
+    IVoter.MarketSide side;
+    uint256 votes;
+  }
+
   struct IncentiveInfo {
     address market;
     address bribeSupply;
@@ -133,6 +139,17 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     }
   }
 
+  function getAllMarketVotes(address lp) external view returns (MarketVoteInfo[] memory _marketVoteInfo) {
+    uint256 marketsLength = IVoter(voter).marketsLength();
+    _marketVoteInfo = new MarketVoteInfo[](marketsLength);
+    for (uint256 i; i < marketsLength; i++) {
+      IVoter.Market memory _market = IVoterView(voter).markets(i);
+      _marketVoteInfo[i].market = _market.marketAddress;
+      _marketVoteInfo[i].side = _market.side;
+      _marketVoteInfo[i].votes = IVoterView(voter).weights(_market.marketAddress, _market.side, lp);
+    }
+  }
+
   function setMasterPriceOracle(address _masterPriceOracle) external onlyOwner {
     mpo = IMasterPriceOracle(_masterPriceOracle);
   }
@@ -141,6 +158,8 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
 interface IVoterView {
   function rewardAccumulatorToBribe(address rewardAccumulator) external view returns (address);
   function marketToRewardAccumulators(address market, IVoter.MarketSide marketSide) external view returns (address);
+  function markets(uint256 index) external view returns (IVoter.Market memory);
+  function weights(address market, IVoter.MarketSide marketSide, address lp) external view returns (uint256);
 }
 
 interface IBribeRewardsView {
