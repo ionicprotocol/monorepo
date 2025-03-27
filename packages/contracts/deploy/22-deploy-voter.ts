@@ -296,13 +296,13 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   //   console.error("Error setting max voting number:", error);
   // }
 
-  try {
-    const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
-    await publicClient.waitForTransactionReceipt({ hash: txHash });
-    console.log(`Successfully set ve to ${veION.address}`);
-  } catch (error) {
-    console.error("Error setting max voting number:", error);
-  }
+  // try {
+  //   const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
+  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
+  //   console.log(`Successfully set ve to ${veION.address}`);
+  // } catch (error) {
+  //   console.error("Error setting max voting number:", error);
+  // }
 };
 
 func.tags = ["prod", "veion", "voter"];

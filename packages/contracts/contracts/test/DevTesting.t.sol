@@ -282,6 +282,26 @@ contract DevTesting is BaseTest {
     voter.claimBribes(_bribes, _tokens, 38);
   }
 
+  function testUserBribeRewards() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+    address lpAsset = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    VoterLens.UserBribes[] memory userBribes = voterLens.getUserBribeRewards(user);
+
+    emit log("User Bribe Rewards:");
+    for (uint256 i = 0; i < userBribes.length; i++) {
+      emit log_named_uint("Token ID", userBribes[i].tokenId);
+      emit log_named_address("Market", userBribes[i].market);
+      emit log_named_address("Bribe", userBribes[i].bribe);
+      emit log_named_address("Reward", userBribes[i].reward);
+      emit log_named_uint("Earned", userBribes[i].earned);
+      emit log("-----------------------------------------------------------");
+    }
+  }
+
   function testUserEmissions() public debuggingOnly fork(BASE_MAINNET) {
     address user = 0x5321d7296fe0e7Cae533a090DcDA6E00F0499df0;
     IClaimRewards lens = IClaimRewards(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
