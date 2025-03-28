@@ -152,44 +152,56 @@ const VoteConfirmationDialog: React.FC<VoteConfirmationDialogProps> = ({
 
         <ScrollArea className="flex-1 min-h-0 rounded-md border border-white/10">
           <div className="p-4">
-            <div className="space-y-4">
-              {voteEntries.map(([key, vote]) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={`/img/symbols/32/color/${vote.asset.toLowerCase()}.png`}
-                        alt={vote.asset}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                      <span className="text-sm font-medium text-white/90">
-                        {vote.asset}
-                      </span>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-white/60">
-                        {vote.side === MarketSide.Supply ? 'Supply' : 'Borrow'}
+            {voteEntries.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-32 text-white/60">
+                <Info className="h-6 w-6 mb-2" />
+                <p>
+                  No votes found. Please ensure you have allocated votes to at
+                  least one market.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {voteEntries.map(([key, vote]) => (
+                  <div
+                    key={key}
+                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={`/img/symbols/32/color/${vote.asset.toLowerCase()}.png`}
+                          alt={vote.asset}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                        <span className="text-sm font-medium text-white/90">
+                          {vote.asset}
+                        </span>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-white/10 text-white/60">
+                          {vote.side === MarketSide.Supply
+                            ? 'Supply'
+                            : 'Borrow'}
+                        </span>
+                      </div>
+                      <span className="text-xs text-white/60">
+                        {vote.marketAddress.slice(0, 6)}...
+                        {vote.marketAddress.slice(-4)}
                       </span>
                     </div>
-                    <span className="text-xs text-white/60">
-                      {vote.marketAddress.slice(0, 6)}...
-                      {vote.marketAddress.slice(-4)}
-                    </span>
-                  </div>
 
-                  <div className="flex items-center gap-6">
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-sm font-medium text-white/90">
-                        {vote.voteValue}%
-                      </span>
+                    <div className="flex items-center gap-6">
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-sm font-medium text-white/90">
+                          {vote.voteValue}%
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </ScrollArea>
 

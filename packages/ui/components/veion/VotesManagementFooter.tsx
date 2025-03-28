@@ -50,7 +50,7 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
   const marketAssetMap = Object.values(allMarketRows).reduce(
     (acc, pool) => {
       pool.data.forEach((row) => {
-        const key = `${row.marketAddress}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
+        const key = `${row.marketAddress.toLowerCase()}-${row.side === MarketSide.Supply ? 'supply' : 'borrow'}`;
         acc[key] = {
           asset: row.asset,
           marketAddress: row.marketAddress as `0x${string}`,
@@ -73,15 +73,19 @@ function VotesManagementFooter({ tokenId }: VotesManagementFooterProps) {
 
   const voteData = Object.entries(votes).reduce(
     (acc, [key, voteValue]) => {
-      const marketInfo = marketAssetMap[key];
+      const normalizedKey = key.toLowerCase();
+      const marketInfo = marketAssetMap[normalizedKey];
+
       if (marketInfo) {
-        acc[key] = {
+        acc[normalizedKey] = {
           marketAddress: marketInfo.marketAddress,
           side: marketInfo.side,
           voteValue: voteValue,
           asset: marketInfo.asset,
           poolName: marketInfo.poolName
         };
+      } else {
+        console.warn(`Market info not found for key: ${normalizedKey}`);
       }
       return acc;
     },
