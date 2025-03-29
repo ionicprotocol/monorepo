@@ -176,7 +176,8 @@ export function useVoteData({
             args: [BigInt(tokenId), lpTokenAddress] as const
           };
 
-          const voteDetailsResult = await publicClient.readContract(voteDetailsCall);
+          const voteDetailsResult =
+            await publicClient.readContract(voteDetailsCall);
 
           if (voteDetailsResult) {
             const voteDetails = voteDetailsResult as unknown as VoteDetails;
