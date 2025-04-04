@@ -40,7 +40,7 @@ export const deployConfig: ChainDeployConfig = {
     maxEarlyWithdrawFee: parseEther("0.8"),
     maxVotingNum: 20
   },
-  ION: "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5"
+  ION: "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013"
 };
 
 export const deploy = async ({
