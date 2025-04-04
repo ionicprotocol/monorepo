@@ -201,6 +201,7 @@ interface IVoter {
   event MaxVotingNumSet(uint256 indexed maxVotingNum);
   event RewardAccumulatorAliveToggled(address indexed market, MarketSide indexed marketSide, bool isAlive);
   event Initialized(address[] tokens, address mpo, address rewardToken, address ve, address governor);
+  event DistributionTimelockAliveToggled(bool isAlive);
 
   /**
    * @notice Get the weight of a market.
@@ -385,6 +386,12 @@ interface IVoter {
    * @param _isAlive Boolean indicating if the reward accumulator is alive.
    */
   function toggleRewardAccumulatorAlive(address _market, MarketSide _marketSide, bool _isAlive) external;
+
+  /**
+   * @notice Toggle the alive status of a timelock on distributing rewards.
+   * @param _isAlive Boolean indicating if the timelock is alive.
+   */
+  function toggleDistributionTimelockAlive(bool _isAlive) external;
 
   /**
    * @notice Get the start of the epoch for a given timestamp.

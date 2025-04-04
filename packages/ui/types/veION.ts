@@ -29,6 +29,7 @@ export interface EmissionsData {
     amount: number;
     usdValue: string;
   };
+  isUserBlacklisted?: boolean;
   isLoading: boolean;
 }
 
@@ -237,7 +238,8 @@ export type VoteMarketRow = {
   marketAddress: `0x${string}`;
   currentAmount: string;
   incentives: {
-    balanceUSD: number;
+    incentiveAmount: number;
+    incentiveAmountUSD: number;
     tokens: {
       tokenSymbol: string;
       tokenAmount: number;

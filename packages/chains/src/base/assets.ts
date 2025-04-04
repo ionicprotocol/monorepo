@@ -8,7 +8,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { parseEther, parseUnits } from "viem";
+import { formatEther, parseEther, parseUnits } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -259,9 +259,9 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(2_500_000)).toString(),
-    initialBorrowCap: parseEther(String(2_000_000)).toString(),
-    initialCf: "0.82",
+    initialSupplyCap: parseEther(String(1_200)).toString(),
+    initialBorrowCap: "1",
+    initialCf: formatEther(1n),
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
   {

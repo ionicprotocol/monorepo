@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 
 import Image from 'next/image';
 
-import { GiftIcon } from 'lucide-react';
+import { GiftIcon, Loader2 } from 'lucide-react';
+import { useSwitchChain, useAccount } from 'wagmi';
 
 import { Button } from '@ui/components/ui/button';
 import { Checkbox } from '@ui/components/ui/checkbox';
@@ -46,6 +47,11 @@ const UniversalClaimDialog = ({
   const { toast } = useToast();
   const [isClaimLoading, setIsClaimLoading] = useState(false);
 
+  // Network switching functionality
+  const { chain } = useAccount();
+  const { switchChain, isPending: isSwitchingNetwork } = useSwitchChain();
+  const isWrongNetwork = chain?.id !== Number(currentChain);
+
   const sections = [
     'Market Emissions',
     'Protocol Bribes',
@@ -58,6 +64,16 @@ const UniversalClaimDialog = ({
   }, [currentChain]);
 
   const handleClaim = async () => {
+    // Check if user is on the correct network
+    if (isWrongNetwork) {
+      toast({
+        title: 'Wrong Network',
+        description: `Please switch to ${chainIdToName[currentChain]} network first.`,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     try {
       setIsClaimLoading(true);
       if (mode === 'selective') {
@@ -80,6 +96,18 @@ const UniversalClaimDialog = ({
       });
     } finally {
       setIsClaimLoading(false);
+    }
+  };
+
+  const handleSwitchNetwork = () => {
+    try {
+      switchChain({ chainId: Number(currentChain) });
+    } catch (error) {
+      toast({
+        title: 'Network Switch Failed',
+        description: 'Please try switching networks manually in your wallet',
+        variant: 'destructive'
+      });
     }
   };
 
@@ -171,7 +199,7 @@ const UniversalClaimDialog = ({
                                 </div>
                               </TableCell>
                               <TableCell className="text-white py-1.5 text-sm">
-                                {reward.amount}
+                                {Number(reward.amount).toFixed(5)}
                               </TableCell>
                               <TableCell className="text-white py-1.5">
                                 <div className="flex items-center gap-1.5">
@@ -227,18 +255,63 @@ const UniversalClaimDialog = ({
             </div>
 
             <div className="p-4 mt-auto bg-black/50 border-t border-white/10 rounded-b-full">
-              <Button
-                className="w-full bg-accent hover:bg-accent/90 text-black rounded-xl h-10 text-base font-medium transition-all duration-200"
-                onClick={handleClaim}
-                disabled={
-                  isClaimLoading ||
-                  (mode === 'selective' && getSelectedCount() === 0)
-                }
-              >
-                {mode === 'selective'
-                  ? `Claim Selected (${getSelectedCount()})`
-                  : 'Claim All Rewards'}
-              </Button>
+              {isWrongNetwork ? (
+                // Show network switch button when on wrong network
+                <Button
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl h-10 text-base font-medium transition-all duration-200"
+                  onClick={handleSwitchNetwork}
+                  disabled={isSwitchingNetwork}
+                >
+                  {isSwitchingNetwork ? (
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>
+                        Switching to {chainIdToName[currentChain]} network...
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mr-2"
+                      >
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                      <span>
+                        Switch to {chainIdToName[currentChain]} Network First
+                      </span>
+                    </div>
+                  )}
+                </Button>
+              ) : (
+                // Original claim button
+                <Button
+                  className="w-full bg-accent hover:bg-accent/90 text-black rounded-xl h-10 text-base font-medium transition-all duration-200"
+                  onClick={handleClaim}
+                  disabled={
+                    isClaimLoading ||
+                    (mode === 'selective' && getSelectedCount() === 0)
+                  }
+                >
+                  {isClaimLoading ? (
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>Processing claim...</span>
+                    </div>
+                  ) : mode === 'selective' ? (
+                    `Claim Selected (${getSelectedCount()})`
+                  ) : (
+                    'Claim All Rewards'
+                  )}
+                </Button>
+              )}
             </div>
           </>
         )}

@@ -221,7 +221,7 @@ function VotesManagement({
     },
     {
       id: 'incentives',
-      accessorFn: (row) => row.incentives.balanceUSD,
+      accessorFn: (row) => row.incentives.incentiveAmount,
       header: (
         <TooltipWrapper content="Incentives allocated for voters">
           <span>INCENTIVES</span>
@@ -230,7 +230,7 @@ function VotesManagement({
       sortingFn: 'numerical',
       cell: ({ row }) => (
         <BalanceBreakdown
-          balanceUSD={row.original.incentives.balanceUSD}
+          balanceUSD={row.original.incentives.incentiveAmountUSD}
           tokens={row.original.incentives.tokens}
         />
       )
@@ -239,12 +239,36 @@ function VotesManagement({
       id: 'veAPR',
       accessorFn: (row) => row.veAPR,
       header: (
-        <TooltipWrapper content="Current voting APR">
+        <TooltipWrapper content="Annual Percentage Yield from voting incentives (bribes)">
           <span>veAPR</span>
         </TooltipWrapper>
       ),
       sortingFn: 'numerical',
-      cell: ({ row }) => <span>{row.original.veAPR.toFixed(2)}</span>
+      cell: ({ row }) => {
+        const veAPR = row.original.veAPR;
+
+        let colorClass = 'text-white/80';
+        if (veAPR === Infinity) colorClass = 'text-green-500 font-bold';
+        else if (veAPR > 100000) colorClass = 'text-green-500 font-bold';
+        else if (veAPR > 10000) colorClass = 'text-green-400';
+        else if (veAPR > 1000) colorClass = 'text-green-300';
+        else if (veAPR > 100) colorClass = 'text-green-200';
+
+        let displayValue = '-';
+        if (veAPR > 0) {
+          if (veAPR === Infinity) {
+            displayValue = '∞%';
+          } else if (veAPR > 500000) {
+            displayValue = '>500,000%';
+          } else if (veAPR > 1000) {
+            displayValue = `${veAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
+          } else {
+            displayValue = `${veAPR.toFixed(2)}%`;
+          }
+        }
+
+        return <span className={colorClass}>{displayValue}</span>;
+      }
     },
     {
       id: 'totalVotes.limit',
@@ -260,7 +284,10 @@ function VotesManagement({
         return (
           <div className="flex flex-col">
             <div className="text-xs font-semibold text-white/80">
-              {totalVotes.limit.toFixed(2)}
+              {totalVotes.limit.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
             <div className="text-xs font-semibold text-white/40">
               {totalVotes.percentage.toFixed(2)}%
@@ -283,7 +310,10 @@ function VotesManagement({
         return (
           <div className="flex flex-col">
             <div className="text-xs font-semibold text-white/80">
-              {myVotes.value.toFixed(2)}
+              {myVotes.value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
             <div className="text-xs font-semibold text-white/40">
               {myVotes.percentage.toFixed(2)}%

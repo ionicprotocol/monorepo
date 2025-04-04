@@ -1,18 +1,22 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { useWriteContract } from 'wagmi';
 
 import { REWARDS_TO_SYMBOL } from '@ui/constants';
+import { VEION_CONTRACTS } from '@ui/constants/veIon';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+import { getAvailableStakingToken } from '@ui/utils/getStakingTokens';
+import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useBribeRewards, type BribeReward } from './useBribeRewards';
 import { useMarketRewards } from './useMarketRewards';
 import { useStakingRewards } from './useStakingRewards';
+import { VOTER_CONTRACT_ADDRESSES } from '../veion/useMarketIncentives';
 
 import type { Address, Hex } from 'viem';
 
-import { bribeRewardsAbi } from '@ionicprotocol/sdk';
+import { veIonFirstExtensionAbi, voterAbi } from '@ionicprotocol/sdk';
 import type { SupportedChains } from '@ionicprotocol/types';
 
 export interface BaseReward {
@@ -47,15 +51,10 @@ export const getNetworkName = (chainId: number): string => {
 };
 
 export const useRewardsAggregator = () => {
-  // No chainIds parameter
   const { getSdk } = useMultiIonic();
-  const {
-    currentChain,
-    locks: { myLocks }
-  } = useVeIONContext();
-  const tokenIds = myLocks?.map((lock) => BigInt(lock.id)) || [];
+  const { currentChain } = useVeIONContext();
   const queryClient = useQueryClient();
-  const { data: walletClient } = useWalletClient({ chainId: currentChain });
+  const { writeContractAsync } = useWriteContract();
 
   const { data: marketRewards, isLoading: isLoadingMarket } = useMarketRewards([
     currentChain
@@ -65,6 +64,7 @@ export const useRewardsAggregator = () => {
     isLoading: isLoadingStaking,
     claimRewards: claimStakingRewards
   } = useStakingRewards(currentChain);
+
   const { bribeRewards, isLoading: isLoadingBribes } = useBribeRewards();
 
   const { data: formattedRewards, isLoading: isProcessing } = useQuery({
@@ -96,30 +96,14 @@ export const useRewardsAggregator = () => {
         });
       }
 
-      // Locked LP Emissions
-      if (stakingRewards) {
-        rewards.push({
-          id: `staking-${stakingRewards.chainId}-${stakingRewards.rewardToken}`,
-          token: 'aero',
-          tokenSymbol: 'AERO',
-          amount: formatUnits(stakingRewards.amount, 18),
-          network: getNetworkName(stakingRewards.chainId),
-          section: 'Locked LP Emissions',
-          chainId: stakingRewards.chainId,
-          rewardToken: stakingRewards.rewardToken
-        });
-      }
-
       // Protocol Bribes
       if (bribeRewards) {
         bribeRewards.forEach((reward: BribeReward) => {
-          const tokenSymbol =
-            REWARDS_TO_SYMBOL[reward.chainId][reward.rewardToken] || 'Unknown';
           rewards.push({
             id: `bribe-${reward.chainId}-${reward.rewardToken}-${reward.bribeAddress}-${reward.tokenId}`,
-            token: tokenSymbol.toLowerCase(),
-            tokenSymbol,
-            amount: formatUnits(reward.amount, 18),
+            token: (reward.tokenSymbol || 'unknown').toLowerCase(),
+            tokenSymbol: reward.tokenSymbol || 'Unknown',
+            amount: reward.formattedAmount || '0', // Use the pre-formatted amount
             network: getNetworkName(reward.chainId),
             section: 'Protocol Bribes',
             chainId: reward.chainId,
@@ -129,14 +113,27 @@ export const useRewardsAggregator = () => {
         });
       }
 
+      // Locked LP Emissions
+      if (stakingRewards) {
+        rewards.push({
+          id: `staking-${stakingRewards.chainId}-${stakingRewards.rewardToken}`,
+          token: currentChain === 8453 ? 'aero' : 'velo',
+          tokenSymbol: currentChain === 8453 ? 'AERO' : 'VELO',
+          amount: formatUnits(stakingRewards.amount, 18),
+          network: getNetworkName(stakingRewards.chainId),
+          section: 'Locked LP Emissions',
+          chainId: stakingRewards.chainId,
+          rewardToken: stakingRewards.rewardToken
+        });
+      }
+
       return rewards;
     },
     enabled: !!marketRewards || !!stakingRewards || !!bribeRewards
   });
 
   const claimRewards = async (selectedIds?: string[]) => {
-    if (!formattedRewards || !walletClient || !tokenIds.length || !currentChain)
-      return;
+    if (!formattedRewards || !currentChain) return;
 
     const rewardsToProcess = selectedIds
       ? formattedRewards.filter((r) => selectedIds.includes(r.id))
@@ -209,24 +206,146 @@ export const useRewardsAggregator = () => {
         await queryClient.invalidateQueries({ queryKey: ['marketRewards'] });
       }
 
-      // Claim staking rewards
+      // Claim staking rewards (Locked LP Emissions - AERO/VELO)
       if (staking.length > 0) {
-        await claimStakingRewards();
+        const veIonFirstExtensionAddress =
+          VEION_CONTRACTS[currentChain as keyof typeof VEION_CONTRACTS];
+        if (veIonFirstExtensionAddress) {
+          const isSwitched = await handleSwitchOriginChain(
+            currentChain,
+            currentChain
+          );
+          if (!isSwitched) return;
+
+          // Use veIonFirstExtension.claimEmissions for Locked LP Emissions (AERO/VELO)
+          // Get the token type for the current chain
+          const tokenType = currentChain === 34443 ? 'mode' : 'eth';
+
+          // Get the LP token address directly using the utility function
+          const lpTokenAddress = getAvailableStakingToken(
+            currentChain,
+            tokenType
+          );
+
+          if (
+            lpTokenAddress &&
+            lpTokenAddress !== '0x0000000000000000000000000000000000000000'
+          ) {
+            // Now we have the LP token address, we can call claimEmissions
+            await writeContractAsync({
+              address: veIonFirstExtensionAddress,
+              abi: veIonFirstExtensionAbi,
+              functionName: 'claimEmissions',
+              args: [lpTokenAddress],
+              chainId: currentChain
+            });
+          } else {
+            // Fallback to the original method
+            console.warn(
+              `Could not get valid LP token address for chain ${currentChain}, falling back to original method`
+            );
+            await claimStakingRewards();
+          }
+        } else {
+          // Fallback to the old method if extension address is not available
+          await claimStakingRewards();
+        }
         await queryClient.invalidateQueries({ queryKey: ['stakingRewards'] });
       }
 
       // Claim bribe rewards
       if (bribes.length > 0) {
-        for (const bribe of bribes) {
-          await walletClient.writeContract({
-            address: bribe.bribeAddress,
-            abi: bribeRewardsAbi,
-            functionName: 'getReward',
-            args: [bribe.tokenId, [bribe.token]]
-            // chainId: currentChain
+        try {
+          // Get the voter contract address for the current chain
+          const voterAddress =
+            VOTER_CONTRACT_ADDRESSES[
+              currentChain as keyof typeof VOTER_CONTRACT_ADDRESSES
+            ];
+
+          if (!voterAddress) {
+            console.error(
+              `No voter contract address found for chain ${currentChain}`
+            );
+            return;
+          }
+
+          // Filter out any bribes with undefined tokens
+          const validBribes = bribes.filter((bribe) => {
+            if (!bribe.token) {
+              console.warn('Skipping bribe reward with undefined token', bribe);
+              return false;
+            }
+            return true;
           });
+
+          if (validBribes.length === 0) {
+            return;
+          }
+
+          const groupedByTokenId: Record<
+            string,
+            { token: Hex; bribeAddress: Address; tokenId: bigint }[]
+          > = {};
+
+          validBribes.forEach((bribe) => {
+            const tokenIdKey = bribe.tokenId.toString();
+            if (!groupedByTokenId[tokenIdKey]) {
+              groupedByTokenId[tokenIdKey] = [];
+            }
+            groupedByTokenId[tokenIdKey].push(bribe);
+          });
+
+          for (const [tokenIdKey, bribesForTokenId] of Object.entries(
+            groupedByTokenId
+          )) {
+            const tokenId = BigInt(tokenIdKey);
+
+            const bribeAddresses: Address[] = [];
+            const tokensByBribe: Record<string, Hex[]> = {};
+
+            bribesForTokenId.forEach((bribe) => {
+              const bribeAddressKey = bribe.bribeAddress.toLowerCase();
+
+              if (!tokensByBribe[bribeAddressKey]) {
+                bribeAddresses.push(bribe.bribeAddress);
+                tokensByBribe[bribeAddressKey] = [];
+              }
+
+              if (!tokensByBribe[bribeAddressKey].includes(bribe.token)) {
+                tokensByBribe[bribeAddressKey].push(bribe.token);
+              }
+            });
+
+            const tokensForBribes: Hex[][] = bribeAddresses.map((address) => {
+              const addressKey = address.toLowerCase();
+              return tokensByBribe[addressKey];
+            });
+
+            const hasEmptyTokens = tokensForBribes.some(
+              (tokens) => tokens.length === 0
+            );
+            if (hasEmptyTokens) {
+              console.warn(
+                'Found empty token arrays, skipping this tokenId',
+                tokenId.toString()
+              );
+              continue;
+            }
+
+            await writeContractAsync({
+              address: voterAddress as Address,
+              abi: voterAbi,
+              functionName: 'claimBribes',
+              args: [bribeAddresses, tokensForBribes, tokenId],
+              chainId: currentChain
+            });
+          }
+
+          await queryClient.invalidateQueries({ queryKey: ['bribeRewards'] });
+        } catch (error) {
+          console.error('Error claiming bribe rewards:', error);
+          throw error;
         }
-        await queryClient.invalidateQueries({ queryKey: ['bribeRewards'] });
       }
 
       await queryClient.invalidateQueries({ queryKey: ['formattedRewards'] });

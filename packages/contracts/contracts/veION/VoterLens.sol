@@ -19,6 +19,13 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     address bribeBorrow;
   }
 
+  struct MarketVoteInfo {
+    address market;
+    IVoter.MarketSide side;
+    uint256 votes;
+    uint256 votesValueInEth;
+  }
+
   struct IncentiveInfo {
     address market;
     address bribeSupply;

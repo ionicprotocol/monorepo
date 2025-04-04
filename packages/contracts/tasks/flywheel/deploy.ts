@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 import { Address, getAddress, zeroAddress } from "viem";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
@@ -110,8 +111,9 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
   .addParam("signer", "Named account to use fo tx", "deployer", types.string)
   .addParam("flywheel", "address of flywheel", undefined, types.string)
   .addParam("pool", "address of comptroller", undefined, types.string)
-  .setAction(async (taskArgs, { viem }) => {
+  .setAction(async (taskArgs, { viem, getNamedAccounts }) => {
     const publicClient = await viem.getPublicClient();
+    const { deployer } = await getNamedAccounts();
     let flywheelAddress, poolAddress;
 
     try {
@@ -127,11 +129,22 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
     }
 
     const comptroller = await viem.getContractAt("IonicComptroller", poolAddress);
+    const admin = await comptroller.read.admin();
     const rewardsDistributors = (await comptroller.read.getRewardsDistributors()) as Address[];
     if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheelAddress.toLowerCase())) {
-      const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
-      await publicClient.waitForTransactionReceipt({ hash: addTx });
-      console.log({ addTx });
+      if (admin.toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: comptroller,
+          functionName: "_addRewardsDistributor",
+          args: [flywheelAddress],
+          description: `Add flywheel ${flywheelAddress} to pool ${poolAddress}`,
+          inputs: [{ internalType: "address", name: "rewardsDistributor", type: "address" }]
+        });
+      } else {
+        const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
+        await publicClient.waitForTransactionReceipt({ hash: addTx });
+        console.log({ addTx });
+      }
     } else {
       console.log(`Flywheel ${flywheelAddress} already added to pool ${poolAddress}`);
     }

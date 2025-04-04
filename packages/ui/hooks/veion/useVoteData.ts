@@ -5,7 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { getiVoterContract } from '@ui/constants/veIon';
 import { MarketSide } from '@ui/types/veION';
 
-import { REWARD_TOKENS } from '../rewards/useBribeRewards';
+import { useRewardTokens } from './useRewardTokens';
 
 interface UseVoteDataParams {
   tokenId?: number;
@@ -34,8 +34,14 @@ export function useVoteData({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Use the reusable hook to fetch reward tokens
+  const {
+    rewardTokens,
+    isLoading: isLoadingTokens,
+    error: tokenError
+  } = useRewardTokens(chain);
+
   const voterContract = getiVoterContract(chain);
-  const rewardTokens = REWARD_TOKENS[chain as keyof typeof REWARD_TOKENS];
 
   const formatValue = (value: bigint): number =>
     Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
@@ -45,10 +51,14 @@ export function useVoteData({
       !voterContract ||
       !publicClient ||
       !marketAddresses.length ||
-      !rewardTokens?.length
+      !rewardTokens?.length ||
+      isLoadingTokens // Don't fetch if tokens are still loading
     ) {
-      setVoteData({});
-      setIsLoading(false);
+      if (!isLoadingTokens) {
+        // Only update state if we're not waiting for tokens to load
+        setVoteData({});
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -173,7 +183,18 @@ export function useVoteData({
     fetchVoteData();
   }, [fetchVoteData]);
 
-  return { voteData, isLoading, error, refresh: fetchVoteData };
+  // Combine loading states
+  const combinedIsLoading = isLoading || isLoadingTokens;
+
+  // Combine errors
+  const combinedError = error || tokenError;
+
+  return {
+    voteData,
+    isLoading: combinedIsLoading,
+    error: combinedError,
+    refresh: fetchVoteData
+  };
 }
 
 function chunkArray<T>(array: T[], size: number): T[][] {

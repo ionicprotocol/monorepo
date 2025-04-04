@@ -2,15 +2,27 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Sparkles, TrendingUp, ExternalLink } from 'lucide-react';
+import {
+  Sparkles,
+  TrendingUp,
+  ExternalLink,
+  AlertTriangle
+} from 'lucide-react';
 
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent
 } from '@ui/components/ui/hover-card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
 import { pools, REWARDS_TO_SYMBOL } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
+import { useEmissionsData } from '@ui/hooks/veion/useEmissionsData';
 import { cn } from '@ui/lib/utils';
 
 import { AssetIcons } from '../../AssetIcons';
@@ -61,6 +73,24 @@ export default function APR(props: APRCellProps) {
     disabled
   } = props;
 
+  // Get emissions data to check if user is getting emissions
+  const emissions = useEmissionsData(dropdownSelectedChain);
+
+  // Determine if user is getting emissions
+  const isGettingEmissions =
+    !emissions.isUserBlacklisted &&
+    emissions.actualRatio !== undefined &&
+    emissions.collateralPercentageNumeric !== undefined &&
+    emissions.actualRatio >= emissions.collateralPercentageNumeric;
+
+  // Show warning if user has emissions data but isn't getting emissions
+  const showEmissionsWarning =
+    !emissions.isLoading &&
+    !isGettingEmissions &&
+    !disabled &&
+    emissions.totalCollateral !== undefined &&
+    emissions.totalCollateral > 0n;
+
   const rewardsSymbols = REWARDS_TO_SYMBOL[dropdownSelectedChain] ?? {};
   const ionReward = rewards.find(
     (reward) => rewardsSymbols[reward.token] === 'ION'
@@ -86,6 +116,22 @@ export default function APR(props: APRCellProps) {
               )}
             >
               + ION APR
+              {showEmissionsWarning && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="bg-black rounded-full p-0.5 ml-1 flex items-center justify-center">
+                        <AlertTriangle className="w-3 h-3 text-amber-500" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        Not receiving emissions. Check your veION ratio.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <Image
                 src="/img/ionic-green-on-black.png"
                 alt="ION"
@@ -151,9 +197,31 @@ export default function APR(props: APRCellProps) {
         className="flex flex-col gap-2 p-3 bg-grayone border border-accent rounded-lg shadow-lg"
         align="center"
       >
-        <div className="text-sm font-medium text-gray-300 text-left">
-          APR Breakdown
+        <div className="flex flex-col gap-1">
+          <div className="text-sm font-medium text-gray-300 text-left">
+            APR Breakdown
+          </div>
+
+          {showEmissionsWarning && (
+            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-md px-3 py-2 border border-amber-500/50">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-medium text-amber-400">
+                  You are not receiving emissions!
+                </span>
+                <a
+                  href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion#voting-and-bribing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          )}
         </div>
+
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
