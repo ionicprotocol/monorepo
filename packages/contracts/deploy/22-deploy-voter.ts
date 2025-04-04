@@ -40,8 +40,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
             methodName: "initialize",
             args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
           }
-        }
-        // owner: multisig
+        },
+        owner: deployer
       }
     });
     if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });

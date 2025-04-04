@@ -67,8 +67,8 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
             methodName: "initialize",
             args: [addressesProvider.address]
           }
-        }
-        // owner: deployer
+        },
+        owner: deployer
       }
     });
     if (veION.transactionHash) await publicClient.waitForTransactionReceipt({ hash: veION.transactionHash as Hash });

@@ -38,13 +38,6 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     uint256[] rewardsBorrowETHValues;
   }
 
-  struct MarketVoteInfo {
-    address market;
-    IVoter.MarketSide side;
-    uint256 votes;
-    uint256 votesValueInEth;
-  }
-
   address voter;
   PoolDirectory poolDirectory;
   IMasterPriceOracle mpo;
