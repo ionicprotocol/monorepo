@@ -49,6 +49,7 @@ import { veIONFirstExtension } from "../veION/veIONFirstExtension.sol";
 import { veIONSecondExtension } from "../veION/veIONSecondExtension.sol";
 import { BribeRewards } from "../veION/BribeRewards.sol";
 import { IonicFlywheelLensRouter } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
+import { IVoter } from "../veION/interfaces/IVoter.sol";
 
 import "forge-std/console.sol";
 
@@ -283,7 +284,7 @@ contract DevTesting is BaseTest {
   }
 
   function testUserBribeRewards() public debuggingOnly fork(BASE_MAINNET) {
-    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    address user = 0xd4E73022924E96dD2c98D61621A25B2a63011791;
     VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
     Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
     veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
@@ -309,8 +310,8 @@ contract DevTesting is BaseTest {
     lens.claimRewardsForPool(user, 0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13);
   }
 
-  function testUserBribes() public debuggingOnly forkAtBlock(BASE_MAINNET, 27759655) {
-    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+  function testUserBribes() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0xd4E73022924E96dD2c98D61621A25B2a63011791;
     VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
     Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
     veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
@@ -376,6 +377,36 @@ contract DevTesting is BaseTest {
       uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
       emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
       emit log_named_uint("Earned Amount", earnedAmount);
+    }
+  }
+
+  function testVoteUser() public debuggingOnly forkAtBlock(BASE_MAINNET, 28365448) {
+    address[] memory markets = new address[](1);
+    IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](1);
+    uint256[] memory weights = new uint256[](1);
+
+    address user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+
+    uint256[] memory ownedTokenIds = veIONSecondExtension(address(ve)).getOwnedTokenIds(user);
+
+    emit log("Owned Token IDs for User:");
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      emit log_named_uint("Token ID", ownedTokenIds[i]);
+    }
+    emit log("-----------------------------------------------------------");
+
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+
+    markets[0] = 0x9c2A4f9c5471fd36bE3BBd8437A33935107215A1;
+    marketSides[0] = IVoter.MarketSide(0);
+    weights[0] = 100;
+
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      vm.startPrank(user);
+      voter.reset(ownedTokenIds[i]);
+      voter.vote(ownedTokenIds[i], markets, marketSides, weights);
+      vm.stopPrank();
     }
   }
 

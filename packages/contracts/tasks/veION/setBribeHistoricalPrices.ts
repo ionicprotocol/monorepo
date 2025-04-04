@@ -9,14 +9,9 @@ task("bribes:setHistoricalPrices", "set prices").setAction(
 
     const bribes = await voterLens.read.getAllBribes();
 
-    const epochStart = [
-      1736985600, 1737590400, 1738195200, 1738800000, 1739404800, 1740009600, 1740614400, 1741219200, 1741824000
-    ];
+    const epochStart = [1743033600];
 
-    const ionWethPrice = [
-      11534369312000, 9926117451700, 7054655547000, 4020991213100, 3962702287500, 3130545256700, 2839044335100,
-      2556470895400, 2353683912200
-    ];
+    const ionWethPrice = [2353683912200];
 
     const lpToken = "0x690A74d2eC0175a69C0962B309E03021C0b5002E";
 
@@ -27,55 +22,55 @@ task("bribes:setHistoricalPrices", "set prices").setAction(
         const epochTimestamp = epochStart[i];
         const price = ionWethPrice[i];
 
-        // try {
-        //   // Check if historical price is already set for bribeSupply
-        //   const bribeSupplyContract = await viem.getContractAt("BribeRewards", bribeSupply as Address);
-        //   const historicalPricesSupply = await bribeSupplyContract.read.historicalPrices([lpToken, epochTimestamp]);
-        //   if (historicalPricesSupply != 0) {
-        //     console.log(
-        //       `🔍 Historical price already set for bribeSupply at epoch ${epochTimestamp} Price ${historicalPricesSupply} for contract ${bribeSupply} Skipping...`
-        //     );
-        //     await new Promise((resolve) => setTimeout(resolve, 500));
-        //     continue;
-        //   }
-
-        //   // Set historical price for bribeSupply
-        //   const bribeSupplyTx = await bribeSupplyContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
-        //   const bribeSupplyReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeSupplyTx });
-        //   console.log(
-        //     `✅ Successfully set historical price for bribeSupply at epoch ${epochTimestamp} for ${bribeSupply}:`,
-        //     bribeSupplyReceipt.transactionHash
-        //   );
-
-        //   await new Promise((resolve) => setTimeout(resolve, 500));
-        // } catch (error) {
-        //   console.error(`❌ Failed to set historical price for bribeSupply at epoch ${epochTimestamp}:`, error);
-        // }
-
         try {
-          // Check if historical price is already set for bribeBorrow
-          const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
-          const historicalPricesBorrow = await bribeBorrowContract.read.historicalPrices([lpToken, epochTimestamp]);
-          if (historicalPricesBorrow != 0) {
+          // Check if historical price is already set for bribeSupply
+          const bribeSupplyContract = await viem.getContractAt("BribeRewards", bribeSupply as Address);
+          const historicalPricesSupply = await bribeSupplyContract.read.historicalPrices([lpToken, epochTimestamp]);
+          if (historicalPricesSupply != 0) {
             console.log(
-              `🔍 Historical price already set for bribeBorrow at epoch ${epochTimestamp}, Price: ${historicalPricesBorrow} for contract ${bribeBorrow} Skipping...`
+              `🔍 Historical price already set for bribeSupply at epoch ${epochTimestamp} Price ${historicalPricesSupply} for contract ${bribeSupply} Skipping...`
             );
             await new Promise((resolve) => setTimeout(resolve, 500));
             continue;
           }
 
-          // Set historical price for bribeBorrow
-          const bribeBorrowTx = await bribeBorrowContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
-          const bribeBorrowReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeBorrowTx });
+          // Set historical price for bribeSupply
+          const bribeSupplyTx = await bribeSupplyContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
+          const bribeSupplyReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeSupplyTx });
           console.log(
-            `✅ Successfully set historical price for bribeBorrow at epoch ${epochTimestamp} for ${bribeBorrow}:`,
-            bribeBorrowReceipt.transactionHash
+            `✅ Successfully set historical price for bribeSupply at epoch ${epochTimestamp} for ${bribeSupply}:`,
+            bribeSupplyReceipt.transactionHash
           );
 
           await new Promise((resolve) => setTimeout(resolve, 500));
         } catch (error) {
-          console.error(`❌ Failed to set historical price for bribeBorrow at epoch ${epochTimestamp}:`, error);
+          console.error(`❌ Failed to set historical price for bribeSupply at epoch ${epochTimestamp}:`, error);
         }
+
+        // try {
+        //   // Check if historical price is already set for bribeBorrow
+        //   const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
+        //   const historicalPricesBorrow = await bribeBorrowContract.read.historicalPrices([lpToken, epochTimestamp]);
+        //   if (historicalPricesBorrow != 0) {
+        //     console.log(
+        //       `🔍 Historical price already set for bribeBorrow at epoch ${epochTimestamp}, Price: ${historicalPricesBorrow} for contract ${bribeBorrow} Skipping...`
+        //     );
+        //     await new Promise((resolve) => setTimeout(resolve, 500));
+        //     continue;
+        //   }
+
+        //   // Set historical price for bribeBorrow
+        //   const bribeBorrowTx = await bribeBorrowContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
+        //   const bribeBorrowReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeBorrowTx });
+        //   console.log(
+        //     `✅ Successfully set historical price for bribeBorrow at epoch ${epochTimestamp} for ${bribeBorrow}:`,
+        //     bribeBorrowReceipt.transactionHash
+        //   );
+
+        //   await new Promise((resolve) => setTimeout(resolve, 500));
+        // } catch (error) {
+        //   console.error(`❌ Failed to set historical price for bribeBorrow at epoch ${epochTimestamp}:`, error);
+        // }
       }
     }
   }
