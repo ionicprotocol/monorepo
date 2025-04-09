@@ -218,7 +218,7 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
     }
   }
 
-  function getAllMarketVotes(address lp) external view returns (MarketVoteInfo[] memory _marketVoteInfo) {
+  function getAllMarketVotes(address lp) public view returns (MarketVoteInfo[] memory _marketVoteInfo) {
     uint256 marketsLength = IVoter(voter).marketsLength();
     _marketVoteInfo = new MarketVoteInfo[](marketsLength);
     for (uint256 i; i < marketsLength; i++) {
@@ -230,6 +230,16 @@ contract VoterLens is Initializable, Ownable2StepUpgradeable {
       _marketVoteInfo[i].votesValueInEth =
         (_marketVoteInfo[i].votes * 10 ** (18 - ERC20(lp).decimals()) * mpo.price(lp)) /
         PRECISION;
+    }
+  }
+
+  function getTotalMarketVotes() external view returns (uint256 _total) {
+    address[] memory lpTokens = IVoter(voter).getAllLpRewardTokens();
+    for (uint256 i = 0; i < lpTokens.length; i++) {
+      MarketVoteInfo[] memory marketVotes = getAllMarketVotes(lpTokens[i]);
+      for (uint256 j = 0; j < marketVotes.length; j++) {
+        _total += marketVotes[j].votesValueInEth;
+      }
     }
   }
 
