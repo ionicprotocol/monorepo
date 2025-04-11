@@ -79,9 +79,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
 
-  hash = await veION.write.setExtensions([veIONFirstExtension.address as Hex, veIONSecondExtension.address as Hex], {
-    from: deployer
-  });
+  hash = await veION.write.setExtensions([veIONFirstExtension.address as Hex, veIONSecondExtension.address as Hex]);
   await publicClient.waitForTransactionReceipt({ hash });
 
   console.log(`Extensions Set: ${veIONFirstExtension.address}, ${veIONSecondExtension.address}`);
@@ -106,7 +104,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         ]
       });
     } else {
-      hash = await IveION.write.setLpTokenType([token, type], { from: deployer });
+      hash = await IveION.write.setLpTokenType([token, type]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set Lp Type: ${token}, ${type}`);
@@ -132,9 +130,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       ]
     });
   } else {
-    hash = await IveION.write.whitelistTokens([veParams.lpTokens, veParams.lpTokenWhitelistStatuses], {
-      from: deployer
-    });
+    hash = await IveION.write.whitelistTokens([veParams.lpTokens, veParams.lpTokenWhitelistStatuses]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
       console.log(`Successfully set whitelist [${veParams.lpTokens}], [${veParams.lpTokenWhitelistStatuses}]`);
@@ -162,7 +158,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         ]
       });
     } else {
-      hash = await IveION.write.setMinimumLockAmount([token, minimum], { from: deployer });
+      hash = await IveION.write.setMinimumLockAmount([token, minimum]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set minimum lock amount for token: ${token}`);
@@ -184,7 +180,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       inputs: [{ internalType: "uint256", name: "_minimumLockDuration", type: "uint256" }]
     });
   } else {
-    hash = await IveION.write.setMinimumLockDuration([BigInt(veParams.minimumLockDuration)], { from: deployer });
+    hash = await IveION.write.setMinimumLockDuration([BigInt(veParams.minimumLockDuration)]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
       console.log(`Successfully set minimum lock duration for token: ${veParams.minimumLockDuration}`);
@@ -206,7 +202,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         inputs: [{ internalType: "address", name: "_ionicPool", type: "address" }]
       });
     } else {
-      hash = await IveION.write.setIonicPool([veParams.ionicAeroVeloPool], { from: deployer });
+      hash = await IveION.write.setIonicPool([veParams.ionicAeroVeloPool]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set Aero Ionic Pool: ${veParams.ionicAeroVeloPool}`);
@@ -229,7 +225,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         inputs: [{ internalType: "address", name: "_aeroVoting", type: "address" }]
       });
     } else {
-      hash = await IveION.write.setAeroVoting([veParams.aeroVoting], { from: deployer });
+      hash = await IveION.write.setAeroVoting([veParams.aeroVoting]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set Aero Voter: ${veParams.aeroVoting}`);
@@ -252,7 +248,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         inputs: [{ internalType: "uint256", name: "_aeroVoterBoost", type: "uint256" }]
       });
     } else {
-      hash = await IveION.write.setAeroVoterBoost([veParams.aeroVotingBoost], { from: deployer });
+      hash = await IveION.write.setAeroVoterBoost([veParams.aeroVotingBoost]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set Aero Voter Boost: ${veParams.aeroVotingBoost}`);
@@ -274,7 +270,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       inputs: [{ internalType: "uint256", name: "_maxEarlyWithdrawFee", type: "uint256" }]
     });
   } else {
-    hash = await IveION.write.setMaxEarlyWithdrawFee([veParams.maxEarlyWithdrawFee], { from: deployer });
+    hash = await IveION.write.setMaxEarlyWithdrawFee([veParams.maxEarlyWithdrawFee]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
       console.log(`Successfully set max early withdraw fee: ${veParams.maxEarlyWithdrawFee}`);
@@ -296,7 +292,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         inputs: [{ internalType: "address", name: "_veAERO", type: "address" }]
       });
     } else {
-      hash = await IveION.write.setVeAERO([veParams.veAERO as Hex], { from: deployer });
+      hash = await IveION.write.setVeAERO([veParams.veAERO as Hex]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set veAERO: ${veParams.veAERO}`);
@@ -369,9 +365,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       (await deployments.get(stakingStrategyName)).address as Address
     );
 
-    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy.address], {
-      from: deployer
-    });
+    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy.address]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
     if (receipt.status === "success") {
       console.log(
@@ -397,7 +391,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       ]
     });
   } else {
-    hash = await IveION.write.toggleSplit([zeroAddress, true], { from: deployer });
+    hash = await IveION.write.toggleSplit([zeroAddress, true]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
       console.log(`Successfully toggled global split: ${true}`);

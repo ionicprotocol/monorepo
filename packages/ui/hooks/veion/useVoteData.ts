@@ -1,11 +1,36 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { usePublicClient } from 'wagmi';
 
 import { getiVoterContract } from '@ui/constants/veIon';
+import { VOTERLENS_CHAIN_ADDRESSES } from '@ui/hooks/rewards/useBribeRewards';
 import { MarketSide } from '@ui/types/veION';
 
 import { useRewardTokens } from './useRewardTokens';
+
+import { voterLensAbi } from '@ionicprotocol/sdk';
+
+const extendedVoterLensAbi = [
+  ...voterLensAbi,
+  {
+    type: 'function',
+    name: 'getAllMarketVotes',
+    inputs: [{ name: 'lp', type: 'address' }],
+    outputs: [
+      {
+        name: '_marketVoteInfo',
+        type: 'tuple[]',
+        components: [
+          { name: 'market', type: 'address' },
+          { name: 'side', type: 'uint8' },
+          { name: 'weight', type: 'uint256' },
+          { name: 'votesValueInEth', type: 'uint256' }
+        ]
+      }
+    ],
+    stateMutability: 'view'
+  }
+] as const;
 
 interface UseVoteDataParams {
   tokenId?: number;
@@ -19,9 +44,28 @@ interface VoteData {
   myVotes: { percentage: number; value: number };
 }
 
+interface VoteDetails {
+  marketVotes: readonly `0x${string}`[];
+  marketVoteSides: number[];
+  votes: readonly bigint[];
+  usedWeight: bigint;
+}
+
+interface MarketVoteInfo {
+  market: `0x${string}`;
+  side: number;
+  weight: bigint;
+  votesValueInEth: bigint;
+}
+
+// Chain-specific LP token addresses
+const LP_TOKEN_ADDRESSES = {
+  8453: '0x0FAc819628a7F612AbAc1CaD939768058cc0170c', // Base
+  34443: '0x690A74d2eC0175a69C0962B309E03021C0b5002E' // Mode
+} as const;
+
 const BASIS_POINTS = 10000n;
 const DECIMALS_SCALAR = BigInt(10 ** 18);
-const MULTICALL_CHUNK_SIZE = 5;
 
 export function useVoteData({
   tokenId,
@@ -34,14 +78,28 @@ export function useVoteData({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Use the reusable hook to fetch reward tokens
   const {
     rewardTokens,
     isLoading: isLoadingTokens,
     error: tokenError
   } = useRewardTokens(chain);
 
-  const voterContract = getiVoterContract(chain);
+  const voterContract = useMemo(() => getiVoterContract(chain), [chain]);
+
+  const lpTokenAddress = useMemo(() => {
+    return (
+      LP_TOKEN_ADDRESSES[chain as keyof typeof LP_TOKEN_ADDRESSES] ||
+      ('0x0000000000000000000000000000000000000000' as `0x${string}`)
+    );
+  }, [chain]);
+
+  const voterLensAddress = useMemo(() => {
+    return (
+      VOTERLENS_CHAIN_ADDRESSES[
+        chain as keyof typeof VOTERLENS_CHAIN_ADDRESSES
+      ] || ('0x0000000000000000000000000000000000000000' as `0x${string}`)
+    );
+  }, [chain]);
 
   const formatValue = (value: bigint): number =>
     Number((value * BASIS_POINTS) / DECIMALS_SCALAR);
@@ -52,10 +110,9 @@ export function useVoteData({
       !publicClient ||
       !marketAddresses.length ||
       !rewardTokens?.length ||
-      isLoadingTokens // Don't fetch if tokens are still loading
+      isLoadingTokens
     ) {
       if (!isLoadingTokens) {
-        // Only update state if we're not waiting for tokens to load
         setVoteData({});
         setIsLoading(false);
       }
@@ -64,80 +121,91 @@ export function useVoteData({
 
     try {
       setIsLoading(true);
-      const chunks = chunkArray(
-        marketAddresses.map((addr, i) => ({ addr, side: marketSides[i] })),
-        MULTICALL_CHUNK_SIZE
+
+      const marketKeys = marketAddresses.map(
+        (addr, i) =>
+          `${addr.toLowerCase()}-${marketSides[i] === MarketSide.Supply ? 'supply' : 'borrow'}`
       );
 
-      const marketData: {
-        [key: string]: { totalWeight: bigint; userVotes: bigint };
-      } = {};
       let totalSystemWeight = 0n;
+      const marketData: Record<
+        string,
+        { totalWeight: bigint; userVotes: bigint }
+      > = {};
+
+      marketKeys.forEach((key) => {
+        marketData[key] = {
+          totalWeight: 0n,
+          userVotes: 0n
+        };
+      });
+
+      if (voterLensAddress) {
+        try {
+          const allMarketVotes = (await publicClient.readContract({
+            address: voterLensAddress,
+            abi: extendedVoterLensAbi,
+            functionName: 'getAllMarketVotes',
+            args: [lpTokenAddress]
+          })) as MarketVoteInfo[];
+
+          if (allMarketVotes) {
+            for (const marketVote of allMarketVotes) {
+              const marketAddress = marketVote.market.toLowerCase();
+              const marketSide = marketVote.side === 0 ? 'supply' : 'borrow';
+              const key = `${marketAddress}-${marketSide}`;
+
+              if (marketData[key]) {
+                marketData[key].totalWeight = marketVote.weight;
+                totalSystemWeight += marketVote.weight;
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching all market votes:', err);
+        }
+      }
+
       let totalUserWeight = 0n;
 
-      for (const chunk of chunks) {
-        const weightCalls = chunk.flatMap(({ addr, side }) =>
-          rewardTokens.map((token) => ({
+      if (tokenId) {
+        try {
+          const voteDetailsCall = {
             ...voterContract,
-            functionName: 'weights',
-            args: [addr, side, token]
-          }))
-        );
-
-        const voteCalls = tokenId
-          ? chunk.flatMap(({ addr, side }) =>
-              rewardTokens.map((token) => ({
-                ...voterContract,
-                functionName: 'votes',
-                args: [BigInt(tokenId), addr, side, token]
-              }))
-            )
-          : [];
-
-        const [weights, votes] = await Promise.all([
-          publicClient.multicall({
-            contracts: weightCalls,
-            allowFailure: true
-          }),
-          tokenId
-            ? publicClient.multicall({
-                contracts: voteCalls,
-                allowFailure: true
-              })
-            : Promise.resolve([])
-        ]);
-
-        chunk.forEach(({ addr, side }, chunkIdx) => {
-          const start = chunkIdx * rewardTokens.length;
-          const end = start + rewardTokens.length;
-
-          const marketWeights = weights
-            .slice(start, end)
-            .map((w) => (w.status === 'success' ? w.result : 0n)) as bigint[];
-          const marketTotalWeight = marketWeights.reduce(
-            (sum, w) => sum + w,
-            0n
-          );
-
-          const marketUserVotes = tokenId
-            ? (
-                votes
-                  .slice(start, end)
-                  .map((v) =>
-                    v.status === 'success' ? v.result : 0n
-                  ) as bigint[]
-              ).reduce((sum, v) => sum + v, 0n)
-            : 0n;
-
-          const key = `${addr}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
-          marketData[key] = {
-            totalWeight: marketTotalWeight,
-            userVotes: marketUserVotes
+            functionName: 'getVoteDetails' as const,
+            args: [BigInt(tokenId), lpTokenAddress] as const
           };
 
-          totalSystemWeight += marketTotalWeight;
-          totalUserWeight += marketUserVotes;
-        });
+          const voteDetailsResult =
+            await publicClient.readContract(voteDetailsCall);
+
+          if (voteDetailsResult) {
+            const voteDetails = voteDetailsResult as unknown as VoteDetails;
+
+            if (voteDetails.marketVotes && voteDetails.votes) {
+              voteDetails.marketVotes.forEach((marketAddress, index) => {
+                const voteSide = voteDetails.marketVoteSides[index];
+                const voteAmount = voteDetails.votes[index];
+
+                const marketKey = `${marketAddress.toLowerCase()}-${voteSide === 0 ? 'supply' : 'borrow'}`;
+                const matchingKey = Object.keys(marketData).find(
+                  (key) => key.toLowerCase() === marketKey.toLowerCase()
+                );
+
+                if (matchingKey) {
+                  marketData[matchingKey].userVotes = voteAmount;
+                  totalUserWeight += voteAmount;
+                }
+              });
+            }
+
+            if (!totalUserWeight && voteDetails.usedWeight) {
+              totalUserWeight = voteDetails.usedWeight;
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching vote details:', err);
+        }
       }
 
       const newVoteData = Object.entries(marketData).reduce(
@@ -177,16 +245,13 @@ export function useVoteData({
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenId, chain, marketAddresses, marketSides]);
+  }, [tokenId, chain, marketAddresses, marketSides, voterLensAddress]);
 
   useEffect(() => {
     fetchVoteData();
   }, [fetchVoteData]);
 
-  // Combine loading states
   const combinedIsLoading = isLoading || isLoadingTokens;
-
-  // Combine errors
   const combinedError = error || tokenError;
 
   return {
@@ -195,12 +260,4 @@ export function useVoteData({
     error: combinedError,
     refresh: fetchVoteData
   };
-}
-
-function chunkArray<T>(array: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
 }

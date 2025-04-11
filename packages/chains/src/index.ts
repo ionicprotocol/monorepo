@@ -5,6 +5,7 @@ import {
   bob as vBob,
   fraxtal as vFraxtal,
   lisk as vLisk,
+  metalL2 as vMetal,
   mode as vMode,
   optimism as vOptimism,
   superseed as vSuperseed,
@@ -17,6 +18,7 @@ import { default as camptest } from "./camptest";
 import { default as fraxtal } from "./fraxtal";
 import { default as ink } from "./ink";
 import { default as lisk } from "./lisk";
+import { default as metalL2 } from "./metalL2";
 import { default as mode } from "./mode";
 import { default as optimism } from "./optimism";
 import { default as ozeantest } from "./ozeantest";
@@ -38,7 +40,8 @@ export {
   swellchain,
   soneium,
   camptest,
-  ozeantest
+  ozeantest,
+  metalL2
 };
 
 export const vInk: Chain = {
@@ -109,7 +112,8 @@ export const chainIdtoChain: { [chainId: number]: Chain } = {
   [swellchain.chainId]: vSwellchain,
   [ozeantest.chainId]: vOzeantest,
   [camptest.chainId]: vCampTest,
-  [soneium.chainId]: vSoneium
+  [soneium.chainId]: vSoneium,
+  [metalL2.chainId]: vMetal
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -125,5 +129,6 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [swellchain.chainId]: swellchain,
   [ozeantest.chainId]: ozeantest,
   [camptest.chainId]: camptest,
-  [soneium.chainId]: soneium
+  [soneium.chainId]: soneium,
+  [metalL2.chainId]: metalL2
 };

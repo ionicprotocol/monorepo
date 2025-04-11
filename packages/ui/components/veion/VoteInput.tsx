@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 
 import { PlusIcon, MinusIcon } from 'lucide-react';
 
@@ -21,10 +21,10 @@ const VoteInput = React.memo(function VoteInput({
   const { votes, updateVote } = useVotes();
   const key = `${marketAddress}-${side === MarketSide.Supply ? 'supply' : 'borrow'}`;
   const inputRef = useRef<HTMLInputElement>(null);
-  const [localValue, setLocalValue] = useState(votes[key] || '');
+
+  const [inputValue, setInputValue] = useState(votes[key] || '');
   const [error, setError] = useState('');
 
-  // Calculate other votes total only when needed
   const getOtherVotesTotal = useCallback(() => {
     return Object.entries(votes).reduce((sum, [voteKey, value]) => {
       if (voteKey !== key && value) {
@@ -35,18 +35,20 @@ const VoteInput = React.memo(function VoteInput({
   }, [votes, key]);
 
   const validateAndUpdate = useCallback(
-    (newValue: string) => {
-      if (newValue === '') {
-        setError('');
-        setLocalValue('');
-        requestAnimationFrame(() => {
-          updateVote(marketAddress, side, '');
-        });
+    (value: string) => {
+      setError('');
+
+      if (value === '') {
+        updateVote(marketAddress, side, '');
         return;
       }
 
-      const numericValue = parseFloat(newValue);
+      const numericValue = parseFloat(value);
       if (isNaN(numericValue) || numericValue < 0) {
+        return;
+      }
+
+      if (votes[key] === value) {
         return;
       }
 
@@ -59,46 +61,55 @@ const VoteInput = React.memo(function VoteInput({
         return;
       }
 
-      setError('');
-      setLocalValue(newValue);
-      requestAnimationFrame(() => {
-        updateVote(marketAddress, side, newValue);
-      });
+      updateVote(marketAddress, side, value);
     },
-    [marketAddress, side, updateVote, getOtherVotesTotal]
+    [marketAddress, side, updateVote, getOtherVotesTotal, votes, key]
   );
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = e.target.value;
       if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-        validateAndUpdate(newValue);
+        setInputValue(newValue);
+
+        if (newValue === '') {
+          updateVote(marketAddress, side, '');
+          setError('');
+        }
       }
     },
-    [validateAndUpdate]
+    [updateVote, marketAddress, side]
   );
+
+  const handleBlur = useCallback(() => {
+    validateAndUpdate(inputValue);
+  }, [inputValue, validateAndUpdate]);
 
   const adjustValue = useCallback(
     (increment: boolean) => {
-      const currentValue = parseFloat(localValue) || 0;
-      const newValue = increment ? currentValue + 1 : currentValue - 1;
+      const currentValue = parseFloat(inputValue) || 0;
+      const newValue = increment
+        ? currentValue + 1
+        : Math.max(0, currentValue - 1);
 
-      if (newValue >= 0) {
-        validateAndUpdate(newValue.toString());
+      const newValueStr = newValue.toString();
+      setInputValue(newValueStr);
+
+      if (!increment) {
+        setError('');
+      }
+
+      if (!increment) {
+        updateVote(marketAddress, side, newValueStr);
+      } else {
+        validateAndUpdate(newValueStr);
       }
     },
-    [localValue, validateAndUpdate]
+    [inputValue, validateAndUpdate, updateVote, marketAddress, side]
   );
 
-  // Sync with external votes changes
-  useEffect(() => {
-    setLocalValue(votes[key] || '');
-    setError('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [votes[key], key]);
-
   const otherVotesTotal = getOtherVotesTotal();
-  const currentValue = parseFloat(localValue) || 0;
+  const currentValue = parseFloat(inputValue) || 0;
 
   return (
     <div className="relative">
@@ -108,7 +119,7 @@ const VoteInput = React.memo(function VoteInput({
           size="icon"
           className="w-6 h-6"
           onClick={() => adjustValue(false)}
-          disabled={isDisabled || !localValue || parseFloat(localValue) <= 0}
+          disabled={isDisabled || !inputValue || parseFloat(inputValue) <= 0}
         >
           <MinusIcon className="w-3 h-3" />
         </Button>
@@ -116,9 +127,11 @@ const VoteInput = React.memo(function VoteInput({
         <div className="relative">
           <Input
             ref={inputRef}
-            value={localValue}
+            value={inputValue}
             className={`w-20 h-8 px-2 py-1 text-sm ${error ? 'border-red-500' : ''}`}
             onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={(e) => e.key === 'Enter' && handleBlur()}
             disabled={isDisabled}
             placeholder="0"
           />
