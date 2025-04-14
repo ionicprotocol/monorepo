@@ -9,6 +9,7 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from 'react-hot-toast';
 import { WagmiProvider } from 'wagmi';
 
+import BaseRpcProvider from '@ui/components/BaseRpcProvider';
 import Footer from '@ui/components/Footer';
 import Navbar from '@ui/components/Navbar';
 import { Toaster as ToastProvider } from '@ui/components/ui/toaster';
@@ -51,41 +52,43 @@ export default function RootLayout({
       <body className="scrollbar-hide font-inter">
         <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
           <QueryClientProvider client={queryClient}>
-            <MultiIonicProvider>
-              <Suspense fallback={<div>Loading...</div>}>
-                <VeIONProvider>
-                  <TooltipProvider>
-                    <ProgressBar
-                      color="#3bff89ff"
-                      height="2px"
-                      options={{ showSpinner: false }}
-                      shallowRouting
-                    />
-                    <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[300px] min-h-screen w-[100vw]">
-                      <Navbar />
-                      <main>{children}</main>
-                      <Footer />
-                      <ToastProvider />
-                      <Toaster
-                        toastOptions={{
-                          error: {
-                            style: {
-                              background: '#e10000',
-                              color: '#fff'
-                            }
-                          },
-                          position: 'bottom-center',
-                          style: {
-                            background: '#3bff89ff',
-                            color: '#000'
-                          }
-                        }}
+            <BaseRpcProvider>
+              <MultiIonicProvider>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <VeIONProvider>
+                    <TooltipProvider>
+                      <ProgressBar
+                        color="#3bff89ff"
+                        height="2px"
+                        options={{ showSpinner: false }}
+                        shallowRouting
                       />
-                    </div>
-                  </TooltipProvider>
-                </VeIONProvider>
-              </Suspense>
-            </MultiIonicProvider>
+                      <div className="relative px-4 overflow-x-hidden pt-24 md:pt-[128px] pb-4 sm:pb-[300px] min-h-screen w-[100vw]">
+                        <Navbar />
+                        <main>{children}</main>
+                        <Footer />
+                        <ToastProvider />
+                        <Toaster
+                          toastOptions={{
+                            error: {
+                              style: {
+                                background: '#e10000',
+                                color: '#fff'
+                              }
+                            },
+                            position: 'bottom-center',
+                            style: {
+                              background: '#3bff89ff',
+                              color: '#000'
+                            }
+                          }}
+                        />
+                      </div>
+                    </TooltipProvider>
+                  </VeIONProvider>
+                </Suspense>
+              </MultiIonicProvider>
+            </BaseRpcProvider>
           </QueryClientProvider>
         </WagmiProvider>
       </body>
