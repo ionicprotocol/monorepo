@@ -1,7 +1,6 @@
 // config/web3.ts
 import { createAppKit } from '@reown/appkit';
 import {
-  base,
   optimism,
   mode,
   bob,
@@ -10,12 +9,31 @@ import {
   superseed,
   worldchain,
   metalL2,
+  base as baseNetwork,
   type AppKitNetwork
 } from '@reown/appkit/networks';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { http } from 'viem';
 
 import type { Transport } from 'viem';
+
+export function getBaseRpcUrl(): string {
+  if (typeof window === 'undefined' && process.env.BASE_RPC_URL) {
+    return process.env.BASE_RPC_URL;
+  }
+
+  return 'https://1rpc.io/base';
+}
+
+const base: AppKitNetwork = {
+  ...baseNetwork,
+  rpcUrls: {
+    ...baseNetwork.rpcUrls,
+    default: {
+      http: [getBaseRpcUrl()]
+    }
+  }
+};
 
 export const ink: AppKitNetwork = {
   id: 57073,
@@ -152,10 +170,26 @@ const createChainTransport = (network: AppKitNetwork): Transport => {
   });
 };
 
+const createBaseTransport = (): Transport => {
+  return http(getBaseRpcUrl(), {
+    timeout: 10_000,
+    retryCount: 3,
+    retryDelay: 1000,
+    batch: {
+      batchSize: 1024 * 1024,
+      wait: 16
+    }
+  });
+};
+
 // Create transports map with specific transport for each chain
 const transports = networks.reduce(
   (acc, network) => {
-    acc[network.id as number] = createChainTransport(network);
+    if (network.id === base.id) {
+      acc[network.id as number] = createBaseTransport();
+    } else {
+      acc[network.id as number] = createChainTransport(network);
+    }
     return acc;
   },
   {} as Record<number, Transport>
