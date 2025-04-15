@@ -1,18 +1,20 @@
-import Image from 'next/image';
 import { useState } from 'react';
-import { utils } from 'ethers';
+
+import Image from 'next/image';
+
+import { formatUnits, parseUnits } from 'ethers';
 import { ThreeCircles } from 'react-loader-spinner';
 import { base } from 'viem/chains';
 import { useChainId, useSwitchChain } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import { Button } from '@ui/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
 } from '@ui/components/ui/dialog';
-import MaxDeposit from '@ui/components/MaxDeposit';
-import { Button } from '@ui/components/ui/button';
 import { useMorphoProtocol } from '@ui/hooks/earn/useMorphoProtocol';
 
 interface LegacyDialogProps {
@@ -32,7 +34,7 @@ export function LegacyDialog({ asset, isOpen, setIsOpen }: LegacyDialogProps) {
     isLegacy: true
   });
 
-  const formattedMaxWithdraw = utils.formatUnits(
+  const formattedMaxWithdraw = formatUnits(
     maxWithdraw,
     assetSymbol === 'WETH' ? 18 : 6
   );
@@ -56,10 +58,7 @@ export function LegacyDialog({ asset, isOpen, setIsOpen }: LegacyDialogProps) {
       }
 
       setIsProcessing(true);
-      const parsedAmount = utils.parseUnits(
-        amount,
-        assetSymbol === 'WETH' ? 18 : 6
-      );
+      const parsedAmount = parseUnits(amount, assetSymbol === 'WETH' ? 18 : 6);
       await withdraw(parsedAmount);
       setAmount('');
     } catch (error) {

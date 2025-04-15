@@ -11,7 +11,7 @@ import { formatEther } from 'viem';
 import { mode } from 'viem/chains';
 // import { useWatchContractEvent } from 'wagmi';
 
-import { chainsArr, pools } from '@ui/constants/index';
+import { chainIdToName, pools } from '@ui/constants/index';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 // import useLocalStorage from '@ui/hooks/useLocalStorage';
 // import { BridgingContractAddress } from '@ui/utils/getStakingTokens';
@@ -141,11 +141,11 @@ function TxPopup({
             <span className={`text-xs  min-w-max`}>Networks</span>
             <div className={`ml-auto flex items-center gap-2`}>
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock.fromChain]}
+                {chainIdToName[+mock.fromChain]}
               </span>
               {'->'}
               <span className={`text-xs text-white/50`}>
-                {chainsArr[+mock.toChain]}
+                {chainIdToName[+mock.toChain]}
               </span>
             </div>
           </div>

@@ -2,15 +2,27 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Sparkles, TrendingUp, ExternalLink } from 'lucide-react';
+import {
+  Sparkles,
+  TrendingUp,
+  ExternalLink,
+  AlertTriangle
+} from 'lucide-react';
 
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent
 } from '@ui/components/ui/hover-card';
-import { pools } from '@ui/constants';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@ui/components/ui/tooltip';
+import { pools, REWARDS_TO_SYMBOL } from '@ui/constants';
 import { useAPRCell } from '@ui/hooks/market/useAPRCell';
+import { useEmissionsData } from '@ui/hooks/veion/useEmissionsData';
 import { cn } from '@ui/lib/utils';
 
 import { AssetIcons } from '../../AssetIcons';
@@ -31,6 +43,8 @@ export type APRCellProps = {
   nativeAssetYield?: number;
   underlyingToken: Hex;
   aprTotal?: number;
+  noRewards?: boolean;
+  disabled?: boolean;
 };
 
 const FlyWheelRewards = dynamic(() => import('../FlyWheelRewards'), {
@@ -42,17 +56,50 @@ export default function APR(props: APRCellProps) {
     baseAPRFormatted,
     effectiveNativeYield,
     showRewardsBadge,
-    showIonBadge,
     config,
     merklAprFormatted,
     rewardIcons,
     additionalRewards
   } = useAPRCell(props);
 
-  const { dropdownSelectedChain, asset, cToken, pool, type, rewards } = props;
+  const {
+    dropdownSelectedChain,
+    asset,
+    cToken,
+    pool,
+    type,
+    rewards = [],
+    noRewards,
+    disabled
+  } = props;
 
-  const showFlywheel =
-    config?.flywheel && (rewards || []).filter((r) => r.apy).length > 0;
+  // Get emissions data to check if user is getting emissions
+  const emissions = useEmissionsData(dropdownSelectedChain);
+
+  // Determine if user is getting emissions
+  const isGettingEmissions =
+    !emissions.isUserBlacklisted &&
+    emissions.actualRatio !== undefined &&
+    emissions.collateralPercentageNumeric !== undefined &&
+    emissions.actualRatio >= emissions.collateralPercentageNumeric;
+
+  // Show warning if user has emissions data but isn't getting emissions
+  const showEmissionsWarning =
+    !emissions.isLoading &&
+    !isGettingEmissions &&
+    !disabled &&
+    emissions.totalCollateral !== undefined &&
+    emissions.totalCollateral > 0n;
+
+  const rewardsSymbols = REWARDS_TO_SYMBOL[dropdownSelectedChain] ?? {};
+  const ionReward = rewards.find(
+    (reward) => rewardsSymbols[reward.token] === 'ION'
+  );
+  const ionAPR = ionReward?.apy || 0;
+
+  const otherRewards = rewards.filter(
+    (reward) => rewardsSymbols[reward.token] !== 'ION'
+  );
 
   return (
     <HoverCard openDelay={50}>
@@ -63,48 +110,56 @@ export default function APR(props: APRCellProps) {
             <span
               className={cn(
                 'rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1',
-                showIonBadge
+                ionAPR > 0 && !disabled
                   ? 'bg-accent text-green-900'
                   : 'bg-accent/50 text-green-900'
               )}
             >
               + ION APR
+              {showEmissionsWarning && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="bg-black rounded-full p-0.5 ml-1 flex items-center justify-center">
+                        <AlertTriangle className="w-3 h-3 text-amber-500" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        Not receiving emissions. Check your veION ratio.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <Image
                 src="/img/ionic-green-on-black.png"
                 alt="ION"
                 width={16}
                 height={16}
-                className={cn('rounded-full', !showIonBadge && 'opacity-50')}
+                className={cn(
+                  'rounded-full',
+                  (ionAPR === 0 || disabled) && 'opacity-50'
+                )}
               />
             </span>
 
-            {/* {showIonBadge && (
-              <span className="rounded-md w-max text-[10px] py-[3px] px-1.5 flex items-center gap-1 bg-accent text-green-900">
-                + ION APR
-                <Image
-                  src="/img/ionic-green-on-black.png"
-                  alt="ION"
-                  width={16}
-                  height={16}
-                  className="rounded-full"
-                />
-              </span>
-            )} */}
+            {(showRewardsBadge || effectiveNativeYield !== undefined) &&
+              !noRewards &&
+              !disabled && (
+                <div
+                  className={cn(
+                    'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
+                    pools[dropdownSelectedChain].text,
+                    pools[dropdownSelectedChain].bg
+                  )}
+                >
+                  <span>+ Rewards</span>
+                  <AssetIcons rewards={rewardIcons} />
+                </div>
+              )}
 
-            {(showRewardsBadge || effectiveNativeYield !== undefined) && (
-              <div
-                className={cn(
-                  'rounded-md w-max py-[3px] px-1.5 flex items-center gap-1 text-[10px]',
-                  pools[dropdownSelectedChain].text,
-                  pools[dropdownSelectedChain].bg
-                )}
-              >
-                <span>+ Rewards</span>
-                <AssetIcons rewards={rewardIcons} />
-              </div>
-            )}
-
-            {(config?.turtle || config?.kelp) && (
+            {(config?.turtle || config?.kelp) && !noRewards && (
               <span className="text-darkone rounded-md w-max md:ml-0 text-center">
                 <a
                   className="text-darkone bg-white rounded-md w-max ml-1 md:ml-0 text-center py-[3px] md:px-1 lg:px-1.5 px-1 flex items-center justify-center gap-1 md:text-[10px] text-[8px]"
@@ -142,9 +197,31 @@ export default function APR(props: APRCellProps) {
         className="flex flex-col gap-2 p-3 bg-grayone border border-accent rounded-lg shadow-lg"
         align="center"
       >
-        <div className="text-sm font-medium text-gray-300 text-left">
-          APR Breakdown
+        <div className="flex flex-col gap-1">
+          <div className="text-sm font-medium text-gray-300 text-left">
+            APR Breakdown
+          </div>
+
+          {showEmissionsWarning && (
+            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-md px-3 py-2 border border-amber-500/50">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-medium text-amber-400">
+                  You are not receiving emissions!
+                </span>
+                <a
+                  href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion/veion#voting-and-bribing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          )}
         </div>
+
         <div className="flex flex-col gap-1">
           <div className="flex justify-between items-center gap-4">
             <div className="flex items-center gap-2">
@@ -154,7 +231,25 @@ export default function APR(props: APRCellProps) {
             <span className="text-xs font-medium">{baseAPRFormatted}%</span>
           </div>
 
-          {config?.op && (
+          {ionAPR !== 0 && !noRewards && (
+            <div className="flex justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/img/ionic-green-on-black.png"
+                  alt="ION"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4 rounded-full"
+                />
+                <span className="text-xs text-gray-400">ION Rewards</span>
+              </div>
+              <span className="text-xs font-medium text-green-400">
+                +{ionAPR.toLocaleString('en-US', { maximumFractionDigits: 2 })}%
+              </span>
+            </div>
+          )}
+
+          {config?.op && !noRewards && (
             <div className="flex justify-between items-center gap-2">
               <Link
                 href="https://app.merkl.xyz/?chain=34443"
@@ -177,7 +272,7 @@ export default function APR(props: APRCellProps) {
             </div>
           )}
 
-          {effectiveNativeYield !== undefined && (
+          {effectiveNativeYield !== undefined && !noRewards && (
             <div className="flex justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <Image
@@ -199,25 +294,26 @@ export default function APR(props: APRCellProps) {
             </div>
           )}
 
-          {additionalRewards.map((reward) => (
-            <div
-              key={reward.name}
-              className="flex justify-between items-center gap-4"
-            >
-              <div className="flex items-center gap-2">
-                <Image
-                  src={reward.icon}
-                  alt={reward.name}
-                  width={16}
-                  height={16}
-                  className="w-4 h-4 rounded"
-                />
-                <span className="text-xs text-gray-400">{reward.text}</span>
+          {!noRewards &&
+            additionalRewards.map((reward) => (
+              <div
+                key={reward.name}
+                className="flex justify-between items-center gap-4"
+              >
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={reward.icon}
+                    alt={reward.name}
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 rounded"
+                  />
+                  <span className="text-xs text-gray-400">{reward.text}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {(config?.turtle || config?.kelp) && (
+          {(config?.turtle || config?.kelp) && !noRewards && (
             <Link
               href="https://turtle.club/dashboard/?ref=IONIC"
               target="_blank"
@@ -245,16 +341,14 @@ export default function APR(props: APRCellProps) {
             </Link>
           )}
 
-          {showFlywheel && (
-            <div className="flex justify-between items-center gap-4">
-              <FlyWheelRewards
-                cToken={cToken}
-                pool={pool}
-                poolChainId={dropdownSelectedChain}
-                type={type}
-                rewards={rewards}
-              />
-            </div>
+          {otherRewards.length > 0 && !noRewards && (
+            <FlyWheelRewards
+              cToken={cToken}
+              pool={pool}
+              poolChainId={dropdownSelectedChain}
+              type={type}
+              rewards={otherRewards}
+            />
           )}
 
           <div className="h-px bg-gray-700 my-1" />

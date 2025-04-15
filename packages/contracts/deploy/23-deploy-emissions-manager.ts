@@ -1,10 +1,9 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, pad, toBytes, Hash, parseEther, Hex } from "viem";
-import { base, bob, fraxtal, mode, optimism } from "viem/chains";
+import { Address, Hex } from "viem";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
 
-import { logTransaction, prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import leveredPositionArtifacts from "../artifacts/contracts/ionic/levered/LeveredPosition.sol/LeveredPosition.json";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -27,7 +26,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   const protocolAddress: Address = deployer as Hex;
   const rewardTokenAddress: Address = chainDeployParams.ION;
   const collateralBp: number = 2500;
-  const nonBlacklistableBytecode: string = "0x";
+  const nonBlacklistableBytecode: string = leveredPositionArtifacts.bytecode;
 
   let emissionsManager;
   try {
@@ -61,7 +60,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║      SET VEION ON EMISSIONS MANAGER      ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await emissionsManager.write.setVeIon([veION.address], { from: deployer });
+    const txHash = await emissionsManager.write.setVeIon([veION.address]);
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set veION: ${veION.address}`);
   } catch (error) {

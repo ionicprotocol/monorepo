@@ -1,10 +1,9 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, pad, toBytes, Hash, parseEther, Hex, zeroAddress } from "viem";
-import { base, bob, fraxtal, mode, optimism } from "viem/chains";
+import { Address, Hash, Hex } from "viem";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { veIONConfig } from "../chainDeploy";
 
-import { logTransaction, prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();
@@ -57,23 +56,23 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║  Configuring which LP tokens are allowed ║
   // ╚══════════════════════════════════════════╝
   const owner = (await voter.read.owner()) as Address;
-  if (owner.toLowerCase() !== deployer.toLowerCase()) {
-    await prepareAndLogTransaction({
-      contractInstance: voter,
-      functionName: "setLpTokens",
-      args: [veParams.lpTokens],
-      description: "Set LP Tokens",
-      inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
-    });
-  } else {
-    hash = await voter.write.setLpTokens([veParams.lpTokens], {
-      from: deployer
-    });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === "success") {
-      console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
+  if (veParams.lpTokens.length > 0) {
+    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: voter,
+        functionName: "setLpTokens",
+        args: [veParams.lpTokens],
+        description: "Set LP Tokens",
+        inputs: [{ internalType: "address[]", name: "_lpTokens", type: "address[]" }]
+      });
     } else {
-      console.error(`Transaction ${hash} failed: ${receipt.status}`);
+      hash = await voter.write.setLpTokens([veParams.lpTokens]);
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      if (receipt.status === "success") {
+        console.log(`Successfully set LP Tokens to: ${veParams.lpTokens}`);
+      } else {
+        console.error(`Transaction ${hash} failed: ${receipt.status}`);
+      }
     }
   }
 
@@ -117,9 +116,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   }
 
   try {
-    hash = await voter.write.addMarkets([allMarkets], {
-      from: deployer
-    });
+    hash = await voter.write.addMarkets([allMarkets]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === "success") {
       console.log(`Successfully set markets for: ${allMarkets}`);
@@ -195,9 +192,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   // Call setMarketRewardAccumulators in the IVoter contract
   try {
-    const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators], {
-      from: deployer
-    });
+    const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(
       `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
@@ -247,7 +242,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   }
 
   try {
-    const txHash = await voter.write.setBribes([rewardAccumulators, bribes], { from: deployer });
+    const txHash = await voter.write.setBribes([rewardAccumulators, bribes]);
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
   } catch (error) {
@@ -258,7 +253,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║           SET MAX VOTING NUM             ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum)], { from: deployer });
+    const txHash = await voter.write.setMaxVotingNum([BigInt(veParams.maxVotingNum!)]);
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set max voting number to: ${veParams.maxVotingNum}`);
   } catch (error) {
@@ -271,11 +266,56 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║           SET VOTER ON VEION             ║
   // ╚══════════════════════════════════════════╝
   try {
-    const txHash = await IveION.write.setVoter([voter.address], { from: deployer });
+    const txHash = await IveION.write.setVoter([voter.address]);
     await publicClient.waitForTransactionReceipt({ hash: txHash });
     console.log(`Successfully set voter: ${voter.address}`);
   } catch (error) {
     console.error("Error setting voter:", error);
+  }
+
+  // ╔══════════════════════════════════════════╗
+  // ║           DEPLOY VOTER LENS              ║
+  // ╚══════════════════════════════════════════╝
+  let voterLens;
+  try {
+    voterLens = await deployments.deploy("VoterLens", {
+      from: deployer,
+      log: true,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [voter.address, (await deployments.get("PoolDirectory")).address]
+          }
+        }
+      }
+    });
+
+    if (voterLens.transactionHash) {
+      await publicClient.waitForTransactionReceipt({ hash: voterLens.transactionHash as Hash });
+    }
+    console.log(`VoterLens deployed at: ${voterLens.address}`);
+  } catch (error) {
+    console.error("Error deploying VoterLens:", error);
+  }
+
+  voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
+
+  try {
+    const txHash = await voterLens.write.setMasterPriceOracle([mpo.address]);
+    await publicClient.waitForTransactionReceipt({ hash: txHash });
+    console.log(`Successfully set mpo to ${mpo.address}`);
+  } catch (error) {
+    console.error("Error setting max voting number:", error);
+  }
+
+  try {
+    const txHash = await voterLens.write.setVeIONAddress([veION.address], { from: deployer });
+    await publicClient.waitForTransactionReceipt({ hash: txHash });
+    console.log(`Successfully set ve to ${veION.address}`);
+  } catch (error) {
+    console.error("Error setting max voting number:", error);
   }
 };
 

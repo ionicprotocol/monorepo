@@ -7,7 +7,8 @@ import {
 } from '@ui/constants/baselp';
 import {
   LiquidityContractAbi,
-  ModeLiquidityContractAddress
+  ModeLiquidityContractAddress,
+  ModeLpAddressPool
 } from '@ui/constants/lp';
 import { ModeTradingContractAddress } from '@ui/constants/modetradingfees';
 import {
@@ -42,8 +43,7 @@ export function getAvailableStakingToken(
 ): Address {
   if (chain === mode.id && (token === 'eth' || token === 'weth'))
     return '0xC6A394952c097004F83d2dfB61715d245A38735a';
-  if (chain === mode.id && token === 'mode')
-    return '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
+  if (chain === mode.id && token === 'mode') return ModeLpAddressPool;
   if (chain === base.id && (token === 'eth' || token === 'weth'))
     return BaseReservesContractAddr;
   if (chain === optimism.id && (token === 'eth' || token === 'weth'))
@@ -71,7 +71,7 @@ export function getStakingToContract(
   if (chain === mode.id && (token === 'eth' || token === 'weth'))
     return StakingContractAddress;
   if (chain === mode.id && token === 'mode')
-    return '0x8EE410cC13948e7e684ebACb36b552e2c2A125fC';
+    return '0x8ff8b21a0736738b25597D32d8f7cf658f39f157';
   if (chain === base.id) return '0x9b42e5F8c45222b2715F804968251c747c588fd7';
   if (chain === optimism.id && token === 'eth') return OPStakingContractAddr;
   return '0x0000000000000000000000000000000000000000';
@@ -117,9 +117,18 @@ export function getReservesArgs(
   if (chain === optimism.id || chain === base.id) {
     return [];
   }
-  if (chain === mode.id && (token === 'weth' || token === 'eth')) {
-    return [getToken(+chain), getPoolToken('weth'), false];
+
+  // MODE specific logic - we need to include MODE token case
+  if (chain === mode.id) {
+    if (token === 'weth' || token === 'eth') {
+      return [getToken(chain), getPoolToken('weth'), false];
+    }
+    if (token === 'mode') {
+      // For MODE/ION pair, pass ion token, mode token address, and false for the reverse flag
+      return [getToken(chain), getPoolToken('mode'), false];
+    }
   }
+
   return [];
 }
 

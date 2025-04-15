@@ -1,10 +1,9 @@
 import { DeployFunction } from "hardhat-deploy/types";
-import { Address, fromBytes, pad, toBytes, Hash, parseEther } from "viem";
-import { base, bob, fraxtal, mode, optimism } from "viem/chains";
-import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
-import { veIONConfig } from "../chainDeploy";
+import { Address } from "viem";
 
-import { logTransaction, prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
+import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
+
+import { prepareAndLogTransaction } from "../chainDeploy/helpers/logging";
 
 const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const { deployer, multisig } = await getNamedAccounts();

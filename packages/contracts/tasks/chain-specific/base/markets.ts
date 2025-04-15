@@ -67,30 +67,30 @@ task("markets:deploy:base:new", "deploy base market").setAction(
 
 task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.msUSD];
+  const assetsToDeploy: string[] = [assetSymbols.wUSDM];
   for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
     const admin = await pool.read.admin();
     const ap = await deployments.get("AddressesProvider");
-    if (admin.toLowerCase() !== deployer.toLowerCase()) {
-      await prepareAndLogTransaction({
-        contractInstance: asExt,
-        functionName: "_setAddressesProvider",
-        args: [ap.address as Address],
-        description: "Set Addresses Provider",
-        inputs: [
-          {
-            internalType: "address",
-            name: "_ap",
-            type: "address"
-          }
-        ]
-      });
-    } else {
-      await asExt.write._setAddressesProvider([ap.address as Address]);
-    }
+    // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+    //   await prepareAndLogTransaction({
+    //     contractInstance: asExt,
+    //     functionName: "_setAddressesProvider",
+    //     args: [ap.address as Address],
+    //     description: "Set Addresses Provider",
+    //     inputs: [
+    //       {
+    //         internalType: "address",
+    //         name: "_ap",
+    //         type: "address"
+    //       }
+    //     ]
+    //   });
+    // } else {
+    //   await asExt.write._setAddressesProvider([ap.address as Address]);
+    // }
 
     await run("market:set-borrow-cap", {
       market: cToken,
@@ -105,7 +105,7 @@ task("base:set-caps:new", "one time setup").setAction(async (_, { viem, run, get
 });
 
 task("market:set-cf:base:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.mBASIS)) {
+  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.wUSDM)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);

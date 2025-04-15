@@ -3,6 +3,7 @@ import {
   bob,
   fraxtal,
   lisk,
+  metalL2,
   mode,
   optimism,
   superseed,
@@ -79,13 +80,18 @@ export const shouldGetFeatured: Record<
 
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
-    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
+    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION',
+    '0xC6A394952c097004F83d2dfB61715d245A38735a': 'ION',
+    '0x690A74d2eC0175a69C0962B309E03021C0b5002E': 'ION'
   },
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
     '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
-    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
+    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD',
+    '0x0FAc819628a7F612AbAc1CaD939768058cc0170c': 'ION',
+    '0x7002458B1DF59EccB57387bC79fFc7C29E22e6f7': 'OGN',
+    '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913': 'USDC'
   },
   [optimism.id]: {
     '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
@@ -99,7 +105,7 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   }
 };
 
-export const chainsArr: Record<number, string> = {
+export const chainIdToName: Record<number, string> = {
   [mode.id]: 'Mode',
   [base.id]: 'Base',
   [optimism.id]: 'Optimism',
@@ -113,45 +119,12 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: [
-      '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
-      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
-      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44',
-      '0xfB30366C781a913b40c96617e380F18071761F9F',
-      '0xdcf01C75eeB8d74D2829eadC3dC5F1EaF542f577'
-    ],
-    borrow: [
-      '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
-      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834',
-      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5',
-      '0xE135500Cc111eEd663b49394E378d8bdCe86c540'
-    ]
+    supply: ['0xE2805eB783AfF1D9140D27D660E26030F92bE029'],
+    borrow: ['0x2912D204D5873A8b7b4b62CFC1DF1dcdC3eAd03a']
   },
   [base.id]: {
-    supply: [
-      '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
-      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
-      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
-      '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
-      '0xc39441b305705AfD07de97237bC835a4501AbbEC',
-      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
-      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
-      '0x1d0a712aE0162431E0573A8a735D02a29805d124',
-      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
-      '0x1e00C933e092912d47153765Fa7c886632c1d083',
-      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440',
-      '0xf42dBd423970fd6735a7CE2d850aA85897C79eeE',
-      '0xDB04Ab33184594Be006364e9bDb4263988c323df',
-      '0xB5c75749C7D03C012f169f69847e9006b8Cf5c58'
-    ],
-    borrow: [
-      '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
-      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
-      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
-      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
-      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a',
-      '0x1005d01cAAC7201e19c661c82a86b878a5e2C5cD'
-    ]
+    supply: ['0x1eE8E310e992E7932A2a0964b29eC6d820f517A2'],
+    borrow: ['0x8f88336f4A4fe791BA657541E1eA4e8F8BB841d2']
   },
   [optimism.id]: {
     supply: [
@@ -220,47 +193,6 @@ export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
 };
 
 export const pools: Record<number, PoolParams> = {
-  [mode.id]: {
-    hexcode: '#3bff89',
-    arrow: '000000',
-    bg: 'bg-lime',
-    accentbg: 'bg-accent',
-    text: 'text-darkone',
-    name: 'Mode',
-    border: 'border-mode',
-    logo: '/img/logo/MODE.png',
-    pools: [
-      {
-        id: '0',
-        name: 'Main',
-        assets: [
-          'WETH',
-          'USDC',
-          'msDAI',
-          'weETH.mode',
-          'LBTC',
-          'uniBTC',
-          'oBTC',
-          'uBTC',
-          'M-BTC',
-          'sUSDe',
-          'wrsETH',
-          'ezETH',
-          'STONE',
-          'WBTC',
-          'USDe',
-          'USDT',
-          'weETH',
-          'dMBTC'
-        ]
-      },
-      {
-        id: '1',
-        name: 'Native',
-        assets: ['MODE', 'WETH', 'USDC', 'USDT']
-      }
-    ]
-  },
   [base.id]: {
     name: 'Base',
     arrow: 'ffffff',
@@ -319,6 +251,47 @@ export const pools: Record<number, PoolParams> = {
     //     assets: ['USDC', 'WETH']
     //   }
     // ]
+  },
+  [mode.id]: {
+    hexcode: '#3bff89',
+    arrow: '000000',
+    bg: 'bg-lime',
+    accentbg: 'bg-accent',
+    text: 'text-darkone',
+    name: 'Mode',
+    border: 'border-mode',
+    logo: '/img/logo/MODE.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Deprecated',
+        assets: [
+          'WETH',
+          'USDC',
+          'msDAI',
+          'weETH.mode',
+          'LBTC',
+          'uniBTC',
+          'oBTC',
+          'uBTC',
+          'M-BTC',
+          'sUSDe',
+          'wrsETH',
+          'ezETH',
+          'STONE',
+          'WBTC',
+          'USDe',
+          'USDT',
+          'weETH',
+          'dMBTC'
+        ]
+      },
+      {
+        id: '1',
+        name: 'Native Pool',
+        assets: ['MODE', 'WETH', 'USDC', 'USDT']
+      }
+    ]
   },
   [optimism.id]: {
     name: 'Optimism',
@@ -491,6 +464,21 @@ export const pools: Record<number, PoolParams> = {
         id: '0',
         name: 'Main',
         assets: ['WETH', 'USDC', 'ASTR']
+      }
+    ]
+  },
+  [metalL2.id]: {
+    name: 'MetalL2',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/METALL2.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
       }
     ]
   }

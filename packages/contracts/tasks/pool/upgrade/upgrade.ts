@@ -1,6 +1,7 @@
 import { chainIdtoChain } from "@ionicprotocol/chains";
 import { task, types } from "hardhat/config";
 import { Address, Hash, zeroAddress } from "viem";
+import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 
 export default task("comptroller:implementation:set-latest", "Configures a latest comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
@@ -97,16 +98,115 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         }
 
         if (shouldUpgrade) {
-          const tx = await feeDistributor.write.autoUpgradePool([pool.comptroller]);
-          console.log(`bulk upgrading pool with tx ${tx}`);
-          await publicClient.waitForTransactionReceipt({ hash: tx });
-          console.log(`bulk upgraded pool ${pool.comptroller}`);
+          if ((await feeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+            await prepareAndLogTransaction({
+              contractInstance: feeDistributor,
+              functionName: "autoUpgradePool",
+              args: [pool.comptroller],
+              description: `bulk upgrade ${pool.comptroller} to ${latestImpl}`,
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "pool",
+                  type: "address"
+                }
+              ]
+            });
+          } else {
+            const tx = await feeDistributor.write.autoUpgradePool([pool.comptroller]);
+            console.log(`bulk upgrading pool with tx ${tx}`);
+            await publicClient.waitForTransactionReceipt({ hash: tx });
+            console.log(`bulk upgraded pool ${pool.comptroller}`);
+          }
         }
       } catch (e) {
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
       }
     }
   });
+
+task("pools:all:upgrade2", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
+  async ({ forceUpgrade }, { viem, getChainId, deployments, getNamedAccounts }) => {
+    const chainId = await getChainId();
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[+chainId] });
+    const { deployer } = await getNamedAccounts();
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[+chainId] });
+
+    const poolDirectory = await viem.getContractAt(
+      "PoolDirectory",
+      (await deployments.get("PoolDirectory")).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
+    );
+    const feeDistributor = await viem.getContractAt(
+      "FeeDistributor",
+      (await deployments.get("FeeDistributor")).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
+    );
+
+    const [, pools] = await poolDirectory.read.getActivePools();
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      console.log("pool", { name: pool.name, address: pool.comptroller });
+      const unitroller = await viem.getContractAt("Unitroller", pool.comptroller, {
+        client: { public: publicClient, wallet: walletClient }
+      });
+      const admin = await unitroller.read.admin();
+      console.log("pool admin", admin);
+
+      try {
+        const implBefore = await unitroller.read.comptrollerImplementation();
+        const latestImpl = await feeDistributor.read.latestComptrollerImplementation([implBefore]);
+        console.log(`current impl ${implBefore} latest ${latestImpl}`);
+
+        let shouldUpgrade = forceUpgrade || implBefore != latestImpl;
+        if (!shouldUpgrade) {
+          const comptrollerAsExtension = await viem.getContractAt("IonicComptroller", pool.comptroller, {
+            client: { public: publicClient, wallet: walletClient }
+          });
+          const markets = await comptrollerAsExtension.read.getAllMarkets();
+          for (let j = 0; j < markets.length; j++) {
+            const market = markets[j];
+            console.log(`market address ${market}`);
+            const cTokenInstance = await viem.getContractAt("ICErc20", market, {
+              client: { public: publicClient, wallet: walletClient }
+            });
+            const implBefore = await cTokenInstance.read.implementation();
+            console.log(`implementation before ${implBefore}`);
+            const [latestImpl] = await feeDistributor.read.latestCErc20Delegate([
+              await cTokenInstance.read.delegateType()
+            ]);
+            if (latestImpl == zeroAddress || latestImpl == implBefore) {
+              console.log(`No auto upgrade with latest implementation ${latestImpl}`);
+            } else {
+              console.log(`will upgrade ${market} to ${latestImpl}`);
+              shouldUpgrade = true;
+              break;
+            }
+          }
+        }
+
+        if (shouldUpgrade) {
+          if ((await feeDistributor.read.owner()).toLowerCase() !== deployer.toLowerCase()) {
+            await prepareAndLogTransaction({
+              contractInstance: unitroller,
+              functionName: "_upgrade",
+              args: [],
+              description: `bulk upgrade ${pool.comptroller}`,
+              inputs: []
+            });
+          } else {
+            const tx = await unitroller.write._upgrade();
+            console.log(`bulk upgrading pool with tx ${tx}`);
+            await publicClient.waitForTransactionReceipt({ hash: tx });
+            console.log(`bulk upgraded pool ${pool.comptroller}`);
+          }
+        }
+      } catch (e) {
+        console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
+      }
+    }
+  }
+);
 
 task("pools:all:pause-guardian", "Sets the pause guardian for all pools that have a different address for it")
   .addParam("replacingGuardian", "Address of the replacing pause guardian", undefined, types.string)

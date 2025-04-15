@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { Info } from 'lucide-react';
 
 import {
@@ -7,21 +9,23 @@ import {
   TooltipTrigger
 } from '@ui/components/ui/tooltip';
 
-const CustomTooltip = ({
-  content,
-  color
-}: {
+interface CustomTooltipProps {
   content: string;
   color?: string;
-}) => (
+  children?: ReactNode;
+}
+
+const CustomTooltip = ({ content, color, children }: CustomTooltipProps) => (
   <TooltipProvider delayDuration={0}>
     <Tooltip>
       <TooltipTrigger asChild>
-        <div
-          className={`w-4 h-4 inline-flex items-center justify-center rounded-full text-xs cursor-help ${color}`}
-        >
-          <Info />
-        </div>
+        {children || (
+          <div
+            className={`w-4 h-4 inline-flex items-center justify-center rounded-full text-xs cursor-help ${color}`}
+          >
+            <Info />
+          </div>
+        )}
       </TooltipTrigger>
       <TooltipContent
         className="bg-grayUnselect text-white border-white/10 max-w-sm"

@@ -1,5 +1,6 @@
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import {
+  COMPTROLLER_NATIVE,
   dmBTC_MARKET,
   ezETH_MARKET,
   ION,
@@ -100,5 +101,107 @@ task("mode:add-rewards:borrow", "add rewards to a market").setAction(
       "IonicFlywheelBorrow_Borrow_ION",
       "IonicFlywheelDynamicRewards_Borrow_ION"
     );
+  }
+);
+
+task("mode:flywheel-setup:veion:supply", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION",
+      rewardToken: ION,
+      booster: "",
+      strategies: [MODE_NATIVE_MARKET, WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET].join(","),
+      pool: COMPTROLLER_NATIVE
+    });
+  }
+);
+
+task("mode:flywheel-setup:veion:borrow", "add rewards to a market").setAction(
+  async (_, { viem, deployments, getNamedAccounts, run }) => {
+    await run("flywheel:deploy-dynamic-rewards-fw", {
+      name: "veION_Borrow",
+      rewardToken: ION,
+      booster: "IonicFlywheelBorrowBooster_ION",
+      strategies: [MODE_NATIVE_MARKET, WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET].join(","),
+      pool: COMPTROLLER_NATIVE
+    });
+  }
+);
+
+task("mode:flywheel:set-reward-accumulators-and-approve", "Set accumulators and approve").setAction(
+  async (_, { deployments, viem }) => {
+    const publicClient = await viem.getPublicClient();
+
+    const markets = [WETH_NATIVE_MARKET, USDC_NATIVE_MARKET, USDT_NATIVE_MARKET, MODE_NATIVE_MARKET];
+    const emissionsManager = await deployments.get("EmissionsManager");
+    const veIONFlywheelSupply = await deployments.get("IonicFlywheel_veION");
+    const veIONFlywheelSupplyContract = await viem.getContractAt(
+      "IonicFlywheel",
+      veIONFlywheelSupply.address as Address
+    );
+
+    const flywheelRewardsContractSupply = await viem.getContractAt(
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION")).address as Address
+    );
+
+    const veIONFlywheelBorrow = await deployments.get("IonicFlywheelBorrow_veION_Borrow");
+    const veIONFlywheelBorrowContract = await viem.getContractAt(
+      "IonicFlywheel",
+      veIONFlywheelBorrow.address as Address
+    );
+
+    // Set emissions manager
+    let tx = await veIONFlywheelSupplyContract.write.setEmissionsManager([emissionsManager.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+    tx = await veIONFlywheelBorrowContract.write.setEmissionsManager([emissionsManager.address as Address]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+
+    const flywheelRewardsContractBorrow = await viem.getContractAt(
+      "IonicFlywheelDynamicRewards",
+      (await deployments.get("IonicFlywheelDynamicRewards_veION_Borrow")).address as Address
+    );
+
+    for (const market of markets) {
+      // supply side config
+      const _rewardAccumulatorSupply = (await deployments.get(`RewardAccumulator_${market}_0`)).address as Address;
+      let tx = await flywheelRewardsContractSupply.write.setRewardAccumulators([
+        [market as Address],
+        [_rewardAccumulatorSupply]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+
+      console.log("Reward accumulator set for market supply: ", market, tx);
+
+      const rewardAccumulator = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorSupply);
+      try {
+        tx = await rewardAccumulator.write.approve([ION, flywheelRewardsContractSupply.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+      } catch (e) {
+        console.log("Reward accumulator already approved for market supply: ", market, tx);
+      }
+
+      console.log("Reward accumulator approved for market supply: ", market, tx);
+
+      // borrow side config
+      const _rewardAccumulatorBorrow = (await deployments.get(`RewardAccumulator_${market}_1`)).address as Address;
+      tx = await flywheelRewardsContractBorrow.write.setRewardAccumulators([
+        [market as Address],
+        [_rewardAccumulatorBorrow]
+      ]);
+      await publicClient.waitForTransactionReceipt({ hash: tx });
+
+      console.log("Reward accumulator set for market borrow: ", market, tx);
+
+      const rewardAccumulatorBorrow = await viem.getContractAt("RewardAccumulator", _rewardAccumulatorBorrow);
+      try {
+        tx = await rewardAccumulatorBorrow.write.approve([ION, flywheelRewardsContractBorrow.address as Address]);
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+      } catch (e) {
+        console.log("Reward accumulator already approved for market borrow: ", market, tx);
+      }
+
+      console.log("Reward accumulator approved for market borrow: ", market, tx);
+    }
   }
 );

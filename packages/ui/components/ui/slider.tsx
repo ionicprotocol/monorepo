@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+
 import * as SliderPrimitive from '@radix-ui/react-slider';
+
 import { cn } from '@ui/lib/utils';
 
 type Mark = {
@@ -22,10 +24,20 @@ const Slider = React.forwardRef<
   SliderProps
 >(
   (
-    { className, value, marks, onMarkClick, currentPosition, ...props },
+    {
+      className,
+      value,
+      marks,
+      onMarkClick,
+      currentPosition,
+      min = 0,
+      max = 100,
+      ...props
+    },
     ref
   ) => {
-    const percentage = value ? value[0] : 0;
+    // Calculate percentage based on the current value relative to min-max range
+    const percentage = value ? ((value[0] - min) / (max - min)) * 100 : 0;
 
     const getGradientStyle = () => {
       return {
@@ -46,10 +58,7 @@ const Slider = React.forwardRef<
         {marks && (
           <div className="relative w-full h-4">
             {marks.map((mark) => {
-              const position =
-                ((mark.value - (props.min || 0)) /
-                  ((props.max || 100) - (props.min || 0))) *
-                100;
+              const position = ((mark.value - min) / (max - min)) * 100;
               return (
                 <span
                   key={mark.value}
@@ -81,6 +90,8 @@ const Slider = React.forwardRef<
             className
           )}
           value={value}
+          min={min}
+          max={max}
           {...props}
         >
           <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-graylite">
@@ -98,6 +109,7 @@ const Slider = React.forwardRef<
     );
   }
 );
+
 Slider.displayName = SliderPrimitive.Root.displayName;
 
 export { Slider };

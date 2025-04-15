@@ -1,8 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
+import { Network } from 'lucide-react';
+import { base } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import {
@@ -19,15 +24,17 @@ interface INetworkSelector {
   nopool?: boolean;
   enabledChains?: number[];
   upcomingChains?: string[];
+  showAll?: boolean;
 }
 
 const ACTIVE_NETWORKS = [
-  'Mode',
   'Base',
+  'Mode',
   'Optimism',
-  'Fraxtal',
-  'Ink',
+  'MetalL2',
   'Lisk',
+  'Ink',
+  'Fraxtal',
   'BoB',
   'Worldchain',
   'Swell',
@@ -36,15 +43,41 @@ const ACTIVE_NETWORKS = [
   'Camp Testnet'
 ];
 
+export const ALL_CHAINS_VALUE = 0;
+
+const BASE_CHAIN_ID = base.id;
+
 function NetworkSelector({
   dropdownSelectedChain,
   nopool = false,
   enabledChains,
-  upcomingChains
+  upcomingChains,
+  showAll = false
 }: INetworkSelector) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { setDropChain } = useMultiIonic();
+
+  const baseNetwork = Object.entries(pools).find(
+    ([_, pool]) => pool.name === 'Base'
+  );
+
+  const baseChainId = baseNetwork ? baseNetwork[0] : BASE_CHAIN_ID.toString();
+
+  useEffect(() => {
+    const currentChain = searchParams.get('chain');
+
+    if (!currentChain) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('chain', baseChainId);
+      if (!nopool) {
+        params.set('pool', '0');
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+      setDropChain(baseChainId);
+    }
+  }, [pathname, searchParams, router, baseChainId, nopool, setDropChain]);
 
   const orderedNetworks = ACTIVE_NETWORKS.map((networkName) =>
     Object.entries(pools).find(([_, pool]) => pool.name === networkName)
@@ -56,16 +89,56 @@ function NetworkSelector({
 
   const getUrlWithParams = (chainId: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    // Always reset pool to 0 when changing chains unless nopool is true
     params.set('chain', chainId);
     if (!nopool) {
-      params.set('pool', '0');
+      const poolValue =
+        Object.entries(pools).find(([id]) => id === chainId)?.[1].name ===
+        'Mode'
+          ? '1'
+          : '0';
+      params.set('pool', poolValue);
     }
     return `${pathname}?${params.toString()}`;
   };
 
   return (
     <div className="flex flex-wrap gap-2">
+      {showAll && (
+        <TooltipProvider>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <div>
+                <Button
+                  variant={
+                    dropdownSelectedChain === ALL_CHAINS_VALUE
+                      ? 'secondary'
+                      : 'ghost'
+                  }
+                  asChild
+                  className={`h-9 rounded-md ${dropdownSelectedChain === ALL_CHAINS_VALUE ? 'min-w-[80px] p-2' : 'min-w-[32px] p-1'}`}
+                >
+                  <Link
+                    href={getUrlWithParams(ALL_CHAINS_VALUE.toString())}
+                    onClick={() => setDropChain(ALL_CHAINS_VALUE.toString())}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Network className="w-6 h-6" />
+                    {dropdownSelectedChain === ALL_CHAINS_VALUE && (
+                      <span className="text-sm">All Chains</span>
+                    )}
+                  </Link>
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="flex items-center gap-2 bg-background">
+              <Network className="w-4 h-4" />
+              <p>All Chains</p>
+              <span className="text-emerald-400 text-xs">Active</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+
       {orderedNetworks.map(([chainId, network], idx) => {
         const isSelected = +chainId === +dropdownSelectedChain;
 

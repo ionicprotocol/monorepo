@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { zeroAddress } from 'viem';
-import { http, createConfig, useChainId, useAccount } from 'wagmi';
+import { http, createConfig, useAccount } from 'wagmi';
 import { base, mode } from 'wagmi/chains';
 import { coinbaseWallet } from 'wagmi/connectors';
 
@@ -42,12 +42,14 @@ const NavLink = ({
   label,
   isActive,
   soon,
+  isNew,
   external
 }: {
   href: string;
   label: string;
   isActive?: boolean;
   soon?: boolean;
+  isNew?: boolean;
   external?: boolean;
 }) => (
   <Link
@@ -69,6 +71,11 @@ const NavLink = ({
           SOON!
         </span>
       )}
+      {isNew && (
+        <span className="absolute px-[5px] -bottom-2.5 left-1/2 -translate-x-1/2 bg-accent rounded-lg text-xxs text-darkone whitespace-nowrap">
+          NEW!
+        </span>
+      )}
     </div>
   </Link>
 );
@@ -78,7 +85,6 @@ export default function Navbar() {
   const [swapWidgetOpen, setSwapWidgetOpen] = useState(false);
   const pathname = usePathname();
   const { dropChain } = useMultiIonic();
-  const chainId = useChainId();
   const { isConnected } = useAccount();
 
   return (
@@ -113,9 +119,27 @@ export default function Navbar() {
             isActive={pathname === '/' || pathname === '/market'}
           />
           <NavLink
+            href="/veion"
+            label="veION"
+            isNew
+          />
+          {/* <NavLink
             href={`/stake?chain=${chainId === mode.id || chainId === base.id ? chainId : '34443'}`}
             label="Stake"
+          /> */}
+          <NavLink
+            href="/xION?chain=34443&toChain=8453"
+            label="Bridge ION"
+            isActive={pathname === '/xION'}
           />
+          <div className="relative mb-2 lg:mb-0">
+            <p
+              className="lg:px-2 xl:px-4 text-center transition-colors duration-200 hover:text-accent cursor-pointer"
+              onClick={() => setSwapWidgetOpen(true)}
+            >
+              Swap
+            </p>
+          </div>
           <NavLink
             href="/dashboard"
             label="Dashboard"
@@ -131,26 +155,10 @@ export default function Navbar() {
             label="Claim"
             isActive={pathname === '/claim'}
           />
-
-          <div className="relative mb-2 lg:mb-0">
-            <p
-              className="lg:px-2 xl:px-4 text-center transition-colors duration-200 hover:text-accent cursor-pointer"
-              onClick={() => setSwapWidgetOpen(true)}
-            >
-              Bridge
-            </p>
-          </div>
-
           <NavLink
-            href="/xION?chain=34443&toChain=8453"
-            label="xION"
-            isActive={pathname === '/xION'}
-          />
-          <NavLink
-            href="https://doc.ionic.money/ionic-documentation/tokenomics/stage-2-usdion"
-            label="veION"
-            soon
-            external
+            href="/incentives"
+            label="Incentivize"
+            isActive={pathname === '/incentives'}
           />
 
           {!isConnected && (

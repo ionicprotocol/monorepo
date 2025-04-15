@@ -155,6 +155,18 @@ task("pool:create:soneium").setAction(async ({}, { run, deployments }) => {
   });
 });
 
+task("pool:create:metalL2").setAction(async ({}, { run, deployments }) => {
+  const mpo = await deployments.get("MasterPriceOracle");
+  await run("pool:create", {
+    name: "MetalL2 Main Pool",
+    creator: "deployer",
+    priceOracle: mpo.address, // MPO
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false"
+  });
+});
+
 task("pool:create:base:morpho-ionic").setAction(async ({}, { run, deployments }) => {
   const mpo = await deployments.get("MasterPriceOracle");
   await run("pool:create", {

@@ -1,31 +1,72 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
-import { Globe, Diamond, Wallet } from 'lucide-react';
+import { Globe, Diamond, Wallet, AlertCircle } from 'lucide-react';
 
 import { pools } from '@ui/constants/index';
 
-const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
+interface HiddenPool {
+  chainId: number;
+  poolId: string;
+}
+
+interface PoolToggleProps {
+  chain: number;
+  pool: string;
+  hiddenPools?: HiddenPool[];
+}
+
+const PoolToggle = ({ chain, pool, hiddenPools = [] }: PoolToggleProps) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const chainConfig = pools[+chain];
   const poolsData = chainConfig.pools;
   const vaultsData = chainConfig.vaults;
 
+  const getUpdatedUrl = (newPool: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('chain', chain.toString());
+    if (newPool) {
+      params.set('pool', newPool);
+    }
+    return `${pathname}?${params.toString()}`;
+  };
+
+  const filteredPoolsData = poolsData
+    .filter((poolConfig) => {
+      return !hiddenPools.some(
+        (hiddenPool) =>
+          hiddenPool.chainId === chain && hiddenPool.poolId === poolConfig.id
+      );
+    })
+    .sort((a, b) => {
+      const aIsDeprecated = a.name.toLowerCase().includes('deprecated');
+      const bIsDeprecated = b.name.toLowerCase().includes('deprecated');
+
+      if (aIsDeprecated && !bIsDeprecated) return 1;
+      if (!aIsDeprecated && bIsDeprecated) return -1;
+      return 0;
+    });
+
   return (
     <div className="flex flex-col sm:flex-row gap-2">
-      {poolsData.length > 0 && (
+      {filteredPoolsData.length > 0 && (
         <div className="h-9 rounded-lg bg-darktwo border border-white/10 p-0.5">
           <div className="inline-flex items-center h-full gap-1">
-            {poolsData.map((poolConfig, idx) => {
+            {filteredPoolsData.map((poolConfig, idx) => {
               const isActive = pool === poolConfig.id;
+              const isNative = poolConfig.name.toLowerCase().includes('native');
+              const isDeprecated = poolConfig.name
+                .toLowerCase()
+                .includes('deprecated');
 
               return (
                 <Link
                   key={idx}
-                  href={`${pathname}?chain=${chain}${
-                    poolConfig.id ? `&pool=${poolConfig.id}` : ''
-                  }`}
+                  href={getUpdatedUrl(poolConfig.id)}
                   className={`
                     inline-flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
                     ${
@@ -35,15 +76,15 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
                     }
                   `}
                 >
-                  {poolConfig.id === '0' ? (
-                    <Globe className="h-4 w-4" />
-                  ) : poolConfig.id === '1' ? (
+                  {isNative ? (
                     <Diamond className="h-4 w-4" />
+                  ) : isDeprecated ? (
+                    <AlertCircle className="h-4 w-4" />
                   ) : (
-                    <></>
+                    <Globe className="h-4 w-4" />
                   )}
                   <span className="relative whitespace-nowrap">
-                    {poolConfig.name}
+                    {isDeprecated ? 'Deprecated' : isNative ? 'Native' : 'Main'}
                   </span>
                 </Link>
               );
@@ -55,7 +96,7 @@ const PoolToggle = ({ chain, pool }: { chain: number; pool: string }) => {
       {vaultsData && vaultsData.length > 0 && (
         <div className="h-9 rounded-lg bg-darktwo border border-white/10 p-0.5">
           <Link
-            href={`${pathname}?chain=${chain}&pool=vault`}
+            href={getUpdatedUrl('vault')}
             className={`
               inline-flex items-center gap-2 px-3 h-full rounded-md text-sm font-medium transition-all
               ${

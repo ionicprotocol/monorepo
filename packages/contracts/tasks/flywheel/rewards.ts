@@ -1,6 +1,8 @@
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Address, formatEther, parseEther } from "viem";
+import { Address, formatEther, parseEther, formatUnits } from "viem";
+import { setTimeout } from 'timers/promises';
+
 
 export const getCycleInfoForAllMarkets = async (
   viem: HardhatRuntimeEnvironment["viem"],
@@ -18,8 +20,12 @@ export const getCycleInfoForAllMarkets = async (
     end: number;
     reward: bigint;
     flywheelRewards: Address;
+    flywheel: Address;
     rewardSymbol: string;
+    rewardsLeft: bigint;
   }[] = [];
+  let totalIONLeft = 0n;
+  let fwrs: string[] = []; 
   for (const pool of pools) {
     const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
     const rewardsDistributors = await comptroller.read.getRewardsDistributors();
@@ -35,15 +41,22 @@ export const getCycleInfoForAllMarkets = async (
         const rewardToken = await viem.getContractAt("EIP20Interface", rw);
         const rewardSymbol = await rewardToken.read.symbol();
         const cycleInfo = await flywheelRewards.read.rewardsCycle([cToken]);
+        const rewardsLeft = await rewardToken.read.balanceOf([flywheelRewards.address]);
+        if (rewardSymbol === "ION" && !fwrs.includes(fwr)) {
+          totalIONLeft += rewardsLeft;
+          fwrs.push(fwr);
+        }
         if (cycleInfo[0] !== 0 && cycleInfo[1] !== 0) {
           rewardsCycles.push({
             symbol,
             cToken,
             start: cycleInfo[0],
             end: cycleInfo[1],
-            reward: cycleInfo[2],
+            reward: (cycleInfo[2] / BigInt(1e18)),
             flywheelRewards: flywheelRewards.address,
-            rewardSymbol
+            flywheel : flywheel.address,
+            rewardSymbol,
+            rewardsLeft: (rewardsLeft / BigInt(1e18)),
           });
 
           // console.log(
@@ -67,10 +80,11 @@ export const getCycleInfoForAllMarkets = async (
     console.log("-".repeat(30));
     rewards.forEach((reward) => {
       console.log(
-        `Market: ${reward.symbol} (${reward.cToken}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Start Time: ${reward.start}\n${"-".repeat(20)}`
+        `Market: ${reward.symbol} (${reward.cToken}) | Flywheel (${reward.flywheel}) | Reward Token: ${reward.rewardSymbol} | Reward Amount: ${reward.reward} | Tokens Left: ${reward.rewardsLeft} | Start Time: ${reward.start}\n${"-".repeat(20)}`
       );
     });
   });
+  console.log(`Total ION Left: ${totalIONLeft / BigInt(1e18)}`);
 };
 
 task("flywheel:get_cycle_info", "get cycle info from flywheel").setAction(async (_, { viem, deployments }) => {
@@ -108,3 +122,105 @@ export const sendRewardsToMarkets = async (
     }
   }
 };
+
+export const getCurrentRewardsInfo= async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"]
+) => {
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const pools = await poolDirectory.read.getAllPools();
+
+  for (const pool of pools) {
+    const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
+    const rewardsDistributors = await comptroller.read.getRewardsDistributors();
+    const cTokens = await comptroller.read.getAllMarkets();
+    for (const rewardsDistributor of rewardsDistributors) {
+      const flywheel = await viem.getContractAt("IonicFlywheel", rewardsDistributor);
+      const fwr = await flywheel.read.flywheelRewards();
+      const flywheelRewards = await viem.getContractAt("IonicFlywheelDynamicRewards", fwr);
+      console.log(flywheel.address);
+      for (const cToken of cTokens) {
+        const cTokenContract = await viem.getContractAt("CErc20RewardsDelegate", cToken);
+        const totalBorrows = await cTokenContract.read.totalBorrows();
+        const symbol = await cTokenContract.read.symbol();
+        const blacklistedSupply = await flywheel.read.blacklistedSupply([cToken]);
+        const totalSupply = await cTokenContract.read.totalSupply();
+        let percentage;
+        /*if (flywheel.address === "0x90ffC9786f4757C262A9B529c4a4F6708c94339e"){
+          percentage = Number(blacklistedSupply) / Number(totalBorrows) * 100;
+          console.log(symbol, blacklistedSupply, totalBorrows, percentage);
+        }
+        else {
+          percentage =  Number(blacklistedSupply) / Number(totalSupply) * 100;
+          console.log(symbol, blacklistedSupply, totalSupply, percentage);
+        }*/
+        const info = await flywheelRewards.read.rewardsCycle([cToken]);
+        if (info[2] != 0n){
+          console.log(symbol, cToken, info[0], info[1], Number(info[2])/ 1e18);
+        }
+        }
+      }
+    }
+};
+
+task("flywheel:get_current_rewards_info", "get current flywheel rewards info").setAction(async (_, { viem, deployments }) => {
+  await getCurrentRewardsInfo(viem, deployments);
+});
+
+
+export const depositInAllPools= async (
+  viem: HardhatRuntimeEnvironment["viem"],
+  deployments: HardhatRuntimeEnvironment["deployments"]
+) => {
+  const [caller] = await viem.getWalletClients(); // Gets the first signer
+  const callerAddress = caller.account.address;
+  const poolDirectory = await viem.getContractAt(
+    "PoolDirectory",
+    (await deployments.get("PoolDirectory")).address as Address
+  );
+  const pools = await poolDirectory.read.getAllPools();
+
+  for (const pool of pools) {
+    const comptroller = await viem.getContractAt("IonicComptroller", pool.comptroller);
+    if(pool.name !== 'Base Market') continue;
+
+    const rewardsDistributors = await comptroller.read.getRewardsDistributors();
+    const cTokens = await comptroller.read.getAllMarkets();
+    for (const cToken of cTokens) {
+      const cTokenContract = await viem.getContractAt("CErc20RewardsDelegate", cToken);
+      const underlyingToken = await cTokenContract.read.underlying();
+      const symbol = await cTokenContract.read.symbol();
+      const decimals = await cTokenContract.read.decimals();
+      const cTokenContractERC20 = await viem.getContractAt("solmate/tokens/ERC20.sol:ERC20", cToken);
+      const balanceDeposited =  Number(await cTokenContractERC20.read.balanceOf([callerAddress])) / 10 ** decimals;
+      //console.log("Market", symbol, underlyingToken);
+      const token = await viem.getContractAt("solmate/tokens/ERC20.sol:ERC20", underlyingToken);
+      const balance = Number(await token.read.balanceOf([callerAddress])) / 10 ** decimals;
+      const tokanSymbol = await token.read.symbol();
+      if (balanceDeposited > 0) {
+        console.log(`${symbol} already deposited ${balanceDeposited} ${tokanSymbol}`)
+        continue;
+      }
+
+      if (balance == 0 ) {
+        console.log(`Buy ${tokanSymbol}..`)
+        continue;
+      }
+      const allowance = await token.read.allowance([callerAddress, cToken])
+      if (allowance < balance ) {
+        console.log(`Increasing allowance ${tokanSymbol}..`)
+        await token.write.approve([cToken, balance]);
+        await setTimeout(3000);
+      }
+      console.log(`Depositing ${balance} ${tokanSymbol} into ${symbol}`)
+      await cTokenContract.write.mint([balance]);
+      }
+    }
+};
+
+task("flywheel:deposit_all_tokens", "get current flywheel rewards info").setAction(async (_, { viem, deployments }) => {
+  await depositInAllPools(viem, deployments);
+});

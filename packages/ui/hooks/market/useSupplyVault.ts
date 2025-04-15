@@ -1,5 +1,5 @@
-import { VAULT_ABI, VAULT_ADDRESSES } from '@ui/utils/marketUtils';
 import { useCallback, useMemo, useState } from 'react';
+
 import { toast } from 'react-hot-toast';
 import { type Address, parseUnits, erc20Abi } from 'viem';
 import {
@@ -8,6 +8,8 @@ import {
   useReadContract,
   useSimulateContract
 } from 'wagmi';
+
+import { VAULT_ABI, VAULT_ADDRESSES } from '@ui/utils/marketUtils';
 
 interface UseSupplyVaultProps {
   underlyingDecimals: number;

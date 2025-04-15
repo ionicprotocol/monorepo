@@ -1,10 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
+
 import { toast } from 'react-hot-toast';
 import { parseUnits } from 'viem';
 import { useWriteContract, useAccount, useSimulateContract } from 'wagmi';
-import { VAULT_ABI, VAULT_ADDRESSES } from '@ui/utils/marketUtils';
 
-import { VaultRowData } from '@ui/types/SupplyVaults';
+import type { VaultRowData } from '@ui/types/SupplyVaults';
+import { VAULT_ABI, VAULT_ADDRESSES } from '@ui/utils/marketUtils';
 
 interface UseWithdrawVaultProps {
   maxAmount: bigint;
