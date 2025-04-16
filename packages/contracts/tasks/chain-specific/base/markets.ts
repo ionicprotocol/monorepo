@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 import { base } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
-import { COMPTROLLER, COMPTROLLER_MORPHO_IONIC } from ".";
+import { COMPTROLLER, COMPTROLLER_MORPHO_IONIC, COMPTROLLER_MORPHO_SEAMLESS } from ".";
 import { Address, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
 import { getMarketInfo } from "../../market";
@@ -123,13 +123,13 @@ task("base:get-market-info", "get market info").setAction(async (_, { viem, run 
   await getMarketInfo(viem, COMPTROLLER);
 });
 
-task("markets:deploy:base:morpho-ionic", "deploy base market").setAction(
+task("markets:deploy:base:morpho-seamless", "deploy base market").setAction(
   async (_, { viem, run, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const assetsToDeploy: string[] = [assetSymbols.ionicUSDC];
+    const assetsToDeploy: string[] = [assetSymbols.smUSDC /*assetSymbols.USDC, assetSymbols.ETH*/];
     for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
-      const marketName = `Ionic ${asset.name} Morpho (Ionic)`;
-      const marketSymbol = `ion${asset.symbol}.morpho.ionic`;
+      const marketName = `Ionic ${asset.name} Morpho (Seamless)`;
+      const marketSymbol = `ion${asset.symbol}.morpho.seamless`;
       console.log("Deploying market for", asset.symbol, asset.name, marketSymbol, marketName);
       await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
 
@@ -140,11 +140,11 @@ task("markets:deploy:base:morpho-ionic", "deploy base market").setAction(
         signer: "deployer",
         cf: "0",
         underlying: asset.underlying,
-        comptroller: COMPTROLLER_MORPHO_IONIC,
+        comptroller: COMPTROLLER_MORPHO_SEAMLESS,
         symbol: marketSymbol,
         name: marketName
       });
-      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_IONIC);
+      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_SEAMLESS);
       const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
       console.log(`Deployed ${asset.symbol} at ${cToken}`);
 
@@ -184,12 +184,12 @@ task("markets:deploy:base:morpho-ionic", "deploy base market").setAction(
   }
 );
 
-task("base:set-caps:morpho-ionic", "one time setup").setAction(
+task("base:set-caps:morpho-seamless", "one time setup").setAction(
   async (_, { viem, run, getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
-    const assetsToDeploy: string[] = [assetSymbols.ionicUSDC];
+    const assetsToDeploy: string[] = [assetSymbols.smUSDC, assetSymbols.USDC];
     for (const asset of base.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
-      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_IONIC);
+      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_SEAMLESS);
       const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
       const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
       const admin = await pool.read.admin();
@@ -225,9 +225,11 @@ task("base:set-caps:morpho-ionic", "one time setup").setAction(
   }
 );
 
-task("market:set-cf:base:morpho-ionic", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of base.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
-    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_IONIC);
+task("market:set-cf:base:morpho-seamless", "Sets CF on a market").setAction(async (_, { viem, run }) => {
+  for (const asset of base.assets.filter((asset) =>
+    [assetSymbols.smUSDC, assetSymbols.USDC].includes(asset.symbol as any)
+  )) {
+    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_SEAMLESS);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
 

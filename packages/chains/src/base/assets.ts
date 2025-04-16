@@ -46,6 +46,7 @@ export const msUSD = "0x526728DBc96689597F85ae4cd716d4f7fCcBAE9d";
 export const ionicUSDC = "0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e";
 export const ionicWETH = "0x5A32099837D89E3a794a44fb131CBbAD41f87a8C";
 export const mBASIS = "0x1C2757c1FeF1038428b5bEF062495ce94BBe92b2";
+export const smUSDC = "0x616a4E1db48e22028f6bbf20444Cd3b8e3273738";
 
 export const assets: SupportedAsset[] = [
   {
@@ -486,6 +487,17 @@ export const assets: SupportedAsset[] = [
     initialCf: "0.10",
     initialSupplyCap: parseEther(String(99_000)).toString(),
     initialBorrowCap: parseEther(String(99_000)).toString()
+  },
+  {
+    symbol: assetSymbols.smUSDC,
+    underlying: smUSDC,
+    name: "Seamless USDC Vault",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", smUSDC),
+    initialSupplyCap: parseEther(String(2_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

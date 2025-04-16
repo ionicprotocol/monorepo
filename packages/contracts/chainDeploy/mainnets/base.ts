@@ -81,24 +81,24 @@ export const deploy = async ({
     publicClient
   );
 
-  //// Pyth Oracle
-  await deployPythPriceOracle({
-    run,
-    viem,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    pythAssets: base.assets
-      .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
-      .map((asset) => ({
-        feed: (asset.oracleSpecificParams as PythSpecificParams).feed as Hex,
-        underlying: asset.underlying
-      })),
-    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-    pythAddress: "0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a",
-    usdToken: base.chainAddresses.STABLE_TOKEN as Address,
-    chainId
-  });
+  // //// Pyth Oracle
+  // await deployPythPriceOracle({
+  //   run,
+  //   viem,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   pythAssets: base.assets
+  //     .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
+  //     .map((asset) => ({
+  //       feed: (asset.oracleSpecificParams as PythSpecificParams).feed as Hex,
+  //       underlying: asset.underlying
+  //     })),
+  //   nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+  //   pythAddress: "0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a",
+  //   usdToken: base.chainAddresses.STABLE_TOKEN as Address,
+  //   chainId
+  // });
 
   // //// ERC4626 Oracle
   await deployErc4626PriceOracle({

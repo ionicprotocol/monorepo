@@ -84,7 +84,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   console.log(`Extensions Set: ${veIONFirstExtension.address}, ${veIONSecondExtension.address}`);
   const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
-  const owner = (await veION.read.owner()) as Address;
+  const veIONOwner = (await veION.read.owner()) as Address;
 
   // ╔══════════════════════════════════════════╗
   // ║          SET LP TOKEN TYPE               ║
@@ -92,7 +92,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   for (let i = 0; i < veParams.lpTokens.length; i++) {
     const token = veParams.lpTokens[i];
     const type = veParams.lpTokenTypes[i];
-    if (owner.toLowerCase() !== deployer.toLowerCase()) {
+    if (veIONOwner.toLowerCase() !== deployer.toLowerCase()) {
       await prepareAndLogTransaction({
         contractInstance: veION,
         functionName: "setLpTokenType",
@@ -133,7 +133,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         ]
       });
     } else {
-      hash = await IveION.write.setLpTokenType([token, type], { from: deployer });
+      hash = await IveION.write.setLpTokenType([token, type]);
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       if (receipt.status === "success") {
         console.log(`Successfully set Lp Type: ${token}, ${type}`);
@@ -384,7 +384,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
           execute: {
             init: {
               methodName: "initialize",
-              args: [veION.address, stakingTokenAddress, externalStakingContract, stakingWalletImplementation.address]
+              args: [veION.address, stakingTokenAddress, externalStakingContract, stakingWalletImplementation!.address]
             }
           }
           // owner: multisig
@@ -403,11 +403,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     //   (await deployments.get(stakingStrategyName)).address as Address
     // );
 
-    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy.address]);
+    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy!.address as Address]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
     if (receipt.status === "success") {
       console.log(
-        `Successfully set staking strategy to : ${stakeStrategy.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
+        `Successfully set staking strategy to : ${stakeStrategy!.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
       );
     } else {
       console.error(`Transaction ${hash} failed: ${receipt.status}`);
