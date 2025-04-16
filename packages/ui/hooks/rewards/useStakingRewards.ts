@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { createPublicClient, http } from 'viem';
-import { base, mode, optimism } from 'viem/chains';
+import { mode, optimism } from 'viem/chains';
 import { useAccount, useChainId, useWriteContract } from 'wagmi';
 
+import { useBaseRpcUrl } from '@ui/hooks/useBaseRpcUrl';
 import { getStakingToContract } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
@@ -33,20 +36,9 @@ const veloAeroStakingStrategyAbi = [
   }
 ] as const;
 
-const publicClients = {
-  [mode.id]: createPublicClient({
-    chain: mode,
-    transport: http()
-  }),
-  [base.id]: createPublicClient({
-    chain: base,
-    transport: http()
-  })
-};
-
 // Map chains to VeloAeroStakingStrategy addresses
 const veloAeroStakingStrategyAddresses: Record<number, `0x${string}`> = {
-  [base.id]: '0x8b4352493077D2B04b033DE83516Dc2d53d09931',
+  8453: '0x8b4352493077D2B04b033DE83516Dc2d53d09931', // Base chain ID
   [mode.id]: '0x8ff8b21a0736738b25597D32d8f7cf658f39f157'
 };
 
@@ -54,6 +46,24 @@ export const useStakingRewards = (chainId: number) => {
   const { address } = useAccount();
   const currentChainId = useChainId();
   const { writeContractAsync } = useWriteContract();
+  const baseRpc = useBaseRpcUrl();
+
+  const base = baseRpc.baseChain;
+
+  const publicClient = useMemo(() => {
+    if (chainId === 8453) {
+      return createPublicClient({
+        chain: base,
+        transport: http(base.rpcUrls.default.http[0])
+      });
+    } else if (chainId === mode.id) {
+      return createPublicClient({
+        chain: mode,
+        transport: http()
+      });
+    }
+    return null;
+  }, [chainId, base]);
 
   const getTokenType = (chain: number) => {
     if (chain === mode.id) return 'mode';
@@ -68,7 +78,6 @@ export const useStakingRewards = (chainId: number) => {
     queryFn: async () => {
       if (!address) return null;
 
-      const publicClient = publicClients[chainId as keyof typeof publicClients];
       if (!publicClient) {
         console.error('No public client available for chain:', chainId);
         return null;
@@ -130,7 +139,6 @@ export const useStakingRewards = (chainId: number) => {
     queryFn: async () => {
       if (!address || !stakingWallet) return null;
 
-      const publicClient = publicClients[chainId as keyof typeof publicClients];
       if (!publicClient) {
         console.error('No public client available for chain:', chainId);
         return null;

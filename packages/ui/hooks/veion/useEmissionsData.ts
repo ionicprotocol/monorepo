@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { createPublicClient, http, formatUnits } from 'viem';
-import { base, mode } from 'viem/chains';
+import { mode } from 'viem/chains';
 import {
   useAccount,
   useChainId,
@@ -12,6 +14,7 @@ import { getVeIonContract } from '@ui/constants/veIon';
 import { useToast } from '@ui/hooks/use-toast';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
+import { useBaseRpcUrl } from '../useBaseRpcUrl';
 import { useUsdPrice } from '../useUsdPrices';
 
 import type { Address } from 'viem';
@@ -22,18 +25,6 @@ import { emissionsManagerAbi } from '@ionicprotocol/sdk';
 const EMISSIONS_MANAGER_ADDRESSES: Record<number, Address> = {
   8453: '0x74Dd8c217C01463b915A7e62879A496b3A5c07a5', // Base
   34443: '0x2AA38965C8D37065Ed07EF7F5de6e341B4B9DAc7' // Mode
-};
-
-// Pre-initialize public clients for supported chains
-const publicClients = {
-  [base.id]: createPublicClient({
-    chain: base,
-    transport: http()
-  }),
-  [mode.id]: createPublicClient({
-    chain: mode,
-    transport: http()
-  })
 };
 
 // Number of decimals for the collateral token (typically 18 for most ERC20 tokens)
@@ -69,10 +60,27 @@ export function useEmissionsData(chainId: number): EmissionsData {
   const currentChainId = useChainId();
   const { toast } = useToast();
   const { writeContractAsync, isPending } = useWriteContract();
+  const baseRpc = useBaseRpcUrl();
 
   const contractAddress = EMISSIONS_MANAGER_ADDRESSES[chainId];
-  const publicClient = publicClients[chainId as keyof typeof publicClients];
   const veIonContract = getVeIonContract(chainId);
+
+  const base = baseRpc.baseChain;
+
+  const publicClient = useMemo(() => {
+    if (chainId === 8453) {
+      return createPublicClient({
+        chain: base,
+        transport: http(base.rpcUrls.default.http[0])
+      });
+    } else if (chainId === mode.id) {
+      return createPublicClient({
+        chain: mode,
+        transport: http()
+      });
+    }
+    return null;
+  }, [chainId, base]);
 
   // Get ETH price using the existing hook
   const { data: ethPriceData } = useUsdPrice(chainId);
