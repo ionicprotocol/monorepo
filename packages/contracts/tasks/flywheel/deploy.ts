@@ -91,6 +91,7 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
       throw `Invalid 'flywheel': ${taskArgs.flywheel}`;
     }
 
+    console.log("🚀 ~ .setAction ~ taskArgs.strategy:", taskArgs.strategy);
     try {
       strategyAddress = getAddress(taskArgs.strategy);
     } catch {
@@ -158,6 +159,7 @@ task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for 
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(
     async ({ signer, name, rewardToken, strategies, pool, booster }, { viem, deployments, run, getNamedAccounts }) => {
+      console.log("🚀 ~ strategies:", strategies);
       const { deployer } = await getNamedAccounts();
       const publicClient = await viem.getPublicClient();
       let flywheelBooster;
@@ -181,8 +183,8 @@ task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for 
               methodName: "initialize",
               args: [rewardToken, zeroAddress, flywheelBooster, deployer]
             }
-          },
-          owner: "0x7d922bf0975424b3371074f54cC784AF738Dac0D"
+          }
+          // owner: "0x7d922bf0975424b3371074f54cC784AF738Dac0D"
         },
         waitConfirmations: 1
       });
