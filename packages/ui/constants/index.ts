@@ -239,12 +239,6 @@ export const pools: Record<number, PoolParams> = {
         ]
       },
       {
-        id: '1',
-        name: 'Morpho Ionic',
-        assets: ['WETH', 'USDC', 'ionicWETH', 'ionicUSDC'],
-        shortName: 'Morpho Ionic'
-      },
-      {
         id: '3',
         name: 'Morpho Seamless',
         assets: ['smUSDC', 'USDC'],
