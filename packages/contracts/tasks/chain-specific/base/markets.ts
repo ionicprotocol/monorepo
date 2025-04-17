@@ -225,6 +225,23 @@ task("base:set-caps:morpho-seamless", "one time setup").setAction(
   }
 );
 
+task("market:set-cf:base:morpho-ionic", "Sets CF on a market").setAction(async (_, { viem, run }) => {
+  for (const asset of base.assets.filter((asset) =>
+    [assetSymbols.ionicUSDC, assetSymbols.ionicWETH, assetSymbols.WETH, assetSymbols.USDC].includes(asset.symbol as any)
+  )) {
+    const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MORPHO_IONIC);
+    const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+    console.log("cToken: ", cToken, asset.symbol);
+
+    if (asset.initialCf) {
+      await run("market:set:ltv", {
+        marketAddress: cToken,
+        ltv: asset.initialCf
+      });
+    }
+  }
+});
+
 task("market:set-cf:base:morpho-seamless", "Sets CF on a market").setAction(async (_, { viem, run }) => {
   for (const asset of base.assets.filter((asset) =>
     [assetSymbols.smUSDC, assetSymbols.USDC].includes(asset.symbol as any)
