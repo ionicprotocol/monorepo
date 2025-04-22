@@ -18,7 +18,7 @@ export interface LiquidityData {
   locked: number;
   isLoading: boolean;
 }
-export type ChainId = 0 | 10 | 8453 | 34443;
+export type ChainId = 0 | 10 | 1135 | 8453 | 34443;
 
 export interface EmissionsData {
   lockedValue: {
@@ -58,7 +58,9 @@ export enum LpTokenType {
   BASE_ETH = 2,
   BASE_ION = 3,
   MODE_ETH = 4,
-  MODE_ION = 5
+  MODE_ION = 5,
+  LISK_ETH = 6,
+  LISK_ION = 7
 }
 
 // Raw lock data from the contract

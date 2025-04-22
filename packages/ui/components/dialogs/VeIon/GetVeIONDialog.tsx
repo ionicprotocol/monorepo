@@ -26,7 +26,7 @@ const MINIMUM_AMOUNT = BigInt('10000000000000000');
 interface GetVeIONDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
 }
 
 export default function GetVeIONDialog({

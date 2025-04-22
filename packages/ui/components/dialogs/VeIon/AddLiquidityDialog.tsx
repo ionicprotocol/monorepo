@@ -21,7 +21,7 @@ import { useVeIONActions } from '@ui/hooks/veion/useVeIONActions';
 interface AddLiquidityDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
 }
 
 // AddLiquidityDialog.tsx
@@ -129,7 +129,7 @@ export default function AddLiquidityDialog({
           <div className="space-y-8">
             <DialogHeader className="space-y-3">
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-accent bg-clip-text text-transparent">
-                Add ION Liquidity
+                Add ION/{selectedToken.toUpperCase()} Liquidity
               </DialogTitle>
               <p className="text-sm text-white/60">
                 Provide liquidity to earn fees and participate in governance
