@@ -18,7 +18,8 @@ const supabase = createClient(
 
 export const VOTERLENS_CHAIN_ADDRESSES = {
   8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B',
-  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D'
+  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D',
+  1135: '0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27' // Using Lisk Voter contract as Lens
 } as const;
 
 export interface BribeReward {
