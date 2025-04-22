@@ -55,8 +55,7 @@ export function getAvailableStakingToken(
     return BaseReservesContractAddr;
   if (chain === optimism.id && (token === 'eth' || token === 'weth'))
     return OPReservesContractAddr;
-  if (chain === lisk.id && (token === 'eth' || token === 'lsk'))
-    return LiskReservesContractAddr;
+  if (chain === lisk.id && token === 'weth') return LiskReservesContractAddr;
   return '0x0000000000000000000000000000000000000000';
 }
 
