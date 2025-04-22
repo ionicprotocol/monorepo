@@ -77,9 +77,9 @@ const WithdrawTab = ({
   const isDisabled =
     !amount ||
     amountAsBInt === 0n ||
-    isLoadingPredictedHealthFactor ||
-    hfpStatus === HFPStatus.CRITICAL ||
-    hfpStatus === HFPStatus.UNKNOWN;
+    // isLoadingPredictedHealthFactor ||
+    // hfpStatus === HFPStatus.UNKNOWN ||
+    hfpStatus === HFPStatus.CRITICAL;
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
