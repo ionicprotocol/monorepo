@@ -38,7 +38,7 @@ export default function GetVeIONDialog({
   const [success, setSuccess] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>('0');
   const { currentChain } = useVeIONContext();
-  const { createLock, isPending } = useVeIONActions();
+  const { createLock } = useVeIONActions();
   const { address, isConnected } = useAccount();
 
   const isAboveMinimum = useMemo(() => {
@@ -101,9 +101,6 @@ export default function GetVeIONDialog({
       };
     }
   }
-
-  const isButtonDisabled =
-    !lockDate || Number(amount) === 0 || !isAboveMinimum || isPending;
 
   return (
     <Dialog
