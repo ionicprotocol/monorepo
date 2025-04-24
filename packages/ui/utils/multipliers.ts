@@ -291,8 +291,6 @@ export const multipliers: Record<
         market: 'ionezeth_base',
         multiplier: 3000,
         supply: {
-          eigenlayer: true,
-          renzo: 2,
           underlyingAPR: 3.25,
           turtle: true
         },
