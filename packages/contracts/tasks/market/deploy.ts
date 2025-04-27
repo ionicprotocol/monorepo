@@ -1,5 +1,5 @@
 import { task, types } from "hardhat/config";
-import { Address, encodeAbiParameters, parseAbiParameters, parseEther } from "viem";
+import { Address, encodeAbiParameters, Hash, parseAbiParameters, parseEther, zeroAddress } from "viem";
 
 import { MarketConfig } from "../../chainDeploy";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
@@ -127,8 +127,51 @@ task("market:deploy-morpho", "deploy market")
       client: { public: publicClient, wallet: walletClient }
     });
 
+    const becomeImplementationData = encodeAbiParameters(parseAbiParameters("address"), [zeroAddress]);
     const delegateType = 5;
     const implementationData = "0x00";
+
+    const fuseFeeDistributor = await viem.getContractAt(
+      "FeeDistributor",
+      (await deployments.get("FeeDistributor")).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
+    );
+    let tx: Hash;
+
+    const cTokenFirstExtension = await deployments.deploy("CTokenFirstExtension", {
+      contract: "CTokenFirstExtension",
+      from: deployer,
+      args: [],
+      log: true
+    });
+    if (cTokenFirstExtension.transactionHash)
+      await publicClient.waitForTransactionReceipt({ hash: cTokenFirstExtension.transactionHash as Hash });
+    console.log("CTokenFirstExtension", cTokenFirstExtension.address);
+
+    const erc20DelMorpho = await deployments.deploy("CErc20RewardsDelegateMorpho", {
+      from: deployer,
+      args: [],
+      log: true,
+      waitConfirmations: 1
+    });
+    if (erc20DelMorpho.transactionHash)
+      await publicClient.waitForTransactionReceipt({ hash: erc20DelMorpho.transactionHash as Hash });
+    console.log("CErc20RewardsDelegateMorpho: ", erc20DelMorpho.address);
+
+    tx = await fuseFeeDistributor.write._setCErc20DelegateExtensions([
+      erc20DelMorpho.address as Address,
+      [erc20DelMorpho.address as Address, cTokenFirstExtension.address as Address]
+    ]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`configured the extensions for the CErc20DelegateMorpho ${erc20DelMorpho.address}`);
+
+    tx = await fuseFeeDistributor.write._setLatestCErc20Delegate([
+      delegateType,
+      erc20DelMorpho.address as Address,
+      becomeImplementationData
+    ]);
+    await publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`Set the latest CErc20DelegateMorpho implementation to ${erc20DelMorpho.address}`);
 
     const config: MarketConfig = {
       underlying: taskArgs.underlying,
@@ -209,6 +252,43 @@ task("market:deploy-morpho", "deploy market")
       const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
       if (receipt.status !== "success") {
         throw `Failed to deploy market for ${config.underlying}`;
+      }
+    }
+  });
+
+task("market:deploy-morpho-bribe-distributor", "Deploy MorphoBribeDistributor")
+  .addParam("morphoMarket", "Address of the Morpho market", undefined, types.string)
+  .addParam("morphoBribes", "Address of the Morpho bribes", undefined, types.string)
+  .setAction(async (taskArgs, { deployments, getNamedAccounts, viem }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+
+    const morphoBribeDistributorDeployment = await deployments.deploy("MorphoBribeDistributor", {
+      contract: "MorphoBribeDistributor",
+      from: deployer,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: [taskArgs.morphoMarket, taskArgs.morphoBribes]
+          }
+        },
+        owner: deployer
+      },
+      log: true,
+      waitConfirmations: 1
+    });
+
+    console.log("MorphoBribeDistributor deployed at:", morphoBribeDistributorDeployment.address);
+
+    // Verify the deployment
+    if (morphoBribeDistributorDeployment.transactionHash) {
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: morphoBribeDistributorDeployment.transactionHash as `0x${string}`
+      });
+      if (receipt.status !== "success") {
+        throw `Failed to deploy MorphoBribeDistributor for ${taskArgs.morphoMarket}`;
       }
     }
   });
