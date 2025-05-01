@@ -22,6 +22,7 @@ abstract contract BaseTest is Test {
   uint128 constant ZKEVM_MAINNET = 1101;
   uint128 constant MODE_MAINNET = 34443;
   uint128 constant BASE_MAINNET = 8453;
+  uint128 constant LISK_MAINNET = 1135;
 
   // taken from ERC1967Upgrade
   bytes32 internal constant _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
@@ -132,6 +133,8 @@ abstract contract BaseTest is Test {
         forkIds[chainid] = vm.createFork(vm.rpcUrl("mode")) + 100;
       } else if (chainid == BASE_MAINNET) {
         forkIds[chainid] = vm.createFork(vm.rpcUrl("base")) + 100;
+      } else if (chainid == LISK_MAINNET) {
+        forkIds[chainid] = vm.createFork(vm.rpcUrl("lisk")) + 100;
       }
     }
 
@@ -162,6 +165,8 @@ abstract contract BaseTest is Test {
         forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("mode_archive")) + 100;
       } else if (chainid == BASE_MAINNET) {
         forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("base_archive")) + 100;
+      } else if (chainid == LISK_MAINNET) {
+        forkIds[chainidWithOffset] = vm.createFork(vm.rpcUrl("lisk_archive")) + 100;
       }
     }
     return forkIds[chainidWithOffset] - 100;
@@ -234,11 +239,7 @@ abstract contract BaseTest is Test {
     return array;
   }
 
-  function asArray(
-    address value0,
-    address value1,
-    address value2
-  ) public pure returns (address[] memory) {
+  function asArray(address value0, address value1, address value2) public pure returns (address[] memory) {
     address[] memory array = new address[](3);
     array[0] = value0;
     array[1] = value1;
@@ -278,11 +279,7 @@ abstract contract BaseTest is Test {
     return array;
   }
 
-  function asArray(
-    bytes memory value0,
-    bytes memory value1,
-    bytes memory value2
-  ) public pure returns (bytes[] memory) {
+  function asArray(bytes memory value0, bytes memory value1, bytes memory value2) public pure returns (bytes[] memory) {
     bytes[] memory array = new bytes[](3);
     array[0] = value0;
     array[1] = value1;

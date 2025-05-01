@@ -164,6 +164,28 @@ contract DevTesting is BaseTest {
     }
   }
 
+  function testLockOnLisk() public debuggingOnly fork(LISK_MAINNET) {
+    address veIONAddress = 0x6136BeC00Ba7C6d44BB10ee8683C792a0F8cDd6a;
+
+    address[] memory tokenAddress = new address[](1);
+    tokenAddress[0] = 0x076d0CD6228B042aA28E1E6A0894Cf6C97abc23b;
+
+    uint256[] memory tokenAmount = new uint256[](1);
+    tokenAmount[0] = 3024400000000000000;
+
+    uint256[] memory duration = new uint256[](1);
+    duration[0] = 15552000;
+
+    bool[] memory stakeUnderlying = new bool[](1);
+    stakeUnderlying[0] = true;
+
+    veION veionContract = veION(veIONAddress);
+    vm.prank(0x89bf9BAaeE2d451477CF850fE4c0d89bb796B1aD);
+    uint256 tokenId = veionContract.createLock(tokenAddress, tokenAmount, duration, stakeUnderlying);
+
+    emit log_named_uint("Created veION lock with tokenId", tokenId);
+  }
+
   function testModeLiquidationShortfall() public debuggingOnly fork(MODE_MAINNET) {
     (uint256 err, uint256 collateralValue, uint256 liquidity, uint256 shortfall) = pool.getAccountLiquidity(
       0xa75F9C8246f7269279bE4c969e7Bc6Eb619cC204
