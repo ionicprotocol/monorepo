@@ -46,6 +46,7 @@ export const msUSD = "0x526728DBc96689597F85ae4cd716d4f7fCcBAE9d";
 export const ionicUSDC = "0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e";
 export const ionicWETH = "0x5A32099837D89E3a794a44fb131CBbAD41f87a8C";
 export const mBASIS = "0x1C2757c1FeF1038428b5bEF062495ce94BBe92b2";
+export const smUSDC = "0x616a4E1db48e22028f6bbf20444Cd3b8e3273738";
 
 export const assets: SupportedAsset[] = [
   {
@@ -54,7 +55,10 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: wrappedAssetDocs(SupportedChains.base)
+    extraDocs: wrappedAssetDocs(SupportedChains.base),
+    initialSupplyCap: parseEther(String(1_500)).toString(),
+    initialBorrowCap: parseEther(String(1_200)).toString(),
+    initialCf: "0.85"
   },
   {
     symbol: assetSymbols.USDC,
@@ -66,7 +70,10 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    extraDocs: defaultDocs("https://basescan.org", USDC)
+    extraDocs: defaultDocs("https://basescan.org", USDC),
+    initialSupplyCap: parseUnits(String(10_000_000_000), 6).toString(),
+    initialBorrowCap: parseUnits(String(8_000_000_000), 6).toString(),
+    initialCf: "0.85"
   },
   {
     symbol: assetSymbols.wstETH,
@@ -480,6 +487,17 @@ export const assets: SupportedAsset[] = [
     initialCf: "0.10",
     initialSupplyCap: parseEther(String(99_000)).toString(),
     initialBorrowCap: parseEther(String(99_000)).toString()
+  },
+  {
+    symbol: assetSymbols.smUSDC,
+    underlying: smUSDC,
+    name: "Seamless USDC Vault",
+    decimals: 18,
+    oracle: OracleTypes.ERC4626Oracle,
+    extraDocs: defaultDocs("https://basescan.org", smUSDC),
+    initialSupplyCap: parseEther(String(2_000)).toString(),
+    initialBorrowCap: "1",
+    initialCf: "0.80"
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

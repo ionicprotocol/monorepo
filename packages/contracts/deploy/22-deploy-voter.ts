@@ -86,6 +86,15 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
   // ║               ADD MARKETS                ║
   // ║  Configuring which LP tokens are allowed ║
   // ╚══════════════════════════════════════════╝
+  const marketsLength = await voter.read.marketsLength();
+  const marketAlreadyAdded: { marketAddress: Address; side: number }[] = [];
+  for (let i = 0; i < marketsLength; i++) {
+    const market = await voter.read.markets([BigInt(i)]);
+    marketAlreadyAdded.push({ marketAddress: market[0], side: market[1] });
+  }
+  const marketAlreadyAddedAddresses = marketAlreadyAdded.map((market) => market.marketAddress);
+  console.log(marketAlreadyAddedAddresses);
+
   const allMarkets: { marketAddress: Address; side: number }[] = [];
   const [, pools] = await poolDirectory.read.getActivePools();
   for (let i = 0; i < pools.length; i++) {
@@ -95,9 +104,11 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
       const markets = await comptroller.read.getAllMarkets();
       console.log(`Setting up ${markets.length} Markets`);
       for (const market of markets) {
-        allMarkets.push({ marketAddress: market, side: 0 });
-        allMarkets.push({ marketAddress: market, side: 1 });
-        console.log(`Setting up ${market}`);
+        if (!marketAlreadyAddedAddresses.includes(market)) {
+          allMarkets.push({ marketAddress: market, side: 0 });
+          allMarkets.push({ marketAddress: market, side: 1 });
+          console.log(`Setting up ${market}`);
+        }
       }
     } catch (error) {
       console.error(`Error processing pool ${pool.name}:`, error);
@@ -116,6 +127,19 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     console.error(`Error adding markets ${error}`);
   }
 
+  const marketsWithoutRewardAccumulator: { marketAddress: Address; side: number }[] = [];
+  for (const market of marketAlreadyAdded) {
+    try {
+      const rewardAccumulatorAddress = await voter.read.marketToRewardAccumulators([market.marketAddress, 0]);
+      if (rewardAccumulatorAddress === zeroAddress) {
+        marketsWithoutRewardAccumulator.push(market);
+      }
+    } catch (error) {
+      console.error(`Error querying reward accumulator for market ${market.marketAddress}:`, error);
+    }
+  }
+  console.log("Markets without accumulators", marketsWithoutRewardAccumulator);
+
   // ╔══════════════════════════════════════════╗
   // ║     DEPLOY REWARD ACCUMULATORS           ║
   // ║  AND SET THEM IN THE VOTER CONTRACT      ║
@@ -127,7 +151,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   // Loop through allMarkets to deploy a RewardAccumulator for each market and configure it
   let counter = 0;
-  for (const market of allMarkets) {
+  for (const market of marketsWithoutRewardAccumulator) {
     const deploymentName = `RewardAccumulator_${market.marketAddress}_${market.side}`;
     try {
       // Deploy RewardAccumulator
@@ -151,7 +175,7 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
         await publicClient.waitForTransactionReceipt({ hash: rewardAccumulatorDeployment.transactionHash as Hash });
       }
       console.log(
-        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${allMarkets.length}`
+        `Deployed RewardAccumulator at: ${rewardAccumulatorDeployment.address}, Counter: ${++counter}/${marketsWithoutRewardAccumulator.length}`
       );
 
       // Collect data for setMarketRewardAccumulators

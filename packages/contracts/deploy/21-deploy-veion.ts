@@ -84,11 +84,40 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   console.log(`Extensions Set: ${veIONFirstExtension.address}, ${veIONSecondExtension.address}`);
   const IveION = await viem.getContractAt("IveION", (await deployments.get("veION")).address as Address);
-  const owner = (await veION.read.owner()) as Address;
+  const veIONOwner = (await veION.read.owner()) as Address;
 
   // ╔══════════════════════════════════════════╗
   // ║          SET LP TOKEN TYPE               ║
   // ╚══════════════════════════════════════════╝
+  for (let i = 0; i < veParams.lpTokens.length; i++) {
+    const token = veParams.lpTokens[i];
+    const type = veParams.lpTokenTypes[i];
+    if (veIONOwner.toLowerCase() !== deployer.toLowerCase()) {
+      await prepareAndLogTransaction({
+        contractInstance: veION,
+        functionName: "setLpTokenType",
+        args: [token, type],
+        description: `Set LP Token Type: ${token} to ${type}`,
+        inputs: [
+          { internalType: "address", name: "_token", type: "address" },
+          { internalType: "uint8", name: "_type", type: "uint8" }
+        ]
+      });
+    } else {
+      hash = await IveION.write.setLpTokenType([token, type]);
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      if (receipt.status === "success") {
+        console.log(`Successfully set Lp Type: ${token}, ${type}`);
+      } else {
+        console.error(`Transaction ${hash} failed: ${receipt.status}`);
+      }
+    }
+  }
+
+  // ╔══════════════════════════════════════════╗
+  // ║          SET LP TOKEN TYPE               ║
+  // ╚══════════════════════════════════════════╝
+  const owner = (await veION.read.owner()) as Address;
   for (let i = 0; i < veParams.lpTokens.length; i++) {
     const token = veParams.lpTokens[i];
     const type = veParams.lpTokenTypes[i];
@@ -320,27 +349,34 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     try {
       console.log(`Deploying ${stakingWalletImplementationName} implementation...`);
 
-      stakingWalletImplementation = await deployments.deploy(stakingWalletImplementationName, {
-        from: deployer,
-        log: true
-      });
+      stakingWalletImplementation = await deployments.deploy(
+        `${stakingWalletImplementationName}_${stakingTokenAddress}`,
+        {
+          contract: stakingWalletImplementationName,
+          from: deployer,
+          log: true
+        }
+      );
 
+      if (stakingWalletImplementation.transactionHash)
+        await publicClient.waitForTransactionReceipt({ hash: stakingWalletImplementation.transactionHash as Hash });
       console.log(`${stakingWalletImplementationName} deployed at: ${stakingWalletImplementation.address}`);
     } catch (error) {
       console.error(`Error deploying ${stakingWalletImplementationName}:`, error);
     }
 
-    stakingWalletImplementation = await viem.getContractAt(
-      stakingWalletImplementationName,
-      (await deployments.get(stakingWalletImplementationName)).address as Address
-    );
+    // stakingWalletImplementation = await viem.getContractAt(
+    //   `${stakingWalletImplementationName}`,
+    //   (await deployments.get(`${stakingWalletImplementationName}_${stakingTokenAddress}`)).address as Address
+    // );
 
     // ╔══════════════════════════════════════════╗
     // ║          SET STAKING STRATEGY            ║
     // ╚══════════════════════════════════════════╝
     let stakeStrategy;
     try {
-      stakeStrategy = await deployments.deploy(stakingStrategyName, {
+      stakeStrategy = await deployments.deploy(`${stakingStrategyName}_${stakingTokenAddress}`, {
+        contract: stakingStrategyName,
         from: deployer,
         log: true,
         proxy: {
@@ -348,28 +384,30 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
           execute: {
             init: {
               methodName: "initialize",
-              args: [veION.address, stakingTokenAddress, externalStakingContract, stakingWalletImplementation.address]
+              args: [veION.address, stakingTokenAddress, externalStakingContract, stakingWalletImplementation!.address]
             }
-          },
-          owner: multisig
+          }
+          // owner: multisig
         }
       });
 
+      if (stakeStrategy.transactionHash)
+        await publicClient.waitForTransactionReceipt({ hash: stakeStrategy.transactionHash as Hash });
       console.log(`${stakingStrategyName} deployed at: ${stakeStrategy.address}`);
     } catch (error) {
       console.error(`Error deploying ${stakingStrategyName}:`, error);
     }
 
-    stakeStrategy = await viem.getContractAt(
-      stakingStrategyName,
-      (await deployments.get(stakingStrategyName)).address as Address
-    );
+    // stakeStrategy = await viem.getContractAt(
+    //   stakingStrategyName,
+    //   (await deployments.get(stakingStrategyName)).address as Address
+    // );
 
-    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy.address]);
+    const txHash = await IveION.write.setStakeStrategy([tokenType, stakeStrategy!.address as Address]);
     const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
     if (receipt.status === "success") {
       console.log(
-        `Successfully set staking strategy to : ${stakeStrategy.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
+        `Successfully set staking strategy to : ${stakeStrategy!.address} (${stakingStrategyName}) with staking wallet ${stakingWalletImplementationName} for token ${stakingTokenAddress}, type ${tokenType}`
       );
     } else {
       console.error(`Transaction ${hash} failed: ${receipt.status}`);
