@@ -68,7 +68,8 @@ export const deploy = async ({
     deployments,
     deployConfig,
     assets: lisk.assets,
-    chainlinkAssets
+    chainlinkAssets,
+    chainId: lisk.chainId
   });
 
   const ion = assets.find((asset) => asset.symbol === assetSymbols.ION)?.underlying;
@@ -89,4 +90,15 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+
+  const uniswapLpTokenPriceOracle = await deployments.get("UniswapLpTokenPriceOracle");
+  for (const lpToken of deployConfig.veION.lpTokens) {
+    await addUnderlyingsToMpo(
+      mpo as any,
+      [lpToken],
+      uniswapLpTokenPriceOracle.address as Address,
+      deployer,
+      publicClient
+    );
+  }
 };
