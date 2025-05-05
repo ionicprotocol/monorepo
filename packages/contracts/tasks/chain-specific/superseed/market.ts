@@ -85,7 +85,7 @@ task("superseed:set-caps:new", "one time setup").setAction(async (_, { viem, run
 });
 
 task("market:set-cf:superseed:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of superseed.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+  for (const asset of superseed.assets.filter((asset) => asset.symbol === assetSymbols.oUSDT)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
