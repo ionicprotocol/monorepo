@@ -66,23 +66,16 @@ const BorrowTab = ({
     comptrollerAddress
   });
 
-  const { isLoadingPredictedHealthFactor, healthFactor, hfpStatus } = useHealth(
-    {
-      comptrollerAddress,
-      cToken: selectedMarketData.cToken,
-      activeTab: 'borrow',
-      amount: amountAsBInt,
-      exchangeRate: selectedMarketData.exchangeRate,
-      decimals: selectedMarketData.underlyingDecimals
-    }
-  );
+  const { healthFactor, hfpStatus } = useHealth({
+    comptrollerAddress,
+    cToken: selectedMarketData.cToken,
+    activeTab: 'borrow',
+    amount: amountAsBInt,
+    exchangeRate: selectedMarketData.exchangeRate,
+    decimals: selectedMarketData.underlyingDecimals
+  });
 
-  const isDisabled =
-    !amount ||
-    amountAsBInt === 0n ||
-    isLoadingPredictedHealthFactor ||
-    hfpStatus === HFPStatus.CRITICAL ||
-    hfpStatus === HFPStatus.UNKNOWN;
+  const isDisabled = !amount || amountAsBInt === 0n;
 
   useEffect(() => {
     setPredictionAmount(amountAsBInt);
