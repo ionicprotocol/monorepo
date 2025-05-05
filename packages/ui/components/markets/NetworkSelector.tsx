@@ -39,6 +39,7 @@ const ACTIVE_NETWORKS = [
   'Worldchain',
   'Swell',
   'Soneium',
+  'Superseed',
   'Ozean Testnet',
   'Camp Testnet'
 ];
