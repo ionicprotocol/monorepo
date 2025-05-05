@@ -32,6 +32,17 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, 
     await publicClient.waitForTransactionReceipt({ hash: booster.transactionHash as Address });
   console.log("LooplessFlywheelBooster: ", booster.address);
   if (booster.newlyDeployed) await run("flywheels:booster:update");
+
+  const ibooster = await deployments.deploy(`IonicFlywheelBorrowBooster_ION`, {
+    contract: "IonicFlywheelBorrowBooster",
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1
+  });
+  if (ibooster.transactionHash)
+    await publicClient.waitForTransactionReceipt({ hash: ibooster.transactionHash as Address });
+  console.log("IonicFlywheelBorrowBooster_ION: ", ibooster.address);
 };
 
 func.tags = ["prod", "deploy-flywheel"];

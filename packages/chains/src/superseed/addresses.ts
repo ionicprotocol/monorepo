@@ -5,7 +5,7 @@ import { assets } from "./assets";
 
 const chainAddresses: ChainAddresses = {
   PAIR_INIT_HASH: "", // TODO is this used anywhere?
-  STABLE_TOKEN: zeroAddress,
+  STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
   UNISWAP_V2_ROUTER: zeroAddress,
   UNISWAP_V2_FACTORY: zeroAddress,
   UNISWAP_V3: {

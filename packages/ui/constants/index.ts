@@ -372,7 +372,7 @@ export const pools: Record<number, PoolParams> = {
       {
         id: '0',
         name: 'Main Pool',
-        assets: ['WETH']
+        assets: ['WETH', 'USDC', 'oUSDT']
       }
     ]
   },

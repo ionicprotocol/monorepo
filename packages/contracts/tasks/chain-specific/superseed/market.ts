@@ -10,7 +10,7 @@ import { superseed } from "@ionicprotocol/chains";
 const superseedAssets = superseed.assets;
 
 task("markets:deploy:superseed:new", "deploy new superseed assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.WETH];
+  const assetsToDeploy: string[] = [assetSymbols.oUSDT];
   for (const asset of superseedAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -46,7 +46,7 @@ task("markets:deploy:superseed:new", "deploy new superseed assets").setAction(as
 
 task("superseed:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.WETH];
+  const assetsToDeploy: string[] = [assetSymbols.oUSDT];
   for (const asset of superseed.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
@@ -85,7 +85,7 @@ task("superseed:set-caps:new", "one time setup").setAction(async (_, { viem, run
 });
 
 task("market:set-cf:superseed:new", "Sets CF on a market").setAction(async (_, { viem, run }) => {
-  for (const asset of superseed.assets.filter((asset) => asset.symbol === assetSymbols.WETH)) {
+  for (const asset of superseed.assets.filter((asset) => asset.symbol === assetSymbols.oUSDT)) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
     console.log("cToken: ", cToken, asset.symbol);
