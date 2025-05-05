@@ -1,11 +1,16 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { Address } from "viem";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
-const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments }) => {
+const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const chainId = parseInt(await getChainId());
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
-  const fpd = await viem.getContractAt("PoolDirectory", (await deployments.get("PoolDirectory")).address as Address);
+  const fpd = await viem.getContractAt("PoolDirectory", (await deployments.get("PoolDirectory")).address as Address, {
+    client: { public: publicClient, wallet: walletClient }
+  });
 
   const mflrReceipt = await deployments.deploy("IonicFlywheelLensRouter", {
     from: deployer,
@@ -27,6 +32,17 @@ const func: DeployFunction = async ({ run, viem, getNamedAccounts, deployments }
     await publicClient.waitForTransactionReceipt({ hash: booster.transactionHash as Address });
   console.log("LooplessFlywheelBooster: ", booster.address);
   if (booster.newlyDeployed) await run("flywheels:booster:update");
+
+  const ibooster = await deployments.deploy(`IonicFlywheelBorrowBooster_ION`, {
+    contract: "IonicFlywheelBorrowBooster",
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1
+  });
+  if (ibooster.transactionHash)
+    await publicClient.waitForTransactionReceipt({ hash: ibooster.transactionHash as Address });
+  console.log("IonicFlywheelBorrowBooster_ION: ", ibooster.address);
 };
 
 func.tags = ["prod", "deploy-flywheel"];

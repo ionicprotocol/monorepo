@@ -1,7 +1,7 @@
-import { Address, formatEther, Hash, Hex, zeroAddress } from "viem";
+import { Address, formatEther, Hash, Hex, zeroAddress, parseEther } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracleDmBTC } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle, deployPythPriceOracle } from "../helpers";
 import { addRedstoneFallbacks } from "../helpers/oracles/redstoneFallbacks";
 import { addRedstoneWeETHFallbacks } from "../helpers/oracles/redstoneWeETHFallbacks";
 import { deployRedStoneWrsETHPriceOracle } from "../helpers/oracles/redstoneWrsETH";
@@ -34,7 +34,20 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3SwapRouter: "0xC9Adff795f46105E53be9bbf14221b1C9919EE25",
     uniswapV3Quoter: "0x7Fd569b2021850fbA53887dd07736010aCBFc787"
   },
-  wtoken: mode.chainAddresses.W_TOKEN as Address
+  wtoken: mode.chainAddresses.W_TOKEN as Address,
+  veION: {
+    lpTokens: ["0xC6A394952c097004F83d2dfB61715d245A38735a"],
+    lpStakingStrategies: [],
+    lpStakingWalletImplementations: [],
+    lpExternalStakingContracts: [],
+    lpTokenWhitelistStatuses: [true],
+    lpTokenTypes: [0],
+    minimumLockAmounts: [parseEther("0.01")],
+    minimumLockDuration: 6 * 30 * 24 * 60 * 60,
+    maxEarlyWithdrawFee: parseEther("0.8"),
+    maxVotingNum: 20
+  },
+  ION: "0x18470019bF0E94611f15852F7e93cf5D65BC34CA"
 };
 
 // // TODO add more assets https://pyth.network/developers/price-feed-ids
@@ -54,6 +67,14 @@ const chainlinkAssets: ChainlinkAsset[] = mode.assets
     aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
     feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency,
     symbol: a.symbol as assetSymbols
+  }));
+
+const pythAssets: PythAsset[] = mode.assets
+  .filter((a) => a.oracle === OracleTypes.PythPriceOracle)
+  .filter((a) => a.symbol === assetSymbols.uBTC)
+  .map((a) => ({
+    feed: (a.oracleSpecificParams as PythSpecificParams).feed as Hex,
+    underlying: underlying(mode.assets, a.symbol)
   }));
 
 // const velodromeAssets = mode.assets.filter((a) => a.oracle === OracleTypes.VelodromePriceOracle);
@@ -145,7 +166,21 @@ export const deploy = async ({
     deployConfig: { ...deployConfig, nativeTokenUsdChainlinkFeed: "0xf3035649cE73EDF8de7dD9B56f14910335819536" },
     assets: mode.assets,
     chainlinkAssets: eOracleAssets,
-    namePostfix: "eOracle"
+    namePostfix: "eOracle",
+    chainId: mode.chainId
+  });
+
+  await deployPythPriceOracle({
+    run,
+    deployConfig,
+    viem,
+    getNamedAccounts,
+    deployments,
+    pythAssets,
+    chainId: mode.chainId,
+    pythAddress: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
+    usdToken: mode.chainAddresses.STABLE_TOKEN as Address,
+    nativeTokenUsdFeed: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace"
   });
 
   // await deployVelodromeOracle({
@@ -171,15 +206,23 @@ export const deploy = async ({
   //   dmBTC: underlying(mode.assets, assetSymbols.dMBTC)
   // });
 
-  // await deployChainlinkOracle({
-  //   run,
-  //   viem,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   assets: mode.assets,
-  //   chainlinkAssets
-  // });
+  const chainlinkAssets = mode.assets
+    .filter((a) => a.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((a) => ({
+      symbol: a.symbol as assetSymbols,
+      aggregator: (a.oracleSpecificParams as ChainlinkSpecificParams).aggregator as Hex,
+      feedBaseCurrency: (a.oracleSpecificParams as ChainlinkSpecificParams).feedBaseCurrency
+    }));
+  await deployChainlinkOracle({
+    run,
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets: mode.assets,
+    chainlinkAssets,
+    chainId: mode.chainId
+  });
 
   // await addRedstoneFallbacks({
   //   viem,

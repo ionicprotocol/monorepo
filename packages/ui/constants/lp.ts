@@ -1,3 +1,4 @@
+export const ModeLpAddressPool = '0x690A74d2eC0175a69C0962B309E03021C0b5002E';
 export const ModeLiquidityContractAddress =
   '0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45';
 export const ModeReservesContractAddr =

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/ClonesUpgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/proxy/ClonesUpgradeable.sol";
 
 import "./UniswapTwapPriceOracleV2.sol";
 
@@ -34,11 +34,7 @@ contract UniswapTwapPriceOracleV2Factory {
   /**
    * @dev Constructor that sets the `UniswapTwapPriceOracleV2Root` and `UniswapTwapPriceOracleV2` implementation contract.
    */
-  constructor(
-    address _rootOracle,
-    address _logic,
-    address _wtoken
-  ) {
+  constructor(address _rootOracle, address _logic, address _wtoken) {
     require(_rootOracle != address(0), "UniswapTwapPriceOracleV2Root not defined.");
     require(_logic != address(0), "UniswapTwapPriceOracleV2 implementation/logic contract not defined.");
     rootOracle = _rootOracle;

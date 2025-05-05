@@ -1,5 +1,9 @@
 'use client';
 
+import { ClaimRewardsButton } from '@ui/components/dialogs/MorphoRewards';
+import EarnTable from '@ui/components/earn/EarnTable';
+import LegacyTable from '@ui/components/earn/LegacyTable';
+import MorphoTable from '@ui/components/earn/MorphoTable';
 import {
   Card,
   CardContent,
@@ -7,20 +11,31 @@ import {
   CardTitle
 } from '@ui/components/ui/card';
 
-import EarnTable from '../_components/earn/EarnTable';
-import MorphoTable from '../_components/earn/MorphoTable';
-
 export default function Earn() {
   return (
     <div className="space-y-8">
       <Card className="bg-grayone">
-        <CardHeader>
-          <CardTitle className="text-center text-white/80 text-xl">
-            🏦 Morpho Vaults - Earn ION rewards while supplying to Morpho! 🏦
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-white/80 text-xl">
+            🏦 Morpho Vaults - Earn $ION and $MORPHO rewards while supplying to
+            Morpho! 🏦
           </CardTitle>
+          <ClaimRewardsButton />
         </CardHeader>
         <CardContent>
           <MorphoTable />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-grayone">
+        <CardHeader>
+          <CardTitle className="text-center text-white/80 text-xl">
+            🗄️ Legacy pools{' '}
+            <span className="text-red-400/80">(Withdraw Only)</span> 🗄️
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LegacyTable />
         </CardContent>
       </Card>
 

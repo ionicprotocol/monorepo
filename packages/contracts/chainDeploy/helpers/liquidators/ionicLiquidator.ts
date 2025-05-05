@@ -1,6 +1,6 @@
 import { Address, Hash, parseEther, PublicClient, zeroAddress } from "viem";
 import { AddressesProviderConfigFnParams, LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../../types";
-import { chainIdToConfig } from "@ionicprotocol/chains";
+import { chainIdtoChain, chainIdToConfig } from "@ionicprotocol/chains";
 import { prepareAndLogTransaction } from "../logging";
 
 export const deployIonicLiquidator = async ({
@@ -66,10 +66,12 @@ export const deployIonicUniV3Liquidator = async ({
   viem,
   getNamedAccounts,
   deployments,
-  deployConfig
+  deployConfig,
+  chainId
 }: LiquidatorDeployFnParams): Promise<string> => {
   const { deployer, multisig } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   const uniV3Liquidator = await deployments.deploy("IonicUniV3Liquidator", {
     from: deployer,
@@ -90,7 +92,8 @@ export const deployIonicUniV3Liquidator = async ({
 
   const ionicLiquidator = await viem.getContractAt(
     "IonicUniV3Liquidator",
-    (await deployments.get("IonicUniV3Liquidator")).address as Address
+    (await deployments.get("IonicUniV3Liquidator")).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
   const uniV3LiquidatorOwner = await ionicLiquidator.read.owner();
   console.log(`IonicUniV3Liquidator owner is ${uniV3LiquidatorOwner}`);
@@ -102,22 +105,27 @@ export const configureIonicLiquidator = async ({
   contractName,
   viem,
   chainId,
-  deployments
+  deployments,
+  getNamedAccounts
 }: LiquidatorConfigFnParams): Promise<void> => {
-  const publicClient = await viem.getPublicClient();
+  const { deployer } = await getNamedAccounts();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
   const ionicLiquidator = await viem.getContractAt(
     contractName,
-    (await deployments.get(contractName)).address as Address
+    (await deployments.get(contractName)).address as Address,
+    { client: { public: publicClient, wallet: walletClient } }
   );
 
   for (const redemptionStrategyConfig of chainIdToConfig[chainId].redemptionStrategies) {
     const { strategy } = redemptionStrategyConfig;
     const redemptionStrategyContract = await viem.getContractAt(
       strategy as string,
-      (await deployments.get(strategy)).address as Address
+      (await deployments.get(strategy)).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
@@ -133,7 +141,8 @@ export const configureIonicLiquidator = async ({
     const { strategy } = fundingStrategy;
     const fundingStrategyContract = await viem.getContractAt(
       strategy as string,
-      (await deployments.get(strategy)).address as Address
+      (await deployments.get(strategy)).address as Address,
+      { client: { public: publicClient, wallet: walletClient } }
     );
 
     const whitelistedAlready = await ionicLiquidator.read.redemptionStrategiesWhitelist([
@@ -153,23 +162,25 @@ export const configureIonicLiquidator = async ({
     console.log("no redemption strategies for whitelisting");
   }
 
-  const poolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address);
+  const poolLens = await viem.getContractAt("PoolLens", (await deployments.get("PoolLens")).address as Address, {
+    client: { public: publicClient, wallet: walletClient }
+  });
   const healthFactorThreshold = parseEther("1");
   const expressRelay = chainIdToConfig[chainId].chainAddresses.EXPRESS_RELAY;
 
-  const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
-  await publicClient.waitForTransactionReceipt({ hash: lensTx });
-  console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
+  // const lensTx = await ionicLiquidator.write.setPoolLens([poolLens.address]);
+  // await publicClient.waitForTransactionReceipt({ hash: lensTx });
+  // console.log(`Pool Lens Set To ${poolLens.address}, at  ${lensTx}`);
 
-  if (expressRelay) {
-    const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
-    await publicClient.waitForTransactionReceipt({ hash: relayTx });
-    console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
-  }
+  // if (expressRelay) {
+  //   const relayTx = await ionicLiquidator.write.setExpressRelay([expressRelay]);
+  //   await publicClient.waitForTransactionReceipt({ hash: relayTx });
+  //   console.log(`Express Relay Set To ${expressRelay} at ${relayTx}`);
+  // }
 
-  const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
-  await publicClient.waitForTransactionReceipt({ hash: hfTx });
-  console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
+  // const hfTx = await ionicLiquidator.write.setHealthFactorThreshold([healthFactorThreshold]);
+  // await publicClient.waitForTransactionReceipt({ hash: hfTx });
+  // console.log(`Permissionless Health Factor Threshold Set To ${healthFactorThreshold.toString()}, at ${hfTx}`);
 };
 
 export const configureAddressesProviderAddresses = async ({
@@ -180,11 +191,14 @@ export const configureAddressesProviderAddresses = async ({
   deployments
 }: AddressesProviderConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const publicClient = await viem.getPublicClient();
+  const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+  const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
   const chainConfig = chainIdToConfig[chainId];
   const _ap = await deployments.getOrNull("AddressesProvider");
   if (_ap) {
-    const ap = await viem.getContractAt("AddressesProvider", _ap.address as Address);
+    const ap = await viem.getContractAt("AddressesProvider", _ap.address as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     /// EXTERNAL ADDRESSES
     await configureAddress(
       ap,

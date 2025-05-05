@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 import { Address, Hash, parseUnits, zeroAddress } from "viem";
 import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
+import { chainIdtoChain } from "@ionicprotocol/chains";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("pool", "Comptroller Address", undefined, types.string)
@@ -16,12 +17,18 @@ export default task("market:unsupport", "Unsupport a market")
 task("market:set:ltv", "Set the LTV (loan to value / collateral factor) of a market")
   .addParam("marketAddress", "Address of the market", undefined, types.string)
   .addParam("ltv", "The LTV as a floating point value between 0 and 1", undefined, types.string)
-  .setAction(async ({ marketAddress, ltv }, { viem, getNamedAccounts }) => {
+  .setAction(async ({ marketAddress, ltv }, { viem, getNamedAccounts, getChainId }) => {
     const { deployer } = await getNamedAccounts();
-    const publicClient = await viem.getPublicClient();
-    const market = await viem.getContractAt("ICErc20", marketAddress);
+    const chainId = await getChainId();
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[+chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[+chainId] });
+    const market = await viem.getContractAt("ICErc20", marketAddress, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const poolAddress = await market.read.comptroller();
-    const pool = await viem.getContractAt("IonicComptroller", poolAddress as Address);
+    const pool = await viem.getContractAt("IonicComptroller", poolAddress as Address, {
+      client: { public: publicClient, wallet: walletClient }
+    });
     const ltvMantissa = parseUnits(ltv, 18);
     console.log(`will set the LTV of market ${marketAddress} to ${ltvMantissa}`);
 
@@ -168,7 +175,6 @@ task("market:mint-pause", "Pauses minting on a market")
       const market = await viem.getContractAt("ICErc20", marketAddress);
       const comptroller = await market.read.comptroller();
       const pool = await viem.getContractAt("IonicComptroller", comptroller);
-
       const currentPauseGuardian = await pool.read.pauseGuardian();
       if (currentPauseGuardian === zeroAddress) {
         tx = await pool.write._setPauseGuardian([deployer as Address]);
@@ -194,9 +200,8 @@ task("market:mint-pause", "Pauses minting on a market")
           });
         } else {
           tx = await pool.write._setMintPaused([market.address, taskArgs.paused]);
+          console.log(`Market mint pause tx ${tx}`);
         }
-
-        console.log(`Market mint pause tx ${tx}`);
       } else {
         console.log(`No need to set the minting pause to ${taskArgs.paused} as it is already set to that value`);
       }
@@ -246,9 +251,8 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
           });
         } else {
           tx = await pool.write._setBorrowPaused([market.address, taskArgs.paused]);
+          console.log(`Market borrow pause tx ${tx}`);
         }
-
-        console.log(`Market borrow pause tx ${tx}`);
       } else {
         console.log(`No need to set the borrow pause to ${taskArgs.paused} as it is already set to that value`);
       }
@@ -261,19 +265,11 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
 task("markets:all:pause", "Pauses borrowing on a market")
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
+  .addOptionalParam("pool", "The pool to operate on", undefined, types.string)
   .setAction(async (taskArgs, { viem, getNamedAccounts, deployments, run }) => {
-    const poolDirectory = await viem.getContractAt(
-      "PoolDirectory",
-      (await deployments.get("PoolDirectory")).address as Address
-    );
-
-    const [, poolData] = await poolDirectory.read.getActivePools();
-
-    for (const pool of poolData) {
-      const poolExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
-
-      const markets = await poolExtension.read.getAllMarkets();
-
+    if (taskArgs.pool) {
+      const pool = await viem.getContractAt("IonicComptroller", taskArgs.pool as Address);
+      const markets = await pool.read.getAllMarkets();
       await run("markets:borrow-pause", {
         markets: markets.join(","),
         paused: taskArgs.paused
@@ -282,5 +278,27 @@ task("markets:all:pause", "Pauses borrowing on a market")
         markets: markets.join(","),
         paused: taskArgs.paused
       });
+    } else {
+      const poolDirectory = await viem.getContractAt(
+        "PoolDirectory",
+        (await deployments.get("PoolDirectory")).address as Address
+      );
+
+      const [, poolData] = await poolDirectory.read.getActivePools();
+
+      for (const pool of poolData) {
+        const poolExtension = await viem.getContractAt("IonicComptroller", pool.comptroller);
+
+        const markets = await poolExtension.read.getAllMarkets();
+
+        await run("markets:borrow-pause", {
+          markets: markets.join(","),
+          paused: taskArgs.paused
+        });
+        await run("market:mint-pause", {
+          markets: markets.join(","),
+          paused: taskArgs.paused
+        });
+      }
     }
   });

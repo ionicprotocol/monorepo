@@ -1,14 +1,19 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { createPublicClient, erc20Abi, http } from 'viem';
 
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { morphoBaseAddresses, vaultAbi } from '@ui/utils/morphoUtils';
 
-import type { BigNumber } from 'ethers';
+interface MorphoProtocolProps {
+  asset: 'USDC' | 'WETH';
+  isLegacy?: boolean;
+}
 
-export const useMorphoProtocol = () => {
+export const useMorphoProtocol = ({ asset, isLegacy }: MorphoProtocolProps) => {
   const { address, currentChain, walletClient } = useMultiIonic();
+  const [maxWithdraw, setMaxWithdraw] = useState<bigint>(BigInt(0));
+  const [isLoading, setIsLoading] = useState(false);
 
   const getClient = useCallback(() => {
     if (!currentChain) throw new Error('Chain not connected');
@@ -18,15 +23,50 @@ export const useMorphoProtocol = () => {
     });
   }, [currentChain]);
 
+  const fetchMaxWithdraw = useCallback(async () => {
+    if (!address) {
+      setMaxWithdraw(BigInt(0));
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const client = getClient();
+      const vaultAddress = isLegacy
+        ? morphoBaseAddresses.legacyVaults[asset]
+        : morphoBaseAddresses.vaults[asset];
+
+      const max = await client.readContract({
+        address: vaultAddress,
+        abi: vaultAbi,
+        functionName: 'maxWithdraw',
+        args: [address]
+      });
+
+      setMaxWithdraw(max);
+    } catch (error) {
+      console.error('Error getting max withdraw:', error);
+      setMaxWithdraw(BigInt(0));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [address, asset, getClient, isLegacy]);
+
+  useEffect(() => {
+    if (asset) fetchMaxWithdraw();
+  }, [address, asset, fetchMaxWithdraw]);
+
   const supply = useCallback(
-    async (asset: 'USDC' | 'WETH', amount: BigNumber) => {
+    async (amount: bigint) => {
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
 
       try {
         const client = getClient();
-        const vaultAddress = morphoBaseAddresses.vaults[asset];
+        const vaultAddress = isLegacy
+          ? morphoBaseAddresses.legacyVaults[asset]
+          : morphoBaseAddresses.vaults[asset];
         const tokenAddress = morphoBaseAddresses.tokens[asset];
 
         const allowance = await client.readContract({
@@ -36,14 +76,12 @@ export const useMorphoProtocol = () => {
           args: [address, vaultAddress]
         });
 
-        const amountBigInt = amount.toBigInt();
-
-        if (allowance < amountBigInt) {
+        if (allowance < amount) {
           const approvalTx = await walletClient.writeContract({
             address: tokenAddress,
             abi: erc20Abi,
             functionName: 'approve',
-            args: [vaultAddress, amountBigInt],
+            args: [vaultAddress, amount],
             chain: currentChain,
             account: address
           });
@@ -55,7 +93,7 @@ export const useMorphoProtocol = () => {
           address: vaultAddress,
           abi: vaultAbi,
           functionName: 'deposit',
-          args: [amountBigInt, address],
+          args: [amount, address],
           chain: currentChain,
           account: address
         });
@@ -68,46 +106,22 @@ export const useMorphoProtocol = () => {
         throw error;
       }
     },
-    [address, walletClient, getClient, currentChain]
-  );
-
-  const getMaxWithdraw = useCallback(
-    async (asset: 'USDC' | 'WETH') => {
-      if (!address) return BigInt(0);
-
-      try {
-        const client = getClient();
-        const vaultAddress = morphoBaseAddresses.vaults[asset];
-
-        const maxWithdraw = await client.readContract({
-          address: vaultAddress,
-          abi: vaultAbi,
-          functionName: 'maxWithdraw',
-          args: [address]
-        });
-
-        return maxWithdraw;
-      } catch (error) {
-        console.error('Error getting max withdraw:', error);
-        return BigInt(0);
-      }
-    },
-    [address, getClient]
+    [address, walletClient, getClient, isLegacy, asset, currentChain]
   );
 
   const withdraw = useCallback(
-    async (asset: 'USDC' | 'WETH', amount: BigNumber) => {
+    async (amount: bigint) => {
       if (!address || !walletClient) {
         throw new Error('Wallet not connected');
       }
 
       try {
         const client = getClient();
-        const vaultAddress = morphoBaseAddresses.vaults[asset];
-        const amountBigInt = amount.toBigInt();
+        const vaultAddress = isLegacy
+          ? morphoBaseAddresses.legacyVaults[asset]
+          : morphoBaseAddresses.vaults[asset];
 
-        const maxWithdraw = await getMaxWithdraw(asset);
-        if (amountBigInt > maxWithdraw) {
+        if (amount > maxWithdraw) {
           throw new Error('Withdrawal amount exceeds available balance');
         }
 
@@ -115,7 +129,7 @@ export const useMorphoProtocol = () => {
           address: vaultAddress,
           abi: vaultAbi,
           functionName: 'withdraw',
-          args: [amountBigInt, address, address],
+          args: [amount, address, address],
           chain: currentChain,
           account: address
         });
@@ -123,19 +137,30 @@ export const useMorphoProtocol = () => {
         const receipt = await client.waitForTransactionReceipt({
           hash: withdrawTx
         });
+        fetchMaxWithdraw();
+
         return receipt;
       } catch (error) {
         throw error;
       }
     },
-    [address, walletClient, getClient, currentChain, getMaxWithdraw]
+    [
+      address,
+      walletClient,
+      getClient,
+      isLegacy,
+      asset,
+      maxWithdraw,
+      currentChain,
+      fetchMaxWithdraw
+    ]
   );
 
   return {
     supply,
     withdraw,
-    getMaxWithdraw,
-    isLoading: false,
+    maxWithdraw,
+    isLoading,
     isConnected: !!address && !!walletClient
   };
 };

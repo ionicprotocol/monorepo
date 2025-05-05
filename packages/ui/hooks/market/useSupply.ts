@@ -1,10 +1,10 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
 import { toast } from 'react-hot-toast';
-import { type Address, formatUnits, parseUnits } from 'viem';
+import { type Address, parseUnits } from 'viem';
 import { getContract } from 'viem';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,
@@ -19,7 +19,7 @@ import { useMaxSupplyAmount } from '../useMaxSupplyAmount';
 import { icErc20Abi } from '@ionicprotocol/sdk';
 
 interface UseSupplyProps {
-  maxAmount: bigint;
+  maxAmount: bigint | undefined;
   enableCollateral: boolean;
   selectedMarketData: MarketData;
   comptrollerAddress: Address;
@@ -27,7 +27,7 @@ interface UseSupplyProps {
 }
 
 export const useSupply = ({
-  maxAmount,
+  maxAmount = 0n,
   enableCollateral,
   selectedMarketData,
   comptrollerAddress,
@@ -37,9 +37,7 @@ export const useSupply = ({
   const [txHash, setTxHash] = useState<Address>();
   const [isWaitingForIndexing, setIsWaitingForIndexing] = useState(false);
   const [amount, setAmount] = useState<string>('0');
-  const [utilizationPercentage, setUtilizationPercentage] = useState<number>(0);
   const { addStepsForType, upsertStepForType } = useManageDialogContext();
-
   const { transactionSteps } = useTransactionSteps();
 
   const amountAsBInt = useMemo(
@@ -51,31 +49,6 @@ export const useSupply = ({
     [amount, selectedMarketData.underlyingDecimals]
   );
 
-  const handleUtilization = useCallback(
-    (newUtilizationPercentage: number) => {
-      const maxAmountNumber = Number(
-        formatUnits(maxAmount ?? 0n, selectedMarketData.underlyingDecimals)
-      );
-      const calculatedAmount = (
-        (newUtilizationPercentage / 100) *
-        maxAmountNumber
-      ).toFixed(parseInt(selectedMarketData.underlyingDecimals.toString()));
-
-      setAmount(calculatedAmount);
-      setUtilizationPercentage(newUtilizationPercentage);
-    },
-    [maxAmount, selectedMarketData.underlyingDecimals]
-  );
-
-  useEffect(() => {
-    if (amount === '0' || !amount || maxAmount === 0n) {
-      setUtilizationPercentage(0);
-      return;
-    }
-    const utilization = (Number(amountAsBInt) * 100) / Number(maxAmount);
-    setUtilizationPercentage(Math.min(Math.round(utilization), 100));
-  }, [amountAsBInt, maxAmount, amount]);
-
   const supplyAmount = useCallback(async () => {
     if (
       !currentSdk ||
@@ -83,8 +56,15 @@ export const useSupply = ({
       !amount ||
       amountAsBInt <= 0n ||
       amountAsBInt > maxAmount
-    )
+    ) {
       return;
+    }
+    if (amountAsBInt > maxAmount) {
+      toast.error(
+        `Cannot supply more than ${Number(maxAmount) / 10 ** selectedMarketData.underlyingDecimals} ${selectedMarketData.underlyingSymbol} due to supply cap restrictions. Please reduce the amount or contact the pool administrator.`
+      );
+      return;
+    }
 
     let currentTransactionStep = 0;
 
@@ -212,7 +192,6 @@ export const useSupply = ({
       });
 
       if (!currentSdk || !currentSdk.walletClient) {
-        console.error('SDK or wallet client is not initialized');
         return;
       }
 
@@ -254,7 +233,6 @@ export const useSupply = ({
         `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
       );
     } catch (error) {
-      console.error('Supply error:', error);
       setIsWaitingForIndexing(false);
       setTxHash(undefined);
 
@@ -310,7 +288,6 @@ export const useSupply = ({
       setTxHash(undefined);
       refetchMaxSupply();
       setAmount('0');
-      setUtilizationPercentage(0);
       toast.success(
         `Supplied ${amount} ${selectedMarketData.underlyingSymbol}`
       );
@@ -336,8 +313,6 @@ export const useSupply = ({
     isPolling,
     amount,
     setAmount,
-    utilizationPercentage,
-    handleUtilization,
     amountAsBInt,
     resetAllowance
   };

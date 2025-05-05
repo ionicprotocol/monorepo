@@ -24,19 +24,19 @@
       "address": "0x1D2b32Bf1422d22B080534221ba662a6E03a8283"
     },
     "CErc20Delegate": {
-      "address": "0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7"
+      "address": "0xA48953cF909ae94bDee1fea398E2E5FD717b34b9"
     },
     "CErc20PluginDelegate": {
-      "address": "0xB828A7e95ae1097E3c3d0efB3c3544Ce6bcD77A1"
+      "address": "0x0D2ADda4FE1A1751cfc2A1Af608AAab3148A4d89"
     },
     "CErc20PluginRewardsDelegate": {
       "address": "0xB4c0522F595eA2B407FE3e3D55B36291cC2b2Ced"
     },
     "CErc20RewardsDelegate": {
-      "address": "0x0e47b0fF7b5571047bb1A8b18C9444D25516e7F9"
+      "address": "0x07FA75a8F16993c5bCB0Adc4d2d4A0366915a20D"
     },
     "CTokenFirstExtension": {
-      "address": "0xD83ba0673090ba85f190e320a1C280AC816ba3aD"
+      "address": "0x059543A8712848a8FdE781Ce263825251FfcFDB6"
     },
     "ChainlinkPriceOracleV2": {
       "address": "0x13fD2701C3017bCc375Ad14Dd8433c6d7a441794"
@@ -48,10 +48,13 @@
       "address": "0x13fD2701C3017bCc375Ad14Dd8433c6d7a441794"
     },
     "Comptroller": {
-      "address": "0x8C58ECb9C0050824177f4e1Cd71C335421d4aeA2"
+      "address": "0x4B9ec267720725Dd4533C18C1fC565235e4a5A7C"
     },
     "ComptrollerFirstExtension": {
-      "address": "0xb3788b3C421348E43beEa88551acC16d2f6a6332"
+      "address": "0x9e05D11B867455554263db819f92646Ef3d27c15"
+    },
+    "ComptrollerPrudentiaCapsExt": {
+      "address": "0x2A3bcF52A6291a10A07D19D0694C054E39640b94"
     },
     "CurveSwapLiquidator": {
       "address": "0x18470019bF0E94611f15852F7e93cf5D65BC34CA"
@@ -95,14 +98,29 @@
     "IonicFlywheelBorrow_Borrow_ION_epoch5_Proxy": {
       "address": "0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA"
     },
+    "IonicFlywheelBorrow_Borrow_ION_epoch7": {
+      "address": "0x030a6514049D0AF71cf89E51a01C9D82873F4a2b"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_epoch7_Implementation": {
+      "address": "0x728685aE342e3C10FD0eFF020b3B248C951e2Ef7"
+    },
+    "IonicFlywheelBorrow_Borrow_ION_epoch7_Proxy": {
+      "address": "0x030a6514049D0AF71cf89E51a01C9D82873F4a2b"
+    },
     "IonicFlywheelDynamicRewards_Borrow_ION_epoch5": {
       "address": "0xfdC02d776547F0DEC6c91F7eb0219112630430e3"
+    },
+    "IonicFlywheelDynamicRewards_Borrow_ION_epoch7": {
+      "address": "0x4534c9eB856085F8959455B14998dAD06EE8d837"
     },
     "IonicFlywheelDynamicRewards_ION_epoch4": {
       "address": "0xAE8D590B31c3De396B8B97a27A2039Bbd1fc2B35"
     },
     "IonicFlywheelDynamicRewards_ION_epoch5": {
       "address": "0x9A5e7bE2581C3C287FcaAdCb5a6c91377Ff44633"
+    },
+    "IonicFlywheelDynamicRewards_ION_epoch7": {
+      "address": "0x2951aAae8A39953AB2530612c1476Cf9Af95cAF3"
     },
     "IonicFlywheelDynamicRewards_ION_v3": {
       "address": "0xe5bB1c9C58CF3C9F505f63A843779c6E614F8102"
@@ -136,6 +154,15 @@
     },
     "IonicFlywheel_ION_epoch5_Proxy": {
       "address": "0x05c3e910F7639457f92220605966e7f86A2ef966"
+    },
+    "IonicFlywheel_ION_epoch7": {
+      "address": "0xb988eE92A2B9A621187D33C845907DF5c5a1C9A3"
+    },
+    "IonicFlywheel_ION_epoch7_Implementation": {
+      "address": "0x115455f15ef67e298F012F225B606D3c4Daa1d60"
+    },
+    "IonicFlywheel_ION_epoch7_Proxy": {
+      "address": "0xb988eE92A2B9A621187D33C845907DF5c5a1C9A3"
     },
     "IonicLiquidator": {
       "address": "0x6545D2030D95ad0c8eFFF95c47eD55c0f6F5ee73"

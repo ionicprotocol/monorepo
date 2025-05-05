@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { ERC20 } from "solmate/tokens/ERC20.sol";
-import { IERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import { IERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
 import { TransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 import "./config/BaseTest.t.sol";
@@ -28,7 +28,7 @@ import { LeveredPositionFactorySecondExtension } from "../ionic/levered/LeveredP
 import { LeveredPositionFactory } from "../ionic/levered/LeveredPositionFactory.sol";
 import { LeveredPositionStorage } from "../ionic/levered/LeveredPositionStorage.sol";
 import { LeveredPosition } from "../ionic/levered/LeveredPosition.sol";
-import { IonicFlywheelLensRouter, IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
+// import { IonicComptroller, ICErc20, ERC20, IPriceOracle_IFLR } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
 import { PoolDirectory } from "../PoolDirectory.sol";
 import { AlgebraSwapLiquidator } from "../liquidators/AlgebraSwapLiquidator.sol";
 import { AerodromeV2Liquidator } from "../liquidators/AerodromeV2Liquidator.sol";
@@ -39,6 +39,18 @@ import { IRouter_Aerodrome } from "../external/aerodrome/IAerodromeRouter.sol";
 import { VelodromeV2Liquidator } from "../liquidators/VelodromeV2Liquidator.sol";
 import { IRouter_Velodrome } from "../external/velodrome/IVelodromeRouter.sol";
 import { IonicUniV3Liquidator } from "../IonicUniV3Liquidator.sol";
+import { VoterLens } from "../veION/VoterLens.sol";
+import { IonicFlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/IonicFlywheelDynamicRewards.sol";
+import { IonicFlywheel } from "../ionic/strategies/flywheel/IonicFlywheel.sol";
+import { FlywheelDynamicRewards } from "../ionic/strategies/flywheel/rewards/FlywheelDynamicRewards.sol";
+import { Voter } from "../veION/Voter.sol";
+import { veION } from "../veION/veION.sol";
+import { veIONFirstExtension } from "../veION/veIONFirstExtension.sol";
+import { veIONSecondExtension } from "../veION/veIONSecondExtension.sol";
+import { BribeRewards } from "../veION/BribeRewards.sol";
+import { IonicFlywheelLensRouter } from "../ionic/strategies/flywheel/IonicFlywheelLensRouter.sol";
+import { IVoter } from "../veION/interfaces/IVoter.sol";
+
 import "forge-std/console.sol";
 
 struct HealthFactorVars {
@@ -59,6 +71,10 @@ struct HealthFactorVars {
   ICErc20 testCToken;
   address testUnderlying;
   uint256 amountBorrow;
+}
+
+interface IClaimRewards {
+  function claimRewardsForPool(address user, address pool) external;
 }
 
 contract DevTesting is BaseTest {
@@ -118,6 +134,36 @@ contract DevTesting is BaseTest {
     emit log_named_array("borrowers", pool.getAllBorrowers());
   }
 
+  function testGetTotalMarketVotes() public debuggingOnly fork(MODE_MAINNET) {
+    // Deploy a new instance of VoterLens
+    VoterLens lens = new VoterLens();
+
+    lens.initialize(
+      0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
+      PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
+    );
+
+    lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    lens.setVeIONAddress(0x2Abd9eB57Fb7727138f4181B68DA0426B7fd47e8);
+
+    uint256 totalMarketVotes = lens.getTotalMarketVotes();
+    emit log_named_uint("Total Market Votes Value in ETH", totalMarketVotes);
+  }
+
+  function testGetAllMarketVotes() public debuggingOnly fork(MODE_MAINNET) {
+    VoterLens lens = VoterLens(0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D);
+    address lpAsset = 0x690A74d2eC0175a69C0962B309E03021C0b5002E;
+
+    VoterLens.MarketVoteInfo[] memory marketVotes = lens.getAllMarketVotes(lpAsset);
+    emit log_named_uint("MarketVoteInfo array length", marketVotes.length);
+
+    for (uint256 i = 0; i < marketVotes.length; i++) {
+      emit log_named_address("Market", marketVotes[i].market);
+      emit log_named_uint("Votes", marketVotes[i].votes);
+      emit log_named_uint("Votes Value in ETH", marketVotes[i].votesValueInEth);
+    }
+  }
+
   function testModeLiquidationShortfall() public debuggingOnly fork(MODE_MAINNET) {
     (uint256 err, uint256 collateralValue, uint256 liquidity, uint256 shortfall) = pool.getAccountLiquidity(
       0xa75F9C8246f7269279bE4c969e7Bc6Eb619cC204
@@ -153,6 +199,486 @@ contract DevTesting is BaseTest {
     uint256 hf = newImpl.getHealthFactor(rahul, pool);
 
     emit log_named_uint("hf", hf);
+  }
+
+  function testVoterLens() public debuggingOnly fork(BASE_MAINNET) {
+    // VoterLens lens = new VoterLens();
+    // lens.initialize(
+    //   0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429,
+    //   PoolDirectory(0x39C353Cf9041CcF467A04d0e78B63d961E81458a)
+    // );
+
+    // lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    VoterLens lens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B);
+
+    VoterLens.IncentiveInfo[] memory info = lens.getAllIncentivesForBribes();
+    emit log_named_uint("IncentiveInfo array length", info.length);
+    for (uint256 i = 0; i < info.length; i++) {
+      emit log_named_address("Market", info[i].market);
+      emit log_named_address("Bribe Supply", info[i].bribeSupply);
+      emit log_named_address("Bribe Borrow", info[i].bribeBorrow);
+
+      for (uint256 j = 0; j < info[i].rewardsSupply.length; j++) {
+        emit log_named_address("Reward Supply", info[i].rewardsSupply[j]);
+        emit log_named_uint("Reward Supply Amount", info[i].rewardsSupplyAmounts[j]);
+        emit log_named_uint("Reward Supply Amount Value", info[i].rewardsSupplyETHValues[j]);
+      }
+
+      for (uint256 j = 0; j < info[i].rewardsBorrow.length; j++) {
+        emit log_named_address("Reward Borrow", info[i].rewardsBorrow[j]);
+        emit log_named_uint("Reward Borrow Amount", info[i].rewardsBorrowAmounts[j]);
+        emit log_named_uint("Reward Borrow Amount Value", info[i].rewardsBorrowETHValues[j]);
+      }
+      emit log("-----------------------------------------------------------");
+    }
+  }
+
+  function testNewVoterLens() public debuggingOnly fork(BASE_MAINNET) {
+    VoterLens lens = new VoterLens();
+    lens.initialize(
+      0x669A6F5421dA53696fa06f1043CF127d380f6EB9,
+      PoolDirectory(0xE1A3006be645a80F206311d9f18C866c204bA02f)
+    );
+
+    lens.setMasterPriceOracle(ap.getAddress("MasterPriceOracle"));
+    lens.setVeIONAddress(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+
+    VoterLens.UserBribes[] memory userBribes = lens.getUserBribeRewards(0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437);
+    emit log_named_uint("UserBribes array length", userBribes.length);
+    for (uint256 i = 0; i < userBribes.length; i++) {
+      emit log_named_uint("TokenId", userBribes[i].tokenId);
+      emit log_named_address("Market", userBribes[i].market);
+      emit log_named_address("Bribe", userBribes[i].bribe);
+      emit log_named_address("Reward", userBribes[i].reward);
+      emit log_named_uint("Earned", userBribes[i].earned);
+    }
+  }
+
+  function testUserFlywheelRewards1() public debuggingOnly forkAtBlock(BASE_MAINNET, 26840321) {
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards2() public debuggingOnly forkAtBlock(BASE_MAINNET, 26904044) {
+    emit log("Distribution into reward accumulator");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards3() public debuggingOnly forkAtBlock(BASE_MAINNET, 26920527) {
+    emit log("Right before rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards4() public debuggingOnly forkAtBlock(BASE_MAINNET, 26920528) {
+    emit log("Rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards5() public debuggingOnly forkAtBlock(BASE_MAINNET, 26931538) {
+    emit log("First deposit after rewards pulled into flywheel rewards");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards6() public debuggingOnly forkAtBlock(BASE_MAINNET, 27123016) {
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards7() public debuggingOnly forkAtBlock(BASE_MAINNET, 27208871) {
+    emit log("Another Distribution");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards8() public debuggingOnly forkAtBlock(BASE_MAINNET, 27703171) {
+    emit log("Right before user whitelists himself");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserFlywheelRewards9() public debuggingOnly forkAtBlock(BASE_MAINNET, 27703172) {
+    emit log("User whitelists himself");
+    executeFlywheelRewardsTest();
+  }
+
+  function testUserBribeClaims() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x2273B2Fb1664f100C07CDAa25Afd1CD0DA3C7437;
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+
+    address[] memory _bribes = new address[](1);
+    _bribes[0] = 0x4c63d1bcC6c67b9DE3DBf96f8e18eD9440400e6a;
+
+    address[][] memory _tokens = new address[][](1);
+    _tokens[0] = new address[](1);
+
+    _tokens[0][0] = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
+
+    vm.prank(user);
+    voter.claimBribes(_bribes, _tokens, 38);
+  }
+
+  function testUserBribeRewards() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+    address lpAsset = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    VoterLens.UserBribes[] memory userBribes = voterLens.getUserBribeRewards(user);
+
+    emit log("User Bribe Rewards:");
+    for (uint256 i = 0; i < userBribes.length; i++) {
+      emit log_named_uint("Token ID", userBribes[i].tokenId);
+      emit log_named_address("Market", userBribes[i].market);
+      emit log_named_address("Bribe", userBribes[i].bribe);
+      emit log_named_address("Reward", userBribes[i].reward);
+      emit log_named_uint("Earned", userBribes[i].earned);
+      emit log("-----------------------------------------------------------");
+    }
+  }
+
+  function testUserEmissions() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x5321d7296fe0e7Cae533a090DcDA6E00F0499df0;
+    IClaimRewards lens = IClaimRewards(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B);
+
+    lens.claimRewardsForPool(user, 0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13);
+  }
+
+  struct BribeRewardVars {
+    address user;
+    Voter voter;
+    veION ve;
+    address lpAsset;
+    uint256[] ownedTokenIds;
+    uint256 currentTimestamp;
+  }
+
+  function testSingleBribeReward() public debuggingOnly fork(BASE_MAINNET) {
+    BribeRewardVars memory vars;
+    vars.user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    vars.voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+    vars.ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+    vars.lpAsset = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    vars.ownedTokenIds = veIONSecondExtension(address(vars.ve)).getOwnedTokenIds(vars.user);
+    vars.currentTimestamp = vars.voter.epochStart(block.timestamp);
+    emit log_named_uint("Current Timestamp", vars.currentTimestamp);
+
+    emit log("Vote Details for User:");
+    for (uint256 j = 0; j < vars.ownedTokenIds.length; j++) {
+      Voter.VoteDetails memory voteDetails = vars.voter.getVoteDetails(vars.ownedTokenIds[j], vars.lpAsset);
+      emit log_named_uint("Token ID", vars.ownedTokenIds[j]);
+      for (uint256 i = 0; i < voteDetails.marketVotes.length; i++) {
+        emit log_named_address("Market Voted", voteDetails.marketVotes[i]);
+        emit log_named_uint("Market Side", uint256(voteDetails.marketVoteSides[i]));
+        emit log_named_uint("Votes", voteDetails.votes[i]);
+        emit log_named_uint("Used Weight", voteDetails.usedWeight);
+        address rewardAccumulator = vars.voter.marketToRewardAccumulators(
+          voteDetails.marketVotes[i],
+          voteDetails.marketVoteSides[i]
+        );
+        address bribeRewards = vars.voter.rewardAccumulatorToBribe(rewardAccumulator);
+        BribeRewards bribe = BribeRewards(bribeRewards);
+
+        emit log_named_address("Bribe", address(bribe));
+        BribeRewards.Checkpoint memory cp = bribe.getCheckpoint(vars.ownedTokenIds[j], vars.lpAsset, 0);
+        emit log_named_uint("Checkpoint Timestamp", cp.timestamp);
+        emit log_named_uint("Checkpoint Balance Of", cp.balanceOf);
+
+        uint256 voteTimestamp = vars.voter.epochStart(cp.timestamp);
+        emit log_named_uint("Vote Timestamp", voteTimestamp);
+        emit log_named_uint("Difference between timestamps", vars.currentTimestamp - voteTimestamp);
+        uint256 rewardsLength = bribe.rewardsListLength();
+        for (uint256 k = 0; k < rewardsLength; k++) {
+          address rewardToken = bribe.rewards(k);
+          uint256 earnedAmount = bribe.earned(rewardToken, vars.ownedTokenIds[j]);
+          emit log_named_address("Reward Token", rewardToken);
+          emit log_named_uint("Earned Amount", earnedAmount);
+        }
+      }
+      emit log("-----------------------------------------------------------");
+    }
+  }
+
+  function testUserBribes() public debuggingOnly fork(BASE_MAINNET) {
+    address user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+    address lpAsset = 0x0FAc819628a7F612AbAc1CaD939768058cc0170c;
+
+    VoterLens.IncentiveInfo[] memory incentives = voterLens.getAllIncentivesForBribes();
+
+    emit log("Incentive Information:");
+    for (uint256 i = 0; i < incentives.length; i++) {
+      if (
+        (incentives[i].bribeSupply != address(0) && incentives[i].rewardsSupply.length > 0) ||
+        (incentives[i].bribeBorrow != address(0) && incentives[i].rewardsBorrow.length > 0)
+      ) {
+        emit log_named_address("Market", incentives[i].market);
+        if (incentives[i].bribeSupply != address(0)) {
+          emit log_named_address("Bribe Supply", incentives[i].bribeSupply);
+          for (uint256 j = 0; j < incentives[i].rewardsSupply.length; j++) {
+            emit log_named_address("Reward Supply", incentives[i].rewardsSupply[j]);
+            emit log_named_uint("Reward Supply Amount", incentives[i].rewardsSupplyAmounts[j]);
+            emit log_named_uint("Reward Supply ETH Value", incentives[i].rewardsSupplyETHValues[j]);
+          }
+        }
+        if (incentives[i].bribeBorrow != address(0)) {
+          emit log_named_address("Bribe Borrow", incentives[i].bribeBorrow);
+          for (uint256 j = 0; j < incentives[i].rewardsBorrow.length; j++) {
+            emit log_named_address("Reward Borrow", incentives[i].rewardsBorrow[j]);
+            emit log_named_uint("Reward Borrow Amount", incentives[i].rewardsBorrowAmounts[j]);
+            emit log_named_uint("Reward Borrow ETH Value", incentives[i].rewardsBorrowETHValues[j]);
+          }
+        }
+        emit log("-----------------------------------------------------------");
+      }
+    }
+
+    uint256[] memory ownedTokenIds = veIONSecondExtension(address(ve)).getOwnedTokenIds(user);
+
+    emit log("Owned Token IDs for User:");
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      emit log_named_uint("Token ID", ownedTokenIds[i]);
+    }
+    emit log("-----------------------------------------------------------");
+
+    // Fetch the vote details for each token ID owned by the user
+    emit log("Vote Details for User:");
+    for (uint256 j = 0; j < ownedTokenIds.length; j++) {
+      Voter.VoteDetails memory voteDetails = voter.getVoteDetails(ownedTokenIds[j], lpAsset);
+      emit log_named_uint("Token ID", ownedTokenIds[j]);
+      for (uint256 i = 0; i < voteDetails.marketVotes.length; i++) {
+        emit log_named_address("Market Voted", voteDetails.marketVotes[i]);
+        emit log_named_uint("Market Side", uint256(voteDetails.marketVoteSides[i]));
+        emit log_named_uint("Votes", voteDetails.votes[i]);
+        emit log_named_uint("Used Weight", voteDetails.usedWeight);
+      }
+      emit log("-----------------------------------------------------------");
+    }
+
+    BribeRewards bribe = BribeRewards(0x4c63d1bcC6c67b9DE3DBf96f8e18eD9440400e6a);
+    uint256[] memory votingTokens = new uint256[](2);
+    votingTokens[0] = 15;
+    votingTokens[1] = 38;
+
+    for (uint256 i = 0; i < votingTokens.length; i++) {
+      uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
+      emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
+      emit log_named_uint("Earned Amount", earnedAmount);
+    }
+  }
+
+  function testVoteUser() public debuggingOnly forkAtBlock(BASE_MAINNET, 28365448) {
+    address[] memory markets = new address[](1);
+    IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](1);
+    uint256[] memory weights = new uint256[](1);
+
+    address user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
+
+    uint256[] memory ownedTokenIds = veIONSecondExtension(address(ve)).getOwnedTokenIds(user);
+
+    emit log("Owned Token IDs for User:");
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      emit log_named_uint("Token ID", ownedTokenIds[i]);
+    }
+    emit log("-----------------------------------------------------------");
+
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+
+    markets[0] = 0x9c2A4f9c5471fd36bE3BBd8437A33935107215A1;
+    marketSides[0] = IVoter.MarketSide(0);
+    weights[0] = 100;
+
+    for (uint256 i = 0; i < ownedTokenIds.length; i++) {
+      vm.startPrank(user);
+      voter.reset(ownedTokenIds[i]);
+      voter.vote(ownedTokenIds[i], markets, marketSides, weights);
+      vm.stopPrank();
+    }
+  }
+
+  function testBribeIncentives() public debuggingOnly forkAtBlock(MODE_MAINNET, 21084461) {
+    VoterLens voterLens = VoterLens(0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D); // Replace with actual VoterLens contract address
+    VoterLens.IncentiveInfo[] memory incentives = voterLens.getAllIncentivesForBribes();
+
+    emit log("Incentive Information:");
+    for (uint256 i = 0; i < incentives.length; i++) {
+      if (
+        (incentives[i].bribeSupply != address(0) && incentives[i].rewardsSupply.length > 0) ||
+        (incentives[i].bribeBorrow != address(0) && incentives[i].rewardsBorrow.length > 0)
+      ) {
+        emit log_named_address("Market", incentives[i].market);
+        if (incentives[i].bribeSupply != address(0)) {
+          emit log_named_address("Bribe Supply", incentives[i].bribeSupply);
+          for (uint256 j = 0; j < incentives[i].rewardsSupply.length; j++) {
+            emit log_named_address("Reward Supply", incentives[i].rewardsSupply[j]);
+            emit log_named_uint("Reward Supply Amount", incentives[i].rewardsSupplyAmounts[j]);
+            emit log_named_uint("Reward Supply ETH Value", incentives[i].rewardsSupplyETHValues[j]);
+          }
+        }
+        if (incentives[i].bribeBorrow != address(0)) {
+          emit log_named_address("Bribe Borrow", incentives[i].bribeBorrow);
+          for (uint256 j = 0; j < incentives[i].rewardsBorrow.length; j++) {
+            emit log_named_address("Reward Borrow", incentives[i].rewardsBorrow[j]);
+            emit log_named_uint("Reward Borrow Amount", incentives[i].rewardsBorrowAmounts[j]);
+            emit log_named_uint("Reward Borrow ETH Value", incentives[i].rewardsBorrowETHValues[j]);
+          }
+        }
+        emit log("-----------------------------------------------------------");
+      }
+    }
+  }
+
+  struct FlywheelTestVars {
+    address ion;
+    address solMarket;
+    address user;
+    IonicFlywheel ionFlywheel;
+    IonicFlywheelDynamicRewards ionFlywheelRewards;
+    address rewardAccumulator;
+    uint256 ionBalance;
+    uint256 ionFlywheelRewardsBalance;
+    uint256 userBlacklistedSupply;
+    uint256 totalBlacklistedSupply;
+    uint256 compAccrued;
+    uint224 userIndex;
+    uint224 marketStateIndex;
+    uint32 marketStateLastUpdatedTimestamp;
+    uint256 totalSupply;
+    uint256 solMarketBalance;
+    uint32 rewardsCycleStart;
+    uint32 rewardsCycleEnd;
+    uint192 rewardsCycleReward;
+  }
+
+  function executeFlywheelRewardsTest() internal {
+    FlywheelTestVars memory vars;
+
+    vars.ion = 0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5;
+    vars.solMarket = 0xbd06905590b6E1b6Ac979Fc477A0AebB58d52371;
+    vars.user = 0x54494827316C7C6627908A9261AB13Ac0A5222E3;
+    vars.ionFlywheel = IonicFlywheel(0x1f7DF29E614105e5869b4f03Ecc034a087C2Ab5f);
+    vars.ionFlywheelRewards = IonicFlywheelDynamicRewards(0x7Faf51cfF9ed26AD5BD071685F684B0D1338d163);
+
+    emit log("-----------------------------------------------------------");
+    vars.rewardAccumulator = vars.ionFlywheelRewards.rewardAccumulators(vars.solMarket);
+    emit log_named_address("Reward Accumulator for solMarket", vars.rewardAccumulator);
+
+    vars.ionBalance = ERC20(vars.ion).balanceOf(vars.rewardAccumulator);
+    emit log_named_uint("ION Balance of Reward Accumulator", vars.ionBalance);
+
+    vars.totalBlacklistedSupply = vars.ionFlywheel.blacklistedSupply(ERC20(vars.solMarket));
+    emit log_named_uint("Total Blacklisted Supply of solMarket", vars.totalBlacklistedSupply);
+
+    vars.ionFlywheelRewardsBalance = ERC20(vars.ion).balanceOf(address(vars.ionFlywheelRewards));
+    emit log_named_uint("ION Balance of Flywheel Rewards", vars.ionFlywheelRewardsBalance);
+
+    vars.userBlacklistedSupply = vars.ionFlywheel.userBlacklistedSupply(ERC20(vars.solMarket), vars.user);
+    emit log_named_uint("User Blacklisted Supply", vars.userBlacklistedSupply);
+
+    vars.compAccrued = vars.ionFlywheel.compAccrued(vars.user);
+    emit log_named_uint("Comp Accrued", vars.compAccrued);
+
+    vars.userIndex = vars.ionFlywheel.userIndex(ERC20(vars.solMarket), vars.user);
+    emit log_named_uint("User Index", vars.userIndex);
+
+    (vars.marketStateIndex, vars.marketStateLastUpdatedTimestamp) = vars.ionFlywheel.marketState(ERC20(vars.solMarket));
+    emit log_named_uint("Market State Index", vars.marketStateIndex);
+    emit log_named_uint("Market State Last Updated Timestamp", vars.marketStateLastUpdatedTimestamp);
+
+    vars.totalSupply = ERC20(vars.solMarket).totalSupply();
+    emit log_named_uint("Total Supply of solMarket", vars.totalSupply);
+
+    vars.solMarketBalance = ERC20(vars.solMarket).balanceOf(vars.user);
+    emit log_named_uint("solMarket Balance of User", vars.solMarketBalance);
+
+    // Retrieve the rewards cycle for the solMarket strategy
+    (vars.rewardsCycleStart, vars.rewardsCycleEnd, vars.rewardsCycleReward) = vars.ionFlywheelRewards.rewardsCycle(
+      ERC20(vars.solMarket)
+    );
+
+    // Log the rewards cycle details
+    emit log_named_uint("Rewards Cycle Start", vars.rewardsCycleStart);
+    emit log_named_uint("Rewards Cycle End", vars.rewardsCycleEnd);
+    emit log_named_uint("Rewards Cycle Reward", vars.rewardsCycleReward);
+
+    uint32 rewardsCycleLength = vars.ionFlywheelRewards.rewardsCycleLength();
+    emit log_named_uint("Rewards Cycle Length", rewardsCycleLength);
+  }
+
+  function testQuickHF() public debuggingOnly forkAtBlock(MODE_MAINNET, 11831371) {
+    address rahul = 0xf1bAeb439b8eF5043E069af0C8C8145963ebc3f8;
+
+    uint256 hf = lens.getHealthFactor(rahul, pool);
+    uint256 hf2 = lens.getHealthFactor(rahul, IonicComptroller(0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a));
+
+    emit log_named_uint("hf", hf);
+    emit log_named_uint("hf2", hf2);
+  }
+
+  function testQuickLiquidation() public debuggingOnly forkAtBlock(MODE_MAINNET, 12018198) {
+    address user = 0xf1bAeb439b8eF5043E069af0C8C8145963ebc3f8;
+    address whale = 0xaaEd68a3875F6BDbD44f70418dd16082870De8A0;
+    address borrowedAsset = 0x80137510979822322193FC997d400D5A6C747bf7;
+    uint256 repayAmount = 1968810267461862;
+    address collateralToSeizeCToken = 0x71ef7EDa2Be775E5A7aa8afD02C45F059833e9d2;
+    address borrowedAssetCToken = 0x959FA710CCBb22c7Ce1e59Da82A247e686629310;
+
+    IonicUniV3Liquidator uniV3liquidator = IonicUniV3Liquidator(payable(0xa12c1E460c06B1745EFcbfC9A1f666a8749B0e3A));
+
+    emit log_named_address("univ3liq", address(uniV3liquidator));
+    emit log_named_address("express relay", address(uniV3liquidator.expressRelay()));
+
+    vm.mockCall(
+      address(uniV3liquidator.expressRelay()),
+      abi.encodeWithSelector(
+        bytes4(keccak256("isPermissioned(address,bytes)")),
+        address(uniV3liquidator),
+        abi.encode(user)
+      ),
+      abi.encode(true)
+    );
+
+    vm.startPrank(whale);
+    ERC20(borrowedAsset).approve(address(uniV3liquidator), type(uint256).max);
+    uniV3liquidator.safeLiquidate(user, repayAmount, ICErc20(borrowedAssetCToken), ICErc20(collateralToSeizeCToken), 0);
+    vm.stopPrank();
+  }
+
+  function testQuickAssets() public debuggingOnly forkAtBlock(MODE_MAINNET, 12314870) {
+    address user = 0x5BDB1Fb5d0F841f4eb88D537bED0DD674fA88D7c;
+    IonicComptroller comptroller = IonicComptroller(0xFB3323E24743Caf4ADD0fDCCFB268565c0685556);
+    IonicComptroller comptroller2 = IonicComptroller(0x8Fb3D4a94D0aA5D6EDaAC3Ed82B59a27f56d923a);
+
+    uint256 hf = lens.getHealthFactor(user, comptroller);
+    uint256 hf2 = lens.getHealthFactor(user, comptroller2);
+
+    PoolLens.PoolAsset[] memory assets = lens.getPoolAssetsByUser(comptroller, user);
+    PoolLens.PoolAsset[] memory assets2 = lens.getPoolAssetsByUser(comptroller2, user);
+
+    emit log("<---------------------------------MAIN MARKETS--------------------------------->");
+    emit log_named_uint("hf", hf);
+    for (uint i; i < assets.length; i++) {
+      emit log("====================================================");
+      emit log_named_string("name", assets[i].underlyingName);
+      emit log_named_address("ctoken", assets[i].cToken);
+      emit log_named_address("underlying", assets[i].underlyingToken);
+      emit log_named_uint("supplyBalance", assets[i].supplyBalance);
+      emit log_named_uint("borrowBalance", assets[i].borrowBalance);
+      emit log_named_uint("underlyingPrice", assets[i].underlyingPrice);
+      emit log_named_uint("exchange rate", assets[i].exchangeRate);
+    }
+
+    emit log("<---------------------------------NATIVE MARKETS--------------------------------->");
+    emit log_named_uint("hf", hf2);
+    for (uint i; i < assets2.length; i++) {
+      emit log("====================================================");
+      emit log_named_string("name", assets2[i].underlyingName);
+      emit log_named_address("ctoken", assets2[i].cToken);
+      emit log_named_address("underlying", assets2[i].underlyingToken);
+      emit log_named_uint("supplyBalance", assets2[i].supplyBalance);
+      emit log_named_uint("borrowBalance", assets2[i].borrowBalance);
+      emit log_named_uint("underlyingPrice", assets2[i].underlyingPrice);
+    }
   }
 
   function testNetAprMode() public debuggingOnly forkAtBlock(MODE_MAINNET, 8479829) {

@@ -25,30 +25,25 @@ export interface UseRewardsData {
 export const fetchFlywheelRewards = async (
   comptroller: Address,
   sdk: IonicSdk
-) => {
-  let flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[] = [];
-  let flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[] = [];
+): Promise<{
+  flywheelRewardsWithAPY: FlywheelMarketRewardsInfo[];
+  flywheelRewardsWithoutAPY: FlywheelMarketRewardsInfo[];
+}> => {
+  try {
+    const [flywheelRewardsWithAPY = [], flywheelRewardsWithoutAPY = []] =
+      await Promise.all([
+        sdk.getFlywheelMarketRewardsByPoolWithAPR(comptroller),
+        sdk.getFlywheelMarketRewardsByPool(comptroller)
+      ]).catch((error) => {
+        console.error('Failed to fetch flywheel rewards:', error);
+        return [[], []];
+      });
 
-  [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
-    sdk
-      .getFlywheelMarketRewardsByPoolWithAPR(comptroller)
-      .catch((exception) => {
-        console.error(
-          'Unable to get onchain Flywheel Rewards with APY',
-          exception
-        );
-        return [];
-      }),
-    sdk.getFlywheelMarketRewardsByPool(comptroller).catch((error) => {
-      console.error(
-        'Unable to get onchain Flywheel Rewards without APY',
-        error
-      );
-      return [];
-    })
-  ]);
-
-  return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+    return { flywheelRewardsWithAPY, flywheelRewardsWithoutAPY };
+  } catch (error) {
+    console.error('Fatal error fetching flywheel rewards:', error);
+    return { flywheelRewardsWithAPY: [], flywheelRewardsWithoutAPY: [] };
+  }
 };
 
 export function useFlywheelRewards(comptroller?: Address, chainId?: number) {

@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/Create2Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/utils/Create2Upgradeable.sol";
 
 import { IonicComptroller } from "./compound/ComptrollerInterface.sol";
 import { ICErc20 } from "./compound/CTokenInterfaces.sol";
@@ -138,7 +138,7 @@ contract FeeDistributor is SafeOwnableUpgradeable, FeeDistributorStorage {
     BasePriceOracle oracle = comptroller.oracle();
     uint256 underlyingPriceEth = oracle.price(ICErc20(address(_ctoken)).underlying());
     uint256 underlyingDecimals = _ctoken.decimals();
-    uint256 borrowBalanceEth = (underlyingPriceEth * borrowBalance) / 10**underlyingDecimals;
+    uint256 borrowBalanceEth = (underlyingPriceEth * borrowBalance) / 10 ** underlyingDecimals;
     if (borrowBalanceEth > minBorrowEth) {
       return 0;
     }
@@ -219,10 +219,10 @@ contract FeeDistributor is SafeOwnableUpgradeable, FeeDistributorStorage {
    * @param oldImplementation The old `Comptroller` implementation address to upgrade from.
    * @param newImplementation Latest `Comptroller` implementation address.
    */
-  function _setLatestComptrollerImplementation(address oldImplementation, address newImplementation)
-    external
-    onlyOwner
-  {
+  function _setLatestComptrollerImplementation(
+    address oldImplementation,
+    address newImplementation
+  ) external onlyOwner {
     _latestComptrollerImplementation[oldImplementation] = newImplementation;
   }
 
@@ -332,10 +332,10 @@ contract FeeDistributor is SafeOwnableUpgradeable, FeeDistributorStorage {
     return cErc20DelegateExtensions[cErc20Delegate];
   }
 
-  function _setCErc20DelegateExtensions(address cErc20Delegate, DiamondExtension[] calldata extensions)
-    external
-    onlyOwner
-  {
+  function _setCErc20DelegateExtensions(
+    address cErc20Delegate,
+    DiamondExtension[] calldata extensions
+  ) external onlyOwner {
     cErc20DelegateExtensions[cErc20Delegate] = extensions;
   }
 
@@ -351,12 +351,7 @@ contract FeeDistributor is SafeOwnableUpgradeable, FeeDistributorStorage {
     }
   }
 
-  function canCall(
-    address pool,
-    address user,
-    address target,
-    bytes4 functionSig
-  ) external view returns (bool) {
+  function canCall(address pool, address user, address target, bytes4 functionSig) external view returns (bool) {
     return authoritiesRegistry.canCall(pool, user, target, functionSig);
   }
 }

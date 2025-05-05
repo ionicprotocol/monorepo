@@ -7,12 +7,16 @@ import "./liquidation";
 import "./leverage";
 import "./oracle";
 import "./hypernative";
+import "./erc4626";
+import "./veION";
 
 export const COMPTROLLER = "0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13";
 
 export const ION = "0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5";
 export const eUSD = "0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4";
 export const hyUSD = "0xCc7FF230365bD730eE4B352cC2492CEdAC49383e";
+export const OGN = "0x7002458b1df59eccb57387bc79ffc7c29e22e6f7";
+export const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 
 export const weETH_MARKET = "0x84341B650598002d427570298564d6701733c805";
 export const ezETH_MARKET = "0x079f84161642D81aaFb67966123C9949F9284bf5";
@@ -37,3 +41,4 @@ export const uSUI_MARKET = "0xAa255Cf8e294BD7fcAB21897C0791e50C99BAc69";
 export const sUSDz_MARKET = "0xf64bfd19DdCB2Bb54e6f976a233d0A9400ed84eA";
 export const fBOMB_MARKET = "0xd333681242F376f9005d1208ff946C3EE73eD659";
 export const KLIMA_MARKET = "0x600D660440f15EeADbC3fc1403375e04b318F07e";
+

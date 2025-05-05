@@ -23,6 +23,8 @@ module "optimism_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
+  cpu    = "256"  # Custom CPU value
+  memory = "512"  # Custom memory value
   task_definition_family     = var.task_definition_family_optimism
   ecr_repository_url         = "${local.liquidator_ecr_repository_name}:${var.bots_image_tag}"
   bots_image_tag             = var.bots_image_tag
@@ -41,4 +43,19 @@ module "optimism_mainnet_liquidator_ecs" {
   security_group_ids        = ["sg-0a3996557af867ad0"]
   region                    = var.region
   liquidator_container_name = "${var.liquidator_container_name}-optimism"
+}
+module "optimism_mainnet_pyth_rpc_0" {
+  source              = "../modules/lambda"
+  ecr_repository_name = local.pyth_updater_ecr_repository_name
+  docker_image_tag    = var.bots_image_tag
+  container_family    = "pyth-updater-rpc-0"
+  environment         = "mainnet"
+  target_chain_id     = local.optimism_mainnet_chain_id
+  container_env_vars = merge(
+    local.pyth_updater_optimism_lambda_variables,
+    { WEB3_HTTP_PROVIDER_URLS = local.optimism_mainnet_rpc_0 }
+  )
+  schedule_expression = "rate(5 minutes)"
+  timeout             = 700
+  memory_size         = 512
 }

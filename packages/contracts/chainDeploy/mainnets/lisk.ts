@@ -1,7 +1,8 @@
 import { lisk } from "@ionicprotocol/chains";
 
 import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
-import { Address } from "viem";
+import { Address, formatEther, Hash, Hex, zeroAddress, parseEther } from "viem";
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { assetSymbols, ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
 import { addUnderlyingsToMpo } from "../helpers/oracles/utils";
@@ -26,7 +27,20 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3Quoter: lisk.chainAddresses.UNISWAP_V3?.QUOTER_V2 as Address
   },
   wtoken: lisk.chainAddresses.W_TOKEN as Address,
-  nativeTokenUsdChainlinkFeed: lisk.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address
+  nativeTokenUsdChainlinkFeed: lisk.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address,
+  veION: {
+    lpTokens: ["0x076d0CD6228B042aA28E1E6A0894Cf6C97abc23b"],
+    lpStakingStrategies: ["VeloAeroStakingStrategy"],
+    lpStakingWalletImplementations: ["VeloAeroStakingWallet"],
+    lpExternalStakingContracts: ["0x6BFF62258b7BD76F79B4F0818cDDF3628A2fFA58"],
+    lpTokenWhitelistStatuses: [true],
+    lpTokenTypes: [0],
+    minimumLockAmounts: [parseEther("0.01")],
+    minimumLockDuration: 6 * 30 * 24 * 60 * 60,
+    maxEarlyWithdrawFee: parseEther("0.8"),
+    maxVotingNum: 20
+  },
+  ION: "0x3f608A49a3ab475dA7fBb167C1Be6b7a45cD7013"
 };
 
 export const deploy = async ({
@@ -54,7 +68,8 @@ export const deploy = async ({
     deployments,
     deployConfig,
     assets: lisk.assets,
-    chainlinkAssets
+    chainlinkAssets,
+    chainId: lisk.chainId
   });
 
   const ion = assets.find((asset) => asset.symbol === assetSymbols.ION)?.underlying;
@@ -75,4 +90,15 @@ export const deploy = async ({
     waitConfirmations: 1
   });
   console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+
+  const uniswapLpTokenPriceOracle = await deployments.get("UniswapLpTokenPriceOracle");
+  for (const lpToken of deployConfig.veION.lpTokens) {
+    await addUnderlyingsToMpo(
+      mpo as any,
+      [lpToken],
+      uniswapLpTokenPriceOracle.address as Address,
+      deployer,
+      publicClient
+    );
+  }
 };

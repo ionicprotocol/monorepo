@@ -144,9 +144,9 @@ export const assets: SupportedAsset[] = [
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
     extraDocs: defaultDocs("https://optimistic.etherscan.io", wUSDM),
-    initialCf: "0.82",
-    initialSupplyCap: parseEther(String(1_300_000)).toString(),
-    initialBorrowCap: parseEther(String(1_000_000)).toString()
+    initialCf: "0.01",
+    initialSupplyCap: parseEther(String(512)).toString(),
+    initialBorrowCap: "1"
   },
   {
     symbol: assetSymbols.ION,

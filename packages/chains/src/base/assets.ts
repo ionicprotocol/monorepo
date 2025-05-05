@@ -8,7 +8,7 @@ import {
   SupportedAsset,
   SupportedChains
 } from "@ionicprotocol/types";
-import { parseEther, parseUnits } from "viem";
+import { formatEther, parseEther, parseUnits } from "viem";
 
 import { defaultDocs, wrappedAssetDocs } from "../common";
 
@@ -41,8 +41,11 @@ export const sUSDz = "0xe31eE12bDFDD0573D634124611e85338e2cBF0cF";
 export const fBOMB = "0x74ccbe53F77b08632ce0CB91D3A545bF6B8E0979";
 export const KLIMA = "0xDCEFd8C8fCc492630B943ABcaB3429F12Ea9Fea2";
 export const uXRP = "0x2615a94df961278DcbC41Fb0a54fEc5f10a693aE";
-export const ionicUSDC = "0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440";
-export const ionicWETH = "0x9aB2d181E4b87ba57D5eD564D3eF652C4E710707";
+export const msETH = "0x7Ba6F01772924a82D9626c126347A28299E98c98";
+export const msUSD = "0x526728DBc96689597F85ae4cd716d4f7fCcBAE9d";
+export const ionicUSDC = "0x23479229e52Ab6aaD312D0B03DF9F33B46753B5e";
+export const ionicWETH = "0x5A32099837D89E3a794a44fb131CBbAD41f87a8C";
+export const mBASIS = "0x1C2757c1FeF1038428b5bEF062495ce94BBe92b2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -256,9 +259,9 @@ export const assets: SupportedAsset[] = [
       aggregator: "0x88Ee016dadDCa8061bf6D566585dF6c8aBfED7bb",
       feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
     },
-    initialSupplyCap: parseEther(String(2_500_000)).toString(),
-    initialBorrowCap: parseEther(String(2_000_000)).toString(),
-    initialCf: "0.82",
+    initialSupplyCap: parseEther(String(1_200)).toString(),
+    initialBorrowCap: "1",
+    initialCf: formatEther(1n),
     extraDocs: defaultDocs("https://basescan.org", wUSDM)
   },
   {
@@ -437,6 +440,46 @@ export const assets: SupportedAsset[] = [
     initialSupplyCap: parseEther(String(2_000)).toString(),
     initialBorrowCap: "1",
     initialCf: "0.80"
+  },
+  {
+    symbol: assetSymbols.mBASIS,
+    underlying: mBASIS,
+    name: "Midas Basis Trading Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracleSpecificParams: {
+      aggregator: "0x6d62D3C3C8f9912890788b50299bF4D2C64823b6",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    extraDocs: defaultDocs("https://basescan.org", mBASIS),
+    initialSupplyCap: parseEther(String(1_000_000)).toString(),
+    initialBorrowCap: parseEther(String(100_000)).toString(),
+    initialCf: "0.50"
+  },
+  {
+    symbol: assetSymbols.msETH,
+    underlying: msETH,
+    name: "Metronome Synth ETH",
+    decimals: 18,
+    oracle: OracleTypes.FixedNativePriceOracle,
+    extraDocs: defaultDocs("https://basescan.org", msETH),
+    initialCf: "0.10",
+    initialSupplyCap: parseEther(String(30)).toString(),
+    initialBorrowCap: parseEther(String(100)).toString()
+  },
+  {
+    symbol: assetSymbols.msUSD,
+    underlying: msUSD,
+    name: "Metronome Synth USD",
+    decimals: 18,
+    oracle: OracleTypes.eOracle,
+    oracleSpecificParams: {
+      aggregator: "0x4ba73879B0C073Db595aBE9Ba27104D83f024286",
+      feedBaseCurrency: ChainlinkFeedBaseCurrency.USD
+    },
+    initialCf: "0.10",
+    initialSupplyCap: parseEther(String(99_000)).toString(),
+    initialBorrowCap: parseEther(String(99_000)).toString()
   }
   // DO NOT ADD TO MARKET UNLESS PROPER ORACLE IS DEPLOYED
   // {

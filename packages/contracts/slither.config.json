@@ -1,0 +1,3 @@
+{
+    "solc-args": "--allow-paths .,node_modules,lib"
+}

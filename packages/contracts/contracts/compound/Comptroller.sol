@@ -342,6 +342,9 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   function mintVerify(address cToken, address minter, uint256 actualMintAmount, uint256 mintTokens) external {
     // Add minter to suppliers mapping
     suppliers[minter] = true;
+
+    // Keep the flywheel moving
+    flywheelPostSupplierAction(cToken, minter);
   }
 
   /**
@@ -363,6 +366,9 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
     if (redeemTokens == 0 && redeemAmount > 0) {
       revert("!zero");
     }
+
+    // Keep the flywheel moving
+    flywheelPostSupplierAction(cToken, redeemer);
   }
 
   function getMaxRedeemOrBorrow(
@@ -499,6 +505,16 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   }
 
   /**
+   * @notice Validates borrow the underlying asset of the given market
+   * @param cToken The market to verify the borrow against
+   * @param borrower The account which borrowed the asset
+   */
+  function borrowVerify(address cToken, address borrower) external override {
+    // Keep the flywheel moving
+    flywheelPostBorrowerAction(cToken, borrower);
+  }
+
+  /**
    * @notice Checks if the account should be allowed to borrow the underlying asset of the given market
    * @param cToken Asset whose underlying is being borrowed
    * @param accountBorrowsNew The user's new borrow balance of the underlying asset
@@ -548,6 +564,23 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
     flywheelPreBorrowerAction(cToken, borrower);
 
     return uint256(Error.NO_ERROR);
+  }
+
+  /**
+   * @notice Validates that blacklisted balances are updated after borrow repayment
+   * @param cToken The market to verify the repay against
+   * @param payer The account which repayed the asset
+   * @param borrower The account which borrowed the asset
+   * @param repayAmount The amount of the underlying asset the account repayed
+   */
+  function repayBorrowVerify(
+    address cToken,
+    address payer,
+    address borrower,
+    uint256 repayAmount
+  ) external override {
+    // Keep the flywheel moving
+    flywheelPostBorrowerAction(cToken, borrower);
   }
 
   /**
@@ -638,6 +671,25 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   }
 
   /**
+   * @notice Validates that blacklisted balances are updated after seizing of assets
+   * @param cTokenCollateral Asset which was used as collateral and will be seized
+   * @param cTokenBorrowed Asset which was borrowed by the borrower
+   * @param liquidator The address repaying the borrow and seizing the collateral
+   * @param borrower The address of the borrower
+   * @param seizeTokens The number of collateral tokens to seize
+   */
+  function seizeVerify(
+    address cTokenCollateral,
+    address cTokenBorrowed,
+    address liquidator,
+    address borrower,
+    uint256 seizeTokens
+  ) external override {
+    // Keep the flywheel moving
+    flywheelPostTransferAction(cTokenCollateral, borrower, liquidator);
+  }
+
+  /**
    * @notice Checks if the account should be allowed to transfer tokens in the given market
    * @param cToken The market to verify the transfer against
    * @param src The account which sources the tokens
@@ -667,6 +719,25 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
     return uint256(Error.NO_ERROR);
   }
 
+
+  /**
+   * @notice Validates that blacklisted balances are updated after transfering assets
+   * @param cToken The market to verify the transfer against
+   * @param src The account which sources the tokens
+   * @param dst The account which receives the tokens
+   * @param transferTokens The number of cTokens to transfer
+   */
+  function transferVerify(
+    address cToken,
+    address src,
+    address dst,
+    uint256 transferTokens
+  ) external override {
+
+    // Keep the flywheel moving
+    flywheelPostTransferAction(cToken, src, dst);
+  }
+
   /*** Flywheel Hooks ***/
 
   /**
@@ -680,6 +751,16 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   }
 
   /**
+   * @notice Keeps the flywheel moving post-mint and post-redeem
+   * @param cToken The relevant market
+   * @param supplier The minter/redeemer
+   */
+  function flywheelPostSupplierAction(address cToken, address supplier) internal {
+    for (uint256 i = 0; i < rewardsDistributors.length; i++)
+      IIonicFlywheel(rewardsDistributors[i]).flywheelPostSupplierAction(cToken, supplier);
+  }
+
+  /**
    * @notice Keeps the flywheel moving pre-borrow and pre-repay
    * @param cToken The relevant market
    * @param borrower The borrower
@@ -687,6 +768,16 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   function flywheelPreBorrowerAction(address cToken, address borrower) internal {
     for (uint256 i = 0; i < rewardsDistributors.length; i++)
       IIonicFlywheel(rewardsDistributors[i]).flywheelPreBorrowerAction(cToken, borrower);
+  }
+
+  /**
+   * @notice Keeps the flywheel moving post-borrow and post-repay
+   * @param cToken The relevant market
+   * @param borrower The borrower
+   */
+  function flywheelPostBorrowerAction(address cToken, address borrower) internal {
+    for (uint256 i = 0; i < rewardsDistributors.length; i++)
+      IIonicFlywheel(rewardsDistributors[i]).flywheelPostBorrowerAction(cToken, borrower);
   }
 
   /**
@@ -698,6 +789,17 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   function flywheelPreTransferAction(address cToken, address src, address dst) internal {
     for (uint256 i = 0; i < rewardsDistributors.length; i++)
       IIonicFlywheel(rewardsDistributors[i]).flywheelPreTransferAction(cToken, src, dst);
+  }
+
+  /**
+   * @notice Keeps the flywheel moving post-transfer and post-seize
+   * @param cToken The relevant market
+   * @param src The account which sources the tokens
+   * @param dst The account which receives the tokens
+   */
+  function flywheelPostTransferAction(address cToken, address src, address dst) internal {
+    for (uint256 i = 0; i < rewardsDistributors.length; i++)
+      IIonicFlywheel(rewardsDistributors[i]).flywheelPostTransferAction(cToken, src, dst);
   }
 
   /*** Liquidity/Liquidation Calculations ***/
@@ -1251,7 +1353,7 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
   }
 
   function _getExtensionFunctions() external pure virtual override returns (bytes4[] memory functionSelectors) {
-    uint8 fnsCount = 32;
+    uint8 fnsCount = 36;
 
     functionSelectors = new bytes4[](fnsCount);
 
@@ -1287,6 +1389,10 @@ contract Comptroller is ComptrollerBase, ComptrollerInterface, ComptrollerErrorR
     functionSelectors[--fnsCount] = this._becomeImplementation.selector;
     functionSelectors[--fnsCount] = this.effectiveSupplyCaps.selector;
     functionSelectors[--fnsCount] = this.effectiveBorrowCaps.selector;
+    functionSelectors[--fnsCount] = this.borrowVerify.selector;
+    functionSelectors[--fnsCount] = this.repayBorrowVerify.selector;
+    functionSelectors[--fnsCount] = this.seizeVerify.selector;
+    functionSelectors[--fnsCount] = this.transferVerify.selector;
 
     require(fnsCount == 0, "use the correct array length");
   }

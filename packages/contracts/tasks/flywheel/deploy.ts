@@ -1,6 +1,6 @@
-import { viem } from "hardhat";
 import { task, types } from "hardhat/config";
 import { Address, getAddress, zeroAddress } from "viem";
+import { prepareAndLogTransaction } from "../../chainDeploy/helpers/logging";
 
 task("flywheel:deploy-static-rewards-fw", "Deploy static rewards flywheel for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
@@ -91,6 +91,7 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
       throw `Invalid 'flywheel': ${taskArgs.flywheel}`;
     }
 
+    console.log("🚀 ~ .setAction ~ taskArgs.strategy:", taskArgs.strategy);
     try {
       strategyAddress = getAddress(taskArgs.strategy);
     } catch {
@@ -100,7 +101,7 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
     if (taskArgs.name.includes("Borrow")) {
       contractName = "IonicFlywheelBorrow";
     } else contractName = "IonicFlywheel";
-  
+
     const flywheel = await viem.getContractAt(`${contractName}`, flywheelAddress);
     const addTx = await flywheel.write.addStrategyForRewards([strategyAddress]);
     await publicClient.waitForTransactionReceipt({ hash: addTx });
@@ -111,8 +112,9 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
   .addParam("signer", "Named account to use fo tx", "deployer", types.string)
   .addParam("flywheel", "address of flywheel", undefined, types.string)
   .addParam("pool", "address of comptroller", undefined, types.string)
-  .setAction(async (taskArgs, { viem }) => {
+  .setAction(async (taskArgs, { viem, getNamedAccounts }) => {
     const publicClient = await viem.getPublicClient();
+    const { deployer } = await getNamedAccounts();
     let flywheelAddress, poolAddress;
 
     try {
@@ -128,11 +130,22 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
     }
 
     const comptroller = await viem.getContractAt("IonicComptroller", poolAddress);
+    const admin = await comptroller.read.admin();
     const rewardsDistributors = (await comptroller.read.getRewardsDistributors()) as Address[];
     if (!rewardsDistributors.map((s) => s.toLowerCase()).includes(flywheelAddress.toLowerCase())) {
-      const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
-      await publicClient.waitForTransactionReceipt({ hash: addTx });
-      console.log({ addTx });
+      if (admin.toLowerCase() !== deployer.toLowerCase()) {
+        await prepareAndLogTransaction({
+          contractInstance: comptroller,
+          functionName: "_addRewardsDistributor",
+          args: [flywheelAddress],
+          description: `Add flywheel ${flywheelAddress} to pool ${poolAddress}`,
+          inputs: [{ internalType: "address", name: "rewardsDistributor", type: "address" }]
+        });
+      } else {
+        const addTx = await comptroller.write._addRewardsDistributor([flywheelAddress]);
+        await publicClient.waitForTransactionReceipt({ hash: addTx });
+        console.log({ addTx });
+      }
     } else {
       console.log(`Flywheel ${flywheelAddress} already added to pool ${poolAddress}`);
     }
@@ -141,11 +154,12 @@ task("flywheel:add-to-pool", "Create pool if does not exist")
 task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for LM rewards")
   .addParam("name", "String to append to the flywheel contract name", undefined, types.string)
   .addParam("rewardToken", "Reward token of flywheel", undefined, types.string)
-  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", undefined, types.string)
+  .addParam("booster", "Kind of booster flywheel to use", "IonicFlywheelBorrowBooster", types.string)
   .addParam("strategies", "address of strategy for which to enable the flywheel", undefined, types.string)
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(
     async ({ signer, name, rewardToken, strategies, pool, booster }, { viem, deployments, run, getNamedAccounts }) => {
+      console.log("🚀 ~ strategies:", strategies);
       const { deployer } = await getNamedAccounts();
       const publicClient = await viem.getPublicClient();
       let flywheelBooster;
@@ -169,8 +183,8 @@ task("flywheel:deploy-dynamic-rewards-fw", "Deploy dynamic rewards flywheel for 
               methodName: "initialize",
               args: [rewardToken, zeroAddress, flywheelBooster, deployer]
             }
-          },
-          owner: deployer
+          }
+          // owner: "0x7d922bf0975424b3371074f54cC784AF738Dac0D"
         },
         waitConfirmations: 1
       });
@@ -214,11 +228,11 @@ task("flywheel:deploy-dynamic-rewards", "Deploy dynamic rewards flywheel for LM 
       log: true,
       args: [
         flywheel, // flywheel
-        2484000 // epoch duration
+        604800 // epoch duration
       ],
       waitConfirmations: 1
     });
-  
+
     if (name.includes("Borrow")) {
       contractName = "IonicFlywheelBorrow";
     } else contractName = "IonicFlywheel";

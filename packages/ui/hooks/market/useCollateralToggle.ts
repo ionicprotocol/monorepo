@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { toast } from 'react-hot-toast';
 
-import { useTransactionSteps } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import { useTransactionSteps } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { INFO_MESSAGES } from '@ui/constants';
 import {
   TransactionType,

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -23,9 +23,16 @@ import {
   useWalletClient
 } from 'wagmi';
 
+import SliderComponent from '@ui/components/dialogs/ManageMarket/Slider';
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import ClaimRewards from '@ui/components/stake/ClaimRewards';
+import RewardDisplay from '@ui/components/stake/RewardDisplay';
+import Toggle from '@ui/components/Toggle';
 import { pools } from '@ui/constants/index';
 import { LiquidityContractAbi } from '@ui/constants/lp';
 import { StakingContractAbi } from '@ui/constants/staking';
+import { useLiquidityCalculations } from '@ui/hooks/useLiquidityCalculations';
 import {
   getAvailableStakingToken,
   getPoolToken,
@@ -38,21 +45,14 @@ import {
 } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
-import SliderComponent from '../_components/dialogs/manage/Slider';
-import MaxDeposit from '../_components/MaxDeposit';
-import ResultHandler from '../_components/ResultHandler';
-import ClaimRewards from '../_components/stake/ClaimRewards';
-import RewardDisplay from '../_components/stake/RewardDisplay';
-import Toggle from '../_components/Toggle';
-
 const NetworkSelector = dynamic(
-  () => import('../_components/markets/NetworkSelector'),
+  () => import('@ui/components/markets/NetworkSelector'),
   {
     ssr: false
   }
 );
 
-const Widget = dynamic(() => import('../_components/stake/Widget'), {
+const Widget = dynamic(() => import('@ui/components/stake/Widget'), {
   ssr: false
 });
 
@@ -586,6 +586,51 @@ export default function Stake() {
     10: ['eth', 'weth']
   };
 
+  const {
+    calculateTokenAmount,
+    getMaximumIonInput,
+    wouldExceedLiquidity,
+    ionBalance,
+    selectedTokenBalance
+  } = useLiquidityCalculations({
+    address,
+    chainId: +chain,
+    selectedToken: selectedtoken as 'eth' | 'mode' | 'weth'
+  });
+
+  const updateDepositValues = useCallback(
+    (ionValue: string) => {
+      if (!ionValue) {
+        setMaxDeposit({ ion: '', eth: '' });
+        return;
+      }
+
+      const ethValue = calculateTokenAmount(ionValue);
+      if (ethValue) {
+        setMaxDeposit({ ion: ionValue, eth: ethValue });
+      }
+    },
+    [calculateTokenAmount]
+  );
+
+  const handleIonInput = useCallback(
+    (val?: string) => {
+      if (!val) {
+        updateDepositValues('');
+        return;
+      }
+
+      if (wouldExceedLiquidity(val)) {
+        const maxInput = getMaximumIonInput();
+        updateDepositValues(maxInput);
+        return;
+      }
+
+      updateDepositValues(val);
+    },
+    [wouldExceedLiquidity, getMaximumIonInput, updateDepositValues]
+  );
+
   return (
     <main>
       <div className="w-full flex items-center justify-center md:py-20 py-8 transition-all duration-200 ease-linear bg-black dark:bg-black relative">
@@ -609,7 +654,7 @@ export default function Stake() {
                 Step 1. Buy
                 <img
                   alt="ion logo"
-                  className="w-6 h-6 inline-block mx-1"
+                  className="w-5 h-5 inline-block mx-1"
                   src="/img/symbols/32/color/ion.png"
                 />
                 ION Tokens
@@ -644,11 +689,9 @@ export default function Stake() {
                   amount={maxDeposit.ion}
                   tokenName={'ion'}
                   token={ionTokenOfChain}
-                  handleInput={(val?: string) =>
-                    setMaxDeposit((p) => {
-                      return { ...p, ion: val || '' };
-                    })
-                  }
+                  handleInput={handleIonInput}
+                  max={ionBalance}
+                  effectiveMax={getMaximumIonInput()}
                   chain={+chain}
                 />
                 <MaxDeposit
@@ -656,9 +699,11 @@ export default function Stake() {
                   amount={maxDeposit.eth}
                   tokenName={selectedtoken}
                   token={getPoolToken(selectedtoken as 'eth' | 'mode' | 'weth')}
+                  max={selectedTokenBalance}
                   chain={+chain}
-                  tokenSelector={true}
+                  tokenSelector
                   tokenArr={tokenArrOfChain[+chain]}
+                  readonly={true}
                 />
               </>
             )}

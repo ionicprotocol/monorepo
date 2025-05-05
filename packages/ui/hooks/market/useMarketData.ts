@@ -7,35 +7,44 @@ import {
   pools,
   shouldGetFeatured
 } from '@ui/constants/index';
+import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import { useBorrowCapsForAssets } from '@ui/hooks/ionic/useBorrowCapsDataForAsset';
 import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useFraxtalAprs } from '@ui/hooks/useFraxtalApr';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useLoopMarkets } from '@ui/hooks/useLoopMarkets';
-import { useRewards } from '@ui/hooks/useRewards';
 import { useSupplyAPYs } from '@ui/hooks/useSupplyAPYs';
 import type { MarketData } from '@ui/types/TokensDataMap';
 import { calculateTotalAPR } from '@ui/utils/marketUtils';
 import { multipliers } from '@ui/utils/multipliers';
 
+import { useTokenBalances } from './useTokenBalances';
 import { useMerklData } from '../useMerklData';
+import { useRewardsWithEmissions } from '../useRewardsWithEmissions';
 
 import type { FlywheelReward } from '@ionicprotocol/types';
+
+type TokenBalance = {
+  amount: number;
+  formatted: string;
+  amountUSD: number;
+  formattedUSD: string;
+};
 
 export type MarketRowData = MarketData & {
   asset: string;
   logo: string;
   supply: {
-    balance: string;
-    balanceUSD: string;
-    total: string;
-    totalUSD: string;
+    balance: number;
+    balanceUSD: number;
+    total: number;
+    totalUSD: number;
   };
   borrow: {
-    balance: string;
-    balanceUSD: string;
-    total: string;
-    totalUSD: string;
+    balance: number;
+    balanceUSD: number;
+    total: number;
+    totalUSD: number;
   };
   supplyAPR: number;
   borrowAPR: number;
@@ -52,15 +61,15 @@ export type MarketRowData = MarketData & {
   isBorrowDisabled: boolean;
   underlyingSymbol: string;
   nativeAssetYield: number | undefined;
-  supplyAPRTotalz: number;
-  borrowAPRTotalz: number;
+  tokenBalance: TokenBalance;
 };
 
 export const useMarketData = (
   selectedPool: string,
   chain: number | string,
-  selectedSymbol: string | undefined
+  selectedSymbol?: string | undefined
 ) => {
+  const { address } = useMultiIonic();
   const { data: poolData, isLoading: isLoadingPoolData } = useFusePoolData(
     selectedPool,
     +chain
@@ -94,18 +103,28 @@ export const useMarketData = (
   const { data: borrowCapsData, isLoading: isLoadingBorrowCaps } =
     useBorrowCapsForAssets(cTokenAddresses, +chain);
 
-  const { data: rewards, isLoading: isLoadingRewards } = useRewards({
-    chainId: +chain,
-    poolId: selectedPool
+  const { data: rewards, isLoading: isLoadingRewards } =
+    useRewardsWithEmissions({
+      chainId: +chain,
+      poolId: selectedPool
+    });
+
+  const { balanceMap } = useTokenBalances({
+    assets: assets?.map((asset) => ({
+      underlyingToken: asset.underlyingToken,
+      underlyingDecimals: asset.underlyingDecimals
+    })),
+    chainId: chain,
+    userAddress: address
   });
 
-  const formatNumber = (value: bigint | number, decimals: number): string => {
+  const formatNumber = (value: bigint | number, decimals: number): number => {
     const parsedValue =
       typeof value === 'bigint'
         ? parseFloat(formatUnits(value, decimals))
         : value;
 
-    return parsedValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    return Number(parsedValue.toFixed(2));
   };
 
   const marketData = useMemo(() => {
@@ -144,24 +163,24 @@ export const useMarketData = (
         const supply = {
           balance:
             typeof asset.supplyBalance === 'bigint'
-              ? `${formatNumber(asset.supplyBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-              : `0 ${asset.underlyingSymbol}`,
+              ? formatNumber(asset.supplyBalance, asset.underlyingDecimals)
+              : 0,
           balanceUSD: formatNumber(asset.supplyBalanceFiat, 0),
           total: asset.totalSupplyNative
-            ? `${formatNumber(asset.totalSupply, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-            : `0 ${asset.underlyingSymbol}`,
+            ? formatNumber(asset.totalSupply, asset.underlyingDecimals)
+            : 0,
           totalUSD: formatNumber(asset.totalSupplyFiat, 0)
         };
 
         const borrow = {
           balance:
             typeof asset.borrowBalance === 'bigint'
-              ? `${formatNumber(asset.borrowBalance, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-              : `0 ${asset.underlyingSymbol}`,
+              ? formatNumber(asset.borrowBalance, asset.underlyingDecimals)
+              : 0,
           balanceUSD: formatNumber(asset.borrowBalanceFiat, 0),
           total: asset.totalBorrowNative
-            ? `${formatNumber(asset.totalBorrow, asset.underlyingDecimals)} ${asset.underlyingSymbol}`
-            : `0 ${asset.underlyingSymbol}`,
+            ? formatNumber(asset.totalBorrow, asset.underlyingDecimals)
+            : 0,
           totalUSD: formatNumber(asset.totalBorrowFiat, 0)
         };
 
@@ -183,7 +202,8 @@ export const useMarketData = (
             ? merklApr?.find(
                 (info) =>
                   info.token?.toLowerCase() ===
-                  asset.underlyingToken?.toLowerCase()
+                    asset.underlyingToken?.toLowerCase() &&
+                  info.type === 'supply'
               )?.apr
             : undefined
         });
@@ -202,7 +222,8 @@ export const useMarketData = (
             ? merklApr?.find(
                 (info) =>
                   info.token?.toLowerCase() ===
-                  asset.underlyingToken?.toLowerCase()
+                    asset.underlyingToken?.toLowerCase() &&
+                  info.type === 'borrow'
               )?.apr
             : undefined
         });
@@ -234,7 +255,13 @@ export const useMarketData = (
             ? assetBorrowCaps.totalBorrowCap <= 1
             : false,
           supplyAPRTotal,
-          borrowAPRTotal
+          borrowAPRTotal,
+          tokenBalance: balanceMap[asset.underlyingToken.toLowerCase()] ?? {
+            amount: 0,
+            formatted: '0.00',
+            amountUSD: 0,
+            formattedUSD: '$0.00'
+          }
         };
       })
       .filter(Boolean) as MarketRowData[];
@@ -251,7 +278,8 @@ export const useMarketData = (
     loopMarkets,
     isLoadingFraxtalAprs,
     poolData?.comptroller,
-    borrowCapsData
+    borrowCapsData,
+    balanceMap
   ]);
 
   const selectedMarketData = useMemo(() => {

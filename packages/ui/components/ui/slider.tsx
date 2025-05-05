@@ -24,21 +24,41 @@ const Slider = React.forwardRef<
   SliderProps
 >(
   (
-    { className, value, marks, onMarkClick, currentPosition, ...props },
+    {
+      className,
+      value,
+      marks,
+      onMarkClick,
+      currentPosition,
+      min = 0,
+      max = 100,
+      ...props
+    },
     ref
   ) => {
-    const percentage = value ? value[0] : 0;
-    const getColor = () => (percentage <= 50 ? 'bg-accent' : 'bg-lime');
+    // Calculate percentage based on the current value relative to min-max range
+    const percentage = value ? ((value[0] - min) / (max - min)) * 100 : 0;
+
+    const getGradientStyle = () => {
+      return {
+        background: `linear-gradient(to right, #dffe00, #3bff89)`,
+        width: `${percentage}%`
+      };
+    };
+
+    const getThumbColor = () => {
+      if (percentage === 0) return '#dffe00';
+      if (percentage === 100) return '#3bff89';
+
+      return `color-mix(in srgb, #dffe00 ${100 - percentage}%, #3bff89 ${percentage}%)`;
+    };
 
     return (
       <div className="space-y-2">
         {marks && (
           <div className="relative w-full h-4">
             {marks.map((mark) => {
-              const position =
-                ((mark.value - (props.min || 0)) /
-                  ((props.max || 100) - (props.min || 0))) *
-                100;
+              const position = ((mark.value - min) / (max - min)) * 100;
               return (
                 <span
                   key={mark.value}
@@ -70,24 +90,26 @@ const Slider = React.forwardRef<
             className
           )}
           value={value}
+          min={min}
+          max={max}
           {...props}
         >
           <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-graylite">
             <SliderPrimitive.Range
-              className={cn('absolute h-full', getColor())}
+              className="absolute h-full"
+              style={getGradientStyle()}
             />
           </SliderPrimitive.Track>
           <SliderPrimitive.Thumb
-            className={cn(
-              'block h-4 w-4 rounded-full transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
-              getColor()
-            )}
+            className="block h-4 w-4 rounded-full border border-black/10 transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            style={{ backgroundColor: getThumbColor() }}
           />
         </SliderPrimitive.Root>
       </div>
     );
   }
 );
+
 Slider.displayName = SliderPrimitive.Root.displayName;
 
 export { Slider };

@@ -8,7 +8,9 @@ import {
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  ink,
+  swellchain
 } from '@ionicprotocol/chains';
 import type { IonicPoolData } from '@ionicprotocol/types';
 
@@ -46,6 +48,14 @@ export const supportedChainIdToConfig: {
   [worldchain.chainId]: {
     enabled: config.isWorldchainEnabled,
     supported: config.isWorldchainEnabled
+  },
+  [ink.chainId]: {
+    enabled: config.isInkEnabled,
+    supported: config.isInkEnabled
+  },
+  [swellchain.chainId]: {
+    enabled: config.isSwellEnabled,
+    supported: config.isSwellEnabled
   }
 };
 

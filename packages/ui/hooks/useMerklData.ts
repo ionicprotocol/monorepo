@@ -5,12 +5,12 @@ import { mode } from 'viem/chains';
 import type { Address } from 'viem';
 
 interface MerklOpportunity {
-  action: 'supply' | 'borrow';
+  action: 'borrow' | 'supply';
   apr: number;
   tvl: number;
   platform: string;
   name: string;
-  status: 'live' | 'inactive';
+  status: 'inactive' | 'live';
   campaigns: {
     active: Array<{
       apr: number;
@@ -28,7 +28,7 @@ interface MerklOpportunityResponse {
 
 export interface TokenAprInfo {
   token: Address;
-  type: 'supply' | 'borrow';
+  type: 'borrow' | 'supply';
   apr: number;
 }
 
@@ -47,7 +47,6 @@ export function useMerklData() {
         const res = await axios.get<MerklOpportunityResponse>(
           `https://api.merkl.xyz/v3/opportunity?campaigns=true&chainId=${mode.id}&type=10&testTokens=true`
         );
-        console.log('res', res);
 
         return Object.entries(res.data).flatMap(
           ([key, opportunity]): TokenAprInfo[] => {

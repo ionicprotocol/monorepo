@@ -134,6 +134,8 @@
 
 
 
+
+
 .bg-pink {
   background: #ff007f;
 }
@@ -152,6 +154,18 @@
 
 .bg-lisk {
   background: #4071f4;
+}
+
+.bg-ink {
+  background: #7040e0;
+}
+
+.bg-swell {
+  background: #3c50d6;
+}
+
+.bg-camp {
+  background: #f66c09;
 }
 
 .text-lime {
@@ -184,6 +198,18 @@
 
 .border-lisk {
   border-color: #4071f4;
+}
+
+.border-ink {
+  border-color: #7040e0;
+}
+
+.border-swell {
+  border-color: #3c50d6;
+}
+
+.border-camp {
+  border-color: #f66c09;
 }
 
 .text-xxs {

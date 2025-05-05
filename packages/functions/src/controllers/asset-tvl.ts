@@ -9,6 +9,11 @@ import { Chain, createPublicClient, formatUnits, formatEther, http } from 'viem'
 
 export const HEARTBEAT_API_URL = environment.uptimeTvlApi;
 
+// Define excluded comptrollers
+const EXCLUDED_COMPTROLLERS = [
+  '0xfb3323e24743caf4add0fdccfb268565c0685556', // Mode Main market
+].map(address => address.toLowerCase());
+
 export const updateAssetTvl = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
@@ -43,7 +48,12 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
             .catch(() => [])
         ).map(filterOnlyObjectProperties);
 
-        totalAssets.push(...assets);
+        // Filter out excluded markets
+        const filteredAssets = assets.filter(asset => 
+          !EXCLUDED_COMPTROLLERS.includes(comptroller.toLowerCase())
+        );
+
+        totalAssets.push(...filteredAssets);
         console.log("assets", totalAssets)
       })
     );
@@ -108,11 +118,11 @@ export const updateAssetTvl = async (chainId: SupportedChains) => {
       throw new Error(`Error saving asset TVL to database: ${error.message}`);
     }
 
-    return results; // Return the results array
+    return { results, totalAssets }; // Return both arrays
   } catch (err) {
     console.error('Error in updateAssetTvl:', err);
     await functionsAlert('Functions.asset-tvl: Generic Error', JSON.stringify(err));
-    return []; // Return an empty array in case of error
+    return { results: [], totalAssets: [] }; // Return empty arrays with correct structure
   }
 };
 

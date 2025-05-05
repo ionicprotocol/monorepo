@@ -7,6 +7,12 @@ import "./lisk";
 import "./virtual-base";
 import "./superseed";
 import "./worldchain";
+import "./ink";
+import "./swellchain";
+import "./soneium";
+import "./ozeantest";
+import "./camptest";
+import "./metalL2";
 
 export const SUPPLY_DURATION = 29 * (24 * 60 * 60) + 1 * (23 * 60 * 60); // 29 days 23 hours
 export const BORROW_DURATION = 30 * (24 * 60 * 60); // 30 days

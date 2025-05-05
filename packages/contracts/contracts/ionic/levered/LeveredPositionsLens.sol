@@ -6,8 +6,9 @@ import { LeveredPosition } from "./LeveredPosition.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 import { IonicComptroller } from "../../compound/ComptrollerInterface.sol";
 import { BasePriceOracle } from "../../oracles/BasePriceOracle.sol";
+import { Initializable } from "@openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 
 contract LeveredPositionsLens is Initializable {
   ILeveredPositionFactory public factory;
@@ -80,7 +81,9 @@ contract LeveredPositionsLens is Initializable {
 
   /// @notice this is a lens fn, it is not intended to be used on-chain
   /// @dev returns lists of the market addresses, names, symbols and the current Rate for each Borrowable asset
-  function getBorrowableMarketsAndRates(ICErc20 _collateralMarket)
+  function getBorrowableMarketsAndRates(
+    ICErc20 _collateralMarket
+  )
     external
     view
     returns (
@@ -142,11 +145,10 @@ contract LeveredPositionsLens is Initializable {
     netAPY = ((netValueDiffScaled / int256(collateralAssetPrice)) * 1e18) / int256(_supplyAmount);
   }
 
-  function getPositionsInfo(LeveredPosition[] calldata positions, uint256[] calldata supplyApys)
-    external
-    view
-    returns (PositionInfo[] memory infos)
-  {
+  function getPositionsInfo(
+    LeveredPosition[] calldata positions,
+    uint256[] calldata supplyApys
+  ) external view returns (PositionInfo[] memory infos) {
     infos = new PositionInfo[](positions.length);
     for (uint256 i = 0; i < positions.length; i++) {
       infos[i] = getPositionInfo(positions[i], supplyApys[i]);

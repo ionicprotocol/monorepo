@@ -37,7 +37,11 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://velodrome.finance/swap"
     },
     [SupportedChains.worldchain]: {
-      swapName: "World Chain",
+      swapName: "Velodrome",
+      swapAddress: "https://velodrome.finance/swap"
+    },
+    [SupportedChains.soneium]: {
+      swapName: "Velodrome",
       swapAddress: "https://velodrome.finance/swap"
     }
   }[chainId];

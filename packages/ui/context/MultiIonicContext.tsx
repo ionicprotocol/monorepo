@@ -20,6 +20,7 @@ import {
 import { useAccount, useDisconnect, useWalletClient } from 'wagmi';
 
 import { MIDAS_LOCALSTORAGE_KEYS } from '@ui/constants/index';
+import { useBaseRpcUrl } from '@ui/hooks/useBaseRpcUrl';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 import { chainIdToConfig } from '@ionicprotocol/chains';
@@ -46,6 +47,8 @@ export interface MultiIonicContextData {
   setGlobalLoading: Dispatch<boolean>;
   setIsSidebarCollapsed: Dispatch<boolean>;
   walletClient?: WalletClient;
+  dropChain: string;
+  setDropChain: (val: string) => void;
 }
 
 export const MultiIonicContext = createContext<
@@ -62,6 +65,8 @@ export const MultiIonicProvider = (
   const enabledChains = useEnabledChains();
   // const { chain, chains } = useNetwork();
   const { address: wagmiAddress, chain, isConnected } = useAccount();
+  const baseRpc = useBaseRpcUrl();
+  const base = baseRpc.baseChain;
 
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
@@ -76,25 +81,31 @@ export const MultiIonicProvider = (
   >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>();
+  const [dropChain, setDropChain] = useState<string>('34443');
 
   const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: IonicSdk[] = [];
     const _securities: Security[] = [];
     const _chainIds: SupportedChains[] = [];
     enabledChains.map((chain) => {
-      const config = chainIdToConfig[chain.id];
+      const chainConfig = chainIdToConfig[chain.id];
       const _walletClient =
         chain.id === walletClient?.chain?.id ? walletClient : undefined;
+
+      const transportUrls =
+        chain.id === 8453
+          ? [
+              base.rpcUrls.default.http[0],
+              ...chainConfig.specificParams.metadata.rpcUrls.default.http
+            ]
+          : chainConfig.specificParams.metadata.rpcUrls.default.http;
+
       const client = createPublicClient({
         batch: { multicall: { wait: 16 } },
         chain,
-        transport: fallback(
-          config.specificParams.metadata.rpcUrls.default.http.map((url) =>
-            http(url)
-          )
-        )
+        transport: fallback(transportUrls.map((url) => http(url)))
       });
-      _sdks.push(new IonicSdk(client as any, _walletClient, config));
+      _sdks.push(new IonicSdk(client as any, _walletClient, chainConfig));
       // _securities.push(
       //   new Security(
       //     chain.id,
@@ -107,7 +118,7 @@ export const MultiIonicProvider = (
     });
 
     return [_sdks, _securities, _chainIds.sort()];
-  }, [enabledChains, walletClient]);
+  }, [enabledChains, walletClient, base]);
 
   const currentSdk = useMemo(() => {
     if (chain) {
@@ -141,18 +152,23 @@ export const MultiIonicProvider = (
   useEffect(() => {
     if (sdks.length > 0 && !walletClient) {
       sdks.map((sdk) => {
-        const config = chainIdToConfig[sdk.chainId];
+        const sdkConfig = chainIdToConfig[sdk.chainId];
+        let rpcUrl = sdkConfig.specificParams.metadata.rpcUrls.default.http[0];
+
+        // Use custom RPC URL for Base
+        if (sdk.chainId === 8453) {
+          rpcUrl = base.rpcUrls.default.http[0];
+        }
+
         sdk.removeWalletClient(
           createPublicClient({
             chain,
-            transport: http(
-              config.specificParams.metadata.rpcUrls.default.http[0]
-            )
+            transport: http(rpcUrl)
           })
         );
       });
     }
-  }, [walletClient, sdks, chain]);
+  }, [walletClient, sdks, chain, base]);
 
   useEffect(() => {
     if (wagmiAddress) {
@@ -204,7 +220,9 @@ export const MultiIonicProvider = (
       setAddress,
       setGlobalLoading,
       setIsSidebarCollapsed,
-      walletClient
+      walletClient,
+      dropChain,
+      setDropChain
     };
   }, [
     sdks,
@@ -222,7 +240,9 @@ export const MultiIonicProvider = (
     walletClient,
     setAddress,
     isSidebarCollapsed,
-    setIsSidebarCollapsed
+    setIsSidebarCollapsed,
+    dropChain,
+    setDropChain
   ]);
 
   return (

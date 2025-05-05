@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import "../BasePriceOracle.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import "../../ionic/SafeOwnableUpgradeable.sol";
 
 contract SimplePriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
@@ -28,8 +28,8 @@ contract SimplePriceOracle is BasePriceOracle, SafeOwnableUpgradeable {
       uint256 underlyingDecimals = uint256(ERC20Upgradeable(underlying).decimals());
       return
         underlyingDecimals <= 18
-          ? uint256(oraclePrice) * (10**(18 - underlyingDecimals))
-          : uint256(oraclePrice) / (10**(underlyingDecimals - 18));
+          ? uint256(oraclePrice) * (10 ** (18 - underlyingDecimals))
+          : uint256(oraclePrice) / (10 ** (underlyingDecimals - 18));
     }
   }
 

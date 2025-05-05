@@ -22,6 +22,11 @@ import {
   // useBlock
 } from 'wagmi';
 
+import MaxDeposit from '@ui/components/MaxDeposit';
+import ResultHandler from '@ui/components/ResultHandler';
+import FromTOChainSelector from '@ui/components/xION/FromToChainSelector';
+import ProgressSteps from '@ui/components/xION/ProgressSteps';
+import Quote from '@ui/components/xION/Quote';
 import { ixErc20 } from '@ui/constants/bridge';
 import { pools } from '@ui/constants/index';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
@@ -29,18 +34,13 @@ import { getToken } from '@ui/utils/getStakingTokens';
 import { handleSwitchOriginChain } from '@ui/utils/NetworkChecker';
 
 import { useOutsideClick } from '../../hooks/useOutsideClick';
-import MaxDeposit from '../_components/MaxDeposit';
-import ResultHandler from '../_components/ResultHandler';
-import FromTOChainSelector from '../_components/xION/FromToChainSelector';
-import ProgressSteps from '../_components/xION/ProgressSteps';
-import Quote from '../_components/xION/Quote';
-// import TxPopup from '../_components/xION/TxPopup';
+// import TxPopup from '../components/xION/TxPopup';
 
 import type { Address } from 'viem';
 
 import { xErc20HyperlaneAbi } from '@ionicprotocol/sdk';
 
-const TxPopup = dynamic(() => import('../_components/xION/TxPopup'), {
+const TxPopup = dynamic(() => import('@ui/components/xION/TxPopup'), {
   ssr: false
 });
 
@@ -285,7 +285,6 @@ export default function XION() {
               token={getToken(+chain)}
               handleInput={(val?: string) => setDeposit(val ?? '')}
               chain={+chain}
-              // tokenSelector={true}
               tokenArr={['ion']}
             />
           </div>

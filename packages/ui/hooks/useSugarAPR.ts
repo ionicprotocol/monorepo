@@ -4,8 +4,8 @@ import { useReadContract } from 'wagmi';
 
 import { lpSugarAbi } from '@ui/app/stake/abi/lpSugar';
 
-import { useAllUsdPrices } from './useAllUsdPrices';
 import { useIonPrice, useTokenPrice } from './useDexScreenerPrices';
+import { useUsdPrice } from './useUsdPrices';
 
 const WETH_ADDRESSES = {
   10: '0x4200000000000000000000000000000000000006',
@@ -42,14 +42,15 @@ export default function useSugarAPR({
   const { data: ionData } = useIonPrice({ chainId });
   const { data: rewardTokenData } = useTokenPrice(chainId);
   const { data: modePriceData } = useTokenPrice(mode.id);
-  const { data: ethPriceData } = useAllUsdPrices();
+  const { data: ethPrice } = useUsdPrice(chainId);
+  const { data: modeEthPrice } = useUsdPrice(mode.id);
 
   let apr = '-';
   if (
     !!(
       sugarData &&
       ionData &&
-      ethPriceData &&
+      ethPrice &&
       (isMode ? modePriceData : rewardTokenData)
     )
   ) {
@@ -75,7 +76,7 @@ export default function useSugarAPR({
           Number(ionData.pair?.priceUsd || 0) +
         Number(formatEther(sugarData.staked1)) *
           (selectedToken !== 'mode'
-            ? ethPriceData[mode.id]?.value || 0
+            ? modeEthPrice || 0
             : Number(modePriceData.pair?.priceUsd || 0));
     } else {
       // Original logic
@@ -85,14 +86,10 @@ export default function useSugarAPR({
 
       const staked0USD =
         Number(formatEther(sugarData.staked0)) *
-        (isToken0Weth
-          ? ethPriceData[chainId].value
-          : Number(ionData.pair.priceUsd));
+        (isToken0Weth ? ethPrice : Number(ionData.pair?.priceUsd || 0));
       const staked1USD =
         Number(formatEther(sugarData.staked1)) *
-        (isToken0Weth
-          ? Number(ionData.pair.priceUsd)
-          : ethPriceData[chainId].value);
+        (isToken0Weth ? Number(ionData.pair?.priceUsd || 0) : ethPrice);
 
       totalStakedUSD = staked0USD + staked1USD;
     }

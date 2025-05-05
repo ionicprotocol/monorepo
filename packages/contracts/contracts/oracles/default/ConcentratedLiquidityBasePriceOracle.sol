@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { EIP20Interface } from "../../compound/EIP20Interface.sol";
-import { ERC20Upgradeable } from "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import { ERC20Upgradeable } from "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
 import { BasePriceOracle } from "../../oracles/BasePriceOracle.sol";
 import { ICErc20 } from "../../compound/CTokenInterfaces.sol";
 
@@ -83,7 +83,7 @@ abstract contract ConcentratedLiquidityBasePriceOracle is BasePriceOracle, SafeO
     address underlying = cToken.underlying();
     // Comptroller needs prices to be scaled by 1e(36 - decimals)
     // Since `_price` returns prices scaled by 18 decimals, we must scale them by 1e(36 - 18 - decimals)
-    return (_price(underlying) * 1e18) / (10**uint256(EIP20Interface(underlying).decimals()));
+    return (_price(underlying) * 1e18) / (10 ** uint256(EIP20Interface(underlying).decimals()));
   }
 
   /**
@@ -96,7 +96,7 @@ abstract contract ConcentratedLiquidityBasePriceOracle is BasePriceOracle, SafeO
     address priceToken,
     uint160 sqrtPriceX96
   ) public pure returns (uint256 price_) {
-    price_ = FullMath.mulDiv(sqrtPriceX96, sqrtPriceX96, uint256(2**(96 * 2)) / 1e18);
+    price_ = FullMath.mulDiv(sqrtPriceX96, sqrtPriceX96, uint256(2 ** (96 * 2)) / 1e18);
     if (token0 != priceToken) price_ = 1e36 / price_;
   }
 
@@ -117,11 +117,7 @@ abstract contract ConcentratedLiquidityBasePriceOracle is BasePriceOracle, SafeO
     return SUPPORTED_BASE_TOKENS;
   }
 
-  function scalePrices(
-    address baseToken,
-    address token,
-    uint256 tokenPrice
-  ) internal view returns (uint256) {
+  function scalePrices(address baseToken, address token, uint256 tokenPrice) internal view returns (uint256) {
     uint256 baseTokenDecimals;
     uint256 tokenPriceScaled;
 
@@ -136,9 +132,9 @@ abstract contract ConcentratedLiquidityBasePriceOracle is BasePriceOracle, SafeO
     // scale tokenPrice by 1e18
     uint256 tokenDecimals = uint256(ERC20Upgradeable(token).decimals());
     if (baseTokenDecimals > tokenDecimals) {
-      tokenPriceScaled = tokenPrice / (10**(baseTokenDecimals - tokenDecimals));
+      tokenPriceScaled = tokenPrice / (10 ** (baseTokenDecimals - tokenDecimals));
     } else if (baseTokenDecimals < tokenDecimals) {
-      tokenPriceScaled = tokenPrice * (10**(tokenDecimals - baseTokenDecimals));
+      tokenPriceScaled = tokenPrice * (10 ** (tokenDecimals - baseTokenDecimals));
     } else {
       tokenPriceScaled = tokenPrice;
     }

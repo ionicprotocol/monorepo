@@ -6,7 +6,8 @@ import {
   fraxtal as vFraxtal,
   lisk as vLisk,
   superseed as vSuperseed,
-  worldchain as vWorldchain
+  worldchain as vWorldchain,
+  metalL2 as vMetalL2
 } from 'viem/chains';
 
 import { config } from '@ui/config/index';
@@ -22,7 +23,18 @@ import {
   fraxtal,
   lisk,
   superseed,
-  worldchain
+  worldchain,
+  ink,
+  vInk,
+  swellchain,
+  vSwellchain,
+  camptest,
+  vCampTest,
+  ozeantest,
+  vOzeantest,
+  soneium,
+  vSoneium,
+  metalL2
 } from '@ionicprotocol/chains';
 import { SupportedChains } from '@ionicprotocol/types';
 import type {
@@ -107,6 +119,30 @@ export function getEnabledChains() {
     enabledChains.push(vWorldchain);
   }
 
+  if (config.isInkEnabled) {
+    enabledChains.push(vInk);
+  }
+
+  if (config.isSwellEnabled) {
+    enabledChains.push(vSwellchain);
+  }
+
+  if (config.isCampTestEnabled) {
+    enabledChains.push(vCampTest);
+  }
+
+  if (config.isOzeantestEnabled) {
+    enabledChains.push(vOzeantest);
+  }
+
+  if (config.isSoneiumEnabled) {
+    enabledChains.push(vSoneium);
+  }
+
+  if (config.isMetalL2Enabled) {
+    enabledChains.push(vMetalL2);
+  }
+
   return enabledChains;
 }
 
@@ -118,7 +154,13 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.fraxtal]: fraxtal.assets,
   [SupportedChains.lisk]: lisk.assets,
   [SupportedChains.superseed]: superseed.assets,
-  [SupportedChains.worldchain]: worldchain.assets
+  [SupportedChains.worldchain]: worldchain.assets,
+  [SupportedChains.ink]: ink.assets,
+  [SupportedChains.swell]: swellchain.assets,
+  [SupportedChains.camptest]: camptest.assets,
+  [SupportedChains.ozeantest]: ozeantest.assets,
+  [SupportedChains.soneium]: soneium.assets,
+  [SupportedChains.metalL2]: metalL2.assets
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -129,5 +171,11 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.fraxtal]: fraxtal.deployedPlugins,
   [SupportedChains.lisk]: lisk.deployedPlugins,
   [SupportedChains.superseed]: superseed.deployedPlugins,
-  [SupportedChains.worldchain]: worldchain.deployedPlugins
+  [SupportedChains.worldchain]: worldchain.deployedPlugins,
+  [SupportedChains.ink]: ink.deployedPlugins,
+  [SupportedChains.swell]: swellchain.deployedPlugins,
+  [SupportedChains.soneium]: soneium.deployedPlugins,
+  [SupportedChains.camptest]: camptest.deployedPlugins,
+  [SupportedChains.ozeantest]: ozeantest.deployedPlugins,
+  [SupportedChains.metalL2]: metalL2.deployedPlugins
 };

@@ -21,7 +21,7 @@ export function useAssets(chainIds?: number[]) {
 
           assetsRewards = { ...res.data };
         } catch (e) {
-          console.error(`Unable to fetch assets of chain \`${chainIds}\``, e);
+          assetsRewards = {};
         }
       }
 

@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 
@@ -12,7 +13,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { type Address, formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import type { TransactionStep } from '@ui/app/_components/dialogs/manage/TransactionStepsHandler';
+import type { TransactionStep } from '@ui/components/dialogs/ManageMarket/TransactionStepsHandler';
 import { useMultiIonic } from '@ui/context/MultiIonicContext';
 import useUpdatedUserAssets from '@ui/hooks/ionic/useUpdatedUserAssets';
 import type { MarketData } from '@ui/types/TokensDataMap';
@@ -84,6 +85,7 @@ interface ManageDialogContextType {
       | undefined
   ) => void;
   getStepsForTypes: (...types: TransactionType[]) => TransactionStep[];
+  isSliding: boolean;
 }
 
 const formatBalance = (value: bigint | undefined, decimals: number): string => {
@@ -112,7 +114,30 @@ export const ManageDialogProvider: React.FC<{
     }),
     []
   );
+  const [isSliding, setIsSliding] = useState(false);
+  const slideTimeoutRef = useRef<NodeJS.Timeout>();
   const [predictionAmount, setPredictionAmount] = useState<bigint>(0n);
+
+  const updatePredictionAmount = useCallback((amount: bigint) => {
+    setIsSliding(true);
+    setPredictionAmount(amount);
+
+    if (slideTimeoutRef.current) {
+      clearTimeout(slideTimeoutRef.current);
+    }
+
+    slideTimeoutRef.current = setTimeout(() => {
+      setIsSliding(false);
+    }, 300);
+  }, []);
+  useEffect(() => {
+    return () => {
+      if (slideTimeoutRef.current) {
+        clearTimeout(slideTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const [transactionSteps, setTransactionSteps] =
     useState<TransactionStepsState>({
       [TransactionType.SUPPLY]: [],
@@ -135,7 +160,8 @@ export const ManageDialogProvider: React.FC<{
       assets: [selectedMarketData],
       index: 0,
       mode: currentFundOperation,
-      poolChainId: chainId
+      poolChainId: chainId,
+      enabled: !isSliding
     });
 
   const updatedAsset = updatedAssets ? updatedAssets[0] : undefined;
@@ -147,7 +173,6 @@ export const ManageDialogProvider: React.FC<{
       'useFusePoolData',
       'useBorrowMinimum',
       'useUsdPrice',
-      'useAllUsdPrices',
       'useTotalSupplyAPYs',
       'useUpdatedUserAssets',
       'useMaxSupplyAmount',
@@ -331,11 +356,12 @@ export const ManageDialogProvider: React.FC<{
         comptrollerAddress,
         isLoadingUpdatedAssets,
         updatedValues,
-        setPredictionAmount,
+        setPredictionAmount: updatePredictionAmount,
         transactionSteps,
         addStepsForType,
         upsertStepForType,
-        getStepsForTypes
+        getStepsForTypes,
+        isSliding
       }}
     >
       {children}

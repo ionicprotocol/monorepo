@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import { Address, formatUnits, parseEther, zeroAddress } from "viem";
-import { mode } from "@ionicprotocol/chains";
+import { chainIdtoChain, mode } from "@ionicprotocol/chains";
 import { assetSymbols } from "@ionicprotocol/types";
 
 import { prepareAndLogTransaction } from "../../../chainDeploy/helpers/logging";
@@ -10,7 +10,7 @@ import { getMarketInfo } from "../../market";
 const modeAssets = mode.assets;
 
 task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.msDAI];
+  const assetsToDeploy: string[] = [assetSymbols.LBTC];
   for (const asset of modeAssets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -44,29 +44,75 @@ task("markets:deploy:mode:new", "deploy new mode assets").setAction(async (_, { 
   }
 });
 
-task("market:setup:mode:new", "Sets caps on a market").setAction(async (_, { viem, run }) => {
-  const asset = modeAssets.find((asset) => asset.symbol === assetSymbols.MODE);
-  if (!asset) {
-    throw new Error("dMBTC not found in mode assets");
+task("mode:set-caps:new", "one time setup").setAction(
+  async (_, { viem, run, getNamedAccounts, deployments, getChainId }) => {
+    const { deployer } = await getNamedAccounts();
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const assetsToDeploy: string[] = [assetSymbols.LBTC];
+    for (const asset of mode.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
+        client: { public: publicClient, wallet: walletClient }
+      });
+      const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+      const asExt = await viem.getContractAt("CTokenFirstExtension", cToken);
+      const admin = await pool.read.admin();
+      const ap = await deployments.get("AddressesProvider");
+      // if (admin.toLowerCase() !== deployer.toLowerCase()) {
+      //   await prepareAndLogTransaction({
+      //     contractInstance: asExt,
+      //     functionName: "_setAddressesProvider",
+      //     args: [ap.address as Address],
+      //     description: "Set Addresses Provider",
+      //     inputs: [
+      //       {
+      //         internalType: "address",
+      //         name: "_ap",
+      //         type: "address"
+      //       }
+      //     ]
+      //   });
+      // } else {
+      //   await asExt.write._setAddressesProvider([ap.address as Address]);
+      // }
+
+      await run("market:set-borrow-cap", {
+        market: cToken,
+        maxBorrow: asset.initialBorrowCap
+      });
+
+      await run("market:set-supply-cap", {
+        market: cToken,
+        maxSupply: asset.initialSupplyCap
+      });
+    }
   }
-  const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_NATIVE);
-  const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+);
 
-  await run("market:set-borrow-cap", {
-    market: cToken,
-    maxBorrow: parseEther(String(30_000_000)).toString()
-  });
+task("market:set-cf:mode:new", "Sets CF on a market").setAction(
+  async (_, { viem, run, getNamedAccounts, getChainId }) => {
+    const { deployer } = await getNamedAccounts();
+    const chainId = parseInt(await getChainId());
+    const publicClient = await viem.getPublicClient({ chain: chainIdtoChain[chainId] });
+    const walletClient = await viem.getWalletClient(deployer as Address, { chain: chainIdtoChain[chainId] });
+    const assetsToDeploy: string[] = [assetSymbols.oBTC, assetSymbols.uniBTC];
+    for (const asset of mode.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
+      const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN, {
+        client: { public: publicClient, wallet: walletClient }
+      });
+      const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);
+      console.log("cToken: ", cToken, asset.symbol);
 
-  await run("market:set-supply-cap", {
-    market: cToken,
-    maxSupply: parseEther(String(24_000_000)).toString()
-  });
-
-  await run("market:set:ltv", {
-    marketAddress: cToken,
-    ltv: asset.initialCf
-  });
-});
+      if (asset.initialCf) {
+        await run("market:set:ltv", {
+          marketAddress: cToken,
+          ltv: asset.initialCf
+        });
+      }
+    }
+  }
+);
 
 task("mode:irm:set-prudentia", "Set new IRM to ctoken").setAction(
   async (_, { viem, deployments, getNamedAccounts }) => {
@@ -241,4 +287,39 @@ task("prudentia:print-borrow-cap", "Prints supply cap")
 task("mode:get-market-info", "get market info").setAction(async (_, { viem, run }) => {
   await getMarketInfo(viem, COMPTROLLER_MAIN);
 });
-  
+
+task("mode:deploy:irm", "deploy irm").setAction(async (_, { viem, run, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const irm = await deployments.deploy("AdjustableJumpRateModel", {
+    from: deployer,
+    args: [
+      { blocksPerYear: 365 * 24 * 60 * 30, baseRatePerYear: 0, multiplierPerYear: 0, jumpMultiplierPerYear: 0, kink: 0 }
+    ]
+  });
+  console.log("irm: ", irm);
+  const irmContract = await viem.getContractAt("AdjustableJumpRateModel", irm.address as Address);
+  const cash = parseEther("100000");
+  const borrows = parseEther("80000");
+  const reserves = parseEther("10000");
+  const borrowRate = await irmContract.read.getBorrowRate([cash, borrows, reserves]);
+  console.log("borrow rate: ", borrowRate);
+  const supplyRate = await irmContract.read.getSupplyRate([cash, borrows, reserves, parseEther("0.1")]);
+  console.log("supply rate: ", supplyRate);
+});
+
+task("mode:deploy:irm:set-irm", "set irm").setAction(async (_, { viem, run, deployments, getNamedAccounts }) => {
+  const { deployer } = await getNamedAccounts();
+  const irm = await deployments.get("AdjustableJumpRateModel");
+  const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
+  const ctokens = await pool.read.getAllMarkets();
+  for (const ctoken of ctokens) {
+    const ctokenContract = await viem.getContractAt("ICErc20", ctoken);
+    await prepareAndLogTransaction({
+      contractInstance: ctokenContract,
+      functionName: "_setInterestRateModel",
+      args: [irm.address as Address],
+      description: `Set IRM of ${await ctokenContract.read.symbol()} to ${irm.address}`,
+      inputs: [{ internalType: "address", name: "newInterestRateModel", type: "address" }]
+    });
+  }
+});

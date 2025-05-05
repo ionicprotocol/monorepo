@@ -3,6 +3,7 @@ import {
   bob,
   fraxtal,
   lisk,
+  metalL2,
   mode,
   optimism,
   superseed,
@@ -13,6 +14,13 @@ import type { TxStep } from '@ui/types/ComponentPropsType';
 
 import type { Address } from 'viem';
 
+import {
+  camptest,
+  ink,
+  ozeantest,
+  soneium,
+  swellchain
+} from '@ionicprotocol/chains';
 import { SupportedChainsArray } from '@ionicprotocol/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(
@@ -72,13 +80,18 @@ export const shouldGetFeatured: Record<
 
 export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   [mode.id]: {
-    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION'
+    '0x18470019bF0E94611f15852F7e93cf5D65BC34CA': 'ION',
+    '0xC6A394952c097004F83d2dfB61715d245A38735a': 'ION',
+    '0x690A74d2eC0175a69C0962B309E03021C0b5002E': 'ION'
   },
   [base.id]: {
     '0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5': 'ION',
     '0xaB36452DbAC151bE02b16Ca17d8919826072f64a': 'RSR',
     '0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4': 'eUSD',
-    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD'
+    '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e': 'hyUSD',
+    '0x0FAc819628a7F612AbAc1CaD939768058cc0170c': 'ION',
+    '0x7002458B1DF59EccB57387bC79fFc7C29E22e6f7': 'OGN',
+    '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913': 'USDC'
   },
   [optimism.id]: {
     '0x887d1c6A4f3548279c2a8A9D0FA61B5D458d14fC': 'ION'
@@ -92,7 +105,7 @@ export const REWARDS_TO_SYMBOL: Record<number, Record<Address, string>> = {
   }
 };
 
-export const chainsArr: Record<number, string> = {
+export const chainIdToName: Record<number, string> = {
   [mode.id]: 'Mode',
   [base.id]: 'Base',
   [optimism.id]: 'Optimism',
@@ -106,58 +119,42 @@ export const FLYWHEEL_TYPE_MAP: Record<
   Record<'borrow' | 'supply', Address[]>
 > = {
   [mode.id]: {
-    supply: [
-      '0xcC11Fc7048db155F691Cc20Ac9958Fc465fa0062',
-      '0x6AfCca37CC93DB6bed729d20ADF203290d465df5',
-      '0x1A118B250ED0Ba690f03877AC46519A4b66f1D44'
-    ],
-    borrow: [
-      '0x2DC3f7B18e8F62F7fE7819596D15E521EEf3b1ec',
-      '0x4E854cde138495a3eB9CFe48e50F12dC352cD834',
-      '0xa80ff99c82d55dFE893867E25C5c77276DFb23C5'
-    ]
+    supply: ['0xE2805eB783AfF1D9140D27D660E26030F92bE029'],
+    borrow: ['0x2912D204D5873A8b7b4b62CFC1DF1dcdC3eAd03a']
   },
   [base.id]: {
-    supply: [
-      '0xE4E74A0c98b8dEa4bcbB870C9391Bb73a230ced4',
-      '0x6e93f617AB6CEfFec7c276B4fD4c136B7A7aDD54',
-      '0x5Dc1fd5cFA5F1efdaCBC790b41A2BfB41bf4F122',
-      '0xf638994B1155DfE2cbDd9589365960DD8dcDE6B4',
-      '0xc39441b305705AfD07de97237bC835a4501AbbEC',
-      '0xDcF10D5193910e2A76B565C13942bF4EABc9498E',
-      '0xba655A5096f617Ed4688169C830a6f81e80fa9A4',
-      '0x1d0a712aE0162431E0573A8a735D02a29805d124',
-      '0xAC717cd20a72470Cb764B518dE561E1fFF41cC22',
-      '0x1e00C933e092912d47153765Fa7c886632c1d083',
-      '0x19aAB5A4C1803a5Cb82C94134C29bd59FF50D440'
-      // '0xCc7FF230365bD730eE4B352cC2492CEdAC49383e'
-    ],
-    borrow: [
-      '0x3EE270d9115CfabD776c32A72F3ca6AF5c8CC88a',
-      '0xC8B73Ea80fBD12e5216F3D2424D3971fAd3e65F9',
-      '0x90CDFB5AdcDFFFf3d3141760F68a8DF6A7A261BF',
-      '0x46F00C2D10fd01a8dc7db996aC4df8FF481B3424',
-      '0xc06a3AFf1bE598976EC43e0988bE2e106807071a'
-    ]
+    supply: ['0x1eE8E310e992E7932A2a0964b29eC6d820f517A2'],
+    borrow: ['0x8f88336f4A4fe791BA657541E1eA4e8F8BB841d2']
   },
   [optimism.id]: {
     supply: [
       '0x6671AfE7c3aBd9Db195b3e58D348166c21405B88',
       '0x4D01bb5710F1989b6C2Dde496a5400E7F3b88162',
-      '0x05c3e910F7639457f92220605966e7f86A2ef966'
+      '0x05c3e910F7639457f92220605966e7f86A2ef966',
+      '0xb988eE92A2B9A621187D33C845907DF5c5a1C9A3'
     ],
-    borrow: ['0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA']
+    borrow: [
+      '0x6660174886cb3B26B38E5D4c1324E0BfB361F7CA',
+      '0x030a6514049D0AF71cf89E51a01C9D82873F4a2b'
+    ]
   },
   [lisk.id]: {
     supply: [
       '0x523F183ECbBf9144403D937B444d8486aD752453',
-      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7'
+      '0x8A48245Db7D3572AD118D41b2F7dFf0aaBEF37A7',
+      '0xdC737c91900097EF84c44885374527b26CD48d89'
     ],
     borrow: []
   },
   [fraxtal.id]: {
-    supply: ['0xa54697FAF64721Ec6ddd13bC345bd733de17539D'],
-    borrow: ['0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF']
+    supply: [
+      '0xa54697FAF64721Ec6ddd13bC345bd733de17539D',
+      '0xD07cd8Df6CCdC9228EBcEd7FA236E1d59C272164'
+    ],
+    borrow: [
+      '0xf3E5172A9d701F3E5d98A1A846Eec7CC205A10dF',
+      '0x738d34C11a66Ff56B95D2fC4DC1b3a954baB5da4'
+    ]
   }
 };
 
@@ -181,6 +178,12 @@ type PoolParams = {
     name: string;
     assets: string[];
   }[];
+  vaults?: {
+    id: string;
+    name: string;
+    description: string;
+    assets: string[];
+  }[];
 };
 
 export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
@@ -190,47 +193,10 @@ export const NO_COLLATERAL_SWAP: Record<number, Record<string, string[]>> = {
 };
 
 export const pools: Record<number, PoolParams> = {
-  [mode.id]: {
-    hexcode: '#3bff89',
-    arrow: '000000',
-    bg: 'bg-lime',
-    accentbg: 'bg-accent',
-    text: 'text-darkone',
-    name: 'Mode',
-    border: 'border-mode',
-    logo: '/img/logo/MODE.png',
-    pools: [
-      {
-        id: '0',
-        name: 'Main Pool',
-        assets: [
-          'WETH',
-          'USDC',
-          'msDAI',
-          'weETH.mode',
-          'dMBTC',
-          'M-BTC',
-          'sUSDe',
-          'wrsETH',
-          'ezETH',
-          'STONE',
-          'WBTC',
-          'USDe',
-          'USDT',
-          'weETH'
-        ]
-      },
-      {
-        id: '1',
-        name: 'Native Pool',
-        assets: ['MODE', 'WETH', 'USDC', 'USDT']
-      }
-    ]
-  },
   [base.id]: {
-    hexcode: '#2467ed',
     name: 'Base',
     arrow: 'ffffff',
+    hexcode: '#2467ed',
     bg: 'bg-blue-600',
     accentbg: 'bg-blue-600',
     text: 'text-white',
@@ -243,12 +209,15 @@ export const pools: Record<number, PoolParams> = {
         assets: [
           'USDC',
           'WETH',
+          'msETH',
+          'msUSD',
           'wsuperOETHb',
           'OGN',
           'sUSDz',
           'USDz',
           'wUSD+',
           'wUSDM',
+          'mBASIS',
           'uSOL',
           'uSUI',
           'uXRP',
@@ -267,6 +236,55 @@ export const pools: Record<number, PoolParams> = {
           'fBOMB',
           'KLIMA'
         ]
+      }
+    ]
+    // vaults: [
+    //   {
+    //     id: 'vault',
+    //     name: 'Supply Vaults',
+    //     description: 'Optimized yield strategies',
+    //     assets: ['USDC', 'WETH']
+    //   }
+    // ]
+  },
+  [mode.id]: {
+    hexcode: '#3bff89',
+    arrow: '000000',
+    bg: 'bg-lime',
+    accentbg: 'bg-accent',
+    text: 'text-darkone',
+    name: 'Mode',
+    border: 'border-mode',
+    logo: '/img/logo/MODE.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Deprecated',
+        assets: [
+          'WETH',
+          'USDC',
+          'msDAI',
+          'weETH.mode',
+          'LBTC',
+          'uniBTC',
+          'oBTC',
+          'uBTC',
+          'M-BTC',
+          'sUSDe',
+          'wrsETH',
+          'ezETH',
+          'STONE',
+          'WBTC',
+          'USDe',
+          'USDT',
+          'weETH',
+          'dMBTC'
+        ]
+      },
+      {
+        id: '1',
+        name: 'Native Pool',
+        assets: ['MODE', 'WETH', 'USDC', 'USDT']
       }
     ]
   },
@@ -365,6 +383,92 @@ export const pools: Record<number, PoolParams> = {
     text: 'text-white',
     border: 'border-fraxtal',
     logo: '/img/logo/WORLDCHAIN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [ink.chainId]: {
+    name: 'Ink',
+    arrow: 'ffffff',
+    bg: 'bg-ink',
+    text: 'text-white',
+    border: 'border-ink',
+    logo: '/img/logo/INK.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH']
+      }
+    ]
+  },
+  [swellchain.chainId]: {
+    name: 'Swell',
+    arrow: 'ffffff',
+    bg: 'bg-swell',
+    text: 'text-white',
+    border: 'border-swell',
+    logo: '/img/logo/SWELL.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDe', 'rswETH', 'weETH']
+      }
+    ]
+  },
+  [camptest.chainId]: {
+    name: 'Camp Testnet',
+    arrow: 'ffffff',
+    bg: 'bg-camp',
+    text: 'text-white',
+    border: 'border-camp',
+    logo: '/img/logo/CAMP.png',
+    pools: [{ id: '0', name: 'Main Pool', assets: ['WETH'] }]
+  },
+  [ozeantest.chainId]: {
+    arrow: 'ffffff',
+    name: 'Ozean Testnet',
+    hexcode: '#2467ed',
+    bg: 'bg-blue-600',
+    accentbg: 'bg-blue-600',
+    text: 'text-white',
+    border: 'border-base',
+    logo: '/img/logo/OZEAN.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WUSDX']
+      }
+    ]
+  },
+  [soneium.chainId]: {
+    name: 'Soneium',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/SONEIUM.png',
+    pools: [
+      {
+        id: '0',
+        name: 'Main Pool',
+        assets: ['WETH', 'USDC', 'ASTR']
+      }
+    ]
+  },
+  [metalL2.id]: {
+    name: 'MetalL2',
+    arrow: 'ffffff',
+    bg: 'bg-fraxtal',
+    text: 'text-white',
+    border: 'border-fraxtal',
+    logo: '/img/logo/METALL2.png',
     pools: [
       {
         id: '0',
@@ -683,10 +787,10 @@ export const POOLS_COLUMNS = [
   TOTAL_BORROW,
   EXPANDER
 ];
-export const FEATURE_REQUESTS_URL =
-  'https://midascapital.canny.io/feature-requests';
 export const COINGECKO_API =
   'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
+export const FEATURE_REQUESTS_URL =
+  'https://midascapital.canny.io/feature-requests';
 export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
 export const HIGH_RISK_RATIO = 0.8;
 

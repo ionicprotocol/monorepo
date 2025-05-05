@@ -5,8 +5,14 @@ export enum SupportedChains {
   bob = 60808,
   fraxtal = 252,
   lisk = 1135,
+  ink = 57073,
   superseed = 5330,
-  worldchain = 480
+  worldchain = 480,
+  swell = 1923,
+  soneium = 1868,
+  ozeantest = 7849306,
+  camptest = 325000,
+  metalL2 = 1750
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -190,6 +196,10 @@ export enum assetSymbols {
   dMBTC = "dMBTC",
   STONE = "STONE",
   msDAI = "msDAI",
+  oBTC = "oBTC",
+  uniBTC = "uniBTC",
+  uBTC = "uBTC",
+  LBTC = "LBTC",
 
   // base
   AERO = "AERO",
@@ -214,6 +224,9 @@ export enum assetSymbols {
   uXRP = "uXRP",
   ionicUSDC = "ionicUSDC",
   ionicWETH = "ionicWETH",
+  mBASIS = "mBASIS",
+  msETH = "msETH",
+  msUSD = "msUSD",
 
   // optimism
   OP = "OP",
@@ -232,6 +245,15 @@ export enum assetSymbols {
 
   // lisk
   LSK = "LSK",
+
+  // ozean
+  WUSDX = "WUSDX",
+
+  // soneium
+  ASTR = "ASTR",
+
+  // swell
+  rswETH = "rswETH",
 
   // legacy
   DAI = "DAI",

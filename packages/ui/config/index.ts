@@ -11,7 +11,13 @@ type CONFIG = {
   isLiskEnabled: boolean;
   isSuperseedEnabled: boolean;
   isWorldchainEnabled: boolean;
+  isInkEnabled: boolean;
+  isSwellEnabled: boolean;
+  isOzeantestEnabled: boolean;
+  isCampTestEnabled: boolean;
+  isSoneiumEnabled: boolean;
   isTestnetEnabled: boolean;
+  isMetalL2Enabled: boolean;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabaseAssetApyTableName: string;
@@ -40,6 +46,12 @@ const config: CONFIG = {
   isFraxtalEnabled: true,
   isSuperseedEnabled: true,
   isWorldchainEnabled: true,
+  isInkEnabled: true,
+  isSwellEnabled: true,
+  isOzeantestEnabled: true,
+  isCampTestEnabled: true,
+  isSoneiumEnabled: true,
+  isMetalL2Enabled: true,
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,

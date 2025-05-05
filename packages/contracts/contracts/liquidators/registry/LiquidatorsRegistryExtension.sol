@@ -10,13 +10,11 @@ import { MasterPriceOracle } from "../../oracles/MasterPriceOracle.sol";
 
 import { IRouter_Aerodrome as IAerodromeV2Router } from "../../external/aerodrome/IAerodromeRouter.sol";
 import { IRouter_Velodrome as IVelodromeV2Router } from "../../external/velodrome/IVelodromeRouter.sol";
-import { IRouter } from "../../external/solidly/IRouter.sol";
-import { IPair } from "../../external/solidly/IPair.sol";
 import { IUniswapV2Pair } from "../../external/uniswap/IUniswapV2Pair.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin-contracts-upgradeable/contracts/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 contract LiquidatorsRegistryExtension is LiquidatorsRegistryStorage, DiamondExtension, ILiquidatorsRegistryExtension {
   using EnumerableSet for EnumerableSet.AddressSet;

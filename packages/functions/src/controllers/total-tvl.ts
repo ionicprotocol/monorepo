@@ -6,6 +6,7 @@ import axios from 'axios'; // Assuming axios is already installed for API reques
 import { Handler } from '@netlify/functions';
 
 // Function to get ETH to USD conversion rate from Coingecko API
+export const HEARTBEAT_API_URL = environment.uptimeTotalTvlApi;
 const getEthToUsdRate = async (): Promise<number> => {
   try {
     const response = await axios.get(
@@ -23,18 +24,16 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
   try {
     // Call updateAssetTvl to get the TVL for each asset
     const results = await updateAssetTvl(chainId);
-
     // Log each asset's TVL
-    results.forEach((asset: { tvlNative: string }) => {
+    results.results.forEach((asset: { tvlNative: string }) => {
       // console.log(`Asset TVL (native): ${asset.tvlNative}`);
     });
-
     // Summing up the total TVL (native) in ETH
-    const totalMarketBorrow = results.reduce((total: number, asset: { borrowtotal : string }) => {
+    const totalMarketBorrow = results.results.reduce((total: number, asset: { borrowtotal: string }) => {
       return total + parseFloat(asset.borrowtotal);
     }, 0);
     // console.log("hereee",totalMarketBorrow)
-    const totalTvlNative = results.reduce((total: number, asset: { tvlNative: string }) => {
+    const totalTvlNative = results.results.reduce((total: number, asset: { tvlNative: string }) => {
       return total + parseFloat(asset.tvlNative);
     }, 0);
 
@@ -62,6 +61,7 @@ export const updateTotalTvl = async (chainId: SupportedChains): Promise<void> =>
     };
 
     // Insert the total TVL row into the database
+    await axios.get(HEARTBEAT_API_URL);
     const { error } = await supabase
       .from(environment.supabaseAssettotalTvlTableName) // New table name for total TVL
       .insert([totalTvlRow]);
