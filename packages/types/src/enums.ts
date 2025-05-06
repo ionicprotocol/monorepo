@@ -258,6 +258,9 @@ export enum assetSymbols {
   // superseed
   oUSDT = "oUSDT",
 
+  // metalL2
+  MTL = "MTL",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",
