@@ -22,6 +22,8 @@ const environment = {
   uptimeTvlApi: process.env.UPTIME_TVL_API ?? '',
   uptimeTotalTvlApi: process.env.UPTIME_TOTAL_TVL_API ?? '',
   uptimeTvlTotalPoolApi: process.env.UPTIME_TVL_TOTAL_POOL_API ?? '',
+  // Custom RPC URLs for Base chain (comma-separated list of URLs to try in sequence)
+  baseRpcUrl: process.env.BASE_RPC_URL ?? '',
 };
 
 export default environment;
