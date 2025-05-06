@@ -255,6 +255,9 @@ export enum assetSymbols {
   // swell
   rswETH = "rswETH",
 
+  // superseed
+  oUSDT = "oUSDT",
+
   // legacy
   DAI = "DAI",
   AUTO = "AUTO",
