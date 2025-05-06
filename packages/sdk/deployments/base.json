@@ -620,6 +620,9 @@
     "CErc20RewardsDelegate": {
       "address": "0xfceEA832b549F2A2e0881C8DB8B42e358C7a0889"
     },
+    "CErc20RewardsDelegateMorpho": {
+      "address": "0x13197fdb0A96Ff25E3455D77b1a75f65e3B03CFe"
+    },
     "CTokenFirstExtension": {
       "address": "0x4661DBCf8EB11801F438f8019B160F3Cb9B5d817"
     },
@@ -645,13 +648,13 @@
       "address": "0xF9fc8e7C5dAf707f18f06E04916Ff315B01326Da"
     },
     "Comptroller": {
-      "address": "0xc63Ee58A68C22BFd7900ab5C3eB94D0f3d1442e9"
+      "address": "0x7E98caf24A84ae15Fb5De8C5f1C4D261c3Cf9833"
     },
     "ComptrollerFirstExtension": {
-      "address": "0x0C7d81F299dD96bF01432dE64f262E48AfF4F5ea"
+      "address": "0xC35a8090c13879438E3bF6aC5f1DCFD0Ef6f34c0"
     },
     "ComptrollerPrudentiaCapsExt": {
-      "address": "0x3C1c62d04ccA26DCD17e670325cd435541625daD"
+      "address": "0xD22130E50EC505acEc884C7842b62f5baa6131a0"
     },
     "CurveSwapLiquidator": {
       "address": "0xa1452e5557CdEf25D88deFE06De12B45fC8eEA30"
@@ -1482,7 +1485,7 @@
       "address": "0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B"
     },
     "VoterLens_Implementation": {
-      "address": "0xd23933c6ceFbDdEF0902252Cb13A0E7371C5c5A9"
+      "address": "0x682E491d804Fa22a2fd77Bd0Ce0861Ad17df3d60"
     },
     "VoterLens_Proxy": {
       "address": "0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B"
