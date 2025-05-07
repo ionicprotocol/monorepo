@@ -21,6 +21,12 @@ export const VEION_CHAIN_CONFIGS: Record<
     nativeCurrency: 'MODE',
     name: 'Mode'
   },
+  1135: {
+    // Lisk
+    lpTypes: [0],
+    nativeCurrency: 'WETH',
+    name: 'Lisk'
+  },
   0: {
     // All chains
     lpTypes: [0, 2],

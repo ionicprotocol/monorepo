@@ -84,7 +84,7 @@ function VotesManagement({
   const querychain = searchParams.get('chain');
   const querypool = searchParams.get('pool');
   const chain = querychain ? querychain : mode.id.toString();
-  const selectedPool = +chain === mode.id ? '1' : querypool ?? '0';
+  const selectedPool = querypool ?? (+chain === mode.id ? '1' : '0');
 
   const hiddenPools: HiddenPool[] = [{ chainId: mode.id, poolId: '0' }];
 

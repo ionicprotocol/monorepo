@@ -3,8 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { formatUnits } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 
-import { REWARDS_TO_SYMBOL } from '@ui/constants'; // Import the REWARDS_TO_SYMBOL mapping
+import { REWARDS_TO_SYMBOL } from '@ui/constants';
 import { useVeIONContext } from '@ui/context/VeIonContext';
+
+import { VOTER_LENS_ADDRESSES } from '../veion/useMarketIncentives';
 
 import type { Address, Hex } from 'viem';
 
@@ -16,11 +18,6 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvYWd0anN0c2RyanlweGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc5MDE2MTcsImV4cCI6MjAyMzQ3NzYxN30.CYck7aPTmW5LE4hBh2F4Y89Cn15ArMXyvnP3F521S78'
 );
 
-export const VOTERLENS_CHAIN_ADDRESSES = {
-  8453: '0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B',
-  34443: '0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D'
-} as const;
-
 export interface BribeReward {
   amount: bigint;
   chainId: SupportedChains;
@@ -28,7 +25,6 @@ export interface BribeReward {
   bribeAddress: Address;
   tokenId: bigint;
   market?: Address;
-  // Add these fields for formatted display
   formattedAmount?: string;
   tokenSymbol?: string;
 }
@@ -86,9 +82,7 @@ export const useBribeRewards = () => {
       }
 
       const voterLensAddress =
-        VOTERLENS_CHAIN_ADDRESSES[
-          currentChain as keyof typeof VOTERLENS_CHAIN_ADDRESSES
-        ];
+        VOTER_LENS_ADDRESSES[currentChain as keyof typeof VOTER_LENS_ADDRESSES];
       if (!voterLensAddress) return [];
 
       try {
