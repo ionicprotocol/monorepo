@@ -15,7 +15,7 @@ import {
 interface UseLiquidityCalculationsProps {
   address?: Address;
   chainId: number;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
 }
 
 export function useLiquidityCalculations({
@@ -23,10 +23,14 @@ export function useLiquidityCalculations({
   chainId,
   selectedToken
 }: UseLiquidityCalculationsProps) {
+  const reservesContractAddress = getReservesContract(chainId);
+  const reservesAbi = getReservesABI(chainId);
+  const reservesArgs = getReservesArgs(chainId, selectedToken);
+
   const reserves = useReadContract({
-    abi: getReservesABI(chainId),
-    address: getReservesContract(chainId),
-    args: getReservesArgs(chainId, selectedToken),
+    abi: reservesAbi,
+    address: reservesContractAddress,
+    args: reservesArgs,
     functionName: 'getReserves',
     chainId: chainId,
     query: {
@@ -65,11 +69,15 @@ export function useLiquidityCalculations({
   };
 
   const calculateTokenAmount = (ionAmount: string): string => {
-    if (!processedReserves || !ionAmount || processedReserves.ion === 0n)
-      return '';
+    if (!ionAmount) return '';
 
     try {
       const parsedIonAmount = parseUnits(ionAmount, 18);
+
+      if (!processedReserves || processedReserves.ion === 0n) {
+        return ionAmount;
+      }
+
       const tokenVal =
         (parsedIonAmount * processedReserves.token) / processedReserves.ion;
       return formatEther(tokenVal);
@@ -104,12 +112,17 @@ export function useLiquidityCalculations({
   }, [reserves.status, reserves.data, chainId]);
 
   const getMaximumIonInput = (): string => {
-    if (!processedReserves || !selectedTokenBalance || !ionBalance) {
+    if (!selectedTokenBalance || !ionBalance) {
       return '0';
     }
 
     try {
       const maxIonBasedOnBalance = ionBalance.value;
+
+      if (!processedReserves || processedReserves.token === 0n) {
+        return formatEther(maxIonBasedOnBalance);
+      }
+
       const maxIonBasedOnReserves =
         (selectedTokenBalance.value * processedReserves.ion) /
         processedReserves.token;
@@ -126,14 +139,20 @@ export function useLiquidityCalculations({
   };
 
   const wouldExceedLiquidity = (ionAmount: string): boolean => {
-    if (!processedReserves || !selectedTokenBalance || !ionAmount) return false;
+    if (!selectedTokenBalance || !ionAmount) return false;
 
     try {
+      if (!processedReserves || processedReserves.ion === 0n) {
+        const parsedIonAmount = parseUnits(ionAmount, 18);
+        return parsedIonAmount > selectedTokenBalance.value;
+      }
+
       const parsedIonAmount = parseUnits(ionAmount, 18);
       const requiredToken =
         (parsedIonAmount * processedReserves.token) / processedReserves.ion;
       return requiredToken > selectedTokenBalance.value;
-    } catch {
+    } catch (error) {
+      console.warn('Error checking liquidity:', error);
       return false;
     }
   };

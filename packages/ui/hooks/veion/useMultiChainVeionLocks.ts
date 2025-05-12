@@ -10,6 +10,7 @@ const chainValidStates: Record<number, VeIONLockData | null> = {
   8453: null, // base
   34443: null, // mode
   10: null, // optimism
+  1135: null, // lisk
   [ALL_CHAINS_VALUE]: null // combined state
 };
 
@@ -24,6 +25,10 @@ export function useMultiChainVeIONLocks({
 
   const modeLocks = useVeIONLocks({
     chainId: 34443
+  });
+
+  const liskLocks = useVeIONLocks({
+    chainId: 1135
   });
 
   // const optimismLocks = useVeIONLocks({
@@ -71,12 +76,12 @@ export function useMultiChainVeIONLocks({
             updateCacheIfValid(modeLocks, 34443);
             return modeLocks;
 
-          // case 10:
-          //   if (shouldPreserveState(optimismLocks, 10)) {
-          //     return chainValidStates[10];
-          //   }
-          //   updateCacheIfValid(optimismLocks, 10);
-          //   return optimismLocks;
+          case 1135:
+            if (shouldPreserveState(liskLocks, 1135)) {
+              return chainValidStates[1135];
+            }
+            updateCacheIfValid(liskLocks, 1135);
+            return liskLocks;
 
           default:
             return { myLocks: [], delegatedLocks: [], isLoading: false };
@@ -87,15 +92,18 @@ export function useMultiChainVeIONLocks({
       const combinedLocks = {
         myLocks: [
           ...baseLocks.myLocks,
-          ...modeLocks.myLocks
+          ...modeLocks.myLocks,
+          ...liskLocks.myLocks
           // ...optimismLocks.myLocks
         ],
         delegatedLocks: [
           ...baseLocks.delegatedLocks,
-          ...modeLocks.delegatedLocks
+          ...modeLocks.delegatedLocks,
+          ...liskLocks.delegatedLocks
           // ...optimismLocks.delegatedLocks
         ],
-        isLoading: baseLocks.isLoading || modeLocks.isLoading
+        isLoading:
+          baseLocks.isLoading || modeLocks.isLoading || liskLocks.isLoading
       };
 
       if (shouldPreserveState(combinedLocks, ALL_CHAINS_VALUE)) {
@@ -117,7 +125,8 @@ export function useMultiChainVeIONLocks({
   }, [
     selectedChainId,
     baseLocks,
-    modeLocks
+    modeLocks,
+    liskLocks
     // optimismLocks
   ]);
 }
