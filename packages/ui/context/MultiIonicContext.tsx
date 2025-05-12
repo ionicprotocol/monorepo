@@ -93,12 +93,7 @@ export const MultiIonicProvider = (
         chain.id === walletClient?.chain?.id ? walletClient : undefined;
 
       const transportUrls =
-        chain.id === 8453
-          ? [
-              base.rpcUrls.default.http[0],
-              ...chainConfig.specificParams.metadata.rpcUrls.default.http
-            ]
-          : chainConfig.specificParams.metadata.rpcUrls.default.http;
+        chainConfig.specificParams.metadata.rpcUrls.default.http;
 
       const client = createPublicClient({
         batch: { multicall: { wait: 16 } },
@@ -118,7 +113,7 @@ export const MultiIonicProvider = (
     });
 
     return [_sdks, _securities, _chainIds.sort()];
-  }, [enabledChains, walletClient, base]);
+  }, [enabledChains, walletClient]);
 
   const currentSdk = useMemo(() => {
     if (chain) {
