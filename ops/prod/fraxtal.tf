@@ -5,7 +5,7 @@ locals {
 }
 
 
-module "fraxtal_mainnet_liquidator_ecs" {
+/*module "fraxtal_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
@@ -29,4 +29,4 @@ module "fraxtal_mainnet_liquidator_ecs" {
   security_group_ids        = ["sg-0a3996557af867ad0"]
   region                    = var.region
   liquidator_container_name = "${var.liquidator_container_name}-fraxtal"
-}
+}*/
