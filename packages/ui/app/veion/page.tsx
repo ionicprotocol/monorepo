@@ -7,7 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ExternalLink } from 'lucide-react';
-import { base, mode } from 'viem/chains';
+import { base, mode, lisk } from 'viem/chains';
 
 import { Button } from '@ui/components/ui/button';
 import { Card, CardContent, CardHeader } from '@ui/components/ui/card';
@@ -32,7 +32,8 @@ export default function EnhancedVeIon() {
   const [isAddLiquidityOpen, setIsAddLiquidityOpen] = useState(false);
   const [isMigrateOpen, setIsMigrateOpen] = useState(false);
 
-  const selectedtoken = currentChain === 8453 ? 'eth' : 'mode';
+  const selectedtoken =
+    currentChain === 34443 ? 'mode' : currentChain === 1135 ? 'weth' : 'eth';
 
   return (
     <div className="min-h-screen">
@@ -70,7 +71,7 @@ export default function EnhancedVeIon() {
             <NetworkSelector
               dropdownSelectedChain={currentChain}
               nopool={true}
-              enabledChains={[mode.id, base.id]}
+              enabledChains={[mode.id, base.id, lisk.id]}
             />
           </div>
         </CardHeader>
@@ -150,17 +151,17 @@ export default function EnhancedVeIon() {
         <AddLiquidityDialog
           isOpen={isAddLiquidityOpen}
           onOpenChange={setIsAddLiquidityOpen}
-          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+          selectedToken={selectedtoken as 'eth' | 'lsk' | 'mode' | 'weth'}
         />
         <UnstakeIonDialog
           isOpen={isMigrateOpen}
           onOpenChange={setIsMigrateOpen}
-          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+          selectedToken={selectedtoken as 'eth' | 'lsk' | 'mode' | 'weth'}
         />
         <GetVeIONDialog
           isOpen={isDialogOpen}
           onOpenChange={setIsDialogOpen}
-          selectedToken={selectedtoken as 'eth' | 'mode' | 'weth'}
+          selectedToken={selectedtoken as 'eth' | 'lsk' | 'mode' | 'weth'}
         />
       </Card>
     </div>

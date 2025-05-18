@@ -22,7 +22,7 @@ import {
 interface UnstakeIonDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedToken: 'eth' | 'mode' | 'weth';
+  selectedToken: 'eth' | 'lsk' | 'mode' | 'weth';
 }
 
 export default function UnstakeIonDialog({

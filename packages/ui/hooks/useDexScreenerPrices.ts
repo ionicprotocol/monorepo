@@ -3,6 +3,10 @@ import axios from 'axios';
 import { base, mode, optimism } from 'viem/chains';
 
 import { BaseReservesContractAddr } from '@ui/constants/baselp';
+import {
+  LiskIonTokenAddress,
+  LiskReservesContractAddr
+} from '@ui/constants/liskLp';
 import { ModeReservesContractAddr } from '@ui/constants/lp';
 import { OPReservesContractAddr } from '@ui/constants/oplp';
 
@@ -28,6 +32,12 @@ const REWARD_TOKEN_CONFIGS = {
     pairAddress: '0xc2026f3fb6fc51f4ecae40a88b4509cb6c143ed4', // MODE pair
     tokenSymbol: 'xVELO',
     ionAddress: ModeReservesContractAddr.toLocaleLowerCase()
+  },
+  [1135]: {
+    name: 'mode',
+    pairAddress: '0x076d0CD6228B042aA28E1E6A0894Cf6C97abc23b',
+    tokenSymbol: 'xVELO',
+    ionAddress: ModeReservesContractAddr.toLocaleLowerCase() // using mode ion address for lisk, because dexscreener does not have it
   }
 } as const;
 
@@ -77,7 +87,7 @@ export function useIonPrice({ chainId }: { chainId: number }) {
 
 export function useIonPrices(specificChains?: number[]) {
   // If no chains provided, use all available chains
-  const chains = specificChains || [8453, 34443, 10];
+  const chains = specificChains || [8453, 34443, 10, 1135];
 
   return useQuery({
     queryKey: ['ionPrices', chains], // Add chains to queryKey for proper caching
@@ -91,7 +101,6 @@ export function useIonPrices(specificChains?: number[]) {
           const res = await axios.get(
             `https://api.dexscreener.com/latest/dex/pairs/${config.name}/${config.ionAddress}`
           );
-
           return {
             chainId,
             price: Number(res.data.pairs[0]?.priceUsd || '0')

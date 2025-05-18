@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import { base, mode } from 'viem/chains';
+import { base, lisk, mode } from 'viem/chains';
 
 import ActionButton from '@ui/components/ActionButton';
 import NetworkSelector from '@ui/components/markets/NetworkSelector';
@@ -57,7 +57,7 @@ export default function Governance() {
       <NetworkSelector
         nopool
         dropdownSelectedChain={+chain}
-        enabledChains={[base.id, mode.id]}
+        enabledChains={[base.id, mode.id, lisk.id]}
         upcomingChains={['Optimism']}
       />
 
