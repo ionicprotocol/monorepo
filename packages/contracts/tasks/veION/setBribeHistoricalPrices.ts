@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 import { assetFilter } from "../../chainDeploy/helpers/utils";
-import { Address, formatEther, parseUnits } from "viem";
+import { Address, formatEther, parseUnits, zeroAddress } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 task("bribes:accept-ownership", "accept ownership").setAction(
@@ -12,6 +12,11 @@ task("bribes:accept-ownership", "accept ownership").setAction(
 
     for (const bribe of bribes) {
       const { bribeSupply, bribeBorrow } = bribe;
+
+      if (bribeSupply === zeroAddress || bribeBorrow === zeroAddress) {
+        console.log(`🔍 BribeSupply or BribeBorrow is zero address, skipping...`);
+        continue;
+      }
 
       const bribeSupplyContract = await viem.getContractAt("BribeRewards", bribeSupply as Address);
       const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
@@ -133,14 +138,14 @@ const setHistoricalPrices = async (
 };
 
 task("bribes:setHistoricalPrices:mode", "set prices").setAction(async (taskArgs, { viem, deployments }) => {
-  await setHistoricalPrices("0x690A74d2eC0175a69C0962B309E03021C0b5002E", [1747879625n], {
+  await setHistoricalPrices("0x690A74d2eC0175a69C0962B309E03021C0b5002E", [1748495055n], {
     viem,
     deployments
   });
 });
 
 task("bribes:setHistoricalPrices:base", "set prices").setAction(async (taskArgs, { viem, deployments }) => {
-  await setHistoricalPrices("0x0FAc819628a7F612AbAc1CaD939768058cc0170c", [1747879625n], {
+  await setHistoricalPrices("0x0FAc819628a7F612AbAc1CaD939768058cc0170c", [1748495055n], {
     viem,
     deployments
   });
