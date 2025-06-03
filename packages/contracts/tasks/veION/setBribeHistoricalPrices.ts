@@ -241,7 +241,7 @@ task("voter:setHistoricalPricesRange", "set historical prices over a range on Vo
 
     for (let epoch = startEpoch; epoch <= endEpoch; epoch += increment) {
       console.log(`Sending transaction to set historical price on Voter contract at epoch ${epoch}`);
-      const voterTx = await voter.write.setHistoricalPrices([BigInt(epoch), lpToken, BigInt("1930803084600000")]);
+      const voterTx = await voter.write.setHistoricalPrices([BigInt(epoch), lpToken, BigInt("1000000000000000000")]);
       console.log(`Transaction sent: ${voterTx}`);
       const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: voterTx });
       console.log(
