@@ -491,12 +491,12 @@ contract DevTesting is BaseTest {
       emit log("-----------------------------------------------------------");
     }
 
-    BribeRewards bribe = BribeRewards(0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f);
+    BribeRewards bribe = BribeRewards(0x9fb8316a2c5bCE52bA81a00A265BfED19868a4bE);
     uint256[] memory votingTokens = new uint256[](1);
-    votingTokens[0] = 20;
+    votingTokens[0] = 74;
 
     for (uint256 i = 0; i < votingTokens.length; i++) {
-      uint256 earnedAmount = bribe.earned(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4, votingTokens[i]);
+      uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
       emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
       emit log_named_uint("Earned Amount", earnedAmount);
     }

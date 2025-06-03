@@ -251,3 +251,27 @@ task("voter:setHistoricalPricesRange", "set historical prices over a range on Vo
     }
   }
 );
+
+task("voter:checkRewards", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+
+    const voter = await viem.getContractAt("Voter", "0x669A6F5421dA53696fa06f1043CF127d380f6EB9");
+
+    const startEpoch = 1744243200;
+    const endEpoch = 1749081600;
+    const increment = 604800;
+
+    const bribeRewards = await viem.getContractAt("BribeRewards", "0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f");
+
+    let tokenRewardPerEpoch;
+    for (let epoch = startEpoch; epoch <= endEpoch; epoch += increment) {
+      tokenRewardPerEpoch = BigInt(
+        await bribeRewards.read.tokenRewardsPerEpoch(["0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4", BigInt(epoch)])
+      );
+
+      console.log(`Token reward for epoch ${epoch}: ${tokenRewardPerEpoch}`);
+    }
+  }
+);
