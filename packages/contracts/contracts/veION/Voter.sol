@@ -533,16 +533,16 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
   function setHistoricalPrices(uint256 epochTimestamp, address lpToken, uint256 price) external onlyOwner {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     historicalPrices[lpToken][epochStart] = price;
-    emit HistoricalPriceSet(epochTimestamp, lpToken, price);
+    // emit HistoricalPriceSet(epochTimestamp, lpToken, price);
   }
 
   /**
    * @notice Gets the historical price for a specific LP token at a given epoch
-   * @param epochTimestamp The timestamp of the epoch
    * @param lpToken The LP token address
+   * @param epochTimestamp The timestamp of the epoch
    * @return The historical price of the LP token at the specified epoch
    */
-  function getHistoricalPrice(uint256 epochTimestamp, address lpToken) external view returns (uint256) {
+  function getHistoricalPrice(address lpToken, uint256 epochTimestamp) external view returns (uint256) {
     uint256 epochStart = IonicTimeLibrary.epochStart(epochTimestamp);
     return historicalPrices[lpToken][epochStart];
   }
