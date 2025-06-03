@@ -227,3 +227,27 @@ task("bribes:setHistoricalPriceSingle", "set prices").setAction(
     );
   }
 );
+
+task("voter:setHistoricalPricesRange", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+
+    const voter = await viem.getContractAt("Voter", "0x669A6F5421dA53696fa06f1043CF127d380f6EB9");
+
+    const startEpoch = 1735776000;
+    const endEpoch = 1749081600;
+    const increment = 604800;
+
+    for (let epoch = startEpoch; epoch <= endEpoch; epoch += increment) {
+      console.log(`Sending transaction to set historical price on Voter contract at epoch ${epoch}`);
+      const voterTx = await voter.write.setHistoricalPrices([BigInt(epoch), lpToken, BigInt("1930803084600000")]);
+      console.log(`Transaction sent: ${voterTx}`);
+      const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: voterTx });
+      console.log(
+        `✅ Successfully set historical price on Voter contract at epoch ${epoch}:`,
+        voterReceipt.transactionHash
+      );
+    }
+  }
+);
