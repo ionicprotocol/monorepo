@@ -9,7 +9,7 @@ task("bribes:setHistoricalPrices", "set prices").setAction(
 
     const bribes = await voterLens.read.getAllBribes();
 
-    const epochStart = [1743033600];
+    const epochStart = [1746057600];
 
     const ionWethPrice = [2353683912200];
 
@@ -47,30 +47,135 @@ task("bribes:setHistoricalPrices", "set prices").setAction(
           console.error(`❌ Failed to set historical price for bribeSupply at epoch ${epochTimestamp}:`, error);
         }
 
-        // try {
-        //   // Check if historical price is already set for bribeBorrow
-        //   const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
-        //   const historicalPricesBorrow = await bribeBorrowContract.read.historicalPrices([lpToken, epochTimestamp]);
-        //   if (historicalPricesBorrow != 0) {
-        //     console.log(
-        //       `🔍 Historical price already set for bribeBorrow at epoch ${epochTimestamp}, Price: ${historicalPricesBorrow} for contract ${bribeBorrow} Skipping...`
-        //     );
-        //     await new Promise((resolve) => setTimeout(resolve, 500));
-        //     continue;
-        //   }
+        try {
+          // Check if historical price is already set for bribeBorrow
+          const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
+          const historicalPricesBorrow = await bribeBorrowContract.read.historicalPrices([lpToken, epochTimestamp]);
+          if (historicalPricesBorrow != 0) {
+            console.log(
+              `🔍 Historical price already set for bribeBorrow at epoch ${epochTimestamp}, Price: ${historicalPricesBorrow} for contract ${bribeBorrow} Skipping...`
+            );
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            continue;
+          }
 
-        //   // Set historical price for bribeBorrow
-        //   const bribeBorrowTx = await bribeBorrowContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
-        //   const bribeBorrowReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeBorrowTx });
-        //   console.log(
-        //     `✅ Successfully set historical price for bribeBorrow at epoch ${epochTimestamp} for ${bribeBorrow}:`,
-        //     bribeBorrowReceipt.transactionHash
-        //   );
+          // Set historical price for bribeBorrow
+          const bribeBorrowTx = await bribeBorrowContract.write.setHistoricalPrices([epochTimestamp, lpToken, price]);
+          const bribeBorrowReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeBorrowTx });
+          console.log(
+            `✅ Successfully set historical price for bribeBorrow at epoch ${epochTimestamp} for ${bribeBorrow}:`,
+            bribeBorrowReceipt.transactionHash
+          );
 
-        //   await new Promise((resolve) => setTimeout(resolve, 500));
-        // } catch (error) {
-        //   console.error(`❌ Failed to set historical price for bribeBorrow at epoch ${epochTimestamp}:`, error);
-        // }
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        } catch (error) {
+          console.error(`❌ Failed to set historical price for bribeBorrow at epoch ${epochTimestamp}:`, error);
+        }
+      }
+    }
+  }
+);
+
+task("bribes:checkPrices", "view prices").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
+
+    const bribes = await voterLens.read.getAllBribes();
+
+    const epochStart = [1748476800];
+    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+
+    for (const bribe of bribes) {
+      const { bribeSupply, bribeBorrow } = bribe;
+      console.log(`Market: ${bribe.market}---------------------------------------------`);
+
+      for (let i = 0; i < epochStart.length; i++) {
+        const epochTimestamp = epochStart[i];
+
+        try {
+          // Check if historical price is already set for bribeSupply
+          const bribeSupplyContract = await viem.getContractAt("BribeRewards", bribeSupply as Address);
+          const historicalPricesSupply = await bribeSupplyContract.read.historicalPrices([lpToken, epochTimestamp]);
+          if (historicalPricesSupply != 0) {
+            console.log(
+              `🔍 Historical price already set for bribeSupply at epoch ${epochTimestamp} Price ${historicalPricesSupply} for contract ${bribeSupply} for market ${bribe.market} Skipping...`
+            );
+          } else {
+            console.log(
+              `❌  Historical price NOT set for bribeSupply at epoch ${epochTimestamp} Price ${historicalPricesSupply} for contract ${bribeSupply} for market ${bribe.market}  Skipping...`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `❌ Failed to set historical price for contract ${bribeSupply} for market ${bribe.market} at epoch ${epochTimestamp}:`
+          );
+        }
+
+        try {
+          // Check if historical price is already set for bribeBorrow
+          const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
+          const historicalPricesBorrow = await bribeBorrowContract.read.historicalPrices([lpToken, epochTimestamp]);
+          if (historicalPricesBorrow != 0) {
+            console.log(
+              `🔍 Historical price already set for bribeBorrow at epoch ${epochTimestamp}, Price: ${historicalPricesBorrow} for contract ${bribeBorrow} for market ${bribe.market} Skipping...`
+            );
+          } else {
+            console.log(
+              `❌  Historical price NOT set for bribeSupply at epoch ${epochTimestamp} Price ${historicalPricesBorrow} for contract ${bribeBorrow} for market ${bribe.market} Skipping...`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `❌ Failed to set historical price for contract ${bribeBorrow} for market ${bribe.market} at epoch ${epochTimestamp}:`
+          );
+        }
+      }
+      console.log("\n");
+    }
+  }
+);
+
+task("bribes:transferOwnership", "transfer ownership").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const voterLens = await viem.getContractAt("VoterLens", (await deployments.get("VoterLens")).address as Address);
+
+    const bribes = await voterLens.read.getAllBribes();
+
+    const newOwner = "0x1155b614971f16758C92c4890eD338C9e3ede6b7"; // Replace with the actual new owner address
+
+    for (const bribe of bribes) {
+      const { bribeSupply, bribeBorrow } = bribe;
+
+      try {
+        // Transfer ownership for bribeSupply
+        const bribeSupplyContract = await viem.getContractAt("BribeRewards", bribeSupply as Address);
+        const bribeSupplyTx = await bribeSupplyContract.write.transferOwnership([newOwner]);
+        const bribeSupplyReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeSupplyTx });
+        console.log(
+          `✅ Successfully transferred ownership for bribeSupply to ${newOwner} for ${bribeSupply}:`,
+          bribeSupplyReceipt.transactionHash
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`❌ Failed to transfer ownership for bribeSupply:`, error);
+      }
+
+      try {
+        // Transfer ownership for bribeBorrow
+        const bribeBorrowContract = await viem.getContractAt("BribeRewards", bribeBorrow as Address);
+        const bribeBorrowTx = await bribeBorrowContract.write.transferOwnership([newOwner]);
+        const bribeBorrowReceipt = await publicClient.waitForTransactionReceipt({ hash: bribeBorrowTx });
+        console.log(
+          `✅ Successfully transferred ownership for bribeBorrow to ${newOwner} for ${bribeBorrow}:`,
+          bribeBorrowReceipt.transactionHash
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`❌ Failed to transfer ownership for bribeBorrow:`, error);
       }
     }
   }

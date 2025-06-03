@@ -164,7 +164,22 @@ contract DevTesting is BaseTest {
     }
   }
 
-  function testLockOnLisk() public debuggingOnly fork(LISK_MAINNET) {
+  function testBorrowFunctionality() public debuggingOnly fork(BASE_MAINNET) {
+    address borrower = 0x1155b614971f16758C92c4890eD338C9e3ede6b7;
+    address marketAddress = 0x40c7aafb43B67FDCA3EBd15d917b9E4755F81547;
+    uint256 borrowAmount = 1219261;
+
+    // Set the context to the borrower address
+    vm.prank(borrower);
+
+    // Call the borrow function on the specified market
+    ICErc20(marketAddress).borrow(borrowAmount);
+
+    // Emit a log to confirm the borrow action
+    emit log_named_uint("Borrowed Amount", borrowAmount);
+  }
+
+  function testLockOnLisk() public debuggingOnly forkAtBlock(LISK_MAINNET, 15392770) {
     address veIONAddress = 0x6136BeC00Ba7C6d44BB10ee8683C792a0F8cDd6a;
 
     address[] memory tokenAddress = new address[](1);
@@ -419,7 +434,7 @@ contract DevTesting is BaseTest {
   }
 
   function testUserBribes() public debuggingOnly fork(BASE_MAINNET) {
-    address user = 0x249025bD74e42fAecb5f7c63B889f511581a8546;
+    address user = 0xec7e64b33EE52Bed121a551901Bd124986BC3b58;
     VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
     Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
     veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
@@ -476,19 +491,18 @@ contract DevTesting is BaseTest {
       emit log("-----------------------------------------------------------");
     }
 
-    BribeRewards bribe = BribeRewards(0x4c63d1bcC6c67b9DE3DBf96f8e18eD9440400e6a);
-    uint256[] memory votingTokens = new uint256[](2);
-    votingTokens[0] = 15;
-    votingTokens[1] = 38;
+    BribeRewards bribe = BribeRewards(0xe9b889c8c7A5Bbe63e5E2eEafb212cdcF1A60B9f);
+    uint256[] memory votingTokens = new uint256[](1);
+    votingTokens[0] = 20;
 
     for (uint256 i = 0; i < votingTokens.length; i++) {
-      uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
+      uint256 earnedAmount = bribe.earned(0xCfA3Ef56d303AE4fAabA0592388F19d7C3399FB4, votingTokens[i]);
       emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
       emit log_named_uint("Earned Amount", earnedAmount);
     }
   }
 
-  function testVoteUser() public debuggingOnly forkAtBlock(BASE_MAINNET, 28365448) {
+  function testVoteUser() public debuggingOnly fork(BASE_MAINNET) {
     address[] memory markets = new address[](1);
     IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](1);
     uint256[] memory weights = new uint256[](1);
@@ -518,8 +532,8 @@ contract DevTesting is BaseTest {
     }
   }
 
-  function testBribeIncentives() public debuggingOnly forkAtBlock(MODE_MAINNET, 21084461) {
-    VoterLens voterLens = VoterLens(0x0286bf00b6f6Cc45D2bd7e8C2e728B1DF2854c7D); // Replace with actual VoterLens contract address
+  function testBribeIncentives() public debuggingOnly fork(BASE_MAINNET) {
+    VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B);
     VoterLens.IncentiveInfo[] memory incentives = voterLens.getAllIncentivesForBribes();
 
     emit log("Incentive Information:");
