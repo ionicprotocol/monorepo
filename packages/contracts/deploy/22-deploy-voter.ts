@@ -215,16 +215,29 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     (await askQuestion("Deployed Accumulators. Move to step 6 Deploy and set Bribes? (y/n)")) || "";
   if (proceedToStep6.toLowerCase() !== "y") return;
 
-  // // Call setMarketRewardAccumulators in the IVoter contract
-  // try {
-  //   const txHash = await voter.write.setMarketRewardAccumulators([marketAddresses, marketSides, rewardAccumulators]);
-  //   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-  //   console.log(
-  //     `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
-  //   );
-  // } catch (error) {
-  //   console.error("Error setting market reward accumulators:", error);
-  // }
+  // Call setMarketRewardAccumulators in the IVoter contract
+
+  for (let i = 0; i < marketAddresses.length; i++) {
+    const existingAccumulator = await voter.read.marketToRewardAccumulators([marketAddresses[i], marketSides[i]]);
+
+    if (existingAccumulator === "0x0000000000000000000000000000000000000000") {
+      try {
+        const txHash = await voter.write.setMarketRewardAccumulators([
+          marketAddresses,
+          marketSides,
+          rewardAccumulators
+        ]);
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+        console.log(
+          `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
+        );
+      } catch (error) {
+        console.error("Error setting market reward accumulators:", error);
+      }
+    } else {
+      console.log(`Market reward accumulator already set for market: ${marketAddresses[i]}, side: ${marketSides[i]}`);
+    }
+  }
 
   // ╔══════════════════════════════════════════╗
   // ║       DEPLOY BRIBES AND SET MAPPINGS     ║
@@ -266,13 +279,19 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     }
   }
 
-  // try {
-  //   const txHash = await voter.write.setBribes([rewardAccumulators, bribes]);
-  //   await publicClient.waitForTransactionReceipt({ hash: txHash });
-  //   console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
-  // } catch (error) {
-  //   console.error("Error setting bribes in Voter contract:", error);
-  // }
+  for (let i = 0; i < rewardAccumulators.length; i++) {
+    let bribe = await voter.read.rewardAccumulatorToBribe([rewardAccumulators[i]]);
+
+    if (bribe === "0x0000000000000000000000000000000000000000") {
+      try {
+        const txHash = await voter.write.setBribes([rewardAccumulators, bribes]);
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
+      } catch (error) {
+        console.error("Error setting bribes in Voter contract:", error);
+      }
+    }
+  }
 
   // // ╔══════════════════════════════════════════╗
   // // ║           SET MAX VOTING NUM             ║
