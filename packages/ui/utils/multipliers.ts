@@ -418,52 +418,28 @@ export const multipliers: Record<
   [bob.id]: {
     '0': {
       USDC: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       },
       USDT: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       },
       WETH: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       },
       WBTC: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       },
       tBTC: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       },
       SOV: {
-        borrow: {
-          spice: true
-        },
-        supply: {
-          spice: true
-        }
+        borrow: {},
+        supply: {}
       }
     }
   },
