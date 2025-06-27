@@ -55,6 +55,18 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
 
   voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
+  try {
+    const txHash = await voter.write.setGovernor(["0x7d922bf0975424b3371074f54cC784AF738Dac0D"]);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+    if (receipt.status === "success") {
+      console.log(`Successfully set governor. Transaction hash: ${txHash}`);
+    } else {
+      console.error(`Failed to set governor. Transaction hash: ${txHash}, Status: ${receipt.status}`);
+    }
+  } catch (error) {
+    console.error("Error setting governor:", error);
+  }
+
   // // ╔══════════════════════════════════════════╗
   // // ║               SET LP ARRAY               ║
   // // ║  Configuring which LP tokens are allowed ║
@@ -221,15 +233,24 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     const existingAccumulator = await voter.read.marketToRewardAccumulators([marketAddresses[i], marketSides[i]]);
 
     if (existingAccumulator === "0x0000000000000000000000000000000000000000") {
+      const confirmTx = await askQuestion(
+        `About to set market reward accumulators for market: ${marketAddresses[i]}, side: ${marketSides[i]}. Proceed? (y/n)`
+      );
+      if (confirmTx.toLowerCase() !== "y") {
+        console.log(
+          `Skipped setting market reward accumulators for market: ${marketAddresses[i]}, side: ${marketSides[i]}`
+        );
+        continue;
+      }
       try {
         const txHash = await voter.write.setMarketRewardAccumulators([
-          marketAddresses,
-          marketSides,
-          rewardAccumulators
+          [marketAddresses[i]],
+          [marketSides[i]],
+          [rewardAccumulators[i]]
         ]);
         const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
         console.log(
-          `Successfully set market reward accumulators ${marketAddresses}, ${marketSides}, ${rewardAccumulators}`
+          `Successfully set market reward accumulators ${marketAddresses[i]}, ${marketSides[i]}, ${rewardAccumulators[i]}`
         );
       } catch (error) {
         console.error("Error setting market reward accumulators:", error);
@@ -283,13 +304,24 @@ const func: DeployFunction = async ({ viem, getNamedAccounts, deployments, getCh
     let bribe = await voter.read.rewardAccumulatorToBribe([rewardAccumulators[i]]);
 
     if (bribe === "0x0000000000000000000000000000000000000000") {
+      const userConfirmed = await askQuestion(
+        `Do you want to set bribes for RewardAccumulator: ${rewardAccumulators[i]} with Bribe: ${bribes[i]}?`
+      );
+      if (!userConfirmed) {
+        console.log(`User canceled the transaction for RewardAccumulator: ${rewardAccumulators[i]}`);
+        continue;
+      }
       try {
-        const txHash = await voter.write.setBribes([rewardAccumulators, bribes]);
+        const txHash = await voter.write.setBribes([[rewardAccumulators[i]], [bribes[i]]]);
         await publicClient.waitForTransactionReceipt({ hash: txHash });
-        console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators}, ${bribes}`);
+        console.log(`Successfully set bribes for RewardAccumulators. ${rewardAccumulators[i]}, ${bribes[i]}`);
       } catch (error) {
         console.error("Error setting bribes in Voter contract:", error);
       }
+    } else {
+      console.log(
+        `Bribe contract already set for accumulator: ${marketAddresses[i]}, side: ${marketSides[i]}, ${rewardAccumulators[i]}`
+      );
     }
   }
 

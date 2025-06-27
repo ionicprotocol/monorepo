@@ -231,9 +231,9 @@ task("bribes:setHistoricalPriceSingle", "set prices").setAction(
 task("voter:setHistoricalPricesRange", "set historical prices over a range on Voter contract").setAction(
   async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
     const publicClient = await viem.getPublicClient();
-    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
+    const lpToken = "0x690A74d2eC0175a69C0962B309E03021C0b5002E";
 
-    const voter = await viem.getContractAt("Voter", "0x669A6F5421dA53696fa06f1043CF127d380f6EB9");
+    const voter = await viem.getContractAt("Voter", "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429");
 
     const startEpoch = 1735776000;
     const endEpoch = 1749081600;
@@ -249,6 +249,63 @@ task("voter:setHistoricalPricesRange", "set historical prices over a range on Vo
         voterReceipt.transactionHash
       );
     }
+  }
+);
+
+task("voter:setHistoricalPricesRange", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const lpToken = "0x690A74d2eC0175a69C0962B309E03021C0b5002E";
+
+    const voter = await viem.getContractAt("Voter", "0x141F7f2aa313Ff4C60Dd58fDe493aA2048170429");
+
+    const startEpoch = 1735776000;
+    const endEpoch = 1749081600;
+    const increment = 604800;
+
+    for (let epoch = startEpoch; epoch <= endEpoch; epoch += increment) {
+      console.log(`Sending transaction to set historical price on Voter contract at epoch ${epoch}`);
+      const voterTx = await voter.write.setHistoricalPrices([BigInt(epoch), lpToken, BigInt("1000000000000000000")]);
+      console.log(`Transaction sent: ${voterTx}`);
+      const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: voterTx });
+      console.log(
+        `✅ Successfully set historical price on Voter contract at epoch ${epoch}:`,
+        voterReceipt.transactionHash
+      );
+    }
+  }
+);
+
+task("voter:setHistoricalPrice", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+    const lpToken = "0x690A74d2eC0175a69C0962B309E03021C0b5002E";
+
+    const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+
+    const epoch = 1749081600 + 604800 * 3;
+
+    const priceAtEpoch = await voter.read.historicalPrices([lpToken, BigInt(epoch)]);
+    console.log(`Current historical price at epoch ${epoch}: ${priceAtEpoch}`);
+
+    const userResponse = await new Promise((resolve) => {
+      process.stdout.write("Do you want to continue to set the price? (yes/no): ");
+      process.stdin.once("data", (data) => resolve(data.toString().trim()));
+    });
+
+    if (userResponse.toLowerCase() !== "yes") {
+      console.log("Operation cancelled by user.");
+      return;
+    }
+
+    console.log(`Sending transaction to set historical price on Voter contract at epoch ${epoch}`);
+    const voterTx = await voter.write.setHistoricalPrices([BigInt(epoch), lpToken, BigInt("1000000000000000000")]);
+    console.log(`Transaction sent: ${voterTx}`);
+    const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: voterTx });
+    console.log(
+      `✅ Successfully set historical price on Voter contract at epoch ${epoch}:`,
+      voterReceipt.transactionHash
+    );
   }
 );
 
@@ -273,5 +330,24 @@ task("voter:checkRewards", "set historical prices over a range on Voter contract
 
       console.log(`Token reward for epoch ${epoch}: ${tokenRewardPerEpoch}`);
     }
+  }
+);
+
+task("voter:distribute", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const publicClient = await viem.getPublicClient();
+
+    const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+
+    const toggleDistributorTimeLockOff = await voter.write.toggleDistributionTimelockAlive([false]);
+    console.log(`Tx sent: ${toggleDistributorTimeLockOff}`);
+    const toggleReceipt = await publicClient.waitForTransactionReceipt({ hash: toggleDistributorTimeLockOff });
+    console.log(`✅ Successfully distributed rewards on Voter contract:`, toggleReceipt.transactionHash);
+
+    console.log("Sending transaction to distribute rewards on Voter contract");
+    const tx = await voter.write.distributeRewards();
+    console.log(`Transaction sent: ${tx}`);
+    const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: tx });
+    console.log(`✅ Successfully distributed rewards on Voter contract:`, voterReceipt.transactionHash);
   }
 );
