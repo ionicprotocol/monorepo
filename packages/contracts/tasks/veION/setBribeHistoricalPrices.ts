@@ -388,5 +388,16 @@ task("voter:upgrade", "set historical prices over a range on Voter contract").se
     } catch (error) {
       console.error("Could not deploy:", error);
     }
+
+    voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
+
+    try {
+      const distributorAddress = "0x7d922bf0975424b3371074f54cC784AF738Dac0D";
+      const setDistributorTx = await voter.write.setDistributor([distributorAddress]);
+      const setDistributorReceipt = await publicClient.waitForTransactionReceipt({ hash: setDistributorTx });
+      console.log(`✅ Successfully set distributor on Voter contract:`, setDistributorReceipt.transactionHash);
+    } catch (error) {
+      console.error("❌ Failed to set distributor on Voter contract:", error);
+    }
   }
 );
