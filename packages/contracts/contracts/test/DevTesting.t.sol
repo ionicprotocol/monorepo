@@ -434,7 +434,7 @@ contract DevTesting is BaseTest {
   }
 
   function testUserBribes() public debuggingOnly fork(BASE_MAINNET) {
-    address user = 0xec7e64b33EE52Bed121a551901Bd124986BC3b58;
+    address user = 0x21afD1263c638adbf0082EB5DF92Dc98F61C3027;
     VoterLens voterLens = VoterLens(0xFEF51b9B5a1050B2bBE52A39cC356dfCEE79D87B); // Replace with actual VoterLens contract address
     Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
     veION ve = veION(0x8865E0678E3b1BD0F5302e4C178a4B576F6aAA27);
@@ -491,14 +491,47 @@ contract DevTesting is BaseTest {
       emit log("-----------------------------------------------------------");
     }
 
-    BribeRewards bribe = BribeRewards(0x9fb8316a2c5bCE52bA81a00A265BfED19868a4bE);
-    uint256[] memory votingTokens = new uint256[](1);
-    votingTokens[0] = 74;
-
-    for (uint256 i = 0; i < votingTokens.length; i++) {
-      uint256 earnedAmount = bribe.earned(0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, votingTokens[i]);
-      emit log_named_uint("Earned Amount for Token ID", votingTokens[i]);
-      emit log_named_uint("Earned Amount", earnedAmount);
+    for (uint256 j = 0; j < ownedTokenIds.length; j++) {
+      Voter.VoteDetails memory voteDetails = voter.getVoteDetails(ownedTokenIds[j], lpAsset);
+      for (uint256 i = 0; i < voteDetails.marketVotes.length; i++) {
+        address marketVoted = voteDetails.marketVotes[i];
+        for (uint256 k = 0; k < incentives.length; k++) {
+          if (incentives[k].market == marketVoted) {
+            // Check bribe supply
+            if (incentives[k].bribeSupply != address(0)) {
+              for (uint256 l = 0; l < incentives[k].rewardsSupply.length; l++) {
+                uint256 earnedSupplyBribe = BribeRewards(incentives[k].bribeSupply).earned(
+                  incentives[k].rewardsSupply[l],
+                  ownedTokenIds[j]
+                );
+                emit log("-----------------------------------------------------------");
+                emit log_named_address("Market Voted", marketVoted);
+                emit log_named_uint("Token ID", ownedTokenIds[j]);
+                emit log_named_address("Reward Supply Token", incentives[k].rewardsSupply[l]);
+                emit log_named_uint("Earned Supply Bribe", earnedSupplyBribe);
+                emit log_named_address("Bribe Supply", incentives[k].bribeSupply);
+                emit log("-----------------------------------------------------------");
+              }
+            }
+            // Check bribe borrow
+            if (incentives[k].bribeBorrow != address(0)) {
+              for (uint256 l = 0; l < incentives[k].rewardsBorrow.length; l++) {
+                uint256 earnedBorrowBribe = BribeRewards(incentives[k].bribeBorrow).earned(
+                  incentives[k].rewardsBorrow[l],
+                  ownedTokenIds[j]
+                );
+                emit log("-----------------------------------------------------------");
+                emit log_named_address("Market Voted", marketVoted);
+                emit log_named_uint("Token ID", ownedTokenIds[j]);
+                emit log_named_address("Reward Borrow Token", incentives[k].rewardsBorrow[l]);
+                emit log_named_uint("Earned Borrow Bribe", earnedBorrowBribe);
+                emit log_named_address("Bribe Borrow", incentives[k].bribeBorrow);
+                emit log("-----------------------------------------------------------");
+              }
+            }
+          }
+        }
+      }
     }
   }
 

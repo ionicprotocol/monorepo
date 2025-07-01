@@ -1,6 +1,7 @@
 import { task, types } from "hardhat/config";
 import { assetFilter } from "../../chainDeploy/helpers/utils";
 import { Address, formatEther, parseUnits } from "viem";
+import { chainDeployConfig, ChainDeployConfig } from "../../chainDeploy";
 
 task("bribes:setHistoricalPrices", "set prices").setAction(
   async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
@@ -349,5 +350,43 @@ task("voter:distribute", "set historical prices over a range on Voter contract")
     console.log(`Transaction sent: ${tx}`);
     const voterReceipt = await publicClient.waitForTransactionReceipt({ hash: tx });
     console.log(`✅ Successfully distributed rewards on Voter contract:`, voterReceipt.transactionHash);
+  }
+);
+
+task("voter:upgrade", "set historical prices over a range on Voter contract").setAction(
+  async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
+    const { deployer } = await getNamedAccounts();
+    const publicClient = await viem.getPublicClient();
+
+    const veION = await viem.getContractAt("veION", (await deployments.get("veION")).address as Address);
+    const mpo = await viem.getContractAt(
+      "MasterPriceOracle",
+      (await deployments.get("MasterPriceOracle")).address as Address
+    );
+    const chainId = parseInt(await getChainId());
+
+    const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
+
+    let voter;
+    try {
+      voter = await deployments.deploy("Voter", {
+        from: deployer,
+        log: true,
+        proxy: {
+          proxyContract: "OpenZeppelinTransparentProxy",
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [[chainDeployParams.ION], mpo.address, chainDeployParams.ION, veION.address]
+            }
+          }
+          // owner: multisig
+        }
+      });
+      if (voter.transactionHash) await publicClient.waitForTransactionReceipt({ hash: voter.transactionHash as Hash });
+      console.log("voter: ", voter.address);
+    } catch (error) {
+      console.error("Could not deploy:", error);
+    }
   }
 );

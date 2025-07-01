@@ -39,6 +39,8 @@ interface IVoter {
   /// @notice Error thrown when the caller is not the governor.
   error NotGovernor();
 
+  error NotDistributor();
+
   /// @notice Error thrown when an NFT is not whitelisted.
   error NotWhitelistedNFT();
 
