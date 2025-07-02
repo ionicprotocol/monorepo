@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 import { assetFilter } from "../../chainDeploy/helpers/utils";
-import { Address, formatEther, parseUnits } from "viem";
+import { Address, formatEther, parseEther, parseUnits } from "viem";
 import { chainDeployConfig, ChainDeployConfig } from "../../chainDeploy";
 
 task("bribes:setHistoricalPrices", "set prices").setAction(
@@ -415,17 +415,5 @@ task("voter:upgrade", "set historical prices over a range on Voter contract").se
     }
 
     voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
-
-    try {
-      console.log("Calling emergencyWithdraw on Voter contract");
-      const ionicTokenAddress = "0xYourIonicTokenAddress"; // Replace with the actual Ionic token address
-      const amountToWithdraw = "87000000000000000000000"; // Replace with the actual amount to withdraw in wei
-      const tx = await voter.write.emergencyWithdraw(amountToWithdraw, ionicTokenAddress, { from: deployer });
-      console.log(`Transaction sent: ${tx}`);
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
-      console.log(`✅ Successfully called emergencyWithdraw on Voter contract:`, receipt.transactionHash);
-    } catch (error) {
-      console.error("Error calling emergencyWithdraw:", error);
-    }
   }
 );
