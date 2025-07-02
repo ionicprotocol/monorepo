@@ -548,6 +548,10 @@ contract Voter is IVoter, Ownable2StepUpgradeable, ReentrancyGuardUpgradeable {
     // emit HistoricalPriceSet(epochTimestamp, lpToken, price);
   }
 
+  function emergencyWithdraw(uint256 amount, address ionicToken) external onlyOwner {
+    IERC20(ionicToken).safeTransfer(msg.sender, amount);
+  }
+
   /**
    * @notice Gets the historical price for a specific LP token at a given epoch
    * @param lpToken The LP token address

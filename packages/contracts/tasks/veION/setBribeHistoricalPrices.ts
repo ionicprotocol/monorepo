@@ -280,13 +280,38 @@ task("voter:setHistoricalPricesRange", "set historical prices over a range on Vo
 task("voter:setHistoricalPrice", "set historical prices over a range on Voter contract").setAction(
   async (taskArgs, { viem, getNamedAccounts, deployments, getChainId }) => {
     const publicClient = await viem.getPublicClient();
-    const lpToken = "0x690A74d2eC0175a69C0962B309E03021C0b5002E";
+
+    const chainId = parseInt(await getChainId());
+
+    const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
+    const lpToken = "0x0FAc819628a7F612AbAc1CaD939768058cc0170c";
 
     const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
-    const epoch = 1749081600 + 604800 * 3;
+    // Get the current Unix timestamp
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    // Calculate the epoch by floor dividing by 604800 and then multiplying by 604800
+    const epoch = Math.floor(currentTimestamp / 604800) * 604800 + 604800;
+    const previousEpoch = epoch - 604800;
 
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZoneName: "short"
+    };
+    const epochDate = new Date(epoch * 1000).toLocaleString("en-US", options);
+    const previousEpochDate = new Date(previousEpoch * 1000).toLocaleString("en-US", options);
+
+    const priceAtPreviousEpoch = await voter.read.historicalPrices([lpToken, BigInt(previousEpoch)]);
+    console.log(`Previous epoch date: ${previousEpochDate}`);
+    console.log(`Historical price at previous epoch ${previousEpoch}: ${priceAtPreviousEpoch}`);
     const priceAtEpoch = await voter.read.historicalPrices([lpToken, BigInt(epoch)]);
+    console.log(`Epoch date: ${epochDate}`);
     console.log(`Current historical price at epoch ${epoch}: ${priceAtEpoch}`);
 
     const userResponse = await new Promise((resolve) => {
@@ -340,10 +365,10 @@ task("voter:distribute", "set historical prices over a range on Voter contract")
 
     const voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
-    const toggleDistributorTimeLockOff = await voter.write.toggleDistributionTimelockAlive([false]);
-    console.log(`Tx sent: ${toggleDistributorTimeLockOff}`);
-    const toggleReceipt = await publicClient.waitForTransactionReceipt({ hash: toggleDistributorTimeLockOff });
-    console.log(`✅ Successfully distributed rewards on Voter contract:`, toggleReceipt.transactionHash);
+    // const toggleDistributorTimeLockOff = await voter.write.toggleDistributionTimelockAlive([false]);
+    // console.log(`Tx sent: ${toggleDistributorTimeLockOff}`);
+    // const toggleReceipt = await publicClient.waitForTransactionReceipt({ hash: toggleDistributorTimeLockOff });
+    // console.log(`✅ Successfully distributed rewards on Voter contract:`, toggleReceipt.transactionHash);
 
     console.log("Sending transaction to distribute rewards on Voter contract");
     const tx = await voter.write.distributeRewards();
@@ -392,12 +417,15 @@ task("voter:upgrade", "set historical prices over a range on Voter contract").se
     voter = await viem.getContractAt("Voter", (await deployments.get("Voter")).address as Address);
 
     try {
-      const distributorAddress = "0x7d922bf0975424b3371074f54cC784AF738Dac0D";
-      const setDistributorTx = await voter.write.setDistributor([distributorAddress]);
-      const setDistributorReceipt = await publicClient.waitForTransactionReceipt({ hash: setDistributorTx });
-      console.log(`✅ Successfully set distributor on Voter contract:`, setDistributorReceipt.transactionHash);
+      console.log("Calling emergencyWithdraw on Voter contract");
+      const ionicTokenAddress = "0xYourIonicTokenAddress"; // Replace with the actual Ionic token address
+      const amountToWithdraw = "87000000000000000000000"; // Replace with the actual amount to withdraw in wei
+      const tx = await voter.write.emergencyWithdraw(amountToWithdraw, ionicTokenAddress, { from: deployer });
+      console.log(`Transaction sent: ${tx}`);
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
+      console.log(`✅ Successfully called emergencyWithdraw on Voter contract:`, receipt.transactionHash);
     } catch (error) {
-      console.error("❌ Failed to set distributor on Voter contract:", error);
+      console.error("Error calling emergencyWithdraw:", error);
     }
   }
 );

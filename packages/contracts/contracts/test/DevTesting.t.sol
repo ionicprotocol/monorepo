@@ -535,6 +535,51 @@ contract DevTesting is BaseTest {
     }
   }
 
+  function testDistro() public debuggingOnly forkAtBlock(BASE_MAINNET, 32000000) {
+    Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
+
+    vm.prank(0x584942689042EF8703d3172e0BdcF34964dB1F4c);
+    ERC20 token = ERC20(0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5);
+    token.transfer(address(voter), 10 * 10 ** 6 * 10 ** 18);
+
+    vm.recordLogs();
+
+    vm.prank(voter.owner());
+    voter.distributeRewards();
+
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+
+    // The Transfer event signature
+    bytes32 transferSig = keccak256("Transfer(address,address,uint256)");
+
+    // Loop through and decode Transfer events
+    uint256 transferCount = 0;
+    for (uint i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == transferSig) {
+        transferCount++;
+        address from = address(uint160(uint256(entries[i].topics[1])));
+        address to = address(uint160(uint256(entries[i].topics[2])));
+        uint256 amount = abi.decode(entries[i].data, (uint256));
+        console.log("Transfer: %s -> %s | Amount: %s", from, to, amount);
+      }
+    }
+    console.log("Total Transfers: %s", transferCount);
+
+    console.log("Current Block Number: %s", block.number);
+
+    vm.roll(32080000);
+    ICErc20[] memory markets = ComptrollerFirstExtension(0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13).getAllMarkets();
+    for (uint256 i = 0; i < markets.length; i++) {
+      (uint32 cycleStart, uint32 cycleEnd, uint192 cycleReward) = IonicFlywheelDynamicRewards(
+        0xf871E19bf6B7E905B3994E1dF68521BafF636440
+      ).rewardsCycle(ERC20(address(markets[i])));
+      emit log_named_address("Market", address(markets[i]));
+      emit log_named_uint("Cycle Start", cycleStart);
+      emit log_named_uint("Cycle End", cycleEnd);
+      emit log_named_uint("Cycle Reward", cycleReward);
+    }
+  }
+
   function testVoteUser() public debuggingOnly fork(BASE_MAINNET) {
     address[] memory markets = new address[](1);
     IVoter.MarketSide[] memory marketSides = new IVoter.MarketSide[](1);
