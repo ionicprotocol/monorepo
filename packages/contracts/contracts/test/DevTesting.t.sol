@@ -535,7 +535,7 @@ contract DevTesting is BaseTest {
     }
   }
 
-  function testDistro() public debuggingOnly forkAtBlock(BASE_MAINNET, 32000000) {
+  function testDistro() public debuggingOnly forkAtBlock(BASE_MAINNET, 32349499) {
     Voter voter = Voter(0x669A6F5421dA53696fa06f1043CF127d380f6EB9);
 
     vm.prank(0x584942689042EF8703d3172e0BdcF34964dB1F4c);
@@ -578,6 +578,33 @@ contract DevTesting is BaseTest {
       emit log_named_uint("Cycle End", cycleEnd);
       emit log_named_uint("Cycle Reward", cycleReward);
     }
+  }
+
+  function testRewardCycles() public debuggingOnly fork(BASE_MAINNET) {
+    ERC20 token = ERC20(0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5);
+
+    // uint256 currentTimestamp = block.timestamp;
+    // console.log("Current Timestamp: %s", currentTimestamp);
+
+    // vm.prank(0xabE9ae9cDB87771C2a3fC43311e46309FC684Fd6);
+    // IonicFlywheelLensRouter(0xB1402333b12fc066C3D7F55d37944D5e281a3e8B).claimRewardsOfRewardToken(
+    //   0xabE9ae9cDB87771C2a3fC43311e46309FC684Fd6,
+    //   0x3eE5e23eEE121094f1cFc0Ccc79d6C809Ebd22e5
+    // );
+
+    ICErc20[] memory markets = ComptrollerFirstExtension(0x05c9C6417F246600f8f5f49fcA9Ee991bfF73D13).getAllMarkets();
+    for (uint256 i = 0; i < markets.length; i++) {
+      (uint32 cycleStart, uint32 cycleEnd, uint192 cycleReward) = IonicFlywheelDynamicRewards(
+        0xf871E19bf6B7E905B3994E1dF68521BafF636440
+      ).rewardsCycle(ERC20(address(markets[i])));
+      console.log("Market: %s", address(markets[i]));
+      console.log("Cycle Start: %s", cycleStart);
+      console.log("Cycle End: %s", cycleEnd);
+      console.log("Cycle Reward: %s", cycleReward);
+      console.log("--------------------------------------");
+    }
+    uint256 balance = token.balanceOf(0xD4c9420a9e67E78CbFa1CD75E63f1048cB77BC18);
+    console.log("Balance: %s", balance);
   }
 
   function testVoteUser() public debuggingOnly fork(BASE_MAINNET) {
