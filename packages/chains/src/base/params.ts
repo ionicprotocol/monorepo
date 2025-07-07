@@ -16,6 +16,7 @@ const specificParams: ChainParams = {
     rpcUrls: {
       default: {
         http: [
+          "https://rpc.ankr.com/base/5f29692f7dd10adfd399569824ee3168c7b0c055ceea0ba9075d7f926bd49fd7",
           "https://mainnet.base.org",
           "https://base.llamarpc.com",
           "https://base-rpc.publicnode.com",
