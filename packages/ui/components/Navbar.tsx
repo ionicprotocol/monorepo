@@ -150,11 +150,11 @@ export default function Navbar() {
             label="Earn"
             isActive={pathname === '/earn'}
           />
-          <NavLink
+          {/* <NavLink
             href="/claim"
             label="Claim"
             isActive={pathname === '/claim'}
-          />
+          /> */}
           <NavLink
             href="/incentives"
             label="Incentivize"
