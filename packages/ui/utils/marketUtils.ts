@@ -149,14 +149,6 @@ export const getExtraRewardIcons = (
     );
   }
 
-  if (config?.spice) {
-    additionalRewards.push({
-      name: 'spice',
-      icon: '/img/symbols/32/color/bob.png',
-      text: '+ Spice Points'
-    });
-  }
-
   return additionalRewards;
 };
 

@@ -20,7 +20,7 @@ locals {
   memory_size         = 512
 } */
 
-module "mode_mainnet_liquidator_ecs" {
+/*module "mode_mainnet_liquidator_ecs" {
   source = "../modules/bot"
 
   cluster_name               = var.liquidator_cluster_name
@@ -44,7 +44,8 @@ module "mode_mainnet_liquidator_ecs" {
   security_group_ids         = ["sg-0a3996557af867ad0"]
   region                     = var.region
   liquidator_container_name  = var.liquidator_container_name
-}
+}*/
+
 module "mode_mainnet_pyth_rpc_0" {
   source              = "../modules/lambda"
   ecr_repository_name = local.pyth_updater_ecr_repository_name

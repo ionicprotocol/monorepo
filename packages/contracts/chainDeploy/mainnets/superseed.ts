@@ -1,8 +1,13 @@
 import { superseed } from "@ionicprotocol/chains";
 
-import { ChainDeployConfig } from "../helpers";
-import { Address } from "viem";
+import { ChainDeployConfig, deployPythPriceOracle } from "../helpers";
+import { Address, zeroAddress } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { OracleTypes, PythSpecificParams } from "@ionicprotocol/types";
+import { PythAsset } from "../types";
+
+const PYTH_ADDRESS = "0x2880aB155794e7179c9eE2e38200202908C17B43";
+const PYTH_ETH_USD_FEED = "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace";
 
 const assets = superseed.assets;
 
@@ -23,7 +28,9 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV3Quoter: superseed.chainAddresses.UNISWAP_V3?.QUOTER_V2 as Address
   },
   wtoken: superseed.chainAddresses.W_TOKEN as Address,
-  nativeTokenUsdChainlinkFeed: superseed.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address
+  nativeTokenUsdChainlinkFeed: superseed.chainAddresses.W_TOKEN_USD_CHAINLINK_PRICE_FEED as Address,
+  ION: zeroAddress,
+  veION: {} as any
 };
 
 export const deploy = async ({
@@ -34,6 +41,26 @@ export const deploy = async ({
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
+
+  const pythAssets: PythAsset[] = assets
+    .filter((asset) => asset.oracle === OracleTypes.PythPriceOracle)
+    .map((asset) => ({
+      underlying: asset.underlying,
+      feed: (asset.oracleSpecificParams as PythSpecificParams).feed as Address
+    }));
+
+  await deployPythPriceOracle({
+    chainId: superseed.chainId,
+    viem,
+    getNamedAccounts,
+    deployments,
+    run,
+    pythAddress: PYTH_ADDRESS,
+    usdToken: superseed.chainAddresses.STABLE_TOKEN as Address,
+    pythAssets,
+    deployConfig,
+    nativeTokenUsdFeed: PYTH_ETH_USD_FEED
+  });
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {

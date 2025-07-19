@@ -1,62 +1,12 @@
 import { SupportedChains } from '@ionicprotocol/types';
 import { Handler } from '@netlify/functions';
-import { Chain, createPublicClient, http, formatEther, getContract, formatUnits, type Abi } from 'viem';
+import { Chain, createPublicClient, http, formatEther, formatUnits, type Abi } from 'viem';
 import { chainIdtoChain, chainIdToConfig } from '@ionicprotocol/chains';
 import { IonicSdk } from '@ionicprotocol/sdk';
 import axios from 'axios';
 import CTokenABI from '../abi/CToken.json';
 import FlywheelABI from '../abi/FlywheelCore.json';
-import FlywheelRewardsABI from '../abi/FlywheelCore.json';
 import { environment, supabase } from '../config';
-const FLYWHEEL_TYPE_MAP: Record<number, { supply?: string[], borrow?: string[] }> = {
-  [SupportedChains.mode]: {
-    supply: [],
-    borrow: []
-  }
-};
-// merge in main branch
-interface AssetMasterData {
-  // Key identifiers
-  chain_id: SupportedChains;
-  ctoken_address: string;
-  underlying_address: string;
-  pool_address: string;
-  
-  // Asset basic info
-  underlying_name: string;
-  underlying_symbol: string;
-  decimals: number;
-  // Price data
-  underlying_price: number;
-  usd_price: number;
-  exchange_rate: number;
-  // TVL and supply data
-  total_supply: string;
-  total_supply_usd: number;
-  total_borrow: string;
-  total_borrow_usd: number;
-  utilization_rate: number;
-  // APY/APR data
-  supply_apy: number;
-  borrow_apy: number;
-  reward_apy: number;
-  total_apy: number;
-  // Market status
-  is_listed: boolean;
-  collateral_factor: number;
-  reserve_factor: number;
-  borrow_cap: string;
-  supply_cap: string;
-  is_borrow_paused: boolean;
-  is_mint_paused: boolean;
-  // Metadata
-  updated_at: string;
-  block_number: number;
-  timestamp: string;
-  reward_apy_supply: number;
-  reward_apy_borrow: number;
-  reward_tokens: string[];
-}
 const fetchTokenPrice = async (cgId: string): Promise<number> => {
   try {
     const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cgId}&vs_currencies=usd`);
@@ -66,38 +16,70 @@ const fetchTokenPrice = async (cgId: string): Promise<number> => {
     return 0;
   }
 };
-const validateAssetData = (data: any) => {
-  const requiredFields = [
-    'underlying_price',
-    'usd_price',
-    'exchange_rate',
-    'supply_apy',
-    'borrow_apy'
-  ];
-  requiredFields.forEach(field => {
-    if (typeof data[field] !== 'number' || isNaN(data[field])) {
-      throw new Error(`Invalid ${field}: ${data[field]}`);
-    }
-  });
-  return data;
-};
 const formatBigIntValue = (value: string | number | bigint, decimals: number): number => {
   const valueStr = value.toString();
   const valueBigInt = BigInt(valueStr);
   const divisor = BigInt(10) ** BigInt(decimals);
   return Number(valueBigInt) / Number(divisor);
 };
-const calculateRewardApy = (rewardRate: bigint, index: bigint): number => {
-  const annualRewardRate = (rewardRate * BigInt(365 * 24 * 60 * 60)) / index;
-  return Number(annualRewardRate) / 1e18 * 100;
-};
 export const updateAssetMasterData = async (chainId: SupportedChains) => {
   try {
     const config = chainIdToConfig[chainId];
     let publicClient;
     
-    // Special handling for Base chain
+    // Special handling for Base chain with custom RPCs
     if (chainId === SupportedChains.base) {
+      // Parse comma-separated list of Base RPC URLs from environment variable
+      const customBaseRpcUrls = environment.baseRpcUrl
+        .split(',')
+        .map(url => url.trim())
+        .filter(Boolean);
+      
+      if (customBaseRpcUrls.length > 0) {
+        for (const rpcUrl of customBaseRpcUrls) {
+          try {
+            publicClient = createPublicClient({
+              chain: chainIdtoChain[chainId] as Chain,
+              transport: http(rpcUrl, {
+                timeout: 60000,
+                retryCount: 5,
+                retryDelay: 2000,
+              }),
+            });
+            await publicClient.getBlockNumber();
+            console.log(`Connected to Base custom RPC #${customBaseRpcUrls.indexOf(rpcUrl) + 1}`);
+            break;
+          } catch (e) {
+            console.log(`Failed to connect to Base custom RPC #${customBaseRpcUrls.indexOf(rpcUrl) + 1}, trying next...`);
+            continue;
+          }
+        }
+      }
+      
+      // If all custom RPCs failed or weren't provided, fall back to default RPCs
+      if (!publicClient) {
+        const defaultRpcUrls = config.specificParams.metadata.rpcUrls.default.http;
+        for (const rpcUrl of defaultRpcUrls) {
+          try {
+            publicClient = createPublicClient({
+              chain: chainIdtoChain[chainId] as Chain,
+              transport: http(rpcUrl, {
+                timeout: 60000,
+                retryCount: 5,
+                retryDelay: 2000,
+              }),
+            });
+            await publicClient.getBlockNumber();
+            console.log(`Connected to Base default RPC: ${rpcUrl}`);
+            break;
+          } catch (e) {
+            console.log(`Failed to connect to Base default RPC ${rpcUrl}, trying next...`);
+            continue;
+          }
+        }
+      }
+    } else {
+      // For other chains, use default RPCs with retry mechanism
       const rpcUrls = config.specificParams.metadata.rpcUrls.default.http;
       
       for (const rpcUrl of rpcUrls) {
@@ -106,24 +88,18 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
             chain: chainIdtoChain[chainId] as Chain,
             transport: http(rpcUrl, {
               timeout: 60000,
-              retryCount: 5,
-              retryDelay: 2000,
+              retryCount: 3,
+              retryDelay: 1500,
             }),
           });
           await publicClient.getBlockNumber();
-          console.log(`Connected to Base RPC: ${rpcUrl}`);
+          console.log(`Connected to ${chainIdtoChain[chainId].name} RPC: ${rpcUrl}`);
           break;
         } catch (e) {
-          console.log(`Failed to connect to Base RPC ${rpcUrl}, trying next...`);
+          console.log(`Failed to connect to ${chainIdtoChain[chainId].name} RPC ${rpcUrl}, trying next...`);
           continue;
         }
       }
-    } else {
-      // For other chains, use default RPC
-      publicClient = createPublicClient({
-        chain: chainIdtoChain[chainId] as Chain,
-        transport: http(config.specificParams.metadata.rpcUrls.default.http[0])
-      });
     }
 
     if (!publicClient) {
@@ -283,7 +259,6 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
         console.error(`Error processing pool ${pool.comptroller}:`, e);
       }
     }
-
     // Insert into database with fallback to insert if upsert fails
     try {
       const { error } = await supabase
@@ -292,7 +267,6 @@ export const updateAssetMasterData = async (chainId: SupportedChains) => {
           onConflict: 'chain_id,ctoken_address',
           ignoreDuplicates: false
         });
-
       if (error) {
         // If upsert fails due to missing constraint, fall back to insert
         if (error.code === '42P10') {

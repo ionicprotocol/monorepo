@@ -10,7 +10,7 @@ import { metalL2 } from "@ionicprotocol/chains";
 const metalL2Assets = metalL2.assets;
 
 task("markets:deploy:metalL2:new", "deploy new metalL2 assets").setAction(async (_, { viem, run }) => {
-  const assetsToDeploy: string[] = [assetSymbols.WETH];
+  const assetsToDeploy: string[] = [assetSymbols.MTL, assetSymbols.USDC];
   for (const asset of metalL2Assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     if (!asset.name || !asset.symbol || !asset.underlying) {
       throw new Error(`Asset ${asset.symbol} has no name, symbol or underlying`);
@@ -46,7 +46,7 @@ task("markets:deploy:metalL2:new", "deploy new metalL2 assets").setAction(async 
 
 task("metalL2:set-caps:new", "one time setup").setAction(async (_, { viem, run, getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
-  const assetsToDeploy: string[] = [assetSymbols.WETH];
+  const assetsToDeploy: string[] = [assetSymbols.MTL, assetSymbols.USDC];
   for (const asset of metalL2.assets.filter((asset) => assetsToDeploy.includes(asset.symbol))) {
     const pool = await viem.getContractAt("IonicComptroller", COMPTROLLER_MAIN);
     const cToken = await pool.read.cTokensByUnderlying([asset.underlying]);

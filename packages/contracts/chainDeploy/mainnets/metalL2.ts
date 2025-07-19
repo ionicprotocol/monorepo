@@ -1,8 +1,10 @@
 import { metalL2 } from "@ionicprotocol/chains";
 
-import { ChainDeployConfig } from "../helpers";
+import { ChainDeployConfig, deployChainlinkOracle } from "../helpers";
 import { Address, parseEther, zeroAddress } from "viem";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { ChainlinkSpecificParams, OracleTypes } from "@ionicprotocol/types";
+import { ChainlinkAsset } from "../types";
 
 const assets = metalL2.assets;
 
@@ -47,6 +49,24 @@ export const deploy = async ({
 }: HardhatRuntimeEnvironment): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   const publicClient = await viem.getPublicClient();
+
+  const chainlinkAssets = metalL2.assets
+    .filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2)
+    .map((a) => ({
+      symbol: a.symbol,
+      aggregator: (a.oracleSpecificParams! as ChainlinkSpecificParams).aggregator,
+      feedBaseCurrency: (a.oracleSpecificParams! as ChainlinkSpecificParams).feedBaseCurrency
+    })) as ChainlinkAsset[];
+  await deployChainlinkOracle({
+    viem,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    assets,
+    chainlinkAssets,
+    run,
+    chainId: metalL2.chainId
+  });
 
   //// Uniswap V3 Liquidator Funder
   const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
